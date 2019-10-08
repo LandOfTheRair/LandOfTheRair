@@ -1,3 +1,4 @@
+import { Game } from '../helpers';
 import { GameServerEvent, GameServerResponse, IServerAction, IServerResponse } from '../interfaces';
 
 export class ServerAction implements IServerAction {
@@ -10,7 +11,7 @@ export class ServerAction implements IServerAction {
     return this.requiredKeys.every(key => args[key]);
   }
 
-  async act(data): Promise<IServerResponse> {
+  async act(game: Game, data): Promise<IServerResponse> {
     return { type: GameServerResponse.Error, error: 'No type specified.', data };
   }
 }

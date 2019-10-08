@@ -11,12 +11,23 @@ export class WebsocketWorker {
 
   private sockets: { [uuid: string]: any } = {};
 
-  private wsServer: WebSocketServer;
+  private wsServer!: WebSocketServer;
 
-  start() {
+  async start() {
 
     // set up IPC
-    process.on('message', msg => this.handleMessage(msg));
+    process.on('message', msg => {
+      if (msg.__ready) {
+        this.setup();
+        return;
+      }
+
+      this.handleMessage(msg);
+    });
+
+  }
+
+  public setup() {
 
     // set up HTTP
     const app = fastify();

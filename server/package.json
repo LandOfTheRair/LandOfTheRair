@@ -25,6 +25,7 @@
   "homepage": "https://github.com/landoftherair/core2#readme",
   "dependencies": {
     "@clusterws/cws": "^0.15.2",
+    "bcrypt": "^3.0.6",
     "censor-sensor": "^1.0.5",
     "dotenv": "^8.1.0",
     "download-github-repo": "^0.1.4",
@@ -32,6 +33,7 @@
     "fastify": "^2.9.0",
     "fastify-rate-limit": "^2.4.0",
     "l1-path-finder": "^1.0.0",
+    "mikro-orm": "^2.7.8",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
     "nodemon": "^1.19.3",

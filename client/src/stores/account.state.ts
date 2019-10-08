@@ -1,6 +1,6 @@
 
-import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { IAccount, IChatUser, ICharacter } from '../models';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { IAccount, ICharacter, IChatUser } from '../models';
 
 export class Login {
   static type = '[Account] Log in';
@@ -44,11 +44,6 @@ export class AccountState {
   @Action(Login)
   login(ctx: StateContext<IAccount>, { info }: Login) {
     window.document.title = `[${info.username}] Land of the Rair`;
-    info.players = info.players.reduce((prev, cur) => {
-      prev[cur.slot] = cur;
-      return prev;
-    }, []);
-
     if (info.players.length < 4) info.players.length = 4;
 
     ctx.setState(Object.assign({}, ctx.getState(), { email: info.email, players: info.players, username: info.username }));

@@ -14,4 +14,8 @@ The core for Land of the Rair.
 
 ## Environment Variables
 
+Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) file.
+
+* `DATABASE_URI` - the path to your mongodb install
+
 ## Setup

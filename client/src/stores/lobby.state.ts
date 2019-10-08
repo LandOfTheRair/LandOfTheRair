@@ -1,7 +1,7 @@
 
-import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { ILobbyContainer, IChatUser, SubscriptionTier, ICharacterCreateInfo } from '../models';
-import { Login } from './account.state';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../models';
+// import { Login } from './account.state';
 
 export class AddMessage {
   static type = '[Chat] Add message';
@@ -70,8 +70,8 @@ export class LobbyState {
 
   private sortUsers(users: IChatUser[]): IChatUser[] {
     return users.sort((user1, user2) => {
-      if (user1.tier > user2.tier) return -1;
-      if (user1.tier < user2.tier) return 1;
+      if (user1!.tier > user2!.tier) return -1;
+      if (user1!.tier < user2!.tier) return 1;
 
       if (user1.username > user2.username) return 1;
       if (user1.username < user2.username) return -1;
@@ -124,11 +124,13 @@ export class LobbyState {
     ctx.patchState({ users: this.sortUsers(state.users.filter(x => x.username !== username)) });
   }
 
+  /*
   @Action(Login)
   login(ctx: StateContext<ILobbyContainer>, { info }: Login) {
-    this.setUsers(ctx, { users: info.onlineUsers });
-    this.setMOTD(ctx, { motd: info.motd });
+    // this.setUsers(ctx, { users: info.onlineUsers });
+    // this.setMOTD(ctx, { motd: info.motd });
   }
+  */
 
   @Action(SetCharacterCreateInformation)
   setCharCreateInformation(ctx: StateContext<ILobbyContainer>, { charCreateInfo }: SetCharacterCreateInformation) {

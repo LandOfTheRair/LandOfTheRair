@@ -110,7 +110,6 @@ export class SocketService {
       },
 
       error: (error: Error) => {
-        console.log('ASDF', error);
         this.connectStatus(false);
 
         const { message } = error;

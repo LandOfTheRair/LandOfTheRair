@@ -8,8 +8,11 @@ export class GameloopWorker {
 
   @Inject private wsCommands!: WebsocketCommandHandler;
 
-  start() {
+  async start() {
     process.on('message', msg => this.handleMessage(msg));
+
+    await this.wsCommands.init();
+    process.send!({ __ready: true });
   }
 
   private async handleMessage(msg) {
