@@ -1,0 +1,28 @@
+
+mat-button-toggle-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-button, .play-button {
+  width: 50%;
+  border-radius: 0;
+}
+
+.character-slot {
+  border-bottom: 1px solid #000;
+  
+
+  &:nth-child(odd) .char-container {
+    text-align: left;
+  }
+
+  &:nth-child(even) .char-container {
+    text-align: right;
+  }
+}
+
+.char-container{
+  line-height: 20px;
+  width: 200px;
+}

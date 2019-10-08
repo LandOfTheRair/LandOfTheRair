@@ -1,0 +1,49 @@
+:host {
+  position: absolute;
+  
+  z-index: 100;
+}
+
+.root-icon {
+  width: 64px;
+  height: 64px;
+
+  position: fixed;
+  left: 10px;
+  top: 10px;
+
+  cursor: pointer;
+
+  z-index: 110;
+}
+
+.activated {
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  left: 11px;
+  top: 10px;
+
+  border-radius: 50%;
+  border: 1px solid #999;
+
+  box-shadow: 0 0 5px 1px #fff;
+}
+
+.offline-indicator {
+  position: fixed;
+  left: 80px;
+  top: 25px;
+}
+
+.menu-container {
+  position: fixed;
+  top: 70px;
+
+  .menu-item {
+    font-size: 10px;
+    position: absolute;
+
+    left: 23px;
+  }
+}

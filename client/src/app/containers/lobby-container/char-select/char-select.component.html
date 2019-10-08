@@ -1,0 +1,45 @@
+
+
+<app-window windowName="charselect"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+
+            defaultX="850"
+            defaultY="100"
+            defaultWidth="250"
+></app-window>
+
+<ng-template #headTemplate>
+  Characters
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div *ngIf="gameService.charSlot$ | async as charSlot">
+    <div *ngIf="gameService.account$ | async as account">
+      <mat-button-toggle-group name="charSlot" [value]="charSlot.slot" (change)="setCharSlot($event)">
+        <mat-button-toggle *ngFor="let player of account.players; let i = index" class="character-slot" mat-button-toggle color="accent" [value]="i">
+          <div *ngIf="player" class="char-container">
+            {{ player.name }}
+            <br>
+            <small>Level {{ player.level }} {{ player.baseclass }}</small>
+            <br>
+            <small>{{ player.mapName }}</small>
+          </div>
+          <div *ngIf="!player">
+            No Character
+          </div>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    
+      <div *ngIf="gameService.charCreateData$ | async as charCreateData">
+        <button mat-flat-button color="accent" class="create-button" (click)="create(charCreateData, charSlot.slot, account.players[charSlot.slot])">
+          {{ account.players[charSlot.slot] ? 'Reroll' : 'Create' }}
+        </button>
+    
+        <button mat-flat-button color="primary" class="play-button" [disabled]="!account.players[charSlot.slot]" (click)="play(charSlot.slot)">
+          Play
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

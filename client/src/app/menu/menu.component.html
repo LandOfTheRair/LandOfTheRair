@@ -1,0 +1,23 @@
+
+<img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="gameService.loggedIn$ | async" (click)="toggleMenu()" />
+<img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="(gameService.loggedIn$ | async) === false" />
+<div class="activated" *ngIf="gameService.loggedIn$ | async"></div>
+
+<div class="offline-indicator">
+  <mat-chip-list *ngIf="!socketService.isConnected">
+    <mat-chip color="warn" selected>
+      <mat-icon class="m-r-10">offline_bolt</mat-icon> Disconnected. Reconnecting...
+    </mat-chip>
+  </mat-chip-list>
+</div>
+
+<div *ngIf="isMenuVisible" class="menu-container">
+  <button mat-mini-fab 
+          class="menu-item" 
+          [class.hidden]="!menuItem.name"
+          *ngFor="let menuItem of menuItems; let i = index" 
+          (click)="menuItem.handler()"
+          [style.top]="(i * 50) + 'px'">
+    {{ menuItem.name }}
+  </button>
+</div>

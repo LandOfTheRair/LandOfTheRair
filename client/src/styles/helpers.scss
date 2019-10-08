@@ -1,0 +1,78 @@
+
+
+
+$spaceamounts: (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 75, 100);
+$sides: (top, bottom, left, right);
+
+@each $space in $spaceamounts {
+  .m-#{$space} {
+    @each $side in $sides {
+      margin-#{$side}: #{$space}px !important;
+    }
+  }
+
+  .p-#{$space} {
+    @each $side in $sides {
+      padding-#{$side}: #{$space}px !important;
+    }
+  }
+
+  @each $side in $sides {
+    .m-#{str-slice($side, 0, 1)}-#{$space} {
+      margin-#{$side}: #{$space}px !important;
+    }
+  
+    .p-#{str-slice($side, 0, 1)}-#{$space} {
+      padding-#{$side}: #{$space}px !important;
+    }
+  }
+}
+
+.bordered {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.true-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 50%;
+}
+
+.float-right {
+  float: right;
+}
+
+.float-left {
+  float: left;
+}
+
+.thin-button {
+  line-height: 18px !important;
+  max-height: 18px;
+
+  mat-icon {
+    font-size: 16px;
+    line-height: 20px !important;
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.cursor-draggable {
+  cursor: grab;
+}
+
+.text-center {
+  text-align: center;
+}

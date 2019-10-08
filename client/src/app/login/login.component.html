@@ -1,0 +1,75 @@
+<div class="window active">
+  <mat-toolbar class="window-header">
+    <span>{{ isRegistering ? 'Register' : 'Login' }}</span>
+  </mat-toolbar>
+
+  <div class="window-body p-10">
+    <form>
+      <mat-form-field class="full-width" *ngIf="isRegistering">
+        <input matInput 
+               type="email" 
+               placeholder="Email Address" 
+               [(ngModel)]="newAccount.email"
+               [disabled]="isActing"
+               [ngModelOptions]="{ standalone: true }" />
+      </mat-form-field>
+  
+      <div class="full-width">
+        <mat-form-field>
+          <input matInput 
+                 type="text" 
+                 placeholder="Username" 
+                 [(ngModel)]="newAccount.username" 
+                 [disabled]="isActing"
+                 [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+
+        <button mat-icon-button [matMenuTriggerFor]="accountSwitcher" *ngIf="!isRegistering && (gameService.accounts$ | async).length > 0">
+          <mat-icon>swap_horizontal_circle</mat-icon>
+        </button>
+
+        <mat-menu #accountSwitcher="matMenu">
+          <button mat-menu-item disabled>All Accounts</button>
+          <div mat-menu-item *ngFor="let account of gameService.accounts$ | async" class="multi-menu-container">
+            <button mat-flat-button (click)="addToLogin(account)" class="thin-button">{{ account.username }}</button>
+            <button mat-icon-button (click)="removeFromList(account)" class="thin-button">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </div>
+        </mat-menu>
+      </div>
+  
+      <mat-form-field class="full-width">
+        <input matInput 
+               type="password" 
+               placeholder="Password" 
+               [(ngModel)]="newAccount.password" 
+               [disabled]="isActing"
+               [ngModelOptions]="{ standalone: true }" />
+      </mat-form-field>
+      
+      <button mat-stroked-button color="accent" class="m-r-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
+
+      <button mat-flat-button color="primary" *ngIf="!isRegistering" [disabled]="isActing || !canLogin" (click)="login()">Login</button>
+
+      <button mat-flat-button color="primary" *ngIf="isRegistering" [disabled]="isActing || !canRegister" (click)="register()">Register</button>
+      
+      <mat-checkbox class="m-l-10"
+                    [(ngModel)]="newAccount.autologin"
+                    [disabled]="isActing"
+                    [ngModelOptions]="{ standalone: true }">Auto-login</mat-checkbox>
+
+      <mat-chip-list class="float-right" *ngIf="isActing">
+        <mat-chip color="primary">
+          <mat-progress-spinner mode="indeterminate" diameter="16" class="m-r-10"></mat-progress-spinner> Working...
+        </mat-chip>
+      </mat-chip-list>
+
+      <mat-chip-list class="float-right" *ngIf="errorMessage">
+        <mat-chip color="warn" selected>
+          <mat-icon class="m-r-10">error</mat-icon> {{ errorMessage }}
+        </mat-chip>
+      </mat-chip-list>
+    </form>
+  </div>
+</div>

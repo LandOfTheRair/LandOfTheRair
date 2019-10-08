@@ -1,0 +1,15 @@
+
+
+<app-menu></app-menu>
+
+<app-login 
+  *ngIf="!socketService.isConnected || (gameService.loggedIn$ | async) === false"
+></app-login>
+
+<app-lobby-container 
+  *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)"
+></app-lobby-container>
+
+<app-game-container></app-game-container>
+
+<app-options-container></app-options-container>

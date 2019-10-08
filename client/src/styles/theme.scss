@@ -1,0 +1,53 @@
+
+:root {
+  --window-background-color: #444;
+  --title-background-color: #212121;
+  --text-color: rgba(255, 255, 255, 0.7);
+}
+
+$fantasy-font: 'Cormorant Upright', sans-serif;
+$font: Roboto, "Helvetica Neue", sans-serif;
+$backgroundColor: #444;
+$titleColor: #212121;
+$readableOnDark: rgba(255, 255, 255, 0.7);
+
+input.mat-input-element {
+  color: $readableOnDark;
+}
+
+mat-icon {
+  color: $readableOnDark;
+}
+
+.mat-checkbox-label {
+  color: $readableOnDark;
+}
+
+mat-toolbar {
+  max-height: 32px;
+}
+
+.mat-menu-panel {
+  min-height: 32px !important;
+
+  .mat-menu-content {
+    padding: 0;
+
+    .mat-menu-item {
+      line-height: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.menu-item {
+  background-color: $titleColor !important;
+}
+
+a {
+  color: #aa5;
+
+  &:visited {
+    color: #0a5;
+  }
+}

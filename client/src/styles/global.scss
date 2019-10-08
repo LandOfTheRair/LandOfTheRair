@@ -1,0 +1,50 @@
+
+body {
+  $background-dark: rgba(50, 50, 50, 0.1);
+  $background-light: rgba(200, 200, 200, 0.1);
+  
+  background-color: #8c3310;
+  background-image:
+    repeating-linear-gradient(120deg, $background-light, $background-light 1px, transparent 1px, transparent 60px),
+    repeating-linear-gradient(60deg, $background-light, $background-light 1px, transparent 1px, transparent 60px),
+    linear-gradient(60deg, $background-dark 15%, transparent 15%, transparent 85%, $background-dark 85%, $background-dark),
+    linear-gradient(120deg, $background-dark 15%, transparent 15%, transparent 85%, $background-dark 85%, $background-dark);
+  background-size: 70px 120px;
+  background-attachment: fixed;
+  overflow: visible;
+  height: 100vh;
+
+  * {
+    font-family: $font;
+  }
+}
+
+body.fantasy {
+  *:not(.mat-icon):not(.macicons) {
+    font-family: $fantasy-font;
+  }
+
+  button {
+    letter-spacing: 1px;
+    font-weight: bold;
+  }
+}
+
+img {
+  user-select: none;
+}
+
+mat-dialog-actions {
+  justify-content: space-between;
+}
+
+.mat-button-toggle.icon-button {
+  min-width: 120px;
+
+  .mat-button-toggle-label-content {
+    line-height: 36px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

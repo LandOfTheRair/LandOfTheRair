@@ -1,0 +1,89 @@
+
+<h2 mat-dialog-title>Create New Character</h2>
+
+<mat-dialog-content>
+
+  <table *ngIf="character.name">
+    <tr>
+      <td colspan="11">
+        You are 
+        <strong>{{ character.name }}</strong>
+        <span *ngIf="character.gender || character.baseclass" class="m-r-5">, the</span> 
+        <span *ngIf="character.gender" class="m-r-5">{{ character.gender }}</span> 
+        <span *ngIf="character.baseclass">{{ character.baseclass || 'Undecided' }}.</span>
+      </td>
+    </tr>
+    <tr *ngIf="character.allegiance">
+      <td colspan="11">You are with the {{ character.allegiance }}.</td>
+    </tr>
+    <tr>
+      <td colspan="11">Your base stats are as follows:</td>
+    </tr>
+    <tr>
+      <td *ngFor="let stat of allStats" class="p-5 bordered">
+        {{ stat | uppercase }} <strong>{{ stats[stat] }}</strong>
+      </td>
+    </tr>
+  </table>
+
+  <mat-horizontal-stepper>
+    <mat-step label="Pick a name and sex">
+      <div class="full-width split-container">
+        <div class="m-t-10 half-width text-center">
+          <h2>Name</h2>
+          <mat-form-field class="full-width">
+            <input class="input" matInput type="text" [(ngModel)]="character.name" [ngModelOptions]="{ standalone: true }" (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
+          </mat-form-field>
+        </div>
+  
+        <div class="m-t-10 half-width text-center">
+          <h2>Sex</h2>
+          <mat-button-toggle-group  [(ngModel)]="character.gender">
+            <mat-button-toggle value="male">Male</mat-button-toggle>
+            <mat-button-toggle value="female">Female</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </div>
+
+    </mat-step>
+
+    <mat-step label="Pick an allegiance">
+      <div class="text-center">
+        <mat-button-toggle-group  [(ngModel)]="character.allegiance">
+          <mat-button-toggle [value]="allegiance.name" 
+                             (click)="chooseAllegiance(allegiance)"
+                             *ngFor="let allegiance of data.charCreateData.allegiances">{{ allegiance.name }}</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="text-center desc-area" [innerHTML]="descs.allegiance || 'Choose an allegiance!'"></div>
+    </mat-step>
+
+    <mat-step label="Pick a class">
+      <div class="text-center">
+        <mat-button-toggle-group [(ngModel)]="character.baseclass">
+          <mat-button-toggle [value]="baseclass.name" 
+                             class="icon-button"
+                             (click)="chooseBaseClass(baseclass)"
+                             *ngFor="let baseclass of data.charCreateData.classes">
+
+            <app-icon [name]="icons[baseclass.name]" *ngIf="icons[baseclass.name]" bgColor="transparent" fgColor="white" size="xsmall"></app-icon>
+            {{ baseclass.name }}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <div class="text-center desc-area" [innerHTML]="descs.baseclass || 'Choose a class!'"></div>
+    </mat-step>
+  </mat-horizontal-stepper>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+
+  <div>
+    <mat-checkbox class="m-r-20" [(ngModel)]="overwriteChecked" *ngIf="data.needsOverwrite">Overwrite My Existing Character</mat-checkbox>
+    <button mat-button mat-dialog-close color="primary" [disabled]="!canCreateCharacter" (click)="create()">Create!</button>
+  </div>
+</mat-dialog-actions>

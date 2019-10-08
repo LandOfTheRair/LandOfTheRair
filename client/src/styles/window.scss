@@ -1,0 +1,34 @@
+
+.window-container {
+  position: absolute;
+}
+
+.window {
+  background-color: $backgroundColor;
+  outline: 1px solid #000;
+
+  display: flex;
+  flex-direction: column;
+
+  &.active .window-header {
+    background-color: $titleColor;
+  }
+
+  .window-header {
+    background-color: lighten($titleColor, 20%);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 32px;
+    letter-spacing: 2px;
+    
+    overflow: hidden;
+    padding-right: 0;
+    border-bottom: 1px solid $titleColor;
+    user-select: none;
+  }
+
+  .window-body {
+    flex: 1;
+    overflow: hidden;
+  }
+}

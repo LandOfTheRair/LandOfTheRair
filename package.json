@@ -1,0 +1,13 @@
+{
+  "name": "landoftherair",
+  "version": "0.0.0",
+  "scripts": {
+    "postinstall": "lerna exec -- npm install",
+    "start": "lerna exec --parallel -- npm run start:dev"
+  },
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.16.5",
+    "tslib": "^1.10.0"
+  }
+}

@@ -1,0 +1,53 @@
+
+<app-window windowName="lobby"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            canMinimize="true"
+
+            defaultX="100"
+            defaultY="100"
+            defaultWidth="800"
+            defaultHeight="500"
+></app-window>
+
+<ng-template #headTemplate>
+  Global Chat ({{ (users$ | async).length }} online)
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="container">
+    <div class="left-side">
+      <div class="user-list">
+        <ul>
+          <li *ngFor="let user of users$ | async" class="user">
+            <span class="user-marking tier-{{ user.tier }}" *ngIf="user.tier"></span> 
+            <span class="user-name">{{ user.username }}</span> 
+            <img src="assets/extra/in-game.png" height="16" width="16" class="in-game" *ngIf="user.inGame" />
+          </li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="right-side">
+      <div class="motd">
+        System: <span [innerHTML]="((motd$ | async) || 'No MOTD.') | linkify"></span>
+      </div>
+  
+      <div class="output-area">
+        <div *ngFor="let message of messages$ | async" class="message">
+          <span class="timestamp">[{{ message.timestamp | date:'hh:mm' }}]</span> 
+          <span class="username">{{ message.from }}:</span> 
+          <span class="usermessage" [innerHTML]="message.message | linkify"></span>
+        </div>
+      </div>
+  
+      <div class="input-area">
+        <input class="input" type="text" [(ngModel)]="currentMessage" [ngModelOptions]="{ standalone: true }" (keydown.enter)="sendMessage()" placeholder="Chat message here!" />
+
+        <button mat-flat-button [disabled]="!currentMessage" (click)="sendMessage()" color="accent" class="button">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
