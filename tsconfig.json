@@ -1,10 +1,8 @@
 {
-  "include": [
-    "../shared"
-  ],
   "compilerOptions": {
     "target": "es2018",
     "sourceMap": true,
+    "baseUrl": "./",
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
@@ -13,6 +11,7 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "importHelpers": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -20,6 +19,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "typeRoots": [
       "node_modules/@types"
     ],

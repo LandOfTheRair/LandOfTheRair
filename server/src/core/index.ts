@@ -2,23 +2,33 @@
 import cluster from 'cluster';
 import { cpus } from 'os';
 
-import { start as netStart } from './networking';
-import { start as gameStart } from './gameloop';
+import { GameloopWorker } from './gameloop';
+import { WebsocketWorker } from './networking';
 
 const isProd = process.env.NODE_ENV === 'production';
 
 const isSingleMode = process.argv.includes('--single-core');
 const processors = cpus().length;
 
-if(cluster.isMaster) {
+const gameStart = () => {
+  const worker = new GameloopWorker();
+  worker.start();
+};
+
+const netStart = () => {
+  const worker = new WebsocketWorker();
+  worker.start();
+};
+
+if (cluster.isMaster) {
   console.log(isProd ? 'Production mode starting.' : 'Development mode starting.');
-  
-  if(isSingleMode || processors < 4) {
+
+  if (isSingleMode || processors < 4) {
     console.log('Starting in single-core mode.', processors < 4 ? 'Not enough processors (need 4).' : '');
-  
+
     netStart();
     gameStart();
-  
+
   } else {
     console.log('Starting in normal multi-core mode.');
 
@@ -26,7 +36,7 @@ if(cluster.isMaster) {
       net: null,
       gameloop: null
     };
-    
+
     const pids = {
       net: 0,
       gameloop: 0
@@ -38,7 +48,7 @@ if(cluster.isMaster) {
 
       workers[type].on('message', (msg: any) => {
         Object.keys(workers).forEach(workerType => {
-          if(workerType === type) return;
+          if (workerType === type) return;
 
           workers[workerType].send(msg);
         });
@@ -52,7 +62,7 @@ if(cluster.isMaster) {
     console.log(`Gameloop started as PID ${pids.gameloop}.`);
 
     cluster.on('exit', (deadWorker) => {
-      switch(deadWorker.process.pid) {
+      switch (deadWorker.process.pid) {
         case pids.net: {
           createWorker('net');
           console.log(`Respawning networking as PID ${pids.net}`);
@@ -70,6 +80,7 @@ if(cluster.isMaster) {
 
 } else {
 
-  if(process.env.NET) netStart();
-  if(process.env.GAMELOOP) gameStart();
+  if (process.env.NET) netStart();
+  if (process.env.GAMELOOP) gameStart();
+
 }

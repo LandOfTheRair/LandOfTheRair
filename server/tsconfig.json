@@ -1,16 +1,17 @@
 {
+  "compileOnSave": false,
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "target": "es2018",
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "./dist",
     "strict": true,
+    "importHelpers": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "target": "es2018",
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -18,6 +19,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
     "typeRoots": [
       "node_modules/@types"
     ],

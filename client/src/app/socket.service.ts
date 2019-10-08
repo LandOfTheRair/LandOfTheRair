@@ -4,18 +4,17 @@ import { QueueingSubject } from 'queueing-subject';
 
 import makeWebSocketObservable, {
   GetWebSocketResponses,
-  normalClosureMessage,
-  WebSocketOptions,
+  normalClosureMessage
 } from 'rxjs-websockets';
 
-import { Observable, Subject, Subscription } from 'rxjs';
-import { map, switchMap, share, retryWhen, delay } from 'rxjs/operators';
-import { GameServerEvent, GameServerResponse } from '../models';
-import { environment } from '../environments/environment';
-import { LoggerService } from './logger.service';
 import { Store } from '@ngxs/store';
 import { StateReset } from 'ngxs-reset-plugin';
-import { CharacterState, AccountState, Logout } from '../stores';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
+import { GameServerEvent, GameServerResponse } from '../models';
+import { AccountState, CharacterState, Logout } from '../stores';
+import { LoggerService } from './logger.service';
 
 interface WebsocketMessage {
   type: GameServerEvent;
@@ -52,12 +51,7 @@ export class SocketService {
 
   private makeJsonWebSocketObservable(url: string): Observable<unknown> {
 
-    const options: WebSocketOptions = {
-      protocols: [],
-      makeWebSocket: (wsurl, protocols) => new WebSocket(wsurl, protocols)
-    };
-
-    const socket$ = makeWebSocketObservable<string>(url, options);
+    const socket$ = makeWebSocketObservable<string>(url);
     return socket$.pipe(
       map((getResponses: GetWebSocketResponses<string>) =>
         (input$: Observable<object>) =>
@@ -93,7 +87,10 @@ export class SocketService {
         this.logger.debug(`[WS CN]`, `Connected to server!`);
         return getResponses(this.input$);
       }),
-      retryWhen(errors => errors.pipe(delay(1000))),
+      retryWhen(errors => errors.pipe(
+        tap(() => this.connectStatus(false)),
+        delay(1000)
+      )),
       share()
     );
 
@@ -113,6 +110,7 @@ export class SocketService {
       },
 
       error: (error: Error) => {
+        console.log('ASDF', error);
         this.connectStatus(false);
 
         const { message } = error;

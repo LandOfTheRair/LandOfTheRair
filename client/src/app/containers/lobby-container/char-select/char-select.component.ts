@@ -1,12 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { GameService } from '../../../game.service';
-import { Store } from '@ngxs/store';
-import { SetCharSlot, SetCharacterCreateInformation, SetCharacterSlotInformation } from '../../../../stores';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { CharCreateComponent } from '../char-create/char-create.component';
+import { Store } from '@ngxs/store';
+import { GameServerEvent, GameServerResponse, ICharacterCreateInfo } from '../../../../models';
+import { SetCharacterCreateInformation, SetCharacterSlotInformation, SetCharSlot } from '../../../../stores';
+import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
-import { GameServerEvent, GameServerResponse } from '../../../../models/events';
-import { ICharacterCreateInfo } from '../../../../models';
+import { CharCreateComponent } from '../char-create/char-create.component';
 
 @Component({
   selector: 'app-char-select',

@@ -1,12 +1,14 @@
 {
-  "name": "core2",
+  "name": "lotr-server",
   "version": "1.0.0",
   "description": "Backend of Land of the Rair",
   "main": "index.js",
   "scripts": {
     "setup": "node scripts/setup",
     "start:dev": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\"",
-    "start:dev:single": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\" --single-core"
+    "start:dev:single": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\" --single-core",
+    "lint": "tslint --project tsconfig.json",
+    "build": "tsc"
   },
   "engines": {
     "node": ">= 12"
@@ -37,7 +39,9 @@
     "process-stats": "^3.1.1",
     "rbush": "^3.0.1",
     "recursive-readdir": "^2.2.2",
-    "ts-node": "^8.4.1"
+    "ts-node": "^8.4.1",
+    "typescript-ioc": "^1.2.5",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
