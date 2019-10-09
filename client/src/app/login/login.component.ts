@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { SocketService } from '../socket.service';
-import { IAccountSettings, GameServerEvent, GameServerResponse } from '../../models';
-import { Store, Select } from '@ngxs/store';
-import { AddAccount, RemoveAccount, Login, SetActiveWindow, SettingsState } from '../../stores';
-import { GameService } from '../game.service';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../models';
+import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
+import { GameService } from '../game.service';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +15,7 @@ import { take } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
+  @Select(SettingsState.wasKicked) public wasKicked$: Observable<boolean>;
   @Select(SettingsState.autologin) public autologin$: Observable<string>;
 
   public isActing: boolean;

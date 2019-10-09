@@ -12,10 +12,10 @@ export class Game {
   @Inject public logger!: Logger;
   @Inject public accountDB!: AccountDB;
 
-  public init() {
+  public async init() {
 
     this.logger.log('Game', 'Initializing database...');
-    this.db.init();
+    await this.db.init();
 
     this.loop();
   }

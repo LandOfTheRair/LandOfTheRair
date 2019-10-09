@@ -1,35 +1,35 @@
 
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../models';
+import { GameAction, ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../models';
 // import { Login } from './account.state';
 
 export class AddMessage {
-  static type = '[Chat] Add message';
+  static type = GameAction.ChatAddMessage;
   constructor(public from: string, public message: string, public timestamp: number) {}
 }
 
 export class SetMOTD {
-  static type = '[Chat] Set MOTD';
+  static type = GameAction.ChatSetMOTD;
   constructor(public motd: string) {}
 }
 
 export class SetUsers {
-  static type = '[Chat] Set user list';
+  static type = GameAction.ChatSetUserList;
   constructor(public users: IChatUser[]) {}
 }
 
 export class AddUser {
-  static type = '[Chat] Add user';
+  static type = GameAction.ChatAddUser;
   constructor(public user: IChatUser) {}
 }
 
 export class RemoveUser {
-  static type = '[Chat] Remove user';
+  static type = GameAction.ChatRemoveUser;
   constructor(public username: string) {}
 }
 
 export class SetCharacterCreateInformation {
-  static type = '[CharSelect] Set Create Info';
+  static type = GameAction.SetCharacterCreateInformation;
   constructor(public charCreateInfo: ICharacterCreateInfo) {}
 }
 

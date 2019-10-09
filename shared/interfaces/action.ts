@@ -30,6 +30,20 @@ export enum GameServerEvent {
   Move = 'Game:Emit:Move'
 }
 
+export enum GameAction {
+  Login = '[Account] Log in',
+  Logout = '[Account] Log out',
+  SetCharacterSlotInformation = '[Account] Set Charslot Info',
+
+  ChatAddMessage = '[Chat] Add message',
+  ChatSetMOTD = '[Chat] Set MOTD',
+  ChatSetUserList = '[Chat] Set user list',
+  ChatAddUser = '[Chat] Add user',
+  ChatRemoveUser = '[Chat] Remove user',
+
+  SetCharacterCreateInformation = '[CharSelect] Set Create Info'
+}
+
 export enum GameServerResponse {
   Error = 'error',
 

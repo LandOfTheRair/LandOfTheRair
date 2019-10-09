@@ -89,7 +89,7 @@ export class SocketService {
       }),
       retryWhen(errors => errors.pipe(
         tap(() => this.connectStatus(false)),
-        delay(1000)
+        delay(5000)
       )),
       share()
     );
@@ -99,13 +99,13 @@ export class SocketService {
       next: (message: any) => {
         this.logger.debug(`[WS RECV]`, message);
 
-        // auto dispatch event based on `type`
-        if (message.type) {
-          this.store.dispatch({ ...message, type: message.type });
+        // auto dispatch event based on `action`
+        if (message.action) {
+          this.store.dispatch({ type: message.action, ...message });
+          return;
         }
 
         this.events.next(message);
-
         this.handleCallback(message);
       },
 

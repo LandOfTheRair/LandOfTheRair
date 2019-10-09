@@ -1,19 +1,19 @@
 
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { IAccount, ICharacter, IChatUser } from '../models';
+import { GameAction, IAccount, ICharacter, IChatUser } from '../models';
 
 export class Login {
-  static type = '[Account] Log in';
+  static type = GameAction.Login;
   constructor(public info: { email: string, motd: string, onlineUsers: IChatUser[], players: ICharacter[], username: string }) {}
 }
 
 export class Logout {
-  static type = '[Account] Log out';
-  constructor(public manualDisconnect?: boolean) {}
+  static type = GameAction.Logout;
+  constructor(public manualDisconnect?: boolean, public kick?: boolean) {}
 }
 
 export class SetCharacterSlotInformation {
-  static type = '[Account] Set Charslot Info';
+  static type = GameAction.SetCharacterSlotInformation;
   constructor(public characterInfo: ICharacter, public slot: number) {}
 }
 

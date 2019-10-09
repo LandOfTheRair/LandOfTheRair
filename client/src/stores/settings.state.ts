@@ -1,7 +1,7 @@
 
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { ISettings } from '../models';
-import { Logout } from './account.state';
+import { Login, Logout } from './account.state';
 
 export class AddAccount {
   static type = '[Settings] Add account';
@@ -37,7 +37,8 @@ const defaultSettings: () => ISettings = () => {
     accounts: [],
     windows: {},
     activeWindow: '',
-    charSlot: 0
+    charSlot: 0,
+    wasKicked: false
   };
 };
 
@@ -45,7 +46,7 @@ const defaultSettings: () => ISettings = () => {
   name: 'settings',
   defaults: defaultSettings()
 })
-export class SettingsState {
+export class SettingsState implements NgxsOnInit {
 
   @Selector()
   static autologin(state: ISettings) {
@@ -72,8 +73,22 @@ export class SettingsState {
     return state.activeWindow;
   }
 
+  @Selector()
+  static wasKicked(state: ISettings) {
+    return state.wasKicked;
+  }
+
+  ngxsOnInit(ctx: StateContext<ISettings>) {
+    ctx.patchState({ wasKicked: false });
+  }
+
+  @Action(Login)
+  login(ctx: StateContext<ISettings>) {
+    ctx.patchState({ wasKicked: false });
+  }
+
   @Action(Logout)
-  logout(ctx: StateContext<ISettings>, { manualDisconnect }: Logout) {
+  logout(ctx: StateContext<ISettings>, { manualDisconnect, kick }: Logout) {
     if (!manualDisconnect) return;
 
     const state = ctx.getState();
@@ -82,7 +97,7 @@ export class SettingsState {
       .map(x => Object.assign({}, x, { autologin: false }));
 
     const accounts = [...oldAccounts];
-    ctx.patchState({ accounts });
+    ctx.patchState({ accounts, wasKicked: kick });
   }
 
   @Action(AddAccount)

@@ -10,4 +10,5 @@ export interface ISettings {
   windows: { [key: string]: { x: number, y: number, width: number, height: number } };
   activeWindow: string;
   charSlot: number;
+  wasKicked: boolean;
 }

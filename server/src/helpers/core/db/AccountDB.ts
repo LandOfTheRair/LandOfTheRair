@@ -12,7 +12,10 @@ export class AccountDB {
   @Inject private db!: Database;
 
   public async getAccount(username: string): Promise<Account | null> {
-    return this.db.em.getRepository<Account>(Account).findOne({ username });
+    const res = this.db.em.getRepository<Account>(Account).findOne({ username });
+    this.db.em.flush();
+
+    return res;
   }
 
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
@@ -26,6 +29,10 @@ export class AccountDB {
     await this.db.em.persist(account, true);
 
     return account;
+  }
+
+  public checkPassword(accountInfo: IAccount, account: Account): boolean {
+    return bcrypt.compareSync(accountInfo.password, account.password);
   }
 
 }

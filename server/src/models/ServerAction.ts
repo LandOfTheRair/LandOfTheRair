@@ -3,7 +3,7 @@ import { GameServerEvent, GameServerResponse, IServerAction, IServerResponse } f
 
 export class ServerAction implements IServerAction {
   type = GameServerEvent.Default;
-  requiredKeys = [];
+  requiredKeys: string[] = [];
 
   validate(args) {
     if (!this.requiredKeys || !this.requiredKeys.length) return true;

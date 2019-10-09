@@ -71,5 +71,13 @@
         </mat-chip>
       </mat-chip-list>
     </form>
+
+    <div *ngIf="wasKicked$ | async" class="m-t-10">
+      <mat-chip-list>
+        <mat-chip color="warn" selected>
+          <mat-icon class="m-r-10">error</mat-icon> You were logged in from another location. This connection was terminated automatically.
+        </mat-chip>
+      </mat-chip-list>
+    </div>
   </div>
 </div>
