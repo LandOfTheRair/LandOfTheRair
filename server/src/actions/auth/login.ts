@@ -34,6 +34,11 @@ export class LoginAction extends ServerAction {
         onlineUsers: game.lobbyManager.onlineUsers
       });
 
+      emit({
+        action: GameAction.SetCharacterCreateInformation,
+        charCreateInfo: game.contentManager.charSelect
+      });
+
     } catch (e) {
       game.logger.error('LoginAction', e);
       throw new Error('Could not login username?');

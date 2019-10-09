@@ -4,9 +4,10 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { Database } from './Database';
 import { Logger } from './Logger';
 
-import { ProfanityHelper } from './chat/ProfanityHelper';
+import { ProfanityHelper } from '../chat/ProfanityHelper';
+import { ContentManager } from '../content';
+import { LobbyManager } from '../lobby';
 import { AccountDB, WorldDB } from './db';
-import { LobbyManager } from './lobby';
 
 @Singleton
 export class Game {
@@ -18,9 +19,13 @@ export class Game {
 
   @Inject public profanityHelper!: ProfanityHelper;
 
+  @Inject public contentManager!: ContentManager;
   @Inject public lobbyManager!: LobbyManager;
 
   public async init() {
+
+    this.logger.log('Game', 'Initializing content...');
+    await this.contentManager.init();
 
     this.logger.log('Game', 'Initializing database...');
     await this.db.init();

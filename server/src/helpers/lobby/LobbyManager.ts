@@ -1,8 +1,8 @@
 
 import { Inject, Singleton } from 'typescript-ioc';
-import { IAccount } from '../../../interfaces';
-import { Account } from '../../../models';
-import { WorldDB } from '../db';
+import { IAccount } from '../../interfaces';
+import { Account } from '../../models';
+import { WorldDB } from '../core/db';
 
 class LobbyState {
   users: IAccount[] = [];

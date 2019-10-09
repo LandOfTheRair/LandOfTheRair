@@ -42,6 +42,11 @@ export class RegisterAction extends ServerAction {
         onlineUsers: game.lobbyManager.onlineUsers
       });
 
+      emit({
+        action: GameAction.SetCharacterCreateInformation,
+        charCreateInfo: game.contentManager.charSelect
+      });
+
     } catch (e) {
       game.logger.error('RegisterAction', e);
       throw new Error('Could not register username?');
