@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
-import { IAccount, ICharacterCreateInfo } from '../models';
 import { Observable } from 'rxjs';
-import { SettingsState, AccountState, LobbyState } from '../stores';
+import { IAccount, ICharacterCreateInfo } from '../models';
+import { AccountState, LobbyState, SettingsState } from '../stores';
 
 @Injectable({
   providedIn: 'root'

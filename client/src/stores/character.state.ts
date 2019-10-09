@@ -1,5 +1,5 @@
-import { ICharacter } from '../models';
 import { State } from '@ngxs/store';
+import { ICharacter } from '../models';
 
 const defaultCharacter: () => ICharacter = () => {
   return {

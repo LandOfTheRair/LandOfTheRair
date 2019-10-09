@@ -6,7 +6,10 @@ export interface IServerResponse {
 }
 
 type EmitterFunction = (id, args) => void;
-type BroadcastEmit = { broadcast?: EmitterFunction, emit?: EmitterFunction };
+interface BroadcastEmit {
+  broadcast?: EmitterFunction;
+  emit?: EmitterFunction;
+}
 
 export interface IServerAction {
   type: GameServerEvent;

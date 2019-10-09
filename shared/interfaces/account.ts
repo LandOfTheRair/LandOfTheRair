@@ -9,7 +9,7 @@ export interface IAccount {
   isGameMaster: boolean;
   isTester: boolean;
   isSubscribed: boolean;
-  
+
   subscriptionEndsTimestamp: number;
   trialEndsTimestamp: number;
 }

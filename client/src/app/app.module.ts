@@ -1,29 +1,29 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
-import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from './app.component';
 
-import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
-import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
+import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
 import * as AllStores from '../stores';
-import { SocketService } from './socket.service';
-import { LoginComponent } from './login/login.component';
-import { SharedModule } from './shared.module';
-import { MenuComponent } from './menu/menu.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
-import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
-import { OptionsContainerComponent } from './containers/options-container/options-container.component';
-import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
-import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
+import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
+import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
+import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
+import { OptionsContainerComponent } from './containers/options-container/options-container.component';
+import { LoginComponent } from './login/login.component';
+import { MenuComponent } from './menu/menu.component';
+import { SharedModule } from './shared.module';
+import { SocketService } from './socket.service';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 

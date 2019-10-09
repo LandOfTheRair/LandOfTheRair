@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { SocketService } from '../socket.service';
-import { GameService } from '../game.service';
 import { Store } from '@ngxs/store';
 import { Logout } from '../../stores';
+import { GameService } from '../game.service';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-menu',

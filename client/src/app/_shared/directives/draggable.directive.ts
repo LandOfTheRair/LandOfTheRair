@@ -1,8 +1,8 @@
-import { Directive, Input, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { UpdateWindowPosition } from '../../../stores';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { UpdateWindowPosition } from '../../../stores';
 
 @Directive({
   selector: '[appDraggableWindow]'

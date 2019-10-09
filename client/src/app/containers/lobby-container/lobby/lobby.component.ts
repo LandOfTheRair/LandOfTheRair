@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { LobbyState, AddMessage, AddUser, RemoveUser } from '../../../../stores';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IChatUser, IChatMessage, GameServerResponse, GameServerEvent } from '../../../../models';
-import { SocketService } from '../../../socket.service';
+import { GameServerEvent, GameServerResponse, IChatMessage, IChatUser } from '../../../../models';
+import { AddMessage, AddUser, LobbyState, RemoveUser } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
+import { SocketService } from '../../../socket.service';
 
 @Component({
   selector: 'app-lobby',

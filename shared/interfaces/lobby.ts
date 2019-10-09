@@ -1,4 +1,4 @@
-import { IAccount } from "./account";
+import { IAccount } from './account';
 
 export enum SubscriptionTier {
   None = 0,
@@ -23,7 +23,7 @@ export interface IChatMessage {
 export type IChatUser = IAccount & {
   inGame?: boolean;
   tier?: number;
-}
+};
 
 export interface ILobbyContainer {
   messages: IChatMessage[];
