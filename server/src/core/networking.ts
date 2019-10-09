@@ -81,9 +81,10 @@ export class WebsocketWorker {
 
       socket.on('close', () => {
         delete this.sockets[socket.uuid];
-        delete this.sockets[socket.username];
 
-        this.emit(socket, { type: GameServerEvent.Logout, username: socket.username });
+        if (socket.username) {
+          this.emit(socket, { type: GameServerEvent.Logout, username: socket.username });
+        }
 
         /* not sure if I care about any of these at all, really
         if (code !== 1001 && code !== 1000 && code !== 5000) {
@@ -149,6 +150,7 @@ export class WebsocketWorker {
       // if we are already logged in somewhere else, we kick them
       const oldSocket = this.sockets[socket.username];
       if (oldSocket) {
+        delete this.sockets[socket.username];
         this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
         oldSocket.close(5000, 'disconnected from another login location');
       }

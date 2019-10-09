@@ -30,6 +30,7 @@ export class LobbyManager {
   }
 
   public removeAccount(username: string): void {
-    this.state.users = this.state.users.filter(x => x.username !== username);
+    const firstInst = this.state.users.findIndex(x => x.username === username);
+    this.state.users.splice(firstInst, 1);
   }
 }

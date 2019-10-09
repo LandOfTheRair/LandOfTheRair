@@ -119,7 +119,11 @@ export class LobbyState {
   removeUser(ctx: StateContext<ILobbyContainer>, { username }: RemoveUser) {
     const state = ctx.getState();
 
-    ctx.patchState({ users: this.sortUsers(state.users.filter(x => x.username !== username)) });
+    const users = [...state.users];
+    const firstInst = users.findIndex(x => x.username === username);
+    users.splice(firstInst, 1);
+
+    ctx.patchState({ users: this.sortUsers(users) });
   }
 
   @Action(Login)
