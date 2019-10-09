@@ -5,7 +5,7 @@ import { Database } from './Database';
 import { Logger } from './Logger';
 
 import { ProfanityHelper } from '../chat/ProfanityHelper';
-import { ContentManager } from '../content';
+import { ContentManager } from '../data';
 import { LobbyManager } from '../lobby';
 import { AccountDB, WorldDB } from './db';
 
