@@ -13,8 +13,6 @@ export class AccountDB {
 
   public async getAccount(username: string): Promise<Account | null> {
     const res = this.db.em.getRepository<Account>(Account).findOne({ username });
-    this.db.em.flush();
-
     return res;
   }
 

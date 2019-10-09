@@ -105,7 +105,7 @@ export class WebsocketWorker {
 
   // send to game loop
   private emit(socket, data) {
-    process.send!({ socketId: socket.uuid, ...data });
+    process.send!({ socketId: socket.uuid, username: socket.username, ...data });
   }
 
   private transformData(data) {

@@ -19,6 +19,8 @@ export class RegisterAction extends ServerAction {
     if (!data.email) throw new Error('Must specify email.');
     if (!data.email.includes('.') || !data.email.includes('@')) throw new Error('Email must match basic format.');
 
+    if (game.profanityHelper.hasProfanity(data.username)) throw new Error('Pick a different username.');
+
     const account = await game.accountDB.getAccount(data.username);
     if (account) throw new Error(`Username already registered.`);
 

@@ -23,6 +23,7 @@ export class GameloopWorker {
     process.send!({ __ready: true });
   }
 
+  // parse / send to the appropriate API command
   private async handleMessage(msg) {
     const { socketId, type, ...args } = msg;
 
@@ -33,6 +34,7 @@ export class GameloopWorker {
     }
   }
 
+  // send to networking loop
   private emit(socketId, data) {
     process.send!({ socketId, ...data });
   }

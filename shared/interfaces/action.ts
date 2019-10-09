@@ -23,6 +23,8 @@ export enum GameServerEvent {
   Login = 'Auth:Emit:Login',
   Logout = 'Auth:Emit:Logout',
 
+  SetMOTD = 'GM:Emit:SetMOTD',
+
   CharacterCreateInformation = 'Creator:Emit:CharacterSelect',
 
   DeleteCharacter = 'Selector:Emit:CharacterDelete',
