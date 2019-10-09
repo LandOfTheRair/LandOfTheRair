@@ -1,3 +1,4 @@
+import { IAccount } from "./account";
 
 export enum SubscriptionTier {
   None = 0,
@@ -19,15 +20,8 @@ export interface IChatMessage {
   timestamp: number;
 }
 
-export interface IChatUser {
+export type IChatUser = IAccount & {
   inGame?: boolean;
-  hasDoneTrial: boolean;
-  isGameMaster: boolean;
-  isTester: boolean;
-  subscriptionTier: number;
-  trialEndsUnixTimestamp: number;
-  username: string;
-
   tier?: number;
 }
 

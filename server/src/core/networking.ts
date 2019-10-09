@@ -6,12 +6,11 @@ import * as HTTPRoutes from '../http';
 import uuid from 'uuid/v4';
 
 import { WebSocketServer } from '@clusterws/cws';
-import { GameAction, GameServerResponse } from '../interfaces';
+import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 
 export class WebsocketWorker {
 
-  private sockets: { [uuid: string]: any } = {};
-  private logins: { [username: string]: any } = {};
+  private sockets: { [uuidOrUsername: string]: any } = {};
 
   private wsServer!: WebSocketServer;
 
@@ -25,6 +24,14 @@ export class WebsocketWorker {
       }
 
       this.handleMessage(msg);
+    });
+
+    process.on('unhandledRejection', (error) => {
+      console.error('NET', `Unhandled Rejection`, error);
+    });
+
+    process.on('uncaughtException', (error) => {
+      console.error('NET', `Uncaught Exception`, error);
     });
 
   }
@@ -46,7 +53,7 @@ export class WebsocketWorker {
     app.listen(process.env.PORT ? +process.env.PORT : 6975, (err: any) => {
       if (err) throw err;
 
-      console.log(`Started HTTP server on port ${process.env.PORT || 6975}.`);
+      console.log('NET', `Started HTTP server on port ${process.env.PORT || 6975}.`);
     });
 
     // set up WS
@@ -68,13 +75,15 @@ export class WebsocketWorker {
         try {
           this.emit(socket, JSON.parse(msg as string));
         } catch (e) {
-          console.error('Invalid message (cannot parse to JSON)', msg);
+          console.error('NET', 'Invalid message (cannot parse to JSON)', msg);
         }
       });
 
       socket.on('close', () => {
         delete this.sockets[socket.uuid];
         delete this.sockets[socket.username];
+
+        this.emit(socket, { type: GameServerEvent.Logout, username: socket.username });
 
         /* not sure if I care about any of these at all, really
         if (code !== 1001 && code !== 1000 && code !== 5000) {
@@ -84,12 +93,12 @@ export class WebsocketWorker {
       });
 
       socket.on('error', (err) => {
-        console.error(`[Socket Error]`, err);
+        console.error('NET', `[Socket Error]`, err);
       });
     });
 
     wsServer.on('error', (err) => {
-      console.error(`[WS Server Error]`, err);
+      console.error('NET', `[WS Server Error]`, err);
     });
   }
 
@@ -98,40 +107,53 @@ export class WebsocketWorker {
     process.send!({ socketId: socket.uuid, ...data });
   }
 
+  private transformData(data) {
+    return JSON.stringify(data);
+  }
+
   // emit message directly to socket
   private sendToSocket(socket, data) {
-    const sendMessage = JSON.stringify(data);
+    const sendMessage = this.transformData(data);
     socket.send(sendMessage, { binary: true, compress: true });
   }
 
   // broadcast to all sockets
   private broadcast(data) {
-    const sendMessage = JSON.stringify(data);
-    this.wsServer.broadcast(sendMessage, { binary: true });
+    const sendMessage = this.transformData(data);
+    this.wsServer.broadcast(sendMessage);
   }
 
-  private handleMessage({ socketId, socketUsername, ...data }) {
+  private handleMessage({ socketId, ...data }) {
 
+    // if there is no id specified, we broadcast the data to everyone
     if (!socketId) {
       this.broadcast(data);
       return;
     }
 
-    const socket = this.logins[socketUsername] || this.sockets[socketId];
+    // look up the socket by id or username
+    const socket = this.sockets[socketId];
     if (!socket) return;
 
     // the networking layer specifically watches for login events
     if (data.type === GameServerResponse.Login) {
-      socket.username = data.username;
+
+      // if it already has a username, it's already logged in
+      if (socket.username) {
+        this.sendToSocket(socket, { type: GameServerResponse.Error, error: 'You are already logged in.' });
+        return;
+      }
+
+      socket.username = data.account.username;
 
       // if we are already logged in somewhere else, we kick them
-      const oldSocket = this.logins[socket.username];
+      const oldSocket = this.sockets[socket.username];
       if (oldSocket) {
         this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
         oldSocket.close(5000, 'disconnected from another login location');
       }
 
-      this.logins[socket.username] = socket;
+      this.sockets[socket.username] = socket;
     }
 
     this.sendToSocket(socket, data);

@@ -1,7 +1,7 @@
 
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { GameAction, ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../models';
-// import { Login } from './account.state';
+import { Login } from './account.state';
 
 export class AddMessage {
   static type = GameAction.ChatAddMessage;
@@ -81,9 +81,7 @@ export class LobbyState {
   }
 
   private formatUser(user: IChatUser): IChatUser {
-    user.tier = Math.min(user.subscriptionTier || 0, 10);
-
-    if (user.subscriptionTier) user.tier = SubscriptionTier.Normal;
+    if (user.isSubscribed) user.tier = SubscriptionTier.Normal;
     if (user.isTester) user.tier = SubscriptionTier.Tester;
     if (user.isGameMaster) user.tier = SubscriptionTier.GM;
 
@@ -124,13 +122,11 @@ export class LobbyState {
     ctx.patchState({ users: this.sortUsers(state.users.filter(x => x.username !== username)) });
   }
 
-  /*
   @Action(Login)
   login(ctx: StateContext<ILobbyContainer>, { info }: Login) {
-    // this.setUsers(ctx, { users: info.onlineUsers });
-    // this.setMOTD(ctx, { motd: info.motd });
+    this.setUsers(ctx, { users: info.onlineUsers });
+    this.setMOTD(ctx, { motd: info.motd });
   }
-  */
 
   @Action(SetCharacterCreateInformation)
   setCharCreateInformation(ctx: StateContext<ILobbyContainer>, { charCreateInfo }: SetCharacterCreateInformation) {

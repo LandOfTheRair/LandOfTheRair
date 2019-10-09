@@ -23,14 +23,16 @@ export class WebsocketCommandHandler {
     await this.game.init();
   }
 
-  public async doAction(type: GameServerEvent, data: any) {
+  public async doAction(type: GameServerEvent, data: any, socketId: string, emitCallback: (id, args) => void): Promise<void> {
 
     const action = this.actions[type];
     if (!action) throw new Error(`Action type ${type} does not exist.`);
 
     if (!action.validate(data)) throw new Error(`Action type ${type} is not valid with keys ${JSON.stringify(data)}.`);
 
-    const res = await action.act(this.game, data);
-    return res;
+    const broadcast = (args) => emitCallback('', args);
+    const emit = (args) => emitCallback(socketId, args);
+
+    await action.act(this.game, { broadcast, emit }, data);
   }
 }

@@ -5,4 +5,11 @@ export interface IAccount {
   password?: string;
   email: string;
   players: ICharacter[];
+
+  isGameMaster: boolean;
+  isTester: boolean;
+  isSubscribed: boolean;
+  
+  subscriptionEndsTimestamp: number;
+  trialEndsTimestamp: number;
 }

@@ -11,6 +11,14 @@ export class GameloopWorker {
   async start() {
     process.on('message', msg => this.handleMessage(msg));
 
+    process.on('unhandledRejection', (error) => {
+      console.error('GAME', `Unhandled Rejection`, error);
+    });
+
+    process.on('uncaughtException', (error) => {
+      console.error('GAME', `Uncaught Exception`, error);
+    });
+
     await this.wsCommands.init();
     process.send!({ __ready: true });
   }
@@ -19,8 +27,7 @@ export class GameloopWorker {
     const { socketId, type, ...args } = msg;
 
     try {
-      const res = await this.wsCommands.doAction(type, args);
-      this.emit(socketId, res);
+      await this.wsCommands.doAction(type, args, socketId, (id, data) => this.emit(id, data));
     } catch (e) {
       this.emit(socketId, { type: GameServerResponse.Error, error: e.message });
     }

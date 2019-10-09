@@ -2,8 +2,10 @@
 import { Inject, Singleton } from 'typescript-ioc';
 
 import { Database } from './Database';
-import { AccountDB } from './db';
 import { Logger } from './Logger';
+
+import { AccountDB } from './db';
+import { LobbyManager } from './lobby';
 
 @Singleton
 export class Game {
@@ -12,10 +14,15 @@ export class Game {
   @Inject public logger!: Logger;
   @Inject public accountDB!: AccountDB;
 
+  @Inject public lobbyManager!: LobbyManager;
+
   public async init() {
 
     this.logger.log('Game', 'Initializing database...');
     await this.db.init();
+
+    this.logger.log('Game', 'Initializing lobby...');
+    await this.lobbyManager.init();
 
     this.loop();
   }

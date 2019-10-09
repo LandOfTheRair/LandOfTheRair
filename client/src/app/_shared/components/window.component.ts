@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, TemplateRef, EventEmitter, Output } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
-import { SettingsState, UpdateWindowPosition, SetActiveWindow } from '../../../stores';
-import { map } from 'rxjs/operators';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { SetActiveWindow, SettingsState, UpdateWindowPosition } from '../../../stores';
 
 // TODO: resize
 
@@ -74,10 +74,10 @@ export class WindowComponent implements OnInit {
   @Input() public head: TemplateRef<any>;
   @Input() public body: TemplateRef<any>;
 
-  @Input() public defaultX = 0;
-  @Input() public defaultY = 0;
-  @Input() public defaultWidth: number|string = 100;
-  @Input() public defaultHeight: number|string = 100;
+  @Input() public defaultX: number;
+  @Input() public defaultY: number;
+  @Input() public defaultWidth: number|string;
+  @Input() public defaultHeight: number|string;
 
   @Input() public canDrag = true;
 

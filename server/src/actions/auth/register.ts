@@ -1,12 +1,12 @@
 import { Game } from '../../helpers';
-import { GameServerEvent, GameServerResponse } from '../../interfaces';
+import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RegisterAction extends ServerAction {
   type = GameServerEvent.Register;
   requiredKeys = [];
 
-  async act(game: Game, data) {
+  async act(game: Game, { broadcast, emit }, data) {
 
     if (!data.username) throw new Error('Must specify username.');
     if (data.username.length < 2) throw new Error('Username must be >2 characters.');
@@ -24,7 +24,21 @@ export class RegisterAction extends ServerAction {
 
     try {
       const res = await game.accountDB.createAccount(data);
-      return { type: GameServerResponse.Login, ...res };
+      if (!res) throw new Error('Could not register.');
+
+      broadcast({
+        action: GameAction.ChatAddUser,
+        user: res
+      });
+
+      game.lobbyManager.addAccount(res);
+
+      emit({
+        type: GameServerResponse.Login,
+        account: res,
+        motd: game.lobbyManager.motd,
+        onlineUsers: game.lobbyManager.onlineUsers
+      });
 
     } catch (e) {
       game.logger.error('RegisterAction', e);

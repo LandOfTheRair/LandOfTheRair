@@ -1,12 +1,12 @@
 import { Game } from '../../helpers';
-import { GameServerEvent, GameServerResponse } from '../../interfaces';
+import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
-export class Login extends ServerAction {
+export class LoginAction extends ServerAction {
   type = GameServerEvent.Login;
   requiredKeys = ['username', 'password'];
 
-  async act(game: Game, data) {
+  async act(game: Game, { broadcast, emit }, data) {
 
     if (!data.username) throw new Error('Must specify username.');
     if (!data.password) throw new Error('Must specify password.');
@@ -20,7 +20,19 @@ export class Login extends ServerAction {
       const res = { ...account };
       delete res.password;
 
-      return { type: GameServerResponse.Login, ...res };
+      broadcast({
+        action: GameAction.ChatAddUser,
+        user: res
+      });
+
+      game.lobbyManager.addAccount(res);
+
+      emit({
+        type: GameServerResponse.Login,
+        account: res,
+        motd: game.lobbyManager.motd,
+        onlineUsers: game.lobbyManager.onlineUsers
+      });
 
     } catch (e) {
       game.logger.error('LoginAction', e);

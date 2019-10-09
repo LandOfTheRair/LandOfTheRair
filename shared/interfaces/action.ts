@@ -5,12 +5,15 @@ export interface IServerResponse {
   data?: any;
 }
 
+type EmitterFunction = (id, args) => void;
+type BroadcastEmit = { broadcast?: EmitterFunction, emit?: EmitterFunction };
+
 export interface IServerAction {
   type: GameServerEvent;
   requiredKeys: string[];
 
   validate(args?): boolean;
-  act(game, args?): Promise<IServerResponse & any>;
+  act(game, { broadcast, emit }: BroadcastEmit, args?): Promise<void>;
 }
 
 export enum GameServerEvent {
@@ -18,6 +21,7 @@ export enum GameServerEvent {
 
   Register = 'Auth:Emit:Register',
   Login = 'Auth:Emit:Login',
+  Logout = 'Auth:Emit:Logout',
 
   CharacterCreateInformation = 'Creator:Emit:CharacterSelect',
 
@@ -25,9 +29,7 @@ export enum GameServerEvent {
   CreateCharacter = 'Selector:Emit:CharacterCreate',
   PlayCharacter = 'Selector:Emit:CharacterPlay',
 
-  Chat = 'Chat:Emit:SendMessage',
-
-  Move = 'Game:Emit:Move'
+  Chat = 'Chat:Emit:SendMessage'
 }
 
 export enum GameAction {

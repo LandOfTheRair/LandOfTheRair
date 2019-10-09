@@ -4,7 +4,7 @@ import { GameAction, IAccount, ICharacter, IChatUser } from '../models';
 
 export class Login {
   static type = GameAction.Login;
-  constructor(public info: { email: string, motd: string, onlineUsers: IChatUser[], players: ICharacter[], username: string }) {}
+  constructor(public info: { motd: string, onlineUsers: IChatUser[], account: IAccount }) {}
 }
 
 export class Logout {
@@ -21,7 +21,14 @@ const defaultAccount: () => IAccount = () => {
   return {
     username: '',
     email: '',
-    players: []
+    players: [],
+
+    isGameMaster: false,
+    isTester: false,
+    isSubscribed: false,
+
+    subscriptionEndsTimestamp: -1,
+    trialEndsTimestamp: -1
   };
 };
 
@@ -43,10 +50,10 @@ export class AccountState {
 
   @Action(Login)
   login(ctx: StateContext<IAccount>, { info }: Login) {
-    window.document.title = `[${info.username}] Land of the Rair`;
-    if (info.players.length < 4) info.players.length = 4;
+    window.document.title = `[${info.account.username}] Land of the Rair`;
+    if (info.account.players.length < 4) info.account.players.length = 4;
 
-    ctx.setState(Object.assign({}, ctx.getState(), { email: info.email, players: info.players, username: info.username }));
+    ctx.setState(Object.assign({}, ctx.getState(), info.account));
   }
 
   @Action(Logout)
