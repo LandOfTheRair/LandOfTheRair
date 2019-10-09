@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { GameServerEvent, GameServerResponse, IChatMessage, IChatUser } from '../../../../models';
-import { AddMessage, AddUser, LobbyState, RemoveUser } from '../../../../stores';
+import { GameServerEvent, IChatMessage, IChatUser } from '../../../../models';
+import { LobbyState } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { SocketService } from '../../../socket.service';
 
@@ -24,25 +24,10 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   private mutationObserver: MutationObserver;
 
   constructor(
-    private store: Store,
     private socketService: SocketService
   ) { }
 
   ngOnInit() {
-    this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.Chat,
-      (data) => this.recieveMessage(data)
-    );
-
-    this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.UserJoin,
-      (data) => this.userJoin(data)
-    );
-
-    this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.UserLeave,
-      (data) => this.userLeave(data)
-    );
   }
 
   ngAfterViewInit() {
@@ -74,18 +59,6 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.socketService.emit(GameServerEvent.Chat, { content: this.currentMessage.trim() });
     this.currentMessage = '';
-  }
-
-  private recieveMessage(data) {
-    this.store.dispatch(new AddMessage(data.user, data.content, data.unixTimestamp));
-  }
-
-  private userJoin(data) {
-    this.store.dispatch(new AddUser(data));
-  }
-
-  private userLeave(data) {
-    this.store.dispatch(new RemoveUser(data.username));
   }
 
 }
