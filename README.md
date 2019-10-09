@@ -7,7 +7,8 @@ It would be nice to have a cool docker setup that abstracts having to set up bot
 
 ## Getting Started
 
-Run `npm install` to install all related dependencies.
+* `npm install` - install dependencies for the client and server.
+* `npm run setup` - setup both the client and server for development.
 
 ## Running Both Projects
 

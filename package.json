@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "postinstall": "lerna exec -- npm install",
+    "setup": "lerna exec -- npm run setup",
     "start": "lerna exec --parallel -- npm run start:dev",
     "lint": "lerna exec --parallel -- npm run lint",
     "build": "lerna exec --parallel -- npm run build"

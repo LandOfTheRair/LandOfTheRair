@@ -30,7 +30,7 @@ export class WebsocketCommandHandler {
 
     if (!action.validate(data)) throw new Error(`Action type ${type} is not valid with keys ${JSON.stringify(data)}.`);
 
-    const broadcast = (args) => emitCallback('', args);
+    const broadcast = (args) => emitCallback(null, args);
     const emit = (args) => emitCallback(socketId, args);
 
     await action.act(this.game, { broadcast, emit }, data);
