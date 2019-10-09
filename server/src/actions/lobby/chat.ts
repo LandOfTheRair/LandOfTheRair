@@ -7,9 +7,6 @@ export class ChatAction extends ServerAction {
   requiredKeys = ['content'];
 
   async act(game: Game, { broadcast }, data) {
-
-    if (!data.content) throw new Error('Must send content.');
-
     data.content = game.profanityHelper.cleanMessage(data.content);
 
     const account = await game.accountDB.getAccount(data.username);
