@@ -12,7 +12,7 @@ export class WebsocketWorker {
 
   private sockets: { [uuidOrUsername: string]: any } = {};
 
-  private wsServer!: WebSocketServer;
+  private wsServer: WebSocketServer;
 
   async start() {
 

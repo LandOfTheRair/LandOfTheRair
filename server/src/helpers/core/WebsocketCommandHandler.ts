@@ -8,7 +8,7 @@ import { Game } from './Game';
 @Singleton
 export class WebsocketCommandHandler {
 
-  @Inject private game!: Game;
+  @Inject private game: Game;
 
   private actions: { [key: string]: IServerAction } = {};
 

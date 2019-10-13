@@ -6,35 +6,40 @@ import { Logger } from './Logger';
 
 import { ProfanityHelper } from '../chat/ProfanityHelper';
 import { ContentManager } from '../data';
-import { LobbyManager } from '../lobby';
-import { AccountDB, WorldDB } from './db';
+import { CharacterRoller, LobbyManager } from '../lobby';
+import { AccountDB, CharacterDB, WorldDB } from './db';
 
 @Singleton
 export class Game {
-  @Inject private db!: Database;
+  @Inject public logger: Logger;
+  @Inject public contentManager: ContentManager;
 
-  @Inject public logger!: Logger;
-  @Inject public worldDB!: WorldDB;
-  @Inject public accountDB!: AccountDB;
+  @Inject public db: Database;
 
-  @Inject public profanityHelper!: ProfanityHelper;
+  @Inject public accountDB: AccountDB;
+  @Inject public characterDB: CharacterDB;
+  @Inject public worldDB: WorldDB;
 
-  @Inject public contentManager!: ContentManager;
-  @Inject public lobbyManager!: LobbyManager;
+  @Inject public profanityHelper: ProfanityHelper;
+
+  @Inject public lobbyManager: LobbyManager;
+  @Inject public characterRoller: CharacterRoller;
 
   public async init() {
 
-    this.logger.log('Game', 'Initializing content...');
-    await this.contentManager.init();
+    const initOrder = [
+      'logger',
+      'contentManager',
+      'db', 'worldDB', 'characterDB', 'accountDB',
+      'profanityHelper',
+      'lobbyManager',
+      'characterRoller'
+  ];
 
-    this.logger.log('Game', 'Initializing database...');
-    await this.db.init();
-
-    this.logger.log('Game', 'Initializing world settings...');
-    await this.worldDB.init();
-
-    this.logger.log('Game', 'Initializing lobby...');
-    await this.lobbyManager.init();
+    for (const i of initOrder) {
+      this.logger.log('Game', `Initializing ${i}...`);
+      await this[i].init();
+    }
 
     this.loop();
   }

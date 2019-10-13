@@ -28,9 +28,13 @@ export class RegisterAction extends ServerAction {
       const res = await game.accountDB.createAccount(data);
       if (!res) throw new Error('Could not register.');
 
+      const simpleAccount = await game.accountDB.simpleAccount(res);
+      delete simpleAccount.password;
+      delete simpleAccount.players;
+
       broadcast({
         action: GameAction.ChatAddUser,
-        user: res
+        user: simpleAccount
       });
 
       game.lobbyManager.addAccount(res);
@@ -44,7 +48,7 @@ export class RegisterAction extends ServerAction {
 
       emit({
         action: GameAction.SetCharacterCreateInformation,
-        charCreateInfo: game.contentManager.charSelect
+        charCreateInfo: game.contentManager.charSelectData
       });
 
     } catch (e) {

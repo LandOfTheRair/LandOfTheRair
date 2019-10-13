@@ -5,6 +5,8 @@
     "postinstall": "lerna exec -- npm install",
     "setup": "lerna exec -- npm run setup",
     "start": "lerna exec --parallel -- npm run start:dev",
+    "start:client": "cd client && npm run start:dev",
+    "start:server": "cd server && npm run start:dev",
     "lint": "lerna exec --parallel -- npm run lint",
     "build": "lerna exec --parallel -- npm run build"
   },
@@ -12,5 +14,6 @@
   "devDependencies": {
     "lerna": "^3.16.5",
     "tslib": "^1.10.0"
-  }
+  },
+  "dependencies": {}
 }

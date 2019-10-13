@@ -9,11 +9,15 @@ import { Database } from '../Database';
 @Singleton
 export class AccountDB {
 
-  @Inject private db!: Database;
+  @Inject private db: Database;
+
+  public async init() {}
 
   public async getAccount(username: string): Promise<Account | null> {
-    const res = this.db.em.getRepository<Account>(Account).findOne({ username });
-    return res;
+    const account = await this.db.em.getRepository<Account>(Account).findOne({ username }, ['players']);
+    await account?.players.init();
+
+    return account;
   }
 
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
@@ -24,9 +28,13 @@ export class AccountDB {
     account.email = accountInfo.email;
     account.password = bcrypt.hashSync(accountInfo.password, 10);
 
-    await this.db.em.persist(account, true);
+    await this.db.save(account);
 
     return account;
+  }
+
+  public async simpleAccount(account: Account) {
+    return this.db.toObject(account);
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {

@@ -7,9 +7,9 @@ import { Database } from '../Database';
 @Singleton
 export class WorldDB {
 
-  @Inject private db!: Database;
+  @Inject private db: Database;
 
-  private settings!: WorldSettings;
+  private settings: WorldSettings;
 
   public get motd() {
     return this.settings.motd;
@@ -26,12 +26,12 @@ export class WorldDB {
       this.settings = new WorldSettings();
       this.settings.motd = 'Welcome to Land of the Rair!';
 
-      await this.db.em.persist(this.settings, true);
+      this.saveSettings();
     }
   }
 
   private async saveSettings() {
-    return this.db.em.persist(this.settings, true);
+    await this.db.save(this.settings);
   }
 
   public setMOTD(motd: string) {

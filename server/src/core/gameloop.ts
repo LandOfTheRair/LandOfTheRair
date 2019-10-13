@@ -6,7 +6,7 @@ import { GameServerResponse } from '../interfaces';
 
 export class GameloopWorker {
 
-  @Inject private wsCommands!: WebsocketCommandHandler;
+  @Inject private wsCommands: WebsocketCommandHandler;
 
   async start() {
     process.on('message', msg => this.handleMessage(msg));

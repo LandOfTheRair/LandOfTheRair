@@ -2,20 +2,24 @@
 import { CensorSensor } from 'censor-sensor';
 import { Singleton } from 'typescript-ioc';
 
-const censorSensor = new CensorSensor();
-censorSensor.disableTier(2);
-censorSensor.disableTier(3);
-censorSensor.disableTier(4);
-
 @Singleton
 export class ProfanityHelper {
 
+  private censorSensor: CensorSensor;
+
+  public async init() {
+    this.censorSensor = new CensorSensor();
+    this.censorSensor.disableTier(2);
+    this.censorSensor.disableTier(3);
+    this.censorSensor.disableTier(4);
+  }
+
   public hasProfanity(check: string): boolean {
-    return censorSensor.isProfane(check);
+    return this.censorSensor.isProfane(check);
   }
 
   public cleanMessage(msg: string): string {
-    return censorSensor.cleanProfanity(msg);
+    return this.censorSensor.cleanProfanity(msg);
   }
 
 }

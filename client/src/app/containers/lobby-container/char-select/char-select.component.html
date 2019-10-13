@@ -21,9 +21,7 @@
           <div *ngIf="player" class="char-container">
             {{ player.name }}
             <br>
-            <small>Level {{ player.level }} {{ player.baseclass }}</small>
-            <br>
-            <small>{{ player.mapName }}</small>
+            <small>{{ player.baseClass }} Lv.{{ player.level }} // {{ player.map }}</small>
           </div>
           <div *ngIf="!player">
             No Character

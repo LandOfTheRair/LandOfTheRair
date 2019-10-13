@@ -17,26 +17,27 @@ export class LoginAction extends ServerAction {
     if (!game.accountDB.checkPassword(data, account)) throw new Error('Password does not match.');
 
     try {
-      const res = { ...account };
-      delete res.password;
+      const simpleAccount = await game.accountDB.simpleAccount(account);
+      delete simpleAccount.password;
+      delete simpleAccount.players;
 
       broadcast({
         action: GameAction.ChatAddUser,
-        user: res
+        user: simpleAccount
       });
 
-      game.lobbyManager.addAccount(res);
+      game.lobbyManager.addAccount(account);
 
       emit({
         type: GameServerResponse.Login,
-        account: res,
+        account,
         motd: game.lobbyManager.motd,
         onlineUsers: game.lobbyManager.onlineUsers
       });
 
       emit({
         action: GameAction.SetCharacterCreateInformation,
-        charCreateInfo: game.contentManager.charSelect
+        charCreateInfo: game.contentManager.charSelectData
       });
 
     } catch (e) {

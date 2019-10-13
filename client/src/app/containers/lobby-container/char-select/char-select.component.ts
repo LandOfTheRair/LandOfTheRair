@@ -39,12 +39,6 @@ export class CharSelectComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(char => {
       if (!char) return;
-
-      // TODO: doesn't work
-      if (needsOverwrite) {
-        this.socketService.emit(GameServerEvent.DeleteCharacter, { slot });
-      }
-
       this.socketService.emit(GameServerEvent.CreateCharacter, { slot, ...char });
     });
   }

@@ -8,7 +8,7 @@ export class ServerAction implements IServerAction {
   validate(args) {
     if (!this.requiredKeys || !this.requiredKeys.length) return true;
 
-    return this.requiredKeys.every(key => args[key]);
+    return this.requiredKeys.every(key => typeof args[key] !== 'undefined');
   }
 
   async act(game: Game, { broadcast, emit }, data): Promise<void> {

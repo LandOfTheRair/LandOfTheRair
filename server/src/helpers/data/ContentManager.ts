@@ -5,7 +5,11 @@ import fs from 'fs-extra';
 @Singleton
 export class ContentManager {
 
-  public charSelect: any;
+  private charSelect: any;
+  public get charSelectData() {
+    return JSON.parse(JSON.stringify(this.charSelect));
+  }
+
   public mapDroptables: any;
   public regionDroptables: any;
   public items: any;

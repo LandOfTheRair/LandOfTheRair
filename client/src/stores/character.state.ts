@@ -1,20 +1,19 @@
 import { State } from '@ngxs/store';
-import { ICharacter } from '../models';
+import { Allegiance, BaseClass, ICharacter } from '../models';
 
 const defaultCharacter: () => ICharacter = () => {
   return {
     name: '',
-    allegiance: 'None',
-    baseclass: 'Undecided',
+    allegiance: Allegiance.None,
+    baseClass: BaseClass.Undecided,
     gender: 'male',
-    gold: 0,
-    items: [],
-    mapName: 'Tutorial',
-    skills: [],
-    stats: [],
+    currency: { gold: 0 },
+    map: 'Tutorial',
     x: 0,
     y: 0,
-    slot: 0
+    charSlot: 0,
+    items: { potion: null, equipment: null, sack: null, belt: null, pouch: null },
+    stats: {}
   };
 };
 

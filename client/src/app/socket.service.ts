@@ -72,7 +72,6 @@ export class SocketService {
     if (!isConnected) {
       this.store.dispatch(new Logout());
       this.store.dispatch(new StateReset(CharacterState, AccountState));
-      this.reconnect();
     }
   }
 
@@ -132,23 +131,11 @@ export class SocketService {
   }
 
   tryDisconnect() {
-    if (!this.messages$) return;
-    this.messages$.unsubscribe();
+    if (this.messages$) this.messages$.unsubscribe();
   }
 
   emit(type: GameServerEvent, data: any = {}) {
     this.input$.next({ type, ...data });
-  }
-
-  private reconnect() {
-    const interval = setInterval(() => {
-      if (this.isConnected) {
-        clearInterval(interval);
-        return;
-      }
-
-      this.init();
-    }, 5000);
   }
 
   private handleCallback(data: any): void {

@@ -4,6 +4,8 @@ import { Singleton } from 'typescript-ioc';
 @Singleton
 export class Logger {
 
+  public async init() {}
+
   private _logWithTs(type: 'log'|'error', tag, ...args) {
     console[type](new Date(), `[${tag}]`, ...args);
   }

@@ -12,9 +12,9 @@ class LobbyState {
 @Singleton
 export class LobbyManager {
 
-  @Inject private worldDB!: WorldDB;
+  @Inject private worldDB: WorldDB;
 
-  private state!: LobbyState;
+  private state: LobbyState;
 
   public get motd() {
     return this.worldDB.motd;

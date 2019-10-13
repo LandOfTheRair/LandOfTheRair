@@ -111,13 +111,13 @@ export class CharCreateComponent implements OnInit {
     this.descs.allegiance = allegiance.description.split('\n').join('<br><br>');
 
     if (prevStatMods) {
-      prevStatMods.forEach(({ name, value }) => {
-        this.stats[name] -= value;
+      Object.keys(prevStatMods).forEach((stat) => {
+        this.stats[stat] -= prevStatMods[stat];
       });
     }
 
-    allegiance.statMods.forEach(({ name, value }) => {
-      this.stats[name] += value;
+    Object.keys(allegiance.statMods).forEach((stat) => {
+      this.stats[stat] += allegiance.statMods[stat];
     });
   }
 
@@ -129,13 +129,13 @@ export class CharCreateComponent implements OnInit {
     this.descs.baseclass = baseclass.description.split('\n').join('<br><br>');
 
     if (prevStatMods) {
-      prevStatMods.forEach(({ name, value }) => {
-        this.stats[name] -= value;
+      Object.keys(prevStatMods).forEach((stat) => {
+        this.stats[stat] -= prevStatMods[stat];
       });
     }
 
-    baseclass.statMods.forEach(({ name, value }) => {
-      this.stats[name] += value;
+    Object.keys(baseclass.statMods).forEach((stat) => {
+      this.stats[stat] += baseclass.statMods[stat];
     });
   }
 

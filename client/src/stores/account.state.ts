@@ -51,6 +51,12 @@ export class AccountState {
   @Action(Login)
   login(ctx: StateContext<IAccount>, { info }: Login) {
     window.document.title = `[${info.account.username}] Land of the Rair`;
+
+    info.account.players = info.account.players.reduce((prev, cur) => {
+      prev[cur.charSlot] = cur;
+      return prev;
+    }, []);
+
     if (info.account.players.length < 4) info.account.players.length = 4;
 
     ctx.setState(Object.assign({}, ctx.getState(), info.account));
@@ -66,7 +72,7 @@ export class AccountState {
   setCharacter(ctx: StateContext<IAccount>, { characterInfo, slot }: SetCharacterSlotInformation) {
     const state = ctx.getState();
 
-    const players = state.players;
+    const players = [...state.players];
     players[slot] = characterInfo;
 
     ctx.patchState({ players });

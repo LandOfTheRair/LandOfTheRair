@@ -1,37 +1,33 @@
+import { Allegiance, BaseClass, CharacterCurrency, ItemSlot, StatBlock } from './building-blocks';
+import { IItem } from './item';
 
-export type Allegiance = 'None' | 'Adventurers' | 'Pirates' | 'Royalty' | 'Townsfolk' |  'Underground' | 'Wilderness';
-
-export type BaseClass = 'Undecided' | 'Mage' | 'Thief' | 'Healer' | 'Warrior';
-
-export type Stat = 'str' | 'int' | 'dex' | 'int' | 'wis' | 'wil' | 'con' | 'luk' | 'cha'
-                 | 'hp' | 'maxhp'
-                 | 'mp' | 'maxmp'
-                 | 'actionSpeed';
-
-export interface IItem {
-  name: string;
+export interface ItemContainer {
+  items: IItem[];
 }
 
-export interface ISkill {
-  name: string;
-}
+export interface CharacterItems {
+  potion: IItem;
 
-export interface IStat {
-  name: Stat;
-  value: number;
+  equipment: { [key in ItemSlot]: IItem };
+
+  sack: ItemContainer;
+  belt: ItemContainer;
+  pouch: ItemContainer;
 }
 
 export interface ICharacter {
   name: string;
-  slot: number;
+  charSlot: number;
   allegiance: Allegiance;
-  baseclass: BaseClass;
+  baseClass: BaseClass;
+
   gender: 'male'|'female';
-  gold: number;
-  items: IItem[];
-  mapName: string;
-  skills: ISkill[];
-  stats: IStat[];
+  map: string;
   x: number;
   y: number;
+
+  stats: StatBlock;
+
+  currency: CharacterCurrency;
+  items: CharacterItems;
 }

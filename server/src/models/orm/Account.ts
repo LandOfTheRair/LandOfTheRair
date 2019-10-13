@@ -1,19 +1,26 @@
 
-import { Entity, IEntity, PrimaryKey, Property } from 'mikro-orm';
+import { Cascade, Collection, Entity, MongoEntity, OneToMany, PrimaryKey, Property } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 
-import { IAccount, ICharacter } from '../../interfaces';
+import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
+import { IAccount } from '../../interfaces';
+import { Player } from './Player';
 
 @Entity()
-export class Account implements IAccount {
+export class Account implements IAccount, MongoEntity<Account> {
 
   @PrimaryKey() _id: ObjectID;
+  @SerializedPrimaryKey() id: string;
 
   @Property() createdAt = new Date();
-  @Property() username!: string;
-  @Property() password!: string;
-  @Property() email!: string;
-  @Property() players: ICharacter[] = [];
+  @Property() username: string;
+  @Property({ hidden: true }) password: string;
+  @Property() email: string;
+  @OneToMany(
+    () => Player,
+    player => player.account,
+    { cascade: [Cascade.ALL], orphanRemoval: true }
+  ) players = new Collection<Player>(this);
 
   @Property() isGameMaster = false;
   @Property() isTester = false;
@@ -23,5 +30,3 @@ export class Account implements IAccount {
   @Property() trialEndsTimestamp = -1;
 
 }
-
-export interface Account extends IEntity<string> {}

@@ -1,7 +1,5 @@
 
-import path from 'path';
-
-import { EntityManager, MikroORM } from 'mikro-orm';
+import { AnyEntity, EntityManager, EntityName, MikroORM, MongoEntity, wrap, WrappedEntity } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -18,11 +16,37 @@ export class Database {
   public async init() {
     this.orm = await MikroORM.init({
       entitiesDirs: [(isProd ? 'dist' : 'src') + '/models/orm'],
+      entitiesDirsTs: ['src/models/orm'],
 
       clientUrl: process.env.DATABASE_URI,
-      autoFlush: false,
-      dbName: 'landoftherair2'
+      dbName: 'landoftherair2',
+      debug: true
     });
+  }
+
+  public async toObject<T>(entity: AnyEntity<T>) {
+    const obj = await wrap(entity);
+    return obj.toObject();
+  }
+
+  public wrap<T>(entity: AnyEntity<T>) {
+    return wrap(entity);
+  }
+
+  public flush() {
+    this.em.flush();
+  }
+
+  public create<T>(entity: EntityName<T>, data = {}): T {
+    return this.em.create(entity, data);
+  }
+
+  public save(entity: MongoEntity<any>) {
+    return this.em.persist(entity, true);
+  }
+
+  public delete(entity: MongoEntity<any>) {
+    return this.em.removeEntity(entity, true);
   }
 
 }
