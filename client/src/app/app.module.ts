@@ -14,6 +14,9 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
+import { AssetService } from './asset.service';
+import { SocketService } from './socket.service';
+
 import * as AllStores from '../stores';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
@@ -24,8 +27,6 @@ import { OptionsContainerComponent } from './containers/options-container/option
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
-import { SocketService } from './socket.service';
-import { AssetService } from './asset.service';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
