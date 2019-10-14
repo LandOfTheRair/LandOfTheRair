@@ -3,7 +3,7 @@ import { Cascade, Collection, Entity, MongoEntity, OneToMany, PrimaryKey, Proper
 import { ObjectID } from 'mongodb';
 
 import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
-import { IAccount } from '../../interfaces';
+import { IAccount, PROP_SERVER_ONLY } from '../../interfaces';
 import { Player } from './Player';
 
 @Entity()
@@ -12,10 +12,12 @@ export class Account implements IAccount, MongoEntity<Account> {
   @PrimaryKey() _id: ObjectID;
   @SerializedPrimaryKey() id: string;
 
-  @Property() createdAt = new Date();
+  @Property(PROP_SERVER_ONLY()) createdAt = new Date();
+  @Property(PROP_SERVER_ONLY()) password: string;
+
   @Property() username: string;
-  @Property({ hidden: true }) password: string;
   @Property() email: string;
+
   @OneToMany(
     () => Player,
     player => player.account,
@@ -28,5 +30,7 @@ export class Account implements IAccount, MongoEntity<Account> {
 
   @Property() subscriptionEndsTimestamp = -1;
   @Property() trialEndsTimestamp = -1;
+
+  // TODO: shared lockers and bank should be properties of account
 
 }

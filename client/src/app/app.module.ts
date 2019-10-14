@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,6 +25,7 @@ import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
 import { SocketService } from './socket.service';
+import { AssetService } from './asset.service';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
@@ -40,6 +42,7 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     CharCreateComponent
   ],
   imports: [
+    HttpClientModule,
     FormsModule,
     BrowserModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
@@ -64,6 +67,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
         return sc;
       },
       deps: [SocketService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (assets: AssetService) => () => {
+        assets.init();
+        return assets;
+      },
+      deps: [AssetService],
       multi: true
     }
   ],

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { GameServerEvent, ICharacterCreateInfo } from '../../../../models';
 import { SetCharSlot } from '../../../../stores';
+import { AssetService } from '../../../asset.service';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 import { CharCreateComponent } from '../char-create/char-create.component';
@@ -18,7 +19,8 @@ export class CharSelectComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     public gameService: GameService,
-    public socketService: SocketService
+    public socketService: SocketService,
+    public assetService: AssetService
   ) { }
 
   ngOnInit() {

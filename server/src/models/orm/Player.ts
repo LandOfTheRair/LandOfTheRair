@@ -2,19 +2,22 @@
 import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property } from 'mikro-orm';
 import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
 import { ObjectID } from 'mongodb';
-import { Allegiance, BaseClass, CharacterCurrency, ICharacter, StatBlock } from '../../interfaces';
+import { Allegiance, BaseClass, CharacterCurrency, ICharacter, IPlayer, PROP_SERVER_ONLY, PROP_TEMPORARY, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { CharacterItems } from './CharacterItems';
 
 @Entity()
-export class Player implements ICharacter, MongoEntity<Player> {
+export class Player implements IPlayer, MongoEntity<Player> {
 
   @PrimaryKey() _id: ObjectID;
   @SerializedPrimaryKey() id: string;
 
   @ManyToOne() account: IdentifiedReference<Account, 'id'|'_id'>;
 
-  @Property({ hidden: true }) createdAt = new Date();
+  @Property(PROP_SERVER_ONLY()) createdAt = new Date();
+
+  @Property(PROP_TEMPORARY()) actionQueue = { fast: [], slow: [] };
+
   @Property() charSlot: number;
 
   @Property() name: string;

@@ -19,8 +19,7 @@ export class Database {
       entitiesDirsTs: ['src/models/orm'],
 
       clientUrl: process.env.DATABASE_URI,
-      dbName: 'landoftherair2',
-      debug: true
+      dbName: 'landoftherair2'
     });
   }
 

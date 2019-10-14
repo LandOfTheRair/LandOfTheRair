@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Logout } from '../../stores';
+import { AssetService } from '../asset.service';
 import { GameService } from '../game.service';
 import { SocketService } from '../socket.service';
 
@@ -40,7 +41,8 @@ export class MenuComponent implements OnInit {
   constructor(
     private store: Store,
     public socketService: SocketService,
-    public gameService: GameService
+    public gameService: GameService,
+    public assetService: AssetService
   ) { }
 
   ngOnInit() {

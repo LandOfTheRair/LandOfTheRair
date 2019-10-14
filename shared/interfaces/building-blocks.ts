@@ -26,6 +26,24 @@ export enum Alignment {
   Evil = 'evil'
 }
 
+export enum DamageClass {
+  Physical = 'physical',
+  Necrotic = 'necrotic',
+  Energy = 'energy',
+  Disease = 'disease',
+  Poison = 'poison',
+  Water = 'water',
+  Fire = 'fire',
+  Ice = 'ice',
+
+  // used specifically for guns hunting turkeys
+  Turkey = 'turkey',
+
+  // different classes of weapons
+  Sharp = 'sharp',
+  Blunt = 'blunt'
+}
+
 export enum BaseClass {
   Undecided = 'Undecided',
   Mage = 'Mage',
@@ -193,6 +211,12 @@ export enum Currency {
   Gold = 'gold'
 }
 
+export enum Holiday {
+  Halloween = 'Halloween',
+  Thanksgiving = 'Thanksgiving',
+  Christmas = 'Christmas'
+}
+
 export enum MonsterClass {
   Beast = 'Beast',
   Dragon = 'Dragon',
@@ -200,6 +224,15 @@ export enum MonsterClass {
   Undead = 'Undead'
 }
 
+export type SkillBlock = { [skill in Skill]?: number };
+
 export type StatBlock = { [stat in Stat]?: number };
 
 export type CharacterCurrency = { [currency in Currency]?: number };
+
+export interface Rollable {
+  chance: number;
+  result: string;
+  maxChance?: number;
+  requireHoliday?: Holiday;
+}

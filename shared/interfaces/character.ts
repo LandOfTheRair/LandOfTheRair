@@ -1,14 +1,14 @@
 import { Allegiance, BaseClass, CharacterCurrency, ItemSlot, StatBlock } from './building-blocks';
-import { IItem } from './item';
+import { ISimpleItem } from './item';
 
 export interface ItemContainer {
-  items: IItem[];
+  items: ISimpleItem[];
 }
 
 export interface CharacterItems {
-  potion: IItem;
+  potion: ISimpleItem;
 
-  equipment: { [key in ItemSlot]: IItem };
+  equipment: { [key in ItemSlot]: ISimpleItem };
 
   sack: ItemContainer;
   belt: ItemContainer;
@@ -17,7 +17,6 @@ export interface CharacterItems {
 
 export interface ICharacter {
   name: string;
-  charSlot: number;
   allegiance: Allegiance;
   baseClass: BaseClass;
 
@@ -31,3 +30,4 @@ export interface ICharacter {
   currency: CharacterCurrency;
   items: CharacterItems;
 }
+

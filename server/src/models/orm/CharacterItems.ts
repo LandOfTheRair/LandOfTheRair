@@ -19,4 +19,6 @@ export class CharacterItems implements CharacterItems, MongoEntity<CharacterItem
   @Property() belt: ItemContainer;
   @Property() pouch: ItemContainer;
 
+  // TODO: lockers, buyback
+
 }
