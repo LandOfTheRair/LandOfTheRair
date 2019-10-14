@@ -5,7 +5,7 @@ import { Database } from './Database';
 import { Logger } from './Logger';
 
 import { ProfanityHelper } from '../chat/ProfanityHelper';
-import { ContentManager } from '../data';
+import { ContentManager, ItemCreator } from '../data';
 import { CharacterRoller, LobbyManager } from '../lobby';
 import { AccountDB, CharacterDB, WorldDB } from './db';
 
@@ -24,6 +24,7 @@ export class Game {
 
   @Inject public lobbyManager: LobbyManager;
   @Inject public characterRoller: CharacterRoller;
+  @Inject public itemCreator: ItemCreator;
 
   public async init() {
 

@@ -2,7 +2,7 @@
 import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property } from 'mikro-orm';
 import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
 import { ObjectID } from 'mongodb';
-import { Allegiance, BaseClass, CharacterCurrency, ICharacter, IPlayer, PROP_SERVER_ONLY, PROP_TEMPORARY, StatBlock } from '../../interfaces';
+import { Allegiance, BaseClass, CharacterCurrency, IPlayer, PROP_SERVER_ONLY, PROP_TEMPORARY, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { CharacterItems } from './CharacterItems';
 

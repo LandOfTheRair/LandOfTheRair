@@ -1,7 +1,7 @@
 import { Entity, MongoEntity, OneToOne, PrimaryKey, Property } from 'mikro-orm';
 import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
 import { ObjectID } from 'mongodb';
-import { IItem, ItemContainer, ItemSlot } from '../../interfaces';
+import { ISimpleItem, ItemContainer, ItemSlot } from '../../interfaces';
 import { Player } from './Player';
 
 @Entity()
@@ -12,8 +12,8 @@ export class CharacterItems implements CharacterItems, MongoEntity<CharacterItem
 
   @OneToOne() player: Player;
 
-  @Property() potion: IItem;
-  @Property() equipment: { [key in ItemSlot]: IItem };
+  @Property() potion: ISimpleItem;
+  @Property() equipment: { [key in ItemSlot]: ISimpleItem };
 
   @Property() sack: ItemContainer;
   @Property() belt: ItemContainer;
