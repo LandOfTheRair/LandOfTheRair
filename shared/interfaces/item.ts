@@ -7,6 +7,7 @@ export interface IItemRequirements {
   alignment: Alignment;
   baseClass: BaseClass;
   level: number;
+  quest: string;
 }
 
 export interface ISuccorInfo {
