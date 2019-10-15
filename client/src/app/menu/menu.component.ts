@@ -12,6 +12,13 @@ import { SocketService } from '../socket.service';
 })
 export class MenuComponent implements OnInit {
 
+  private serverAssetHash: string;
+
+  public get assetMismatchWarning(): boolean {
+    if (!this.serverAssetHash) return false;
+    return this.serverAssetHash !== this.assetService.clientAssetHash;
+  }
+
   public isMenuVisible: boolean;
   public menuItems = [
     {
@@ -46,6 +53,9 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.assetService.assetHash$.subscribe(hash => {
+      this.serverAssetHash = hash;
+    });
   }
 
   toggleMenu() {

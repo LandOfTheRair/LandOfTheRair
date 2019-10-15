@@ -1,5 +1,6 @@
 
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
+import { GameAction } from '../../../shared/interfaces';
 import { ISettings } from '../models';
 import { Login, Logout } from './account.state';
 
@@ -32,13 +33,19 @@ export class SetCharSlot {
   constructor(public charSlot: number) {}
 }
 
+export class SetAssetHash {
+  static type = GameAction.SettingsSetAssetHash;
+  constructor(public assetHash: string) {}
+}
+
 const defaultSettings: () => ISettings = () => {
   return {
     accounts: [],
     windows: {},
     activeWindow: '',
     charSlot: 0,
-    wasKicked: false
+    wasKicked: false,
+    assetHash: ''
   };
 };
 
@@ -78,8 +85,18 @@ export class SettingsState implements NgxsOnInit {
     return state.wasKicked;
   }
 
+  @Selector()
+  static assetHash(state: ISettings) {
+    return state.assetHash;
+  }
+
   ngxsOnInit(ctx: StateContext<ISettings>) {
-    ctx.patchState({ wasKicked: false });
+    ctx.patchState({ wasKicked: false, assetHash: '' });
+  }
+
+  @Action(SetAssetHash)
+  updateHash(ctx: StateContext<ISettings>, { assetHash }: SetAssetHash) {
+    ctx.patchState({ assetHash });
   }
 
   @Action(Login)
@@ -89,15 +106,18 @@ export class SettingsState implements NgxsOnInit {
 
   @Action(Logout)
   logout(ctx: StateContext<ISettings>, { manualDisconnect, kick }: Logout) {
-    if (!manualDisconnect) return;
-
     const state = ctx.getState();
+
+    if (!manualDisconnect) {
+      ctx.patchState({ assetHash: '' });
+      return;
+    }
 
     const oldAccounts = state.accounts
       .map(x => Object.assign({}, x, { autologin: false }));
 
     const accounts = [...oldAccounts];
-    ctx.patchState({ accounts, wasKicked: kick });
+    ctx.patchState({ accounts, wasKicked: kick, assetHash: '' });
   }
 
   @Action(AddAccount)

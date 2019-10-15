@@ -11,4 +11,5 @@ export interface ISettings {
   activeWindow: string;
   charSlot: number;
   wasKicked: boolean;
+  assetHash: string;
 }

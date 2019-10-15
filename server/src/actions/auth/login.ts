@@ -2,6 +2,8 @@ import { Game } from '../../helpers';
 import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
+import * as meta from '../../../content/_output/meta.json';
+
 export class LoginAction extends ServerAction {
   type = GameServerEvent.Login;
   requiredKeys = ['username', 'password'];
@@ -38,6 +40,11 @@ export class LoginAction extends ServerAction {
       emit({
         action: GameAction.SetCharacterCreateInformation,
         charCreateInfo: game.contentManager.charSelectData
+      });
+
+      emit({
+        action: GameAction.SettingsSetAssetHash,
+        assetHash: meta.hash
       });
 
     } catch (e) {

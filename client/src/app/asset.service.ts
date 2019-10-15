@@ -1,19 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import * as meta from '../assets/content/_output/meta.json';
 import { environment } from '../environments/environment';
+import { SettingsState } from '../stores/index.js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AssetService {
 
-  private spritesheets = [];
+  private spritesheets: boolean[] = [];
   private items: any;
   private npcs: any;
 
+  @Select(SettingsState.assetHash) public assetHash$: Observable<string>;
+
   public get assetsLoaded(): boolean {
     return this.spritesheets.every(Boolean) && this.items && this.npcs;
+  }
+
+  public get clientAssetHash(): string {
+    return meta.hash;
   }
 
   constructor(private http: HttpClient) { }

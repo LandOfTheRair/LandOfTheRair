@@ -48,6 +48,8 @@ export enum GameAction {
   ChatAddUser = '[Chat] Add user',
   ChatRemoveUser = '[Chat] Remove user',
 
+  SettingsSetAssetHash = '[Settings] Set server asset hash',
+
   SetCharacterCreateInformation = '[CharSelect] Set Create Info'
 }
 

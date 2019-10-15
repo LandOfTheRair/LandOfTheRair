@@ -17,6 +17,12 @@
     </mat-chip>
   </mat-chip-list>
 
+  <mat-chip-list *ngIf="assetMismatchWarning">
+    <mat-chip color="warn" selected>
+      <mat-icon class="m-r-10">warning</mat-icon> Asset mismatch error - Items/NPCs may not render correctly. Reload to fix.
+    </mat-chip>
+  </mat-chip-list>
+
 </div>
 
 <div *ngIf="isMenuVisible" class="menu-container">

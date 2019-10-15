@@ -9,6 +9,7 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "target": "es2015",
     "module": "commonjs",
     "moduleResolution": "node",
