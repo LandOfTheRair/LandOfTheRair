@@ -17,7 +17,7 @@ export interface INPC {
   npcId: string;
 
   // the sprite or sprites this creature can be
-  sprite: number|number[];
+  sprite: number[];
 
   // the npc name - optional - if unspecified, generated randomly
   name?: string;
