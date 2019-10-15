@@ -236,3 +236,8 @@ export interface Rollable {
   maxChance?: number;
   requireHoliday?: Holiday;
 }
+
+export interface RandomNumber {
+  min: number;
+  max: number;
+}

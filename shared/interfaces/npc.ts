@@ -1,4 +1,4 @@
-import { Allegiance, BaseClass, ItemSlot, MonsterClass, Rollable, SkillBlock } from './building-blocks';
+import { Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock } from './building-blocks';
 import { IEffect } from './effect';
 
 export interface ISimpleNPC {
@@ -54,7 +54,7 @@ export interface INPC {
   drops?: Rollable[];
 
   // gear items that can spawn on the creature
-  gear?: { [slot in ItemSlot]: string[] | Rollable[] };
+  gear?: { [slot in ItemSlot]: Rollable[] };
   leftHand?: Rollable[];
   rightHand?: Rollable[];
   sack?: Rollable[];
@@ -66,9 +66,14 @@ export interface INPC {
   // the creature class (used for rippers, etc)
   monsterClass?: MonsterClass;
 
-  // the base hp/mp for the creature
-  hp: { min: number, max: number };
-  mp: { min: number, max: number };
+  // how hostile the creature is (default: always)
+  hostility?: Hostility;
+
+  // the base hp/mp/gold/xp for the creature
+  hp: RandomNumber;
+  mp: RandomNumber;
+  gold: RandomNumber;
+  giveXp: RandomNumber;
 
   // whether the creature should avoid dropping a corpse
   noCorpseDrop?: boolean;

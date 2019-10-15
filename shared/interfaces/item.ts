@@ -1,4 +1,4 @@
-import { Alignment, BaseClass, DamageClass, Rollable, Stat, StatBlock } from './building-blocks';
+import { Alignment, BaseClass, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IEffect } from './effect';
 
 export type IItemEncrust = { effect: IEffect } & { stats: StatBlock } & { maxEncrusts: number };
@@ -36,13 +36,13 @@ export interface IGear {
   stats?: StatBlock;
 
   // randomly chosen stats for this item
-  randomStats?: { [stat in Stat]?: { min: number, max: number } };
+  randomStats?: { [stat in Stat]?: RandomNumber };
 
   // the trait on the item
   trait?: IItemTrait;
 
   // the random trait generated for an item
-  randomTrait?: { level: { min: number, max: number }, name: string[] };
+  randomTrait?: { level: RandomNumber, name: string[] };
 }
 
 export interface IWeapon {
