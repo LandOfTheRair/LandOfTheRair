@@ -29,7 +29,7 @@ export interface INPC {
   allegiance?: Allegiance;
 
   // the current reputation (how it views other allegiances)
-  allegianceReuptation?: { [all in Allegiance]?: number };
+  allegianceReputation?: { [all in Allegiance]?: number };
 
   // whether the npc can only use water
   aquaticOnly?: boolean;
