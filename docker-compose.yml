@@ -21,13 +21,14 @@ services:
       - "6379:6379"
 
   game:
-    command: bash -c "apt-get update && apt-get install -y build-essential && apt-get install -y python && npm install && npm run setup && npm run start"
+    command: bash -c "apt-get update && apt-get install -y build-essential && npm install && npm run setup && npm run start"
     working_dir: /usr/src/app
 
     image: "node:12"
 
     ports:
       - "6975:6975"
+      - "4567:4567"
 
     environment:
       TS_NODE_TRANSPILE_ONLY: 1
