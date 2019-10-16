@@ -20,9 +20,9 @@ services:
     ports:
       - "6379:6379"
 
-  server:
-    command: bash -c "npm install && npm run setup && npm run start:dev"
-    working_dir: /usr/src/app/server
+  game:
+    command: bash -c "apt-get update && apt-get install -y build-essential && apt-get install -y python && npm install && npm run setup && npm run start"
+    working_dir: /usr/src/app
 
     image: "node:12"
 
@@ -39,25 +39,5 @@ services:
 
     volumes:
       - type: bind
-        source: ./server
-        target: /usr/src/app/server
-      - type: bind
-        source: ./shared
-        target: /usr/src/app/shared
-
-  client:
-    command: bash -c "npm install && npm run setup && npm run start:dev"
-    working_dir: /usr/src/app/client
-
-    image: "node:12"
-
-    ports:
-      - "4567:4567"
-
-    volumes:
-      - type: bind
-        source: ./client
-        target: /usr/src/app/client
-      - type: bind
-        source: ./shared
-        target: /usr/src/app/shared
+        source: .
+        target: /usr/src/app
