@@ -4,7 +4,7 @@
   "description": "Backend of Land of the Rair",
   "main": "index.js",
   "scripts": {
-    "setup": "node scripts/setup",
+    "setup": "npm i && node scripts/setup",
     "start:dev": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\"",
     "start:dev:single": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\" --single-core",
     "lint": "tslint --project tsconfig.json",
