@@ -1,0 +1,63 @@
+
+version: '3.2'
+
+services:
+  mongo:
+    image: mongo
+
+    logging:
+      driver: none
+
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis
+
+    logging:
+      driver: none
+
+    ports:
+      - "6379:6379"
+
+  server:
+    command: bash -c "npm install && npm run setup && npm run start:dev"
+    working_dir: /usr/src/app/server
+
+    image: "node:12"
+
+    ports:
+      - "6975:6975"
+
+    environment:
+      TS_NODE_TRANSPILE_ONLY: 1
+      DATABASE_URI: mongodb://mongo:27017
+
+    depends_on:
+      - mongo
+      - redis
+
+    volumes:
+      - type: bind
+        source: ./server
+        target: /usr/src/app/server
+      - type: bind
+        source: ./shared
+        target: /usr/src/app/shared
+
+  client:
+    command: bash -c "npm install && npm run setup && npm run start:dev"
+    working_dir: /usr/src/app/client
+
+    image: "node:12"
+
+    ports:
+      - "4567:4567"
+
+    volumes:
+      - type: bind
+        source: ./client
+        target: /usr/src/app/client
+      - type: bind
+        source: ./shared
+        target: /usr/src/app/shared
