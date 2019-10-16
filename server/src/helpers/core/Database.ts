@@ -21,6 +21,16 @@ export class Database {
       clientUrl: process.env.DATABASE_URI,
       dbName: 'landoftherair2'
     });
+
+    [
+      'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
+      'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
+    ].forEach(sig => {
+      process.on(sig as any, async () => {
+        await this.flush();
+        process.exit(1);
+      });
+    });
   }
 
   public async toObject<T>(entity: AnyEntity<T>) {
@@ -32,7 +42,7 @@ export class Database {
     return wrap(entity);
   }
 
-  public flush() {
+  public async flush() {
     this.em.flush();
   }
 

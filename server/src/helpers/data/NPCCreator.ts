@@ -2,7 +2,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { ContentManager } from './ContentManager';
 
 @Singleton
-export class ItemCreator {
+export class NPCCreator {
 
   @Inject private content: ContentManager;
 
