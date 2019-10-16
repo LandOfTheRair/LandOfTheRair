@@ -21,7 +21,7 @@ services:
       - "6379:6379"
 
   game:
-    command: bash -c "apt-get update && apt-get install -y build-essential && npm install && npm run setup && npm run start"
+    command: bash -c "npm run setup && npm run start"
     working_dir: /usr/src/app
 
     image: "node:12"

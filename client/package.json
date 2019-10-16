@@ -8,7 +8,7 @@
     "build:app": "ng build --prod",
     "lint": "ng lint",
     "test": "npm run lint && npm run build",
-    "setup": "npm run prebuild",
+    "setup": "npm i && npm run prebuild",
     "prebuild": "npm run prebuild:assets:all && npm run prebuild:assets:hashes && npm run prebuild:macicon:json && npm run prebuild:macicon:font",
     "prebuild:assets:all": "node scripts/prebuild-assets-all",
     "prebuild:assets:hashes": "node scripts/prebuild-assets-hashes",
