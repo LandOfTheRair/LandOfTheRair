@@ -22,7 +22,7 @@ export interface ICharacter {
   uuid: string;
 
   name: string;
-  affilitation?: string;
+  affiliation?: string;
   allegiance: Allegiance;
   alignment: Alignment;
   baseClass: BaseClass;

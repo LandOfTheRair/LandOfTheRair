@@ -2,7 +2,7 @@
 import { merge } from 'lodash';
 import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
-import * as uuid from 'uuid/v4';
+import uuid from 'uuid/v4';
 
 import {
   Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, initializePlayer,
@@ -82,7 +82,8 @@ export class Player implements IPlayer, MongoEntity<Player> {
   create() {
     if (!this.uuid) this.uuid = uuid();
 
-    const player = initializePlayer(this);
-    merge(player, this);
+    // TODO: waiting for new alpha then this should work (?)
+    // const player = initializePlayer(this);
+    // merge(this, player);
   }
 }
