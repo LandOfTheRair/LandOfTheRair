@@ -1,5 +1,5 @@
 
-import { AnyEntity, EntityManager, EntityName, MikroORM, MongoEntity, wrap, WrappedEntity } from 'mikro-orm';
+import { AnyEntity, EntityManager, EntityName, MikroORM, MongoEntity, wrap } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -19,7 +19,9 @@ export class Database {
       entitiesDirsTs: ['src/models/orm'],
 
       clientUrl: process.env.DATABASE_URI,
-      dbName: 'landoftherair2'
+      dbName: 'landoftherair2',
+      type: 'mongo',
+      driverOptions: { useUnifiedTopology: true }
     });
 
     [

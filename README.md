@@ -23,3 +23,5 @@ You will want to be using Node 12 (at least) to run this project.
 #### Running Both Projects
 
 Run `npm start` and the client and server will both start up.
+
+You can also do `npm run start:server` and `npm run start:client` to start the two separately.
