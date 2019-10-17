@@ -1,11 +1,12 @@
 
+import { merge } from 'lodash';
 import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 import * as uuid from 'uuid/v4';
 
 import {
-  Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, IPlayer,
-  IStatusEffect, LearnedSpell, PROP_SERVER_ONLY, PROP_TEMPORARY, SkillBlock, StatBlock
+  Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, initializePlayer,
+  IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY, PROP_TEMPORARY, SkillBlock, StatBlock
 } from '../../interfaces';
 
 import { Account } from './Account';
@@ -80,10 +81,8 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @OnInit()
   create() {
     if (!this.uuid) this.uuid = uuid();
-    if (!this.map) this.map = 'Tutorial';
-    if (!this.x) this.x = 14;
-    if (!this.y) this.y = 14;
-    if (!this.level) this.level = 1;
-    if (!this.exp) this.exp = 1000;
+
+    const player = initializePlayer(this);
+    merge(player, this);
   }
 }
