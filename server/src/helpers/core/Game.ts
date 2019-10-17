@@ -1,9 +1,11 @@
 
+import { LoggerTimer } from 'logger-timer';
 import { Inject, Singleton } from 'typescript-ioc';
 
 import { Database } from './Database';
 import { Logger } from './Logger';
 
+import { CharacterHelper } from '../character';
 import { ProfanityHelper } from '../chat/ProfanityHelper';
 import { ContentManager, ItemCreator, NPCCreator, WorldManager } from '../data';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -27,6 +29,8 @@ export class Game {
   @Inject public itemCreator: ItemCreator;
   @Inject public npcCreator: NPCCreator;
 
+  @Inject public characterHelper: CharacterHelper;
+
   @Inject public worldManager: WorldManager;
 
   public async init() {
@@ -38,6 +42,7 @@ export class Game {
       'profanityHelper',
       'lobbyManager',
       'characterRoller',
+      'characterHelper',
       'itemCreator', 'npcCreator',
       'worldManager'
   ];
@@ -51,6 +56,10 @@ export class Game {
   }
 
   public loop() {
-    // setTimeout(() => this.loop(), 100);
+    const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production' });
+    timer.startTimer('gameloop');
+    timer.stopTimer('gameloop');
+    // timer.dumpTimers();
+    setTimeout(() => this.loop(), 100);
   }
 }

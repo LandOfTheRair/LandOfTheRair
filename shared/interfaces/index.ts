@@ -9,3 +9,4 @@ export * from './lobby';
 export * from './npc';
 export * from './player';
 export * from './settings';
+export * from './status-effect';

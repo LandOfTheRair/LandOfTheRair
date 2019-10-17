@@ -1,4 +1,12 @@
 
+export enum Direction {
+  South = 'S',
+  North = 'N',
+  East = 'E',
+  West = 'W',
+  Corpse = 'C'
+}
+
 export enum Allegiance {
   // for things that do not have an allegiance
   None = 'None',

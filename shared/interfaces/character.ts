@@ -1,23 +1,30 @@
-import { Allegiance, BaseClass, CharacterCurrency, ItemSlot, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, ItemSlot, SkillBlock, StatBlock } from './building-blocks';
 import { ISimpleItem } from './item';
+import { IStatusEffect } from './status-effect';
 
 export interface ItemContainer {
   items: ISimpleItem[];
 }
 
 export interface CharacterItems {
-  potion: ISimpleItem;
+  potion?: ISimpleItem;
 
-  equipment: { [key in ItemSlot]: ISimpleItem };
+  equipment: { [key in ItemSlot]?: ISimpleItem };
 
   sack: ItemContainer;
   belt: ItemContainer;
   pouch: ItemContainer;
+
+  buyback: ISimpleItem[];
 }
 
 export interface ICharacter {
+  uuid: string;
+
   name: string;
+  affilitation?: string;
   allegiance: Allegiance;
+  alignment: Alignment;
   baseClass: BaseClass;
 
   gender: 'male'|'female';
@@ -25,9 +32,21 @@ export interface ICharacter {
   x: number;
   y: number;
 
+  level: number;
+
   stats: StatBlock;
+  skills: SkillBlock;
+
+  dir: Direction;
 
   currency: CharacterCurrency;
   items: CharacterItems;
+
+  effects: { [effName: string]: IStatusEffect };
+
+  combatTicks: number;
+
+  agro: { [uuid: string]: number };
+  allegianceReputation: { [allegiance in Allegiance]?: number };
 }
 

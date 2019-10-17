@@ -1,9 +1,8 @@
 
-import { Cascade, Collection, Entity, MongoEntity, OneToMany, PrimaryKey, Property } from 'mikro-orm';
+import { Cascade, Collection, Entity, MongoEntity, OneToMany, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 
-import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
-import { IAccount, PROP_SERVER_ONLY } from '../../interfaces';
+import { IAccount, PROP_SERVER_ONLY, PROP_TEMPORARY } from '../../interfaces';
 import { Player } from './Player';
 
 @Entity()
@@ -14,6 +13,8 @@ export class Account implements IAccount, MongoEntity<Account> {
 
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();
   @Property(PROP_SERVER_ONLY()) password: string;
+
+  @Property(PROP_TEMPORARY()) inGame: boolean;
 
   @Property() username: string;
   @Property() email: string;
@@ -31,6 +32,6 @@ export class Account implements IAccount, MongoEntity<Account> {
   @Property() subscriptionEndsTimestamp = -1;
   @Property() trialEndsTimestamp = -1;
 
-  // TODO: shared lockers and bank should be properties of account
+  // TODO: shared lockers and bank should be properties of account (bank needs region separators)
 
 }

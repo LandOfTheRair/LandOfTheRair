@@ -1,6 +1,6 @@
-import { Entity, MongoEntity, OneToOne, PrimaryKey, Property } from 'mikro-orm';
-import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
+import { Entity, MongoEntity, OneToOne, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
+
 import { ISimpleItem, ItemContainer, ItemSlot } from '../../interfaces';
 import { Player } from './Player';
 
@@ -19,6 +19,8 @@ export class CharacterItems implements CharacterItems, MongoEntity<CharacterItem
   @Property() belt: ItemContainer;
   @Property() pouch: ItemContainer;
 
-  // TODO: lockers, buyback
+  @Property() buyback: ISimpleItem[];
+
+  // TODO: lockers
 
 }

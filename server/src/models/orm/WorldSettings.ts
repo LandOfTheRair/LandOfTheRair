@@ -1,6 +1,5 @@
 
-import { AnyEntity, Entity, MongoEntity, PrimaryKey, Property } from 'mikro-orm';
-import { SerializedPrimaryKey } from 'mikro-orm/dist/decorators';
+import { AnyEntity, Entity, MongoEntity, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 
 
