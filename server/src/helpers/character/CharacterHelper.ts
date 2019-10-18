@@ -10,7 +10,7 @@ export class CharacterHelper {
   public gainPermanentStat(character: ICharacter, stat: CoreStat, value = 1): boolean {
 
     // hp/mp always go up with no limit
-    if(stat === CoreStat.HP || stat === CoreStat.MP) {
+    if (stat === CoreStat.HP || stat === CoreStat.MP) {
       character.stats[stat] = (character.stats[stat] ?? 1) + value;
       return true;
     }
