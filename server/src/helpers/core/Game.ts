@@ -5,7 +5,7 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { Database } from './Database';
 import { Logger } from './Logger';
 
-import { CharacterHelper } from '../character';
+import { CalculatorHelper, CharacterHelper, ItemHelper, NPCHelper, PlayerHelper } from '../character';
 import { ProfanityHelper } from '../chat/ProfanityHelper';
 import { ContentManager, ItemCreator, NPCCreator, WorldManager } from '../data';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -29,7 +29,11 @@ export class Game {
   @Inject public itemCreator: ItemCreator;
   @Inject public npcCreator: NPCCreator;
 
+  @Inject public calculatorHelper: CalculatorHelper;
+  @Inject public itemHelper: ItemHelper;
+  @Inject public npcHelper: NPCHelper;
   @Inject public characterHelper: CharacterHelper;
+  @Inject public playerHelper: PlayerHelper;
 
   @Inject public worldManager: WorldManager;
 
@@ -42,8 +46,9 @@ export class Game {
       'profanityHelper',
       'lobbyManager',
       'characterRoller',
-      'characterHelper',
       'itemCreator', 'npcCreator',
+      'calculatorHelper',
+      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
       'worldManager'
   ];
 

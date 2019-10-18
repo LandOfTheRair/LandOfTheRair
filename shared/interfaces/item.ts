@@ -1,7 +1,7 @@
 import { Alignment, BaseClass, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IEffect } from './effect';
 
-export type IItemEncrust = { effect: IEffect } & { stats: StatBlock } & { maxEncrusts: number };
+export type IItemEncrust = { effect: IEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
 
 export interface IItemRequirements {
   alignment: Alignment;
@@ -144,6 +144,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
   // if binds and this, will announce the pickup to nearby
   tellsBind?: boolean;
 
+  // the encrusted item name
+  encrustItem?: string;
+
   // the cosmetic data for the item
   cosmetic?: {
     isPermanent?: boolean,
@@ -180,6 +183,6 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
 export interface ISimpleItem {
   name: string;
-  mods: any;
+  mods: Partial<IItem>;
 }
 

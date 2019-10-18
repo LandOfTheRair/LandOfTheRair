@@ -1,6 +1,7 @@
+import fs from 'fs-extra';
 import { Singleton } from 'typescript-ioc';
 
-import fs from 'fs-extra';
+import { IItem, INPC } from '../../interfaces';
 
 @Singleton
 export class ContentManager {
@@ -12,8 +13,8 @@ export class ContentManager {
 
   public mapDroptables: any;
   public regionDroptables: any;
-  public items: any;
-  public npcs: any;
+  public items: { [itemName: string]: IItem };
+  public npcs: { [npcName: string]: INPC };
   public npcScripts: any;
   public recipes: any;
   public spawners: any;

@@ -36,6 +36,7 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
+  @Property(PROP_TEMPORARY()) totalStats: StatBlock;
 
   // all characters have these props
   @Property() uuid: string;

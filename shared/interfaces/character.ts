@@ -35,6 +35,7 @@ export interface ICharacter {
   level: number;
 
   stats: StatBlock;
+  totalStats: StatBlock;
   skills: SkillBlock;
 
   dir: Direction;

@@ -15,6 +15,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
     map: char.map ?? 'Tutorial',
     currency: char.currency ?? { gold: 0 },
     stats: char.stats ?? { },
+    totalStats: char.totalStats ?? { },
     skills: char.skills ?? { },
     effects: char.effects ?? { },
     dir: char.dir ?? Direction.South,

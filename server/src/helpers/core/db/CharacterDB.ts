@@ -2,7 +2,9 @@
 import { Inject, Singleton } from 'typescript-ioc';
 
 import { Reference } from 'mikro-orm';
+import { initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
+import { CharacterItems } from '../../../models/orm/CharacterItems';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -25,8 +27,13 @@ export class CharacterDB {
 
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass });
 
-    const player = this.db.create<Player>(Player);
+    const basePlayer = initializePlayer({});
+    const player = this.db.create<Player>(Player, basePlayer);
+
     player.account = Reference.create(account);
+
+    const items = new CharacterItems();
+    player.items = Reference.create(items);
 
     player.charSlot = slot;
     player.name = name;
@@ -35,6 +42,11 @@ export class CharacterDB {
     player.gender = gender;
     player.currency = { gold: characterDetails.gold };
     player.stats = characterDetails.stats;
+    player.skills = characterDetails.skills;
+
+    Object.keys(characterDetails.items).forEach(itemSlot => {
+      items.equipment[itemSlot] = characterDetails.items[itemSlot];
+    });
 
     account.players.add(player);
     await this.db.save(account);

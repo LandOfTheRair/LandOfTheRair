@@ -3,7 +3,7 @@ import { IEffect } from './effect';
 
 export interface ISimpleNPC {
   npcId: string;
-  mods: any;
+  mods: Partial<INPC>;
 }
 
 export enum NPCTriggerType {

@@ -78,6 +78,23 @@ export enum ItemSlot {
   Trinket = 'trinket'
 }
 
+export enum CoreStat {
+  STR = 'str',
+  DEX = 'dex',
+  AGI = 'agi',
+  INT = 'int',
+  WIS = 'wis',
+  WIL = 'wil',
+  CHA = 'cha',
+  LUK = 'luk',
+  CON = 'con',
+
+  HP = 'hp',
+  MP = 'mp',
+  HPRegen = 'hpregen',
+  MPRegen = 'mpregen',
+}
+
 export enum Stat {
 
   // core

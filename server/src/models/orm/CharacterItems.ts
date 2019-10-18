@@ -13,13 +13,13 @@ export class CharacterItems implements CharacterItems, MongoEntity<CharacterItem
   @OneToOne() player: Player;
 
   @Property() potion: ISimpleItem;
-  @Property() equipment: { [key in ItemSlot]: ISimpleItem };
+  @Property() equipment: { [key in ItemSlot]?: ISimpleItem } = {};
 
   @Property() sack: ItemContainer;
   @Property() belt: ItemContainer;
   @Property() pouch: ItemContainer;
 
-  @Property() buyback: ISimpleItem[];
+  @Property() buyback: ISimpleItem[] = [];
 
   // TODO: lockers
 
