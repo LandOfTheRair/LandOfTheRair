@@ -53,8 +53,8 @@ export class Database {
     return this.em.create(entity, data);
   }
 
-  public save(entity: MongoEntity<any>) {
-    return this.em.persist(entity, true);
+  public save(entity: MongoEntity<any>, delayed = false) {
+    return this.em.persist(entity, !delayed);
   }
 
   public delete(entity: MongoEntity<any>) {
