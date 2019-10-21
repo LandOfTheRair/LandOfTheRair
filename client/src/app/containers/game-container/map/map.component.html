@@ -1,0 +1,18 @@
+
+<app-window windowName="map"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            (hide)="quitGame()"
+
+            defaultX="100"
+            defaultY="100"
+></app-window>
+
+<ng-template #headTemplate>
+  Map
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="map"></div>
+</ng-template>

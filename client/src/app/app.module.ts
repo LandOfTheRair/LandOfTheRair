@@ -19,6 +19,7 @@ import { SocketService } from './socket.service';
 
 import * as AllStores from '../stores';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
+import { MapComponent } from './containers/game-container/map/map.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
@@ -40,7 +41,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     OptionsContainerComponent,
     LobbyComponent,
     CharSelectComponent,
-    CharCreateComponent
+    CharCreateComponent,
+    MapComponent
   ],
   imports: [
     HttpClientModule,

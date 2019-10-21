@@ -1,6 +1,6 @@
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent } from '../../interfaces';
-import { WorldMap } from '../../models';
+import { Player, WorldMap } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class PlayAction extends ServerAction {
@@ -11,7 +11,12 @@ export class PlayAction extends ServerAction {
     if (game.lobbyManager.isAccountInGame(data.account)) throw new Error('Already in game.');
 
     const charSlot = data.charSlot;
-    const player = data.account.players[charSlot];
+
+    let player!: Player;
+    for (const checkPlayer of data.account.players) {
+      if (checkPlayer.charSlot !== charSlot) continue;
+      player = checkPlayer;
+    }
 
     if (!player) throw new Error(`No character in slot ${charSlot}.`);
     const mapName = player.map;
