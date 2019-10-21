@@ -2,11 +2,12 @@
 import { Inject, Singleton } from 'typescript-ioc';
 import { IAccount } from '../../interfaces';
 import { Account } from '../../models';
-import { WorldDB } from '../core/db';
+import { AccountDB, WorldDB } from '../core/db';
 
 class LobbyState {
   users: IAccount[] = [];
   userHash: { [username: string]: IAccount } = {};
+  usersInGame: { [username: string]: boolean } = {};
 }
 
 @Singleton
@@ -15,6 +16,10 @@ export class LobbyManager {
   @Inject private worldDB: WorldDB;
 
   private state: LobbyState;
+
+  public get usersInGame() {
+    return this.state.usersInGame;
+  }
 
   public get motd() {
     return this.worldDB.motd;
@@ -50,5 +55,17 @@ export class LobbyManager {
       prev[cur.username] = cur;
       return prev;
     }, {});
+  }
+
+  public isAccountInGame(account: Account): boolean {
+    return this.state.usersInGame[account.username];
+  }
+
+  public accountEnterGame(account: Account): void {
+    this.state.usersInGame[account.username] = true;
+  }
+
+  public accountLeaveGame(account: Account): void {
+    delete this.state.usersInGame[account.username];
   }
 }

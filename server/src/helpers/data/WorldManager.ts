@@ -46,6 +46,10 @@ export class WorldManager {
 
   }
 
+  public getMap(mapName: string): WorldMap {
+    return this.maps[mapName];
+  }
+
   public joinMap() {
     // leave current map
     // join desired map

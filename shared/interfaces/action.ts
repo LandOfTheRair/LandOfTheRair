@@ -14,6 +14,7 @@ interface BroadcastEmit {
 export interface IServerAction {
   type: GameServerEvent;
   requiredKeys: string[];
+  requiresLoggedIn: boolean;
 
   validate(args?): boolean;
   act(game, { broadcast, emit }: BroadcastEmit, args?): Promise<void>;
@@ -34,7 +35,9 @@ export enum GameServerEvent {
   CreateCharacter = 'Selector:Emit:CharacterCreate',
   PlayCharacter = 'Selector:Emit:CharacterPlay',
 
-  Chat = 'Chat:Emit:SendMessage'
+  Chat = 'Chat:Emit:SendMessage',
+
+  QuitGame = 'Game:Emit:QuitGame'
 }
 
 export enum GameAction {
@@ -47,10 +50,16 @@ export enum GameAction {
   ChatSetUserList = '[Chat] Set user list',
   ChatAddUser = '[Chat] Add user',
   ChatRemoveUser = '[Chat] Remove user',
+  ChatUserEnterGame = '[Chat] User Enter Game',
+  ChatUserLeaveGame = '[Chat] User Leave Game',
 
   SettingsSetAssetHash = '[Settings] Set server asset hash',
 
-  SetCharacterCreateInformation = '[CharSelect] Set Create Info'
+  SetCharacterCreateInformation = '[CharSelect] Set Create Info',
+
+  GamePlay = '[Game] Play Game',
+  GameQuit = '[Game] Quit Game',
+  GameSetMap = '[Game] Set Map'
 }
 
 export enum GameServerResponse {

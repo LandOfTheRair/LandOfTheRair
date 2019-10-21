@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { GameServerEvent } from '../../models';
 import { Logout } from '../../stores';
 import { AssetService } from '../asset.service';
 import { GameService } from '../game.service';
@@ -34,6 +35,13 @@ export class MenuComponent implements OnInit {
       handler: () => {}
     },
     { },
+    {
+      name: 'Quit',
+      visibleIf: this.gameService.inGame$,
+      handler: () => {
+        this.socketService.emit(GameServerEvent.QuitGame);
+      }
+    },
     {
       name: 'Log out',
       handler: () => {

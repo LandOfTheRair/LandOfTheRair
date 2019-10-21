@@ -9,9 +9,6 @@ export class ChatAction extends ServerAction {
   async act(game: Game, { broadcast }, data) {
     data.content = game.profanityHelper.cleanMessage(data.content);
 
-    const account = await game.accountDB.getAccount(data.username);
-    if (!account) throw new Error(`Not logged in.`);
-
     try {
       broadcast({
         action: GameAction.ChatAddMessage,

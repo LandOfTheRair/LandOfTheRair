@@ -38,7 +38,7 @@
     "lodash": "4.17.15",
     "logger-timer": "1.0.2",
     "lootastic": "1.1.2",
-    "mikro-orm": "3.0.0-alpha.29",
+    "mikro-orm": "3.0.0-alpha.31",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
     "nodemon": "^1.19.3",

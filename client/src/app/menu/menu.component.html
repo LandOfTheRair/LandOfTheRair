@@ -26,12 +26,14 @@
 </div>
 
 <div *ngIf="isMenuVisible" class="menu-container">
-  <button mat-mini-fab 
-          class="menu-item" 
-          [class.hidden]="!menuItem.name"
-          *ngFor="let menuItem of menuItems; let i = index" 
-          (click)="menuItem.handler()"
-          [style.top]="(i * 50) + 'px'">
-    {{ menuItem.name }}
-  </button>
+  <ng-container *ngFor="let menuItem of menuItems; let i = index">
+    <button mat-mini-fab 
+            class="menu-item" 
+            [class.hidden]="!menuItem.name"
+            *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
+            (click)="menuItem.handler()"
+            [style.top]="(i * 50) + 'px'">
+      {{ menuItem.name }}
+    </button>
+  </ng-container>
 </div>

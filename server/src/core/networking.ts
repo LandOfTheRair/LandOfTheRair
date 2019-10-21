@@ -84,6 +84,7 @@ export class WebsocketWorker {
 
         if (socket.username) {
           this.emit(socket, { type: GameServerEvent.Logout, username: socket.username });
+          this.emit(socket, { type: GameServerEvent.QuitGame, username: socket.username });
         }
 
         /* not sure if I care about any of these at all, really

@@ -1,2 +1,5 @@
 
 <!-- <app-game-container> will contain all of the game windows -->
+<div *ngIf="gameService.inGame$ | async">
+  in game!
+</div>

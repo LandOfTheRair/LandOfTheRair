@@ -7,9 +7,6 @@ export class RollCharacterAction extends ServerAction {
   requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
 
   async act(game: Game, { emit }, data) {
-    const account = await game.accountDB.getAccount(data.username);
-    if (!account) throw new Error(`Not logged in.`);
-
     const { gender, allegiance, baseclass } = data;
     let { slot, name } = data;
 
@@ -28,6 +25,7 @@ export class RollCharacterAction extends ServerAction {
 
     if (name.length < 2) throw new Error('Bad name.');
 
+    const account = data.account;
     const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
 
     emit({

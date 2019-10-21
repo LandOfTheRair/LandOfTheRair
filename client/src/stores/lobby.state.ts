@@ -33,6 +33,16 @@ export class SetCharacterCreateInformation {
   constructor(public charCreateInfo: ICharacterCreateInfo) {}
 }
 
+export class AccountEnterGame {
+  static type = GameAction.ChatUserEnterGame;
+  constructor(public username: string) {}
+}
+
+export class AccountLeaveGame {
+  static type = GameAction.ChatUserLeaveGame;
+  constructor(public username: string) {}
+}
+
 @State<ILobbyContainer>({
   name: 'chat',
   defaults: {
@@ -135,6 +145,32 @@ export class LobbyState {
   @Action(SetCharacterCreateInformation)
   setCharCreateInformation(ctx: StateContext<ILobbyContainer>, { charCreateInfo }: SetCharacterCreateInformation) {
     ctx.patchState({ charCreate:  charCreateInfo });
+  }
+
+  @Action(AccountEnterGame)
+  accountEnterGame(ctx: StateContext<ILobbyContainer>, { username }: AccountEnterGame) {
+    const state = ctx.getState();
+
+    const users = [...state.users];
+    const userIndex = users.findIndex(x => x.username === username);
+    const user = { ...users[userIndex] };
+    user.inGame = true;
+    users[userIndex] = user;
+
+    ctx.patchState({ users });
+  }
+
+  @Action(AccountLeaveGame)
+  accountLeaveGame(ctx: StateContext<ILobbyContainer>, { username }: AccountLeaveGame) {
+    const state = ctx.getState();
+
+    const users = [...state.users];
+    const userIndex = users.findIndex(x => x.username === username);
+    const user = { ...users[userIndex] };
+    user.inGame = false;
+    users[userIndex] = user;
+
+    ctx.patchState({ users });
   }
 
 }

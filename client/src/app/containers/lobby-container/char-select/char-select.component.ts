@@ -45,8 +45,8 @@ export class CharSelectComponent implements OnInit, OnDestroy {
     });
   }
 
-  play(slot: number) {
-    this.socketService.emit(GameServerEvent.PlayCharacter, { slot });
+  play(charSlot: number) {
+    this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot });
   }
 
 }

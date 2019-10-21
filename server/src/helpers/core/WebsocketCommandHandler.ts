@@ -33,6 +33,13 @@ export class WebsocketCommandHandler {
     const broadcast = (args) => emitCallback(null, args);
     const emit = (args) => emitCallback(socketId, args);
 
+    if (action.requiresLoggedIn) {
+      const account = await this.game.accountDB.getAccount(data.username);
+      if (!account) throw new Error(`Not logged in.`);
+
+      data.account = account;
+    }
+
     await action.act(this.game, { broadcast, emit }, data);
   }
 }

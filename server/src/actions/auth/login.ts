@@ -7,6 +7,7 @@ import * as meta from '../../../content/_output/meta.json';
 export class LoginAction extends ServerAction {
   type = GameServerEvent.Login;
   requiredKeys = ['username', 'password'];
+  requiresLoggedIn = false;
 
   async act(game: Game, { broadcast, emit }, data) {
 

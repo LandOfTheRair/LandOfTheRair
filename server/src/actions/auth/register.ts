@@ -7,6 +7,7 @@ import * as meta from '../../../content/_output/meta.json';
 export class RegisterAction extends ServerAction {
   type = GameServerEvent.Register;
   requiredKeys = [];
+  requiresLoggedIn = false;
 
   async act(game: Game, { broadcast, emit }, data) {
 
