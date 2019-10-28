@@ -18,7 +18,7 @@ export class PlayerHelper extends BaseService {
 
     // TODO: modify xpGained for sub
     if (isNaN(xpGained)) throw new Error(`XP gained for ${player.name} is NaN!`);
-    player.exp += Math.max(player.exp + xpGained, 0);
+    player.exp += Math.max(Math.floor(player.exp + xpGained), 0);
 
   }
 
@@ -28,7 +28,7 @@ export class PlayerHelper extends BaseService {
 
     // TODO: modify axpGained for sub
     if (isNaN(axpGained)) throw new Error(`AXP gained for ${player.name} is NaN!`);
-    player.axp = Math.max(player.axp + axpGained, 0);
+    player.axp = Math.max(Math.floor(player.axp + axpGained), 0);
 
   }
 
@@ -72,7 +72,7 @@ export class PlayerHelper extends BaseService {
   public gainCurrency(player: IPlayer, currency: Currency = Currency.Gold, currencyGained: number): void {
     if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${player.name} is NaN!`);
 
-    player.currency[currency] = Math.max((player.currency[currency] ?? 0) + currencyGained, 0);
+    player.currency[currency] = Math.max(Math.floor((player.currency[currency] ?? 0) + currencyGained), 0);
 
   }
 
