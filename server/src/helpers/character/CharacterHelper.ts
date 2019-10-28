@@ -1,8 +1,8 @@
 import { Singleton } from 'typescript-ioc';
-import { CoreStat, ICharacter, Stat } from '../../interfaces';
+import { BaseService, CoreStat, ICharacter, Stat } from '../../interfaces';
 
 @Singleton
-export class CharacterHelper {
+export class CharacterHelper extends BaseService {
 
   public init() {}
 

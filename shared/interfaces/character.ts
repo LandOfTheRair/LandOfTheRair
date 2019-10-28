@@ -1,3 +1,4 @@
+
 import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, ItemSlot, SkillBlock, StatBlock } from './building-blocks';
 import { ISimpleItem } from './item';
 import { IStatusEffect } from './status-effect';
@@ -26,6 +27,9 @@ export interface ICharacter {
   allegiance: Allegiance;
   alignment: Alignment;
   baseClass: BaseClass;
+
+  hp: { maximum: number, minimum: number, __current: number };
+  mp: { maximum: number, minimum: number, __current: number };
 
   gender: 'male'|'female';
   map: string;

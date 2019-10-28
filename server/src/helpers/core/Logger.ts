@@ -1,8 +1,10 @@
 
 import { Singleton } from 'typescript-ioc';
 
+import { BaseService } from '../../interfaces';
+
 @Singleton
-export class Logger {
+export class Logger extends BaseService {
 
   public async init() {}
 

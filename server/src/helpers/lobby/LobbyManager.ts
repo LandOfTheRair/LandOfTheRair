@@ -1,8 +1,10 @@
 
 import { Inject, Singleton } from 'typescript-ioc';
-import { IAccount } from '../../interfaces';
-import { Account } from '../../models';
-import { AccountDB, WorldDB } from '../core/db';
+
+import { BaseService, IAccount } from '../../interfaces';
+import { Account, Player } from '../../models';
+import { WorldDB } from '../core/db';
+import { PlayerManager } from '../game';
 
 class LobbyState {
   users: IAccount[] = [];
@@ -11,9 +13,10 @@ class LobbyState {
 }
 
 @Singleton
-export class LobbyManager {
+export class LobbyManager extends BaseService {
 
   @Inject private worldDB: WorldDB;
+  @Inject private playerManager: PlayerManager;
 
   private state: LobbyState;
 
@@ -61,11 +64,15 @@ export class LobbyManager {
     return this.state.usersInGame[account.username];
   }
 
-  public accountEnterGame(account: Account): void {
+  public accountEnterGame(account: Account, player: Player): void {
     this.state.usersInGame[account.username] = true;
+
+    this.playerManager.addPlayerToGame(player);
   }
 
   public accountLeaveGame(account: Account): void {
     delete this.state.usersInGame[account.username];
+
+    this.playerManager.removePlayerFromGameByAccount(account);
   }
 }

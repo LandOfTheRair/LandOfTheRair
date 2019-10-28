@@ -1,8 +1,10 @@
 import { Inject, Singleton } from 'typescript-ioc';
+
+import { BaseService } from '../../interfaces';
 import { ContentManager } from './ContentManager';
 
 @Singleton
-export class ItemCreator {
+export class ItemCreator extends BaseService {
 
   @Inject private content: ContentManager;
 

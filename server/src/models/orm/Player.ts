@@ -2,6 +2,7 @@
 import { merge } from 'lodash';
 import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
+import { RestrictedNumber } from 'restricted-number';
 import uuid from 'uuid/v4';
 
 import {
@@ -47,6 +48,9 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property() baseClass: BaseClass;
   @Property() gender: 'male'|'female';
 
+  @Property() hp: RestrictedNumber;
+  @Property() mp: RestrictedNumber;
+
   @Property() level: number;
   @Property() highestLevel: number;
   @Property() currency: CharacterCurrency;
@@ -83,8 +87,7 @@ export class Player implements IPlayer, MongoEntity<Player> {
   create() {
     if (!this.uuid) this.uuid = uuid();
 
-    // TODO: waiting for new alpha then this should work (?)
-    // const player = initializePlayer(this);
-    // merge(this, player);
+    const player = initializePlayer(this);
+    merge(this, player);
   }
 }

@@ -1,11 +1,12 @@
 
 import { Inject, Singleton } from 'typescript-ioc';
 
+import { BaseService } from '../../../interfaces';
 import { WorldSettings } from '../../../models';
 import { Database } from '../Database';
 
 @Singleton
-export class WorldDB {
+export class WorldDB extends BaseService {
 
   @Inject private db: Database;
 

@@ -1,6 +1,6 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { GameAction, IGame } from '../models';
+import { GameAction, IGame, IPlayer } from '../models';
 
 export class PlayGame {
   static type = GameAction.GamePlay;
@@ -12,10 +12,26 @@ export class QuitGame {
   constructor() {}
 }
 
+export class SetMap {
+  static type = GameAction.GameSetMap;
+  constructor(public map: any) {}
+}
+
+export class SetPlayer {
+  static type = GameAction.GameSetPlayer;
+  constructor(public player: IPlayer) {}
+}
+
+export class PatchPlayer {
+  static type = GameAction.GamePatchPlayer;
+  constructor(public player: Partial<IPlayer>) {}
+}
+
 const defaultGame: () => IGame = () => {
   return {
     inGame: false,
-    map: {},
+    player: null,
+    map: null,
     npcs: []
   };
 };
@@ -25,6 +41,11 @@ const defaultGame: () => IGame = () => {
   defaults: defaultGame()
 })
 export class GameState {
+
+  @Selector()
+  static player(state: IGame) {
+    return state.player;
+  }
 
   @Selector()
   static inGame(state: IGame) {
@@ -54,5 +75,36 @@ export class GameState {
     const baseState = defaultGame();
 
     ctx.patchState(baseState);
+  }
+
+  @Action(SetMap)
+  setMap(ctx: StateContext<IGame>, { map }: SetMap) {
+    const state = ctx.getState();
+    const copyState = { ...state };
+    copyState.map = map;
+
+    ctx.patchState(copyState);
+  }
+
+  @Action(SetPlayer)
+  setPlayer(ctx: StateContext<IGame>, { player }: SetPlayer) {
+    const state = ctx.getState();
+    const copyState = { ...state };
+    copyState.player = player;
+
+    ctx.patchState(copyState);
+  }
+
+  @Action(PatchPlayer)
+  patchPlayer(ctx: StateContext<IGame>, { player }: PatchPlayer) {
+    const state = ctx.getState();
+    const copyState = { ...state };
+
+    // can't get patches if we're not in game
+    if (!copyState.player) return;
+
+    copyState.player = Object.assign({}, copyState.player, player);
+
+    ctx.patchState(copyState);
   }
 }

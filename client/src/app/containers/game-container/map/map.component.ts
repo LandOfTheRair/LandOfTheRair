@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { GameServerEvent } from '../../../../models';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
@@ -14,6 +15,11 @@ const Phaser = (window as any).Phaser;
 })
 export class MapComponent implements OnInit {
 
+  public map = new BehaviorSubject<any>(null);
+
+  public loadPercent = new BehaviorSubject<number>(0);
+  public loadPercent$ = this.loadPercent.asObservable();
+
   private game: MapRenderGame;
 
   constructor(
@@ -22,15 +28,22 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gameService.inGame$.subscribe(inGame => {
-      if (!inGame) {
-        if (this.game) {
-          this.game.destroy(true);
-        }
-        return;
-      }
 
+    // play game when we get the signal and have a valid map
+    combineLatest(
+      this.gameService.playGame$,
+      this.gameService.currentMap$
+    ).subscribe(([play, map]) => {
+      if (!play || !map) return;
+      this.map.next(map);
       this.initMap();
+    });
+
+    // reset when we get a quit signal
+    this.gameService.quitGame$.subscribe(() => {
+      if (this.game) this.game.destroy(true);
+      this.map.next(null);
+      this.loadPercent.next(0);
     });
   }
 
@@ -52,7 +65,15 @@ export class MapComponent implements OnInit {
       banner: false
     };
 
-    this.game = new MapRenderGame(config);
+    this.game = new MapRenderGame(
+      config,
+      this.gameService,
+      this.socketService,
+      {
+        loadPercent: this.loadPercent,
+        map: this.map
+      }
+    );
   }
 
 }

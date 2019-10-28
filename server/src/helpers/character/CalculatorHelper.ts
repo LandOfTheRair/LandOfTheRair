@@ -1,11 +1,12 @@
 import { Singleton } from 'typescript-ioc';
-import { ICharacter, Skill } from '../../interfaces';
+
+import { BaseService, ICharacter, Skill } from '../../interfaces';
 
 const FIRST_LEVEL_CONSTANT_CHANGER = 19;
 const SKILL_COEFFICIENT = 1.55;
 
 @Singleton
-export class CalculatorHelper {
+export class CalculatorHelper extends BaseService {
 
   public init() {}
 

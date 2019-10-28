@@ -7,6 +7,7 @@ export * from './effect';
 export * from './game';
 export * from './item';
 export * from './lobby';
+export * from './map';
 export * from './npc';
 export * from './player';
 export * from './settings';

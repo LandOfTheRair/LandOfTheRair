@@ -7,6 +7,9 @@
 
             defaultX="100"
             defaultY="100"
+            defaultWidth="576"
+            defaultHeight="608"
+
 ></app-window>
 
 <ng-template #headTemplate>
@@ -14,5 +17,9 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
+  <div class="loader" *ngIf="(loadPercent$ | async) as loadPct">
+    <span *ngIf="loadPct && loadPct !== 100">Loading... {{ loadPct }}%</span>
+  </div>
+
   <div class="map"></div>
 </ng-template>

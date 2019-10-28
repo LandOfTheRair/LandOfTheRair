@@ -5,14 +5,20 @@ import { Inject, Singleton } from 'typescript-ioc';
 import { Database } from './Database';
 import { Logger } from './Logger';
 
+import { GameAction } from '../../interfaces';
 import { CalculatorHelper, CharacterHelper, ItemHelper, NPCHelper, PlayerHelper } from '../character';
 import { ProfanityHelper } from '../chat/ProfanityHelper';
 import { ContentManager, ItemCreator, NPCCreator, WorldManager } from '../data';
+import { PlayerManager } from '../game';
 import { CharacterRoller, LobbyManager } from '../lobby';
 import { AccountDB, CharacterDB, WorldDB } from './db';
+import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
 @Singleton
 export class Game {
+
+  public wsCmdHandler: WebsocketCommandHandler;
+
   @Inject public logger: Logger;
   @Inject public contentManager: ContentManager;
 
@@ -35,9 +41,11 @@ export class Game {
   @Inject public characterHelper: CharacterHelper;
   @Inject public playerHelper: PlayerHelper;
 
+  @Inject public playerManager: PlayerManager;
   @Inject public worldManager: WorldManager;
 
-  public async init() {
+  public async init(wsCmdHandler: WebsocketCommandHandler) {
+    this.wsCmdHandler = wsCmdHandler;
 
     const initOrder = [
       'logger',
@@ -49,12 +57,13 @@ export class Game {
       'itemCreator', 'npcCreator',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
-      'worldManager'
+      'playerManager', 'worldManager'
   ];
 
     for (const i of initOrder) {
       this.logger.log('Game', `Initializing ${i}...`);
       await this[i].init();
+      this[i].game = this;
     }
 
     this.loop();
@@ -66,5 +75,13 @@ export class Game {
     timer.stopTimer('gameloop');
     // timer.dumpTimers();
     setTimeout(() => this.loop(), 100);
+  }
+
+  public sendDataToAccount(username: string, data: any): void {
+    this.wsCmdHandler.sendToSocket(username, data);
+  }
+
+  public sendActionToAccount(username: string, action: GameAction, data: any): void {
+    this.wsCmdHandler.sendToSocket(username, { action, ...data });
   }
 }

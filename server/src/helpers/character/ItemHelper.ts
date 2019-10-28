@@ -1,11 +1,10 @@
-import { get } from 'lodash';
 import { Inject, Singleton } from 'typescript-ioc';
 
-import { IItem, ISimpleItem, Stat } from '../../interfaces';
+import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 @Singleton
-export class ItemHelper {
+export class ItemHelper extends BaseService {
 
   @Inject private content: ContentManager;
 
@@ -28,15 +27,15 @@ export class ItemHelper {
 
   // get an items stat
   public getStat(item: ISimpleItem, stat: Stat): number {
-    const statMod = get(item, `mod.stats.${stat}`, 0);
+    const statMod = item.mods?.stats?.[stat] ?? 0;
 
     const baseItem = this.getItem(item.name);
-    const baseStat = get(baseItem, `stats.${stat}`, 0);
+    const baseStat = baseItem?.stats?.[stat] ?? 0;
 
     let encrustStat = 0;
     if (item.mods.encrustItem) {
       const encrustItem = this.getItem(item.mods.encrustItem);
-      encrustStat = get(encrustItem, `encrustGive.stats.${stat}`, 0);
+      encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
     }
 
     return statMod + baseStat + encrustStat;

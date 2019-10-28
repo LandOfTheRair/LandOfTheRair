@@ -2,12 +2,12 @@
 import bcrypt from 'bcrypt';
 import { Inject, Singleton } from 'typescript-ioc';
 
-import { IAccount } from '../../../interfaces';
+import { BaseService, IAccount } from '../../../interfaces';
 import { Account } from '../../../models';
 import { Database } from '../Database';
 
 @Singleton
-export class AccountDB {
+export class AccountDB extends BaseService {
 
   @Inject private db: Database;
 

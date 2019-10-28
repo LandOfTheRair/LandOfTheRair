@@ -5,10 +5,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
+import { BaseService } from '../../interfaces';
 import { InstancedWorldMap, WorldMap } from '../../models';
 
 @Singleton
-export class WorldManager {
+export class WorldManager extends BaseService {
 
   // live maps
   private maps: { [mapName: string]: WorldMap } = {};

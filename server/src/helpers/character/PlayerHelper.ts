@@ -1,9 +1,9 @@
 import { Singleton } from 'typescript-ioc';
-import { Currency, IPlayer, Skill } from '../../interfaces';
+import { BaseService, Currency, IPlayer, Skill } from '../../interfaces';
 
 
 @Singleton
-export class PlayerHelper {
+export class PlayerHelper extends BaseService {
 
   public init() {}
 

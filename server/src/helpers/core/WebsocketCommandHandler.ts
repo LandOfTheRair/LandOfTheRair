@@ -11,8 +11,12 @@ export class WebsocketCommandHandler {
   @Inject private game: Game;
 
   private actions: { [key: string]: IServerAction } = {};
+  private accountSocketIds: { [username: string]: string } = {};
 
-  public async init() {
+  private emitCallback: (id, data) => void;
+
+  public async init(emitCallback: (id, data) => void) {
+    this.emitCallback = emitCallback;
 
     Object.keys(Actions).forEach(actionKey => {
       const action: IServerAction = new Actions[actionKey]();
@@ -20,18 +24,20 @@ export class WebsocketCommandHandler {
       this.actions[action.type] = action;
     });
 
-    await this.game.init();
+    await this.game.init(this);
   }
 
-  public async doAction(type: GameServerEvent, data: any, socketId: string, emitCallback: (id, args) => void): Promise<void> {
+  public async doAction(type: GameServerEvent, data: any, socketId: string): Promise<void> {
 
     const action = this.actions[type];
     if (!action) throw new Error(`Action type ${type} does not exist.`);
 
     if (!action.validate(data)) throw new Error(`Action type ${type} is not valid with keys ${JSON.stringify(data)}.`);
 
-    const broadcast = (args) => emitCallback(null, args);
-    const emit = (args) => emitCallback(socketId, args);
+    const broadcast = (args) => this.emitCallback(null, args);
+    const emit = (args) => this.emitCallback(socketId, args);
+    const register = (username) => this.registerAccountSocket(username, socketId);
+    const unregister = (username) => this.unregisterAccountSocket(username);
 
     if (action.requiresLoggedIn) {
       const account = await this.game.accountDB.getAccount(data.username);
@@ -40,6 +46,18 @@ export class WebsocketCommandHandler {
       data.account = account;
     }
 
-    await action.act(this.game, { broadcast, emit }, data);
+    await action.act(this.game, { broadcast, emit, register, unregister }, data);
+  }
+
+  public sendToSocket(username: string, data: any): void {
+    this.emitCallback(this.accountSocketIds[username], data);
+  }
+
+  private registerAccountSocket(username: string, socketId: string) {
+    this.accountSocketIds[username] = socketId;
+  }
+
+  private unregisterAccountSocket(username: string) {
+    delete this.accountSocketIds[username];
   }
 }

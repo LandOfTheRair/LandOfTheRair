@@ -6,9 +6,11 @@ export interface IServerResponse {
 }
 
 type EmitterFunction = (id, args) => void;
-interface BroadcastEmit {
-  broadcast?: EmitterFunction;
-  emit?: EmitterFunction;
+interface WebsocketCallbacks {
+  broadcast: EmitterFunction;
+  emit: EmitterFunction;
+  register: (username: string, socketId: string) => void;
+  unregister: (username: string) => void;
 }
 
 export interface IServerAction {
@@ -17,7 +19,7 @@ export interface IServerAction {
   requiresLoggedIn: boolean;
 
   validate(args?): boolean;
-  act(game, { broadcast, emit }: BroadcastEmit, args?): Promise<void>;
+  act(game, { broadcast, emit }: WebsocketCallbacks, args?): Promise<void>;
 }
 
 export enum GameServerEvent {
@@ -59,7 +61,9 @@ export enum GameAction {
 
   GamePlay = '[Game] Play Game',
   GameQuit = '[Game] Quit Game',
-  GameSetMap = '[Game] Set Map'
+  GameSetMap = '[Game] Set Map',
+  GameSetPlayer = '[Game] Set Player',
+  GamePatchPlayer = '[Game] Patch Player'
 }
 
 export enum GameServerResponse {

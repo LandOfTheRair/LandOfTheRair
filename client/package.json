@@ -36,6 +36,7 @@
     "camelize2": "^1.0.0",
     "hammerjs": "^2.0.8",
     "linkifyjs": "^2.1.8",
+    "mikro-orm": "3.0.0-alpha.31",
     "ngxs-reset-plugin": "^1.2.0",
     "phaser": "3.20.1",
     "queueing-subject": "^0.3.4",

@@ -12,7 +12,7 @@ export class ServerAction implements IServerAction {
     return this.requiredKeys.every(key => typeof args[key] !== 'undefined');
   }
 
-  async act(game: Game, { broadcast, emit }, data): Promise<void> {
+  async act(game: Game, { broadcast, emit, register, unregister }, data): Promise<void> {
     emit({ type: GameServerResponse.Error, error: 'No type specified.', data });
   }
 }

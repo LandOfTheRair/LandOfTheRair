@@ -3,7 +3,7 @@ import { initializeCharacter } from './character';
 
 export const initializeNPC = (char: INPC): ICharacter => {
 
-  const baseChar = initializeCharacter(char);
+  const baseChar = initializeCharacter({});
 
   // TODO: owner, aquaticOnly, avoidWater, deathTicks
 

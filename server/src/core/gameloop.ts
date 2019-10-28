@@ -19,7 +19,7 @@ export class GameloopWorker {
       console.error('GAME', `Uncaught Exception`, error);
     });
 
-    await this.wsCommands.init();
+    await this.wsCommands.init((id, data) => this.emit(id, data));
     process.send!({ __ready: true });
   }
 
@@ -28,7 +28,7 @@ export class GameloopWorker {
     const { socketId, type, ...args } = msg;
 
     try {
-      await this.wsCommands.doAction(type, args, socketId, (id, data) => this.emit(id, data));
+      await this.wsCommands.doAction(type, args, socketId);
     } catch (e) {
       this.emit(socketId, { type: GameServerResponse.Error, error: e.message });
     }

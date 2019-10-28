@@ -2,8 +2,10 @@
 import { CensorSensor } from 'censor-sensor';
 import { Singleton } from 'typescript-ioc';
 
+import { BaseService } from '../../interfaces';
+
 @Singleton
-export class ProfanityHelper {
+export class ProfanityHelper extends BaseService {
 
   private censorSensor: CensorSensor;
 

@@ -1,11 +1,11 @@
 import { Inject, Singleton } from 'typescript-ioc';
 
-import { CharacterItems, SkillBlock, StatBlock } from '../../interfaces';
+import { BaseService, CharacterItems, SkillBlock, StatBlock } from '../../interfaces';
 import { CalculatorHelper, ItemHelper } from '../character';
 import { ContentManager } from '../data';
 
 @Singleton
-export class CharacterRoller {
+export class CharacterRoller extends BaseService {
 
   @Inject private contentManager: ContentManager;
   @Inject private calculatorHelper: CalculatorHelper;

@@ -6,7 +6,7 @@ export class LogoutAction extends ServerAction {
   type = GameServerEvent.Logout;
   requiredKeys = ['username'];
 
-  async act(game: Game, { broadcast }, data) {
+  async act(game: Game, { broadcast, unregister }, data) {
     try {
 
       broadcast({
@@ -14,6 +14,7 @@ export class LogoutAction extends ServerAction {
         username: data.username
       });
 
+      unregister(data.username);
       game.lobbyManager.removeAccount(data.username);
 
     } catch (e) {

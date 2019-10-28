@@ -1,10 +1,10 @@
 import fs from 'fs-extra';
 import { Singleton } from 'typescript-ioc';
 
-import { IItem, INPC } from '../../interfaces';
+import { BaseService, IItem, INPC } from '../../interfaces';
 
 @Singleton
-export class ContentManager {
+export class ContentManager extends BaseService {
 
   private charSelect: any;
   public get charSelectData() {

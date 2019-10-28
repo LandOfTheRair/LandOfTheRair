@@ -25,6 +25,7 @@ import { CharSelectComponent } from './containers/lobby-container/char-select/ch
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
+import { GameService } from './game.service';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
@@ -80,7 +81,16 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
       },
       deps: [AssetService],
       multi: true
-    }
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (game: GameService) => () => {
+        game.init();
+        return game;
+      },
+      deps: [GameService],
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

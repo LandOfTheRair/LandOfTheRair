@@ -38,7 +38,7 @@
     "lodash": "4.17.15",
     "logger-timer": "1.0.2",
     "lootastic": "1.1.2",
-    "mikro-orm": "3.0.0-alpha.31",
+    "mikro-orm": "3.0.0-alpha.32",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
     "nodemon": "^1.19.3",
@@ -46,7 +46,7 @@
     "process-stats": "^3.1.1",
     "rbush": "^3.0.1",
     "recursive-readdir": "^2.2.2",
-    "restricted-number": "^2.1.0",
+    "restricted-number": "2.1.0",
     "ts-node": "^8.4.1",
     "typescript-ioc": "^1.2.5",
     "uuid": "^3.3.3"

@@ -2,14 +2,14 @@
 import { Inject, Singleton } from 'typescript-ioc';
 
 import { Reference } from 'mikro-orm';
-import { initializePlayer } from '../../../interfaces';
+import { BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { CharacterItems } from '../../../models/orm/CharacterItems';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
 @Singleton
-export class CharacterDB {
+export class CharacterDB extends BaseService {
 
   @Inject private db: Database;
 

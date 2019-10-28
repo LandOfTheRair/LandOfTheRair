@@ -9,7 +9,7 @@ export class RegisterAction extends ServerAction {
   requiredKeys = [];
   requiresLoggedIn = false;
 
-  async act(game: Game, { broadcast, emit }, data) {
+  async act(game: Game, { broadcast, emit, register }, data) {
 
     if (!data.username) throw new Error('Must specify username.');
     if (data.username.length < 2) throw new Error('Username must be >2 characters.');
@@ -40,6 +40,7 @@ export class RegisterAction extends ServerAction {
         user: simpleAccount
       });
 
+      register(data.username);
       game.lobbyManager.addAccount(res);
 
       emit({

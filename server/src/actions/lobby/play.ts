@@ -25,12 +25,11 @@ export class PlayAction extends ServerAction {
     if (!map) {
       map = game.worldManager.getMap('Tutorial');
 
-      // TODO: how do I send this update to the client
       player.x = 14;
       player.y = 14;
     }
 
-    game.lobbyManager.accountEnterGame(data.account);
+    game.lobbyManager.accountEnterGame(data.account, player);
 
     broadcast({
       action: GameAction.ChatUserEnterGame,
