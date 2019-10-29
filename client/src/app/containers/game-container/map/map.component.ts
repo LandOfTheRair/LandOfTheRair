@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { GameServerEvent } from '../../../../models';
+import { GameServerEvent, IPlayer } from '../../../../models';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 import { MapRenderGame, MapScene, PreloadScene } from './phasergame';
@@ -16,6 +16,7 @@ const Phaser = (window as any).Phaser;
 export class MapComponent implements OnInit {
 
   public map = new BehaviorSubject<any>(null);
+  public currentPlayer = new BehaviorSubject<IPlayer>(null);
 
   public loadPercent = new BehaviorSubject<number>(0);
   public loadPercent$ = this.loadPercent.asObservable();
@@ -24,7 +25,8 @@ export class MapComponent implements OnInit {
 
   constructor(
     private gameService: GameService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private zone: NgZone
   ) { }
 
   ngOnInit() {
@@ -32,11 +34,16 @@ export class MapComponent implements OnInit {
     // play game when we get the signal and have a valid map
     combineLatest(
       this.gameService.playGame$,
+      this.gameService.currentPlayer$,
       this.gameService.currentMap$
-    ).subscribe(([play, map]) => {
-      if (!play || !map) return;
+    ).subscribe(([play, player, map]) => {
+      if (!play || !player || !map) return;
       this.map.next(map);
-      this.initMap();
+      this.currentPlayer.next(player);
+
+      this.zone.runOutsideAngular(() => {
+        this.initMap();
+      });
     });
 
     // reset when we get a quit signal
@@ -71,6 +78,7 @@ export class MapComponent implements OnInit {
       this.socketService,
       {
         loadPercent: this.loadPercent,
+        player: this.currentPlayer,
         map: this.map
       }
     );

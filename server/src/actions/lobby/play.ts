@@ -22,9 +22,10 @@ export class PlayAction extends ServerAction {
     const mapName = player.map;
 
     let map: WorldMap = game.worldManager.getMap(mapName);
-    if (!map) {
+    if (!map || !player.x || !player.y || isNaN(player.x) || isNaN(player.y)) {
       map = game.worldManager.getMap('Tutorial');
 
+      player.map = 'Tutorial';
       player.x = 14;
       player.y = 14;
     }

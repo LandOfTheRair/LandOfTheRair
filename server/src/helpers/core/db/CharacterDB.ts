@@ -5,6 +5,7 @@ import { Reference } from 'mikro-orm';
 import { BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { CharacterItems } from '../../../models/orm/CharacterItems';
+import { PlayerHelper } from '../../character';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -14,6 +15,7 @@ export class CharacterDB extends BaseService {
   @Inject private db: Database;
 
   @Inject private characterRoller: CharacterRoller;
+  @Inject private playerHelper: PlayerHelper;
 
   public async init() {}
 
@@ -47,6 +49,8 @@ export class CharacterDB extends BaseService {
     Object.keys(characterDetails.items).forEach(itemSlot => {
       items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
+
+    this.playerHelper.migrate(player);
 
     account.players.add(player);
     await this.db.save(account);

@@ -1,11 +1,22 @@
+import { wrap } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
-import { BaseService, Currency, IPlayer, Skill } from '../../interfaces';
+import uuid from 'uuid/v4';
+
+import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill } from '../../interfaces';
 
 
 @Singleton
 export class PlayerHelper extends BaseService {
 
   public init() {}
+
+  public migrate(player: IPlayer): void {
+    if (!player.uuid) player.uuid = uuid();
+    if (!player.dir) player.dir = Direction.South;
+
+    const playerPristine = initializePlayer(player);
+    wrap(player).assign(playerPristine, { mergeObjects: true });
+  }
 
   // flag a certain skill for a player
   public flagSkill(player: IPlayer, skill: Skill|Skill[]): void {

@@ -50,6 +50,8 @@ export class LobbyManager extends BaseService {
     const firstInst = this.state.users.findIndex(x => x.username === username);
     this.state.users.splice(firstInst, 1);
 
+    delete this.state.usersInGame[username];
+
     this.rebuildUserHash();
   }
 

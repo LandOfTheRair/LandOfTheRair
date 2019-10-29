@@ -1,13 +1,12 @@
 
-import { merge } from 'lodash';
-import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, OnInit, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
+import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne,
+  PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 import { RestrictedNumber } from 'restricted-number';
-import uuid from 'uuid/v4';
 
 import {
-  Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, initializePlayer,
-  IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY, PROP_TEMPORARY, SkillBlock, StatBlock
+  Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction,
+  IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock
 } from '../../interfaces';
 
 import { Account } from './Account';
@@ -25,10 +24,11 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();
 
   // temporary props
-  @Property(PROP_TEMPORARY()) dir = Direction.South;
+  @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
+  @Property(PROP_UNSAVED_SHARED()) swimLevel = 0;
+
   @Property(PROP_TEMPORARY()) agro = {};
   @Property(PROP_TEMPORARY()) combatTicks = 0;
-  @Property(PROP_TEMPORARY()) swimLevel = 0;
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
   @Property(PROP_TEMPORARY()) actionQueue = { fast: [], slow: [] };
@@ -82,12 +82,4 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property() learnedSpells: { [spellName: string]: LearnedSpell };
 
   @Property() respawnPoint: { x: number, y: number, map: string };
-
-  @OnInit()
-  create() {
-    if (!this.uuid) this.uuid = uuid();
-
-    const player = initializePlayer(this);
-    merge(this, player);
-  }
 }

@@ -4,18 +4,24 @@ import { Inject, Singleton } from 'typescript-ioc';
 
 import { BaseService, IAccount } from '../../../interfaces';
 import { Account } from '../../../models';
+import { PlayerHelper } from '../../character';
 import { Database } from '../Database';
 
 @Singleton
 export class AccountDB extends BaseService {
 
   @Inject private db: Database;
+  @Inject private playerHelper: PlayerHelper;
 
   public async init() {}
 
   public async getAccount(username: string): Promise<Account | null> {
-    const account = await this.db.em.getRepository<Account>(Account).findOne({ username }, ['players']);
+    const account = await this.db.em.getRepository<Account>(Account).findOne({ username });
     await account?.players.init();
+
+    for (const player of account!.players) {
+      this.playerHelper.migrate(player);
+    }
 
     return account;
   }

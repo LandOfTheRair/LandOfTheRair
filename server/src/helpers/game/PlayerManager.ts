@@ -1,3 +1,4 @@
+import { wrap } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
 
 import { BaseService, GameAction } from '../../interfaces';
@@ -14,7 +15,9 @@ export class PlayerManager extends BaseService {
     const username = await player.account.get('username');
     this.inGamePlayers[username] = player;
 
-    this.game.sendActionToAccount(username, GameAction.GameSetPlayer, { player });
+    // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
+    const sendPlayer = await wrap(player).toObject();
+    this.game.sendActionToAccount(username, GameAction.GameSetPlayer, { player: sendPlayer });
   }
 
   public async removePlayerFromGame(player: Player) {

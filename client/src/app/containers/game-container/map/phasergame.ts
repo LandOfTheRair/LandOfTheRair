@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Allegiance, Direction, IPlayer } from '../../../../models';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
@@ -64,11 +64,19 @@ export class MapScene extends Phaser.Scene {
   // the current map in JSON form
   private tiledMapData: any;
 
+  private allSprites = {};
+
+  private playerUpdate$: Subscription;
+
   // the currently visible creatures
-  private visibleCreatures = {};
+  // private visibleCreatures = {};
 
   constructor() {
     super({ key: 'MapScene' });
+  }
+
+  private destroy() {
+    if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
   }
 
   private basePlayerSprite(player: IPlayer) {
@@ -108,6 +116,7 @@ export class MapScene extends Phaser.Scene {
       case Direction.East:   return 2;
       case Direction.North:  return 3;
       case Direction.Corpse: return 4;
+      default:               return 0;
     }
   }
 
@@ -118,6 +127,7 @@ export class MapScene extends Phaser.Scene {
       case Direction.East:   return 36;
       case Direction.North:  return 12;
       case Direction.Corpse: return 60;
+      default:               return 60;
     }
   }
 
@@ -139,14 +149,21 @@ export class MapScene extends Phaser.Scene {
 
     }
 
-    sprite.x = this.convertPosition(player.x);
-    sprite.y = this.convertPosition(player.y);
+    sprite.x = this.convertPosition(player.x, true);
+    sprite.y = this.convertPosition(player.y, true);
 
     if (sprite.key !== newKey) {
       sprite.setTexture(newKey);
     }
 
-    sprite.frame = newFrame;
+    sprite.setFrame(newFrame);
+  }
+
+  public updatePlayerSprite(player: IPlayer) {
+    const sprite = this.allSprites[player.uuid];
+    if (!sprite) return;
+
+    this.updatePlayerSpriteData(sprite, player);
   }
 
   private createPlayerSprite(player: IPlayer) {
@@ -157,6 +174,8 @@ export class MapScene extends Phaser.Scene {
       this.convertPosition(player.x), this.convertPosition(player.y),
       'Creatures', spriteGenderBase + directionOffset
     );
+
+    this.allSprites[player.uuid] = sprite;
 
     this.updatePlayerSpriteData(sprite, player);
 
@@ -220,13 +239,18 @@ export class MapScene extends Phaser.Scene {
     this.loadObjectLayer(map.objects[2]);
     this.loadObjectLayer(map.objects[3]);
 
-    // create the 5 interactable layers
+    const player = this.game.observables.player.getValue();
 
-    this.cameras.main.centerOn(this.convertPosition(14, true), this.convertPosition(14, true));
+    this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
 
-    console.log(map);
+    this.createPlayerSprite(player);
 
-    // this.createPlayerSprite();
+    this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
+      this.updatePlayerSprite(updPlayer);
+    });
+
+    // TODO: this doesn't work
+    this.events.on('destroy', () => this.destroy());
 
     // TODO: adjust if this sprite is visible based on visibility
     // TODO: if sprite is visible but stealthed, set an alpha of 0.7
@@ -245,6 +269,7 @@ export class MapRenderGame extends Phaser.Game {
     public socketService: SocketService,
     public observables: {
       loadPercent: BehaviorSubject<number>,
+      player: BehaviorSubject<IPlayer>,
       map: BehaviorSubject<any>
     }
     ) {

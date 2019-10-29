@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { IAccount, ICharacterCreateInfo } from '../models';
+import { IAccount, ICharacterCreateInfo, IPlayer } from '../models';
 import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
 
 @Injectable({
@@ -19,6 +19,7 @@ export class GameService {
   }
 
   @Select(GameState.inGame) inGame$: Observable<boolean>;
+  @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
   @Select(GameState.map) currentMap$: Observable<any>;
   @Select(AccountState.loggedIn) loggedIn$: Observable<boolean>;
   @Select(AccountState.account) account$: Observable<IAccount>;
