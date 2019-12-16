@@ -249,7 +249,6 @@ export class MapScene extends Phaser.Scene {
       this.updatePlayerSprite(updPlayer);
     });
 
-    // TODO: this doesn't work
     this.events.on('destroy', () => this.destroy());
 
     // TODO: adjust if this sprite is visible based on visibility

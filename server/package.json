@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/landoftherair/core2#readme",
   "dependencies": {
-    "@clusterws/cws": "^0.15.2",
+    "@clusterws/cws": "0.16.0",
     "bcrypt": "^3.0.6",
     "censor-sensor": "^1.0.5",
     "dotenv": "^8.1.0",
