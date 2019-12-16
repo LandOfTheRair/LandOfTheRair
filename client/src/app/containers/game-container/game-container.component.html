@@ -1,5 +1,5 @@
 
 <!-- <app-game-container> will contain all of the game windows -->
-<div [class.hidden]="!(gameService.inGame$ | async)">
+<div [class.hidden]="(gameService.inGame$ | async) === false">
   <app-map></app-map>
 </div>

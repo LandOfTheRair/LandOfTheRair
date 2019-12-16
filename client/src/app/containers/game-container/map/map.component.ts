@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { GameServerEvent, IPlayer } from '../../../../models';
