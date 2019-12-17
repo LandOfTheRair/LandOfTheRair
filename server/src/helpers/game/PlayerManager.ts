@@ -1,8 +1,8 @@
 import { wrap } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
-
 import { BaseService, GameAction } from '../../interfaces';
 import { Account, Player } from '../../models';
+
 
 @Singleton
 export class PlayerManager extends BaseService {
@@ -10,6 +10,10 @@ export class PlayerManager extends BaseService {
   private inGamePlayers: { [account: string]: Player } = {};
 
   public init() {}
+
+  public getPlayerInGame(account: Account): Player {
+    return this.inGamePlayers[account.username];
+  }
 
   public async addPlayerToGame(player: Player) {
     const username = await player.account.get('username');
@@ -31,6 +35,26 @@ export class PlayerManager extends BaseService {
     delete this.inGamePlayers[account.username];
 
     this.game.sendActionToAccount(account.username, GameAction.GameSetPlayer, { player: null });
+  }
+
+  private tick(type: 'slow'|'fast') {
+    Object.values(this.inGamePlayers).forEach(player => {
+      const queue = player.actionQueue[type] || [];
+
+      console.log(queue);
+
+      queue.forEach(command => {
+        // TODO: do command
+      });
+    });
+  }
+
+  public fastTick() {
+    this.tick('fast');
+  }
+
+  public slowTick() {
+    this.tick('slow');
   }
 
 }

@@ -1,21 +1,23 @@
 
 import { LoggerTimer } from 'logger-timer';
 import { Inject, Singleton } from 'typescript-ioc';
-
-import { Database } from './Database';
-import { Logger } from './Logger';
-
 import { GameAction } from '../../interfaces';
 import { CalculatorHelper, CharacterHelper, ItemHelper, NPCHelper, PlayerHelper } from '../character';
 import { ProfanityHelper } from '../chat/ProfanityHelper';
 import { ContentManager, ItemCreator, NPCCreator, WorldManager } from '../data';
-import { PlayerManager } from '../game';
+import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { CharacterRoller, LobbyManager } from '../lobby';
+import { Database } from './Database';
 import { AccountDB, CharacterDB, WorldDB } from './db';
+import { Logger } from './Logger';
 import { WebsocketCommandHandler } from './WebsocketCommandHandler';
+
+
 
 @Singleton
 export class Game {
+
+  private ticksElapsed = 0;
 
   public wsCmdHandler: WebsocketCommandHandler;
 
@@ -41,6 +43,9 @@ export class Game {
   @Inject public characterHelper: CharacterHelper;
   @Inject public playerHelper: PlayerHelper;
 
+  @Inject public messageHelper: MessageHelper;
+  @Inject public commandHandler: CommandHandler;
+
   @Inject public playerManager: PlayerManager;
   @Inject public worldManager: WorldManager;
 
@@ -57,6 +62,7 @@ export class Game {
       'itemCreator', 'npcCreator',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
+      'commandHandler', 'messageHelper',
       'playerManager', 'worldManager'
   ];
 
@@ -72,8 +78,23 @@ export class Game {
   public loop() {
     const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production' });
     timer.startTimer('gameloop');
+
+    if (this.ticksElapsed % 2 === 0) {
+      timer.startTimer('fastTick');
+      this.playerManager.fastTick();
+      timer.stopTimer('fastTick');
+    }
+
+    if (this.ticksElapsed % 20 === 0) {
+      timer.startTimer('slowTick');
+      this.playerManager.slowTick();
+      timer.stopTimer('slowTick');
+    }
+
     timer.stopTimer('gameloop');
     // timer.dumpTimers();
+
+    this.ticksElapsed++;
     setTimeout(() => this.loop(), 100);
   }
 

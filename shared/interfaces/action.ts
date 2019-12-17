@@ -5,7 +5,8 @@ export interface IServerResponse {
   data?: any;
 }
 
-type EmitterFunction = (id, args) => void;
+export type EmitterFunction = (id, args) => void;
+
 interface WebsocketCallbacks {
   broadcast: EmitterFunction;
   emit: EmitterFunction;
@@ -39,7 +40,9 @@ export enum GameServerEvent {
 
   Chat = 'Chat:Emit:SendMessage',
 
-  QuitGame = 'Game:Emit:QuitGame'
+  QuitGame = 'Game:Emit:QuitGame',
+
+  DoCommand = 'Game:Emit:DoCommand'
 }
 
 export enum GameAction {
@@ -76,5 +79,7 @@ export enum GameServerResponse {
   Chat = 'Chat:Response:Message',
 
   CharacterCreateInformation = 'Creator:Response:CharacterSelect',
-  CharacterCreate = 'Creator:Response:CharacterCreate'
+  CharacterCreate = 'Creator:Response:CharacterCreate',
+
+  GameLog = 'Game:Response:Message'
 }
