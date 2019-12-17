@@ -59,6 +59,7 @@ export enum GameAction {
   ChatUserLeaveGame = '[Chat] User Leave Game',
 
   SettingsSetAssetHash = '[Settings] Set server asset hash',
+  SettingsSetChatMode = '[Settings] Set Chat Mode',
 
   SetCharacterCreateInformation = '[CharSelect] Set Create Info',
 
@@ -66,7 +67,9 @@ export enum GameAction {
   GameQuit = '[Game] Quit Game',
   GameSetMap = '[Game] Set Map',
   GameSetPlayer = '[Game] Set Player',
-  GamePatchPlayer = '[Game] Patch Player'
+  GamePatchPlayer = '[Game] Patch Player',
+
+  SetCurrentCommand = '[Game] Set Current Command'
 }
 
 export enum GameServerResponse {

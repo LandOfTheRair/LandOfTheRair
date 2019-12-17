@@ -1,14 +1,9 @@
 
-import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne,
-  PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
+import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 import { RestrictedNumber } from 'restricted-number';
-
-import {
-  Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction,
-  IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock
-} from '../../interfaces';
-
+import { Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
+  PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { CharacterItems } from './CharacterItems';
 
@@ -31,7 +26,7 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_TEMPORARY()) combatTicks = 0;
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
-  @Property(PROP_TEMPORARY()) actionQueue = { fast: [], slow: [] };
+  @Property(PROP_TEMPORARY()) actionQueue: { fast: Array<() => void>, slow: Array<() => void> } = { fast: [], slow: [] };
   @Property(PROP_TEMPORARY()) lastRegion = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;

@@ -1,12 +1,16 @@
 import { Game } from '../../helpers';
-import { ICharacter, IGame, IMacroCommand, IMacroCommandArgs, IPlayer } from '../../interfaces';
+import { ICharacter, IMacroCommand, IMacroCommandArgs, IPlayer } from '../../interfaces';
 
 export abstract class MacroCommand implements IMacroCommand {
-  abstract name: string[];
+
+  abstract aliases: string[];
+  canBeInstant = false;
   canBeFast = false;
 
-  protected sendMessage(game: IGame, character: ICharacter, message: string): void {
-    (game as unknown as Game).messageHelper.sendMessage(character, message);
+  constructor(protected game: Game) {}
+
+  protected sendMessage(character: ICharacter, message: string): void {
+    this.game.messageHelper.sendMessage(character, message);
   }
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void {}

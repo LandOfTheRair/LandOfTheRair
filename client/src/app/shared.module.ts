@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
@@ -25,7 +26,8 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
-  MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule
+  MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule,
+  MatSelectModule
 ];
 
 const declarations = [

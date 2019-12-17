@@ -1,0 +1,16 @@
+
+
+
+.cmd-container {
+  display: flex;
+
+  .mode-select {
+    width: 100px;
+    margin-left: 10px;
+  }
+
+  .text-entry {
+    width: 100%;
+    margin-left: 10px;
+  }
+}

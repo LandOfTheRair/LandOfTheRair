@@ -2,7 +2,8 @@ import { wrap } from 'mikro-orm';
 import { Singleton } from 'typescript-ioc';
 import uuid from 'uuid/v4';
 
-import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill } from '../../interfaces';
+import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill, Stat } from '../../interfaces';
+import { Player } from '../../models';
 
 
 @Singleton
@@ -10,12 +11,18 @@ export class PlayerHelper extends BaseService {
 
   public init() {}
 
-  public migrate(player: IPlayer): void {
+  public migrate(player: Player): void {
     if (!player.uuid) player.uuid = uuid();
     if (!player.dir) player.dir = Direction.South;
+    if (!player.actionQueue) player.actionQueue = { fast: [], slow: [] };
 
     const playerPristine = initializePlayer(player);
     wrap(player).assign(playerPristine, { mergeObjects: true });
+  }
+
+  // get a stat from a player, or 0
+  public getStat(player: IPlayer, stat: Stat): number {
+    return player.stats[stat] || 0;
   }
 
   // flag a certain skill for a player

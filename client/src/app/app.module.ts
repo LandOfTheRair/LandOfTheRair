@@ -2,22 +2,18 @@ import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { AppComponent } from './app.component';
-
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
-
-import { AssetService } from './asset.service';
-import { SocketService } from './socket.service';
-
+import { environment } from '../environments/environment';
 import * as AllStores from '../stores';
+import { AppComponent } from './app.component';
+import { AssetService } from './asset.service';
+import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
 import { MapComponent } from './containers/game-container/map/map.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
@@ -29,6 +25,7 @@ import { GameService } from './game.service';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
+import { SocketService } from './socket.service';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
@@ -43,7 +40,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     LobbyComponent,
     CharSelectComponent,
     CharCreateComponent,
-    MapComponent
+    MapComponent,
+    CommandLineComponent
   ],
   imports: [
     HttpClientModule,

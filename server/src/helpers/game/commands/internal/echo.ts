@@ -3,11 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class Echo extends MacroCommand {
 
-  name = ['echo'];
+  aliases = ['echo'];
+  canBeInstant = true;
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    this.sendMessage(args.game, player, `test`);
+    this.sendMessage(player, args.stringArgs);
   }
 
 }

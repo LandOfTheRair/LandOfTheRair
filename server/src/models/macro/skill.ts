@@ -13,7 +13,7 @@ const DefaultMacroMetadata: IMacroMetadata = {
 // TODO: https://github.com/LandOfTheRair/landoftherair/blob/master/src/server/base/Skill.ts
 export class MacroSkill extends MacroCommand implements IMacroSkill {
 
-  name = [];
+  aliases = [];
 
   metadata = DefaultMacroMetadata;
   targetsFriendly = false;

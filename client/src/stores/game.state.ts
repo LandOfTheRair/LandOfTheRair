@@ -1,6 +1,6 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-
 import { GameAction, IGame, IPlayer } from '../models';
+
 
 export class PlayGame {
   static type = GameAction.GamePlay;

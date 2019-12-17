@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup": "npm i && node scripts/setup",
-    "start:dev": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\"",
-    "start:dev:single": "nodemon --ignore \"dist/*\" --ignore \"*.json\" --exec \"ts-node \" -- \"src/core/index.ts\" --single-core",
+    "start:dev": "ts-node-dev --respawn --transpile-only --exit-child --debounce --clear src/core/index.ts",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc"
   },
@@ -15,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/landoftherair/core2.git"
+    "url": "git+https://github.com/landoftherair/lotr2.git"
   },
   "author": "Kyle Kemp <kyle@seiyria.com>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/landoftherair/core2/issues"
+    "url": "https://github.com/landoftherair/lotr2/issues"
   },
-  "homepage": "https://github.com/landoftherair/core2#readme",
+  "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
     "@clusterws/cws": "0.16.0",
     "bcrypt": "^3.0.6",
@@ -40,7 +39,6 @@
     "mikro-orm": "3.0.0-alpha.32",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
-    "nodemon": "^1.19.3",
     "notepack.io": "^2.2.0",
     "process-stats": "^3.1.1",
     "rbush": "^3.0.1",
@@ -51,8 +49,10 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
+    "@types/mongodb": "3.3.13",
     "@types/node": "^12.7.11",
     "codelyzer": "^5.1.2",
+    "ts-node-dev": "1.0.0-pre.44",
     "tslint": "^5.20.0",
     "typescript": "^3.7.0-beta"
   }

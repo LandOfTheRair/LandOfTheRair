@@ -1,7 +1,7 @@
 
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameAction } from '../../../shared/interfaces';
-import { ISettings } from '../models';
+import { ChatMode, ISettings } from '../models';
 import { Login, Logout } from './account.state';
 
 export class AddAccount {
@@ -38,6 +38,16 @@ export class SetAssetHash {
   constructor(public assetHash: string) {}
 }
 
+export class SetChatMode {
+  static type = GameAction.SettingsSetChatMode;
+  constructor(public chatMode: ChatMode) {}
+}
+
+export class SetCurrentCommand {
+  static type = GameAction.SetCurrentCommand;
+  constructor(public command: string) {}
+}
+
 const defaultSettings: () => ISettings = () => {
   return {
     accounts: [],
@@ -45,7 +55,9 @@ const defaultSettings: () => ISettings = () => {
     activeWindow: '',
     charSlot: 0,
     wasKicked: false,
-    assetHash: ''
+    assetHash: '',
+    chatMode: 'cmd',
+    currentCommand: ''
   };
 };
 
@@ -54,6 +66,11 @@ const defaultSettings: () => ISettings = () => {
   defaults: defaultSettings()
 })
 export class SettingsState implements NgxsOnInit {
+
+  @Selector()
+  static currentCommand(state: ISettings) {
+    return state.currentCommand;
+  }
 
   @Selector()
   static autologin(state: ISettings) {
@@ -88,6 +105,11 @@ export class SettingsState implements NgxsOnInit {
   @Selector()
   static assetHash(state: ISettings) {
     return state.assetHash;
+  }
+
+  @Selector()
+  static chatMode(state: ISettings) {
+    return state.chatMode;
   }
 
   ngxsOnInit(ctx: StateContext<ISettings>) {
@@ -158,6 +180,16 @@ export class SettingsState implements NgxsOnInit {
   @Action(SetCharSlot)
   setCharSlot(ctx: StateContext<ISettings>, { charSlot }: SetCharSlot) {
     ctx.patchState({ charSlot });
+  }
+
+  @Action(SetChatMode)
+  setChatMode(ctx: StateContext<ISettings>, { chatMode }: SetChatMode) {
+    ctx.patchState({ chatMode });
+  }
+
+  @Action(SetCurrentCommand)
+  setCurrentCommand(ctx: StateContext<ISettings>, { command }: SetCurrentCommand) {
+    ctx.patchState({ currentCommand: command });
   }
 
 }

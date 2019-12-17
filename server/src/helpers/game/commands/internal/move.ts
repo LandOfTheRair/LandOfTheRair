@@ -1,6 +1,6 @@
 import { MacroCommand } from '../../../../models/macro';
 
 export class Move extends MacroCommand {
-  name = ['move'];
+  aliases = ['move'];
   canBeFast = true;
 }

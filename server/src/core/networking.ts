@@ -121,6 +121,8 @@ export class WebsocketWorker {
 
   // broadcast to all sockets
   private broadcast(data) {
+    if (!this.wsServer) return;
+
     const sendMessage = this.transformData(data);
     this.wsServer.broadcast(sendMessage);
   }

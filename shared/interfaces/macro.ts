@@ -1,16 +1,15 @@
 import { ICharacter } from './character';
-import { IGame } from './game';
 import { IPlayer } from './player';
 
 export interface IMacroCommandArgs {
-  game: IGame;
-
-  emit: (id, args) => void;
+  stringArgs: string;
+  arrayArgs: string[];
 }
 
 export interface IMacroCommand {
-  name: string[];
+  aliases: string[];
   canBeFast: boolean;
+  canBeInstant: boolean;
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void;
 }

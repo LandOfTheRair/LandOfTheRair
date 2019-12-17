@@ -68,8 +68,8 @@ export class Game {
 
     for (const i of initOrder) {
       this.logger.log('Game', `Initializing ${i}...`);
-      await this[i].init();
       this[i].game = this;
+      await this[i].init();
     }
 
     this.loop();

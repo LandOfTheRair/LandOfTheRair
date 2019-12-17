@@ -8,8 +8,6 @@ import { WebsocketCommandHandler } from '../core';
 @Singleton
 export class MessageHelper extends BaseService {
 
-  @Inject websocketCommandHandler: WebsocketCommandHandler;
-
   public init() {}
 
   public async sendMessage(player: ICharacter, message: string): Promise<void> {
@@ -17,7 +15,7 @@ export class MessageHelper extends BaseService {
     const account = (player as Player).account;
     if (!account) return;
 
-    this.websocketCommandHandler.sendToSocket(await account.get('username'), {
+    this.game.wsCmdHandler.sendToSocket(await account.get('username'), {
       type: GameServerResponse.GameLog,
       message
     });

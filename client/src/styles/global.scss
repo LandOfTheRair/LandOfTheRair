@@ -48,3 +48,23 @@ mat-dialog-actions {
     align-items: center;
   }
 }
+
+// custom material overrides for in-game
+.game {
+
+  // these are free child elements
+  .mat-form-field-infix {
+    border-top: 0;
+  }
+  
+  .mat-form-field-underline {
+    display: none;
+  }
+  
+  // these are panels
+  &.mat-select-panel .mat-option {
+    height: 32px;
+    line-height: 32px;
+  }
+
+}

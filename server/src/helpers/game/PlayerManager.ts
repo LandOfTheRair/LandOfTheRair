@@ -1,11 +1,14 @@
 import { wrap } from 'mikro-orm';
-import { Singleton } from 'typescript-ioc';
-import { BaseService, GameAction } from '../../interfaces';
+import { Inject, Singleton } from 'typescript-ioc';
+import { BaseService, GameAction, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
+import { PlayerHelper } from '../character';
 
 
 @Singleton
 export class PlayerManager extends BaseService {
+
+  @Inject private playerHelper: PlayerHelper;
 
   private inGamePlayers: { [account: string]: Player } = {};
 
@@ -39,13 +42,18 @@ export class PlayerManager extends BaseService {
 
   private tick(type: 'slow'|'fast') {
     Object.values(this.inGamePlayers).forEach(player => {
+      if (!player.actionQueue) return;
+
       const queue = player.actionQueue[type] || [];
 
-      console.log(queue);
+      const actions = type === 'fast' ? 1 : (this.playerHelper.getStat(player, Stat.ActionSpeed) || 1);
 
-      queue.forEach(command => {
-        // TODO: do command
-      });
+      for (let i = 0; i < actions; i++) {
+        const command = queue.shift();
+        if (!command) continue;
+
+        command();
+      }
     });
   }
 
