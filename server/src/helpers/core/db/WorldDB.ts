@@ -22,7 +22,7 @@ export class WorldDB extends BaseService {
 
   public async loadSettings() {
     this.settings = await this.db.em.getRepository<WorldSettings>(WorldSettings)
-      .findOne({ _id: { $exists: true }}) as WorldSettings;
+      .findOne({ _id: { $exists: true } } as any) as WorldSettings;
     if (!this.settings) {
       this.settings = new WorldSettings();
       this.settings.motd = 'Welcome to Land of the Rair!';
