@@ -9,7 +9,7 @@ export type ChatMode = 'cmd' | 'say' | 'global' | 'party';
 
 export interface ISettings {
   accounts: IAccountSettings[];
-  windows: { [key: string]: { x: number, y: number, width: number, height: number } };
+  windows: { [key: string]: { x: number, y: number, width: number, height: number, hidden?: boolean } };
   activeWindow: string;
   charSlot: number;
   wasKicked: boolean;

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@an
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SetActiveWindow, SettingsState, UpdateWindowPosition } from '../../../stores';
+import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from '../../../stores';
 
 // TODO: resize
 
@@ -12,6 +12,7 @@ import { SetActiveWindow, SettingsState, UpdateWindowPosition } from '../../../s
   <div *ngIf="(window$ | async) as windowProps">
     <div class="window"
         [class.active]="(activeWindow$ | async) === windowName"
+        [class.hidden]="windowProps.hidden"
         [class.minimized]="minimized"
 
         [style.top]="windowProps.y + 'px'"
@@ -114,6 +115,7 @@ export class WindowComponent implements OnInit {
 
   hideWindow() {
     this.hide.next();
+    this.store.dispatch(new HideWindow(this.windowName));
   }
 
   async makeActive() {

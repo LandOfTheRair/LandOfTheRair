@@ -18,9 +18,19 @@ export class UpdateWindowPosition {
   static type = '[Settings] Update window position';
   constructor(
     public windowName: string,
-    public windowProps: { x?: number, y?: number, width?: number, height?: number },
+    public windowProps: { x?: number, y?: number, width?: number, height?: number, hidden?: boolean },
     public overwrite?: boolean
   ) {}
+}
+
+export class HideWindow {
+  static type = '[Settings] Hide Window';
+  constructor(public windowName: string) {}
+}
+
+export class ShowWindow {
+  static type = '[Settings] Show Window';
+  constructor(public windowName: string) {}
 }
 
 export class SetActiveWindow {
@@ -57,7 +67,8 @@ const defaultSettings: () => ISettings = () => {
     wasKicked: false,
     assetHash: '',
     chatMode: 'cmd',
-    currentCommand: ''
+    currentCommand: '',
+    commandHistory: []
   };
 };
 
@@ -169,6 +180,28 @@ export class SettingsState implements NgxsOnInit {
     if (!windows[windowName] || overwrite) {
       windows[windowName] = Object.assign({}, windows[windowName], windowProps);
     }
+    ctx.patchState({ windows });
+  }
+
+  @Action(ShowWindow)
+  showWindow(ctx: StateContext<ISettings>, { windowName }: ShowWindow) {
+    const state = ctx.getState();
+    const windows = { ...state.windows };
+    if (windows[windowName]) {
+      windows[windowName] = Object.assign({}, windows[windowName], { hidden: false });
+    }
+
+    ctx.patchState({ windows });
+  }
+
+  @Action(HideWindow)
+  hideWindow(ctx: StateContext<ISettings>, { windowName }: HideWindow) {
+    const state = ctx.getState();
+    const windows = { ...state.windows };
+    if (windows[windowName]) {
+      windows[windowName] = Object.assign({}, windows[windowName], { hidden: true });
+    }
+
     ctx.patchState({ windows });
   }
 

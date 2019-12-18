@@ -21,7 +21,7 @@
       <mat-label>Mode</mat-label>
       <mat-select [value]="gameService.chatMode$ | async"
                   panelClass="game" 
-                  (selectionChange)="updateChatMode($event)">
+                  (selectionChange)="updateChatMode($event.value)">
         <mat-option value="cmd">Command</mat-option>
         <mat-option value="say">Local</mat-option>
         <mat-option value="party">Party</mat-option>
@@ -32,8 +32,8 @@
     <mat-form-field class="text-entry" floatLabel="never">
       <input matInput 
              #commandInput
-             [value]="gameService.currentCommand$ | async"
-             (keydown.enter)="sendCommand()"
+             [value]="currentCommand"
+             (keydown.enter)="sendCommand($event)"
              (input)="updateCommand(commandInput.value)"
              [placeholder]="placeholderTexts[gameService.chatMode$ | async] || 'Enter text here...'" 
              autocomplete="off"
