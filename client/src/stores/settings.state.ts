@@ -53,6 +53,11 @@ export class SetChatMode {
   constructor(public chatMode: ChatMode) {}
 }
 
+export class LogCurrentCommandInHistory {
+  static type = GameAction.LogCurrentCommand;
+  constructor() {}
+}
+
 export class SetCurrentCommand {
   static type = GameAction.SetCurrentCommand;
   constructor(public command: string) {}
@@ -68,7 +73,8 @@ const defaultSettings: () => ISettings = () => {
     assetHash: '',
     chatMode: 'cmd',
     currentCommand: '',
-    commandHistory: []
+    commandHistory: [],
+    options: {}
   };
 };
 
@@ -218,6 +224,19 @@ export class SettingsState implements NgxsOnInit {
   @Action(SetChatMode)
   setChatMode(ctx: StateContext<ISettings>, { chatMode }: SetChatMode) {
     ctx.patchState({ chatMode });
+  }
+
+  @Action(LogCurrentCommandInHistory)
+  logCommand(ctx: StateContext<ISettings>) {
+    const state = ctx.getState();
+    const history = [...(state.commandHistory || [])];
+
+    if (history[0] !== state.currentCommand) {
+      history.unshift(state.currentCommand);
+      if (history.length > 20) history.length = 20;
+      ctx.patchState({ commandHistory: history });
+    }
+
   }
 
   @Action(SetCurrentCommand)

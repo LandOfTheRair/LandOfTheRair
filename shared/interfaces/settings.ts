@@ -16,4 +16,5 @@ export interface ISettings {
   assetHash: string;
   chatMode: ChatMode;
   currentCommand: string;
+  commandHistory: string[];
 }

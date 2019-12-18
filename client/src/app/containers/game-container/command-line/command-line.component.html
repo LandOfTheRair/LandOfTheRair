@@ -33,6 +33,8 @@
       <input matInput 
              #commandInput
              [value]="currentCommand"
+             (keydown.arrowup)="searchCommandHistory($event, 1)"
+             (keydown.arrowdown)="searchCommandHistory($event, -1)"
              (keydown.enter)="sendCommand($event)"
              (input)="updateCommand(commandInput.value)"
              [placeholder]="placeholderTexts[gameService.chatMode$ | async] || 'Enter text here...'" 

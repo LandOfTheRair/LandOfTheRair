@@ -32,7 +32,7 @@ export class CommandHandler extends BaseService {
 
     // if instant or fast, strip prefix
     if (isInstant || isFast) {
-      command = command.substring(1, command.length);
+      command = command.substring(1);
     }
 
     // parse command args

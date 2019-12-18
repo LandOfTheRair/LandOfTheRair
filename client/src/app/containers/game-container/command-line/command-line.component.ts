@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { Store } from '@ngxs/store';
 import { Subscription } from 'rxjs';
 import { ChatMode, GameServerEvent } from '../../../../models';
-import { HideWindow, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
+import { HideWindow, LogCurrentCommandInHistory, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 
@@ -14,8 +14,6 @@ import { SocketService } from '../../../socket.service';
 export class CommandLineComponent implements OnInit, OnDestroy {
 
   @ViewChild('commandInput', { static: false, read: ElementRef }) public commandInput: ElementRef;
-
-  // TODO: ., history, #, enter from anywhere, etc.
 
   public currentCommand = '';
 
@@ -37,7 +35,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   private globalListener: (ev) => void;
   private sendListener: (ev) => void;
 
-  // private curIndex = -1;
+  private curIndex = -1;
 
   private get isCmdActive() {
     return this.commandInput.nativeElement === document.activeElement;
@@ -92,8 +90,15 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       this.focusInput();
     };
 
+    // TODO: right click send option
     this.sendListener = (ev) => {
-
+      /*
+      if(environment.production) {
+        ev.preventDefault();
+      }
+      if(!this.rightClickSend) return;
+      this.sendCommand();
+      */
     };
 
     document.addEventListener('keydown', this.globalListener);
@@ -115,13 +120,88 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   }
 
   sendCommand(ev) {
-    if (!this.currentCommand || !this.currentCommand.trim()) return;
+
+    let currentCommand = (this.currentCommand || '').trim();
+    if (!currentCommand) return;
+
     ev.preventDefault();
     ev.stopPropagation();
 
-    this.doCommand(this.currentCommand.trim());
+    this.store.selectOnce(state => state.settings.chatMode)
+      .subscribe((chatMode: ChatMode) => {
 
-    this.store.dispatch(new SetCurrentCommand(''));
+        const reset = () => {
+          this.store.dispatch(new LogCurrentCommandInHistory());
+          this.store.dispatch(new SetCurrentCommand(''));
+        };
+
+        const doCommand = (commandToDo: string) => {
+          this.curIndex = -1;
+
+          this.doCommand(commandToDo.trim());
+          reset();
+
+          (document.activeElement as HTMLElement).blur();
+        };
+
+        const shouldBypassOthers = currentCommand.startsWith('#');
+
+        if (!shouldBypassOthers && chatMode === 'say') {
+          this.doCommand(`!say ${currentCommand}`);
+          reset();
+          return;
+        }
+
+        if (!shouldBypassOthers && chatMode === 'party') {
+          this.doCommand(`!partysay ${currentCommand}`);
+          reset();
+          return;
+        }
+
+        if (!shouldBypassOthers && chatMode === 'global') {
+          this.doCommand(`!lobbysay ${currentCommand}`);
+          reset();
+          return;
+        }
+
+        if (shouldBypassOthers) {
+          currentCommand = currentCommand.substring(1);
+        }
+
+        if (currentCommand === '.') {
+          this.store.selectOnce(state => state.settings.commandHistory)
+            .subscribe(history => {
+              const command = history[0];
+              if (!command) return;
+
+              this.updateCommand(command);
+              doCommand(command);
+            });
+
+          return;
+        }
+
+        doCommand(currentCommand);
+      });
+  }
+
+  searchCommandHistory(ev, diff: number) {
+    ev.preventDefault();
+
+    this.store.selectOnce(state => state.settings.commandHistory)
+      .subscribe(history => {
+        const newIndex = diff + this.curIndex;
+        if (newIndex <= -2 || newIndex >= history.length) return;
+
+        this.curIndex += diff;
+
+        let curCommand = history[newIndex];
+        if (this.curIndex <= -1 || !history[newIndex]) {
+          curCommand = '';
+        }
+
+        this.store.dispatch(new SetCurrentCommand(curCommand));
+      });
   }
 
   private focusInput() {
