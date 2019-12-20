@@ -1,5 +1,5 @@
 import { Game } from '../../helpers';
-import { GameAction, GameServerEvent } from '../../interfaces';
+import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
@@ -12,6 +12,13 @@ export class ChatAction extends ServerAction {
     try {
       broadcast({
         action: GameAction.ChatAddMessage,
+        timestamp: Date.now(),
+        message: data.content,
+        from: data.username
+      });
+
+      broadcast({
+        type: GameServerResponse.Chat,
         timestamp: Date.now(),
         message: data.content,
         from: data.username

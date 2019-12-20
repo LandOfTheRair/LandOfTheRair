@@ -12,7 +12,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(WindowComponent, { static: false, read: ElementRef }) public window: ElementRef;
 
-  public messages: any = [];
+  public messages: Array<{ messageTypes: string[], message: string }> = [];
 
   private mutationObserver: MutationObserver;
 
@@ -22,7 +22,14 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
-      this.messages.push(data);
+      this.addMessage(data);
+    });
+
+    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.Chat, (data) => {
+      this.addMessage({
+        messageTypes: ['lobby', 'chat'],
+        message: `[${data.from}] ${data.message}`
+      });
     });
   }
 
@@ -48,6 +55,10 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.socketService.unregisterComponentCallbacks(this.constructor.name);
+  }
+
+  private addMessage(message) {
+    this.messages.push(message);
   }
 
 }

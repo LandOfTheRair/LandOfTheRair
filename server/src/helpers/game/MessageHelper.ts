@@ -1,6 +1,6 @@
 
 import { Singleton } from 'typescript-ioc';
-import { BaseService, GameServerResponse, ICharacter } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter } from '../../interfaces';
 import { Player } from '../../models';
 
 
@@ -18,6 +18,28 @@ export class MessageHelper extends BaseService {
       type: GameServerResponse.GameLog,
       messageTypes,
       message
+    });
+  }
+
+  public async broadcastChatMessage(player: ICharacter, message: string): Promise<void> {
+
+    const account = (player as Player).account;
+    if (!account) return;
+
+    const username = await account.get('username');
+
+    this.game.wsCmdHandler.broadcast({
+      action: GameAction.ChatAddMessage,
+      timestamp: Date.now(),
+      message,
+      from: username
+    });
+
+    this.game.wsCmdHandler.broadcast({
+      type: GameServerResponse.Chat,
+      timestamp: Date.now(),
+      message,
+      from: username
     });
   }
 

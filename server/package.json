@@ -54,6 +54,6 @@
     "codelyzer": "^5.1.2",
     "ts-node-dev": "1.0.0-pre.44",
     "tslint": "^5.20.0",
-    "typescript": "^3.7.0-beta"
+    "typescript": "3.7.3"
   }
 }

@@ -49,6 +49,10 @@ export class WebsocketCommandHandler {
     await action.act(this.game, { broadcast, emit, register, unregister }, data);
   }
 
+  public broadcast(data): void {
+    this.emitCallback(null, data);
+  }
+
   public sendToSocket(username: string, data: any): void {
     this.emitCallback(this.accountSocketIds[username], data);
   }
