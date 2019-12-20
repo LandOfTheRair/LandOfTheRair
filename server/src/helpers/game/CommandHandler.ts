@@ -1,3 +1,4 @@
+import didYouMean from 'didyoumean2';
 import { Inject, Singleton } from 'typescript-ioc';
 import { BaseService, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
@@ -12,6 +13,7 @@ export class CommandHandler extends BaseService {
   @Inject private messageHelper: MessageHelper;
 
   private commands: { [key: string]: MacroCommand } = {};
+  private commandStrings: string[] = [];
 
   private parseArgs(args: string): string[] {
     // TODO: support target=$target dir=$dir,n,e,a for advanced macros, pos=$pos (for targetting in a particular position)
@@ -22,6 +24,8 @@ export class CommandHandler extends BaseService {
     Object.values(Commands).map(x => new x(this.game)).forEach(command => {
       command.aliases.forEach(alias => this.commands[alias] = command);
     });
+
+    this.commandStrings = Object.keys(this.commands);
   }
 
   public doCommand(player: Player, data) {
@@ -49,7 +53,13 @@ export class CommandHandler extends BaseService {
     // validate the command / prefixes
     const commandRef = this.commands[command];
     if (!commandRef) {
-      this.messageHelper.sendMessage(player, `Command ${command} does not exist.`);
+      const didyoumean = didYouMean(command, this.commandStrings);
+      let message = `Command "${command}" does not exist.`;
+      if (didyoumean) {
+        message = `${message} Did you mean "${didyoumean}"?`;
+      }
+
+      this.messageHelper.sendMessage(player, message);
       return;
     }
 
