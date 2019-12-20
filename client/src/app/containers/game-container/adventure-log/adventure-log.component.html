@@ -1,0 +1,23 @@
+<app-window windowName="adventureLog"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+
+            defaultX="0"
+            defaultY="400"
+            defaultWidth="300"
+            defaultHeight="300"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Adventure Log
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="log-area">
+    <div class="message" *ngFor="let message of messages" [ngClass]="message.messageTypes">
+      {{ message.message }}
+    </div>
+  </div>
+</ng-template>

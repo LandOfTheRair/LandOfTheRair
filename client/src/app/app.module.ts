@@ -26,6 +26,7 @@ import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
 import { SocketService } from './socket.service';
+import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
@@ -41,7 +42,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     CharSelectComponent,
     CharCreateComponent,
     MapComponent,
-    CommandLineComponent
+    CommandLineComponent,
+    AdventureLogComponent
   ],
   imports: [
     HttpClientModule,

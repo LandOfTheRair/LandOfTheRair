@@ -12,8 +12,6 @@ import { AccountDB, CharacterDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
-
-
 @Singleton
 export class Game {
 
