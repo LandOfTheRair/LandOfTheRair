@@ -4,15 +4,24 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
+
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
+
 import { environment } from '../environments/environment';
 import * as AllStores from '../stores';
 import { AppComponent } from './app.component';
 import { AssetService } from './asset.service';
+import { GameService } from './game.service';
+import { LoginComponent } from './login/login.component';
+import { MenuComponent } from './menu/menu.component';
+import { SharedModule } from './shared.module';
+import { SocketService } from './socket.service';
+
+import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
 import { MapComponent } from './containers/game-container/map/map.component';
@@ -21,12 +30,6 @@ import { CharSelectComponent } from './containers/lobby-container/char-select/ch
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
-import { GameService } from './game.service';
-import { LoginComponent } from './login/login.component';
-import { MenuComponent } from './menu/menu.component';
-import { SharedModule } from './shared.module';
-import { SocketService } from './socket.service';
-import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
