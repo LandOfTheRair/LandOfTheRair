@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup": "npm i && node scripts/setup",
-    "start:dev": "ts-node-dev --respawn --transpile-only --exit-child --debounce --clear src/core/index.ts",
+    "start:dev": "ts-node-dev --respawn --exit-child --debounce --clear src/core/index.ts",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc"
   },
