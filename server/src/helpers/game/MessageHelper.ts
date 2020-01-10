@@ -1,10 +1,10 @@
 
-import { Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 import { BaseService, GameAction, GameServerResponse, ICharacter } from '../../interfaces';
 import { Player } from '../../models';
 
 
-@Singleton
+@Injectable()
 export class MessageHelper extends BaseService {
 
   public init() {}

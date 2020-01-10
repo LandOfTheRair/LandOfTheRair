@@ -1,12 +1,17 @@
-import { Inject, Singleton } from 'typescript-ioc';
+
+import { Injectable } from 'injection-js';
 
 import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
-@Singleton
+@Injectable()
 export class ItemHelper extends BaseService {
 
-  @Inject private content: ContentManager;
+  constructor(
+    private content: ContentManager
+  ) {
+    super();
+  }
 
   public init() {}
 

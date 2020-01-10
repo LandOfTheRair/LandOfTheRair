@@ -1,10 +1,10 @@
 
 import { CensorSensor } from 'censor-sensor';
-import { Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { BaseService } from '../../interfaces';
 
-@Singleton
+@Injectable()
 export class ProfanityHelper extends BaseService {
 
   private censorSensor: CensorSensor;

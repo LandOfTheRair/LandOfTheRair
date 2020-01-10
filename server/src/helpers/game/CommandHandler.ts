@@ -1,5 +1,6 @@
 import didYouMean from 'didyoumean2';
-import { Inject, Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
+
 import { BaseService, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
 import { MacroCommand } from '../../models/macro';
@@ -7,10 +8,14 @@ import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
 
 
-@Singleton
+@Injectable()
 export class CommandHandler extends BaseService {
 
-  @Inject private messageHelper: MessageHelper;
+  constructor(
+    private messageHelper: MessageHelper
+  ) {
+    super();
+  }
 
   private commands: { [key: string]: MacroCommand } = {};
   private commandStrings: string[] = [];

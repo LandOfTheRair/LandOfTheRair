@@ -1,15 +1,20 @@
-import { Inject, Singleton } from 'typescript-ioc';
+
+import { Injectable } from 'injection-js';
 
 import { BaseService, CharacterItems, SkillBlock, StatBlock } from '../../interfaces';
 import { CalculatorHelper, ItemHelper } from '../character';
 import { ContentManager } from '../data';
 
-@Singleton
+@Injectable()
 export class CharacterRoller extends BaseService {
 
-  @Inject private contentManager: ContentManager;
-  @Inject private calculatorHelper: CalculatorHelper;
-  @Inject private itemHelper: ItemHelper;
+  constructor(
+    private contentManager: ContentManager,
+    private calculatorHelper: CalculatorHelper,
+    private itemHelper: ItemHelper
+  ) {
+    super();
+  }
 
   public async init() {}
 

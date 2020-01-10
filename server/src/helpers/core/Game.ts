@@ -1,6 +1,6 @@
 
 import { LoggerTimer } from 'logger-timer';
-import { Inject, Singleton } from 'typescript-ioc';
+
 import { GameAction } from '../../interfaces';
 import { CalculatorHelper, CharacterHelper, ItemHelper, NPCHelper, PlayerHelper } from '../character';
 import { ProfanityHelper } from '../chat/ProfanityHelper';
@@ -12,40 +12,43 @@ import { AccountDB, CharacterDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
-@Singleton
 export class Game {
 
   private ticksElapsed = 0;
 
   public wsCmdHandler: WebsocketCommandHandler;
 
-  @Inject public logger: Logger;
-  @Inject public contentManager: ContentManager;
+  constructor(
 
-  @Inject public db: Database;
+    public logger: Logger,
+    public contentManager: ContentManager,
 
-  @Inject public accountDB: AccountDB;
-  @Inject public characterDB: CharacterDB;
-  @Inject public worldDB: WorldDB;
+    public db: Database,
 
-  @Inject public profanityHelper: ProfanityHelper;
+    public accountDB: AccountDB,
+    public characterDB: CharacterDB,
+    public worldDB: WorldDB,
 
-  @Inject public lobbyManager: LobbyManager;
-  @Inject public characterRoller: CharacterRoller;
-  @Inject public itemCreator: ItemCreator;
-  @Inject public npcCreator: NPCCreator;
+    public profanityHelper: ProfanityHelper,
 
-  @Inject public calculatorHelper: CalculatorHelper;
-  @Inject public itemHelper: ItemHelper;
-  @Inject public npcHelper: NPCHelper;
-  @Inject public characterHelper: CharacterHelper;
-  @Inject public playerHelper: PlayerHelper;
+    public lobbyManager: LobbyManager,
+    public characterRoller: CharacterRoller,
+    public itemCreator: ItemCreator,
+    public npcCreator: NPCCreator,
 
-  @Inject public messageHelper: MessageHelper;
-  @Inject public commandHandler: CommandHandler;
+    public calculatorHelper: CalculatorHelper,
+    public itemHelper: ItemHelper,
+    public npcHelper: NPCHelper,
+    public characterHelper: CharacterHelper,
+    public playerHelper: PlayerHelper,
 
-  @Inject public playerManager: PlayerManager;
-  @Inject public worldManager: WorldManager;
+    public messageHelper: MessageHelper,
+    public commandHandler: CommandHandler,
+
+    public playerManager: PlayerManager,
+    public worldManager: WorldManager
+
+  ) {}
 
   public async init(wsCmdHandler: WebsocketCommandHandler) {
     this.wsCmdHandler = wsCmdHandler;

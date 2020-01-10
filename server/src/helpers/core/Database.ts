@@ -1,11 +1,12 @@
 
+import { Injectable } from 'injection-js';
 import { AnyEntity, EntityManager, EntityName, MikroORM, MongoEntity, wrap } from 'mikro-orm';
-import { Singleton } from 'typescript-ioc';
+
 import { BaseService } from '../../interfaces';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-@Singleton
+@Injectable()
 export class Database extends BaseService {
 
   private orm: MikroORM;

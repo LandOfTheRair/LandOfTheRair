@@ -1,14 +1,15 @@
 
-import { Inject, Singleton } from 'typescript-ioc';
-
+import { ReflectiveInjector } from 'injection-js';
 import * as Actions from '../../actions';
+import { resolveDeps } from '../../core/dependency-resolver';
 import { GameServerEvent, IServerAction } from '../../interfaces';
 import { Game } from './Game';
 
-@Singleton
 export class WebsocketCommandHandler {
 
-  @Inject private game: Game;
+  private game: Game;
+
+  constructor() {}
 
   private actions: { [key: string]: IServerAction } = {};
   private accountSocketIds: { [username: string]: string } = {};
@@ -24,6 +25,8 @@ export class WebsocketCommandHandler {
       this.actions[action.type] = action;
     });
 
+    const injector = ReflectiveInjector.resolveAndCreate(resolveDeps(Game));
+    this.game = injector.get(Game);
     await this.game.init(this);
   }
 

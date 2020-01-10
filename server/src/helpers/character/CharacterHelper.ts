@@ -1,7 +1,8 @@
-import { Singleton } from 'typescript-ioc';
+
+import { Injectable } from 'injection-js';
 import { BaseService, CoreStat, ICharacter, Stat } from '../../interfaces';
 
-@Singleton
+@Injectable()
 export class CharacterHelper extends BaseService {
 
   public init() {}

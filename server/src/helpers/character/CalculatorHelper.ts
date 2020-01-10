@@ -1,11 +1,12 @@
-import { Singleton } from 'typescript-ioc';
+
+import { Injectable } from 'injection-js';
 
 import { BaseService, ICharacter, Skill } from '../../interfaces';
 
 const FIRST_LEVEL_CONSTANT_CHANGER = 19;
 const SKILL_COEFFICIENT = 1.55;
 
-@Singleton
+@Injectable()
 export class CalculatorHelper extends BaseService {
 
   public init() {}

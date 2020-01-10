@@ -1,12 +1,10 @@
 
-import { Inject } from 'typescript-ioc';
-
 import { WebsocketCommandHandler } from '../helpers';
 import { GameServerResponse } from '../interfaces';
 
 export class GameloopWorker {
 
-  @Inject private wsCommands: WebsocketCommandHandler;
+  private wsCommands: WebsocketCommandHandler;
 
   async start() {
     process.on('message', msg => this.handleMessage(msg));
@@ -19,6 +17,7 @@ export class GameloopWorker {
       console.error('GAME', `Uncaught Exception`, error);
     });
 
+    this.wsCommands = new WebsocketCommandHandler();
     await this.wsCommands.init((id, data) => this.emit(id, data));
     process.send!({ __ready: true });
   }

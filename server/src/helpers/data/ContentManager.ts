@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
-import { Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { BaseService, IItem, INPC } from '../../interfaces';
 
-@Singleton
+@Injectable()
 export class ContentManager extends BaseService {
 
   private charSelect: any;

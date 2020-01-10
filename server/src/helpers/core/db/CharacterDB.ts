@@ -1,5 +1,5 @@
 
-import { Inject, Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { Reference } from 'mikro-orm';
 import { BaseService, initializePlayer } from '../../../interfaces';
@@ -9,13 +9,16 @@ import { PlayerHelper } from '../../character';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
-@Singleton
+@Injectable()
 export class CharacterDB extends BaseService {
 
-  @Inject private db: Database;
-
-  @Inject private characterRoller: CharacterRoller;
-  @Inject private playerHelper: PlayerHelper;
+  constructor(
+    private db: Database,
+    private characterRoller: CharacterRoller,
+    private playerHelper: PlayerHelper
+  ) {
+    super();
+  }
 
   public async init() {}
 

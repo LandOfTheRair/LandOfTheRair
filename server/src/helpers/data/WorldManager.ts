@@ -1,5 +1,5 @@
 
-import { Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import fs from 'fs-extra';
 import path from 'path';
@@ -8,7 +8,7 @@ import readdir from 'recursive-readdir';
 import { BaseService } from '../../interfaces';
 import { InstancedWorldMap, WorldMap } from '../../models';
 
-@Singleton
+@Injectable()
 export class WorldManager extends BaseService {
 
   // live maps

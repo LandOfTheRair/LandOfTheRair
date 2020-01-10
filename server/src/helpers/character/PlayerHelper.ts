@@ -1,12 +1,12 @@
+import { Injectable } from 'injection-js';
 import { wrap } from 'mikro-orm';
-import { Singleton } from 'typescript-ioc';
 import uuid from 'uuid/v4';
 
 import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
 
 
-@Singleton
+@Injectable()
 export class PlayerHelper extends BaseService {
 
   public init() {}

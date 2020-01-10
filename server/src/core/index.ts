@@ -1,6 +1,8 @@
 
 require('dotenv').config();
 
+import 'reflect-metadata';
+
 import cluster from 'cluster';
 import { cpus } from 'os';
 
@@ -11,6 +13,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const isSingleMode = process.argv.includes('--single-core');
 const processors = cpus().length;
+
 
 const gameStart = () => {
   const worker = new GameloopWorker();

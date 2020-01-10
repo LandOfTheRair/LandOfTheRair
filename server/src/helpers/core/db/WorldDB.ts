@@ -1,14 +1,18 @@
 
-import { Inject, Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { BaseService } from '../../../interfaces';
 import { WorldSettings } from '../../../models';
 import { Database } from '../Database';
 
-@Singleton
+@Injectable()
 export class WorldDB extends BaseService {
 
-  @Inject private db: Database;
+  constructor(
+    private db: Database
+  ) {
+    super();
+  }
 
   private settings: WorldSettings;
 

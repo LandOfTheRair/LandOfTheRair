@@ -1,5 +1,5 @@
 
-import { Inject, Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { BaseService, IAccount } from '../../interfaces';
 import { Account, Player } from '../../models';
@@ -12,11 +12,15 @@ class LobbyState {
   usersInGame: { [username: string]: boolean } = {};
 }
 
-@Singleton
+@Injectable()
 export class LobbyManager extends BaseService {
 
-  @Inject private worldDB: WorldDB;
-  @Inject private playerManager: PlayerManager;
+  constructor(
+    private worldDB: WorldDB,
+    private playerManager: PlayerManager
+  ) {
+    super();
+  }
 
   private state: LobbyState;
 

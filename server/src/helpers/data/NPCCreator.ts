@@ -1,12 +1,17 @@
-import { Inject, Singleton } from 'typescript-ioc';
+
+import { Injectable } from 'injection-js';
 
 import { BaseService } from '../../interfaces';
 import { ContentManager } from './ContentManager';
 
-@Singleton
+@Injectable()
 export class NPCCreator extends BaseService {
 
-  @Inject private content: ContentManager;
+  constructor(
+    private content: ContentManager
+  ) {
+    super();
+  }
 
   public init() {}
 

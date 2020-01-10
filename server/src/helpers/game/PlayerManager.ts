@@ -1,14 +1,19 @@
+import { Injectable } from 'injection-js';
 import { wrap } from 'mikro-orm';
-import { Inject, Singleton } from 'typescript-ioc';
+
 import { BaseService, GameAction, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { PlayerHelper } from '../character';
 
 
-@Singleton
+@Injectable()
 export class PlayerManager extends BaseService {
 
-  @Inject private playerHelper: PlayerHelper;
+  constructor(
+    private playerHelper: PlayerHelper
+  ) {
+    super();
+  }
 
   private inGamePlayers: { [account: string]: Player } = {};
 

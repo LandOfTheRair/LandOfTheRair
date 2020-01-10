@@ -1,9 +1,9 @@
 
-import { Singleton } from 'typescript-ioc';
+import { Injectable } from 'injection-js';
 
 import { BaseService } from '../../interfaces';
 
-@Singleton
+@Injectable()
 export class Logger extends BaseService {
 
   public async init() {}
