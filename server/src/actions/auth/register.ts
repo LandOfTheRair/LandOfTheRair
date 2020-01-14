@@ -46,7 +46,7 @@ export class RegisterAction extends ServerAction {
       emit({
         type: GameServerResponse.Login,
         account: res,
-        motd: game.lobbyManager.motd,
+        motd: game.worldDB.motd,
         onlineUsers: game.lobbyManager.onlineUsers
       });
 

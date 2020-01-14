@@ -3,7 +3,6 @@ import { Injectable } from 'injection-js';
 
 import { BaseService, IAccount } from '../../interfaces';
 import { Account, Player } from '../../models';
-import { WorldDB } from '../core/db';
 import { PlayerManager } from '../game';
 
 class LobbyState {
@@ -16,7 +15,6 @@ class LobbyState {
 export class LobbyManager extends BaseService {
 
   constructor(
-    private worldDB: WorldDB,
     private playerManager: PlayerManager
   ) {
     super();
@@ -26,10 +24,6 @@ export class LobbyManager extends BaseService {
 
   public get usersInGame() {
     return this.state.usersInGame;
-  }
-
-  public get motd() {
-    return this.worldDB.motd;
   }
 
   public get onlineUsers() {

@@ -40,7 +40,7 @@ export class LoginAction extends ServerAction {
       emit({
         type: GameServerResponse.Login,
         account,
-        motd: game.lobbyManager.motd,
+        motd: game.worldDB.motd,
         onlineUsers: game.lobbyManager.onlineUsers
       });
 

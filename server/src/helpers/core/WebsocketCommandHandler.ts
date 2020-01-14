@@ -1,7 +1,6 @@
 
-import { ReflectiveInjector } from 'injection-js';
+import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
-import { resolveDeps } from '../../core/dependency-resolver';
 import { GameServerEvent, IServerAction } from '../../interfaces';
 import { Game } from './Game';
 
@@ -25,7 +24,7 @@ export class WebsocketCommandHandler {
       this.actions[action.type] = action;
     });
 
-    const injector = ReflectiveInjector.resolveAndCreate(resolveDeps(Game));
+    const injector = ReflectiveInjector.resolveAndCreate(resolveDependencies(Game));
     this.game = injector.get(Game);
     await this.game.init(this);
   }

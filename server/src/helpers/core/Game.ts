@@ -1,4 +1,5 @@
 
+import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 
 import { GameAction } from '../../interfaces';
@@ -12,6 +13,7 @@ import { AccountDB, CharacterDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
+@Injectable()
 export class Game {
 
   private ticksElapsed = 0;
