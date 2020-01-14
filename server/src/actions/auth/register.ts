@@ -24,8 +24,8 @@ export class RegisterAction extends ServerAction {
 
     if (game.profanityHelper.hasProfanity(data.username)) throw new Error('Pick a different username.');
 
-    const account = await game.accountDB.getAccount(data.username);
-    if (account) throw new Error(`Username already registered.`);
+    const doesExist = await game.accountDB.doesAccountExist(data);
+    if (doesExist) throw new Error('Username already registered.');
 
     try {
       const res = await game.accountDB.createAccount(data);

@@ -19,6 +19,10 @@ export class AccountDB extends BaseService {
 
   public async init() {}
 
+  public async doesAccountExist(username: string): Promise<Account | null> {
+    return this.db.em.getRepository<Account>(Account).findOne({ username });
+  }
+
   public async getAccount(username: string): Promise<Account | null> {
     const account = await this.db.em.getRepository<Account>(Account).findOne({ username });
     await account?.players.init();
