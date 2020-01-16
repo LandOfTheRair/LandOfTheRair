@@ -26,8 +26,6 @@ export class LoginAction extends ServerAction {
 
     try {
       const simpleAccount = await game.accountDB.simpleAccount(account);
-      delete simpleAccount.password;
-      delete simpleAccount.players;
 
       broadcast({
         action: GameAction.ChatAddUser,

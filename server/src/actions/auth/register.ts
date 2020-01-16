@@ -12,11 +12,11 @@ export class RegisterAction extends ServerAction {
   async act(game: Game, { broadcast, emit, register }, data) {
 
     if (!data.username) throw new Error('Must specify username.');
-    if (data.username.length < 2) throw new Error('Username must be >2 characters.');
+    if (data.username.length < 1) throw new Error('Username must be >2 characters.');
     if (data.username.length > 20) throw new Error('Username must be <20 characters.');
 
     if (!data.password) throw new Error('Must specify password.');
-    if (data.password.length < 10) throw new Error('Password must be >10 characters.');
+    if (data.password.length < 11) throw new Error('Password must be >10 characters.');
     if (data.password.length > 256) throw new Error('Password must be less than <256 characters.');
 
     if (!data.email) throw new Error('Must specify email.');
@@ -28,24 +28,22 @@ export class RegisterAction extends ServerAction {
     if (doesExist) throw new Error('Username already registered.');
 
     try {
-      const res = await game.accountDB.createAccount(data);
-      if (!res) throw new Error('Could not register.');
+      const account = await game.accountDB.createAccount(data);
+      if (!account) throw new Error('Could not register.');
 
-      const simpleAccount = await game.accountDB.simpleAccount(res);
-      delete simpleAccount.password;
-      delete simpleAccount.players;
+      const simpleAccount = await game.accountDB.simpleAccount(account);
 
       broadcast({
         action: GameAction.ChatAddUser,
         user: simpleAccount
       });
 
-      register(data.username);
-      game.lobbyManager.addAccount(res);
+      register(account.username);
+      game.lobbyManager.addAccount(account);
 
       emit({
         type: GameServerResponse.Login,
-        account: res,
+        account,
         motd: game.worldDB.motd,
         onlineUsers: game.lobbyManager.onlineUsers
       });

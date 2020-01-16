@@ -24,6 +24,7 @@ export class PlayerManager extends BaseService {
   }
 
   public async addPlayerToGame(player: Player) {
+    console.log(player, player.account);
     const username = await player.account.get('username');
     this.inGamePlayers[username] = player;
 

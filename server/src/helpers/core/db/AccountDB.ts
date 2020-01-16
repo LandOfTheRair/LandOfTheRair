@@ -25,9 +25,11 @@ export class AccountDB extends BaseService {
 
   public async getAccount(username: string): Promise<Account | null> {
     const account = await this.db.em.getRepository<Account>(Account).findOne({ username });
-    await account?.players.init();
+    if (!account) return null;
 
-    for (const player of account!.players) {
+    await account.players.init();
+
+    for (const player of account.players) {
       this.playerHelper.migrate(player);
     }
 
@@ -44,11 +46,15 @@ export class AccountDB extends BaseService {
 
     await this.db.save(account);
 
-    return account;
+    return this.getAccount(account.username);
   }
 
-  public async simpleAccount(account: Account) {
-    return this.db.toObject(account);
+  public async simpleAccount(account: Account): Promise<Partial<Account>> {
+    const accountObj = await this.db.toObject(account);
+    delete accountObj.password;
+    delete accountObj.players;
+
+    return accountObj;
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {

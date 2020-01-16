@@ -25,6 +25,8 @@ export class RollCharacterAction extends ServerAction {
 
     if (name.length < 2) throw new Error('Bad name.');
 
+    // TODO: rolling a character causes game entry to break, the account references aren't lining up; ideally regenerate the account entry when rolling a new character
+    // TODO: write down console command to generate a character so no UI traversing
     const account = data.account;
     const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
 
