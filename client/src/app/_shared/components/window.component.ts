@@ -12,7 +12,7 @@ import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from
   <div *ngIf="(window$ | async) as windowProps">
     <div class="window"
         [class.active]="(activeWindow$ | async) === windowName"
-        [class.hidden]="windowProps.hidden"
+        [class.hidden]="willNotHide ? false : windowProps.hidden"
         [class.minimized]="minimized"
 
         [style.top]="windowProps.y + 'px'"
@@ -71,6 +71,7 @@ export class WindowComponent implements OnInit {
   @Input() public windowName = '';
   @Input() public canHide = false;
   @Input() public canMinimize = false;
+  @Input() public willNotHide = false;
 
   @Input() public head: TemplateRef<any>;
   @Input() public body: TemplateRef<any>;

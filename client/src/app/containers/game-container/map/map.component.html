@@ -3,13 +3,13 @@
             [head]="headTemplate"
             [body]="bodyTemplate"
             [canHide]="true"
+            [willNotHide]="true"
             (hide)="quitGame()"
 
             defaultX="315"
             defaultY="100"
             defaultWidth="576"
             defaultHeight="608"
-
 ></app-window>
 
 <ng-template #headTemplate>
