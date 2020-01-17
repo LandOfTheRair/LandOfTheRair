@@ -48,6 +48,7 @@ export class CharacterDB extends BaseService {
     player.currency = { gold: characterDetails.gold };
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
+    player.username = account.username;
 
     Object.keys(characterDetails.items).forEach(itemSlot => {
       items.equipment[itemSlot] = characterDetails.items[itemSlot];
@@ -57,8 +58,6 @@ export class CharacterDB extends BaseService {
 
     account.players.add(player);
     await this.db.save(account);
-
-    await account.players.init();
 
     return player;
   }

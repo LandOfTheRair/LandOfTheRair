@@ -14,7 +14,7 @@ export class MessageHelper extends BaseService {
     const account = (player as Player).account;
     if (!account) return;
 
-    this.game.wsCmdHandler.sendToSocket(await account.get('username'), {
+    this.game.wsCmdHandler.sendToSocket((player as Player).username, {
       type: GameServerResponse.GameLog,
       messageTypes,
       message
@@ -26,7 +26,7 @@ export class MessageHelper extends BaseService {
     const account = (player as Player).account;
     if (!account) return;
 
-    const username = await account.get('username');
+    const username = (player as Player).username;
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatAddMessage,

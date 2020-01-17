@@ -37,6 +37,7 @@ export class MapComponent implements OnInit {
       this.gameService.currentPlayer$,
       this.gameService.currentMap$
     ).subscribe(([play, player, map]) => {
+      // TODO: map isn't showing up ???
       if (!play || !player || !map) return;
       this.map.next(map);
       this.currentPlayer.next(player);

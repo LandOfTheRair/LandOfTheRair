@@ -7,6 +7,8 @@ export type BGM = 'town' | 'dungeon' | 'wilderness';
 export interface IPlayer extends ICharacter {
   charSlot: number;
 
+  username: string;
+
   z: number;
 
   exp: number;

@@ -7,6 +7,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
 
   return {
     ...baseChar,
+    username: char.username ?? '',
     z: char.z ?? 0,
     charSlot: char.charSlot ?? 0,
     exp: char.exp ?? 1000,

@@ -34,6 +34,8 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_TEMPORARY()) lastDeathLocation;
   @Property(PROP_TEMPORARY()) totalStats: StatBlock;
 
+  @Property(PROP_TEMPORARY()) username: string;
+
   // all characters have these props
   @Property() uuid: string;
   @Property() name: string;

@@ -24,8 +24,7 @@ export class PlayerManager extends BaseService {
   }
 
   public async addPlayerToGame(player: Player) {
-    console.log(player, player.account);
-    const username = await player.account.get('username');
+    const username = player.username;
     this.inGamePlayers[username] = player;
 
     // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
@@ -34,7 +33,7 @@ export class PlayerManager extends BaseService {
   }
 
   public async removePlayerFromGame(player: Player) {
-    const username = await player.account.get('username');
+    const username = player.username;
     delete this.inGamePlayers[username];
 
     this.game.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });

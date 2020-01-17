@@ -137,7 +137,9 @@ export class SocketService {
   }
 
   emit(type: GameServerEvent, data: any = {}) {
-    this.input$.next({ type, ...data });
+    const message = { type, ...data };
+    this.logger.debug(`[WS EMIT]`, message);
+    this.input$.next(message);
   }
 
   private handleCallback(data: any): void {
