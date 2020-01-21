@@ -3,13 +3,14 @@ import { wrap } from 'mikro-orm';
 
 import { BaseService, GameAction, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
-import { PlayerHelper } from '../character';
+import { PlayerHelper, CharacterHelper } from '../character';
 
 
 @Injectable()
 export class PlayerManager extends BaseService {
 
   constructor(
+    private characterHelper: CharacterHelper,
     private playerHelper: PlayerHelper
   ) {
     super();
@@ -26,6 +27,7 @@ export class PlayerManager extends BaseService {
   public async addPlayerToGame(player: Player) {
     const username = player.username;
     this.inGamePlayers[username] = player;
+    this.updatePlayerData(player);
 
     // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
     const sendPlayer = await wrap(player).toObject();
@@ -43,6 +45,12 @@ export class PlayerManager extends BaseService {
     delete this.inGamePlayers[account.username];
 
     this.game.sendActionToAccount(account.username, GameAction.GameSetPlayer, { player: null });
+  }
+
+  // TODO: how to patch player object client side?
+
+  public updatePlayerData(player: Player) {
+    this.characterHelper.calculateStatTotals(player);
   }
 
   private tick(type: 'slow'|'fast') {

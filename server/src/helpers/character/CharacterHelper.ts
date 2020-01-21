@@ -1,5 +1,7 @@
 
 import { Injectable } from 'injection-js';
+import { clamp } from 'lodash';
+
 import { BaseService, CoreStat, ICharacter, Stat } from '../../interfaces';
 
 @Injectable()
@@ -33,6 +35,7 @@ export class CharacterHelper extends BaseService {
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
     character.totalStats = Object.assign({}, character.stats);
+    character.totalStats.move = clamp(0, 4, character.stats[Stat.Move] || 3);
 
     // stats from effects
     // stats from classes

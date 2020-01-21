@@ -4,6 +4,7 @@ import { IPlayer } from './player';
 export interface IMacroCommandArgs {
   stringArgs: string;
   arrayArgs: string[];
+  objArgs: any;
 }
 
 export interface IMacroCommand {

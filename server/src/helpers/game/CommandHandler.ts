@@ -1,5 +1,6 @@
 import didYouMean from 'didyoumean2';
 import { Injectable } from 'injection-js';
+import { isObject, isString } from 'lodash';
 
 import { BaseService, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
@@ -47,12 +48,16 @@ export class CommandHandler extends BaseService {
     // parse command args
     const args: IMacroCommandArgs = {
       stringArgs: '',
-      arrayArgs: []
+      arrayArgs: [],
+      objArgs: {}
     };
 
-    if (data.args) {
+    if (data.args && isString(data.args)) {
       args.stringArgs = data.args;
       args.arrayArgs = this.parseArgs(data.args);
+
+    } else if (data.args && isObject(data.args)) {
+      args.objArgs = data.args;
     }
 
     // validate the command / prefixes

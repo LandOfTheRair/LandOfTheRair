@@ -136,6 +136,10 @@ export class SocketService {
     if (this.messages$) this.messages$.unsubscribe();
   }
 
+  sendAction(data: any = {}) {
+    this.emit(GameServerEvent.DoCommand, data);
+  }
+
   emit(type: GameServerEvent, data: any = {}) {
     const message = { type, ...data };
     this.logger.debug(`[WS EMIT]`, message);

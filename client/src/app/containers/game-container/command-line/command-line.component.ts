@@ -1,11 +1,14 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
+
 import { ChatMode, GameServerEvent } from '../../../../models';
 import { HideWindow, LogCurrentCommandInHistory, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 
+@AutoUnsubscribe()
 @Component({
   selector: 'app-command-line',
   templateUrl: './command-line.component.html',
@@ -31,7 +34,8 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     global: 'cmd'
   };
 
-  private command$: Subscription;
+  command$: Subscription;
+  
   private globalListener: (ev) => void;
   private sendListener: (ev) => void;
 
@@ -106,7 +110,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.command$) this.command$.unsubscribe();
     document.removeEventListener('keydown', this.globalListener);
     document.removeEventListener('contextmenu', this.sendListener);
   }

@@ -4,7 +4,8 @@ import { BehaviorSubject, combineLatest } from 'rxjs';
 import { GameServerEvent, IPlayer } from '../../../../models';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
-import { MapRenderGame, MapScene, PreloadScene } from './phasergame';
+import { MapRenderGame } from './phasergame';
+import { MapScene, PreloadScene } from './phaserstates';
 
 const Phaser = (window as any).Phaser;
 

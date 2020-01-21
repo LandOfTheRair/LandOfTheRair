@@ -16,3 +16,8 @@ export enum MapLayer {
   Succorport = 13,
   SpawnerZones = 14
 }
+
+export interface IMapData {
+  tiledJSON: any;
+  layerData: { [key in MapLayer]?: any };
+}
