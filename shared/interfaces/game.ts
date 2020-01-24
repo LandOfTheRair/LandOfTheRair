@@ -5,5 +5,5 @@ export interface IGame {
   inGame: boolean;
   player: IPlayer;
   map: any;
-  npcs: ISimpleNPC[];
+  npcs: { [uuid: string]: ISimpleNPC };
 }

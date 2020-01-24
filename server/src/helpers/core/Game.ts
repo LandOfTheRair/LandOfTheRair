@@ -84,6 +84,11 @@ export class Game {
     const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production' });
     timer.startTimer('gameloop');
 
+    // TODO: update positions for everything that changed; use the game state for this, gamestate should track diffs?
+    // TODO: server game state per map, npcs hash, player hash, positional data, track current positions and send them every 200ms (should be x/y/uuid[] maybe?); actual character data (hands, etc) should only be updated on change
+    //  - update positions per player area every 200ms
+    //  - rbush for player, spawner, npc?
+    //  - only send what's near player?
     if (this.ticksElapsed % 2 === 0) {
       timer.startTimer('fastTick');
       this.playerManager.fastTick();
