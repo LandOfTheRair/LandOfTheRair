@@ -11,7 +11,7 @@ export class TransmissionHelper extends BaseService {
 
   // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
   public convertPlayerForTransmission(player: Player): IPlayer {
-    return Object.assign({}, this.game.db.wrap<Player>(player) as IPlayer);
+    return Object.assign({}, this.game.db.wrap<Player>(player) as any as IPlayer);
   }
 
   public patchPlayer(player: Player) {
