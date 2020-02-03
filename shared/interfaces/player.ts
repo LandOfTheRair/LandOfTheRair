@@ -27,7 +27,7 @@ export interface IPlayer extends ICharacter {
 
   learnedSpells: { [spellName: string]: LearnedSpell };
 
-  lastRegion: string;
+  lastTileDesc: string;
   lastRegionDesc: string;
   bgmSetting: BGM;
 

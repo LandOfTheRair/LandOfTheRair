@@ -34,7 +34,7 @@ export class PlayerHelper extends BaseService {
     if (player.actionQueue) {
       const queue = player.actionQueue[type] || [];
 
-      const actions = type === 'fast' ? 1 : (this.getStat(player as any as IPlayer, Stat.ActionSpeed) || 1);
+      const actions = type === 'fast' ? 1 : (this.getStat(player as IPlayer, Stat.ActionSpeed) || 1);
 
       for (let i = 0; i < actions; i++) {
         const command = queue.shift();
