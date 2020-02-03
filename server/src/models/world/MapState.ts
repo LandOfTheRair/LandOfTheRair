@@ -25,7 +25,8 @@ export class MapState {
 
   private bushStorage: { [uuid: string]: RBushCharacter } = {};
 
-  // TODO: ground manager, expire items unless bound, trash has a 99% chance of breaking before hitting ground - condense items with same id but no mods
+  // TODO: ground manager, expire items unless bound,
+    // trash has a 99% chance of breaking before hitting ground - condense items with same id but no mods
 
   private npcsByUUID: { [uuid: string]: ICharacter } = {};
   private playersByUUID: { [uuid: string]: IPlayer } = {};
