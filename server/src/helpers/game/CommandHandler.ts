@@ -69,17 +69,17 @@ export class CommandHandler extends BaseService {
         message = `${message} Did you mean "${didyoumean}"?`;
       }
 
-      this.messageHelper.sendMessage(player, message);
+      this.messageHelper.sendLogMessageToPlayer(player, message);
       return;
     }
 
     if (isInstant && !commandRef.canBeInstant) {
-      this.messageHelper.sendMessage(player, `Command ${command} cannot be made instant.`);
+      this.messageHelper.sendLogMessageToPlayer(player, `Command ${command} cannot be made instant.`);
       return;
     }
 
     if (isFast && !commandRef.canBeFast) {
-      this.messageHelper.sendMessage(player, `Command ${command} cannot be made fast.`);
+      this.messageHelper.sendLogMessageToPlayer(player, `Command ${command} cannot be made fast.`);
       return;
     }
 
