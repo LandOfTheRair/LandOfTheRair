@@ -94,7 +94,7 @@ export class MapScene extends Phaser.Scene {
       const firstGid = isWall ? wallFirstGid : decorFirstGid;
       const tileSet = isWall ? 'Walls' : 'Decor';
 
-      const sprite = this.add.sprite(obj.x, obj.y - 64, tileSet, obj.gid - firstGid);
+      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, obj.gid - firstGid);
       sprite._baseFrame = sprite.frame;
 
       // if you're not subscribed, some objects are not visible
