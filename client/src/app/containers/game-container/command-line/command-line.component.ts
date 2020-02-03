@@ -35,7 +35,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   };
 
   command$: Subscription;
-  
+
   private globalListener: (ev) => void;
   private sendListener: (ev) => void;
 
