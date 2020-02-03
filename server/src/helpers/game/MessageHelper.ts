@@ -40,6 +40,9 @@ export class MessageHelper extends BaseService {
   }
 
   private sendMessage(from: string, message: string): void {
+    message = message.trim();
+    if (!message) return;
+
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),

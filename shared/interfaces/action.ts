@@ -60,6 +60,7 @@ export enum GameAction {
 
   SettingsSetAssetHash = '[Settings] Set server asset hash',
   SettingsSetChatMode = '[Settings] Set Chat Mode',
+  SettingsSetLogMode = '[Settings] Set Log Mode',
 
   SetCharacterCreateInformation = '[CharSelect] Set Create Info',
 

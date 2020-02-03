@@ -1,6 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { GameServerResponse, MessageType } from '../../../../models';
+import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
+import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 
 @Component({
@@ -17,7 +20,9 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   private mutationObserver: MutationObserver;
 
   constructor(
-    private socketService: SocketService
+    private store: Store,
+    private socketService: SocketService,
+    public gameService: GameService
   ) { }
 
   ngOnInit() {
@@ -58,7 +63,25 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
+  public changeTab(newTab: 'General'|'Combat') {
+    this.store.dispatch(new SetLogMode(newTab));
+  }
+
+  public isMessageVisible(logMode: 'General'|'Combat', message): boolean {
+    if (message.typeHash[MessageType.Miscellaneous]) return true;
+
+    if (logMode === 'Combat') return message.typeHash[MessageType.Combat];
+    if (logMode === 'General') return !message.typeHash[MessageType.Combat];
+
+    return true;
+  }
+
   private addMessage(message) {
+
+    // create a small hash to quickly look up messages by type
+    message.typeHash = {};
+    message.messageTypes.forEach(type => message.typeHash[type] = true);
+
     this.messages.push(message);
   }
 

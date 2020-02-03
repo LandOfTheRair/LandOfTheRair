@@ -15,6 +15,7 @@ export interface ISettings {
   wasKicked: boolean;
   assetHash: string;
   chatMode: ChatMode;
+  logMode: 'General'|'Combat';
   currentCommand: string;
   commandHistory: string[];
 }

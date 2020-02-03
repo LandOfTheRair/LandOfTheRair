@@ -53,6 +53,11 @@ export class SetChatMode {
   constructor(public chatMode: ChatMode) {}
 }
 
+export class SetLogMode {
+  static type = GameAction.SettingsSetLogMode;
+  constructor(public logMode: 'General'|'Combat') {}
+}
+
 export class LogCurrentCommandInHistory {
   static type = GameAction.LogCurrentCommand;
   constructor() {}
@@ -72,6 +77,7 @@ const defaultSettings: () => ISettings = () => {
     wasKicked: false,
     assetHash: '',
     chatMode: 'cmd',
+    logMode: 'General',
     currentCommand: '',
     commandHistory: [],
     options: {}
@@ -83,6 +89,11 @@ const defaultSettings: () => ISettings = () => {
   defaults: defaultSettings()
 })
 export class SettingsState implements NgxsOnInit {
+
+  @Selector()
+  static currentLogMode(state: ISettings) {
+    return state.logMode;
+  }
 
   @Selector()
   static currentCommand(state: ISettings) {
@@ -224,6 +235,11 @@ export class SettingsState implements NgxsOnInit {
   @Action(SetChatMode)
   setChatMode(ctx: StateContext<ISettings>, { chatMode }: SetChatMode) {
     ctx.patchState({ chatMode });
+  }
+
+  @Action(SetLogMode)
+  setLogMode(ctx: StateContext<ISettings>, { logMode }: SetLogMode) {
+    ctx.patchState({ logMode });
   }
 
   @Action(LogCurrentCommandInHistory)

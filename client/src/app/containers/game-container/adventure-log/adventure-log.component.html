@@ -15,8 +15,13 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <div class="log-area">
-    <div class="message" *ngFor="let message of messages" [ngClass]="message.messageTypes">
+  <div class="buttons">
+    <ng-container *ngFor="let tab of ['General', 'Combat']">
+      <button mat-raised-button [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''" (click)="changeTab(tab)">{{ tab }}</button>
+    </ng-container>
+  </div>
+  <div class="log-area" *ngIf="(gameService.logMode$ | async) as logMode">
+    <div class="message" *ngFor="let message of messages" [ngClass]="message.messageTypes" [class.hidden]="!isMessageVisible(logMode, message)">
       {{ message.message }}
     </div>
   </div>

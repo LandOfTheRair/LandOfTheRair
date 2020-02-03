@@ -31,6 +31,7 @@ export class GameService {
   @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
   @Select(SettingsState.chatMode) chatMode$: Observable<ChatMode>;
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
+  @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
 
   init() {
     this.inGame$.subscribe(val => {
