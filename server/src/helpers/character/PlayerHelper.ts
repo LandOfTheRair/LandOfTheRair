@@ -2,15 +2,18 @@ import { Injectable } from 'injection-js';
 import { wrap } from 'mikro-orm';
 import uuid from 'uuid/v4';
 
-import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill, Stat } from '../../interfaces';
+import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
-import { WorldManager } from '../data';
+import { StaticTextHelper, WorldManager } from '../data';
 
 
 @Injectable()
 export class PlayerHelper extends BaseService {
 
-  constructor(private world: WorldManager) {
+  constructor(
+    private staticTextHelper: StaticTextHelper,
+    private worldManager: WorldManager
+  ) {
     super();
   }
 
@@ -31,7 +34,7 @@ export class PlayerHelper extends BaseService {
     if (player.actionQueue) {
       const queue = player.actionQueue[type] || [];
 
-      const actions = type === 'fast' ? 1 : (this.getStat(player, Stat.ActionSpeed) || 1);
+      const actions = type === 'fast' ? 1 : (this.getStat(player as any as IPlayer, Stat.ActionSpeed) || 1);
 
       for (let i = 0; i < actions; i++) {
         const command = queue.shift();
@@ -42,7 +45,7 @@ export class PlayerHelper extends BaseService {
     }
 
     // if we're on a dense tile, "respawn"
-    const { map } = this.world.getMap(player.map);
+    const { map } = this.worldManager.getMap(player.map);
     if (map.getWallAt(player.x, player.y) || map.getDenseDecorAt(player.x, player.y)) {
       this.teleportToRespawnPoint(player);
     }
@@ -58,8 +61,54 @@ export class PlayerHelper extends BaseService {
     // TODO: fov
     // TODO: swimming, drowning
 
+    const { map } = this.worldManager.getMap(player.map);
+
+    // update the players BGM
+    const newBGM = map.getBackgroundMusicAt(player.x, player.y);
+    player.bgmSetting = (newBGM ?? 'wilderness') as BGM;
+
+    // send message updates while the player is walking around the world
     if (!ignoreMessages) {
-      // TODO: send messages
+
+      const regionDesc = map.getRegionDescriptionAt(player.x, player.y);
+
+      let desc = '';
+
+      const descObj = map.getInteractableAt(player.x, player.y) || map.getDecorAt(player.x, player.y);
+      desc = this.staticTextHelper.getGidDescription(descObj?.gid);
+
+      // we do this to avoid unnecessary lookups
+      if (!desc) {
+        desc = this.staticTextHelper.getGidDescription(map.getFluidAt(player.x, player.y));
+      }
+
+      if (!desc) {
+        desc = map.getFoliageAt(player.x, player.y) ? 'You are near some trees.' : '';
+      }
+
+      if (!desc) {
+        desc = this.staticTextHelper.getGidDescription(map.getFloorAt(player.x, player.y));
+      }
+
+      if (!desc) {
+        desc = this.staticTextHelper.getGidDescription(map.getTerrainAt(player.x, player.y));
+      }
+
+      // send a new region desc if possible
+      const hasNewRegion = regionDesc && regionDesc !== player.lastRegionDesc;
+      if (hasNewRegion && regionDesc) {
+        player.lastRegionDesc = regionDesc;
+        this.game.messageHelper.sendLogMessageToPlayer(player, regionDesc, [MessageType.Environment]);
+
+      } else if (!regionDesc) {
+        player.lastRegionDesc = '';
+      }
+
+      // send a new tile desc if possible
+      if (!hasNewRegion && desc && desc !== player.lastTileDesc) {
+        player.lastTileDesc = desc;
+        this.game.messageHelper.sendLogMessageToPlayer(player, desc, [MessageType.Environment]);
+      }
     }
   }
 
@@ -68,7 +117,7 @@ export class PlayerHelper extends BaseService {
     player.x = x;
     player.y = y;
 
-    const { state } = this.world.getMap(player.map);
+    const { state } = this.worldManager.getMap(player.map);
 
     if (player.map === map) {
       state.moveNPCOrPlayer(player);
@@ -76,7 +125,7 @@ export class PlayerHelper extends BaseService {
     } else {
       state.removePlayer(player);
 
-      const { state: newState } = this.world.getMap(map);
+      const { state: newState } = this.worldManager.getMap(map);
       player.map = map;
       newState.addPlayer(player);
     }

@@ -27,7 +27,7 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
   @Property(PROP_TEMPORARY()) actionQueue: { fast: Array<() => void>, slow: Array<() => void> } = { fast: [], slow: [] };
-  @Property(PROP_TEMPORARY()) lastRegion = '';
+  @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_TEMPORARY()) partyName = '';

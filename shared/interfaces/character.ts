@@ -7,6 +7,13 @@ export interface ItemContainer {
   items: ISimpleItem[];
 }
 
+export enum SwimLevel {
+  SpringWater = 1,
+  NormalWater = 2,
+  ChillWater = 6,
+  Lava = 8
+}
+
 export interface CharacterItems {
   potion?: ISimpleItem;
 

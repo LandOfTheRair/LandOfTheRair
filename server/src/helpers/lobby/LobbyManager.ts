@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { BaseService, IAccount } from '../../interfaces';
 import { Account, Player } from '../../models';
+import { PlayerHelper } from '../character';
 import { WorldManager } from '../data';
 import { PlayerManager } from '../game';
 
@@ -17,6 +18,7 @@ export class LobbyManager extends BaseService {
 
   constructor(
     private playerManager: PlayerManager,
+    private playerHelper: PlayerHelper,
     private worldManager: WorldManager
   ) {
     super();
@@ -71,6 +73,8 @@ export class LobbyManager extends BaseService {
 
     this.playerManager.addPlayerToGame(player);
     this.worldManager.joinMap(player);
+
+    this.playerHelper.resetStatus(player);
   }
 
   public accountLeaveGame(account: Account): void {

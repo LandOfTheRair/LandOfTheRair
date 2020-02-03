@@ -56,6 +56,7 @@ export class WorldMap {
 
   private destructureJSON() {
     [
+      MapLayer.Decor,
       MapLayer.DenseDecor,
       MapLayer.OpaqueDecor,
       MapLayer.Interactables,
@@ -70,23 +71,7 @@ export class WorldMap {
       MapLayer.BackgroundMusic,
       MapLayer.Succorport
     ].forEach(layer => {
-      this.parsePropertyDataIntoPositionalHash(layer);
-    });
-  }
-
-  private parsePropertyDataIntoPositionalHash(mapLayer: MapLayer) {
-    const objects = this.json.layers[mapLayer].objects;
-    objects.forEach(obj => {
-      const realX = Math.floor(obj.x / 64);
-      const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
-      const realW = Math.floor(obj.width / 64);
-      const realH = Math.floor(obj.height / 64);
-
-      for (let x = realX; x < realW; x++) {
-        for (let y = realY; y < realH; y++) {
-          setWith(this.layerHashes, [mapLayer, realX, realY], obj, Object);
-        }
-      }
+      this.parseRectangleDataIntoPositionalHash(layer);
     });
   }
 
@@ -97,6 +82,22 @@ export class WorldMap {
       const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
 
       setWith(this.layerHashes, [mapLayer, realX, realY], obj, Object);
+    });
+  }
+
+  private parseRectangleDataIntoPositionalHash(mapLayer: MapLayer) {
+    const objects = this.json.layers[mapLayer].objects;
+    objects.forEach(obj => {
+      const realX = Math.floor(obj.x / 64);
+      const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
+      const realW = Math.floor(obj.width / 64);
+      const realH = Math.floor(obj.height / 64);
+
+      for (let x = realX; x < realX + realW; x++) {
+        for (let y = realY; y < realY + realH; y++) {
+          setWith(this.layerHashes, [mapLayer, x, y], obj, Object);
+        }
+      }
     });
   }
 
@@ -128,6 +129,10 @@ export class WorldMap {
     return this.getArrayLayerData(MapLayer.Walls, x, y);
   }
 
+  public getDecorAt(x: number, y: number): null | any {
+    return this.getObjectAt(MapLayer.Decor, x, y);
+  }
+
   public getDenseDecorAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.DenseDecor, x, y);
   }
@@ -150,23 +155,17 @@ export class WorldMap {
 
   public getRegionDescriptionAt(x: number, y: number): any {
     const obj = this.getObjectAt(MapLayer.RegionDescriptions, x, y);
-    if (!obj) return '';
-
-    return obj.properties.desc;
+    return obj?.properties?.desc || '';
   }
 
   public getBackgroundMusicAt(x: number, y: number): string {
     const obj = this.getObjectAt(MapLayer.BackgroundMusic, x, y);
-    if (!obj) return '';
-
-    return obj.name;
+    return obj?.name || '';
   }
 
   public getSuccorportPropertiesAt(x: number, y: number): null | any {
     const obj = this.getObjectAt(MapLayer.Succorport, x, y);
-    if (!obj) return null;
-
-    return obj.properties;
+    return obj?.properties;
   }
 
   public getInteractableOfTypeAt(x: number, y: number, type: ObjectType): null | any {
