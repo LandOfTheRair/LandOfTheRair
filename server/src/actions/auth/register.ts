@@ -60,6 +60,8 @@ export class RegisterAction extends ServerAction {
         assetHash: meta.hash
       });
 
+      game.messageHelper.broadcastSystemMessage(`Welcome ${account.username} to Land of the Rair!`);
+
     } catch (e) {
       game.logger.error('RegisterAction', e);
       throw new Error('Could not register username?');

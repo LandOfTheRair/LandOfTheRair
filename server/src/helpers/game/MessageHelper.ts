@@ -9,7 +9,7 @@ export class MessageHelper extends BaseService {
 
   public init() {}
 
-  public async sendMessage(player: ICharacter, message: string, messageTypes: string[] = ['misc']): Promise<void> {
+  public async sendLogMessageToPlayer(player: ICharacter, message: string, messageTypes: string[] = ['misc']): Promise<void> {
 
     const account = (player as Player).account;
     if (!account) return;
@@ -21,6 +21,10 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public async broadcastSystemMessage(message: string): Promise<void> {
+    this.sendMessage('★System', message);
+  }
+
   public async broadcastChatMessage(player: ICharacter, message: string): Promise<void> {
 
     const account = (player as Player).account;
@@ -28,18 +32,22 @@ export class MessageHelper extends BaseService {
 
     const username = (player as Player).username;
 
+    this.sendMessage(username, message);
+  }
+
+  private sendMessage(from: string, message: string): void {
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message,
-      from: username
+      from
     });
 
     this.game.wsCmdHandler.broadcast({
       type: GameServerResponse.Chat,
       timestamp: Date.now(),
       message,
-      from: username
+      from
     });
   }
 
