@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter, MessageType } from '../../interfaces';
 import { Player } from '../../models';
 
 
@@ -9,7 +9,11 @@ export class MessageHelper extends BaseService {
 
   public init() {}
 
-  public async sendLogMessageToPlayer(player: ICharacter, message: string, messageTypes: string[] = ['misc']): Promise<void> {
+  public async sendLogMessageToPlayer(
+    player: ICharacter,
+    message: string,
+    messageTypes: MessageType[] = [MessageType.Miscellaneous]
+  ): Promise<void> {
 
     const account = (player as Player).account;
     if (!account) return;

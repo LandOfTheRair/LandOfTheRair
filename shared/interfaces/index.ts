@@ -9,6 +9,7 @@ export * from './item';
 export * from './lobby';
 export * from './macro';
 export * from './map';
+export * from './messages';
 export * from './npc';
 export * from './player';
 export * from './settings';

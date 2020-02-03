@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { GameServerResponse } from '../../../../models';
+import { GameServerResponse, MessageType } from '../../../../models';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { SocketService } from '../../../socket.service';
 
@@ -12,7 +12,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(WindowComponent, { static: false, read: ElementRef }) public window: ElementRef;
 
-  public messages: Array<{ messageTypes: string[], message: string }> = [];
+  public messages: Array<{ messageTypes: MessageType[], message: string }> = [];
 
   private mutationObserver: MutationObserver;
 
@@ -22,13 +22,14 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
+      if (data.messageTypes.includes(MessageType.Chatter)) data.message = `<local:${data.from}> ${data.message}`;
       this.addMessage(data);
     });
 
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.Chat, (data) => {
       this.addMessage({
-        messageTypes: ['lobby', 'chat'],
-        message: `[${data.from}] ${data.message}`
+        messageTypes: [MessageType.Lobby, MessageType.Chatter],
+        message: `<lobby:${data.from}> ${data.message}`
       });
     });
   }
