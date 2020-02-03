@@ -7,6 +7,7 @@ export class LogoutAction extends ServerAction {
   requiredKeys = ['username'];
 
   async act(game: Game, { broadcast, unregister }, data) {
+
     try {
 
       broadcast({
@@ -15,7 +16,13 @@ export class LogoutAction extends ServerAction {
       });
 
       unregister(data.username);
+
+      if (game.lobbyManager.isAccountInGame(data.account)) {
+        game.lobbyManager.accountLeaveGame(data.account);
+      }
+
       game.lobbyManager.removeAccount(data.username);
+      game.logger.log('Auth:Logout', `${data.username} logged out.`);
 
     } catch (e) {
       game.logger.error('LogoutAction', e);

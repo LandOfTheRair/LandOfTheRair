@@ -31,6 +31,8 @@ export class RegisterAction extends ServerAction {
       const account = await game.accountDB.createAccount(data);
       if (!account) throw new Error('Could not register.');
 
+      game.logger.log('Auth:Register', `${data.username} registered.`);
+
       const simpleAccount = await game.accountDB.simpleAccount(account);
 
       broadcast({

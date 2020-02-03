@@ -66,7 +66,7 @@ export class WebsocketWorker {
     // prevent disconnects by doing a heartbeat
     wsServer.startAutoPing(20000);
 
-    wsServer.on('connection', (socket) => {
+    wsServer.on('connection', (socket: any) => {
       socket.uuid = uuid();
 
       this.sockets[socket.uuid] = socket;
@@ -116,7 +116,7 @@ export class WebsocketWorker {
   // emit message directly to socket
   private sendToSocket(socket, data) {
     const sendMessage = this.transformData(data);
-    socket.send(sendMessage, { binary: true, compress: true });
+    socket.send(sendMessage, { compress: true });
   }
 
   // broadcast to all sockets

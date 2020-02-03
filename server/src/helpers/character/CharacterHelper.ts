@@ -2,12 +2,17 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, ICharacter, Stat } from '../../interfaces';
+import { BaseService, CoreStat, ICharacter, IPlayer, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
 
   public init() {}
+
+  // check if a character is a player
+  public isPlayer(character: ICharacter): boolean {
+    return !!(character as IPlayer).username;
+  }
 
   // gain a permanent stat (from a bottle, or some other source)
   public gainPermanentStat(character: ICharacter, stat: CoreStat, value = 1): boolean {

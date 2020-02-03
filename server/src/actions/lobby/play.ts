@@ -21,9 +21,9 @@ export class PlayAction extends ServerAction {
     if (!player) throw new Error(`No character in slot ${charSlot}.`);
     const mapName = player.map;
 
-    let map: WorldMap = game.worldManager.getMap(mapName);
+    let map: WorldMap = game.worldManager.getMap(mapName).map;
     if (!map || !player.x || !player.y || isNaN(player.x) || isNaN(player.y)) {
-      map = game.worldManager.getMap('Tutorial');
+      map = game.worldManager.getMap('Tutorial').map;
 
       player.map = 'Tutorial';
       player.x = 14;

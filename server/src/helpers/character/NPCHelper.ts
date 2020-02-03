@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { Allegiance, BaseService, ICharacter, initializeCharacter, INPC, ISimpleNPC, MonsterClass } from '../../interfaces';
+import { Allegiance, BaseService, ICharacter, initializeCharacter, INPCDefinition, ISimpleNPC, MonsterClass } from '../../interfaces';
 import { ContentManager } from '../data';
 
 import { species } from 'fantastical';
@@ -23,11 +23,11 @@ export class NPCHelper extends BaseService {
   }
 
   // get the real item for base information lookup
-  public getNPC(npcId: string): INPC {
+  public getNPC(npcId: string): INPCDefinition {
     return this.content.npcs[npcId];
   }
 
-  public getNPCName(npc: INPC): string {
+  public getNPCName(npc: INPCDefinition): string {
     if (npc.name) return npc.name;
 
     switch (npc.monsterClass) {

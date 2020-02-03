@@ -32,7 +32,9 @@ const defaultGame: () => IGame = () => {
     inGame: false,
     player: null,
     map: null,
-    npcs: {}
+    npcs: {},
+    players: {},
+    ground: {}
   };
 };
 

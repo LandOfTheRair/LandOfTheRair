@@ -42,14 +42,20 @@ export class MapComponent implements OnInit {
       this.map.next(map);
       this.currentPlayer.next(player);
 
-      this.zone.runOutsideAngular(() => {
-        this.initMap();
-      });
+      if (!this.game) {
+        this.zone.runOutsideAngular(() => {
+          this.initMap();
+        });
+      }
     });
 
     // reset when we get a quit signal
     this.gameService.quitGame$.subscribe(() => {
-      if (this.game) this.game.destroy(true);
+      if (this.game) {
+        this.game.destroy(true);
+        this.game = null;
+      }
+
       this.map.next(null);
       this.loadPercent.next(0);
     });

@@ -35,6 +35,8 @@ export class LoginAction extends ServerAction {
       register(data.username);
       game.lobbyManager.addAccount(account);
 
+      game.logger.log('Auth:Login', `${data.username} logged in.`);
+
       emit({
         type: GameServerResponse.Login,
         account,

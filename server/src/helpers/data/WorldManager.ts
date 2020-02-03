@@ -1,12 +1,15 @@
 
 import { Injectable } from 'injection-js';
 
+import { pull } from 'lodash';
+
 import fs from 'fs-extra';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
-import { BaseService } from '../../interfaces';
-import { InstancedWorldMap, WorldMap } from '../../models';
+import { BaseService, ICharacter } from '../../interfaces';
+import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import { Logger } from '../core';
 
 @Injectable()
 export class WorldManager extends BaseService {
@@ -27,6 +30,15 @@ export class WorldManager extends BaseService {
   // the number of players in each map, semaphore to indicate if a map should activate or not
   private mapPlayerCounts: { [mapName: string]: number } = {};
 
+  // the maps players are currently located in
+  private playersInMaps: { [playerName: string]: string } = {};
+
+  // the state for each map
+  private mapStates: { [mapName: string]: MapState } = {};
+
+  // the list of active maps to run ticks on
+  private activeMaps: Set<string> = new Set<string>();
+
   public async init() {
 
     const allMaps = await readdir('content/maps');
@@ -41,32 +53,73 @@ export class WorldManager extends BaseService {
         return;
       }
 
-      this.maps[name] = new WorldMap(map);
+      this.createMap(name, map);
       this.mapNames.push(name);
     });
 
   }
 
-  public getMap(mapName: string): WorldMap {
-    return this.maps[mapName];
+  private createMap(mapName: string, mapJson: any) {
+    this.maps[mapName] = new WorldMap(mapName, mapJson);
+    this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
   }
 
-  public joinMap() {
-    // leave current map
-    // join desired map
-    // increment mapplayercounts
-    // if map does not exist in maps, check if it is instanced. if so, create or join an instance
-    //    if instance, push to activemapnames
+  public getMap(mapName: string): { map: WorldMap, state: MapState } {
+    return {
+      map: this.instances[mapName] || this.maps[mapName],
+      state: this.mapStates[mapName]
+    };
   }
 
-  public leaveMap() {
-    // leave map
-    // if mapplayercounts <= 0 or not exist, remove from active maps
+  public getMapStateForCharacter(character: ICharacter): MapState {
+    return this.mapStates[character.map];
   }
 
-  // if a map is active, it should tick
-  public isMapActive(mapName: string) {
-    return this.mapPlayerCounts[mapName] > 0;
+  public joinMap(player: Player) {
+    this.leaveMap(player);
+
+    const mapName = player.map;
+
+    this.playersInMaps[player.name] = mapName;
+    this.mapPlayerCounts[mapName] = this.mapPlayerCounts[mapName] || 0;
+    this.mapPlayerCounts[mapName]++;
+
+    this.activeMaps.add(mapName);
+
+    this.mapStates[mapName].addPlayer(player);
+
+    this.game.logger.log(`Map:Join`, `${player.name} joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`);
+
+    // TODO: join instanced map
+  }
+
+  public leaveMap(player: Player) {
+    const oldMap = this.playersInMaps[player.name];
+    if (!oldMap) return;
+
+    delete this.playersInMaps[player.name];
+
+    this.mapPlayerCounts[oldMap] = this.mapPlayerCounts[oldMap] || 0;
+    this.mapPlayerCounts[oldMap] = Math.max(this.mapPlayerCounts[oldMap] - 1, 0);
+    if (this.mapPlayerCounts[oldMap] <= 0) {
+      this.activeMaps.delete(oldMap);
+    }
+
+    this.mapStates[oldMap].removePlayer(player);
+
+    this.game.logger.log(`Map:Leave`, `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
+  }
+
+  public mapTick() {
+    this.activeMaps.forEach(activeMap => {
+      const state = this.mapStates[activeMap];
+      if (!state) {
+        this.game.logger.error('WorldManager:MapTick', new Error(`Map ${activeMap} does not have state.`));
+        return;
+      }
+
+      state.tick();
+    });
   }
 
 }

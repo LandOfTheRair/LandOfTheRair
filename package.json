@@ -15,7 +15,5 @@
     "lerna": "^3.16.5",
     "tslib": "^1.10.0"
   },
-  "dependencies": {
-    "mikro-orm": "^3.0.0-rc.6"
-  }
+  "dependencies": {}
 }

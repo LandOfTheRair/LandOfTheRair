@@ -1,9 +1,19 @@
 
 export enum Direction {
+
+  // cardinals, used for players
   South = 'S',
   North = 'N',
   East = 'E',
   West = 'W',
+
+  // diagonals
+  Southwest = 'SW',
+  Southeast = 'SE',
+  Northwest = 'NW',
+  Northeast = 'NE',
+
+  // special directions
   Corpse = 'C'
 }
 

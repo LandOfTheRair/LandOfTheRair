@@ -3,7 +3,7 @@ import { IEffect } from './effect';
 
 export interface ISimpleNPC {
   npcId: string;
-  mods: Partial<INPC>;
+  mods: Partial<INPCDefinition>;
 }
 
 export enum NPCTriggerType {
@@ -13,7 +13,7 @@ export enum NPCTriggerType {
   Combat = 'combat'
 }
 
-export interface INPC {
+export interface INPCDefinition {
   npcId: string;
 
   // the sprite or sprites this creature can be

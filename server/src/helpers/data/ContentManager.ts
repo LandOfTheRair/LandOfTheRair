@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
 
-import { BaseService, IItem, INPC } from '../../interfaces';
+import { BaseService, IItem, INPCDefinition } from '../../interfaces';
 
 @Injectable()
 export class ContentManager extends BaseService {
@@ -14,7 +14,7 @@ export class ContentManager extends BaseService {
   public mapDroptables: any;
   public regionDroptables: any;
   public items: { [itemName: string]: IItem };
-  public npcs: { [npcName: string]: INPC };
+  public npcs: { [npcName: string]: INPCDefinition };
   public npcScripts: any;
   public recipes: any;
   public spawners: any;

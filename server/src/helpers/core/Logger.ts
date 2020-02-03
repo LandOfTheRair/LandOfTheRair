@@ -9,7 +9,7 @@ export class Logger extends BaseService {
   public async init() {}
 
   private _logWithTs(type: 'log'|'error', tag, ...args) {
-    console[type](new Date(), `[${tag}]`, ...args);
+    console[type](new Date().toISOString(), `[${tag}]`, ...args);
   }
 
   public log(tag: string, args) {

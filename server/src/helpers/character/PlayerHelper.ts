@@ -4,10 +4,15 @@ import uuid from 'uuid/v4';
 
 import { BaseService, Currency, Direction, initializePlayer, IPlayer, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
+import { WorldManager } from '../data';
 
 
 @Injectable()
 export class PlayerHelper extends BaseService {
+
+  constructor(private world: WorldManager) {
+    super();
+  }
 
   public init() {}
 
@@ -18,6 +23,63 @@ export class PlayerHelper extends BaseService {
 
     const playerPristine = initializePlayer(player);
     wrap(player).assign(playerPristine, { mergeObjects: true });
+  }
+
+  public tick(player: Player, type: 'fast'|'slow'): void {
+
+    // do actions if we have any
+    if (player.actionQueue) {
+      const queue = player.actionQueue[type] || [];
+
+      const actions = type === 'fast' ? 1 : (this.getStat(player, Stat.ActionSpeed) || 1);
+
+      for (let i = 0; i < actions; i++) {
+        const command = queue.shift();
+        if (!command) continue;
+
+        command();
+      }
+    }
+
+    // if we're on a dense tile, "respawn"
+    const { map } = this.world.getMap(player.map);
+    if (map.getWallAt(player.x, player.y) || map.getDenseDecorAt(player.x, player.y)) {
+      this.teleportToRespawnPoint(player);
+    }
+  }
+
+  // teleport a player to their respawn point
+  public teleportToRespawnPoint(player: Player): void {
+    this.teleport(player, player.respawnPoint.x, player.respawnPoint.y, player.respawnPoint.map);
+  }
+
+  // reset swim level, fov, region desc
+  public resetStatus(player: Player, ignoreMessages?: boolean) {
+    // TODO: fov
+    // TODO: swimming, drowning
+
+    if (!ignoreMessages) {
+      // TODO: send messages
+    }
+  }
+
+  // teleport a player to a new location
+  public teleport(player: Player, x: number, y: number, map: string = player.map): void {
+    player.x = x;
+    player.y = y;
+
+    const { state } = this.world.getMap(player.map);
+
+    if (player.map === map) {
+      state.moveNPCOrPlayer(player);
+
+    } else {
+      state.removePlayer(player);
+
+      const { state: newState } = this.world.getMap(map);
+      player.map = map;
+      newState.addPlayer(player);
+    }
   }
 
   // get a stat from a player, or 0

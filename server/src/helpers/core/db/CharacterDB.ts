@@ -62,4 +62,8 @@ export class CharacterDB extends BaseService {
     return player;
   }
 
+  public async savePlayer(player: Player): Promise<void> {
+    return this.db.save(player);
+  }
+
 }

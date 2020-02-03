@@ -1,13 +1,15 @@
 import { Injectable } from 'injection-js';
-import { wrap } from 'mikro-orm';
 
 import { BaseService, GameAction, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
-import { PlayerHelper, CharacterHelper } from '../character';
+import { CharacterHelper, PlayerHelper } from '../character';
 
 
 @Injectable()
 export class PlayerManager extends BaseService {
+
+  private currentSlowTick = 0;
+  private readonly SAVE_TICK_COUNT = 150;
 
   constructor(
     private characterHelper: CharacterHelper,
@@ -29,25 +31,24 @@ export class PlayerManager extends BaseService {
     this.inGamePlayers[username] = player;
     this.updatePlayerData(player);
 
-    // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
-    const sendPlayer = await wrap(player).toObject();
-    this.game.sendActionToAccount(username, GameAction.GameSetPlayer, { player: sendPlayer });
+    const sendPlayer = await this.game.transmissionHelper.convertPlayerForTransmission(player);
+    this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: sendPlayer });
   }
 
   public async removePlayerFromGame(player: Player) {
     const username = player.username;
     delete this.inGamePlayers[username];
 
-    this.game.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });
+    this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });
   }
 
   public async removePlayerFromGameByAccount(account: Account) {
     delete this.inGamePlayers[account.username];
 
-    this.game.sendActionToAccount(account.username, GameAction.GameSetPlayer, { player: null });
+    this.game.transmissionHelper.sendActionToAccount(account.username, GameAction.GameSetPlayer, { player: null });
   }
 
-  // TODO: how to patch player object client side?
+  // TODO: how to patch player object client side? (map state: update)
 
   public updatePlayerData(player: Player) {
     this.characterHelper.calculateStatTotals(player);
@@ -55,19 +56,16 @@ export class PlayerManager extends BaseService {
 
   private tick(type: 'slow'|'fast') {
     Object.values(this.inGamePlayers).forEach(player => {
-      if (!player.actionQueue) return;
-
-      const queue = player.actionQueue[type] || [];
-
-      const actions = type === 'fast' ? 1 : (this.playerHelper.getStat(player, Stat.ActionSpeed) || 1);
-
-      for (let i = 0; i < actions; i++) {
-        const command = queue.shift();
-        if (!command) continue;
-
-        command();
-      }
+      this.playerHelper.tick(player, type);
     });
+  }
+
+  public savePlayer(player: Player) {
+    this.game.characterDB.savePlayer(player);
+  }
+
+  public saveAllPlayers() {
+    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player));
   }
 
   public fastTick() {
@@ -76,6 +74,11 @@ export class PlayerManager extends BaseService {
 
   public slowTick() {
     this.tick('slow');
+
+    this.currentSlowTick++;
+    if (this.currentSlowTick > this.SAVE_TICK_COUNT) {
+      this.saveAllPlayers();
+    }
   }
 
 }

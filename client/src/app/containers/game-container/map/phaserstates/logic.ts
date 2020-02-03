@@ -184,6 +184,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   public update() {
-
+    if (!this.player) return;
+    this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
   }
 }
