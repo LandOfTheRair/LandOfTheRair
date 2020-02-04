@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { BaseService, ICharacter, INPCDefinition, IPlayer, ObjectType, Stat } from '../../interfaces';
+import { BaseService, ICharacter, INPCDefinition, ObjectType, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';

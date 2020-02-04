@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 
-import { CalculatorHelper, CharacterHelper, DirectionHelper, InteractionHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper } from '../character';
+import { CalculatorHelper, CharacterHelper, DirectionHelper, InteractionHelper,
+  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -40,6 +41,7 @@ export class Game {
     public npcCreator: NPCCreator,
 
     public movementHelper: MovementHelper,
+    public visibilityHelper: VisibilityHelper,
     public directionHelper: DirectionHelper,
     public staticTextHelper: StaticTextHelper,
     public interactionHelper: InteractionHelper,
@@ -69,7 +71,7 @@ export class Game {
       'lobbyManager',
       'characterRoller',
       'itemCreator', 'npcCreator',
-      'movementHelper', 'directionHelper', 'staticTextHelper',
+      'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
       'commandHandler', 'messageHelper',

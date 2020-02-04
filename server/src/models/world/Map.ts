@@ -1,6 +1,7 @@
 
 import { get, setWith } from 'lodash';
 
+import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 
 import { IMapData, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
@@ -9,6 +10,7 @@ export class WorldMap {
 
   private densityMap: Pathfinder.Grid;
   private planner: any;
+  private fov: Mrpas;
 
   private layerHashes: { [key in MapLayer]?: any } = {};
 
@@ -24,16 +26,20 @@ export class WorldMap {
     return { tiledJSON: this.json, layerData: this.layerHashes };
   }
 
-  constructor(private mapName: string, private json: any) {
+  public get fovCalculator() {
+    return this.fov;
+  }
+
+  constructor(private json: any) {
     this.destructureJSON();
     this.createPlanner();
   }
 
   private createPlanner() {
-    const densityMap = new Pathfinder.Grid(this.json.width, this.json.height);
+    const densityMap = new Pathfinder.Grid(this.width, this.height);
 
-    for (let dx = 0; dx < this.json.width; dx++) {
-      for (let dy = 0; dy < this.json.height; dy++) {
+    for (let dx = 0; dx < this.width; dx++) {
+      for (let dy = 0; dy < this.height; dy++) {
 
         const isDense = this.getWallAt(dx, dy) || this.getDenseDecorAt(dx, dy);
 
@@ -51,6 +57,18 @@ export class WorldMap {
 
     this.planner = new Pathfinder.AStarFinder({
       diagonalMovement: Pathfinder.DiagonalMovement.Always
+    });
+
+
+    this.fov = new Mrpas(this.width, this.height, (x, y) => {
+      const tile = this.getWallAt(x, y);
+
+      if (tile === TilesWithNoFOVUpdate.Empty || tile === TilesWithNoFOVUpdate.Air) {
+        const object = this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
+        return !object || (object && !object.opacity);
+      }
+
+      return false;
     });
   }
 
@@ -102,7 +120,7 @@ export class WorldMap {
   }
 
   private getArrayLayerData(mapLayer: MapLayer, x: number, y: number): number {
-    return this.json.layers[mapLayer].data[x + (y * (this.json.width))];
+    return this.json.layers[mapLayer].data[x + (y * (this.width))];
   }
 
   private getObjectAt(mapLayer: MapLayer, x: number, y: number): null | any {

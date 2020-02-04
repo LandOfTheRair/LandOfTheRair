@@ -47,6 +47,7 @@
     "no-switch-case-fall-through": true,
     "no-use-before-declare": true,
     "no-var-requires": false,
+    "no-unused-variable": true,
     "object-literal-key-quotes": [
       true,
       "as-needed"

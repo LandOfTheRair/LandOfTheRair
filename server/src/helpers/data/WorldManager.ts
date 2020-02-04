@@ -1,15 +1,12 @@
 
 import { Injectable } from 'injection-js';
 
-import { pull } from 'lodash';
-
 import fs from 'fs-extra';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
 import { BaseService, ICharacter } from '../../interfaces';
 import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
-import { Logger } from '../core';
 
 @Injectable()
 export class WorldManager extends BaseService {
@@ -60,7 +57,7 @@ export class WorldManager extends BaseService {
   }
 
   private createMap(mapName: string, mapJson: any) {
-    this.maps[mapName] = new WorldMap(mapName, mapJson);
+    this.maps[mapName] = new WorldMap(mapJson);
     this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
   }
 

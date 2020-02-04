@@ -21,7 +21,6 @@ export class MapState {
 
   private players = new RBush();
   private npcs = new RBush();
-  private groundItems = new RBush();
 
   private bushStorage: { [uuid: string]: RBushCharacter } = {};
 
@@ -33,7 +32,7 @@ export class MapState {
 
   private playerKnowledgePositions = {};
 
-  constructor(private game: Game, private map: WorldMap) {}
+  constructor(private game: Game, map: WorldMap) {}
 
   public tick() {
 
@@ -71,7 +70,7 @@ export class MapState {
 
   // update all players for a particular coordinate
   public triggerUpdate(x: number, y: number) {
-    const playersToUpdate = this.getPlayersToUpdate(x, y);
+    // const playersToUpdate = this.getPlayersToUpdate(x, y);
   }
 
   // trigger a full update for a particular player

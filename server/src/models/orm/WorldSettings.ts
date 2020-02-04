@@ -1,5 +1,5 @@
 
-import { AnyEntity, Entity, MongoEntity, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
+import { Entity, MongoEntity, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
 import { ObjectID } from 'mongodb';
 
 
