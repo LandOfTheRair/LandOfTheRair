@@ -22,6 +22,7 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
   @Property(PROP_UNSAVED_SHARED()) swimLevel = 0;
 
+  @Property(PROP_TEMPORARY()) fov = {};
   @Property(PROP_TEMPORARY()) agro = {};
   @Property(PROP_TEMPORARY()) combatTicks = 0;
   @Property(PROP_TEMPORARY()) swimElement = '';

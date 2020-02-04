@@ -2,6 +2,7 @@ import { Alignment, Allegiance, BaseClass, Direction, ICharacter } from '../inte
 
 export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter => {
   return {
+    fov: char.fov ?? { },
     uuid: char.uuid ?? '',
     agro: char.agro ?? { },
     affiliation: char.affiliation ?? '',

@@ -39,6 +39,7 @@ export interface ICharacter {
   mp: { maximum: number, minimum: number, __current: number };
 
   gender: 'male'|'female';
+  fov: any;
   map: string;
   x: number;
   y: number;

@@ -16,6 +16,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
+import { AlertComponent } from './_shared/components/alert/alert.component';
 import { ButtonCloseComponent } from './_shared/components/button-close.component';
 import { ButtonMinimizeComponent } from './_shared/components/button-minimize.component';
 import { IconComponent } from './_shared/components/icon.component';
@@ -31,7 +32,7 @@ const matImports = [
 ];
 
 const declarations = [
-  DraggableDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent, WindowComponent, LinkifyPipe
+  AlertComponent, DraggableDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent, WindowComponent, LinkifyPipe
 ];
 
 

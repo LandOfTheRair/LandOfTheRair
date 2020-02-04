@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +20,8 @@ import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared.module';
 import { SocketService } from './socket.service';
+
+import { AlertErrorHandler } from './logger.service';
 
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
@@ -94,6 +96,10 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
       deps: [GameService],
       multi: true
     },
+    {
+      provide: ErrorHandler,
+      useClass: AlertErrorHandler,
+    }
   ],
   bootstrap: [AppComponent]
 })
