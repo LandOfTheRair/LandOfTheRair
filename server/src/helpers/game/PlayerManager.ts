@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 
-import { BaseService, GameAction, Stat } from '../../interfaces';
+import { BaseService, GameAction } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { CharacterHelper, PlayerHelper } from '../character';
 
@@ -30,6 +30,7 @@ export class PlayerManager extends BaseService {
     const username = player.username;
     this.inGamePlayers[username] = player;
     this.updatePlayerData(player);
+    this.game.transmissionHelper.startWatching(player);
 
     const sendPlayer = await this.game.transmissionHelper.convertPlayerForTransmission(player);
     this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: sendPlayer });
@@ -38,6 +39,7 @@ export class PlayerManager extends BaseService {
   public async removePlayerFromGame(player: Player) {
     const username = player.username;
     delete this.inGamePlayers[username];
+    this.game.transmissionHelper.stopWatching(player);
 
     this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });
   }

@@ -1,6 +1,8 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { GameAction, IGame, IPlayer } from '../models';
 
+import { applyPatch } from 'fast-json-patch';
+
 
 export class PlayGame {
   static type = GameAction.GamePlay;
@@ -24,7 +26,7 @@ export class SetPlayer {
 
 export class PatchPlayer {
   static type = GameAction.GamePatchPlayer;
-  constructor(public player: Partial<IPlayer>) {}
+  constructor(public player: Partial<IPlayer>, public patches: any[]) {}
 }
 
 const defaultGame: () => IGame = () => {
@@ -98,14 +100,20 @@ export class GameState {
   }
 
   @Action(PatchPlayer)
-  patchPlayer(ctx: StateContext<IGame>, { player }: PatchPlayer) {
+  patchPlayer(ctx: StateContext<IGame>, { player, patches }: PatchPlayer) {
     const state = ctx.getState();
     const copyState = { ...state };
 
     // can't get patches if we're not in game
     if (!copyState.player) return;
 
-    copyState.player = Object.assign({}, copyState.player, player);
+    if (player) {
+      copyState.player = Object.assign({}, copyState.player, player);
+    }
+
+    if (patches) {
+      copyState.player = applyPatch({ ...copyState.player }, patches).newDocument;
+    }
 
     ctx.patchState(copyState);
   }

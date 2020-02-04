@@ -37,11 +37,7 @@ export class LoggerService {
 @Injectable()
 export class AlertErrorHandler implements ErrorHandler {
 
-  constructor(private logger: LoggerService) {
-    setTimeout(() => {
-      throw new Error('halp');
-    }, 100);
-  }
+  constructor(private logger: LoggerService) {}
 
   handleError(error) {
     this.logger.error(error);
