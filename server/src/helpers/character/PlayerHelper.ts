@@ -28,6 +28,9 @@ export class PlayerHelper extends BaseService {
 
     const playerPristine = initializePlayer(player);
     wrap(player).assign(playerPristine, { mergeObjects: true });
+
+    player.lastRegionDesc = '';
+    player.lastTileDesc = '';
   }
 
   public tick(player: Player, type: 'fast'|'slow'): void {
@@ -100,7 +103,7 @@ export class PlayerHelper extends BaseService {
 
       // send a new region desc if possible
       const hasNewRegion = regionDesc && regionDesc !== player.lastRegionDesc;
-      if (hasNewRegion && regionDesc) {
+      if (hasNewRegion) {
         player.lastRegionDesc = regionDesc;
         this.game.messageHelper.sendLogMessageToPlayer(player, regionDesc, [MessageType.Environment]);
 

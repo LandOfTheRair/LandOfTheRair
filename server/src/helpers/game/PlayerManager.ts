@@ -35,6 +35,9 @@ export class PlayerManager extends BaseService {
 
   // add a player to the game
   public async addPlayerToGame(player: Player) {
+
+    this.playerHelper.migrate(player);
+
     const username = player.username;
     this.inGamePlayers[username] = player;
 
