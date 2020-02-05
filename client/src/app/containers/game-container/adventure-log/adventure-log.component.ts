@@ -1,11 +1,16 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
+
+import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+
+import { Subscription } from 'rxjs';
 import { GameServerResponse, MessageType } from '../../../../models';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 
+@AutoUnsubscribe()
 @Component({
   selector: 'app-adventure-log',
   templateUrl: './adventure-log.component.html',
@@ -19,6 +24,8 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private mutationObserver: MutationObserver;
 
+  inGame$: Subscription;
+
   constructor(
     private store: Store,
     private socketService: SocketService,
@@ -26,6 +33,12 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.inGame$ = this.gameService.inGame$.subscribe(inGame => {
+      if (inGame) return;
+
+      this.messages = [];
+    });
+
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
       if (data.messageTypes.includes(MessageType.Chatter)) data.message = `<local:${data.from}> ${data.message}`;
       this.addMessage(data);
@@ -40,6 +53,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    console.log('INIT');
     const outputAreaDOMElement = this.window.nativeElement.querySelector('.log-area');
 
     const scrollToBottom = () => {
@@ -83,6 +97,8 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     message.messageTypes.forEach(type => message.typeHash[type] = true);
 
     this.messages.push(message);
+
+    if (this.messages.length > 500) this.messages.shift();
   }
 
 }
