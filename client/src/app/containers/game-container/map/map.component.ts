@@ -19,6 +19,7 @@ export class MapComponent implements OnInit {
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
 
+  // TODO: change this to loading text
   public loadPercent = new BehaviorSubject<number>(0);
   public loadPercent$ = this.loadPercent.asObservable();
 

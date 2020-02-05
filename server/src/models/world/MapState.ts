@@ -75,7 +75,7 @@ export class MapState {
 
   // trigger a full update for a particular player
   public triggerFullUpdateForPlayer(player: Player) {
-    this.game.transmissionHelper.patchPlayer(player);
+    this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
 
     // TODO: also send npcs, items, players
   }

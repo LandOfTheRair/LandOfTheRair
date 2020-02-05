@@ -1,7 +1,7 @@
-import { get } from 'lodash';
+import { get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { IMapData, IPlayer, MapLayer } from '../../../../../models';
+import { IMapData, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../models';
 import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
 const Phaser = (window as any).Phaser;
@@ -11,7 +11,32 @@ export class MapScene extends Phaser.Scene {
   // the current map in JSON form
   private allMapData: IMapData;
 
+  private layers = {
+    decor: null,
+    densedecor: null,
+    opaquedecor: null,
+
+    gold: null,
+    groundItems: null,
+    interactables: null,
+    doorTops: null,
+
+    otherEnvironmentalObjects: null,
+    vfx: null,
+    npcs: null,
+    playerSprites: null,
+
+    fov: null
+  };
+
+  private specialRenders = {
+    truesight: false,
+    eagleeye: false
+  };
+
   private allSprites = {};
+  private fovSprites = {};
+  private fovDetailSprites = {};
 
   private playerUpdate$: Subscription;
   private player: IPlayer;
@@ -23,39 +48,48 @@ export class MapScene extends Phaser.Scene {
     super({ key: 'MapScene' });
   }
 
-  private destroy() {
-    if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
+  private createLayers() {
+    Object.keys(this.layers).forEach((layer, index) => {
+      this.layers[layer] = this.add.container();
+      this.layers[layer].depth = index + 1;
+    });
   }
 
-  private updatePlayerSpriteData(sprite, player: IPlayer) {
-    let newFrame = 0;
-    let newKey = '';
+  private createFOV() {
+    const blackBitmapData = this.textures.createCanvas('black', 64, 64);
+    blackBitmapData.context.fillStyle = 0x000000;
+    blackBitmapData.context.fillRect(0, 0, 64, 64);
+    blackBitmapData.refresh();
 
-    if (player.swimLevel && player.hp.__current > 0) {
-      const baseSprite = basePlayerSwimmingSprite(player);
-      const dirSpriteDiff = swimmingSpriteOffsetForDirection(player.dir);
-      newFrame = baseSprite + dirSpriteDiff;
-      newKey = 'Swimming';
+    /*
+    const debugBitmapData = this.g.add.bitmapData(64, 64);
+    debugBitmapData.ctx.beginPath();
+    debugBitmapData.ctx.rect(0, 0, 64, 64);
+    debugBitmapData.ctx.fillStyle = '#0f0';
+    debugBitmapData.ctx.fill();
+    */
 
-    } else {
-      const baseSprite = basePlayerSprite(player);
-      const dirSpriteDiff = spriteOffsetForDirection(player.dir);
-      newFrame = baseSprite + dirSpriteDiff;
-      newKey = 'Creatures';
+    for (let x = -4; x <= 4; x++) {
+      for (let y = -4; y <= 4; y++) {
+        const dark = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData);
+        dark.alpha = 0;
+        dark.setScrollFactor(0);
 
+        setWith(this.fovSprites, [x, y], dark, Object);
+        this.fovSprites[x][y] = dark;
+        this.layers.fov.add(dark);
+
+        const dark2 = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData);
+        dark2.alpha = 0;
+        dark2.setScrollFactor(0);
+
+        setWith(this.fovDetailSprites, [x, y], dark2, Object);
+        this.layers.fov.add(dark2);
+      }
     }
-
-    sprite.x = this.convertPosition(player.x, true);
-    sprite.y = this.convertPosition(player.y, true);
-
-    if (sprite.key !== newKey) {
-      sprite.setTexture(newKey);
-    }
-
-    sprite.setFrame(newFrame);
   }
 
-  public updatePlayerSprite(player: IPlayer) {
+  private updatePlayerSprite(player: IPlayer) {
     const sprite = this.allSprites[player.uuid];
     if (!sprite) return;
 
@@ -71,11 +105,142 @@ export class MapScene extends Phaser.Scene {
       'Creatures', spriteGenderBase + directionOffset
     );
 
+    this.layers.playerSprites.add(sprite);
+
     this.allSprites[player.uuid] = sprite;
 
     this.updatePlayerSpriteData(sprite, player);
 
     return sprite;
+  }
+
+  private updateSelf(player: IPlayer) {
+    if (!player) return;
+
+    this.updateFOV();
+  }
+
+  private shouldRenderXY(x: number, y: number): boolean {
+    if (!this.player) return false;
+
+    return get(this.player.fov, [x, y]);
+  }
+
+  private isThereAWallAt(x: number, y: number): boolean {
+    if (!this.player) return false;
+
+    const map = this.allMapData.tiledJSON;
+    const { width, layers } = map;
+
+    const totalX = x + this.player.x;
+    const totalY = y + this.player.y;
+
+    const potentialSecretWall = get(this.allMapData.layerData[MapLayer.OpaqueDecor], [totalX, totalY]);
+    const wallList = layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
+    const wallLayerTile = wallList[(width * totalY) + totalX];
+
+    return (potentialSecretWall?.type === ObjectType.SecretWall && !this.specialRenders.truesight)
+        || (wallLayerTile !== TilesWithNoFOVUpdate.Empty && wallLayerTile !== TilesWithNoFOVUpdate.Air);
+  }
+
+  private updateFOV() {
+
+    const isPlayerInGame = this.allSprites[this.player.uuid];
+
+    for (let x = -4; x <= 4; x++) {
+      for (let y = -4; y <= 4; y++) {
+        const fovState = this.shouldRenderXY(x, y);
+        const fovSprite = this.fovSprites[x][y];
+        const fovSprite2 = this.fovDetailSprites[x][y];
+
+        fovSprite.setScale(1);
+        fovSprite.x = 32 + 64 * (x + 4);
+        fovSprite.y = 32 + 64 * (y + 4);
+
+        fovSprite2.setScale(1);
+        fovSprite2.x = 32 + 64 * (x + 4);
+        fovSprite2.y = 32 + 64 * (y + 4);
+
+        /*
+        if(this.colyseus.game.debugFOVHide) {
+          fovSprite.alpha = 0;
+          fovSprite2.alpha = 0;
+          continue;
+        }
+        */
+
+        if (!isPlayerInGame) {
+          fovSprite.alpha = 1;
+          fovSprite2.alpha = 1;
+          continue;
+        }
+
+        // tile effects
+        /* TODO: darkness / darkvision
+        if(fovState && this.isDarkAt(x, y)) {
+          if(this.isLightAt(x, y)) {
+            fovSprite.alpha = 0;
+            continue;
+          }
+
+          if(this.canDarkSee(x, y)) {
+            fovSprite.alpha = 0.5;
+            continue;
+          }
+        }
+        */
+
+        fovSprite.alpha = fovState ? 0 : 1;
+        fovSprite2.alpha = fovState ? 0 : 1;
+
+        // cut tiles
+        if (fovState) {
+          const isWallHere = this.isThereAWallAt(x, y);
+          if (!isWallHere) continue;
+
+          // FOV SPRITE 2 IS USED HERE SO IT CAN LAYER ON TOP OF THE OTHER ONES
+          if (y === 4                                           // cut down IIF the wall *is* the edge tile (scale down to y0.5, y + ~32)
+          || (y + 1 <= 4 && !this.shouldRenderXY(x, y + 1))) {  // cut down (scale down to y0.5, y + ~32)
+
+            fovSprite2.alpha = 1;
+            fovSprite2.setScale(1, 0.7);
+            fovSprite2.y += 20;
+          }
+
+          if (x === -4                                          // cut left IIF the wall *is* the edge tile (scale down to x0.5, no offset)
+          || (x - 1 >= -4 && !this.shouldRenderXY(x - 1, y))) { // cut left (scale down to x0.5, no offset)
+
+            // if the tile is black on both sides, it should be black regardless
+            if (!this.shouldRenderXY(x + 1, y)) {
+              fovSprite.alpha = 1;
+              continue;
+            }
+
+            fovSprite.alpha = 1;
+            fovSprite.setScale(0.35, 1);
+            fovSprite.x -= 22;
+            continue;
+          }
+
+
+          if (x === 4                                           // cut right IIF the wall *is* the edge tile (scale down to x0.5, x + ~32)
+          || (x + 1 <= 4 && !this.shouldRenderXY(x + 1, y))) {  // cut right (scale down to x0.5, x + ~32)
+
+            // if the tile is black on both sides, it should be black regardless
+            if (!this.shouldRenderXY(x - 1, y)) {
+              fovSprite.alpha = 1;
+              continue;
+            }
+
+            fovSprite.alpha = 1;
+            fovSprite.setScale(0.35, 1);
+            fovSprite.x += 42;
+
+          }
+        }
+
+      }
+    }
   }
 
   private convertPosition(lowPosition: number, centerOn?: boolean): number {
@@ -134,8 +299,8 @@ export class MapScene extends Phaser.Scene {
   }
 
   public create() {
-    this.setupMapInteractions();
 
+    // set up map - must happen first
     const mapData = { ...this.game.observables.map.getValue() };
     const tiledJSON = { ... mapData.tiledJSON };
 
@@ -143,6 +308,11 @@ export class MapScene extends Phaser.Scene {
     tiledJSON.tileHeight = tiledJSON.tileheight;
 
     this.allMapData = mapData;
+
+    // create some phaser data
+    this.createLayers();
+    this.createFOV();
+    this.setupMapInteractions();
 
     this.cache.tilemap.add('map', { data: tiledJSON, format: Phaser.Tilemaps.Formats.TILED_JSON });
 
@@ -175,6 +345,7 @@ export class MapScene extends Phaser.Scene {
     this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
       this.player = updPlayer;
       this.updatePlayerSprite(updPlayer);
+      this.updateSelf(updPlayer);
     });
 
     this.events.on('destroy', () => this.destroy());
@@ -186,5 +357,38 @@ export class MapScene extends Phaser.Scene {
   public update() {
     if (!this.player) return;
     this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
+    this.updateFOV();
+  }
+
+  private destroy() {
+    if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
+  }
+
+  private updatePlayerSpriteData(sprite, player: IPlayer) {
+    let newFrame = 0;
+    let newKey = '';
+
+    if (player.swimLevel && player.hp.__current > 0) {
+      const baseSprite = basePlayerSwimmingSprite(player);
+      const dirSpriteDiff = swimmingSpriteOffsetForDirection(player.dir);
+      newFrame = baseSprite + dirSpriteDiff;
+      newKey = 'Swimming';
+
+    } else {
+      const baseSprite = basePlayerSprite(player);
+      const dirSpriteDiff = spriteOffsetForDirection(player.dir);
+      newFrame = baseSprite + dirSpriteDiff;
+      newKey = 'Creatures';
+
+    }
+
+    sprite.x = this.convertPosition(player.x, true);
+    sprite.y = this.convertPosition(player.y, true);
+
+    if (sprite.key !== newKey) {
+      sprite.setTexture(newKey);
+    }
+
+    sprite.setFrame(newFrame);
   }
 }

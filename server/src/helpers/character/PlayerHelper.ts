@@ -5,6 +5,7 @@ import uuid from 'uuid/v4';
 import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { StaticTextHelper, WorldManager } from '../data';
+import { VisibilityHelper } from './VisibilityHelper';
 
 
 @Injectable()
@@ -12,6 +13,7 @@ export class PlayerHelper extends BaseService {
 
   constructor(
     private staticTextHelper: StaticTextHelper,
+    private visibilityHelper: VisibilityHelper,
     private worldManager: WorldManager
   ) {
     super();
@@ -58,7 +60,9 @@ export class PlayerHelper extends BaseService {
 
   // reset swim level, fov, region desc
   public resetStatus(player: Player, ignoreMessages?: boolean) {
-    // TODO: fov
+
+    this.visibilityHelper.calculatePlayerFOV(player);
+
     // TODO: swimming, drowning
 
     const { map } = this.worldManager.getMap(player.map);

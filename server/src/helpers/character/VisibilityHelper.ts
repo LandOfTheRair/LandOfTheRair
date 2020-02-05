@@ -1,7 +1,10 @@
 
 import { Injectable } from 'injection-js';
 
+import { get, setWith } from 'lodash';
+
 import { BaseService, ICharacter } from '../../interfaces';
+import { Player } from '../../models';
 import { WorldManager } from '../data';
 
 @Injectable()
@@ -15,6 +18,13 @@ export class VisibilityHelper extends BaseService {
 
   public init() {}
 
+  // specifically calculate fov for players and update it afterwards
+  calculatePlayerFOV(player: Player): void {
+    this.calculateFOV(player);
+    this.game.transmissionHelper.queuePlayerPatch(player, { player: { fov: player.fov } });
+  }
+
+  // calculate a fov for a character and set it
   calculateFOV(character: ICharacter): void {
 
     const { map } = this.worldManager.getMap(character.map);
@@ -37,11 +47,13 @@ export class VisibilityHelper extends BaseService {
 
     // no dark, calculate fov
     } else {
-      map.fovCalculator.compute(character.x, character.y, dist, (x, y) => {
-        return affected[x - character.x] && affected[x - character.x][y - character.y];
-      }, (x, y) => {
-        affected[x - character.x] = affected[x - character.x] || {};
-        affected[x - character.x][y - character.y] = true;
+      map.fovCalculator.compute(
+        character.x, character.y, dist,
+      (x, y) => {
+        return get(affected, [x - character.x, y - character.y]);
+      },
+      (x, y) => {
+        setWith(affected, [x - character.x, y - character.y], true, Object);
       });
 
       /*
@@ -69,6 +81,8 @@ export class VisibilityHelper extends BaseService {
     */
 
     character.fov = affected;
+
+
   }
 
 }

@@ -26,7 +26,6 @@ export class Database extends BaseService {
       driverOptions: { useUnifiedTopology: true }
     });
 
-    // TODO: add save without flush to the game loop
     [
       'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
       'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'

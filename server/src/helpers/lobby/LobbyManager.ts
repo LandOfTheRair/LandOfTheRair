@@ -18,7 +18,6 @@ export class LobbyManager extends BaseService {
 
   constructor(
     private playerManager: PlayerManager,
-    private playerHelper: PlayerHelper,
     private worldManager: WorldManager
   ) {
     super();
@@ -38,16 +37,19 @@ export class LobbyManager extends BaseService {
     this.state = new LobbyState();
   }
 
+  // add an account to the lobby
   public addAccount(account: Account): void {
     this.state.users.push(account);
 
     this.rebuildUserHash();
   }
 
+  // get an account
   public getAccount(username: string): IAccount {
     return this.state.userHash[username];
   }
 
+  // remove an account from the lobby
   public removeAccount(username: string): void {
     const firstInst = this.state.users.findIndex(x => x.username === username);
     this.state.users.splice(firstInst, 1);
@@ -57,6 +59,7 @@ export class LobbyManager extends BaseService {
     this.rebuildUserHash();
   }
 
+  // build a hash of users to their account objects
   private rebuildUserHash() {
     this.state.userHash = this.state.users.reduce((prev, cur) => {
       prev[cur.username] = cur;
@@ -64,19 +67,20 @@ export class LobbyManager extends BaseService {
     }, {});
   }
 
+  // check if an account is in game
   public isAccountInGame(account: Account): boolean {
     return this.state.usersInGame[account.username];
   }
 
+  // enter game as a particular player
   public accountEnterGame(account: Account, player: Player): void {
     this.state.usersInGame[account.username] = true;
 
     this.playerManager.addPlayerToGame(player);
     this.worldManager.joinMap(player);
-
-    this.playerHelper.resetStatus(player);
   }
 
+  // leave the game
   public accountLeaveGame(account: Account): void {
     delete this.state.usersInGame[account.username];
 

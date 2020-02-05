@@ -63,11 +63,14 @@ export class WorldMap {
     this.fov = new Mrpas(this.width, this.height, (x, y) => {
       const tile = this.getWallAt(x, y);
 
+      // if the tile is either empty or air, we look for interactables/opaquedecor
+      // if neither, we can see here
       if (tile === TilesWithNoFOVUpdate.Empty || tile === TilesWithNoFOVUpdate.Air) {
         const object = this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
         return !object || (object && !object.opacity);
       }
 
+      // by default, we can't see
       return false;
     });
   }
