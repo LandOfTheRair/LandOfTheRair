@@ -7,6 +7,19 @@ This is a monorepo. For a specific project setup/config, check those project sub
 
 You can either use docker, or you can use your own installed Node / Mongo / Redis (or, of course, a hosted Mongo / Redis).
 
+### Environment Variables
+
+These either need to be set in a `.env` file or set some other way:
+
+* `DATABASE_URI` - the path to the mongodb instance
+
+Additionally, these _can_ be set, and circumstantially should be:
+
+* `SINGLE_CORE` - run the game in single core mode (untested)
+* `TS_NODE_TRANSPILE_ONLY` - set to `1` to make transpiling and development significantly faster on windows
+
+Further, some properties are completely optional
+
 ### Docker
 
 Just run `docker-compose up` and it will build, run, and start the client and server (as well as Mongo and Redis).
