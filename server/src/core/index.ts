@@ -11,7 +11,7 @@ import { WebsocketWorker } from './networking';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-const isSingleMode = process.argv.includes('--single-core');
+const isSingleMode = process.argv.includes('--single-core') || process.env.SINGLE_CORE;
 const processors = cpus().length;
 
 
