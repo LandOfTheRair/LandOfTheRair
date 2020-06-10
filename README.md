@@ -18,7 +18,9 @@ Additionally, these _can_ be set, and circumstantially should be:
 * `SINGLE_CORE` - run the game in single core mode (untested)
 * `TS_NODE_TRANSPILE_ONLY` - set to `1` to make transpiling and development significantly faster on windows
 
-Further, some properties are completely optional
+Further, some properties are completely optional:
+
+* ADD THESE HERE
 
 ### Docker
 
