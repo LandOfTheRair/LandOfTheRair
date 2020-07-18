@@ -35,7 +35,7 @@
     "fastify-rate-limit": "^2.4.0",
     "fs-extra": "^8.1.0",
     "injection-js": "^2.3.0",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "logger-timer": "1.0.2",
     "lootastic": "1.1.2",
     "mikro-orm": "3.0.0-alpha.32",
