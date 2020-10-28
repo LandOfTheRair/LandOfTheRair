@@ -27,6 +27,7 @@ import { InventoryComponent } from './_shared/components/inventory/inventory.com
 import { ItemComponent } from './_shared/components/item/item.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
+import { EquipmentMainComponent } from './containers/game-container/equipment-main/equipment-main.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
 import { InventoryBeltComponent } from './containers/game-container/inventory-belt/inventory-belt.component';
 import { InventoryPouchComponent } from './containers/game-container/inventory-pouch/inventory-pouch.component';
@@ -60,7 +61,9 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
 
     InventoryBeltComponent,
     InventoryPouchComponent,
-    InventorySackComponent
+    InventorySackComponent,
+
+    EquipmentMainComponent
   ],
   imports: [
     HttpClientModule,

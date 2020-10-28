@@ -1,0 +1,72 @@
+<app-window windowName="equipmentMain"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+
+            defaultX="892"
+            defaultY="16"
+            defaultWidth="350"
+            defaultHeight="384"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Equipment
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="item-container" droppable dropScope="Equipment" *ngIf="player$ | async as player">
+    <div class="item-slot" *ngFor="let slot of slots" [class.item-background]="slot.template || slot.slot" [dropScope]="slot.slot" droppable>
+
+      <ng-container *ngIf="!slot.template">
+        <ng-container *ngTemplateOutlet="itemGenericTemplate; context: createContext(slot, player)"></ng-container>
+      </ng-container>
+      
+      <ng-container *ngIf="slot.template === 'coin'">
+        <ng-container *ngTemplateOutlet="itemCoinTemplate; context: createContext(slot, player)"></ng-container>
+      </ng-container>
+      
+      <ng-container *ngIf="slot.template === 'hand'">
+        <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
+      </ng-container>
+      
+      <ng-container *ngIf="slot.template === 'potion'">
+        <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
+      </ng-container>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #itemGenericTemplate let-slot="slot" let-player="player">
+  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
+  <app-item [size]="'lg'"
+            [context]="'Equipment'"
+            [contextSlot]="slot.slot"
+            [item]="player.items.equipment[slot.slot]"></app-item>
+</ng-template>
+
+<ng-template #itemHandTemplate let-slot="slot" let-player="player">
+  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
+  <app-item [size]="'lg'"
+            [context]="hand"
+            [contextSlot]="slot.slot"
+            showOunces="true"
+            [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
+            [item]="player.items.equipment[slot.slot]"></app-item>
+</ng-template>
+
+<ng-template #itemPotionTemplate let-slot="slot" let-player="player">
+  <span class="item-slot-bg-text" *ngIf="!player.items.potion">Potion</span>
+  <app-item [size]="'lg'"
+            context="Potion"
+            showOunces="true"
+            [item]="player.items.potion"></app-item>
+</ng-template>
+
+<ng-template #itemCoinTemplate let-slot="slot" let-player="player">
+  <app-item [size]="'lg'"
+            context="Sack"
+            showValue="true"
+            [item]="{ name: 'Gold Coin', mods: { value: player.currency.gold } }"></app-item>
+</ng-template>

@@ -6,6 +6,31 @@
   border-radius: 3px;
 }
 
+.item-slot {
+  position: relative;
+  user-select: none;
+
+  .item-slot-bg-text {
+    position: absolute;
+    user-select: none;
+    color: #888;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    word-spacing: 100px;
+
+    &.small {
+      font-size: 75%;
+    }
+
+    &.xsmall {
+      font-size: 50%;
+    }
+  }
+}
 
 .item-slot {
   width: 64px;
