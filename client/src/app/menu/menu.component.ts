@@ -31,6 +31,10 @@ export class MenuComponent implements OnInit {
       handler: () => {}
     },
     {
+      name: 'Options',
+      handler: () => {}
+    },
+    {
       name: 'Macros',
       handler: () => {}
     },
