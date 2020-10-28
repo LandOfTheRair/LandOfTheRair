@@ -110,7 +110,7 @@ export class WorldMap {
     const objects = this.json.layers[mapLayer].objects;
     objects.forEach(obj => {
       const realX = Math.floor(obj.x / 64);
-      const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
+      const realY = Math.floor(obj.y / 64); // -1 to adjust for Tiled
       const realW = Math.floor(obj.width / 64);
       const realH = Math.floor(obj.height / 64);
 
