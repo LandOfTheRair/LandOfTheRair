@@ -76,11 +76,13 @@ export enum ItemSlot {
   Ear = 'ear',
   Waist = 'waist',
   Wrists = 'wrists',
+  Ring = 'ring',      // internal type, not to be used as an actual slot
   Ring1 = 'ring1',
   Ring2 = 'ring2',
   Hands = 'hands',
   Feet = 'feet',
   Armor = 'armor',
+  Robe = 'robe',      // internal type, not to be used as an actual slot
   Robe1 = 'robe1',
   Robe2 = 'robe2',
   RightHand = 'rightHand',

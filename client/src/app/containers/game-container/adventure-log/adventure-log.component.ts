@@ -53,7 +53,6 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log('INIT');
     const outputAreaDOMElement = this.window.nativeElement.querySelector('.log-area');
 
     const scrollToBottom = () => {

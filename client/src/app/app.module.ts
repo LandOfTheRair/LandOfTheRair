@@ -23,9 +23,14 @@ import { SocketService } from './socket.service';
 
 import { AlertErrorHandler } from './logger.service';
 
+import { InventoryComponent } from './_shared/components/inventory/inventory.component';
+import { ItemComponent } from './_shared/components/item/item.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
+import { InventoryBeltComponent } from './containers/game-container/inventory-belt/inventory-belt.component';
+import { InventoryPouchComponent } from './containers/game-container/inventory-pouch/inventory-pouch.component';
+import { InventorySackComponent } from './containers/game-container/inventory-sack/inventory-sack.component';
 import { MapComponent } from './containers/game-container/map/map.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
@@ -48,7 +53,14 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     CharCreateComponent,
     MapComponent,
     CommandLineComponent,
-    AdventureLogComponent
+    AdventureLogComponent,
+
+    InventoryComponent,
+    ItemComponent,
+
+    InventoryBeltComponent,
+    InventoryPouchComponent,
+    InventorySackComponent
   ],
   imports: [
     HttpClientModule,
@@ -66,7 +78,6 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     NgxsResetPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot({ disabled: environment.production })
-
   ],
   providers: [
     {

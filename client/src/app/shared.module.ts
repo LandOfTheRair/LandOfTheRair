@@ -21,7 +21,9 @@ import { ButtonCloseComponent } from './_shared/components/button-close.componen
 import { ButtonMinimizeComponent } from './_shared/components/button-minimize.component';
 import { IconComponent } from './_shared/components/icon.component';
 import { WindowComponent } from './_shared/components/window.component';
-import { DraggableDirective } from './_shared/directives/draggable.directive';
+import { DraggableDirective } from './_shared/directives/dragdrop/draggable.directive';
+import { DroppableDirective } from './_shared/directives/dragdrop/droppable.directive';
+import { DraggableDirective as DraggableWindowDirective } from './_shared/directives/draggable-window.directive';
 import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 
 const matImports = [
@@ -32,7 +34,8 @@ const matImports = [
 ];
 
 const declarations = [
-  AlertComponent, DraggableDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent, WindowComponent, LinkifyPipe
+  AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent, WindowComponent, LinkifyPipe,
+  DraggableDirective, DroppableDirective
 ];
 
 

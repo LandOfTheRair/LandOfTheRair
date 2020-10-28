@@ -1,0 +1,19 @@
+<app-window windowName="inventoryPouch"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+
+            defaultX="690"
+            defaultY="300"
+            defaultWidth="350"
+            defaultHeight="110"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Demi-Magic Pouch
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <app-inventory context="Pouch" container="pouch" [size]="5"></app-inventory>
+</ng-template>

@@ -6,6 +6,7 @@ export * from './character';
 export * from './effect';
 export * from './game';
 export * from './item';
+export * from './itemtypes';
 export * from './lobby';
 export * from './macro';
 export * from './map';

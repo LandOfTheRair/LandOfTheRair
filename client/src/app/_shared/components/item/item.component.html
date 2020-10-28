@@ -1,0 +1,29 @@
+
+<div class="item-container" 
+    [ngClass]="[size]"
+    [class.transparent]="showOutline"
+    draggable
+    [dragScope]="scopes"
+    [dragEnabled]="item && !displayOnly"
+    [dragData]="{ item: item, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
+    (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
+    (mouseenter)="updateWithDesc(); determineScopes()"
+    (mouseleave)="removeDesc()">
+  <img [src]="imgUrl" 
+      [style.object-position]="spriteLocation" 
+      [class.hidden]="!item" 
+      [class.animate]="shouldAnimate" 
+      [ngClass]="['cosmetic-item-' + cosmeticName]" />
+  <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.encrust" />
+  <div class="item-background" *ngIf="item && showBackground"></div>
+  <div class="glow-container" [ngClass]="[glowColor]" *ngIf="item && showDesc"></div>
+  <div class="animation-container"
+      [class.animate]="shouldAnimate" 
+      [ngClass]="['cosmetic-bg-' + cosmeticName]" 
+      *ngIf="item && cosmeticName"></div>
+  <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount }}x</span>
+  <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces }}oz</span>
+  <span class="value" *ngIf="item && showValue">{{ overrideValue || (item._buybackValue || item.value) + 'g' }}</span>
+  <span class="value" *ngIf="item && showOunces && item.succorInfo">{{ item.succorInfo.map }}</span>
+  <span class="ounces" *ngIf="item && showDesc && item.effect && item.itemClass === 'Trap'">{{ item.trapUses }}x {{ effectName }}</span>
+</div>

@@ -1,5 +1,6 @@
 import { Alignment, BaseClass, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IEffect } from './effect';
+import { ArmorClass, MiscClass, WeaponClass } from './itemtypes';
 
 export type IItemEncrust = { effect: IEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
 
@@ -132,6 +133,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
   // the name of the item
   name: string;
 
+  // the itemClass representing the item type
+  itemClass: WeaponClass & ArmorClass & MiscClass;
+
   // the sprite representing this item
   sprite: number;
 
@@ -179,6 +183,12 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // how much the item will absolutely sell for - useful for gems that have a specific value (no CHA)
   sellValue?: number;
+
+  // the condition of the item
+  condition: number;
+
+  // the items you get from searching this item on the ground
+  searchItems?: ISimpleItem[];
 };
 
 export interface ISimpleItem {

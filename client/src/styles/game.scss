@@ -1,0 +1,45 @@
+
+
+.item-background {
+  background-color: #ccc;
+  box-shadow: 3px 3px 5px #aaa;
+  border-radius: 3px;
+}
+
+
+.item-slot {
+  width: 64px;
+  height: 64px;
+}
+
+.small {
+  .item-slot {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.xsmall {
+  .item-slot {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.drag-over-border {
+  border: none !important;
+  outline: 3px dashed green !important;
+  outline-offset: -2px;
+}
+
+.drag-hint-border {
+  border: none !important;
+  outline: 3px dashed blue;
+  background-color: rgba(0, 0, 255, 0.2);
+  outline-offset: -2px;
+}
+
+.drag-border {
+  border: none !important;
+  outline: 3px dashed red;
+}

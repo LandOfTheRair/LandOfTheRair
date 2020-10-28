@@ -9,7 +9,7 @@ You can either use docker, or you can use your own installed Node / Mongo / Redi
 
 ### Environment Variables
 
-These either need to be set in a `.env` file or set some other way:
+These either need to be set in a `.env` file or set some other way (in the `server` directory):
 
 * `DATABASE_URI` - the path to the mongodb instance
 

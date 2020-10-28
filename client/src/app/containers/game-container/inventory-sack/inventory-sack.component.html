@@ -1,0 +1,19 @@
+<app-window windowName="inventorySack"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+
+            defaultX="890"
+            defaultY="510"
+            defaultWidth="350"
+            defaultHeight="384"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Sack
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <app-inventory context="Sack" container="sack" [size]="25"></app-inventory>
+</ng-template>

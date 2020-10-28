@@ -25,6 +25,9 @@
     ],
     "lib": [
       "es2018"
-    ]
+    ],
+    "paths": {
+      "@interfaces/*": ["shared/interfaces/*"]
+    }
   }
 }
