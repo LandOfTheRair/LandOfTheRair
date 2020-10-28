@@ -20,7 +20,12 @@ Additionally, these _can_ be set, and circumstantially should be:
 
 Further, some properties are completely optional:
 
-* ADD THESE HERE
+* None Yet
+
+### Other Repos
+
+* [Assets](https://github.com/LandOfTheRair/Assets) - home of bgm, macicons, sfx, and spritesheets (frontend content)
+* [Content](https://github.com/LandOfTheRair/Content) - home of droptables, items, maps, npc stats, npc scripts, quests, recipes, and spawners (backend content)
 
 ### Docker
 

@@ -2,7 +2,7 @@
   "name": "landoftherair",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "lerna exec -- npm install",
+    "postinstall": "lerna exec -- npm install && lerna exec -- npm run setup",
     "setup": "lerna exec -- npm run setup",
     "start": "lerna exec --parallel -- npm run start:dev",
     "start:client": "cd client && npm run start:dev",
