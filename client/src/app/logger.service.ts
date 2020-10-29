@@ -8,12 +8,19 @@ import { AlertComponent } from './_shared/components/alert/alert.component';
 export class LoggerService {
 
   private ignoredErrorMessages = {};
+  private canShowErrors = true;
 
   constructor(private dialog: MatDialog) {}
 
   public showErrorWindow(title: string, content: string) {
-    if (this.ignoredErrorMessages[title]) return;
+    if (this.ignoredErrorMessages[title] || !this.canShowErrors || !title || !content) return;
 
+    this.dialog.afterAllClosed.subscribe(() => {
+      this.canShowErrors = true;
+    });
+
+    this.canShowErrors = false;
+    console.log(title, content);
     this.dialog.open(AlertComponent, {
       width: '250px',
       data: { title, content }

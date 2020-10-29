@@ -1,4 +1,6 @@
 
+import { wrap } from '@mikro-orm/core';
+
 import bcrypt from 'bcrypt';
 import { Injectable } from 'injection-js';
 
@@ -24,10 +26,10 @@ export class AccountDB extends BaseService {
   }
 
   public async getAccount(username: string): Promise<Account | null> {
-    const account = await this.db.em.getRepository<Account>(Account).findOne({ username });
+    const account = await this.db.em.getRepository<Account>(Account).findOne({ username }, ['players.items']);
     if (!account) return null;
 
-    await account.players.init();
+    await account.players.populated();
 
     for (const player of account.players) {
       player.username = account.username;
@@ -41,9 +43,11 @@ export class AccountDB extends BaseService {
 
     const account = new Account();
 
-    account.username = accountInfo.username;
-    account.email = accountInfo.email;
-    account.password = bcrypt.hashSync(accountInfo.password, 10);
+    wrap(account).assign({
+      username: accountInfo.username,
+      email: accountInfo.email,
+      password: bcrypt.hashSync(accountInfo.password, 10)
+    });
 
     await this.db.save(account);
 

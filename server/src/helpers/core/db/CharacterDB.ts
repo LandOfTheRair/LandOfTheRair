@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { Reference } from 'mikro-orm';
+import { Reference, wrap } from '@mikro-orm/core';
 import { BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { CharacterItems } from '../../../models/orm/CharacterItems';
@@ -34,11 +34,14 @@ export class CharacterDB extends BaseService {
 
     const basePlayer = initializePlayer({});
     const player = this.db.create<Player>(Player, basePlayer);
-
-    player.account = Reference.create(account);
+    player.account = wrap(account).toReference();
 
     const items = new CharacterItems();
-    player.items = Reference.create(items);
+    Object.keys(characterDetails.items).forEach(itemSlot => {
+      items.equipment[itemSlot] = characterDetails.items[itemSlot];
+    });
+
+    player.items = wrap(items).toReference();
 
     player.charSlot = slot;
     player.name = name;
@@ -50,16 +53,8 @@ export class CharacterDB extends BaseService {
     player.skills = characterDetails.skills;
     player.username = account.username;
 
-    Object.keys(characterDetails.items).forEach(itemSlot => {
-      items.equipment[itemSlot] = characterDetails.items[itemSlot];
-    });
-
-    this.playerHelper.migrate(player);
-
     account.players.add(player);
     await this.db.save(account);
-
-    return player;
   }
 
   public async savePlayer(player: Player): Promise<void> {

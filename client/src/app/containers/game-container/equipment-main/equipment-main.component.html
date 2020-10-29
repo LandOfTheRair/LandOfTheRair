@@ -57,11 +57,11 @@
 </ng-template>
 
 <ng-template #itemPotionTemplate let-slot="slot" let-player="player">
-  <span class="item-slot-bg-text" *ngIf="!player.items.potion">Potion</span>
+  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">Potion</span>
   <app-item [size]="'lg'"
             context="Potion"
             showOunces="true"
-            [item]="player.items.potion"></app-item>
+            [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 
 <ng-template #itemCoinTemplate let-slot="slot" let-player="player">

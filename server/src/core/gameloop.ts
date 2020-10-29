@@ -25,11 +25,26 @@ export class GameloopWorker {
   // parse / send to the appropriate API command
   private async handleMessage(msg) {
     const { socketId, type, ...args } = msg;
+    if (!type) {
+      this.emit(socketId, { type: GameServerResponse.Error, error: `You must specify a \`type\` when sending commands.` });
+      return;
+    }
 
     try {
       await this.wsCommands.doAction(type, args, socketId);
     } catch (e) {
-      this.emit(socketId, { type: GameServerResponse.Error, error: e.message });
+      const blacklistedErrors = [
+        'Not logged in.'
+      ];
+
+      if (!blacklistedErrors.includes(e.message)) {
+        console.error('ERROR: CMD', e);
+        console.error('ERROR: DATA', msg);
+
+        if (process.env.NODE_ENV !== 'production') {
+          this.emit(socketId, { type: GameServerResponse.Error, error: e.message });
+        }
+      }
     }
   }
 

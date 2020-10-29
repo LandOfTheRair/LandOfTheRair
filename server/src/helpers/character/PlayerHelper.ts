@@ -1,5 +1,5 @@
+import { wrap } from '@mikro-orm/core';
 import { Injectable } from 'injection-js';
-import { wrap } from 'mikro-orm';
 import uuid from 'uuid/v4';
 
 import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';

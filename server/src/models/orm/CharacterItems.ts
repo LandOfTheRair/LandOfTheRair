@@ -1,23 +1,22 @@
-import { Entity, MongoEntity, OneToOne, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
-import { ObjectID } from 'mongodb';
+import { Entity, OneToOne, Property } from '@mikro-orm/core';
 
-import { ISimpleItem, ItemContainer, ItemSlot } from '../../interfaces';
+import { ICharacterItems, IItemContainer, ISimpleItem, ItemSlot, PROP_SERVER_ONLY } from '../../interfaces';
+import { BaseEntity } from './BaseEntity';
 import { Player } from './Player';
 
 @Entity()
-export class CharacterItems implements CharacterItems, MongoEntity<CharacterItems> {
+export class CharacterItems extends BaseEntity implements ICharacterItems {
 
-  @PrimaryKey() _id: ObjectID;
-  @SerializedPrimaryKey() id: string;
+  // relation props
+  @OneToOne(PROP_SERVER_ONLY()) player: Player;
 
-  @OneToOne() player: Player;
-
+  // other props
   @Property() potion: ISimpleItem;
   @Property() equipment: { [key in ItemSlot]?: ISimpleItem } = {};
 
-  @Property() sack: ItemContainer;
-  @Property() belt: ItemContainer;
-  @Property() pouch: ItemContainer;
+  @Property() sack: IItemContainer = { items: [] };
+  @Property() belt: IItemContainer = { items: [] };
+  @Property() pouch: IItemContainer = { items: [] };
 
   @Property() buyback: ISimpleItem[] = [];
 

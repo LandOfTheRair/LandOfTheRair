@@ -50,8 +50,9 @@ export class LobbyManager extends BaseService {
 
   // remove an account from the lobby
   public removeAccount(username: string): void {
-    const firstInst = this.state.users.findIndex(x => x.username === username);
-    this.state.users.splice(firstInst, 1);
+    while (this.state.users.findIndex(x => x.username === username) !== -1) {
+      this.state.users.splice(this.state.users.findIndex(x => x.username === username), 1);
+    }
 
     delete this.state.usersInGame[username];
 

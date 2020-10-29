@@ -1,8 +1,12 @@
 
 import { Injectable } from 'injection-js';
-import { AnyEntity, EntityManager, EntityName, MikroORM, MongoEntity, wrap } from 'mikro-orm';
+
+import { AnyEntity, EntityManager, EntityName, MikroORM, wrap } from '@mikro-orm/core';
+import { MongoDriver } from '@mikro-orm/mongodb';
+import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
 
 import { BaseService } from '../../interfaces';
+import { BaseEntity } from '../../models/orm/BaseEntity';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -16,9 +20,10 @@ export class Database extends BaseService {
   }
 
   public async init() {
-    this.orm = await MikroORM.init({
-      entitiesDirs: [(isProd ? 'dist' : 'src') + '/models/orm'],
-      entitiesDirsTs: ['src/models/orm'],
+    this.orm = await MikroORM.init<MongoDriver>({
+      metadataProvider: TsMorphMetadataProvider,
+      entities: [(isProd ? 'dist' : 'src') + '/models/orm'],
+      entitiesTs: ['src/models/orm'],
 
       clientUrl: process.env.DATABASE_URI,
       dbName: 'landoftherair2',
@@ -54,12 +59,12 @@ export class Database extends BaseService {
     return this.em.create(entity, data);
   }
 
-  public save(entity: MongoEntity<any>, delayed = false) {
-    return this.em.persist(entity, !delayed);
+  public save(entity: BaseEntity) {
+    return this.em.persistAndFlush(entity);
   }
 
-  public delete(entity: MongoEntity<any>) {
-    return this.em.removeEntity(entity, true);
+  public delete(entity: BaseEntity) {
+    return this.em.removeAndFlush(entity);
   }
 
 }

@@ -3,7 +3,7 @@ import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, ItemSlo
 import { ISimpleItem } from './item';
 import { IStatusEffect } from './status-effect';
 
-export interface ItemContainer {
+export interface IItemContainer {
   items: ISimpleItem[];
 }
 
@@ -14,14 +14,12 @@ export enum SwimLevel {
   Lava = 8
 }
 
-export interface CharacterItems {
-  potion?: ISimpleItem;
-
+export interface ICharacterItems {
   equipment: { [key in ItemSlot]?: ISimpleItem };
 
-  sack: ItemContainer;
-  belt: ItemContainer;
-  pouch: ItemContainer;
+  sack: IItemContainer;
+  belt: IItemContainer;
+  pouch: IItemContainer;
 
   buyback: ISimpleItem[];
 }
@@ -53,7 +51,7 @@ export interface ICharacter {
   dir: Direction;
 
   currency: CharacterCurrency;
-  items: CharacterItems;
+  items: ICharacterItems;
 
   effects: { [effName: string]: IStatusEffect };
 

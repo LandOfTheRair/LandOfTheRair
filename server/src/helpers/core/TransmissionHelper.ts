@@ -37,7 +37,9 @@ export class TransmissionHelper extends BaseService {
   // convert a player object for being sent to the client
   // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
   public convertPlayerForTransmission(player: Player): IPlayer {
-    return Object.assign({}, this.game.db.wrap<Player>(player) as IPlayer);
+    const playerJson = this.game.db.wrap<Player>(player).toJSON() as IPlayer;
+    playerJson.fov = player.fov;
+    return playerJson;
   }
 
   // auto patch a player. just calls patch player for now

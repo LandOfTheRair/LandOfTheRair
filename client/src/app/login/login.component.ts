@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   public isActing: boolean;
   public isRegistering: boolean;
-  public newAccount: IAccountSettings | any = { username: '', password: '', email: '', autologin: false };
+  public newAccount: IAccountSettings | any = { };
 
   public errorMessage: string;
 
@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.newAccount = { username: '', password: '', email: '', autologin: false };
     this.socketService.registerComponentCallback(
       this.constructor.name, GameServerResponse.Error,
       (data) => this.setErrorMessage(data.error)
@@ -52,7 +53,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.autologin$.pipe(take(1)).subscribe(acc => {
       if (!acc) return;
 
-      this.newAccount = acc;
+      this.newAccount = Object.assign({}, acc);
       this.login();
     });
   }

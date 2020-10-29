@@ -1,5 +1,6 @@
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent } from '../../interfaces';
+import { Account } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RollCharacterAction extends ServerAction {
@@ -7,7 +8,7 @@ export class RollCharacterAction extends ServerAction {
   requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
 
   async act(game: Game, { emit }, data) {
-    const { gender, allegiance, baseclass } = data;
+    const { gender, allegiance, baseclass, account } = data;
     let { slot, name } = data;
 
     slot = Math.round(slot);
@@ -17,7 +18,7 @@ export class RollCharacterAction extends ServerAction {
     if (!charCreateData.allegiances.find(x => x.name === allegiance)) throw new Error('Bad allegiance.');
     if (!charCreateData.classes.find(x => x.name === baseclass)) throw new Error('Bad class.');
     if (!['male', 'female'].find(x => x === gender)) throw new Error('Bad gender.');
-    if (slot < 0 || slot > 3) throw new Error('Bad slot.');
+    if (slot < 0 || slot > 3) throw new Error('Bad slot.'); // TODO: track premium in account, mark here to check against account max slots
 
     name = name.slice(0, 1).toUpperCase() + name.slice(1).toLowerCase();
     name = name.replace(/[^a-zA-Z]/g, '');
@@ -25,8 +26,14 @@ export class RollCharacterAction extends ServerAction {
 
     if (name.length < 2) throw new Error('Bad name.');
 
-    const account = data.account;
-    const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
+    await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
+
+    // here, we reload the account to get the assocations setup correctly because shit just is broken sometimes
+    const newAccount: Account = await game.accountDB.getAccount(account.username) as Account;
+    if (!newAccount) throw new Error('Could not reload account correctly.');
+
+    game.lobbyManager.addAccount(newAccount);
+    const player = newAccount.players.getItems().find(c => c.charSlot === slot);
 
     emit({
       action: GameAction.SetCharacterSlotInformation,

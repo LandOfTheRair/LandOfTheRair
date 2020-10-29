@@ -26,7 +26,6 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
     alignment: char.alignment ?? Alignment.Neutral,
     level: char.level ?? 1,
     items: char.items ?? {
-      potion: undefined,
       equipment: { },
       sack: { items: [] },
       belt: { items: [] },

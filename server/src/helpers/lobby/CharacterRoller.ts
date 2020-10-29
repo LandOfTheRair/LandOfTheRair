@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, CharacterItems, SkillBlock, StatBlock } from '../../interfaces';
+import { BaseService, ICharacterItems, SkillBlock, StatBlock } from '../../interfaces';
 import { CalculatorHelper, ItemHelper } from '../character';
 import { ContentManager } from '../data';
 
@@ -18,7 +18,7 @@ export class CharacterRoller extends BaseService {
 
   public async init() {}
 
-  rollCharacter({ allegiance, baseclass }): { skills: SkillBlock, stats: StatBlock, gold: number, items: Partial<CharacterItems> } {
+  rollCharacter({ allegiance, baseclass }): { skills: SkillBlock, stats: StatBlock, gold: number, items: Partial<ICharacterItems> } {
     const charSelectData = this.contentManager.charSelectData;
 
     const coreStats = charSelectData.baseStats;

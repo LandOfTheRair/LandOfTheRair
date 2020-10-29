@@ -1,16 +1,21 @@
 
-import { Cascade, Collection, Entity, MongoEntity, OneToMany, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
-import { ObjectID } from 'mongodb';
+import { Cascade, Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
 
 import { IAccount, PROP_SERVER_ONLY, PROP_TEMPORARY } from '../../interfaces';
+import { BaseEntity } from './BaseEntity';
 import { Player } from './Player';
 
 @Entity()
-export class Account implements IAccount, MongoEntity<Account> {
+export class Account extends BaseEntity implements IAccount {
 
-  @PrimaryKey() _id: ObjectID;
-  @SerializedPrimaryKey() id: string;
+  // relation props
+  @OneToMany(
+    () => Player,
+    player => player.account,
+    { orphanRemoval: true }
+  ) players = new Collection<Player>(this);
 
+  // server only props
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();
   @Property(PROP_SERVER_ONLY()) password: string;
 
@@ -18,12 +23,6 @@ export class Account implements IAccount, MongoEntity<Account> {
 
   @Property() username: string;
   @Property() email: string;
-
-  @OneToMany(
-    () => Player,
-    player => player.account,
-    { cascade: [Cascade.ALL], orphanRemoval: true }
-  ) players = new Collection<Player>(this);
 
   @Property() isGameMaster = false;
   @Property() isTester = false;

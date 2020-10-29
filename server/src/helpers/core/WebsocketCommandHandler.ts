@@ -42,7 +42,7 @@ export class WebsocketCommandHandler {
     const unregister = (username) => this.unregisterAccountSocket(username);
 
     if (action.requiresLoggedIn) {
-      const account = await this.game.lobbyManager.getAccount(data.username);
+      const account = this.game.lobbyManager.getAccount(data.username);
       if (!account) throw new Error(`Not logged in.`);
 
       data.account = account;

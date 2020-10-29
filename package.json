@@ -15,5 +15,9 @@
     "lerna": "^3.16.5",
     "tslib": "^1.10.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@mikro-orm/core": "^4.2.3",
+    "@mikro-orm/mongodb": "^4.2.3",
+    "@mikro-orm/reflection": "^4.2.3"
+  }
 }

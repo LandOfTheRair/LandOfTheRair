@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import uuid from 'uuid/v4';
 
 import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
@@ -17,7 +18,7 @@ export class ItemHelper extends BaseService {
 
   // get an item that can be equipped
   public getSimpleItem(itemName: string): ISimpleItem {
-    return { name: itemName, mods: {} };
+    return { name: itemName, uuid: uuid(), mods: {} };
   }
 
   // get the real item for base information lookup

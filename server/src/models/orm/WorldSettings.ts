@@ -1,13 +1,9 @@
 
-import { Entity, MongoEntity, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
-import { ObjectID } from 'mongodb';
-
+import { Entity, Property } from '@mikro-orm/core';
+import { BaseEntity } from './BaseEntity';
 
 @Entity()
-export class WorldSettings implements MongoEntity<WorldSettings> {
-
-  @PrimaryKey() _id: ObjectID;
-  @SerializedPrimaryKey() id: string;
+export class WorldSettings extends BaseEntity {
 
   @Property() motd = '';
 

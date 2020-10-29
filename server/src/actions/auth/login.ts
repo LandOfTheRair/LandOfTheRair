@@ -33,6 +33,7 @@ export class LoginAction extends ServerAction {
       });
 
       register(data.username);
+      game.lobbyManager.removeAccount(data.username);
       game.lobbyManager.addAccount(account);
 
       game.logger.log('Auth:Login', `${data.username} logged in.`);
@@ -53,6 +54,14 @@ export class LoginAction extends ServerAction {
         action: GameAction.SettingsSetAssetHash,
         assetHash: meta.hash
       });
+
+      for (const player of account.players) {
+        emit({
+          action: GameAction.SetCharacterSlotInformation,
+          slot: player.charSlot,
+          characterInfo: player
+        });
+      }
 
     } catch (e) {
       game.logger.error('LoginAction', e);

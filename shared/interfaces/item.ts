@@ -193,6 +193,7 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
 export interface ISimpleItem {
   name: string;
+  uuid: string;
   mods: Partial<IItem>;
 }
 

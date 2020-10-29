@@ -1,19 +1,18 @@
 
-import { Cascade, Entity, IdentifiedReference, ManyToOne, MongoEntity, OneToOne, PrimaryKey, Property, SerializedPrimaryKey } from 'mikro-orm';
-import { ObjectID } from 'mongodb';
+import { Entity, IdentifiedReference, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
 import { RestrictedNumber } from 'restricted-number';
 import { Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 import { Account } from './Account';
+import { BaseEntity } from './BaseEntity';
 import { CharacterItems } from './CharacterItems';
 
 @Entity()
-export class Player implements IPlayer, MongoEntity<Player> {
+export class Player extends BaseEntity implements IPlayer {
 
-  @PrimaryKey() _id: ObjectID;
-  @SerializedPrimaryKey() id: string;
-
-  @ManyToOne() account: IdentifiedReference<Account, 'id'|'_id'>;
+  // relation props
+  @ManyToOne(PROP_SERVER_ONLY()) account: IdentifiedReference<Account, 'id'|'_id'>;
+  @OneToOne(() => CharacterItems, (item) => item.player, { owner: true, orphanRemoval: true }) items: CharacterItems;
 
   // server-only props
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();
@@ -62,12 +61,6 @@ export class Player implements IPlayer, MongoEntity<Player> {
   @Property() skills: SkillBlock;
   @Property() effects: { [effName: string]: IStatusEffect } = {};
   @Property() allegianceReputation: { [allegiance in Allegiance]?: number } = {};
-
-  @OneToOne(
-    () => CharacterItems,
-    (item) => item.player,
-    { cascade: [Cascade.ALL] }
-  ) items: CharacterItems;
 
   // player-specific props
   @Property() exp: number;
