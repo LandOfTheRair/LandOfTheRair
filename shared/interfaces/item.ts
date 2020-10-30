@@ -184,6 +184,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
   // how much the item will absolutely sell for - useful for gems that have a specific value (no CHA)
   sellValue?: number;
 
+  // how much the item will be able to be bought back for
+  buybackValue?: number;
+
   // the condition of the item
   condition: number;
 

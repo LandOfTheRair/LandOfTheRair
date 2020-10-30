@@ -14,7 +14,7 @@
       [class.hidden]="!item" 
       [class.animate]="shouldAnimate" 
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
-  <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.encrust" />
+  <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.mods.encrustItem" />
   <div class="item-background" *ngIf="item && showBackground"></div>
   <div class="glow-container" [ngClass]="[glowColor]" *ngIf="item && showDesc"></div>
   <div class="animation-container"
@@ -23,7 +23,7 @@
       *ngIf="item && cosmeticName"></div>
   <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount }}x</span>
   <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces }}oz</span>
-  <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item._buybackValue || item.mods.value | number)) + 'g' }}</span>
-  <span class="value" *ngIf="item && showOunces && item.succorInfo">{{ item.succorInfo.map }}</span>
-  <span class="ounces" *ngIf="item && showDesc && item.effect && item.itemClass === 'Trap'">{{ item.trapUses }}x {{ effectName }}</span>
+  <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | number)) + 'g' }}</span>
+  <span class="value" *ngIf="item && showOunces && item.mods.succorInfo">{{ item.mods.succorInfo.map }}</span>
+  <span class="ounces" *ngIf="item && showDesc && realItem.effect && realItem.itemClass === 'Trap'">{{ item.mods.trapUses }}x {{ effectName }}</span>
 </div>

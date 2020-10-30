@@ -49,7 +49,7 @@
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
   <app-item [size]="'lg'"
-            [context]="hand"
+            [context]="slot.hand"
             [contextSlot]="slot.slot"
             showOunces="true"
             [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
