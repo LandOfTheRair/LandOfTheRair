@@ -1,8 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { calculateXPRequiredForLevel } from '../../../../shared/functions';
-import { BaseService, ICharacter, Skill } from '../../interfaces';
+import { BaseService, calculateXPRequiredForLevel, ICharacter, Skill } from '../../interfaces';
 
 const SKILL_COEFFICIENT = 1.55;
 
