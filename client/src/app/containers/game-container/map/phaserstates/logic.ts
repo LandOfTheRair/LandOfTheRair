@@ -252,7 +252,7 @@ export class MapScene extends Phaser.Scene {
     const wallFirstGid = this.allMapData.tiledJSON.tilesets[1].firstgid;
 
     // TODO: am I subscribed? check account object to find out!
-    const isSubscribed = false;
+    const isSubscribed = this.player.isSubscribed;
 
     layer.objects.forEach(obj => {
       const isWall = obj.gid < decorFirstGid;
@@ -298,7 +298,14 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  public init(data) {
+    this.player = data.player;
+  }
+
   public create() {
+
+    const player = this.game.observables.player.getValue();
+    this.player = player;
 
     // set up map - must happen first
     const mapData = { ...this.game.observables.map.getValue() };
@@ -336,8 +343,6 @@ export class MapScene extends Phaser.Scene {
     this.loadObjectLayer(map.objects[2]);
     this.loadObjectLayer(map.objects[3]);
 
-    const player = this.game.observables.player.getValue();
-
     this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
 
     this.createPlayerSprite(player);
@@ -349,6 +354,12 @@ export class MapScene extends Phaser.Scene {
     });
 
     this.events.on('destroy', () => this.destroy());
+
+    this.game.observables.loadPercent.next(`Welcome to ${player.map}!`);
+
+    setTimeout(() => {
+      this.game.observables.loadPercent.next('');
+    }, 1000);
 
     // TODO: adjust if this sprite is visible based on visibility
     // TODO: if sprite is visible but stealthed, set an alpha of 0.7

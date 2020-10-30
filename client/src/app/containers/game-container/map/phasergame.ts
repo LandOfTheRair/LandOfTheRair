@@ -13,11 +13,11 @@ export class MapRenderGame extends Phaser.Game {
     public gameService: GameService,
     public socketService: SocketService,
     public observables: {
-      loadPercent: BehaviorSubject<number>,
+      loadPercent: BehaviorSubject<string>,
       player: BehaviorSubject<IPlayer>,
       map: BehaviorSubject<IMapData>
     }
     ) {
-    super(config);
+      super(config);
   }
 }

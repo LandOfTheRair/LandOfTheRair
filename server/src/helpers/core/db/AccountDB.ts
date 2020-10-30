@@ -32,7 +32,6 @@ export class AccountDB extends BaseService {
     await account.players.populated();
 
     for (const player of account.players) {
-      player.username = account.username;
       this.playerHelper.migrate(player);
     }
 

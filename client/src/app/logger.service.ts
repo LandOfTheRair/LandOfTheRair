@@ -20,7 +20,6 @@ export class LoggerService {
     });
 
     this.canShowErrors = false;
-    console.log(title, content);
     this.dialog.open(AlertComponent, {
       width: '250px',
       data: { title, content }

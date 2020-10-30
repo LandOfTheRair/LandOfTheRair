@@ -38,7 +38,6 @@ export class TransmissionHelper extends BaseService {
   // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
   public convertPlayerForTransmission(player: Player): IPlayer {
     const playerJson = this.game.db.wrap<Player>(player).toJSON() as IPlayer;
-    playerJson.fov = player.fov;
     return playerJson;
   }
 

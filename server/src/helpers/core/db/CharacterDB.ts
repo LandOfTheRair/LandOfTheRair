@@ -51,7 +51,6 @@ export class CharacterDB extends BaseService {
     player.currency = { gold: characterDetails.gold };
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
-    player.username = account.username;
 
     if (player.baseClass === BaseClass.Healer) player.mp.maximum = 20;
     if (player.baseClass === BaseClass.Mage) player.mp.maximum = 30;

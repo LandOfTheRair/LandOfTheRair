@@ -4,6 +4,7 @@ import uuid from 'uuid/v4';
 
 import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
+import { SubscriptionHelper } from '../account';
 import { StaticTextHelper, WorldManager } from '../data';
 import { VisibilityHelper } from './VisibilityHelper';
 
@@ -14,6 +15,7 @@ export class PlayerHelper extends BaseService {
   constructor(
     private staticTextHelper: StaticTextHelper,
     private visibilityHelper: VisibilityHelper,
+    private subscriptionHelper: SubscriptionHelper,
     private worldManager: WorldManager
   ) {
     super();
@@ -25,6 +27,9 @@ export class PlayerHelper extends BaseService {
     if (!player.uuid) player.uuid = uuid();
     if (!player.dir) player.dir = Direction.South;
     if (!player.actionQueue) player.actionQueue = { fast: [], slow: [] };
+
+    player.username = player.account.username;
+    player.isSubscribed = this.subscriptionHelper.isSubscribed(player.account);
 
     const playerPristine = initializePlayer(player);
     wrap(player).assign(playerPristine, { mergeObjects: true });

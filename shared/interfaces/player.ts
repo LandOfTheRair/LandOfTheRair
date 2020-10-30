@@ -8,6 +8,7 @@ export interface IPlayer extends ICharacter {
   charSlot: number;
 
   username: string;
+  isSubscribed: boolean;
 
   z: number;
 

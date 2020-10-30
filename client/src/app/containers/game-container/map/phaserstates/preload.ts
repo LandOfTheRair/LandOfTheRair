@@ -2,6 +2,7 @@
 const Phaser = (window as any).Phaser;
 
 export class PreloadScene extends Phaser.Scene {
+
   constructor() {
     super({ key: 'PreloadScene' });
   }
@@ -10,7 +11,8 @@ export class PreloadScene extends Phaser.Scene {
 
     this.load.crossOrigin = 'anonymous';
     this.load.addListener('progress', (prog) => {
-      this.game.observables.loadPercent.next(Math.floor(prog * 100));
+      const pct = Math.floor(prog * 100);
+      this.game.observables.loadPercent.next(`Loading... ${pct}%`);
     });
 
     const bgms = ['combat', 'town', 'dungeon', 'wilderness'];
@@ -50,6 +52,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public create() {
+    this.game.observables.loadPercent.next('');
     this.scene.start('MapScene');
   }
 

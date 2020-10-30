@@ -1,6 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
+import { SubscriptionHelper } from '../account';
 
 import { CalculatorHelper, CharacterHelper, DirectionHelper, InteractionHelper,
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, VisibilityHelper } from '../character';
@@ -36,6 +37,7 @@ export class Game {
     public profanityHelper: ProfanityHelper,
 
     public lobbyManager: LobbyManager,
+    public subscriptionHelper: SubscriptionHelper,
     public characterRoller: CharacterRoller,
     public itemCreator: ItemCreator,
     public npcCreator: NPCCreator,
@@ -68,7 +70,7 @@ export class Game {
       'contentManager',
       'db', 'worldDB', 'characterDB', 'accountDB',
       'profanityHelper',
-      'lobbyManager',
+      'lobbyManager', 'subscriptionHelper',
       'characterRoller',
       'itemCreator', 'npcCreator',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper',

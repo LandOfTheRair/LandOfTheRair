@@ -1,4 +1,5 @@
 
+import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { ChatMode, GameAction, ISettings } from '../interfaces';
 import { Login, Logout } from './account.state';
@@ -87,6 +88,7 @@ const defaultSettings: () => ISettings = () => {
   name: 'settings',
   defaults: defaultSettings()
 })
+@Injectable()
 export class SettingsState implements NgxsOnInit {
 
   @Selector()

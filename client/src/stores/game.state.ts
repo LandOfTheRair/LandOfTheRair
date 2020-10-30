@@ -1,6 +1,7 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { GameAction, IGame, IPlayer } from '../interfaces';
 
+import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 
 
@@ -44,6 +45,7 @@ const defaultGame: () => IGame = () => {
   name: 'game',
   defaults: defaultGame()
 })
+@Injectable()
 export class GameState {
 
   @Selector()

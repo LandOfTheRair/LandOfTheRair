@@ -19,9 +19,9 @@ export class MapComponent implements OnInit {
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
 
-  // TODO: change this to loading text
-  public loadPercent = new BehaviorSubject<number>(0);
+  public loadPercent = new BehaviorSubject<string>('');
   public loadPercent$ = this.loadPercent.asObservable();
+  public loadString: string;
 
   private game: MapRenderGame;
 
@@ -32,7 +32,6 @@ export class MapComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
     // play game when we get the signal and have a valid map
     combineLatest(
       this.gameService.playGame$,
@@ -50,6 +49,13 @@ export class MapComponent implements OnInit {
       }
     });
 
+    // have to do it this way so zone doesn't lose it's mind
+    this.loadPercent.subscribe(d => {
+      this.zone.run(() => {
+        this.loadString = d;
+      });
+    });
+
     // reset when we get a quit signal
     this.gameService.quitGame$.subscribe(() => {
       if (this.game) {
@@ -58,7 +64,7 @@ export class MapComponent implements OnInit {
       }
 
       this.map.next(null);
-      this.loadPercent.next(0);
+      this.loadPercent.next('');
     });
   }
 
@@ -76,7 +82,6 @@ export class MapComponent implements OnInit {
         width: 9 * 64,
         height: 9 * 64
       },
-      scene: [PreloadScene, MapScene],
       banner: false
     };
 
@@ -90,6 +95,11 @@ export class MapComponent implements OnInit {
         map: this.map
       }
     );
+
+    this.game.scene.add('PreloadScene', PreloadScene);
+    this.game.scene.add('MapScene', MapScene);
+
+    this.game.scene.start('PreloadScene');
   }
 
 }

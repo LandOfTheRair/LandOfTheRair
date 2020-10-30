@@ -1,4 +1,5 @@
 
+import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { GameAction, IAccount, ICharacter, IChatUser } from '../interfaces';
 
@@ -36,6 +37,7 @@ const defaultAccount: () => IAccount = () => {
   name: 'account',
   defaults: defaultAccount()
 })
+@Injectable()
 export class AccountState {
 
   @Selector()

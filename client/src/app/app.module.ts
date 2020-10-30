@@ -8,7 +8,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
-import { NgxsModule } from '@ngxs/store';
+import { getActionTypeFromInstance, NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
 import { environment } from '../environments/environment';
@@ -39,6 +39,8 @@ import { CharSelectComponent } from './containers/lobby-container/char-select/ch
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
+
+import { SetActiveWindow, UpdateWindowPosition } from '../stores';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
 
@@ -82,7 +84,17 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     NgxsResetPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot({ disabled: environment.production, collapsed: true })
+    NgxsLoggerPluginModule.forRoot({
+      disabled: environment.production,
+      collapsed: true,
+      filter: action => {
+        const ignoreActions: any = {
+          [UpdateWindowPosition.type]: true, [SetActiveWindow.type]: true
+        };
+        const actionType: string = getActionTypeFromInstance(action) as string;
+        return !ignoreActions[actionType];
+      }
+    })
   ],
   providers: [
     {
