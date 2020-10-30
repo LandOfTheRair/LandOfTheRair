@@ -33,11 +33,11 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
     // play game when we get the signal and have a valid map
-    combineLatest(
+    combineLatest([
       this.gameService.playGame$,
       this.gameService.currentPlayer$,
       this.gameService.currentMap$
-    ).subscribe(([play, player, map]) => {
+    ]).subscribe(([play, player, map]) => {
       if (!play || !player || !map) return;
       this.map.next(map);
       this.currentPlayer.next(player);

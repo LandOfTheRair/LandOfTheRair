@@ -69,53 +69,20 @@ export class DroppableDirective implements OnInit, OnDestroy {
         return this._dropEnabled;
     }
 
-    /**
-     * @private
-     */
     dragStartSubscription: Subscription;
 
-    /**
-     * @private
-     */
     dragEndSubscription: Subscription;
 
-    /**
-     * @private
-     * Backing field for the dropEnabled property
-     */
     _dropEnabled = true;
 
-    /**
-     * @private
-     * Field for tracking drag state. Helps when
-     * drag stop event occurs before the allowDrop()
-     * can be calculated (async).
-     */
     _isDragActive = false;
 
-    /**
-     * @private
-     * Field for tracking if service is subscribed.
-     * Avoids creating multiple subscriptions of service.
-     */
     _isServiceActive = false;
 
-    /**
-     * @private
-     * Function for unbinding the drag enter listener
-     */
     unbindDragEnterListener: Function;
 
-    /**
-     * @private
-     * Function for unbinding the drag over listener
-     */
     unbindDragOverListener: Function;
 
-    /**
-     * @private
-     * Function for unbinding the drag leave listener
-     */
     unbindDragLeaveListener: Function;
 
     constructor(protected el: ElementRef, private renderer: Renderer2,

@@ -1,11 +1,10 @@
 
 import { Injectable } from 'injection-js';
 
-import { Reference, wrap } from '@mikro-orm/core';
+import { wrap } from '@mikro-orm/core';
 import { BaseClass, BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { CharacterItems } from '../../../models/orm/CharacterItems';
-import { PlayerHelper } from '../../character';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -14,8 +13,7 @@ export class CharacterDB extends BaseService {
 
   constructor(
     private db: Database,
-    private characterRoller: CharacterRoller,
-    private playerHelper: PlayerHelper
+    private characterRoller: CharacterRoller
   ) {
     super();
   }
