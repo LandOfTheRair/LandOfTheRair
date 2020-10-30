@@ -19,9 +19,11 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <div class="loader" *ngIf="(loadPercent$ | async) as loadPct">
-    <span *ngIf="loadPct && loadPct !== 100">Loading... {{ loadPct }}%</span>
-  </div>
+  <ng-container *ngIf="currentPlayer | async as player">
+    <div class="loader" *ngIf="(loadPercent$ | async) as loadPct">
+      <span *ngIf="loadPct && loadPct !== 100">Loading {{ player.map }}... {{ loadPct }}%</span>
+    </div>
+  </ng-container>
 
   <div class="map"></div>
 </ng-template>
