@@ -95,6 +95,12 @@ export class WebsocketWorker {
       });
 
       socket.on('error', (err) => {
+        const ignoredMessages = [
+          'cWs invalid status code or invalid UTF-8 sequence'
+        ];
+
+        if (ignoredMessages.includes(err.message)) return;
+
         console.error('NET', `[Socket Error]`, err);
       });
     });

@@ -48,12 +48,23 @@ export class MenuComponent implements OnInit {
       }
     },
     {
-      name: 'Log out',
+      name: 'Log Out',
       handler: () => {
         this.toggleMenu();
-        this.socketService.tryDisconnect();
-        this.socketService.init();
-        this.store.dispatch(new Logout(true));
+        this.socketService.emit(GameServerEvent.QuitGame);
+
+        setTimeout(() => {
+          this.socketService.emit(GameServerEvent.Logout);
+        }, 50);
+
+        setTimeout(() => {
+          this.store.dispatch(new Logout(true));
+        }, 75);
+
+        setTimeout(() => {
+          this.socketService.tryDisconnect();
+          this.socketService.init();
+        }, 100);
       }
     }
   ];

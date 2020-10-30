@@ -34,7 +34,8 @@ export class GameloopWorker {
       await this.wsCommands.doAction(type, args, socketId);
     } catch (e) {
       const blacklistedErrors = [
-        'Not logged in.'
+        'Not logged in.',
+        'Not in game.'
       ];
 
       if (!blacklistedErrors.includes(e.message)) {

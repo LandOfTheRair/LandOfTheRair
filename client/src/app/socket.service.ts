@@ -155,6 +155,8 @@ export class SocketService {
     }
 
     if (!this.callbacks[type] || this.callbacks[type].length === 0) {
+      if (type === 'error') return;
+
       this.logger.error(`[WS Callback]`, `Type ${type} has no callbacks registered.`);
       return;
     }
