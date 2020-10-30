@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { GameServerEvent } from '../../models';
+import { GameServerEvent } from '../../interfaces';
 import { Logout } from '../../stores';
 import { AssetService } from '../asset.service';
 import { GameService } from '../game.service';

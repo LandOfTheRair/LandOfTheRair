@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IPlayer } from '../../../../models';
+import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 @Component({

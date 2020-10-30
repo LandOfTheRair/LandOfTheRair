@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../models';
+import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../interfaces';
 import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
 import { GameService } from '../game.service';
 import { SocketService } from '../socket.service';

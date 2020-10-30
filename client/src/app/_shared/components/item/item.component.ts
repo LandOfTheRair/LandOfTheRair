@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { EquippableItemClasses, IItem, ISimpleItem, ItemClass } from '../../../../models';
+import { EquippableItemClasses, IItem, ISimpleItem, ItemClass } from '../../../../interfaces';
 import { AssetService } from '../../../asset.service';
 
 // const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];

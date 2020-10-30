@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
-import { GameServerEvent, ICharacterCreateInfo } from '../../../../models';
+import { GameServerEvent, ICharacterCreateInfo } from '../../../../interfaces';
 import { SetActiveWindow, SetCharSlot } from '../../../../stores';
 import { AssetService } from '../../../asset.service';
 import { GameService } from '../../../game.service';

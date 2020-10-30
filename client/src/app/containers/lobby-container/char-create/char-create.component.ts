@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ICharacterCreateInfo } from '../../../../models';
+import { ICharacterCreateInfo } from '../../../../interfaces';
 
 @Component({
   selector: 'app-char-create',

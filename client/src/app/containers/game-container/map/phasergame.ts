@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs';
 
-import { IMapData, IPlayer } from '../../../../models';
+import { IMapData, IPlayer } from '../../../../interfaces';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 

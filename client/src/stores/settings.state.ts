@@ -1,7 +1,6 @@
 
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction } from '../../../shared/interfaces';
-import { ChatMode, ISettings } from '../models';
+import { ChatMode, GameAction, ISettings } from '../interfaces';
 import { Login, Logout } from './account.state';
 
 export class AddAccount {

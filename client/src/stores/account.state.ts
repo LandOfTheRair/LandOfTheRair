@@ -1,6 +1,6 @@
 
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, IAccount, ICharacter, IChatUser } from '../models';
+import { GameAction, IAccount, ICharacter, IChatUser } from '../interfaces';
 
 export class Login {
   static type = GameAction.Login;

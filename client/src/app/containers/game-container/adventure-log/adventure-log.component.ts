@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
 import { Subscription } from 'rxjs';
-import { GameServerResponse, MessageType } from '../../../../models';
+import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { GameService } from '../../../game.service';

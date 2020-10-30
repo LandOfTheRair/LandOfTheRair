@@ -5,7 +5,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import * as meta from '../assets/content/_output/meta.json';
 import { environment } from '../environments/environment';
-import { IItem, INPCDefinition } from '../models';
+import { IItem, INPCDefinition } from '../interfaces';
 import { SettingsState } from '../stores/index.js';
 
 @Injectable({

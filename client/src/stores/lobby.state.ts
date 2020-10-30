@@ -1,6 +1,6 @@
 
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../models';
+import { GameAction, ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
 import { Login } from './account.state';
 
 export class AddMessage {

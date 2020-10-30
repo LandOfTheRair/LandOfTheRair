@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { ChatMode, IAccount, ICharacterCreateInfo, IMapData, IPlayer } from '../models';
+import { ChatMode, IAccount, ICharacterCreateInfo, IMapData, IPlayer } from '../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
 
 @Injectable({

@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../models';
+import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 import { AssetService } from '../../../asset.service';
 

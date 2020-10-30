@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { GameServerEvent, IChatMessage, IChatUser } from '../../../../models';
+import { GameServerEvent, IChatMessage, IChatUser } from '../../../../interfaces';
 import { LobbyState } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { SocketService } from '../../../socket.service';

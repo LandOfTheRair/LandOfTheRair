@@ -1,7 +1,7 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { GameServerEvent, IPlayer } from '../../../../models';
+import { GameServerEvent, IPlayer } from '../../../../interfaces';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 import { MapRenderGame } from './phasergame';

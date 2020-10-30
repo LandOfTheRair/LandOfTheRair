@@ -3,7 +3,7 @@ import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
 
-import { ChatMode, GameServerEvent } from '../../../../models';
+import { ChatMode, GameServerEvent } from '../../../../interfaces';
 import { HideWindow, LogCurrentCommandInHistory, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';

@@ -3,12 +3,12 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPlayer } from '../../../../models';
+import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../game.service';
 
-import { calculateXPRequiredForLevel } from '../../../../models';
+import { calculateXPRequiredForLevel } from '../../../../interfaces';
 
 @AutoUnsubscribe()
 @Component({

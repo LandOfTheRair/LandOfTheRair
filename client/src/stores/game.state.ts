@@ -1,5 +1,5 @@
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, IGame, IPlayer } from '../models';
+import { GameAction, IGame, IPlayer } from '../interfaces';
 
 import { applyPatch } from 'fast-json-patch';
 

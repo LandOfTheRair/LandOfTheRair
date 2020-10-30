@@ -1,7 +1,7 @@
 import { get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { IMapData, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../models';
+import { IMapData, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
 const Phaser = (window as any).Phaser;
