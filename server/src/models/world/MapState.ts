@@ -1,13 +1,21 @@
 
 import RBush from 'rbush';
 
-import { setWith, unset } from 'lodash';
+import { keyBy, pick, setWith, unset } from 'lodash';
 
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
 
 import { ICharacter, IPlayer } from '../../interfaces';
 import { Player } from '../orm';
+
+const PLAYER_KEYS = [
+  'dir', 'swimLevel', 'uuid', 'partyName', 'name',
+  'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
+  'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects'
+];
+
+const NPC_KEYS = [];
 
 interface RBushCharacter {
   minX: number;
@@ -78,9 +86,22 @@ export class MapState {
   public triggerFullUpdateForPlayer(player: Player) {
     this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
 
-    // TODO: there needs to be a watcher per MAP that tracks all player locations (won't be many players, so one watcher per map is fine)
-    // TODO: each player needs 2 watchers for their view (every time they move or are moved, needs to regenerate) for npcs and ground
-    // TODO: also send npcs, ground, players
+    this.updateStateForPlayer(player);
+  }
+
+  private updateStateForPlayer(player: Player) {
+    const state = this.game.playerManager.getPlayerState(player);
+
+    const nearbyPlayers = this.players
+      .search({ minX: player.x - 3, maxX: player.x + 3, minY: player.y - 3, maxY: player.y + 3 })
+      .filter(({ uuid }) => uuid !== player.uuid)
+      .map(({ uuid }) => pick(this.playersByUUID[uuid], PLAYER_KEYS))
+      .filter(Boolean);
+
+    state.players = keyBy(nearbyPlayers, 'uuid');
+
+    // TODO: each player needs 2 more watchers for their view (every time they move or are moved, needs to regenerate) for npcs and ground
+    // TODO: also send npcs, ground
   }
 
   // player functions

@@ -1,7 +1,9 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
 
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { GameServerEvent, IPlayer } from '../../../../interfaces';
+import { GameState } from '../../../../stores';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
 import { MapRenderGame } from './phasergame';
@@ -14,13 +16,20 @@ const Phaser = (window as any).Phaser;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
 
+  @Select(GameState.players) private allPlayers$: Observable<any>;
+
+  // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
+  public allPlayers = new BehaviorSubject<any>({ });
 
-  public loadPercent = new BehaviorSubject<string>('');
-  public loadPercent$ = this.loadPercent.asObservable();
+  // subs
+  private playerSub: Subscription;
+
+  // loading text
+  private loadPercent = new BehaviorSubject<string>('');
   public loadString: string;
 
   private game: MapRenderGame;
@@ -31,7 +40,10 @@ export class MapComponent implements OnInit {
     private zone: NgZone
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
+
+    this.playerSub = this.allPlayers$.subscribe(pHash => this.allPlayers.next(pHash));
+
     // play game when we get the signal and have a valid map
     combineLatest([
       this.gameService.playGame$,
@@ -68,6 +80,10 @@ export class MapComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.playerSub) this.playerSub.unsubscribe();
+  }
+
   public quitGame() {
     this.socketService.emit(GameServerEvent.QuitGame);
   }
@@ -92,7 +108,8 @@ export class MapComponent implements OnInit {
       {
         loadPercent: this.loadPercent,
         player: this.currentPlayer,
-        map: this.map
+        map: this.map,
+        allPlayers: this.allPlayers
       }
     );
 

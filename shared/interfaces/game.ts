@@ -5,7 +5,9 @@ export interface IGame {
   inGame: boolean;
   player: IPlayer;
   map: any;
-  npcs: { [uuid: string]: ISimpleNPC };
-  players: { [uuid: string]: IPlayer };
-  ground: any;
+  mapInfo: {
+    players: Record<string, Partial<IPlayer>>;
+    npcs: Record<string, ISimpleNPC>;
+    ground: any;
+  }
 }

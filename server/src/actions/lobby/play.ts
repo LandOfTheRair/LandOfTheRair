@@ -31,6 +31,7 @@ export class PlayAction extends ServerAction {
     }
 
     game.lobbyManager.accountEnterGame(data.account, player);
+    game.worldManager.getMapStateForCharacter(player).triggerFullUpdateForPlayer(player);
 
     broadcast({
       action: GameAction.ChatUserEnterGame,

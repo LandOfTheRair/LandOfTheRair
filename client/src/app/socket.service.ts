@@ -98,12 +98,15 @@ export class SocketService {
     this.messages$ = messages$.subscribe({
 
       next: (message: any) => {
-        this.logger.debug(`[WS RECV]`, message);
 
         // auto dispatch event based on `action`
         if (message.action) {
           this.store.dispatch({ type: message.action, ...message });
           return;
+
+        // if there is no action, log it. otherwise it's redundant.
+        } else {
+          this.logger.debug(`[WS RECV]`, message);
         }
 
         this.events.next(message);

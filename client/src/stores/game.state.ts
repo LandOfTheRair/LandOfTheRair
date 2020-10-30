@@ -3,6 +3,7 @@ import { GameAction, IGame, IPlayer } from '../interfaces';
 
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
+import { cloneDeep } from 'lodash';
 
 
 export class PlayGame {
@@ -40,9 +41,11 @@ const defaultGame: () => IGame = () => {
     inGame: false,
     player: null,
     map: null,
-    npcs: {},
-    players: {},
-    ground: {}
+    mapInfo: {
+      players: {},
+      npcs: {},
+      ground: {}
+    }
   };
 };
 
@@ -70,7 +73,17 @@ export class GameState {
 
   @Selector()
   static npcs(state: IGame) {
-    return state.npcs;
+    return state.mapInfo.npcs;
+  }
+
+  @Selector()
+  static players(state: IGame) {
+    return state.mapInfo.players;
+  }
+
+  @Selector()
+  static ground(state: IGame) {
+    return state.mapInfo.ground;
   }
 
   @Action(PlayGame)
@@ -133,11 +146,6 @@ export class GameState {
     // can't get patches if we're not in game
     if (!copyState.player || !statePatches) return;
 
-    if (statePatches) {
-      console.log(statePatches);
-      // copyState.player = applyPatch({ ...copyState.player }, patches).newDocument;
-    }
-
-    ctx.patchState(copyState);
+    ctx.patchState({ mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches).newDocument });
   }
 }

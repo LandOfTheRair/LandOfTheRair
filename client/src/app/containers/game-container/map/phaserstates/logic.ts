@@ -34,11 +34,12 @@ export class MapScene extends Phaser.Scene {
     eagleeye: false
   };
 
-  private allSprites = {};
+  private allCharacterSprites = {};
   private fovSprites = {};
   private fovDetailSprites = {};
 
   private playerUpdate$: Subscription;
+  private allPlayersUpdate$: Subscription;
   private player: IPlayer;
 
   // the currently visible creatures
@@ -90,8 +91,12 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updatePlayerSprite(player: IPlayer) {
-    const sprite = this.allSprites[player.uuid];
-    if (!sprite) return;
+    console.log('update', player);
+    const sprite = this.allCharacterSprites[player.uuid];
+    if (!sprite) {
+      this.createPlayerSprite(player);
+      return;
+    }
 
     this.updatePlayerSpriteData(sprite, player);
   }
@@ -107,7 +112,7 @@ export class MapScene extends Phaser.Scene {
 
     this.layers.playerSprites.add(sprite);
 
-    this.allSprites[player.uuid] = sprite;
+    this.allCharacterSprites[player.uuid] = sprite;
 
     this.updatePlayerSpriteData(sprite, player);
 
@@ -145,7 +150,7 @@ export class MapScene extends Phaser.Scene {
 
   private updateFOV() {
 
-    const isPlayerInGame = this.allSprites[this.player.uuid];
+    const isPlayerInGame = this.allCharacterSprites[this.player.uuid];
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
@@ -352,6 +357,10 @@ export class MapScene extends Phaser.Scene {
       this.updateSelf(updPlayer);
     });
 
+    this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
+      Object.values(allPlayers).forEach(p => this.updatePlayerSprite(p as IPlayer));
+    });
+
     this.events.on('destroy', () => this.destroy());
 
     this.game.observables.loadPercent.next(`Welcome to ${player.map}!`);
@@ -372,6 +381,7 @@ export class MapScene extends Phaser.Scene {
 
   private destroy() {
     if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
+    if (this.allPlayersUpdate$) this.allPlayersUpdate$.unsubscribe();
   }
 
   private updatePlayerSpriteData(sprite, player: IPlayer) {
