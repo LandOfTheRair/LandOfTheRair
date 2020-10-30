@@ -1,0 +1,94 @@
+
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.buffs {
+  width: 320px;
+  height: 100%;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+
+  .hp, .energy, .exp {
+    text-align: center;
+    position: relative;
+    display: flex;
+
+    background-color: silver;
+    outline: 1px solid #444;
+
+    .bar, .bar-text {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      outline: 1px solid #444;
+    }
+
+    .bar {
+      z-index: 5;
+    }
+
+    .bar-text {
+      z-index: 6;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+      font-size: 20px;
+      color: white;
+      text-shadow:
+       -1px -1px 0 #000,  
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+         1px 1px 0 #000;
+    }
+  }
+
+  .top-bars {
+    flex: 1;
+    display: flex;
+
+    .hp, .energy {
+      width: 50%;
+    }
+
+    .hp .bar {
+      background-color: #dc3545;
+    }
+
+    .energy {
+      &.Healer, &.Mage {
+        background-color: #007bff;
+      }
+
+      &.Warrior, &.Thief {
+        background-color: #ffc107;
+      }
+
+      &.Undecided {
+        display: none;
+      }
+    }
+  }
+
+  .bottom-bars {
+    flex: 1;
+    display: flex;
+
+    .exp {
+      width: 100%;
+
+      .bar {
+        background-color: #28a745;
+      }
+    }
+  }
+}

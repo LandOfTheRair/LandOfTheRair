@@ -33,6 +33,7 @@ import { InventoryBeltComponent } from './containers/game-container/inventory-be
 import { InventoryPouchComponent } from './containers/game-container/inventory-pouch/inventory-pouch.component';
 import { InventorySackComponent } from './containers/game-container/inventory-sack/inventory-sack.component';
 import { MapComponent } from './containers/game-container/map/map.component';
+import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
@@ -63,7 +64,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     InventoryPouchComponent,
     InventorySackComponent,
 
-    EquipmentMainComponent
+    EquipmentMainComponent,
+    PlayerStatusComponent
   ],
   imports: [
     HttpClientModule,
@@ -80,7 +82,7 @@ const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     NgxsResetPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot({ disabled: environment.production })
+    NgxsLoggerPluginModule.forRoot({ disabled: environment.production, collapsed: true })
   ],
   providers: [
     {

@@ -1,0 +1,46 @@
+<app-window windowName="playerStatus"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="false"
+
+            defaultX="315"
+            defaultY="4"
+            defaultWidth="576"
+            defaultHeight="96"
+></app-window>
+
+<ng-template #headTemplate>
+  <ng-container *ngIf="player$ | async as player">
+    {{ player.name }} the {{ player.alignment }} level {{ player.level }} {{ player.baseClass }}
+  </ng-container>
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="container" *ngIf="player$ | async as player">
+    
+    <div class="buffs">
+      
+    </div>
+
+    <div class="bars">
+      <div class="top-bars">
+        <div class="hp">
+          <span class="bar" [style.width]="(player.hp.__current / player.hp.maximum * 100) + '%'"></span>
+          <span class="bar-text">{{ player.hp.__current }}/{{ player.hp.maximum }}</span>
+        </div>
+        <div class="energy {{ player.baseClass }}">
+          <span class="bar" [style.width]="(player.mp.__current / player.mp.maximum * 100) + '%'"></span>
+          <span class="bar-text">{{ player.mp.__current }}/{{ player.mp.maximum }}</span>
+        </div>
+      </div>
+
+      <div class="bottom-bars">
+        <div class="exp">
+          <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
+          <span class="bar-text">{{ player.exp | number }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ng-template>
