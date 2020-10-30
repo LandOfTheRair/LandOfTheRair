@@ -39,7 +39,7 @@
     "fs-extra": "^8.1.0",
     "injection-js": "^2.3.0",
     "lodash": "4.17.15",
-    "logger-timer": "1.0.2",
+    "logger-timer": "^1.0.5",
     "lootastic": "1.1.2",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",

@@ -111,21 +111,24 @@ export class Game {
   }
 
   public loop() {
-    const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production' });
+    const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production', dumpThreshold: 50 });
     timer.startTimer('gameloop');
 
+    // fast tick actions
     if (this.ticksElapsed % 2 === 0) {
       timer.startTimer('fastTick');
       this.playerManager.fastTick();
       timer.stopTimer('fastTick');
     }
 
+    // slow tick actions
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer('slowTick');
       this.playerManager.slowTick();
       timer.stopTimer('slowTick');
     }
 
+    // map ticks
     if (this.ticksElapsed % 20 === 0) {
       timer.startTimer('mapTick');
       this.worldManager.mapTick();
@@ -133,7 +136,7 @@ export class Game {
     }
 
     timer.stopTimer('gameloop');
-    // timer.dumpTimers();
+    timer.dumpTimers();
 
     this.ticksElapsed++;
     setTimeout(() => this.loop(), 100);

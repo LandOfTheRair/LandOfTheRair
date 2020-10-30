@@ -42,7 +42,7 @@ import { OptionsContainerComponent } from './containers/options-container/option
 
 import { SetActiveWindow, UpdateWindowPosition } from '../stores';
 
-const allActualStores = Object.keys(AllStores).filter(x => x.includes('State')).map(x => AllStores[x]);
+const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
 
 @NgModule({
   declarations: [

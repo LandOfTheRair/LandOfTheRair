@@ -69,6 +69,7 @@ export enum GameAction {
   GameSetMap = '[Game] Set Map',
   GameSetPlayer = '[Game] Set Player',
   GamePatchPlayer = '[Game] Patch Player',
+  GamePatchPlayerState = '[Game] Patch Player State',
 
   LogCurrentCommand = '[Game] Log Current Command',
   SetCurrentCommand = '[Game] Set Current Command'

@@ -251,7 +251,6 @@ export class MapScene extends Phaser.Scene {
     const decorFirstGid = this.allMapData.tiledJSON.tilesets[2].firstgid;
     const wallFirstGid = this.allMapData.tiledJSON.tilesets[1].firstgid;
 
-    // TODO: am I subscribed? check account object to find out!
     const isSubscribed = this.player.isSubscribed;
 
     layer.objects.forEach(obj => {

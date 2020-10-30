@@ -30,6 +30,11 @@ export class PatchPlayer {
   constructor(public player: Partial<IPlayer>, public patches: any[]) {}
 }
 
+export class PatchGameStateForPlayer {
+  static type = GameAction.GamePatchPlayerState;
+  constructor(public statePatches: any[]) {}
+}
+
 const defaultGame: () => IGame = () => {
   return {
     inGame: false,
@@ -115,6 +120,22 @@ export class GameState {
 
     if (patches) {
       copyState.player = applyPatch({ ...copyState.player }, patches).newDocument;
+    }
+
+    ctx.patchState(copyState);
+  }
+
+  @Action(PatchGameStateForPlayer)
+  patchPlayerState(ctx: StateContext<IGame>, { statePatches }: PatchGameStateForPlayer) {
+    const state = ctx.getState();
+    const copyState = { ...state };
+
+    // can't get patches if we're not in game
+    if (!copyState.player || !statePatches) return;
+
+    if (statePatches) {
+      console.log(statePatches);
+      // copyState.player = applyPatch({ ...copyState.player }, patches).newDocument;
     }
 
     ctx.patchState(copyState);

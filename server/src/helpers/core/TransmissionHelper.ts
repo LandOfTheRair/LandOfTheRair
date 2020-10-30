@@ -60,7 +60,16 @@ export class TransmissionHelper extends BaseService {
 
   // generate and queue player object patches
   public generateAndQueuePlayerPatches(player: Player) {
+
+    // we twiddle the fov here because it creates a bunch of unnecessary patches
+    // hell yeah micro optimizations
+    const fov = player.fov;
+    delete (player as any).fov;
+
     const patches = generate(this.playerPatchWatchers[player.username]);
+
+    // reset the fov because we do still need it
+    player.fov = fov;
     this.queuePlayerPatch(player, { patches });
   }
 
@@ -69,7 +78,7 @@ export class TransmissionHelper extends BaseService {
     const patches = generate(this.playerStateWatchers[player.username]);
     if (patches.length === 0) return;
 
-    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, { statePatches: patches });
+    this.sendActionToAccount(player.username, GameAction.GamePatchPlayerState, { statePatches: patches });
   }
 
   // send patches to a player about themselves

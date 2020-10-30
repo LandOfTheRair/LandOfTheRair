@@ -1,7 +1,7 @@
 
 import RBush from 'rbush';
 
-import { get, setWith, unset } from 'lodash';
+import { setWith, unset } from 'lodash';
 
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
@@ -23,9 +23,6 @@ export class MapState {
   private npcs = new RBush();
 
   private bushStorage: { [uuid: string]: RBushCharacter } = {};
-
-  // TODO: ground manager, expire items unless bound, condense items with same id but no mods
-  // TODO: trash has a 99% chance of breaking before hitting ground
 
   private npcsByUUID: { [uuid: string]: ICharacter } = {};
   private playersByUUID: { [uuid: string]: IPlayer } = {};
@@ -49,14 +46,15 @@ export class MapState {
   }
 
   // query functions
-  public getPlayerView(player: Player): ICharacter[] {
-    // return players and npcs in view
-    return [];
-  }
 
   // get the specific players that need to be updated for a particular coordinate
-  public getPlayersToUpdate(x: number, y: number): string[] {
-    return Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
+  public getPlayersToUpdate(x: number, y: number): Player[] {
+
+    // eventually, the model may shift to using the knowledge hash, but for now... no
+    // return Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
+    const playersInRange = this.players.search({ minX: x - 3, maxX: x + 3, minY: y - 3, maxY: y + 3 });
+
+    return playersInRange.map(({ uuid }) => this.playersByUUID[uuid]).filter(Boolean);
   }
 
   // move an NPC or a player without the caller having to figure out which func to call
@@ -69,15 +67,20 @@ export class MapState {
   }
 
   // update all players for a particular coordinate
-  public triggerUpdate(x: number, y: number) {
-    // const playersToUpdate = this.getPlayersToUpdate(x, y);
+  public triggerUpdate(x: number, y: number, triggeringPlayer?: Player) {
+    const playersToUpdate = this.getPlayersToUpdate(x, y);
+    playersToUpdate
+      .filter(p => p !== triggeringPlayer)
+      .forEach(p => this.triggerFullUpdateForPlayer(p));
   }
 
   // trigger a full update for a particular player
   public triggerFullUpdateForPlayer(player: Player) {
     this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
 
-    // TODO: also send npcs, items, players
+    // TODO: there needs to be a watcher per MAP that tracks all player locations (won't be many players, so one watcher per map is fine)
+    // TODO: each player needs 2 watchers for their view (every time they move or are moved, needs to regenerate) for npcs and ground
+    // TODO: also send npcs, ground, players
   }
 
   // player functions
@@ -91,7 +94,7 @@ export class MapState {
 
     this.players.insert(rbushPlayer);
 
-    this.triggerUpdate(player.x, player.y);
+    this.triggerUpdate(player.x, player.y, player);
   }
 
   public removePlayer(player: Player) {
@@ -102,7 +105,7 @@ export class MapState {
 
     this.players.remove(rbushPlayer);
 
-    this.triggerUpdate(player.x, player.y);
+    this.triggerUpdate(player.x, player.y, player);
   }
 
   private movePlayer(player: Player) {
@@ -118,7 +121,7 @@ export class MapState {
 
     this.generateKnowledgeRadius({ uuid: player.uuid, x: player.x, y: player.y }, true);
 
-    this.triggerUpdate(player.x, player.y);
+    this.triggerUpdate(player.x, player.y, player);
     this.triggerFullUpdateForPlayer(player);
   }
 
