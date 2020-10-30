@@ -44,6 +44,7 @@ export class MenuComponent implements OnInit {
       visibleIf: this.gameService.inGame$,
       handler: () => {
         this.socketService.emit(GameServerEvent.QuitGame);
+        this.toggleMenu();
       }
     },
     {

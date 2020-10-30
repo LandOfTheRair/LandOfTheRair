@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 
 import { Reference, wrap } from '@mikro-orm/core';
-import { BaseService, initializePlayer } from '../../../interfaces';
+import { BaseClass, BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { CharacterItems } from '../../../models/orm/CharacterItems';
 import { PlayerHelper } from '../../character';
@@ -52,6 +52,14 @@ export class CharacterDB extends BaseService {
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
     player.username = account.username;
+
+    if (player.baseClass === BaseClass.Healer) player.mp.maximum = 20;
+    if (player.baseClass === BaseClass.Mage) player.mp.maximum = 30;
+
+    if (player.baseClass === BaseClass.Thief) player.mp.maximum = 100;
+    if (player.baseClass === BaseClass.Warrior) player.mp.maximum = 100;
+
+    player.mp.__current = player.mp.maximum;
 
     account.players.add(player);
     await this.db.save(account);

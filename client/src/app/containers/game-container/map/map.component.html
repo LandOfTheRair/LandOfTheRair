@@ -2,7 +2,7 @@
 <app-window windowName="map"
             [head]="headTemplate"
             [body]="bodyTemplate"
-            [canHide]="true"
+            [canHide]="false"
             [willNotHide]="true"
             (hide)="quitGame()"
 
@@ -13,7 +13,9 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Map
+  <ng-container *ngIf="currentPlayer | async as player">
+    Map - {{ player.map }}
+  </ng-container>
 </ng-template>
 
 <ng-template #bodyTemplate>

@@ -22,13 +22,13 @@
     display: flex;
 
     background-color: silver;
-    outline: 1px solid #444;
+    outline: 1px solid #212121;
 
     .bar, .bar-text {
       position: absolute;
       width: 100%;
       height: 100%;
-      outline: 1px solid #444;
+      outline: 1px solid #212121;
     }
 
     .bar {
@@ -57,7 +57,7 @@
     display: flex;
 
     .hp, .energy {
-      width: 50%;
+      flex: 1;
     }
 
     .hp .bar {
@@ -65,11 +65,11 @@
     }
 
     .energy {
-      &.Healer, &.Mage {
+      &.Healer .bar, &.Mage .bar {
         background-color: #007bff;
       }
 
-      &.Warrior, &.Thief {
+      &.Warrior .bar, &.Thief .bar {
         background-color: #ffc107;
       }
 

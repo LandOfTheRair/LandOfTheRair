@@ -32,9 +32,10 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
 
   xpPercent(player: IPlayer) {
     const playerXP = player.exp;
+    const curPlayerLevelXP = calculateXPRequiredForLevel(player.level);
     const nextPlayerLevelXP = calculateXPRequiredForLevel(player.level + 1);
 
-    return playerXP / nextPlayerLevelXP * 100;
+    return (playerXP - curPlayerLevelXP) / nextPlayerLevelXP * 100;
   }
 
 }
