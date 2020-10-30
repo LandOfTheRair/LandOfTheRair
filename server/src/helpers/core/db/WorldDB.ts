@@ -24,7 +24,6 @@ export class WorldDB extends BaseService {
     await this.loadSettings();
   }
 
-  // TODO: DI eats this so the settings never actually are visible to lobby at load
   public async loadSettings() {
     this.settings = await this.db.em.getRepository<WorldSettings>(WorldSettings)
       .findOne({ _id: { $exists: true } } as any) as WorldSettings;
