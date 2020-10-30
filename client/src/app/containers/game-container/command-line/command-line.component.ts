@@ -16,7 +16,7 @@ import { SocketService } from '../../../socket.service';
 })
 export class CommandLineComponent implements OnInit, OnDestroy {
 
-  @ViewChild('commandInput', { static: false, read: ElementRef }) public commandInput: ElementRef;
+  @ViewChild('commandInput', { read: ElementRef }) public commandInput: ElementRef;
 
   public currentCommand = '';
 

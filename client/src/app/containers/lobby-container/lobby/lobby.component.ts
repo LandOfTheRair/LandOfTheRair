@@ -13,7 +13,7 @@ import { SocketService } from '../../../socket.service';
 })
 export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild(WindowComponent, { static: false, read: ElementRef }) public window: ElementRef;
+  @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
   @Select(LobbyState.motd) public motd$: Observable<string>;
   @Select(LobbyState.users) public users$: Observable<IChatUser[]>;

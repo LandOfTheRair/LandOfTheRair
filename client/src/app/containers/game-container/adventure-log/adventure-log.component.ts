@@ -18,7 +18,7 @@ import { SocketService } from '../../../socket.service';
 })
 export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild(WindowComponent, { static: false, read: ElementRef }) public window: ElementRef;
+  @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
   public messages: Array<{ messageTypes: MessageType[], message: string }> = [];
 
