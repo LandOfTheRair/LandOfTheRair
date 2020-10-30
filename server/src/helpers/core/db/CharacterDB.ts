@@ -22,7 +22,7 @@ export class CharacterDB extends BaseService {
 
   public async init() {}
 
-  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<Player | undefined> {
+  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<void> {
 
     const oldPlayer = account.players.getItems().find(char => char.charSlot === slot);
 
