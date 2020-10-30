@@ -3,8 +3,9 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPlayer, ISimpleItem, ItemSlot } from '../../../../models';
+import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../models';
 import { GameState } from '../../../../stores';
+import { AssetService } from '../../../asset.service';
 
 import { GameService } from '../../../game.service';
 
@@ -106,7 +107,8 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    public gameService: GameService
+    public gameService: GameService,
+    public assetService: AssetService
   ) { }
 
   ngOnInit() {
@@ -120,7 +122,8 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   }
 
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {
-    return true;
+    if (!item) return false;
+    return this.assetService.getItem(item.name).itemClass === ItemClass.Coin;
   }
 
 }
