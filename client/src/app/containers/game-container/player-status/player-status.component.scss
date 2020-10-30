@@ -15,6 +15,7 @@
   flex-direction: column;
   height: 100%;
   flex: 1;
+  border-left: 1px solid #000;
 
   .hp, .energy, .exp {
     text-align: center;
@@ -22,13 +23,11 @@
     display: flex;
 
     background-color: silver;
-    outline: 1px solid #212121;
 
     .bar, .bar-text {
       position: absolute;
       width: 100%;
       height: 100%;
-      outline: 1px solid #212121;
     }
 
     .bar {
@@ -65,6 +64,8 @@
     }
 
     .energy {
+      border-left: 1px solid #000;
+
       &.Healer .bar, &.Mage .bar {
         background-color: #007bff;
       }
@@ -82,6 +83,7 @@
   .bottom-bars {
     flex: 1;
     display: flex;
+    border-top: 1px solid #000;
 
     .exp {
       width: 100%;
