@@ -122,7 +122,7 @@ export class ItemComponent implements OnDestroy {
   get descText() {
     if (!this.item) return '';
 
-    // TODO: sense desc etc
+    // TODO: sense desc etc - should be a shared helper function
     return this.item.mods.desc || this.realItem.desc;
   }
 
