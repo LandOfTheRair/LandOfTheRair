@@ -103,20 +103,12 @@ export class GameState {
 
   @Action(SetMap)
   setMap(ctx: StateContext<IGame>, { map }: SetMap) {
-    const state = ctx.getState();
-    const copyState = { ...state };
-    copyState.map = map;
-
-    ctx.patchState(copyState);
+    ctx.patchState({ map });
   }
 
   @Action(SetPlayer)
   setPlayer(ctx: StateContext<IGame>, { player }: SetPlayer) {
-    const state = ctx.getState();
-    const copyState = { ...state };
-    copyState.player = player;
-
-    ctx.patchState(copyState);
+    ctx.patchState({ player });
   }
 
   @Action(PatchPlayer)

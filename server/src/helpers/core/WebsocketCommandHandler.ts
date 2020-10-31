@@ -56,6 +56,10 @@ export class WebsocketCommandHandler {
   }
 
   public sendToSocket(username: string, data: any): void {
+
+    // if they've disconnected, and something gets sent to them, it will technically be broadcast
+    // that's not ideal, so we make sure we have somewhere to send this first
+    if (!this.accountSocketIds[username]) return;
     this.emitCallback(this.accountSocketIds[username], data);
   }
 
