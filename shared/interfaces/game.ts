@@ -9,5 +9,5 @@ export interface IGame {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, ISimpleNPC>;
     ground: any;
-  }
+  };
 }

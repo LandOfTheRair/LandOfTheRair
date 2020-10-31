@@ -15,8 +15,6 @@ const PLAYER_KEYS = [
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects'
 ];
 
-const NPC_KEYS = [];
-
 interface RBushCharacter {
   minX: number;
   minY: number;
