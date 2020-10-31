@@ -10,7 +10,7 @@ Contributions will almost certainly net you some in-game Silver (no promises can
 
 ## Code
 
-To contribute code, I would urge you to set up and run the game locally ([instructions here](https://github.com/LandOfTheRair/landoftherair/blob/master/README.md#requirements)). This will allow you to actually test your changes. When submitting code, you will have to create a pull request. If your pull request is sufficiently large (tackling a big fix, feature, etc) please describe it in-depth on the pull request. Some examples of what code changes could be:
+To contribute code, I would urge you to set up and run the game locally ([instructions here](https://github.com/LandOfTheRair/lotr2/blob/master/README.md#requirements)). This will allow you to actually test your changes. When submitting code, you will have to create a pull request. If your pull request is sufficiently large (tackling a big fix, feature, etc) please describe it in-depth on the pull request. Some examples of what code changes could be:
 
 * Increasing a spawner's density, or creating a new one.
 * Creating a new NPC type.
