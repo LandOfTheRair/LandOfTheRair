@@ -17,7 +17,7 @@
 <ng-template #bodyTemplate>
   <div class="buttons">
     <ng-container *ngFor="let tab of ['General', 'Combat']">
-      <button mat-raised-button [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''" (click)="changeTab(tab)">{{ tab }}</button>
+      <button class="tab-button" mat-raised-button [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''" (click)="changeTab(tab)">{{ tab }}</button>
     </ng-container>
   </div>
   <div class="log-area" *ngIf="(gameService.logMode$ | async) as logMode">

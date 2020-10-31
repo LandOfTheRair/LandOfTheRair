@@ -3,8 +3,11 @@
   display: flex;
   justify-content: space-around;
 
-  button {
+  .tab-button {
+    flex: 1;
     line-height: 22px;
+    border-radius: 0;
+    outline: 1px solid #212121;
   }
 }
 
