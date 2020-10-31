@@ -366,7 +366,7 @@ export class MapScene extends Phaser.Scene {
 
     this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
       const curPlayers = Object.keys(this.allCharacterSprites).filter(f => f !== this.player.uuid);
-      const newPlayers = this.mostRecentPlayersList || [];
+      const newPlayers = Object.keys(allPlayers);
 
       Object.values(allPlayers).forEach(p => this.updatePlayerSprite(p as IPlayer));
 
