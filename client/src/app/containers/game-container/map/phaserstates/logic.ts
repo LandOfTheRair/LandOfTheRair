@@ -390,7 +390,6 @@ export class MapScene extends Phaser.Scene {
     if (!this.player) return;
     this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
     this.updateFOV();
-    this.removeOldPlayerSprites();
   }
 
   private destroy() {
