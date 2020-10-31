@@ -58,17 +58,17 @@ export class MapState {
 
     // eventually, the model may shift to using the knowledge hash, but for now... no
     // return Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
-    const playersInRange = this.players.search({ minX: x - 3, maxX: x + 3, minY: y - 3, maxY: y + 3 });
+    const playersInRange = this.players.search({ minX: x - 4, maxX: x + 4, minY: y - 4, maxY: y + 4 });
 
     return playersInRange.map(({ uuid }) => this.playersByUUID[uuid]).filter(Boolean);
   }
 
   // move an NPC or a player without the caller having to figure out which func to call
-  public moveNPCOrPlayer(character: ICharacter): void {
+  public moveNPCOrPlayer(character: ICharacter, { oldX, oldY }): void {
     if ((character as IPlayer).username) {
-      this.movePlayer(character as Player);
+      this.movePlayer(character as Player, { oldX, oldY });
     } else {
-      this.moveNPC(character);
+      this.moveNPC(character, { oldX, oldY });
     }
   }
 
@@ -91,7 +91,7 @@ export class MapState {
     const state = this.game.playerManager.getPlayerState(player);
 
     const nearbyPlayers = this.players
-      .search({ minX: player.x - 3, maxX: player.x + 3, minY: player.y - 3, maxY: player.y + 3 })
+      .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
       .filter(({ uuid }) => uuid !== player.uuid)
       .map(({ uuid }) => pick(this.playersByUUID[uuid], PLAYER_KEYS))
       .filter(Boolean);
@@ -127,7 +127,9 @@ export class MapState {
     this.triggerUpdate(player.x, player.y, player);
   }
 
-  private movePlayer(player: Player) {
+  private movePlayer(player: Player, { oldX, oldY }) {
+    this.triggerUpdate(oldX, oldY, player);
+
     this.generateKnowledgeRadius(player, false);
 
     const rbushPlayer = this.bushStorage[player.uuid];
@@ -184,7 +186,9 @@ export class MapState {
     this.triggerUpdate(npc.x, npc.y);
   }
 
-  private moveNPC(npc: ICharacter) {
+  private moveNPC(npc: ICharacter, { oldX, oldY }) {
+    this.triggerUpdate(oldX, oldY);
+
     const rbushNPC = this.bushStorage[npc.uuid];
     this.npcs.remove(rbushNPC);
 

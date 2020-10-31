@@ -119,7 +119,7 @@ export class MovementHelper extends BaseService {
     // TODO: trigger traps
     this.directionHelper.setDirBasedOnXYDiff(character, character.x - oldX, character.y - oldY);
 
-    state.moveNPCOrPlayer(character);
+    state.moveNPCOrPlayer(character, { oldX, oldY });
 
     return wasSuccessfulWithNoInterruptions;
   }

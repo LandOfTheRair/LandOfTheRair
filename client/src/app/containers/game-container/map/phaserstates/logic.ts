@@ -1,4 +1,4 @@
-import { get, setWith } from 'lodash';
+import { difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { IMapData, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
@@ -91,7 +91,6 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updatePlayerSprite(player: IPlayer) {
-    console.log('update', player);
     const sprite = this.allCharacterSprites[player.uuid];
     if (!sprite) {
       this.createPlayerSprite(player);
@@ -99,6 +98,14 @@ export class MapScene extends Phaser.Scene {
     }
 
     this.updatePlayerSpriteData(sprite, player);
+  }
+
+  private removePlayerSprite(uuid: string) {
+    const sprite = this.allCharacterSprites[uuid];
+    if (!sprite) return;
+
+    delete this.allCharacterSprites[uuid];
+    sprite.destroy();
   }
 
   private createPlayerSprite(player: IPlayer) {
@@ -358,7 +365,13 @@ export class MapScene extends Phaser.Scene {
     });
 
     this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
+      const curPlayers = Object.keys(this.allCharacterSprites).filter(f => f !== this.player.uuid);
+      const newPlayers = this.mostRecentPlayersList || [];
+
       Object.values(allPlayers).forEach(p => this.updatePlayerSprite(p as IPlayer));
+
+      const diff = difference(curPlayers, newPlayers);
+      diff.forEach(p => this.removePlayerSprite(p));
     });
 
     this.events.on('destroy', () => this.destroy());
@@ -377,6 +390,7 @@ export class MapScene extends Phaser.Scene {
     if (!this.player) return;
     this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
     this.updateFOV();
+    this.removeOldPlayerSprites();
   }
 
   private destroy() {

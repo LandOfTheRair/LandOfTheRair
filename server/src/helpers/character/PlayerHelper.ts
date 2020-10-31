@@ -126,13 +126,16 @@ export class PlayerHelper extends BaseService {
 
   // teleport a player to a new location
   public teleport(player: Player, x: number, y: number, map: string = player.map): void {
+    const oldX = player.x;
+    const oldY = player.y;
+
     player.x = x;
     player.y = y;
 
     const { state } = this.worldManager.getMap(player.map);
 
     if (player.map === map) {
-      state.moveNPCOrPlayer(player);
+      state.moveNPCOrPlayer(player, { oldX, oldY });
 
     } else {
       state.removePlayer(player);
