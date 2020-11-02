@@ -124,7 +124,7 @@ export class GameState {
     }
 
     if (patches) {
-      copyState.player = applyPatch({ ...copyState.player }, patches).newDocument;
+      copyState.player = applyPatch(cloneDeep(copyState.player), patches).newDocument;
     }
 
     ctx.patchState(copyState);
