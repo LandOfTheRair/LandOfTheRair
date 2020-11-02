@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
@@ -14,7 +13,6 @@ import { GameService } from '../../../game.service';
 export class CharacterListComponent implements OnInit, OnDestroy {
 
   constructor(
-    private store: Store,
     public gameService: GameService
   ) { }
 
