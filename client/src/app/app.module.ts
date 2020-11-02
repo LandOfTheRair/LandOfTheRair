@@ -41,6 +41,7 @@ import { LobbyComponent } from './containers/lobby-container/lobby/lobby.compone
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
 
 import { SetActiveWindow, UpdateWindowPosition } from '../stores';
+import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
 
@@ -67,7 +68,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     InventorySackComponent,
 
     EquipmentMainComponent,
-    PlayerStatusComponent
+    PlayerStatusComponent,
+    CharacterListComponent
   ],
   imports: [
     HttpClientModule,
