@@ -18,7 +18,6 @@ export class LootHelper extends BaseService {
   public init() {}
 
   chooseWithReplacement(choices: any[], number = 1) {
-    console.log(choices);
     const table = new LootTable(choices);
     return table.chooseWithReplacement(number);
   }

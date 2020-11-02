@@ -1,7 +1,7 @@
 
 import RBush from 'rbush';
 
-import { keyBy, pick, setWith, unset } from 'lodash';
+import { extend, keyBy, pick, setWith, unset } from 'lodash';
 
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
@@ -93,12 +93,35 @@ export class MapState {
 
   private createOtherSpawners() {
     this.map.allSpawners.forEach(spawner => {
-      // const spawner = new Spawner(this.game, this.map, this, )
+      const spawnerX = spawner.x / 64;
+      const spawnerY = (spawner.y / 64) - 1;
+      const tag = spawner.properties.tag;
+      if (!tag) throw new Error(`Spawner ${this.map.name} - ${spawnerX},${spawnerY} has no tag!`);
+
+      const spawnerData = this.game.contentManager.getSpawnerByTag(tag);
+      if (!spawnerData) throw new Error(`Tagged spawner ${tag} does not exist.`);
+
+      spawnerData.name = spawner.name;
+      spawnerData.x = spawnerX;
+      spawnerData.y = spawnerY;
+      spawnerData.doInitialSpawnImmediately = spawnerData.initialSpawn > 0;
+
+      extend(spawnerData, spawner.properties);
+
+      if (spawner.properties.lairName) spawnerData.npcIds = [spawner.properties.lairName];
+      if (spawner.properties.resourceName) spawnerData.npcIds = [spawner.properties.resourceName];
+
+      const createdSpawner = new Spawner(this.game, this.map, this, spawnerData);
+      this.addSpawner(createdSpawner);
     });
   }
 
-  private addSpawner(spawner: Spawner) {
+  public addSpawner(spawner: Spawner) {
     this.spawners.push(spawner);
+  }
+
+  public removeSpawner(spawner: Spawner) {
+    this.spawners = this.spawners.filter(x => x !== spawner);
   }
 
   // tick spawners (respawn, buffs, etc)

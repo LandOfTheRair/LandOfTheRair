@@ -11,6 +11,7 @@ export class Spawner {
   private x: number;
   private y: number;
   private map: string;
+  private name: string;
 
   private currentTick = 0;
   private currentEliteTick = 0;
@@ -75,6 +76,10 @@ export class Spawner {
     return this.paths?.length > 0;
   }
 
+  public get canBeSaved(): boolean {
+    return this.shouldSerialize;
+  }
+
   constructor(private game: Game, private mapRef: WorldMap, private mapState: MapState, spawnOpts: Partial<Spawner> = {}) {
     extend(this, spawnOpts);
 
@@ -101,12 +106,18 @@ export class Spawner {
   // triggers on world slow ticks
   public npcTick(): void {
     this.npcs.forEach(npc => {
-      if (this.game.characterHelper.isDead(npc)) {
+      if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc)) {
         this.removeNPC(npc);
         return;
       }
 
+      this.game.npcHelper.tick(npc);
+
     });
+
+    if (this.npcs.length === 0 && this.removeWhenNoNPCs) {
+      this.removeSelf();
+    }
   }
 
   // triggers every second, for clearing buffs
@@ -135,7 +146,7 @@ export class Spawner {
   private createNPC(opts: { npcId?: string, npcDef?: INPCDefinition, createCallback?: (npc: INPC) => void } = {}) {
     const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
-      this.game.logger.error('Spawner', `No valid npcIds for spawner ${this.constructor.name} at ${this.x}, ${this.y} on ${this.map}`);
+      this.game.logger.error('Spawner', `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`);
       this.removeSelf();
       return;
     }
@@ -153,9 +164,14 @@ export class Spawner {
       chosenNPCDef = this.game.npcHelper.getNPCDefinition(chosenNPCId);
     }
 
-    const npc = this.game.npcCreator.createCharacterFromNPCDefinition(npcDef as INPCDefinition);
+    if (!chosenNPCDef) {
+      this.game.logger.error('Spawner', `Could not get NPC definition for ${this.name}.`);
+      return;
+    }
 
-    let foundCoordinates = { x: npcDef?.x ?? 0, y: npcDef?.y ?? 0 };
+    const npc = this.game.npcCreator.createCharacterFromNPCDefinition(chosenNPCDef as INPCDefinition);
+
+    let foundCoordinates = { x: chosenNPCDef?.x ?? 0, y: chosenNPCDef?.y ?? 0 };
     let attempts = 0;
 
     while (!foundCoordinates.x || !foundCoordinates.y) {
@@ -197,14 +213,14 @@ export class Spawner {
     npc.stripY = this.stripY;
 
     // TODO: check dangerous
+    if (this.isDangerous) {
+
+    }
 
     this.assignPath(npc);
 
     if (this.npcCreateCallback) this.npcCreateCallback(npc);
     if (createCallback) createCallback(npc);
-
-    // TODO: call this.npcCreateCallback
-    // TODO: call createCallback
 
     this.game.characterHelper.tryToCastEquipmentEffects(npc);
     this.game.characterHelper.calculateStatTotals(npc);
@@ -226,7 +242,7 @@ export class Spawner {
   }
 
   private assignPath(npc: INPC): void {
-    if (!this.paths || this.paths.length === 0) return;
+    if (!this.hasPaths) return;
     const path = sample(this.paths);
 
     // TODO: turn path into directions
@@ -234,7 +250,7 @@ export class Spawner {
   }
 
   private removeSelf() {
-
+    this.mapState.removeSpawner(this);
   }
 
   // make an enemy elite
