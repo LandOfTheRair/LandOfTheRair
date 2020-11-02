@@ -1,4 +1,4 @@
-import { ISimpleNPC } from './npc';
+import { INPC } from './npc';
 import { IPlayer } from './player';
 
 export interface IGame {
@@ -7,7 +7,7 @@ export interface IGame {
   map: any;
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
-    npcs: Record<string, ISimpleNPC>;
+    npcs: Record<string, Partial<INPC>>;
     ground: any;
   };
 }

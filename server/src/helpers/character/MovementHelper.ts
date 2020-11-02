@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { BaseService, ICharacter, INPCDefinition, ObjectType, Stat } from '../../interfaces';
+import { BaseService, ICharacter, INPC, ObjectType, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
@@ -72,7 +72,7 @@ export class MovementHelper extends BaseService {
       // aquatic npcs can't leave the water
       if (!this.characterHelper.isPlayer(character)) {
         const nextTileFluid = map.getFluidAt(nextX, nextY);
-        if ((character as any as INPCDefinition).aquaticOnly && !nextTileFluid) return;
+        if ((character as any as INPC).aquaticOnly && !nextTileFluid) return;
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);

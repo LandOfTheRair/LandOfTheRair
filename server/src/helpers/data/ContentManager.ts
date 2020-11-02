@@ -11,13 +11,13 @@ export class ContentManager extends BaseService {
     return JSON.parse(JSON.stringify(this.charSelect));
   }
 
-  public mapDroptables: any;
-  public regionDroptables: any;
-  public items: { [itemName: string]: IItem };
-  public npcs: { [npcName: string]: INPCDefinition };
-  public npcScripts: any;
-  public recipes: any;
-  public spawners: any;
+  private mapDroptables: any;
+  private regionDroptables: any;
+  private items: { [itemName: string]: IItem };
+  private npcs: { [npcName: string]: INPCDefinition };
+  private npcScripts: any;
+  private recipes: any; // { tradeskill: recipe[] }
+  private spawners: any;
 
   public init() {
     this.loadCharSelect();
@@ -28,6 +28,34 @@ export class ContentManager extends BaseService {
     this.loadNPCScripts();
     this.loadRecipes();
     this.loadSpawners();
+  }
+
+  public getDropablesForRegion(region: string) {
+    return this.regionDroptables[region];
+  }
+
+  public getDroptablesForMap(mapName: string) {
+    return this.mapDroptables[mapName];
+  }
+
+  public getItemDefinition(itemName: string): IItem {
+    return this.items[itemName];
+  }
+
+  public getNPCDefinition(npcId: string): INPCDefinition {
+    return this.npcs[npcId];
+  }
+
+  public getNPCScript(npcTag: string) {
+    return this.npcScripts[npcTag];
+  }
+
+  public getRecipesForTradeskill(tradeskill) {
+    return this.recipes[tradeskill] || [];
+  }
+
+  public getSpawnerByTag(spawnerTag: string) {
+    return this.spawners[spawnerTag];
   }
 
   private loadCharSelect() {

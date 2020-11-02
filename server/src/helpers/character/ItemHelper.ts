@@ -1,9 +1,11 @@
 
 import { Injectable } from 'injection-js';
-import uuid from 'uuid/v4';
 
 import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
+
+// functions related to MODIFYING an item
+// not to be confused with ItemCreator which is for HELPER FUNCTIONS that CREATE ITEMS
 
 @Injectable()
 export class ItemHelper extends BaseService {
@@ -16,14 +18,9 @@ export class ItemHelper extends BaseService {
 
   public init() {}
 
-  // get an item that can be equipped
-  public getSimpleItem(itemName: string): ISimpleItem {
-    return { name: itemName, uuid: uuid(), mods: {} };
-  }
-
   // get the real item for base information lookup
-  public getItem(itemName: string): IItem {
-    return this.content.items[itemName];
+  public getItemDefinition(itemName: string): IItem {
+    return this.content.getItemDefinition(itemName);
   }
 
   // encrust an item with another item
@@ -35,12 +32,12 @@ export class ItemHelper extends BaseService {
   public getStat(item: ISimpleItem, stat: Stat): number {
     const statMod = item.mods?.stats?.[stat] ?? 0;
 
-    const baseItem = this.getItem(item.name);
+    const baseItem = this.getItemDefinition(item.name);
     const baseStat = baseItem?.stats?.[stat] ?? 0;
 
     let encrustStat = 0;
     if (item.mods.encrustItem) {
-      const encrustItem = this.getItem(item.mods.encrustItem);
+      const encrustItem = this.getItemDefinition(item.mods.encrustItem);
       encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
     }
 

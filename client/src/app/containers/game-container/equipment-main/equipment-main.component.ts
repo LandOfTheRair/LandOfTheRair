@@ -91,7 +91,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
       name: 'Potion'
     },
     {
-      slot: 'body',
+      slot: 'armor',
       name: 'Armor'
     },
     {

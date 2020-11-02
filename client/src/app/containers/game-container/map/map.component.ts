@@ -2,7 +2,7 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { GameServerEvent, IPlayer } from '../../../../interfaces';
+import { GameServerEvent, INPC, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 import { GameService } from '../../../game.service';
 import { SocketService } from '../../../socket.service';
@@ -18,15 +18,18 @@ const Phaser = (window as any).Phaser;
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  @Select(GameState.players) private allPlayers$: Observable<any>;
+  @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
+  @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
 
   // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
-  public allPlayers = new BehaviorSubject<any>({ });
+  public allPlayers = new BehaviorSubject<Record<string, Partial<IPlayer>>>({ });
+  public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
 
   // subs
   private playerSub: Subscription;
+  private npcSub: Subscription;
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
@@ -43,6 +46,7 @@ export class MapComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.playerSub = this.allPlayers$.subscribe(pHash => this.allPlayers.next(pHash));
+    this.npcSub = this.allNPCs$.subscribe(pHash => this.allNPCs.next(pHash));
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -82,6 +86,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.playerSub) this.playerSub.unsubscribe();
+    if (this.npcSub) this.npcSub.unsubscribe();
   }
 
   public quitGame() {
@@ -109,7 +114,8 @@ export class MapComponent implements OnInit, OnDestroy {
         loadPercent: this.loadPercent,
         player: this.currentPlayer,
         map: this.map,
-        allPlayers: this.allPlayers
+        allPlayers: this.allPlayers,
+        allNPCs: this.allNPCs
       }
     );
 

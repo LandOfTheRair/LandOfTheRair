@@ -3,8 +3,9 @@ import { get, setWith } from 'lodash';
 
 import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
+import { Game } from '../../helpers';
 
-import { IMapData, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
+import { IMapData, IMapProperties, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
 
 export class WorldMap {
 
@@ -26,11 +27,101 @@ export class WorldMap {
     return { tiledJSON: this.json, layerData: this.layerHashes };
   }
 
+  public get properties(): IMapProperties {
+    return this.json.properties;
+  }
+
+  public get region() {
+    return this.properties.region;
+  }
+
+  public get holiday() {
+    return this.properties.holiday;
+  }
+
+  public get maxSkill() {
+    return this.properties.maxSkill || 1;
+  }
+
+  public get maxCreatures() {
+    return this.properties.maxCreatures;
+  }
+
+  public get disableCreatureSpawn() {
+    return this.properties.disableCreatureSpawn;
+  }
+
+  public get canSpawnCreatures() {
+    return !this.disableCreatureSpawn;
+  }
+
+  public get decayRateHours() {
+    return this.properties.itemExpirationHours || 6;
+  }
+
+  public get decayCheckMinutes() {
+    return this.properties.itemGarbageCollection || 60;
+  }
+
+  public get maxItemsOnGround() {
+    return this.properties.maxItemsOnGround || 1000;
+  }
+
+  public get subscriberOnly() {
+    return this.properties.subscriberOnly;
+  }
+
+  public get respawnPoint() {
+    return {
+      map: this.properties.respawnMap || this.mapName,
+      x: this.properties.respawnX,
+      y: this.properties.respawnY
+    };
+  }
+
+  public get exitPoint() {
+    const { kickMap, kickX, kickY } = this.properties;
+    if (!kickMap || !kickX || !kickY) return null;
+    return { kickMap, kickX, kickY };
+  }
+
+  public get canMemorize() {
+    return true;
+  }
+
+  public get canPartyAction() {
+    return true;
+  }
+
+  public get script() {
+    return this.properties.script;
+  }
+
   public get fovCalculator() {
     return this.fov;
   }
 
-  constructor(private json: any) {
+  public get mapDroptables() {
+    return this.game.contentManager.getDroptablesForMap(this.mapName) || [];
+  }
+
+  public get regionDroptables() {
+    return this.game.contentManager.getDropablesForRegion(this.region) || [];
+  }
+
+  public get allSpawners() {
+    return this.json.layers[MapLayer.Spawners].objects;
+  }
+
+  public get allDefaultNPCs() {
+    return this.json.layers[MapLayer.NPCs].objects;
+  }
+
+  public get name() {
+    return this.mapName;
+  }
+
+  constructor(private game: Game, private mapName: string, private json: any) {
     this.destructureJSON();
     this.createPlanner();
   }
@@ -237,5 +328,11 @@ export class WorldMap {
 }
 
 export class InstancedWorldMap extends WorldMap {
+  public get canMemorize() {
+    return false;
+  }
 
+  public get canPartyAction() {
+    return false;
+  }
 }

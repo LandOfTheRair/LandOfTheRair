@@ -200,3 +200,5 @@ export interface ISimpleItem {
   mods: Partial<IItem>;
 }
 
+export type IGroundItem = ISimpleItem & { count: number };
+

@@ -2,8 +2,8 @@
 import { Injectable } from 'injection-js';
 
 import { BaseService, ICharacterItems, SkillBlock, StatBlock } from '../../interfaces';
-import { CalculatorHelper, ItemHelper } from '../character';
-import { ContentManager } from '../data';
+import { CalculatorHelper } from '../character';
+import { ContentManager, ItemCreator } from '../data';
 
 @Injectable()
 export class CharacterRoller extends BaseService {
@@ -11,7 +11,7 @@ export class CharacterRoller extends BaseService {
   constructor(
     private contentManager: ContentManager,
     private calculatorHelper: CalculatorHelper,
-    private itemHelper: ItemHelper
+    private itemCreator: ItemCreator
   ) {
     super();
   }
@@ -43,7 +43,7 @@ export class CharacterRoller extends BaseService {
 
     const items = {};
     Object.keys(foundAllegiance.baseItems).forEach(slot => {
-      items[slot] = this.itemHelper.getSimpleItem(foundAllegiance.baseItems[slot]);
+      items[slot] = this.itemCreator.getSimpleItem(foundAllegiance.baseItems[slot]);
     });
 
     const { gold, ...stats } = coreStats;

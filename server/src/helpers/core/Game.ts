@@ -8,6 +8,7 @@ import { CalculatorHelper, CharacterHelper, DirectionHelper, InteractionHelper,
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
+import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
 import { Database } from './Database';
 import { AccountDB, CharacterDB, WorldDB } from './db';
@@ -42,6 +43,9 @@ export class Game {
     public itemCreator: ItemCreator,
     public npcCreator: NPCCreator,
 
+    public diceRollerHelper: DiceRollerHelper,
+    public lootHelper: LootHelper,
+    public holidayHelper: HolidayHelper,
     public movementHelper: MovementHelper,
     public visibilityHelper: VisibilityHelper,
     public directionHelper: DirectionHelper,
@@ -73,6 +77,7 @@ export class Game {
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
       'itemCreator', 'npcCreator',
+      'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
@@ -128,11 +133,18 @@ export class Game {
       timer.stopTimer('slowTick');
     }
 
-    // map ticks
+    // world steady tick actions
+    if (this.ticksElapsed % 10 === 0) {
+      timer.startTimer('steadyTick');
+      this.worldManager.steadyTick();
+      timer.stopTimer('steadyTick');
+    }
+
+    // map ticks (npcs)
     if (this.ticksElapsed % 20 === 0) {
-      timer.startTimer('mapTick');
-      this.worldManager.mapTick();
-      timer.stopTimer('mapTick');
+      timer.startTimer('npcTick');
+      this.worldManager.npcTick();
+      timer.stopTimer('npcTick');
     }
 
     timer.stopTimer('gameloop');

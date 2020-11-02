@@ -1,15 +1,18 @@
 
 import { Injectable } from 'injection-js';
 
-import { Allegiance, BaseService, ICharacter, initializeCharacter, INPCDefinition, ISimpleNPC, MonsterClass } from '../../interfaces';
+import { Allegiance, BaseService, INPC, INPCDefinition } from '../../interfaces';
 import { ContentManager } from '../data';
+import { CharacterHelper } from './CharacterHelper';
 
-import { species } from 'fantastical';
+// functions related to MODIFYING an NPC
+// not to be confused with NPCCreator which is for HELPER FUNCTIONS that CREATE NPCs
 
 @Injectable()
 export class NPCHelper extends BaseService {
 
   constructor(
+    private characterHelper: CharacterHelper,
     private content: ContentManager
   ) {
     super();
@@ -17,46 +20,19 @@ export class NPCHelper extends BaseService {
 
   public init() {}
 
-  // get an item that can be equipped
-  public getSimpleNPC(npcId: string): ISimpleNPC {
-    return { npcId, mods: {} };
+  // get the real npc definition for a named npc id
+  public getNPCDefinition(npcId: string): INPCDefinition {
+    return this.content.getNPCDefinition(npcId);
   }
 
-  // get the real item for base information lookup
-  public getNPC(npcId: string): INPCDefinition {
-    return this.content.npcs[npcId];
+  public isNaturalResource(npc: INPC): boolean {
+    return npc.allegiance === Allegiance.NaturalResource;
   }
 
-  public getNPCName(npc: INPCDefinition): string {
-    if (npc.name) return npc.name;
+  public tick(npc: INPC): void {
+    if (this.isNaturalResource(npc)) return;
 
-    switch (npc.monsterClass) {
-      case MonsterClass.Dragon:    return species.dragon();
-      case MonsterClass.Beast:     return species.ogre();
-      case MonsterClass.Undead:    return species.human();
-    }
-
-    switch (npc.allegiance) {
-      case Allegiance.Pirates:     return species.dwarf();
-      case Allegiance.Royalty:     return species.highelf();
-      case Allegiance.Townsfolk:   return species.human();
-      case Allegiance.Underground: return species.cavePerson();
-      case Allegiance.Wilderness:  return species.fairy();
-      case Allegiance.Adventurers: return species.gnome();
-    }
-
-    return species.human();
+    this.characterHelper.tick(npc);
   }
 
-  // actually make a character from an npc id
-  public createCharacterFromNPC(npcId: string): ICharacter {
-    const baseChar = initializeCharacter({});
-
-    const npc = this.getNPC(npcId);
-    baseChar.name = this.getNPCName(npc);
-
-    // TODO: more props
-
-    return baseChar;
-  }
 }

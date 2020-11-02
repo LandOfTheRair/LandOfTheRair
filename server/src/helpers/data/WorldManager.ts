@@ -57,7 +57,7 @@ export class WorldManager extends BaseService {
   }
 
   private createMap(mapName: string, mapJson: any) {
-    this.maps[mapName] = new WorldMap(mapJson);
+    this.maps[mapName] = new WorldMap(this.game, mapName, mapJson);
     this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
   }
 
@@ -107,7 +107,7 @@ export class WorldManager extends BaseService {
     this.game.logger.log(`Map:Leave`, `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
   }
 
-  public mapTick() {
+  public steadyTick() {
     this.activeMaps.forEach(activeMap => {
       const state = this.mapStates[activeMap];
       if (!state) {
@@ -115,7 +115,19 @@ export class WorldManager extends BaseService {
         return;
       }
 
-      state.tick();
+      state.steadyTick();
+    });
+  }
+
+  public npcTick() {
+    this.activeMaps.forEach(activeMap => {
+      const state = this.mapStates[activeMap];
+      if (!state) {
+        this.game.logger.error('WorldManager:MapTick', new Error(`Map ${activeMap} does not have state.`));
+        return;
+      }
+
+      state.npcTick();
     });
   }
 

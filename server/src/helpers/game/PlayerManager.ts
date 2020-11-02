@@ -78,6 +78,11 @@ export class PlayerManager extends BaseService {
     Object.values(this.inGamePlayers).forEach(player => {
       this.playerHelper.tick(player, type);
 
+      // effects tick at most once per second
+      if (type === 'slow') {
+        this.characterHelper.tickEffects(player);
+      }
+
       // not sure if this will be a good idea or not, we'll see
       if (type === 'fast') {
         this.game.transmissionHelper.tryAutoPatchPlayer(player);

@@ -6,6 +6,7 @@ import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, Messa
 import { Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { StaticTextHelper, WorldManager } from '../data';
+import { CharacterHelper } from './CharacterHelper';
 import { VisibilityHelper } from './VisibilityHelper';
 
 
@@ -13,6 +14,7 @@ import { VisibilityHelper } from './VisibilityHelper';
 export class PlayerHelper extends BaseService {
 
   constructor(
+    private characterHelper: CharacterHelper,
     private staticTextHelper: StaticTextHelper,
     private visibilityHelper: VisibilityHelper,
     private subscriptionHelper: SubscriptionHelper,
@@ -39,6 +41,10 @@ export class PlayerHelper extends BaseService {
   }
 
   public tick(player: Player, type: 'fast'|'slow'): void {
+
+    if (type === 'slow') {
+      this.characterHelper.tick(player);
+    }
 
     // do actions if we have any
     if (player.actionQueue) {

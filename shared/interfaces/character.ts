@@ -24,6 +24,12 @@ export interface ICharacterItems {
   buyback: ISimpleItem[];
 }
 
+export interface BoundedNumber {
+  maximum: number;
+  minimum: number;
+  __current: number;
+}
+
 export interface ICharacter {
   uuid: string;
 
@@ -33,8 +39,8 @@ export interface ICharacter {
   alignment: Alignment;
   baseClass: BaseClass;
 
-  hp: { maximum: number, minimum: number, __current: number };
-  mp: { maximum: number, minimum: number, __current: number };
+  hp: BoundedNumber;
+  mp: BoundedNumber;
 
   gender: 'male'|'female';
   fov: any;

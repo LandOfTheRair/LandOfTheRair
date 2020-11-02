@@ -4,7 +4,8 @@
   "description": "Backend of Land of the Rair",
   "main": "index.js",
   "scripts": {
-    "setup": "npm i && node scripts/setup",
+    "setup": "npm i && npm run setup:content",
+    "setup:content": "node scripts/setup",
     "start:dev": "ts-node-dev --respawn --exit-child --debounce --clear src/core/index.ts",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc"
@@ -40,7 +41,7 @@
     "injection-js": "^2.3.0",
     "lodash": "4.17.15",
     "logger-timer": "^1.0.5",
-    "lootastic": "1.1.2",
+    "lootastic": "^1.1.2",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
     "pathfinding": "0.4.18",
@@ -48,7 +49,6 @@
     "rbush": "^3.0.1",
     "recursive-readdir": "^2.2.2",
     "reflect-metadata": "0.1.13",
-    "restricted-number": "2.1.0",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

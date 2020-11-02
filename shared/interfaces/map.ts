@@ -44,3 +44,55 @@ export interface IMapData {
   tiledJSON: any;
   layerData: { [key in MapLayer]?: any };
 }
+
+export interface IMapProperties {
+
+  // the region this map is in - determines things like banks, regional caps, regional drops
+  region: string;
+
+  // the holiday this map requires - for holiday maps like thanksgiving
+  holiday: string;
+
+  // the max skill level you can get in this map
+  maxSkill: number;
+
+  // the max # of creatures on this map
+  maxCreatures: number;
+
+  // whether this map should spawn creatures
+  disableCreatureSpawn: boolean;
+
+  // how many hours it takes items to expire on this map by default (owned items only)
+  itemExpirationHours: number;
+
+  // how often GC runs on this map (in minutes)
+  itemGarbageCollection: number;
+
+  // the maximum number of items on the ground
+  maxItemsOnGround: number;
+
+  // the map you respawn on (typically, it is the same map, but instances respawn you elsewhere)
+  respawnMap: string;
+
+  // the X you respawn at
+  respawnX: number;
+
+  // the Y you respawn at
+  respawnY: number;
+
+  // whether the map is subscriber only or not
+  subscriberOnly: boolean;
+
+  // the script this map runs (useful for map triggers like in the maze or mines)
+  script: string;
+  
+  // the map you get kicked to from this instance
+  kickMap: string;
+
+  // the x you get kicked to from this instance
+  kickX: number;
+
+  // the y you get kicked to from this instances
+  kickY: number;
+
+}

@@ -1,7 +1,6 @@
 
 import { Entity, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
-import { RestrictedNumber } from 'restricted-number';
-import { Alignment, Allegiance, BaseClass, BGM, CharacterCurrency, Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
+import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency, Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { BaseEntity } from './BaseEntity';
@@ -46,8 +45,8 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() baseClass: BaseClass;
   @Property() gender: 'male'|'female';
 
-  @Property() hp: RestrictedNumber;
-  @Property() mp: RestrictedNumber;
+  @Property() hp: BoundedNumber;
+  @Property() mp: BoundedNumber;
 
   @Property() level: number;
   @Property() highestLevel: number;

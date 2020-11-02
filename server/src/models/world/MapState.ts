@@ -6,13 +6,24 @@ import { keyBy, pick, setWith, unset } from 'lodash';
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
 
-import { ICharacter, IPlayer } from '../../interfaces';
+import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer } from '../../interfaces';
 import { Player } from '../orm';
+import { Spawner } from './Spawner';
 
 const PLAYER_KEYS = [
   'dir', 'swimLevel', 'uuid', 'partyName', 'name',
   'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects'
+];
+
+const NPC_KEYS = [
+  'dir', 'swimLevel', 'uuid', 'name', 'sprite',
+  'affiliation', 'allegiance', 'alignment', 'baseClass',
+  'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects',
+  'agro', 'allegianceReputation', 'hostility',
+  'items.equipment.leftHand', 'items.equipment.rightHand',
+  'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
+  'onlyVisibleTo', 'totalStats.stealth', 'totalStats.wil'
 ];
 
 interface RBushCharacter {
@@ -25,6 +36,8 @@ interface RBushCharacter {
 
 export class MapState {
 
+  private spawners: Spawner[] = [];
+
   private players = new RBush();
   private npcs = new RBush();
 
@@ -35,10 +48,66 @@ export class MapState {
 
   private playerKnowledgePositions = {};
 
-  constructor(private game: Game, map: WorldMap) {}
+  constructor(private game: Game, private map: WorldMap) {
+    this.createSpawners();
+  }
 
-  public tick() {
+  private createSpawners() {
+    this.createDefaultSpawner();
+    this.createOtherSpawners();
+  }
 
+  // create green spawner
+  private createDefaultSpawner() {
+    const npcDefs = this.map.allDefaultNPCs.map(npc => {
+      if (!npc.properties.tag) return;  // TODO: throw an error here as soon as all maps are caught up
+
+      const npcDef = this.game.contentManager.getNPCScript(npc.properties.tag);
+      if (!npcDef) throw new Error(`Script ${npc.properties.tag} does not exist for NPC ${npc.name}`);
+
+      npcDef.x = npc.x / 64;
+      npcDef.y = (npc.y / 64) - 1;
+      npcDef.sprite = npc.gid - this.map.mapData.tiledJSON.tilesets[3].firstgid;
+      npcDef.allegiance = npcDef.allegiance || Allegiance.None;
+      npcDef.alignment = npcDef.alignment || Alignment.Neutral;
+      npcDef.hostility = npcDef.hostility || Hostility.Never;
+
+      return npcDef;
+    }).filter(Boolean);
+
+    const spawner = new Spawner(this.game, this.map, this, {
+      x: 0,
+      y: 0,
+      map: this.map.name,
+      name: 'Green NPC Spawner',
+      leashRadius: -1,
+      respawnRate: 300,
+      doInitialSpawnImmediately: true,
+      eliteTickCap: -1,
+      npcDefs
+    } as Partial<Spawner>);
+
+    this.addSpawner(spawner);
+  }
+
+  private createOtherSpawners() {
+    this.map.allSpawners.forEach(spawner => {
+      // const spawner = new Spawner(this.game, this.map, this, )
+    });
+  }
+
+  private addSpawner(spawner: Spawner) {
+    this.spawners.push(spawner);
+  }
+
+  // tick spawners (respawn, buffs, etc)
+  public steadyTick() {
+    this.spawners.forEach(s => s.steadyTick());
+  }
+
+  // tick spawner npcs
+  public npcTick() {
+    this.spawners.forEach(s => s.npcTick());
   }
 
   private toRBushFormat(character: ICharacter): RBushCharacter {
@@ -68,7 +137,7 @@ export class MapState {
     if ((character as IPlayer).username) {
       this.movePlayer(character as Player, { oldX, oldY });
     } else {
-      this.moveNPC(character, { oldX, oldY });
+      this.moveNPC(character as INPC, { oldX, oldY });
     }
   }
 
@@ -90,6 +159,7 @@ export class MapState {
   private updateStateForPlayer(player: Player) {
     const state = this.game.playerManager.getPlayerState(player);
 
+    // update players
     const nearbyPlayers = this.players
       .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
       .filter(({ uuid }) => uuid !== player.uuid)
@@ -98,8 +168,15 @@ export class MapState {
 
     state.players = keyBy(nearbyPlayers, 'uuid');
 
-    // TODO: each player needs 2 more watchers for their view (every time they move or are moved, needs to regenerate) for npcs and ground
-    // TODO: also send npcs, ground
+    // update npcs
+    const nearbyNPCs = this.npcs
+      .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
+      .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
+      .filter(Boolean);
+
+    state.npcs = keyBy(nearbyNPCs, 'uuid');
+
+    // TODO: also send ground
   }
 
   // player functions
@@ -163,7 +240,7 @@ export class MapState {
   }
 
   // npc functions
-  public addNPC(npc: ICharacter) {
+  public addNPC(npc: INPC) {
     this.npcsByUUID[npc.uuid] = npc;
 
     const rbushNPC = this.toRBushFormat(npc);
@@ -174,7 +251,7 @@ export class MapState {
     this.triggerUpdate(npc.x, npc.y);
   }
 
-  public removeNPC(npc: ICharacter) {
+  public removeNPC(npc: INPC) {
 
     delete this.npcsByUUID[npc.uuid];
 
@@ -186,7 +263,7 @@ export class MapState {
     this.triggerUpdate(npc.x, npc.y);
   }
 
-  private moveNPC(npc: ICharacter, { oldX, oldY }) {
+  private moveNPC(npc: INPC, { oldX, oldY }) {
     this.triggerUpdate(oldX, oldY);
 
     const rbushNPC = this.bushStorage[npc.uuid];

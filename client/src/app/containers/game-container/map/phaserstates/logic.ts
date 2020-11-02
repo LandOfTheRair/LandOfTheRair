@@ -1,7 +1,7 @@
 import { difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { IMapData, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import { ICharacter, IMapData, INPC, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
 const Phaser = (window as any).Phaser;
@@ -24,7 +24,7 @@ export class MapScene extends Phaser.Scene {
     otherEnvironmentalObjects: null,
     vfx: null,
     npcs: null,
-    playerSprites: null,
+    characterSprites: null,
 
     fov: null
   };
@@ -34,12 +34,14 @@ export class MapScene extends Phaser.Scene {
     eagleeye: false
   };
 
-  private allCharacterSprites = {};
+  private allNPCSprites = {};
+  private allPlayerSprites = {};
   private fovSprites = {};
   private fovDetailSprites = {};
 
   private playerUpdate$: Subscription;
   private allPlayersUpdate$: Subscription;
+  private allNPCsUpdate$: Subscription;
   private player: IPlayer;
 
   // the currently visible creatures
@@ -90,8 +92,44 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
+  // npc sprite stuff
+  private updateNPCSprite(npc: INPC) {
+    const sprite = this.allNPCSprites[npc.uuid];
+    if (!sprite) {
+      this.createNPCSprite(npc);
+      return;
+    }
+
+    this.updateSpritePositionalData(sprite, npc);
+  }
+
+  private removeNPCSprite(uuid: string) {
+    const sprite = this.allNPCSprites[uuid];
+    if (!sprite) return;
+
+    delete this.allNPCSprites[uuid];
+    sprite.destroy();
+  }
+
+  private createNPCSprite(npc: INPC) {
+
+    const sprite = this.add.sprite(
+      this.convertPosition(npc.x), this.convertPosition(npc.y),
+      'Creatures', npc.sprite
+    );
+
+    this.layers.characterSprites.add(sprite);
+
+    this.allNPCSprites[npc.uuid] = sprite;
+
+    this.updateSpritePositionalData(sprite, npc);
+
+    return sprite;
+  }
+
+  // player sprite stuff
   private updatePlayerSprite(player: IPlayer) {
-    const sprite = this.allCharacterSprites[player.uuid];
+    const sprite = this.allPlayerSprites[player.uuid];
     if (!sprite) {
       this.createPlayerSprite(player);
       return;
@@ -101,10 +139,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   private removePlayerSprite(uuid: string) {
-    const sprite = this.allCharacterSprites[uuid];
+    const sprite = this.allPlayerSprites[uuid];
     if (!sprite) return;
 
-    delete this.allCharacterSprites[uuid];
+    delete this.allPlayerSprites[uuid];
     sprite.destroy();
   }
 
@@ -117,9 +155,9 @@ export class MapScene extends Phaser.Scene {
       'Creatures', spriteGenderBase + directionOffset
     );
 
-    this.layers.playerSprites.add(sprite);
+    this.layers.characterSprites.add(sprite);
 
-    this.allCharacterSprites[player.uuid] = sprite;
+    this.allPlayerSprites[player.uuid] = sprite;
 
     this.updatePlayerSpriteData(sprite, player);
 
@@ -157,7 +195,7 @@ export class MapScene extends Phaser.Scene {
 
   private updateFOV() {
 
-    const isPlayerInGame = this.allCharacterSprites[this.player.uuid];
+    const isPlayerInGame = this.allPlayerSprites[this.player.uuid];
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
@@ -365,13 +403,23 @@ export class MapScene extends Phaser.Scene {
     });
 
     this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
-      const curPlayers = Object.keys(this.allCharacterSprites).filter(f => f !== this.player.uuid);
+      const curPlayers = Object.keys(this.allPlayerSprites).filter(f => f !== this.player.uuid);
       const newPlayers = Object.keys(allPlayers);
 
       Object.values(allPlayers).forEach(p => this.updatePlayerSprite(p as IPlayer));
 
       const diff = difference(curPlayers, newPlayers);
       diff.forEach(p => this.removePlayerSprite(p));
+    });
+
+    this.allNPCsUpdate$ = this.game.observables.allNPCs.subscribe(allNPCs => {
+      const curNPCs = Object.keys(this.allNPCSprites);
+      const newNPCs = Object.keys(allNPCs);
+
+      Object.values(allNPCs).forEach((p) => this.updateNPCSprite(p as INPC));
+
+      const diff = difference(curNPCs, newNPCs);
+      diff.forEach(p => this.removeNPCSprite(p));
     });
 
     this.events.on('destroy', () => this.destroy());
@@ -395,6 +443,7 @@ export class MapScene extends Phaser.Scene {
   private destroy() {
     if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
     if (this.allPlayersUpdate$) this.allPlayersUpdate$.unsubscribe();
+    if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
   }
 
   private updatePlayerSpriteData(sprite, player: IPlayer) {
@@ -415,13 +464,17 @@ export class MapScene extends Phaser.Scene {
 
     }
 
-    sprite.x = this.convertPosition(player.x, true);
-    sprite.y = this.convertPosition(player.y, true);
+    this.updateSpritePositionalData(sprite, player);
 
     if (sprite.key !== newKey) {
       sprite.setTexture(newKey);
     }
 
     sprite.setFrame(newFrame);
+  }
+
+  private updateSpritePositionalData(sprite, char: ICharacter) {
+    sprite.x = this.convertPosition(char.x, true);
+    sprite.y = this.convertPosition(char.y, true);
   }
 }
