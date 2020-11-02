@@ -69,7 +69,7 @@ export interface INPCDefinition {
     equipment?: { [slot in ItemSlot]: Rollable[] };
     sack?: Rollable[];
     belt?: Rollable[];
-  }
+  };
 
   // the creatures level
   level: number;

@@ -85,7 +85,7 @@ export interface IMapProperties {
 
   // the script this map runs (useful for map triggers like in the maze or mines)
   script: string;
-  
+
   // the map you get kicked to from this instance
   kickMap: string;
 

@@ -20,7 +20,8 @@ export interface IVendorBehavior {
 }
 
 export interface ITrainerBehavior {
-
+  maxSkill?: number;
+  maxLevel?: number;
 }
 
 export interface ICrierBehavior {
@@ -29,4 +30,4 @@ export interface ICrierBehavior {
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & {
   type: BehaviorType;
-}
+};
