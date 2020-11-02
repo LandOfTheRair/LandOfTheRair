@@ -254,6 +254,11 @@ export class DefaultAIBehavior implements IAI {
       }
 
     }
+
+    const amINearAPlayer = !!this.mapState.getPlayerKnowledgeForXY(npc.x, npc.y);
+    if (amINearAPlayer) {
+      this.game.visibilityHelper.calculateFOV(npc);
+    }
   }
 
   private sendSpawnMessage() {
