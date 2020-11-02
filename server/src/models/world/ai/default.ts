@@ -1,5 +1,5 @@
 
-import { clamp, get, maxBy, random, sample, set, size, uniq } from 'lodash';
+import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
 import { Direction, Hostility, IAI, ICharacter, IMacroSkill, INPC, ItemSlot, Stat } from '../../../interfaces';
@@ -14,9 +14,8 @@ export class DefaultAIBehavior implements IAI {
   private leashRadius: number;
   private pathDisrupted: { x: number, y: number } | null = null;
 
-  private didNPCHaveRightHandAtSpawn: boolean;
+  // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
-  private targetDamageDone = {};
 
   private highestAgro: ICharacter | null;
   private currentTarget: ICharacter | null;
@@ -58,7 +57,7 @@ export class DefaultAIBehavior implements IAI {
       this.pickNewPath();
     }
 
-    this.didNPCHaveRightHandAtSpawn = !!this.npc.items.equipment[ItemSlot.RightHand];
+    // this.didNPCHaveRightHandAtSpawn = !!this.npc.items.equipment[ItemSlot.RightHand];
 
     this.sendSpawnMessage();
   }
@@ -115,7 +114,9 @@ export class DefaultAIBehavior implements IAI {
     rolledSkills.forEach((skill: string) => {
       if (chosenSkill) return;
 
-      if (this.highestAgro && this.getAttackDamage(this.highestAgro, skill) === 0 && this.getZeroTimes(this.highestAgro, skill) >= 5) {
+      if (this.highestAgro
+      && this.game.npcHelper.getAttackDamage(npc, this.highestAgro, skill) === 0
+      && this.game.npcHelper.getZeroTimes(npc, this.highestAgro, skill) >= 5) {
         skill = (npc.usableSkills as any[]).find(s => s === 'Charge' || s.result === 'Charge') ? 'Charge' : 'Attack';
       }
 
@@ -315,28 +316,6 @@ export class DefaultAIBehavior implements IAI {
 
   private checkIfCanUseSkill(skillName: string, target: ICharacter) {
     return null;
-  }
-
-  private registerAttackDamage(char: ICharacter, attack: string, damage: number) {
-    this.targetDamageDone = this.targetDamageDone || {};
-    set(this, ['targetDamageDone', char.uuid, attack, 'lastDamage'], damage);
-
-    this.registerZeroTimes(char, attack, damage > 0);
-  }
-
-  private getAttackDamage(char: ICharacter, attack: string) {
-    return get(this, ['targetDamageDone', char.uuid, attack, 'lastDamage'], -1);
-  }
-
-  private registerZeroTimes(char: ICharacter, attack: string, overrideValue?: boolean) {
-    this.targetDamageDone = this.targetDamageDone || {};
-    const times = get(this, ['targetDamageDone', char.uuid, attack, 'zeroTimes'], 0);
-    set(this, ['targetDamageDone', char.uuid, attack, 'zeroTimes'], overrideValue ? 0 : times + 1);
-  }
-
-  private getZeroTimes(char: ICharacter, attack: string) {
-    this.targetDamageDone = this.targetDamageDone || {};
-    return get(this, ['targetDamageDone', char.uuid, attack, 'zeroTimes'], 0);
   }
 
   private pickNewPath() {

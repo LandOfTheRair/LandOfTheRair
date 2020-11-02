@@ -3,7 +3,6 @@ import { Injectable } from 'injection-js';
 import { LootTable } from 'lootastic';
 
 import { BaseService, IItem, ItemClass } from '../../../interfaces';
-import { HolidayHelper } from './HolidayHelper';
 
 @Injectable()
 export class LootHelper extends BaseService {

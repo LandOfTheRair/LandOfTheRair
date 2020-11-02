@@ -1,15 +1,12 @@
 
 import { Injectable } from 'injection-js';
-import { size } from 'lodash';
 
 import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer } from '../../interfaces';
-import { CharacterHelper } from './CharacterHelper';
 
 @Injectable()
 export class TargettingHelper extends BaseService {
 
   constructor(
-    private characterHelper: CharacterHelper
   ) {
     super();
   }

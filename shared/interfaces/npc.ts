@@ -145,4 +145,6 @@ export interface INPC extends ICharacter {
   stripOnSpawner?: boolean;
   stripX?: number;
   stripY?: number;
+
+  targetDamageDone?: any;
 }
