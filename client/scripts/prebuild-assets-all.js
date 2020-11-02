@@ -1,13 +1,24 @@
 
 const childProcess = require('child_process');
+const fs = require('fs');
+const symlinkDir = require('symlink-dir');
 
-console.log('Downloading assets (sfx, bgm, spritesheets, icons, items, npcs)...');
+console.log('[Client] Downloading assets (sfx, bgm, spritesheets, icons, items, npcs)...');
 
 const dl = require('download-github-repo');
-dl('LandOfTheRair/Assets', 'src/assets', () => {
-  dl('LandOfTheRair/Content', 'src/assets/content', () => {
-    childProcess.exec('cd src/assets/content && npm install', () => {
-      childProcess.exec('cd src/assets/content && npm run build:all');
+
+if(fs.existsSync('../../Content')) {  
+  console.log('[Client] Found Content repo, creating a symlink to it.');
+
+  symlinkDir('../../Content', 'src/assets/content');
+
+} else {
+  console.log('[Client] No Content repo, downloading a simple non-git copy of it.');
+
+  dl('LandOfTheRair/Assets', 'src/assets', () => {
+    dl('LandOfTheRair/Content', 'src/assets/content', () => {
+      childProcess.exec('cd src/assets/content && npm install', () => {
+      });
     });
   });
-});
+}

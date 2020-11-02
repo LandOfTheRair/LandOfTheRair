@@ -53,6 +53,7 @@
     "download-github-repo": "^0.1.4",
     "git-describe": "^4.0.4",
     "md5-file": "^4.0.0",
+    "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
     "typescript": "4.0.5",

@@ -38,7 +38,11 @@ You will want to be using Node 12 (at least) to run this project.
 #### Setup
 
 * `npm install` - install dependencies for the client and server.
-* `npm run setup` - setup both the client and server for development.
+* `npm run setup` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
+
+#### Developing Content
+
+One option you have to run Land of the Rair and actively work on the content, is to clone [the Content repo](https://github.com/LandOfTheRair/Content) right alongside Land of ther Rair (meaning you'll have `folder/LandOfTheRair` and `folder/Content`). If you have the Content repo available and run `npm run setup`, it will symlink the Content repo so you can develop it concurrently without having to commit, push, pull, and update. Or copying, or whatever.
 
 #### Running Both Projects
 
