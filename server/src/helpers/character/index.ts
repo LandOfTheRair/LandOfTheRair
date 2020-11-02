@@ -7,4 +7,5 @@ export * from './ItemHelper';
 export * from './MovementHelper';
 export * from './NPCHelper';
 export * from './PlayerHelper';
+export * from './TargettingHelper';
 export * from './VisibilityHelper';

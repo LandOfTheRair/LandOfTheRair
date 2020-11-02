@@ -95,9 +95,6 @@ export interface INPCDefinition {
   // whether the creature should avoid dropping items
   noItemDrop?: boolean;
 
-  // the npc path it follows for walking by default
-  path?: string[];
-
   // the reputation modifications for the killer when this npc is killed
   repMod: Array<{ allegiance: Allegiance, delta: number }>;
 
@@ -135,7 +132,6 @@ export interface INPC extends ICharacter {
   avoidWater?: boolean;
   hostility?: Hostility;
   owner?: string;
-  path?: string[];
   usableSkills: Rollable[] | string[];
 
   skillOnKill: number;

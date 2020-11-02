@@ -1,7 +1,7 @@
 
 import RBush from 'rbush';
 
-import { extend, keyBy, pick, setWith, unset } from 'lodash';
+import { extend, get, keyBy, pick, setWith, size, unset } from 'lodash';
 
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
@@ -134,6 +134,10 @@ export class MapState {
     this.spawners.forEach(s => s.npcTick());
   }
 
+  public getPlayerKnowledgeForXY(x: number, y: number): Record<string, any> {
+    return get(this.playerKnowledgePositions, x, y);
+  }
+
   private toRBushFormat(character: ICharacter): RBushCharacter {
     return {
       minX: character.x,
@@ -145,15 +149,98 @@ export class MapState {
   }
 
   // query functions
+  private getPlayersFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): Player[] {
+    return this.players
+      .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
+      .map(({ uuid }) => this.playersByUUID[uuid])
+      .filter(Boolean);
+  }
+
+  private getNPCsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): INPC[] {
+    return this.npcs
+      .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
+      .map(({ uuid }) => this.npcsByUUID[uuid])
+      .filter(Boolean);
+  }
+
+  private getAllTargetsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): ICharacter[] {
+    return [
+      ...this.getPlayersFromQuadtrees(ref, radius),
+      ...this.getNPCsFromQuadtrees(ref, radius)
+    ];
+  }
+
+  public getAllPlayersInRange(ref: { x: number, y: number }, radius: number): Player[] {
+    return this.getPlayersFromQuadtrees(ref, radius);
+  }
+
+  public getPlayersInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+    return this.getPlayersFromQuadtrees(ref, radius)
+      .filter(char => char
+                   && !this.game.characterHelper.isDead(char)
+                   && !except.includes(char.uuid)
+                   && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
+  }
+
+  public getAllInRangeRaw(ref: { x: number, y: number }, radius, except: string[] = []): ICharacter[] {
+    return this.getAllTargetsFromQuadtrees(ref, radius)
+      .filter(char => char && !except.includes(char.uuid));
+  }
+
+  public getAllInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+    return this.getAllTargetsFromQuadtrees(ref, radius)
+      .filter(char => char
+                   && !this.game.characterHelper.isDead(char)
+                   && !except.includes(char.uuid)
+                   && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
+  }
+
+  public getAllHostilesInRange(ref: ICharacter, radius): ICharacter[] {
+    const targets = this.getAllInRange(ref, radius);
+    return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
+  }
+
+  public getAllAlliesInRange(ref: ICharacter, radius): ICharacter[] {
+    const targets = this.getAllInRange(ref, radius);
+    return targets.filter((target: ICharacter) => !this.game.targettingHelper.checkTargetForHostility(ref, target));
+  }
+
+  public getPossibleTargetsFor(me: INPC, radius = 0): ICharacter[] {
+
+    let targetArray: ICharacter[] = [];
+
+    // optimization for thirsty monsters
+    if (me.hostility === Hostility.Always && size(me.agro) === 0) {
+      targetArray = this.getPlayersInRange(me, radius);
+    } else {
+      targetArray = this.getAllInRange(me, radius);
+    }
+
+    return targetArray.filter((char: ICharacter) => {
+
+      // no hitting myself
+      if (me === char) return false;
+
+      // if they can't attack, they're not worth fighting
+      if ((char as INPC).hostility === Hostility.Never) return false;
+
+      // TODO: stealth affects sight
+      // if(!me.canSeeThroughStealthOf(char)) return false;
+
+      if (this.game.targettingHelper.checkTargetForHostility(me, char)) return true;
+
+      return false;
+    });
+  }
+
+  // state/quadtree functions
 
   // get the specific players that need to be updated for a particular coordinate
   public getPlayersToUpdate(x: number, y: number): Player[] {
 
     // eventually, the model may shift to using the knowledge hash, but for now... no
     // return Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
-    const playersInRange = this.players.search({ minX: x - 4, maxX: x + 4, minY: y - 4, maxY: y + 4 });
-
-    return playersInRange.map(({ uuid }) => this.playersByUUID[uuid]).filter(Boolean);
+    return this.getPlayersFromQuadtrees({ x, y }, 4);
   }
 
   // move an NPC or a player without the caller having to figure out which func to call

@@ -2,9 +2,11 @@
 import { extend, isArray, random, sample } from 'lodash';
 import { Game } from '../../helpers';
 
-import { Hostility, INPC, INPCDefinition } from '../../interfaces';
+import { Hostility, IAI, INPC, INPCDefinition } from '../../interfaces';
 import { WorldMap } from './Map';
 import { MapState } from './MapState';
+
+import { AllAIBehaviors } from './ai';
 
 export class Spawner {
 
@@ -49,11 +51,28 @@ export class Spawner {
   private doInitialSpawnImmediately: boolean;       // whether or not the spawner should spawn creatures immediately or wait
 
   // spawner live properties
-  private npcs: INPC[] = [];
-  private hasDoneInitialSpawn: boolean;
+  private npcs: INPC[] = [];                        // the npcs currently in existence on this spawner
+  private hasDoneInitialSpawn: boolean;             // whether or not the initial spawn has been done for this spawner
+  private npcAI: Record<string, IAI> = {};          // the ai for each npc on this spawner
 
   public get areAnyNPCsAlive(): boolean {
     return this.npcs.some(npc => !this.game.characterHelper.isDead(npc));
+  }
+
+  public get canBeSaved(): boolean {
+    return this.shouldSerialize;
+  }
+
+  public get walkingAttributes() {
+    return { randomWalkRadius: this.randomWalkRadius, leashRadius: this.leashRadius };
+  }
+
+  public get hasPaths(): boolean {
+    return this.paths?.length > 0;
+  }
+
+  public get pos() {
+    return { x: this.x, y: this.y };
   }
 
   private get canRespawn(): boolean {
@@ -70,14 +89,6 @@ export class Spawner {
 
   private get canISpawnAnNPCRightNow(): boolean {
     return this.canRespawn && this.isUnderNPCCap && this.isAbleToSpawn;
-  }
-
-  private get hasPaths(): boolean {
-    return this.paths?.length > 0;
-  }
-
-  public get canBeSaved(): boolean {
-    return this.shouldSerialize;
   }
 
   constructor(private game: Game, private mapRef: WorldMap, private mapState: MapState, spawnOpts: Partial<Spawner> = {}) {
@@ -111,7 +122,7 @@ export class Spawner {
         return;
       }
 
-      this.game.npcHelper.tick(npc);
+      this.npcAI[npc.uuid].tick();
 
     });
 
@@ -197,13 +208,19 @@ export class Spawner {
     npc.map = this.mapRef.name;
 
     let ai = 'default';
+    let aiInst: IAI;
     if (this.npcAISettings.length > 0) {
       let aiSettings: any = this.npcAISettings;
       if (!isArray(aiSettings)) aiSettings = [aiSettings];
       ai = sample(aiSettings);
     }
 
-    // TODO: set tick, mechanictick, etc
+    if (!AllAIBehaviors[ai]) {
+      this.game.logger.error('Spawner', `AI setting ${ai} does not exist.`);
+      return;
+    }
+
+    aiInst = new AllAIBehaviors[ai](this.game, this.mapRef, this.mapState, this, npc);
 
     npc.shouldStrip = this.shouldStrip;
     npc.shouldEatTier = this.shouldEatTier;
@@ -217,8 +234,6 @@ export class Spawner {
 
     }
 
-    this.assignPath(npc);
-
     if (this.npcCreateCallback) this.npcCreateCallback(npc);
     if (createCallback) createCallback(npc);
 
@@ -228,25 +243,24 @@ export class Spawner {
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
-    this.addNPC(npc);
+    this.addNPC(npc, aiInst);
   }
 
-  private addNPC(npc: INPC): void {
+  private addNPC(npc: INPC, ai: IAI): void {
     this.npcs.push(npc);
+    this.npcAI[npc.uuid] = ai;
     this.mapState.addNPC(npc);
   }
 
   private removeNPC(npc: INPC): void {
     this.npcs = this.npcs.filter(c => c.uuid !== npc.uuid);
+    delete this.npcAI[npc.uuid];
     this.mapState.removeNPC(npc);
   }
 
-  private assignPath(npc: INPC): void {
-    if (!this.hasPaths) return;
-    const path = sample(this.paths);
-
-    // TODO: turn path into directions
-    npc.path = path;
+  public getRandomPath(): string {
+    if (!this.hasPaths) return '';
+    return sample(this.paths);
   }
 
   private removeSelf() {

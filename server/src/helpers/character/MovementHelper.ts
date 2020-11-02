@@ -24,12 +24,12 @@ export class MovementHelper extends BaseService {
 
   init() {}
 
-  moveWithPathfinding(character: ICharacter, { xDiff, yDiff }): void {
+  moveWithPathfinding(character: ICharacter, { xDiff, yDiff }): boolean {
 
-    if (isUndefined(xDiff) || isUndefined(yDiff) || isNaN(xDiff) || isNaN(yDiff)) return;
+    if (isUndefined(xDiff) || isUndefined(yDiff) || isNaN(xDiff) || isNaN(yDiff)) return false;
 
     const maxMoveRate = this.characterHelper.getStat(character, Stat.Move);
-    if (maxMoveRate <= 0) return;
+    if (maxMoveRate <= 0) return false;
 
     xDiff = clamp(xDiff, -4, 4);
     yDiff = clamp(yDiff, -4, 4);
@@ -42,13 +42,15 @@ export class MovementHelper extends BaseService {
       steps.length = maxMoveRate;
     }
 
-    this.takeSequenceOfSteps(character, steps);
+    const didFinish = this.takeSequenceOfSteps(character, steps);
 
     if (this.characterHelper.isPlayer(character)) {
       this.playerHelper.resetStatus(character as Player);
 
       // TODO: handle interactable
     }
+
+    return didFinish;
   }
 
   // returns true or false based on if the steps were all taken or not
@@ -104,8 +106,6 @@ export class MovementHelper extends BaseService {
         return;
       }
 
-      if (!opts.isChasing && !this.isValidStep(character, nextX, nextY)) return;
-
       character.x = nextX;
       character.y = nextY;
     });
@@ -122,12 +122,5 @@ export class MovementHelper extends BaseService {
     state.moveNPCOrPlayer(character, { oldX, oldY });
 
     return wasSuccessfulWithNoInterruptions;
-  }
-
-  isValidStep(character: ICharacter, x: number, y: number): boolean {
-    if (this.characterHelper.isPlayer(character)) return true;
-
-    // TODO: spawner/path logic
-    return false;
   }
 }

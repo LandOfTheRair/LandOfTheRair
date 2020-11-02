@@ -1,6 +1,7 @@
 
 export * from './account';
 export * from './action';
+export * from './ai';
 export * from './behaviors';
 export * from './building-blocks';
 export * from './character';

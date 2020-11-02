@@ -30,6 +30,8 @@ export class PlayerHelper extends BaseService {
     if (!player.dir) player.dir = Direction.South;
     if (!player.actionQueue) player.actionQueue = { fast: [], slow: [] };
 
+    player.agro = {};
+
     player.username = player.account.username;
     player.isSubscribed = this.subscriptionHelper.isSubscribed(player.account);
 

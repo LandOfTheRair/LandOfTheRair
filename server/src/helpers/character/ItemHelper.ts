@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { isUndefined } from 'lodash';
 
 import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
@@ -21,6 +22,13 @@ export class ItemHelper extends BaseService {
   // get the real item for base information lookup
   public getItemDefinition(itemName: string): IItem {
     return this.content.getItemDefinition(itemName);
+  }
+
+  public getItemProperty(item: ISimpleItem, prop: keyof IItem): any {
+    if (!isUndefined(item.mods[prop])) return item.mods[prop];
+
+    const realItem = this.getItemDefinition(item.name);
+    return realItem[prop];
   }
 
   // encrust an item with another item

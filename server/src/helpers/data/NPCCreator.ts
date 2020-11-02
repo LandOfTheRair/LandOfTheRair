@@ -51,7 +51,7 @@ export class NPCCreator extends BaseService {
     baseChar.sprite = this.chooseSpriteFrom(npcDef.sprite);
     baseChar.allegiance = npcDef.allegiance ?? Allegiance.Enemy;
     baseChar.alignment = npcDef.alignment ?? Alignment.Evil;
-    baseChar.hostility = npcDef.hostility ?? Hostility.Always;
+    baseChar.hostility = npcDef.hostility ?? Hostility.OnHit;
 
     const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
 
