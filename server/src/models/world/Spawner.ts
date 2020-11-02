@@ -11,42 +11,41 @@ export class Spawner {
   private x: number;
   private y: number;
   private map: string;
-  private name: string;
 
   private currentTick = 0;
   private currentEliteTick = 0;
 
   // spawner settings
-  private respawnRate = 120;                  // the number of seconds before a new creatures comes from the spawner
+  private respawnRate = 120;                        // the number of seconds before a new creatures comes from the spawner
 
-  private initialSpawn = 0;                   // the number of creatures the spawner will spawn initially
-  private maxCreatures = 5;                   // the maximum number of creatures the spawner can have
-  private spawnRadius = 0;                    // the number of tiles around the spawner that a creature can spawn
-  private randomWalkRadius = 10;              // the number of tiles away a creature will walk on it's own
-  private leashRadius = 20;                   // the number of tiles away a creature can chase before it's pulled back to the spawner
+  private initialSpawn = 0;                         // the number of creatures the spawner will spawn initially
+  private maxCreatures = 5;                         // the maximum number of creatures the spawner can have
+  private spawnRadius = 0;                          // the number of tiles around the spawner that a creature can spawn
+  private randomWalkRadius = 10;                    // the number of tiles away a creature will walk on it's own
+  private leashRadius = 20;                         // the number of tiles away a creature can chase before it's pulled back to the spawner
 
-  private paths: string[] = [];               // the paths creatures can walk specified by this spawner
-  private npcDefs: INPCDefinition[] = [];     // the npc definitions
-  private npcIds: string[] | any[] = [];      // the npc ids or { npcId, chance } for potential spawned creatures
-  private npcAISettings: string[] = [];       // the ai the npcs should consider when spawning (if none, default is used)
+  private paths: string[] = [];                     // the paths creatures can walk specified by this spawner
+  private npcDefs: INPCDefinition[] = [];           // the npc definitions
+  private npcIds: string[] | any[] = [];            // the npc ids or { npcId, chance } for potential spawned creatures
+  private npcAISettings: string[] = [];             // the ai the npcs should consider when spawning (if none, default is used)
 
-  private alwaysSpawn: boolean;               // whether the spawner should always spawn or not (used for specific spawners that cannot be blocked by caps)
-  private shouldSerialize: boolean;           // whether the spawner should save its state or not (boss only)
-  private requireDeadToRespawn = false;       // whether the spawner can keep spawning while it has living creatures
-  private isDangerous = false;                // whether the creature is "dangerous" or not (strips)
+  private alwaysSpawn: boolean;                     // whether the spawner should always spawn or not (used for specific spawners that cannot be blocked by caps)
+  private shouldSerialize: boolean;                 // whether the spawner should save its state or not (boss only)
+  private requireDeadToRespawn = false;             // whether the spawner can keep spawning while it has living creatures
+  private isDangerous = false;                      // whether the creature is "dangerous" or not (strips)
 
-  private shouldStrip = false;                // whether the creature should strip all your gear on death
-  private stripRadius = 0;                    // the radius around the strip point (0 = no spread) gear spreads to
-  private stripOnSpawner = true;              // whether you should strip on the spawner or not
-  private stripX: number;                     // the specific x to strip to (overrides stripOnSpawner)
-  private stripY: number;                     // the specific y to strip to (overrides stripOnSpawner)
-  private shouldEatTier = 0;                  // if the creature eats, and if so, how badly it does
+  private shouldStrip = false;                      // whether the creature should strip all your gear on death
+  private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
+  private stripOnSpawner = true;                    // whether you should strip on the spawner or not
+  private stripX: number;                           // the specific x to strip to (overrides stripOnSpawner)
+  private stripY: number;                           // the specific y to strip to (overrides stripOnSpawner)
+  private shouldEatTier = 0;                        // if the creature eats, and if so, how badly it does
 
-  private eliteTickCap = 50;                  // the number of creatures required to spawn an elite (-1 = no elites)
-  private removeDeadNPCs = false;             // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
-  private removeWhenNoNPCs = false;           // remove this spawner when no npcs? generally used for on-the-fly spawners
-  private npcCreateCallback: () => void;      // the callback for creating an npc - used for summons, generally
-  private doInitialSpawnImmediately: boolean; // whether or not the spawner should spawn creatures immediately or wait
+  private eliteTickCap = 50;                        // the number of creatures required to spawn an elite (-1 = no elites)
+  private removeDeadNPCs = false;                   // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
+  private removeWhenNoNPCs = false;                 // remove this spawner when no npcs? generally used for on-the-fly spawners
+  private npcCreateCallback: (npc: INPC) => void;   // the callback for creating an npc - used for summons, generally
+  private doInitialSpawnImmediately: boolean;       // whether or not the spawner should spawn creatures immediately or wait
 
   // spawner live properties
   private npcs: INPC[] = [];
@@ -200,6 +199,9 @@ export class Spawner {
     // TODO: check dangerous
 
     this.assignPath(npc);
+
+    if (this.npcCreateCallback) this.npcCreateCallback(npc);
+    if (createCallback) createCallback(npc);
 
     // TODO: call this.npcCreateCallback
     // TODO: call createCallback

@@ -9,7 +9,7 @@ import { HolidayHelper } from './HolidayHelper';
 export class LootHelper extends BaseService {
 
   constructor(
-    private holidayHelper: HolidayHelper
+    // private holidayHelper: HolidayHelper
     // private content: ContentManager
   ) {
     super();

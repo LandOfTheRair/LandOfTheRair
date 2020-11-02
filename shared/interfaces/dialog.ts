@@ -50,7 +50,7 @@ export interface IDialogChatAction {
   options: Array<{ text: string, action: string, requirement?: IDialogRequirement }>;
 }
 
-export type IDialogAction = IDialogChatAction & IDialogCheckItemAction 
+export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
                           & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction;
 
 export interface IDialogTree {

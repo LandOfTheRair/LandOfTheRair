@@ -1,6 +1,7 @@
 
 import { Entity, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
-import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency, Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
+import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
+  Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { BaseEntity } from './BaseEntity';

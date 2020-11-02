@@ -82,6 +82,7 @@ export class MapState {
       name: 'Green NPC Spawner',
       leashRadius: -1,
       respawnRate: 300,
+      removeDeadNPCs: false,
       doInitialSpawnImmediately: true,
       eliteTickCap: -1,
       npcDefs
