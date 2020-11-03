@@ -39,6 +39,10 @@ $sides: (top, bottom, left, right);
   align-items: center;
 }
 
+.full-height {
+  height: 100%;
+}
+
 .full-width {
   width: 100%;
 }
@@ -75,4 +79,8 @@ $sides: (top, bottom, left, right);
 
 .text-center {
   text-align: center;
+}
+
+.background-text {
+  color: rgba(150, 150, 150, 0.7);
 }
