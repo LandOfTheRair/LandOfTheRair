@@ -7,6 +7,12 @@ export interface IAccountSettings {
 
 export type ChatMode = 'cmd' | 'say' | 'global' | 'party';
 
+export enum GameOption {
+  PinLastTarget = 'pinLastTarget',
+  ShouldSortFriendly = 'shouldSortFriendly',
+  ShouldSortDistance = 'shouldSortDistance'
+}
+
 export interface ISettings {
   accounts: IAccountSettings[];
   windows: { [key: string]: { x: number, y: number, width: number, height: number, hidden?: boolean } };
@@ -18,4 +24,5 @@ export interface ISettings {
   logMode: 'General'|'Combat';
   currentCommand: string;
   commandHistory: string[];
+  options: Record<GameOption, number|boolean>;
 }

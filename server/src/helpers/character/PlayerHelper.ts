@@ -46,6 +46,7 @@ export class PlayerHelper extends BaseService {
 
     if (type === 'slow') {
       this.characterHelper.tick(player);
+      this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
     }
 
     // do actions if we have any

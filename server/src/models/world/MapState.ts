@@ -11,7 +11,9 @@ import { Player } from '../orm';
 import { Spawner } from './Spawner';
 
 const PLAYER_KEYS = [
-  'dir', 'swimLevel', 'uuid', 'partyName', 'name',
+  'dir', 'swimLevel', 'uuid', 'partyName', 'name', 'agro',
+  'items.equipment.leftHand', 'items.equipment.rightHand',
+  'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
   'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects'
 ];
@@ -262,11 +264,16 @@ export class MapState {
 
   // trigger a full update for a particular player
   public triggerFullUpdateForPlayer(player: Player) {
-    this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
-
+    this.onlyUpdatePlayer(player);
     this.updateStateForPlayer(player);
   }
 
+  // update only player related stuff
+  private onlyUpdatePlayer(player: Player) {
+    this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
+  }
+
+  // update the entire gamestate for the players fov
   private updateStateForPlayer(player: Player) {
     const state = this.game.playerManager.getPlayerState(player);
 

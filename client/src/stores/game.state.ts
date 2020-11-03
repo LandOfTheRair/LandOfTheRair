@@ -36,9 +36,15 @@ export class PatchGameStateForPlayer {
   constructor(public statePatches: any[]) {}
 }
 
+export class SetCurrentTarget {
+  static type = GameAction.SetCurrentTarget;
+  constructor(public target: string) {}
+}
+
 const defaultGame: () => IGame = () => {
   return {
     inGame: false,
+    currentTarget: '',
     player: null,
     map: null,
     mapInfo: {
@@ -59,6 +65,24 @@ export class GameState {
   @Selector()
   static player(state: IGame) {
     return state.player;
+  }
+
+  @Selector()
+  static currentTarget(state: IGame) {
+    return state.mapInfo.players[state.currentTarget] || state.mapInfo.npcs[state.currentTarget];
+  }
+
+  @Selector()
+  static allCharacters(state: IGame) {
+    return [
+      ...Object.values(state.mapInfo.players),
+      ...Object.values(state.mapInfo.npcs)
+    ];
+  }
+
+  @Selector()
+  static currentPosition(state: IGame) {
+    return { x: state.player.x, y: state.player.y };
   }
 
   @Selector()
@@ -109,6 +133,11 @@ export class GameState {
   @Action(SetPlayer)
   setPlayer(ctx: StateContext<IGame>, { player }: SetPlayer) {
     ctx.patchState({ player });
+  }
+
+  @Action(SetCurrentTarget)
+  setCurrentTarget(ctx: StateContext<IGame>, { target }: SetCurrentTarget) {
+    ctx.patchState({ currentTarget: target });
   }
 
   @Action(PatchPlayer)

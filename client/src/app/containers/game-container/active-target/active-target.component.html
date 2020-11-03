@@ -1,0 +1,23 @@
+
+<ng-container *ngIf="shouldShow">
+  <div class="target-name">
+    <span class="dir">{{ direction }}</span>
+    <span>{{ target.name }} ({{ hostility }})</span>
+    <span class="difficulty" *ngIf="isDifficult" tooltip="This target might present some difficulty.">
+      <app-icon name="crowned-skull" size="xsmall" round="true"></app-icon>
+    </span>
+  </div>
+  <div class="target-affiliation">
+    <span *ngIf="target.affiliation"><{{ target.affiliation }}></span>
+  </div>
+  <div class="target-health">
+    <div class="bar-container hp">
+      <span class="bar" [style.width]="targetHealth + '%'"></span>
+      <span class="bar-text">{{ targetHealth }}%</span>
+    </div>
+  </div>
+  <div class="target-status">
+    <div *ngFor="let effect of effects" class="effect-container">
+    </div>
+  </div>
+</ng-container>

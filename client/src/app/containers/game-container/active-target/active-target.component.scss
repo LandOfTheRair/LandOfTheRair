@@ -1,0 +1,72 @@
+
+:host {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 32px;
+  right: 0;
+  z-index: 600;
+  pointer-events: none;
+  user-select: none;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.bar-container {
+  height: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+
+  &.hp .bar {
+    background-color: #dc3545;
+  }
+}
+
+.target-name, .target-health {
+  margin-top: 3px;
+}
+
+.target-name, .target-affiliation {
+  color: #fff !important;
+  letter-spacing: 1px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000 !important;
+}
+
+.target-affiliation {
+  min-height: 15px;
+  font-size: 85%;
+  margin-left: calc(25% + 25px) !important;
+}
+
+.target-name {
+  .dir {
+    display: inline-block;
+    width: 25px !important;
+  }
+
+  .difficulty {
+    float: right;
+    text-shadow: none;
+  }
+}
+
+.target-health, .target-status, .target-name, .target-affiliation {
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
+.target-status {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.effect-container {
+  width: 32px;
+  height: 40px;
+  margin: 4px;
+  background-color: #ccc;
+  pointer-events: auto;
+}

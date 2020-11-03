@@ -19,11 +19,11 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="currentPlayer | async as player">
-    <div class="loader" *ngIf="loadString">
-      {{ loadString }}
-    </div>
-  </ng-container>
+  <app-active-target></app-active-target>
+  
+  <div class="loader" *ngIf="loadString">
+    {{ loadString }}
+  </div>
 
   <div class="map"></div>
 </ng-template>

@@ -25,6 +25,7 @@ import { AlertErrorHandler } from './logger.service';
 
 import { InventoryComponent } from './_shared/components/inventory/inventory.component';
 import { ItemComponent } from './_shared/components/item/item.component';
+import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { EquipmentMainComponent } from './containers/game-container/equipment-main/equipment-main.component';
@@ -41,6 +42,8 @@ import { LobbyComponent } from './containers/lobby-container/lobby/lobby.compone
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
 
 import { SetActiveWindow, UpdateWindowPosition } from '../stores';
+import { CharacterCardComponent } from './_shared/components/character-card.component';
+import { LifeHeartComponent } from './_shared/components/life-heart.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
@@ -59,9 +62,12 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     MapComponent,
     CommandLineComponent,
     AdventureLogComponent,
+    ActiveTargetComponent,
 
     InventoryComponent,
     ItemComponent,
+    CharacterCardComponent,
+    LifeHeartComponent,
 
     InventoryBeltComponent,
     InventoryPouchComponent,

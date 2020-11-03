@@ -58,6 +58,11 @@ export class TransmissionHelper extends BaseService {
     }
   }
 
+  public generateQueueSendPlayerPatches(player: Player) {
+    this.generateAndQueuePlayerPatches(player);
+    this.patchPlayer(player);
+  }
+
   // generate and queue player object patches
   public generateAndQueuePlayerPatches(player: Player) {
 
@@ -84,7 +89,7 @@ export class TransmissionHelper extends BaseService {
   // send patches to a player about themselves
   public patchPlayer(player: Player) {
     const patchData = this.playerPatchQueue[player.username];
-    if (patchData.patches.length === 0 || Object.keys(patchData.player).length === 0) return;
+    if (patchData.patches.length === 0 && Object.keys(patchData.player).length === 0) return;
 
     this.sendPlayerPatches(player, patchData);
     patchData.player = {};

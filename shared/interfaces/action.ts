@@ -72,7 +72,10 @@ export enum GameAction {
   GamePatchPlayerState = '[Game] Patch Player State',
 
   LogCurrentCommand = '[Game] Log Current Command',
-  SetCurrentCommand = '[Game] Set Current Command'
+  SetCurrentCommand = '[Game] Set Current Command',
+  SetOption = '[Game] Set Option',
+
+  SetCurrentTarget = '[Game] Set Current Target'
 }
 
 export enum GameServerResponse {

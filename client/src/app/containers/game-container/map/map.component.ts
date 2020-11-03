@@ -28,8 +28,8 @@ export class MapComponent implements OnInit, OnDestroy {
   public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
 
   // subs
-  private playerSub: Subscription;
-  private npcSub: Subscription;
+  playerSub: Subscription;
+  npcSub: Subscription;
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
@@ -42,6 +42,9 @@ export class MapComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private zone: NgZone
   ) { }
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
+  }
 
   ngOnInit(): void {
 
@@ -82,11 +85,6 @@ export class MapComponent implements OnInit, OnDestroy {
       this.map.next(null);
       this.loadPercent.next('');
     });
-  }
-
-  ngOnDestroy(): void {
-    if (this.playerSub) this.playerSub.unsubscribe();
-    if (this.npcSub) this.npcSub.unsubscribe();
   }
 
   public quitGame() {

@@ -49,6 +49,7 @@ export class NPCCreator extends BaseService {
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
     baseChar.sprite = this.chooseSpriteFrom(npcDef.sprite);
+    baseChar.affiliation = npcDef.affiliation ?? '';
     baseChar.allegiance = npcDef.allegiance ?? Allegiance.Enemy;
     baseChar.alignment = npcDef.alignment ?? Alignment.Evil;
     baseChar.hostility = npcDef.hostility ?? Hostility.OnHit;

@@ -56,7 +56,8 @@
       "as-needed"
     ],
     "object-literal-sort-keys": false,
-    "ordered-imports": [true, "case-sensitive"],
+    "ordered-imports": [true, { "named-imports-order": "case-insensitive" }],
+    "prefer-for-of": false,
     "quotemark": [
       true,
       "single"

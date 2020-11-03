@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { ChatMode, GameAction, ISettings } from '../interfaces';
+import { ChatMode, GameAction, GameOption, ISettings } from '../interfaces';
 import { Login, Logout } from './account.state';
 
 export class AddAccount {
@@ -68,6 +68,11 @@ export class SetCurrentCommand {
   constructor(public command: string) {}
 }
 
+export class SetOption {
+  static type = GameAction.SetOption;
+  constructor(public option: GameOption, public value: boolean|number) {}
+}
+
 const defaultSettings: () => ISettings = () => {
   return {
     accounts: [],
@@ -80,7 +85,11 @@ const defaultSettings: () => ISettings = () => {
     logMode: 'General',
     currentCommand: '',
     commandHistory: [],
-    options: {}
+    options: {
+      [GameOption.PinLastTarget]: false,
+      [GameOption.ShouldSortDistance]: false,
+      [GameOption.ShouldSortFriendly]: false
+    }
   };
 };
 
@@ -139,6 +148,11 @@ export class SettingsState implements NgxsOnInit {
   @Selector()
   static chatMode(state: ISettings) {
     return state.chatMode;
+  }
+
+  @Selector()
+  static options(state: ISettings) {
+    return state.options;
   }
 
   ngxsOnInit(ctx: StateContext<ISettings>) {
@@ -259,6 +273,15 @@ export class SettingsState implements NgxsOnInit {
   @Action(SetCurrentCommand)
   setCurrentCommand(ctx: StateContext<ISettings>, { command }: SetCurrentCommand) {
     ctx.patchState({ currentCommand: command });
+  }
+
+  @Action(SetOption)
+  setOption(ctx: StateContext<ISettings>, { option, value }: SetOption) {
+    const state = ctx.getState();
+    const options = { ...state.options };
+    options[option] = value;
+
+    ctx.patchState({ options });
   }
 
 }

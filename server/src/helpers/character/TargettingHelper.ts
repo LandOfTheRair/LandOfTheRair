@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer } from '../../interfaces';
+import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
 
 @Injectable()
 export class TargettingHelper extends BaseService {
@@ -34,6 +34,7 @@ export class TargettingHelper extends BaseService {
   }
 
   // hostility check: order is important
+  // important: updates to this _might_ need to be made to client/hostilityLevelFor()
   public checkTargetForHostility(me: ICharacter, target: ICharacter): boolean {
 
     // I can never be hostile to myself
@@ -57,12 +58,13 @@ export class TargettingHelper extends BaseService {
     if (me.agro[target.uuid] || target.agro[me.uuid]) return true;
 
     // if the target is disguised, and my wil is less than the targets cha, he is not hostile to me
+    // TODO: disguise
     // if(target.hasEffect('Disguise') && me.getTotalStat('wil') < target.getTotalStat('cha')) return false;
 
     // if my hostility is based on faction, and either the target or my faction is hostile to each other, yes
     if ((me as INPC).hostility === Hostility.Faction && (
-         this.isHostileTo(me, target.allegiance)
-      || this.isHostileTo(target, me.allegiance))) return true;
+         isHostileTo(me, target.allegiance)
+      || isHostileTo(target, me.allegiance))) return true;
 
     // if we are of the same allegiance, no hostility
     if (me.allegiance === target.allegiance) return false;
@@ -75,23 +77,6 @@ export class TargettingHelper extends BaseService {
 
     // no hostility
     return false;
-  }
-
-  public isHostileTo(char: ICharacter, faction: Allegiance) {
-    if (!char.allegianceReputation[faction]) return false;
-    const rep = char.allegianceReputation[faction] ?? 0;
-    return rep <= -100;
-  }
-
-  public isFriendlyTo(char: ICharacter, faction: Allegiance) {
-    if (!char.allegianceReputation[faction]) return false;
-    const rep = char.allegianceReputation[faction] ?? 0;
-    return rep >= 100;
-  }
-
-  public isNeutralTo(char: ICharacter, faction: Allegiance) {
-    if (!char.allegianceReputation[faction]) return true;
-    return !this.isHostileTo(char, faction) && !this.isFriendlyTo(char, faction);
   }
 
 }
