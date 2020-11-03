@@ -1,7 +1,7 @@
 import { Alignment, Allegiance, BaseClass, Direction, ICharacter } from '../interfaces';
 
 export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter => {
-  
+
   return {
     fov: char.fov ?? { },
     uuid: char.uuid ?? '',
