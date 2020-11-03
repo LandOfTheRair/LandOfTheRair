@@ -62,7 +62,7 @@ export class MapState {
   // create green spawner
   private createDefaultSpawner() {
     const npcDefs = this.map.allDefaultNPCs.map(npc => {
-      if (!npc.properties.tag) return;  // TODO: throw an error here as soon as all maps are caught up
+      if (!npc.properties || !npc.properties.tag) return;  // TODO: throw an error here as soon as all maps are caught up
 
       const npcDef = this.game.contentManager.getNPCScript(npc.properties.tag);
       if (!npcDef) throw new Error(`Script ${npc.properties.tag} does not exist for NPC ${npc.name}`);

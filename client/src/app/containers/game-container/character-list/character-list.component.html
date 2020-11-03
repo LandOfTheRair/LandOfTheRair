@@ -16,7 +16,7 @@
 <ng-template #bodyTemplate>
   <ng-container *ngIf="player">
     <div class="p-1 char-container" [ngClass]="['window-size-' + windowSize]">
-      <div class="vertical-center full-width background-text" *ngIf="visibleCharacterList.length === 0">You don't see anything</div>
+      <div class="vertical-center full-width full-height background-text" *ngIf="visibleCharacterList.length === 0">You don't see anything</div>
       <div class="char-card-container" *ngFor="let character of visibleCharacterList; let i = index">
         <app-character-card [origin]="player" [char]="character" *ngIf="character" (click)="doAction(character, $event, i)" (contextmenu)="doAltAction(character)"></app-character-card>
       </div>

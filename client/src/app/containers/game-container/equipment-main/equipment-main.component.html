@@ -40,7 +40,8 @@
 
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
   <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
-  <app-item [size]="'lg'"
+  <app-item *ngIf="player.items.equipment[slot.slot]"
+            [size]="'lg'"
             [context]="'Equipment'"
             [contextSlot]="slot.slot"
             [item]="player.items.equipment[slot.slot]"></app-item>
@@ -48,7 +49,8 @@
 
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
-  <app-item [size]="'lg'"
+  <app-item *ngIf="player.items.equipment[slot.slot]"
+            [size]="'lg'"
             [context]="slot.hand"
             [contextSlot]="slot.slot"
             showOunces="true"
@@ -58,7 +60,8 @@
 
 <ng-template #itemPotionTemplate let-slot="slot" let-player="player">
   <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">Potion</span>
-  <app-item [size]="'lg'"
+  <app-item *ngIf="player.items.equipment[slot.slot]"
+            [size]="'lg'"
             context="Potion"
             showOunces="true"
             [item]="player.items.equipment[slot.slot]"></app-item>

@@ -13,7 +13,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { GameServerEvent, GameServerResponse } from '../interfaces';
-import { AccountState, CharacterState, GameState, Logout } from '../stores';
+import { AccountState, GameState, Logout } from '../stores';
 import { LoggerService } from './logger.service';
 
 interface WebsocketMessage {
@@ -73,7 +73,7 @@ export class SocketService {
       this.store.dispatch(new Logout());
 
       // any time a new state is added and needs to be reset, it has to be added to this list
-      this.store.dispatch(new StateReset(CharacterState, AccountState, GameState));
+      this.store.dispatch(new StateReset(AccountState, GameState));
     }
   }
 
