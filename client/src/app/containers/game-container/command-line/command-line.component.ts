@@ -3,10 +3,9 @@ import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
 
-import { ChatMode, GameServerEvent } from '../../../../interfaces';
+import { ChatMode } from '../../../../interfaces';
 import { HideWindow, LogCurrentCommandInHistory, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
 import { GameService } from '../../../game.service';
-import { SocketService } from '../../../socket.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -47,7 +46,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
-    private socketService: SocketService,
     public gameService: GameService
   ) { }
 
@@ -141,7 +139,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         const doCommand = (commandToDo: string) => {
           this.curIndex = -1;
 
-          this.doCommand(commandToDo.trim());
+          this.gameService.sendCommandString(commandToDo.trim());
           reset();
 
           (document.activeElement as HTMLElement).blur();
@@ -150,19 +148,19 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         const shouldBypassOthers = currentCommand.startsWith('#');
 
         if (!shouldBypassOthers && chatMode === 'say') {
-          this.doCommand(`!say ${currentCommand}`);
+          this.gameService.sendCommandString(`!say ${currentCommand}`);
           reset();
           return;
         }
 
         if (!shouldBypassOthers && chatMode === 'party') {
-          this.doCommand(`!partysay ${currentCommand}`);
+          this.gameService.sendCommandString(`!partysay ${currentCommand}`);
           reset();
           return;
         }
 
         if (!shouldBypassOthers && chatMode === 'global') {
-          this.doCommand(`!lobbysay ${currentCommand}`);
+          this.gameService.sendCommandString(`!lobbysay ${currentCommand}`);
           reset();
           return;
         }
@@ -211,11 +209,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.commandInput.nativeElement.focus();
     }, 0);
-  }
-
-  private doCommand(cmdString: string) {
-    const [command, ...args] = cmdString.split(' ');
-    this.socketService.emit(GameServerEvent.DoCommand, { command, args: args.join(' ') });
   }
 
 }

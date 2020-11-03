@@ -128,7 +128,7 @@ export class PlayerHelper extends BaseService {
       // send a new tile desc if possible
       if (!hasNewRegion && desc && desc !== player.lastTileDesc) {
         player.lastTileDesc = desc;
-        this.game.messageHelper.sendLogMessageToPlayer(player, desc, [MessageType.Environment]);
+        this.game.messageHelper.sendLogMessageToPlayer(player, { message: desc }, [MessageType.Environment]);
       }
     }
   }

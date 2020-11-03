@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { Alignment, Allegiance, ChatMode, Hostility, IAccount, ICharacter,
+import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
   ICharacterCreateInfo, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +35,8 @@ export class GameService {
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
   @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
 
+  constructor(private socketService: SocketService) {}
+
   init() {
     this.inGame$.subscribe(val => {
       if (val) {
@@ -46,6 +49,12 @@ export class GameService {
     });
   }
 
+  public sendCommandString(cmdString: string) {
+    const [command, ...args] = cmdString.split(' ');
+    this.socketService.emit(GameServerEvent.DoCommand, { command, args: args.join(' ') });
+  }
+
+  // get the direction from a character to another one
   public directionTo(from: ICharacter, to: ICharacter) {
     if (!to || !from) return '';
 

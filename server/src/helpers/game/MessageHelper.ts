@@ -11,7 +11,7 @@ export class MessageHelper extends BaseService {
 
   public async sendLogMessageToPlayer(
     player: ICharacter,
-    message: string,
+    { message, sfx }: { message: string, sfx?: string },
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
   ): Promise<void> {
 
@@ -21,7 +21,8 @@ export class MessageHelper extends BaseService {
     this.game.wsCmdHandler.sendToSocket((player as Player).username, {
       type: GameServerResponse.GameLog,
       messageTypes,
-      message
+      message,
+      sfx
     });
   }
 

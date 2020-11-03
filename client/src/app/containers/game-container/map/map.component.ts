@@ -42,9 +42,6 @@ export class MapComponent implements OnInit, OnDestroy {
     private socketService: SocketService,
     private zone: NgZone
   ) { }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
 
   ngOnInit(): void {
 
@@ -86,6 +83,8 @@ export class MapComponent implements OnInit, OnDestroy {
       this.loadPercent.next('');
     });
   }
+
+  ngOnDestroy(): void {}
 
   public quitGame() {
     this.socketService.emit(GameServerEvent.QuitGame);

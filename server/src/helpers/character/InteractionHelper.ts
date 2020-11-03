@@ -13,4 +13,8 @@ export class InteractionHelper extends BaseService {
     return false;
   }
 
+  // TODO: fall
+
+  // TODO: teleport
+
 }

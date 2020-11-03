@@ -316,7 +316,11 @@ export class MapScene extends Phaser.Scene {
         sprite.visible = isSubscribed;
       }
 
-      // TODO: doors, stairs
+      if (obj.type === 'StairsUp' || obj.type === 'StairsDown' 
+       || obj.type === 'ClimbUp' || obj.type === 'ClimbDown' 
+       || obj.type === 'Door') {
+        sprite.inputEnabled = true;
+      }
     });
   }
 
@@ -336,8 +340,12 @@ export class MapScene extends Phaser.Scene {
       const possibleInteractable = get(this.allMapData.layerData, [MapLayer.Interactables, xCoord, yCoord]);
       if (possibleInteractable) {
         // check if it's within "interact" range
-        if (Math.abs(xDiff) < 2 && Math.abs(yDiff) < 2) {
-          this.game.socketService.sendAction({ command: `~interact`, args: `${xDiff} ${yDiff}` });
+        if (['StairsUp', 'StairsDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
+          this.game.gameService.sendCommandString('~up');
+        }
+
+        if (['ClimbUp', 'ClimbDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
+          this.game.gameService.sendCommandString('~climbup');
         }
       }
 

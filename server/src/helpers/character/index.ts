@@ -8,4 +8,5 @@ export * from './MovementHelper';
 export * from './NPCHelper';
 export * from './PlayerHelper';
 export * from './TargettingHelper';
+export * from './TeleportHelper';
 export * from './VisibilityHelper';

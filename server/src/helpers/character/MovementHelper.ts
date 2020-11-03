@@ -47,7 +47,7 @@ export class MovementHelper extends BaseService {
     if (this.characterHelper.isPlayer(character)) {
       this.playerHelper.resetStatus(character as Player);
 
-      // TODO: handle interactable
+      // TODO: handle interactable (door, teleport, fall)
     }
 
     return didFinish;

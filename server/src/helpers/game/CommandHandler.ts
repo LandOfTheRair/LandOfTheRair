@@ -37,7 +37,11 @@ export class CommandHandler extends BaseService {
   public doCommand(player: Player, data) {
 
     let command: string = data.command;
+
+    // happens *immediately*
     const isInstant = command.startsWith('!');
+
+    // happens on the fast loop
     const isFast = command.startsWith('~');
 
     // if instant or fast, strip prefix
@@ -69,17 +73,17 @@ export class CommandHandler extends BaseService {
         message = `${message} Did you mean "${didyoumean}"?`;
       }
 
-      this.messageHelper.sendLogMessageToPlayer(player, message);
+      this.messageHelper.sendLogMessageToPlayer(player, { message });
       return;
     }
 
     if (isInstant && !commandRef.canBeInstant) {
-      this.messageHelper.sendLogMessageToPlayer(player, `Command ${command} cannot be made instant.`);
+      this.messageHelper.sendLogMessageToPlayer(player, { message: `Command ${command} cannot be made instant.` });
       return;
     }
 
     if (isFast && !commandRef.canBeFast) {
-      this.messageHelper.sendLogMessageToPlayer(player, `Command ${command} cannot be made fast.`);
+      this.messageHelper.sendLogMessageToPlayer(player, { message: `Command ${command} cannot be made fast.` });
       return;
     }
 

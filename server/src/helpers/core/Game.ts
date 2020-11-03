@@ -4,7 +4,7 @@ import { LoggerTimer } from 'logger-timer';
 import { SubscriptionHelper } from '../account';
 
 import { CalculatorHelper, CharacterHelper, DirectionHelper, InteractionHelper,
-  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, TargettingHelper, VisibilityHelper } from '../character';
+  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, TargettingHelper, TeleportHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -44,6 +44,7 @@ export class Game {
     public npcCreator: NPCCreator,
 
     public targettingHelper: TargettingHelper,
+    public teleportHelper: TeleportHelper,
     public diceRollerHelper: DiceRollerHelper,
     public lootHelper: LootHelper,
     public holidayHelper: HolidayHelper,
@@ -77,7 +78,7 @@ export class Game {
       'profanityHelper',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
-      'itemCreator', 'npcCreator', 'targettingHelper',
+      'itemCreator', 'npcCreator', 'targettingHelper', 'teleportHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper',
       'calculatorHelper',
