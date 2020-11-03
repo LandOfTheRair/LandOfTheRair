@@ -17,11 +17,13 @@ export class LootHelper extends BaseService {
   public init() {}
 
   chooseWithReplacement(choices: any[], number = 1) {
+    if (choices.length === 0) return [];
     const table = new LootTable(choices);
     return table.chooseWithReplacement(number);
   }
 
   chooseWithoutReplacement(choices: any[], number = 1) {
+    if (choices.length === 0) return [];
     const table = new LootTable(choices);
     return table.chooseWithoutReplacement(number);
   }

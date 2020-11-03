@@ -172,7 +172,10 @@ export class Spawner {
         chosenNPCId = this.game.lootHelper.chooseWithReplacement(this.npcIds, 1)[0];
       }
 
-      chosenNPCDef = this.game.npcHelper.getNPCDefinition(chosenNPCId);
+      if (chosenNPCId) {
+        chosenNPCDef = this.game.npcHelper.getNPCDefinition(chosenNPCId);
+      }
+
     }
 
     if (!chosenNPCDef) {
