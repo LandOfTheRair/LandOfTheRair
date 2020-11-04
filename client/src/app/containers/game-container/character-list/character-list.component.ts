@@ -154,6 +154,25 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
   public doAction(char: ICharacter, $event, index) {
     this.store.dispatch(new SetCurrentTarget(char.uuid));
+
+    /*
+    this.pinUUID = npc.uuid;
+    this.pinPos = index;
+
+    if(npc.hostility === 'Never') {
+      this.colyseusGame.sendCommandString(`${npc.uuid}, hello`);
+
+    } else if((<any>npc).username && !this.colyseusGame.currentCommand && this.colyseusGame.hostilityLevelFor(npc) !== 'hostile') {
+      this.colyseusGame.currentCommand = `#${npc.uuid}, `;
+
+    } else if(this.colyseusGame.currentCommand) {
+      this.colyseusGame.sendCommandString(this.colyseusGame.currentCommand, npc.uuid);
+      this.colyseusGame.currentCommand = '';
+
+    } else if(this.macroService.activeMacro) {
+      this.colyseusGame.sendCommandString(this.macroService.activeMacro.macro, npc.uuid);
+    }
+    */
   }
 
   public doAltAction(char: ICharacter) {

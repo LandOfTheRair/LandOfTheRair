@@ -49,9 +49,11 @@ export class GameService {
     });
   }
 
-  public sendCommandString(cmdString: string) {
-    const [command, ...args] = cmdString.split(' ');
-    this.socketService.emit(GameServerEvent.DoCommand, { command, args: args.join(' ') });
+  public sendCommandString(cmdString: string, target?: string) {
+    cmdString.split(';').forEach(cmd => {
+      const [command, ...args] = cmd.trim().split(' ');
+      this.socketService.emit(GameServerEvent.DoCommand, { command, args: args.join(' ') });
+    });
   }
 
   // get the direction from a character to another one

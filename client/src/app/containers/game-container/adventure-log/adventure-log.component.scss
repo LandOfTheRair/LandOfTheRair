@@ -44,6 +44,14 @@
       font-weight: bold;
     }
 
+    &.playerchat {
+      font-weight: bold;
+    }
+
+    &.private {
+      color: mediumpurple;
+    }
+
     &.combat {
       &.self {
         color: #0f0;

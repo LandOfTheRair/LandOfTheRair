@@ -1,6 +1,8 @@
 
-export * from './climbs';
+export * from './traversal/climbs';
 export * from './echo';
-export * from './lobbysay';
-export * from './move';
-export * from './stairs';
+export * from './chat/lobbysay';
+export * from './chat/privatesay';
+export * from './chat/say';
+export * from './traversal/move';
+export * from './traversal/stairs';

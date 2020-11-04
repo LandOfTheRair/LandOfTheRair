@@ -46,7 +46,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.Chat, (data) => {
       this.addMessage({
-        messageTypes: [MessageType.Lobby, MessageType.Chatter],
+        messageTypes: [MessageType.Lobby, MessageType.Chatter, MessageType.PlayerChat],
         message: `<lobby:${data.from}> ${data.message}`
       });
     });

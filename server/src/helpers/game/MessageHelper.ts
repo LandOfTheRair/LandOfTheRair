@@ -9,11 +9,11 @@ export class MessageHelper extends BaseService {
 
   public init() {}
 
-  public async sendLogMessageToPlayer(
+  public sendLogMessageToPlayer(
     player: ICharacter,
     { message, sfx }: { message: string, sfx?: string },
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
-  ): Promise<void> {
+  ): void {
 
     const account = (player as Player).account;
     if (!account) return;
@@ -26,11 +26,16 @@ export class MessageHelper extends BaseService {
     });
   }
 
-  public async broadcastSystemMessage(message: string): Promise<void> {
+  public sendPrivateMessage(from: ICharacter, to: ICharacter, message: string): void {
+    this.sendLogMessageToPlayer(to, { message: `from ${from.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+    this.sendLogMessageToPlayer(from, { message: `to ${to.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+  }
+
+  public broadcastSystemMessage(message: string): void {
     this.sendMessage('★System', message);
   }
 
-  public async broadcastChatMessage(player: ICharacter, message: string): Promise<void> {
+  public broadcastChatMessage(player: ICharacter, message: string): void {
 
     const account = (player as Player).account;
     if (!account) return;

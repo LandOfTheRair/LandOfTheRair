@@ -2,11 +2,17 @@
 import { Injectable } from 'injection-js';
 
 import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { WorldManager } from '../data';
+import { CharacterHelper } from './CharacterHelper';
+import { VisibilityHelper } from './VisibilityHelper';
 
 @Injectable()
 export class TargettingHelper extends BaseService {
 
   constructor(
+    private worldManager: WorldManager,
+    private characterHelper: CharacterHelper,
+    private visibilityHelper: VisibilityHelper
   ) {
     super();
   }
@@ -77,6 +83,34 @@ export class TargettingHelper extends BaseService {
 
     // no hostility
     return false;
+  }
+
+  public getFirstPossibleTargetInViewRange(player: ICharacter, findStr: string, useSight = true): ICharacter {
+    return this.getPossibleTargetsInViewRange(player, findStr, useSight)[0];
+  }
+
+  public getPossibleTargetsInViewRange(player: ICharacter, findStr: string, useSight = true): ICharacter[] {
+    const state = this.worldManager.getMapStateForCharacter(player);
+    const allTargets = state.getAllInRange(player, 4, [], useSight);
+    const possTargets = allTargets.filter(target => {
+      if (this.characterHelper.isDead(target)) return false;
+
+      const diffX = target.x - player.x;
+      const diffY = target.y - player.y;
+
+      if (useSight && !this.visibilityHelper.canSee(player, diffX, diffY)) return false;
+
+      // you can always see yourself
+      // if(useSight && player !== target && !player.canSeeThroughStealthOf(target)) return false;
+
+      return this.doesTargetMatchSearch(target, findStr);
+    });
+
+    return possTargets;
+  }
+
+  public doesTargetMatchSearch(target: ICharacter, findStr: string): boolean {
+    return target.uuid === findStr || target.name.toLowerCase().startsWith(findStr.toLowerCase());
   }
 
 }

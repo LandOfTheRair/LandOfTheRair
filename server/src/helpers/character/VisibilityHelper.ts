@@ -85,4 +85,11 @@ export class VisibilityHelper extends BaseService {
 
   }
 
+  public canSee(char: ICharacter, xOffset: number, yOffset: number): boolean {
+    if (!char.fov) return false;
+    if (!char.fov[xOffset]) return false;
+    if (!char.fov[xOffset][yOffset]) return false;
+    return true;
+  }
+
 }
