@@ -116,7 +116,7 @@ export class PlayerHelper extends BaseService {
       const hasNewRegion = regionDesc && regionDesc !== player.lastRegionDesc;
       if (hasNewRegion) {
         player.lastRegionDesc = regionDesc;
-        this.game.messageHelper.sendLogMessageToPlayer(player, regionDesc, [MessageType.Environment]);
+        this.game.messageHelper.sendLogMessageToPlayer(player, { message: regionDesc }, [MessageType.Environment]);
 
       } else if (!regionDesc) {
         player.lastRegionDesc = '';
