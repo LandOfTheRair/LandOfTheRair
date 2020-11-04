@@ -88,7 +88,7 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
 
     NgxsModule.forRoot(allActualStores, { developmentMode: !environment.production }),
     NgxsStoragePluginModule.forRoot({
-      key: ['settings', 'chat.messages']
+      key: ['settings', 'chat.messages', 'macros']
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
     NgxsResetPluginModule.forRoot(),

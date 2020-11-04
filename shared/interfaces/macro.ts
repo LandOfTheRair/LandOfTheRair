@@ -32,6 +32,16 @@ export interface IMacroMonsterSkill extends IMacroSkill {
   isMonsterSkill: boolean;
 }
 
+export interface IMacroContainer {
+  customMacros: IMacro[];
+  characterMacros: Record<string, IMacroBar[][]>;  // username -> charslot -> macros[]
+}
+
+export interface IMacroBar {
+  macros: IMacro[];
+  position: number;
+}
+
 export interface IMacro {
   key: string;
   modifiers: { shift: boolean, alt: boolean, ctrl: boolean };

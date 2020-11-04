@@ -75,7 +75,13 @@ export enum GameAction {
   SetCurrentCommand = '[Game] Set Current Command',
   SetOption = '[Game] Set Option',
 
-  SetCurrentTarget = '[Game] Set Current Target'
+  SetCurrentTarget = '[Game] Set Current Target',
+
+  CreateCustomMacro = '[Macro] Create Custom',
+  EditCustomMacro = '[Macro] Edit Custom',
+  DeleteCustomMacro = '[Macro] Delete Custom',
+
+  SetMacroBar = '[Macro] Set Macro Bars'
 }
 
 export enum GameServerResponse {
