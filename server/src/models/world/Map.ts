@@ -194,6 +194,19 @@ export class WorldMap {
       const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
 
       setWith(this.layerHashes, [mapLayer, realX, realY], obj, Object);
+
+      if (obj.type === 'Door') {
+        obj.density = 1;
+        obj.opacity = 1;
+      }
+
+      if (mapLayer === MapLayer.OpaqueDecor) {
+        obj.opacity = 1;
+      }
+
+      if (mapLayer === MapLayer.DenseDecor) {
+        obj.density = 1;
+      }
     });
   }
 
@@ -287,6 +300,10 @@ export class WorldMap {
 
   public getInteractableOrDenseObject(x: number, y: number) {
     return this.getDenseDecorAt(x, y) || this.getInteractableAt(x, y);
+  }
+
+  public findDoorById(id: number) {
+    return this.json.layers[MapLayer.Interactables].objects.find(x => x.id === id);
   }
 
   checkIfDenseObjectAt(x: number, y: number): boolean {

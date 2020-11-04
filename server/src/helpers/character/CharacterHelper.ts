@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, ICharacter, IPlayer, Stat } from '../../interfaces';
+import { BaseService, CoreStat, ICharacter, IPlayer, ISimpleItem, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -36,6 +36,25 @@ export class CharacterHelper extends BaseService {
 
   public die(char: ICharacter): void {
     if (!this.isDead(char)) return;
+  }
+
+  // check if this player is holding sometihng
+  public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
+    const ref = char.items.equipment[`${hand}Hand`];
+    return (ref && ref.name === item && ref.mods.owner === (char as IPlayer).username);
+  }
+
+  public hasHeldItems(char: ICharacter, item1: string, item2: string): boolean {
+    return (this.hasHeldItem(char, item1, 'right') && this.hasHeldItem(char, item2, 'left'))
+        || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
+  }
+
+  public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
+    char.items.equipment[ItemSlot.RightHand] = item;
+  }
+
+  public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
+    char.items.equipment[ItemSlot.RightHand] = item;
   }
 
   // check if a character is a player
@@ -90,12 +109,27 @@ export class CharacterHelper extends BaseService {
     return character.totalStats[stat] ?? 0;
   }
 
+  // tick the character - do regen
   public tick(character: ICharacter): void {
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
     if (character.hp.__current + hpRegen > 0) this.heal(character, hpRegen);
     this.mana(character, mpRegen);
+  }
+
+  // get the skill level for the character
+  public getSkillLevel(character: ICharacter, skill: Skill) {
+    return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) + this.getStat(character, `${skill}Bonus` as Stat);
+  }
+
+  // gain skill for a character
+  public gainSkill(character: ICharacter, skill: Skill, skillGained: number): void {
+
+    // TODO: modify skillGained for sub
+    if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
+
+    character.skills[skill] = Math.max((character.skills[skill] ?? 0) + skillGained);
   }
 
   // check to see if any effects are expired

@@ -48,6 +48,7 @@ export class NPCCreator extends BaseService {
     const baseChar = initializeNPC({});
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
+    baseChar.npcId = npcDef.npcId;
     baseChar.sprite = this.chooseSpriteFrom(npcDef.sprite);
     baseChar.affiliation = npcDef.affiliation ?? '';
     baseChar.allegiance = npcDef.allegiance ?? Allegiance.Enemy;

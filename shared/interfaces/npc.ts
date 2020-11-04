@@ -127,6 +127,7 @@ export interface INPCDefinition {
 }
 
 export interface INPC extends ICharacter {
+  npcId: string;
   sprite: number;
   aquaticOnly?: boolean;
   avoidWater?: boolean;

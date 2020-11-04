@@ -165,7 +165,24 @@ export enum Stat {
   // uncommon
   Move = 'move',
   ActionSpeed = 'actionSpeed',
-  DamageFactor = 'damageFactor'
+  DamageFactor = 'damageFactor',
+
+  // skill bonuses
+  MaceBonus = 'maceBonus',
+  AxeBonus = 'axeBonus',
+  DaggerBonus = 'daggerBonus',
+  SwordBonus = 'swordBonus',
+  ShortswordBonus = 'shortswordBonus',
+  PolearmBonus = 'polearmBonus',
+  WandBonus = 'wandBonus',
+  StaffBonus = 'staffBonus',
+  MartialBonus = 'martialBonus',
+  RangedBonus = 'rangedBonus',
+  ThrowingBonus = 'throwingBonus',
+  TwoHandedBonus = 'twohandedBonus',
+  ThieveryBonus = 'thieveryBonus',
+  ConjurationBonus = 'conjurationBonus',
+  RestorationBonus = 'restorationBonus'
 }
 
 export enum Skill {

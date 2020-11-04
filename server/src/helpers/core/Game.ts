@@ -84,7 +84,7 @@ export class Game {
       'itemCreator', 'npcCreator', 'targettingHelper', 'teleportHelper',
       'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
-      'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper',
+      'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper',
       'commandHandler', 'messageHelper',

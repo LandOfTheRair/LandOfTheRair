@@ -17,7 +17,8 @@ export class MapRenderGame extends Phaser.Game {
       player: BehaviorSubject<IPlayer>,
       map: BehaviorSubject<IMapData>,
       allPlayers: Observable<Record<string, Partial<IPlayer>>>,
-      allNPCs: Observable<Record<string, Partial<INPC>>>
+      allNPCs: Observable<Record<string, Partial<INPC>>>,
+      openDoors: Observable<Record<number, boolean>>
     }
     ) {
       super(config);

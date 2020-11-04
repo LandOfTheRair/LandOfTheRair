@@ -162,8 +162,8 @@ export class MovementHelper extends BaseService {
 
     // check if player has a held item
     if (requireHeld
-    && !this.playerHelper.hasHeldItem(player, requireHeld, 'left')
-    && !this.playerHelper.hasHeldItem(player, requireHeld, 'right')) return;
+    && !this.characterHelper.hasHeldItem(player, requireHeld, 'left')
+    && !this.characterHelper.hasHeldItem(player, requireHeld, 'right')) return;
 
     // check if player has a quest (and the corresponding quest progress, if necessary)
     /* TODO: quests

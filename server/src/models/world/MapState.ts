@@ -45,10 +45,12 @@ export class MapState {
 
   private bushStorage: { [uuid: string]: RBushCharacter } = {};
 
-  private npcsByUUID: { [uuid: string]: ICharacter } = {};
+  private npcsByUUID: { [uuid: string]: INPC } = {};
   private playersByUUID: { [uuid: string]: IPlayer } = {};
 
   private playerKnowledgePositions = {};
+
+  private openDoors: Record<number, boolean> = {};
 
   constructor(private game: Game, private map: WorldMap) {
     this.createSpawners();
@@ -94,6 +96,7 @@ export class MapState {
     this.addSpawner(spawner);
   }
 
+  // create mob spawners
   private createOtherSpawners() {
     this.map.allSpawners.forEach(spawner => {
       const spawnerX = spawner.x / 64;
@@ -119,12 +122,39 @@ export class MapState {
     });
   }
 
+  // add spawner to our list of tickable spawners
   public addSpawner(spawner: Spawner) {
     this.spawners.push(spawner);
   }
 
+  // remove a dead or useless spawner
   public removeSpawner(spawner: Spawner) {
     this.spawners = this.spawners.filter(x => x !== spawner);
+  }
+
+  // check if door is open
+  public isDoorOpen(id: number) {
+    return this.openDoors[id];
+  }
+
+  // open door
+  public openDoor(id: number) {
+    this.setDoorState(id, true);
+  }
+
+  // close door
+  public closeDoor(id: number) {
+    this.setDoorState(id, false);
+  }
+
+  public setDoorState(id: number, state: boolean) {
+    this.openDoors[id] = state;
+
+    const door = this.map.findDoorById(id);
+    door.density = !state;
+    door.opacity = !state;
+
+    this.triggerAndSendUpdate(door.x / 64, (door.y / 64) - 1);
   }
 
   // tick spawners (respawn, buffs, etc)
@@ -134,13 +164,19 @@ export class MapState {
 
   // tick spawner npcs
   public npcTick() {
-    this.spawners.forEach(s => s.npcTick());
+  this.spawners.forEach(s => s.npcTick());
   }
 
+  public isAnyNPCWithId(npcId: string) {
+    return Object.values(this.npcsByUUID).find(x => x.npcId === npcId);
+  }
+
+  // check if there are any players that care about x,y
   public getPlayerKnowledgeForXY(x: number, y: number): Record<string, any> {
     return get(this.playerKnowledgePositions, x, y);
   }
 
+  // format for rbush
   private toRBushFormat(character: ICharacter): RBushCharacter {
     return {
       minX: character.x,
@@ -152,6 +188,8 @@ export class MapState {
   }
 
   // query functions
+
+  // get all PLAYERS from the quadtree
   private getPlayersFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): Player[] {
     return this.players
       .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
@@ -159,6 +197,7 @@ export class MapState {
       .filter(Boolean);
   }
 
+  // get all NPCS from the quadtree
   private getNPCsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): INPC[] {
     return this.npcs
       .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
@@ -166,6 +205,7 @@ export class MapState {
       .filter(Boolean);
   }
 
+  // get all PLAYERS AND NPCS from the quadtree
   private getAllTargetsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): ICharacter[] {
     return [
       ...this.getPlayersFromQuadtrees(ref, radius),
@@ -173,10 +213,12 @@ export class MapState {
     ];
   }
 
+  // get all PLAYERS in range (simple)
   public getAllPlayersInRange(ref: { x: number, y: number }, radius: number): Player[] {
     return this.getPlayersFromQuadtrees(ref, radius);
   }
 
+  // get PLAYERS in range (query)
   public getPlayersInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
     return this.getPlayersFromQuadtrees(ref, radius)
       .filter(char => char
@@ -185,11 +227,13 @@ export class MapState {
                    && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
   }
 
+  // get PLAYERS in range (query, but able to use args from above)
   public getAllInRangeRaw(ref: { x: number, y: number }, radius, except: string[] = []): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char && !except.includes(char.uuid));
   }
 
+  // get ALL characters in range
   public getAllInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char
@@ -198,16 +242,19 @@ export class MapState {
                    && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
   }
 
+  // get ONLY HOSTILES in range
   public getAllHostilesInRange(ref: ICharacter, radius): ICharacter[] {
     const targets = this.getAllInRange(ref, radius);
     return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
   }
 
+  // get ONLY ALLIES in range
   public getAllAlliesInRange(ref: ICharacter, radius): ICharacter[] {
     const targets = this.getAllInRange(ref, radius);
     return targets.filter((target: ICharacter) => !this.game.targettingHelper.checkTargetForHostility(ref, target));
   }
 
+  // get TARGETS for an NPC
   public getPossibleTargetsFor(me: INPC, radius = 0): ICharacter[] {
 
     let targetArray: ICharacter[] = [];
@@ -256,11 +303,14 @@ export class MapState {
   }
 
   // update all players for a particular coordinate
-  public triggerUpdate(x: number, y: number, triggeringPlayer?: Player) {
+  public triggerAndSendUpdate(x: number, y: number, triggeringPlayer?: Player) {
     const playersToUpdate = this.getPlayersToUpdate(x, y);
     playersToUpdate
       .filter(p => p !== triggeringPlayer)
-      .forEach(p => this.triggerFullUpdateForPlayer(p));
+      .forEach(p => {
+        this.game.playerHelper.resetStatus(p);
+        this.triggerFullUpdateForPlayer(p);
+      });
   }
 
   // trigger a full update for a particular player
@@ -295,6 +345,8 @@ export class MapState {
 
     state.npcs = keyBy(nearbyNPCs, 'uuid');
 
+    state.openDoors = this.openDoors;
+
     // TODO: also send ground
   }
 
@@ -309,7 +361,7 @@ export class MapState {
 
     this.players.insert(rbushPlayer);
 
-    this.triggerUpdate(player.x, player.y, player);
+    this.triggerAndSendUpdate(player.x, player.y, player);
   }
 
   public removePlayer(player: Player) {
@@ -320,11 +372,11 @@ export class MapState {
 
     this.players.remove(rbushPlayer);
 
-    this.triggerUpdate(player.x, player.y, player);
+    this.triggerAndSendUpdate(player.x, player.y, player);
   }
 
   private movePlayer(player: Player, { oldX, oldY }) {
-    this.triggerUpdate(oldX, oldY, player);
+    this.triggerAndSendUpdate(oldX, oldY, player);
 
     this.generateKnowledgeRadius(player, false);
 
@@ -338,7 +390,7 @@ export class MapState {
 
     this.generateKnowledgeRadius({ uuid: player.uuid, x: player.x, y: player.y }, true);
 
-    this.triggerUpdate(player.x, player.y, player);
+    this.triggerAndSendUpdate(player.x, player.y, player);
     this.triggerFullUpdateForPlayer(player);
   }
 
@@ -367,7 +419,7 @@ export class MapState {
 
     this.npcs.insert(rbushNPC);
 
-    this.triggerUpdate(npc.x, npc.y);
+    this.triggerAndSendUpdate(npc.x, npc.y);
   }
 
   public removeNPC(npc: INPC) {
@@ -379,11 +431,11 @@ export class MapState {
 
     this.npcs.remove(rbushNPC);
 
-    this.triggerUpdate(npc.x, npc.y);
+    this.triggerAndSendUpdate(npc.x, npc.y);
   }
 
   private moveNPC(npc: INPC, { oldX, oldY }) {
-    this.triggerUpdate(oldX, oldY);
+    this.triggerAndSendUpdate(oldX, oldY);
 
     const rbushNPC = this.bushStorage[npc.uuid];
     this.npcs.remove(rbushNPC);
@@ -393,7 +445,7 @@ export class MapState {
 
     this.npcs.insert(rbushNPC);
 
-    this.triggerUpdate(npc.x, npc.y);
+    this.triggerAndSendUpdate(npc.x, npc.y);
   }
 
 }

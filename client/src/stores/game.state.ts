@@ -50,7 +50,8 @@ const defaultGame: () => IGame = () => {
     mapInfo: {
       players: {},
       npcs: {},
-      ground: {}
+      ground: {},
+      openDoors: {}
     }
   };
 };
@@ -103,6 +104,11 @@ export class GameState {
   @Selector()
   static players(state: IGame) {
     return state.mapInfo.players;
+  }
+
+  @Selector()
+  static openDoors(state: IGame) {
+    return state.mapInfo.openDoors;
   }
 
   @Selector()

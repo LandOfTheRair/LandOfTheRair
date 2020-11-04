@@ -72,17 +72,6 @@ export class PlayerHelper extends BaseService {
     }
   }
 
-  // check if this player is holding sometihng
-  public hasHeldItem(char: Player, item: string, hand: 'left'|'right' = 'right'): boolean {
-    const ref = char.items.equipment[`${hand}Hand`];
-    return (ref && ref.name === item && ref.mods.owner === char.username);
-  }
-
-  public hasHeldItems(char: Player, item1: string, item2: string): boolean {
-    return (this.hasHeldItem(char, item1, 'right') && this.hasHeldItem(char, item2, 'left'))
-        || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
-  }
-
   // reset swim level, fov, region desc
   public resetStatus(player: Player, ignoreMessages?: boolean) {
 
@@ -171,16 +160,6 @@ export class PlayerHelper extends BaseService {
 
   }
 
-  // gain skill for a player
-  public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
-
-    // TODO: modify skillGained for sub
-    if (isNaN(skillGained)) throw new Error(`Skill gained for ${player.name} is NaN!`);
-
-    player.skills[skill] = Math.max((player.skills[skill] ?? 0) + skillGained);
-
-  }
-
   // gain all currently flagged skills
   public gainCurrentSkills(player: IPlayer, skillGained: number): void {
     if (!player.flaggedSkills || !player.flaggedSkills.length) return;
@@ -188,22 +167,22 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      this.gainSkill(player, primary, skillGained * 0.45);
-      this.gainSkill(player, secondary, skillGained * 0.25);
-      this.gainSkill(player, tertiary, skillGained * 0.15);
-      this.gainSkill(player, quaternary, skillGained * 0.15);
+      this.characterHelper.gainSkill(player, primary, skillGained * 0.45);
+      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
+      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.15);
+      this.characterHelper.gainSkill(player, quaternary, skillGained * 0.15);
 
     } else if (tertiary) {
-      this.gainSkill(player, primary, skillGained * 0.55);
-      this.gainSkill(player, secondary, skillGained * 0.25);
-      this.gainSkill(player, tertiary, skillGained * 0.20);
+      this.characterHelper.gainSkill(player, primary, skillGained * 0.55);
+      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
+      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.20);
 
     } else if (secondary) {
-      this.gainSkill(player, primary, skillGained * 0.75);
-      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.characterHelper.gainSkill(player, primary, skillGained * 0.75);
+      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
 
     } else {
-      this.gainSkill(player, primary, skillGained);
+      this.characterHelper.gainSkill(player, primary, skillGained);
     }
   }
 

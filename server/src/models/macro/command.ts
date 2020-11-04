@@ -10,7 +10,7 @@ export abstract class MacroCommand implements IMacroCommand {
   constructor(protected game: Game) {}
 
   protected sendMessage(character: ICharacter, message: string, sfx?: string): void {
-    this.game.messageHelper.sendLogMessageToPlayer(character, { message, sfx });
+    this.game.messageHelper.sendSimpleMessage(character, message, sfx);
   }
 
   protected sendChatMessage(character: ICharacter, message: string, sfx?: string): void {

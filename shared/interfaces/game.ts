@@ -10,5 +10,6 @@ export interface IGame {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;
     ground: any;
+    openDoors: Record<number, boolean>;
   };
 }

@@ -7,6 +7,7 @@ export const initializeNPC = (char: Partial<INPCDefinition> = {}): INPC => {
 
   return {
     ...baseChar,
+    npcId: char.npcId ?? '',
     aquaticOnly: char.aquaticOnly ?? false,
     avoidWater: char.avoidWater ?? false,
     usableSkills: char.usableSkills ?? [],

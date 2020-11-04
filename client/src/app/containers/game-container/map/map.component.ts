@@ -20,16 +20,19 @@ export class MapComponent implements OnInit, OnDestroy {
 
   @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
   @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
+  @Select(GameState.openDoors) private openDoors$: Observable<Record<number, boolean>>;
 
   // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
   public allPlayers = new BehaviorSubject<Record<string, Partial<IPlayer>>>({ });
   public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
+  public openDoors = new BehaviorSubject<Record<number, boolean>>({ });
 
   // subs
   playerSub: Subscription;
   npcSub: Subscription;
+  doorSub: Subscription;
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
@@ -47,6 +50,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.playerSub = this.allPlayers$.subscribe(pHash => this.allPlayers.next(pHash));
     this.npcSub = this.allNPCs$.subscribe(pHash => this.allNPCs.next(pHash));
+    this.doorSub = this.openDoors$.subscribe(dHash => this.openDoors.next(dHash));
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -112,7 +116,8 @@ export class MapComponent implements OnInit, OnDestroy {
         player: this.currentPlayer,
         map: this.map,
         allPlayers: this.allPlayers,
-        allNPCs: this.allNPCs
+        allNPCs: this.allNPCs,
+        openDoors: this.openDoors
       }
     );
 

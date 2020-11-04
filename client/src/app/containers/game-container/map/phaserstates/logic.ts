@@ -42,10 +42,10 @@ export class MapScene extends Phaser.Scene {
   private playerUpdate$: Subscription;
   private allPlayersUpdate$: Subscription;
   private allNPCsUpdate$: Subscription;
+  private openDoorsUpdate$: Subscription;
   private player: IPlayer;
 
-  // the currently visible creatures
-  // private visibleCreatures = {};
+  private openDoors = {};
 
   constructor() {
     super({ key: 'MapScene' });
@@ -293,11 +293,20 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
+  private updateDoors() {
+    this.layers.interactables.each(i => {
+      if (i._type !== 'Door') return;
+      i.setFrame(this.openDoors[i._id] ? i._openFrame : i._closedFrame);
+
+      i._doorTopSprite.visible = !!this.openDoors[i._id];
+    });
+  }
+
   private convertPosition(lowPosition: number, centerOn?: boolean): number {
     return lowPosition * 64 + (centerOn ? 32 : 0);
   }
 
-  private loadObjectLayer(layer) {
+  private loadObjectLayer(layer, layerGroup) {
     const decorFirstGid = this.allMapData.tiledJSON.tilesets[2].firstgid;
     const wallFirstGid = this.allMapData.tiledJSON.tilesets[1].firstgid;
 
@@ -309,7 +318,9 @@ export class MapScene extends Phaser.Scene {
       const tileSet = isWall ? 'Walls' : 'Decor';
 
       const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, obj.gid - firstGid);
-      sprite._baseFrame = sprite.frame;
+      sprite._baseFrame = sprite.frame.name;
+      sprite._type = obj.type;
+      sprite._id = obj.id;
 
       // if you're not subscribed, some objects are not visible
       if (obj.properties?.subscriberOnly) {
@@ -321,6 +332,19 @@ export class MapScene extends Phaser.Scene {
        || obj.type === 'Door') {
         sprite.inputEnabled = true;
       }
+
+      if (obj.type === 'Door') {
+        sprite._closedFrame = sprite._baseFrame;
+        sprite._openFrame = sprite._baseFrame + 1;
+
+        const doorTopSprite = this.add.sprite(obj.x + 32, obj.y - 96, tileSet, obj.gid - firstGid + 2);
+        doorTopSprite.visible = false;
+        sprite._doorTopSprite = doorTopSprite;
+
+        layerGroup.add(doorTopSprite);
+      }
+
+      layerGroup.add(sprite);
     });
   }
 
@@ -356,7 +380,7 @@ export class MapScene extends Phaser.Scene {
 
         // check if it's within "interact" range for generic interactables
         } else if (Math.abs(xDiff) < 2 && Math.abs(yDiff) < 2) {
-          this.game.gameService.sendCommandString(`~interact ${xDiff} ${yDiff}`);
+          this.game.gameService.sendCommandString(`!interact ${xDiff} ${yDiff}`); // interact is instant because it runs other commands, but fast, so this avoids double queuing
         }
       }
 
@@ -406,10 +430,10 @@ export class MapScene extends Phaser.Scene {
     map.createStaticLayer('Walls', ['Walls', 'Decor']);
 
     // decor, densedecor, opaquedecor, interactables
-    this.loadObjectLayer(map.objects[0]);
-    this.loadObjectLayer(map.objects[1]);
-    this.loadObjectLayer(map.objects[2]);
-    this.loadObjectLayer(map.objects[3]);
+    this.loadObjectLayer(map.objects[0], this.layers.decor);
+    this.loadObjectLayer(map.objects[1], this.layers.densedecor);
+    this.loadObjectLayer(map.objects[2], this.layers.opaquedecor);
+    this.loadObjectLayer(map.objects[3], this.layers.interactables);
 
     this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
 
@@ -441,6 +465,10 @@ export class MapScene extends Phaser.Scene {
       diff.forEach(p => this.removeNPCSprite(p));
     });
 
+    this.openDoorsUpdate$ = this.game.observables.openDoors.subscribe(openDoors => {
+      this.openDoors = openDoors;
+    });
+
     this.events.on('destroy', () => this.destroy());
 
     this.game.observables.loadPercent.next(`Welcome to ${player.map}!`);
@@ -457,12 +485,14 @@ export class MapScene extends Phaser.Scene {
     if (!this.player) return;
     this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
     this.updateFOV();
+    this.updateDoors();
   }
 
   private destroy() {
     if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
     if (this.allPlayersUpdate$) this.allPlayersUpdate$.unsubscribe();
     if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
+    if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
   }
 
   private updatePlayerSpriteData(sprite, player: IPlayer) {

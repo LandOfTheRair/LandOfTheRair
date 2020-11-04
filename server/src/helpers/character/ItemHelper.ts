@@ -24,10 +24,14 @@ export class ItemHelper extends BaseService {
     return this.content.getItemDefinition(itemName);
   }
 
-  public getItemProperty(item: ISimpleItem, prop: keyof IItem): any {
+  public getItemProperty(item: ISimpleItem | undefined, prop: keyof IItem): any {
+    if (!item) return null;
+
     if (!isUndefined(item.mods[prop])) return item.mods[prop];
 
     const realItem = this.getItemDefinition(item.name);
+    if (!realItem) return null;
+
     return realItem[prop];
   }
 
@@ -50,6 +54,22 @@ export class ItemHelper extends BaseService {
     }
 
     return statMod + baseStat + encrustStat;
+  }
+
+  // check if an item is broken
+  public isItemBroken(item: ISimpleItem) {
+    const condition = this.getItemProperty(item, 'condition');
+    return condition === 0;
+  }
+
+  public gainCondition(item: ISimpleItem, conditionLoss: number) {
+    item.mods.condition = item.mods.condition || 20000;
+    item.mods.condition += conditionLoss;
+    item.mods.condition = Math.max(0, item.mods.condition);
+  }
+
+  public loseCondition(item: ISimpleItem, conditionLoss: number) {
+    this.gainCondition(item, -conditionLoss);
   }
 
 }
