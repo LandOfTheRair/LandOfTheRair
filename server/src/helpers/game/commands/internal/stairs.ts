@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { IMacroCommandArgs } from '../../../../interfaces';
 import { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models/macro';
 

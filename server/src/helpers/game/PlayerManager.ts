@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 
 import { BaseService, GameAction } from '../../interfaces';
 import { Account, Player, PlayerState } from '../../models';
-import { CharacterHelper, PlayerHelper } from '../character';
+import { CharacterHelper } from '../character';
 
 
 @Injectable()

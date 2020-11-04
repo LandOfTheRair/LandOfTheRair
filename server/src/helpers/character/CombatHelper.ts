@@ -3,7 +3,6 @@ import { Injectable } from 'injection-js';
 
 import { BaseService, DamageClass, ICharacter, MessageType, Stat } from '../../interfaces';
 import { MessageHelper } from '../game';
-import { CharacterHelper } from './CharacterHelper';
 
 interface OnesidedDamageArgs {
   damage: number;

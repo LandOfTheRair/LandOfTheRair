@@ -4,7 +4,8 @@ import { LoggerTimer } from 'logger-timer';
 import { SubscriptionHelper } from '../account';
 
 import { CalculatorHelper, CharacterHelper, CombatHelper, DirectionHelper, InteractionHelper,
-  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, TargettingHelper, TeleportHelper, VisibilityHelper } from '../character';
+  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, TargettingHelper,
+  TeleportHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
