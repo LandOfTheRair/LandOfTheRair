@@ -55,7 +55,7 @@ export class SetChatMode {
 
 export class SetLogMode {
   static type = GameAction.SettingsSetLogMode;
-  constructor(public logMode: 'General'|'Combat') {}
+  constructor(public logMode: 'All'|'General'|'Combat') {}
 }
 
 export class LogCurrentCommandInHistory {
@@ -82,7 +82,7 @@ const defaultSettings: () => ISettings = () => {
     wasKicked: false,
     assetHash: '',
     chatMode: 'cmd',
-    logMode: 'General',
+    logMode: 'All',
     currentCommand: '',
     commandHistory: [],
     options: {

@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, Stat } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, MessageType, Stat } from '../../interfaces';
 import { MessageHelper } from '../game';
 import { CharacterHelper } from './CharacterHelper';
 
@@ -48,11 +48,19 @@ export class CombatHelper extends BaseService {
     this.game.characterHelper.damage(defender, damage);
 
     if ((damage <= 0 && !suppressIfNegative) || damage > 0) {
-      this.messageHelper.sendLogMessageToPlayer(defender, { message: `${damageMessage} [${damage} ${damageClass} damage]`, subClass: 'combat other hit', sfx: overrideSfx });
+      this.messageHelper.sendLogMessageToPlayer(
+        defender,
+        { message: `${damageMessage} [${damage} ${damageClass} damage]`, sfx: overrideSfx },
+        [MessageType.Combat, MessageType.Other, MessageType.Hit]
+      );
     }
 
     if (this.game.characterHelper.isDead(defender)) {
-      this.messageHelper.sendLogMessageToPlayer(defender, { message: `You died!`, subClass: 'combat other kill', sfx: 'combat-die' });
+      this.messageHelper.sendLogMessageToPlayer(
+        defender,
+        { message: `You died!`, sfx: 'combat-die' },
+        [MessageType.Combat, MessageType.Other, MessageType.Kill]
+      );
       this.game.characterHelper.die(defender);
     }
   }

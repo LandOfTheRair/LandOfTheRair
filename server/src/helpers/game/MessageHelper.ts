@@ -11,7 +11,7 @@ export class MessageHelper extends BaseService {
 
   public async sendLogMessageToPlayer(
     player: ICharacter,
-    { message, subClass, sfx }: { message: string, subClass?: string, sfx?: string },
+    { message, sfx }: { message: string, sfx?: string },
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
   ): Promise<void> {
 
@@ -22,7 +22,6 @@ export class MessageHelper extends BaseService {
       type: GameServerResponse.GameLog,
       messageTypes,
       message,
-      subClass,
       sfx
     });
   }

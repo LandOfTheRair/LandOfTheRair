@@ -16,7 +16,7 @@
 
 <ng-template #bodyTemplate>
   <div class="buttons">
-    <ng-container *ngFor="let tab of ['General', 'Combat']">
+    <ng-container *ngFor="let tab of ['All', 'General', 'Combat']">
       <button class="tab-button" mat-raised-button [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''" (click)="changeTab(tab)">{{ tab }}</button>
     </ng-container>
   </div>

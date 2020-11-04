@@ -4,5 +4,8 @@ export enum MessageType {
   Miscellaneous = 'misc',
   Combat = 'combat',
   Lobby = 'lobby',
-  Chatter = 'chatter'
+  Chatter = 'chatter',
+  Other = 'other',
+  Kill = 'kill',
+  Hit = 'hit'
 }

@@ -76,13 +76,14 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
-  public changeTab(newTab: 'General'|'Combat') {
+  public changeTab(newTab: 'All'|'General'|'Combat') {
     this.store.dispatch(new SetLogMode(newTab));
   }
 
-  public isMessageVisible(logMode: 'General'|'Combat', message): boolean {
+  public isMessageVisible(logMode: 'All'|'General'|'Combat', message): boolean {
     if (message.typeHash[MessageType.Miscellaneous]) return true;
 
+    if (logMode === 'All') return true;
     if (logMode === 'Combat') return message.typeHash[MessageType.Combat];
     if (logMode === 'General') return !message.typeHash[MessageType.Combat];
 

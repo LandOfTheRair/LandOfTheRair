@@ -18,4 +18,56 @@
   overflow: auto;
 
   color: var(--text-color);
+  
+  .message {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    padding-left: 5px;
+
+    &.font-size-xlarge {
+      font-size: 1.3rem;
+    }
+
+    &.font-size-large {
+      font-size: 1.1rem;
+    }
+
+    &.font-size-small {
+      font-size: 0.8rem;
+    }
+
+    &.font-size-xsmall {
+      font-size: 0.7rem;
+    }
+
+    &.loot {
+      font-weight: bold;
+    }
+
+    &.combat {
+      &.self {
+        color: #0f0;
+      }
+
+      &.other.miss, &.other.block {
+        color: #ccc;
+      }
+
+      &.other.hit {
+        color: #fb5555;
+      }
+
+      &.heal {
+        color: #0f0;
+      }
+
+      &.kill {
+        font-weight: bold;
+      }
+    }
+
+    strong {
+      letter-spacing: 2px;
+    }
+  }
 }
