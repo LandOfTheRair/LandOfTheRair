@@ -1,10 +1,11 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { BaseService, ICharacter, INPC, ObjectType, Stat } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, INPC, ObjectType, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
+import { CombatHelper } from './CombatHelper';
 import { DirectionHelper } from './DirectionHelper';
 import { InteractionHelper } from './InteractionHelper';
 import { PlayerHelper } from './PlayerHelper';
@@ -17,7 +18,8 @@ export class MovementHelper extends BaseService {
     private playerHelper: PlayerHelper,
     private directionHelper: DirectionHelper,
     private characterHelper: CharacterHelper,
-    private interactionHelper: InteractionHelper
+    private interactionHelper: InteractionHelper,
+    private combatHelper: CombatHelper
   ) {
     super();
   }
@@ -47,7 +49,12 @@ export class MovementHelper extends BaseService {
     if (this.characterHelper.isPlayer(character)) {
       this.playerHelper.resetStatus(character as Player);
 
-      // TODO: handle interactable (door, teleport, fall)
+      const mapData = this.game.worldManager.getMap(character.map);
+      const interactable = mapData.map.getInteractableAt(character.x, character.y);
+
+      if (interactable) {
+        this.handleInteractable(character as Player, interactable);
+      }
     }
 
     return didFinish;
@@ -122,5 +129,82 @@ export class MovementHelper extends BaseService {
     state.moveNPCOrPlayer(character, { oldX, oldY });
 
     return wasSuccessfulWithNoInterruptions;
+  }
+
+  private handleInteractable(player: Player, obj): void {
+    switch (obj.type) {
+      case 'Fall':     return this.handleTeleport(player, obj, true);
+      case 'Teleport': return this.handleTeleport(player, obj);
+
+      // TODO: lockers
+      // case 'Locker':   return this.handleLocker(player, obj);
+    }
+  }
+
+  private handleTeleport(player: Player, obj, isFall = false): void {
+    const {
+      teleportX, teleportY, teleportMap,
+      requireHeld, requireParty, requireHoliday,
+      // requireQuest, requireQuestProgress, requireQuestComplete,
+      damagePercent
+    } = obj.properties;
+
+    if (requireParty && !player.partyName) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You must gather your party before venturing forth.' });
+      return;
+    }
+
+    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: `That location is only seasonally open during "${requireHoliday}"!` });
+      return;
+    }
+
+    // check if player has a held item
+    if (requireHeld
+    && !this.playerHelper.hasHeldItem(player, requireHeld, 'left')
+    && !this.playerHelper.hasHeldItem(player, requireHeld, 'right')) return;
+
+    // check if player has a quest (and the corresponding quest progress, if necessary)
+    /* TODO: quests
+    if(requireQuest) {
+
+      // if the player has permanent completion for it, they can always get through
+      if(!player.hasPermanentCompletionFor(requireQuest)) {
+
+        // but if not, we check if we need a certain quest progress
+        if(requireQuestProgress) {
+          const questData = player.getQuestData({ name: requireQuest });
+          if(!questData || !questData[requireQuestProgress]) return;
+        }
+
+        // then we check if they have the quest
+        if(!player.hasQuest({ name: requireQuest })) return;
+      }
+    }
+
+    // check if player has completed quest
+    if(requireQuestComplete) {
+      if(!player.hasPermanentCompletionFor(requireQuestComplete)) return;
+    }
+    */
+
+    this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
+
+    if (isFall) {
+      const hpLost = Math.floor(player.hp.maximum * ((damagePercent || 15) / 100));
+
+      // TODO: fleetoffoot does 1 damage if you fall
+      const damage = hpLost;
+      this.combatHelper.dealOnesidedDamage(player, {
+        damage,
+        damageClass: DamageClass.Physical,
+        damageMessage: 'You have fallen!',
+        suppressIfNegative: true,
+        overrideSfx: 'combat-hit-melee'
+      });
+    } else {
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'Your surroundings shift.' });
+    }
   }
 }

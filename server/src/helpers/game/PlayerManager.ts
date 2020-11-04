@@ -12,8 +12,7 @@ export class PlayerManager extends BaseService {
   private readonly SAVE_TICK_COUNT = 150;
 
   constructor(
-    private characterHelper: CharacterHelper,
-    private playerHelper: PlayerHelper
+    private characterHelper: CharacterHelper
   ) {
     super();
   }
@@ -36,7 +35,7 @@ export class PlayerManager extends BaseService {
   // add a player to the game
   public async addPlayerToGame(player: Player) {
 
-    this.playerHelper.migrate(player);
+    this.game.playerHelper.migrate(player);
 
     const username = player.username;
     this.inGamePlayers[username] = player;
@@ -45,7 +44,7 @@ export class PlayerManager extends BaseService {
     this.playerStates[username] = state;
     this.game.transmissionHelper.startWatching(player, state);
 
-    this.playerHelper.resetStatus(player);
+    this.game.playerHelper.resetStatus(player);
     this.updatePlayerData(player);
 
     const sendPlayer = await this.game.transmissionHelper.convertPlayerForTransmission(player);
@@ -76,7 +75,7 @@ export class PlayerManager extends BaseService {
 
   private tick(type: 'slow'|'fast') {
     Object.values(this.inGamePlayers).forEach(player => {
-      this.playerHelper.tick(player, type);
+      this.game.playerHelper.tick(player, type);
 
       // effects tick at most once per second
       if (type === 'slow') {

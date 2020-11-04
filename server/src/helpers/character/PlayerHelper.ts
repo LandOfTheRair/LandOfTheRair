@@ -7,6 +7,7 @@ import { Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { StaticTextHelper, WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
+import { TeleportHelper } from './TeleportHelper';
 import { VisibilityHelper } from './VisibilityHelper';
 
 
@@ -18,6 +19,7 @@ export class PlayerHelper extends BaseService {
     private staticTextHelper: StaticTextHelper,
     private visibilityHelper: VisibilityHelper,
     private subscriptionHelper: SubscriptionHelper,
+    private teleportHelper: TeleportHelper,
     private worldManager: WorldManager
   ) {
     super();
@@ -66,13 +68,19 @@ export class PlayerHelper extends BaseService {
     // if we're on a dense tile, "respawn"
     const { map } = this.worldManager.getMap(player.map);
     if (map.getWallAt(player.x, player.y) || map.getDenseDecorAt(player.x, player.y)) {
-      this.teleportToRespawnPoint(player);
+      this.teleportHelper.teleportToRespawnPoint(player);
     }
   }
 
-  // teleport a player to their respawn point
-  public teleportToRespawnPoint(player: Player): void {
-    this.teleport(player, player.respawnPoint.x, player.respawnPoint.y, player.respawnPoint.map);
+  // check if this player is holding sometihng
+  public hasHeldItem(char: Player, item: string, hand: 'left'|'right' = 'right'): boolean {
+    const ref = char.items.equipment[`${hand}Hand`];
+    return (ref && ref.name === item && ref.mods.owner === char.username);
+  }
+
+  public hasHeldItems(char: Player, item1: string, item2: string): boolean {
+    return (this.hasHeldItem(char, item1, 'right') && this.hasHeldItem(char, item2, 'left'))
+        || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
   // reset swim level, fov, region desc
@@ -130,28 +138,6 @@ export class PlayerHelper extends BaseService {
         player.lastTileDesc = desc;
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: desc }, [MessageType.Environment]);
       }
-    }
-  }
-
-  // teleport a player to a new location
-  public teleport(player: Player, x: number, y: number, map: string = player.map): void {
-    const oldX = player.x;
-    const oldY = player.y;
-
-    player.x = x;
-    player.y = y;
-
-    const { state } = this.worldManager.getMap(player.map);
-
-    if (player.map === map) {
-      state.moveNPCOrPlayer(player, { oldX, oldY });
-
-    } else {
-      state.removePlayer(player);
-
-      const { state: newState } = this.worldManager.getMap(map);
-      player.map = map;
-      newState.addPlayer(player);
     }
   }
 

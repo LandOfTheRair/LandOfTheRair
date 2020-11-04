@@ -3,9 +3,14 @@ import { Injectable } from 'injection-js';
 
 import { BaseService } from '../../interfaces';
 import { Player } from '../../models';
+import { WorldManager } from '../data';
 
 @Injectable()
 export class TeleportHelper extends BaseService {
+
+  constructor(private worldManager: WorldManager) {
+    super();
+  }
 
   public init() {}
 
@@ -22,6 +27,12 @@ export class TeleportHelper extends BaseService {
     this.game.visibilityHelper.calculatePlayerFOV(player);
   }
 
+  // teleport a player to their respawn point
+  public teleportToRespawnPoint(player: Player): void {
+    this.teleport(player, { x: player.respawnPoint.x, y: player.respawnPoint.y, map: player.respawnPoint.map });
+  }
+
+  // teleport a player somewhere
   public teleport(
     player: Player,
     { x, y, map, zChange = 0, zSet = 0 }: { x: number, y: number, map?: string, zChange?: number, zSet?: number }
@@ -45,15 +56,20 @@ export class TeleportHelper extends BaseService {
 
     // check if the new map even exists before going
     if (map && player.map !== map) {
-      const mapData = this.game.worldManager.getMap(map);
-      if (!mapData) {
+
+      const { state } = this.worldManager.getMap(player.map);
+      const newMapData = this.game.worldManager.getMap(map);
+      if (!newMapData) {
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Warning: map ${map} does not exist.` });
         return;
       }
 
       // TODO: players coming in from different teleports will have different z coords. figure this out.
       player.z = 0;
-      // TODO: teleport to new map
+
+      state.removePlayer(player);
+      player.map = map;
+      newMapData.state.addPlayer(player);
     }
   }
 

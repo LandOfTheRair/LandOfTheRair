@@ -54,6 +54,9 @@ export enum DamageClass {
   Fire = 'fire',
   Ice = 'ice',
 
+  // used for cheese damage
+  GM = 'gm',
+
   // used specifically for guns hunting turkeys
   Turkey = 'turkey',
 

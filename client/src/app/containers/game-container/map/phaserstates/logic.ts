@@ -316,8 +316,8 @@ export class MapScene extends Phaser.Scene {
         sprite.visible = isSubscribed;
       }
 
-      if (obj.type === 'StairsUp' || obj.type === 'StairsDown' 
-       || obj.type === 'ClimbUp' || obj.type === 'ClimbDown' 
+      if (obj.type === 'StairsUp' || obj.type === 'StairsDown'
+       || obj.type === 'ClimbUp' || obj.type === 'ClimbDown'
        || obj.type === 'Door') {
         sprite.inputEnabled = true;
       }
@@ -337,21 +337,32 @@ export class MapScene extends Phaser.Scene {
       const xDiff = xCoord - this.player.x;
       const yDiff = yCoord - this.player.y;
 
+      const doMove = () => {
+        this.game.socketService.sendAction({ command: `~move`, args: `${xDiff} ${yDiff}` });
+      };
+
       const possibleInteractable = get(this.allMapData.layerData, [MapLayer.Interactables, xCoord, yCoord]);
       if (possibleInteractable) {
-        // check if it's within "interact" range
+
+        if (['Fall', 'Teleport'].includes(possibleInteractable.type)) return doMove();
+
+        // check for a stairs interactable
         if (['StairsUp', 'StairsDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
           this.game.gameService.sendCommandString('~up');
-        }
 
-        if (['ClimbUp', 'ClimbDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
+        // check for a climbable interactable
+        } else if (['ClimbUp', 'ClimbDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
           this.game.gameService.sendCommandString('~climbup');
+
+        // check if it's within "interact" range for generic interactables
+        } else if (Math.abs(xDiff) < 2 && Math.abs(yDiff) < 2) {
+          this.game.gameService.sendCommandString(`~interact ${xDiff} ${yDiff}`);
         }
       }
 
       if (xDiff === 0 && yDiff === 0) return;
 
-      this.game.socketService.sendAction({ command: `~move`, args: `${xDiff} ${yDiff}` });
+      doMove();
     });
   }
 

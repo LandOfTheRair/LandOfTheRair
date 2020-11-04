@@ -22,12 +22,20 @@ export class CharacterHelper extends BaseService {
     this.mana(char, char.mp.maximum);
   }
 
+  public damage(char: ICharacter, hp: number): void {
+    this.heal(char, -hp);
+  }
+
   public heal(char: ICharacter, hp: number): void {
     char.hp.__current = clamp(char.hp.__current + hp, char.hp.minimum, char.hp.maximum);
   }
 
   public mana(char: ICharacter, mp: number): void {
     char.mp.__current = clamp(char.mp.__current + mp, char.mp.minimum, char.mp.maximum);
+  }
+
+  public die(char: ICharacter): void {
+    if (!this.isDead(char)) return;
   }
 
   // check if a character is a player
@@ -83,7 +91,7 @@ export class CharacterHelper extends BaseService {
   }
 
   public tick(character: ICharacter): void {
-    const hpRegen = this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15);
+    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
     if (character.hp.__current + hpRegen > 0) this.heal(character, hpRegen);
