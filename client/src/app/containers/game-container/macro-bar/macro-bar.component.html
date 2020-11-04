@@ -1,0 +1,52 @@
+
+<app-window windowName="macroBar"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="false"
+
+            defaultX="349"
+            defaultY="772"
+            defaultWidth="576"
+            defaultHeight="96"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Macros
+</ng-template>
+
+<ng-template #bodyTemplate>
+</ng-template>
+<!--
+<div class="macro-group-container" *ngIf="macroService.hasLoaded">
+  <div *ngFor="let group of macroService.visibleMacroGroups; let i = index">
+    <div class="macro-group" *ngIf="macroService.allMacroGroups[group]">
+
+      <div class="group-name {{ size }}">
+        <div class="arrow arrow-left" (click)="changeMacroGroup(i, -1)">
+          &#9664;
+        </div>
+
+        <div class="text-rotated">
+          {{ group }}
+        </div>
+
+        <div class="arrow arrow-right" (click)="changeMacroGroup(i, 1)">
+          &#9654;
+        </div>
+      </div>
+
+      <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
+
+        <app-macro
+          [size]="size"
+          (click)="operateOnMacro(macroService.allMacros[macroService.allMacroGroups[group][macroIdx]])"
+          [macroRef]="macroService.allMacroGroups[group][macroIdx]"
+          [isActive]="macroService.allMacroGroups[group][macroIdx] === selectedMacro"
+        ></app-macro>
+
+      </div>
+    </div>
+  </div>
+</div>
+-->

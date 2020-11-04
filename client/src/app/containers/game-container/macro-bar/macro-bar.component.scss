@@ -1,0 +1,65 @@
+
+.macro-group-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.macro-group {
+  display: flex;
+  flex-direction: row;
+
+  .group-name {
+    min-width: 55px;
+    max-width: 55px;
+    max-height: 54px;
+    padding-top: 12px;
+    user-select: none;
+    position: relative;
+
+    .arrow {
+      position: absolute;
+      height: 100%;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      font-size: 60%;
+      width: 20px;
+      justify-content: center;
+      cursor: pointer;
+
+      &.arrow-left {
+        left: 0;
+      }
+
+      &.arrow-right {
+        right: 0;
+      }
+    }
+
+    .text-rotated {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+      padding-top: 9px;
+      pointer-events: none;
+      margin-top: -10px;
+    }
+
+    &.small {
+      .text-rotated {
+        margin-top: -15px;
+        font-size: 75%;
+        padding-top: 6px;
+      }
+    }
+
+    &.xsmall {
+      .text-rotated {
+        margin-top: -20px;
+        font-size: 50%;
+        padding-top: 3px;
+      }
+    }
+  }
+}

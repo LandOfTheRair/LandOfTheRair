@@ -44,7 +44,9 @@ import { OptionsContainerComponent } from './containers/options-container/option
 import { SetActiveWindow, UpdateWindowPosition } from '../stores';
 import { CharacterCardComponent } from './_shared/components/character-card.component';
 import { LifeHeartComponent } from './_shared/components/life-heart.component';
+import { MacroComponent } from './_shared/components/macro/macro.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
+import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
 
@@ -63,11 +65,13 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     CommandLineComponent,
     AdventureLogComponent,
     ActiveTargetComponent,
+    MacroBarComponent,
 
     InventoryComponent,
     ItemComponent,
     CharacterCardComponent,
     LifeHeartComponent,
+    MacroComponent,
 
     InventoryBeltComponent,
     InventoryPouchComponent,

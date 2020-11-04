@@ -1,0 +1,16 @@
+
+<div class="macro-container" [ngClass]="[size]" [class.active]="isActive" [class.has-macro]="macroRef" [class.disable-effects]="disableEffects">
+
+  <div class="macro" [tooltip]="macroTooltipTemplate" container="body">
+    <app-icon [name]="iconName"
+              [bgColor]="background"
+              [fgColor]="foreground"
+              [size]="size"></app-icon>
+  </div>
+
+  <ng-template #macroTooltipTemplate>
+    <strong>{{ macroName || 'Empty' }}</strong><br>
+    {{ macroTooltip }}
+  </ng-template>
+
+</div>

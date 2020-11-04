@@ -1,0 +1,43 @@
+
+.macro-container {
+  margin: 3px;
+  box-shadow: 0 0 2px 2px #ccc;
+
+  user-select: none;
+
+  min-width: 46px;
+  max-width: 46px;
+
+  border-radius: 3px;
+  overflow: hidden;
+
+  &.small {
+    min-width: 34px;
+    max-width: 34px;
+
+    span.macicons {
+      font-size: 350% !important;
+    }
+  }
+
+  &.xsmall {
+    min-width: 22px;
+    max-width: 22px;
+
+    span.macicons {
+      font-size: 150% !important;
+    }
+  }
+
+  background-color: #ccc;
+
+  &.has-macro:not(.disable-effects) {
+    &.active {
+      box-shadow: 1px 0 5px 3px #000;
+    }
+
+    &:active:not(.active) {
+      box-shadow: 1px 0 5px 3px #000;
+    }
+  }
+}
