@@ -50,10 +50,50 @@ export class GameService {
   }
 
   public sendCommandString(cmdString: string, target?: string) {
+    if (cmdString.startsWith('#')) cmdString = cmdString.substring(1);
+
     cmdString.split(';').forEach(cmd => {
-      const [command, ...args] = cmd.trim().split(' ');
-      this.socketService.emit(GameServerEvent.DoCommand, { command, args: args.join(' ') });
+      cmd = cmd.trim();
+
+      let command = '';
+      let args = '';
+
+      if (cmd.includes(',')) {
+        command = '!privatesay';
+        args = cmd;
+      } else {
+        [command, args] = this.parseCommand(cmd);
+      }
+
+      if (target) {
+        args = `${args} ${target}`;
+      }
+
+      this.sendAction(GameServerEvent.DoCommand, { command, args });
     });
+  }
+
+  public sendAction(action: GameServerEvent, args: any) {
+    this.socketService.emit(action, args);
+  }
+
+  private parseCommand(cmd: string) {
+    const arr = cmd.split(' ');
+    const multiPrefixes = ['party', 'look', 'show', 'cast', 'stance', 'powerword', 'art'];
+
+    let argsIndex = 1;
+
+    let command = arr[0];
+
+    if (multiPrefixes.includes(command)) {
+      command = `${arr[0]} ${arr[1]}`;
+      argsIndex = 2;
+    }
+
+    // factor in the space because otherwise indexOf can do funky things.
+    const args = arr.length > argsIndex ? cmd.substring(cmd.indexOf(' ' + arr[argsIndex])).trim() : '';
+
+    return [command, args];
   }
 
   // get the direction from a character to another one
