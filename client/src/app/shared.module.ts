@@ -15,6 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { AlertComponent } from './_shared/components/alert/alert.component';
 import { ButtonCloseComponent } from './_shared/components/button-close.component';
@@ -30,7 +31,7 @@ const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
   MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule,
-  MatSelectModule
+  MatSelectModule, MatTooltipModule
 ];
 
 const declarations = [
