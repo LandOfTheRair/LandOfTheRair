@@ -9,11 +9,6 @@ export class CreateCustomMacro {
   constructor(public macro: IMacro) {}
 }
 
-export class EditCustomMacro {
-  static type = GameAction.EditCustomMacro;
-  constructor(public macro: IMacro) {}
-}
-
 export class DeleteCustomMacro {
   static type = GameAction.DeleteCustomMacro;
   constructor(public macro: IMacro) {}
@@ -26,7 +21,7 @@ export class SetMacroBars {
 
 const defaultMacros: () => IMacroContainer = () => {
   return {
-    customMacros: [],
+    customMacros: {},
     characterMacros: {}
   };
 };
@@ -54,21 +49,8 @@ export class MacrosState {
   createCustomMacro(ctx: StateContext<IMacroContainer>, { macro }: CreateCustomMacro) {
     const state = ctx.getState();
 
-    const copyMacros = [...state.customMacros];
-    copyMacros.push(macro);
-
-    ctx.patchState({ customMacros: copyMacros });
-  }
-
-  @Action(EditCustomMacro)
-  editCustomMacro(ctx: StateContext<IMacroContainer>, { macro }: EditCustomMacro) {
-    const state = ctx.getState();
-
-    const copyMacros = [...state.customMacros];
-    const existingMacroIdx = copyMacros.findIndex(x => x === macro);
-    if (existingMacroIdx !== -1) {
-      copyMacros[existingMacroIdx] = macro;
-    }
+    const copyMacros = { ... state.customMacros };
+    copyMacros[macro.name] = macro;
 
     ctx.patchState({ customMacros: copyMacros });
   }
@@ -77,7 +59,8 @@ export class MacrosState {
   deleteCustomMacro(ctx: StateContext<IMacroContainer>, { macro }: DeleteCustomMacro) {
     const state = ctx.getState();
 
-    const copyMacros = [...state.customMacros].filter(x => x !== macro);
+    const copyMacros = { ... state.customMacros };
+    delete copyMacros[macro.name];
 
     ctx.patchState({ customMacros: copyMacros });
   }

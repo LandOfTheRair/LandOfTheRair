@@ -33,7 +33,7 @@ export interface IMacroMonsterSkill extends IMacroSkill {
 }
 
 export interface IMacroContainer {
-  customMacros: IMacro[];
+  customMacros: Record<string, IMacro>;
   characterMacros: Record<string, IMacroBar[][]>;  // username -> charslot -> macros[]
 }
 
