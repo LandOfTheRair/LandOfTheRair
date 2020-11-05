@@ -33,7 +33,7 @@ export class MacrosService {
   }
 
   public getMacroMatching(key: string): IMacro {
-    if (!key) return;
+    if (!key) return null;
     return this.macroMap[key.toUpperCase()];
   }
 
