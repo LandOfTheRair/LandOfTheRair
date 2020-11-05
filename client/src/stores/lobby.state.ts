@@ -1,48 +1,8 @@
 
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, ICharacterCreateInfo, IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
-import { Login } from './account.state';
-
-export class AddMessage {
-  static type = GameAction.ChatAddMessage;
-  constructor(public from: string, public message: string, public timestamp: number) {}
-}
-
-export class SetMOTD {
-  static type = GameAction.ChatSetMOTD;
-  constructor(public motd: string) {}
-}
-
-export class SetUsers {
-  static type = GameAction.ChatSetUserList;
-  constructor(public users: IChatUser[]) {}
-}
-
-export class AddUser {
-  static type = GameAction.ChatAddUser;
-  constructor(public user: IChatUser) {}
-}
-
-export class RemoveUser {
-  static type = GameAction.ChatRemoveUser;
-  constructor(public username: string) {}
-}
-
-export class SetCharacterCreateInformation {
-  static type = GameAction.SetCharacterCreateInformation;
-  constructor(public charCreateInfo: ICharacterCreateInfo) {}
-}
-
-export class AccountEnterGame {
-  static type = GameAction.ChatUserEnterGame;
-  constructor(public username: string) {}
-}
-
-export class AccountLeaveGame {
-  static type = GameAction.ChatUserLeaveGame;
-  constructor(public username: string) {}
-}
+import { IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
+import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser, Login, RemoveUser, SetCharacterCreateInformation, SetMOTD, SetUsers } from './actions';
 
 @State<ILobbyContainer>({
   name: 'chat',

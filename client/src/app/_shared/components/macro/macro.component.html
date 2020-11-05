@@ -1,16 +1,25 @@
 
-<div class="macro-container" [ngClass]="[size]" [class.active]="isActive" [class.has-macro]="macroRef" [class.disable-effects]="disableEffects">
+<div class="macro-container" [class.active]="isActive" [class.has-macro]="macroRef" [class.disable-effects]="disableEffects">
 
-  <div class="macro" [matTooltip]="macroTooltipTemplate" container="body">
+  <div class="macro" [mdePopoverTriggerFor]="macroTooltipTemplate">
     <app-icon [name]="iconName"
               [bgColor]="background"
-              [fgColor]="foreground"
-              [size]="size"></app-icon>
+              [fgColor]="foreground"></app-icon>
   </div>
 
-  <ng-template #macroTooltipTemplate>
-    <strong>{{ macroName || 'Empty' }}</strong><br>
-    {{ macroTooltip }}
-  </ng-template>
+  <mde-popover #macroTooltipTemplate="mdePopover" 
+               mdePopoverPositionY="above" 
+               mdePopoverTriggerOn="hover" 
+               [mdePopoverOverlapTrigger]="false"
+               mdePopoverEnterDelay="1000">
+    <mat-card class="tooltip-card">
+      <mat-card-title>
+        <strong>{{ macroName || 'Empty' }}</strong>
+      </mat-card-title>
+      <mat-card-content>
+        {{ macroTooltip }}
+      </mat-card-content>
+    </mat-card>
+  </mde-popover>
 
 </div>

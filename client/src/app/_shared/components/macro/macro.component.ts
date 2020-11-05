@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { IMacro } from '../../../../interfaces';
 
 @Component({
   selector: 'app-macro',
@@ -11,7 +12,7 @@ export class MacroComponent {
   public size = 'normal';
 
   @Input()
-  public macroRef: string;
+  public macroRef: IMacro;
 
   @Input()
   public isActive: boolean;
@@ -22,32 +23,22 @@ export class MacroComponent {
   constructor() { }
 
   get background() {
-    return '#ccc';
-    // if(!this.macroRef || !this.macroService.allMacros[this.macroRef]) return '#ccc';
-    // return this.macroService.allMacros[this.macroRef].background || '#ccc';
+    return this.macroRef?.background ?? '#ccc';
   }
 
   get foreground() {
-    return '';
-    // if(!this.macroRef || !this.macroService.allMacros[this.macroRef]) return '';
-    // return this.macroService.allMacros[this.macroRef].foreground;
+    return this.macroRef?.color ?? '';
   }
 
   get iconName() {
-    return '';
-    // if(!this.macroRef || !this.macroService.allMacros[this.macroRef]) return '';
-    // return this.macroService.allMacros[this.macroRef].icon;
+    return this.macroRef?.icon ?? '';
   }
 
   get macroName() {
-    return '';
-    // if(!this.macroRef || !this.macroService.allMacros[this.macroRef]) return '';
-    // return startCase(this.macroService.allMacros[this.macroRef].name);
+    return this.macroRef?.name ?? '';
   }
 
   get macroTooltip() {
-    return '';
-    // if(!this.macroRef || !this.macroService.allMacros[this.macroRef]) return '';
-    // return this.macroService.allMacros[this.macroRef].tooltipDesc;
+    return this.macroRef?.tooltipDesc ?? '';
   }
 }

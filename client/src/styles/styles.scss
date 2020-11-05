@@ -2,6 +2,7 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @import '~@angular/material/theming';
+@import '~@angular/cdk/overlay-prebuilt.css';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -27,6 +28,10 @@ $landoftherair-theme: mat-dark-theme($landoftherair-primary, $landoftherair-acce
 @include angular-material-theme($landoftherair-theme);
 
 /* You can add global styles to this file, and also import other style files */
+
+.cdk-overlay-container {
+  z-index: 1500;
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

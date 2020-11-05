@@ -56,7 +56,7 @@ import { environment } from '../../../environments/environment';
     }
   `],
   template: `
-    <div class="mac-container vertical-center" [ngClass]="[size]" [class.round]="round" [style.background-color]="bgColor">
+    <div class="mac-container vertical-center normal" [class.round]="round" [style.background-color]="bgColor">
       <span class="macicons" [ngClass]="['macicons-'+name]" [style.color]="fgColor"></span>
     </div>
   `
@@ -68,9 +68,6 @@ export class IconComponent {
 
   @Input()
   public name = 'undecided';
-
-  @Input()
-  public size: 'normal' | 'nsmall' | 'small' | 'xsmall' = 'normal';
 
   @Input()
   public bgColor = 'white';

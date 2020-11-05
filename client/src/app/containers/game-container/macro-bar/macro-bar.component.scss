@@ -7,6 +7,7 @@
 .macro-group {
   display: flex;
   flex-direction: row;
+  margin-top: 5px;
 
   .group-name {
     min-width: 55px;
@@ -15,6 +16,7 @@
     padding-top: 12px;
     user-select: none;
     position: relative;
+    color: #fff;
 
     .arrow {
       position: absolute;
@@ -44,6 +46,8 @@
       padding-top: 9px;
       pointer-events: none;
       margin-top: -10px;
+
+      text-align: center;
     }
 
     &.small {

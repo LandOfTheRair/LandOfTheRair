@@ -47,6 +47,7 @@ import { LifeHeartComponent } from './_shared/components/life-heart.component';
 import { MacroComponent } from './_shared/components/macro/macro.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
+import { MacrosService } from './macros.service';
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
 
@@ -134,6 +135,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
         return game;
       },
       deps: [GameService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (macros: MacrosService) => () => {
+        macros.init();
+        return macros;
+      },
+      deps: [MacrosService],
       multi: true
     },
     {

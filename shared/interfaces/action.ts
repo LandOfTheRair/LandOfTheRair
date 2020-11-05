@@ -65,6 +65,7 @@ export enum GameAction {
   SetCharacterCreateInformation = '[CharSelect] Set Create Info',
 
   GamePlay = '[Game] Play Game',
+  GamePlayerReady = '[Game] Player Ready',
   GameQuit = '[Game] Quit Game',
   GameSetMap = '[Game] Set Map',
   GameSetPlayer = '[Game] Set Player',
@@ -79,8 +80,10 @@ export enum GameAction {
 
   CreateCustomMacro = '[Macro] Create Custom',
   DeleteCustomMacro = '[Macro] Delete Custom',
-
-  SetMacroBar = '[Macro] Set Macro Bars'
+  SetActiveMacro = '[Macro] Set Active Macro',
+  SetActiveMacroBars = '[Macro] Set Active Bars',
+  SetMacroBar = '[Macro] Set Macro Bars',
+  SetDefaultMacros = '[Macros] Set Default Macros/Bars'
 }
 
 export enum GameServerResponse {

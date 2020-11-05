@@ -1,4 +1,6 @@
 
+export * from './actions';
+
 export * from './account.state';
 export * from './game.state';
 export * from './lobby.state';

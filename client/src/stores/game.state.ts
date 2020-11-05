@@ -1,45 +1,11 @@
-import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, IGame, IPlayer } from '../interfaces';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import { IGame } from '../interfaces';
 
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
-
-
-export class PlayGame {
-  static type = GameAction.GamePlay;
-  constructor() {}
-}
-
-export class QuitGame {
-  static type = GameAction.GameQuit;
-  constructor() {}
-}
-
-export class SetMap {
-  static type = GameAction.GameSetMap;
-  constructor(public map: any) {}
-}
-
-export class SetPlayer {
-  static type = GameAction.GameSetPlayer;
-  constructor(public player: IPlayer) {}
-}
-
-export class PatchPlayer {
-  static type = GameAction.GamePatchPlayer;
-  constructor(public player: Partial<IPlayer>, public patches: any[]) {}
-}
-
-export class PatchGameStateForPlayer {
-  static type = GameAction.GamePatchPlayerState;
-  constructor(public statePatches: any[]) {}
-}
-
-export class SetCurrentTarget {
-  static type = GameAction.SetCurrentTarget;
-  constructor(public target: string) {}
-}
+import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame, 
+  QuitGame, SetCurrentTarget, SetMap, SetPlayer } from './actions';
 
 const defaultGame: () => IGame = () => {
   return {
@@ -116,6 +82,8 @@ export class GameState {
     return state.mapInfo.ground;
   }
 
+  constructor(private store: Store) {}
+
   @Action(PlayGame)
   playGame(ctx: StateContext<IGame>) {
     const baseState = defaultGame();
@@ -138,7 +106,12 @@ export class GameState {
 
   @Action(SetPlayer)
   setPlayer(ctx: StateContext<IGame>, { player }: SetPlayer) {
+    const state = ctx.getState();
+    const hasPlayer = !!state.player;
+
     ctx.patchState({ player });
+
+    if (!hasPlayer) this.store.dispatch(new PlayerReady());
   }
 
   @Action(SetCurrentTarget)

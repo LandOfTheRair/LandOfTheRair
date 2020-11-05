@@ -33,22 +33,22 @@ export interface IMacroMonsterSkill extends IMacroSkill {
 }
 
 export interface IMacroContainer {
+  activeMacroBars: Record<string, Record<number, string[]>>; // username -> charSlot -> [group1, group2, group3]
+  activeMacros: Record<string, Record<number, string>>; // username -> charSlot -> macroname
   customMacros: Record<string, IMacro>;
-  characterMacros: Record<string, IMacroBar[][]>;  // username -> charslot -> macros[]
+  characterMacros: Record<string, Record<number, Record<string, IMacroBar>>>;  // username -> charSlot -> macrobarname -> macrobar
 }
 
 export interface IMacroBar {
-  macros: IMacro[];
-  position: number;
+  macros: string[];
+  name: string;
 }
 
 export interface IMacro {
   key: string;
   modifiers: { shift: boolean, alt: boolean, ctrl: boolean };
 
-  autoActivate: boolean;
-  lockActivation: boolean;
-  clickToTarget: boolean;
+  mode: 'autoActivate' | 'lockActivation' | 'clickToTarget';
   ignoreAutoattackOption: boolean;
 
   appendTargetToEachMacro: boolean;
@@ -59,7 +59,7 @@ export interface IMacro {
   name: string;
   icon: string;
 
-  foreground: string;
+  color: string;
   background: string;
 
   isSystem: boolean;

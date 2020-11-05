@@ -1,22 +1,8 @@
 
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { GameAction, IAccount, ICharacter, IChatUser } from '../interfaces';
-
-export class Login {
-  static type = GameAction.Login;
-  constructor(public info: { motd: string, onlineUsers: IChatUser[], account: IAccount }) {}
-}
-
-export class Logout {
-  static type = GameAction.Logout;
-  constructor(public manualDisconnect?: boolean, public kick?: boolean) {}
-}
-
-export class SetCharacterSlotInformation {
-  static type = GameAction.SetCharacterSlotInformation;
-  constructor(public characterInfo: ICharacter, public slot: number) {}
-}
+import { IAccount } from '../interfaces';
+import { Login, Logout, SetCharacterSlotInformation } from './actions';
 
 const defaultAccount: () => IAccount = () => {
   return {

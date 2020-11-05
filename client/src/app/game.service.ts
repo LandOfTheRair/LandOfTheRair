@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Select, Selector } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
-import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
+  ICharacterCreateInfo, IGame, IMacroContainer, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
+import { AccountState, GameState, LobbyState, MacrosState, SettingsState } from '../stores';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -34,6 +34,18 @@ export class GameService {
   @Select(SettingsState.chatMode) chatMode$: Observable<ChatMode>;
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
   @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
+
+  @Selector([GameState, MacrosState])
+  static currentPlayerMacros(gameState: IGame, macroState: IMacroContainer) {
+    const player = gameState.player;
+    if (!player) return null;
+
+    return {
+      activeMacro: macroState.activeMacros?.[player.username]?.[player.charSlot],
+      activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
+      macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
+    };
+  }
 
   constructor(private socketService: SocketService) {}
 

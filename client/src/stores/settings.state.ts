@@ -1,77 +1,10 @@
 
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
-import { ChatMode, GameAction, GameOption, ISettings } from '../interfaces';
-import { Login, Logout } from './account.state';
-
-export class AddAccount {
-  static type = '[Settings] Add account';
-  constructor(public username: string, public password: string, public autologin?: boolean) {}
-}
-
-export class RemoveAccount {
-  static type = '[Settings] Remove account';
-  constructor(public username: string) {}
-}
-
-export class UpdateWindowPosition {
-  static type = '[Settings] Update window position';
-  constructor(
-    public windowName: string,
-    public windowProps: { x?: number, y?: number, width?: number, height?: number, hidden?: boolean },
-    public overwrite?: boolean
-  ) {}
-}
-
-export class HideWindow {
-  static type = '[Settings] Hide Window';
-  constructor(public windowName: string) {}
-}
-
-export class ShowWindow {
-  static type = '[Settings] Show Window';
-  constructor(public windowName: string) {}
-}
-
-export class SetActiveWindow {
-  static type = '[Settings] Set active window';
-  constructor(public windowName: string) {}
-}
-
-export class SetCharSlot {
-  static type = '[Settings] Set char slot';
-  constructor(public charSlot: number) {}
-}
-
-export class SetAssetHash {
-  static type = GameAction.SettingsSetAssetHash;
-  constructor(public assetHash: string) {}
-}
-
-export class SetChatMode {
-  static type = GameAction.SettingsSetChatMode;
-  constructor(public chatMode: ChatMode) {}
-}
-
-export class SetLogMode {
-  static type = GameAction.SettingsSetLogMode;
-  constructor(public logMode: 'All'|'General'|'Combat') {}
-}
-
-export class LogCurrentCommandInHistory {
-  static type = GameAction.LogCurrentCommand;
-  constructor() {}
-}
-
-export class SetCurrentCommand {
-  static type = GameAction.SetCurrentCommand;
-  constructor(public command: string) {}
-}
-
-export class SetOption {
-  static type = GameAction.SetOption;
-  constructor(public option: GameOption, public value: boolean|number) {}
-}
+import { GameOption, ISettings } from '../interfaces';
+import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
+  RemoveAccount, SetActiveWindow, SetAssetHash, SetCharSlot, SetChatMode,
+  SetCurrentCommand, SetLogMode, SetOption, ShowWindow, UpdateWindowPosition } from './actions';
 
 const defaultSettings: () => ISettings = () => {
   return {
