@@ -2,7 +2,8 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
-import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser, Login, RemoveUser, SetCharacterCreateInformation, SetMOTD, SetUsers } from './actions';
+import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser,
+  Login, RemoveUser, SetCharacterCreateInformation, SetMOTD, SetUsers } from './actions';
 
 @State<ILobbyContainer>({
   name: 'chat',
