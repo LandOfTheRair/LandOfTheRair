@@ -38,7 +38,6 @@
           <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
     
             <app-macro
-              [size]="size"
               (click)="operateOnMacro(allMacros[macros.macroBars[group].macros[macroIdx]])"
               [macroRef]="allMacros[macros.macroBars[group].macros[macroIdx]]"
               [isActive]="macros.macroBars[group].macros[macroIdx] === macros.activeMacro"
