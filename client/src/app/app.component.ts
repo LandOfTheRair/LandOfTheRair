@@ -6,8 +6,8 @@ import { environment } from '../environments/environment';
 import { GameService } from './game.service';
 import { SocketService } from './socket.service';
 
-import { IAccount } from '../interfaces';
 import { AccountState } from '../stores';
+import { IAccount } from '../interfaces';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,7 @@ import { AccountState } from '../stores';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  
+
   @Select(AccountState.account) account$: Observable<IAccount>;
 
   constructor(
