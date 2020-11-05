@@ -20,10 +20,6 @@ export class MenuComponent implements OnInit {
     return this.serverAssetHash !== this.assetService.clientAssetHash;
   }
 
-  public get minimumResolutionWarning(): boolean {
-    return (window.innerHeight < 900 || window.innerWidth < 1280);
-  }
-
   public isMenuVisible: boolean;
   public menuItems = [
     {
