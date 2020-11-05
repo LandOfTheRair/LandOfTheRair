@@ -4,7 +4,7 @@ import { IGame } from '../interfaces';
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
-import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame, 
+import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
   QuitGame, SetCurrentTarget, SetMap, SetPlayer } from './actions';
 
 const defaultGame: () => IGame = () => {
