@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
 
 import { environment } from '../environments/environment';
 import { GameService } from './game.service';
 import { SocketService } from './socket.service';
 
-import { AccountState } from '../stores';
 import { IAccount } from '../interfaces';
+import { AccountState } from '../stores';
 
 @Component({
   selector: 'app-root',
