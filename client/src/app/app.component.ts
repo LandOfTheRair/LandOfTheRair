@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+
 import { environment } from '../environments/environment';
 import { GameService } from './game.service';
 import { SocketService } from './socket.service';
+
+import { IAccount } from '../interfaces';
+import { AccountState } from '../stores';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +15,8 @@ import { SocketService } from './socket.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+
+  @Select(AccountState.account) account$: Observable<IAccount>;
 
   constructor(
     public socketService: SocketService,
