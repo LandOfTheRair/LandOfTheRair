@@ -1,11 +1,5 @@
 import { Stat } from '../interfaces';
 
-export function getStatDescription(stat: Stat, value = 1): string {
-  const value5 = Math.floor(value / 5);
-  const array = statValues[stat];
-  return array[Math.min(value5, array.length - 1)];
-}
-
 const statValues = {
   [Stat.STR]: [
     'Puny',
@@ -79,4 +73,10 @@ const statValues = {
     'Attractive',
     'Extremely Charismatic'
   ]
+};
+
+export function getStatDescription(stat: Stat, value = 1): string {
+  const value5 = Math.floor(value / 5);
+  const array = statValues[stat];
+  return array[Math.min(value5, array.length - 1)];
 }

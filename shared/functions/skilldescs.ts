@@ -1,9 +1,5 @@
 import { Skill } from '../interfaces';
 
-export function getSkillDescription(skill: Skill, level = 0): string {
-  return customSkillDescs[skill] ? customSkillDescs[skill][level] : weaponSkillDescs[level];
-}
-
 const weaponSkillDescs = [
   'Unpracticed',
   'Clumsy',
@@ -192,4 +188,8 @@ const customSkillDescs = {
     'Master of Deception',
     'Lord of Deception' // 40
   ]
+};
+
+export function getSkillDescription(skill: Skill, level = 0): string {
+  return customSkillDescs[skill] ? customSkillDescs[skill][level] : weaponSkillDescs[level];
 }
