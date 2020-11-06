@@ -73,6 +73,7 @@ export class WindowComponent implements OnInit {
   @Input() public canHide = false;
   @Input() public canMinimize = false;
   @Input() public willNotHide = false;
+  @Input() public initialHide = false;
 
   @Input() public head: TemplateRef<any>;
   @Input() public body: TemplateRef<any>;
@@ -102,7 +103,7 @@ export class WindowComponent implements OnInit {
   constructor(private store: Store) { }
 
   ngOnInit() {
-    const opts: any = { x: this.defaultX, y: this.defaultY };
+    const opts: any = { x: this.defaultX, y: this.defaultY, hidden: this.initialHide };
     if (this.defaultWidth) opts.width = this.defaultWidth;
     if (this.defaultHeight) opts.height = this.defaultHeight;
 
