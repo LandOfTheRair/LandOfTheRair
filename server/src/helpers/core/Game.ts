@@ -130,28 +130,28 @@ export class Game {
     // fast tick actions
     if (this.ticksElapsed % 2 === 0) {
       timer.startTimer('fastTick');
-      this.playerManager.fastTick();
+      this.playerManager.fastTick(timer);
       timer.stopTimer('fastTick');
     }
 
     // slow tick actions
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer('slowTick');
-      this.playerManager.slowTick();
+      this.playerManager.slowTick(timer);
       timer.stopTimer('slowTick');
     }
 
     // world steady tick actions
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer('steadyTick');
-      this.worldManager.steadyTick();
+      this.worldManager.steadyTick(timer);
       timer.stopTimer('steadyTick');
     }
 
     // map ticks (npcs)
     if (this.ticksElapsed % 20 === 0) {
       timer.startTimer('npcTick');
-      this.worldManager.npcTick();
+      this.worldManager.npcTick(timer);
       timer.stopTimer('npcTick');
     }
 

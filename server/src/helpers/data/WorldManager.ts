@@ -121,7 +121,7 @@ export class WorldManager extends BaseService {
     this.game.logger.log(`Map:Leave`, `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
   }
 
-  public steadyTick() {
+  public steadyTick(timer) {
     this.activeMaps.forEach(activeMap => {
       const state = this.mapStates[activeMap];
       if (!state) {
@@ -129,11 +129,13 @@ export class WorldManager extends BaseService {
         return;
       }
 
+      timer.startTimer(`map-${activeMap}`);
       state.steadyTick();
+      timer.stopTimer(`map-${activeMap}`);
     });
   }
 
-  public npcTick() {
+  public npcTick(timer) {
     this.activeMaps.forEach(activeMap => {
       const state = this.mapStates[activeMap];
       if (!state) {
@@ -141,7 +143,9 @@ export class WorldManager extends BaseService {
         return;
       }
 
+      timer.startTimer(`npc-${activeMap}`);
       state.npcTick();
+      timer.stopTimer(`npc-${activeMap}`);
     });
   }
 
