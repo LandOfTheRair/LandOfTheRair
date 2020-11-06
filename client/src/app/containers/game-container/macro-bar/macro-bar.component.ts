@@ -7,6 +7,7 @@ import { IMacro, IMacroBar } from '../../../../interfaces';
 import { MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
 
 import { GameService } from '../../../game.service';
+import { MacrosService } from '../../../macros.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -16,7 +17,7 @@ import { GameService } from '../../../game.service';
 })
 export class MacroBarComponent implements OnInit, OnDestroy {
 
-  @Select(GameService.currentPlayerMacros) macros$;
+  @Select(MacrosService.currentPlayerMacros) macros$;
   @Select(MacrosState.allMacros) allMacros$: Observable<any>;
 
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);

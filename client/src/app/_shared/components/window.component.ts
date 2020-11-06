@@ -44,10 +44,11 @@ import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from
   styles: [`
   .window {
     position: absolute;
+    z-index: 1000;
   }
 
   .window.active {
-    z-index: 1000;
+    z-index: 1001;
   }
 
   .window.minimized {

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Select, Selector, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IMacro } from '../interfaces';
-import { MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../stores';
+import { IGame, IMacro, IMacroContainer } from '../interfaces';
+import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../stores';
 import { GameService } from './game.service';
 
 @Injectable({
@@ -23,7 +23,30 @@ export class MacrosService {
     commandLine: true, journal: true
   };
 
-  constructor(private store: Store, private gameService: GameService) {}
+  @Selector([GameState, MacrosState])
+  static currentPlayerMacros(gameState: IGame, macroState: IMacroContainer) {
+    const player = gameState.player;
+    if (!player) return null;
+
+    return {
+      activeMacro: macroState.activeMacros?.[player.username]?.[player.charSlot],
+      activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
+      macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
+    };
+  }
+
+  @Selector([GameState, MacrosState, MacrosState.allMacros])
+  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allMacros) {
+    const player = gameState.player;
+    if (!player) return null;
+
+    return allMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
+  }
+
+  constructor(
+    private store: Store,
+    private gameService: GameService
+  ) {}
 
   public init() {
     this.activeWindow$.subscribe(w => this.activeWindow = w);

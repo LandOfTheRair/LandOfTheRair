@@ -4,10 +4,12 @@ import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
 import { isNumber, isString, random, sample } from 'lodash';
+import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BaseService, CoreStat, Currency, Hostility,
   initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable } from '../../interfaces';
 import { CharacterHelper, ItemHelper } from '../character';
+import { DialogActionHelper } from '../character/DialogActionHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
@@ -24,6 +26,7 @@ export class NPCCreator extends BaseService {
     private lootHelper: LootHelper,
     private itemCreator: ItemCreator,
     private itemHelper: ItemHelper,
+    private dialogActionHelper: DialogActionHelper,
     private content: ContentManager
   ) {
     super();
@@ -37,15 +40,15 @@ export class NPCCreator extends BaseService {
   }
 
   // actually make a character from an npc id
-  public createCharacterFromNPC(npcId: string): INPC {
+  public createCharacterFromNPC(npcId: string): INPC & { dialogParser?: Parser } {
     const npc = this.getNPCDefinition(npcId);
 
     return this.createCharacterFromNPCDefinition(npc);
   }
 
   // create character from npc def - also useful for greens
-  public createCharacterFromNPCDefinition(npcDef: INPCDefinition): INPC {
-    const baseChar = initializeNPC({});
+  public createCharacterFromNPCDefinition(npcDef: INPCDefinition): INPC & { dialogParser?: Parser } {
+    const baseChar: INPC & { dialogParser?: Parser } = initializeNPC({});
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
     baseChar.npcId = npcDef.npcId;
@@ -138,6 +141,11 @@ export class NPCCreator extends BaseService {
     this.characterHelper.healToFull(baseChar);
     this.characterHelper.manaToFull(baseChar);
 
+    const parser = this.createNPCDialogParser(baseChar, npcDef);
+    baseChar.dialogParser = parser;
+
+    this.assignNPCBehavior(baseChar, npcDef);
+
     return baseChar;
   }
 
@@ -160,6 +168,20 @@ export class NPCCreator extends BaseService {
     }
 
     return species.human();
+  }
+
+  // elite npcs are random and stronger
+  public makeElite(npc: INPC): void {
+    npc.name = `elite ${npc.name}`;
+    Object.values(CoreStat).forEach(stat => {
+      this.game.characterHelper.gainPermanentStat(npc, stat as CoreStat, Math.round((npc.stats?.[stat] ?? 0) / 3));
+    });
+
+    npc.level += Math.min(1, Math.floor(npc.level / 10));
+    npc.skillOnKill *= 4;
+    npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * 3;
+    npc.giveXp.min *= 4;
+    npc.giveXp.max *= 4;
   }
 
   private shouldLoadContainerItem(itemName: string|any): boolean {
@@ -194,18 +216,34 @@ export class NPCCreator extends BaseService {
     return sample(choices);
   }
 
-  // elite npcs are random and stronger
-  public makeElite(npc: INPC): void {
-    npc.name = `elite ${npc.name}`;
-    Object.values(CoreStat).forEach(stat => {
-      this.game.characterHelper.gainPermanentStat(npc, stat as CoreStat, Math.round((npc.stats?.[stat] ?? 0) / 3));
+  private createNPCDialogParser(npc: INPC, npcDef: INPCDefinition): Parser {
+    const parser = new Parser();
+    if (!npcDef.dialog) return parser;
+
+    Object.keys(npcDef.dialog.keyword || {}).forEach(keyword => {
+      const actions = npcDef.dialog?.keyword[keyword].actions ?? [];
+
+      parser.addCommand(keyword)
+        .setSyntax([keyword])
+        .setLogic(({ env }) => {
+          const retMessages: string[] = [];
+
+          for (const action of actions) {
+            const { messages, shouldContinue } = this.dialogActionHelper.handleAction(action, npc, env.player);
+            retMessages.push(...messages);
+
+            if (!shouldContinue) return retMessages;
+          }
+
+          return retMessages;
+        });
     });
 
-    npc.level += Math.min(1, Math.floor(npc.level / 10));
-    npc.skillOnKill *= 4;
-    npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * 3;
-    npc.giveXp.min *= 4;
-    npc.giveXp.max *= 4;
+    return parser;
+  }
+
+  private assignNPCBehavior(npc: INPC, npcDef: INPCDefinition): void {
+    if (!npcDef.behaviors) return;
   }
 
 }

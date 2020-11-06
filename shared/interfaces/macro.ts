@@ -16,7 +16,6 @@ export interface IMacroCommand {
 }
 
 export interface IMacroSkill extends IMacroCommand {
-  metadata: IMacroMetadata;
   targetsFriendly: boolean;
   requiresLearn: boolean;
 
@@ -60,27 +59,12 @@ export interface IMacro {
   icon: string;
 
   color: string;
-  background: string;
+  bgColor: string;
 
-  isSystem: boolean;
-  requiresLearn: boolean;
-  requiresBaseClass: boolean;
-}
-
-export interface IMacroMetadata {
-  name: string;
-  macro: string;
-
-  icon: string;
-  color: string;
-  bgColor?: string;
-
-  mode: 'autoActivate' | 'lockActivation' | 'clickToTarget';
-  tooltipDesc: string;
-
+  isSystem?: boolean;
+  requiresLearn?: boolean;
   requireBaseClass?: string;
   requireCharacterLevel?: number;
   requireSkillLevel?: number;
-
-  skillTPCost?: number;
 }
+

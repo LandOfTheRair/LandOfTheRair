@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
 import { GameService } from './game.service';
 import { SocketService } from './socket.service';
 
-import { IAccount } from '../interfaces';
+import { IAccount, isSubscribed } from '../interfaces';
 import { AccountState } from '../stores';
 
 @Component({
@@ -34,6 +34,10 @@ export class AppComponent implements OnInit {
       console.log('Do not paste or run any code here unless you really know what you\'re doing!');
       console.log('Doing so could give your account information to someone else, destroy your characters, or worse.');
     }
+  }
+
+  public isSubscribed(account: IAccount): boolean {
+    return isSubscribed(account);
   }
 
 }

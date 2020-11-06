@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Select, Selector } from '@ngxs/store';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IGame, IMacroContainer, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
-import { AccountState, GameState, LobbyState, MacrosState, SettingsState } from '../stores';
+  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
+import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
+import { DialogComponent } from './_shared/components/dialog/dialog.component';
 import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+  private npcDialog: MatDialogRef<DialogComponent>;
+
   private playGame: Subject<boolean> = new Subject();
   public get playGame$() {
     return this.playGame.asObservable();
@@ -35,25 +39,22 @@ export class GameService {
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
   @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
 
-  @Selector([GameState, MacrosState])
-  static currentPlayerMacros(gameState: IGame, macroState: IMacroContainer) {
-    const player = gameState.player;
-    if (!player) return null;
-
-    return {
-      activeMacro: macroState.activeMacros?.[player.username]?.[player.charSlot],
-      activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
-      macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
-    };
-  }
-
-  constructor(private socketService: SocketService) {}
+  constructor(
+    private dialog: MatDialog,
+    private socketService: SocketService
+  ) {}
 
   init() {
     this.inGame$.subscribe(val => {
       if (val) {
         this.playGame.next(true);
         return;
+
+      // close any dialogs when the game closes
+      } else {
+        if (this.npcDialog) {
+          this.npcDialog.close();
+        }
       }
 
       this.playGame.next(false);
@@ -162,5 +163,23 @@ export class GameService {
     if (origin.alignment === Alignment.Evil && compare.alignment === Alignment.Good) return 'hostile';
 
     return 'neutral';
+  }
+
+  public showNPCDialog(dialogInfo: IDialogChatAction) {
+    if (this.npcDialog) return;
+
+    this.npcDialog = this.dialog.open(DialogComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      data: dialogInfo
+    });
+
+    this.npcDialog.afterClosed().subscribe((result) => {
+      this.npcDialog = null;
+
+      if (result && result !== 'noop') {
+        this.sendCommandString(`#${dialogInfo.displayNPCUUID || dialogInfo.displayNPCName}, ${result}`);
+      }
+    });
   }
 }

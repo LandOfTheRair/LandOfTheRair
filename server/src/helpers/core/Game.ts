@@ -6,6 +6,7 @@ import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DirectionHelper, InteractionHelper,
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
+import { DialogActionHelper } from '../character/DialogActionHelper';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -42,6 +43,7 @@ export class Game {
     public subscriptionHelper: SubscriptionHelper,
     public characterRoller: CharacterRoller,
     public itemCreator: ItemCreator,
+    public dialogActionHelper: DialogActionHelper,
     public npcCreator: NPCCreator,
 
     public targettingHelper: TargettingHelper,
@@ -81,7 +83,7 @@ export class Game {
       'profanityHelper',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
-      'itemCreator', 'npcCreator', 'targettingHelper', 'teleportHelper',
+      'itemCreator', 'dialogActionHelper', 'npcCreator', 'targettingHelper', 'teleportHelper',
       'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',

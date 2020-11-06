@@ -19,7 +19,7 @@ export interface IDialogItem {
 // requirements for some dialog options
 export interface IDialogRequirement {
   stat?: string;
-  statValue?: string;
+  statValue?: number;
 }
 
 // different types of actions
@@ -45,14 +45,25 @@ export interface IDialogCheckItemAction {
   checkFailActions: IDialogAction[];
 }
 
+export interface IDialogChatActionOption {
+  text: string;
+  action: string;
+  requirement?: IDialogRequirement;
+}
+
 export interface IDialogChatAction {
+  displayNPCSprite?: number;
+  displayNPCName?: string;
+  displayNPCUUID?: string;
+  maxDistance?: number;
   message: string;
-  options: Array<{ text: string, action: string, requirement?: IDialogRequirement }>;
+  options: IDialogChatActionOption[];
 }
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
-                          & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction;
+                          & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
+                          & { type: IDialogActionType };
 
 export interface IDialogTree {
-  keyword: Record<string, IDialogAction[]>;
+  keyword: Record<string, { actions: IDialogAction[] }>;
 }

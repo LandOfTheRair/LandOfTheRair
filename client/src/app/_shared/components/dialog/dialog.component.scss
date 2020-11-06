@@ -1,0 +1,24 @@
+
+.mat-dialog-title {
+  text-align: center;
+}
+
+app-npc {
+  float: left;
+  margin-right: 16px;
+}
+
+.mat-dialog-content {
+  padding: 0;
+}
+
+.mat-dialog-actions {
+  flex-direction: column;
+  margin-top: 15px;
+  border-top: 1px dotted #B88846;
+
+  button {
+    width: 100%;
+    text-align: left;
+  }
+}

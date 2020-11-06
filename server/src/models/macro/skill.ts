@@ -1,21 +1,11 @@
-import { ICharacter, IMacroMetadata, IMacroSkill } from '../../interfaces';
+import { ICharacter, IMacroSkill } from '../../interfaces';
 import { MacroCommand } from './command';
-
-const DefaultMacroMetadata: IMacroMetadata = {
-  name: 'Unknown',
-  macro: 'echo hello',
-  icon: 'uncertainty',
-  color: '#000',
-  mode: 'autoActivate',
-  tooltipDesc: 'Unknown'
-};
 
 // TODO: https://github.com/LandOfTheRair/landoftherair/blob/master/src/server/base/Skill.ts
 export class MacroSkill extends MacroCommand implements IMacroSkill {
 
   aliases = [];
 
-  metadata = DefaultMacroMetadata;
   targetsFriendly = false;
   requiresLearn = false;
 

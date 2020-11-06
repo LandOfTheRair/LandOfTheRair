@@ -63,17 +63,10 @@ import { environment } from '../../../environments/environment';
 })
 export class IconComponent {
 
-  @Input()
-  public round = false;
-
-  @Input()
-  public name = 'undecided';
-
-  @Input()
-  public bgColor = 'white';
-
-  @Input()
-  public fgColor = '#000';
+  @Input() public round = false;
+  @Input() public name = 'undecided';
+  @Input() public bgColor = 'white';
+  @Input() public fgColor = '#000';
 
   get imgUrl() {
     const name = this.name || 'undecided';

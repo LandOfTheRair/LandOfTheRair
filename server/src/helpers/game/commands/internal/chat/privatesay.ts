@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
+import { IMacroCommandArgs, INPC, IPlayer } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class PrivateSay extends MacroCommand {
@@ -13,6 +13,11 @@ export class PrivateSay extends MacroCommand {
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, aargs[0]);
     if (!target) return this.youDontSeeThatPerson(player);
+
+    if ((target as any).dialogParser) {
+      this.game.dialogActionHelper.handleDialog(player, target as INPC, aargs[1]);
+      return;
+    }
 
     const msg = this.game.profanityHelper.cleanMessage(aargs[1]);
     this.game.messageHelper.sendPrivateMessage(player, target, msg);

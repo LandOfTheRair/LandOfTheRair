@@ -45,6 +45,23 @@ export enum GameServerEvent {
   DoCommand = 'Game:Emit:DoCommand'
 }
 
+export enum GameServerResponse {
+  Error = 'error',
+
+  Login = 'Auth:Response:Login',
+  UserJoin = 'Lobby:Response:UserJoin',
+  UserLeave = 'Lobby:Response:UserLeave',
+
+  Chat = 'Chat:Response:Message',
+
+  CharacterCreateInformation = 'Creator:Response:CharacterSelect',
+  CharacterCreate = 'Creator:Response:CharacterCreate',
+
+  GameLog = 'Game:Response:Message',
+
+  DialogChat = 'Game:Response:NPCDialog'
+}
+
 export enum GameAction {
   Login = '[Account] Log in',
   Logout = '[Account] Log out',
@@ -84,19 +101,4 @@ export enum GameAction {
   SetActiveMacroBars = '[Macro] Set Active Bars',
   SetMacroBar = '[Macro] Set Macro Bars',
   SetDefaultMacros = '[Macros] Set Default Macros/Bars'
-}
-
-export enum GameServerResponse {
-  Error = 'error',
-
-  Login = 'Auth:Response:Login',
-  UserJoin = 'Lobby:Response:UserJoin',
-  UserLeave = 'Lobby:Response:UserLeave',
-
-  Chat = 'Chat:Response:Message',
-
-  CharacterCreateInformation = 'Creator:Response:CharacterSelect',
-  CharacterCreate = 'Creator:Response:CharacterCreate',
-
-  GameLog = 'Game:Response:Message'
 }

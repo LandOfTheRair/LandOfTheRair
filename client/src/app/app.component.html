@@ -17,7 +17,7 @@
 <!-- If we are logged in and not subscribed, suggest checking out a subscription -->
 <div *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)">
   <div class="subscribe-banner" *ngIf="account$ | async as account">
-    <span *ngIf="!account.isSubscribed">
+    <span *ngIf="!isSubscribed(account)">
       You're not currently subscribed. Please consider subscribing or buying silver to help keep the lights on! Want to know what you get for subscribing?
       <br>
       <a href="http://rair.land/docs/subscriber-benefits/" target="_blank">Click this link to see all the awesome perks of subscribing!</a>

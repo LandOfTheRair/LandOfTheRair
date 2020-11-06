@@ -23,7 +23,7 @@ export class MacroComponent {
   constructor() { }
 
   get background() {
-    return this.macroRef?.background ?? '#ccc';
+    return this.macroRef?.bgColor ?? '#ccc';
   }
 
   get foreground() {

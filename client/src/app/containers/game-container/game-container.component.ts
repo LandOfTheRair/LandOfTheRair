@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { GameServerResponse } from '../../../interfaces';
 import { GameService } from '../../game.service';
+import { SocketService } from '../../socket.service';
 
 @Component({
   selector: 'app-game-container',
@@ -8,9 +10,12 @@ import { GameService } from '../../game.service';
 })
 export class GameContainerComponent implements OnInit {
 
-  constructor(public gameService: GameService) { }
+  constructor(private socketService: SocketService, public gameService: GameService) { }
 
   ngOnInit() {
+    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.DialogChat, (data) => {
+      this.gameService.showNPCDialog(data);
+    });
   }
 
 }

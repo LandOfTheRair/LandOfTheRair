@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>{{ data.displayNPCName || 'A Mysterious Voice' }}</h1>
+<div mat-dialog-content>
+
+  <app-npc [sprite]="data.displayNPCSprite"></app-npc>
+
+  {{ data.message || 'I don\'t know what to say.' }}
+  
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button 
+          [mat-dialog-close]="option.action"
+          [color]="option.action !== 'noop' ? 'primary' : ''"
+          *ngFor="let option of data.options">{{ option.text }}</button>
+</div>

@@ -4,11 +4,13 @@ import { Select, Store } from '@ngxs/store';
 import { isNumber, maxBy, sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
-import { Observable, Subscription, timer } from 'rxjs';
-import { Direction, GameOption, ICharacter, IPlayer } from '../../../../interfaces';
-import { GameState, SetCurrentTarget, SettingsState } from '../../../../stores';
+import { combineLatest, Observable, Subscription, timer } from 'rxjs';
+import { first } from 'rxjs/operators';
+import { Direction, GameOption, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
+import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState } from '../../../../stores';
 
 import { GameService } from '../../../game.service';
+import { MacrosService } from '../../../macros.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -22,6 +24,8 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
   @Select(GameState.currentPosition) pos$: Observable<{ x: number, y: number }>;
   @Select(SettingsState.options) options$: Observable<Record<GameOption, number|boolean>>;
+  @Select(SettingsState.currentCommand) command$: Observable<string>;
+  @Select(MacrosService.currentPlayerActiveMacro) macro$: Observable<IMacro>;
 
   charSub: Subscription;
   playerSub: Subscription;
@@ -155,28 +159,30 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   public doAction(char: ICharacter, $event, index) {
     this.store.dispatch(new SetCurrentTarget(char.uuid));
 
-    /*
-    this.pinUUID = npc.uuid;
-    this.pinPos = index;
+    // only select the target if we hit ctrl
+    if ($event.ctrlKey) return;
 
-    if(npc.hostility === 'Never') {
-      this.colyseusGame.sendCommandString(`${npc.uuid}, hello`);
+    combineLatest([this.command$, this.macro$])
+      .pipe(first())
+      .subscribe(([cmd, macro]) => {
+        if ((char as INPC).hostility === Hostility.Never) {
+          this.gameService.sendCommandString(`${char.uuid}, hello`);
 
-    } else if((<any>npc).username && !this.colyseusGame.currentCommand && this.colyseusGame.hostilityLevelFor(npc) !== 'hostile') {
-      this.colyseusGame.currentCommand = `#${npc.uuid}, `;
+        } else if ((char as IPlayer).username && !cmd && this.gameService.hostilityLevelFor(this.player, char) !== 'hostile') {
+          this.store.dispatch(new SetCurrentCommand(`#${(char as IPlayer).name}, `));
 
-    } else if(this.colyseusGame.currentCommand) {
-      this.colyseusGame.sendCommandString(this.colyseusGame.currentCommand, npc.uuid);
-      this.colyseusGame.currentCommand = '';
+        } else if (cmd) {
+          this.gameService.sendCommandString(cmd);
+          this.store.dispatch(new SetCurrentCommand(''));
 
-    } else if(this.macroService.activeMacro) {
-      this.colyseusGame.sendCommandString(this.macroService.activeMacro.macro, npc.uuid);
-    }
-    */
+        } else if (macro) {
+          this.gameService.sendCommandString(macro.macro, char.uuid);
+        }
+
+      });
   }
 
   public doAltAction(char: ICharacter) {
-
   }
 
 }

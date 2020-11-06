@@ -1,0 +1,16 @@
+
+.npc-container {
+  position: relative;
+  height: 64px;
+  width: 64px;
+}
+
+img {
+  width: 64px;
+  height: 64px;
+  object-fit: none;
+  z-index: 550;
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+}

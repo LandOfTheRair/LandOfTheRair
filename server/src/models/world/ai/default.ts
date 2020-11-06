@@ -20,12 +20,16 @@ export class DefaultAIBehavior implements IAI {
   private highestAgro: ICharacter | null;
   private currentTarget: ICharacter | null;
 
+  public get dialogParser() {
+    return this.npc.dialogParser;
+  }
+
   constructor(
     protected game: Game,
     protected map: WorldMap,
     protected mapState: MapState,
     protected spawner: Spawner,
-    protected npc: INPC
+    protected npc: INPC & { dialogParser?: boolean }
   ) {
     this.init();
   }

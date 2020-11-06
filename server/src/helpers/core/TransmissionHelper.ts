@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { generate, observe, Observer, unobserve } from 'fast-json-patch';
 
-import { BaseService, GameAction, IPlayer } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, IPlayer } from '../../interfaces';
 import { Player, PlayerState } from '../../models';
 
 interface PlayerPatch {
@@ -109,6 +109,11 @@ export class TransmissionHelper extends BaseService {
   // send an action to an account. very useful.
   public sendActionToAccount(username: string, action: GameAction, data: any): void {
     this.game.wsCmdHandler.sendToSocket(username, { action, ...data });
+  }
+
+  // send a response to an account. very useful.
+  public sendResponseToAccount(username: string, type: GameServerResponse, data: any): void {
+    this.game.wsCmdHandler.sendToSocket(username, { type, ...data });
   }
 
 }

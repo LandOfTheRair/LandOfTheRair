@@ -18,7 +18,7 @@ export class MessageHelper extends BaseService {
     const account = (player as Player).account;
     if (!account) return;
 
-    this.game.wsCmdHandler.sendToSocket((player as Player).username, {
+    this.game.transmissionHelper.sendResponseToAccount((player as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
       messageTypes,
       message,
