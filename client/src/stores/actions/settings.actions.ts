@@ -82,3 +82,9 @@ export class SetOption {
   static type = GameAction.SetOption;
   constructor(public option: GameOption, public value: boolean|number) {}
 }
+
+// dispatched when the user changes their character view
+export class SetCharacterView {
+  static type = GameAction.SettingsSetCharacterView;
+  constructor(public charMode: 'Equipment'|'Stats'|'Skills') {}
+}

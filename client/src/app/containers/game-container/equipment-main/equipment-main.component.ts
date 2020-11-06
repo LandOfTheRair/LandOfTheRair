@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
-import { GameState } from '../../../../stores';
+import { calculateSkillLevelFromXP, getSkillDescription, getStatDescription,
+  IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../../../interfaces';
+import { GameState, SetCharacterView, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../asset.service';
 
 import { GameService } from '../../../game.service';
@@ -17,6 +19,7 @@ import { GameService } from '../../../game.service';
 })
 export class EquipmentMainComponent implements OnInit, OnDestroy {
 
+  @Select(SettingsState.currentCharView) charView$: Observable<string>;
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   public readonly slots = [
@@ -106,7 +109,38 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
 
   ];
 
+  public readonly stats = [
+    { stat: Stat.STR, icon: 'biceps',      tooltip: 'STR: Affects how likely you are to hit in combat and how much damage you deal' },
+    { stat: Stat.DEX, icon: 'bowman',      tooltip: 'DEX: Affects how likely you are to hit in combat' },
+    { stat: Stat.AGI, icon: 'sprint',      tooltip: 'AGI: Affects how likely you are to dodge physical attacks in combat' },
+    { stat: Stat.INT, icon: 'smart',       tooltip: 'INT: Affects damage for Conjuration damage and Mage level up MP' },
+    { stat: Stat.WIS, icon: 'wisdom',      tooltip: 'WIS: Affects damage and healing for Restoration damage and Healers level up MP' },
+    { stat: Stat.WIL, icon: 'aura',        tooltip: 'WIL: Affects your saving throw for magical attacks' },
+    { stat: Stat.CON, icon: 'glass-heart', tooltip: 'CON: Affects how likely you are to get stunned in combat and level up HP' },
+    { stat: Stat.CHA, icon: 'rose',        tooltip: 'CHA: Affects merchant shop prices' },
+    { stat: Stat.LUK, icon: 'clover',      tooltip: 'LUK: Affects random drop chance and crit chance' }
+  ];
+
+  public readonly skills = [
+    { skill: Skill.Sword,       icon: 'katana',         tooltip: 'Proficiency with one-handed swords' },
+    { skill: Skill.TwoHanded,   icon: 'relic-blade',    tooltip: 'Proficiency with two-handed weapons' },
+    { skill: Skill.Shortsword,  icon: 'gladius',        tooltip: 'Proficiency with shortswords' },
+    { skill: Skill.Staff,       icon: 'bo',             tooltip: 'Proficiency with staves' },
+    { skill: Skill.Polearm,     icon: 'sharp-halberd',  tooltip: 'Proficiency with halberds' },
+    { skill: Skill.Axe,         icon: 'battered-axe',   tooltip: 'Proficiency with axes' },
+    { skill: Skill.Dagger,      icon: 'plain-dagger',   tooltip: 'Proficiency with daggers' },
+    { skill: Skill.Mace,        icon: 'flanged-mace',   tooltip: 'Proficiency with maces' },
+    { skill: Skill.Martial,     icon: 'black-belt',     tooltip: 'Proficiency with martial attacks (fists)' },
+    { skill: Skill.Ranged,      icon: 'high-shot',      tooltip: 'Proficiency with ranged attacks (bows, shortbows, crossbows)' },
+    { skill: Skill.Throwing,    icon: 'thrown-spear',   tooltip: 'Proficiency with thrown attacks' },
+    { skill: Skill.Thievery,    icon: 'two-shadows',    tooltip: 'Proficiency with thievery' },
+    { skill: Skill.Wand,        icon: 'orb-wand',       tooltip: 'Proficiency with wands & totems' },
+    { skill: Skill.Conjuration, icon: 'ankh',           tooltip: 'Proficiency with conjuration magic' },
+    { skill: Skill.Restoration, icon: 'enlightenment',  tooltip: 'Proficiency with restoration magic' },
+  ];
+
   constructor(
+    private store: Store,
     public gameService: GameService,
     public assetService: AssetService
   ) { }
@@ -119,6 +153,26 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };
+  }
+
+  changeView(newView: 'Equipment'|'Stats'|'Skills') {
+    this.store.dispatch(new SetCharacterView(newView));
+  }
+
+  statText(stat: Stat, statValue: number): string {
+    return getStatDescription(stat, statValue);
+  }
+
+  sortedSkills(playerSkills: Record<Skill, number>): Array<any> {
+    return sortBy(this.skills, s => -playerSkills[s.skill]);
+  }
+
+  skillLevel(skillValue: number): number {
+    return calculateSkillLevelFromXP(skillValue);
+  }
+
+  skillText(skill: Skill, skillValue: number): string {
+    return getSkillDescription(skill, this.skillLevel(skillValue));
   }
 
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {

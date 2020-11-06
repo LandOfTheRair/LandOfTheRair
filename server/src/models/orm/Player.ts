@@ -24,6 +24,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) isSubscribed: boolean;
   @Property(PROP_UNSAVED_SHARED()) fov = {};
   @Property(PROP_UNSAVED_SHARED()) agro = {};
+  @Property(PROP_UNSAVED_SHARED()) totalStats: StatBlock;
 
   // temporary props
   @Property(PROP_TEMPORARY()) combatTicks = 0;
@@ -35,7 +36,6 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
-  @Property(PROP_TEMPORARY()) totalStats: StatBlock;
 
   // all characters have these props
   @Property() uuid: string;

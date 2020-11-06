@@ -1,9 +1,9 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, calculateXPRequiredForLevel, ICharacter, Skill } from '../../interfaces';
+import { BaseService, calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
+  calculateXPRequiredForLevel, ICharacter, Skill } from '../../interfaces';
 
-const SKILL_COEFFICIENT = 1.55;
 
 @Injectable()
 export class CalculatorHelper extends BaseService {
@@ -16,18 +16,13 @@ export class CalculatorHelper extends BaseService {
 
   // skill XP needed for a particular skill level
   public calculateSkillXPRequiredForLevel(level: number): number {
-    if (level === 0) return 100;
-
-    return Math.floor(Math.pow(SKILL_COEFFICIENT, level) * 100);
+    return calculateSkillXPRequiredForLevel(level);
   }
 
   // skill level for a certain skill for a character
   public calcSkillLevelForCharacter(character: ICharacter, skill: Skill) {
     const skillValue = character.skills[skill] ?? 0;
-    if (skillValue < 100) return 0;
-
-    const value = Math.log(skillValue / 100) / Math.log(SKILL_COEFFICIENT);
-    return 1 + Math.floor(value);
+    return calculateSkillLevelFromXP(skillValue);
   }
 
   // get the % of current skill to next skill

@@ -79,6 +79,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
       const diffX = testChar.x - this.player.x;
       const diffY = testChar.y - this.player.y;
 
+      if (!fov) return false;
       if (!fov[diffX]) return false;
       if (!fov[diffX][diffY]) return false;
 

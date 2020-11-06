@@ -35,7 +35,7 @@ import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from
         <app-button-close *ngIf="canHide" (click)="hideWindow()"></app-button-close>
       </mat-toolbar>
 
-      <div class="window-body" [class.hidden]="minimized">
+      <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll">
         <ng-template [ngTemplateOutlet]="body"></ng-template>
       </div>
     </div>
@@ -62,6 +62,10 @@ import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from
   .window-header span {
     flex: 1;
   }
+
+  .window-body.can-scroll {
+    overflow-y: auto;
+  }
   `]
 })
 export class WindowComponent implements OnInit {
@@ -74,6 +78,7 @@ export class WindowComponent implements OnInit {
   @Input() public canMinimize = false;
   @Input() public willNotHide = false;
   @Input() public initialHide = false;
+  @Input() public canScroll = false;
 
   @Input() public head: TemplateRef<any>;
   @Input() public body: TemplateRef<any>;

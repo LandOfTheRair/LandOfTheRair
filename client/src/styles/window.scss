@@ -32,3 +32,31 @@
     overflow: hidden;
   }
 }
+
+.window-has-more-buttons {
+  display: flex;
+  justify-content: space-between;
+
+  .window-extra-buttons {
+    margin-right: 50px;
+    display: inline-flex;
+
+    button {
+      max-height: 32px;
+      max-width: 32px;
+      height: 32px;
+      width: 32px;
+      border-radius: 50%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      overflow: hidden;
+
+      &.is-selector:not(.mat-button-disabled) {
+        opacity: 0.5;
+      }
+    }
+  }
+}

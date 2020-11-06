@@ -2,6 +2,7 @@
             [head]="headTemplate"
             [body]="bodyTemplate"
             [canHide]="true"
+            [canScroll]="(charView$ | async) === 'Skills'"
 
             defaultX="926"
             defaultY="4"
@@ -11,10 +12,74 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Equipment
+  <div class="window-has-more-buttons" *ngIf="charView$ | async as charView">
+    <span>
+      My {{ charView }}
+    </span>
+  
+    <span class="window-extra-buttons">
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Equipment'" (click)="changeView('Equipment')">
+        <app-icon name="battle-gear" size="xsmall"></app-icon>
+      </button>
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Stats'" (click)="changeView('Stats')">
+        <app-icon name="biceps" size="xsmall"></app-icon>
+      </button>
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Skills'" (click)="changeView('Skills')">
+        <app-icon name="broadsword" size="xsmall"></app-icon>
+      </button>
+    </span>
+  </div>
 </ng-template>
 
 <ng-template #bodyTemplate>
+  <ng-container *ngIf="charView$ | async as charView">
+
+    <ng-container *ngIf="charView === 'Equipment'">
+      <ng-container *ngTemplateOutlet="viewEquipment"></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="charView === 'Stats'">
+      <ng-container *ngTemplateOutlet="viewStats"></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="charView === 'Skills'">
+      <ng-container *ngTemplateOutlet="viewSkills"></ng-container>
+    </ng-container>
+
+  </ng-container>
+</ng-template>
+
+<ng-template #viewStats>
+  <table class="display-table" *ngIf="player$ | async as player">
+    <tr *ngFor="let stat of stats">
+      <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall"></app-icon></td>
+      <td>{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
+      <td class="number">
+        {{ player.totalStats[stat.stat] }} 
+      </td>
+      <td class="number">
+        <span [class.lower-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
+              [class.higher-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
+              (<span *ngIf="player.totalStats[stat.stat] - player.stats[stat.stat] > 0">+</span>{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
+        </span>
+      </td>
+    </tr>
+  </table>
+</ng-template>
+
+<ng-template #viewSkills>
+  <table class="display-table" *ngIf="player$ | async as player">
+    <tr *ngFor="let skill of sortedSkills(player.skills)">
+      <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-icon [name]="skill.icon" size="xsmall"></app-icon></td>
+      <td>{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
+      <td class="number">
+        {{ skillLevel(player.skills[skill.skill]) }} 
+      </td>
+    </tr>
+  </table>
+</ng-template>
+
+<ng-template #viewEquipment>
   <div class="item-container" droppable dropScope="Equipment" *ngIf="player$ | async as player">
     <div class="item-slot" *ngFor="let slot of slots" [class.item-background]="slot.template || slot.slot" [dropScope]="slot.slot" droppable>
 

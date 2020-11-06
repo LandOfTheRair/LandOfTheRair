@@ -24,5 +24,6 @@ export interface ISettings {
   logMode: 'All'|'General'|'Combat';
   currentCommand: string;
   commandHistory: string[];
+  characterView: 'Equipment'|'Stats'|'Skills';
   options: Record<GameOption, number|boolean>;
 }

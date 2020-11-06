@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameOption, ISettings } from '../interfaces';
 import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
-  RemoveAccount, SetActiveWindow, SetAssetHash, SetCharSlot, SetChatMode,
+  RemoveAccount, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
   SetCurrentCommand, SetLogMode, SetOption, ShowWindow, UpdateWindowPosition } from './actions';
 
 const defaultSettings: () => ISettings = () => {
@@ -18,6 +18,7 @@ const defaultSettings: () => ISettings = () => {
     logMode: 'All',
     currentCommand: '',
     commandHistory: [],
+    characterView: 'Equipment',
     options: {
       [GameOption.PinLastTarget]: false,
       [GameOption.ShouldSortDistance]: false,
@@ -32,6 +33,11 @@ const defaultSettings: () => ISettings = () => {
 })
 @Injectable()
 export class SettingsState implements NgxsOnInit {
+
+  @Selector()
+  static currentCharView(state: ISettings) {
+    return state.characterView;
+  }
 
   @Selector()
   static currentLogMode(state: ISettings) {
@@ -188,6 +194,11 @@ export class SettingsState implements NgxsOnInit {
   @Action(SetLogMode)
   setLogMode(ctx: StateContext<ISettings>, { logMode }: SetLogMode) {
     ctx.patchState({ logMode });
+  }
+
+  @Action(SetCharacterView)
+  setCharView(ctx: StateContext<ISettings>, { charMode }: SetCharacterView) {
+    ctx.patchState({ characterView: charMode });
   }
 
   @Action(LogCurrentCommandInHistory)
