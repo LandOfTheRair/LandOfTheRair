@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
-import { BaseService, ICharacter } from '../../interfaces';
+import { BaseService, ICharacter, ObjectType } from '../../interfaces';
 import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
 
 @Injectable()
@@ -70,6 +70,20 @@ export class WorldManager extends BaseService {
 
   public getMapStateForCharacter(character: ICharacter): MapState {
     return this.mapStates[character.map];
+  }
+
+  // if a player logs into a closed door, send them to the respawn point
+  public checkPlayerForDoorsBeforeJoiningGame(player: Player): void {
+    const { x, y } = player;
+
+    const { map, state } = this.getMap(player.map);
+    const door = map.getInteractableOfTypeAt(x, y, ObjectType.Door);
+
+    if (door && !state.isDoorOpen(door.id)) {
+      player.x = map.respawnPoint.x;
+      player.y = map.respawnPoint.y;
+      player.map = map.respawnPoint.map;
+    }
   }
 
   public joinMap(player: Player) {

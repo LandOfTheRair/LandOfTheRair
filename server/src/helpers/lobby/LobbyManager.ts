@@ -76,6 +76,7 @@ export class LobbyManager extends BaseService {
   public accountEnterGame(account: Account, player: Player): void {
     this.state.usersInGame[account.username] = true;
 
+    this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
     this.playerManager.addPlayerToGame(player);
     this.worldManager.joinMap(player);
   }

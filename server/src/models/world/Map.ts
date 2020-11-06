@@ -295,7 +295,7 @@ export class WorldMap {
 
   public getInteractableOfTypeAt(x: number, y: number, type: ObjectType): null | any {
     const obj = this.getInteractableAt(x, y);
-    return obj.type === type ? obj : null;
+    return obj?.type === type ? obj : null;
   }
 
   public getInteractableOrDenseObject(x: number, y: number) {
@@ -308,7 +308,7 @@ export class WorldMap {
 
   checkIfDenseObjectAt(x: number, y: number): boolean {
     const object = this.getInteractableOrDenseObject(x, y);
-    return object && object.density && object.type !== ObjectType.Door;
+    return object?.density && object?.type !== ObjectType.Door;
   }
 
   checkIfActualWallAt(x: number, y: number, shouldAirCountForWall = true): boolean {
