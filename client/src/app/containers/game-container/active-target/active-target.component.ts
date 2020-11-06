@@ -25,8 +25,21 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   playerSub: Subscription;
   targetSub: Subscription;
 
+  public get isInFOV(): boolean {
+    if (!this.player || !this.target) return false;
+
+    const diffX = this.target.x - this.player.x;
+    const diffY = this.target.y - this.player.y;
+
+    if (!this.player.fov) return false;
+    if (!this.player.fov[diffX]) return false;
+    if (!this.player.fov[diffX][diffY]) return false;
+
+    return true;
+  }
+
   public get shouldShow() {
-    return this.player && this.target && this.target.hp.__current > 0; // TODO: can see stealth here
+    return this.player && this.target && this.target.hp.__current > 0 && !this.isInFOV; // TODO: can see stealth here
   }
 
   public get targetHealth() {

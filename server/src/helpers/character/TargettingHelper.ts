@@ -26,16 +26,9 @@ export class TargettingHelper extends BaseService {
     if (ref.fov && useSight) {
       const offsetX = target.x - ref.x;
       const offsetY = target.y - ref.y;
-      return this.canSee(ref, offsetX, offsetY);
+      return this.visibilityHelper.canSee(ref, offsetX, offsetY);
     }
 
-    return true;
-  }
-
-  public canSee(ref: ICharacter, xOffset, yOffset) {
-    if (!ref.fov) return false;
-    if (!ref.fov[xOffset]) return false;
-    if (!ref.fov[xOffset][yOffset]) return false;
     return true;
   }
 
