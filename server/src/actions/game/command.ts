@@ -13,5 +13,7 @@ export class CommandAction extends ServerAction {
     if (!player) throw new Error('Player ref is not available.');
 
     game.commandHandler.doCommand(player, data);
+
+    return {};
   }
 }

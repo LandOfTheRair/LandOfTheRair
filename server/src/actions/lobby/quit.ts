@@ -20,5 +20,7 @@ export class QuitAction extends ServerAction {
     emit({
       action: GameAction.GameQuit
     });
+
+    return {};
   }
 }

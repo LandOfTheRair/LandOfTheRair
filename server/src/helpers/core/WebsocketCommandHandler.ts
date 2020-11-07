@@ -1,7 +1,7 @@
 
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
-import { GameServerEvent, IServerAction } from '../../interfaces';
+import { GameServerEvent, GameServerResponse, IServerAction } from '../../interfaces';
 import { Game } from './Game';
 
 export class WebsocketCommandHandler {
@@ -48,7 +48,23 @@ export class WebsocketCommandHandler {
       data.account = account;
     }
 
-    await action.act(this.game, { broadcast, emit, register, unregister }, data);
+    const res = await action.act(this.game, { broadcast, emit, register, unregister }, data);
+    if (res && res.message) {
+
+      if (res.wasSuccess) {
+        emit({
+          type: GameServerResponse.SendNotification,
+          message: res.message
+        });
+
+      } else {
+        emit({
+          type: GameServerResponse.Error,
+          error: res.message
+        });
+      }
+
+    }
   }
 
   public broadcast(data): void {

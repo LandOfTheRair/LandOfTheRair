@@ -20,7 +20,7 @@ export interface IServerAction {
   requiresLoggedIn: boolean;
 
   validate(args?): boolean;
-  act(game, { broadcast, emit }: WebsocketCallbacks, args?): Promise<void>;
+  act(game, { broadcast, emit }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean, message?: string }>;
 }
 
 export enum GameServerEvent {

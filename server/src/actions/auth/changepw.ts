@@ -7,30 +7,23 @@ export class ChangePasswordAction extends ServerAction {
   requiredKeys = ['newPassword', 'oldPassword'];
   requiresLoggedIn = true;
 
-  async act(game: Game, { emit }, data) {
-
-    if (!data.oldPassword) throw new Error('Must specify old password.');
-
-    if (!data.newPassword) throw new Error('Must specify password.');
-    if (data.newPassword.length < 11) throw new Error('Password must be >10 characters.');
-    if (data.newPassword.length > 256) throw new Error('Password must be less than <256 characters.');
+  async act(game: Game, callbacks, data) {
+    if (data.newPassword.length < 11)  return { wasSuccess: false, message: 'Password must be >10 characters.' };
+    if (data.newPassword.length > 256) return { wasSuccess: false, message: 'Password must be less than <256 characters.' };
 
     const doesPasswordMatch = await game.accountDB.checkPasswordString(data.account, data.oldPassword);
-    if (!doesPasswordMatch) throw new Error('Old password is not correct.');
+    if (!doesPasswordMatch) return { wasSuccess: false, message: 'Old password is not correct.' };
 
     try {
 
       await game.accountDB.changePassword(data.account, data.newPassword);
       game.logger.log('Auth:ChangePassword', `${data.username} changed password.`);
 
-      emit({
-        type: GameServerResponse.SendNotification,
-        message: `Successfully changed your password.`
-      });
-
     } catch (e) {
       game.logger.error('ChangePasswordAction', e);
       throw new Error('Could not change password?');
     }
+
+    return { wasSuccess: true, message: 'Successfully changed your password.' };
   }
 }

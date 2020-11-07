@@ -10,17 +10,22 @@ export class ChangeDiscordTagAction extends ServerAction {
   async act(game: Game, { emit }, data) {
 
     try {
-      await game.accountDB.changeDiscordTag(data.account, data.discordTag);
-      game.logger.log('Auth:ChangeDiscordTag', `${data.username} changed Discord tag to ${data.discordTag}.`);
+      try {
+        await game.accountDB.changeDiscordTag(data.account, data.discordTag);
+      } catch {
+        return { wasSuccess: false, message: 'That Discord tag is already in use.' };
+      }
 
-      emit({
-        type: GameServerResponse.SendNotification,
-        message: `Successfully changed your Discord tag.`
-      });
+      game.logger.log('Auth:ChangeDiscordTag', `${data.username} changed Discord tag to ${data.discordTag}.`);
 
     } catch (e) {
       game.logger.error('ChangeDiscordTag', e);
-      throw new Error('Could not change discord tag?');
+      throw new Error('Could not change Discord tag?');
     }
+
+    return {
+      wasSuccess: true,
+      message: `Successfully changed your Discord tag.`
+    };
   }
 }
