@@ -4,8 +4,8 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
 
 import { ChatMode } from '../../../../interfaces';
-import { HideWindow, LogCurrentCommandInHistory, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
-import { GameService } from '../../../game.service';
+import { HideWindow, LogCurrentCommandInHistory, SetActiveWindow, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
+import { GameService } from '../../../services/game.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -53,6 +53,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     this.command$ = this.gameService.currentCommand$.subscribe(command => {
       this.currentCommand = command;
       this.store.dispatch(new ShowWindow('commandLine'));
+      this.store.dispatch(new SetActiveWindow('commandLine'));
       this.focusInput();
     });
 
@@ -88,6 +89,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       if (ev.key !== 'Enter') return;
 
       this.store.dispatch(new ShowWindow('commandLine'));
+      this.store.dispatch(new SetActiveWindow('commandLine'));
 
       this.focusInput();
     };

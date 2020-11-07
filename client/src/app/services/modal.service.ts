@@ -3,12 +3,13 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
-import { IDialogChatAction } from '../interfaces';
-import { GameState } from '../stores';
+import { IDialogChatAction } from '../../interfaces';
+import { GameState } from '../../stores';
 
-import { AlertComponent } from './_shared/modals/alert/alert.component';
-import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
-import { DialogComponent } from './_shared/modals/dialog/dialog.component';
+import { AboutComponent } from '../_shared/modals/about/about.component';
+import { AlertComponent } from '../_shared/modals/alert/alert.component';
+import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
+import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -62,5 +63,12 @@ export class ModalService {
     });
 
     return this.npcDialogRef.afterClosed();
+  }
+
+  public showAbout() {
+    this.dialog.open(AboutComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
   }
 }

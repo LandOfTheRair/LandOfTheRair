@@ -11,9 +11,9 @@ import { Store } from '@ngxs/store';
 import { StateReset } from 'ngxs-reset-plugin';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../environments/environment';
-import { GameServerEvent, GameServerResponse } from '../interfaces';
-import { AccountState, GameState, Logout } from '../stores';
+import { environment } from '../../environments/environment';
+import { GameServerEvent, GameServerResponse } from '../../interfaces';
+import { AccountState, GameState, Logout } from '../../stores';
 import { LoggerService } from './logger.service';
 
 interface WebsocketMessage {

@@ -19,12 +19,12 @@ import { SetActiveWindow, UpdateWindowPosition } from '../stores';
 
 import { AppComponent } from './app.component';
 
-import { AssetService } from './asset.service';
-import { GameService } from './game.service';
-import { AlertErrorHandler } from './logger.service';
-import { MacrosService } from './macros.service';
-import { ModalService } from './modal.service';
-import { SocketService } from './socket.service';
+import { AssetService } from './services/asset.service';
+import { GameService } from './services/game.service';
+import { AlertErrorHandler } from './services/logger.service';
+import { MacrosService } from './services/macros.service';
+import { ModalService } from './services/modal.service';
+import { SocketService } from './services/socket.service';
 
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);

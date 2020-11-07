@@ -6,10 +6,11 @@ import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
 import { Logout, ResetWindowPositions } from '../../stores';
-import { AssetService } from '../asset.service';
-import { GameService } from '../game.service';
-import { ModalService } from '../modal.service';
-import { SocketService } from '../socket.service';
+
+import { AssetService } from '../services/asset.service';
+import { GameService } from '../services/game.service';
+import { ModalService } from '../services/modal.service';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-menu',
@@ -65,7 +66,7 @@ export class MenuComponent implements OnInit {
         {
           name: 'About',
           icon: 'info',
-          handler: () => {},
+          handler: () => this.modalService.showAbout(),
           borderTop: true
         }
       ]
@@ -85,11 +86,13 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Party',
+          disabled: true,
           visibleIf: this.gameService.inGame$,
           handler: () => {}
         },
         {
           name: 'Traits',
+          disabled: true,
           visibleIf: this.gameService.inGame$,
           handler: () => {}
         },

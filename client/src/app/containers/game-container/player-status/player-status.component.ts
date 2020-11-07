@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
-import { GameService } from '../../../game.service';
+import { GameService } from '../../../services/game.service';
 
 import { calculateXPRequiredForLevel } from '../../../../interfaces';
 

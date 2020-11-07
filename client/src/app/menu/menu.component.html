@@ -45,6 +45,7 @@
       <button mat-menu-item
               [matMenuTriggerFor]="subMenu"
               [class.hidden]="!menuItem.name"
+              [disabled]="menuItem.disabled"
               *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
               (click)="menuItem.handler()">
         {{ menuItem.name }}
@@ -56,6 +57,7 @@
 
           <button mat-menu-item
                   (click)="childItem.handler()"
+                  [disabled]="childItem.disabled"
                   *ngIf="!childItem.visibleIf || (childItem.visibleIf | async)">
                   <mat-icon *ngIf="childItem.icon">{{ childItem.icon }}</mat-icon>
                   <span>{{ childItem.name }}</span>
@@ -69,6 +71,7 @@
 
       <button mat-menu-item
               [class.hidden]="!menuItem.name"
+              [disabled]="menuItem.disabled"
               *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
               (click)="menuItem.handler()">
         {{ menuItem.name }}
@@ -76,18 +79,3 @@
     </ng-container>
   </ng-container>
 </mat-menu>
-
-<!--
-<div *ngIf="isMenuVisible" class="menu-container">
-  <ng-container *ngFor="let menuItem of menuItems; let i = index">
-    <button mat-mini-fab 
-            class="menu-item" 
-            [class.hidden]="!menuItem.name"
-            *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
-            (click)="menuItem.handler()"
-            [style.top]="(i * 50) + 'px'">
-      {{ menuItem.name }}
-    </button>
-  </ng-container>
-</div>
--->

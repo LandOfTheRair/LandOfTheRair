@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
-import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
+  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
 
 import { ModalService } from './modal.service';
 import { SocketService } from './socket.service';

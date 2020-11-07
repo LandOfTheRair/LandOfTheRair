@@ -15,6 +15,7 @@ import { LifeHeartComponent } from './_shared/components/life-heart.component';
 import { MacroComponent } from './_shared/components/macro/macro.component';
 import { NPCComponent } from './_shared/components/npc/npc.component';
 import { WindowComponent } from './_shared/components/window.component';
+import { AboutComponent } from './_shared/modals/about/about.component';
 import { AlertComponent } from './_shared/modals/alert/alert.component';
 
 import { DraggableDirective } from './_shared/directives/dragdrop/draggable.directive';
@@ -50,7 +51,7 @@ import { OptionsContainerComponent } from './containers/options-container/option
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent
+  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent
 ];
 
 const gameComponents = [

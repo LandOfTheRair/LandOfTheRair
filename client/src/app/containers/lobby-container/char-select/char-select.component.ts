@@ -3,9 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { GameServerEvent, ICharacterCreateInfo } from '../../../../interfaces';
 import { SetActiveWindow, SetCharSlot } from '../../../../stores';
-import { AssetService } from '../../../asset.service';
-import { GameService } from '../../../game.service';
-import { SocketService } from '../../../socket.service';
+import { AssetService } from '../../../services/asset.service';
+import { GameService } from '../../../services/game.service';
+import { SocketService } from '../../../services/socket.service';
 import { CharCreateComponent } from '../char-create/char-create.component';
 
 @Component({

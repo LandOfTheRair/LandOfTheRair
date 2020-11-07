@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 import { IMacro, IMacroBar } from '../../../../interfaces';
 import { MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
 
-import { GameService } from '../../../game.service';
-import { MacrosService } from '../../../macros.service';
+import { GameService } from '../../../services/game.service';
+import { MacrosService } from '../../../services/macros.service';
 
 @AutoUnsubscribe()
 @Component({
