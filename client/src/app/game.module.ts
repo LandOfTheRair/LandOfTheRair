@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { UIModule } from './ui.module';
+
 import { AlertComponent } from './_shared/components/alert/alert.component';
 import { ButtonCloseComponent } from './_shared/components/button-close.component';
 import { ButtonMinimizeComponent } from './_shared/components/button-minimize.component';
@@ -42,7 +44,6 @@ import { CharSelectComponent } from './containers/lobby-container/char-select/ch
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { OptionsContainerComponent } from './containers/options-container/options-container.component';
-import { UIModule } from './ui.module';
 
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
