@@ -21,7 +21,7 @@ export interface ISettings {
   wasKicked: boolean;
   assetHash: string;
   chatMode: ChatMode;
-  logMode: 'All'|'General'|'Combat';
+  logMode: 'All'|'General'|'Combat'|'NPC';
   currentCommand: string;
   commandHistory: string[];
   characterView: 'Equipment'|'Stats'|'Skills';

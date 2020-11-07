@@ -62,7 +62,7 @@ export class SetChatMode {
 // dispatched when the user changes their in game log mode
 export class SetLogMode {
   static type = GameAction.SettingsSetLogMode;
-  constructor(public logMode: 'All'|'General'|'Combat') {}
+  constructor(public logMode: 'All'|'General'|'Combat'|'NPC') {}
 }
 
 // dispatched when a command happens, and is logged in history

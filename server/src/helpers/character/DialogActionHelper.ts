@@ -42,21 +42,23 @@ export class DialogActionHelper extends BaseService {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
-    const formattedChat: Partial<IDialogChatAction> = {};
-    formattedChat.message = template(action.message)(player);
-    formattedChat.displayNPCName = npc.name;
-    formattedChat.displayNPCSprite = npc.sprite;
-    formattedChat.displayNPCUUID = npc.uuid;
-    formattedChat.options = action.options
-      .map(x => {
-        if (x.requirement && !this.meetsRequirement(player, x.requirement)) return null;
-        return {
-          text: template(x.text)(player),
-          action: x.action
-        };
-      })
-      .filter(Boolean) as IDialogChatActionOption[];
+    const formattedChat: IDialogChatAction = {
+      message: template(action.message)(player),
+      displayNPCName: npc.name,
+      displayNPCSprite: npc.sprite,
+      displayNPCUUID: npc.uuid,
+      options: action.options
+        .map(x => {
+          if (x.requirement && !this.meetsRequirement(player, x.requirement)) return null;
+          return {
+            text: template(x.text)(player),
+            action: x.action
+          };
+        })
+        .filter(Boolean) as IDialogChatActionOption[]
+    };
 
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: formattedChat.message }, [MessageType.NPCChatter]);
     this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
     return { messages: [], shouldContinue: true };
