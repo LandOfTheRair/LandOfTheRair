@@ -44,7 +44,7 @@
     "lootastic": "^1.1.2",
     "mongodb": "^3.3.2",
     "mrpas": "^2.0.0",
-    "muud": "^1.0.4",
+    "muud": "^1.0.5",
     "pathfinding": "0.4.18",
     "process-stats": "^3.5.4",
     "rbush": "^3.0.1",
