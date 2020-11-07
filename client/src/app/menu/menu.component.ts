@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
 import { timer } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
 import { Logout } from '../../stores';
@@ -31,22 +32,92 @@ export class MenuComponent implements OnInit {
   public menuItems = [
     {
       name: 'Game',
-      handler: () => {}
+      handler: () => {},
+      children: [
+        {
+          name: 'My Account',
+          icon: 'account_circle',
+          handler: () => {}
+        },
+        {
+          name: 'Current Events',
+          icon: 'event',
+          handler: () => {}
+        },
+        {
+          name: 'Manage Silver',
+          icon: 'account_balance',
+          visibleIf: this.gameService.inGame$.pipe(map(x => !x)),
+          handler: () => {}
+        },
+        {
+          name: 'Leaderboard',
+          icon: 'open_in_new',
+          handler: () => window.open('https://global.rair.land', '_blank'),
+          borderTop: true,
+        },
+        {
+          name: 'Help',
+          icon: 'open_in_new',
+          handler: () => window.open('https://rair.land/docs/home', '_blank'),
+        },
+        {
+          name: 'About',
+          icon: 'info',
+          handler: () => {},
+          borderTop: true
+        }
+      ]
     },
     {
       name: 'Windows',
-      handler: () => {}
+      handler: () => {},
+      children: [
+        {
+          name: 'Journal',
+          handler: () => {}
+        },
+        {
+          name: 'Command Line',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Party',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Traits',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Reset Window Positions',
+          borderTop: true,
+          handler: () => {}
+        },
+      ]
+    },
+    {
+      name: 'Macros',
+      visibleIf: this.gameService.inGame$,
+      handler: () => {},
+      children: [
+        {
+          name: 'Macro Editor',
+          handler: () => {}
+        },
+        {
+          name: 'Macro Bar Editor',
+          handler: () => {}
+        },
+      ]
     },
     {
       name: 'Options',
       handler: () => {}
     },
-    {
-      name: 'Macros',
-      visibleIf: this.gameService.inGame$,
-      handler: () => {}
-    },
-    { },
     {
       name: 'Quit',
       visibleIf: this.gameService.inGame$,

@@ -36,16 +36,8 @@
   top: 25px;
 }
 
-.menu-container {
-  position: fixed;
-  top: 70px;
-
-  .menu-item {
-    font-size: 10px;
-    position: absolute;
-
-    left: 23px;
-
-    border: 1px solid #fff;
-  }
+.mat-menu-item mat-icon {
+  font-size: 16px;
+  margin-top: 3px;
+  margin-right: 8px;
 }
