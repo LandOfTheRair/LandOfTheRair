@@ -31,6 +31,8 @@ import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
 import { AccountComponent } from './_shared/modals/account/account.component';
+import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
+import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
@@ -52,7 +54,8 @@ import { OptionsContainerComponent } from './containers/options-container/option
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent
+  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
+  ManageSilverComponent, CurrentEventsComponent
 ];
 
 const gameComponents = [

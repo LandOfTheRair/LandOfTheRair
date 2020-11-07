@@ -44,13 +44,13 @@ export class MenuComponent implements OnInit {
         {
           name: 'Current Events',
           icon: 'event',
-          handler: () => {}
+          handler: () => this.modalService.showCurrentEvents()
         },
         {
           name: 'Manage Silver',
           icon: 'account_balance',
           visibleIf: this.gameService.inGame$.pipe(map(x => !x)),
-          handler: () => {}
+          handler: () => this.modalService.showManageSilver()
         },
         {
           name: 'Leaderboard',

@@ -11,7 +11,9 @@ import { AboutComponent } from '../_shared/modals/about/about.component';
 import { AccountComponent } from '../_shared/modals/account/account.component';
 import { AlertComponent } from '../_shared/modals/alert/alert.component';
 import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
+import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
+import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -103,6 +105,20 @@ export class ModalService {
 
   public showAccount() {
     this.dialog.open(AccountComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showCurrentEvents() {
+    this.dialog.open(CurrentEventsComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showManageSilver() {
+    this.dialog.open(ManageSilverComponent, {
       width: '650px',
       panelClass: 'fancy'
     });
