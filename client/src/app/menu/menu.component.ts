@@ -5,7 +5,7 @@ import { timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
-import { Logout, ResetWindowPositions } from '../../stores';
+import { Logout, ResetWindowPositions, ShowWindow } from '../../stores';
 
 import { AssetService } from '../services/asset.service';
 import { GameService } from '../services/game.service';
@@ -82,34 +82,34 @@ export class MenuComponent implements OnInit {
         {
           name: 'Command Line',
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('commandLine'))
         },
         {
           name: 'Character',
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('equipmentMain'))
         },
         {
           name: 'Belt',
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('inventoryBelt'))
         },
         {
           name: 'Sack',
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('inventorySack'))
         },
         {
           name: 'Party',
           disabled: true,
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('party'))
         },
         {
           name: 'Traits',
           disabled: true,
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('traits'))
         },
         {
           name: 'Reset Window Positions',
