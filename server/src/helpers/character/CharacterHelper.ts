@@ -54,7 +54,7 @@ export class CharacterHelper extends BaseService {
   }
 
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
-    char.items.equipment[ItemSlot.RightHand] = item;
+    char.items.equipment[ItemSlot.LeftHand] = item;
   }
 
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
