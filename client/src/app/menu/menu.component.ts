@@ -128,6 +128,7 @@ export class MenuComponent implements OnInit {
     },
     {
       name: 'Log Out',
+      borderTop: true,
       handler: () => {
         this.toggleMenu();
         this.socketService.emit(GameServerEvent.QuitGame);

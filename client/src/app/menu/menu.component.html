@@ -40,6 +40,8 @@
 <mat-menu #menu="matMenu">
   <ng-container *ngFor="let menuItem of menuItems; let i = index">
     <ng-container *ngIf="menuItem.children">
+      <hr *ngIf="menuItem.borderTop">
+      
       <button mat-menu-item
               [matMenuTriggerFor]="subMenu"
               [class.hidden]="!menuItem.name"
@@ -63,6 +65,8 @@
     </ng-container>
 
     <ng-container *ngIf="!menuItem.children">
+      <hr *ngIf="menuItem.borderTop">
+
       <button mat-menu-item
               [class.hidden]="!menuItem.name"
               *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"

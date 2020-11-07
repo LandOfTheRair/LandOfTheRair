@@ -1,6 +1,5 @@
-import { NgModule } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -20,21 +19,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MdePopoverModule } from '@material-extended/mde';
 
-import { AlertComponent } from './_shared/components/alert/alert.component';
-import { ButtonCloseComponent } from './_shared/components/button-close.component';
-import { ButtonMinimizeComponent } from './_shared/components/button-minimize.component';
-import { DialogComponent } from './_shared/components/dialog/dialog.component';
-import { EffectIconComponent } from './_shared/components/effect-icon.component';
-import { IconComponent } from './_shared/components/icon.component';
-import { NPCComponent } from './_shared/components/npc/npc.component';
-import { WindowComponent } from './_shared/components/window.component';
-
-import { DraggableDirective } from './_shared/directives/dragdrop/draggable.directive';
-import { DroppableDirective } from './_shared/directives/dragdrop/droppable.directive';
-import { DraggableDirective as DraggableWindowDirective } from './_shared/directives/draggable-window.directive';
-
-import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
-
 const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
@@ -44,16 +28,9 @@ const matImports = [
   MdePopoverModule
 ];
 
-const declarations = [
-  AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
-  WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective
-];
-
-
 @NgModule({
-  declarations: [...declarations],
+  declarations: [],
   imports: [CommonModule, ...matImports],
-  exports: [...matImports, ...declarations]
+  exports: [...matImports]
 })
-export class SharedModule { }
+export class UIModule { }
