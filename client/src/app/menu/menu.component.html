@@ -29,6 +29,12 @@
     </mat-chip>
   </mat-chip-list>
 
+  <mat-chip-list *ngIf="socketService.isConnected && assetService.assetsLoaded && !assetMismatchWarning && !minimumResolutionWarning">
+    <mat-chip color="tertiary" selected (click)="showDailyResetMessage = !showDailyResetMessage">
+      <mat-icon [class.m-r-10]="showDailyResetMessage">access_time</mat-icon> <span *ngIf="showDailyResetMessage">Daily Reset in {{ timestampDisplay }}</span>
+    </mat-chip>
+  </mat-chip-list>
+
 </div>
 
 <div *ngIf="isMenuVisible" class="menu-container">
