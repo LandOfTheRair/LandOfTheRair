@@ -50,7 +50,7 @@ import { CharCreateComponent } from './containers/lobby-container/char-create/ch
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
-import { OptionsContainerComponent } from './containers/options-container/options-container.component';
+import { JournalComponent } from './journal/journal.component';
 
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
@@ -64,7 +64,6 @@ const gameComponents = [
   MenuComponent,
   GameContainerComponent,
   LobbyContainerComponent,
-  OptionsContainerComponent,
   LobbyComponent,
   CharSelectComponent,
   CharCreateComponent,
@@ -86,7 +85,9 @@ const gameComponents = [
 
   EquipmentMainComponent,
   PlayerStatusComponent,
-  CharacterListComponent
+  CharacterListComponent,
+
+  JournalComponent
 ];
 
 

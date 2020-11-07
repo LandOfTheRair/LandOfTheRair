@@ -1,0 +1,22 @@
+<app-window windowName="journal"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+
+            defaultX="48"
+            defaultY="48"
+            defaultWidth="350"
+            defaultHeight="530"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Personal Journal
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="journal">
+    <textarea class="journal" [(ngModel)]="journal" (keyup)="updateJournal()" placeholder="Enter the details of your journal here..."></textarea>
+  </div>
+</ng-template>

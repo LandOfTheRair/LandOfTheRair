@@ -105,5 +105,7 @@ export enum GameAction {
   SetActiveMacro = '[Macro] Set Active Macro',
   SetActiveMacroBars = '[Macro] Set Active Bars',
   SetMacroBar = '[Macro] Set Macro Bars',
-  SetDefaultMacros = '[Macros] Set Default Macros/Bars'
+  SetDefaultMacros = '[Macros] Set Default Macros/Bars',
+
+  UpdateJournal = '[Journal] Update Journal'
 }

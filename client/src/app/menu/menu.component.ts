@@ -77,7 +77,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           name: 'Journal',
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('journal'))
         },
         {
           name: 'Command Line',
@@ -145,7 +145,7 @@ export class MenuComponent implements OnInit {
       handler: () => this.modalService.showOptions()
     },
     {
-      name: 'Quit',
+      name: 'Exit To Lobby',
       visibleIf: this.gameService.inGame$,
       handler: () => {
         this.modalService.confirm('Exit Game', 'Are you sure you want to exit to lobby?')

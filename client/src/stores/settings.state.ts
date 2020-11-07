@@ -181,7 +181,7 @@ export class SettingsState implements NgxsOnInit {
       windows[windowName] = Object.assign({}, windows[windowName], { hidden: false });
     }
 
-    ctx.patchState({ windows });
+    ctx.patchState({ windows, activeWindow: windowName });
   }
 
   @Action(HideWindow)

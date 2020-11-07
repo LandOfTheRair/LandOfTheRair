@@ -12,7 +12,7 @@
 
 <app-game-container></app-game-container>
 
-<app-options-container></app-options-container>
+<app-journal *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)"></app-journal>
 
 <!-- If we are logged in and not subscribed, suggest checking out a subscription -->
 <div *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)">
