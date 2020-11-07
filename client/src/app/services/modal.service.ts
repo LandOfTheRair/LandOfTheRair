@@ -48,15 +48,15 @@ export class ModalService {
 
   public notify(text: string) {
     return this.snackbar.open(text, 'Close', {
-      panelClass: ['fancy', 'normal']
-      // duration: 3000
+      panelClass: ['fancy', 'normal'],
+      duration: 3000
     });
   }
 
   public notifyError(text: string) {
     return this.snackbar.open(text, 'Close', {
-      panelClass: ['fancy', 'error']
-      // duration: 3000
+      panelClass: ['fancy', 'error'],
+      duration: 3000
     });
   }
 
