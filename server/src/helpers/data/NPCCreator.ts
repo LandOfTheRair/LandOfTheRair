@@ -223,20 +223,24 @@ export class NPCCreator extends BaseService {
     Object.keys(npcDef.dialog.keyword || {}).forEach(keyword => {
       const actions = npcDef.dialog?.keyword[keyword].actions ?? [];
 
+      const logicCallback: any = ({ env }) => {
+        if (!env || !env.player) return;
+
+        const retMessages: string[] = [];
+
+        for (const action of actions) {
+          const { messages, shouldContinue } = this.dialogActionHelper.handleAction(action, npc, env.player);
+          retMessages.push(...messages);
+
+          if (!shouldContinue) return retMessages;
+        }
+
+        return retMessages;
+      };
+
       parser.addCommand(keyword)
         .setSyntax([keyword])
-        .setLogic(({ env }) => {
-          const retMessages: string[] = [];
-
-          for (const action of actions) {
-            const { messages, shouldContinue } = this.dialogActionHelper.handleAction(action, npc, env.player);
-            retMessages.push(...messages);
-
-            if (!shouldContinue) return retMessages;
-          }
-
-          return retMessages;
-        });
+        .setLogic(logicCallback);
     });
 
     return parser;
