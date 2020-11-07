@@ -14,6 +14,7 @@ import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.compone
 import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
 import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
+import { OptionsComponent } from '../_shared/modals/options/options.component';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -119,6 +120,13 @@ export class ModalService {
 
   public showManageSilver() {
     this.dialog.open(ManageSilverComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showOptions() {
+    this.dialog.open(OptionsComponent, {
       width: '650px',
       panelClass: 'fancy'
     });

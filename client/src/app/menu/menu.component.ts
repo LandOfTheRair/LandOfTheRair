@@ -142,7 +142,7 @@ export class MenuComponent implements OnInit {
     },
     {
       name: 'Options',
-      handler: () => {}
+      handler: () => this.modalService.showOptions()
     },
     {
       name: 'Quit',
