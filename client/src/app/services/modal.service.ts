@@ -37,7 +37,7 @@ export class ModalService {
 
     this.socketService.registerComponentCallback(
       this.constructor.name, GameServerResponse.Error,
-      (data) => this.notify(data.error)
+      (data) => this.notifyError(data.error)
     );
 
     this.socketService.registerComponentCallback(
@@ -48,13 +48,15 @@ export class ModalService {
 
   public notify(text: string) {
     return this.snackbar.open(text, 'Close', {
-      duration: 3000
+      panelClass: ['fancy', 'normal']
+      // duration: 3000
     });
   }
 
   public notifyError(text: string) {
     return this.snackbar.open(text, 'Close', {
-      duration: 3000
+      panelClass: ['fancy', 'error']
+      // duration: 3000
     });
   }
 
