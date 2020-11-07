@@ -53,7 +53,8 @@ export class CommandHandler extends BaseService {
     const args: IMacroCommandArgs = {
       stringArgs: '',
       arrayArgs: [],
-      objArgs: {}
+      objArgs: {},
+      calledAlias: command
     };
 
     if (data.args && isString(data.args)) {
