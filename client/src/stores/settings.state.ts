@@ -3,8 +3,10 @@ import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameOption, ISettings } from '../interfaces';
 import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
-  RemoveAccount, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
-  SetCurrentCommand, SetLogMode, SetOption, ShowWindow, UpdateWindowPosition } from './actions';
+  RemoveAccount, ResetWindowPositions, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
+  SetCurrentCommand, SetDefaultWindowPosition, SetLogMode, SetOption, ShowWindow, UpdateWindowPosition } from './actions';
+
+const defaultWindowPositions = {};
 
 const defaultSettings: () => ISettings = () => {
   return {
@@ -151,6 +153,23 @@ export class SettingsState implements NgxsOnInit {
     if (!windows[windowName] || overwrite) {
       windows[windowName] = Object.assign({}, windows[windowName], windowProps);
     }
+    ctx.patchState({ windows });
+  }
+
+  @Action(SetDefaultWindowPosition)
+  setDefaultWindowPos(ctx: StateContext<ISettings>, { windowName, windowProps }: SetDefaultWindowPosition) {
+    defaultWindowPositions[windowName] = windowProps;
+  }
+
+  @Action(ResetWindowPositions)
+  resetWindowPositions(ctx: StateContext<ISettings>) {
+    const state = ctx.getState();
+    const windows = { ...state.windows };
+
+    Object.keys(defaultWindowPositions).forEach(winName => {
+      windows[winName] = Object.assign({}, windows[winName], defaultWindowPositions[winName]);
+    });
+
     ctx.patchState({ windows });
   }
 

@@ -4,11 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { UIModule } from './ui.module';
 
-import { AlertComponent } from './_shared/components/alert/alert.component';
 import { ButtonCloseComponent } from './_shared/components/button-close.component';
 import { ButtonMinimizeComponent } from './_shared/components/button-minimize.component';
 import { CharacterCardComponent } from './_shared/components/character-card.component';
-import { DialogComponent } from './_shared/components/dialog/dialog.component';
 import { EffectIconComponent } from './_shared/components/effect-icon.component';
 import { IconComponent } from './_shared/components/icon.component';
 import { InventoryComponent } from './_shared/components/inventory/inventory.component';
@@ -17,10 +15,14 @@ import { LifeHeartComponent } from './_shared/components/life-heart.component';
 import { MacroComponent } from './_shared/components/macro/macro.component';
 import { NPCComponent } from './_shared/components/npc/npc.component';
 import { WindowComponent } from './_shared/components/window.component';
+import { AlertComponent } from './_shared/modals/alert/alert.component';
 
 import { DraggableDirective } from './_shared/directives/dragdrop/draggable.directive';
 import { DroppableDirective } from './_shared/directives/dragdrop/droppable.directive';
 import { DraggableDirective as DraggableWindowDirective } from './_shared/directives/draggable-window.directive';
+
+import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
+import { DialogComponent } from './_shared/modals/dialog/dialog.component';
 
 import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 
@@ -48,7 +50,7 @@ import { OptionsContainerComponent } from './containers/options-container/option
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective
+  DraggableDirective, DroppableDirective, ConfirmModalComponent
 ];
 
 const gameComponents = [

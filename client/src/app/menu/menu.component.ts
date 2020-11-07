@@ -5,9 +5,10 @@ import { timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
-import { Logout } from '../../stores';
+import { Logout, ResetWindowPositions } from '../../stores';
 import { AssetService } from '../asset.service';
 import { GameService } from '../game.service';
+import { ModalService } from '../modal.service';
 import { SocketService } from '../socket.service';
 
 @Component({
@@ -95,7 +96,14 @@ export class MenuComponent implements OnInit {
         {
           name: 'Reset Window Positions',
           borderTop: true,
-          handler: () => {}
+          handler: () => {
+            this.modalService.confirm('Reset Window Positions', 'Are you sure you want to reset all your window positions?')
+              .subscribe(res => {
+                if (!res) return;
+
+                this.store.dispatch(new ResetWindowPositions());
+              });
+          }
         },
       ]
     },
@@ -122,29 +130,38 @@ export class MenuComponent implements OnInit {
       name: 'Quit',
       visibleIf: this.gameService.inGame$,
       handler: () => {
-        this.socketService.emit(GameServerEvent.QuitGame);
-        this.toggleMenu();
+        this.modalService.confirm('Exit Game', 'Are you sure you want to exit to lobby?')
+          .subscribe(res => {
+            if (!res) return;
+
+            this.socketService.emit(GameServerEvent.QuitGame);
+          });
       }
     },
     {
       name: 'Log Out',
       borderTop: true,
       handler: () => {
-        this.toggleMenu();
-        this.socketService.emit(GameServerEvent.QuitGame);
+        this.modalService.confirm('Log Out', 'Are you sure you want to log out of Land of the Rair?')
+          .subscribe(res => {
+            if (!res) return;
 
-        setTimeout(() => {
-          this.socketService.emit(GameServerEvent.Logout);
-        }, 50);
+            this.socketService.emit(GameServerEvent.QuitGame);
 
-        setTimeout(() => {
-          this.store.dispatch(new Logout(true));
-        }, 75);
+            setTimeout(() => {
+              this.socketService.emit(GameServerEvent.Logout);
+            }, 50);
 
-        setTimeout(() => {
-          this.socketService.tryDisconnect();
-          this.socketService.init();
-        }, 100);
+            setTimeout(() => {
+              this.store.dispatch(new Logout(true));
+            }, 75);
+
+            setTimeout(() => {
+              this.socketService.tryDisconnect();
+              this.socketService.init();
+            }, 100);
+
+          });
       }
     }
   ];
@@ -159,6 +176,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private store: Store,
+    private modalService: ModalService,
     public socketService: SocketService,
     public gameService: GameService,
     public assetService: AssetService
@@ -170,10 +188,6 @@ export class MenuComponent implements OnInit {
     });
 
     this.watchResetTime();
-  }
-
-  toggleMenu() {
-    this.isMenuVisible = !this.isMenuVisible;
   }
 
   private watchResetTime() {

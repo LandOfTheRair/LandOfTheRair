@@ -23,6 +23,7 @@ import { AssetService } from './asset.service';
 import { GameService } from './game.service';
 import { AlertErrorHandler } from './logger.service';
 import { MacrosService } from './macros.service';
+import { ModalService } from './modal.service';
 import { SocketService } from './socket.service';
 
 
@@ -93,6 +94,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
         return macros;
       },
       deps: [MacrosService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (modal: ModalService) => () => {
+        modal.init();
+        return modal;
+      },
+      deps: [ModalService],
       multi: true
     },
     {
