@@ -5,6 +5,7 @@ export interface IMacroCommandArgs {
   stringArgs: string;
   arrayArgs: string[];
   objArgs: any;
+  calledAlias: string;
 }
 
 export interface IMacroCommand {
