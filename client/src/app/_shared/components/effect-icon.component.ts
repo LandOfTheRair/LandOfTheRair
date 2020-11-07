@@ -7,7 +7,7 @@ import * as effectIcons from '../../../assets/content/_output/effect-icons.json'
   selector: 'app-effect-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-icon [name]="iconName" [color]="color" [bgColor]="bgColor" [matTooltip]="tooltip"></app-icon>
+    <app-icon [name]="iconName" [fgColor]="color" [bgColor]="bgColor" [matTooltip]="tooltip"></app-icon>
   `
 })
 export class EffectIconComponent {
