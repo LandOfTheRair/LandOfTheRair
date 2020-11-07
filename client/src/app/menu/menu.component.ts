@@ -39,7 +39,7 @@ export class MenuComponent implements OnInit {
         {
           name: 'My Account',
           icon: 'account_circle',
-          handler: () => {}
+          handler: () => this.modalService.showAccount()
         },
         {
           name: 'Current Events',
@@ -81,6 +81,21 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Command Line',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Character',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Belt',
+          visibleIf: this.gameService.inGame$,
+          handler: () => {}
+        },
+        {
+          name: 'Sack',
           visibleIf: this.gameService.inGame$,
           handler: () => {}
         },

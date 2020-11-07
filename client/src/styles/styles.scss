@@ -33,6 +33,18 @@ $landoftherair-theme: mat-dark-theme($landoftherair-primary, $landoftherair-acce
   z-index: 2500;
 }
 
+.split-button {
+  
+  display: flex;
+
+  mat-form-field {
+    flex: 1;
+  }
+  
+  .form-inline-button {
+  }
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 

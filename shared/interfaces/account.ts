@@ -12,4 +12,7 @@ export interface IAccount {
 
   subscriptionEndsTimestamp: number;
   trialEndsTimestamp: number;
+
+  discordTag: string;
+  alwaysOnline: boolean;
 }

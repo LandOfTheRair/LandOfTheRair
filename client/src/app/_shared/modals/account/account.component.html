@@ -1,0 +1,75 @@
+<h1 mat-dialog-title>My Account</h1>
+
+<div mat-dialog-content>
+  <ng-container *ngIf="account">
+    <form>
+      <mat-form-field class="full-width">
+        <input matInput 
+               type="email" 
+               placeholder="Email Address" 
+               [(ngModel)]="account.email"
+               [disabled]="true"
+               [ngModelOptions]="{ standalone: true }" />
+      </mat-form-field>
+
+      <fieldset>
+        <legend>
+          Change Password
+        </legend>
+
+        <mat-form-field class="full-width">
+          <input matInput 
+                 type="password" 
+                 placeholder="Current Password" 
+                 [(ngModel)]="currentPassword"
+                 [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+  
+        <div class="split-button">
+          <mat-form-field class="full-width">
+            <input matInput 
+                   type="password" 
+                   placeholder="New Password" 
+                   [(ngModel)]="newPassword"
+                   [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+  
+          <div class="m-l-20 true-center">
+            <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangePassword" (click)="changePassword()">Update</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="m-t-20">
+        <legend>
+          Discord Options
+        </legend>
+
+        <div class="split-button">
+          <mat-form-field class="full-width">
+            <input matInput 
+                  type="text" 
+                  placeholder="Discord Tag (Username#0000)" 
+                  [(ngModel)]="account.discordTag"
+                  [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+  
+          <div class="m-l-20 true-center">
+            <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangeTag" (click)="changeTag()">Update</button>
+          </div>
+        </div>
+  
+        <mat-checkbox [(ngModel)]="account.alwaysOnline"
+                      (change)="changeOnline()"
+                      [ngModelOptions]="{ standalone: true }">
+          Always Online
+        </mat-checkbox>
+      </fieldset>
+    </form>
+
+  </ng-container>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</div>

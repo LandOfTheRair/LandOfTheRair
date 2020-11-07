@@ -30,6 +30,7 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
+import { AccountComponent } from './_shared/modals/account/account.component';
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
@@ -51,7 +52,7 @@ import { OptionsContainerComponent } from './containers/options-container/option
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent
+  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent
 ];
 
 const gameComponents = [

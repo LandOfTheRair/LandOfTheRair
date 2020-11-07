@@ -29,6 +29,9 @@ export enum GameServerEvent {
   Register = 'Auth:Emit:Register',
   Login = 'Auth:Emit:Login',
   Logout = 'Auth:Emit:Logout',
+  ChangePassword = 'Auth:Emit:ChangePassword',
+  ChangeDiscordTag = 'Auth:Emit:ChangeDiscordTag',
+  ChangeAlwaysOnline = 'Auth:Emit:ChangeAlwaysOnline',
 
   SetMOTD = 'GM:Emit:SetMOTD',
 
@@ -58,6 +61,7 @@ export enum GameServerResponse {
   CharacterCreate = 'Creator:Response:CharacterCreate',
 
   GameLog = 'Game:Response:Message',
+  SendNotification = 'Game:Response:Notification',
 
   DialogChat = 'Game:Response:NPCDialog'
 }
