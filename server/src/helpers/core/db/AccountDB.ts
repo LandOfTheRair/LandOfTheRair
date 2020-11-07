@@ -85,8 +85,10 @@ export class AccountDB extends BaseService {
 
   public async changeDiscordTag(account: Account, discordTag: string): Promise<void> {
 
-    const doesTagExist = await this.doesDiscordTagExist(discordTag);
-    if (doesTagExist) throw new Error('Discord tag already taken.');
+    if(discordTag) {
+      const doesTagExist = await this.doesDiscordTagExist(discordTag);
+      if (doesTagExist) throw new Error('Discord tag already taken.');
+    }
 
     account.discordTag = discordTag;
     await this.db.save(account);
