@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, ISimpleItem, Skill, Stat } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer, Stat } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class ShowStats extends MacroCommand {

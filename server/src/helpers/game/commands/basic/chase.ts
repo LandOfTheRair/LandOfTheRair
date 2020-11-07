@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, ISimpleItem } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Chase extends MacroCommand {
@@ -8,8 +8,6 @@ export class Chase extends MacroCommand {
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    const state = this.game.worldManager.getMapStateForCharacter(player);
-    const playersInView = state.getAllPlayersInRange(player, 4);
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target) {

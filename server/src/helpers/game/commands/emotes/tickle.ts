@@ -1,6 +1,5 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
-import { CharacterHelper } from '../../../character';
 
 export class Tickle extends MacroCommand {
 

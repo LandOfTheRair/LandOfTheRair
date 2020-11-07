@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, ISimpleItem } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
