@@ -1,5 +1,5 @@
 import { Game } from '../../helpers';
-import { GameServerEvent, GameServerResponse } from '../../interfaces';
+import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeAlwaysOnlineAction extends ServerAction {
