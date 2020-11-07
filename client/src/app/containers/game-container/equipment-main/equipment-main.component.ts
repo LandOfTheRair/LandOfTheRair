@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
 import { calculateSkillLevelFromXP, getSkillDescription, getStatDescription,
   IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../../../interfaces';
 import { GameState, SetCharacterView, SettingsState } from '../../../../stores';
-import { AssetService } from '../../../asset.service';
+import { AssetService } from '../../../services/asset.service';
 
-import { GameService } from '../../../game.service';
+import { GameService } from '../../../services/game.service';
 
 @AutoUnsubscribe()
 @Component({

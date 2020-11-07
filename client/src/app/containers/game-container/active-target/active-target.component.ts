@@ -6,7 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { ICharacter } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
-import { GameService } from '../../../game.service';
+import { GameService } from '../../../services/game.service';
 
 @AutoUnsubscribe()
 @Component({

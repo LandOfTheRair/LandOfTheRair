@@ -5,8 +5,8 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../interfaces';
 import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
-import { GameService } from '../game.service';
-import { SocketService } from '../socket.service';
+import { GameService } from '../services/game.service';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-login',

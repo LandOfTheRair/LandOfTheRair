@@ -23,6 +23,21 @@ export class UpdateWindowPosition {
   ) {}
 }
 
+// dispatched when a window is created
+export class SetDefaultWindowPosition {
+  static type = '[Settings] Set default window position';
+  constructor(
+    public windowName: string,
+    public windowProps: { x?: number, y?: number  }
+  ) {}
+}
+
+// dispatched when "reset window positions" set
+export class ResetWindowPositions {
+  static type = '[Settings] Reset window positions';
+  constructor() {}
+}
+
 // dispatched when a window is marked hidden
 export class HideWindow {
   static type = '[Settings] Hide Window';

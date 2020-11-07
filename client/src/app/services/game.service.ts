@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../interfaces';
-import { AccountState, GameState, LobbyState, SettingsState } from '../stores';
-import { DialogComponent } from './_shared/components/dialog/dialog.component';
+  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
+
+import { ModalService } from './modal.service';
 import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  private npcDialog: MatDialogRef<DialogComponent>;
 
   private playGame: Subject<boolean> = new Subject();
   public get playGame$() {
@@ -40,8 +39,8 @@ export class GameService {
   @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
 
   constructor(
-    private dialog: MatDialog,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private modalService: ModalService
   ) {}
 
   init() {
@@ -49,12 +48,6 @@ export class GameService {
       if (val) {
         this.playGame.next(true);
         return;
-
-      // close any dialogs when the game closes
-      } else {
-        if (this.npcDialog) {
-          this.npcDialog.close();
-        }
       }
 
       this.playGame.next(false);
@@ -166,17 +159,10 @@ export class GameService {
   }
 
   public showNPCDialog(dialogInfo: IDialogChatAction) {
-    if (this.npcDialog) return;
+    const res = this.modalService.npcDialog(dialogInfo);
+    if (!res) return;
 
-    this.npcDialog = this.dialog.open(DialogComponent, {
-      width: '450px',
-      panelClass: 'fancy',
-      data: dialogInfo
-    });
-
-    this.npcDialog.afterClosed().subscribe((result) => {
-      this.npcDialog = null;
-
+    res.subscribe(result => {
       if (result && result !== 'noop') {
         this.sendCommandString(`#${dialogInfo.displayNPCUUID || dialogInfo.displayNPCName}, ${result}`);
       }

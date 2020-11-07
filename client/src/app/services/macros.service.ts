@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IGame, IMacro, IMacroContainer } from '../interfaces';
-import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../stores';
+import { IGame, IMacro, IMacroContainer } from '../../interfaces';
+import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
 @Injectable({

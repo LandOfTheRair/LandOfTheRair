@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@an
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { HideWindow, SetActiveWindow, SettingsState, UpdateWindowPosition } from '../../../stores';
+import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, UpdateWindowPosition } from '../../../stores';
 
 // TODO: resize
 
@@ -112,6 +112,7 @@ export class WindowComponent implements OnInit {
     if (this.defaultWidth) opts.width = this.defaultWidth;
     if (this.defaultHeight) opts.height = this.defaultHeight;
 
+    this.store.dispatch(new SetDefaultWindowPosition(this.windowName, { x: this.defaultX, y: this.defaultY }));
     this.store.dispatch(new UpdateWindowPosition(this.windowName, opts));
     this.window$ = this.store.select(SettingsState.window).pipe(map(x => x(this.windowName)));
   }

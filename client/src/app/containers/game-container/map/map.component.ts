@@ -4,8 +4,8 @@ import { Select } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { GameServerEvent, INPC, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
-import { GameService } from '../../../game.service';
-import { SocketService } from '../../../socket.service';
+import { GameService } from '../../../services/game.service';
+import { SocketService } from '../../../services/socket.service';
 import { MapRenderGame } from './phasergame';
 import { MapScene, PreloadScene } from './phaserstates';
 

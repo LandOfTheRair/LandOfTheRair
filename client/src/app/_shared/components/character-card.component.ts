@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ICharacter, ItemSlot } from '../../../interfaces';
 import { GameState } from '../../../stores';
-import { GameService } from '../../game.service';
+import { GameService } from '../../services/game.service';
 
 @Component({
   selector: 'app-character-card',

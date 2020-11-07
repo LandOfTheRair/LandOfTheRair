@@ -9,8 +9,8 @@ import { first } from 'rxjs/operators';
 import { Direction, GameOption, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState } from '../../../../stores';
 
-import { GameService } from '../../../game.service';
-import { MacrosService } from '../../../macros.service';
+import { GameService } from '../../../services/game.service';
+import { MacrosService } from '../../../services/macros.service';
 
 @AutoUnsubscribe()
 @Component({

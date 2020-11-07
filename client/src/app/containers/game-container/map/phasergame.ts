@@ -1,8 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { IMapData, INPC, IPlayer } from '../../../../interfaces';
-import { GameService } from '../../../game.service';
-import { SocketService } from '../../../socket.service';
+import { GameService } from '../../../services/game.service';
+import { SocketService } from '../../../services/socket.service';
 
 const Phaser = (window as any).Phaser;
 

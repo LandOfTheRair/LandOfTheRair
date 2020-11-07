@@ -7,8 +7,8 @@ import { Subscription } from 'rxjs';
 import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
-import { GameService } from '../../../game.service';
-import { SocketService } from '../../../socket.service';
+import { GameService } from '../../../services/game.service';
+import { SocketService } from '../../../services/socket.service';
 
 @AutoUnsubscribe()
 @Component({

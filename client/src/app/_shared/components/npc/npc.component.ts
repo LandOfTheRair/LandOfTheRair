@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AssetService } from '../../../asset.service';
+import { AssetService } from '../../../services/asset.service';
 
 @Component({
   selector: 'app-npc',

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GameServerResponse } from '../../../interfaces';
-import { GameService } from '../../game.service';
-import { SocketService } from '../../socket.service';
+import { GameService } from '../../services/game.service';
+import { SocketService } from '../../services/socket.service';
 
 @Component({
   selector: 'app-game-container',

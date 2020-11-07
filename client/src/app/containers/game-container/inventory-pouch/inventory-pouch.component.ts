@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
-import { GameService } from '../../../game.service';
+import { GameService } from '../../../services/game.service';
 
 @AutoUnsubscribe()
 @Component({

@@ -159,6 +159,7 @@ export class WebsocketWorker {
       // if we are already logged in somewhere else, we kick them
       const oldSocket = this.sockets[socket.username];
       if (oldSocket) {
+        oldSocket.username = null;
         delete this.sockets[socket.username];
         this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
         oldSocket.close(5000, 'disconnected from another login location');

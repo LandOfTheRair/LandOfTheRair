@@ -25,15 +25,17 @@ export class LoginAction extends ServerAction {
     if (!game.accountDB.checkPassword(data, account)) throw new Error('Password does not match.');
 
     try {
-      const simpleAccount = await game.accountDB.simpleAccount(account);
 
+      game.lobbyManager.removeAccount(data.username);
+
+      const simpleAccount = await game.accountDB.simpleAccount(account);
       broadcast({
         action: GameAction.ChatAddUser,
         user: simpleAccount
       });
 
       register(data.username);
-      game.lobbyManager.removeAccount(data.username);
+
       game.lobbyManager.addAccount(account);
 
       game.logger.log('Auth:Login', `${data.username} logged in.`);
