@@ -101,14 +101,14 @@ export class NPCCreator extends BaseService {
     if (npcDef.items?.sack) {
       baseChar.items.sack.items = (npcDef.items?.sack ?? [])
         .filter(i => this.shouldLoadContainerItem(i))
-        .map(i => this.loadItem(this.chooseItem(i)))
+        .map(i => this.loadItem(i.result))
         .filter(Boolean);
     }
 
     if (npcDef.items?.belt) {
       baseChar.items.belt.items = (npcDef.items?.belt ?? [])
         .filter(i => this.shouldLoadContainerItem(i))
-        .map(i => this.loadItem(this.chooseItem(i)))
+        .map(i => this.loadItem(i.result))
         .filter(Boolean);
     }
 

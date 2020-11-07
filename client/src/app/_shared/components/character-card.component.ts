@@ -125,8 +125,8 @@ import { GameService } from '../../game.service';
     border: 1px solid #000;
     border-right: none;
     border-bottom: none;
-    min-height: 17px;
-    max-height: 17px;
+    min-height: 16px;
+    max-height: 16px;
   }
 
   .char-direction {
@@ -171,6 +171,7 @@ import { GameService } from '../../game.service';
 
   .char-title {
     height: 18px;
+    font-weight: bold;
   }
 
   .char-name {
