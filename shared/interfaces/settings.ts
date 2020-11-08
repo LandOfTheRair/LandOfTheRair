@@ -8,9 +8,35 @@ export interface IAccountSettings {
 export type ChatMode = 'cmd' | 'say' | 'global' | 'party';
 
 export enum GameOption {
+
+  // interface options
+  RightClickCMDSend = 'rightClickCMDSend',
+  AutoAttack = 'autoAttack',
+  HideLobbyWhilePlaying = 'hideLobbyWhileInGame',
+  LockWindows = 'lockWindows',
+  SuppressZeroDamage = 'suppressZeroDamageMessage',
+  SuppressOutgoingDoT = 'suppressOutgoingDoTDamage',
+  NoItemAnimations = 'noItemAnimations',
+  EnterToggleCMD = 'enterToggleCMD',
   PinLastTarget = 'pinLastTarget',
   ShouldSortFriendly = 'shouldSortFriendly',
-  ShouldSortDistance = 'shouldSortDistance'
+  ShouldSortDistance = 'shouldSortDistance',
+
+  // sound options
+  SoundBGM = 'playBGM',
+  SoundSFX = 'playSFX',
+  SoundNostalgia = 'playNostalgia',
+  SoundMusicVolume = 'volumeMusic',
+  SoundSFXVolume = 'volumeSFX',
+
+  // debug options
+  SpritesheetDecor = 'spritesheetDecorUrl',
+  SpritesheetWalls = 'spritesheetWallsUrl',
+  SpritesheetItems = 'spritesheetItemsUrl',
+  SpritesheetCreatures = 'spritesheetCreaturesUrl',
+  SpritesheetSwimming = 'spritesheetSwimmingUrl',
+  SpritesheetTerrain = 'spritesheetTerrainUrl',
+  SpritesheetEffects = 'spritesheetEffectsUrl',
 }
 
 export interface ISettings {
@@ -25,5 +51,5 @@ export interface ISettings {
   currentCommand: string;
   commandHistory: string[];
   characterView: 'Equipment'|'Stats'|'Skills';
-  options: Record<GameOption, number|boolean>;
+  options: Record<GameOption, number|boolean|string>;
 }

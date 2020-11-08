@@ -2,7 +2,120 @@
 
 <div mat-dialog-content>
 
-  Under construction!
+  <mat-tab-group mat-align-tabs="center">
+
+    <!--
+    <mat-tab label="Windows">
+
+    </mat-tab>
+    -->
+
+    <mat-tab label="Interface">
+      <form>
+        <div class="m-t-5" *ngFor="let option of uiOptions">
+          <mat-checkbox [(ngModel)]="options[option.option]"
+                        (change)="updateOption(option.option)"
+                        [ngModelOptions]="{ standalone: true }">
+            {{ option.text }}
+          </mat-checkbox>
+        </div>
+
+        <div class="radio-row m-t-5">
+          <div class="radio-label">Sort friendlies</div>
+          <mat-radio-group [(ngModel)]="options.shouldSortFriendly" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortFriendly')">
+            <mat-radio-button [value]="null">none</mat-radio-button>
+            <mat-radio-button [value]="true">first</mat-radio-button>
+            <mat-radio-button [value]="false">last</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="radio-row m-t-5">
+          <div class="radio-label">Sort by distance</div>
+          <mat-radio-group [(ngModel)]="options.shouldSortDistance" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortDistance')">
+            <mat-radio-button [value]="null">none</mat-radio-button>
+            <mat-radio-button [value]="true">closest</mat-radio-button>
+            <mat-radio-button [value]="false">farthest</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </form>
+
+    </mat-tab>
+
+    <mat-tab label="Audio">
+      <form>
+        <div>
+          <mat-checkbox [(ngModel)]="options.playBGM"
+                        (change)="updateOption('playBGM')"
+                        [ngModelOptions]="{ standalone: true }">
+            Play Background Music
+          </mat-checkbox>
+        </div>
+  
+        <div>
+          <mat-checkbox [(ngModel)]="options.playSFX"
+                        (change)="updateOption('playSFX')"
+                        [ngModelOptions]="{ standalone: true }">
+            Play Sound Effects
+          </mat-checkbox>
+        </div>
+  
+        <div>
+          <mat-checkbox [(ngModel)]="options.playNostalgia"
+                        (change)="updateOption('playNostalgia')"
+                        [ngModelOptions]="{ standalone: true }">
+            Play Nostalgia Background Music & Sound Effects
+          </mat-checkbox>
+        </div>
+  
+        <div class="slider-option-row">
+          <div class="slider-label">Music Volume</div>
+          <mat-slider [min]="0" 
+                      [max]="100" 
+                      [step]="5" 
+                      [(ngModel)]="options.volumeMusic" 
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="updateOption('volumeMusic')" 
+                      thumbLabel="true"></mat-slider>
+          <div>{{ options.volumeMusic }}%</div>
+        </div>
+  
+        <div class="slider-option-row">
+          <div class="slider-label">SFX Volume</div>
+          <mat-slider [min]="0" 
+                      [max]="100" 
+                      [step]="5" 
+                      [(ngModel)]="options.volumeSFX" 
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="updateOption('volumeSFX')" 
+                      thumbLabel="true"></mat-slider>
+          <div>{{ options.volumeSFX }}%</div>
+        </div>
+      </form>
+
+    </mat-tab>
+
+    <mat-tab label="Debug">
+      <p>
+        <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
+      </p>
+
+      <form autocomplete="off">
+        <mat-form-field class="full-width" *ngFor="let spritesheet of spritesheets">
+          <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
+          <input matInput 
+            type="text" 
+            [id]="spritesheet"
+            [name]="spritesheet"
+            [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.png'" 
+            [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
+            autocomplete="off"
+            (change)="updateOption('spritesheet' + spritesheet + 'Url')"
+            [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+      </form>
+    </mat-tab>
+
+  </mat-tab-group>
   
 </div>
 

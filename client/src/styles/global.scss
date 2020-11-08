@@ -84,6 +84,43 @@ mat-dialog-actions {
   font-size: 1rem;
 }
 
+.slider-option-row {
+  display: flex;
+  align-items: center;
+
+  .slider-label {
+    min-width: 100px;
+  }
+}
+
+.mat-tab-header {
+  margin-bottom: 20px;
+}
+
+.radio-row {
+  display: flex;
+  justify-content: space-between;
+
+  .radio-label {
+    flex: 1;
+  }
+
+  mat-radio-group {
+    flex: 2;
+
+    display: flex;
+    justify-content: space-between;
+
+    .mat-radio-button {
+      min-width: 100px;
+    }
+  }
+}
+
+.mat-tab-body, .mat-tab-body-content {
+  overflow: hidden !important;
+}
+
 .mat-snack-bar-container {
   background: #545454;
   color: #fff;

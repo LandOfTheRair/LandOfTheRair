@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 import * as meta from '../../assets/content/_output/meta.json';
 import { environment } from '../../environments/environment';
 import { IItem, INPCDefinition } from '../../interfaces';
@@ -17,7 +18,10 @@ export class AssetService {
   private items: any;
   private npcs: any;
 
+  private spritesheetCustomHash: any = {};
+
   @Select(SettingsState.assetHash) public assetHash$: Observable<string>;
+  @Select(SettingsState.options) public options$: Observable<string>;
 
   public get assetsLoaded(): boolean {
     return this.spritesheets.every(Boolean) && this.items && this.npcs;
@@ -28,31 +32,31 @@ export class AssetService {
   }
 
   get terrainUrl(): string {
-    return `${this.assetUrl}/spritesheets/terrain.png?c=${environment.assetHashes.terrain}`;
+    return this.spritesheetCustomHash.terrain || `${this.assetUrl}/spritesheets/terrain.png?c=${environment.assetHashes.terrain}`;
   }
 
   get wallsUrl(): string {
-    return `${this.assetUrl}/spritesheets/walls.png?c=${environment.assetHashes.walls}`;
+    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.png?c=${environment.assetHashes.walls}`;
   }
 
   get decorUrl(): string {
-    return `${this.assetUrl}/spritesheets/decor.png?c=${environment.assetHashes.decor}`;
+    return this.spritesheetCustomHash.decor || `${this.assetUrl}/spritesheets/decor.png?c=${environment.assetHashes.decor}`;
   }
 
   get swimmingUrl(): string {
-    return `${this.assetUrl}/spritesheets/swimming.png?c=${environment.assetHashes.swimming}`;
+    return this.spritesheetCustomHash.swimming || `${this.assetUrl}/spritesheets/swimming.png?c=${environment.assetHashes.swimming}`;
   }
 
   get creaturesUrl(): string {
-    return `${this.assetUrl}/spritesheets/creatures.png?c=${environment.assetHashes.creatures}`;
+    return this.spritesheetCustomHash.creatures || `${this.assetUrl}/spritesheets/creatures.png?c=${environment.assetHashes.creatures}`;
   }
 
   get itemsUrl(): string {
-    return `${this.assetUrl}/spritesheets/items.png?c=${environment.assetHashes.items}`;
+    return this.spritesheetCustomHash.items || `${this.assetUrl}/spritesheets/items.png?c=${environment.assetHashes.items}`;
   }
 
   get effectsUrl(): string {
-    return `${this.assetUrl}/spritesheets/effects.png?c=${environment.assetHashes.effects}`;
+    return this.spritesheetCustomHash.effects || `${this.assetUrl}/spritesheets/effects.png?c=${environment.assetHashes.effects}`;
   }
 
   public get clientAssetHash(): string {
@@ -62,8 +66,10 @@ export class AssetService {
   constructor(private http: HttpClient) { }
 
   public init() {
-    const spritesheets = ['creatures', 'decor', 'effects', 'items', 'swimming', 'terrain', 'walls'];
+    const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls'];
     spritesheets.forEach((sheet, idx) => {
+      sheet = sheet.toLowerCase();
+
       const img = new Image();
       img.src = `assets/spritesheets/${sheet}.png?t=${environment.assetHashes[sheet]}`;
       this.spritesheets[idx] = false;
@@ -75,6 +81,13 @@ export class AssetService {
 
     this.http.get('assets/content/_output/npcs.json')
       .subscribe(npcs => this.setNPCs(npcs as INPCDefinition[]));
+
+    this.options$.pipe(first())
+      .subscribe(opts => {
+        spritesheets.forEach(ss => {
+          this.spritesheetCustomHash[ss.toLowerCase()] = opts[`spritesheet${ss}Url`];
+        });
+      });
   }
 
   public getItem(itemName: string): IItem {

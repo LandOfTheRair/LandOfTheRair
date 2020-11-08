@@ -42,6 +42,12 @@ $landoftherair-theme: mat-dark-theme($landoftherair-primary, $landoftherair-acce
   }
 }
 
+.mat-tab-label {
+  min-width: 90px !important;
+  padding: 0 12px !important;
+  height: 36px !important;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 

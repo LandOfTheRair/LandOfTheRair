@@ -99,7 +99,7 @@ export class SetCurrentCommand {
 // dispatched to set any client game option
 export class SetOption {
   static type = GameAction.SetOption;
-  constructor(public option: GameOption, public value: boolean|number) {}
+  constructor(public option: GameOption, public value: boolean|number|string) {}
 }
 
 // dispatched when the user changes their character view
