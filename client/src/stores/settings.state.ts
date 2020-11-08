@@ -22,9 +22,31 @@ const defaultSettings: () => ISettings = () => {
     commandHistory: [],
     characterView: 'Equipment',
     options: {
+      [GameOption.RightClickCMDSend]: false,
+      [GameOption.AutoAttack]: true,
+      [GameOption.HideLobbyWhilePlaying]: true,
+      [GameOption.LockWindows]: false,
+      [GameOption.SuppressZeroDamage]: false,
+      [GameOption.SuppressOutgoingDoT]: false,
+      [GameOption.NoItemAnimations]: false,
+      [GameOption.EnterToggleCMD]: false,
       [GameOption.PinLastTarget]: false,
       [GameOption.ShouldSortDistance]: false,
-      [GameOption.ShouldSortFriendly]: false
+      [GameOption.ShouldSortFriendly]: false,
+
+      [GameOption.SoundBGM]: true,
+      [GameOption.SoundSFX]: true,
+      [GameOption.SoundNostalgia]: false,
+      [GameOption.SoundMusicVolume]: 50,
+      [GameOption.SoundSFXVolume]: 50,
+
+      [GameOption.SpritesheetCreatures]: '',
+      [GameOption.SpritesheetDecor]: '',
+      [GameOption.SpritesheetEffects]: '',
+      [GameOption.SpritesheetItems]: '',
+      [GameOption.SpritesheetSwimming]: '',
+      [GameOption.SpritesheetTerrain]: '',
+      [GameOption.SpritesheetWalls]: '',
     }
   };
 };
@@ -181,7 +203,7 @@ export class SettingsState implements NgxsOnInit {
       windows[windowName] = Object.assign({}, windows[windowName], { hidden: false });
     }
 
-    ctx.patchState({ windows });
+    ctx.patchState({ windows, activeWindow: windowName });
   }
 
   @Action(HideWindow)

@@ -20,7 +20,7 @@ export interface IServerAction {
   requiresLoggedIn: boolean;
 
   validate(args?): boolean;
-  act(game, { broadcast, emit }: WebsocketCallbacks, args?): Promise<void>;
+  act(game, { broadcast, emit }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean, message?: string }>;
 }
 
 export enum GameServerEvent {
@@ -29,6 +29,9 @@ export enum GameServerEvent {
   Register = 'Auth:Emit:Register',
   Login = 'Auth:Emit:Login',
   Logout = 'Auth:Emit:Logout',
+  ChangePassword = 'Auth:Emit:ChangePassword',
+  ChangeDiscordTag = 'Auth:Emit:ChangeDiscordTag',
+  ChangeAlwaysOnline = 'Auth:Emit:ChangeAlwaysOnline',
 
   SetMOTD = 'GM:Emit:SetMOTD',
 
@@ -58,6 +61,7 @@ export enum GameServerResponse {
   CharacterCreate = 'Creator:Response:CharacterCreate',
 
   GameLog = 'Game:Response:Message',
+  SendNotification = 'Game:Response:Notification',
 
   DialogChat = 'Game:Response:NPCDialog'
 }
@@ -101,5 +105,7 @@ export enum GameAction {
   SetActiveMacro = '[Macro] Set Active Macro',
   SetActiveMacroBars = '[Macro] Set Active Bars',
   SetMacroBar = '[Macro] Set Macro Bars',
-  SetDefaultMacros = '[Macros] Set Default Macros/Bars'
+  SetDefaultMacros = '[Macros] Set Default Macros/Bars',
+
+  UpdateJournal = '[Journal] Update Journal'
 }

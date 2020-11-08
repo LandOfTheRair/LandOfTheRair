@@ -15,7 +15,10 @@ const defaultAccount: () => IAccount = () => {
     isSubscribed: false,
 
     subscriptionEndsTimestamp: -1,
-    trialEndsTimestamp: -1
+    trialEndsTimestamp: -1,
+
+    discordTag: '',
+    alwaysOnline: false
   };
 };
 

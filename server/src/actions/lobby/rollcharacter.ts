@@ -41,5 +41,7 @@ export class RollCharacterAction extends ServerAction {
       characterInfo: player
     });
 
+    return {};
+
   }
 }

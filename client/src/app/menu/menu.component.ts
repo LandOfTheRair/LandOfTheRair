@@ -5,7 +5,7 @@ import { timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
-import { Logout, ResetWindowPositions } from '../../stores';
+import { Logout, ResetWindowPositions, ShowWindow } from '../../stores';
 
 import { AssetService } from '../services/asset.service';
 import { GameService } from '../services/game.service';
@@ -39,18 +39,18 @@ export class MenuComponent implements OnInit {
         {
           name: 'My Account',
           icon: 'account_circle',
-          handler: () => {}
+          handler: () => this.modalService.showAccount()
         },
         {
           name: 'Current Events',
           icon: 'event',
-          handler: () => {}
+          handler: () => this.modalService.showCurrentEvents()
         },
         {
           name: 'Manage Silver',
           icon: 'account_balance',
           visibleIf: this.gameService.inGame$.pipe(map(x => !x)),
-          handler: () => {}
+          handler: () => this.modalService.showManageSilver()
         },
         {
           name: 'Leaderboard',
@@ -77,24 +77,39 @@ export class MenuComponent implements OnInit {
       children: [
         {
           name: 'Journal',
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('journal'))
         },
         {
           name: 'Command Line',
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('commandLine'))
+        },
+        {
+          name: 'Character',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('equipmentMain'))
+        },
+        {
+          name: 'Belt',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('inventoryBelt'))
+        },
+        {
+          name: 'Sack',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('inventorySack'))
         },
         {
           name: 'Party',
           disabled: true,
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('party'))
         },
         {
           name: 'Traits',
           disabled: true,
           visibleIf: this.gameService.inGame$,
-          handler: () => {}
+          handler: () => this.store.dispatch(new ShowWindow('traits'))
         },
         {
           name: 'Reset Window Positions',
@@ -127,10 +142,10 @@ export class MenuComponent implements OnInit {
     },
     {
       name: 'Options',
-      handler: () => {}
+      handler: () => this.modalService.showOptions()
     },
     {
-      name: 'Quit',
+      name: 'Exit To Lobby',
       visibleIf: this.gameService.inGame$,
       handler: () => {
         this.modalService.confirm('Exit Game', 'Are you sure you want to exit to lobby?')

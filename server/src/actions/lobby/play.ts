@@ -46,5 +46,7 @@ export class PlayAction extends ServerAction {
       action: GameAction.GameSetMap,
       map: map.mapData
     });
+
+    return {};
   }
 }

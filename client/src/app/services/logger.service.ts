@@ -1,6 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalService } from './modal.service';
+import { AlertComponent } from '../_shared/modals/alert/alert.component';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,7 @@ export class LoggerService {
   private canShowErrors = true;
 
   constructor(
-    private dialog: MatDialog,
-    private modalService: ModalService
+    private dialog: MatDialog
   ) {}
 
   public showErrorWindow(title: string, content: string) {
@@ -24,7 +23,11 @@ export class LoggerService {
 
     this.canShowErrors = false;
 
-    this.modalService.alert(title, content);
+    this.dialog.open(AlertComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      data: { title, content }
+    });
   }
 
   // TODO: add debug flag in settings

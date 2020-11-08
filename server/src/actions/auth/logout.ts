@@ -28,5 +28,7 @@ export class LogoutAction extends ServerAction {
       game.logger.error('LogoutAction', e);
       throw new Error('Could not logout username?');
     }
+
+    return {};
   }
 }

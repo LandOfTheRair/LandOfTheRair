@@ -12,8 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -23,7 +27,8 @@ const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
   MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule,
-  MatSelectModule, MatTooltipModule, MatCardModule,
+  MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule, MatTabsModule,
+  MatSliderModule, MatRadioModule,
 
   MdePopoverModule
 ];

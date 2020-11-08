@@ -31,6 +31,9 @@ export class Account extends BaseEntity implements IAccount {
   @Property() subscriptionEndsTimestamp = -1;
   @Property() trialEndsTimestamp = -1;
 
+  @Property() discordTag: string;
+  @Property() alwaysOnline = false;
+
   // TODO: shared lockers and bank should be properties of account (bank needs region separators)
 
 }

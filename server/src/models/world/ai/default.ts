@@ -70,7 +70,7 @@ export class DefaultAIBehavior implements IAI {
 
     const npc = this.npc;
     const possibleAgro = npc.agro;
-    const amINearAPlayer = !!this.mapState.getPlayerKnowledgeForXY(npc.x, npc.y);
+    const amINearAPlayer = this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y);
 
     // onhit with no agro means they don't care
     if (npc.hostility === Hostility.OnHit && size(possibleAgro) === 0) {
@@ -260,7 +260,7 @@ export class DefaultAIBehavior implements IAI {
 
     }
 
-    const amINearAPlayer = !!this.mapState.getPlayerKnowledgeForXY(npc.x, npc.y);
+    const amINearAPlayer = this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y);
     if (amINearAPlayer) {
       this.game.visibilityHelper.calculateFOV(npc);
     }

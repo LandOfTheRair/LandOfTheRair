@@ -25,6 +25,10 @@ export class AccountDB extends BaseService {
     return this.db.em.getRepository<Account>(Account).findOne({ username });
   }
 
+  public async doesDiscordTagExist(discordTag: string): Promise<Account | null> {
+    return this.db.em.getRepository<Account>(Account).findOne({ discordTag });
+  }
+
   public async getAccount(username: string): Promise<Account | null> {
     const account = await this.db.em.getRepository<Account>(Account).findOne({ username }, ['players.items']);
     if (!account) return null;
@@ -45,7 +49,7 @@ export class AccountDB extends BaseService {
     wrap(account).assign({
       username: accountInfo.username,
       email: accountInfo.email,
-      password: bcrypt.hashSync(accountInfo.password, 10)
+      password: this.bcryptPassword(accountInfo.password as string)
     });
 
     await this.db.save(account);
@@ -62,7 +66,36 @@ export class AccountDB extends BaseService {
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {
-    return bcrypt.compareSync(accountInfo.password, account.password);
+    return this.checkPasswordString(account, accountInfo.password as string);
+  }
+
+  public checkPasswordString(account: Account, passwordCheck: string): boolean {
+    return bcrypt.compareSync(passwordCheck, account.password);
+  }
+
+  public async changePassword(account: Account, newPassword: string): Promise<void> {
+    account.password = this.bcryptPassword(newPassword);
+    await this.db.save(account);
+  }
+
+  public async changeAlwaysOnline(account: Account, alwaysOnline: boolean): Promise<void> {
+    account.alwaysOnline = alwaysOnline;
+    await this.db.save(account);
+  }
+
+  public async changeDiscordTag(account: Account, discordTag: string): Promise<void> {
+
+    if (discordTag) {
+      const doesTagExist = await this.doesDiscordTagExist(discordTag);
+      if (doesTagExist) throw new Error('Discord tag already taken.');
+    }
+
+    account.discordTag = discordTag;
+    await this.db.save(account);
+  }
+
+  private bcryptPassword(password: string): string {
+    return bcrypt.hashSync(password, 10);
   }
 
 }

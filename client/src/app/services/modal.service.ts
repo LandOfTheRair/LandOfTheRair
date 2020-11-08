@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
-import { IDialogChatAction } from '../../interfaces';
+import { GameServerResponse, IDialogChatAction } from '../../interfaces';
 import { GameState } from '../../stores';
 
 import { AboutComponent } from '../_shared/modals/about/about.component';
+import { AccountComponent } from '../_shared/modals/account/account.component';
 import { AlertComponent } from '../_shared/modals/alert/alert.component';
 import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
+import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
+import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
+import { OptionsComponent } from '../_shared/modals/options/options.component';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +26,8 @@ export class ModalService {
   private npcDialogRef: MatDialogRef<DialogComponent>;
 
   constructor(
+    private socketService: SocketService,
+    private snackbar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
@@ -28,6 +36,30 @@ export class ModalService {
       if (!val && this.npcDialogRef) {
         this.npcDialogRef.close();
       }
+    });
+
+    this.socketService.registerComponentCallback(
+      this.constructor.name, GameServerResponse.Error,
+      (data) => this.notifyError(data.error)
+    );
+
+    this.socketService.registerComponentCallback(
+      this.constructor.name, GameServerResponse.SendNotification,
+      (data) => this.notify(data.message)
+    );
+  }
+
+  public notify(text: string) {
+    return this.snackbar.open(text, 'Close', {
+      panelClass: ['fancy', 'normal'],
+      duration: 3000
+    });
+  }
+
+  public notifyError(text: string) {
+    return this.snackbar.open(text, 'Close', {
+      panelClass: ['fancy', 'error'],
+      duration: 3000
     });
   }
 
@@ -67,6 +99,34 @@ export class ModalService {
 
   public showAbout() {
     this.dialog.open(AboutComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showAccount() {
+    this.dialog.open(AccountComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showCurrentEvents() {
+    this.dialog.open(CurrentEventsComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showManageSilver() {
+    this.dialog.open(ManageSilverComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showOptions() {
+    this.dialog.open(OptionsComponent, {
       width: '650px',
       panelClass: 'fancy'
     });

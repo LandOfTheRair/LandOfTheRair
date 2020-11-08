@@ -69,5 +69,7 @@ export class LoginAction extends ServerAction {
       game.logger.error('LoginAction', e);
       throw new Error('Could not login username?');
     }
+
+    return {};
   }
 }

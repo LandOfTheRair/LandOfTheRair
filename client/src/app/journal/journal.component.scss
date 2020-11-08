@@ -1,0 +1,21 @@
+
+.journal {
+  height: 100%;
+  width: 100%;
+  padding: 5px;
+  overflow: hidden;
+
+  textarea {
+    border-radius: 0;
+    padding: 5px;
+    width: 329px;
+    height: calc(100% - 20px);
+    resize: none;
+    color: #fff;
+    background: #444;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}

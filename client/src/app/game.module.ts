@@ -30,6 +30,10 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
+import { AccountComponent } from './_shared/modals/account/account.component';
+import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
+import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
+import { OptionsComponent } from './_shared/modals/options/options.component';
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
@@ -46,12 +50,13 @@ import { CharCreateComponent } from './containers/lobby-container/char-create/ch
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
-import { OptionsContainerComponent } from './containers/options-container/options-container.component';
+import { JournalComponent } from './journal/journal.component';
 
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent
+  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
+  ManageSilverComponent, CurrentEventsComponent, OptionsComponent
 ];
 
 const gameComponents = [
@@ -59,7 +64,6 @@ const gameComponents = [
   MenuComponent,
   GameContainerComponent,
   LobbyContainerComponent,
-  OptionsContainerComponent,
   LobbyComponent,
   CharSelectComponent,
   CharCreateComponent,
@@ -81,7 +85,9 @@ const gameComponents = [
 
   EquipmentMainComponent,
   PlayerStatusComponent,
-  CharacterListComponent
+  CharacterListComponent,
+
+  JournalComponent
 ];
 
 

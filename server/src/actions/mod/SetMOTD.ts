@@ -24,5 +24,7 @@ export class SetMOTDAction extends ServerAction {
       game.logger.error('SetMOTDAction', e);
       throw new Error('Could not set MOTD?');
     }
+
+    return {};
   }
 }
