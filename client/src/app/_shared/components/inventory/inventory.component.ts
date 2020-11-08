@@ -19,7 +19,7 @@ export class InventoryComponent implements OnInit {
   @Input() public container: 'sack' | 'belt' | 'pouch';
 
   public get slots() {
-    return Array(this.size).fill(null).map((v, i) => i).reverse();
+    return Array(this.size).fill(null).map((v, i) => i);
   }
 
   constructor() { }

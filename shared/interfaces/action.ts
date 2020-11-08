@@ -99,6 +99,7 @@ export enum GameAction {
   SetOption = '[Game] Set Option',
 
   SetCurrentTarget = '[Game] Set Current Target',
+  SetCurrentItemTooltip = '[Game] Set Current Item Tooltip',
 
   CreateCustomMacro = '[Macro] Create Custom',
   DeleteCustomMacro = '[Macro] Delete Custom',

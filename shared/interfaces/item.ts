@@ -25,8 +25,17 @@ export interface IItemTrait {
 
 export interface IGear {
 
-  // the effect the item gives
-  effect?: IEffect;
+  // the effect the item gives on equip
+  equipEffect?: IEffect;
+
+  // the effect that happens when the item hits something
+  strikeEffect?: IEffect;
+
+  // the effect that happens when the item is used
+  useEffect?: IEffect;
+
+  // the effect that happens when the trap is stepped on
+  trapEffect?: IEffect;
 
   // the max enchant level for an item (defaults to 5) - used for progressive item enhancement
   maxEnchantLevel?: number;
@@ -171,6 +180,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // whether the item is heavy (ie, causes encumberance)
   isHeavy?: boolean;
+
+  // the owner of the item
+  owner?: string;
 
   // the requirements to use this items effects (or to use it in combat)
   requirements?: IItemRequirements;

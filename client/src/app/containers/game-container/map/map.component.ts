@@ -18,6 +18,8 @@ const Phaser = (window as any).Phaser;
 })
 export class MapComponent implements OnInit, OnDestroy {
 
+  @Select(GameState.itemTooltip) public itemTooltip$: Observable<string>;
+
   @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
   @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
   @Select(GameState.openDoors) private openDoors$: Observable<Record<number, boolean>>;

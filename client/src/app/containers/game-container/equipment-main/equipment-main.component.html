@@ -109,6 +109,7 @@
             [size]="'lg'"
             [context]="'Equipment'"
             [contextSlot]="slot.slot"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 
@@ -120,6 +121,7 @@
             [contextSlot]="slot.slot"
             showOunces="true"
             [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 
@@ -129,6 +131,7 @@
             [size]="'lg'"
             context="Potion"
             showOunces="true"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 

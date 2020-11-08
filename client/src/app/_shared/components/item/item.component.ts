@@ -1,5 +1,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { EquippableItemClasses, IItem, ISimpleItem, ItemClass } from '../../../../interfaces';
+import { Store } from '@ngxs/store';
+
+import { descTextFor, EquippableItemClasses, IItem, IPlayer, ISimpleItem, ItemClass } from '../../../../interfaces';
+import { SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
 // const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];
@@ -51,6 +54,7 @@ export class ItemComponent implements OnDestroy {
   @Input() public contextSlot: number|string;
   @Input() public containerUUID: string;
   @Input() public overrideValue: number|string;
+  @Input() public viewingPlayer: IPlayer;
   @Input() public size: 'xsmall' | 'small' | 'normal' = 'normal';
 
   public scopes: string[] = [];
@@ -121,9 +125,7 @@ export class ItemComponent implements OnDestroy {
 
   get descText() {
     if (!this.item) return '';
-
-    // TODO: sense desc etc - should be a shared helper function
-    return this.item.mods.desc || this.realItem.desc;
+    return descTextFor(this.viewingPlayer, this.item, this.realItem);
   }
 
   get isStackableMaterial(): boolean {
@@ -133,13 +135,7 @@ export class ItemComponent implements OnDestroy {
     // return MaterialSlotInfo[ValidMaterialItems[this.item.name]].withdrawInOunces;
   }
 
-  get effectName(): string {
-    if (!this.item) return '';
-    if (!this.item.mods.effect) return '';
-    return this.item.mods.effect.name;
-  }
-
-  constructor(private assetService: AssetService) {}
+  constructor(private store: Store, private assetService: AssetService) {}
 
   ngOnDestroy(): void {
     this.removeDesc();
@@ -339,19 +335,15 @@ export class ItemComponent implements OnDestroy {
   updateWithDesc(): void {
     if (!this.item || !this.showDesc) return;
 
-    /*
-    this.colyseusGame.updateCurrentItemDesc(this.descText);
+    this.store.dispatch(new SetCurrentItemTooltip(this.descText));
     this.hasTooltip = true;
-    */
   }
 
   removeDesc(): void {
     if (!this.hasTooltip) return;
 
-    /*
-    this.colyseusGame.updateCurrentItemDesc('');
+    this.store.dispatch(new SetCurrentItemTooltip(''));
     this.hasTooltip = false;
-    */
   }
 
 }
