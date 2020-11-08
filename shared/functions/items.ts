@@ -6,28 +6,28 @@ function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
 
 function conditionString(item: ISimpleItem): string {
   const condition = item.mods.condition ?? 20000;
-  if(condition <= 0)     return 'broken';
-  if(condition <= 2500)  return 'rough';
-  if(condition <= 5000)  return 'tattered';
-  if(condition <= 10000) return 'below average';
-  if(condition <= 20000) return 'average';
-  if(condition <= 30000) return 'above average';
-  if(condition <= 40000) return 'mint';
-  if(condition <= 50000) return 'above mint';
-  if(condition <= 99999) return 'perfect';
+  if (condition <= 0)     return 'broken';
+  if (condition <= 2500)  return 'rough';
+  if (condition <= 5000)  return 'tattered';
+  if (condition <= 10000) return 'below average';
+  if (condition <= 20000) return 'average';
+  if (condition <= 30000) return 'above average';
+  if (condition <= 40000) return 'mint';
+  if (condition <= 50000) return 'above mint';
+  if (condition <= 99999) return 'perfect';
   return 'heavenly';
 }
 
 function usesString(item: ISimpleItem, itemDef: IItem): string {
-  const effect = getProp(item, itemDef, 'useEffect')
-  if(!effect || !effect.uses || effect.uses < 0) return '';
+  const effect = getProp(item, itemDef, 'useEffect');
+  if (!effect || !effect.uses || effect.uses < 0) return '';
   const uses = effect.uses;
 
-  if(uses < 3)    return 'looks brittle';
-  if(uses < 9)    return 'looks cracked';
-  if(uses < 20)   return 'looks normal';
-  if(uses < 50)   return 'surges with energy';
-  if(uses < 100)  return 'crackles with power';
+  if (uses < 3)    return 'looks brittle';
+  if (uses < 9)    return 'looks cracked';
+  if (uses < 20)   return 'looks normal';
+  if (uses < 50)   return 'surges with energy';
+  if (uses < 100)  return 'crackles with power';
 
   return 'is flawlessly vibrant';
 
@@ -47,15 +47,15 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   const condition = item.mods.condition ?? 20000;
 
   // can't use broken items, traps, or items you don't own
-  if(condition <= 0) return false;
-  if(itemClass === ItemClass.Trap) return false;
-  if(!isOwnedBy(player, item)) return false;
+  if (condition <= 0) return false;
+  if (itemClass === ItemClass.Trap) return false;
+  if (!isOwnedBy(player, item)) return false;
 
-  if(itemClass === ItemClass.Box) return true;
-  if(itemClass === ItemClass.Book) return true;
-  if(useEffect && useEffect.uses) return true;
-  if(item.mods.succorInfo) return true;
-  if(ounces > 0) return true;
+  if (itemClass === ItemClass.Box) return true;
+  if (itemClass === ItemClass.Book) return true;
+  if (useEffect && useEffect.uses) return true;
+  if (item.mods.succorInfo) return true;
+  if (ounces > 0) return true;
 
   return false;
 }
@@ -73,15 +73,15 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem):
 
   // the owner text
   let ownedText = '';
-  if(item.mods.owner) {
-    if(item.mods.owner === player.username) ownedText = 'This item belongs to you. ';
-    else                                    ownedText = 'This item does NOT belong to you. ';
+  if (item.mods.owner) {
+    if (item.mods.owner === player.username) ownedText = 'This item belongs to you. ';
+    else                                     ownedText = 'This item does NOT belong to you. ';
   }
 
   // how full it is, if at all
   const ounces = item.mods.ounces || 0;
   let fluidText = itemClass === ItemClass.Bottle && ounces > 0 ? `It is filled with ${ounces}oz of fluid. ` : '';
-  if(itemClass === ItemClass.Bottle && ounces === 0) fluidText = 'It is empty.';
+  if (itemClass === ItemClass.Bottle && ounces === 0) fluidText = 'It is empty.';
 
   // the items 'use' effect situation
   let usesText = usesString(item, itemDef);
@@ -93,7 +93,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem):
   // various requirements for the item
   const requirements = getProp(item, itemDef, 'requirements');
   const levelText = requirements && requirements.level ? `You must be level ${requirements.level} to use this item. ` : '';
-  
+
   const alignmentText = requirements && requirements.alignment ? `This item is ${requirements.alignment}. ` : '';
 
   const formattedSkill = requirements?.skill?.name === 'Wand' ? 'Magical Weapons' : requirements?.skill?.name;
@@ -102,7 +102,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem):
   // TODO: encrust
 
   const desc = getProp(item, itemDef, 'desc');
-  
+
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces}oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}. `;
 

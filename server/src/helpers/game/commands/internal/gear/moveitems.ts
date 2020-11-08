@@ -26,7 +26,7 @@ export class MoveItems extends MacroCommand {
   canBeInstant = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    const [o, t, d, ...rest] = args.calledAlias.split('');
+    const [o, d] = args.calledAlias.split(' ')[0].split('t');
 
     if (!this[`handle${o}`]) return this.sendMessage(player, 'Invalid item move origin.');
 
@@ -75,7 +75,7 @@ export class MoveItems extends MacroCommand {
   }
 
   // handle L as an origin
-  private handleL(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+  handleL(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.L.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
     const srcItem = player.items.equipment[ItemSlot.LeftHand];
 
@@ -129,7 +129,7 @@ export class MoveItems extends MacroCommand {
   }
 
   // handle R as an origin
-  private handleR(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+  handleR(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.R.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
     const srcItem = player.items.equipment[ItemSlot.RightHand];
 
@@ -183,7 +183,7 @@ export class MoveItems extends MacroCommand {
   }
 
   // handle E as an origin
-  private handleE(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+  handleE(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.E.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
     const srcItem = player.items.equipment[origSlot];
 
@@ -254,7 +254,7 @@ export class MoveItems extends MacroCommand {
   }
 
   // handle B as an origin
-  private handleB(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+  handleB(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.B.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
     const srcItem = player.items.belt.items[+origSlot];
@@ -339,7 +339,7 @@ export class MoveItems extends MacroCommand {
   }
 
   // handle S as an origin
-  private handleS(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+  handleS(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.S.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
     const srcItem = player.items.sack.items[+origSlot];
