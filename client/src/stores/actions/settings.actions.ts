@@ -16,6 +16,7 @@ export class RemoveAccount {
 // dispatched any time a window moves
 export class UpdateWindowPosition {
   static type = '[Settings] Update window position';
+  filterOutFromLogs = true;
   constructor(
     public windowName: string,
     public windowProps: { x?: number, y?: number, width?: number, height?: number, hidden?: boolean },
@@ -26,6 +27,7 @@ export class UpdateWindowPosition {
 // dispatched when a window is created
 export class SetDefaultWindowPosition {
   static type = '[Settings] Set default window position';
+  filterOutFromLogs = true;
   constructor(
     public windowName: string,
     public windowProps: { x?: number, y?: number  }
@@ -47,12 +49,14 @@ export class HideWindow {
 // dispatched when a window is shown
 export class ShowWindow {
   static type = '[Settings] Show Window';
+  filterOutFromLogs = true;
   constructor(public windowName: string) {}
 }
 
 // dispatched when a window is marked active (usually via click)
 export class SetActiveWindow {
   static type = '[Settings] Set active window';
+  filterOutFromLogs = true;
   constructor(public windowName: string) {}
 }
 

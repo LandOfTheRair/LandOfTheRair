@@ -7,7 +7,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
-import { getActionTypeFromInstance, NgxsModule } from '@ngxs/store';
+import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
 import { GameModule } from './game.module';
@@ -15,7 +15,6 @@ import { GameModule } from './game.module';
 import { environment } from '../environments/environment';
 
 import * as AllStores from '../stores';
-import { SetActiveWindow, UpdateWindowPosition } from '../stores';
 
 import { AppComponent } from './app.component';
 
@@ -50,13 +49,7 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production,
       collapsed: true,
-      filter: action => {
-        const ignoreActions: any = {
-          [UpdateWindowPosition.type]: true, [SetActiveWindow.type]: true
-        };
-        const actionType: string = getActionTypeFromInstance(action) as string;
-        return !ignoreActions[actionType];
-      }
+      filter: action => !action.filterOutFromLogs
     })
   ],
   providers: [

@@ -15,6 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -24,7 +25,7 @@ const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
   MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule,
-  MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule,
+  MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule, MatTabsModule,
 
   MdePopoverModule
 ];
