@@ -36,6 +36,7 @@ export class Spawner {
   private shouldSerialize: boolean;                 // whether the spawner should save its state or not (boss only)
   private requireDeadToRespawn = false;             // whether the spawner can keep spawning while it has living creatures
   private isDangerous = false;                      // whether the creature is "dangerous" or not (strips)
+  private respectKnowledge = true;                  // whether the npcs should be acting if true, they only act where players have knowledge (green, town, and lair spawners always act)
 
   private shouldStrip = false;                      // whether the creature should strip all your gear on death
   private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
@@ -119,6 +120,11 @@ export class Spawner {
     this.npcs.forEach(npc => {
       if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc)) {
         this.removeNPC(npc);
+        return;
+      }
+
+      // if the spawner respects player knowledge (generally, monsters do), then we don't trigger unless a player is nearby
+      if (this.respectKnowledge && !this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y)) {
         return;
       }
 

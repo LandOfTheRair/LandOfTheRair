@@ -90,6 +90,7 @@ export class MapState {
       removeDeadNPCs: false,
       doInitialSpawnImmediately: true,
       eliteTickCap: -1,
+      respectKnowledge: false,
       npcDefs
     } as Partial<Spawner>);
 
@@ -114,7 +115,11 @@ export class MapState {
 
       extend(spawnerData, spawner.properties);
 
-      if (spawner.properties.lairName) spawnerData.npcIds = [spawner.properties.lairName];
+      if (spawner.properties.lairName) {
+        spawnerData.npcIds = [spawner.properties.lairName];
+        spawnerData.respectKnowledge = false;
+      }
+
       if (spawner.properties.resourceName) spawnerData.npcIds = [spawner.properties.resourceName];
 
       const createdSpawner = new Spawner(this.game, this.map, this, spawnerData);
@@ -171,9 +176,14 @@ export class MapState {
     return Object.values(this.npcsByUUID).find(x => x.npcId === npcId);
   }
 
-  // check if there are any players that care about x,y
+  // get any players that care about x,y
   public getPlayerKnowledgeForXY(x: number, y: number): Record<string, any> {
-    return get(this.playerKnowledgePositions, x, y);
+    return get(this.playerKnowledgePositions, [x, y]);
+  }
+
+  // check if there are any players that care about x,y
+  public isThereAnyKnowledgeForXY(x: number, y: number): boolean {
+    return Object.keys(get(this.playerKnowledgePositions, [x, y], {})).length !== 0;
   }
 
   // format for rbush
@@ -378,7 +388,7 @@ export class MapState {
   private movePlayer(player: Player, { oldX, oldY }) {
     this.triggerAndSendUpdate(oldX, oldY, player);
 
-    this.generateKnowledgeRadius(player, false);
+    this.generateKnowledgeRadius({ uuid: player.uuid, x: oldX, y: oldY }, false);
 
     const rbushPlayer = this.bushStorage[player.uuid];
     this.players.remove(rbushPlayer);
