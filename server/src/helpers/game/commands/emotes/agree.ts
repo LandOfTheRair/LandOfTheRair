@@ -13,15 +13,15 @@ export class Agree extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You agree!');
+      this.sendChatMessage(player, 'You agree!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} agrees!`);
       });
       return;
     }
 
-    this.sendMessage(player, `You agree with ${target.name}!`);
-    this.sendMessage(target, `${player.name} agrees with you!`);
+    this.sendChatMessage(player, `You agree with ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} agrees with you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} agrees with ${target.name}!`);
     });

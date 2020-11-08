@@ -13,15 +13,15 @@ export class Dance extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You dance!');
+      this.sendChatMessage(player, 'You dance!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} dances!`);
       });
       return;
     }
 
-    this.sendMessage(player, `You dance with ${target.name}!`);
-    this.sendMessage(target, `${player.name} dances with you!`);
+    this.sendChatMessage(player, `You dance with ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} dances with you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} dances with ${target.name}!`);
     });

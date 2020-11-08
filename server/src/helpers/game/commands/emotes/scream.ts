@@ -13,15 +13,15 @@ export class Scream extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You scream!');
+      this.sendChatMessage(player, 'You scream!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} screams!`);
       });
       return;
     }
 
-    this.sendMessage(player, `You scream at ${target.name}!`);
-    this.sendMessage(target, `${player.name} screams at you!`);
+    this.sendChatMessage(player, `You scream at ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} screams at you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} screams at ${target.name}!`);
     });

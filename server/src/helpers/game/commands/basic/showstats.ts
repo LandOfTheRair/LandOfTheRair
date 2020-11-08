@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, Stat } from '../../../../interfaces';
+import { Allegiance, IMacroCommandArgs, IPlayer, MessageType, Stat } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class ShowStats extends MacroCommand {
@@ -8,11 +8,14 @@ export class ShowStats extends MacroCommand {
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    this.sendMessage(player, `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.`);
-    this.sendMessage(player, `Your allegiance lies with ${player.allegiance === 'None' ? 'no one' : `the ${player.allegiance}`}.`);
+    let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.`;
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
+    message = `Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
 
     Object.keys(player.stats).forEach(key => {
-      this.sendMessage(player, `Your ${key.toUpperCase()} is ${this.game.characterHelper.getStat(player, key as Stat)}`);
+      message = `Your ${key.toUpperCase()} is ${this.game.characterHelper.getStat(player, key as Stat)}`;
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
     });
   }
 }

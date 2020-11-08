@@ -13,7 +13,7 @@ export class Tickle extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You tickle the air!');
+      this.sendChatMessage(player, 'You tickle the air!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} tickles the air!`);
       });
@@ -21,8 +21,8 @@ export class Tickle extends MacroCommand {
     }
 
     this.game.characterHelper.clearAgro(player, target);
-    this.sendMessage(player, `You tickle ${target.name}!`);
-    this.sendMessage(target, `${player.name} tickles you!`);
+    this.sendChatMessage(player, `You tickle ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} tickles you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} tickle ${target.name}!`);
     });

@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer, MessageType } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
@@ -8,9 +8,11 @@ export class Break extends MacroCommand {
   canBeFast = false;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
+    let message;
     const breakItem = args.stringArgs;
     if (!breakItem) {
-      this.sendMessage(player, 'You need to specify which item to break!');
+      message = 'You need to specify which item to break!';
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
       return;
     }
 
@@ -21,15 +23,16 @@ export class Break extends MacroCommand {
     switch (breakItem) {
       case 'left':
         this.game.characterHelper.setLeftHand(player, undefined);
-        this.sendMessage(player, `You break the item in your left hand!`);
+        message = `You break the item in your left hand!`;
         break;
       case 'right':
         this.game.characterHelper.setRightHand(player, undefined);
-        this.sendMessage(player, `You break the item in your right hand!`);
+        message = `You break the item in your right hand!`;
         break;
       default:
-      this.sendMessage(player, 'That is not one of your hands!');
-      break;
+        message = 'That is not one of your hands!';
+        break;
     }
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
   }
 }

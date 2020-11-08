@@ -13,7 +13,7 @@ export class Emote extends MacroCommand {
 
     const cleanedEmote = this.game.profanityHelper.cleanMessage(args.stringArgs);
     if (args.stringArgs !== cleanedEmote) {
-      this.sendMessage(player, 'Have some decency!');
+      this.sendChatMessage(player, 'Have some decency!');
       return;
     }
 

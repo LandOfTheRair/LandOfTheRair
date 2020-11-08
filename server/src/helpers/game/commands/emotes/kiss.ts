@@ -13,15 +13,15 @@ export class Kiss extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You blow a kiss!');
+      this.sendChatMessage(player, 'You blow a kiss!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} blows a kiss!`);
       });
       return;
     }
 
-    this.sendMessage(player, `You kiss ${target.name}!`);
-    this.sendMessage(target, `${player.name} kisses you!`);
+    this.sendChatMessage(player, `You kiss ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} kisses you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} kisses ${target.name}!`);
     });

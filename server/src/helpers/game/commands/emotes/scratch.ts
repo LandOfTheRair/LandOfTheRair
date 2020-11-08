@@ -13,7 +13,7 @@ export class Scratch extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You scratch yourself!');
+      this.sendChatMessage(player, 'You scratch yourself!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} scratches ${player.gender === 'male' ? 'himself' : 'herself'}!`);
       });
@@ -21,8 +21,8 @@ export class Scratch extends MacroCommand {
     }
 
     this.game.characterHelper.addAgro(player, target, 1);
-    this.sendMessage(player, `You scratch ${target.name}!`);
-    this.sendMessage(target, `${player.name} scratches you!`);
+    this.sendChatMessage(player, `You scratch ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} scratches you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} scratches ${target.name}!`);
     });

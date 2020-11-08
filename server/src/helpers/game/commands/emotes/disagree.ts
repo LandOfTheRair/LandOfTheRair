@@ -13,15 +13,15 @@ export class Disagree extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendMessage(player, 'You disagree!');
+      this.sendChatMessage(player, 'You disagree!');
       playersInView.filter(element => element !== player).forEach(p => {
         this.sendChatMessage(p, `${player.name} disagrees!`);
       });
       return;
     }
 
-    this.sendMessage(player, `You disagree with ${target.name}!`);
-    this.sendMessage(target, `${player.name} disagrees with you!`);
+    this.sendChatMessage(player, `You disagree with ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} disagrees with you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
       this.sendChatMessage(p, `${player.name} disagrees with ${target.name}!`);
     });
