@@ -34,6 +34,8 @@ export class PlayerHelper extends BaseService {
 
     player.agro = {};
 
+    player.isGM = player.account.isGameMaster;
+    player.isTester = player.account.isTester;
     player.username = player.account.username;
     player.isSubscribed = this.subscriptionHelper.isSubscribed(player.account);
 

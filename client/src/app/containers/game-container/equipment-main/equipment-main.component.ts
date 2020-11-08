@@ -10,6 +10,7 @@ import { GameState, SetCharacterView, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
 import { GameService } from '../../../services/game.service';
+import { UIService } from '../../../services/ui.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -23,45 +24,53 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   public readonly slots = [
-    // coins are special, we skip that slot
-
     {
-      template: 'coin'
+      template: 'coin',
+      dropScope: 'Sack'
     },
     {
       slot: 'ear',
       name: 'Earring',
+      dropScope: 'Equipment'
     },
     {
       slot: 'head',
-      name: 'Helm'
+      name: 'Helm',
+      dropScope: 'Equipment'
     },
     {
       slot: 'neck',
-      name: 'Amulet'
+      name: 'Amulet',
+      dropScope: 'Equipment'
     },
     {},
 
     {
       slot: 'waist',
-      name: 'Sash'
+      name: 'Sash',
+      dropScope: 'Equipment'
     },
     {},
     {},
     {},
     {
       slot: 'wrists',
-      name: 'Bracers'
+      name: 'Bracers',
+      dropScope: 'Equipment'
     },
 
     {
       slot: 'ring1',
-      name: 'Ring'
+      name: 'Ring',
+      scope: 'ring',
+      dropScope: 'Equipment'
     },
     {
       template: 'hand',
       name: 'Right Hand',
       slot: 'rightHand',
+      scope: 'right',
+      dropScope: 'Right',
       hand: 'Right'
     },
     {},
@@ -69,41 +78,53 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
       template: 'hand',
       name: 'Left Hand',
       slot: 'leftHand',
+      scope: 'left',
+      dropScope: 'Left',
       hand: 'Left'
     },
     {
       slot: 'ring2',
-      name: 'Ring'
+      name: 'Ring',
+      scope: 'ring',
+      dropScope: 'Equipment'
     },
 
     {
       slot: 'hands',
-      name: 'Gloves'
+      name: 'Gloves',
+      dropScope: 'Equipment'
     },
     {},
     {},
     {},
     {
       slot: 'feet',
-      name: 'Boots'
+      name: 'Boots',
+      dropScope: 'Equipment'
     },
 
     {
       template: 'potion',
       slot: 'potion',
-      name: 'Potion'
+      name: 'Potion',
+      dropScope: 'Potion'
     },
     {
       slot: 'armor',
-      name: 'Armor'
+      name: 'Armor',
+      dropScope: 'Equipment'
     },
     {
       slot: 'robe1',
-      name: 'Robe'
+      name: 'Robe',
+      scope: 'robe',
+      dropScope: 'Equipment'
     },
     {
       slot: 'robe2',
-      name: 'Robe'
+      name: 'Robe',
+      scope: 'robe',
+      dropScope: 'Equipment'
     },
     {}
 
@@ -141,6 +162,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    public uiService: UIService,
     public gameService: GameService,
     public assetService: AssetService
   ) { }

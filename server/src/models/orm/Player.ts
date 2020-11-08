@@ -25,6 +25,8 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) fov = {};
   @Property(PROP_UNSAVED_SHARED()) agro = {};
   @Property(PROP_UNSAVED_SHARED()) totalStats: StatBlock;
+  @Property(PROP_UNSAVED_SHARED()) isGM: boolean;
+  @Property(PROP_UNSAVED_SHARED()) isTester: boolean;
 
   // temporary props
   @Property(PROP_TEMPORARY()) combatTicks = 0;

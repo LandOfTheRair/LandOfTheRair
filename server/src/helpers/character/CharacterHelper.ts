@@ -49,12 +49,16 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
+  public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined) {
+    char.items.equipment[slot] = item;
+  }
+
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
-    char.items.equipment[ItemSlot.RightHand] = item;
+    this.setEquipmentSlot(char, ItemSlot.RightHand, item);
   }
 
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
-    char.items.equipment[ItemSlot.LeftHand] = item;
+    this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
   }
 
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {

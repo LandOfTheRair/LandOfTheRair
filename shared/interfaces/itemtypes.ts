@@ -64,6 +64,7 @@ export enum ArmorClass {
 export enum MiscClass {
   Book = 'Book',
   Bottle = 'Bottle',
+  Box = 'Box',
   Coin = 'Coin',
   Corpse = 'Corpse',
   Flower = 'Flower',

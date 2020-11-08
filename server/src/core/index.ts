@@ -54,7 +54,6 @@ if (cluster.isMaster) {
       workers[type].on('message', (msg: any) => {
         Object.keys(workers).forEach(workerType => {
           if (workerType === type) return;
-
           workers[workerType].send(msg);
         });
       });

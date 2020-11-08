@@ -34,6 +34,32 @@ function usesString(item: ISimpleItem, itemDef: IItem): string {
   // the item <x>
 }
 
+export function isOwnedBy(player: IPlayer, item: ISimpleItem): boolean {
+  return !item.mods.owner || item.mods.owner === player.username;
+}
+
+export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): boolean {
+
+  const itemClass = getProp(item, itemDef, 'itemClass');
+  const useEffect = getProp(item, itemDef, 'useEffect');
+  const ounces = getProp(item, itemDef, 'ounces');
+
+  const condition = item.mods.condition ?? 20000;
+
+  // can't use broken items, traps, or items you don't own
+  if(condition <= 0) return false;
+  if(itemClass === ItemClass.Trap) return false;
+  if(!isOwnedBy(player, item)) return false;
+
+  if(itemClass === ItemClass.Box) return true;
+  if(itemClass === ItemClass.Book) return true;
+  if(useEffect && useEffect.uses) return true;
+  if(item.mods.succorInfo) return true;
+  if(ounces > 0) return true;
+
+  return false;
+}
+
 export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem): string {
 
   const itemClass = getProp(item, itemDef, 'itemClass');

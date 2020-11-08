@@ -93,6 +93,7 @@ export class LogCurrentCommandInHistory {
 // dispatched when something calls to set the current command, typing or otherwise
 export class SetCurrentCommand {
   static type = GameAction.SetCurrentCommand;
+  filterOutFromLogs = true;
   constructor(public command: string) {}
 }
 
