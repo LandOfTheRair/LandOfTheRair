@@ -17,7 +17,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
 
   @Select(SettingsState.options) options$: Observable<any>;
 
-  public options = {};
+  public options: any = {};
 
   public readonly uiOptions = [
     { option: GameOption.RightClickCMDSend,     text: 'Right-click to send command line' },
