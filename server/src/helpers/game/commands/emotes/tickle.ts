@@ -24,7 +24,7 @@ export class Tickle extends MacroCommand {
     this.sendChatMessage(player, `You tickle ${target.name}!`);
     this.sendChatMessage(target, `${player.name} tickles you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
-      this.sendChatMessage(p, `${player.name} tickle ${target.name}!`);
+      this.sendChatMessage(p, `${player.name} tickles ${target.name}!`);
     });
 
   }
