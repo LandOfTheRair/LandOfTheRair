@@ -23,7 +23,7 @@ export class Sing extends MacroCommand {
     this.sendChatMessage(player, `You sing with ${target.name}!`);
     this.sendChatMessage(target, `${player.name} sings with you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
-      this.sendChatMessage(p, `${player.name} sing with ${target.name}!`);
+      this.sendChatMessage(p, `${player.name} sings with ${target.name}!`);
     });
 
   }
