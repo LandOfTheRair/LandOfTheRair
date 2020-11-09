@@ -1,10 +1,11 @@
-# core2
-The core for Land of the Rair.
+# Land of the Rair
+
+This is the backend for Land of the Rair.
 
 ## Requirements
 
 * Node.js 12+
-* MongoDB (or mLab - easier)
+* MongoDB (or MongoDB Atlas - easier)
 
 ## Installation
 
@@ -19,4 +20,8 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `TS_NODE_TRANSPILE_ONLY` - set this to `1` if you want the dev server to start up a little bit faster
 * `DATABASE_URI` - the path to your mongodb database
 
-## Setup
+### Optional Variables
+
+You can also use these variables for various features:
+
+* `DATABASE_QUERY_DEBUG` - set this to `1` if you want to debug DB queries

@@ -28,7 +28,8 @@ export class Database extends BaseService {
       clientUrl: process.env.DATABASE_URI,
       dbName: 'landoftherair2',
       type: 'mongo',
-      driverOptions: { useUnifiedTopology: true }
+      driverOptions: { useUnifiedTopology: true },
+      debug: !!+(process.env.DATABASE_QUERY_DEBUG || '0')
     });
 
     [
@@ -59,8 +60,12 @@ export class Database extends BaseService {
     return this.em.create(entity, data);
   }
 
-  public save(entity: BaseEntity) {
-    return this.em.persistAndFlush(entity);
+  public save(entity: BaseEntity, flush = true) {
+    if (flush) {
+      return this.em.persistAndFlush(entity);
+    }
+
+    return this.em.persist(entity);
   }
 
   public delete(entity: BaseEntity) {

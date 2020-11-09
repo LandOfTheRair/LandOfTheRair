@@ -7,6 +7,7 @@ export class GameloopWorker {
   private wsCommands: WebsocketCommandHandler;
 
   async start() {
+    console.log('GAME', 'Starting game loop...');
     process.on('message', msg => this.handleMessage(msg));
 
     process.on('unhandledRejection', (error) => {
@@ -17,8 +18,11 @@ export class GameloopWorker {
       console.error('GAME', `Uncaught Exception`, error);
     });
 
+    console.log('GAME', 'Creating WSCMD...');
     this.wsCommands = new WebsocketCommandHandler();
     await this.wsCommands.init((id, data) => this.emit(id, data));
+
+    console.log('GAME', 'Sending ready signal...');
     process.send!({ __ready: true });
   }
 

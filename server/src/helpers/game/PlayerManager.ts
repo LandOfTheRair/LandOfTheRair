@@ -95,13 +95,14 @@ export class PlayerManager extends BaseService {
   }
 
   // save a single player
-  public savePlayer(player: Player) {
-    this.game.characterDB.savePlayer(player);
+  public savePlayer(player: Player, flush = true) {
+    this.game.characterDB.savePlayer(player, flush);
   }
 
   // save all players
   public saveAllPlayers() {
-    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player));
+    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player, false));
+    this.game.db.flush();
   }
 
   // do a fast tick (200ms by default)

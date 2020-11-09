@@ -4,7 +4,7 @@ import { Injectable } from 'injection-js';
 import { wrap } from '@mikro-orm/core';
 import { BaseClass, BaseService, initializePlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
-import { CharacterItems } from '../../../models/orm/CharacterItems';
+import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -34,7 +34,7 @@ export class CharacterDB extends BaseService {
     const player = this.db.create<Player>(Player, basePlayer);
     player.account = wrap(account).toReference();
 
-    const items = new CharacterItems();
+    const items = new PlayerItems();
     Object.keys(characterDetails.items).forEach(itemSlot => {
       items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
@@ -62,8 +62,9 @@ export class CharacterDB extends BaseService {
     await this.db.save(account);
   }
 
-  public async savePlayer(player: Player): Promise<void> {
-    return this.db.save(player);
+  public async savePlayer(player: Player, flush = true): Promise<void> {
+    await this.db.em.nativeUpdate(PlayerItems, { _id: player.items._id }, player.items);
+    await this.db.save(player, flush);
   }
 
 }

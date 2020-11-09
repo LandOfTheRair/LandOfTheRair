@@ -5,7 +5,7 @@ import { BaseEntity } from './BaseEntity';
 import { Player } from './Player';
 
 @Entity()
-export class CharacterItems extends BaseEntity implements ICharacterItems {
+export class PlayerItems extends BaseEntity implements ICharacterItems {
 
   // relation props
   @OneToOne(PROP_SERVER_ONLY()) player: Player;

@@ -74,6 +74,7 @@ export class Game {
   ) {}
 
   public async init(wsCmdHandler: WebsocketCommandHandler) {
+    this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 
     const initOrder = [

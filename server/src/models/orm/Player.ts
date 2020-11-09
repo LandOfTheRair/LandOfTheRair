@@ -1,18 +1,22 @@
 
-import { Entity, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
+import { Cascade, Entity, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 import { Account } from './Account';
 import { BaseEntity } from './BaseEntity';
-import { CharacterItems } from './CharacterItems';
+import { PlayerItems } from './PlayerItems';
 
 @Entity()
 export class Player extends BaseEntity implements IPlayer {
 
   // relation props
   @ManyToOne({ hidden: true, entity: () => Account }) account: Account;
-  @OneToOne(() => CharacterItems, (item) => item.player, { owner: true, orphanRemoval: true }) items: CharacterItems;
+  @OneToOne(
+    () => PlayerItems,
+    (item) => item.player,
+    { owner: true, orphanRemoval: true, cascade: [Cascade.ALL] }
+  ) items: PlayerItems;
 
   // server-only props
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();

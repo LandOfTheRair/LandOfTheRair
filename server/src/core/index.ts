@@ -17,11 +17,13 @@ const processors = cpus().length;
 
 const gameStart = () => {
   const worker = new GameloopWorker();
+  console.log('CLUSTER', 'Start game...');
   worker.start();
 };
 
 const netStart = () => {
   const worker = new WebsocketWorker();
+  console.log('CLUSTER', 'Start net...');
   worker.start();
 };
 

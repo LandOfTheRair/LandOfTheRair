@@ -15,10 +15,12 @@ export class WebsocketWorker {
   private wsServer: WebSocketServer;
 
   async start() {
+    console.log('NET', 'Starting network handler...');
 
     // set up IPC
     process.on('message', msg => {
       if (msg.__ready) {
+        console.log('NET', 'Starting API server...');
         this.setup();
         return;
       }
