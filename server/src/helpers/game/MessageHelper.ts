@@ -26,6 +26,29 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public sendLogMessageToRadius(
+    player: ICharacter,
+    radius: number,
+    { message, sfx }: { message: string, sfx?: string },
+    messageTypes: MessageType[] = [MessageType.Miscellaneous]
+  ): void {
+
+    const { state } = this.game.worldManager.getMap(player.map);
+    const allPlayers = state.getAllPlayersInRange(player, radius);
+
+    allPlayers.forEach(checkPlayer => {
+      const account = (checkPlayer as Player).account;
+      if (!account) return;
+
+      this.game.transmissionHelper.sendResponseToAccount((checkPlayer as Player).username, GameServerResponse.GameLog, {
+        type: GameServerResponse.GameLog,
+        messageTypes,
+        message,
+        sfx
+      });
+    });
+  }
+
   public sendSimpleMessage(character: ICharacter, message: string, sfx?: string): void {
     this.sendLogMessageToPlayer(character, { message, sfx });
   }

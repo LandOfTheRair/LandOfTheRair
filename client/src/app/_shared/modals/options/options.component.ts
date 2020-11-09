@@ -22,6 +22,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
   public readonly uiOptions = [
     { option: GameOption.RightClickCMDSend,     text: 'Right-click to send command line' },
     { option: GameOption.EnterToggleCMD,        text: 'Use Enter to toggle command line visibility' },
+    { option: GameOption.NoNPCModals,           text: 'Classic NPC chat (no dialog popups)' },
     { option: GameOption.AutoAttack,            text: 'Auto-attack while there is an active target' },
     { option: GameOption.HideLobbyWhilePlaying, text: 'Hide lobby while in game' },
     { option: GameOption.LockWindows,           text: 'Lock all window positions' },

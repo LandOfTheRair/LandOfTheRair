@@ -18,6 +18,7 @@ export enum GameOption {
   SuppressOutgoingDoT = 'suppressOutgoingDoTDamage',
   NoItemAnimations = 'noItemAnimations',
   EnterToggleCMD = 'enterToggleCMD',
+  NoNPCModals = 'noNPCModals',
   PinLastTarget = 'pinLastTarget',
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',

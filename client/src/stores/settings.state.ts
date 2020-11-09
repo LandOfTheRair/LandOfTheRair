@@ -25,6 +25,7 @@ const defaultSettings: () => ISettings = () => {
       [GameOption.RightClickCMDSend]: false,
       [GameOption.AutoAttack]: true,
       [GameOption.HideLobbyWhilePlaying]: true,
+      [GameOption.NoNPCModals]: false,
       [GameOption.LockWindows]: false,
       [GameOption.SuppressZeroDamage]: false,
       [GameOption.SuppressOutgoingDoT]: false,

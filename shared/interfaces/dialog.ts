@@ -30,17 +30,17 @@ export interface IDialogGiveEffectAction {
 
 export interface IDialogGiveItemAction {
   slot: ItemSlot[];
-  item: IDialogItem[];
+  item: IDialogItem;
 }
 
 export interface IDialogTakeItemAction {
   slot: ItemSlot[];
-  item: IDialogItem[];
+  item: IDialogItem;
 }
 
 export interface IDialogCheckItemAction {
   slot: ItemSlot[];
-  item: IDialogItem[];
+  item: IDialogItem;
   checkPassActions: IDialogAction[];
   checkFailActions: IDialogAction[];
 }

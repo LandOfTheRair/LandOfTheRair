@@ -35,6 +35,16 @@ export class ItemHelper extends BaseService {
     return realItem[prop];
   }
 
+  public getItemProperties(item: ISimpleItem | undefined, props: Array<keyof IItem>): Partial<Record<keyof IItem, any>> {
+    const hash = {};
+    props.forEach(prop => hash[prop] = this.getItemProperty(item, prop));
+    return hash;
+  }
+
+  public setItemProperty(item: ISimpleItem, prop: keyof IItem, value: any): void {
+    item.mods[prop] = value;
+  }
+
   // encrust an item with another item
   public encrustItem(baseItem: ISimpleItem, encrustItem: ISimpleItem): void {
     baseItem.mods.encrustItem = encrustItem.name;

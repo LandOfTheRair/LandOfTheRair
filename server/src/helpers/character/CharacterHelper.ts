@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, ICharacter, IPlayer, ISimpleItem, ItemSlot, Skill, Stat } from '../../interfaces';
+import { BaseService, CoreStat, ICharacter, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -49,8 +49,22 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
-  public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined) {
+  public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
     char.items.equipment[slot] = item;
+
+    if (item) {
+      const { binds, desc, tellsBind, itemClass, owner } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner']);
+      if (itemClass === ItemClass.Corpse) return;
+
+      if (binds && (char as IPlayer).username && !owner) {
+        this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
+        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${itemClass.toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
+
+        if (tellsBind) {
+          this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `${char.name} has looted ${desc}.` });
+        }
+      }
+    }
   }
 
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
