@@ -117,6 +117,7 @@ export class PlayerManager extends BaseService {
     this.currentSlowTick++;
     if (this.currentSlowTick > this.SAVE_TICK_COUNT) {
       this.saveAllPlayers();
+      this.currentSlowTick = 0;
     }
   }
 
