@@ -26,7 +26,6 @@ export class MoveItems extends MacroCommand {
   canBeInstant = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    console.log(player.items);
     const [o, d] = args.calledAlias.split(' ')[0].split('t');
 
     if (!this[`handle${o}`]) return this.sendMessage(player, 'Invalid item move origin.');
