@@ -1,5 +1,8 @@
 
-<div class="item-container" droppable [dropScope]="context" *ngIf="player$ | async as player">
+<div class="item-container" droppable 
+                            [dropScope]="context.toLowerCase()" 
+                            (onDrop)="uiService.buildAndDoDropAction($event, context)"  
+                            *ngIf="player$ | async as player">
   <div class="item-slot item-background" *ngFor="let slot of slots">
     <app-item *ngIf="player.items[container]?.items[slot]"
               [size]="displaySize"
@@ -7,6 +10,7 @@
               [contextSlot]="slot"
               [showDesc]="true"
               [showOunces]="true"
+              [viewingPlayer]="player"
               [item]="player.items[container].items[slot]"></app-item>
   </div>
 </div>

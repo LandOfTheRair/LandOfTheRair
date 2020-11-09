@@ -52,7 +52,7 @@
 <ng-template #viewStats>
   <table class="display-table" *ngIf="player$ | async as player">
     <tr *ngFor="let stat of stats">
-      <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall"></app-icon></td>
+      <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall" round="true"></app-icon></td>
       <td>{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
       <td class="number">
         {{ player.totalStats[stat.stat] }} 
@@ -70,7 +70,7 @@
 <ng-template #viewSkills>
   <table class="display-table" *ngIf="player$ | async as player">
     <tr *ngFor="let skill of sortedSkills(player.skills)">
-      <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-icon [name]="skill.icon" size="xsmall"></app-icon></td>
+      <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-icon [name]="skill.icon" size="xsmall" round="true"></app-icon></td>
       <td>{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
       <td class="number">
         {{ skillLevel(player.skills[skill.skill]) }} 
@@ -80,8 +80,12 @@
 </ng-template>
 
 <ng-template #viewEquipment>
-  <div class="item-container" droppable dropScope="Equipment" *ngIf="player$ | async as player">
-    <div class="item-slot" *ngFor="let slot of slots" [class.item-background]="slot.template || slot.slot" [dropScope]="slot.slot" droppable>
+  <div class="item-container" *ngIf="player$ | async as player">
+    <div class="item-slot" *ngFor="let slot of slots" 
+                           [class.item-background]="slot.template || slot.slot" 
+                           [dropScope]="slot.scope || slot.slot"
+                           (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)" 
+                           droppable>
 
       <ng-container *ngIf="!slot.template">
         <ng-container *ngTemplateOutlet="itemGenericTemplate; context: createContext(slot, player)"></ng-container>
@@ -109,6 +113,7 @@
             [size]="'lg'"
             [context]="'Equipment'"
             [contextSlot]="slot.slot"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 
@@ -117,9 +122,10 @@
   <app-item *ngIf="player.items.equipment[slot.slot]"
             [size]="'lg'"
             [context]="slot.hand"
-            [contextSlot]="slot.slot"
+            contextSlot="_"
             showOunces="true"
             [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 
@@ -129,6 +135,7 @@
             [size]="'lg'"
             context="Potion"
             showOunces="true"
+            [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 

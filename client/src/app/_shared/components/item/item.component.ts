@@ -1,5 +1,9 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { EquippableItemClasses, IItem, ISimpleItem, ItemClass } from '../../../../interfaces';
+import { Store } from '@ngxs/store';
+
+import { canUseItem, descTextFor, EquipHash, EquippableItemClasses,
+  IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
+import { SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
 // const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];
@@ -51,6 +55,7 @@ export class ItemComponent implements OnDestroy {
   @Input() public contextSlot: number|string;
   @Input() public containerUUID: string;
   @Input() public overrideValue: number|string;
+  @Input() public viewingPlayer: IPlayer;
   @Input() public size: 'xsmall' | 'small' | 'normal' = 'normal';
 
   public scopes: string[] = [];
@@ -121,9 +126,7 @@ export class ItemComponent implements OnDestroy {
 
   get descText() {
     if (!this.item) return '';
-
-    // TODO: sense desc etc - should be a shared helper function
-    return this.item.mods.desc || this.realItem.desc;
+    return descTextFor(this.viewingPlayer, this.item, this.realItem);
   }
 
   get isStackableMaterial(): boolean {
@@ -133,16 +136,84 @@ export class ItemComponent implements OnDestroy {
     // return MaterialSlotInfo[ValidMaterialItems[this.item.name]].withdrawInOunces;
   }
 
-  get effectName(): string {
-    if (!this.item) return '';
-    if (!this.item.mods.effect) return '';
-    return this.item.mods.effect.name;
-  }
-
-  constructor(private assetService: AssetService) {}
+  constructor(private store: Store, private assetService: AssetService) {}
 
   ngOnDestroy(): void {
     this.removeDesc();
+  }
+
+  determineScopes(): void {
+    if (!this.context || !this.item || !this.realItem || !this.viewingPlayer) return;
+
+    const scopes = [];
+
+    // if any hands are empty, or you're looking at left/right hand, they can move into the hand area
+    if (!this.viewingPlayer.items.equipment[ItemSlot.LeftHand]
+    || !this.viewingPlayer.items.equipment[ItemSlot.RightHand]
+    || this.context === 'Left'
+    || this.context === 'Right') {
+      scopes.push('right', 'left');
+    }
+
+    // if you have a coin, it can go... to your coin
+    if (this.realItem.itemClass === ItemClass.Coin) {
+      scopes.push('coin');
+    }
+
+    // if we're not buying back stuff or looking at a merchant, we can drag to the ground
+    // also, it can go to its equipment slot if possible
+    if (this.context !== 'Obtainagain' && this.context !== 'Merchant') {
+      scopes.push('ground', 'mapground');
+
+      const itemType = EquipHash[this.realItem.itemClass] as ItemSlot;
+      if (itemType) scopes.push(itemType.toLowerCase());
+    }
+
+    // you can sell anything on your person if it isn't a coin or a corpse
+    if (this.realItem.itemClass !== ItemClass.Coin
+    && this.realItem.itemClass !== ItemClass.Corpse
+    && this.context !== 'Obtainagain'
+    && this.context !== 'Equipment'
+    && this.context !== 'GroundGroup'
+    && this.context !== 'Ground') scopes.push('merchant');
+
+    // you can stash anything that's not a coin or a corpse
+    // who the hell would put a corpse in their locker anyway?
+    if (this.realItem.itemClass !== ItemClass.Coin
+    && this.realItem.itemClass !== ItemClass.Corpse) {
+      scopes.push('wardrobe');
+
+      /*
+      if (this.context !== 'GroundGroup') {
+        POSSIBLE_TRADESKILL_SCOPES.forEach(skill => {
+          if (this.colyseusGame[`show${skill}`].uuid) {
+            scopes.push(skill.toLowerCase());
+          }
+        });
+      }
+      */
+    }
+
+    // if we have a bottle and it's on our person, we can equip it
+    if (this.realItem.itemClass === ItemClass.Bottle
+    && (this.context === 'Sack'
+      || this.context === 'DemiMagicPouch'
+      || this.context === 'Ground'
+      || this.context === 'Right'
+      || this.context === 'Left')) {
+      scopes.push('potion');
+    }
+
+    // if the item is sackable or beltable, it can go there
+    if (this.realItem.isSackable) scopes.push('sack', 'demimagicpouch');
+    if (this.realItem.isBeltable) scopes.push('belt', 'demimagicpouch');
+
+    // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
+    if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
+    && this.context !== 'GroundGroup'
+    && this.context !== 'Equipment') scopes.push('use');
+
+    this.scopes = scopes;
   }
 
   doColyseusMoveAction(choice): void {
@@ -158,70 +229,6 @@ export class ItemComponent implements OnDestroy {
 
   doColyseusUseAction(): void {
     // this.colyseusGame.buildUseAction(this.item, this.context, this.contextSlot);
-  }
-
-  determineScopes(): void {
-    if (!this.context || !this.item) return;
-    /*
-
-    const scopes = [];
-
-    if (this.context !== 'Obtainagain' && this.context !== 'Merchant') {
-      scopes.push('ground', 'mapground');
-
-      const itemType = this.player.determineItemType(this.item.itemClass);
-      scopes.push(itemType.toLowerCase());
-    }
-
-    if (!this.player.leftHand || !this.player.rightHand || this.context === 'Left' || this.context === 'Right') {
-      scopes.push('right', 'left');
-    }
-
-    if (this.item.itemClass === 'Coin') {
-      scopes.push('coin');
-    }
-
-    if (this.item.itemClass !== 'Coin'
-    && this.item.itemClass !== 'Corpse'
-    && this.context !== 'Obtainagain'
-    && this.context !== 'Equipment'
-    && this.context !== 'GroundGroup'
-    && this.context !== 'Ground') scopes.push('merchant');
-
-    if (this.item.itemClass !== 'Coin'
-    && this.item.itemClass !== 'Corpse') {
-      scopes.push('wardrobe');
-
-      if (this.context !== 'GroundGroup') {
-        POSSIBLE_TRADESKILL_SCOPES.forEach(skill => {
-          if (this.colyseusGame[`show${skill}`].uuid) {
-            scopes.push(skill.toLowerCase());
-          }
-        });
-      }
-    }
-
-    if (this.item.itemClass === 'Bottle'
-    && (this.context === 'Sack'
-      || this.context === 'DemiMagicPouch'
-      || this.context === 'Ground'
-      || this.context === 'Right'
-      || this.context === 'Left')) {
-      scopes.push('potion');
-    }
-
-    if (this.item.isSackable) scopes.push('sack', 'demimagicpouch');
-    if (this.item.isBeltable) scopes.push('belt', 'demimagicpouch');
-
-    if (
-      ((this.item.canUse && this.item.canUse(this.player)) || this.item.itemClass === 'Bottle')
-    && this.context !== 'GroundGroup'
-    && this.context !== 'Equipment') scopes.push('use');
-
-    this.scopes = scopes;
-    */
-
-    this.scopes = [];
   }
 
   automaticallyTakeActionBasedOnOpenWindows(): void {
@@ -339,19 +346,19 @@ export class ItemComponent implements OnDestroy {
   updateWithDesc(): void {
     if (!this.item || !this.showDesc) return;
 
-    /*
-    this.colyseusGame.updateCurrentItemDesc(this.descText);
-    this.hasTooltip = true;
-    */
+    setTimeout(() => {
+      this.store.dispatch(new SetCurrentItemTooltip(this.descText));
+      this.hasTooltip = true;
+    });
   }
 
   removeDesc(): void {
     if (!this.hasTooltip) return;
 
-    /*
-    this.colyseusGame.updateCurrentItemDesc('');
-    this.hasTooltip = false;
-    */
+    setTimeout(() => {
+      this.store.dispatch(new SetCurrentItemTooltip(''));
+      this.hasTooltip = false;
+    });
   }
 
 }

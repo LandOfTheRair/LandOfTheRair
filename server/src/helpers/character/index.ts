@@ -3,6 +3,7 @@ export * from './CalculatorHelper';
 export * from './CharacterHelper';
 export * from './CombatHelper';
 export * from './DirectionHelper';
+export * from './PlayerInventoryHelper';
 export * from './InteractionHelper';
 export * from './ItemHelper';
 export * from './MovementHelper';

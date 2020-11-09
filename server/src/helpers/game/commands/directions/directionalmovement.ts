@@ -1,4 +1,4 @@
-import { Direction, IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { Direction, IMacroCommandArgs, IPlayer, Stat } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class DirectionalMovement extends MacroCommand {
@@ -6,7 +6,7 @@ export class DirectionalMovement extends MacroCommand {
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    const totalMoves = Array<Direction>();
+    const totalMoves: Direction[] = [];
     totalMoves.push(args.calledAlias as Direction);
 
     if (args.stringArgs) {
@@ -14,7 +14,7 @@ export class DirectionalMovement extends MacroCommand {
       additionalMoves.forEach(element => totalMoves.push(element as Direction));
     }
 
-    totalMoves.slice(0, player.stats.move || 3).forEach(element => {
+    totalMoves.slice(0, this.game.characterHelper.getStat(player, Stat.Move)).forEach(element => {
         const { x, y } = this.game.directionHelper.getXYFromDir( element as Direction);
         this.game.movementHelper.moveWithPathfinding(player, { xDiff: x, yDiff: y });
       });

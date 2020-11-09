@@ -88,6 +88,11 @@ export class CommandHandler extends BaseService {
       return;
     }
 
+    if (commandRef.isGMCommand && !player.isGM) {
+      this.messageHelper.sendLogMessageToPlayer(player, { message: `You're not a GM.` });
+      return;
+    }
+
     // run or queue the command
     const callback = () => commandRef.execute(player, args);
 

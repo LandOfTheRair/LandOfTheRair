@@ -3,6 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
+import { UIService } from '../../../services/ui.service';
 
 @Component({
   selector: 'app-inventory',
@@ -15,14 +16,14 @@ export class InventoryComponent implements OnInit {
 
   @Input() public size: number;
   @Input() public displaySize = 'lg';
-  @Input() public context: 'Sack' | 'Belt' | 'Pouch';
+  @Input() public context: 'Sack' | 'Belt' | 'DemiMagicPouch';
   @Input() public container: 'sack' | 'belt' | 'pouch';
 
   public get slots() {
-    return Array(this.size).fill(null).map((v, i) => i).reverse();
+    return Array(this.size).fill(null).map((v, i) => i);
   }
 
-  constructor() { }
+  constructor(public uiService: UIService) { }
 
   ngOnInit() {
   }

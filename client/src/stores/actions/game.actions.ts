@@ -47,3 +47,10 @@ export class SetCurrentTarget {
   static type = GameAction.SetCurrentTarget;
   constructor(public target: string) {}
 }
+
+// dispatched when hovering over an item
+export class SetCurrentItemTooltip {
+  static type = GameAction.SetCurrentItemTooltip;
+  filterOutFromLogs = true;
+  constructor(public tooltip: string) {}
+}

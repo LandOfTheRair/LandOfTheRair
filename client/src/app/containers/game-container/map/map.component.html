@@ -26,4 +26,6 @@
   </div>
 
   <div class="map"></div>
+
+  <div class="item-text" *ngIf="itemTooltip$ | async" [innerHTML]="itemTooltip$ | async"></div>
 </ng-template>

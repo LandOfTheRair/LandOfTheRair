@@ -10,5 +10,6 @@ export enum MessageType {
   Chatter = 'chatter',
   Other = 'other',
   Kill = 'kill',
-  Hit = 'hit'
+  Hit = 'hit',
+  Description = 'description'
 }

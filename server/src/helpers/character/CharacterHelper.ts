@@ -49,12 +49,32 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
+  public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined) {
+    char.items.equipment[slot] = item;
+  }
+
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
-    char.items.equipment[ItemSlot.RightHand] = item;
+    this.setEquipmentSlot(char, ItemSlot.RightHand, item);
   }
 
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
-    char.items.equipment[ItemSlot.RightHand] = item;
+    this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
+  }
+
+  public addAgro(char: ICharacter, target: ICharacter, amount: number) {
+    char.agro[target.uuid] = (char.agro[target.uuid] || 0) + amount;
+    target.agro[char.uuid] = (target.agro[char.uuid] || 0) + amount;
+
+    if (char.agro[target.uuid] <= 0) {
+      delete char.agro[target.uuid];
+    }
+    if (target.agro[char.uuid] <= 0) {
+      delete target.agro[char.uuid];
+    }
+
+  }
+  public clearAgro(char: ICharacter, target: ICharacter) {
+    delete char.agro[target.uuid];
   }
 
   // check if a character is a player

@@ -5,12 +5,13 @@ import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
-  QuitGame, SetCurrentTarget, SetMap, SetPlayer } from './actions';
+  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer } from './actions';
 
 const defaultGame: () => IGame = () => {
   return {
     inGame: false,
     currentTarget: '',
+    itemTooltip: '',
     player: null,
     map: null,
     mapInfo: {
@@ -37,6 +38,11 @@ export class GameState {
   @Selector()
   static currentTarget(state: IGame) {
     return state.mapInfo.players[state.currentTarget] || state.mapInfo.npcs[state.currentTarget];
+  }
+
+  @Selector()
+  static itemTooltip(state: IGame) {
+    return state.itemTooltip;
   }
 
   @Selector()
@@ -117,6 +123,11 @@ export class GameState {
   @Action(SetCurrentTarget)
   setCurrentTarget(ctx: StateContext<IGame>, { target }: SetCurrentTarget) {
     ctx.patchState({ currentTarget: target });
+  }
+
+  @Action(SetCurrentItemTooltip)
+  setItemTooltip(ctx: StateContext<IGame>, { tooltip }: SetCurrentItemTooltip) {
+    ctx.patchState({ itemTooltip: tooltip });
   }
 
   @Action(PatchPlayer)
