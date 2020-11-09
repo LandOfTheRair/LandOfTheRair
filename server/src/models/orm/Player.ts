@@ -12,11 +12,10 @@ export class Player extends BaseEntity implements IPlayer {
 
   // relation props
   @ManyToOne({ hidden: true, entity: () => Account }) account: Account;
-  @OneToOne(
-    () => PlayerItems,
-    (item) => item.player,
-    { owner: true, orphanRemoval: true, cascade: [Cascade.ALL] }
-  ) items: PlayerItems;
+  @OneToOne({
+    orphanRemoval: true,
+    inversedBy: 'player'
+  }) items: PlayerItems;
 
   // server-only props
   @Property(PROP_SERVER_ONLY()) createdAt = new Date();

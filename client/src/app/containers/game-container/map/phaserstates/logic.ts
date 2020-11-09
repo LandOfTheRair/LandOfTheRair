@@ -477,6 +477,10 @@ export class MapScene extends Phaser.Scene {
       this.game.observables.loadPercent.next('');
     }, 1000);
 
+    setTimeout(() => {
+      this.game.gameService.sendCommandString('~move 0 0');
+    }, 1000);
+
     // TODO: adjust if this sprite is visible based on visibility
     // TODO: if sprite is visible but stealthed, set an alpha of 0.7
   }

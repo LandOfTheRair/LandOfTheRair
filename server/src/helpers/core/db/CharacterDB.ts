@@ -39,7 +39,7 @@ export class CharacterDB extends BaseService {
       items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
 
-    player.items = wrap(items).toReference();
+    player.items = items;
 
     player.charSlot = slot;
     player.name = name;
@@ -63,7 +63,7 @@ export class CharacterDB extends BaseService {
   }
 
   public async savePlayer(player: Player, flush = true): Promise<void> {
-    await this.db.em.nativeUpdate(PlayerItems, { _id: player.items._id }, player.items);
+    // await this.db.em.nativeUpdate(PlayerItems, { _id: player.items._id }, player.items);
     await this.db.save(player, flush);
   }
 
