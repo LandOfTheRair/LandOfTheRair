@@ -9,6 +9,8 @@ import { cpus } from 'os';
 import { GameloopWorker } from './gameloop';
 import { WebsocketWorker } from './networking';
 
+// TODO: sometimes, in dev mode, this does not start. for seemingly no reason.
+
 const isProd = process.env.NODE_ENV === 'production';
 
 const isSingleMode = process.argv.includes('--single-core') || process.env.SINGLE_CORE;
