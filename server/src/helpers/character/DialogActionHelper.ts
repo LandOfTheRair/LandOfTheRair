@@ -2,7 +2,8 @@ import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
 import { BaseService, GameServerResponse, IDialogAction, IDialogActionType,
-  IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction, IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
+  IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
+  IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
 
 interface IActionResult {
