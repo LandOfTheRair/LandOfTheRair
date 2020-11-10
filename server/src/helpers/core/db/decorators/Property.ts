@@ -14,6 +14,7 @@ export function Property(options?: PropertyOptions) {
     options = options || {};
     if (isUndefined(options.persist)) options.persist = true;
 
+    // temporary props are not sent to client or are they saved, so they can't be patched
     if (!options.persist && options.hidden) {
       Object.defineProperty(target, propertyName, {
         get() { return undefined; },
@@ -22,10 +23,10 @@ export function Property(options?: PropertyOptions) {
                 value: val,
                 writable: true,
                 enumerable: false,
-                configurable: true,
+                configurable: true
             });
         },
-        enumerable: false,
+        enumerable: false
       });
     }
 
