@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   position: absolute;
   width: 100vw;
   height: 100vh;
@@ -40,4 +41,8 @@ div.multi-menu-container {
       margin-right: 0;
     }
   }
+}
+
+.ann-window {
+  color: #fff;
 }

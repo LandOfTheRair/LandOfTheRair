@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../interfaces';
 import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
+import { AnnouncementService } from '../services/announcement.service';
 import { GameService } from '../services/game.service';
 import { SocketService } from '../services/socket.service';
 
@@ -34,6 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    public announcementService: AnnouncementService,
     public gameService: GameService,
     public socketService: SocketService,
     private store: Store

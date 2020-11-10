@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
 import { Logout, ResetWindowPositions, ShowWindow } from '../../stores';
+import { AnnouncementService } from '../services/announcement.service';
 
 import { AssetService } from '../services/asset.service';
 import { GameService } from '../services/game.service';
@@ -57,6 +58,12 @@ export class MenuComponent implements OnInit {
           icon: 'open_in_new',
           handler: () => window.open('https://global.rair.land', '_blank'),
           borderTop: true,
+        },
+        {
+          name: 'Blog',
+          icon: 'open_in_new',
+          visibleIf: this.announcementService.latestAnnouncement,
+          handler: () => window.open(this.announcementService.latestAnnouncement.link, '_blank'),
         },
         {
           name: 'Help',
@@ -194,6 +201,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private store: Store,
+    private announcementService: AnnouncementService,
     private modalService: ModalService,
     public socketService: SocketService,
     public gameService: GameService,

@@ -1,3 +1,18 @@
+
+<div class="ann-window window active m-b-50" *ngIf="announcementService.latestAnnouncement as announcement">
+  <mat-toolbar class="window-header">Latest Announcement</mat-toolbar>
+
+  <div class="window-body p-10">
+    <div class="m-b-20">
+      <a [href]="announcement.link">{{ announcement.title }}</a> &middot; Posted by {{ announcement.author }}
+    </div>
+
+    <div>
+      {{ announcement.summary || 'No summary provided.' }}
+    </div>
+  </div>
+</div>
+
 <div class="window active">
   <mat-toolbar class="window-header">
     <span>{{ isRegistering ? 'Register' : 'Login' }}</span>
