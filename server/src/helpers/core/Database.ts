@@ -25,8 +25,10 @@ export class Database extends BaseService {
     return this.db.collection(MetadataStorage.getCollectionForEntity(entity));
   }
 
-  public async findSingle<T>(T, filter): Promise<T> {
+  public async findSingle<T>(T, filter): Promise<T | null> {
     const foundSingle = await this.getCollection(T).findOne(filter);
+    if (!foundSingle) return null;
+
     const newSingle = new T();
 
     Object.keys(foundSingle).forEach(key => {
@@ -56,7 +58,8 @@ export class Database extends BaseService {
 
   public async delete(entity: BaseEntity): Promise<any> {
     const collection = this.getCollection(entity);
-    return collection.findOneAndDelete(entity);
+    console.log(entity.constructor.name, entity._id);
+    return collection.findOneAndDelete({ _id: entity._id });
   }
 
   public prepareForTransmission(entity): any {

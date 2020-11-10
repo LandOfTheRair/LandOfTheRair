@@ -1,3 +1,4 @@
+
 import * as meta from '../../../content/_output/meta.json';
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
@@ -61,11 +62,19 @@ export class LoginAction extends ServerAction {
         assetHash: meta.hash
       });
 
-      for (const player of realAccount.players) {
+      const sortedPlayers = realAccount.players.reduce((prev, cur) => {
+        prev[cur.charSlot] = cur;
+        return prev;
+      }, [] as any[]);
+
+      for (let i = 0; i < sortedPlayers.length; i++) {
+
+        const player = sortedPlayers[i];
+
         emit({
           action: GameAction.SetCharacterSlotInformation,
-          slot: player.charSlot,
-          characterInfo: game.db.prepareForTransmission(player)
+          slot: i,
+          characterInfo: player ? game.db.prepareForTransmission(player) : null
         });
       }
 

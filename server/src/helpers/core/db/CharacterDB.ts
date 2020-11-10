@@ -23,11 +23,11 @@ export class CharacterDB extends BaseService {
 
   public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<IPlayer> {
 
-    const oldPlayer = account.players.find(char => char.charSlot === slot);
+    const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
 
-    if (oldPlayer) {
-      account.players.splice(slot, 1);
-      await this.db.delete(oldPlayer as Player);
+    if (oldPlayerSlot !== -1) {
+      await this.deletePlayer(account.players[oldPlayerSlot] as Player);
+      account.players.splice(oldPlayerSlot, 1);
     }
 
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass });
@@ -60,9 +60,17 @@ export class CharacterDB extends BaseService {
 
     player.mp.__current = player.mp.maximum;
 
+    account.players.push(player);
     await this.savePlayer(player);
 
     return player;
+  }
+
+  public async deletePlayer(player: Player): Promise<void> {
+    await Promise.all([
+      this.db.delete(player),
+      this.db.delete(player.items as PlayerItems)
+    ]);
   }
 
   public async savePlayer(player: Player): Promise<void> {

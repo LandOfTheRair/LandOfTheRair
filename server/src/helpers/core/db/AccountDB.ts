@@ -14,8 +14,7 @@ import { Database } from '../Database';
 export class AccountDB extends BaseService {
 
   constructor(
-    private db: Database,
-    private playerHelper: PlayerHelper
+    private db: Database
   ) {
     super();
   }
@@ -39,6 +38,8 @@ export class AccountDB extends BaseService {
   // get a fully populated account object post-signin validation
   public async getAccount(username: string): Promise<Account | null> {
     const account = await this.db.findSingle<Account>(Account, { username });
+    if (!account) return null;
+
     const players = await this.db.findMany<Player>(Player, { _account: account._id });
 
     for (const player of players) {
@@ -46,6 +47,7 @@ export class AccountDB extends BaseService {
     }
 
     account.players = players;
+    if (account.players.length < 4) account.players.length = 4;
 
     return account;
   }
