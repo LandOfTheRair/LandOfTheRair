@@ -23,7 +23,7 @@
       *ngIf="item && cosmeticName"></div>
   <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount }}x</span>
   <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces }}oz</span>
-  <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | number)) + 'g' }}</span>
+  <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
   <span class="value" *ngIf="item && showOunces && item.mods.succorInfo">{{ item.mods.succorInfo.map }}</span>
   <span class="ounces" *ngIf="item && showDesc && realItem.trapEffect && realItem.itemClass === 'Trap'">{{ item.mods.trapUses }}x {{ realItem.trapEffect.name }}</span>
 </div>

@@ -25,6 +25,7 @@ import { DraggableDirective as DraggableWindowDirective } from './_shared/direct
 import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
 import { DialogComponent } from './_shared/modals/dialog/dialog.component';
 
+import { GoldifyPipe } from './_shared/pipes/goldify.pipe';
 import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 
 import { LoginComponent } from './login/login.component';
@@ -54,7 +55,7 @@ import { JournalComponent } from './journal/journal.component';
 
 const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
-  WindowComponent, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
+  WindowComponent, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent
 ];
