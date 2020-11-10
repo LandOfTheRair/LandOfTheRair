@@ -1,9 +1,8 @@
 
 import { Injectable } from 'injection-js';
-import { merge } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { BaseClass, BaseService, initializePlayer, IPlayer } from '../../../interfaces';
+import { BaseClass, BaseService, IPlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { CharacterRoller } from '../../lobby';

@@ -7,7 +7,6 @@ import { ObjectId } from 'mongodb';
 import { BaseService, IAccount } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
-import { PlayerHelper } from '../../character';
 import { Database } from '../Database';
 
 @Injectable()

@@ -1,6 +1,5 @@
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent } from '../../interfaces';
-import { Account } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RollCharacterAction extends ServerAction {

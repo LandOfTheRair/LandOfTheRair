@@ -6,8 +6,6 @@ import { BaseService } from '../../interfaces';
 import { MetadataStorage } from './db/base';
 import { BaseEntity } from './db/base/BaseEntity';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 @Injectable()
 export class Database extends BaseService {
 
