@@ -56,7 +56,6 @@ export class Database extends BaseService {
 
   public async delete(entity: BaseEntity): Promise<any> {
     const collection = this.getCollection(entity);
-    console.log(entity.constructor.name, entity._id);
     return collection.findOneAndDelete({ _id: entity._id });
   }
 
