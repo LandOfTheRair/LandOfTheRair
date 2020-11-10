@@ -47,6 +47,14 @@
                [disabled]="isActing"
                [ngModelOptions]="{ standalone: true }" />
       </mat-form-field>
+
+      <div class="m-b-20">
+        <mat-checkbox [(ngModel)]="agreedToTerms"
+                      [ngModelOptions]="{ standalone: true }"
+                      *ngIf="isRegistering">
+          I've read the <a href="https://rair.land/docs/code-of-conduct/" target="_blank">Code of Conduct</a> and agree to the <a href="https://rair.land/docs/privacy/" target="_blank">Privacy Policy</a>
+        </mat-checkbox>
+      </div>
       
       <button mat-stroked-button color="accent" class="m-r-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
 

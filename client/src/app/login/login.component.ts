@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public isActing: boolean;
   public isRegistering: boolean;
   public newAccount: IAccountSettings | any = { };
+  public agreedToTerms: boolean;
 
   public errorMessage: string;
 
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public get canRegister() {
-    return this.newAccount.username && this.newAccount.password && this.newAccount.email;
+    return this.newAccount.username && this.newAccount.password && this.newAccount.email && this.agreedToTerms;
   }
 
   constructor(
