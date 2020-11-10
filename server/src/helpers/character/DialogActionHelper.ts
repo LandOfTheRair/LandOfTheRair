@@ -26,8 +26,6 @@ export class DialogActionHelper extends BaseService {
 
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
-    console.log('action', action);
-
     const actions: Record<IDialogActionType, (act, npc, player) => IActionResult> = {
       [IDialogActionType.Chat]:         this.handleChatAction,
       [IDialogActionType.CheckItem]:    this.handleCheckItemAction,

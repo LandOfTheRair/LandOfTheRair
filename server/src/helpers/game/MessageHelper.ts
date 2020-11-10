@@ -15,7 +15,7 @@ export class MessageHelper extends BaseService {
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
   ): void {
 
-    const account = (player as Player).account;
+    const account = this.game.lobbyManager.getAccount((player as Player).username);
     if (!account) return;
 
     this.game.transmissionHelper.sendResponseToAccount((player as Player).username, GameServerResponse.GameLog, {
@@ -37,7 +37,7 @@ export class MessageHelper extends BaseService {
     const allPlayers = state.getAllPlayersInRange(player, radius);
 
     allPlayers.forEach(checkPlayer => {
-      const account = (checkPlayer as Player).account;
+      const account = this.game.lobbyManager.getAccount((checkPlayer as Player).username);
       if (!account) return;
 
       this.game.transmissionHelper.sendResponseToAccount((checkPlayer as Player).username, GameServerResponse.GameLog, {
@@ -64,7 +64,7 @@ export class MessageHelper extends BaseService {
 
   public broadcastChatMessage(player: ICharacter, message: string): void {
 
-    const account = (player as Player).account;
+    const account = this.game.lobbyManager.getAccount((player as Player).username);
     if (!account) return;
 
     const username = (player as Player).username;

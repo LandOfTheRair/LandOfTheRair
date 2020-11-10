@@ -26,14 +26,7 @@ export class RollCharacterAction extends ServerAction {
 
     if (name.length < 2) throw new Error('Bad name.');
 
-    await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
-
-    // here, we reload the account to get the assocations setup correctly because shit just is broken sometimes
-    const newAccount: Account = await game.accountDB.getAccount(account.username) as Account;
-    if (!newAccount) throw new Error('Could not reload account correctly.');
-
-    game.lobbyManager.addAccount(newAccount);
-    const player = newAccount.players.getItems().find(c => c.charSlot === slot);
+    const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
 
     emit({
       action: GameAction.SetCharacterSlotInformation,

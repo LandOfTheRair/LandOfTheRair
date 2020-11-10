@@ -31,21 +31,27 @@ export class PlayAction extends ServerAction {
     }
 
     game.lobbyManager.accountEnterGame(data.account, player);
-    game.worldManager.getMapStateForCharacter(player).triggerFullUpdateForPlayer(player);
-
-    broadcast({
-      action: GameAction.ChatUserEnterGame,
-      username: data.username
-    });
 
     emit({
       action: GameAction.GamePlay
     });
 
     emit({
+      action: GameAction.GameSetPlayer,
+      player: game.db.prepareForTransmission(player)
+    });
+
+    emit({
       action: GameAction.GameSetMap,
       map: map.mapData
     });
+
+    broadcast({
+      action: GameAction.ChatUserEnterGame,
+      username: data.username
+    });
+
+    game.worldManager.getMapStateForCharacter(player).triggerFullUpdateForPlayer(player);
 
     return {};
   }

@@ -1,24 +1,20 @@
 
-import { Entity, ManyToOne, OneToOne, Property } from '@mikro-orm/core';
+import { ObjectId } from 'mongodb';
+import { BaseEntity } from '../../helpers/core/db/base';
+import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, IPlayer, IStatusEffect, LearnedSpell, PROP_SERVER_ONLY,
+  Direction, IAccount, ICharacterItems, IPlayer, IStatusEffect, LearnedSpell,
+  PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
-import { Account } from './Account';
-import { BaseEntity } from './BaseEntity';
-import { PlayerItems } from './PlayerItems';
 
 @Entity()
 export class Player extends BaseEntity implements IPlayer {
 
   // relation props
-  @ManyToOne({ hidden: true, entity: () => Account }) account: Account;
-  @OneToOne({
-    orphanRemoval: true,
-    inversedBy: 'player'
-  }) items: PlayerItems;
+  @Property(PROP_SERVER_ONLY()) _account: ObjectId;
+  @Property(PROP_SERVER_ONLY()) _items: ObjectId;
 
-  // server-only props
-  @Property(PROP_SERVER_ONLY()) createdAt = new Date();
+  @Property(PROP_UNSAVED_SHARED()) items: ICharacterItems;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;

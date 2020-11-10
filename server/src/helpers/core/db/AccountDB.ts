@@ -1,11 +1,12 @@
 
-import { wrap } from '@mikro-orm/core';
-
 import bcrypt from 'bcrypt';
 import { Injectable } from 'injection-js';
+import { cloneDeep, merge, pick } from 'lodash';
+import { ObjectId } from 'mongodb';
 
 import { BaseService, IAccount } from '../../../interfaces';
-import { Account } from '../../../models';
+import { Account, Player } from '../../../models';
+import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerHelper } from '../../character';
 import { Database } from '../Database';
 
@@ -22,31 +23,58 @@ export class AccountDB extends BaseService {
   public async init() {}
 
   public async doesAccountExist(username: string): Promise<Account | null> {
-    return this.db.em.getRepository<Account>(Account).findOne({ username });
+    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1 } });
   }
 
   public async doesDiscordTagExist(discordTag: string): Promise<Account | null> {
-    return this.db.em.getRepository<Account>(Account).findOne({ discordTag });
+    return this.db.getCollection(Account).findOne({ discordTag }, { projection: { username: 1 } });
   }
 
+  // get an unpopulated account for login purposes
+  // possibly this should take in a password and query the db instead of doing the checks later
+  public async getAccountForLoggingIn(username: string): Promise<Account | null> {
+    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1, password: 1 } });
+  }
+
+  // get a fully populated account object post-signin validation
   public async getAccount(username: string): Promise<Account | null> {
-    const account = await this.db.em.getRepository<Account>(Account).findOne({ username }, ['players.items']);
-    if (!account) return null;
+    const account = await this.db.findSingle<Account>(Account, { username });
+    const players = await this.db.findMany<Player>(Player, { _account: account._id });
 
-    await account.players.populated();
-
-    for (const player of account.players) {
-      this.playerHelper.migrate(player);
+    for (const player of players) {
+      await this.populatePlayer(player, account);
     }
 
+    account.players = players;
+
     return account;
+  }
+
+  public async populatePlayer(player: Player, account: Account): Promise<void> {
+    const results = await Promise.all([
+      this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items })
+    ]);
+
+    let [items] = results;
+
+    if (!items) {
+      const newItems = new PlayerItems();
+      newItems._id = new ObjectId();
+
+      items = newItems;
+      player._items = items._id;
+    }
+
+    player.items = items;
+
+    this.game.playerHelper.migrate(player, account);
   }
 
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
 
     const account = new Account();
 
-    wrap(account).assign({
+    merge(account, {
       username: accountInfo.username,
       email: accountInfo.email,
       password: this.bcryptPassword(accountInfo.password as string)
@@ -57,12 +85,9 @@ export class AccountDB extends BaseService {
     return this.getAccount(account.username);
   }
 
-  public async simpleAccount(account: Account): Promise<Partial<Account>> {
-    const accountObj = await this.db.toObject(account);
-    delete accountObj.password;
-    delete accountObj.players;
-
-    return accountObj;
+  public simpleAccount(account: Account): Partial<Account> {
+    const accountObj = cloneDeep(account);
+    return pick(accountObj, ['alwaysOnline', 'isGameMaster', 'isSubscribed', 'isTester', 'tier', 'username']);
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {

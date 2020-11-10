@@ -1,8 +1,9 @@
 
 import { Injectable } from 'injection-js';
+import { merge } from 'lodash';
+import { ObjectId } from 'mongodb';
 
-import { wrap } from '@mikro-orm/core';
-import { BaseClass, BaseService, initializePlayer } from '../../../interfaces';
+import { BaseClass, BaseService, initializePlayer, IPlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { CharacterRoller } from '../../lobby';
@@ -20,26 +21,27 @@ export class CharacterDB extends BaseService {
 
   public async init() {}
 
-  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<void> {
+  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<IPlayer> {
 
-    const oldPlayer = account.players.getItems().find(char => char.charSlot === slot);
+    const oldPlayer = account.players.find(char => char.charSlot === slot);
 
     if (oldPlayer) {
-      account.players.remove(oldPlayer);
+      account.players.splice(slot, 1);
+      await this.db.delete(oldPlayer as Player);
     }
 
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass });
 
-    const basePlayer = initializePlayer({});
-    const player = this.db.create<Player>(Player, basePlayer);
-    player.account = wrap(account).toReference();
+    const player = new Player();
+    player._id = new ObjectId();
 
-    const items = new PlayerItems();
+    player._account = account._id;
+
+    await this.game.accountDB.populatePlayer(player, account);
+
     Object.keys(characterDetails.items).forEach(itemSlot => {
-      items.equipment[itemSlot] = characterDetails.items[itemSlot];
+      player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
-
-    player.items = items;
 
     player.charSlot = slot;
     player.name = name;
@@ -58,13 +60,16 @@ export class CharacterDB extends BaseService {
 
     player.mp.__current = player.mp.maximum;
 
-    account.players.add(player);
-    await this.db.save(account);
+    await this.savePlayer(player);
+
+    return player;
   }
 
-  public async savePlayer(player: Player, flush = true): Promise<void> {
-    // await this.db.em.nativeUpdate(PlayerItems, { _id: player.items._id }, player.items);
-    await this.db.save(player, flush);
+  public async savePlayer(player: Player): Promise<void> {
+    await Promise.all([
+      this.db.save(player),
+      this.db.save(player.items as PlayerItems)
+    ]);
   }
 
 }

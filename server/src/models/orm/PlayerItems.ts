@@ -1,14 +1,12 @@
-import { Entity, OneToOne, Property } from '@mikro-orm/core';
 
+import { BaseEntity } from '../../helpers/core/db/base/BaseEntity';
+import { Entity, Property } from '../../helpers/core/db/decorators';
 import { ICharacterItems, IItemContainer, ISimpleItem, ItemSlot } from '../../interfaces';
-import { BaseEntity } from './BaseEntity';
-import { Player } from './Player';
 
 @Entity()
 export class PlayerItems extends BaseEntity implements ICharacterItems {
 
   // relation props
-  @OneToOne({ hidden: true, mappedBy: 'items' }) player: Player;
 
   // other props
   @Property() potion: ISimpleItem;

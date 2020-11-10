@@ -1,6 +1,7 @@
 import * as meta from '../../../content/_output/meta.json';
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
+import { Account } from '../../models/orm';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LoginAction extends ServerAction {
@@ -14,7 +15,7 @@ export class LoginAction extends ServerAction {
 
     let account;
     try {
-      account = await game.accountDB.getAccount(data.username);
+      account = await game.accountDB.getAccountForLoggingIn(data.username);
     } catch (e) {
       game.logger.error('LoginAction#getAccount', e);
       throw new Error('Could not get account; try again.');
@@ -26,25 +27,28 @@ export class LoginAction extends ServerAction {
 
     try {
 
+      const realAccount = await game.accountDB.getAccount(data.username);
+      if (!realAccount) throw new Error('Could not get real account from login.');
+
       game.lobbyManager.removeAccount(data.username);
 
-      const simpleAccount = await game.accountDB.simpleAccount(account);
+      const simpleAccount = game.accountDB.simpleAccount(realAccount);
+
       broadcast({
         action: GameAction.ChatAddUser,
         user: simpleAccount
       });
 
       register(data.username);
-
-      game.lobbyManager.addAccount(account);
+      game.lobbyManager.addAccount(realAccount);
 
       game.logger.log('Auth:Login', `${data.username} logged in.`);
 
       emit({
         type: GameServerResponse.Login,
-        account,
+        account: game.db.prepareForTransmission(realAccount),
         motd: game.worldDB.motd,
-        onlineUsers: game.lobbyManager.onlineUsers
+        onlineUsers: game.lobbyManager.onlineUsers.map(a => game.accountDB.simpleAccount(a as Account))
       });
 
       emit({
@@ -57,11 +61,11 @@ export class LoginAction extends ServerAction {
         assetHash: meta.hash
       });
 
-      for (const player of account.players) {
+      for (const player of realAccount.players) {
         emit({
           action: GameAction.SetCharacterSlotInformation,
           slot: player.charSlot,
-          characterInfo: player
+          characterInfo: game.db.prepareForTransmission(player)
         });
       }
 

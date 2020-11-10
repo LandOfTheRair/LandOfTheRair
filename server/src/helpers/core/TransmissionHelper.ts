@@ -34,13 +34,6 @@ export class TransmissionHelper extends BaseService {
     delete this.playerPatchQueue[player.username];
   }
 
-  // convert a player object for being sent to the client
-  // if we don't do this, it eats random properties when it does JSON.stringify(). dunno how, but whatever.
-  public convertPlayerForTransmission(player: Player): IPlayer {
-    const playerJson = this.game.db.wrap<Player>(player).toJSON() as IPlayer;
-    return playerJson;
-  }
-
   // auto patch a player. just calls patch player for now
   public tryAutoPatchPlayer(player: Player) {
     this.patchPlayer(player);

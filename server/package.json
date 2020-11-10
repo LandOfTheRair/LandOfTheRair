@@ -25,9 +25,6 @@
   "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
     "@clusterws/cws": "1.1.2",
-    "@mikro-orm/core": "^4.2.3",
-    "@mikro-orm/mongodb": "^4.2.3",
-    "@mikro-orm/reflection": "^4.2.3",
     "bcrypt": "3.0.7",
     "censor-sensor": "^1.0.5",
     "didyoumean2": "3.1.2",
@@ -42,7 +39,7 @@
     "lodash": "^4.17.20",
     "logger-timer": "^1.0.5",
     "lootastic": "^1.1.2",
-    "mongodb": "^3.3.2",
+    "mongodb": "^3.6.3",
     "mrpas": "^2.0.0",
     "muud": "^1.0.5",
     "pathfinding": "0.4.18",
@@ -53,7 +50,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "@types/mongodb": "3.3.13",
+    "@types/mongodb": "^3.3.13",
     "@types/node": "^12.7.11",
     "codelyzer": "^5.1.2",
     "symlink-dir": "^4.1.0",

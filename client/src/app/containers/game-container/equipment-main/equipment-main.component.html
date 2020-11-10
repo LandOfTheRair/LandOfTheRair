@@ -108,8 +108,8 @@
 </ng-template>
 
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
-  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
-  <app-item *ngIf="player.items.equipment[slot.slot]"
+  <span class="item-slot-bg-text" *ngIf="!(player.items.equipment || {})[slot.slot]">{{ slot.name }}</span>
+  <app-item *ngIf="(player.items.equipment || {})[slot.slot]"
             [size]="'lg'"
             [context]="'Equipment'"
             [contextSlot]="slot.slot"
@@ -118,8 +118,8 @@
 </ng-template>
 
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
-  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">{{ slot.name }}</span>
-  <app-item *ngIf="player.items.equipment[slot.slot]"
+  <span class="item-slot-bg-text" *ngIf="!(player.items.equipment || {})[slot.slot]">{{ slot.name }}</span>
+  <app-item *ngIf="(player.items.equipment || {})[slot.slot]"
             [size]="'lg'"
             [context]="slot.hand"
             contextSlot="_"
@@ -130,8 +130,8 @@
 </ng-template>
 
 <ng-template #itemPotionTemplate let-slot="slot" let-player="player">
-  <span class="item-slot-bg-text" *ngIf="!player.items.equipment[slot.slot]">Potion</span>
-  <app-item *ngIf="player.items.equipment[slot.slot]"
+  <span class="item-slot-bg-text" *ngIf="!(player.items.equipment || {})[slot.slot]">Potion</span>
+  <app-item *ngIf="(player.items.equipment || {})[slot.slot]"
             [size]="'lg'"
             context="Potion"
             showOunces="true"

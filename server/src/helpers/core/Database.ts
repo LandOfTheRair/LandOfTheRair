@@ -1,75 +1,66 @@
 
 import { Injectable } from 'injection-js';
-
-import { AnyEntity, EntityManager, EntityName, MikroORM, wrap } from '@mikro-orm/core';
-import { MongoDriver } from '@mikro-orm/mongodb';
-import { TsMorphMetadataProvider } from '@mikro-orm/reflection';
+import { Collection, Db, MongoClient } from 'mongodb';
 
 import { BaseService } from '../../interfaces';
-import { BaseEntity } from '../../models/orm/BaseEntity';
+import { MetadataStorage } from './db/base';
+import { BaseEntity } from './db/base/BaseEntity';
 
 const isProd = process.env.NODE_ENV === 'production';
 
 @Injectable()
 export class Database extends BaseService {
 
-  private orm: MikroORM;
-
-  public get em(): EntityManager {
-    return this.orm.em;
-  }
+  private client: MongoClient;
+  private db: Db;
 
   public async init() {
-    this.orm = await MikroORM.init<MongoDriver>({
-      metadataProvider: TsMorphMetadataProvider,
-      entities: [(isProd ? 'dist' : 'src') + '/models/orm'],
-      entitiesTs: ['src/models/orm'],
+    this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
+    await this.client.connect();
 
-      clientUrl: process.env.DATABASE_URI,
-      dbName: 'landoftherair2',
-      type: 'mongo',
-      driverOptions: { useUnifiedTopology: true },
-      debug: !!+(process.env.DATABASE_QUERY_DEBUG || '0')
+    this.db = this.client.db('landoftherair2');
+  }
+
+  public getCollection(entity): Collection {
+    return this.db.collection(MetadataStorage.getCollectionForEntity(entity));
+  }
+
+  public async findSingle<T>(T, filter): Promise<T> {
+    const foundSingle = await this.getCollection(T).findOne(filter);
+    const newSingle = new T();
+
+    Object.keys(foundSingle).forEach(key => {
+      newSingle[key] = foundSingle[key];
     });
 
-    [
-      'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-      'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-    ].forEach(sig => {
-      process.on(sig as any, async () => {
-        await this.flush();
-        process.exit(1);
+    return newSingle;
+  }
+
+  public async findMany<T>(T, filter): Promise<T[]> {
+    const foundMany = await this.getCollection(T).find(filter).toArray();
+    return foundMany.map(foundSingle => {
+      const newSingle = new T();
+
+      Object.keys(foundSingle).forEach(key => {
+        newSingle[key] = foundSingle[key];
       });
+
+      return newSingle;
     });
   }
 
-  public async toObject<T>(entity: AnyEntity<T>) {
-    const obj = await wrap(entity);
-    return obj.toObject();
+  public async save(entity: BaseEntity): Promise<any> {
+    const collection = this.getCollection(entity);
+    return collection.replaceOne({ _id: entity._id }, MetadataStorage.getPersistObject(entity), { upsert: true });
   }
 
-  public wrap<T>(entity: AnyEntity<T>) {
-    return wrap(entity);
+  public async delete(entity: BaseEntity): Promise<any> {
+    const collection = this.getCollection(entity);
+    return collection.findOneAndDelete(entity);
   }
 
-  public async flush() {
-    this.em.flush();
-  }
-
-  public create<T>(entity: EntityName<T>, data = {}): T {
-    return this.em.create(entity, data);
-  }
-
-  public save(entity: BaseEntity, flush = true) {
-    if (flush) {
-      return this.em.persistAndFlush(entity);
-    }
-
-    return this.em.persist(entity);
-  }
-
-  public delete(entity: BaseEntity) {
-    return this.em.removeAndFlush(entity);
+  public prepareForTransmission(entity): any {
+    return MetadataStorage.getEnumerableObject(entity);
   }
 
 }

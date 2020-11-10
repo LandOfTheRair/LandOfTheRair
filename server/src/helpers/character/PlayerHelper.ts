@@ -1,9 +1,8 @@
-import { wrap } from '@mikro-orm/core';
 import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
-import { Player } from '../../models';
+import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { StaticTextHelper, WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
@@ -27,20 +26,24 @@ export class PlayerHelper extends BaseService {
 
   public init() {}
 
-  public migrate(player: Player): void {
+  public migrate(player: Player, playerAccount: Account): void {
+
+    const basePlayer = initializePlayer({});
+    Object.keys(basePlayer).forEach(key => {
+      if (player[key]) return;
+      player[key] = basePlayer[key];
+    });
+
     if (!player.uuid) player.uuid = uuid();
     if (!player.dir) player.dir = Direction.South;
     if (!player.actionQueue) player.actionQueue = { fast: [], slow: [] };
 
     player.agro = {};
 
-    player.isGM = player.account.isGameMaster;
-    player.isTester = player.account.isTester;
-    player.username = player.account.username;
-    player.isSubscribed = this.subscriptionHelper.isSubscribed(player.account);
-
-    const playerPristine = initializePlayer(player);
-    wrap(player).assign(playerPristine, { mergeObjects: true });
+    player.isGM = playerAccount.isGameMaster;
+    player.isTester = playerAccount.isTester;
+    player.username = playerAccount.username;
+    player.isSubscribed = this.subscriptionHelper.isSubscribed(playerAccount);
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';

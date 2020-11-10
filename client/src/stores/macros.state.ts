@@ -118,11 +118,13 @@ export class MacrosState {
     const state = ctx.getState();
 
     const curPlayer = this.store.selectSnapshot(GameState.player);
+    if (curPlayer) {
 
-    // if we have no macros, make the default setup
-    const macroBars = state.characterMacros?.[curPlayer.username]?.[curPlayer.charSlot];
-    if (Object.keys(macroBars || {}).length === 0) {
-      this.store.dispatch(new SetDefaultMacros());
+      // if we have no macros, make the default setup
+      const macroBars = state.characterMacros?.[curPlayer.username]?.[curPlayer.charSlot];
+      if (Object.keys(macroBars || {}).length === 0) {
+        this.store.dispatch(new SetDefaultMacros());
+      }
     }
   }
 

@@ -35,8 +35,6 @@ export class PlayerManager extends BaseService {
   // add a player to the game
   public async addPlayerToGame(player: Player) {
 
-    this.game.playerHelper.migrate(player);
-
     const username = player.username;
     this.inGamePlayers[username] = player;
 
@@ -46,9 +44,6 @@ export class PlayerManager extends BaseService {
 
     this.game.playerHelper.resetStatus(player);
     this.updatePlayerData(player);
-
-    const sendPlayer = await this.game.transmissionHelper.convertPlayerForTransmission(player);
-    this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: sendPlayer });
   }
 
   // remove a player from the game
@@ -95,14 +90,13 @@ export class PlayerManager extends BaseService {
   }
 
   // save a single player
-  public savePlayer(player: Player, flush = true) {
-    this.game.characterDB.savePlayer(player, flush);
+  public savePlayer(player: Player) {
+    this.game.characterDB.savePlayer(player);
   }
 
   // save all players
   public saveAllPlayers() {
-    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player, false));
-    this.game.db.flush();
+    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player));
   }
 
   // do a fast tick (200ms by default)

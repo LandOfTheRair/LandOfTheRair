@@ -9,7 +9,6 @@ export class UIService {
   constructor(private gameService: GameService) {}
 
   public buildAndDoDropAction(event, droppedOn) {
-    console.log(event.dragData, droppedOn);
     this.doDropAction(event.dragData, droppedOn);
   }
 
