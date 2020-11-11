@@ -80,7 +80,7 @@ export class MoveItems extends MacroCommand {
   handleC(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
     if (!validDestinations.C.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
-    const amount = Math.floor(+origSlot);
+    const amount = Math.min(player.currency[Currency.Gold] || 0, Math.floor(+origSlot));
     if (isNaN(amount) || amount < 0) return this.sendMessage(player, 'That amount isn\'t valid.');
 
     const srcItem = this.game.itemCreator.getSimpleItem('Gold Coin');
