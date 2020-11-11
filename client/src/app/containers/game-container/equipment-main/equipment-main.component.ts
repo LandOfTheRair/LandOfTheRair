@@ -26,6 +26,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   public readonly slots = [
     {
       template: 'coin',
+      scope: 'coin',
       dropScope: 'Sack'
     },
     {

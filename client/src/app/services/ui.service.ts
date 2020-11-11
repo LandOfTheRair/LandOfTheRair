@@ -28,6 +28,8 @@ export class UIService {
     const choiceStr = dropScope.substring(0, 1).toUpperCase();
     const cmd = `!${contextStr}t${choiceStr}`;
 
+    const blacklistedCommands = ['!CtS'];
+    if (blacklistedCommands.includes(cmd)) return;
     if (!this.canMoveBetweenContainers(contextStr, choiceStr)) return;
 
     let ctxArgs = '';

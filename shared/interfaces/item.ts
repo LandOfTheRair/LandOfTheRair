@@ -1,4 +1,4 @@
-import { Alignment, BaseClass, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
+import { Alignment, BaseClass, Currency, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IItemEffect } from './effect';
 import { ArmorClass, MiscClass, WeaponClass } from './itemtypes';
 
@@ -138,7 +138,13 @@ export interface ISuccorable {
   succorInfo?: ISuccorInfo;
 }
 
-export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & {
+export interface ICoin {
+
+  // the currency given by this coin
+  currency?: Currency;
+}
+
+export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & {
   // the name of the item
   name: string;
 

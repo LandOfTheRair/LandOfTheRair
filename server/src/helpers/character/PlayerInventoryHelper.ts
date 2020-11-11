@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { BaseService, IPlayer, ISimpleItem } from '../../interfaces';
+import { BaseService, IPlayer, ISimpleItem, ItemClass } from '../../interfaces';
 
 @Injectable()
 export class PlayerInventoryHelper extends BaseService {
@@ -18,6 +18,12 @@ export class PlayerInventoryHelper extends BaseService {
 
   public addItemToSack(player: IPlayer, item: ISimpleItem): boolean {
     if (!this.canAddItemToSack(player, item)) return false;
+
+    const { itemClass, currency, value } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'currency', 'value']);
+    if (itemClass === ItemClass.Coin) {
+      this.game.playerHelper.gainCurrency(player, currency, value);
+      return true;
+    }
 
     player.items.sack.items.push(item);
     player.items.sack.items = player.items.sack.items.filter(Boolean);

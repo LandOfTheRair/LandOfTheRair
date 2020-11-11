@@ -34,8 +34,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     this.playerSub = this.player$.subscribe(p => this.setPlayer(p));
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   private setPlayer(p) {
     this.player = p;

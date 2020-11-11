@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
-import { BaseService, ISimpleItem } from '../../interfaces';
+import { BaseService, Currency, ISimpleItem, ItemClass } from '../../interfaces';
 import { ContentManager } from './ContentManager';
 
 // functions related to CREATING an item
@@ -23,7 +23,15 @@ export class ItemCreator extends BaseService {
     const itemDefinition = this.content.getItemDefinition(itemName);
     if (!itemDefinition) throw new Error(`Item ${itemName} does not exist and cannot be created.`);
 
-    return { name: itemName, uuid: uuid(), mods: {} };
+    const item: ISimpleItem = { name: itemName, uuid: uuid(), mods: {} };
+
+    if (itemDefinition.itemClass === ItemClass.Coin) {
+      item.mods.value = 1;
+      item.mods.currency = Currency.Gold;
+    }
+
+    return item;
+
   }
 
 }

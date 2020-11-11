@@ -139,7 +139,9 @@ export class ItemComponent implements OnDestroy {
   constructor(private store: Store, private assetService: AssetService) {}
 
   ngOnDestroy(): void {
-    this.removeDesc();
+    setTimeout(() => {
+      this.removeDesc();
+    }, 0);
   }
 
   determineScopes(): void {
@@ -205,7 +207,7 @@ export class ItemComponent implements OnDestroy {
     }
 
     // if the item is sackable or beltable, it can go there
-    if (this.realItem.isSackable) scopes.push('sack', 'demimagicpouch');
+    if (this.realItem.isSackable && this.context !== 'Coin') scopes.push('sack', 'demimagicpouch');
     if (this.realItem.isBeltable) scopes.push('belt', 'demimagicpouch');
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment

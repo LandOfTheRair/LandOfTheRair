@@ -127,7 +127,9 @@
 
 <ng-template #itemCoinTemplate let-slot="slot" let-player="player">
   <app-item [size]="'lg'"
-            context="Sack"
+            context="Coin"
+            contextSlot="_"
             showValue="true"
-            [item]="{ name: 'Gold Coin', mods: { value: player.currency.gold } }"></app-item>
+            [viewingPlayer]="player"
+            [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: player.currency.gold } }"></app-item>
 </ng-template>
