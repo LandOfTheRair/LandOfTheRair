@@ -91,7 +91,8 @@ export enum ItemSlot {
   RightHand = 'rightHand',
   LeftHand = 'leftHand',
   Trinket = 'trinket',
-  Potion = 'potion'
+  Potion = 'potion',
+  Ammo = 'ammo'
 }
 
 export enum CoreStat {

@@ -9,7 +9,6 @@ export class PlayerItems extends BaseEntity implements ICharacterItems {
   // relation props
 
   // other props
-  @Property() potion: ISimpleItem;
   @Property() equipment: { [key in ItemSlot]?: ISimpleItem } = {};
 
   @Property() sack: IItemContainer = { items: [] };

@@ -109,6 +109,8 @@ export const HandsClasses = [ItemClass.Gloves, ItemClass.Claws];
 
 export const EarClasses = [ItemClass.Earring];
 
+export const PotionClasses = [ItemClass.Bottle];
+
 export const EquipHash: Partial<Record<ArmorClass, ItemSlot>> = {};
 ArmorClasses.forEach(t => EquipHash[t] = ItemSlot.Armor);
 RobeClasses.forEach(t => EquipHash[t] = ItemSlot.Robe);
@@ -120,6 +122,8 @@ RingClasses.forEach(t => EquipHash[t] = ItemSlot.Ring);
 FeetClasses.forEach(t => EquipHash[t] = ItemSlot.Feet);
 HandsClasses.forEach(t => EquipHash[t] = ItemSlot.Hands);
 EarClasses.forEach(t => EquipHash[t] = ItemSlot.Ear);
+PotionClasses.forEach(t => EquipHash[t] = ItemSlot.Potion);
+AmmoClasses.forEach(t => EquipHash[t] = ItemSlot.Ammo);
 
 export const GivesBonusInHandItemClasses = [
   ...Object.keys(WeaponClass),

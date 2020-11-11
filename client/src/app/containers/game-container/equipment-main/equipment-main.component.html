@@ -98,10 +98,6 @@
       <ng-container *ngIf="slot.template === 'hand'">
         <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
       </ng-container>
-      
-      <ng-container *ngIf="slot.template === 'potion'">
-        <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
-      </ng-container>
 
     </div>
   </div>
@@ -125,16 +121,6 @@
             contextSlot="_"
             showOunces="true"
             [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
-            [viewingPlayer]="player"
-            [item]="player.items.equipment[slot.slot]"></app-item>
-</ng-template>
-
-<ng-template #itemPotionTemplate let-slot="slot" let-player="player">
-  <span class="item-slot-bg-text" *ngIf="!(player.items.equipment || {})[slot.slot]">Potion</span>
-  <app-item *ngIf="(player.items.equipment || {})[slot.slot]"
-            [size]="'lg'"
-            context="Potion"
-            showOunces="true"
             [viewingPlayer]="player"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>

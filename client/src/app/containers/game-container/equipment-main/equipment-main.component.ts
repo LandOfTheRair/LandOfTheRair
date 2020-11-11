@@ -104,10 +104,9 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     },
 
     {
-      template: 'potion',
       slot: 'potion',
       name: 'Potion',
-      dropScope: 'Potion'
+      dropScope: 'Equipment'
     },
     {
       slot: 'armor',
@@ -126,7 +125,11 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
       scope: 'robe',
       dropScope: 'Equipment'
     },
-    {}
+    {
+      slot: 'ammo',
+      name: 'Ammo',
+      dropScope: 'Equipment'
+    },
 
   ];
 

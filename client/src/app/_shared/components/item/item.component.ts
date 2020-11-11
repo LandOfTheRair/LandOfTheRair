@@ -210,8 +210,7 @@ export class ItemComponent implements OnDestroy {
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
-    && this.context !== 'GroundGroup'
-    && this.context !== 'Equipment') scopes.push('use');
+    && this.context !== 'GroundGroup') scopes.push('use');
 
     this.scopes = scopes;
   }

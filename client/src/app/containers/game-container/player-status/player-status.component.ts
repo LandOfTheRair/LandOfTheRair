@@ -9,6 +9,7 @@ import { GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 
 import { calculateXPRequiredForLevel } from '../../../../interfaces';
+import { UIService } from '../../../services/ui.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -25,6 +26,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   playerSub: Subscription;
 
   constructor(
+    public uiService: UIService,
     public gameService: GameService
   ) { }
 

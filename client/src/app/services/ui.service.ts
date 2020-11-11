@@ -18,6 +18,7 @@ export class UIService {
   }
 
   private doDropAction(dragData, dropScope) {
+    console.log(dragData, dropScope);
     // also has { containerUUID, isStackableMaterial }
     const { context, contextSlot, item } = dragData;
 
@@ -48,6 +49,11 @@ export class UIService {
 
     } else if (context === 'Merchant') {
 
+    }
+
+    if (dropScope === 'use') {
+      this.gameService.sendCommandString(`!use ${context.toLowerCase()} ${ctxArgs}`);
+      return;
     }
 
     this.gameService.sendCommandString(cmd.trim() + ' ' + ctxArgs.trim() + ' ' + destArgs.trim());

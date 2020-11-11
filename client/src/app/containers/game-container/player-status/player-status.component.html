@@ -18,7 +18,10 @@
 <ng-template #bodyTemplate>
   <div class="container" *ngIf="player">
     
-    <div class="buffs">
+    <div class="buffs"
+         droppable
+         (onDrop)="uiService.buildAndDoDropAction($event, 'use')" 
+         dropScope="use">
       <ng-container *ngIf="effects.length > 0; else noEffects">
         <app-effect-icon [effect]="effect" *ngFor="let effect of effects"></app-effect-icon>
       </ng-container>
