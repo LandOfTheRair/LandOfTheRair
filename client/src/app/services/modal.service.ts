@@ -10,6 +10,7 @@ import { GameState } from '../../stores';
 import { AboutComponent } from '../_shared/modals/about/about.component';
 import { AccountComponent } from '../_shared/modals/account/account.component';
 import { AlertComponent } from '../_shared/modals/alert/alert.component';
+import { AmountModalComponent } from '../_shared/modals/amount/amount.component';
 import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
 import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
@@ -79,6 +80,16 @@ export class ModalService {
     });
 
     return confirm.afterClosed();
+  }
+
+  public amount(title: string, content: string, max: number) {
+    const amount = this.dialog.open(AmountModalComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      data: { title, content, max }
+    });
+
+    return amount.afterClosed();
   }
 
   public npcDialog(dialogInfo: IDialogChatAction) {

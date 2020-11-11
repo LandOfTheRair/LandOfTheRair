@@ -32,6 +32,7 @@ import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
 import { AccountComponent } from './_shared/modals/account/account.component';
+import { AmountModalComponent } from './_shared/modals/amount/amount.component';
 import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
 import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
 import { OptionsComponent } from './_shared/modals/options/options.component';
@@ -57,7 +58,7 @@ const declarations = [
   AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
-  ManageSilverComponent, CurrentEventsComponent, OptionsComponent
+  ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent
 ];
 
 const gameComponents = [

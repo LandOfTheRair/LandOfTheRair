@@ -31,7 +31,6 @@ export class AnnouncementService {
     const feed = await parser.parseURL('https://landoftherair.github.io/feed.xml');
 
     this.allAnnouncements = feed.items;
-    console.log(feed);
   }
 
 }

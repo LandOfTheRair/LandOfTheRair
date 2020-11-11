@@ -1,4 +1,4 @@
-import { EquipHash, IItem, IMacroCommandArgs, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
+import { Currency, EquipHash, IItem, IMacroCommandArgs, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 const origins = [
@@ -7,6 +7,7 @@ const origins = [
   'E',  // equipment
   'B',  // belt
   'S',  // sack
+  'C',  // coin
 ];
 
 const validDestinations = {
@@ -14,7 +15,8 @@ const validDestinations = {
   B: ['L', 'R', 'S', 'E'],
   S: ['L', 'R', 'B', 'E'],
   L: ['R', 'E', 'B', 'S'],
-  R: ['L', 'E', 'B', 'S']
+  R: ['L', 'E', 'B', 'S'],
+  C: ['R', 'L']
 };
 
 const allAliases = origins.map(o => validDestinations[o].map(sub => `${o}t${sub}`)).flat();
@@ -72,6 +74,60 @@ export class MoveItems extends MacroCommand {
     }
 
     return slot;
+  }
+
+  // handle C as an origin
+  handleC(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+    if (!validDestinations.C.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+
+    const amount = Math.floor(+origSlot);
+    if (isNaN(amount) || amount < 0) return this.sendMessage(player, 'That amount isn\'t valid.');
+
+    const srcItem = this.game.itemCreator.getSimpleItem('Gold Coin');
+    srcItem.mods.value = amount;
+    this.game.playerHelper.loseCurrency(player, Currency.Gold, amount);
+
+    switch (dest) {
+      case 'R': { // CtR
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (rightHand && !leftHand) {
+          this.game.characterHelper.setLeftHand(player, rightHand);
+          this.game.characterHelper.setRightHand(player, srcItem);
+
+        } else if (!rightHand) {
+          this.game.characterHelper.setRightHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      case 'L': { // CtL
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (leftHand && !rightHand) {
+          this.game.characterHelper.setRightHand(player, leftHand);
+          this.game.characterHelper.setLeftHand(player, srcItem);
+
+        } else if (!leftHand) {
+          this.game.characterHelper.setLeftHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      default: {
+        this.game.logger.error('MoveItems', `handleC ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+      }
+    }
+
   }
 
   // handle L as an origin

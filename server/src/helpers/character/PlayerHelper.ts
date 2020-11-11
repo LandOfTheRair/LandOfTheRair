@@ -227,4 +227,9 @@ export class PlayerHelper extends BaseService {
 
   }
 
+  // lose currency for a player (either by taking it, or spending it)
+  public loseCurrency(player: IPlayer, currency: Currency = Currency.Gold, currencyGained: number): void {
+    this.gainCurrency(player, currency, -currencyGained);
+  }
+
 }

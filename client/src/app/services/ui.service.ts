@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { GameService } from './game.service';
+import { ModalService } from './modal.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UIService {
 
-  constructor(private gameService: GameService) {}
+  constructor(private modalService: ModalService, private gameService: GameService) {}
 
   public buildAndDoDropAction(event, droppedOn) {
     this.doDropAction(event.dragData, droppedOn);
@@ -18,7 +19,6 @@ export class UIService {
   }
 
   private doDropAction(dragData, dropScope) {
-    console.log(dragData, dropScope);
     // also has { containerUUID, isStackableMaterial }
     const { context, contextSlot, item } = dragData;
 
@@ -48,6 +48,17 @@ export class UIService {
       ctxArgs = `${contextSlot}`;
 
     } else if (context === 'Coin') {
+      const amount = this.modalService.amount(
+        'Take Coins From Stash',
+        'How many coins do you want to take from your stash?',
+        dragData.item.mods.value
+      );
+
+      amount.subscribe((amt) => {
+        this.gameService.sendCommandString(`${cmd} ${amt}`);
+      });
+
+      return;
 
     } else if (context === 'Merchant') {
 

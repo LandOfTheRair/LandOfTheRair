@@ -1,0 +1,40 @@
+<h1 mat-dialog-title>
+  {{ data.title || 'How much would you like?' }}
+</h1>
+
+<div mat-dialog-content>
+  <div>{{ data.content || 'How much would you like?' }}</div>
+
+  <mat-form-field class="full-width m-t-20">
+    <mat-label>Choose Amount</mat-label>
+    <input matInput 
+      type="number" 
+      [placeholder]="'Max: ' + data.max" 
+      min="0"
+      [max]="data.max"
+      autofocus
+      cdkFocusInitial
+      (keyup.enter)="finish()"
+      [(ngModel)]="amount"
+      [ngModelOptions]="{ standalone: true }" />
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button 
+          [mat-dialog-close]="false">
+          {{ data.cancelText || 'Cancel' }}
+  </button>
+
+  <button mat-button 
+          [mat-dialog-close]="amount"
+          color="primary">
+          {{ data.okText || 'OK' }}
+  </button>
+
+  <button mat-button 
+          [mat-dialog-close]="data.max"
+          color="primary">
+          {{ data.maxText || 'Maximum' }}
+  </button>
+</div>
