@@ -18,6 +18,10 @@ import { IStatusEffect } from '../../../interfaces';
     </div>
   `,
   styles: [`
+    :host {
+      cursor: pointer;
+    }
+
     .status-effect {
       position: relative;
       display: flex;

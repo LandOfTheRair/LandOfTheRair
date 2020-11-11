@@ -2,6 +2,7 @@ import { difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { ICharacter, IMapData, INPC, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
 import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
 const Phaser = (window as any).Phaser;
@@ -443,6 +444,7 @@ export class MapScene extends Phaser.Scene {
       this.player = updPlayer;
       this.updatePlayerSprite(updPlayer);
       this.updateSelf(updPlayer);
+      this.checkTruesight(updPlayer);
     });
 
     this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
@@ -529,5 +531,29 @@ export class MapScene extends Phaser.Scene {
   private updateSpritePositionalData(sprite, char: ICharacter) {
     sprite.x = this.convertPosition(char.x, true);
     sprite.y = this.convertPosition(char.y, true);
+  }
+
+  private checkTruesight(player: IPlayer) {
+    const hasTruesight = player.effects.buff.find(x => x.effectName === 'TrueSight');
+
+    if (this.specialRenders.truesight && !hasTruesight) {
+      this.handleTruesight(false);
+    }
+
+    if (!this.specialRenders.truesight && hasTruesight) {
+      this.handleTruesight(true);
+    }
+  }
+
+  private handleTruesight(canSeeTruesight: boolean) {
+    this.specialRenders.truesight = canSeeTruesight;
+
+    this.layers.opaquedecor.each(sprite => {
+      if (canSeeTruesight && TrueSightMap[sprite.frame.name]) {
+        sprite.setTexture('Decor', +TrueSightMap[sprite.frame.name]);
+      } else if (!canSeeTruesight && TrueSightMapReversed[sprite.frame.name]) {
+        sprite.setTexture('Walls', +TrueSightMapReversed[sprite.frame.name]);
+      }
+    });
   }
 }
