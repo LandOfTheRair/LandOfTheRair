@@ -13,7 +13,7 @@ import { IStatusEffect } from '../../../interfaces';
     <div class="status-effect" [class.fading]="currentTicksLeft > 0 && currentTicksLeft <= 15">
       <app-icon size="small" [name]="iconName" [fgColor]="color" [bgColor]="bgColor" [matTooltip]="tooltip"></app-icon>
       <div class="status-remaining" *ngIf="charges > 0">{{ charges }}</div>
-      <div class="status-remaining" *ngIf="buildUpPercent > 0">{{ buildupPercent }}%</div>
+      <div class="status-remaining" *ngIf="buildUpPercent > 0">{{ buildUpPercent }}%</div>
       <div class="status-remaining" *ngIf="currentTicksLeft > 0 && charges === 0">{{ currentTicksLeft }}</div>
     </div>
   `,
