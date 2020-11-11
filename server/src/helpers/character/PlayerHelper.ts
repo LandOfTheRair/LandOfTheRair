@@ -4,7 +4,7 @@ import uuid from 'uuid/v4';
 import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
-import { StaticTextHelper, WorldManager } from '../data';
+import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { TeleportHelper } from './TeleportHelper';
 import { VisibilityHelper } from './VisibilityHelper';
@@ -110,9 +110,21 @@ export class PlayerHelper extends BaseService {
 
     this.visibilityHelper.calculatePlayerFOV(player);
 
-    // TODO: swimming, drowning
-
     const { map } = this.worldManager.getMap(player.map);
+
+    const swimTile = map.getFluidAt(player.x, player.y);
+    const swimInfo = GetSwimLevel(swimTile);
+
+    // TODO: swimming, drowning
+    if (swimInfo) {
+      const { element, swimLevel } = swimInfo;
+      player.swimElement = element;
+      player.swimLevel = swimLevel;
+
+    } else {
+      player.swimElement = '';
+      player.swimLevel = 0;
+    }
 
     // update the players BGM
     const newBGM = map.getBackgroundMusicAt(player.x, player.y);
