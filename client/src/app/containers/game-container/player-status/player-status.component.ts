@@ -41,8 +41,14 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     this.effects = this.getEffects(p);
   }
 
+  trackEffectBy(effect: IStatusEffect) {
+    return effect.uuid;
+  }
+
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
+
+    console.log(player.effects.buff);
 
     return [
       ...player.effects.buff,
