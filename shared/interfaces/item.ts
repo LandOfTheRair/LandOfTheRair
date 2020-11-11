@@ -88,7 +88,6 @@ export interface IWeapon {
 
 export interface ITrap {
 
-
   // the number of uses left on this trap (traps only)
   trapUses?: number;
 }

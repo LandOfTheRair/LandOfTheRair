@@ -110,6 +110,8 @@
             [context]="'Equipment'"
             [contextSlot]="slot.slot"
             [viewingPlayer]="player"
+            [showCount]="slot.slot === 'ammo'"
+            [showOunces]="slot.slot === 'potion'"
             [item]="player.items.equipment[slot.slot]"></app-item>
 </ng-template>
 

@@ -121,7 +121,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
       dropScope: 'Equipment'
     },
     {
-      slot: 'robe2',
+    slot: 'robe2',
       name: 'Robe',
       scope: 'robe',
       dropScope: 'Equipment'

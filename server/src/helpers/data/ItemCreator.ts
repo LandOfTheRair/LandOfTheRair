@@ -30,6 +30,12 @@ export class ItemCreator extends BaseService {
       item.mods.currency = Currency.Gold;
     }
 
+    ['ounces', 'shots', 'trapUses'].forEach(modKey => {
+      if (!itemDefinition[modKey]) return;
+
+      item.mods[modKey] = itemDefinition[modKey];
+    });
+
     return item;
 
   }
