@@ -2,11 +2,9 @@
 import bcrypt from 'bcrypt';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, pick } from 'lodash';
-import { ObjectId } from 'mongodb';
 
 import { BaseService, IAccount } from '../../../interfaces';
-import { Account, Player } from '../../../models';
-import { PlayerItems } from '../../../models/orm/PlayerItems';
+import { Account } from '../../../models';
 import { Database } from '../Database';
 
 @Injectable()
