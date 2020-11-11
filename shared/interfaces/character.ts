@@ -1,7 +1,7 @@
 
 import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, ItemSlot, SkillBlock, StatBlock } from './building-blocks';
+import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
-import { IStatusEffect } from './status-effect';
 
 export interface IItemContainer {
   items: ISimpleItem[];
@@ -59,7 +59,7 @@ export interface ICharacter {
   currency: CharacterCurrency;
   items: ICharacterItems;
 
-  effects: { [effName: string]: IStatusEffect };
+  effects: IEffectContainer;
 
   combatTicks: number;
 

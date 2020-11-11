@@ -21,7 +21,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
     stats: char.stats ?? { },
     totalStats: char.totalStats ?? { },
     skills: char.skills ?? { },
-    effects: char.effects ?? { },
+    effects: char.effects ?? { buff: [], debuff: [], outgoing: [], incoming: [] },
     dir: char.dir ?? Direction.South,
     combatTicks: char.combatTicks ?? 0,
     alignment: char.alignment ?? Alignment.Neutral,

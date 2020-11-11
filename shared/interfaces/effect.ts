@@ -1,6 +1,21 @@
 import { DamageClass, StatBlock } from './building-blocks';
+import { IStatusEffect } from './status-effect';
 
-export interface IEffectExtra {
+export enum BuffType {
+  Buff = 'buff',
+  Debuff = 'debuff',
+  OutgoingModifier = 'outgoing',
+  IncomingModifier = 'incoming'
+}
+
+export interface IEffectContainer {
+  [BuffType.Buff]: IStatusEffect[];
+  [BuffType.Debuff]: IStatusEffect[];
+  [BuffType.OutgoingModifier]: IStatusEffect[];
+  [BuffType.IncomingModifier]: IStatusEffect[];
+}
+
+export interface IItemEffectExtra {
 
   // the tooltip to be displayed (food)
   tooltip?: string;
@@ -11,9 +26,6 @@ export interface IEffectExtra {
   // the stats given (food)
   stats?: StatBlock;
 
-  // whether the effect is permanent (npc attributes)
-  isPermanent?: boolean;
-
   // the damage type of the attribute (npc attributes)
   damageType?: DamageClass;
 
@@ -21,7 +33,7 @@ export interface IEffectExtra {
   enrageTimer?: number;
 }
 
-export interface IEffect {
+export interface IItemEffect {
   name: string;
   potency: number;
 
@@ -44,5 +56,5 @@ export interface IEffect {
   range?: number;
 
   // extra data that is used by different items
-  extra?: IEffectExtra;
+  extra?: IItemEffectExtra;
 }

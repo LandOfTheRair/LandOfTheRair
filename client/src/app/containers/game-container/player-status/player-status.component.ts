@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
-import { Observable } from 'rxjs';
-import { IPlayer } from '../../../../interfaces';
+import { Observable, Subscription } from 'rxjs';
+import { IPlayer, IStatusEffect } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -19,15 +19,36 @@ import { calculateXPRequiredForLevel } from '../../../../interfaces';
 export class PlayerStatusComponent implements OnInit, OnDestroy {
 
   @Select(GameState.player) player$: Observable<IPlayer>;
+  public player: IPlayer;
+  public effects: IStatusEffect[] = [];
+
+  playerSub: Subscription;
 
   constructor(
     public gameService: GameService
   ) { }
 
   ngOnInit() {
+    this.playerSub = this.player$.subscribe(p => this.setPlayer(p));
   }
 
   ngOnDestroy() {
+  }
+
+  private setPlayer(p) {
+    this.player = p;
+    this.effects = this.getEffects(p);
+  }
+
+  getEffects(player: IPlayer): IStatusEffect[] {
+    if (!player) return [];
+
+    return [
+      ...player.effects.buff,
+      ...player.effects.debuff,
+      ...player.effects.incoming,
+      ...player.effects.outgoing
+    ];
   }
 
   xpPercent(player: IPlayer) {

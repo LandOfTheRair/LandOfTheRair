@@ -8,6 +8,7 @@
     [dragData]="{ item: item, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
     (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
     (mouseenter)="updateWithDesc(); determineScopes()"
+    (mouseout)="removeDesc()"
     (mouseleave)="removeDesc()">
   <img [src]="imgUrl" 
       [style.object-position]="spriteLocation" 

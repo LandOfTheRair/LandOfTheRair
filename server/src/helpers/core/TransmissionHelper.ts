@@ -43,7 +43,11 @@ export class TransmissionHelper extends BaseService {
   // queue data to be sent to a player during their next patch
   public queuePlayerPatch(player: Player, patch: PlayerPatch) {
     if (patch.patches) {
-      this.playerPatchQueue[player.username].patches.push(...patch.patches);
+      this.playerPatchQueue[player.username].patches.push(...patch.patches.filter(p => {
+
+        // ideally, it would not generate these patches, but we take what we can
+        return !p.path.includes('_') && !p.path.includes('createdAt');
+      }));
     }
 
     if (patch.player) {

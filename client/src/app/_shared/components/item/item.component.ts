@@ -349,7 +349,7 @@ export class ItemComponent implements OnDestroy {
     setTimeout(() => {
       this.store.dispatch(new SetCurrentItemTooltip(this.descText));
       this.hasTooltip = true;
-    });
+    }, 0);
   }
 
   removeDesc(): void {
@@ -358,7 +358,7 @@ export class ItemComponent implements OnDestroy {
     setTimeout(() => {
       this.store.dispatch(new SetCurrentItemTooltip(''));
       this.hasTooltip = false;
-    });
+    }, 0);
   }
 
 }

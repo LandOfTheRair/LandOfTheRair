@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { BaseEntity } from '../../helpers/core/db/base';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, ICharacterItems, IPlayer, IStatusEffect, LearnedSpell,
+  Direction, ICharacterItems, IEffectContainer, IPlayer, IStatusEffect, LearnedSpell,
   PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 
@@ -61,7 +61,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() stats: StatBlock;
   @Property() skills: SkillBlock;
-  @Property() effects: { [effName: string]: IStatusEffect } = {};
+  @Property() effects: IEffectContainer;
   @Property() allegianceReputation: { [allegiance in Allegiance]?: number } = {};
 
   // player-specific props

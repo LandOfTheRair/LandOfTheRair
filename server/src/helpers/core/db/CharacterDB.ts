@@ -65,6 +65,34 @@ export class CharacterDB extends BaseService {
     return player;
   }
 
+  public async loadPlayers(account: Account): Promise<Player[]> {
+    const players = await this.db.findMany<Player>(Player, { _account: account._id });
+
+    for (const player of players) {
+      await this.populatePlayer(player, account);
+    }
+
+    return players;
+  }
+
+  public async populatePlayer(player: Player, account: Account): Promise<void> {
+    const results = await Promise.all([
+      this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items })
+    ]);
+
+    let [items] = results;
+
+    if (!items) {
+      const newItems = new PlayerItems();
+      newItems._id = new ObjectId();
+
+      items = newItems;
+      player._items = items._id;
+    }
+
+    player.items = items;
+  }
+
   public async deletePlayer(player: Player): Promise<void> {
     await Promise.all([
       this.db.delete(player),
@@ -73,6 +101,8 @@ export class CharacterDB extends BaseService {
   }
 
   public async savePlayer(player: Player): Promise<void> {
+    this.game.playerHelper.reformatPlayerBeforeSave(player);
+
     await Promise.all([
       this.db.save(player),
       this.db.save(player.items as PlayerItems)

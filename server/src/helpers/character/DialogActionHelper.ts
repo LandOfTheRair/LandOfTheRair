@@ -3,6 +3,7 @@ import { template } from 'lodash';
 
 import { BaseService, GameServerResponse, IDialogAction, IDialogActionType,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
+  IDialogGiveEffectAction,
   IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
 
@@ -142,7 +143,12 @@ export class DialogActionHelper extends BaseService {
     return { messages: [], shouldContinue: didSucceed };
   }
 
-  private handleGiveEffectAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleGiveEffectAction(action: IDialogGiveEffectAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const { effect, duration } = action;
+
+    this.game.effectHelper.addEffect(player, npc, effect, {}, duration);
+
     return { messages: [], shouldContinue: true };
   }
 

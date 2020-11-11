@@ -2,8 +2,7 @@ import { IBehavior } from './behaviors';
 import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
-import { IEffect } from './effect';
-
+import { IStatusEffectInfo } from './status-effect';
 
 export enum NPCTriggerType {
   HP = 'hp',
@@ -43,7 +42,7 @@ export interface INPCDefinition {
   baseClass?: BaseClass;
 
   // the base effects given to the creature (usually attributes/truesight/etc)
-  baseEffects?: IEffect[];
+  baseEffects?: Array<{ name: string, endsAt: number, extra: IStatusEffectInfo }>;
 
   // the behaviors for the npc
   behaviors: IBehavior[];

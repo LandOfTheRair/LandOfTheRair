@@ -39,7 +39,7 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   public get shouldShow() {
-    return this.player && this.target && this.target.hp.__current > 0 && !this.isInFOV; // TODO: can see stealth here
+    return this.player && this.target && this.target.hp.__current > 0 && this.isInFOV; // TODO: can see stealth here
   }
 
   public get targetHealth() {
@@ -59,7 +59,14 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   public get effects() {
-    return []; // TODO: effects
+    if (!this.target) return [];
+
+    return [
+      ...this.target.effects.buff,
+      ...this.target.effects.debuff,
+      ...this.target.effects.incoming,
+      ...this.target.effects.outgoing
+    ];
   }
 
   constructor(

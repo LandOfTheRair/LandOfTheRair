@@ -8,6 +8,11 @@
 .buffs {
   width: 320px;
   height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .bars {

@@ -7,6 +7,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, DirectionHelper, Inter
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
 import { DialogActionHelper } from '../character/DialogActionHelper';
+import { EffectHelper } from '../character/EffectHelper';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -64,6 +65,7 @@ export class Game {
     public characterHelper: CharacterHelper,
     public playerHelper: PlayerHelper,
     public playerInventoryHelper: PlayerInventoryHelper,
+    public effectHelper: EffectHelper,
 
     public messageHelper: MessageHelper,
     public commandHandler: CommandHandler,
@@ -91,6 +93,7 @@ export class Game {
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
+      'effectHelper',
       'commandHandler', 'messageHelper',
       'playerManager', 'worldManager'
   ];

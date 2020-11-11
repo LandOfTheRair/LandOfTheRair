@@ -10,16 +10,22 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  <ng-container *ngIf="player$ | async as player">
+  <ng-container *ngIf="player">
     {{ player.name }} the {{ player.alignment }} level {{ player.level }} {{ player.baseClass }}
   </ng-container>
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <div class="container" *ngIf="player$ | async as player">
+  <div class="container" *ngIf="player">
     
     <div class="buffs">
-      <div class="true-center background-text full-height">Drop a potion or food here to consume it</div>
+      <ng-container *ngIf="effects.length > 0; else noEffects">
+        <app-effect-icon [effect]="effect" *ngFor="let effect of effects"></app-effect-icon>
+      </ng-container>
+
+      <ng-template #noEffects>
+        <div class="true-center background-text full-height">Drop a potion or food here to consume it</div>
+      </ng-template>
     </div>
 
     <div class="bars">

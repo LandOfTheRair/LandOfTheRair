@@ -1,8 +1,8 @@
 import { Alignment, BaseClass, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
-import { IEffect } from './effect';
+import { IItemEffect } from './effect';
 import { ArmorClass, MiscClass, WeaponClass } from './itemtypes';
 
-export type IItemEncrust = { effect: IEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
+export type IItemEncrust = { effect: IItemEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
 
 export interface IItemRequirements {
   alignment: Alignment;
@@ -26,16 +26,16 @@ export interface IItemTrait {
 export interface IGear {
 
   // the effect the item gives on equip
-  equipEffect?: IEffect;
+  equipEffect?: IItemEffect;
 
   // the effect that happens when the item hits something
-  strikeEffect?: IEffect;
+  strikeEffect?: IItemEffect;
 
   // the effect that happens when the item is used
-  useEffect?: IEffect;
+  useEffect?: IItemEffect;
 
   // the effect that happens when the trap is stepped on
-  trapEffect?: IEffect;
+  trapEffect?: IItemEffect;
 
   // the max enchant level for an item (defaults to 5) - used for progressive item enhancement
   maxEnchantLevel?: number;

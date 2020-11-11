@@ -39,36 +39,12 @@ export class AccountDB extends BaseService {
     const account = await this.db.findSingle<Account>(Account, { username });
     if (!account) return null;
 
-    const players = await this.db.findMany<Player>(Player, { _account: account._id });
-
-    for (const player of players) {
-      await this.populatePlayer(player, account);
-    }
+    const players = await this.game.characterDB.loadPlayers(account);
 
     account.players = players;
     if (account.players.length < 4) account.players.length = 4;
 
     return account;
-  }
-
-  public async populatePlayer(player: Player, account: Account): Promise<void> {
-    const results = await Promise.all([
-      this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items })
-    ]);
-
-    let [items] = results;
-
-    if (!items) {
-      const newItems = new PlayerItems();
-      newItems._id = new ObjectId();
-
-      items = newItems;
-      player._items = items._id;
-    }
-
-    player.items = items;
-
-    this.game.playerHelper.migrate(player, account);
   }
 
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {

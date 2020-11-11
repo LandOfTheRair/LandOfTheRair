@@ -76,7 +76,7 @@ export class PlayerManager extends BaseService {
       // effects tick at most once per second
       if (type === 'slow') {
         timer.startTimer(`slow-- ${player.name}`);
-        this.characterHelper.tickEffects(player);
+        this.game.effectHelper.tickEffects(player);
         timer.stopTimer(`slow-- ${player.name}`);
       }
 

@@ -139,7 +139,7 @@ export class Spawner {
 
   // triggers every second, for clearing buffs
   private buffTick(): void {
-    this.npcs.forEach(npc => this.game.characterHelper.tickEffects(npc));
+    this.npcs.forEach(npc => this.game.effectHelper.tickEffects(npc));
   }
 
   private doInitialSpawn() {

@@ -27,7 +27,6 @@ export class PlayerHelper extends BaseService {
   public init() {}
 
   public migrate(player: Player, playerAccount: Account): void {
-
     const basePlayer = initializePlayer({});
     Object.keys(basePlayer).forEach(key => {
       if (player[key]) return;
@@ -37,6 +36,10 @@ export class PlayerHelper extends BaseService {
     if (!player.uuid) player.uuid = uuid();
     if (!player.dir) player.dir = Direction.South;
     if (!player.actionQueue) player.actionQueue = { fast: [], slow: [] };
+    if (!player.effects.debuff) player.effects.debuff = [];
+    if (!player.effects.buff) player.effects.buff = [];
+    if (!player.effects.outgoing) player.effects.outgoing = [];
+    if (!player.effects.incoming) player.effects.incoming = [];
 
     player.agro = {};
 
@@ -47,6 +50,31 @@ export class PlayerHelper extends BaseService {
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';
+
+    this.reformatPlayerAfterLoad(player);
+  }
+
+  public reformatPlayerBeforeSave(player: Player): void {
+
+    // persist remaining ticks so on load we don't lose effect times
+    Object.values(player.effects).forEach(arr => {
+      arr.forEach(eff => {
+        if (eff.endsAt === -1) return;
+        eff._ticksLeft = Math.floor((eff.endsAt - Date.now()) / 1000);
+      });
+    });
+  }
+
+  public reformatPlayerAfterLoad(player: Player): void {
+
+    // re-hydrate effect timers
+    Object.values(player.effects).forEach(arr => {
+      arr.forEach(eff => {
+        if (!eff._ticksLeft) return;
+        eff.endsAt = Date.now() + (eff._ticksLeft * 1000);
+        delete eff._ticksLeft;
+      });
+    });
   }
 
   public tick(player: Player, type: 'fast'|'slow'): void {

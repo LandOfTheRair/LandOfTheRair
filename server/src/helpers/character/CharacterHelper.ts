@@ -166,11 +166,6 @@ export class CharacterHelper extends BaseService {
     character.skills[skill] = Math.max((character.skills[skill] ?? 0) + skillGained);
   }
 
-  // check to see if any effects are expired
-  public tickEffects(character: ICharacter) {
-
-  }
-
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
 
