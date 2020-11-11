@@ -7,7 +7,8 @@
     [dragEnabled]="item && !displayOnly"
     [dragData]="{ item: item, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
     (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
-    (mouseenter)="updateWithDesc(); determineScopes()"
+    (mouseover)="updateWithDesc()"
+    (mouseenter)="determineScopes()"
     (mouseout)="removeDesc()"
     (mouseleave)="removeDesc()">
   <img [src]="imgUrl" 

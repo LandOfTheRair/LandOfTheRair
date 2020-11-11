@@ -346,19 +346,15 @@ export class ItemComponent implements OnDestroy {
   updateWithDesc(): void {
     if (!this.item || !this.showDesc) return;
 
-    setTimeout(() => {
-      this.store.dispatch(new SetCurrentItemTooltip(this.descText));
-      this.hasTooltip = true;
-    }, 0);
+    this.store.dispatch(new SetCurrentItemTooltip(this.descText));
+    this.hasTooltip = true;
   }
 
   removeDesc(): void {
     if (!this.hasTooltip) return;
 
-    setTimeout(() => {
-      this.store.dispatch(new SetCurrentItemTooltip(''));
-      this.hasTooltip = false;
-    }, 0);
+    this.store.dispatch(new SetCurrentItemTooltip(''));
+    this.hasTooltip = false;
   }
 
 }
