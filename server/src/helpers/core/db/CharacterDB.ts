@@ -36,7 +36,7 @@ export class CharacterDB extends BaseService {
 
     player._account = account._id;
 
-    await this.game.accountDB.populatePlayer(player, account);
+    await this.game.characterDB.populatePlayer(player, account);
 
     Object.keys(characterDetails.items).forEach(itemSlot => {
       player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
