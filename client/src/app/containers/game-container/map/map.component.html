@@ -21,7 +21,7 @@
 <ng-template #bodyTemplate>
   <app-active-target></app-active-target>
   
-  <div class="loader" *ngIf="loadString">
+  <div class="loader" [class.fade-out]="fadeOut">
     {{ loadString }}
   </div>
 

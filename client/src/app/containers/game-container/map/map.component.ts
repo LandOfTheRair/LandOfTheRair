@@ -39,6 +39,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
   public loadString: string;
+  public fadeOut: boolean;
 
   private game: MapRenderGame;
 
@@ -74,7 +75,22 @@ export class MapComponent implements OnInit, OnDestroy {
     // have to do it this way so zone doesn't lose it's mind
     this.loadPercent.subscribe(d => {
       this.zone.run(() => {
+
+        // if we don't have anything, we set a fadeout boolean and then trigger css animations
+        if (!d) {
+          this.fadeOut = true;
+
+          setTimeout(() => {
+            this.loadString = d;
+            this.fadeOut = false;
+          }, 5000);
+
+          return;
+        }
+
+        // if we do have something, we just set it
         this.loadString = d;
+        this.fadeOut = false;
       });
     });
 

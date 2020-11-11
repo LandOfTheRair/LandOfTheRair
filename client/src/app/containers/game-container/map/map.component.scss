@@ -1,4 +1,8 @@
 
+:host {
+  overflow: hidden;
+}
+
 .map {
   height: 576px !important;
 }
@@ -10,6 +14,13 @@
   text-align: center;
   top: 200px;
   width: 100%;
+  opacity: 1;
+
+  &.fade-out {
+    transition: all 2s ease-out;
+    opacity: 0;
+    top: -50px;
+  }
 }
 
 .item-text {
