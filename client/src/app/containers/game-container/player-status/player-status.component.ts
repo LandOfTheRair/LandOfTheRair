@@ -48,8 +48,6 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
 
-    console.log(player.effects.buff);
-
     return [
       ...player.effects.buff,
       ...player.effects.debuff,
@@ -64,6 +62,12 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     const nextPlayerLevelXP = calculateXPRequiredForLevel(player.level + 1);
 
     return (playerXP - curPlayerLevelXP) / nextPlayerLevelXP * 100;
+  }
+
+  unapply($event, effect: IStatusEffect): void {
+    $event.stopPropagation();
+    $event.preventDefault();
+    this.gameService.sendCommandString(`!removeeffect ${effect.uuid}`);
   }
 
 }

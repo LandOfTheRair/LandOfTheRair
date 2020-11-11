@@ -23,7 +23,7 @@
          (onDrop)="uiService.buildAndDoDropAction($event, 'use')" 
          dropScope="use">
       <ng-container *ngIf="effects.length > 0; else noEffects">
-        <app-effect-icon [effect]="effect" *ngFor="let effect of effects; trackBy:trackEffectBy"></app-effect-icon>
+        <app-effect-icon [effect]="effect" *ngFor="let effect of effects; trackBy:trackEffectBy" (contextmenu)="unapply($event, effect)"></app-effect-icon>
       </ng-container>
 
       <ng-template #noEffects>

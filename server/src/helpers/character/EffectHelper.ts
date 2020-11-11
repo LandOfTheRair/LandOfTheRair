@@ -78,4 +78,25 @@ export class EffectHelper extends BaseService {
     character.effects[type] = character.effects[type].filter(e => e.uuid !== effect.uuid);
   }
 
+  public removeEffectManually(character: ICharacter, effectNameOrUUID: string): void {
+
+    let effect!: IStatusEffect;
+
+    Object.values(character.effects).forEach(effectContainer => {
+      effectContainer.forEach(checkEffect => {
+        if (effect) return;
+        if (checkEffect.effectName !== effectNameOrUUID && checkEffect.uuid !== effectNameOrUUID) return;
+
+        effect = checkEffect;
+      });
+    });
+
+    if (!effect) return;
+
+    const meta = this.getEffectData(effect.effectName);
+    if (!meta.effect.canRemove) return;
+
+    this.removeEffect(character, effect);
+  }
+
 }
