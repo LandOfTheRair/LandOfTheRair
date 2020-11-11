@@ -6,8 +6,9 @@ import { species } from 'fantastical';
 import { isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
-import { Alignment, Allegiance, BaseService, CoreStat, Currency, Hostility,
-  initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable } from '../../interfaces';
+import { Alignment, Allegiance, BaseService, BehaviorType, CoreStat, Currency, Hostility,
+  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable } from '../../interfaces';
+import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper, ItemHelper } from '../character';
 import { DialogActionHelper } from '../character/DialogActionHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
@@ -251,6 +252,24 @@ export class NPCCreator extends BaseService {
 
   private assignNPCBehavior(npc: INPC, npcDef: INPCDefinition): void {
     if (!npcDef.behaviors) return;
+
+    const behaviors: IAIBehavior[] = [];
+
+    const behaviorTypes: Record<BehaviorType, any> = {
+      [BehaviorType.Crier]: AllBehaviors.CrierBehavior,
+      [BehaviorType.Trainer]: AllBehaviors.TrainerBehavior,
+      [BehaviorType.Vendor]: AllBehaviors.VendorBehavior
+    };
+
+    npcDef.behaviors.forEach(behavior => {
+      const initBehavior = behaviorTypes[behavior.type];
+      const behaviorInst = new initBehavior();
+      behaviorInst.init(this.game, (npc as any).dialogParser, behavior);
+
+      behaviors.push(behaviorInst);
+    });
+
+    npc.behaviors = behaviors;
   }
 
 }

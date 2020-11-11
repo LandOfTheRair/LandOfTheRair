@@ -36,6 +36,9 @@ export class DefaultAIBehavior implements IAI {
 
   tick() {
     const npc = this.npc;
+
+    (npc.behaviors || []).forEach(beh => beh.tick(this.game, npc));
+
     this.game.npcHelper.tick(npc);
 
     if (npc.hostility === Hostility.Never) return;
@@ -266,10 +269,12 @@ export class DefaultAIBehavior implements IAI {
     }
   }
 
+  // TODO: spawn messages
   private sendSpawnMessage() {
 
   }
 
+  // TODO: leash messages
   private sendLeashMessage() {
 
   }

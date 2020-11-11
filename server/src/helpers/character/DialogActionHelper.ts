@@ -20,8 +20,7 @@ export class DialogActionHelper extends BaseService {
   public async handleDialog(player: IPlayer, npc: INPC, command: string): Promise<void> {
     const messages = await (npc as any).dialogParser.parse(command, { player });
     (messages || []).forEach(message => {
-      const msg = `**${npc.name}**: ${message}`;
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg }, [MessageType.NPCChatter]);
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg, from: npc.name }, [MessageType.NPCChatter]);
     });
   }
 
@@ -61,8 +60,7 @@ export class DialogActionHelper extends BaseService {
         .filter(Boolean) as IDialogChatActionOption[]
     };
 
-    const msg = `**${npc.name}**: ${formattedChat.message}`;
-    this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg }, [MessageType.NPCChatter]);
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: formattedChat.message, from: npc.name }, [MessageType.NPCChatter]);
     this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
     return { messages: [], shouldContinue: true };

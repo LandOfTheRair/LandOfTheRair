@@ -1,5 +1,11 @@
 
 import { Currency } from './building-blocks';
+import { INPC } from './npc';
+
+export interface IAIBehavior {
+  init(game, parser, behavior: IBehavior): void;
+  tick(game, npc: INPC): void;
+}
 
 export enum BehaviorType {
   Trainer = 'trainer',

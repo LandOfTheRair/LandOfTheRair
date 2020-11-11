@@ -11,12 +11,14 @@ export class MessageHelper extends BaseService {
 
   public sendLogMessageToPlayer(
     player: ICharacter,
-    { message, sfx }: { message: string, sfx?: string },
+    { message, sfx, from }: { message: string, sfx?: string, from?: string },
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
   ): void {
 
     const account = this.game.lobbyManager.getAccount((player as Player).username);
     if (!account) return;
+
+    if (from) message = `**${from}**: ${message}`;
 
     this.game.transmissionHelper.sendResponseToAccount((player as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
@@ -29,9 +31,11 @@ export class MessageHelper extends BaseService {
   public sendLogMessageToRadius(
     player: ICharacter,
     radius: number,
-    { message, sfx }: { message: string, sfx?: string },
+    { message, sfx, from }: { message: string, sfx?: string, from?: string },
     messageTypes: MessageType[] = [MessageType.Miscellaneous]
   ): void {
+
+    if (from) message = `**${from}**: ${message}`;
 
     const { state } = this.game.worldManager.getMap(player.map);
     const allPlayers = state.getAllPlayersInRange(player, radius);

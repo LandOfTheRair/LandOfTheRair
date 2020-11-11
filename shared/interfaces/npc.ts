@@ -1,4 +1,4 @@
-import { IBehavior } from './behaviors';
+import { IAIBehavior, IBehavior } from './behaviors';
 import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
@@ -45,7 +45,7 @@ export interface INPCDefinition {
   baseEffects?: Array<{ name: string, endsAt: number, extra: IStatusEffectInfo }>;
 
   // the behaviors for the npc
-  behaviors: IBehavior[];
+  behaviors?: IBehavior[];
 
   // the drop chance for copying items that are already equipped
   copyDrops?: Rollable[];
@@ -137,6 +137,7 @@ export interface INPC extends ICharacter {
   skillOnKill: number;
   giveXp: { min: number, max: number };
 
+  behaviors?: IAIBehavior[];
   onlyVisibleTo?: string;
 
   shouldStrip?: boolean;
