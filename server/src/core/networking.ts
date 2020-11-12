@@ -25,6 +25,9 @@ export class WebsocketWorker {
         return;
       }
 
+      // networking ignores ground messages
+      if (msg.__ground) return;
+
       this.handleMessage(msg);
     });
 
