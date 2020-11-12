@@ -11,12 +11,18 @@ export class EffectHelper extends BaseService {
 
   public init() {}
 
+  // do whatever the effect does, not sure how this will work yet
+  public tickEffect(character: ICharacter, effect: IStatusEffect): void {
+
+  }
+
   // check to see if any effects have expired
   public tickEffects(character: ICharacter): void {
     const now = Date.now();
 
     Object.values(character.effects).forEach(effectContainer => {
       effectContainer.forEach(effect => {
+        this.tickEffect(character, effect);
         if (effect.endsAt > now || effect.endsAt === -1) return;
 
         this.removeEffect(character, effect);

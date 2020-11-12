@@ -7,9 +7,8 @@ import cluster from 'cluster';
 import { cpus } from 'os';
 
 import { GameloopWorker } from './gameloop';
+import { GroundWorker } from './ground';
 import { WebsocketWorker } from './networking';
-
-// TODO: sometimes, in dev mode, this does not start. for seemingly no reason.
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -28,6 +27,12 @@ const netStart = () => {
   worker.start();
 };
 
+const groundStart = () => {
+  const worker = new GroundWorker();
+  console.log('CORE', 'Start ground...');
+  worker.start();
+};
+
 if (cluster.isMaster) {
   console.log(isProd ? 'Production mode starting.' : 'Development mode starting.');
 
@@ -36,21 +41,24 @@ if (cluster.isMaster) {
 
     netStart();
     gameStart();
+    groundStart();
 
   } else {
     console.log('CORE', 'Starting in normal multi-core mode.');
 
     const workers: any = {
       net: null,
-      gameloop: null
+      gameloop: null,
+      ground: null
     };
 
     const pids = {
       net: 0,
-      gameloop: 0
+      gameloop: 0,
+      ground: 0
     };
 
-    const createWorker = (type: 'net'|'gameloop') => {
+    const createWorker = (type: 'net'|'gameloop'|'ground') => {
       workers[type] = cluster.fork({ [type.toUpperCase()]: 1 });
       pids[type] = workers[type].process.pid;
 
@@ -68,6 +76,9 @@ if (cluster.isMaster) {
     createWorker('gameloop');
     console.log('CORE', `Gameloop started as PID ${pids.gameloop}.`);
 
+    createWorker('ground');
+    console.log('CORE', `Ground watcher started as PID ${pids.ground}.`);
+
     cluster.on('exit', (deadWorker) => {
       switch (deadWorker.process.pid) {
         case pids.net: {
@@ -81,6 +92,12 @@ if (cluster.isMaster) {
           console.log('CORE', `Respawning gameloop as PID ${pids.gameloop}`);
           break;
         }
+
+        case pids.ground: {
+          createWorker('ground');
+          console.log('CORE', `Respawning ground as PID ${pids.ground}`);
+          break;
+        }
       }
     });
   }
@@ -89,5 +106,6 @@ if (cluster.isMaster) {
 
   if (process.env.NET) netStart();
   if (process.env.GAMELOOP) gameStart();
+  if (process.env.GROUND) groundStart();
 
 }
