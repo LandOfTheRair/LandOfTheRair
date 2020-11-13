@@ -1,7 +1,8 @@
-import { difference, get, setWith } from 'lodash';
+import { difference, get, setWith, size } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { ICharacter, IMapData, INPC, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import { ICharacter, IMapData, INPC, IPlayer, ISimpleItem,
+  ItemClass, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
 import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
@@ -40,6 +41,9 @@ export class MapScene extends Phaser.Scene {
   private allPlayerSprites = {};
   private fovSprites = {};
   private fovDetailSprites = {};
+  private visibleItemSprites = {};
+  private visibleItemUUIDHash = {};
+  private goldSprites = {};
 
   private playerUpdate$: Subscription;
   private allPlayersUpdate$: Subscription;
@@ -487,6 +491,8 @@ export class MapScene extends Phaser.Scene {
 
     this.groundUpdate$ = this.game.observables.ground.subscribe(ground => {
       this.ground = ground;
+      console.log(ground);
+      this.removeOldItemSprites();
       this.updateGroundSprites();
     });
 
@@ -581,15 +587,203 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  // check if something is in range
+  private notInRange(centerX: number, centerY: number, x: number, y: number) {
+    return x < centerX - 4 || x > centerX + 4 || y < centerY - 4 || y > centerY + 4;
+  }
+
   // item-render functions
   private canCreateItemSpriteAt(x: number, y: number): boolean {
     const tileCheck = (y * this.allMapData.tiledJSON.width) + x;
-    const fluid = this.layers[MapLayer.Fluids].data;
-    const foliage = this.layers[MapLayer.Foliage].data;
+    const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
+    const foliage = this.allMapData.tiledJSON.layers[MapLayer.Foliage].data;
     return this.specialRenders.eagleeye || (!fluid[tileCheck] && !foliage[tileCheck]);
   }
 
   private updateGroundSprites() {
+    for (let x = this.player.x - 4; x <= this.player.x + 4; x++) {
+      const itemsX = this.ground[x];
+      if (!itemsX) continue;
 
+      for (let y = this.player.y - 4; y <= this.player.y + 4; y++) {
+        const itemsXY = this.ground[x][y];
+        if (!itemsXY) continue;
+
+        const numItemsHere = size(itemsXY);
+        Object.keys(itemsXY).forEach(itemType => {
+          if (itemsXY[itemType].length === 0 || (itemType === ItemClass.Coin && numItemsHere > 1)) {
+            if (get(this.goldSprites, [x, y])) this.createTreasureSprite(x, y);
+            return;
+          }
+
+          const item = itemsXY[itemType][0].item;
+          if (!this.canCreateItemSpriteAt(x, y)) return;
+          this.createItemSprite(item, x, y);
+          this.createTreasureSprite(x, y);
+        });
+      }
+    }
+  }
+
+  private createItemSprite(item: ISimpleItem, x: number, y: number) {
+    const realItem = this.game.assetService.getItem(item.name);
+    if (!realItem) return;
+
+    if (!this.visibleItemSprites[x]) this.visibleItemSprites[x] = {};
+    if (!this.visibleItemSprites[x][y]) this.visibleItemSprites[x][y] = {};
+    if (!this.visibleItemSprites[x][y][realItem.itemClass]) this.visibleItemSprites[x][y][realItem.itemClass] = null;
+
+    const currentItemSprite = this.visibleItemSprites[x][y][realItem.itemClass];
+
+    if (currentItemSprite) {
+      if (currentItemSprite.uuid === item.uuid) {
+        return;
+      } else {
+        currentItemSprite.destroy();
+      }
+    }
+
+    const isCorpse = realItem.itemClass === ItemClass.Corpse;
+    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), isCorpse ? 'Creatures' : 'Items', realItem.sprite);
+    this.visibleItemSprites[x][y][realItem.itemClass] = sprite;
+    this.visibleItemUUIDHash[sprite.uuid] = sprite;
+
+    sprite._realX = x;
+    sprite._realY = y;
+    sprite.itemClass = realItem.itemClass;
+    sprite.uuid = item.uuid;
+
+    this.layers.groundItems.add(sprite);
+  }
+
+  private createTreasureSprite(x: number, y: number) {
+    const spritePos = this.goldSpriteForLocation(x, y);
+    if (!spritePos) return;
+
+    if (!this.goldSprites[x]) this.goldSprites[x] = {};
+
+    const currentItemSprite = this.goldSprites[x][y];
+
+    if (currentItemSprite) {
+      if (spritePos === currentItemSprite.frame.name) return;
+      currentItemSprite.destroy();
+    }
+
+    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Terrain', spritePos);
+    this.goldSprites[x][y] = sprite;
+
+    sprite._realX = x;
+    sprite._realY = y;
+
+    this.layers.gold.add(sprite);
+  }
+
+  private removeOldItemSprites() {
+    this.layers.groundItems.each(sprite => {
+      const x = sprite._realX;
+      const y = sprite._realY;
+
+      let ground = this.ground[x] ? this.ground[x][y] : null;
+      ground = ground || {};
+
+      const myGround = ground[sprite.itemClass] || [];
+      if (this.notInRange(this.player.x, this.player.y, x, y) || !myGround || !myGround[0] || myGround[0].item.uuid !== sprite.uuid) {
+        delete this.visibleItemUUIDHash[sprite.uuid];
+        this.visibleItemSprites[x][y][sprite.itemClass] = null;
+        sprite.destroy();
+      }
+    });
+
+    this.layers.gold.each(sprite => {
+      const x = sprite._realX;
+      const y = sprite._realY;
+
+      let ground = this.ground[x] ? this.ground[x][y] : null;
+      ground = ground || {};
+
+      if (this.notInRange(this.player.x, this.player.y, x, y) || !ground[ItemClass.Coin]) {
+        this.goldSprites[x][y] = null;
+        sprite.destroy();
+      }
+    });
+  }
+
+  private goldSpriteForLocation(x: number, y: number) {
+    const hasGold = (checkX, checkY) => get(this.ground, [checkX, checkY, ItemClass.Coin], false);
+
+    // check and abort early
+    const goldHere = hasGold(x, y) && this.canCreateItemSpriteAt(x, y);
+    if (!goldHere) return 0;
+
+    const goldNW = hasGold(x - 1, y - 1) && this.canCreateItemSpriteAt(x - 1, y - 1);
+    const goldN  = hasGold(x,     y - 1) && this.canCreateItemSpriteAt(x,     y - 1);
+    const goldNE = hasGold(x + 1, y - 1) && this.canCreateItemSpriteAt(x + 1, y - 1);
+    const goldE =  hasGold(x + 1, y)     && this.canCreateItemSpriteAt(x + 1, y);
+    const goldSE = hasGold(x + 1, y + 1) && this.canCreateItemSpriteAt(x + 1, y + 1);
+    const goldS  = hasGold(x,     y + 1) && this.canCreateItemSpriteAt(x,     y + 1);
+    const goldSW = hasGold(x - 1, y + 1) && this.canCreateItemSpriteAt(x - 1, y + 1);
+    const goldW  = hasGold(x - 1, y)     && this.canCreateItemSpriteAt(x - 1, y);
+
+    if (!goldNW && goldN && goldNE && goldE && goldSE && goldS && goldSW && goldW) return 337; // NW corner missing
+    if (goldNW && goldN && !goldNE && goldE && goldSE && goldS && goldSW && goldW) return 338; // NE corner missing
+    if (goldNW && goldN && goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 339; // SE corner missing
+    if (goldNW && goldN && goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 340; // SW corner missing
+
+    if (!goldNW && goldN && !goldNE && goldE && goldSE && goldS && goldSW && goldW) return 341;  // NE,NW corner missing
+    if (goldNW && goldN && !goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 342;  // NE,SE corner missing
+    if (goldNW && goldN && goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 343;  // SE,SW corner missing
+    if (!goldNW && goldN && goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 344;  // SW,NW corner missing
+
+    if (!goldNW && goldN && !goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 345; // NW,NE,SW corner missing
+    if (!goldNW && goldN && !goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 346; // NW,NE,SE corner missing
+    if (goldNW && goldN && !goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 347; // NE,SE,SW corner missing
+    if (!goldNW && goldN && goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 348; // NW,SE,SW corner missing
+
+    if (!goldNW && goldN && !goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 349;  // ALL corner missing
+
+    if (!goldN && goldE && goldSE && goldS && goldSW && goldW) return 350; // N missing NE,NW unchecked
+    if (goldNW && goldN && !goldE && goldS && goldSW && goldW) return 351; // E missing NE,SE unchecked
+    if (goldNW && goldN && goldNE && goldE && !goldS && goldW) return 352; // S missing SE,SW unchecked
+    if (goldN && goldNE && goldE && goldSE && goldS && !goldW) return 353; // W missing SW,NW unchecked
+
+    if (!goldNW && goldN && goldNE && goldE && !goldS && goldW) return 354;  // NW,S missing SE,SW unchecked
+    if (goldNW && goldN && !goldNE && goldE && !goldS && goldW) return 355;  // NE,S missing SE,SW unchecked
+    if (!goldN && goldE && !goldSE && goldS && goldSW && goldW) return 356;  // SE,N missing NE,NW unchecked
+    if (!goldN && goldE && goldSE && goldS && !goldSW && goldW) return 357;  // SW,N missing NE,NW unchecked
+
+    if (!goldNW && goldN && !goldE && goldS && goldSW && goldW) return 358;  // NW,E missing NE,SE unchecked
+    if (goldN && !goldNE && goldE && goldSE && goldS && !goldW) return 359;  // NE,W missing NW,SW unchecked
+    if (goldN && goldNE && goldE && !goldSE && goldS && !goldW) return 360;  // SE,W missing NW,SW unchecked
+    if (goldNW && goldN && !goldE && goldS && !goldSW && goldW) return 361;  // SW,E missing NE,SE unchecked
+
+    if (!goldN && goldE && !goldSE && goldS && !goldSW && goldW) return 362; // SE,SW,N missing NW,NE unchecked
+    if (!goldNW && goldN && !goldE && goldS && !goldSW && goldW) return 363; // NW,SW,E missing SE,NE unchecked
+    if (!goldNW && goldN && !goldNE && goldE && !goldS && goldW) return 364; // NE,NW,S missing SE,SW unchecked
+    if (goldN && !goldNE && goldE && !goldSE && goldS && !goldW) return 365; // NE,SE,W missing NW,SW unchecked
+
+    if (!goldN && goldE && goldSE && goldS && !goldW) return 366; // E,SE,S present, NE,SW,NW unchecked
+    if (!goldN && !goldE && goldS && goldSW && goldW) return 367; // W,SW,S present, NW,SE,NE unchecked
+    if (goldNW && goldN && !goldE && !goldS && goldW) return 368; // W,NW,N present, NE,SE,SW unchecked
+    if (goldN && goldNE && goldE && !goldS && !goldW) return 369; // E,NE,N present, NW,SE,SW unchecked
+
+    if (!goldN && goldE && goldS && !goldW) return 370;  // E,S present, CORNERS unchecked
+    if (!goldN && !goldE && goldS && goldW) return 371;  // W,S present, CORNERS unchecked
+    if (goldN && !goldE && !goldS && goldW) return 372;  // W,N present, CORNERS unchecked
+    if (goldN && goldE && !goldS && !goldW) return 373;  // E,N present, CORNERS unchecked
+
+    if (!goldN && !goldE && goldS && !goldW) return 374; // S present, CORNERS unchecked
+    if (!goldN && !goldE && !goldS && goldW) return 375; // W present, CORNERS unchecked
+    if (goldN && !goldE && !goldS && !goldW) return 376; // N present, CORNERS unchecked
+    if (!goldN && goldE && !goldS && !goldW) return 377; // E present, CORNERS unchecked
+
+    if (goldN && !goldE && goldS && !goldW) return 378;  // N,S present, CORNERS unchecked
+    if (!goldN && goldE && !goldS && goldW) return 379;  // E,W present, CORNERS unchecked
+
+    if (!goldNW && goldN && goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 380;  // NW,SE missing
+    if (goldNW && goldN && !goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 381;  // NE,SW missing
+
+    if (goldNW && goldN && goldNE && goldE && goldSE && goldS && goldSW && goldW) return 382;  // ALL present
+
+    return 336;
   }
 }

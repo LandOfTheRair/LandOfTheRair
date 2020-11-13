@@ -4,6 +4,7 @@ import { Select } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { GameServerEvent, IGround, INPC, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
+import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 import { UIService } from '../../../services/ui.service';
@@ -48,6 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
   private game: MapRenderGame;
 
   constructor(
+    private assetService: AssetService,
     private gameService: GameService,
     private socketService: SocketService,
     private zone: NgZone,
@@ -135,6 +137,7 @@ export class MapComponent implements OnInit, OnDestroy {
       config,
       this.gameService,
       this.socketService,
+      this.assetService,
       {
         loadPercent: this.loadPercent,
         player: this.currentPlayer,

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import * as meta from '../../assets/content/_output/meta.json';
 import { environment } from '../../environments/environment';
-import { IItem, INPCDefinition } from '../../interfaces';
+import { IItem, IItemDefinition, INPCDefinition } from '../../interfaces';
 import { SettingsState } from '../../stores/index.js';
 
 @Injectable({
@@ -90,7 +90,7 @@ export class AssetService {
       });
   }
 
-  public getItem(itemName: string): IItem {
+  public getItem(itemName: string): IItemDefinition {
     return this.items[itemName];
   }
 

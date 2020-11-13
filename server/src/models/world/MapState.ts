@@ -494,8 +494,8 @@ export class MapState {
 
     const ground: IGround = {};
 
-    for (let xx = x - radius; xx < x + radius; xx++) {
-      for (let yy = y - radius; yy < y + radius; yy++) {
+    for (let xx = x - radius; xx <= x + radius; xx++) {
+      for (let yy = y - radius; yy <= y + radius; yy++) {
         const atCoord = get(baseGround, [xx, yy], {});
         setWith(ground, [xx, yy], atCoord, Object);
       }

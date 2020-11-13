@@ -1,5 +1,6 @@
 
 import { cloneDeep, get, size } from 'lodash';
+import { ObjectId } from 'mongodb';
 
 import { BaseService, IGround, IGroundItem, ISimpleItem, ItemClass } from '../../interfaces';
 import { Ground } from '../../models/orm/Ground';
@@ -25,6 +26,7 @@ export class GroundManager extends BaseService {
     if (this.groundEntities[map]) return;
 
     this.groundEntities[map] = new Ground();
+    this.groundEntities[map]._id = new ObjectId();
   }
 
   // load the ground from the db and sort it out
@@ -102,9 +104,12 @@ export class GroundManager extends BaseService {
     this.saveableGround[mapName] = this.saveableGround[mapName] || {};
     const saveableGround = this.saveableGround[mapName] || {};
 
-    saveableGround[x] = saveableGround[x] || {};
-    saveableGround[x][y] = saveableGround[x][y] || {};
-    saveableGround[x][y][itemClass] = saveableGround[x][y][itemClass] || [];
+    const addToSaveableGround = (sx, sy, sitemClass, sitem) => {
+      saveableGround[sx] = saveableGround[sx] || {};
+      saveableGround[sx][sy] = saveableGround[sx][sy] || {};
+      saveableGround[sx][sy][sitemClass] = saveableGround[sx][sy][sitemClass] || [];
+      saveableGround[sx][sy][sitemClass].push(sitem);
+    };
 
     const isModified = size(item.mods) > 0;
 
@@ -153,7 +158,7 @@ export class GroundManager extends BaseService {
         mapGround[x][y][itemClass].push(groundItem);
 
         if (item.mods.owner) {
-          saveableGround[x][y][itemClass].push(groundItem);
+          addToSaveableGround(x, y, itemClass, groundItem);
         }
       }
 
@@ -162,7 +167,7 @@ export class GroundManager extends BaseService {
       mapGround[x][y][itemClass].push(groundItem);
 
       if (item.mods.owner) {
-        saveableGround[x][y][itemClass].push(groundItem);
+        addToSaveableGround(x, y, itemClass, groundItem);
       }
     }
   }
@@ -212,7 +217,14 @@ export class GroundManager extends BaseService {
     }
 
     // if the ground item gets to a count of 0, to the axe with it
-    if (gItem.count <= 0) mapGround[x][y][itemClass] = mapGround[x][y][itemClass].filter(i => i.item.uuid !== uuid);
+    if (gItem.count <= 0) {
+      mapGround[x][y][itemClass] = mapGround[x][y][itemClass].filter(i => i.item.uuid !== uuid);
+
+      // clean up the save object so we don't send every possible combination everywhere
+      if (mapGround[x][y][itemClass].length === 0) delete mapGround[x][y][itemClass];
+      if (size(mapGround[x][y]) === 0) delete mapGround[x][y];
+      if (size(mapGround[x]) === 0) delete mapGround[x];
+    }
 
     // we also remove the sItem if possible
     if (sItem && sItem.count <= 0) {

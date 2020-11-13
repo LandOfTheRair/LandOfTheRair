@@ -1,6 +1,7 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { IGround, IMapData, INPC, IPlayer } from '../../../../interfaces';
+import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 
@@ -12,6 +13,7 @@ export class MapRenderGame extends Phaser.Game {
     config,
     public gameService: GameService,
     public socketService: SocketService,
+    public assetService: AssetService,
     public observables: {
       loadPercent: BehaviorSubject<string>,
       player: BehaviorSubject<IPlayer>,
