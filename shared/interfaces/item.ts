@@ -223,4 +223,4 @@ export type IItemDefinition = IItem & {
     name: string[];
     level: { min: number, max: number };
   };
-}
+};
