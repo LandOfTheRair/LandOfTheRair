@@ -9,7 +9,7 @@ export interface IMacroCommandArgs {
   callbacks: {
     broadcast: (args) => void,
     emit: (args) => void
-  }
+  };
 }
 
 export interface IMacroCommand {

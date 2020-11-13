@@ -220,7 +220,7 @@ export interface ISimpleItem {
 export type IItemDefinition = IItem & {
   randomStats: Record<Stat, { min: number, max: number }>;
   randomTrait: {
-    name: string[],
+    name: string[];
     level: { min: number, max: number };
   };
 }
