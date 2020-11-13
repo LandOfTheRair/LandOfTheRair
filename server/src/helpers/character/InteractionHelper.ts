@@ -9,7 +9,6 @@ export class InteractionHelper extends BaseService {
 
   public init() {}
 
-  // TODO: open doors
   // return whether or not we opened the door
   public tryToOpenDoor(character: ICharacter, door: any): boolean {
     const properties = door.properties || {};

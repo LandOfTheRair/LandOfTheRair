@@ -135,7 +135,6 @@ export class NPCCreator extends BaseService {
       return { result: skill as unknown as string, chance: 1 };
     });
 
-    // TODO: check npcDef.baseEffects
     (npcDef.baseEffects || []).forEach(effect => {
       this.game.effectHelper.addEffect(baseChar, 'Self', effect.name, effect.extra, effect.endsAt);
     });
