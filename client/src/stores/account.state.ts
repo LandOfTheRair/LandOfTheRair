@@ -43,6 +43,9 @@ export class AccountState {
   login(ctx: StateContext<IAccount>, { info }: Login) {
     window.document.title = `[${info.account.username}] Land of the Rair`;
 
+    if(!info.account.players) info.account.players = [];
+    if (info.account.players.length < 4) info.account.players.length = 4;
+
     ctx.setState(Object.assign({}, ctx.getState(), info.account));
   }
 

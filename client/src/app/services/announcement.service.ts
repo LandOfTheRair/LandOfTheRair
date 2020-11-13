@@ -28,9 +28,13 @@ export class AnnouncementService {
 
   private async init() {
     const parser = new Parser();
-    const feed = await parser.parseURL('https://landoftherair.github.io/feed.xml');
+    try {
+      const feed = await parser.parseURL('https://landoftherair.github.io/feed.xml');
 
-    this.allAnnouncements = feed.items;
+      this.allAnnouncements = feed.items;
+    } catch {
+      console.error('Could not fetch announcements.');
+    }
   }
 
 }
