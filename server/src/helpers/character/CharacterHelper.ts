@@ -53,7 +53,7 @@ export class CharacterHelper extends BaseService {
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { binds, desc, tellsBind, itemClass, owner } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner']);
+      const { binds, desc, tellsBind, itemClass, owner } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc']);
       if (itemClass === ItemClass.Corpse) return;
 
       if (binds && (char as IPlayer).username && !owner) {
@@ -61,7 +61,7 @@ export class CharacterHelper extends BaseService {
         this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${itemClass.toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
 
         if (tellsBind) {
-          this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `${char.name} has looted ${desc}.` });
+          this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `*** ${char.name} has looted ${desc}.` });
         }
       }
     }

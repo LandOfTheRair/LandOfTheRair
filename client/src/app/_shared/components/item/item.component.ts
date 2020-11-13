@@ -95,10 +95,12 @@ export class ItemComponent implements OnDestroy {
     if (!this.item) return '';
     if (this.item.mods.searchItems) return 'UnsearchedCorpse';
 
-    if (!this.item.mods.cosmetic) return '';
+    const cosmetic = this.item.mods?.cosmetic || this.realItem.cosmetic;
+
+    if (!cosmetic) return '';
     if (this.item.mods.condition <= 10000) return '';
 
-    return this.item.mods.cosmetic.name;
+    return cosmetic.name;
   }
 
   get glowColor() {
