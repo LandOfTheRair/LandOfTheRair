@@ -1,6 +1,6 @@
 import { Alignment, BaseClass, Currency, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IItemEffect } from './effect';
-import { ArmorClass, MiscClass, WeaponClass } from './itemtypes';
+import { ItemClass } from './itemtypes';
 
 export type IItemEncrust = { effect: IItemEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
 
@@ -148,7 +148,7 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
   name: string;
 
   // the itemClass representing the item type
-  itemClass: WeaponClass & ArmorClass & MiscClass;
+  itemClass: ItemClass;
 
   // the sprite representing this item
   sprite: number;
@@ -217,5 +217,10 @@ export interface ISimpleItem {
   mods: Partial<IItem>;
 }
 
-export type IGroundItem = ISimpleItem & { count: number };
-
+export type IItemDefinition = IItem & {
+  randomStats: Record<Stat, { min: number, max: number }>;
+  randomTrait: {
+    name: string[],
+    level: { min: number, max: number };
+  };
+}

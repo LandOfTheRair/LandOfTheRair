@@ -1,4 +1,4 @@
-import { IItem, IPlayer, ISimpleItem, ItemClass } from '../interfaces';
+import { IItem, IPlayer, ISimpleItem, ItemClass, Skill } from '../interfaces';
 
 function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
   return item.mods[prop] || itemDef[prop];
@@ -80,7 +80,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem):
 
   // how full it is, if at all
   const ounces = item.mods.ounces || 0;
-  let fluidText = itemClass === ItemClass.Bottle && ounces > 0 ? `It is filled with ${ounces}oz of fluid. ` : '';
+  let fluidText = itemClass === ItemClass.Bottle && ounces > 0 ? `It is filled with ${ounces} oz of fluid. ` : '';
   if (itemClass === ItemClass.Bottle && ounces === 0) fluidText = 'It is empty.';
 
   // the items 'use' effect situation
@@ -96,14 +96,14 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem):
 
   const alignmentText = requirements && requirements.alignment ? `This item is ${requirements.alignment}. ` : '';
 
-  const formattedSkill = requirements?.skill?.name === 'Wand' ? 'Magical Weapons' : requirements?.skill?.name;
+  const formattedSkill = requirements?.skill?.name === Skill.Wand ? 'Magical Weapons' : requirements?.skill?.name;
   const skillText = requirements && requirements.skill ? `This item requires ${formattedSkill} skill ${requirements.skill.level}. ` : '';
 
   // TODO: encrust
 
   const desc = getProp(item, itemDef, 'desc');
 
-  const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces}oz of ` : '';
+  const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}. `;
 
   const conditionText = `The item is in ${conditionString(item)} condition. `;

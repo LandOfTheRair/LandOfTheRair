@@ -20,7 +20,7 @@ export class UIService {
 
   private doDropAction(dragData, dropScope) {
     // also has { containerUUID, isStackableMaterial }
-    const { context, contextSlot, item } = dragData;
+    const { context, contextSlot, item, realItem } = dragData;
 
     if (!context) return;
 
@@ -36,13 +36,13 @@ export class UIService {
     const destArgs = '';
 
     if (context === 'Ground') {
-      ctxArgs = `${item.itemClass}:${item.uuid}`;
+      ctxArgs = `${realItem.itemClass}:${item.uuid}`;
 
     } else if (['Right', 'Left'].includes(context)) {
       ctxArgs = '_';
 
     } else if (context === 'GroundGroup') {
-      ctxArgs = `${item.itemClass}`;
+      ctxArgs = `${realItem.itemClass}`;
 
     } else if (['Sack', 'Belt', 'Equipment', 'DemiMagicPouch'].includes(context)) {
       ctxArgs = `${contextSlot}`;

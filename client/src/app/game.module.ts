@@ -42,6 +42,7 @@ import { CharacterListComponent } from './containers/game-container/character-li
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { EquipmentMainComponent } from './containers/game-container/equipment-main/equipment-main.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
+import { GroundComponent } from './containers/game-container/ground/ground.component';
 import { InventoryBeltComponent } from './containers/game-container/inventory-belt/inventory-belt.component';
 import { InventoryPouchComponent } from './containers/game-container/inventory-pouch/inventory-pouch.component';
 import { InventorySackComponent } from './containers/game-container/inventory-sack/inventory-sack.component';
@@ -88,6 +89,7 @@ const gameComponents = [
   EquipmentMainComponent,
   PlayerStatusComponent,
   CharacterListComponent,
+  GroundComponent,
 
   JournalComponent
 ];

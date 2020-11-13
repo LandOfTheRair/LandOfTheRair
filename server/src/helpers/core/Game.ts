@@ -10,6 +10,7 @@ import { DialogActionHelper } from '../character/DialogActionHelper';
 import { EffectHelper } from '../character/EffectHelper';
 import { ProfanityHelper } from '../chat';
 import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
+import { GroundManager } from '../data/GroundManager';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -66,6 +67,7 @@ export class Game {
     public playerHelper: PlayerHelper,
     public playerInventoryHelper: PlayerInventoryHelper,
     public effectHelper: EffectHelper,
+    public groundManager: GroundManager,
 
     public messageHelper: MessageHelper,
     public commandHandler: CommandHandler,
@@ -93,7 +95,7 @@ export class Game {
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
-      'effectHelper',
+      'effectHelper', 'groundManager',
       'commandHandler', 'messageHelper',
       'playerManager', 'worldManager'
   ];
@@ -117,8 +119,8 @@ export class Game {
       process.on(sig as any, () => {
         this.logger.log(`Game:Exit:${sig}`, 'Beginning save of players and ground...');
         Promise.all([
-          this.playerManager.saveAllPlayers()
-          // TODO: save ground
+          this.playerManager.saveAllPlayers(),
+          this.groundManager.saveGround()
         ])
         .then(() => {
           this.logger.log('Game:Exit', 'Finished save of players and ground.');

@@ -54,6 +54,11 @@ export class GameState {
   }
 
   @Selector()
+  static currentGround(state: IGame) {
+    return state.mapInfo.ground[state.player.x][state.player.y];
+  }
+
+  @Selector()
   static currentPosition(state: IGame) {
     return { x: state.player.x, y: state.player.y };
   }

@@ -6,7 +6,8 @@ import { extend, get, keyBy, pick, setWith, size, unset } from 'lodash';
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
 
-import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer } from '../../interfaces';
+import { Alignment, Allegiance, Hostility, ICharacter, IGround,
+  IGroundItem, INPC, IPlayer, ISimpleItem, ItemClass } from '../../interfaces';
 import { Player } from '../orm';
 import { Spawner } from './Spawner';
 
@@ -181,6 +182,12 @@ export class MapState {
     return get(this.playerKnowledgePositions, [x, y]);
   }
 
+  // get any players that care about x,y
+  public getPlayerObjectsWithKnowledgeForXY(x: number, y: number): IPlayer[] {
+    const uuids = Object.keys(get(this.playerKnowledgePositions, [x, y]));
+    return uuids.map(uuid => this.playersByUUID[uuid]);
+  }
+
   // check if there are any players that care about x,y
   public isThereAnyKnowledgeForXY(x: number, y: number): boolean {
     return Object.keys(get(this.playerKnowledgePositions, [x, y], {})).length !== 0;
@@ -339,6 +346,22 @@ export class MapState {
     const state = this.game.playerManager.getPlayerState(player);
 
     // update players
+    this.triggerPlayerUpdateForPlayer(player);
+
+    // update npcs
+    this.triggerNPCUpdateForPlayer(player);
+
+    // update ground
+    this.triggerGroundUpdateForPlayer(player);
+
+    // update doors
+    state.openDoors = this.openDoors;
+  }
+
+  private triggerPlayerUpdateForPlayer(player: IPlayer) {
+    const state = this.game.playerManager.getPlayerState(player);
+
+    // update players
     const nearbyPlayers = this.players
       .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
       .filter(({ uuid }) => uuid !== player.uuid)
@@ -346,18 +369,25 @@ export class MapState {
       .filter(Boolean);
 
     state.players = keyBy(nearbyPlayers, 'uuid');
+  }
 
-    // update npcs
+  private triggerNPCUpdateForPlayer(player: IPlayer) {
+    const state = this.game.playerManager.getPlayerState(player);
+
+    // update players
     const nearbyNPCs = this.npcs
-      .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
-      .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
-      .filter(Boolean);
+    .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
+    .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
+    .filter(Boolean);
 
     state.npcs = keyBy(nearbyNPCs, 'uuid');
+  }
 
-    state.openDoors = this.openDoors;
+  private triggerGroundUpdateForPlayer(player: IPlayer) {
+    const state = this.game.playerManager.getPlayerState(player);
 
-    // TODO: also send ground
+    // update players
+    state.ground = this.getGroundVision(player.x, player.y, 4);
   }
 
   // player functions
@@ -456,6 +486,40 @@ export class MapState {
     this.npcs.insert(rbushNPC);
 
     this.triggerAndSendUpdate(npc.x, npc.y);
+  }
+
+  // GROUND FUNCTIONS
+  public getGroundVision(x: number, y: number, radius = 4): IGround {
+    const baseGround = this.game.groundManager.getGround(this.map.name);
+
+    const ground: IGround = {};
+
+    for (let xx = x - radius; xx < x + radius; xx++) {
+      for (let yy = y - radius; yy < y + radius; yy++) {
+        const atCoord = get(baseGround, [xx, yy], {});
+        setWith(ground, [xx, yy], atCoord, Object);
+      }
+    }
+
+    return ground;
+  }
+
+  public addItemToGround(x: number, y: number, item: ISimpleItem): void {
+    this.game.groundManager.addItemToGround(this.map.name, x, y, item);
+
+    // if player knowledge x/y, update ground
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
+  }
+
+  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): IGroundItem[] {
+    return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
+  }
+
+  public removeItemFromGround(x: number, y: number, itemClass: ItemClass, uuid: string|string[], count = 1): void {
+    this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, uuid, count);
+
+    // if player knowledge x/y, update ground
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
   }
 
 }

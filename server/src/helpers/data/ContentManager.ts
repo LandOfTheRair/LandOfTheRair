@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
 
-import { BaseService, IItem, INPCDefinition } from '../../interfaces';
+import { BaseService, IItem, IItemDefinition, INPCDefinition } from '../../interfaces';
 
 @Injectable()
 export class ContentManager extends BaseService {
@@ -38,7 +38,7 @@ export class ContentManager extends BaseService {
     return this.mapDroptables[mapName];
   }
 
-  public getItemDefinition(itemName: string): IItem {
+  public getItemDefinition(itemName: string): IItemDefinition {
     return this.items[itemName];
   }
 

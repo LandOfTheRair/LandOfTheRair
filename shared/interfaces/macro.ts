@@ -6,6 +6,10 @@ export interface IMacroCommandArgs {
   arrayArgs: string[];
   objArgs: any;
   calledAlias: string;
+  callbacks: {
+    broadcast: (args) => void,
+    emit: (args) => void
+  }
 }
 
 export interface IMacroCommand {

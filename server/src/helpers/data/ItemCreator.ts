@@ -1,8 +1,9 @@
 
 import { Injectable } from 'injection-js';
+import { cloneDeep } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseService, Currency, ISimpleItem, ItemClass } from '../../interfaces';
+import { BaseService, Currency, IItemDefinition, ISimpleItem, ItemClass } from '../../interfaces';
 import { ContentManager } from './ContentManager';
 
 // functions related to CREATING an item
@@ -36,8 +37,27 @@ export class ItemCreator extends BaseService {
       item.mods[modKey] = itemDefinition[modKey];
     });
 
+    this.rollStats(item, itemDefinition);
+
     return item;
 
+  }
+
+  public rerollItem(item: ISimpleItem): ISimpleItem {
+    const newItem = cloneDeep(item);
+    newItem.uuid = uuid();
+
+    const itemDefinition = this.content.getItemDefinition(item.name);
+    if (itemDefinition) {
+      this.rollStats(item, itemDefinition);
+    }
+
+    return newItem;
+  }
+
+  // do randomStats, randomTrait, assign quality
+  private rollStats(item: ISimpleItem, itemDef: IItemDefinition): ISimpleItem {
+    return item;
   }
 
 }

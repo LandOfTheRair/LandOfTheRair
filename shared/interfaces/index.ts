@@ -8,6 +8,7 @@ export * from './character';
 export * from './dialog';
 export * from './effect';
 export * from './game';
+export * from './ground';
 export * from './item';
 export * from './itemtypes';
 export * from './journal';

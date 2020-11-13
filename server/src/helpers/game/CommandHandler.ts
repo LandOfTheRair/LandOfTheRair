@@ -28,13 +28,13 @@ export class CommandHandler extends BaseService {
 
   public init() {
     Object.values(Commands).map(x => new x(this.game)).forEach(command => {
-      command.aliases.forEach(alias => this.commands[alias] = command);
+      command.aliases.forEach(alias => this.commands[alias.toLowerCase()] = command);
     });
 
     this.commandStrings = Object.keys(this.commands);
   }
 
-  public doCommand(player: Player, data) {
+  public doCommand(player: Player, data, callbacks) {
 
     let command: string = data.command;
 
@@ -54,7 +54,8 @@ export class CommandHandler extends BaseService {
       stringArgs: '',
       arrayArgs: [],
       objArgs: {},
-      calledAlias: command
+      calledAlias: command,
+      callbacks
     };
 
     if (data.args && isString(data.args)) {
@@ -66,7 +67,7 @@ export class CommandHandler extends BaseService {
     }
 
     // validate the command / prefixes
-    const commandRef = this.commands[command];
+    const commandRef = this.commands[command.toLowerCase()];
     if (!commandRef) {
       const didyoumean = didYouMean(command, this.commandStrings);
       let message = `Command "${command}" does not exist.`;

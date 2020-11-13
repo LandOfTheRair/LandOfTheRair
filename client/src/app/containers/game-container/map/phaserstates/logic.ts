@@ -57,7 +57,6 @@ export class MapScene extends Phaser.Scene {
     Object.keys(this.layers).forEach((layer, index) => {
       this.layers[layer] = this.add.container();
       this.layers[layer].depth = index + 1;
-      console.log(layer, index + 1);
     });
   }
 

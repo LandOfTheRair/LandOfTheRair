@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 
-import { BaseService, GameAction } from '../../interfaces';
+import { BaseService, GameAction, IPlayer } from '../../interfaces';
 import { Account, Player, PlayerState } from '../../models';
 import { CharacterHelper } from '../character';
 
@@ -28,7 +28,7 @@ export class PlayerManager extends BaseService {
   }
 
   // get a player state based on the player
-  public getPlayerState(player: Player): PlayerState {
+  public getPlayerState(player: IPlayer): PlayerState {
     return this.playerStates[player.username];
   }
 

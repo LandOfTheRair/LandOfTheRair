@@ -6,6 +6,7 @@ import { GameServerEvent, INPC, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
+import { UIService } from '../../../services/ui.service';
 import { MapRenderGame } from './phasergame';
 import { MapScene, PreloadScene } from './phaserstates';
 
@@ -46,7 +47,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private gameService: GameService,
     private socketService: SocketService,
-    private zone: NgZone
+    private zone: NgZone,
+    public uiService: UIService
   ) { }
 
   ngOnInit(): void {

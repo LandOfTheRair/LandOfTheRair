@@ -3,19 +3,19 @@ import { ChatMode, GameAction, GameOption } from '../../interfaces';
 
 // dispatched when an account is added to the quick login selector
 export class AddAccount {
-  static type = '[Settings] Add account';
+  static type = GameAction.SettingsAddAccount;
   constructor(public username: string, public password: string, public autologin?: boolean) {}
 }
 
 // dispatched when an account is removed from the quick login selector
 export class RemoveAccount {
-  static type = '[Settings] Remove account';
+  static type = GameAction.SettingsRemoveAccount;
   constructor(public username: string) {}
 }
 
 // dispatched any time a window moves
 export class UpdateWindowPosition {
-  static type = '[Settings] Update window position';
+  static type = GameAction.SettingsUpdateWindowPosition;
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
@@ -26,7 +26,7 @@ export class UpdateWindowPosition {
 
 // dispatched when a window is created
 export class SetDefaultWindowPosition {
-  static type = '[Settings] Set default window position';
+  static type = GameAction.SettingsSetDefaultWindowPosition;
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
@@ -36,33 +36,33 @@ export class SetDefaultWindowPosition {
 
 // dispatched when "reset window positions" set
 export class ResetWindowPositions {
-  static type = '[Settings] Reset window positions';
+  static type = GameAction.SettingsResetWindowPositions;
   constructor() {}
 }
 
 // dispatched when a window is marked hidden
 export class HideWindow {
-  static type = '[Settings] Hide Window';
+  static type = GameAction.SettingsHideWindow;
   constructor(public windowName: string) {}
 }
 
 // dispatched when a window is shown
 export class ShowWindow {
-  static type = '[Settings] Show Window';
+  static type = GameAction.SettingsShowWindow;
   filterOutFromLogs = true;
   constructor(public windowName: string) {}
 }
 
 // dispatched when a window is marked active (usually via click)
 export class SetActiveWindow {
-  static type = '[Settings] Set active window';
+  static type = GameAction.SettingsActiveWindow;
   filterOutFromLogs = true;
   constructor(public windowName: string) {}
 }
 
 // dispatched when the user changes their currently active character slot
 export class SetCharSlot {
-  static type = '[Settings] Set char slot';
+  static type = GameAction.SettingsCharSlot;
   constructor(public charSlot: number) {}
 }
 

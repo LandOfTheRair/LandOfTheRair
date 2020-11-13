@@ -77,6 +77,7 @@ export enum MiscClass {
   Twig = 'Twig'
 }
 
+export type ItemClass = WeaponClass | ArmorClass | MiscClass;
 export const ItemClass = Object.assign({}, WeaponClass, ArmorClass, MiscClass);
 
 export const AmmoClasses = [ItemClass.Arrow];

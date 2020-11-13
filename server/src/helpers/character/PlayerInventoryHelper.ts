@@ -7,6 +7,10 @@ export class PlayerInventoryHelper extends BaseService {
   init() {}
 
   // sack functions
+  public sackSpaceLeft(player: IPlayer): number {
+    return 25 - player.items.sack.items.length;
+  }
+
   public canAddItemToSack(player: IPlayer, item: ISimpleItem): boolean {
     const isSackable = this.game.itemHelper.getItemProperty(item, 'isSackable');
     if (!isSackable) return false;
@@ -39,6 +43,10 @@ export class PlayerInventoryHelper extends BaseService {
   }
 
   // belt functions
+  public beltSpaceLeft(player: IPlayer): number {
+    return 5 - player.items.belt.items.length;
+  }
+
   public canAddItemToBelt(player: IPlayer, item: ISimpleItem): boolean {
     const isBeltable = this.game.itemHelper.getItemProperty(item, 'isBeltable');
     if (!isBeltable) return false;

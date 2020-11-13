@@ -9,7 +9,7 @@
     <mat-label>Choose Amount</mat-label>
     <input matInput 
       type="number" 
-      [placeholder]="'Max: ' + data.max" 
+      [placeholder]="'Max: ' + (data.max | number)" 
       min="0"
       [max]="data.max"
       autofocus

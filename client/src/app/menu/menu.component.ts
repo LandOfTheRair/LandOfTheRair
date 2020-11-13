@@ -107,6 +107,11 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('inventorySack'))
         },
         {
+          name: 'Ground',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('ground'))
+        },
+        {
           name: 'Party',
           disabled: true,
           visibleIf: this.gameService.inGame$,

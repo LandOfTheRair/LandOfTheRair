@@ -5,7 +5,7 @@
     draggable
     [dragScope]="scopes"
     [dragEnabled]="item && !displayOnly"
-    [dragData]="{ item: item, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
+    [dragData]="{ item: item, realItem: realItem, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
     (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
     (mouseover)="updateWithDesc()"
     (mouseenter)="determineScopes()"
@@ -23,9 +23,9 @@
       [class.animate]="shouldAnimate" 
       [ngClass]="['cosmetic-bg-' + cosmeticName]" 
       *ngIf="item && cosmeticName"></div>
-  <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount }}x</span>
-  <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces }}oz</span>
+  <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount | number }} <small>x</small></span>
+  <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces | number }} <small>oz</small></span>
   <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
   <span class="value" *ngIf="item && showOunces && item.mods.succorInfo">{{ item.mods.succorInfo.map }}</span>
-  <span class="ounces" *ngIf="item && showDesc && realItem.trapEffect && realItem.itemClass === 'Trap'">{{ item.mods.trapUses }}x {{ realItem.trapEffect.name }}</span>
+  <span class="ounces" *ngIf="item && showDesc && realItem.trapEffect && realItem.itemClass === 'Trap'">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
 </div>

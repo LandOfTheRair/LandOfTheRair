@@ -108,5 +108,15 @@ export enum GameAction {
   SetMacroBar = '[Macro] Set Macro Bars',
   SetDefaultMacros = '[Macros] Set Default Macros/Bars',
 
-  UpdateJournal = '[Journal] Update Journal'
+  UpdateJournal = '[Journal] Update Journal',
+
+  SettingsAddAccount = '[Settings] Add Quick Account',
+  SettingsRemoveAccount = '[Settings] Remove Quick Account',
+  SettingsUpdateWindowPosition = '[Settings] Update Window Position',
+  SettingsSetDefaultWindowPosition = '[Settings] Set Default Window Position',
+  SettingsResetWindowPositions = '[Settings] Reset Window Positions',
+  SettingsHideWindow = '[Settings] Hide Window',
+  SettingsShowWindow = '[Settings] Show Window',
+  SettingsActiveWindow = '[Settings] Set Active Window',
+  SettingsCharSlot = '[Settings] Set Char Slot'
 }

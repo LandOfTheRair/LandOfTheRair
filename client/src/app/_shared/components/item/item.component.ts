@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Store } from '@ngxs/store';
 
-import { canUseItem, descTextFor, EquipHash, EquippableItemClasses,
-  IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
+import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
+  IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot, WeaponClass } from '../../../../interfaces';
 import { SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
@@ -39,6 +39,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   public get realItem(): IItem {
+    if (!this.item) return null;
     return this.assetService.getItem(this.item.name);
   }
 
@@ -71,7 +72,7 @@ export class ItemComponent implements OnDestroy {
 
   get isEquippable(): boolean {
     if (!this.item) return false;
-    return EquippableItemClasses.includes(this.realItem.itemClass);
+    return EquippableItemClasses.includes(this.realItem.itemClass as WeaponClass|ArmorClass);
   }
 
   get realOunces() {
@@ -79,7 +80,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   get realCount() {
-    return this.item.mods.shots;
+    return this.count || this.item.mods.shots;
   }
 
   get imgUrl() {

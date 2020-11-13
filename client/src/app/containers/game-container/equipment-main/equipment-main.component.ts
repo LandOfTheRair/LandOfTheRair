@@ -111,6 +111,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     },
     {
       slot: 'armor',
+      scope: ['armor', 'robe'],
       name: 'Armor',
       dropScope: 'Equipment'
     },
