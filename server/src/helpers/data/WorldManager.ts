@@ -36,6 +36,10 @@ export class WorldManager extends BaseService {
   // the list of active maps to run ticks on
   private activeMaps: Set<string> = new Set<string>();
 
+  public get currentlyActiveMaps(): string[] {
+    return [...this.activeMaps];
+  }
+
   public async init() {
 
     const allMaps = await readdir('content/maps');
@@ -117,6 +121,10 @@ export class WorldManager extends BaseService {
     }
 
     this.mapStates[oldMap].removePlayer(player);
+
+    if (this.mapPlayerCounts[oldMap] === 0) {
+      this.game.groundManager.saveSingleGround(oldMap);
+    }
 
     this.game.logger.log(`Map:Leave`, `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
   }

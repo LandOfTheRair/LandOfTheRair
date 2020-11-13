@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
 
-import { BaseService, IItem, IItemDefinition, INPCDefinition } from '../../interfaces';
+import { BaseService, IItemDefinition, INPCDefinition } from '../../interfaces';
 
 @Injectable()
 export class ContentManager extends BaseService {

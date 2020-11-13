@@ -7,6 +7,6 @@ import { IGround } from '../../interfaces';
 export class Ground extends BaseEntity {
 
   @Property() map: string;
-  @Property() groundData: IGround;
+  @Property() ground: IGround;
 
 }

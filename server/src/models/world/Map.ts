@@ -124,6 +124,7 @@ export class WorldMap {
   constructor(private game: Game, private mapName: string, private json: any) {
     this.destructureJSON();
     this.createPlanner();
+    game.groundManager.initGroundForMap(mapName);
   }
 
   private createPlanner() {

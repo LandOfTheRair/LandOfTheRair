@@ -15,7 +15,7 @@ import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
 import { Database } from './Database';
-import { AccountDB, CharacterDB, WorldDB } from './db';
+import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
 import { WebsocketCommandHandler } from './WebsocketCommandHandler';
@@ -38,6 +38,7 @@ export class Game {
     public accountDB: AccountDB,
     public characterDB: CharacterDB,
     public worldDB: WorldDB,
+    public groundDB: GroundDB,
 
     public profanityHelper: ProfanityHelper,
 
@@ -85,7 +86,7 @@ export class Game {
       'logger',
       'transmissionHelper',
       'contentManager',
-      'db', 'worldDB', 'characterDB', 'accountDB',
+      'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB',
       'profanityHelper',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
@@ -145,6 +146,7 @@ export class Game {
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer('slowTick');
       this.playerManager.slowTick(timer);
+      this.groundManager.tick(timer);
       timer.stopTimer('slowTick');
     }
 
