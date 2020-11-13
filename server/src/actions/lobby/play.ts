@@ -14,7 +14,7 @@ export class PlayAction extends ServerAction {
 
     let player!: Player;
     for (const checkPlayer of data.account.players) {
-      if (checkPlayer.charSlot !== charSlot) continue;
+      if (checkPlayer?.charSlot !== charSlot) continue;
       player = checkPlayer;
     }
 

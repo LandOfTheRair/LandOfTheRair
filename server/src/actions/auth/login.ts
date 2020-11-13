@@ -11,8 +11,8 @@ export class LoginAction extends ServerAction {
   requiresLoggedIn = false;
 
   async act(game: Game, { broadcast, emit, register }, data) {
-    if (!data.username) throw new Error('Must specify username.');
-    if (!data.password) throw new Error('Must specify password.');
+    if (!data.username) return { wasSuccess: false, message: 'No username specified.' };
+    if (!data.password) return { wasSuccess: false, message: 'No password specified.' };
 
     let account;
     try {
@@ -22,9 +22,9 @@ export class LoginAction extends ServerAction {
       throw new Error('Could not get account; try again.');
     }
 
-    if (!account) throw new Error(`Username not registered.`);
+    if (!account) return { wasSuccess: false, message: 'Username not registered.' };
 
-    if (!game.accountDB.checkPassword(data, account)) throw new Error('Password does not match.');
+    if (!game.accountDB.checkPassword(data, account)) return { wasSuccess: false, message: 'Incorrect password.' };
 
     try {
 

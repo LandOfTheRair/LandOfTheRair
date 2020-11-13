@@ -61,12 +61,12 @@ export class SettingsState implements NgxsOnInit {
 
   @Selector()
   static currentCharView(state: ISettings) {
-    return state.characterView;
+    return state.characterView ?? 'Equipment';
   }
 
   @Selector()
   static currentLogMode(state: ISettings) {
-    return state.logMode;
+    return state.logMode ?? 'General';
   }
 
   @Selector()
@@ -111,7 +111,7 @@ export class SettingsState implements NgxsOnInit {
 
   @Selector()
   static chatMode(state: ISettings) {
-    return state.chatMode;
+    return state.chatMode ?? 'say';
   }
 
   @Selector()

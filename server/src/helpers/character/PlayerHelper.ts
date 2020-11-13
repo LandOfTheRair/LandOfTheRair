@@ -57,7 +57,7 @@ export class PlayerHelper extends BaseService {
   public reformatPlayerBeforeSave(player: Player): void {
 
     // persist remaining ticks so on load we don't lose effect times
-    Object.values(player.effects).forEach(arr => {
+    Object.values(player.effects || {}).forEach(arr => {
       arr.forEach(eff => {
         if (eff.endsAt === -1) return;
         eff._ticksLeft = Math.floor((eff.endsAt - Date.now()) / 1000);
@@ -68,7 +68,7 @@ export class PlayerHelper extends BaseService {
   public reformatPlayerAfterLoad(player: Player): void {
 
     // re-hydrate effect timers
-    Object.values(player.effects).forEach(arr => {
+    Object.values(player.effects || {}).forEach(arr => {
       arr.forEach(eff => {
         if (!eff._ticksLeft) return;
         eff.endsAt = Date.now() + (eff._ticksLeft * 1000);
