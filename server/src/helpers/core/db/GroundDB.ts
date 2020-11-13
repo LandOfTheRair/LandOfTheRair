@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, IGround } from '../../../interfaces';
+import { BaseService } from '../../../interfaces';
 import { Ground } from '../../../models/orm/Ground';
 import { Database } from '../Database';
 
@@ -15,16 +15,17 @@ export class GroundDB extends BaseService {
 
   public async init() {}
 
-  public loadAllGrounds(): Promise<Ground[]> {
+  public async loadAllGrounds(): Promise<Ground[]> {
     return this.db.findMany<Ground>(Ground, {});
   }
 
-  public saveSingleGround(ground: Ground): Promise<any> {
+  public async saveSingleGround(ground: Ground): Promise<any> {
     return this.db.save(ground);
   }
 
-  // TODO: bulk save players like this
-  public saveAllGrounds(grounds: Ground[]): Promise<any> {
+  public async saveAllGrounds(grounds: Ground[]): Promise<any> {
+    if (grounds.length === 0) return;
+
     const groundColl = this.db.getCollection(Ground);
 
     const massOp = groundColl.initializeUnorderedBulkOp();

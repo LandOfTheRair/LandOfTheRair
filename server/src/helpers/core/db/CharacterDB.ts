@@ -100,6 +100,27 @@ export class CharacterDB extends BaseService {
     ]);
   }
 
+  public async saveAllPlayers(players: Player[]): Promise<any> {
+    if (players.length === 0) return;
+
+    const playerColl = this.db.getCollection(Player);
+    const itemsColl = this.db.getCollection(PlayerItems);
+
+    const playerOp = playerColl.initializeUnorderedBulkOp();
+    const itemOp = itemsColl.initializeUnorderedBulkOp();
+
+    players.forEach(player => {
+      playerOp.find({ _id: player._id }).upsert().replaceOne(this.db.getPersistObject(player));
+
+      itemOp.find({ _id: (player.items as PlayerItems)._id }).upsert().replaceOne(this.db.getPersistObject(player.items as PlayerItems));
+    });
+
+    return Promise.all([
+      playerOp.execute(),
+      itemOp.execute()
+    ]);
+  }
+
   public async savePlayer(player: Player): Promise<void> {
     this.game.playerHelper.reformatPlayerBeforeSave(player);
 

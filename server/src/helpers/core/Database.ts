@@ -49,9 +49,13 @@ export class Database extends BaseService {
     });
   }
 
+  public getPersistObject(entity: BaseEntity) {
+    return MetadataStorage.getPersistObject(entity);
+  }
+
   public async save(entity: BaseEntity): Promise<any> {
     const collection = this.getCollection(entity);
-    return collection.replaceOne({ _id: entity._id }, MetadataStorage.getPersistObject(entity), { upsert: true });
+    return collection.replaceOne({ _id: entity._id }, this.getPersistObject(entity), { upsert: true });
   }
 
   public async delete(entity: BaseEntity): Promise<any> {

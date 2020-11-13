@@ -96,7 +96,10 @@ export class PlayerManager extends BaseService {
 
   // save all players
   public saveAllPlayers() {
-    Object.values(this.inGamePlayers).forEach(player => this.savePlayer(player));
+    const players = Object.values(this.inGamePlayers);
+    if (players.length === 0) return;
+
+    this.game.characterDB.saveAllPlayers(players);
   }
 
   // do a fast tick (200ms by default)
@@ -109,9 +112,8 @@ export class PlayerManager extends BaseService {
     this.tick(timer, 'slow');
 
     this.currentSlowTick++;
-    if (this.currentSlowTick > this.SAVE_TICK_COUNT) {
+    if ((this.currentSlowTick % this.SAVE_TICK_COUNT) === 0) {
       this.saveAllPlayers();
-      this.currentSlowTick = 0;
     }
   }
 

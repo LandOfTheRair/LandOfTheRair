@@ -52,6 +52,7 @@ export class GroundManager extends BaseService {
     // if we don't pass any maps in, we get all of them saved by default
     if (!maps) maps = Object.keys(this.groundEntities);
 
+    // map the entities to something we can save
     const allSaves = maps.map(map => {
       const entity = this.groundEntities[map];
       entity.map = map;
@@ -190,6 +191,7 @@ export class GroundManager extends BaseService {
     mapGround[x][y] = mapGround[x][y] || {};
     mapGround[x][y][itemClass] = mapGround[x][y][itemClass] || [];
 
+    // re-initialize the save ground as needed
     const saveGround = this.saveableGround[mapName] || {};
     saveGround[x] = saveGround[x] || {};
     saveGround[x][y] = saveGround[x][y] || {};
@@ -215,6 +217,8 @@ export class GroundManager extends BaseService {
     // we also remove the sItem if possible
     if (sItem && sItem.count <= 0) {
       saveGround[x][y][itemClass] = saveGround[x][y][itemClass].filter(i => i.item.uuid !== uuid);
+
+      // clean up the save object so we don't save every possible combination everywhere
       if (saveGround[x][y][itemClass].length === 0) delete saveGround[x][y][itemClass];
       if (size(saveGround[x][y]) === 0) delete saveGround[x][y];
       if (size(saveGround[x]) === 0) delete saveGround[x];
