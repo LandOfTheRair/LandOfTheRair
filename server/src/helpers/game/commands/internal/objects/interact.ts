@@ -28,7 +28,7 @@ export class Interact extends MacroCommand {
       return;
     }
 
-    this.game.commandHandler.doCommand(player, { command, args: sendArgs });
+    this.game.commandHandler.doCommand(player, { command, args: sendArgs }, args.callbacks);
   }
 
   private doDoor(door, state: MapState) {

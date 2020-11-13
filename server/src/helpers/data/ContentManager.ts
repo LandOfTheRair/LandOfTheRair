@@ -13,7 +13,7 @@ export class ContentManager extends BaseService {
 
   private mapDroptables: any;
   private regionDroptables: any;
-  private items: { [itemName: string]: IItem };
+  private items: { [itemName: string]: IItemDefinition };
   private npcs: { [npcName: string]: INPCDefinition };
   private npcScripts: any;
   private recipes: any; // { tradeskill: recipe[] }

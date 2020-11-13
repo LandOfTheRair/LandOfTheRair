@@ -7,7 +7,6 @@ import cluster from 'cluster';
 import { cpus } from 'os';
 
 import { GameloopWorker } from './gameloop';
-import { GroundWorker } from './ground';
 import { WebsocketWorker } from './networking';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -27,12 +26,6 @@ const netStart = () => {
   worker.start();
 };
 
-const groundStart = () => {
-  const worker = new GroundWorker();
-  console.log('CORE', 'Start ground...');
-  worker.start();
-};
-
 if (cluster.isMaster) {
   console.log(isProd ? 'Production mode starting.' : 'Development mode starting.');
 
@@ -41,7 +34,6 @@ if (cluster.isMaster) {
 
     netStart();
     gameStart();
-    groundStart();
 
   } else {
     console.log('CORE', 'Starting in normal multi-core mode.');
@@ -106,6 +98,5 @@ if (cluster.isMaster) {
 
   if (process.env.NET) netStart();
   if (process.env.GAMELOOP) gameStart();
-  if (process.env.GROUND) groundStart();
 
 }

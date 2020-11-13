@@ -515,7 +515,7 @@ export class MapState {
     return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
   }
 
-  public removeItemFromGround(x: number, y: number, itemClass: ItemClass, uuid: string|string[], count = 1): void {
+  public removeItemFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
     this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, uuid, count);
 
     // if player knowledge x/y, update ground

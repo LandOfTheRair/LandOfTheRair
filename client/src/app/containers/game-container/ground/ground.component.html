@@ -1,0 +1,60 @@
+<app-window windowName="ground"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+
+            defaultX="4"
+            defaultY="710"
+            defaultWidth="344"
+            defaultHeight="208"
+
+></app-window>
+
+<ng-template #headTemplate>
+  Ground
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div *ngIf="currentGround"
+       class="full-height"
+       dropScope="ground"
+       (onDrop)="uiService.buildAndDoDropAction($event, 'ground')" 
+       droppable>
+
+    <ng-container *ngIf="groundGroups.length === 0">
+      <div class="true-center background-text full-height">You don't see any items here</div>
+    </ng-container>
+
+    <ng-container *ngIf="groundGroups.length > 0">
+      <div class="item-classes">
+        <app-item *ngFor="let itemGroup of groundGroups" 
+                  (click)="changeItemClass(itemGroup.itemClass)"
+                  [class.selected]="itemGroup.itemClass === currentItemClass"
+                  [size]="'lg'"
+                  [showDesc]="false"
+                  context="GroundGroup"
+                  [contextSlot]="itemGroup.itemClass"
+                  [showCount]="itemGroup.itemClass !== 'Coin'"
+                  [showValue]="itemGroup.itemClass === 'Coin'"
+                  [count]="itemGroup.count"
+                  [viewingPlayer]="player"
+                  [item]="{ name: itemGroup.name, mods: { value: itemGroup.value || 0 } }"></app-item>
+      </div>
+  
+      <div class="item-sub">
+        <div class="true-center background-text full-height full-width" *ngIf="!currentItemClass">Select an item category</div>
+
+        <app-item *ngFor="let item of (currentGround[currentItemClass] || [])" 
+                  [size]="'lg'"
+                  context="Ground"
+                  [contextSlot]="item.item.uuid"
+                  [count]="item.count"
+                  [viewingPlayer]="player"
+                  [showCount]="currentItemClass !== 'Coin'"
+                  [showValue]="currentItemClass === 'Coin'"
+                  [item]="item.item"></app-item>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

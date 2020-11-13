@@ -1,0 +1,23 @@
+
+.item-classes, .item-sub {
+  max-height: 88px;
+  min-height: 88px;
+
+  display: flex;
+
+  overflow-x: scroll;
+
+  app-item {
+    padding: 2px;
+  }
+}
+
+.item-classes .selected {
+  outline: 1px solid #000;
+}
+
+.item-sub {
+  .background-text {
+    height: 68px !important;
+  }
+}
