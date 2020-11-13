@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { IMapData, INPC, IPlayer } from '../../../../interfaces';
+import { IGround, IMapData, INPC, IPlayer } from '../../../../interfaces';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 
@@ -18,7 +18,8 @@ export class MapRenderGame extends Phaser.Game {
       map: BehaviorSubject<IMapData>,
       allPlayers: Observable<Record<string, Partial<IPlayer>>>,
       allNPCs: Observable<Record<string, Partial<INPC>>>,
-      openDoors: Observable<Record<number, boolean>>
+      openDoors: Observable<Record<number, boolean>>,
+      ground: Observable<IGround>
     }
     ) {
       super(config);

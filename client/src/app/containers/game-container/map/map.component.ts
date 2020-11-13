@@ -2,7 +2,7 @@ import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { GameServerEvent, INPC, IPlayer } from '../../../../interfaces';
+import { GameServerEvent, IGround, INPC, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
@@ -24,6 +24,7 @@ export class MapComponent implements OnInit, OnDestroy {
   @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
   @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
   @Select(GameState.openDoors) private openDoors$: Observable<Record<number, boolean>>;
+  @Select(GameState.ground) private ground$: Observable<IGround>;
 
   // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
@@ -31,11 +32,13 @@ export class MapComponent implements OnInit, OnDestroy {
   public allPlayers = new BehaviorSubject<Record<string, Partial<IPlayer>>>({ });
   public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
   public openDoors = new BehaviorSubject<Record<number, boolean>>({ });
+  public ground = new BehaviorSubject<IGround>({ });
 
   // subs
   playerSub: Subscription;
   npcSub: Subscription;
   doorSub: Subscription;
+  groundSub: Subscription;
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
@@ -56,6 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.playerSub = this.allPlayers$.subscribe(pHash => this.allPlayers.next(pHash));
     this.npcSub = this.allNPCs$.subscribe(pHash => this.allNPCs.next(pHash));
     this.doorSub = this.openDoors$.subscribe(dHash => this.openDoors.next(dHash));
+    this.groundSub = this.ground$.subscribe(g => this.ground.next(g));
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -137,7 +141,8 @@ export class MapComponent implements OnInit, OnDestroy {
         map: this.map,
         allPlayers: this.allPlayers,
         allNPCs: this.allNPCs,
-        openDoors: this.openDoors
+        openDoors: this.openDoors,
+        ground: this.ground
       }
     );
 

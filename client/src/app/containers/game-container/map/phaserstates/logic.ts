@@ -45,9 +45,11 @@ export class MapScene extends Phaser.Scene {
   private allPlayersUpdate$: Subscription;
   private allNPCsUpdate$: Subscription;
   private openDoorsUpdate$: Subscription;
+  private groundUpdate$: Subscription;
   private player: IPlayer;
 
   private openDoors = {};
+  private ground = {};
 
   constructor() {
     super({ key: 'MapScene' });
@@ -60,6 +62,7 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  // create the fov / subfov sprites
   private createFOV() {
     const blackBitmapData = this.textures.createCanvas('black', 64, 64);
     blackBitmapData.context.fillStyle = 0x000000;
@@ -172,12 +175,14 @@ export class MapScene extends Phaser.Scene {
     this.updateFOV();
   }
 
+  // whether we see fov at an x,y
   private shouldRenderXY(x: number, y: number): boolean {
     if (!this.player) return false;
 
     return get(this.player.fov, [x, y]);
   }
 
+  // check if there's a wall at a location (used to render fov for hidden areas)
   private isThereAWallAt(x: number, y: number): boolean {
     if (!this.player) return false;
 
@@ -195,6 +200,7 @@ export class MapScene extends Phaser.Scene {
         || (wallLayerTile !== TilesWithNoFOVUpdate.Empty && wallLayerTile !== TilesWithNoFOVUpdate.Air);
   }
 
+  // update the fov sprites whenever we get new fov
   private updateFOV() {
 
     const isPlayerInGame = this.allPlayerSprites[this.player.uuid];
@@ -329,12 +335,14 @@ export class MapScene extends Phaser.Scene {
         sprite.visible = isSubscribed;
       }
 
+      // surprisingly interactables can be interacted with
       if (obj.type === 'StairsUp' || obj.type === 'StairsDown'
        || obj.type === 'ClimbUp' || obj.type === 'ClimbDown'
        || obj.type === 'Door') {
         sprite.inputEnabled = true;
       }
 
+      // doors have to store two sprites, and create a door top
       if (obj.type === 'Door') {
         sprite._closedFrame = sprite._baseFrame;
         sprite._openFrame = sprite._baseFrame + 1;
@@ -350,6 +358,7 @@ export class MapScene extends Phaser.Scene {
     });
   }
 
+  // create sprite click functionality for stairs, doors, etc
   private setupMapInteractions() {
     this.input.mouse.disableContextMenu();
 
@@ -437,10 +446,12 @@ export class MapScene extends Phaser.Scene {
     this.loadObjectLayer(map.objects[2], this.layers.opaquedecor);
     this.loadObjectLayer(map.objects[3], this.layers.interactables);
 
+    // start the camera at our x,y
     this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
 
     this.createPlayerSprite(player);
 
+    // watch for player updates
     this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
       this.player = updPlayer;
       this.updatePlayerSprite(updPlayer);
@@ -448,6 +459,7 @@ export class MapScene extends Phaser.Scene {
       this.checkTruesight(updPlayer);
     });
 
+    // watch for other players to come in
     this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
       const curPlayers = Object.keys(this.allPlayerSprites).filter(f => f !== this.player.uuid);
       const newPlayers = Object.keys(allPlayers);
@@ -458,6 +470,7 @@ export class MapScene extends Phaser.Scene {
       diff.forEach(p => this.removePlayerSprite(p));
     });
 
+    // watch for npcs to come in
     this.allNPCsUpdate$ = this.game.observables.allNPCs.subscribe(allNPCs => {
       const curNPCs = Object.keys(this.allNPCSprites);
       const newNPCs = Object.keys(allNPCs);
@@ -472,14 +485,21 @@ export class MapScene extends Phaser.Scene {
       this.openDoors = openDoors;
     });
 
+    this.groundUpdate$ = this.game.observables.ground.subscribe(ground => {
+      this.ground = ground;
+      this.updateGroundSprites();
+    });
+
     this.events.on('destroy', () => this.destroy());
 
+    // update the loader as we load the map
     this.game.observables.loadPercent.next(`Welcome to ${player.map}!`);
 
     setTimeout(() => {
       this.game.observables.loadPercent.next('');
     }, 1000);
 
+    // force a move 0,0 to get default rendering info
     setTimeout(() => {
       this.game.gameService.sendCommandString('~move 0 0');
     }, 1000);
@@ -500,8 +520,10 @@ export class MapScene extends Phaser.Scene {
     if (this.allPlayersUpdate$) this.allPlayersUpdate$.unsubscribe();
     if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
     if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
+    if (this.groundUpdate$) this.groundUpdate$.unsubscribe();
   }
 
+  // sprite updates
   private updatePlayerSpriteData(sprite, player: IPlayer) {
     let newFrame = 0;
     let newKey = '';
@@ -534,6 +556,7 @@ export class MapScene extends Phaser.Scene {
     sprite.y = this.convertPosition(char.y, true);
   }
 
+  // truesight functions
   private checkTruesight(player: IPlayer) {
     const hasTruesight = player.effects.buff.find(x => x.effectName === 'TrueSight');
 
@@ -556,5 +579,17 @@ export class MapScene extends Phaser.Scene {
         sprite.setTexture('Walls', +TrueSightMapReversed[sprite.frame.name]);
       }
     });
+  }
+
+  // item-render functions
+  private canCreateItemSpriteAt(x: number, y: number): boolean {
+    const tileCheck = (y * this.allMapData.tiledJSON.width) + x;
+    const fluid = this.layers[MapLayer.Fluids].data;
+    const foliage = this.layers[MapLayer.Foliage].data;
+    return this.specialRenders.eagleeye || (!fluid[tileCheck] && !foliage[tileCheck]);
+  }
+
+  private updateGroundSprites() {
+
   }
 }
