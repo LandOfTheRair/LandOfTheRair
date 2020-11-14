@@ -1,9 +1,9 @@
 
-import { Currency } from './building-blocks';
+import { BaseClass, Currency } from './building-blocks';
 import { INPC } from './npc';
 
 export interface IAIBehavior {
-  init(game, parser, behavior: IBehavior): void;
+  init(game, npc: INPC, parser, behavior: IBehavior, props?: any): void;
   tick(game, npc: INPC): void;
 }
 
@@ -26,8 +26,8 @@ export interface IVendorBehavior {
 }
 
 export interface ITrainerBehavior {
-  maxSkill?: number;
-  maxLevel?: number;
+  joinClass: BaseClass;
+  trainClass: BaseClass[];
 }
 
 export interface ICrierBehavior {

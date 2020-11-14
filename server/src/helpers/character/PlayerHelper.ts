@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
-import { BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
+import { BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -41,6 +41,7 @@ export class PlayerHelper extends BaseService {
     if (!player.effects.outgoing) player.effects.outgoing = [];
     if (!player.effects.incoming) player.effects.incoming = [];
     if (!player.stats.mp) player.stats.mp = 100;
+    if (!player.stats.mpregen) player.stats.mpregen = 1;
     if ((player.mp as any).__current) {
       player.mp.current = (player.mp as any).__current;
       delete (player.mp as any).__current;
@@ -61,6 +62,20 @@ export class PlayerHelper extends BaseService {
     player.lastTileDesc = '';
 
     this.reformatPlayerAfterLoad(player);
+  }
+
+  public becomeClass(player: IPlayer, baseClass: BaseClass) {
+    const maxMP: Record<BaseClass, number> = {
+      [BaseClass.Healer]: 20,
+      [BaseClass.Mage]: 30,
+      [BaseClass.Warrior]: 100,
+      [BaseClass.Thief]: 100,
+      [BaseClass.Undecided]: 0
+    };
+
+    player.baseClass = baseClass;
+    player.mp.maximum = maxMP[baseClass];
+    player.stats.mp = maxMP[baseClass];
   }
 
   public reformatPlayerBeforeSave(player: Player): void {
@@ -240,8 +255,12 @@ export class PlayerHelper extends BaseService {
     }
   }
 
+  public hasCurrency(player: IPlayer, total: number, currency: Currency = Currency.Gold): boolean {
+    return (player.currency[currency] || 0) >= total;
+  }
+
   // gain currency for a player
-  public gainCurrency(player: IPlayer, currency: Currency = Currency.Gold, currencyGained: number): void {
+  public gainCurrency(player: IPlayer, currencyGained: number, currency: Currency = Currency.Gold): void {
     if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${player.name} is NaN!`);
 
     player.currency[currency] = Math.max(Math.floor((player.currency[currency] ?? 0) + currencyGained), 0);
@@ -249,8 +268,8 @@ export class PlayerHelper extends BaseService {
   }
 
   // lose currency for a player (either by taking it, or spending it)
-  public loseCurrency(player: IPlayer, currency: Currency = Currency.Gold, currencyGained: number): void {
-    this.gainCurrency(player, currency, -currencyGained);
+  public loseCurrency(player: IPlayer, currencyLost: number, currency: Currency = Currency.Gold): void {
+    this.gainCurrency(player, -currencyLost, currency);
   }
 
 }

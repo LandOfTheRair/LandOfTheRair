@@ -263,7 +263,7 @@ export class NPCCreator extends BaseService {
     npcDef.behaviors.forEach(behavior => {
       const initBehavior = behaviorTypes[behavior.type];
       const behaviorInst = new initBehavior();
-      behaviorInst.init(this.game, (npc as any).dialogParser, behavior);
+      behaviorInst.init(this.game, npc, (npc as any).dialogParser, behavior, npcDef.extraProps);
 
       behaviors.push(behaviorInst);
     });

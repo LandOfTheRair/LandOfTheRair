@@ -114,7 +114,7 @@ export class MoveItems extends MacroCommand {
 
     const srcItem = this.game.itemCreator.getSimpleItem('Gold Coin');
     srcItem.mods.value = amount;
-    this.game.playerHelper.loseCurrency(player, Currency.Gold, amount);
+    this.game.playerHelper.loseCurrency(player, amount, Currency.Gold);
 
     switch (dest) {
       case 'R': { // CtR

@@ -1,3 +1,4 @@
+import { IPlayer, Skill } from '../interfaces';
 
 const FIRST_LEVEL_CONSTANT_CHANGER = 19;
 const SKILL_COEFFICIENT = 1.55;
@@ -36,4 +37,19 @@ export function calculateSkillXPRequiredForLevel(level: number): number {
   if (level === 0) return 100;
 
   return Math.floor(Math.pow(SKILL_COEFFICIENT, level) * 100);
+}
+
+export function percentCompleteSkill(player: IPlayer, skill: Skill): string {
+  const skillValue = player.skills[skill] || 0;
+  const skillLevel = calculateSkillLevelFromXP(skillValue);
+
+  const nextLevel = skillLevel === 0 ? 100 : calculateSkillXPRequiredForLevel(skillLevel);
+  const prevLevel = skillLevel === 0 ? 0 : calculateSkillXPRequiredForLevel(skillLevel - 1);
+
+  const normalizedCurrent = skillValue - prevLevel;
+  const normalizedMax = nextLevel - prevLevel;
+
+  const percentWay = Math.max(0, (normalizedCurrent / normalizedMax * 100)).toFixed(3);
+
+  return percentWay;
 }

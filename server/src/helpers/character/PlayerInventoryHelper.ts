@@ -25,7 +25,7 @@ export class PlayerInventoryHelper extends BaseService {
 
     const { itemClass, currency, value } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'currency', 'value']);
     if (itemClass === ItemClass.Coin) {
-      this.game.playerHelper.gainCurrency(player, currency, value);
+      this.game.playerHelper.gainCurrency(player, value, currency);
       return true;
     }
 

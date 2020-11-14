@@ -86,7 +86,7 @@ export class TargettingHelper extends BaseService {
     const state = this.worldManager.getMapStateForCharacter(player);
     const allTargets = state.getAllInRange(player, 4, [], useSight);
     const possTargets = allTargets.filter(target => {
-      if (this.characterHelper.isDead(target)) return false;
+      if (this.characterHelper.isDead(target) || target.uuid === player.uuid) return false;
 
       const diffX = target.x - player.x;
       const diffY = target.y - player.y;

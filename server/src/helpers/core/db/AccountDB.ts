@@ -2,6 +2,7 @@
 import bcrypt from 'bcrypt';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, pick } from 'lodash';
+import { ObjectId } from 'mongodb';
 
 import { BaseService, IAccount } from '../../../interfaces';
 import { Account } from '../../../models';
@@ -48,6 +49,7 @@ export class AccountDB extends BaseService {
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
 
     const account = new Account();
+    account._id = new ObjectId();
 
     merge(account, {
       username: accountInfo.username,

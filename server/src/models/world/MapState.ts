@@ -77,6 +77,8 @@ export class MapState {
       npcDef.alignment = npcDef.alignment || Alignment.Neutral;
       npcDef.hostility = npcDef.hostility || Hostility.Never;
 
+      npcDef.extraProps = npc.properties || {};
+
       return npcDef;
     }).filter(Boolean);
 
@@ -184,7 +186,7 @@ export class MapState {
 
   // get any players that care about x,y
   public getPlayerObjectsWithKnowledgeForXY(x: number, y: number): IPlayer[] {
-    const uuids = Object.keys(get(this.playerKnowledgePositions, [x, y]));
+    const uuids = Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
     return uuids.map(uuid => this.playersByUUID[uuid]);
   }
 

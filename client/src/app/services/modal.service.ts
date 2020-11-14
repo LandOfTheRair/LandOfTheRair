@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
-import { GameServerResponse, IDialogChatAction } from '../../interfaces';
+import { GameServerEvent, GameServerResponse, IDialogChatAction } from '../../interfaces';
 import { GameState } from '../../stores';
 
 import { AboutComponent } from '../_shared/modals/about/about.component';
@@ -48,6 +48,22 @@ export class ModalService {
       this.constructor.name, GameServerResponse.SendNotification,
       (data) => this.notify(data.message)
     );
+
+    this.socketService.registerComponentCallback(
+      this.constructor.name, GameServerResponse.SendAlert,
+      (data) => this.alert(data.title, data.content)
+    );
+
+    this.socketService.registerComponentCallback(
+      this.constructor.name, GameServerResponse.SendConfirm,
+      (data) => {
+        const confirm = this.confirm(data.title, data.content);
+        confirm.subscribe(choice => {
+          if (!choice) return;
+          this.socketService.emit(GameServerEvent.DoCommand, data.okAction);
+        });
+      }
+    );
   }
 
   public notify(text: string) {
@@ -72,11 +88,11 @@ export class ModalService {
     });
   }
 
-  public confirm(title: string, content: string) {
+  public confirm(title: string, content: string, okAction?: string) {
     const confirm = this.dialog.open(ConfirmModalComponent, {
       width: '450px',
       panelClass: 'fancy',
-      data: { title, content }
+      data: { title, content, okAction }
     });
 
     return confirm.afterClosed();

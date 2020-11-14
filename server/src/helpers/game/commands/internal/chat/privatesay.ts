@@ -15,7 +15,7 @@ export class PrivateSay extends MacroCommand {
     if (!target) return this.youDontSeeThatPerson(player);
 
     if ((target as any).dialogParser) {
-      this.game.dialogActionHelper.handleDialog(player, target as INPC, aargs[1]);
+      this.game.dialogActionHelper.handleDialog(player, target as INPC, aargs[1], args.callbacks);
       return;
     }
 
