@@ -11,6 +11,8 @@ if(fs.existsSync('../../Content')) {
   console.log('[Client] Found Content repo, creating a symlink to it.');
 
   symlinkDir('../../Content', 'src/assets/content');
+  
+  dl('LandOfTheRair/Assets', 'src/assets', () => {});
 
 } else {
   console.log('[Client] No Content repo, downloading a simple non-git copy of it.');
