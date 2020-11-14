@@ -506,7 +506,7 @@ export class MapState {
     this.game.groundManager.addItemToGround(this.map.name, x, y, item);
 
     // if player knowledge x/y, update ground
-    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
+    this.triggerGroundUpdateInRadius(x, y);
   }
 
   public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): IGroundItem[] {
@@ -517,17 +517,22 @@ export class MapState {
     this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, uuid, count);
 
     // if player knowledge x/y, update ground
-    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
+    this.triggerGroundUpdateInRadius(x, y);
   }
 
   // update all npcs for players in radius
-  public triggerNPCUpdateInRadius(x: number, y: number, radius = 4) {
+  public triggerNPCUpdateInRadius(x: number, y: number) {
     this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerNPCUpdateForPlayer(player));
   }
 
   // update all players for players in radius
-  public triggerPlayerUpdateInRadius(x: number, y: number, radius = 4) {
+  public triggerPlayerUpdateInRadius(x: number, y: number) {
     this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerPlayerUpdateForPlayer(player));
+  }
+
+  // update all players for players in radius
+  public triggerGroundUpdateInRadius(x: number, y: number) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
   }
 
 }

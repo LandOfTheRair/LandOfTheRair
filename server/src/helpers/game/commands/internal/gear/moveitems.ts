@@ -1,4 +1,4 @@
-import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
+import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 const origins = [
@@ -35,6 +35,16 @@ export class MoveItems extends MacroCommand {
     if (!this[`handle${o}`]) return this.sendMessage(player, 'Invalid item move origin.');
 
     this[`handle${o}`](player, d, ...args.arrayArgs);
+    this.doPostChecks(player, o, d);
+  }
+
+  private doPostChecks(player: IPlayer, srcSlot: string, destSlot: string): void {
+    const updatePlayerSlots = { E: true, L: true, R: true };
+    const updateGroundSlots = { G: true };
+
+    const { state } = this.game.worldManager.getMap(player.map);
+    if (updatePlayerSlots[srcSlot] || updatePlayerSlots[destSlot]) state.triggerPlayerUpdateInRadius(player.x, player.y);
+    if (updateGroundSlots[srcSlot] || updateGroundSlots[destSlot]) state.triggerGroundUpdateInRadius(player.x, player.y);
   }
 
   private doPrelimChecks(player: IPlayer, srcItem: ISimpleItem | undefined, dest: string, destSlot: string): boolean {
@@ -52,6 +62,12 @@ export class MoveItems extends MacroCommand {
     // Dest: B - Items must be beltable
     if (dest === 'B' && !isBeltable) {
       this.sendMessage(player, 'That item cannot fit in your belt.');
+      return false;
+    }
+
+    // Dest: E - Items must be owned by the equipper
+    if (dest === 'E' && !isOwnedBy(player, srcItem)) {
+      this.sendMessage(player, 'That item is not yours!');
       return false;
     }
 
@@ -555,6 +571,8 @@ export class MoveItems extends MacroCommand {
     const items: IGroundItem[] = state.getItemsFromGround(player.x, player.y, itemClass as ItemClass, uuid);
     if (items.length === 0) return this.sendMessage(player, 'No items to grab.');
 
+    if (!this.doPrelimChecks(player, items[0].item, dest, destSlot)) return;
+
     switch (dest) {
       case 'R': { // GtR
         const rightHand = player.items.equipment[ItemSlot.RightHand];
@@ -611,6 +629,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
+          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
@@ -642,6 +661,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
+          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
