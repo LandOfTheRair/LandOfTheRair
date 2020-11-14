@@ -8,6 +8,7 @@ import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 import { UIService } from '../../../services/ui.service';
+import { FloatingBox } from './floating-box';
 import { MapRenderGame } from './phasergame';
 import { MapScene, PreloadScene } from './phaserstates';
 
@@ -40,6 +41,10 @@ export class MapComponent implements OnInit, OnDestroy {
   npcSub: Subscription;
   doorSub: Subscription;
   groundSub: Subscription;
+  boxSub: Subscription;
+
+  // boxes
+  private allBoxes: FloatingBox[] = [];
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
@@ -62,6 +67,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.npcSub = this.allNPCs$.subscribe(pHash => this.allNPCs.next(pHash));
     this.doorSub = this.openDoors$.subscribe(dHash => this.openDoors.next(dHash));
     this.groundSub = this.ground$.subscribe(g => this.ground.next(g));
+
+    this.boxSub = GameState.box.subscribe(data => this.createBox(data));
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -107,6 +114,7 @@ export class MapComponent implements OnInit, OnDestroy {
       if (this.game) {
         this.game.destroy(true);
         this.game = null;
+        this.allBoxes.forEach(b => b.clearSelf());
       }
 
       this.map.next(null);
@@ -115,6 +123,12 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {}
+
+  private createBox(boxData) {
+    const box = new FloatingBox(boxData.side, boxData.color, boxData.text);
+    box.init(document.querySelectorAll('.map')[0], () => this.allBoxes = this.allBoxes.filter(x => x !== box));
+    this.allBoxes.push(box);
+  }
 
   public quitGame() {
     this.socketService.emit(GameServerEvent.QuitGame);
