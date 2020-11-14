@@ -7,6 +7,13 @@ export interface IGame {
   itemTooltip: string;
   player: IPlayer;
   map: any;
+  trainerInfo: {
+    npcUUID: string;
+    npcName: string;
+    npcSprite: number;
+    npcMaxLevel: number;
+    npcMaxSkill: number;
+  },
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;

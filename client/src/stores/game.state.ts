@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
-  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer } from './actions';
+import { OpenTrainerWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
   return {
@@ -15,6 +15,13 @@ const defaultGame: () => IGame = () => {
     itemTooltip: '',
     player: null,
     map: null,
+    trainerInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
+      npcMaxSkill: 0,
+      npcMaxLevel: 0
+    },
     mapInfo: {
       players: {},
       npcs: {},
@@ -94,6 +101,11 @@ export class GameState {
   @Selector()
   static ground(state: IGame) {
     return state.mapInfo.ground;
+  }
+
+  @Selector()
+  static currentTrainerWindow(state: IGame) {
+    return state.trainerInfo;
   }
 
   constructor(private store: Store) {}
@@ -191,5 +203,20 @@ export class GameState {
     if (!copyState.player || !statePatches) return;
 
     ctx.patchState({ mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches).newDocument });
+  }
+
+  @Action(OpenTrainerWindow)
+  openTrainerWindow(ctx: StateContext<IGame>, { npcUUID, npcName, npcSprite, npcMaxLevel, npcMaxSkill }: OpenTrainerWindow) {
+    ctx.patchState({
+      trainerInfo: {
+        npcName,
+        npcUUID,
+        npcSprite,
+        npcMaxLevel,
+        npcMaxSkill
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('trainer'));
   }
 }

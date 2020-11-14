@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 interface IAlertData {
   title: string;
   content: string;
+  extraData: any;
 }
 
 @Component({

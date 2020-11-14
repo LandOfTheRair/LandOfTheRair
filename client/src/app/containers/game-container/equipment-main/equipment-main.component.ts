@@ -148,21 +148,21 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   ];
 
   public readonly skills = [
-    { skill: Skill.Sword,       icon: 'katana',         tooltip: 'Proficiency with one-handed swords' },
-    { skill: Skill.TwoHanded,   icon: 'relic-blade',    tooltip: 'Proficiency with two-handed weapons' },
-    { skill: Skill.Shortsword,  icon: 'gladius',        tooltip: 'Proficiency with shortswords' },
-    { skill: Skill.Staff,       icon: 'bo',             tooltip: 'Proficiency with staves' },
-    { skill: Skill.Polearm,     icon: 'sharp-halberd',  tooltip: 'Proficiency with halberds' },
-    { skill: Skill.Axe,         icon: 'battered-axe',   tooltip: 'Proficiency with axes' },
-    { skill: Skill.Dagger,      icon: 'plain-dagger',   tooltip: 'Proficiency with daggers' },
-    { skill: Skill.Mace,        icon: 'flanged-mace',   tooltip: 'Proficiency with maces' },
-    { skill: Skill.Martial,     icon: 'black-belt',     tooltip: 'Proficiency with martial attacks (fists)' },
-    { skill: Skill.Ranged,      icon: 'high-shot',      tooltip: 'Proficiency with ranged attacks (bows, shortbows, crossbows)' },
-    { skill: Skill.Throwing,    icon: 'thrown-spear',   tooltip: 'Proficiency with thrown attacks' },
-    { skill: Skill.Thievery,    icon: 'two-shadows',    tooltip: 'Proficiency with thievery' },
-    { skill: Skill.Wand,        icon: 'orb-wand',       tooltip: 'Proficiency with wands & totems' },
-    { skill: Skill.Conjuration, icon: 'ankh',           tooltip: 'Proficiency with conjuration magic' },
-    { skill: Skill.Restoration, icon: 'enlightenment',  tooltip: 'Proficiency with restoration magic' },
+    { skill: Skill.Sword,       tooltip: 'Proficiency with one-handed swords' },
+    { skill: Skill.TwoHanded,   tooltip: 'Proficiency with two-handed weapons' },
+    { skill: Skill.Shortsword,  tooltip: 'Proficiency with shortswords' },
+    { skill: Skill.Staff,       tooltip: 'Proficiency with staves' },
+    { skill: Skill.Polearm,     tooltip: 'Proficiency with halberds' },
+    { skill: Skill.Axe,         tooltip: 'Proficiency with axes' },
+    { skill: Skill.Dagger,      tooltip: 'Proficiency with daggers' },
+    { skill: Skill.Mace,        tooltip: 'Proficiency with maces' },
+    { skill: Skill.Martial,     tooltip: 'Proficiency with martial attacks (fists)' },
+    { skill: Skill.Ranged,      tooltip: 'Proficiency with ranged attacks (bows, shortbows, crossbows)' },
+    { skill: Skill.Throwing,    tooltip: 'Proficiency with thrown attacks' },
+    { skill: Skill.Thievery,    tooltip: 'Proficiency with thievery' },
+    { skill: Skill.Wand,        tooltip: 'Proficiency with wands & totems' },
+    { skill: Skill.Conjuration, tooltip: 'Proficiency with conjuration magic' },
+    { skill: Skill.Restoration, tooltip: 'Proficiency with restoration magic' },
   ];
 
   constructor(

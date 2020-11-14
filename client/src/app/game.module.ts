@@ -31,6 +31,7 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
+import { SkillIconComponent } from './_shared/components/skill-icon';
 import { AccountComponent } from './_shared/modals/account/account.component';
 import { AmountModalComponent } from './_shared/modals/amount/amount.component';
 import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
@@ -82,6 +83,7 @@ const gameComponents = [
   ItemComponent,
   CharacterCardComponent,
   LifeHeartComponent,
+  SkillIconComponent,
   MacroComponent,
 
   InventoryBeltComponent,

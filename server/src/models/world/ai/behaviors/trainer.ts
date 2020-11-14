@@ -4,7 +4,9 @@ import { BaseClass, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, 
 
 export class TrainerBehavior implements IAIBehavior {
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior, props = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior, props: any = {}) {
+
+    const { maxLevelUpLevel, maxSkillTrain } = props;
 
     // default guidance
     parser.addCommand('hello')
@@ -21,6 +23,7 @@ export class TrainerBehavior implements IAIBehavior {
             type: GameServerResponse.SendConfirm,
             title: `Join the ${behavior.joinClass} Brotherhood?`,
             content: `I cannot train you unless you join the ${behavior.joinClass} brotherhood, ${player.name}. Would you like to join us?`,
+            extraData: { npcSprite: npc.sprite },
             okAction: { command: `!privatesay`, args: `${npc.uuid}, join` }
           });
 
@@ -31,7 +34,8 @@ export class TrainerBehavior implements IAIBehavior {
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
             title: 'Not Trainable',
-            content: `I cannot train you, ${player.name}.`
+            content: `I cannot train you, ${player.name}.`,
+            extraData: { npcSprite: npc.sprite },
           });
 
           return `I cannot train you, ${player.name}.`;
@@ -42,7 +46,8 @@ export class TrainerBehavior implements IAIBehavior {
           npcUUID: npc.uuid,
           npcName: npc.name,
           npcSprite: npc.sprite,
-          trainClasses: behavior.trainClass
+          npcMaxLevel: maxLevelUpLevel,
+          npcMaxSkill: maxSkillTrain
         });
 
         return `Hello, ${env?.player.name}!`;
@@ -73,26 +78,29 @@ export class TrainerBehavior implements IAIBehavior {
       .setSyntax(['assess <string:skill*>'])
       .setLogic(async ({ env, args }) => {
         const player = env?.player;
-        const skill = args['skill*'];
+        const skill = args['skill*'].toLowerCase();
 
-        const checkSkill = Skill[skill];
+        const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
         const ignores = {
-          [BaseClass.Warrior]:    [Skill.Restoration, Skill.Thievery, Skill.Conjuration],
+          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Thievery, Skill.Conjuration],
           [BaseClass.Mage]:       [Skill.Restoration, Skill.Thievery],
           [BaseClass.Healer]:     [Skill.Thievery, Skill.Conjuration],
-          [BaseClass.Thief]:      [Skill.Restoration, Skill.Conjuration]
+          [BaseClass.Thief]:      [Skill.Wand, Skill.Restoration, Skill.Conjuration]
         };
 
-        if ((ignores[behavior.joinClass] || []).includes(checkSkill)) return 'I\'m afraid I can\'t help you with that skill.';
+        if ((ignores[behavior.joinClass] || []).includes(skill)) return 'I\'m afraid I can\'t help you with that skill.';
+
+        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
+        if (skillLevel > maxSkillTrain) return `You're way beyond my comprehension.`;
 
         if (!game.playerHelper.hasCurrency(player, 50)) return `You do need to pay for this, you know. 50 gold is not a lot!`;
         game.playerHelper.loseCurrency(player, 50);
 
-        const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, checkSkill);
+        const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
 
-        return `You're ${percentWay}% of the way to your next ${checkSkill.toUpperCase()} skill level.`;
+        return `You're ${percentWay}% of the way to your next ${skill.toUpperCase()} skill level.`;
       });
 
     parser.addCommand('train')
