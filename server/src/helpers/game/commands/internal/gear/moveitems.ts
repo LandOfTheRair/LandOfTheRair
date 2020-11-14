@@ -1,4 +1,4 @@
-import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot } from '../../../../../interfaces';
+import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 const origins = [

@@ -4,16 +4,15 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, UpdateWindowPosition } from '../../../stores';
 
-// TODO: resize
-
 @Component({
   selector: 'app-window',
   template: `
   <div *ngIf="(window$ | async) as windowProps">
     <div class="window"
-        [class.active]="(activeWindow$ | async) === windowName"
+        [class.active]="alwaysOnTop || (activeWindow$ | async) === windowName"
         [class.hidden]="willNotHide ? false : windowProps.hidden"
         [class.minimized]="minimized"
+        [class.always-on-top]="alwaysOnTop"
 
         [style.top]="windowProps.y + 'px'"
         [style.left]="windowProps.x + 'px'"
@@ -51,6 +50,10 @@ import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, U
     z-index: 1001;
   }
 
+  .window.always-on-top {
+    z-index: 1002 !important;
+  }
+
   .window.minimized {
     max-height: 32px;
   }
@@ -79,6 +82,7 @@ export class WindowComponent implements OnInit {
   @Input() public willNotHide = false;
   @Input() public initialHide = false;
   @Input() public canScroll = false;
+  @Input() public alwaysOnTop = false;
 
   @Input() public head: TemplateRef<any>;
   @Input() public body: TemplateRef<any>;

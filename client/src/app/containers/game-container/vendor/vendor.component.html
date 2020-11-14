@@ -1,0 +1,20 @@
+<app-window windowName="vendor"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="false"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="670"
+            defaultY="120"
+            defaultWidth="576"
+            defaultHeight="96"
+></app-window>
+
+<ng-template #headTemplate>
+  Vendor NPCNAMEhere
+</ng-template>
+
+<ng-template #bodyTemplate>
+  npcsprite, npc vend items, npc currency required, buyback
+</ng-template>

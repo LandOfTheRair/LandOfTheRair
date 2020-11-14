@@ -49,6 +49,8 @@ import { InventorySackComponent } from './containers/game-container/inventory-sa
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 import { MapComponent } from './containers/game-container/map/map.component';
 import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
+import { TrainerComponent } from './containers/game-container/trainer/trainer.component';
+import { VendorComponent } from './containers/game-container/vendor/vendor.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
@@ -90,6 +92,8 @@ const gameComponents = [
   PlayerStatusComponent,
   CharacterListComponent,
   GroundComponent,
+  TrainerComponent,
+  VendorComponent,
 
   JournalComponent
 ];

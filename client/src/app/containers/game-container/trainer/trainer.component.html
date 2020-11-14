@@ -1,0 +1,20 @@
+<app-window windowName="trainer"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="false"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="670"
+            defaultY="120"
+            defaultWidth="350"
+            defaultHeight="384"
+></app-window>
+
+<ng-template #headTemplate>
+  Trainer
+</ng-template>
+
+<ng-template #bodyTemplate>
+  npc sprite, all skills trainable (except thief/conj/resto, but those trainers can train it), assess skill, pay skill, join button [if undecided], level up button
+</ng-template>
