@@ -84,8 +84,6 @@ export class ItemHelper extends BaseService {
       if (requirements.level && player.level < requirements.level) return false;
     }
 
-    // TODO: requirements
-
     return true;
   }
 
