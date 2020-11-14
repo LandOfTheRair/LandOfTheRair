@@ -13,7 +13,7 @@ export interface IGame {
     npcSprite: number;
     npcMaxLevel: number;
     npcMaxSkill: number;
-  },
+  };
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;
