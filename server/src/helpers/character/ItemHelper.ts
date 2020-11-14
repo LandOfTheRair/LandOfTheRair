@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { isUndefined } from 'lodash';
 
-import { BaseService, ICharacter, IItem, IPlayer, ISimpleItem, isOwnedBy, Stat } from '../../interfaces';
+import { BaseService, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
@@ -73,9 +73,16 @@ export class ItemHelper extends BaseService {
   }
 
   // check if an item is usable
-  public canUseItem(player: IPlayer, item: ISimpleItem): boolean {
+  public canGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): boolean {
     if (!isOwnedBy(player, item)) return false;
     if (this.isItemBroken(item)) return false;
+
+    const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
+    if (requirements) {
+      if (requirements.alignment && player.alignment !== requirements.alignment) return false;
+      if (requirements.baseClass && player.baseClass !== requirements.baseClass) return false;
+      if (requirements.level && player.level < requirements.level) return false;
+    }
 
     // TODO: requirements
 

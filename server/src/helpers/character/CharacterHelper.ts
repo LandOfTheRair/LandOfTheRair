@@ -134,7 +134,7 @@ export class CharacterHelper extends BaseService {
       if (!item) return;
 
       // no bonus if we can't technically use the item
-      if (this.isPlayer(character) && !this.game.itemHelper.canUseItem(character as IPlayer, item)) return;
+      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
 
       // only some items give bonuses in hands
       const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
