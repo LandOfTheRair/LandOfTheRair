@@ -435,12 +435,10 @@ export class MapState {
   }
 
   // generate a radius that will notify a player in the following circumstances:
-  // - TODO: a character moves in or out
   // - TODO: a character changes visibility to the player
   // - TODO: a character changes their hand items or visible armor item
   // - TODO: a character health value changes
   // - TODO: a character hostility value changes
-  // - TODO: an item drops or is removed
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
     for (let x = player.x - 3; x < player.x + 3; x++) {
       for (let y = player.y - 3; y < player.y + 3; y++) {
@@ -520,6 +518,16 @@ export class MapState {
 
     // if player knowledge x/y, update ground
     this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
+  }
+
+  // update all npcs for players in radius
+  public triggerNPCUpdateInRadius(x: number, y: number, radius = 4) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerNPCUpdateForPlayer(player));
+  }
+
+  // update all players for players in radius
+  public triggerPlayerUpdateInRadius(x: number, y: number, radius = 4) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerPlayerUpdateForPlayer(player));
   }
 
 }
