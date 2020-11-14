@@ -11,7 +11,7 @@ export class CharacterHelper extends BaseService {
 
   // check if the character is dead
   public isDead(char: ICharacter): boolean {
-    return char.hp.__current <= 0;
+    return char.hp.current <= 0;
   }
 
   public healToFull(char: ICharacter): void {
@@ -27,11 +27,11 @@ export class CharacterHelper extends BaseService {
   }
 
   public heal(char: ICharacter, hp: number): void {
-    char.hp.__current = clamp(char.hp.__current + hp, char.hp.minimum, char.hp.maximum);
+    char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
   }
 
   public mana(char: ICharacter, mp: number): void {
-    char.mp.__current = clamp(char.mp.__current + mp, char.mp.minimum, char.mp.maximum);
+    char.mp.current = clamp(char.mp.current + mp, char.mp.minimum, char.mp.maximum);
   }
 
   public die(char: ICharacter): void {
@@ -150,12 +150,12 @@ export class CharacterHelper extends BaseService {
     // set hp/mp
     if (character.totalStats.hp) {
       character.hp.maximum = character.totalStats.hp;
-      character.hp.__current = Math.min(character.hp.__current, character.hp.maximum);
+      character.hp.current = Math.min(character.hp.current, character.hp.maximum);
     }
 
     if (character.totalStats.mp) {
       character.mp.maximum = character.totalStats.mp;
-      character.mp.__current = Math.min(character.mp.__current, character.mp.maximum);
+      character.mp.current = Math.min(character.mp.current, character.mp.maximum);
     }
 
     // can't move more than one screen at a time
@@ -177,7 +177,7 @@ export class CharacterHelper extends BaseService {
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
-    if (character.hp.__current + hpRegen > 0) this.heal(character, hpRegen);
+    if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
     this.mana(character, mpRegen);
   }
 

@@ -60,6 +60,6 @@ export class LifeHeartComponent {
   }
 
   get hpPercent() {
-    return 100 - ((this.target.hp.__current / this.target.hp.maximum) * 100);
+    return 100 - ((this.target.hp.current / this.target.hp.maximum) * 100);
   }
 }

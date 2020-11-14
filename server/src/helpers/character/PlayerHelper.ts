@@ -41,6 +41,14 @@ export class PlayerHelper extends BaseService {
     if (!player.effects.outgoing) player.effects.outgoing = [];
     if (!player.effects.incoming) player.effects.incoming = [];
     if (!player.stats.mp) player.stats.mp = 100;
+    if ((player.mp as any).__current) {
+      player.mp.current = (player.mp as any).__current;
+      delete (player.mp as any).__current;
+    }
+    if ((player.hp as any).__current) {
+      player.hp.current = (player.hp as any).__current;
+      delete (player.hp as any).__current;
+    }
 
     player.agro = {};
 

@@ -27,7 +27,7 @@ export interface ICharacterItems {
 export interface BoundedNumber {
   maximum: number;
   minimum: number;
-  __current: number;
+  current: number;
 }
 
 export interface ICharacter {

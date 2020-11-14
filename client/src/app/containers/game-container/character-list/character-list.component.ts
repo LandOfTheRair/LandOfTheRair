@@ -73,7 +73,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     let unsorted: any[] = allCharacters.map(testChar => {
       if ((testChar as IPlayer).username === this.player.username) return false;
-      if (testChar.dir === Direction.Corpse || testChar.hp.__current === 0) return false;
+      if (testChar.dir === Direction.Corpse || testChar.hp.current === 0) return false;
       // TODO: stealth
       // if(!me.canSeeThroughStealthOf(testnpc)) return false;
       const diffX = testChar.x - this.player.x;

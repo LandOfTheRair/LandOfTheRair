@@ -491,7 +491,6 @@ export class MapScene extends Phaser.Scene {
 
     this.groundUpdate$ = this.game.observables.ground.subscribe(ground => {
       this.ground = ground;
-      console.log(ground);
       this.removeOldItemSprites();
       this.updateGroundSprites();
     });
@@ -534,7 +533,7 @@ export class MapScene extends Phaser.Scene {
     let newFrame = 0;
     let newKey = '';
 
-    if (player.swimLevel && player.hp.__current > 0) {
+    if (player.swimLevel && player.hp.current > 0) {
       const baseSprite = basePlayerSwimmingSprite(player);
       const dirSpriteDiff = swimmingSpriteOffsetForDirection(player.dir);
       newFrame = baseSprite + dirSpriteDiff;

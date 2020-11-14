@@ -39,11 +39,11 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   public get shouldShow() {
-    return this.player && this.target && this.target.hp.__current > 0 && this.isInFOV; // TODO: can see stealth here
+    return this.player && this.target && this.target.hp.current > 0 && this.isInFOV; // TODO: can see stealth here
   }
 
   public get targetHealth() {
-    return ((this.target.hp.__current / this.target.hp.maximum) * 100).toFixed(2);
+    return ((this.target.hp.current / this.target.hp.maximum) * 100).toFixed(2);
   }
 
   public get hostility() {
