@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { isUndefined } from 'lodash';
 
-import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
+import { BaseService, ICharacter, IItem, IPlayer, ISimpleItem, isOwnedBy, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
@@ -72,14 +72,29 @@ export class ItemHelper extends BaseService {
     return condition === 0;
   }
 
-  public gainCondition(item: ISimpleItem, conditionLoss: number) {
+  // check if an item is usable
+  public canUseItem(player: IPlayer, item: ISimpleItem): boolean {
+    if (!isOwnedBy(player, item)) return false;
+    if (this.isItemBroken(item)) return false;
+
+    // TODO: requirements
+
+    return true;
+  }
+
+  // gain or lose condition
+  public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
     item.mods.condition = item.mods.condition || 20000;
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
+
+    if (this.isItemBroken(item)) {
+      this.game.characterHelper.calculateStatTotals(character);
+    }
   }
 
-  public loseCondition(item: ISimpleItem, conditionLoss: number) {
-    this.gainCondition(item, -conditionLoss);
+  public loseCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+    this.gainCondition(item, -conditionLoss, character);
   }
 
 }

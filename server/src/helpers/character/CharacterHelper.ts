@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, ICharacter, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
+import { BaseService, CoreStat, GivesBonusInHandItemClasses, ICharacter, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -122,20 +122,49 @@ export class CharacterHelper extends BaseService {
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
     character.totalStats = Object.assign({}, character.stats);
-    character.totalStats.move = clamp(0, 4, character.stats[Stat.Move] || 3);
 
-    // stats from effects
-    // stats from classes
-    // stats from usable items (check requirements, ownership, durability)
-      // stats from usable item / usable encrusts (check item requirements and encrust requirements)
+    const addStat = (stat: Stat, bonus: number) => {
+      character.totalStats[stat] = character.totalStats[stat] || 0;
+      character.totalStats[stat]! += bonus;
+    };
 
-    // adjust hp/mp RNs
-    // adjust stealth / perception
+    // calculate stats from gear
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
 
-    // trait bonuses
-    // class specific bonuses
+      // no bonus if we can't technically use the item
+      if (this.isPlayer(character) && !this.game.itemHelper.canUseItem(character as IPlayer, item)) return;
 
-    // adjust pet stats
+      // only some items give bonuses in hands
+      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+      if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
+      && !GivesBonusInHandItemClasses.includes(itemClass)) return;
+
+      Object.values(Stat).forEach(stat => {
+        const bonus = this.game.itemHelper.getStat(item, stat);
+        addStat(stat, bonus);
+      });
+    });
+
+    // set hp/mp
+    if (character.totalStats.hp) {
+      character.hp.maximum = character.totalStats.hp;
+      character.hp.__current = Math.min(character.hp.__current, character.hp.maximum);
+    }
+
+    if (character.totalStats.mp) {
+      character.mp.maximum = character.totalStats.mp;
+      character.mp.__current = Math.min(character.mp.__current, character.mp.maximum);
+    }
+
+    // can't move more than one screen at a time
+    character.totalStats[Stat.Move] = clamp(0, 4, character.stats[Stat.Move] || 3);
+
+    // TODO: stats from effects
+    // TODO: adjust stealth / perception
+    // TODO: trait bonuses
+    // TODO: adjust pet stats
   }
 
   // get a specific stat value from a character

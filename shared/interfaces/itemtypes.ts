@@ -128,15 +128,7 @@ AmmoClasses.forEach(t => EquipHash[t] = ItemSlot.Ammo);
 
 export const GivesBonusInHandItemClasses = [
   ...Object.keys(WeaponClass),
-  ...NeckClasses,
-  ...AmmoClasses
-];
-
-export const CanUseEffectItemClasses = [
-  ...Object.keys(WeaponClass),
-  ...HandsClasses,
-  ...AmmoClasses,
-  ...FeetClasses
+  ...NeckClasses
 ];
 
 export const EquippableItemClasses = [

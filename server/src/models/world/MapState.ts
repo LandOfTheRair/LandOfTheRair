@@ -312,7 +312,7 @@ export class MapState {
 
   // move an NPC or a player without the caller having to figure out which func to call
   public moveNPCOrPlayer(character: ICharacter, { oldX, oldY }): void {
-    if ((character as IPlayer).username) {
+    if (this.game.characterHelper.isPlayer(character)) {
       this.movePlayer(character as Player, { oldX, oldY });
     } else {
       this.moveNPC(character as INPC, { oldX, oldY });

@@ -40,6 +40,7 @@ export class PlayerHelper extends BaseService {
     if (!player.effects.buff) player.effects.buff = [];
     if (!player.effects.outgoing) player.effects.outgoing = [];
     if (!player.effects.incoming) player.effects.incoming = [];
+    if (!player.stats.mp) player.stats.mp = 100;
 
     player.agro = {};
 

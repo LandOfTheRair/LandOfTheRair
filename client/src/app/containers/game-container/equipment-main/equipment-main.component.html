@@ -58,8 +58,8 @@
         {{ player.totalStats[stat.stat] }} 
       </td>
       <td class="number">
-        <span [class.lower-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
-              [class.higher-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
+        <span [class.higher-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
+              [class.lower-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
               (<span *ngIf="player.totalStats[stat.stat] - player.stats[stat.stat] > 0">+</span>{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
         </span>
       </td>

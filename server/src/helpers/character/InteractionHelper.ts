@@ -36,11 +36,11 @@ export class InteractionHelper extends BaseService {
         // if we have the right item, open the lock
         if (requireHeld && this.game.characterHelper.hasHeldItem(character, requireHeld)) {
           shouldOpen = true;
-          this.game.itemHelper.loseCondition(rightHand, 1000);
+          this.game.itemHelper.loseCondition(rightHand, 1000, character);
 
         // if we don't have the right item, whoops
         } else {
-          this.game.itemHelper.loseCondition(rightHand, 500000);
+          this.game.itemHelper.loseCondition(rightHand, 500000, character);
           this.game.messageHelper.sendSimpleMessage(character, 'Your key is broken!');
           return false;
 

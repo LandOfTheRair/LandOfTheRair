@@ -39,12 +39,15 @@ export class MoveItems extends MacroCommand {
   }
 
   private doPostChecks(player: IPlayer, srcSlot: string, destSlot: string): void {
-    const updatePlayerSlots = { E: true, L: true, R: true };
-    const updateGroundSlots = { G: true };
+    const updatePlayerSlots =    { E: true, L: true, R: true };
+    const updateGroundSlots =    { G: true };
+    const updateEquipmentSlots = { R: true, L: true, E: true };
 
     const { state } = this.game.worldManager.getMap(player.map);
     if (updatePlayerSlots[srcSlot] || updatePlayerSlots[destSlot]) state.triggerPlayerUpdateInRadius(player.x, player.y);
     if (updateGroundSlots[srcSlot] || updateGroundSlots[destSlot]) state.triggerGroundUpdateInRadius(player.x, player.y);
+
+    if (updateEquipmentSlots[srcSlot] || updateEquipmentSlots[destSlot]) this.game.characterHelper.calculateStatTotals(player);
   }
 
   private doPrelimChecks(player: IPlayer, srcItem: ISimpleItem | undefined, dest: string, destSlot: string): boolean {
@@ -65,8 +68,8 @@ export class MoveItems extends MacroCommand {
       return false;
     }
 
-    // Dest: E - Items must be owned by the equipper
-    if (dest === 'E' && !isOwnedBy(player, srcItem)) {
+    // Dest: E - Items must be able to be used by the equipper
+    if (dest === 'E' && !this.game.itemHelper.canUseItem(player, srcItem)) {
       this.sendMessage(player, 'That item is not yours!');
       return false;
     }

@@ -65,6 +65,7 @@ export class CharacterDB extends BaseService {
     if (player.baseClass === BaseClass.Warrior) player.mp.maximum = 100;
 
     player.mp.__current = player.mp.maximum;
+    player.stats.mp = player.mp.maximum;
 
     account.players.push(player);
     await this.savePlayer(player);
