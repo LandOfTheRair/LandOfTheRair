@@ -50,7 +50,8 @@ export class DamageHelperOnesided extends BaseService {
         { message: `You died!`, sfx: SoundEffect.CombatDie },
         [MessageType.Combat, MessageType.Other, MessageType.Kill]
       );
-      this.game.characterHelper.die(defender);
+
+      this.game.deathHelper.die(defender);
     }
   }
 
