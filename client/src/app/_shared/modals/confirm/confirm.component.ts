@@ -6,6 +6,7 @@ interface IConfirmData {
   content: string;
   okText: string;
   cancelText: string;
+  extraData: any;
 }
 
 @Component({
