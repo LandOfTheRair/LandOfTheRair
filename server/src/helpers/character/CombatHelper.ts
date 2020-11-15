@@ -40,7 +40,7 @@ export class CombatHelper extends BaseService {
   }
 
   // do damage from one person to another, physically
-  public physicalAttack(attacker: ICharacter, defender: ICharacter, args): void {
+  public physicalAttack(attacker: ICharacter, defender: ICharacter, args = {}): void {
     this.physical.physicalAttack(attacker, defender, args);
   }
 

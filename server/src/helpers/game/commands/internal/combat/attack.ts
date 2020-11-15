@@ -26,7 +26,7 @@ export class AttackCommand extends Skill {
   }
 
   use(user: ICharacter, target: ICharacter): void {
-    this.game.combatHelper.physicalAttack(user, target);
+    this.game.combatHelper.physicalAttack(user, target, );
   }
 
 }
