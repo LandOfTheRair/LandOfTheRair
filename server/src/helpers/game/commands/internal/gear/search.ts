@@ -1,25 +1,24 @@
 
-import { GameAction, IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
-import { MacroCommand } from '../../../../../models/macro';
+import { IMacroCommandArgs, IPlayer, ItemClass } from '../../../../../interfaces';
+import { LookCommand } from './look';
 
-export class SearchCommand extends MacroCommand {
+export class SearchCommand extends LookCommand {
 
   aliases = ['search'];
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
 
-    args.callbacks.emit({
-      action: GameAction.SettingsShowWindow,
-      windowName: 'ground'
-    });
+    const { state } = this.game.worldManager.getMap(player.map);
+    const corpses = state.getItemsFromGround(player.x, player.y, ItemClass.Corpse) || [];
 
-    args.callbacks.emit({
-      action: GameAction.SettingsActiveWindow,
-      windowName: 'ground'
-    });
+    const uuids = corpses.filter(x => (x.item.mods?.searchItems?.length ?? 0) > 0).map(x => x.item.uuid);
+    if (uuids.length > 0) {
+      this.game.corpseManager.searchCorpses(uuids);
+    }
 
-    // TODO: search corpses
+    super.execute(player, args);
+
   }
 
 }

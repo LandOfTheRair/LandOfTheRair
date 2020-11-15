@@ -129,6 +129,10 @@ export class PlayerHelper extends BaseService {
     }
   }
 
+  public clearActionQueue(player: Player, target?: string) {
+    player.actionQueue = { fast: [], slow: [] };
+  }
+
   // reset swim level, fov, region desc
   public resetStatus(player: Player, ignoreMessages?: boolean) {
 

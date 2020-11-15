@@ -105,4 +105,13 @@ export class EffectHelper extends BaseService {
     this.removeEffect(character, effect);
   }
 
+  // remove all effects
+  public resetEffects(character: ICharacter): void {
+    Object.values(character.effects).forEach(effectContainer => {
+      effectContainer.forEach(effect => {
+        this.removeEffect(character, effect);
+      });
+    });
+  }
+
 }

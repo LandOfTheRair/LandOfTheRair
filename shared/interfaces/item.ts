@@ -145,7 +145,16 @@ export interface ICoin {
   currency?: Currency;
 }
 
-export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & {
+export interface ICorpse {
+
+  // the items you get from searching this item on the ground
+  searchItems?: ISimpleItem[];
+
+  // the username of the player assigned to this corpse. obviously ignored if it's a monster
+  corpseUsername?: string;
+}
+
+export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & {
   // the name of the item
   name: string;
 
@@ -208,9 +217,6 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // the condition of the item
   condition: number;
-
-  // the items you get from searching this item on the ground
-  searchItems?: ISimpleItem[];
 };
 
 export interface ISimpleItem {

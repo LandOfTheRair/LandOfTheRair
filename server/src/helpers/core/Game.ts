@@ -1,22 +1,18 @@
 
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
-import { SubscriptionHelper } from '../account';
 
-import { CalculatorHelper, CharacterHelper, CombatHelper, DirectionHelper, InteractionHelper,
+import { SubscriptionHelper } from '../account';
+import { CalculatorHelper, CharacterHelper, CombatHelper, DamageHelperMagic, DamageHelperOnesided,
+  DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
-import { DamageHelperMagic } from '../character/DamageHelperMagic';
-import { DamageHelperOnesided } from '../character/DamageHelperOnesided';
-import { DamageHelperPhysical } from '../character/DamageHelperPhysical';
-import { DialogActionHelper } from '../character/DialogActionHelper';
-import { EffectHelper } from '../character/EffectHelper';
 import { ProfanityHelper } from '../chat';
-import { ContentManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
-import { GroundManager } from '../data/GroundManager';
+import { ContentManager, CorpseManager, GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
+
 import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
@@ -45,6 +41,7 @@ export class Game {
 
     public profanityHelper: ProfanityHelper,
 
+    public corpseManager: CorpseManager,
     public lobbyManager: LobbyManager,
     public subscriptionHelper: SubscriptionHelper,
     public characterRoller: CharacterRoller,
@@ -52,6 +49,7 @@ export class Game {
     public dialogActionHelper: DialogActionHelper,
     public npcCreator: NPCCreator,
 
+    public deathHelper: DeathHelper,
     public targettingHelper: TargettingHelper,
     public teleportHelper: TeleportHelper,
     public damageHelperOnesided: DamageHelperOnesided,
@@ -93,10 +91,10 @@ export class Game {
       'transmissionHelper',
       'contentManager',
       'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB',
-      'profanityHelper',
+      'profanityHelper', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
-      'itemCreator', 'dialogActionHelper', 'npcCreator', 'targettingHelper', 'teleportHelper',
+      'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',
       'damageHelperOnesided', 'damageHelperMagic', 'damageHelperPhysical', 'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
@@ -168,6 +166,13 @@ export class Game {
       timer.startTimer('npcTick');
       this.worldManager.npcTick(timer);
       timer.stopTimer('npcTick');
+    }
+
+    // map ticks (npcs)
+    if (this.ticksElapsed % 50 === 0) {
+      timer.startTimer('corpseTick');
+      this.corpseManager.tick(timer);
+      timer.stopTimer('corpseTick');
     }
 
     timer.stopTimer('gameloop');

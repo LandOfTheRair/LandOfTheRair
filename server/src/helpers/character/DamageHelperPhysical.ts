@@ -247,7 +247,7 @@ export class DamageHelperPhysical extends BaseService {
       attackerWeapon = attacker.items.equipment[ItemSlot.Feet] || {
         name: 'feet',
         uuid: 'feet',
-        mods: { itemClass: ItemClass.Boots, tier: 1 },
+        mods: { itemClass: ItemClass.Boots, tier: 1, condition: 20000 },
       };
 
     // but the general case, we grab the right hand and/or hands item
@@ -258,7 +258,7 @@ export class DamageHelperPhysical extends BaseService {
         attackerWeapon = attacker.items.equipment[ItemSlot.Hands] || {
           name: 'hands',
           uuid: 'hands',
-          mods: { itemClass: ItemClass.Hands, type: Skill.Martial, tier: 1 },
+          mods: { itemClass: ItemClass.Hands, type: Skill.Martial, tier: 1, condition: 20000 },
         };
       }
     }
@@ -294,14 +294,14 @@ export class DamageHelperPhysical extends BaseService {
       defenderArmor = {
         name: 'body',
         uuid: 'body',
-        mods: { itemClass: ItemClass.Fur },
+        mods: { itemClass: ItemClass.Fur, condition: 20000 },
       };
     }
 
     const defenderBlocker = defender.items.equipment[ItemSlot.RightHand] || {
       name: 'hands',
       uuid: 'hands',
-      mods: { itemClass: ItemClass.Hands, type: Skill.Martial, tier: 1 },
+      mods: { itemClass: ItemClass.Hands, type: Skill.Martial, tier: 1, condition: 20000 },
     };
 
     const leftHand = defender.items.equipment[ItemSlot.LeftHand];
@@ -879,11 +879,11 @@ export class DamageHelperPhysical extends BaseService {
     // thieves get +25% to the bottom damage range, warriors get +50%
     let damageRollMinimum = 1;
 
-    /** PERK:CLASS:THIEF:Thieves always do at least 25% of their damage roll when rolling dice. */
-    if (attacker.baseClass === BaseClass.Thief) damageRollMinimum = 0.25;
+    /** PERK:CLASS:THIEF:Thieves always do at least 15% of their damage roll when rolling dice. */
+    if (attacker.baseClass === BaseClass.Thief) damageRollMinimum = 0.15;
 
-    /** PERK:CLASS:WARRIOR:Warriors always do at least 50% of their damage roll when rolling dice. */
-    if (attacker.baseClass === BaseClass.Warrior) damageRollMinimum = 0.5;
+    /** PERK:CLASS:WARRIOR:Warriors always do at least 25% of their damage roll when rolling dice. */
+    if (attacker.baseClass === BaseClass.Warrior) damageRollMinimum = 0.25;
 
     let damage = Math.floor(this.game.diceRollerHelper.diceRoll(damageLeft, damageRight, damageRollMinimum)) + damageBoost;
 
@@ -937,7 +937,7 @@ export class DamageHelperPhysical extends BaseService {
 
     const damageArgs = {
       damage,
-      damageClass,
+      damageClass: args.damageClass || DamageClass.Physical,
       isMelee: true,
       attackerDamageMessage: damage > 0 ? `Your attack ${damageType}!` : '',
       defenderDamageMessage: msg,
@@ -954,7 +954,6 @@ export class DamageHelperPhysical extends BaseService {
 
     this.attemptToStun(attacker, defender, attackerWeapon);
 
-    // TODO: damagetype = ammo type, then weapon type, then physical
     // TODO: apply strikeeffect from weapon encrust if exist, then weapon
 
     resolveThrow();

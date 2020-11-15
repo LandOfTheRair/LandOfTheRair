@@ -41,14 +41,6 @@ export class CharacterHelper extends BaseService {
     if (isNaN(char.mp.current)) char.mp.current = 0;
   }
 
-  public kill(killer: ICharacter, dead: ICharacter): void {
-    if (!this.isDead(dead)) return;
-  }
-
-  public die(dead: ICharacter, killer?: ICharacter): void {
-    if (!this.isDead(dead)) return;
-  }
-
   // check if this player is holding sometihng
   public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
     const ref = char.items.equipment[`${hand}Hand`];
@@ -198,6 +190,8 @@ export class CharacterHelper extends BaseService {
 
   // tick the character - do regen
   public tick(character: ICharacter): void {
+    if (this.isDead(character)) return;
+
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 

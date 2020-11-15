@@ -152,7 +152,7 @@ export class CombatHelper extends BaseService {
       const messageTypes = [MessageType.Combat, MessageType.Other, otherClass, damageType];
       if (isOverTime) messageTypes.push(MessageType.InOvertime);
 
-      this.game.messageHelper.sendLogMessageToPlayer(attacker,
+      this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${formattedDefMessage} [${absDmg} ${dmgString}]`,
           sfx: customSfx || this.determineSfx({ itemClass, isMelee, damage }),
@@ -201,11 +201,11 @@ export class CombatHelper extends BaseService {
 
         // only call kill() for players
         if (this.game.characterHelper.isPlayer(attacker)) {
-          this.game.characterHelper.kill(attacker, defender);
+          this.game.deathHelper.kill(attacker, defender);
         }
 
         // but everyone die()s
-        this.game.characterHelper.die(defender, attacker);
+        this.game.deathHelper.die(defender, attacker);
 
       // otherwise, we just let everyone know this person died. probably their own fault. probably.
       } else {
@@ -220,7 +220,7 @@ export class CombatHelper extends BaseService {
         }, [MessageType.Combat, MessageType.Other, MessageType.Kill]);
 
 
-        this.game.characterHelper.die(defender);
+        this.game.deathHelper.die(defender);
       }
 
 

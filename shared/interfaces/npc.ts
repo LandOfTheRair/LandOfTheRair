@@ -151,4 +151,10 @@ export interface INPC extends ICharacter {
   stripY?: number;
 
   targetDamageDone?: any;
+
+  noCorpseDrop?: boolean;
+  noItemDrop?: boolean;
+  drops?: any[];
+  copyDrops?: any[];
+  dropPool?: any;
 }

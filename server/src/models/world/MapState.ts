@@ -436,11 +436,7 @@ export class MapState {
     this.triggerFullUpdateForPlayer(player);
   }
 
-  // generate a radius that will notify a player in the following circumstances:
-  // - TODO: a character changes visibility to the player
-  // - TODO: a character changes their hand items or visible armor item
-  // - TODO: a character health value changes
-  // - TODO: a character hostility value changes
+  // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
     for (let x = player.x - 3; x < player.x + 3; x++) {
       for (let y = player.y - 3; y < player.y + 3; y++) {
@@ -504,6 +500,13 @@ export class MapState {
     return ground;
   }
 
+  public addItemsToGround(x: number, y: number, items: ISimpleItem[]): void {
+    items.forEach(item => this.game.groundManager.addItemToGround(this.map.name, x, y, item));
+
+    // if player knowledge x/y, update ground
+    this.triggerGroundUpdateInRadius(x, y);
+  }
+
   public addItemToGround(x: number, y: number, item: ISimpleItem): void {
     this.game.groundManager.addItemToGround(this.map.name, x, y, item);
 
@@ -511,7 +514,11 @@ export class MapState {
     this.triggerGroundUpdateInRadius(x, y);
   }
 
-  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): IGroundItem[] {
+  public getEntireGround(x: number, y: number): Record<ItemClass, IGroundItem[]> {
+    return this.game.groundManager.getEntireGround(this.map.name, x, y);
+  }
+
+  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid?: string, count = 1): IGroundItem[] {
     return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
   }
 
