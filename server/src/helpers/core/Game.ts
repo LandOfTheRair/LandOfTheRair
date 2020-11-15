@@ -6,6 +6,9 @@ import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DirectionHelper, InteractionHelper,
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
+import { DamageHelperMagic } from '../character/DamageHelperMagic';
+import { DamageHelperOnesided } from '../character/DamageHelperOnesided';
+import { DamageHelperPhysical } from '../character/DamageHelperPhysical';
 import { DialogActionHelper } from '../character/DialogActionHelper';
 import { EffectHelper } from '../character/EffectHelper';
 import { ProfanityHelper } from '../chat';
@@ -51,6 +54,9 @@ export class Game {
 
     public targettingHelper: TargettingHelper,
     public teleportHelper: TeleportHelper,
+    public damageHelperOnesided: DamageHelperOnesided,
+    public damageHelperMagic: DamageHelperMagic,
+    public damageHelperPhysical: DamageHelperPhysical,
     public combatHelper: CombatHelper,
     public questHelper: QuestHelper,
     public diceRollerHelper: DiceRollerHelper,
@@ -91,7 +97,7 @@ export class Game {
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
       'itemCreator', 'dialogActionHelper', 'npcCreator', 'targettingHelper', 'teleportHelper',
-      'combatHelper', 'questHelper',
+      'damageHelperOnesided', 'damageHelperMagic', 'damageHelperPhysical', 'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',

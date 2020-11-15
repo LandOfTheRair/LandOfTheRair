@@ -72,7 +72,7 @@ export class GameService {
       }
 
       if (target) {
-        args = `${args} ${target}`;
+        args = `${args} ${target}`.trim();
       }
 
       this.sendAction(GameServerEvent.DoCommand, { command, args });

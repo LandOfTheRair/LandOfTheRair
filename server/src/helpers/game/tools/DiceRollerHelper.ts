@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { random } from 'lodash';
+import { random, sum } from 'lodash';
 
 import { BaseService } from '../../../interfaces';
 
@@ -24,6 +24,10 @@ export class DiceRollerHelper extends BaseService {
 
   uniformRoll(x: number, y: number): number {
     return random(x * y) + x;
+  }
+
+  diceRoll(rolls: number, sides: number, minimumMult = 0): number {
+    return sum(Array(rolls).fill(0).map(() => random(Math.floor(sides * minimumMult), sides)));
   }
 
 }

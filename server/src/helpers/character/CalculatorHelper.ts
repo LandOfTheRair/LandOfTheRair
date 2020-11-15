@@ -21,7 +21,7 @@ export class CalculatorHelper extends BaseService {
 
   // skill level for a certain skill for a character
   public calcSkillLevelForCharacter(character: ICharacter, skill: Skill) {
-    const skillValue = character.skills[skill] ?? 0;
+    const skillValue = character.skills[skill.toLowerCase()] ?? 0;
     return calculateSkillLevelFromXP(skillValue);
   }
 

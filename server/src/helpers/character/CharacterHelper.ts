@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, GivesBonusInHandItemClasses, ICharacter, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
+import { BaseService, CoreStat, GivesBonusInHandItemClasses, Hostility,
+  ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -28,14 +29,24 @@ export class CharacterHelper extends BaseService {
 
   public heal(char: ICharacter, hp: number): void {
     char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
+    if (isNaN(char.hp.current)) char.hp.current = 1;
+  }
+
+  public manaDamage(char: ICharacter, hp: number): void {
+    this.mana(char, -hp);
   }
 
   public mana(char: ICharacter, mp: number): void {
     char.mp.current = clamp(char.mp.current + mp, char.mp.minimum, char.mp.maximum);
+    if (isNaN(char.mp.current)) char.mp.current = 0;
   }
 
-  public die(char: ICharacter): void {
-    if (!this.isDead(char)) return;
+  public kill(killer: ICharacter, dead: ICharacter): void {
+    if (!this.isDead(dead)) return;
+  }
+
+  public die(dead: ICharacter, killer?: ICharacter): void {
+    if (!this.isDead(dead)) return;
   }
 
   // check if this player is holding sometihng
@@ -87,13 +98,26 @@ export class CharacterHelper extends BaseService {
     }
 
   }
+
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
+  }
+
+  public engageInCombat(char: ICharacter) {
+    char.combatTicks = 10;
   }
 
   // check if a character is a player
   public isPlayer(character: ICharacter): boolean {
     return !!(character as IPlayer).username;
+  }
+
+  // check if we can gain skill from this target
+  public canGainSkillFromTarget(target: ICharacter): boolean {
+    if (!target) return false;
+    if ((target as INPC).hostility === Hostility.Never) return false;
+    if ((target as INPC).owner === Hostility.Never) return false;
+    return true;
   }
 
   // gain a permanent stat (from a bottle, or some other source)
@@ -188,11 +212,12 @@ export class CharacterHelper extends BaseService {
 
   // gain skill for a character
   public gainSkill(character: ICharacter, skill: Skill, skillGained: number): void {
+    if (!skill) skill = Skill.Martial;
 
     // TODO: modify skillGained for sub
     if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
 
-    character.skills[skill] = Math.max((character.skills[skill] ?? 0) + skillGained);
+    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
   }
 
   // check gear and try to cast effects

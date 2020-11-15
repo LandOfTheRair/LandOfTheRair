@@ -136,7 +136,7 @@ export class NPCCreator extends BaseService {
     });
 
     (npcDef.baseEffects || []).forEach(effect => {
-      this.game.effectHelper.addEffect(baseChar, 'Self', effect.name, effect.extra, effect.endsAt);
+      this.game.effectHelper.addEffect(baseChar, '', effect.name, effect.extra, effect.endsAt);
     });
 
     this.characterHelper.calculateStatTotals(baseChar);

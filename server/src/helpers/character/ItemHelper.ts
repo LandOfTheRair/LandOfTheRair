@@ -69,13 +69,19 @@ export class ItemHelper extends BaseService {
   // check if an item is broken
   public isItemBroken(item: ISimpleItem) {
     const condition = this.getItemProperty(item, 'condition');
-    return condition === 0;
+    return condition <= 0;
+  }
+
+  public ownsAndItemUnbroken(character: ICharacter, item: ISimpleItem): boolean {
+    if (!isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
+    if (this.isItemBroken(item)) return false;
+
+    return true;
   }
 
   // check if an item is usable
   public canGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): boolean {
-    if (!isOwnedBy(player, item)) return false;
-    if (this.isItemBroken(item)) return false;
+    if (!this.ownsAndItemUnbroken(player, item)) return false;
 
     const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
     if (requirements) {
@@ -100,6 +106,21 @@ export class ItemHelper extends BaseService {
 
   public loseCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
     this.gainCondition(item, -conditionLoss, character);
+  }
+
+  public conditionACModifier(item: ISimpleItem): number {
+    item.mods.condition = item.mods.condition || 20000;
+
+    if (item.mods.condition <= 0)     return -3;
+    if (item.mods.condition <= 5000)  return -2;
+    if (item.mods.condition <= 10000) return -1;
+    if (item.mods.condition <= 20000) return 0;
+    if (item.mods.condition <= 30000) return 1;
+    if (item.mods.condition <= 40000) return 2;
+    if (item.mods.condition <= 50000) return 3;
+    if (item.mods.condition <= 99999) return 4;
+
+    return 5;
   }
 
 }

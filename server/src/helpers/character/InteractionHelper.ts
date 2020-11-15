@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { BaseClass, BaseService, ICharacter, ItemClass, ItemSlot, Skill } from '../../interfaces';
+import { BaseClass, BaseService, ICharacter, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
 
 @Injectable()
 export class InteractionHelper extends BaseService {
@@ -90,7 +90,11 @@ export class InteractionHelper extends BaseService {
       }
     }
 
-    this.game.messageHelper.sendSimpleMessage(character, isCurrentlyOpen ? 'You close the door.' : 'You open the door.', isCurrentlyOpen ? 'env-door-close' : 'env-door-open');
+    this.game.messageHelper.sendSimpleMessage(
+      character,
+      isCurrentlyOpen ? 'You close the door.' : 'You open the door.',
+      isCurrentlyOpen ? SoundEffect.EnvDoorClose : SoundEffect.EnvDoorOpen
+    );
 
     if (isCurrentlyOpen) {
       state.closeDoor(door.id);
