@@ -192,7 +192,7 @@ export class CharacterHelper extends BaseService {
   public tick(character: ICharacter): void {
     if (this.isDead(character)) return;
 
-    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
+    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
     if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
