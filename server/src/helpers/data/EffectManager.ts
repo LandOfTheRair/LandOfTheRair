@@ -1,7 +1,6 @@
 import { Injectable } from 'injection-js';
 import { BaseService, ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
 
-import { create } from 'domain';
 import * as allEffects from '../../../content/_output/effect-data.json';
 import { Effect } from '../../models';
 import * as allEffectRefs from '../game/effects';
@@ -38,7 +37,7 @@ export class EffectManager extends BaseService {
     const effectData = this.getEffectData(effectName);
 
     // send the cast message to the caster
-    const createMessage = this.formatMessage(effectData.meta.castMessage || '', { target: character.name });;
+    const createMessage = this.formatMessage(effectData.meta.castMessage || '', { target: character.name });
     if (character.uuid !== effect.sourceUUID && effect.sourceUUID && createMessage) {
       effectRef.sendMessage(effect.sourceUUID, { message: createMessage, sfx: effectData.meta.castSfx });
     }

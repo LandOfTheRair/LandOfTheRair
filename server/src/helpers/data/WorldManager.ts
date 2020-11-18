@@ -6,7 +6,7 @@ import { zipObject } from 'lodash';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
-import { BaseService, ICharacter, INPC, ObjectType } from '../../interfaces';
+import { BaseService, ICharacter, ObjectType } from '../../interfaces';
 import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
 
 @Injectable()
