@@ -6,6 +6,7 @@ import { species } from 'fantastical';
 import { isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
+import { debug } from 'console';
 import { Alignment, Allegiance, BaseService, BehaviorType, CoreStat, Currency, Hostility,
   IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
@@ -237,6 +238,9 @@ export class NPCCreator extends BaseService {
 
           if (!shouldContinue) return retMessages;
         }
+        console.log(npc.name, npc.dir, env.player.name, env.player.dir);
+
+        this.game.directionHelper.setDirRelativeTo(npc, env.player);
 
         return retMessages;
       };
