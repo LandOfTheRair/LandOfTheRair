@@ -8,7 +8,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, DamageHelperMagic, Dam
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
-import { ContentManager, CorpseManager, GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
+import { ContentManager, CorpseManager, EffectManager, GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -41,6 +41,7 @@ export class Game {
 
     public profanityHelper: ProfanityHelper,
 
+    public effectManager: EffectManager,
     public corpseManager: CorpseManager,
     public lobbyManager: LobbyManager,
     public subscriptionHelper: SubscriptionHelper,
@@ -91,7 +92,7 @@ export class Game {
       'transmissionHelper',
       'contentManager',
       'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB',
-      'profanityHelper', 'corpseManager',
+      'profanityHelper', 'effectManager', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller',
       'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',

@@ -1,4 +1,5 @@
 
+import { Injectable } from 'injection-js';
 import { cloneDeep, get, size } from 'lodash';
 import { ObjectId } from 'mongodb';
 
@@ -7,6 +8,7 @@ import { Ground } from '../../models/orm/Ground';
 
 // TODO: when stripped, items should be marked as _canBeSaved even if they don't have an owner; they should also be excluded from the quick GCs
 
+@Injectable()
 export class GroundManager extends BaseService {
 
   private readonly SAVE_TICKS = 150;      // save the ground every 5 minutes

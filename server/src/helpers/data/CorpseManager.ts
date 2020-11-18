@@ -1,6 +1,8 @@
 
+import { Injectable } from 'injection-js';
 import { BaseService, ISimpleItem, ItemClass } from '../../interfaces';
 
+@Injectable()
 export class CorpseManager extends BaseService {
 
   private corpseRefs: Record<string, ISimpleItem> = {};                                  // corpseuuid:corpseitem

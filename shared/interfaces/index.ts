@@ -22,4 +22,4 @@ export * from './player';
 export * from './settings';
 export * from './sfx';
 export * from './status-effect';
-
+export * from './typescript';
