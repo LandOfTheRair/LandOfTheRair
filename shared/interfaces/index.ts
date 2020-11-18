@@ -5,6 +5,7 @@ export * from './ai';
 export * from './behaviors';
 export * from './building-blocks';
 export * from './character';
+export * from './combat';
 export * from './dialog';
 export * from './effect';
 export * from './game';
@@ -19,5 +20,6 @@ export * from './messages';
 export * from './npc';
 export * from './player';
 export * from './settings';
+export * from './sfx';
 export * from './status-effect';
 

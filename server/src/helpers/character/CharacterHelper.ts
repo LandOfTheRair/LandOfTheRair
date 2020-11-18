@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, ICharacter, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
+import { BaseService, CoreStat, GivesBonusInHandItemClasses, Hostility,
+  ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -11,7 +12,7 @@ export class CharacterHelper extends BaseService {
 
   // check if the character is dead
   public isDead(char: ICharacter): boolean {
-    return char.hp.__current <= 0;
+    return char.hp.current <= 0;
   }
 
   public healToFull(char: ICharacter): void {
@@ -27,15 +28,17 @@ export class CharacterHelper extends BaseService {
   }
 
   public heal(char: ICharacter, hp: number): void {
-    char.hp.__current = clamp(char.hp.__current + hp, char.hp.minimum, char.hp.maximum);
+    char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
+    if (isNaN(char.hp.current)) char.hp.current = 1;
+  }
+
+  public manaDamage(char: ICharacter, hp: number): void {
+    this.mana(char, -hp);
   }
 
   public mana(char: ICharacter, mp: number): void {
-    char.mp.__current = clamp(char.mp.__current + mp, char.mp.minimum, char.mp.maximum);
-  }
-
-  public die(char: ICharacter): void {
-    if (!this.isDead(char)) return;
+    char.mp.current = clamp(char.mp.current + mp, char.mp.minimum, char.mp.maximum);
+    if (isNaN(char.mp.current)) char.mp.current = 0;
   }
 
   // check if this player is holding sometihng
@@ -87,13 +90,26 @@ export class CharacterHelper extends BaseService {
     }
 
   }
+
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
+  }
+
+  public engageInCombat(char: ICharacter) {
+    char.combatTicks = 10;
   }
 
   // check if a character is a player
   public isPlayer(character: ICharacter): boolean {
     return !!(character as IPlayer).username;
+  }
+
+  // check if we can gain skill from this target
+  public canGainSkillFromTarget(target: ICharacter): boolean {
+    if (!target) return false;
+    if ((target as INPC).hostility === Hostility.Never) return false;
+    if ((target as INPC).owner === Hostility.Never) return false;
+    return true;
   }
 
   // gain a permanent stat (from a bottle, or some other source)
@@ -122,20 +138,49 @@ export class CharacterHelper extends BaseService {
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
     character.totalStats = Object.assign({}, character.stats);
-    character.totalStats.move = clamp(0, 4, character.stats[Stat.Move] || 3);
 
-    // stats from effects
-    // stats from classes
-    // stats from usable items (check requirements, ownership, durability)
-      // stats from usable item / usable encrusts (check item requirements and encrust requirements)
+    const addStat = (stat: Stat, bonus: number) => {
+      character.totalStats[stat] = character.totalStats[stat] || 0;
+      character.totalStats[stat]! += bonus;
+    };
 
-    // adjust hp/mp RNs
-    // adjust stealth / perception
+    // calculate stats from gear
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
 
-    // trait bonuses
-    // class specific bonuses
+      // no bonus if we can't technically use the item
+      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
 
-    // adjust pet stats
+      // only some items give bonuses in hands
+      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+      if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
+      && !GivesBonusInHandItemClasses.includes(itemClass)) return;
+
+      Object.values(Stat).forEach(stat => {
+        const bonus = this.game.itemHelper.getStat(item, stat);
+        addStat(stat, bonus);
+      });
+    });
+
+    // set hp/mp
+    if (character.totalStats.hp) {
+      character.hp.maximum = character.totalStats.hp;
+      character.hp.current = Math.min(character.hp.current, character.hp.maximum);
+    }
+
+    if (character.totalStats.mp) {
+      character.mp.maximum = character.totalStats.mp;
+      character.mp.current = Math.min(character.mp.current, character.mp.maximum);
+    }
+
+    // can't move more than one screen at a time
+    character.totalStats[Stat.Move] = clamp(0, 4, character.stats[Stat.Move] || 3);
+
+    // TODO: stats from effects
+    // TODO: adjust stealth / perception
+    // TODO: trait bonuses
+    // TODO: adjust pet stats
   }
 
   // get a specific stat value from a character
@@ -145,10 +190,12 @@ export class CharacterHelper extends BaseService {
 
   // tick the character - do regen
   public tick(character: ICharacter): void {
+    if (this.isDead(character)) return;
+
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
-    if (character.hp.__current + hpRegen > 0) this.heal(character, hpRegen);
+    if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
     this.mana(character, mpRegen);
   }
 
@@ -159,11 +206,12 @@ export class CharacterHelper extends BaseService {
 
   // gain skill for a character
   public gainSkill(character: ICharacter, skill: Skill, skillGained: number): void {
+    if (!skill) skill = Skill.Martial;
 
     // TODO: modify skillGained for sub
     if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
 
-    character.skills[skill] = Math.max((character.skills[skill] ?? 0) + skillGained);
+    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
   }
 
   // check gear and try to cast effects

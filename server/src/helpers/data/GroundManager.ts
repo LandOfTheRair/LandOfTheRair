@@ -94,6 +94,11 @@ export class GroundManager extends BaseService {
   public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem): void {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
 
+    // corpses get a lil special treatment
+    if (itemClass === ItemClass.Corpse) {
+      this.game.corpseManager.addCorpse(mapName, item, x, y);
+    }
+
     // init the ground here
     this.ground[mapName] = this.ground[mapName] || {};
     const mapGround = this.ground[mapName];
@@ -174,6 +179,10 @@ export class GroundManager extends BaseService {
     }
   }
 
+  public getEntireGround(mapName: string, x: number, y: number): Record<ItemClass, IGroundItem[]> {
+    return get(this.ground, [mapName, x, y], {});
+  }
+
   public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', count = 1): IGroundItem[] {
     const potentialItems: IGroundItem[] = get(this.ground, [mapName, x, y, itemClass], []);
 
@@ -236,6 +245,11 @@ export class GroundManager extends BaseService {
       if (saveGround[x][y][itemClass].length === 0) delete saveGround[x][y][itemClass];
       if (size(saveGround[x][y]) === 0) delete saveGround[x][y];
       if (size(saveGround[x]) === 0) delete saveGround[x];
+    }
+
+    // corpses get a lil special treatment
+    if (itemClass === ItemClass.Corpse) {
+      this.game.corpseManager.removeCorpse(gItem.item);
     }
 
   }

@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { isUndefined } from 'lodash';
 
-import { BaseService, IItem, ISimpleItem, Stat } from '../../interfaces';
+import { BaseService, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
@@ -69,17 +69,58 @@ export class ItemHelper extends BaseService {
   // check if an item is broken
   public isItemBroken(item: ISimpleItem) {
     const condition = this.getItemProperty(item, 'condition');
-    return condition === 0;
+    return condition <= 0;
   }
 
-  public gainCondition(item: ISimpleItem, conditionLoss: number) {
+  public ownsAndItemUnbroken(character: ICharacter, item: ISimpleItem): boolean {
+    if (!isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
+    if (this.isItemBroken(item)) return false;
+
+    return true;
+  }
+
+  // check if an item is usable
+  public canGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): boolean {
+    if (!this.ownsAndItemUnbroken(player, item)) return false;
+
+    const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
+    if (requirements) {
+      if (requirements.alignment && player.alignment !== requirements.alignment) return false;
+      if (requirements.baseClass && player.baseClass !== requirements.baseClass) return false;
+      if (requirements.level && player.level < requirements.level) return false;
+    }
+
+    return true;
+  }
+
+  // gain or lose condition
+  public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
     item.mods.condition = item.mods.condition || 20000;
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
+
+    if (this.isItemBroken(item)) {
+      this.game.characterHelper.calculateStatTotals(character);
+    }
   }
 
-  public loseCondition(item: ISimpleItem, conditionLoss: number) {
-    this.gainCondition(item, -conditionLoss);
+  public loseCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+    this.gainCondition(item, -conditionLoss, character);
+  }
+
+  public conditionACModifier(item: ISimpleItem): number {
+    item.mods.condition = item.mods.condition || 20000;
+
+    if (item.mods.condition <= 0)     return -3;
+    if (item.mods.condition <= 5000)  return -2;
+    if (item.mods.condition <= 10000) return -1;
+    if (item.mods.condition <= 20000) return 0;
+    if (item.mods.condition <= 30000) return 1;
+    if (item.mods.condition <= 40000) return 2;
+    if (item.mods.condition <= 50000) return 3;
+    if (item.mods.condition <= 99999) return 4;
+
+    return 5;
   }
 
 }

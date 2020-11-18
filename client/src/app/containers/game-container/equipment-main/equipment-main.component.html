@@ -58,8 +58,8 @@
         {{ player.totalStats[stat.stat] }} 
       </td>
       <td class="number">
-        <span [class.lower-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
-              [class.higher-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
+        <span [class.higher-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
+              [class.lower-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
               (<span *ngIf="player.totalStats[stat.stat] - player.stats[stat.stat] > 0">+</span>{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
         </span>
       </td>
@@ -70,7 +70,7 @@
 <ng-template #viewSkills>
   <table class="display-table" *ngIf="player$ | async as player">
     <tr *ngFor="let skill of sortedSkills(player.skills)">
-      <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-icon [name]="skill.icon" size="xsmall" round="true"></app-icon></td>
+      <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true"></app-skill-icon></td>
       <td>{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
       <td class="number">
         {{ skillLevel(player.skills[skill.skill]) }} 

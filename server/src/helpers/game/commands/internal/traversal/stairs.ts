@@ -1,4 +1,4 @@
-import { IMacroCommandArgs } from '../../../../../interfaces';
+import { IMacroCommandArgs, SoundEffect } from '../../../../../interfaces';
 import { Player } from '../../../../../models';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -25,7 +25,7 @@ export class Stairs extends MacroCommand {
     if (requireParty && !player.partyName)                                           return this.sendMessage(player, 'You must gather your party before venturing forth.');
     if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday))        return this.sendMessage(player, `That location is only seasonally open during "${requireHoliday}"!`);
 
-    this.sendMessage(player, `You ${interactable.type === 'StairsUp' ? 'ascend' : 'descend'} the staircase.`, 'env-stairs');
+    this.sendMessage(player, `You ${interactable.type === 'StairsUp' ? 'ascend' : 'descend'} the staircase.`, SoundEffect.EnvStairs);
 
     this.game.teleportHelper.teleport(
       player,

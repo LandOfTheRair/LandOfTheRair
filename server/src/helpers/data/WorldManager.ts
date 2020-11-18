@@ -2,6 +2,7 @@
 import { Injectable } from 'injection-js';
 
 import fs from 'fs-extra';
+import { zipObject } from 'lodash';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
@@ -38,6 +39,10 @@ export class WorldManager extends BaseService {
 
   public get currentlyActiveMaps(): string[] {
     return [...this.activeMaps];
+  }
+
+  public get currentlyActiveMapHash(): Record<string, any> {
+    return zipObject([...this.activeMaps], Array(this.activeMaps.size).fill(true));
   }
 
   public async init() {

@@ -2,6 +2,14 @@ import { Alignment, BaseClass, Currency, DamageClass, RandomNumber, Rollable, St
 import { IItemEffect } from './effect';
 import { ItemClass } from './itemtypes';
 
+export enum ItemQuality {
+  POOR = 1,
+  BELOW_AVERAGE = 2,
+  AVERAGE = 3,
+  ABOVE_AVERAGE = 4,
+  PERFECT = 5
+}
+
 export type IItemEncrust = { effect: IItemEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
 
 export interface IItemRequirements {
@@ -41,19 +49,13 @@ export interface IGear {
   maxEnchantLevel?: number;
 
   // the item quality (0-5)
-  quality?: number;
+  quality?: ItemQuality;
 
   // the stats this item boosts
   stats?: StatBlock;
 
-  // randomly chosen stats for this item
-  randomStats?: { [stat in Stat]?: RandomNumber };
-
   // the trait on the item
   trait?: IItemTrait;
-
-  // the random trait generated for an item
-  randomTrait?: { level: RandomNumber, name: string[] };
 }
 
 export interface IWeapon {
@@ -143,7 +145,16 @@ export interface ICoin {
   currency?: Currency;
 }
 
-export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & {
+export interface ICorpse {
+
+  // the items you get from searching this item on the ground
+  searchItems?: ISimpleItem[];
+
+  // the username of the player assigned to this corpse. obviously ignored if it's a monster
+  corpseUsername?: string;
+}
+
+export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & {
   // the name of the item
   name: string;
 
@@ -206,9 +217,6 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // the condition of the item
   condition: number;
-
-  // the items you get from searching this item on the ground
-  searchItems?: ISimpleItem[];
 };
 
 export interface ISimpleItem {
@@ -218,9 +226,9 @@ export interface ISimpleItem {
 }
 
 export type IItemDefinition = IItem & {
-  randomStats: Record<Stat, { min: number, max: number }>;
+  randomStats: Record<Stat, RandomNumber>;
   randomTrait: {
     name: string[];
-    level: { min: number, max: number };
+    level: RandomNumber;
   };
 };

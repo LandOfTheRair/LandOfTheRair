@@ -34,12 +34,12 @@
     <div class="bars">
       <div class="top-bars">
         <div class="bar-container hp">
-          <span class="bar" [style.width]="(player.hp.__current / player.hp.maximum * 100) + '%'"></span>
-          <span class="bar-text">{{ player.hp.__current }}/{{ player.hp.maximum }}</span>
+          <span class="bar" [style.width]="(player.hp.current / player.hp.maximum * 100) + '%'"></span>
+          <span class="bar-text">{{ player.hp.current }}/{{ player.hp.maximum }}</span>
         </div>
         <div class="bar-container energy {{ player.baseClass }}">
-          <span class="bar" [style.width]="(player.mp.__current / player.mp.maximum * 100) + '%'"></span>
-          <span class="bar-text">{{ player.mp.__current }}/{{ player.mp.maximum }}</span>
+          <span class="bar" [style.width]="(player.mp.current / player.mp.maximum * 100) + '%'"></span>
+          <span class="bar-text">{{ player.mp.current }}/{{ player.mp.maximum }}</span>
         </div>
       </div>
 

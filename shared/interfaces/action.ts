@@ -62,6 +62,8 @@ export enum GameServerResponse {
 
   GameLog = 'Game:Response:Message',
   SendNotification = 'Game:Response:Notification',
+  SendAlert = 'Game:Response:Alert',
+  SendConfirm = 'Game:Response:Confirm',
 
   DialogChat = 'Game:Response:NPCDialog'
 }
@@ -118,5 +120,7 @@ export enum GameAction {
   SettingsHideWindow = '[Settings] Hide Window',
   SettingsShowWindow = '[Settings] Show Window',
   SettingsActiveWindow = '[Settings] Set Active Window',
-  SettingsCharSlot = '[Settings] Set Char Slot'
+  SettingsCharSlot = '[Settings] Set Char Slot',
+
+  NPCActionShowTrainer = '[NPC] Show Trainer'
 }

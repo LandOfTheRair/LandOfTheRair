@@ -1,8 +1,17 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter, MessageType } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
 
+interface MessageInfo {
+  message: string;
+  sfx?: SoundEffect;
+  from?: string;
+  setTarget?: string|null;
+  logInfo?: any;
+  useSight?: boolean;
+  except?: string[];
+}
 
 @Injectable()
 export class MessageHelper extends BaseService {
@@ -11,8 +20,9 @@ export class MessageHelper extends BaseService {
 
   public sendLogMessageToPlayer(
     player: ICharacter,
-    { message, sfx, from }: { message: string, sfx?: string, from?: string },
-    messageTypes: MessageType[] = [MessageType.Miscellaneous]
+    { message, sfx, from, setTarget, logInfo }: MessageInfo,
+    messageTypes: MessageType[] = [MessageType.Miscellaneous],
+    formatArgs: ICharacter[] = []
   ): void {
 
     const account = this.game.lobbyManager.getAccount((player as Player).username);
@@ -20,19 +30,25 @@ export class MessageHelper extends BaseService {
 
     if (from) message = `**${from}**: ${message}`;
 
+    let sendMessage = message;
+    if (formatArgs.length > 0) sendMessage = this.formatMessage(player, sendMessage, formatArgs);
+
     this.game.transmissionHelper.sendResponseToAccount((player as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
       messageTypes,
-      message,
-      sfx
+      message: sendMessage,
+      sfx,
+      setTarget,
+      logInfo
     });
   }
 
   public sendLogMessageToRadius(
     player: ICharacter,
     radius: number,
-    { message, sfx, from }: { message: string, sfx?: string, from?: string },
-    messageTypes: MessageType[] = [MessageType.Miscellaneous]
+    { message, sfx, from, setTarget, except }: MessageInfo,
+    messageTypes: MessageType[] = [MessageType.Miscellaneous],
+    formatArgs: ICharacter[] = []
   ): void {
 
     if (from) message = `**${from}**: ${message}`;
@@ -44,16 +60,22 @@ export class MessageHelper extends BaseService {
       const account = this.game.lobbyManager.getAccount((checkPlayer as Player).username);
       if (!account) return;
 
+      if (except && except.includes(checkPlayer.uuid)) return;
+
+      let sendMessage = message;
+      if (formatArgs.length > 0) sendMessage = this.formatMessage(checkPlayer, sendMessage, formatArgs);
+
       this.game.transmissionHelper.sendResponseToAccount((checkPlayer as Player).username, GameServerResponse.GameLog, {
         type: GameServerResponse.GameLog,
         messageTypes,
-        message,
-        sfx
+        message: sendMessage,
+        sfx,
+        setTarget
       });
     });
   }
 
-  public sendSimpleMessage(character: ICharacter, message: string, sfx?: string): void {
+  public sendSimpleMessage(character: ICharacter, message: string, sfx?: SoundEffect): void {
     this.sendLogMessageToPlayer(character, { message, sfx });
   }
 
@@ -93,6 +115,21 @@ export class MessageHelper extends BaseService {
       message,
       from
     });
+  }
+
+  public formatMessage(target: ICharacter, message: string, formatArgs: any[]): string {
+    if (!formatArgs.length) return message;
+
+    return [...formatArgs].reduce((str, c: ICharacter, idx) => {
+      if (!c) return str;
+
+      let name = c.name;
+      // TODO: stealth
+      // if(!CharacterHelper.isAbleToSee(char) || !char.canSeeThroughStealthOf(c)) name = 'somebody';
+      if (target === c) name = 'yourself';
+      return str.replace(new RegExp(`%${idx}`), name);
+
+    }, message);
   }
 
 }

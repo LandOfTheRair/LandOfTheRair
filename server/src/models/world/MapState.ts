@@ -77,6 +77,8 @@ export class MapState {
       npcDef.alignment = npcDef.alignment || Alignment.Neutral;
       npcDef.hostility = npcDef.hostility || Hostility.Never;
 
+      npcDef.extraProps = npc.properties || {};
+
       return npcDef;
     }).filter(Boolean);
 
@@ -184,7 +186,7 @@ export class MapState {
 
   // get any players that care about x,y
   public getPlayerObjectsWithKnowledgeForXY(x: number, y: number): IPlayer[] {
-    const uuids = Object.keys(get(this.playerKnowledgePositions, [x, y]));
+    const uuids = Object.keys(get(this.playerKnowledgePositions, [x, y], {}));
     return uuids.map(uuid => this.playersByUUID[uuid]);
   }
 
@@ -312,7 +314,7 @@ export class MapState {
 
   // move an NPC or a player without the caller having to figure out which func to call
   public moveNPCOrPlayer(character: ICharacter, { oldX, oldY }): void {
-    if ((character as IPlayer).username) {
+    if (this.game.characterHelper.isPlayer(character)) {
       this.movePlayer(character as Player, { oldX, oldY });
     } else {
       this.moveNPC(character as INPC, { oldX, oldY });
@@ -434,13 +436,7 @@ export class MapState {
     this.triggerFullUpdateForPlayer(player);
   }
 
-  // generate a radius that will notify a player in the following circumstances:
-  // - TODO: a character moves in or out
-  // - TODO: a character changes visibility to the player
-  // - TODO: a character changes their hand items or visible armor item
-  // - TODO: a character health value changes
-  // - TODO: a character hostility value changes
-  // - TODO: an item drops or is removed
+  // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
     for (let x = player.x - 3; x < player.x + 3; x++) {
       for (let y = player.y - 3; y < player.y + 3; y++) {
@@ -504,14 +500,25 @@ export class MapState {
     return ground;
   }
 
+  public addItemsToGround(x: number, y: number, items: ISimpleItem[]): void {
+    items.forEach(item => this.game.groundManager.addItemToGround(this.map.name, x, y, item));
+
+    // if player knowledge x/y, update ground
+    this.triggerGroundUpdateInRadius(x, y);
+  }
+
   public addItemToGround(x: number, y: number, item: ISimpleItem): void {
     this.game.groundManager.addItemToGround(this.map.name, x, y, item);
 
     // if player knowledge x/y, update ground
-    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
+    this.triggerGroundUpdateInRadius(x, y);
   }
 
-  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): IGroundItem[] {
+  public getEntireGround(x: number, y: number): Record<ItemClass, IGroundItem[]> {
+    return this.game.groundManager.getEntireGround(this.map.name, x, y);
+  }
+
+  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid?: string, count = 1): IGroundItem[] {
     return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
   }
 
@@ -519,6 +526,21 @@ export class MapState {
     this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, uuid, count);
 
     // if player knowledge x/y, update ground
+    this.triggerGroundUpdateInRadius(x, y);
+  }
+
+  // update all npcs for players in radius
+  public triggerNPCUpdateInRadius(x: number, y: number) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerNPCUpdateForPlayer(player));
+  }
+
+  // update all players for players in radius
+  public triggerPlayerUpdateInRadius(x: number, y: number) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerPlayerUpdateForPlayer(player));
+  }
+
+  // update all players for players in radius
+  public triggerGroundUpdateInRadius(x: number, y: number) {
     this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
   }
 

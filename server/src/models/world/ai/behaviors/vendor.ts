@@ -1,10 +1,10 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { IAIBehavior, IVendorBehavior } from '../../../../interfaces';
+import { IAIBehavior, INPC, IVendorBehavior } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
 
-  init(game: Game, parser: Parser, behavior: IVendorBehavior) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: IVendorBehavior) {
     parser.addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {

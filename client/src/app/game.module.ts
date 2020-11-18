@@ -31,6 +31,7 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
+import { SkillIconComponent } from './_shared/components/skill-icon';
 import { AccountComponent } from './_shared/modals/account/account.component';
 import { AmountModalComponent } from './_shared/modals/amount/amount.component';
 import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
@@ -49,6 +50,8 @@ import { InventorySackComponent } from './containers/game-container/inventory-sa
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 import { MapComponent } from './containers/game-container/map/map.component';
 import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
+import { TrainerComponent } from './containers/game-container/trainer/trainer.component';
+import { VendorComponent } from './containers/game-container/vendor/vendor.component';
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
@@ -80,6 +83,7 @@ const gameComponents = [
   ItemComponent,
   CharacterCardComponent,
   LifeHeartComponent,
+  SkillIconComponent,
   MacroComponent,
 
   InventoryBeltComponent,
@@ -90,6 +94,8 @@ const gameComponents = [
   PlayerStatusComponent,
   CharacterListComponent,
   GroundComponent,
+  TrainerComponent,
+  VendorComponent,
 
   JournalComponent
 ];

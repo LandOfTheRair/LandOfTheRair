@@ -70,6 +70,7 @@ export enum MiscClass {
   Flower = 'Flower',
   Food = 'Food',
   Gem = 'Gem',
+  Hands = 'Hands',      // this is unique, because it's literally only created for combat
   Key = 'Key',
   Rock = 'Rock',
   Scroll = 'Scroll',
@@ -106,7 +107,7 @@ export const RingClasses = [ItemClass.Ring];
 
 export const FeetClasses = [ItemClass.Boots];
 
-export const HandsClasses = [ItemClass.Gloves, ItemClass.Claws];
+export const HandsClasses = [ItemClass.Gloves, ItemClass.Claws, ItemClass.Hands];
 
 export const EarClasses = [ItemClass.Earring];
 
@@ -128,15 +129,7 @@ AmmoClasses.forEach(t => EquipHash[t] = ItemSlot.Ammo);
 
 export const GivesBonusInHandItemClasses = [
   ...Object.keys(WeaponClass),
-  ...NeckClasses,
-  ...AmmoClasses
-];
-
-export const CanUseEffectItemClasses = [
-  ...Object.keys(WeaponClass),
-  ...HandsClasses,
-  ...AmmoClasses,
-  ...FeetClasses
+  ...NeckClasses
 ];
 
 export const EquippableItemClasses = [

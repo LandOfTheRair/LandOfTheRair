@@ -46,7 +46,7 @@ export class Spawner {
   private shouldEatTier = 0;                        // if the creature eats, and if so, how badly it does
 
   private eliteTickCap = 50;                        // the number of creatures required to spawn an elite (-1 = no elites)
-  private removeDeadNPCs = false;                   // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
+  private removeDeadNPCs = true;                    // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
   private removeWhenNoNPCs = false;                 // remove this spawner when no npcs? generally used for on-the-fly spawners
   private npcCreateCallback: (npc: INPC) => void;   // the callback for creating an npc - used for summons, generally
   private doInitialSpawnImmediately: boolean;       // whether or not the spawner should spawn creatures immediately or wait

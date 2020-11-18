@@ -17,8 +17,8 @@ export class DialogActionHelper extends BaseService {
 
   public init() {}
 
-  public async handleDialog(player: IPlayer, npc: INPC, command: string): Promise<void> {
-    const messages = await (npc as any).dialogParser.parse(command, { player });
+  public async handleDialog(player: IPlayer, npc: INPC, command: string, callbacks): Promise<void> {
+    const messages = await (npc as any).dialogParser.parse(command, { player, callbacks });
     (messages || []).forEach(message => {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message, from: npc.name }, [MessageType.NPCChatter]);
     });

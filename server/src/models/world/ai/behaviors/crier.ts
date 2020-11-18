@@ -10,7 +10,7 @@ export class CrierBehavior implements IAIBehavior {
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
 
-  init(game: Game, parser: Parser, behavior: ICrierBehavior) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ICrierBehavior) {
     this.messages = behavior.messages;
 
     parser.addCommand('hello')

@@ -4,8 +4,9 @@ import { IGame } from '../interfaces';
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
-import { PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
-  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer } from './actions';
+import { Subject } from 'rxjs';
+import { OpenTrainerWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
   return {
@@ -14,6 +15,13 @@ const defaultGame: () => IGame = () => {
     itemTooltip: '',
     player: null,
     map: null,
+    trainerInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
+      npcMaxSkill: 0,
+      npcMaxLevel: 0
+    },
     mapInfo: {
       players: {},
       npcs: {},
@@ -29,6 +37,8 @@ const defaultGame: () => IGame = () => {
 })
 @Injectable()
 export class GameState {
+
+  static box = new Subject<{ side: 'left'|'right', color: string, text: string }>();
 
   @Selector()
   static player(state: IGame) {
@@ -93,6 +103,11 @@ export class GameState {
     return state.mapInfo.ground;
   }
 
+  @Selector()
+  static currentTrainerWindow(state: IGame) {
+    return state.trainerInfo;
+  }
+
   constructor(private store: Store) {}
 
   @Action(PlayGame)
@@ -148,6 +163,31 @@ export class GameState {
     }
 
     if (patches) {
+      patches.forEach(patch => {
+        if (patch.path === '/hp/current') {
+          const hpDiff = patch.value - copyState.player.hp.current;
+          if (hpDiff === 0) return;
+          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff}` });
+        }
+
+        if (patch.path === '/exp') {
+          const xpDiff = patch.value - copyState.player.exp;
+          if (xpDiff === 0) return;
+          GameState.box.next({ side: 'right', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+        }
+
+        if (patch.path === '/axp') {
+          const xpDiff = patch.value - copyState.player.axp;
+          if (xpDiff === 0) return;
+          GameState.box.next({ side: 'right', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+        }
+
+
+        if (patch.op === 'add' && patch.path.includes('/effect')) {
+          GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
+        }
+      });
+
       copyState.player = applyPatch(cloneDeep(copyState.player), patches).newDocument;
     }
 
@@ -163,5 +203,20 @@ export class GameState {
     if (!copyState.player || !statePatches) return;
 
     ctx.patchState({ mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches).newDocument });
+  }
+
+  @Action(OpenTrainerWindow)
+  openTrainerWindow(ctx: StateContext<IGame>, { npcUUID, npcName, npcSprite, npcMaxLevel, npcMaxSkill }: OpenTrainerWindow) {
+    ctx.patchState({
+      trainerInfo: {
+        npcName,
+        npcUUID,
+        npcSprite,
+        npcMaxLevel,
+        npcMaxSkill
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('trainer'));
   }
 }

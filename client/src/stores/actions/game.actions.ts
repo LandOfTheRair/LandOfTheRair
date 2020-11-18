@@ -54,3 +54,15 @@ export class SetCurrentItemTooltip {
   filterOutFromLogs = true;
   constructor(public tooltip: string) {}
 }
+
+// dispatched when greeting a trainer
+export class OpenTrainerWindow {
+  static type = GameAction.NPCActionShowTrainer;
+  constructor(
+    public npcUUID: string,
+    public npcName: string,
+    public npcSprite: number,
+    public npcMaxLevel: number,
+    public npcMaxSkill: number
+  ) {}
+}

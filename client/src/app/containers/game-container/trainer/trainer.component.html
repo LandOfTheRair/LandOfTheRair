@@ -1,0 +1,38 @@
+<app-window windowName="trainer"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="670"
+            defaultY="120"
+            defaultWidth="600"
+            defaultHeight="384"
+></app-window>
+
+<ng-template #headTemplate>
+  {{ trainerInfo.npcName || 'Unknown' }} (Trainer)
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="trainer-container">
+    <div class="trainer-intro">
+      <app-npc [sprite]="trainerInfo.npcSprite"></app-npc>
+
+      Hello, adventurer! I can train you to a maximum of level {{ trainerInfo.npcMaxLevel }}/{{ trainerInfo.npcMaxSkill }}. I can also assess your skills if you so desire!
+    </div>
+
+    <div class="buttons">
+      <button mat-raised-button color="primary">Level Up</button>
+      <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="assess()">Assess Skill</button>
+      <button mat-raised-button color="secondary" disabled>Train Skill</button>
+    </div>
+
+    <div class="skills">
+      <div class="skill" *ngFor="let skill of skills" (click)="activeSkill = skill" [class.active]="activeSkill === skill">
+        <app-skill-icon [skill]="skill" size="large" round="true"></app-skill-icon>
+      </div>
+    </div>
+  </div>
+</ng-template>

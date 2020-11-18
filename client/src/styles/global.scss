@@ -37,7 +37,8 @@ img,
 mat-chip,
 mat-icon,
 .loader,
-.mat-form-field-label {
+.mat-form-field-label,
+input::placeholder {
   user-select: none;
 }
 

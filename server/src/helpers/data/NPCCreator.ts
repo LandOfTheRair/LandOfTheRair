@@ -59,6 +59,11 @@ export class NPCCreator extends BaseService {
     baseChar.allegiance = npcDef.allegiance ?? Allegiance.Enemy;
     baseChar.alignment = npcDef.alignment ?? Alignment.Evil;
     baseChar.hostility = npcDef.hostility ?? Hostility.OnHit;
+    baseChar.noCorpseDrop = npcDef.noCorpseDrop ?? false;
+    baseChar.noItemDrop = npcDef.noItemDrop ?? false;
+    baseChar.drops = npcDef.drops ?? [];
+    baseChar.copyDrops = npcDef.copyDrops ?? [];
+    baseChar.dropPool = npcDef.dropPool ?? null;
 
     const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
 
@@ -137,7 +142,7 @@ export class NPCCreator extends BaseService {
     });
 
     (npcDef.baseEffects || []).forEach(effect => {
-      this.game.effectHelper.addEffect(baseChar, 'Self', effect.name, effect.extra, effect.endsAt);
+      this.game.effectHelper.addEffect(baseChar, '', effect.name, effect.extra, effect.endsAt);
     });
 
     this.characterHelper.calculateStatTotals(baseChar);
@@ -267,7 +272,7 @@ export class NPCCreator extends BaseService {
     npcDef.behaviors.forEach(behavior => {
       const initBehavior = behaviorTypes[behavior.type];
       const behaviorInst = new initBehavior();
-      behaviorInst.init(this.game, (npc as any).dialogParser, behavior);
+      behaviorInst.init(this.game, npc, (npc as any).dialogParser, behavior, npcDef.extraProps);
 
       behaviors.push(behaviorInst);
     });
