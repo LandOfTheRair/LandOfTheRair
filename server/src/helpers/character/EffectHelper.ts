@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseService, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
+import { BaseService, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
 
 @Injectable()
 export class EffectHelper extends BaseService {
@@ -134,6 +134,26 @@ export class EffectHelper extends BaseService {
         this.removeEffect(character, effect);
       });
     });
+  }
+
+  // get total effect stat bonuses
+  public effectStatBonuses(character: ICharacter): Partial<Record<Stat, number>> {
+
+    const stats: Partial<Record<Stat, number>> = {};
+
+    Object.values(character.effects).forEach(effectContainer => {
+      if (!isArray(effectContainer)) return;
+
+      effectContainer.forEach((checkEffect: IStatusEffect) => {
+        const statBoosts = checkEffect.effectInfo.statChanges;
+        Object.keys(statBoosts || {}).forEach(stat => {
+          stats[stat] = stats[stat] || 0;
+          stats[stat] += statBoosts?.[stat] ?? 0;
+        });
+      });
+    });
+
+    return stats;
   }
 
   // check if someone has an effect

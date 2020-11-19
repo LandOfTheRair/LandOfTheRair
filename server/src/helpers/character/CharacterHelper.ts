@@ -177,7 +177,12 @@ export class CharacterHelper extends BaseService {
     // can't move more than one screen at a time
     character.totalStats[Stat.Move] = clamp(0, 4, character.stats[Stat.Move] || 3);
 
-    // TODO: stats from effects
+    const statBoosts = this.game.effectHelper.effectStatBonuses(character);
+    Object.keys(statBoosts).forEach(stat => {
+      character.totalStats[stat] = character.totalStats[stat] || 0;
+      character.totalStats[stat] += statBoosts[stat];
+    });
+
     // TODO: adjust stealth / perception
     // TODO: trait bonuses
     // TODO: adjust pet stats

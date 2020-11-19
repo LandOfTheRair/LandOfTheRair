@@ -17,6 +17,7 @@ export class EffectManager extends BaseService {
     });
   }
 
+  // get the metadata for an effect
   public getEffectData(effectName: string): IStatusEffectData {
     const effectData = allEffects[effectName];
     if (!effectData) throw new Error(`No effect ${effectName} exists.`);
@@ -24,10 +25,12 @@ export class EffectManager extends BaseService {
     return effectData;
   }
 
+  // get a ref to an effect
   public getEffectRef(effectName: string): Effect {
     return this.effects[effectName];
   }
 
+  // called when an effect is created
   public effectCreate(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
     if (effectRef) {
@@ -43,6 +46,7 @@ export class EffectManager extends BaseService {
     }
   }
 
+  // called when an effect is applied
   public effectApply(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
     if (effectRef) {
@@ -58,6 +62,7 @@ export class EffectManager extends BaseService {
     }
   }
 
+  // called when an effect is ticked
   public effectTick(effectName: string, character: ICharacter, effect: IStatusEffect) {
 
     const effectRef = this.getEffectRef(effectName);
@@ -66,6 +71,7 @@ export class EffectManager extends BaseService {
     }
   }
 
+  // called when an effect is unapply
   public effectUnapply(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
     if (effectRef) {
@@ -81,6 +87,7 @@ export class EffectManager extends BaseService {
     }
   }
 
+  // called when an effect is destroy
   public effectDestroy(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
     if (effectRef) {
