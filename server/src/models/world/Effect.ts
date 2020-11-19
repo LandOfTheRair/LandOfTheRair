@@ -13,18 +13,14 @@ export class Effect implements BaseEffect {
 
   public create(char: ICharacter, effect: IStatusEffect) {}
 
-  public apply(char: ICharacter, effect: IStatusEffect) {
-    this.game.characterHelper.calculateStatTotals(char);
-  }
+  public apply(char: ICharacter, effect: IStatusEffect) {}
 
   public tick(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.currentTick = effect.effectInfo.currentTick || 0;
     effect.effectInfo.currentTick++;
   }
 
-  public unapply(char: ICharacter, effect: IStatusEffect) {
-    this.game.characterHelper.calculateStatTotals(char);
-  }
+  public unapply(char: ICharacter, effect: IStatusEffect) {}
 
   public destroy(char: ICharacter, effect: IStatusEffect) {}
 
