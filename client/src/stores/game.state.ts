@@ -183,7 +183,7 @@ export class GameState {
         }
 
 
-        if (patch.op === 'add' && patch.path.includes('/effect')) {
+        if (patch.op === 'add' && patch.path.includes('/effect') && patch.value.effectName) {
           GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
         }
       });
