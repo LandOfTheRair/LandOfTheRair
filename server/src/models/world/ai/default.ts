@@ -43,7 +43,6 @@ export class DefaultAIBehavior implements IAI {
     this.game.npcHelper.tick(npc);
 
     if (npc.hostility === Hostility.Never) return;
-    console.log(npc.name, 'tick');
 
     this.adjustTargetting();
     this.attemptMove();

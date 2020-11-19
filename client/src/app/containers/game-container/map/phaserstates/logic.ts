@@ -109,6 +109,11 @@ export class MapScene extends Phaser.Scene {
       return;
     }
 
+    const directionOffset = spriteOffsetForDirection(npc.dir);
+    const newFrame = npc.sprite + directionOffset;
+
+    sprite.setFrame(newFrame);
+
     this.updateSpritePositionalData(sprite, npc);
   }
 
@@ -126,6 +131,11 @@ export class MapScene extends Phaser.Scene {
       this.convertPosition(npc.x), this.convertPosition(npc.y),
       'Creatures', npc.sprite
     );
+
+    const directionOffset = spriteOffsetForDirection(npc.dir);
+    const newFrame = npc.sprite + directionOffset;
+
+    sprite.setFrame(newFrame);
 
     this.layers.npcSprites.add(sprite);
 
