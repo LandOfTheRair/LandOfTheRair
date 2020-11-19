@@ -449,6 +449,7 @@ export class MapState {
   // npc functions
   public addNPC(npc: INPC) {
     this.npcsByUUID[npc.uuid] = npc;
+    this.game.worldManager.addCharacter(npc);
 
     const rbushNPC = this.toRBushFormat(npc);
     this.bushStorage[npc.uuid] = rbushNPC;
@@ -459,8 +460,8 @@ export class MapState {
   }
 
   public removeNPC(npc: INPC) {
-
     delete this.npcsByUUID[npc.uuid];
+    this.game.worldManager.removeCharacter(npc);
 
     const rbushNPC = this.bushStorage[npc.uuid];
     delete this.bushStorage[npc.uuid];

@@ -1,17 +1,7 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter, MessageType, SoundEffect } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
-
-interface MessageInfo {
-  message: string;
-  sfx?: SoundEffect;
-  from?: string;
-  setTarget?: string|null;
-  logInfo?: any;
-  useSight?: boolean;
-  except?: string[];
-}
 
 @Injectable()
 export class MessageHelper extends BaseService {
@@ -19,21 +9,27 @@ export class MessageHelper extends BaseService {
   public init() {}
 
   public sendLogMessageToPlayer(
-    player: ICharacter,
+    charOrUUID: ICharacter | string,
     { message, sfx, from, setTarget, logInfo }: MessageInfo,
     messageTypes: MessageType[] = [MessageType.Miscellaneous],
     formatArgs: ICharacter[] = []
   ): void {
 
-    const account = this.game.lobbyManager.getAccount((player as Player).username);
+    let uuid = (charOrUUID as ICharacter).uuid;
+    if (!uuid) uuid = charOrUUID as string;
+
+    const ref: ICharacter = this.game.worldManager.getCharacter(uuid);
+    if (!ref) return;
+
+    const account = this.game.lobbyManager.getAccount((ref as Player).username);
     if (!account) return;
 
     if (from) message = `**${from}**: ${message}`;
 
     let sendMessage = message;
-    if (formatArgs.length > 0) sendMessage = this.formatMessage(player, sendMessage, formatArgs);
+    if (formatArgs.length > 0) sendMessage = this.formatMessage(ref, sendMessage, formatArgs);
 
-    this.game.transmissionHelper.sendResponseToAccount((player as Player).username, GameServerResponse.GameLog, {
+    this.game.transmissionHelper.sendResponseToAccount((ref as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
       messageTypes,
       message: sendMessage,

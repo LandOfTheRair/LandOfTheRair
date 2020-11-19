@@ -167,6 +167,8 @@ export enum Stat {
   Move = 'move',
   ActionSpeed = 'actionSpeed',
   DamageFactor = 'damageFactor',
+  XPBonusPercent = 'xpBonusPercent',
+  SkillBonusPercet = 'skillBonusPercent',
 
   // skill bonuses
   MaceBonus = 'maceBonus',

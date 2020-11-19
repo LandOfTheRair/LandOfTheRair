@@ -37,6 +37,9 @@ export class WorldManager extends BaseService {
   // the list of active maps to run ticks on
   private activeMaps: Set<string> = new Set<string>();
 
+  // the mapping of every npc/player by their uuid for lookup
+  private characterUUIDHash: Record<string, ICharacter> = {};
+
   public get currentlyActiveMaps(): string[] {
     return [...this.activeMaps];
   }
@@ -106,6 +109,7 @@ export class WorldManager extends BaseService {
 
     this.activeMaps.add(mapName);
 
+    this.addCharacter(player);
     this.mapStates[mapName].addPlayer(player);
 
     this.game.logger.log(`Map:Join`, `${player.name} joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`);
@@ -125,6 +129,7 @@ export class WorldManager extends BaseService {
       this.activeMaps.delete(oldMap);
     }
 
+    this.removeCharacter(player);
     this.mapStates[oldMap].removePlayer(player);
 
     if (this.mapPlayerCounts[oldMap] === 0) {
@@ -160,6 +165,18 @@ export class WorldManager extends BaseService {
       state.npcTick();
       timer.stopTimer(`npc-${activeMap}`);
     });
+  }
+
+  public addCharacter(char: ICharacter): void {
+    this.characterUUIDHash[char.uuid] = char;
+  }
+
+  public removeCharacter(char: ICharacter): void {
+    delete this.characterUUIDHash[char.uuid];
+  }
+
+  public getCharacter(uuid: string): ICharacter {
+    return this.characterUUIDHash[uuid];
   }
 
 }

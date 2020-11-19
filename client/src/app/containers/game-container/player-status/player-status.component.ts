@@ -53,7 +53,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
       ...player.effects.debuff,
       ...player.effects.incoming,
       ...player.effects.outgoing
-    ];
+    ].filter(x => !x.effectInfo.hidden);
   }
 
   xpPercent(player: IPlayer) {

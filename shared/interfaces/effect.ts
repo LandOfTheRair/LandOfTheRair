@@ -13,6 +13,9 @@ export interface IEffectContainer {
   [BuffType.Debuff]: IStatusEffect[];
   [BuffType.OutgoingModifier]: IStatusEffect[];
   [BuffType.IncomingModifier]: IStatusEffect[];
+
+  // used to check if a character has an effect associated with them
+  _hash: Record<string, true>;
 }
 
 export interface IItemEffectExtra {

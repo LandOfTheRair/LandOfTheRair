@@ -21,7 +21,7 @@ export class DeathHelper extends BaseService {
 
     dead.hp.current = -1;
 
-    this.game.effectHelper.resetEffects(dead);
+    this.game.effectHelper.clearEffectsForDeath(dead);
     dead.dir = Direction.Corpse;
 
     const corpse = this.createCorpse(dead);

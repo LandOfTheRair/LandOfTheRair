@@ -145,7 +145,7 @@ export class DialogActionHelper extends BaseService {
 
     const { effect, duration } = action;
 
-    this.game.effectHelper.addEffect(player, npc, effect, {}, duration);
+    this.game.effectHelper.addEffect(player, npc, effect, { effect: { duration } });
 
     return { messages: [], shouldContinue: true };
   }

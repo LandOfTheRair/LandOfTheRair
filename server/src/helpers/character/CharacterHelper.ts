@@ -177,7 +177,12 @@ export class CharacterHelper extends BaseService {
     // can't move more than one screen at a time
     character.totalStats[Stat.Move] = clamp(0, 4, character.stats[Stat.Move] || 3);
 
-    // TODO: stats from effects
+    const statBoosts = this.game.effectHelper.effectStatBonuses(character);
+    Object.keys(statBoosts).forEach(stat => {
+      character.totalStats[stat] = character.totalStats[stat] || 0;
+      character.totalStats[stat] += statBoosts[stat];
+    });
+
     // TODO: adjust stealth / perception
     // TODO: trait bonuses
     // TODO: adjust pet stats
@@ -192,7 +197,7 @@ export class CharacterHelper extends BaseService {
   public tick(character: ICharacter): void {
     if (this.isDead(character)) return;
 
-    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 15));
+    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
     if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);

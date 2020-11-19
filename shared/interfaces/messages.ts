@@ -1,3 +1,4 @@
+import { SoundEffect } from './sfx';
 
 export enum MessageType {
   Environment = 'environment',
@@ -30,4 +31,14 @@ export enum MessageType {
   InOvertime = 'in-overtime',
   Melee = 'melee',
   Magic = 'magic'
+}
+
+export interface MessageInfo {
+  message: string;
+  sfx?: SoundEffect;
+  from?: string;
+  setTarget?: string|null;
+  logInfo?: any;
+  useSight?: boolean;
+  except?: string[];
 }

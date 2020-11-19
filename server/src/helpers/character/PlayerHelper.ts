@@ -1,4 +1,5 @@
 import { Injectable } from 'injection-js';
+import { isArray } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
@@ -82,6 +83,8 @@ export class PlayerHelper extends BaseService {
 
     // persist remaining ticks so on load we don't lose effect times
     Object.values(player.effects || {}).forEach(arr => {
+      if (!isArray(arr)) return;
+
       arr.forEach(eff => {
         if (eff.endsAt === -1) return;
         eff._ticksLeft = Math.floor((eff.endsAt - Date.now()) / 1000);
@@ -93,6 +96,8 @@ export class PlayerHelper extends BaseService {
 
     // re-hydrate effect timers
     Object.values(player.effects || {}).forEach(arr => {
+      if (!isArray(arr)) return;
+
       arr.forEach(eff => {
         if (!eff._ticksLeft) return;
         eff.endsAt = Date.now() + (eff._ticksLeft * 1000);
@@ -143,15 +148,23 @@ export class PlayerHelper extends BaseService {
     const swimTile = map.getFluidAt(player.x, player.y);
     const swimInfo = GetSwimLevel(swimTile);
 
-    // TODO: swimming, drowning
     if (swimInfo) {
       const { element, swimLevel } = swimInfo;
       player.swimElement = element;
       player.swimLevel = swimLevel;
 
+      if (!this.game.effectHelper.hasEffect(player, 'Swimming')
+      && !this.game.effectHelper.hasEffect(player, 'Drowning')) {
+        const swimDuration = this.game.characterHelper.getStat(player, Stat.STR);
+        this.game.effectHelper.addEffect(player, '', 'Swimming', { effect: { duration: swimDuration } });
+      }
+
     } else {
       player.swimElement = '';
       player.swimLevel = 0;
+
+      this.game.effectHelper.removeEffectByName(player, 'Swimming');
+      this.game.effectHelper.removeEffectByName(player, 'Drowning');
     }
 
     // update the players BGM
