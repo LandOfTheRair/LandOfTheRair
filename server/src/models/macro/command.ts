@@ -22,8 +22,8 @@ export abstract class MacroCommand implements IMacroCommand {
     this.sendMessage(character, 'You don\'t see that person.');
   }
 
-  execute(executor: IPlayer, args: IMacroCommandArgs): void {}    // always used only by people who can execute commands (players)
-  use(executor: ICharacter, target: ICharacter): void {}          // used by anyone who has access to the command (players, npcs)
+  execute(executor: IPlayer, args: IMacroCommandArgs): void {}        // always used only by people who can execute commands (players)
+  use(executor: ICharacter, target: ICharacter, opts: any): void {}   // used by anyone who has access to the command (players, npcs)
 }
 
 export abstract class Skill extends MacroCommand {

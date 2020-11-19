@@ -1,16 +1,9 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, MessageType, SoundEffect } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, MessageType, OnesidedDamageArgs, SoundEffect } from '../../interfaces';
 import { MessageHelper } from '../game';
 
-interface OnesidedDamageArgs {
-  damage: number;
-  damageClass: DamageClass;
-  damageMessage: string;
-  suppressIfNegative?: boolean;
-  overrideSfx?: SoundEffect;
-}
 
 @Injectable()
 export class DamageHelperOnesided extends BaseService {

@@ -172,7 +172,7 @@ export class MapState {
 
   // tick spawner npcs
   public npcTick() {
-  this.spawners.forEach(s => s.npcTick());
+    this.spawners.forEach(s => s.npcTick());
   }
 
   public isAnyNPCWithId(npcId: string) {
@@ -438,8 +438,8 @@ export class MapState {
 
   // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
-    for (let x = player.x - 3; x < player.x + 3; x++) {
-      for (let y = player.y - 3; y < player.y + 3; y++) {
+    for (let x = player.x - 4; x <= player.x + 4; x++) {
+      for (let y = player.y - 4; y <= player.y + 4; y++) {
         if (doesKnow) setWith(this.playerKnowledgePositions, [x, y, player.uuid], true, Object);
         else          unset(this.playerKnowledgePositions, [x, y, player.uuid]);
       }

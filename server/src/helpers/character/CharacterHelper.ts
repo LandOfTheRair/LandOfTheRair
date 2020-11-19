@@ -175,7 +175,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // can't move more than one screen at a time
-    character.totalStats[Stat.Move] = clamp(0, 4, character.stats[Stat.Move] || 3);
+    character.totalStats[Stat.Move] = clamp(character.stats[Stat.Move] || 3, 0, 4);
 
     const statBoosts = this.game.effectHelper.effectStatBonuses(character);
     Object.keys(statBoosts).forEach(stat => {

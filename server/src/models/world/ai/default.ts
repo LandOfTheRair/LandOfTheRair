@@ -2,7 +2,8 @@
 import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
-import { Direction, Hostility, IAI, ICharacter, IMacroSkill, INPC, ItemSlot, Stat } from '../../../interfaces';
+import { Direction, Hostility, IAI, ICharacter, INPC, ItemSlot, PhysicalAttackArgs, Stat } from '../../../interfaces';
+import { Skill } from '../../macro';
 import { WorldMap } from '../Map';
 import { MapState } from '../MapState';
 import { Spawner } from '../Spawner';
@@ -42,6 +43,7 @@ export class DefaultAIBehavior implements IAI {
     this.game.npcHelper.tick(npc);
 
     if (npc.hostility === Hostility.Never) return;
+    console.log(npc.name, 'tick');
 
     this.adjustTargetting();
     this.attemptMove();
@@ -105,7 +107,7 @@ export class DefaultAIBehavior implements IAI {
       this.checkGroundForItems();
     }
 
-    let chosenSkill: IMacroSkill | null = null;
+    let chosenSkill: Skill | null = null;
 
     let isThrowing = false;
 
@@ -147,20 +149,20 @@ export class DefaultAIBehavior implements IAI {
       */
 
       if (!this.currentTarget) return;
-      chosenSkill = this.checkIfCanUseSkill(skill, this.currentTarget);
+      chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
     });
 
     // move towards target w/ highest agro, or throw at them, or whatever
     if (this.highestAgro) {
-
       if (this.path && !this.pathDisrupted) this.pathDisrupted = { x: npc.x, y: npc.y };
 
       // use a skill that can hit the target
       if (chosenSkill) {
-        // let opts = {};
-        // if(isThrowing) opts = { throwHand: 'right' };
-        // chosenSkill.use(npc, currentTarget, opts);
-        // npc.mp.sub(chosenSkill.mpCost(npc));
+        const skill: Skill = chosenSkill;
+        const opts: PhysicalAttackArgs = {};
+        if (isThrowing) opts.throwHand = ItemSlot.RightHand;
+        skill.use(npc, this.highestAgro, opts);
+        this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
 
         // either move towards target
       } else {
@@ -323,8 +325,12 @@ export class DefaultAIBehavior implements IAI {
     return { xChange: diffX, yChange: diffY };
   }
 
-  private checkIfCanUseSkill(skillName: string, target: ICharacter) {
-    return null;
+  private checkIfCanUseSkillAndUseIt(npc: INPC, skillName: string, target: ICharacter) {
+    const skillRef = this.game.commandHandler.getSkillRef(skillName);
+    if (!skillRef) return null;
+    if (!skillRef.canUse(npc, target)) return null;
+
+    return skillRef;
   }
 
   private pickNewPath() {

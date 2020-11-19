@@ -3,11 +3,11 @@ import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
-import { isNumber, isString, random, sample } from 'lodash';
+import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BaseService, BehaviorType, CoreStat, Currency, Hostility,
-  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable } from '../../interfaces';
+  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper, ItemHelper } from '../character';
 import { DialogActionHelper } from '../character/DialogActionHelper';
@@ -49,6 +49,8 @@ export class NPCCreator extends BaseService {
 
   // create character from npc def - also useful for greens
   public createCharacterFromNPCDefinition(npcDef: INPCDefinition): INPC & { dialogParser?: Parser } {
+    npcDef = cloneDeep(npcDef);
+
     const baseChar: INPC & { dialogParser?: Parser } = initializeNPC({});
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
@@ -118,16 +120,23 @@ export class NPCCreator extends BaseService {
         .filter(Boolean);
     }
 
+    baseChar.allegianceReputation = npcDef.allegianceReputation as Record<Allegiance, number>;
+    baseChar.stats = npcDef.stats || {};
+    baseChar.skills = npcDef.skills || {};
+    baseChar.allegianceMods = npcDef.repMod || [];
+
     if (npcDef.gold) {
       baseChar.currency[Currency.Gold] = random(npcDef.gold.min, npcDef.gold.max);
     }
 
     if (npcDef.hp) {
       baseChar.hp.maximum = random(npcDef.hp.min, npcDef.hp.max);
+      baseChar.stats[Stat.HP] = baseChar.hp.maximum;
     }
 
     if (npcDef.mp) {
       baseChar.mp.maximum = random(npcDef.mp.min, npcDef.mp.max);
+      baseChar.stats[Stat.MP] = baseChar.mp.maximum;
     }
 
     baseChar.usableSkills = npcDef.usableSkills || [];

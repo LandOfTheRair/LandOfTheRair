@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass, MessageType, SoundEffect, Stat } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass, MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
 
@@ -35,12 +35,12 @@ export class CombatHelper extends BaseService {
   public init() {}
 
   // damage from the world, traps, etc
-  public dealOnesidedDamage(defender: ICharacter, args): void {
+  public dealOnesidedDamage(defender: ICharacter, args: OnesidedDamageArgs): void {
     this.onesided.dealOnesidedDamage(defender, args);
   }
 
   // do damage from one person to another, physically
-  public physicalAttack(attacker: ICharacter, defender: ICharacter, args = {}): void {
+  public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): void {
     this.physical.physicalAttack(attacker, defender, args);
   }
 

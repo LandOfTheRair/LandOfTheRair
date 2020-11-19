@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
+import { ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
 import { Skill } from '../../../../../models/macro';
 
 export class AttackCommand extends Skill {
@@ -25,8 +25,8 @@ export class AttackCommand extends Skill {
     this.use(player, target);
   }
 
-  use(user: ICharacter, target: ICharacter): void {
-    this.game.combatHelper.physicalAttack(user, target, );
+  use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
+    this.game.combatHelper.physicalAttack(user, target, opts);
   }
 
 }

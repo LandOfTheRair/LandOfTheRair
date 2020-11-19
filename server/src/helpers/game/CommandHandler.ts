@@ -4,7 +4,7 @@ import { isObject, isString } from 'lodash';
 
 import { BaseService, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
-import { MacroCommand } from '../../models/macro';
+import { MacroCommand, Skill } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
 
@@ -26,6 +26,7 @@ export class CommandHandler extends BaseService {
     return (args || '').split(' ');
   }
 
+  // load all skills
   public init() {
     Object.values(Commands).map(x => new x(this.game)).forEach(command => {
       command.aliases.forEach(alias => this.commands[alias.toLowerCase()] = command);
@@ -34,6 +35,12 @@ export class CommandHandler extends BaseService {
     this.commandStrings = Object.keys(this.commands);
   }
 
+  // get a ref to a skill
+  public getSkillRef(name: string): Skill {
+    return this.commands[name.toLowerCase()] as Skill;
+  }
+
+  // do the command for the player
   public doCommand(player: Player, data, callbacks) {
 
     let command: string = data.command;

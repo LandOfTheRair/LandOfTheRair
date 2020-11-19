@@ -1,4 +1,4 @@
-import { LearnedSpell, Skill } from './building-blocks';
+import { DamageClass, LearnedSpell, Skill } from './building-blocks';
 import { ICharacter } from './character';
 import { ISimpleItem } from './item';
 
@@ -20,7 +20,7 @@ export interface IPlayer extends ICharacter {
   highestLevel: number;
 
   swimLevel: number;
-  swimElement: string;
+  swimElement: DamageClass | string;
 
   flaggedSkills: Skill[];
 

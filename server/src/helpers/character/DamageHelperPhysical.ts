@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
 import { ArmorClass, BaseClass, BaseService, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
-  ISimpleItem, ItemClass, ItemSlot, MessageType, ShieldClasses, Skill,
+  ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, ShieldClasses, Skill,
   SoundEffect, Stat, WeaponClass } from '../../interfaces';
 
 interface WeaponAttackStats {
@@ -12,25 +12,6 @@ interface WeaponAttackStats {
   max: number;
   weakChance: number;
   damageBonus: number;
-}
-
-interface PhysicalAttackArgs {
-  isPunch?: boolean;
-  isKick?: boolean;
-  isThrow?: boolean;
-  isOffhand?: boolean;
-  isMug?: boolean;
-  isBackstab?: boolean;
-  isCounterAttack?: boolean;
-  isAssassinate?: boolean;
-  throwHand?: ItemSlot;
-  attackRange?: number;
-  damageMult?: number;
-  accuracyLoss?: number;
-  offhandMultiplier?: number;
-  backstabIgnoreRange?: boolean;
-  attackerName?: string;
-  damageClass?: DamageClass;
 }
 
 interface AttackerScope {

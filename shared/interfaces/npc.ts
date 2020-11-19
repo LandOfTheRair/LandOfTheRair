@@ -1,5 +1,5 @@
 import { IAIBehavior, IBehavior } from './behaviors';
-import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
 import { IStatusEffectInfo } from './status-effect';
@@ -106,6 +106,9 @@ export interface INPCDefinition {
   // the skills this creature has
   skills: SkillBlock;
 
+  // the stats this creature has
+  stats: StatBlock;
+
   // the skill required to tan this creature
   tanSkillRequired?: number;
 
@@ -157,4 +160,6 @@ export interface INPC extends ICharacter {
   drops?: any[];
   copyDrops?: any[];
   dropPool?: any;
+
+  allegianceMods: Array<{ delta: number, allegiance: Allegiance }>;
 }
