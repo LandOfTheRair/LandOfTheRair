@@ -248,6 +248,8 @@ export class NPCCreator extends BaseService {
           if (!shouldContinue) return retMessages;
         }
 
+        this.game.directionHelper.setDirRelativeTo(npc, env.player);
+
         return retMessages;
       };
 
