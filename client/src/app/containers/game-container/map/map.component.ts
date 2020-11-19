@@ -23,6 +23,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   @Select(GameState.itemTooltip) public itemTooltip$: Observable<string>;
 
+  @Select(GameState.player) private player$: Observable<IPlayer>;
   @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
   @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
   @Select(GameState.openDoors) private openDoors$: Observable<Record<number, boolean>>;
@@ -37,6 +38,7 @@ export class MapComponent implements OnInit, OnDestroy {
   public ground = new BehaviorSubject<IGround>({ });
 
   // subs
+  meSub: Subscription;
   playerSub: Subscription;
   npcSub: Subscription;
   doorSub: Subscription;
@@ -53,6 +55,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private game: MapRenderGame;
 
+  private player: IPlayer;
+
+  public get canSeeLowHealthBorder(): boolean {
+    return this.player && this.player.hp.current <= this.player.hp.maximum * 0.25;
+  }
+
   constructor(
     private assetService: AssetService,
     private gameService: GameService,
@@ -67,6 +75,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.npcSub = this.allNPCs$.subscribe(pHash => this.allNPCs.next(pHash));
     this.doorSub = this.openDoors$.subscribe(dHash => this.openDoors.next(dHash));
     this.groundSub = this.ground$.subscribe(g => this.ground.next(g));
+    this.meSub = this.player$.subscribe(p => this.player = p);
 
     this.boxSub = GameState.box.subscribe(data => this.createBox(data));
 

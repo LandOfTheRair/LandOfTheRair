@@ -52,3 +52,20 @@
     pointer-events: all;
   }
 }
+
+.dying-border {
+  width: 100%;
+  height: calc(100% - 32px);
+  position: absolute;
+  pointer-events: none;
+  bottom: 0;
+  
+  box-shadow: 0px 0px 10px 1px #f00 inset;
+  animation: dying 500ms linear infinite alternate;
+
+  @keyframes dying {
+    to {
+      box-shadow: 0px 0px 20px 5px #f00 inset;
+    }
+  }
+}
