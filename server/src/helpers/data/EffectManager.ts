@@ -30,63 +30,62 @@ export class EffectManager extends BaseService {
 
   public effectCreate(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
-    if (!effectRef) return;
-
-    effectRef.create(character, effect);
+    if (effectRef) {
+      effectRef.create(character, effect);
+    }
 
     const effectData = this.getEffectData(effectName);
 
     // send the cast message to the caster
     const createMessage = this.formatMessage(effectData.meta.castMessage || '', { target: character.name });
     if (character.uuid !== effect.sourceUUID && effect.sourceUUID && createMessage) {
-      effectRef.sendMessage(effect.sourceUUID, { message: createMessage, sfx: effectData.meta.castSfx });
+      this.game.messageHelper.sendLogMessageToPlayer(effect.sourceUUID, { message: createMessage, sfx: effectData.meta.castSfx });
     }
   }
 
   public effectApply(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
-    if (!effectRef) return;
-
-    effectRef.apply(character, effect);
+    if (effectRef) {
+      effectRef.apply(character, effect);
+    }
 
     const effectData = this.getEffectData(effectName);
 
     // send the apply message to the target
     const applyMessage = this.formatMessage(effectData.meta.applyMessage || '', { target: character.name });
     if (applyMessage) {
-      effectRef.sendMessage(character, { message: applyMessage, sfx: effectData.meta.applySfx });
+      this.game.messageHelper.sendLogMessageToPlayer(character, { message: applyMessage, sfx: effectData.meta.applySfx });
     }
   }
 
   public effectTick(effectName: string, character: ICharacter, effect: IStatusEffect) {
 
     const effectRef = this.getEffectRef(effectName);
-    if (!effectRef) return;
-
-    effectRef.tick(character, effect);
+    if (effectRef) {
+      effectRef.tick(character, effect);
+    }
   }
 
   public effectUnapply(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effectName);
-    if (!effectRef) return;
-
-    effectRef.unapply(character, effect);
+    if (effectRef) {
+      effectRef.unapply(character, effect);
+    }
 
     const effectData = this.getEffectData(effectName);
 
     // send the unapply message to the target
     const unapplyMessage = this.formatMessage(effectData.meta.unapplyMessage || '', { target: character.name });
     if (unapplyMessage) {
-      effectRef.sendMessage(character, { message: unapplyMessage });
+      this.game.messageHelper.sendLogMessageToPlayer(character, { message: unapplyMessage });
     }
   }
 
   public effectDestroy(effectName: string, character: ICharacter, effect: IStatusEffect) {
-
     const effectRef = this.getEffectRef(effectName);
-    if (!effectRef) return;
-
-    effectRef.destroy(character, effect);
+    if (effectRef) {
+      effectRef.destroy(character, effect);
+    }
   }
 
   private formatMessage(message: string, refs: Record<string, string>): string {

@@ -96,6 +96,8 @@ export class PlayerHelper extends BaseService {
 
     // re-hydrate effect timers
     Object.values(player.effects || {}).forEach(arr => {
+      if (!isArray(arr)) return;
+
       arr.forEach(eff => {
         if (!eff._ticksLeft) return;
         eff.endsAt = Date.now() + (eff._ticksLeft * 1000);

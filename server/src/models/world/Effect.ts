@@ -8,15 +8,7 @@ export class Effect implements BaseEffect {
   constructor(protected game: Game) {}
 
   public sendMessage(character: ICharacter|string, message: MessageInfo) {
-
-    // if it's not a character, the character is the uuid
-    let uuid = (character as ICharacter).uuid;
-    if (!uuid) uuid = character as string;
-
-    const ref = this.game.worldManager.getCharacter(uuid);
-    if (!ref) return;
-
-    this.game.messageHelper.sendLogMessageToPlayer(ref, message, [MessageType.Miscellaneous]);
+    this.game.messageHelper.sendLogMessageToPlayer(character, message, [MessageType.Miscellaneous]);
   }
 
   public create(char: ICharacter, effect: IStatusEffect) {}
