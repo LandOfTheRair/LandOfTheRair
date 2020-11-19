@@ -109,6 +109,8 @@ export class EffectHelper extends BaseService {
     let effect!: IStatusEffect;
 
     Object.values(character.effects).forEach(effectContainer => {
+      if (!isArray(effectContainer)) return;
+
       effectContainer.forEach(checkEffect => {
         if (effect) return;
         if (checkEffect.effectName !== effectNameOrUUID && checkEffect.uuid !== effectNameOrUUID) return;
@@ -128,6 +130,8 @@ export class EffectHelper extends BaseService {
   // remove all effects
   public clearEffectsForDeath(character: ICharacter): void {
     Object.values(character.effects).forEach(effectContainer => {
+      if (!isArray(effectContainer)) return;
+
       effectContainer.forEach(effect => {
         const meta = this.game.effectManager.getEffectData(effect.effectName);
         if (meta.effect.extra.persistThroughDeath) return;
