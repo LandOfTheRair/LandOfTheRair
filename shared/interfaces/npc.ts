@@ -1,5 +1,5 @@
 import { IAIBehavior, IBehavior } from './behaviors';
-import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, 
+import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot,
   MonsterClass, RandomNumber, Rollable, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
