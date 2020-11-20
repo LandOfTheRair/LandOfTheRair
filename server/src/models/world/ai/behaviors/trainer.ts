@@ -1,10 +1,14 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { BaseClass, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ITrainerBehavior, Skill } from '../../../../interfaces';
+import { BaseClass, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ItemClass, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
 
 export class TrainerBehavior implements IAIBehavior {
 
+  private canRevive = false;
+
   init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior, props: any = {}) {
+
+    this.canRevive = behavior.trainClass.includes(BaseClass.Healer);
 
     const { maxLevelUpLevel, maxSkillTrain } = props;
 
@@ -68,7 +72,8 @@ export class TrainerBehavior implements IAIBehavior {
         env?.callbacks.emit({
           type: GameServerResponse.SendAlert,
           title: `Welcome, New ${behavior.joinClass}`,
-          content: `Welcome to the ${behavior.joinClass} brotherhood, ${player.name}.`
+          content: `Welcome to the ${behavior.joinClass} brotherhood, ${player.name}.`,
+          extraData: { npcSprite: npc.sprite },
         });
 
         return `Welcome to the ${behavior.joinClass} brotherhood, ${player.name}.`;
@@ -109,7 +114,39 @@ export class TrainerBehavior implements IAIBehavior {
         const player = env?.player;
         return `Maybe one day you'll be able to level up, ${player.name}.`;
       });
+
+    if (this.canRevive) {
+      parser.addCommand('recall')
+        .setSyntax(['recall'])
+        .setLogic(async ({ env }) => {
+          const player = env?.player;
+
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: `Respawn Point Set`,
+            content: `I'll bring you right back to me when you die, ${player.name}.`,
+            extraData: { npcSprite: npc.sprite },
+          });
+
+          player.respawnPoint = { x: npc.x, y: npc.y, map: npc.map };
+
+          return `I'll bring you right back to me when you die, ${player.name}.`;
+        });
+    }
   }
 
-  tick() {}
+  tick(game: Game, npc: INPC) {
+    if (!this.canRevive) return;
+
+    const corpses = game.groundManager.getItemsFromGround(npc.map, npc.x, npc.y, ItemClass.Corpse);
+    corpses.forEach(corpse => {
+      if (!corpse.item.mods.corpseUsername) return;
+
+      const player = game.playerManager.getPlayerByUsername(corpse.item.mods.corpseUsername);
+      if (!player) return;
+
+      game.deathHelper.restore(player, { map: npc.map, x: npc.x, y: npc.y });
+      game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
+    });
+  }
 }

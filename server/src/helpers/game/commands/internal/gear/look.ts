@@ -6,6 +6,7 @@ export class LookCommand extends MacroCommand {
 
   aliases = ['look'];
   canBeFast = true;
+  canUseWhileDead = true;
 
   private getStringForNum(num: number) {
     if (num === 1) return 'a';

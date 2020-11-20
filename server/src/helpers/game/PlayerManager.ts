@@ -22,9 +22,19 @@ export class PlayerManager extends BaseService {
 
   public init() {}
 
+  // get all players. pretty sparingly used.
+  public getAllPlayers(): Player[] {
+    return Object.values(this.inGamePlayers);
+  }
+
   // get a player in game based on the account username
   public getPlayerInGame(account: Account): Player {
-    return this.inGamePlayers[account.username];
+    return this.getPlayerByUsername(account.username);
+  }
+
+  // get a player in game based on the account username
+  public getPlayerByUsername(username: string): Player {
+    return this.inGamePlayers[username];
   }
 
   // get a player state based on the player

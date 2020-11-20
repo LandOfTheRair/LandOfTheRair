@@ -1,10 +1,10 @@
 import { difference, get, setWith, size } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { ICharacter, IMapData, INPC, IPlayer, ISimpleItem,
-  ItemClass, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import { basePlayerSprite, basePlayerSwimmingSprite, Direction, ICharacter, IMapData, INPC,
+  IPlayer, ISimpleItem, ItemClass, MapLayer,
+  ObjectType, spriteOffsetForDirection, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
-import { basePlayerSprite, basePlayerSwimmingSprite, spriteOffsetForDirection, swimmingSpriteOffsetForDirection } from './_helpers';
 
 const Phaser = (window as any).Phaser;
 
@@ -564,6 +564,8 @@ export class MapScene extends Phaser.Scene {
     }
 
     sprite.setFrame(newFrame);
+
+    sprite.alpha = player.dir === Direction.Corpse ? 0 : 1;
   }
 
   private updateSpritePositionalData(sprite, char: ICharacter) {
@@ -653,7 +655,9 @@ export class MapScene extends Phaser.Scene {
     }
 
     const isCorpse = realItem.itemClass === ItemClass.Corpse;
-    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), isCorpse ? 'Creatures' : 'Items', realItem.sprite);
+    const spritesheet = isCorpse ? 'Creatures' : 'Items';
+    const itemSpriteNumber = isCorpse ? item.mods.sprite : realItem.sprite;
+    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), spritesheet, itemSpriteNumber);
     this.visibleItemSprites[x][y][realItem.itemClass] = sprite;
     this.visibleItemUUIDHash[sprite.uuid] = sprite;
 

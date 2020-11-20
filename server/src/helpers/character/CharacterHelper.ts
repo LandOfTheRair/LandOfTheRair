@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, CoreStat, GivesBonusInHandItemClasses, Hostility,
+import { BaseService, GivesBonusInHandItemClasses, Hostility,
   ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class CharacterHelper extends BaseService {
 
   // check if the character is dead
   public isDead(char: ICharacter): boolean {
-    return char.hp.current <= 0;
+    return char.hp.current <= 0 || this.game.effectHelper.hasEffect(char, 'Dead');
   }
 
   public healToFull(char: ICharacter): void {
@@ -70,6 +70,20 @@ export class CharacterHelper extends BaseService {
     }
   }
 
+  public dropHands(char: ICharacter): void {
+    const { state } = this.game.worldManager.getMap(char.map);
+
+    if (char.items.equipment[ItemSlot.RightHand]) {
+      state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.RightHand] as ISimpleItem);
+      this.setRightHand(char, undefined);
+    }
+
+    if (char.items.equipment[ItemSlot.LeftHand]) {
+      state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
+      this.setRightHand(char, undefined);
+    }
+  }
+
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.RightHand, item);
   }
@@ -113,10 +127,10 @@ export class CharacterHelper extends BaseService {
   }
 
   // gain a permanent stat (from a bottle, or some other source)
-  public gainPermanentStat(character: ICharacter, stat: CoreStat, value = 1): boolean {
+  public gainPermanentStat(character: ICharacter, stat: Stat, value = 1): boolean {
 
     // hp/mp always go up with no limit
-    if (stat === CoreStat.HP || stat === CoreStat.MP) {
+    if (stat === Stat.HP || stat === Stat.MP) {
       character.stats[stat] = (character.stats[stat] ?? 1) + value;
       return true;
     }
@@ -131,6 +145,21 @@ export class CharacterHelper extends BaseService {
 
     // but if we're under it, we boost
     character.stats[stat] = (character.stats[stat] ?? 1) + value;
+    return true;
+
+  }
+
+  // lose a permanent stat (from any reason)
+  public losePermanentStat(character: ICharacter, stat: Stat, value = 1): boolean {
+
+    const curStat = character.stats[stat] ?? 1;
+
+    // cannot cannot go lower than 1
+    if (curStat - value < 1) return false;
+
+    // lose the stat if we can
+    character.stats[stat] = (character.stats[stat] ?? 1) - value;
+
     return true;
 
   }
@@ -191,6 +220,11 @@ export class CharacterHelper extends BaseService {
   // get a specific stat value from a character
   public getStat(character: ICharacter, stat: Stat): number {
     return character.totalStats[stat] ?? 0;
+  }
+
+  // get a specific base stat value from a character
+  public getBaseStat(character: ICharacter, stat: Stat): number {
+    return character.stats[stat] ?? 0;
   }
 
   // tick the character - do regen

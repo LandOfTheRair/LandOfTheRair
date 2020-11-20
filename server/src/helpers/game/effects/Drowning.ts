@@ -11,7 +11,7 @@ export class Drowning extends Effect {
     const hpLost = Math.floor(char.hp.maximum * (effect.effectInfo.potency / 100));
     this.game.combatHelper.dealOnesidedDamage(char, {
       damage: hpLost,
-      damageClass: (char as IPlayer).swimElement || DamageClass.Water,
+      damageClass: (char as IPlayer).swimElement as DamageClass || DamageClass.Water,
       damageMessage: 'You are drowning!',
       suppressIfNegative: true,
       overrideSfx: SoundEffect.CombatHitMelee

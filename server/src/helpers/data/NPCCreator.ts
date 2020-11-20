@@ -6,7 +6,7 @@ import { species } from 'fantastical';
 import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
-import { Alignment, Allegiance, BaseService, BehaviorType, CoreStat, Currency, Hostility,
+import { Alignment, Allegiance, BaseService, BehaviorType, Currency, Hostility,
   IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper, ItemHelper } from '../character';
@@ -195,8 +195,17 @@ export class NPCCreator extends BaseService {
   // elite npcs are random and stronger
   public makeElite(npc: INPC): void {
     npc.name = `elite ${npc.name}`;
-    Object.values(CoreStat).forEach(stat => {
-      this.game.characterHelper.gainPermanentStat(npc, stat as CoreStat, Math.round((npc.stats?.[stat] ?? 0) / 3));
+
+    const buffStats: Stat[] = [
+      Stat.STR, Stat.AGI, Stat.DEX,
+      Stat.INT, Stat.WIS, Stat.WIL,
+      Stat.CON, Stat.CHA, Stat.LUK,
+      Stat.HP, Stat.MP,
+      Stat.HPRegen, Stat.MPRegen
+    ];
+
+    buffStats.forEach(stat => {
+      this.game.characterHelper.gainPermanentStat(npc, stat as Stat, Math.round(this.game.characterHelper.getBaseStat(npc, stat) / 3));
     });
 
     npc.level += Math.min(1, Math.floor(npc.level / 10));

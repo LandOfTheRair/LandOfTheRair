@@ -86,6 +86,11 @@ export class CommandHandler extends BaseService {
       return;
     }
 
+    if (this.game.characterHelper.isDead(player) && !commandRef.canUseWhileDead) {
+      this.messageHelper.sendLogMessageToPlayer(player, { message: `You can't do that while you're dead!` });
+      return;
+    }
+
     if (isInstant && !commandRef.canBeInstant) {
       this.messageHelper.sendLogMessageToPlayer(player, { message: `Command ${command} cannot be made instant.` });
       return;

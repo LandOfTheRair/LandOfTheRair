@@ -121,6 +121,11 @@ export class WorldManager extends BaseService {
     const oldMap = this.playersInMaps[player.name];
     if (!oldMap) return;
 
+    // dead people leaving get auto-respawned
+    if (this.game.characterHelper.isDead(player)) {
+      this.game.deathHelper.restore(player);
+    }
+
     delete this.playersInMaps[player.name];
 
     this.mapPlayerCounts[oldMap] = this.mapPlayerCounts[oldMap] || 0;

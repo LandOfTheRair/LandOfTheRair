@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem } from '../../interfaces';
+import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { Player } from '../../models';
 
 @Injectable()
@@ -9,9 +9,51 @@ export class DeathHelper extends BaseService {
 
   public init() {}
 
-  // reviving functions
-  public restore(player: IPlayer): void {
+  // revive the player from their death
+  public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number, y?: number, map?: string, shouldRot?: boolean } = {}): void {
 
+    // store old pos to look up corpse
+    const oldX = player.x;
+    const oldY = player.y;
+    const oldMap = player.map;
+
+    // we're being revived
+    if (x && y && map) {
+      this.game.teleportHelper.teleport(player as Player, { x, y, map });
+
+    // tele to respawn point, then reset some vars
+    } else {
+      this.game.teleportHelper.teleportToRespawnPoint(player as Player);
+    }
+
+    player.hp.current = 1;
+    player.dir = Direction.South;
+
+    this.game.effectHelper.removeEffectByName(player, 'Dead');
+
+    this.game.characterHelper.tryToCastEquipmentEffects(player);
+
+    // remove our corpse if we have one
+    if (player.corpseRef) {
+      const { state } = this.game.worldManager.getMap(oldMap);
+      state.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
+
+      this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
+      delete player.corpseRef;
+    }
+
+    // if we rotted... deal with that
+    if (shouldRot) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You feel a churning sensation...' });
+
+      if ((player.stats?.[Stat.STR] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(5)) {
+        this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
+      }
+
+      if ((player.stats?.[Stat.AGI] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(5)) {
+        this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
+      }
+    }
   }
 
   // dying functions
@@ -27,15 +69,50 @@ export class DeathHelper extends BaseService {
     const corpse = this.createCorpse(dead);
 
     if (this.game.characterHelper.isPlayer(dead)) {
-      this.playerDie(dead as IPlayer, corpse as ISimpleItem, killer);
+      const shouldMakeCorpse = (killer as INPC)?.shouldEatTier ?? 0 <= 0;
+      this.playerDie(dead as IPlayer, shouldMakeCorpse ? corpse as ISimpleItem : undefined, killer);
     } else {
       this.npcDie(dead as INPC, corpse, killer);
     }
   }
 
   // mark last death location, add dead effect, clear action queue, check low con, drop hands if npc killed me
-  private playerDie(dead: IPlayer, corpse: ISimpleItem, killer?: ICharacter): void {
+  private playerDie(dead: IPlayer, corpse?: ISimpleItem, killer?: ICharacter): void {
     this.game.playerHelper.clearActionQueue(dead as Player);
+
+    dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
+
+    if (corpse) {
+      this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
+      dead.dir = Direction.Corpse;
+      dead.corpseRef = corpse;
+
+      const { state } = this.game.worldManager.getMap(dead.map);
+      state.addItemToGround(dead.x, dead.y, corpse);
+
+    } else {
+
+      this.game.teleportHelper.teleportToRespawnPoint(dead as Player);
+      this.restore(dead);
+    }
+
+    // lose a CON if you die (min of 1)
+    this.game.characterHelper.losePermanentStat(dead, Stat.CON, 1);
+
+    // get a warning if your CON is too low
+    if (this.game.characterHelper.getBaseStat(dead, Stat.CON) <= 3) {
+      this.game.effectHelper.addEffect(dead, '', 'LowCON');
+
+      // and lose max hp if you keep dying
+      if (this.game.characterHelper.getBaseStat(dead, Stat.HP) > 10) {
+        this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
+      }
+    }
+
+    // drop your hand items
+    if (killer) {
+      this.game.characterHelper.dropHands(dead);
+    }
   }
 
   // dispatch ai death, calculate loot drops
@@ -115,9 +192,7 @@ export class DeathHelper extends BaseService {
     const baseCorpse = this.game.itemCreator.getSimpleItem('Corpse');
     baseCorpse.mods.desc = `the corpse of ${player.name}`;
     baseCorpse.mods.corpseUsername = player.username;
-    // TODO: corpses need to be treated just like items. player corpse cameras should maybe not move until they're resurrected (their ghost is stuck, maybe)
-    // TODO: track player corpses globally, and poof them if player logs out and back in
-    // TODO: if a player logs out and their corpse is revived, remove it with "there is no spirit to inhabit this body"
+    baseCorpse.mods.sprite = basePlayerSprite(player) + 4;
 
     return baseCorpse;
   }
@@ -128,6 +203,7 @@ export class DeathHelper extends BaseService {
 
     const baseCorpse = this.game.itemCreator.getSimpleItem('Corpse');
     baseCorpse.mods.desc = `the corpse of a ${npc}`;
+    baseCorpse.mods.sprite = npc.sprite + 4;
 
     return baseCorpse;
   }

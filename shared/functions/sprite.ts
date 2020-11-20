@@ -1,4 +1,5 @@
-import { Allegiance, Direction, IPlayer } from '../../../../../interfaces';
+import { Allegiance, Direction, IPlayer } from '../interfaces';
+
 
 export const basePlayerSprite = (player: IPlayer) => {
   let choices = { male: 725, female: 675 };

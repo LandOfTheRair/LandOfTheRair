@@ -7,6 +7,7 @@ export abstract class MacroCommand implements IMacroCommand {
   canBeInstant = false;         // whether the command can happen immediately (ie, UI-related functions)
   canBeFast = false;            // whether the command can happen on the 'fast' cycle (used for 'faster' commands outside the round timer)
   isGMCommand = false;          // whether or not the command is GM-only
+  canUseWhileDead = false;      // whether or not the command can be used while dead
 
   constructor(protected game: Game) {}
 

@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, ISimpleItem, ItemClass } from '../../interfaces';
+import { BaseService, ISimpleItem, ItemClass, ItemSlot } from '../../interfaces';
 
 @Injectable()
 export class CorpseManager extends BaseService {
@@ -79,6 +79,23 @@ export class CorpseManager extends BaseService {
     const corpsePos = this.corpsePositions[uuid];
     this.game.worldManager.getMap(corpsePos.map).state.addItemsToGround(corpsePos.x, corpsePos.y, corpseRef.mods.searchItems ?? []);
     delete corpseRef.mods.searchItems;
+  }
+
+  public removeCorpseFromAnyonesHands(uuid: string): void {
+    this.game.playerManager.getAllPlayers().forEach(p => {
+      const rightHand = p.items.equipment[ItemSlot.RightHand];
+      const leftHand = p.items.equipment[ItemSlot.LeftHand];
+
+      if (rightHand && rightHand.uuid === uuid) {
+        this.game.messageHelper.sendLogMessageToPlayer(p, { message: 'The corpse turns to dust in your hands.' });
+        this.game.characterHelper.setRightHand(p, undefined);
+      }
+
+      if (leftHand && leftHand.uuid === uuid) {
+        this.game.messageHelper.sendLogMessageToPlayer(p, { message: 'The corpse turns to dust in your hands.' });
+        this.game.characterHelper.setLeftHand(p, undefined);
+      }
+    });
   }
 
 }
