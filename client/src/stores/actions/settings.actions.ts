@@ -106,5 +106,5 @@ export class SetOption {
 // dispatched when the user changes their character view
 export class SetCharacterView {
   static type = GameAction.SettingsSetCharacterView;
-  constructor(public charMode: 'Equipment'|'Stats'|'Skills') {}
+  constructor(public charMode: 'Equipment'|'Stats'|'Skills'|'Reputation') {}
 }

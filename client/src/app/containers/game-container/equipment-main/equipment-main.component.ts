@@ -4,7 +4,7 @@ import { sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { calculateSkillLevelFromXP, getSkillDescription, getStatDescription,
+import { Allegiance, calculateSkillLevelFromXP, getSkillDescription, getStatDescription,
   IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../../../interfaces';
 import { GameState, SetCharacterView, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
@@ -165,6 +165,15 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     { skill: Skill.Restoration, tooltip: 'Proficiency with restoration magic' },
   ];
 
+  public readonly allegiances = [
+    Allegiance.Adventurers,
+    Allegiance.Pirates,
+    Allegiance.Royalty,
+    Allegiance.Townsfolk,
+    Allegiance.Underground,
+    Allegiance.Wilderness
+  ];
+
   constructor(
     private store: Store,
     public uiService: UIService,
@@ -182,7 +191,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     return { slot, player };
   }
 
-  changeView(newView: 'Equipment'|'Stats'|'Skills') {
+  changeView(newView: 'Equipment'|'Stats'|'Skills'|'Reputation') {
     this.store.dispatch(new SetCharacterView(newView));
   }
 
@@ -205,6 +214,12 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {
     if (!item) return false;
     return this.assetService.getItem(item.name).itemClass === ItemClass.Coin;
+  }
+
+  hostilityForAllegiance(repValue: number) {
+    if (repValue < -100) return 'Hostile';
+    if (repValue > 100)  return 'Friendly';
+    return 'Neutral';
   }
 
 }

@@ -51,6 +51,6 @@ export interface ISettings {
   logMode: 'All'|'General'|'Combat'|'NPC';
   currentCommand: string;
   commandHistory: string[];
-  characterView: 'Equipment'|'Stats'|'Skills';
+  characterView: 'Equipment'|'Stats'|'Skills'|'Reputation';
   options: Record<GameOption, number|boolean|string>;
 }
