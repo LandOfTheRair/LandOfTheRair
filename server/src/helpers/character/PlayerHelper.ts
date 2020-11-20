@@ -248,6 +248,17 @@ export class PlayerHelper extends BaseService {
 
   }
 
+  // gain skill for a character
+  public gainSkill(character: IPlayer, skill: Skill, skillGained: number): void {
+    if (!skill) skill = Skill.Martial;
+
+    // TODO: modify skillGained for sub
+    if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
+
+    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
+    character.skills[skill.toLowerCase()] = Math.min(character.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
+  }
+
   // gain all currently flagged skills
   public gainCurrentSkills(player: IPlayer, skillGained: number): void {
     if (!player.flaggedSkills || !player.flaggedSkills.length) return;
@@ -255,22 +266,22 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.45);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
-      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.15);
-      this.characterHelper.gainSkill(player, quaternary, skillGained * 0.15);
+      this.gainSkill(player, primary, skillGained * 0.45);
+      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, tertiary, skillGained * 0.15);
+      this.gainSkill(player, quaternary, skillGained * 0.15);
 
     } else if (tertiary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.55);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
-      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.20);
+      this.gainSkill(player, primary, skillGained * 0.55);
+      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, tertiary, skillGained * 0.20);
 
     } else if (secondary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.75);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, primary, skillGained * 0.75);
+      this.gainSkill(player, secondary, skillGained * 0.25);
 
     } else {
-      this.characterHelper.gainSkill(player, primary, skillGained);
+      this.gainSkill(player, primary, skillGained);
     }
   }
 

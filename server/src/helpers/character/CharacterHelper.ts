@@ -255,17 +255,6 @@ export class CharacterHelper extends BaseService {
     return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) + this.getStat(character, `${skill}Bonus` as Stat);
   }
 
-  // gain skill for a character
-  public gainSkill(character: ICharacter, skill: Skill, skillGained: number): void {
-    if (!skill) skill = Skill.Martial;
-
-    // TODO: modify skillGained for sub
-    if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
-
-    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
-    character.skills[skill.toLowerCase()] = Math.min(character.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
-  }
-
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
     Object.keys(character.items.equipment).forEach(itemSlot => {
