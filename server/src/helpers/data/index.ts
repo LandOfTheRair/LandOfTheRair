@@ -1,4 +1,5 @@
 
+export * from './ConfigManager';
 export * from './ContentManager';
 export * from './CorpseManager';
 export * from './EffectManager';

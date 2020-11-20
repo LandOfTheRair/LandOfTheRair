@@ -137,8 +137,7 @@ export class CharacterHelper extends BaseService {
 
     const curStat = character.stats[stat] ?? 1;
 
-    // TODO: make this based on the max region available
-    const hardBaseCap = 30;
+    const hardBaseCap = this.game.configManager.MAX_STATS;
 
     // cannot exceed the hard cap
     if (curStat + value > hardBaseCap) return false;
@@ -251,6 +250,7 @@ export class CharacterHelper extends BaseService {
     if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
 
     character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
+    character.skills[skill.toLowerCase()] = Math.min(character.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
   }
 
   // check gear and try to cast effects

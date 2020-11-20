@@ -8,7 +8,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, DamageHelperMagic, Dam
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
   TeleportHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
-import { ContentManager, CorpseManager, EffectManager, GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
+import { ConfigManager, ContentManager, CorpseManager, EffectManager, GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -79,7 +79,8 @@ export class Game {
     public commandHandler: CommandHandler,
 
     public playerManager: PlayerManager,
-    public worldManager: WorldManager
+    public worldManager: WorldManager,
+    public configManager: ConfigManager
 
   ) {}
 
@@ -103,7 +104,7 @@ export class Game {
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
       'effectHelper', 'groundManager',
       'commandHandler', 'messageHelper',
-      'playerManager', 'worldManager'
+      'playerManager', 'worldManager', 'configManager'
   ];
 
     for (const i of initOrder) {

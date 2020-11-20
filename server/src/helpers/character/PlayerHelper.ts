@@ -234,6 +234,8 @@ export class PlayerHelper extends BaseService {
     if (isNaN(xpGained)) throw new Error(`XP gained for ${player.name} is NaN!`);
     player.exp += Math.max(Math.floor(player.exp + xpGained), 0);
 
+    player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
+
   }
 
   // gain axp for a player
