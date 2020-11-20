@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { isArray } from 'lodash';
+import { isArray, random } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
@@ -333,6 +333,68 @@ export class PlayerHelper extends BaseService {
   public modifyReputationForAllegiance(player: IPlayer, allegiance: Allegiance, mod: number): void {
     player.allegianceReputation[allegiance] = player.allegianceReputation[allegiance] ?? 0;
     player.allegianceReputation[allegiance]! += mod;
+  }
+
+  // gain stats for leveling up
+  public gainLevelStats(player: IPlayer): void {
+
+    const con = this.game.characterHelper.getStat(player, Stat.CON);
+    const wis = this.game.characterHelper.getStat(player, Stat.WIS);
+    const int = this.game.characterHelper.getStat(player, Stat.INT);
+
+    const classStats: Record<BaseClass, () => void> = {
+      [BaseClass.Undecided]: () => {
+        const hpGained = Math.floor(random(2, con / 2) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Warrior]: () => {
+        const hpGained = Math.floor(random(1, con / 2) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Thief]: () => {
+        const hpGained = Math.floor(random(2, con) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Healer]: () => {
+        const hpGained = Math.floor(random(con / 5, (3 * con / 5)) + con / 3);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        const mpGained = Math.floor(random(1, wis) + wis / 3);
+        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+      },
+
+      [BaseClass.Mage]: () => {
+        const hpGained = Math.floor(random(1, con));
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        const mpGained = Math.floor(random(2, int * 2) + int / 5);
+        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+      }
+    };
+
+    classStats[player.baseClass]();
+  }
+
+  // try to level up a player to the maximum possible level they can go based on the trainer they see
+  public tryLevelUp(player: IPlayer, maxLevel = 0): void {
+    do {
+      if (player.level >= maxLevel) break;
+
+      const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(player.level + 1);
+      if (player.exp > neededXp) {
+        player.level += 1;
+        if (player.level > player.highestLevel) {
+          player.highestLevel = player.level;
+          this.gainLevelStats(player);
+        }
+        break;
+      } else {
+        break;
+      }
+    } while (player.level < maxLevel);
   }
 
 }

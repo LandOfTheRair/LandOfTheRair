@@ -79,4 +79,8 @@ export class TrainerComponent implements OnInit, OnDestroy {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, assess ${this.activeSkill}`);
   }
 
+  train() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, train`);
+  }
+
 }
