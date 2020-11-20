@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { BaseService, DamageClass, ICharacter, INPC, ObjectType, Stat } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
@@ -201,7 +201,7 @@ export class MovementHelper extends BaseService {
         damageClass: DamageClass.Physical,
         damageMessage: 'You have fallen!',
         suppressIfNegative: true,
-        overrideSfx: 'combat-hit-melee'
+        overrideSfx: SoundEffect.CombatHitMelee
       });
     } else {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'Your surroundings shift.' });
