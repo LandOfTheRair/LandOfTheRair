@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass, MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
+import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass,
+  MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
 

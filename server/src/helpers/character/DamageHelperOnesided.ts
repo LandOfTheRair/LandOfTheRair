@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, MessageType, OnesidedDamageArgs, SoundEffect } from '../../interfaces';
+import { BaseService, ICharacter, MessageType, OnesidedDamageArgs, SoundEffect } from '../../interfaces';
 import { MessageHelper } from '../game';
 
 
