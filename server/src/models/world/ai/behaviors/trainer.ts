@@ -120,7 +120,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (!game.playerHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
 
-        if (player.level > maxLevelUpLevel) return 'You are too advanced for my teachings.';
+        if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
 
         const oldLevel = player.level;
         game.playerHelper.tryLevelUp(player, maxLevelUpLevel);
