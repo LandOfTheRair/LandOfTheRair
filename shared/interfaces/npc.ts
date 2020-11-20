@@ -1,5 +1,6 @@
 import { IAIBehavior, IBehavior } from './behaviors';
-import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, MonsterClass, RandomNumber, Rollable, SkillBlock, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot, 
+  MonsterClass, RandomNumber, Rollable, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
 import { IStatusEffectInfo } from './status-effect';
