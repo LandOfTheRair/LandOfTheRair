@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { ICharacter } from '../../../../interfaces';
+import { ICharacter, IStatusEffect } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -79,5 +79,9 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {}
+
+  trackEffectBy(effect: IStatusEffect) {
+    return effect.uuid;
+  }
 
 }

@@ -17,7 +17,7 @@
     </div>
   </div>
   <div class="target-status">
-    <div *ngFor="let effect of effects" class="effect-container">
+    <div *ngFor="let effect of effects; trackBy:trackEffectBy" class="effect-container">
       <app-effect-icon [effect]="effect"></app-effect-icon>
     </div>
   </div>

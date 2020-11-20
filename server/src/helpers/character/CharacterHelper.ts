@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, GivesBonusInHandItemClasses, Hostility,
+import { BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
@@ -53,11 +53,24 @@ export class CharacterHelper extends BaseService {
   }
 
   public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
+    const oldItem = char.items.equipment[slot];
+
+    if (oldItem) {
+      const wearEffect = this.game.itemHelper.getItemProperty(oldItem, 'equipEffect');
+      if (wearEffect) {
+        this.game.effectHelper.removeEffectByName(char, wearEffect.name);
+      }
+    }
+
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { binds, desc, tellsBind, itemClass, owner } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc']);
+      const { binds, desc, tellsBind, itemClass, owner, equipEffect } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc', 'equipEffect']);
       if (itemClass === ItemClass.Corpse) return;
+
+      if (equipEffect) {
+        this.tryToCastEquipmentEffects(char);
+      }
 
       if (binds && (char as IPlayer).username && !owner) {
         this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
@@ -255,7 +268,17 @@ export class CharacterHelper extends BaseService {
 
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
 
+      const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['equipEffect', 'itemClass']);
+      if (!equipEffect) return;
+
+      if (EquipHash[itemClass] && EquipHash[itemClass] !== itemSlot) return;
+
+      this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
+    });
   }
 
 }
