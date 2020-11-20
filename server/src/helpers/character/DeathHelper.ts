@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { random } from 'lodash';
 
 import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { Player } from '../../models';
@@ -166,10 +167,22 @@ export class DeathHelper extends BaseService {
 
   // clear action queue of the dead uuid
   private playerKill(killer: IPlayer, dead: ICharacter): void {
-    // if dead is an npc
-        // gain xp
-        // gain skill
-        // modify rep
+    this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
+    if (this.game.characterHelper.isPlayer(dead)) return;
+
+    const npc: INPC = dead as INPC;
+
+    if (this.game.playerHelper.canGainExpOnMap(killer)) {
+      const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
+      this.game.playerHelper.gainExp(killer, earnedExp);
+    }
+
+    killer.flaggedSkills = killer.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(killer, x));
+    this.game.playerHelper.gainCurrentSkills(killer, npc.skillOnKill);
+
+    npc.allegianceMods.forEach(({ delta, allegiance }) => {
+      this.game.playerHelper.modifyReputationForAllegiance(killer, allegiance, delta);
+    });
   }
 
   // try to strip, try to eat

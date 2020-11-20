@@ -13,6 +13,9 @@ export class WorldMap {
   private planner: any;
   private fov: Mrpas;
 
+  private maxLevelExpPossible: number;
+  private maxSkillExpPossible: number;
+
   private layerHashes: { [key in MapLayer]?: any } = {};
 
   public get width(): number {
@@ -41,6 +44,18 @@ export class WorldMap {
 
   public get maxSkill() {
     return this.properties.maxSkill || 1;
+  }
+
+  public get maxSkillExp() {
+    return this.maxSkillExpPossible;
+  }
+
+  public get maxLevel() {
+    return this.properties.maxLevel || 1;
+  }
+
+  public get maxLevelExp() {
+    return this.maxLevelExpPossible;
   }
 
   public get maxCreatures() {
@@ -125,6 +140,12 @@ export class WorldMap {
     this.destructureJSON();
     this.createPlanner();
     game.groundManager.initGroundForMap(mapName);
+    this.setMaxes();
+  }
+
+  private setMaxes() {
+    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel);
+    this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.maxSkill);
   }
 
   private createPlanner() {

@@ -56,6 +56,9 @@ export interface IMapProperties {
   // the max skill level you can get in this map
   maxSkill: number;
 
+  // the max level you can reach in this map
+  maxLevel: number;
+
   // the max # of creatures on this map
   maxCreatures: number;
 

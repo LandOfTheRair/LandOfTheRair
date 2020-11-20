@@ -108,15 +108,16 @@ export class CommandHandler extends BaseService {
 
     // run or queue the command
     const callback = () => commandRef.execute(player, args);
+    callback.args = args;
 
     if (isInstant) {
       callback();
 
     } else if (isFast) {
-      player.actionQueue.fast.push(callback);
+      player.actionQueue.fast.push(callback as any);
 
     } else {
-      player.actionQueue.slow.push(callback);
+      player.actionQueue.slow.push(callback as any);
 
     }
   }

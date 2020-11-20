@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -135,6 +135,15 @@ export class PlayerHelper extends BaseService {
   }
 
   public clearActionQueue(player: Player, target?: string) {
+
+    // if we specify a target, we remove them from the queue as convenience
+    if (target) {
+      player.actionQueue.fast = player.actionQueue.fast.filter(x => !(x as any).args.stringArgs.includes(target));
+      player.actionQueue.slow = player.actionQueue.slow.filter(x => !(x as any).args.stringArgs.includes(target));
+      return;
+    }
+
+    // otherwise, just reset the entire queue
     player.actionQueue = { fast: [], slow: [] };
   }
 
@@ -226,14 +235,29 @@ export class PlayerHelper extends BaseService {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
   }
 
+  // whether or not the player can get skill on the current map
+  public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
+    const { map } = this.worldManager.getMap(player.map);
+    return player.skills[skill.toLowerCase()] < map.maxSkillExp;
+  }
+
+  // whether or not the player can get xp on the current map
+  public canGainExpOnMap(player: IPlayer): boolean {
+    const { map } = this.worldManager.getMap(player.map);
+    return player.exp < map.maxLevelExp;
+  }
+
   // gain exp for a player
   public gainExp(player: IPlayer, xpGained: number): void {
     if (player.gainingAXP && xpGained > 0) return;
 
+    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent);
+    xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
+
     // TODO: modify xpGained for sub
     if (isNaN(xpGained)) throw new Error(`XP gained for ${player.name} is NaN!`);
-    player.exp += Math.max(Math.floor(player.exp + xpGained), 0);
 
+    player.exp = Math.max(Math.floor(player.exp + xpGained), 0);
     player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
 
   }
@@ -249,14 +273,17 @@ export class PlayerHelper extends BaseService {
   }
 
   // gain skill for a character
-  public gainSkill(character: IPlayer, skill: Skill, skillGained: number): void {
+  public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
     if (!skill) skill = Skill.Martial;
 
-    // TODO: modify skillGained for sub
-    if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
+    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent);
+    skillGained += Math.floor((xpGainBoostPercent * skillGained) / 100);
 
-    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
-    character.skills[skill.toLowerCase()] = Math.min(character.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
+    // TODO: modify skillGained for sub
+    if (isNaN(skillGained)) throw new Error(`Skill gained for ${player.name} is NaN!`);
+
+    player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained);
+    player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
   }
 
   // gain all currently flagged skills
@@ -300,6 +327,12 @@ export class PlayerHelper extends BaseService {
   // lose currency for a player (either by taking it, or spending it)
   public loseCurrency(player: IPlayer, currencyLost: number, currency: Currency = Currency.Gold): void {
     this.gainCurrency(player, -currencyLost, currency);
+  }
+
+  // modify rep for a faction
+  public modifyReputationForAllegiance(player: IPlayer, allegiance: Allegiance, mod: number): void {
+    player.allegianceReputation[allegiance] = player.allegianceReputation[allegiance] ?? 0;
+    player.allegianceReputation[allegiance]! += mod;
   }
 
 }

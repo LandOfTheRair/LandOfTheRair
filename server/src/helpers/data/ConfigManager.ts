@@ -32,7 +32,7 @@ export class ConfigManager extends BaseService {
   }
 
   async init() {
-    this.maxLevel = this.game.calculatorHelper.calculateXPRequiredForLevel(this.MAX_LEVEL);
+    this.maxExp = this.game.calculatorHelper.calculateXPRequiredForLevel(this.MAX_LEVEL);
     this.maxSkillExp = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);
   }
 }
