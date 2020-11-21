@@ -7,6 +7,9 @@ export class Sated extends Effect {
   }
 
   unapply(char: ICharacter) {
+
+    // if we're nourished, we don't get malnourished
+    if (this.game.effectHelper.hasEffect(char, 'Nourishment')) return;
     this.game.effectHelper.addEffect(char, '', 'Malnourished', { effect: { duration: -1 } });
   }
 

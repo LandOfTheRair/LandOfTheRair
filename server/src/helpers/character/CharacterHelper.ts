@@ -52,6 +52,11 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
+  // check if the person has an empty hand
+  public hasEmptyHand(char: ICharacter): boolean {
+    return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
+  }
+
   public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
     const oldItem = char.items.equipment[slot];
 
@@ -74,7 +79,7 @@ export class CharacterHelper extends BaseService {
 
       if (binds && (char as IPlayer).username && !owner) {
         this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
-        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${itemClass.toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
+        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
 
         if (tellsBind) {
           this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `*** ${char.name} has looted ${desc}.` });
@@ -264,7 +269,7 @@ export class CharacterHelper extends BaseService {
       const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['equipEffect', 'itemClass']);
       if (!equipEffect) return;
 
-      if (EquipHash[itemClass] && EquipHash[itemClass] !== itemSlot) return;
+      if (EquipHash[itemClass as ItemClass] && EquipHash[itemClass as ItemClass] !== itemSlot) return;
 
       this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
     });

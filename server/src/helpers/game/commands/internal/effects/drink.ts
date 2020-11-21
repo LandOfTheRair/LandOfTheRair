@@ -1,5 +1,5 @@
 
-import { IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../../interfaces';
+import { IPlayer, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class DrinkCommand extends MacroCommand {
