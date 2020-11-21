@@ -508,7 +508,11 @@ export class MapScene extends Phaser.Scene {
     this.events.on('destroy', () => this.destroy());
 
     // update the loader as we load the map
-    this.game.observables.loadPercent.next(`Welcome to ${player.map}!`);
+    let text = `Welcome to ${player.map}!`;
+    if (tiledJSON.properties.creator) {
+      text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
+    }
+    this.game.observables.loadPercent.next(text);
 
     setTimeout(() => {
       this.game.observables.loadPercent.next('');

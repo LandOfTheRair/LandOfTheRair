@@ -26,9 +26,7 @@
 
   <app-active-target></app-active-target>
 
-  <div class="loader" *ngIf="loadString" [class.fade-out]="fadeOut">
-    {{ loadString }}
-  </div>
+  <div class="loader" *ngIf="loadString" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
 
   <div class="map"></div>
 
