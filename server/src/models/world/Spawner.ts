@@ -76,6 +76,10 @@ export class Spawner {
     return { x: this.x, y: this.y };
   }
 
+  public get currentTickForSave() {
+    return this.currentTick;
+  }
+
   private get canRespawn(): boolean {
     return this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0;
   }
