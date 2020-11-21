@@ -31,6 +31,19 @@ export class ConfigManager extends BaseService {
     return this.maxSkillExp;
   }
 
+  public get MAX_POTION_STAT() {
+    return {
+      Lesser: 10,
+      Bradley: 13,
+      Minor: 15,
+      Basic: 18,
+      Greater: 21,
+      Major: 24,
+      Advanced: 27,
+      Pure: 30
+    };
+  }
+
   async init() {
     this.maxExp = this.game.calculatorHelper.calculateXPRequiredForLevel(this.MAX_LEVEL);
     this.maxSkillExp = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);

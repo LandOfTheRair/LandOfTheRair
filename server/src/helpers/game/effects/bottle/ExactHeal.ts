@@ -1,5 +1,5 @@
-import { ICharacter, IStatusEffect } from '../../../interfaces';
-import { Effect } from '../../../models';
+import { ICharacter, IStatusEffect } from '../../../../interfaces';
+import { Effect } from '../../../../models';
 
 export class ExactHeal extends Effect {
 

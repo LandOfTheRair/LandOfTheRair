@@ -1,5 +1,5 @@
-import { DamageClass, ICharacter, IPlayer, IStatusEffect, SoundEffect } from '../../../interfaces';
-import { Effect } from '../../../models';
+import { DamageClass, ICharacter, IPlayer, IStatusEffect, SoundEffect } from '../../../../interfaces';
+import { Effect } from '../../../../models';
 
 export class Drowning extends Effect {
 

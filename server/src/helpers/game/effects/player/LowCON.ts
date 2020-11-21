@@ -1,5 +1,5 @@
-import { ICharacter, Stat } from '../../../interfaces';
-import { Effect } from '../../../models';
+import { ICharacter, Stat } from '../../../../interfaces';
+import { Effect } from '../../../../models';
 
 export class LowCON extends Effect {
 
