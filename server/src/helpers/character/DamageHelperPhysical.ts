@@ -134,16 +134,16 @@ export class DamageHelperPhysical extends BaseService {
 
     const { itemClass, tier } = this.game.itemHelper.getItemProperties(weapon, ['itemClass', 'tier']);
 
-    if (!BaseItemStatsPerTier[itemClass]) {
+    if (!BaseItemStatsPerTier[itemClass as ItemClass]) {
       return { damageRolls: 0, damageBonus: 0, isWeak: false, isStrong: false };
     }
 
-    const { base, min, max, weakChance, damageBonus } = BaseItemStatsPerTier[itemClass];
+    const { base, min, max, weakChance, damageBonus } = BaseItemStatsPerTier[itemClass as ItemClass];
 
     let damageRolls = bonusRolls;
-    const minTier = min * tier;
-    const maxTier = max * tier;
-    const baseTier = base * tier;
+    const minTier = min * (tier as number);
+    const maxTier = max * (tier as number);
+    const baseTier = base * (tier as number);
 
     // go for a weak hit, rarely
     const didFlub = this.game.diceRollerHelper.XInOneHundred(weakChance);
@@ -158,7 +158,7 @@ export class DamageHelperPhysical extends BaseService {
     // add base tier damage if no flub
     if (!didFlub) damageRolls += baseTier;
 
-    return { damageRolls, damageBonus: damageBonus * tier, isWeak, isStrong };
+    return { damageRolls, damageBonus: damageBonus * (tier as number), isWeak, isStrong };
   }
 
   // check if an item is a shield
@@ -178,9 +178,9 @@ export class DamageHelperPhysical extends BaseService {
       Trap: `You hear a mechanical snap and see parts fly all over!`
     };
 
-    if (breakTypes[itemClass]) {
+    if (breakTypes[itemClass as ItemClass]) {
       this.game.characterHelper.setEquipmentSlot(attacker, hand, undefined);
-      this.game.messageHelper.sendLogMessageToRadius(attacker, 5, { message: breakTypes[itemClass] }, [MessageType.Combat]);
+      this.game.messageHelper.sendLogMessageToRadius(attacker, 5, { message: breakTypes[itemClass as ItemClass] }, [MessageType.Combat]);
 
     } else if (shots) {
 
@@ -309,9 +309,11 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     // get relevant skill info for attacker
-    let attackerSkill = this.game.calculatorHelper.calcSkillLevelForCharacter(attacker, isThrow ? Skill.Throwing : type) + 1;
+    let attackerSkill = this.game.calculatorHelper.calcSkillLevelForCharacter(attacker, isThrow ? Skill.Throwing : type as Skill) + 1;
     if (secondaryType) {
-      attackerSkill = Math.floor((attackerSkill + this.game.calculatorHelper.calcSkillLevelForCharacter(attacker, secondaryType)) / 2);
+      attackerSkill = Math.floor(
+        (attackerSkill + this.game.calculatorHelper.calcSkillLevelForCharacter(attacker, secondaryType as Skill)) / 2
+      );
     }
 
     // get relevant stat info for attacker
@@ -364,7 +366,7 @@ export class DamageHelperPhysical extends BaseService {
     const { type: offhandType, stats: offhandStats } = this.game.itemHelper.getItemProperties(defenderOffhand, ['type', 'stats']);
 
     return {
-      skill:          this.game.characterHelper.getSkillLevel(defender, blockerType) + 1,
+      skill:          this.game.characterHelper.getSkillLevel(defender, blockerType as Skill) + 1,
       defense:        this.game.characterHelper.getStat(defender, Stat.Defense),
       agi:            this.game.characterHelper.getStat(defender, Stat.AGI),
       dex:            this.game.characterHelper.getStat(defender, Stat.DEX),
@@ -375,7 +377,7 @@ export class DamageHelperPhysical extends BaseService {
       shieldDefense:  shieldStats?.[Stat.Defense] ?? 0,
       offhandAC:      offhandStats?.[Stat.WeaponArmorClass] ?? 0,
       offhandDefense: offhandStats?.[Stat.Defense] ?? 0,
-      offhandSkill:   defenderOffhand ? Math.floor(this.game.characterHelper.getSkillLevel(defender, offhandType) + 1) / 4 : 0,
+      offhandSkill:   defenderOffhand ? Math.floor(this.game.characterHelper.getSkillLevel(defender, offhandType as Skill) + 1) / 4 : 0,
       level:          defender.level,
       mitigation:     this.game.characterHelper.getStat(defender, Stat.Mitigation),
       dodgeBonus:     Math.floor((100 - (armorStats?.[Stat.Mitigation] ?? 0)) / 10),
@@ -781,7 +783,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     // if we have a hands, it is always a punch
-    if (HandsClasses.includes(itemClass)) isPunch = true;
+    if (HandsClasses.includes(itemClass as ArmorClass)) isPunch = true;
 
     // flag skills for the attack
     if (isAttackerPlayer) {
@@ -790,7 +792,7 @@ export class DamageHelperPhysical extends BaseService {
       if (isThrow)                           flagSkills.push(Skill.Throwing);
       if (!isAttackerVisible || isBackstab)  flagSkills.push(Skill.Thievery);
 
-      this.game.playerHelper.flagSkill(attacker as IPlayer, flagSkills);
+      this.game.playerHelper.flagSkill(attacker as IPlayer, flagSkills as Skill[]);
     }
 
     // if we have ammo equipped, shoot it if our weapon is pew-pew
@@ -803,8 +805,9 @@ export class DamageHelperPhysical extends BaseService {
         args.damageClass = ammoDamageClass;
       }
 
-      this.game.itemHelper.setItemProperty(ammo, 'shots', shots - 1);
-      if (shots - 1 <= 0) this.game.characterHelper.setEquipmentSlot(attacker, ItemSlot.Ammo, undefined);
+      const numShots = shots ?? 0;
+      this.game.itemHelper.setItemProperty(ammo, 'shots', numShots - 1);
+      if (numShots - 1 <= 0) this.game.characterHelper.setEquipmentSlot(attacker, ItemSlot.Ammo, undefined);
     }
 
     const attackerScope = this.getAttackerScope(attacker, attackerWeapon, args);
@@ -883,7 +886,7 @@ export class DamageHelperPhysical extends BaseService {
     let msg = '';
 
     if (attacker.items.equipment[ItemSlot.RightHand] && !isKick && !isPunch) {
-      msg = `${args.attackerName} hits with a ${itemClass.toLowerCase()}!`;
+      msg = `${args.attackerName} hits with a ${(itemClass || 'item').toLowerCase()}!`;
 
     } else if (isKick) {
       msg = `${args.attackerName} kicks you!`;
