@@ -20,6 +20,7 @@ export enum GameOption {
   EnterToggleCMD = 'enterToggleCMD',
   NoNPCModals = 'noNPCModals',
   PinLastTarget = 'pinLastTarget',
+  DyingBorderWidth = 'dyingBorderWidth',
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',
 
