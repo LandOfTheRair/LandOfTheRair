@@ -5,7 +5,7 @@ import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 import { Game } from '../../helpers';
 
-import { IMapData, IMapProperties, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
+import { IMapData, IMapProperties, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
 
 export class WorldMap {
 
@@ -362,6 +362,10 @@ export class WorldMap {
     steps.shift();
 
     return steps;
+  }
+
+  public canSuccor(player: IPlayer): boolean {
+    return this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
   }
 
 }

@@ -1,8 +1,8 @@
 
 import { Injectable } from 'injection-js';
-import { isUndefined } from 'lodash';
+import { cloneDeep, isUndefined } from 'lodash';
 
-import { BaseService, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, Stat } from '../../interfaces';
+import { BaseService, canUseItem, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
@@ -35,7 +35,7 @@ export class ItemHelper extends BaseService {
     return realItem[prop];
   }
 
-  public getItemProperties(item: ISimpleItem | undefined, props: Array<keyof IItem>): Partial<Record<keyof IItem, any>> {
+  public getItemProperties(item: ISimpleItem | undefined, props: Array<keyof IItem>): Partial<IItem> {
     const hash = {};
     props.forEach(prop => hash[prop] = this.getItemProperty(item, prop));
     return hash;
@@ -108,6 +108,7 @@ export class ItemHelper extends BaseService {
     this.gainCondition(item, -conditionLoss, character);
   }
 
+  // the AC modifier for an item in good or bad condition
   public conditionACModifier(item: ISimpleItem): number {
     item.mods.condition = item.mods.condition || 20000;
 
@@ -121,6 +122,95 @@ export class ItemHelper extends BaseService {
     if (item.mods.condition <= 99999) return 4;
 
     return 5;
+  }
+
+  // whether or not the player can use the item
+  public canUseItem(player: IPlayer, item: ISimpleItem): boolean {
+    return canUseItem(player, item, this.game.itemHelper.getItemDefinition(item.name));
+  }
+
+  // try to use the item in the equipment slot for the player
+  public useItemInSlot(player: IPlayer, source: ItemSlot) {
+    const item = player.items.equipment[source];
+    if (!item) return;
+
+    const { map } = this.game.worldManager.getMap(player.map);
+    const { succorInfo, ounces, itemClass } = this.getItemProperties(item, ['succorInfo', 'ounces', 'itemClass']);
+    if (succorInfo && !map.canSuccor(player)) {
+      this.game.messageHelper.sendSimpleMessage(player, 'You stop, unable to envision the place in your memory!');
+      return;
+    }
+
+    const canGetBenefits = this.canGetBenefitsFromItem(player, item);
+    if (!canGetBenefits) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
+    if (!this.tryToUseItem(player, item, source)) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
+
+    let shouldRemove = false;
+    const totalOunces = ounces ?? 0;
+
+    // if it's an empty bottle currently, we just remove it
+    if (itemClass === ItemClass.Bottle && ounces === 0) {
+      shouldRemove = true;
+      this.game.messageHelper.sendSimpleMessage(player, 'The bottle was empty.');
+
+    // otherwise we take away an ounce, and if it's empty, we toss it
+    } else if (totalOunces > 0) {
+
+      item.mods.ounces = totalOunces - 1;
+      if (item.mods.ounces <= 0) shouldRemove = true;
+    }
+
+    // remove if we got an empty one
+    if (shouldRemove) {
+      this.game.characterHelper.setEquipmentSlot(player, source, undefined);
+    }
+
+    // if we magically have succor info, we teleport
+    if (succorInfo) {
+      this.game.playerHelper.doSuccor(player, succorInfo);
+    }
+  }
+
+  // try to actually use the item
+  public tryToUseItem(player: IPlayer, item: ISimpleItem, source: ItemSlot): boolean {
+    if (!this.canUseItem(player, item)) return false;
+
+    const { itemClass, useEffect, ounces } = this.getItemProperties(item, ['itemClass', 'useEffect', 'ounces']);
+
+    if (useEffect && (useEffect.uses || (ounces && ounces !== 0))) {
+      const { potency, extra, duration } = useEffect;
+      const extraData = cloneDeep(extra || {});
+      extraData.potency = potency;
+
+      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration, extra: extraData } });
+    }
+
+    if (useEffect && useEffect.uses && useEffect.uses !== 0) {
+
+      // uses === -1 = permanent use
+      if (useEffect.uses > 0) {
+        item.mods.useEffect = useEffect;
+        item.mods.useEffect.uses = useEffect.uses - 1;
+
+        // it broke, rip
+        if (useEffect.uses - 1 <= 0) {
+          this.game.characterHelper.setEquipmentSlot(player, source, undefined);
+          this.game.messageHelper.sendSimpleMessage(player, `Your ${itemClass?.toLowerCase() || 'item'} has fizzled and turned to dust.`);
+        }
+      }
+    }
+
+    if (itemClass === ItemClass.Book) {
+      this.game.messageHelper.sendSimpleMessage(player, 'Books are not working yet!');
+      return false;
+    }
+
+    if (itemClass === ItemClass.Box) {
+      this.game.messageHelper.sendSimpleMessage(player, 'Boxes are not working yet!');
+      return false;
+    }
+
+    return true;
   }
 
 }

@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, random } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -395,6 +395,19 @@ export class PlayerHelper extends BaseService {
         break;
       }
     } while (player.level < maxLevel);
+  }
+
+  // teleport the player to the succor location
+  public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
+    if (this.game.characterHelper.isDead(player)) return;
+    const { map } = this.game.worldManager.getMap(player.map);
+    if (!map.canSuccor(player)) {
+      this.game.messageHelper.sendSimpleMessage(player, 'The blob turns to ash in your hand!');
+      return;
+    }
+
+    this.game.messageHelper.sendSimpleMessage(player, 'You are whisked back to the place in your stored memories!');
+    this.game.teleportHelper.teleport(player as Player, succorInfo);
   }
 
 }

@@ -1,4 +1,4 @@
-import { DamageClass, IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMXP extends MacroCommand {

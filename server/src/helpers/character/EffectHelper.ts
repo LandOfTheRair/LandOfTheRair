@@ -75,9 +75,11 @@ export class EffectHelper extends BaseService {
       }
     }
 
-    character.effects._hash = character.effects._hash || {};
-    character.effects._hash[effect.effectName] = true;
-    character.effects[type].push(effect);
+    if (type !== 'useonly') {
+      character.effects._hash = character.effects._hash || {};
+      character.effects._hash[effect.effectName] = true;
+      character.effects[type].push(effect);
+    }
 
     this.game.effectManager.effectCreate(effectName, character, effect);
     this.game.effectManager.effectApply(effectName, character, effect);
