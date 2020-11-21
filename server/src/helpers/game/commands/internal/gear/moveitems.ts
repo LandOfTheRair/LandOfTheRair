@@ -206,6 +206,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         this.game.characterHelper.setLeftHand(player, undefined);
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
 
@@ -269,6 +271,8 @@ export class MoveItems extends MacroCommand {
 
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
 
         this.game.characterHelper.setRightHand(player, undefined);
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
@@ -443,6 +447,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         const did = this.game.playerInventoryHelper.removeItemFromBelt(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
@@ -538,6 +544,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         const did = this.game.playerInventoryHelper.removeItemFromSack(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
@@ -618,6 +626,8 @@ export class MoveItems extends MacroCommand {
       case 'E': { // GtE
         const equipSlot = this.getEquipmentSlot(player, items[0].item);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
 
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, items[0].item);
         state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
