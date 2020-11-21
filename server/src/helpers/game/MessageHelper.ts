@@ -76,8 +76,8 @@ export class MessageHelper extends BaseService {
   }
 
   public sendPrivateMessage(from: ICharacter, to: ICharacter, message: string): void {
-    this.sendLogMessageToPlayer(to, { message: `from ${from.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
-    this.sendLogMessageToPlayer(from, { message: `to ${to.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+    this.sendLogMessageToPlayer(to, { message: `from **${from.name}**: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+    this.sendLogMessageToPlayer(from, { message: `to **${to.name}**: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
   }
 
   public broadcastSystemMessage(message: string): void {

@@ -21,8 +21,11 @@
     </ng-container>
   </div>
   <div class="log-area" *ngIf="(gameService.logMode$ | async) as logMode">
-    <div class="message" *ngFor="let message of messages" [ngClass]="message.messageTypes" [class.hidden]="!isMessageVisible(logMode, message)">
-      {{ message.message }}
+    <div class="message" 
+         *ngFor="let message of messages" 
+         [ngClass]="message.messageTypes" 
+         [class.hidden]="!isMessageVisible(logMode, message)"
+         [innerHTML]="message.display">
     </div>
   </div>
 </ng-template>
