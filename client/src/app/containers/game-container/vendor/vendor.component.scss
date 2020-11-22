@@ -1,0 +1,33 @@
+
+app-npc {
+  float: left;
+  margin-right: 16px;
+}
+
+:host {
+  color: white;
+}
+
+.vendor-container {
+  padding: 10px;
+
+  .vendor-intro {
+    margin-bottom: 40px;
+  }
+
+  .vendor-tabs {
+    min-height: 340px;
+    
+    .item-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 5px;
+    
+      .item-slot {
+        margin: 2px;
+      }
+    }
+  }
+  
+
+}

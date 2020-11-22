@@ -122,5 +122,6 @@ export enum GameAction {
   SettingsActiveWindow = '[Settings] Set Active Window',
   SettingsCharSlot = '[Settings] Set Char Slot',
 
-  NPCActionShowTrainer = '[NPC] Show Trainer'
+  NPCActionShowTrainer = '[NPC] Show Trainer',
+  NPCActionShowVendor = '[NPC] Show Vendor',
 }

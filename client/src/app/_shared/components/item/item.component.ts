@@ -181,6 +181,7 @@ export class ItemComponent implements OnDestroy {
     && this.context !== 'Obtainagain'
     && this.context !== 'Equipment'
     && this.context !== 'GroundGroup'
+    && this.context !== 'Merchant'
     && this.context !== 'Ground') scopes.push('merchant');
 
     // you can stash anything that's not a coin or a corpse
@@ -216,7 +217,7 @@ export class ItemComponent implements OnDestroy {
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
-    && this.context !== 'GroundGroup') scopes.push('use');
+    && this.context !== 'GroundGroup' && this.context !== 'Merchant' && this.context !== 'Obtainagain') scopes.push('use');
 
     this.scopes = scopes;
   }

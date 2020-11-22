@@ -1,4 +1,4 @@
-import { GameAction, IPlayer } from '../../interfaces';
+import { Currency, GameAction, IPlayer, IVendorItem } from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -64,5 +64,18 @@ export class OpenTrainerWindow {
     public npcSprite: number,
     public npcMaxLevel: number,
     public npcMaxSkill: number
+  ) {}
+}
+
+// dispatched when greeting a vendor
+export class OpenVendorWindow {
+  static type = GameAction.NPCActionShowVendor;
+  constructor(
+    public npcUUID: string,
+    public npcName: string,
+    public npcSprite: number,
+    public npcVendorCurrency: Currency,
+    public npcVendorItems: IVendorItem[],
+    public npcVendorDailyItems: IVendorItem[]
   ) {}
 }

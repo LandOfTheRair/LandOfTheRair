@@ -1,3 +1,5 @@
+import { IVendorItem } from './behaviors';
+import { Currency } from './building-blocks';
 import { INPC } from './npc';
 import { IPlayer } from './player';
 
@@ -13,6 +15,14 @@ export interface IGame {
     npcSprite: number;
     npcMaxLevel: number;
     npcMaxSkill: number;
+  };
+  vendorInfo: {
+    npcUUID: string;
+    npcName: string;
+    npcSprite: number;
+    npcVendorCurrency: Currency;
+    npcVendorItems: IVendorItem[];
+    npcVendorDailyItems: IVendorItem[];
   };
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;

@@ -1,11 +1,11 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { IGame } from '../interfaces';
+import { Currency, IGame } from '../interfaces';
 
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { OpenTrainerWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+import { OpenTrainerWindow, OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
@@ -21,6 +21,14 @@ const defaultGame: () => IGame = () => {
       npcSprite: 0,
       npcMaxSkill: 0,
       npcMaxLevel: 0
+    },
+    vendorInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
+      npcVendorCurrency: Currency.Gold,
+      npcVendorItems: [],
+      npcVendorDailyItems: []
     },
     mapInfo: {
       players: {},
@@ -106,6 +114,11 @@ export class GameState {
   @Selector()
   static currentTrainerWindow(state: IGame) {
     return state.trainerInfo;
+  }
+
+  @Selector()
+  static currentVendorWindow(state: IGame) {
+    return state.vendorInfo;
   }
 
   constructor(private store: Store) {}
@@ -218,5 +231,23 @@ export class GameState {
     });
 
     this.store.dispatch(new ShowWindow('trainer'));
+  }
+
+  @Action(OpenVendorWindow)
+  openVendorWindow(ctx: StateContext<IGame>, {
+    npcUUID, npcName, npcSprite, npcVendorCurrency, npcVendorDailyItems, npcVendorItems
+  }: OpenVendorWindow) {
+    ctx.patchState({
+      vendorInfo: {
+        npcName,
+        npcUUID,
+        npcSprite,
+        npcVendorCurrency,
+        npcVendorItems,
+        npcVendorDailyItems
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('vendor'));
   }
 }
