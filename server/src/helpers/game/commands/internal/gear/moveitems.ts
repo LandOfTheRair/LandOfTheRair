@@ -11,6 +11,7 @@ const origins = [
   'C',  // coin
   'G',  // ground
   'M',  // merchant
+  'O',  // Obtainagain (buyback)
 ];
 
 const validDestinations = {
@@ -21,7 +22,8 @@ const validDestinations = {
   R: ['L', 'E', 'B', 'S', 'G', 'M'],
   C: ['R', 'L', 'G'],
   G: ['R', 'L', 'E', 'B', 'S'],
-  M: ['R', 'L', 'B', 'S']
+  M: ['R', 'L', 'B', 'S'],
+  O: ['R', 'L', 'B', 'S']
 };
 
 const allAliases = origins.map(o => validDestinations[o].map(sub => `${o}t${sub}`)).flat();
@@ -89,6 +91,35 @@ export class MoveItems extends MacroCommand {
 
       if (this.game.directionHelper.distFrom(player, npc) > 2) {
         this.sendMessage(player, 'You are too far away from that person!');
+        return false;
+      }
+    }
+
+    // buying an item back
+    if (src === 'O') {
+      const [npcUUID, itemSlot] = srcSlot.split(':');
+
+      // make sure npc is nearby
+      const npc = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, npcUUID);
+      if (!npc) {
+        this.sendMessage(player, 'You do not see that person.');
+        return false;
+      }
+
+      if (this.game.directionHelper.distFrom(player, npc) > 2) {
+        this.sendMessage(player, 'You are too far away from that person!');
+        return false;
+      }
+
+      // make sure we can buy it
+      const buybackItem = player.items.buyback[+itemSlot];
+      if (!buybackItem || !buybackItem.mods.buybackValue) {
+        this.sendMessage(player, 'You cannot buy back that item!');
+        return false;
+      }
+
+      if (!this.game.playerHelper.hasCurrency(player, buybackItem.mods.buybackValue ?? 0, Currency.Gold)) {
+        this.sendMessage(player, 'You cannot afford to buy that item back!');
         return false;
       }
     }
@@ -764,7 +795,7 @@ export class MoveItems extends MacroCommand {
 
   // handle M as an origin
   handleM(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.G.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.M.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
     const [npcUUID, subtype, subslot] = origSlot.split(':');
     const npc: INPC = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, npcUUID) as INPC;
@@ -882,6 +913,80 @@ export class MoveItems extends MacroCommand {
         return this.sendMessage(player, 'Something went wrong, please contact a GM.');
       }
     }
+  }
+
+  // handle O as an origin
+  handleO(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+    if (!validDestinations.O.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+
+    const itemSlot = +origSlot.split(':')[1];
+    const srcItem = player.items.buyback[itemSlot];
+
+    if (!this.doPrelimChecks(player, srcItem, 'O', origSlot, dest, destSlot)) return;
+
+    this.game.playerHelper.loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
+
+    switch (dest) {
+      case 'R': { // OtR
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (rightHand && !leftHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setLeftHand(player, rightHand);
+          this.game.characterHelper.setRightHand(player, srcItem);
+
+        } else if (!rightHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setRightHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      case 'L': { // OtL
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (leftHand && !rightHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setRightHand(player, leftHand);
+          this.game.characterHelper.setLeftHand(player, srcItem);
+
+        } else if (!leftHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setLeftHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      case 'S': { // OtS
+        if (!this.game.playerInventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+        this.game.playerInventoryHelper.addItemToSack(player, srcItem);
+        this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+        break;
+      }
+
+      case 'B': { // OtB
+        if (!this.game.playerInventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+        this.game.playerInventoryHelper.addItemToBelt(player, srcItem);
+        this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+        break;
+      }
+
+      default: {
+        this.game.logger.error('MoveItems', `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+      }
+    }
+
   }
 
 }
