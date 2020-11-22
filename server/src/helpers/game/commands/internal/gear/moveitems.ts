@@ -728,7 +728,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
+          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
@@ -760,7 +760,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
+          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
