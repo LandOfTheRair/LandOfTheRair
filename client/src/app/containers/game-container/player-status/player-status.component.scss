@@ -13,6 +13,11 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+
+  app-effect-icon {
+    font-size: 80%;
+    padding: 2px;
+  }
 }
 
 .bars {
