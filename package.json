@@ -1,6 +1,6 @@
 {
   "name": "landoftherair",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "postinstall": "lerna exec -- npm install && lerna exec -- npm run setup",
     "setup": "lerna exec -- npm run setup",
@@ -8,10 +8,24 @@
     "start:client": "cd client && npm run start:dev",
     "start:server": "cd server && npm run start:dev",
     "lint": "lerna exec --parallel -- npm run lint",
-    "build": "lerna exec --parallel -- npm run build"
+    "build": "lerna exec --parallel -- npm run build",
+
+    "changelog:generate": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "changelog:generate:current": "conventional-changelog -p angular -o CHANGELOG-current.md -r 2",
+    "changelog:commit": "git commit CHANGELOG.md CHANGELOG-current.md -m \"Update changelog\" || true",
+  
+    "preversion": "npm run lint && npm run build",
+    "postversion": "npm run changelog:generate && npm run changelog:generate:current && npm run changelog:commit && npm run version:reversion && npm run push",
+    "version:reversion": "node scripts/postversion.reversion",
+    
+    "push": "git push && git push --tags",
+    "bump:patch": "npm version patch -m \"chore(release): Patch %s\"",
+    "bump:minor": "npm version minor -m \"chore(release): Minor %s\"",
+    "bump:major": "npm version major -m \"chore(release): Major %s\""
   },
   "private": true,
   "devDependencies": {
+    "conventional-changelog": "^3.1.24",
     "lerna": "^3.22.1",
     "tslib": "^1.10.0"
   },
