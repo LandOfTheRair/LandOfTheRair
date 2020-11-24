@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+
 import { IGame, IMacro, IMacroContainer } from '../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
+import * as allMacros from '../../assets/content/_output/macros.json';
 @Injectable({
   providedIn: 'root'
 })
@@ -77,7 +79,11 @@ export class MacrosService {
   private parseMacroMap(macroMap: Record<string, IMacro>) {
     this.macroMap = {};
 
-    Object.values(macroMap).forEach(macro => {
+    const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault);
+
+    const allCheckableMacros = Object.values(macroMap).concat(defaultMacros);
+
+    allCheckableMacros.forEach(macro => {
       if (!macro.key) return;
       this.macroMap[this.buildMacroString(macro)] = macro;
     });
