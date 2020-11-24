@@ -250,8 +250,10 @@
   <button mat-button (click)="create()" color="primary" *ngIf="currentTab === 0">New Macro</button>
   <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0 && showMacroEditor" [disabled]="!canSaveCurrentMacro()">Save Macro</button>
   <div class="spacer" *ngIf="currentTab === 0"></div>
-  <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0">Export Macros</button>
-  <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0">Import Macros</button>
+
+  <input type="file" #uploadMacros class="hidden" accept=".json" (change)="import($event, uploadMacros)"/>
+  <button mat-button (click)="export()" color="accent" *ngIf="currentTab === 0">Export Macros</button>
+  <button mat-button (click)="uploadMacros.click()" color="accent" *ngIf="currentTab === 0">Import Macros</button>
   
   <button mat-button (click)="createMacroGroup()" color="primary" *ngIf="currentTab === 1">New Macro Group</button>
 </div>

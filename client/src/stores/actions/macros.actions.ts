@@ -35,3 +35,8 @@ export class SetDefaultMacros {
   static type = GameAction.SetDefaultMacros;
   constructor() {}
 }
+
+export class ImportMacros {
+  static type = GameAction.ImportMacros;
+  constructor(public macroBars: IMacroBar[], public macros: Record<string, IMacro>) {}
+}

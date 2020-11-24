@@ -2,14 +2,17 @@ import { Color, NgxMatColorPickerComponent, stringInputToObject } from '@angular
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Select, Selector, Store } from '@ngxs/store';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isUndefined } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
-import { Observable, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import * as allMacros from '../../../../assets/content/_output/macros.json';
 import { macroNames } from '../../../../assets/generated/macicons.json';
-import { IGame, IMacro, IMacroBar, IMacroContainer } from '../../../../interfaces';
-import { CreateCustomMacro, DeleteCustomMacro, GameState, MacrosState, SetActiveMacroBars, SetMacroBars } from '../../../../stores';
+import { IAccount, IGame, IMacro, IMacroBar, IMacroContainer, IPlayer } from '../../../../interfaces';
+import { AccountState, CreateCustomMacro, DeleteCustomMacro, GameState,
+  ImportMacros,
+  MacrosState, SetActiveMacroBars, SetMacroBars } from '../../../../stores';
 
 const defaultMacro = () => ({
   name: '',
@@ -35,6 +38,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   @ViewChild('fgPick', { static: true }) fgPicker: NgxMatColorPickerComponent;
   @ViewChild('bgPick', { static: true }) bgPicker: NgxMatColorPickerComponent;
 
+  @Select(AccountState.account) account$: Observable<IAccount>;
+  @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
   @Select(MacroEditorComponent.currentPlayerMacros) currentPlayerMacros$: Observable<any>;
   @Select(MacrosState.customMacros) customMacros$: Observable<Record<string, IMacro>>;
 
@@ -251,10 +256,90 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   export() {
+    combineLatest([
+      this.currentPlayerMacros$,
+      this.customMacros$,
+      this.currentPlayer$,
+      this.account$
+    ])
+    .pipe(first())
+    .subscribe(([macroBars, macros, player, account]) => {
+      console.log(macros, player);
 
+      const macroSaveData = {
+        charName: player.name,
+        charSlot: player.charSlot,
+        charClass: player.baseClass,
+        charAccount: account.username,
+        customMacroBars: macroBars.macroBars,
+        customMacros: macros
+      };
+
+      const fileName = `lotr-macros-${macroSaveData.charAccount}-${macroSaveData.charName}-${macroSaveData.charSlot}.json`;
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(macroSaveData, null, 4));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute('href',     dataStr);
+      downloadAnchorNode.setAttribute('download', fileName);
+      downloadAnchorNode.click();
+    });
   }
 
-  import() {
+  import(e, inputEl) {
+    console.log(e?.target?.files);
+    if (!e || !e.target || !e.target.files) return;
+
+    combineLatest([
+      this.currentPlayer$,
+      this.account$
+    ])
+    .pipe(first())
+    .subscribe(([player, account]) => {
+
+      const file = e.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const charSlot = player.charSlot;
+        const charName = player.name;
+        const charClass = player.baseClass;
+        const charAccount = account.username;
+
+        const macroFile = JSON.parse((ev.target as FileReader).result as string);
+
+        const finish = () => {
+          this.store.dispatch(new ImportMacros(Object.values(macroFile.customMacroBars), macroFile.customMacros));
+          inputEl.value = null;
+        };
+
+        // all this data is required to import
+        if (!macroFile.charName
+        || isUndefined(macroFile.charSlot)
+        || !macroFile.customMacroBars
+        || !macroFile.customMacros) return;
+
+        if (charSlot !== macroFile.charSlot || charName !== macroFile.charName || charAccount !== macroFile.charAccount) {
+          const confirm = this.data.modals.confirm(
+            `Confirm Macro Import`,
+            `Are you sure you want to import macros from
+            "${macroFile.charName}" (Class: ${macroFile.charClass}) on slot ${macroFile.charSlot + 1} of account "${macroFile.charAccount}"?
+            You are currently on account "${charAccount}", character "${charName}", slot ${charSlot + 1}, class ${charClass}.`,
+            { okText: 'Yes, import macros!' }
+          );
+
+          confirm.subscribe(res => {
+            if (!res) return;
+
+            finish();
+          });
+
+        } else {
+          finish();
+
+        }
+      };
+
+      reader.readAsText(file);
+    });
 
   }
 
