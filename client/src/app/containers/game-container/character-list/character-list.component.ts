@@ -1,16 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { isNumber, maxBy, sortBy } from 'lodash';
+import { isNumber, isUndefined, maxBy, sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Direction, GameOption, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
+import { Direction, GameOption, GameServerResponse, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 import { MacrosService } from '../../../services/macros.service';
+import { SocketService } from '../../../services/socket.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -44,6 +45,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private socketService: SocketService,
     public gameService: GameService
   ) { }
 
@@ -58,9 +60,16 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     this.timerSub = timer(0, 500).subscribe(() => this.updateCharacterList());
     this.moveSub = this.pos$.subscribe(() => this.updateCharacterList());
+
+    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
+      if (isUndefined(data.setTarget)) return;
+      this.store.dispatch(new SetCurrentTarget(data.setTarget));
+    });
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.socketService.unregisterComponentCallbacks(this.constructor.name);
+  }
 
   private updateCharacterList() {
     this.visibleCharacterList = this.visibleCharacters();
