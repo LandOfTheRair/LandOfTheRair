@@ -148,6 +148,10 @@ mat-dialog-actions {
   padding-top: 0;
 }
 
+.mat-dialog-content {
+  overflow: hidden !important;
+}
+
 // https://codepen.io/shanomurphy/pen/ejpVLw
 .cdk-overlay-pane.fancy .mat-dialog-container, .mat-snack-bar-container.fancy .mat-simple-snackbar {
   border: 25px solid #B88846;

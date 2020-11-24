@@ -98,8 +98,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
       this.allMacros = Object.assign({}, allMacros, macs);
       this.macros = defaultMacros.concat(customMacros);
-
-      console.log(this.allMacros, this.macros);
     });
 
     this.macroBarSub = this.currentPlayerMacros$.subscribe(bars => {
