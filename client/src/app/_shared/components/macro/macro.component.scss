@@ -11,6 +11,8 @@
   border-radius: 3px;
   overflow: hidden;
 
+  position: relative;
+
   &.small {
     min-width: 34px;
     max-width: 34px;
@@ -39,5 +41,16 @@
     &:active:not(.active) {
       box-shadow: 1px 0 5px 3px #000;
     }
+  }
+
+  .keybind {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    color: #000;
+    text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+    font-weight: bold;
+    font-size: 10px;
   }
 }

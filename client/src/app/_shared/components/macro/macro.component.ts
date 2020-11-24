@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { IMacro } from '../../../../interfaces';
+import { MacrosService } from '../../../services/macros.service';
 
 @Component({
   selector: 'app-macro',
@@ -14,7 +15,7 @@ export class MacroComponent {
   @Input() public disableEffects = false;
   @Input() public showTooltip = true;
 
-  constructor() { }
+  constructor(public macroService: MacrosService) { }
 
   get background() {
     return this.macroRef?.bgColor ?? '#ccc';
@@ -34,5 +35,10 @@ export class MacroComponent {
 
   get macroTooltip() {
     return this.macroRef?.tooltipDesc ?? '';
+  }
+
+  get macroKeybind() {
+    if (!this.macroRef) return '';
+    return this.macroService.buildMacroString(this.macroRef);
   }
 }

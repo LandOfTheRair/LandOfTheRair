@@ -60,12 +60,14 @@ export class MacrosService {
     return this.macroMap[key.toUpperCase()];
   }
 
-  private buildMacroString(macro: IMacro): string {
+  public buildMacroString(macro: IMacro): string {
+    if (!macro.key) return '';
+    const modifiers: any = macro.modifiers || {};
 
     let macroString = '';
-    if (macro.modifiers.alt) macroString = `ALT+`;
-    if (macro.modifiers.ctrl) macroString = `${macroString}CTRL+`;
-    if (macro.modifiers.shift) macroString = `${macroString}SHIFT+`;
+    if (modifiers.alt) macroString = `ALT+`;
+    if (modifiers.ctrl) macroString = `${macroString}CTRL+`;
+    if (modifiers.shift) macroString = `${macroString}SHIFT+`;
 
     macroString = `${macroString}${macro.key.toUpperCase()}`;
 

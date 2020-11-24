@@ -128,6 +128,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     if (!key || ['Shift', 'Control', 'Alt'].includes(key)) return;
 
     this.currentlyEditingMacro.key = key.toUpperCase();
+    this.currentlyEditingMacro.modifiers = this.currentlyEditingMacro.modifiers || { shift: false, ctrl: false, alt: false };
     this.currentlyEditingMacro.modifiers.shift = shiftKey;
     this.currentlyEditingMacro.modifiers.ctrl = ctrlKey;
     this.currentlyEditingMacro.modifiers.alt = altKey;

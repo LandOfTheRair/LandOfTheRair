@@ -5,6 +5,10 @@
     <app-icon [name]="iconName"
               [bgColor]="background"
               [fgColor]="foreground"></app-icon>
+
+    <div class="keybind" *ngIf="macroKeybind">
+      {{ macroKeybind }}
+    </div>
   </div>
 
   <mde-popover #macroTooltipTemplate="mdePopover" 
