@@ -9,7 +9,7 @@ import makeWebSocketObservable, {
 
 import { Store } from '@ngxs/store';
 import { StateReset } from 'ngxs-reset-plugin';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GameServerEvent, GameServerResponse } from '../../interfaces';
@@ -30,6 +30,11 @@ export class SocketService {
   private isWSConnected: boolean;
   public get isConnected() {
     return this.isWSConnected;
+  }
+
+  private wsConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public get wsConnected$() {
+    return this.wsConnected.asObservable();
   }
 
   private socket$: Observable<unknown>;
@@ -68,6 +73,8 @@ export class SocketService {
 
   private connectStatus(isConnected: boolean) {
     this.isWSConnected = isConnected;
+
+    this.wsConnected.next(isConnected);
 
     if (!isConnected) {
       this.store.dispatch(new Logout());

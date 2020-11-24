@@ -9,7 +9,7 @@
 
   <mde-popover #macroTooltipTemplate="mdePopover" 
                mdePopoverPositionY="above" 
-               [mdePopoverTriggerOn]="macroRef ? 'hover' : 'none'" 
+               [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'" 
                [mdePopoverOverlapTrigger]="false"
                mdePopoverEnterDelay="1000">
     <mat-card class="tooltip-card">

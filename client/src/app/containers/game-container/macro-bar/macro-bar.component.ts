@@ -17,7 +17,7 @@ import { MacrosService } from '../../../services/macros.service';
 })
 export class MacroBarComponent implements OnInit, OnDestroy {
 
-  @Select(MacrosService.currentPlayerMacros) macros$;
+  @Select(MacrosService.currentPlayerMacros) macros$: Observable<any>;
   @Select(MacrosState.allMacros) allMacros$: Observable<any>;
 
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);

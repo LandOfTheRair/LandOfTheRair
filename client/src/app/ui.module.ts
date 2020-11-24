@@ -23,6 +23,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MdePopoverModule } from '@material-extended/mde';
 
+import { MAT_COLOR_FORMATS, MatColorFormats, NgxMatColorPickerModule } from '@angular-material-components/color-picker';
+
 const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
@@ -30,12 +32,23 @@ const matImports = [
   MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule, MatTabsModule,
   MatSliderModule, MatRadioModule,
 
-  MdePopoverModule
+  MdePopoverModule,
+
+  NgxMatColorPickerModule
 ];
+
+export const CUSTOM_MAT_COLOR_FORMATS: MatColorFormats = {
+  display: {
+      colorInput: 'hex'
+  }
+};
 
 @NgModule({
   declarations: [],
   imports: [CommonModule, ...matImports],
-  exports: [...matImports]
+  exports: [...matImports],
+  providers: [
+   { provide: MAT_COLOR_FORMATS, useValue: CUSTOM_MAT_COLOR_FORMATS }
+  ],
 })
 export class UIModule { }

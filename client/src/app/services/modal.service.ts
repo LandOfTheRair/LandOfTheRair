@@ -14,8 +14,10 @@ import { AmountModalComponent } from '../_shared/modals/amount/amount.component'
 import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
 import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
+import { MacroEditorComponent } from '../_shared/modals/macroeditor/macroeditor.component';
 import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
 import { OptionsComponent } from '../_shared/modals/options/options.component';
+import { TextModalComponent } from '../_shared/modals/text/text.component';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -37,6 +39,12 @@ export class ModalService {
       if (!val && this.npcDialogRef) {
         this.npcDialogRef.close();
       }
+    });
+
+    this.socketService.wsConnected$.subscribe(val => {
+      if (val) return;
+
+      this.dialog.closeAll();
     });
 
     this.socketService.registerComponentCallback(
@@ -108,6 +116,16 @@ export class ModalService {
     return amount.afterClosed();
   }
 
+  public text(title: string, content: string) {
+    const text = this.dialog.open(TextModalComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      data: { title, content }
+    });
+
+    return text.afterClosed();
+  }
+
   public npcDialog(dialogInfo: IDialogChatAction) {
     if (this.npcDialogRef) return null;
 
@@ -156,6 +174,15 @@ export class ModalService {
     this.dialog.open(OptionsComponent, {
       width: '650px',
       panelClass: 'fancy'
+    });
+  }
+
+  public showMacros() {
+    this.dialog.open(MacroEditorComponent, {
+      width: '750px',
+      panelClass: 'fancy',
+      disableClose: true,
+      data: { modals: this }
     });
   }
 }

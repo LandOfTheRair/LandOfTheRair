@@ -137,3 +137,12 @@ $sides: (top, bottom, left, right);
 .lower-stat {
   color: #ff4e4e;
 }
+
+.error-container {
+  position: relative;
+
+  mat-error {
+    position: absolute;
+    top: -20px;
+  }
+}

@@ -8,17 +8,11 @@ import { IMacro } from '../../../../interfaces';
 })
 export class MacroComponent {
 
-  @Input()
-  public size = 'normal';
-
-  @Input()
-  public macroRef: IMacro;
-
-  @Input()
-  public isActive: boolean;
-
-  @Input()
-  public disableEffects = false;
+  @Input() public size = 'normal';
+  @Input() public macroRef: IMacro;
+  @Input() public isActive: boolean;
+  @Input() public disableEffects = false;
+  @Input() public showTooltip = true;
 
   constructor() { }
 

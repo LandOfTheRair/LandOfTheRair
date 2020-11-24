@@ -1,0 +1,256 @@
+<h1 mat-dialog-title>Edit Macros / Macro Bars</h1>
+
+<div mat-dialog-content>
+
+  <mat-tab-group mat-align-tabs="center" (selectedTabChange)="selectTab($event)">
+
+    <mat-tab [label]="'Macros (' + macros.length + ')'">
+      <div class="macro-editor-container">
+
+        <div class="macros-list">
+          <div class="macro-inline" 
+               (mouseover)="showEdit[macro.name] = true"
+               (mouseleave)="showEdit[macro.name] = false"
+               *ngFor="let macro of macros">
+
+            <app-icon size="small" [name]="macro.icon" [fgColor]="macro.color" [bgColor]="macro.bgColor || '#ccc'"></app-icon>
+            <span>{{ macro.name }}</span>
+
+            <span class="macro-actions" *ngIf="showEdit[macro.name]">
+              <button mat-icon-button *ngIf="macro.isDefault" color="accent" (click)="copy(macro)">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="!macro.isDefault" color="primary" (click)="edit(macro)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button *ngIf="!macro.isDefault" color="warn" (click)="remove(macro)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </div>
+        </div>
+
+        <div class="macro-creator">
+          <div class="vertical-center full-width full-height background-text" *ngIf="!showMacroEditor">Select a macro to edit it, or create a new one</div>
+          <div [class.hidden]="!showMacroEditor">
+
+            <div class="full-width name-row">
+              <app-icon [name]="currentlyEditingMacro.icon" size="small" [fgColor]="currentlyEditingMacro.color" [bgColor]="currentlyEditingMacro.bgColor || '#ccc'"></app-icon>
+
+              <mat-form-field class="full-width">
+                <mat-label>Macro Name</mat-label>
+                <input matInput 
+                  type="text" 
+                  [disabled]="isEditing"
+                  placeholder="Macro Name (must be unique)" 
+                  maxlength="15"
+                  [(ngModel)]="currentlyEditingMacro.name"
+                  autocomplete="off"
+                  [ngModelOptions]="{ standalone: true }" />
+              </mat-form-field>
+            </div>
+
+            <div class="full-width error-container">
+              <mat-error *ngIf="alreadyAssignedMacroName()"><small>Macro with this name already exists.</small></mat-error>
+            </div>
+
+            <mat-form-field class="full-width">
+              <mat-label>Macro Commands</mat-label>
+              <textarea matInput 
+                type="text" 
+                placeholder="Macro Commands (separate multiple commands with semicolons)" 
+                maxlength="300"
+                [(ngModel)]="currentlyEditingMacro.macro"
+                [ngModelOptions]="{ standalone: true }"></textarea>
+            </mat-form-field>
+
+            <div class="full-width keycombo-row">
+
+              <mat-form-field class="full-width">
+                <mat-label>Key</mat-label>
+                <input matInput 
+                  type="text" 
+                  placeholder="Key" 
+                  [(ngModel)]="currentlyEditingMacro.key"
+                  autocomplete="off"
+                  (keydown)="updateKey($event)"
+                  [ngModelOptions]="{ standalone: true }" />
+              </mat-form-field>
+
+              <div class="button-container">
+                <button mat-raised-button [color]="currentlyEditingMacro.modifiers?.shift ? 'accent' : ''" (click)="toggleModifier('shift')">Shift</button>
+              </div>
+              <div class="button-container">
+                <button mat-raised-button [color]="currentlyEditingMacro.modifiers?.ctrl ? 'accent' : ''" (click)="toggleModifier('ctrl')">Ctrl</button>
+              </div>
+              <div class="button-container">
+                <button mat-raised-button [color]="currentlyEditingMacro.modifiers?.alt ? 'accent' : ''" (click)="toggleModifier('alt')">Alt</button>
+              </div>
+            </div>
+
+            <div class="full-width error-container">
+              <mat-error *ngIf="alreadyAssignedComboOtherKey()"><small>Key combo duplicated by {{ alreadyAssignedComboOtherKey() }}.</small></mat-error>
+            </div>
+
+            <mat-form-field class="full-width">
+              <mat-label>Macro Mode</mat-label>
+              <mat-select [(ngModel)]="currentlyEditingMacro.mode" [ngModelOptions]="{ standalone: true }">
+                <mat-option value="autoActivate">
+                  Instant (<em>Activates when macro clicked</em>)
+                </mat-option>
+
+                <mat-option value="lockActivation">
+                  Locked (<em>Becomes your active macro when clicked</em>)
+                </mat-option>
+
+                <mat-option value="clickToTarget">
+                  Needs Target (<em>Needs to target a creature</em>)
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="full-width color-row">
+
+              <mat-form-field>
+                <mat-label>Foreground Color</mat-label>
+                <input matInput 
+                  type="text" 
+                  placeholder="#000000" 
+                  maxlength="7"
+                  [ngxMatColorPicker]="fgPick"
+                  [(ngModel)]="fgColor"
+                  [ngModelOptions]="{ standalone: true }" />
+                <ngx-mat-color-toggle matSuffix [for]="fgPick"></ngx-mat-color-toggle>
+                <ngx-mat-color-picker #fgPick [color]="fgColor"></ngx-mat-color-picker>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Background Color</mat-label>
+                <input matInput 
+                  type="text" 
+                  placeholder="#cccccc" 
+                  maxlength="7"
+                  [ngxMatColorPicker]="bgPick"
+                  [(ngModel)]="bgColor"
+                  [ngModelOptions]="{ standalone: true }" />
+                <ngx-mat-color-toggle matSuffix [for]="bgPick"></ngx-mat-color-toggle>
+                <ngx-mat-color-picker #bgPick [color]="bgColor"></ngx-mat-color-picker>
+              </mat-form-field>
+            </div>
+
+            <div class="icon-action-row">
+              <button mat-icon-button color="primary" (click)="setPage(currentIconPage - 1)">
+                <mat-icon>navigate_before</mat-icon>
+              </button>
+              
+              <div>Page {{ currentIconPage + 1 }}</div>
+
+              <button mat-icon-button color="primary" (click)="setPage(currentIconPage + 1)">
+                <mat-icon>navigate_next</mat-icon>
+              </button> 
+            </div>
+           
+            <div class="icons">
+              <app-icon size="small" 
+                        [name]="icon" 
+                        [fgColor]="currentlyEditingMacro.color" 
+                        [bgColor]="currentlyEditingMacro.bgColor || '#ccc'"
+                        (click)="currentlyEditingMacro.icon = icon"
+                        [class.selected]="currentlyEditingMacro.icon === icon"
+                        *ngFor="let icon of currentIconsInPage"></app-icon>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Macro Bars">
+      <div class="macro-bar-editor-container">
+        
+        <div class="macro-group-container">
+          <div class="text-center">
+            <em>(left click to add or change a macro, right click to remove it)</em>
+          </div>
+
+          <div *ngFor="let group of macroBars; let i = index">
+            <div class="macro-group">
+        
+              <div class="group-name">
+                <div class="name">{{ group.name }}</div>
+                <div class="actions">
+                  <button mat-flat-button [color]="activeMacroBars[0] === group.name ? 'accent' : ''" (click)="makeActive(group.name, 0)">1</button>
+                  <button mat-flat-button [color]="activeMacroBars[1] === group.name ? 'accent' : ''" (click)="makeActive(group.name, 1)">2</button>
+                  <button mat-flat-button [color]="activeMacroBars[2] === group.name ? 'accent' : ''" (click)="makeActive(group.name, 2)">3</button>
+                  <button mat-stroked-button color="warn" *ngIf="group.name !== 'default'" (click)="removeMacroGroup(group.name)">&times;</button>
+                </div>
+              </div>
+        
+              <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
+        
+                <app-macro
+                  [macroRef]="allMacros[group.macros[macroIdx]]"
+                  [showTooltip]="false"
+                  (contextmenu)="setMacro(group, macroIdx, null)"
+                  [mdePopoverTriggerFor]="macroSelectorPopover"
+                ></app-macro>
+      
+                <mde-popover #macroSelectorPopover="mdePopover" 
+                            class="macro-selector-popover"
+                            mdePopoverPositionY="below" 
+                            [mdePopoverTriggerOn]="'click'" 
+                            [mdePopoverOverlapTrigger]="false">
+                  <mat-card class="tooltip-card">
+                    <mat-card-title>
+                      Choose Macro
+                    </mat-card-title>
+
+                    <mat-card-content>
+                      <div class="selector-buttons-row">
+                        <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage - 1, $event)">
+                          <mat-icon>navigate_before</mat-icon>
+                        </button>
+                        
+                        <div>Page {{ currentMacroPage + 1 }}</div>
+          
+                        <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage + 1, $event)">
+                          <mat-icon>navigate_next</mat-icon>
+                        </button> 
+                      </div>
+
+                      <div class="selector-macros">
+                        <app-macro
+                          [macroRef]="allMacros[macro.name]"
+                          [showTooltip]="false"
+                          (click)="setMacro(group, macroIdx, macro.name)"
+                          *ngFor="let macro of currentMacrosInPage"
+                        ></app-macro>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </mde-popover>
+        
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </mat-tab>
+
+  </mat-tab-group>
+  
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button (click)="create()" color="primary" *ngIf="currentTab === 0">New Macro</button>
+  <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0 && showMacroEditor" [disabled]="!canSaveCurrentMacro()">Save Macro</button>
+  <div class="spacer" *ngIf="currentTab === 0"></div>
+  <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0">Export Macros</button>
+  <button mat-button (click)="save()" color="accent" *ngIf="currentTab === 0">Import Macros</button>
+  
+  <button mat-button (click)="createMacroGroup()" color="primary" *ngIf="currentTab === 1">New Macro Group</button>
+</div>

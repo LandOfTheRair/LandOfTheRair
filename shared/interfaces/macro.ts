@@ -49,13 +49,13 @@ export interface IMacroBar {
 }
 
 export interface IMacro {
-  key: string;
-  modifiers: { shift: boolean, alt: boolean, ctrl: boolean };
+  key?: string;
+  modifiers?: { shift: boolean, alt: boolean, ctrl: boolean };
 
-  mode: 'autoActivate' | 'lockActivation' | 'clickToTarget';
-  ignoreAutoattackOption: boolean;
+  mode: string; // 'autoActivate' | 'lockActivation' | 'clickToTarget';
+  ignoreAutoattackOption?: boolean;
 
-  appendTargetToEachMacro: boolean;
+  appendTargetToEachMacro?: boolean;
   macro: string;
 
   tooltipDesc: string;
@@ -64,7 +64,7 @@ export interface IMacro {
   icon: string;
 
   color: string;
-  bgColor: string;
+  bgColor?: string;
 
   isSystem?: boolean;
   requiresLearn?: boolean;

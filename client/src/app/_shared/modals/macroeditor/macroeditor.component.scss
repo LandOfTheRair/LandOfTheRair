@@ -1,0 +1,170 @@
+
+.mat-dialog-content {
+  overflow: hidden;
+}
+
+mat-error {
+  font-weight: bold;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.macro-editor-container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: row;
+
+  .macros-list {
+    flex: 1;
+    min-height: 530px;
+    max-height: 530px;
+    overflow-y: auto;
+    max-width: 50%;
+
+    .macro-inline {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+      min-height: 40px;
+
+      app-icon {
+        width: 40px;
+      }
+
+      .macro-name {
+        width: 100px;
+      }
+
+      .macro-actions {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .macro-creator {
+    flex: 1;
+    padding-left: 16px;
+    padding-right: 16px;
+    min-width: 350px;
+    max-width: 350px;
+
+    .name-row {
+      display: flex;
+      align-items: center;
+
+      app-icon {
+        max-width: 64px;
+        margin-right: 10px;
+        border: 1px solid #000;
+      }
+    }
+
+    .keycombo-row {
+      display: flex;
+      justify-content: space-between;
+
+      mat-form-field {
+        max-width: 75px;
+      }
+
+      .button-container {
+        padding: 4px;
+      }
+    }
+
+    .color-row {
+      display: flex;
+      justify-content: space-between;
+
+      mat-form-field {
+        flex: 1;
+        max-width: 40%;
+      }
+    }
+
+    .icon-action-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .icons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      app-icon {
+        margin: 2px;
+
+        &.selected {
+          outline: 1px solid #fff;
+
+          box-shadow: 0px 0px 1px 1px #fff;
+          animation: glow 1000ms linear infinite alternate;
+  
+          @keyframes glow {
+            to {
+              box-shadow: 0px 0px 3px 3px #bbb;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.macro-bar-editor-container {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: row;
+
+  min-height: 530px;
+  max-height: 530px;
+  overflow-y: auto;
+}
+
+
+.macro-group-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: 100%;
+}
+
+.macro-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5px;
+
+  .group-name {
+    min-width: 115px;
+    max-width: 115px;
+    max-height: 54px;
+    padding-top: 5px;
+    user-select: none;
+    position: relative;
+    color: #fff;
+
+    .actions {
+      margin-top: 5px;
+
+      button {
+        min-width: 20px;
+        width: 20px;
+        padding: 0;
+        height: 20px;
+        line-height: 16px;
+        margin-right: 5px;
+      }
+    }
+  }
+}

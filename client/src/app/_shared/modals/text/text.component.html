@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>
+  {{ data.title || 'What would you like to say?' }}
+</h1>
+
+<div mat-dialog-content>
+  <div>{{ data.content || 'What would you like to say?' }}</div>
+
+  <mat-form-field class="full-width m-t-20">
+    <input matInput 
+      type="text" 
+      [placeholder]="'Enter text...'" 
+      autofocus
+      cdkFocusInitial
+      (keyup.enter)="finish()"
+      [(ngModel)]="text"
+      [ngModelOptions]="{ standalone: true }" />
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button 
+          [mat-dialog-close]="false">
+          {{ data.cancelText || 'Cancel' }}
+  </button>
+
+  <button mat-button 
+          [mat-dialog-close]="text"
+          color="primary">
+          {{ data.okText || 'OK' }}
+  </button>
+</div>
