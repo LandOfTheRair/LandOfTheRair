@@ -187,51 +187,52 @@
                 </div>
               </div>
         
-              <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
+              <div class="macrobar-item" *ngFor="let macroIdx of macroArray" [class.active]="activeMacroSlotGroup === group && activeMacroSlotIndex === macroIdx">
         
                 <app-macro
                   [macroRef]="allMacros[group.macros[macroIdx]]"
                   [showTooltip]="false"
                   (contextmenu)="setMacro(group, macroIdx, null)"
+                  (click)="markActiveSlot(group, macroIdx)"
                   [mdePopoverTriggerFor]="macroSelectorPopover"
                 ></app-macro>
-      
-                <mde-popover #macroSelectorPopover="mdePopover" 
-                            class="macro-selector-popover"
-                            mdePopoverPositionY="below" 
-                            [mdePopoverTriggerOn]="'click'" 
-                            [mdePopoverOverlapTrigger]="false">
-                  <mat-card class="tooltip-card">
-                    <mat-card-title>
-                      Choose Macro
-                    </mat-card-title>
-
-                    <mat-card-content>
-                      <div class="selector-buttons-row">
-                        <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage - 1, $event)">
-                          <mat-icon>navigate_before</mat-icon>
-                        </button>
-                        
-                        <div>Page {{ currentMacroPage + 1 }}</div>
-          
-                        <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage + 1, $event)">
-                          <mat-icon>navigate_next</mat-icon>
-                        </button> 
-                      </div>
-
-                      <div class="selector-macros">
-                        <app-macro
-                          [macroRef]="allMacros[macro.name]"
-                          [showTooltip]="false"
-                          (click)="setMacro(group, macroIdx, macro.name)"
-                          *ngFor="let macro of currentMacrosInPage"
-                        ></app-macro>
-                      </div>
-                    </mat-card-content>
-                  </mat-card>
-                </mde-popover>
         
               </div>
+      
+              <mde-popover #macroSelectorPopover="mdePopover" 
+                          class="macro-selector-popover"
+                          mdePopoverPositionY="below" 
+                          [mdePopoverTriggerOn]="'click'" 
+                          [mdePopoverOverlapTrigger]="false">
+                <mat-card class="tooltip-card">
+                  <mat-card-title>
+                    Choose Macro
+                  </mat-card-title>
+
+                  <mat-card-content>
+                    <div class="selector-buttons-row">
+                      <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage - 1, $event)">
+                        <mat-icon>navigate_before</mat-icon>
+                      </button>
+                      
+                      <div>Page {{ currentMacroPage + 1 }}</div>
+        
+                      <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage + 1, $event)">
+                        <mat-icon>navigate_next</mat-icon>
+                      </button> 
+                    </div>
+
+                    <div class="selector-macros">
+                      <app-macro
+                        [macroRef]="allMacros[macro.name]"
+                        [showTooltip]="false"
+                        (click)="setMarkedMacroSlot(macro.name)"
+                        *ngFor="let macro of currentMacrosInPage"
+                      ></app-macro>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </mde-popover>
             </div>
           </div>
         </div>

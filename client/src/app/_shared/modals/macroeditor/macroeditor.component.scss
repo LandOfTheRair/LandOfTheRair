@@ -131,7 +131,6 @@ mat-error {
   overflow-y: auto;
 }
 
-
 .macro-group-container {
   display: flex;
   flex-wrap: wrap;
@@ -165,6 +164,18 @@ mat-error {
         line-height: 16px;
         margin-right: 5px;
       }
+    }
+  }
+}
+
+.macrobar-item.active {
+  box-shadow: 0px 0px 1px 1px #fff;
+  animation: glow 1000ms linear infinite alternate;
+  border-radius: 5px;
+
+  @keyframes glow {
+    to {
+      box-shadow: 0px 0px 3px 3px #bbb;
     }
   }
 }

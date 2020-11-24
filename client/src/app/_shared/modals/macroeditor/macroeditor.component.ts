@@ -1,5 +1,4 @@
-import { Color } from '@angular-material-components/color-picker';
-import { NgxMatColorPickerComponent, stringInputToObject } from '@angular-material-components/color-picker';
+import { Color, NgxMatColorPickerComponent, stringInputToObject } from '@angular-material-components/color-picker';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Select, Selector, Store } from '@ngxs/store';
@@ -31,7 +30,7 @@ const defaultMacro = () => ({
 export class MacroEditorComponent implements OnInit, OnDestroy {
 
   private readonly ICONS_PER_PAGE = 36;
-  private readonly MACROS_PER_PAGE = 8;
+  private readonly MACROS_PER_PAGE = 16;
 
   @ViewChild('fgPick', { static: true }) fgPicker: NgxMatColorPickerComponent;
   @ViewChild('bgPick', { static: true }) bgPicker: NgxMatColorPickerComponent;
@@ -71,6 +70,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);
   public currentMacroPage = 1;
   public currentMacrosInPage: IMacro[] = [];
+  public activeMacroSlotGroup: IMacroBar;
+  public activeMacroSlotIndex: number;
 
   @Selector([GameState, MacrosState])
   static currentPlayerMacros(
@@ -316,13 +317,24 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
     if (page > maxPage) return;
 
-
-    const pageStart = this.currentMacroPage * pageSize;
+    const pageStart = page * pageSize;
     const currentMacrosInPage = this.macros.slice(pageStart, pageStart + pageSize);
+
     if (currentMacrosInPage.length === 0) return;
 
     this.currentMacroPage = page;
     this.currentMacrosInPage = currentMacrosInPage;
+  }
+
+  markActiveSlot(group: IMacroBar, idx: number) {
+    this.activeMacroSlotGroup = group;
+    this.activeMacroSlotIndex = idx;
+  }
+
+  setMarkedMacroSlot(macroName: string) {
+    this.setMacro(this.activeMacroSlotGroup, this.activeMacroSlotIndex, macroName);
+
+    this.markActiveSlot(undefined, undefined);
   }
 
 }
