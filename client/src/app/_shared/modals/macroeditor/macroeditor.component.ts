@@ -269,6 +269,13 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   makeActive(group: string, pos: number) {
+
+    // if it's currently active, un-active it
+    if (this.activeMacroBars[pos] === group) {
+      this.activeMacroBars[pos] = null;
+      return;
+    }
+
     const activeIdx = this.activeMacroBars.findIndex(x => x === group);
     if (activeIdx !== -1) this.activeMacroBars[activeIdx] = null;
 

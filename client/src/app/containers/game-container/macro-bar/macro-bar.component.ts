@@ -60,7 +60,8 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
     const newMacroBars = [...macroBars];
     newMacroBars[macroBarIndex] = orderedMacroBars[newIndex];
-    this.store.dispatch(new SetActiveMacroBars(macroBars));
+
+    this.store.dispatch(new SetActiveMacroBars(newMacroBars));
   }
 
 }
