@@ -130,6 +130,10 @@ export class Spawner {
       }
 
       if (!this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && this.replaceNPCDefs[npc.uuid]) {
+        if (!this.replaceNPCTicks[npc.uuid]) {
+          this.propagateRemoveNPC(npc);
+        }
+
         this.replaceNPCTicks[npc.uuid] = this.replaceNPCTicks[npc.uuid] || 0;
         this.replaceNPCTicks[npc.uuid]++;
 
@@ -283,10 +287,14 @@ export class Spawner {
     }
   }
 
+  private propagateRemoveNPC(npc: INPC): void {
+    this.mapState.removeNPC(npc);
+  }
+
   private removeNPC(npc: INPC): void {
     this.npcs = this.npcs.filter(c => c.uuid !== npc.uuid);
     delete this.npcAI[npc.uuid];
-    this.mapState.removeNPC(npc);
+    this.propagateRemoveNPC(npc);
 
     delete this.replaceNPCTicks[npc.uuid];
     delete this.replaceNPCDefs[npc.uuid];

@@ -353,8 +353,8 @@ export class MapState {
 
   // trigger a full update for a particular player
   public triggerFullUpdateForPlayer(player: Player) {
-    this.onlyUpdatePlayer(player);
     this.updateStateForPlayer(player);
+    this.onlyUpdatePlayer(player);
   }
 
   // update only player related stuff
