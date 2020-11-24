@@ -215,7 +215,7 @@ export class DeathHelper extends BaseService {
     if (npc.noCorpseDrop) return undefined;
 
     const baseCorpse = this.game.itemCreator.getSimpleItem('Corpse');
-    baseCorpse.mods.desc = `the corpse of a ${npc}`;
+    baseCorpse.mods.desc = `the corpse of a ${npc.name}`;
     baseCorpse.mods.sprite = npc.sprite + 4;
 
     return baseCorpse;
