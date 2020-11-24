@@ -38,11 +38,11 @@ export class MacrosService {
   }
 
   @Selector([GameState, MacrosState, MacrosState.allMacros])
-  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allMacros) {
+  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allPossibleMacros) {
     const player = gameState.player;
     if (!player) return null;
 
-    return allMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
+    return allPossibleMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
   }
 
   constructor(
