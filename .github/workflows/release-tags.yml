@@ -31,7 +31,7 @@ jobs:
       
     - run: npm run build
     
-    - uses: olegtarasov/get-tag@v2
+    - uses: little-core-labs/get-git-tag@v3.0.1
       id: loadTagName
 
     - uses: pCYSl5EDgo/cat@master
