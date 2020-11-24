@@ -27,7 +27,7 @@
       <div class="vendor-tabs">
         <mat-tab-group mat-align-tabs="center">
 
-          <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'">
+          <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorItems?.length">
             <div class="item-container">
               <div class="item-slot item-background" *ngFor="let slot of slots">
                 <app-item *ngIf="vendorInfo.npcVendorItems[slot]"
@@ -42,7 +42,7 @@
             </div>
           </mat-tab>
 
-          <mat-tab [label]="'Daily Items (' + (vendorInfo.npcVendorDailyItems?.length || 0) + ')'">
+          <mat-tab [label]="'Daily Items (' + (vendorInfo.npcVendorDailyItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorDailyItems?.length">
             <div class="item-container">
               <div class="item-slot item-background" *ngFor="let slot of slots">
                 <app-item *ngIf="vendorInfo.npcVendorDailyItems[slot]"
