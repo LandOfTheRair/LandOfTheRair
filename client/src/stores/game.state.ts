@@ -204,7 +204,11 @@ export class GameState {
         }
 
 
-        if (patch.op === 'add' && patch.path.includes('/effect') && patch.value.effectName) {
+        const blacklistedEffects = ['Swimming'];
+        if (patch.op === 'add'
+        && patch.path.includes('/effect')
+        && patch.value.effectName
+        && !blacklistedEffects.includes(patch.value.effectName)) {
           GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
         }
       });
