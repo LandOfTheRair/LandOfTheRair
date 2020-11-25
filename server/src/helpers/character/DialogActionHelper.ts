@@ -19,6 +19,9 @@ export class DialogActionHelper extends BaseService {
 
   public async handleDialog(player: IPlayer, npc: INPC, command: string, callbacks): Promise<void> {
     const messages = await (npc as any).dialogParser.parse(command, { player, callbacks });
+    if ((messages || []).length === 0) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {message: this.getDefaultMessage(), from: npc.name}, [MessageType.NPCChatter]);
+    }
     (messages || []).forEach(message => {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message, from: npc.name }, [MessageType.NPCChatter]);
     });
@@ -35,6 +38,22 @@ export class DialogActionHelper extends BaseService {
     };
 
     return actions[action.type].bind(this)(action, npc, player);
+  }
+
+  private getDefaultMessage() {
+    const defaultMessages = [
+      'Hmm?',
+      'What do you mean?',
+      'Hello, are you looking for me?',
+      'What do you want with me?',
+      'Did you mean to say something else?',
+      'What did you just call me?',
+      'Can you get to the point of the matter?',
+      'I\'m very busy, can you hurry it up?',
+      'Can you be more clear?'
+    ];
+
+    return defaultMessages[Math.floor(Math.random() * defaultMessages.length)];
   }
 
   private handleChatAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
@@ -60,10 +79,10 @@ export class DialogActionHelper extends BaseService {
         .filter(Boolean) as IDialogChatActionOption[]
     };
 
-    this.game.messageHelper.sendLogMessageToPlayer(player, { message: formattedChat.message, from: npc.name }, [MessageType.NPCChatter]);
+    // this.game.messageHelper.sendLogMessageToPlayer(player, { message: formattedChat.message, from: npc.name }, [MessageType.NPCChatter]);
     this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
-    return { messages: [], shouldContinue: true };
+    return { messages: [formattedChat.message], shouldContinue: true };
   }
 
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
