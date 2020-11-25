@@ -3,9 +3,11 @@ import { ObjectId } from 'mongodb';
 import { BaseEntity } from '../../helpers/core/db/base';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, ICharacterItems, IEffectContainer, IPlayer, LearnedSpell,
+  Direction, ICharacterItems, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
   PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
+
+type CommandCallback = () => void & { args: IMacroCommandArgs };
 
 @Entity()
 export class Player extends BaseEntity implements IPlayer {
@@ -26,15 +28,15 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) totalStats: StatBlock;
   @Property(PROP_UNSAVED_SHARED()) isGM: boolean;
   @Property(PROP_UNSAVED_SHARED()) isTester: boolean;
+  @Property(PROP_UNSAVED_SHARED()) combatTicks = 0;
+  @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
 
   // temporary props
-  @Property(PROP_TEMPORARY()) combatTicks = 0;
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
-  @Property(PROP_TEMPORARY()) actionQueue: { fast: Array<() => void>, slow: Array<() => void> } = { fast: [], slow: [] };
+  @Property(PROP_TEMPORARY()) actionQueue: { fast: CommandCallback[], slow: CommandCallback[] } = { fast: [], slow: [] };
   @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
-  @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
 

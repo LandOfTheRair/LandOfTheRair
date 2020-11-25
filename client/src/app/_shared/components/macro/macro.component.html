@@ -5,11 +5,15 @@
     <app-icon [name]="iconName"
               [bgColor]="background"
               [fgColor]="foreground"></app-icon>
+
+    <div class="keybind" *ngIf="macroKeybind">
+      {{ macroKeybind }}
+    </div>
   </div>
 
   <mde-popover #macroTooltipTemplate="mdePopover" 
                mdePopoverPositionY="above" 
-               [mdePopoverTriggerOn]="macroRef ? 'hover' : 'none'" 
+               [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'" 
                [mdePopoverOverlapTrigger]="false"
                mdePopoverEnterDelay="1000">
     <mat-card class="tooltip-card">

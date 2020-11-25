@@ -17,11 +17,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MAT_TABS_CONFIG, MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MdePopoverModule } from '@material-extended/mde';
+
+import { MAT_COLOR_FORMATS, MatColorFormats, NgxMatColorPickerModule } from '@angular-material-components/color-picker';
 
 const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
@@ -30,12 +32,24 @@ const matImports = [
   MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule, MatTabsModule,
   MatSliderModule, MatRadioModule,
 
-  MdePopoverModule
+  MdePopoverModule,
+
+  NgxMatColorPickerModule
 ];
+
+export const CUSTOM_MAT_COLOR_FORMATS: MatColorFormats = {
+  display: {
+      colorInput: 'hex'
+  }
+};
 
 @NgModule({
   declarations: [],
   imports: [CommonModule, ...matImports],
-  exports: [...matImports]
+  exports: [...matImports],
+  providers: [
+   { provide: MAT_COLOR_FORMATS, useValue: CUSTOM_MAT_COLOR_FORMATS },
+   { provide: MAT_TABS_CONFIG, useValue: { animationDuration: '0ms' } }
+  ],
 })
 export class UIModule { }

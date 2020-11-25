@@ -140,17 +140,7 @@ export class MenuComponent implements OnInit {
     {
       name: 'Macros',
       visibleIf: this.gameService.inGame$,
-      handler: () => {},
-      children: [
-        {
-          name: 'Macro Editor',
-          handler: () => {}
-        },
-        {
-          name: 'Macro Bar Editor',
-          handler: () => {}
-        },
-      ]
+      handler: () => this.modalService.showMacros()
     },
     {
       name: 'Options',

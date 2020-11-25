@@ -10,7 +10,17 @@ export class QuitAction extends ServerAction {
 
     if (!game.lobbyManager.isAccountInGame(data.account)) throw new Error('Not in game.');
 
+    const player = game.playerManager.getPlayerInGame(data.account);
+
     game.lobbyManager.accountLeaveGame(data.account);
+
+    if (player) {
+      emit({
+        action: GameAction.SetCharacterSlotInformation,
+        slot: player.charSlot,
+        characterInfo: game.db.prepareForTransmission(player)
+      });
+    }
 
     broadcast({
       action: GameAction.ChatUserLeaveGame,

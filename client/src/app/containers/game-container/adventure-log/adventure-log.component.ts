@@ -3,7 +3,9 @@ import { Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
+import marked from 'marked';
 import { Subscription } from 'rxjs';
+
 import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
@@ -23,6 +25,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   public messages: Array<{ messageTypes: MessageType[], message: string }> = [];
 
   private mutationObserver: MutationObserver;
+  private renderer: marked.Renderer;
 
   inGame$: Subscription;
 
@@ -33,6 +36,8 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.initMarkdownRenderer();
+
     this.inGame$ = this.gameService.inGame$.subscribe(inGame => {
       if (inGame) return;
 
@@ -76,6 +81,27 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
+  private initMarkdownRenderer() {
+    this.renderer = new marked.Renderer();
+    const ident = t => t;
+
+    this.renderer.blockquote = ident;
+    this.renderer.html = ident;
+    this.renderer.heading = ident;
+    this.renderer.hr = ident;
+    this.renderer.list = ident;
+    this.renderer.listitem = ident;
+    this.renderer.checkbox = ident;
+    this.renderer.paragraph = ident;
+    this.renderer.table = ident;
+    this.renderer.tablerow = ident;
+    this.renderer.tablecell = ident;
+    this.renderer.br = ident;
+    this.renderer.del = ident;
+    this.renderer.image = ident;
+    this.renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
+  }
+
   public changeTab(newTab: 'All'|'General'|'Combat'|'NPC') {
     this.store.dispatch(new SetLogMode(newTab));
   }
@@ -96,6 +122,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     // create a small hash to quickly look up messages by type
     message.typeHash = {};
     message.messageTypes.forEach(type => message.typeHash[type] = true);
+    message.display = marked(message.message, { renderer: this.renderer });
 
     this.messages.push(message);
 

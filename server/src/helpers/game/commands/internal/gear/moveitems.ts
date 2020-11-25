@@ -1,5 +1,6 @@
-import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
+import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
+import { VendorBehavior } from '../../../../../models/world/ai/behaviors';
 
 const origins = [
   'R',  // right hand
@@ -9,16 +10,20 @@ const origins = [
   'S',  // sack
   'C',  // coin
   'G',  // ground
+  'M',  // merchant
+  'O',  // Obtainagain (buyback)
 ];
 
 const validDestinations = {
   E: ['B', 'S', 'L', 'R', 'G'],
-  B: ['L', 'R', 'S', 'E', 'G'],
-  S: ['L', 'R', 'B', 'E', 'G'],
-  L: ['R', 'E', 'B', 'S', 'G'],
-  R: ['L', 'E', 'B', 'S', 'G'],
+  B: ['L', 'R', 'S', 'E', 'G', 'M'],
+  S: ['L', 'R', 'B', 'E', 'G', 'M'],
+  L: ['R', 'E', 'B', 'S', 'G', 'M'],
+  R: ['L', 'E', 'B', 'S', 'G', 'M'],
   C: ['R', 'L', 'G'],
-  G: ['R', 'L', 'E', 'B', 'S']
+  G: ['R', 'L', 'E', 'B', 'S'],
+  M: ['R', 'L', 'B', 'S'],
+  O: ['R', 'L', 'B', 'S']
 };
 
 const allAliases = origins.map(o => validDestinations[o].map(sub => `${o}t${sub}`)).flat();
@@ -50,7 +55,9 @@ export class MoveItems extends MacroCommand {
     if (updateEquipmentSlots[srcSlot] || updateEquipmentSlots[destSlot]) this.game.characterHelper.calculateStatTotals(player);
   }
 
-  private doPrelimChecks(player: IPlayer, srcItem: ISimpleItem | undefined, dest: string, destSlot: string): boolean {
+  private doPrelimChecks(
+    player: IPlayer, srcItem: ISimpleItem | undefined, src: string, srcSlot: string, dest: string, destSlot: string
+  ): boolean {
     if (!srcItem) return true;
 
     const isSackable = this.game.itemHelper.getItemProperty(srcItem, 'isSackable');
@@ -72,6 +79,49 @@ export class MoveItems extends MacroCommand {
     if (dest === 'E' && !this.game.itemHelper.canGetBenefitsFromItem(player, srcItem)) {
       this.sendMessage(player, 'That item is not yours!');
       return false;
+    }
+
+    // if we're sending to a merchant, make sure we're in range first
+    if (dest === 'M') {
+      const npc = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, destSlot);
+      if (!npc) {
+        this.sendMessage(player, 'You do not see that person.');
+        return false;
+      }
+
+      if (this.game.directionHelper.distFrom(player, npc) > 2) {
+        this.sendMessage(player, 'You are too far away from that person!');
+        return false;
+      }
+    }
+
+    // buying an item back
+    if (src === 'O') {
+      const [npcUUID, itemSlot] = srcSlot.split(':');
+
+      // make sure npc is nearby
+      const npc = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, npcUUID);
+      if (!npc) {
+        this.sendMessage(player, 'You do not see that person.');
+        return false;
+      }
+
+      if (this.game.directionHelper.distFrom(player, npc) > 2) {
+        this.sendMessage(player, 'You are too far away from that person!');
+        return false;
+      }
+
+      // make sure we can buy it
+      const buybackItem = player.items.buyback[+itemSlot];
+      if (!buybackItem || !buybackItem.mods.buybackValue) {
+        this.sendMessage(player, 'You cannot buy back that item!');
+        return false;
+      }
+
+      if (!this.game.playerHelper.hasCurrency(player, buybackItem.mods.buybackValue ?? 0, Currency.Gold)) {
+        this.sendMessage(player, 'You cannot afford to buy that item back!');
+        return false;
+      }
     }
 
     return true;
@@ -171,7 +221,7 @@ export class MoveItems extends MacroCommand {
     if (!validDestinations.L.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
     const srcItem = player.items.equipment[ItemSlot.LeftHand];
 
-    if (!this.doPrelimChecks(player, srcItem, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, srcItem, 'L', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'R': { // LtR
@@ -206,6 +256,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         this.game.characterHelper.setLeftHand(player, undefined);
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
 
@@ -218,6 +270,15 @@ export class MoveItems extends MacroCommand {
 
         this.game.characterHelper.setLeftHand(player, undefined);
         state.addItemToGround(player.x, player.y, srcItem);
+
+        break;
+      }
+
+      case 'M': { // LtM
+        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+
+        this.game.characterHelper.setLeftHand(player, undefined);
+        this.game.playerInventoryHelper.sellItem(player, srcItem);
 
         break;
       }
@@ -235,7 +296,7 @@ export class MoveItems extends MacroCommand {
     if (!validDestinations.R.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
     const srcItem = player.items.equipment[ItemSlot.RightHand];
 
-    if (!this.doPrelimChecks(player, srcItem, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, srcItem, 'R', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'L': { // RtL
@@ -270,6 +331,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         this.game.characterHelper.setRightHand(player, undefined);
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
 
@@ -282,6 +345,15 @@ export class MoveItems extends MacroCommand {
 
         this.game.characterHelper.setRightHand(player, undefined);
         state.addItemToGround(player.x, player.y, srcItem);
+
+        break;
+      }
+
+      case 'M': { // RtM
+        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+
+        this.game.characterHelper.setRightHand(player, undefined);
+        this.game.playerInventoryHelper.sellItem(player, srcItem);
 
         break;
       }
@@ -300,7 +372,7 @@ export class MoveItems extends MacroCommand {
     const srcItem = player.items.equipment[origSlot];
 
     if (!srcItem) return this.sendMessage(player, 'You don\'t have anything equipped there!');
-    if (!this.doPrelimChecks(player, srcItem, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, srcItem, 'E', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'R': { // EtR
@@ -382,7 +454,7 @@ export class MoveItems extends MacroCommand {
 
     if (!srcItem) return this.sendMessage(player, 'You don\'t have an item there!');
 
-    if (!this.doPrelimChecks(player, srcItem, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, srcItem, 'B', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'R': { // BtR
@@ -443,6 +515,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         const did = this.game.playerInventoryHelper.removeItemFromBelt(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
@@ -457,6 +531,15 @@ export class MoveItems extends MacroCommand {
 
         const { state } = this.game.worldManager.getMap(player.map);
         state.addItemToGround(player.x, player.y, srcItem);
+
+        break;
+      }
+
+      case 'M': { // BtM
+        const did = this.game.playerInventoryHelper.removeItemFromBelt(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from belt.');
+
+        this.game.playerInventoryHelper.sellItem(player, srcItem);
 
         break;
       }
@@ -477,7 +560,7 @@ export class MoveItems extends MacroCommand {
 
     if (!srcItem) return this.sendMessage(player, 'You don\'t have an item there!');
 
-    if (!this.doPrelimChecks(player, srcItem, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, srcItem, 'S', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'R': { // StR
@@ -538,6 +621,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, srcItem);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         const did = this.game.playerInventoryHelper.removeItemFromSack(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
@@ -552,6 +637,15 @@ export class MoveItems extends MacroCommand {
 
         const { state } = this.game.worldManager.getMap(player.map);
         state.addItemToGround(player.x, player.y, srcItem);
+
+        break;
+      }
+
+      case 'M': { // StM
+        const did = this.game.playerInventoryHelper.removeItemFromSack(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.playerInventoryHelper.sellItem(player, srcItem);
 
         break;
       }
@@ -574,7 +668,7 @@ export class MoveItems extends MacroCommand {
     const items: IGroundItem[] = state.getItemsFromGround(player.x, player.y, itemClass as ItemClass, uuid);
     if (items.length === 0) return this.sendMessage(player, 'No items to grab.');
 
-    if (!this.doPrelimChecks(player, items[0].item, dest, destSlot)) return;
+    if (!this.doPrelimChecks(player, items[0].item, 'G', origSlot, dest, destSlot)) return;
 
     switch (dest) {
       case 'R': { // GtR
@@ -619,6 +713,8 @@ export class MoveItems extends MacroCommand {
         const equipSlot = this.getEquipmentSlot(player, items[0].item);
         if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
+        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
         this.game.characterHelper.setEquipmentSlot(player, equipSlot, items[0].item);
         state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
 
@@ -632,7 +728,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
+          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
@@ -664,7 +760,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, dest, destSlot)) return;
+          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
           if (addItems.length >= spaceLeft) return;
 
           for (let i = 0; i < item.count; i++) {
@@ -696,4 +792,201 @@ export class MoveItems extends MacroCommand {
     }
 
   }
+
+  // handle M as an origin
+  handleM(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+    if (!validDestinations.M.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+
+    const [npcUUID, subtype, subslot] = origSlot.split(':');
+    const npc: INPC = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, npcUUID) as INPC;
+
+    if (!npc) {
+      this.sendMessage(player, 'You do not see that person.');
+      return;
+    }
+
+    if (this.game.directionHelper.distFrom(player, npc) > 2) {
+      this.sendMessage(player, 'You are too far away from that person!');
+      return;
+    }
+
+    const vendorBehavior: VendorBehavior = (npc.behaviors || []).find(b => (b as VendorBehavior).vendorItems) as VendorBehavior;
+    if (!vendorBehavior) {
+      this.sendMessage(player, 'That person is not a merchant!');
+      return;
+    }
+
+    const vitems = subtype === 'v' ? vendorBehavior.vendorItems : vendorBehavior.vendorDailyItems;
+    const item = vitems[+subslot];
+    const cost = item.mods.value ?? 0;
+
+    if (!this.doPrelimChecks(player, item, 'M', origSlot, dest, destSlot)) return;
+
+    switch (dest) {
+      case 'R': { // MtR
+
+        if (!this.game.playerHelper.hasCurrency(player, cost, Currency.Gold)) {
+          this.sendMessage(player, 'You do not have enough to buy that!');
+          return false;
+        }
+
+        const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (rightHand && !leftHand) {
+          this.game.characterHelper.setLeftHand(player, rightHand);
+          this.game.characterHelper.setRightHand(player, createdItem);
+
+        } else if (!rightHand) {
+          this.game.characterHelper.setRightHand(player, createdItem);
+        }
+
+        this.game.playerHelper.loseCurrency(player, cost, Currency.Gold);
+
+        break;
+      }
+
+      case 'L': { // MtL
+        if (!this.game.playerHelper.hasCurrency(player, cost, Currency.Gold)) {
+          this.sendMessage(player, 'You do not have enough to buy that!');
+          return;
+        }
+
+        const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (leftHand && !rightHand) {
+          this.game.characterHelper.setRightHand(player, rightHand);
+          this.game.characterHelper.setLeftHand(player, createdItem);
+
+        } else if (!leftHand) {
+          this.game.characterHelper.setLeftHand(player, createdItem);
+        }
+
+        this.game.playerHelper.loseCurrency(player, cost, Currency.Gold);
+
+        break;
+      }
+
+      case 'B': { // MtL
+        const maxItemsBuyable = Math.min(this.game.playerInventoryHelper.beltSpaceLeft(player), +destSlot);
+        for (let i = 0; i < maxItemsBuyable; i++) {
+          const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+
+          if (!this.game.playerHelper.hasCurrency(player, cost, Currency.Gold)
+          || !this.game.playerInventoryHelper.canAddItemToBelt(player, createdItem)) {
+            return;
+          }
+
+          this.game.playerHelper.loseCurrency(player, cost, Currency.Gold);
+          this.game.playerInventoryHelper.addItemToBelt(player, createdItem);
+        }
+
+        break;
+      }
+
+      case 'S': { // MtL
+        const maxItemsBuyable = Math.min(this.game.playerInventoryHelper.sackSpaceLeft(player), +destSlot);
+        for (let i = 0; i < maxItemsBuyable; i++) {
+          const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+
+          if (!this.game.playerHelper.hasCurrency(player, cost, Currency.Gold)
+          || !this.game.playerInventoryHelper.canAddItemToSack(player, createdItem)) {
+            return;
+          }
+
+          this.game.playerHelper.loseCurrency(player, cost, Currency.Gold);
+          this.game.playerInventoryHelper.addItemToSack(player, createdItem);
+        }
+
+        break;
+      }
+
+      default: {
+        this.game.logger.error('MoveItems', `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+      }
+    }
+  }
+
+  // handle O as an origin
+  handleO(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+    if (!validDestinations.O.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+
+    const itemSlot = +origSlot.split(':')[1];
+    const srcItem = player.items.buyback[itemSlot];
+
+    if (!this.doPrelimChecks(player, srcItem, 'O', origSlot, dest, destSlot)) return;
+
+    this.game.playerHelper.loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
+
+    switch (dest) {
+      case 'R': { // OtR
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (rightHand && !leftHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setLeftHand(player, rightHand);
+          this.game.characterHelper.setRightHand(player, srcItem);
+
+        } else if (!rightHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setRightHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      case 'L': { // OtL
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+        if (leftHand && !rightHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setRightHand(player, leftHand);
+          this.game.characterHelper.setLeftHand(player, srcItem);
+
+        } else if (!leftHand) {
+          this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+          this.game.characterHelper.setLeftHand(player, srcItem);
+        }
+
+        break;
+      }
+
+      case 'S': { // OtS
+        if (!this.game.playerInventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+        this.game.playerInventoryHelper.addItemToSack(player, srcItem);
+        this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+        break;
+      }
+
+      case 'B': { // OtB
+        if (!this.game.playerInventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+        this.game.playerInventoryHelper.addItemToBelt(player, srcItem);
+        this.game.playerInventoryHelper.removeItemFromBuyback(player, itemSlot);
+        break;
+      }
+
+      default: {
+        this.game.logger.error('MoveItems', `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+      }
+    }
+
+  }
+
 }

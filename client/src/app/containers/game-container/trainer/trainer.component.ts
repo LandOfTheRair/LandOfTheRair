@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
+import { cloneDeep } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
+
 import { Skill } from '../../../../interfaces';
-import { GameState, HideWindow } from '../../../../stores';
+import { GameState, HideTrainerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -61,14 +63,19 @@ export class TrainerComponent implements OnInit, OnDestroy {
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
-      this.store.dispatch(new HideWindow('trainer'));
+
+      if (this.trainerInfo.npcUUID) {
+        this.store.dispatch(new HideTrainerWindow());
+        this.store.dispatch(new HideWindow('trainer'));
+      }
     });
 
     this.trainerInfoSub = this.trainer$.subscribe(data => {
-      this.trainerInfo = data;
+      this.trainerInfo = cloneDeep(data || {});
     });
 
     this.gameStatusSub = this.inGame$.subscribe((d) => {
+      this.store.dispatch(new HideTrainerWindow());
       this.store.dispatch(new HideWindow('trainer'));
     });
   }
@@ -77,6 +84,10 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   assess() {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, assess ${this.activeSkill}`);
+  }
+
+  train() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, train`);
   }
 
 }

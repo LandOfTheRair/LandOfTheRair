@@ -1,6 +1,7 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import { BaseClass, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ItemClass, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
+import { Player } from '../../../orm';
 
 export class TrainerBehavior implements IAIBehavior {
 
@@ -111,8 +112,25 @@ export class TrainerBehavior implements IAIBehavior {
     parser.addCommand('train')
       .setSyntax(['train'])
       .setLogic(async ({ env }) => {
-        const player = env?.player;
-        return `Maybe one day you'll be able to level up, ${player.name}.`;
+        const player: Player = env?.player;
+
+        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (!behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
+        if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
+
+        if (!game.playerHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
+
+        if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
+
+        const oldLevel = player.level;
+        game.playerHelper.tryLevelUp(player, maxLevelUpLevel);
+        const newLevel = player.level;
+
+        if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
+
+        game.playerHelper.loseCurrency(player, 200);
+
+        return `You have gained ${newLevel - oldLevel} experience levels.`;
       });
 
     if (this.canRevive) {

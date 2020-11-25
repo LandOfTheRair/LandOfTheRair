@@ -7,7 +7,7 @@ import { Game } from '../../helpers';
 import { WorldMap } from './Map';
 
 import { Alignment, Allegiance, Hostility, ICharacter, IGround,
-  IGroundItem, INPC, IPlayer, ISimpleItem, ItemClass } from '../../interfaces';
+  IGroundItem, INPC, IPlayer, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
 import { Player } from '../orm';
 import { Spawner } from './Spawner';
 
@@ -102,6 +102,8 @@ export class MapState {
 
   // create mob spawners
   private createOtherSpawners() {
+    const spawnerSavedData = this.game.groundManager.getMapSpawners(this.map.name);
+
     this.map.allSpawners.forEach(spawner => {
       const spawnerX = spawner.x / 64;
       const spawnerY = (spawner.y / 64) - 1;
@@ -115,6 +117,13 @@ export class MapState {
       spawnerData.x = spawnerX;
       spawnerData.y = spawnerY;
       spawnerData.doInitialSpawnImmediately = spawnerData.initialSpawn > 0;
+
+      if (spawnerData.shouldSerialize) {
+        const checkSpawner = spawnerSavedData.find(s => s.x === spawnerX && s.y === spawnerY);
+        if (checkSpawner) {
+          spawnerData.currentTick = checkSpawner.currentTick;
+        }
+      }
 
       extend(spawnerData, spawner.properties);
 
@@ -138,6 +147,16 @@ export class MapState {
   // remove a dead or useless spawner
   public removeSpawner(spawner: Spawner) {
     this.spawners = this.spawners.filter(x => x !== spawner);
+  }
+
+  // get all possible serializable spawners for quit
+  public getSerializableSpawners(): ISerializableSpawner[] {
+    return this.spawners.filter(x => x.canBeSaved).map(s => {
+      return {
+        ...s.pos,
+        currentTick: s.currentTickForSave
+      };
+    });
   }
 
   // check if door is open
@@ -334,8 +353,8 @@ export class MapState {
 
   // trigger a full update for a particular player
   public triggerFullUpdateForPlayer(player: Player) {
-    this.onlyUpdatePlayer(player);
     this.updateStateForPlayer(player);
+    this.onlyUpdatePlayer(player);
   }
 
   // update only player related stuff

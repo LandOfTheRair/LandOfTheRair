@@ -47,6 +47,7 @@
     "rbush": "^3.0.1",
     "recursive-readdir": "^2.2.2",
     "reflect-metadata": "0.1.13",
+    "rollbar": "^2.19.4",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

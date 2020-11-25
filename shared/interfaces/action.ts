@@ -65,7 +65,9 @@ export enum GameServerResponse {
   SendAlert = 'Game:Response:Alert',
   SendConfirm = 'Game:Response:Confirm',
 
-  DialogChat = 'Game:Response:NPCDialog'
+  DialogChat = 'Game:Response:NPCDialog',
+  PlaySFX = 'Game:Response:PlaySFX',
+  PlayCFX = 'Game:Response:PlayCFX'
 }
 
 export enum GameAction {
@@ -109,6 +111,7 @@ export enum GameAction {
   SetActiveMacroBars = '[Macro] Set Active Bars',
   SetMacroBar = '[Macro] Set Macro Bars',
   SetDefaultMacros = '[Macros] Set Default Macros/Bars',
+  ImportMacros = '[Macros] Import Macros',
 
   UpdateJournal = '[Journal] Update Journal',
 
@@ -122,5 +125,8 @@ export enum GameAction {
   SettingsActiveWindow = '[Settings] Set Active Window',
   SettingsCharSlot = '[Settings] Set Char Slot',
 
-  NPCActionShowTrainer = '[NPC] Show Trainer'
+  NPCActionShowTrainer = '[NPC] Show Trainer',
+  NPCActionHideTrainer = '[NPC] Hide Trainer',
+  NPCActionShowVendor = '[NPC] Show Vendor',
+  NPCActionHideVendor = '[NPC] Hide Vendor',
 }

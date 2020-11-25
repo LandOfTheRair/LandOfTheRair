@@ -29,6 +29,8 @@ export class MessageHelper extends BaseService {
     let sendMessage = message;
     if (formatArgs.length > 0) sendMessage = this.formatMessage(ref, sendMessage, formatArgs);
 
+    if (sfx) this.playSoundForPlayer((ref as Player), sfx);
+
     this.game.transmissionHelper.sendResponseToAccount((ref as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
       messageTypes,
@@ -61,6 +63,8 @@ export class MessageHelper extends BaseService {
       let sendMessage = message;
       if (formatArgs.length > 0) sendMessage = this.formatMessage(checkPlayer, sendMessage, formatArgs);
 
+      if (sfx) this.playSoundForPlayer((checkPlayer as Player), sfx);
+
       this.game.transmissionHelper.sendResponseToAccount((checkPlayer as Player).username, GameServerResponse.GameLog, {
         type: GameServerResponse.GameLog,
         messageTypes,
@@ -76,8 +80,8 @@ export class MessageHelper extends BaseService {
   }
 
   public sendPrivateMessage(from: ICharacter, to: ICharacter, message: string): void {
-    this.sendLogMessageToPlayer(to, { message: `from ${from.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
-    this.sendLogMessageToPlayer(from, { message: `to ${to.name}: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+    this.sendLogMessageToPlayer(to, { message: `from **${from.name}**: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
+    this.sendLogMessageToPlayer(from, { message: `to **${to.name}**: ${message}` }, [MessageType.Private, MessageType.PlayerChat]);
   }
 
   public broadcastSystemMessage(message: string): void {
@@ -126,6 +130,10 @@ export class MessageHelper extends BaseService {
       return str.replace(new RegExp(`%${idx}`), name);
 
     }, message);
+  }
+
+  public playSoundForPlayer(player: Player, sfx: string): void {
+    this.game.transmissionHelper.sendResponseToPlayer(player, GameServerResponse.PlaySFX, { sfx });
   }
 
 }

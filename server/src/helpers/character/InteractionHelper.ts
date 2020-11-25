@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { BaseClass, BaseService, ICharacter, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, BaseService, ICharacter, IPlayer, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
 
 @Injectable()
 export class InteractionHelper extends BaseService {
@@ -59,7 +59,7 @@ export class InteractionHelper extends BaseService {
           return false;
         }
 
-        this.game.characterHelper.gainSkill(character, Skill.Thievery, skillRequired);
+        this.game.playerHelper.gainSkill(character as IPlayer, Skill.Thievery, skillRequired);
         this.game.messageHelper.sendSimpleMessage(character, 'You successfully picked the lock!');
         this.game.characterHelper.setRightHand(character, undefined);
 

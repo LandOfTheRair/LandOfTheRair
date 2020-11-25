@@ -36,15 +36,6 @@ export interface IGear {
   // the effect the item gives on equip
   equipEffect?: IItemEffect;
 
-  // the effect that happens when the item hits something
-  strikeEffect?: IItemEffect;
-
-  // the effect that happens when the item is used
-  useEffect?: IItemEffect;
-
-  // the effect that happens when the trap is stepped on
-  trapEffect?: IItemEffect;
-
   // the max enchant level for an item (defaults to 5) - used for progressive item enhancement
   maxEnchantLevel?: number;
 
@@ -86,12 +77,24 @@ export interface IWeapon {
 
   // whether the item takes two hands or not
   twoHanded?: boolean;
+
+  // the effect that happens when the item hits something
+  strikeEffect?: IItemEffect;
 }
 
 export interface ITrap {
 
   // the number of uses left on this trap (traps only)
   trapUses?: number;
+
+  // the effect that happens when the trap is stepped on
+  trapEffect?: IItemEffect;
+}
+
+export interface IUsable {
+
+  // the effect that happens when the item is used
+  useEffect?: IItemEffect;
 }
 
 export interface IBook {
@@ -154,7 +157,7 @@ export interface ICorpse {
   corpseUsername?: string;
 }
 
-export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & {
+export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & IUsable & {
   // the name of the item
   name: string;
 

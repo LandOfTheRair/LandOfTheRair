@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+
 import { IGame, IMacro, IMacroContainer } from '../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
+import * as allMacros from '../../assets/content/_output/macros.json';
 @Injectable({
   providedIn: 'root'
 })
@@ -36,11 +38,11 @@ export class MacrosService {
   }
 
   @Selector([GameState, MacrosState, MacrosState.allMacros])
-  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allMacros) {
+  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allPossibleMacros) {
     const player = gameState.player;
     if (!player) return null;
 
-    return allMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
+    return allPossibleMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
   }
 
   constructor(
@@ -60,12 +62,14 @@ export class MacrosService {
     return this.macroMap[key.toUpperCase()];
   }
 
-  private buildMacroString(macro: IMacro): string {
+  public buildMacroString(macro: IMacro): string {
+    if (!macro.key) return '';
+    const modifiers: any = macro.modifiers || {};
 
     let macroString = '';
-    if (macro.modifiers.alt) macroString = `ALT+`;
-    if (macro.modifiers.ctrl) macroString = `${macroString}CTRL+`;
-    if (macro.modifiers.shift) macroString = `${macroString}SHIFT+`;
+    if (modifiers.alt) macroString = `ALT+`;
+    if (modifiers.ctrl) macroString = `${macroString}CTRL+`;
+    if (modifiers.shift) macroString = `${macroString}SHIFT+`;
 
     macroString = `${macroString}${macro.key.toUpperCase()}`;
 
@@ -75,7 +79,11 @@ export class MacrosService {
   private parseMacroMap(macroMap: Record<string, IMacro>) {
     this.macroMap = {};
 
-    Object.values(macroMap).forEach(macro => {
+    const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault);
+
+    const allCheckableMacros = Object.values(macroMap).concat(defaultMacros);
+
+    allCheckableMacros.forEach(macro => {
       if (!macro.key) return;
       this.macroMap[this.buildMacroString(macro)] = macro;
     });

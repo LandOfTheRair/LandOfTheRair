@@ -55,6 +55,8 @@ export class Spawner {
   private npcs: INPC[] = [];                        // the npcs currently in existence on this spawner
   private hasDoneInitialSpawn: boolean;             // whether or not the initial spawn has been done for this spawner
   private npcAI: Record<string, IAI> = {};          // the ai for each npc on this spawner
+  private replaceNPCTicks: Record<string, number> = {}; // the number of ticks before we replace a dead (probably green) NPC
+  private replaceNPCDefs: Record<string, INPCDefinition> = {};
 
   public get areAnyNPCsAlive(): boolean {
     return this.npcs.some(npc => !this.game.characterHelper.isDead(npc));
@@ -74,6 +76,10 @@ export class Spawner {
 
   public get pos() {
     return { x: this.x, y: this.y };
+  }
+
+  public get currentTickForSave() {
+    return this.currentTick;
   }
 
   private get canRespawn(): boolean {
@@ -118,8 +124,25 @@ export class Spawner {
   // triggers on world slow ticks
   public npcTick(): void {
     this.npcs.forEach(npc => {
-      if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc)) {
+      if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && !this.replaceNPCDefs[npc.uuid]) {
         this.removeNPC(npc);
+        return;
+      }
+
+      if (!this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && this.replaceNPCDefs[npc.uuid]) {
+        if (!this.replaceNPCTicks[npc.uuid]) {
+          this.propagateRemoveNPC(npc);
+        }
+
+        this.replaceNPCTicks[npc.uuid] = this.replaceNPCTicks[npc.uuid] || 0;
+        this.replaceNPCTicks[npc.uuid]++;
+
+        if (this.replaceNPCTicks[npc.uuid] > this.respawnRate) {
+          const npcDef = this.replaceNPCDefs[npc.uuid];
+          this.removeNPC(npc);
+          this.createNPC({ npcDef });
+        }
+
         return;
       }
 
@@ -238,9 +261,8 @@ export class Spawner {
     npc.stripX = this.stripX;
     npc.stripY = this.stripY;
 
-    // TODO: check dangerous
     if (this.isDangerous) {
-
+      this.game.effectHelper.addEffect(npc, '', 'Dangerous');
     }
 
     if (this.npcCreateCallback) this.npcCreateCallback(npc);
@@ -252,19 +274,30 @@ export class Spawner {
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
-    this.addNPC(npc, aiInst);
+    this.addNPC(npc, aiInst, npcDef);
   }
 
-  private addNPC(npc: INPC, ai: IAI): void {
+  private addNPC(npc: INPC, ai: IAI, npcDef?: INPCDefinition): void {
     this.npcs.push(npc);
     this.npcAI[npc.uuid] = ai;
     this.mapState.addNPC(npc);
+
+    if (npcDef) {
+      this.replaceNPCDefs[npc.uuid] = npcDef;
+    }
+  }
+
+  private propagateRemoveNPC(npc: INPC): void {
+    this.mapState.removeNPC(npc);
   }
 
   private removeNPC(npc: INPC): void {
     this.npcs = this.npcs.filter(c => c.uuid !== npc.uuid);
     delete this.npcAI[npc.uuid];
-    this.mapState.removeNPC(npc);
+    this.propagateRemoveNPC(npc);
+
+    delete this.replaceNPCTicks[npc.uuid];
+    delete this.replaceNPCDefs[npc.uuid];
   }
 
   public getRandomPath(): string {

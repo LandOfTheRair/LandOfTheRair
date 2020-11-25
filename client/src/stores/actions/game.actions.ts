@@ -1,4 +1,4 @@
-import { GameAction, IPlayer } from '../../interfaces';
+import { Currency, GameAction, IPlayer, IVendorItem } from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -27,18 +27,21 @@ export class SetMap {
 // dispatched when the server wants to do a full SetPlayer instead of patch
 export class SetPlayer {
   static type = GameAction.GameSetPlayer;
+  filterOutFromLogs = true;
   constructor(public player: IPlayer) {}
 }
 
 // dispatched when the server wants to patch the player
 export class PatchPlayer {
   static type = GameAction.GamePatchPlayer;
+  filterOutFromLogs = true;
   constructor(public player: Partial<IPlayer>, public patches: any[]) {}
 }
 
 // dispatched when the server wants to patch the player state (npcs, ground, etc)
 export class PatchGameStateForPlayer {
   static type = GameAction.GamePatchPlayerState;
+  filterOutFromLogs = true;
   constructor(public statePatches: any[]) {}
 }
 
@@ -65,4 +68,27 @@ export class OpenTrainerWindow {
     public npcMaxLevel: number,
     public npcMaxSkill: number
   ) {}
+}
+
+// dispatched when walking away from a trainer
+export class HideTrainerWindow {
+  static type = GameAction.NPCActionHideTrainer;
+}
+
+// dispatched when greeting a vendor
+export class OpenVendorWindow {
+  static type = GameAction.NPCActionShowVendor;
+  constructor(
+    public npcUUID: string,
+    public npcName: string,
+    public npcSprite: number,
+    public npcVendorCurrency: Currency,
+    public npcVendorItems: IVendorItem[],
+    public npcVendorDailyItems: IVendorItem[]
+  ) {}
+}
+
+// dispatched when walking away from a vendor
+export class HideVendorWindow {
+  static type = GameAction.NPCActionHideVendor;
 }

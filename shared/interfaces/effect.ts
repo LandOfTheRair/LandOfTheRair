@@ -1,4 +1,4 @@
-import { DamageClass, StatBlock } from './building-blocks';
+import { StatBlock } from './building-blocks';
 import { IStatusEffect } from './status-effect';
 
 export enum BuffType {
@@ -27,13 +27,7 @@ export interface IItemEffectExtra {
   message?: string;
 
   // the stats given (food)
-  stats?: StatBlock;
-
-  // the damage type of the attribute (npc attributes)
-  damageType?: DamageClass;
-
-  // the enrage timer of the attribute (npc attributes)
-  enrageTimer?: number;
+  statChanges?: StatBlock;
 }
 
 export interface IItemEffect {

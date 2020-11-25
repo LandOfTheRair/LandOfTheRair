@@ -13,7 +13,7 @@ export class Say extends MacroCommand {
     const msg = this.game.profanityHelper.cleanMessage(args.stringArgs);
 
     playersInView.forEach(p => {
-      this.sendChatMessage(p, `${player.name}: ${msg}`);
+      this.sendChatMessage(p, `**${player.name}**: ${msg}`);
     });
   }
 

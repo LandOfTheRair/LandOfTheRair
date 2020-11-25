@@ -20,6 +20,7 @@ export enum GameOption {
   EnterToggleCMD = 'enterToggleCMD',
   NoNPCModals = 'noNPCModals',
   PinLastTarget = 'pinLastTarget',
+  DyingBorderWidth = 'dyingBorderWidth',
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',
 
@@ -51,6 +52,6 @@ export interface ISettings {
   logMode: 'All'|'General'|'Combat'|'NPC';
   currentCommand: string;
   commandHistory: string[];
-  characterView: 'Equipment'|'Stats'|'Skills';
+  characterView: 'Equipment'|'Stats'|'Skills'|'Reputation';
   options: Record<GameOption, number|boolean|string>;
 }

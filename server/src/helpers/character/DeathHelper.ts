@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { random } from 'lodash';
 
 import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { Player } from '../../models';
@@ -65,11 +66,12 @@ export class DeathHelper extends BaseService {
 
     this.game.effectHelper.clearEffectsForDeath(dead);
     dead.dir = Direction.Corpse;
+    dead.combatTicks = 0;
 
     const corpse = this.createCorpse(dead);
 
     if (this.game.characterHelper.isPlayer(dead)) {
-      const shouldMakeCorpse = (killer as INPC)?.shouldEatTier ?? 0 <= 0;
+      const shouldMakeCorpse = ((killer as INPC)?.shouldEatTier ?? 0) <= 0;
       this.playerDie(dead as IPlayer, shouldMakeCorpse ? corpse as ISimpleItem : undefined, killer);
     } else {
       this.npcDie(dead as INPC, corpse, killer);
@@ -166,10 +168,22 @@ export class DeathHelper extends BaseService {
 
   // clear action queue of the dead uuid
   private playerKill(killer: IPlayer, dead: ICharacter): void {
-    // if dead is an npc
-        // gain xp
-        // gain skill
-        // modify rep
+    this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
+    if (this.game.characterHelper.isPlayer(dead)) return;
+
+    const npc: INPC = dead as INPC;
+
+    if (this.game.playerHelper.canGainExpOnMap(killer)) {
+      const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
+      this.game.playerHelper.gainExp(killer, earnedExp);
+    }
+
+    killer.flaggedSkills = killer.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(killer, x));
+    this.game.playerHelper.gainCurrentSkills(killer, npc.skillOnKill);
+
+    npc.allegianceMods.forEach(({ delta, allegiance }) => {
+      this.game.playerHelper.modifyReputationForAllegiance(killer, allegiance, delta);
+    });
   }
 
   // try to strip, try to eat
@@ -202,7 +216,7 @@ export class DeathHelper extends BaseService {
     if (npc.noCorpseDrop) return undefined;
 
     const baseCorpse = this.game.itemCreator.getSimpleItem('Corpse');
-    baseCorpse.mods.desc = `the corpse of a ${npc}`;
+    baseCorpse.mods.desc = `the corpse of a ${npc.name}`;
     baseCorpse.mods.sprite = npc.sprite + 4;
 
     return baseCorpse;

@@ -1,10 +1,13 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { combineLatest, Observable } from 'rxjs';
 
 import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
   IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot, WeaponClass } from '../../../../interfaces';
-import { SetCurrentItemTooltip } from '../../../../stores';
+import { GameState, SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
+import { GameService } from '../../../services/game.service';
+import { UIService } from '../../../services/ui.service';
 
 // const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];
 
@@ -22,6 +25,8 @@ export type MenuContext = 'Sack' | 'Belt' | 'Ground' | 'DemiMagicPouch'
   ]
 })
 export class ItemComponent implements OnDestroy {
+
+  @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
 
   private simpleItem: ISimpleItem;
   private hasTooltip: boolean;
@@ -140,7 +145,12 @@ export class ItemComponent implements OnDestroy {
     // return MaterialSlotInfo[ValidMaterialItems[this.item.name]].withdrawInOunces;
   }
 
-  constructor(private store: Store, private assetService: AssetService) {}
+  constructor(
+    private store: Store,
+    private assetService: AssetService,
+    private uiService: UIService,
+    private gameService: GameService
+  ) {}
 
   ngOnDestroy(): void {
     setTimeout(() => {
@@ -181,6 +191,7 @@ export class ItemComponent implements OnDestroy {
     && this.context !== 'Obtainagain'
     && this.context !== 'Equipment'
     && this.context !== 'GroundGroup'
+    && this.context !== 'Merchant'
     && this.context !== 'Ground') scopes.push('merchant');
 
     // you can stash anything that's not a coin or a corpse
@@ -216,59 +227,90 @@ export class ItemComponent implements OnDestroy {
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
-    && this.context !== 'GroundGroup') scopes.push('use');
+    && this.context !== 'GroundGroup' && this.context !== 'Merchant' && this.context !== 'Obtainagain') scopes.push('use');
 
     this.scopes = scopes;
   }
 
-  doColyseusMoveAction(choice): void {
-    /*
-    this.colyseusGame.buildAction(this.item, {
+  doMoveAction(choice): void {
+    this.uiService.doDropAction({
       context: this.context,
       contextSlot: this.contextSlot,
       containerUUID: this.containerUUID,
-      isStackableMaterial: this.isStackableMaterial
+      isStackableMaterial: this.isStackableMaterial,
+      item: this.item,
+      realItem: this.realItem
     }, choice);
-    */
   }
 
-  doColyseusUseAction(): void {
-    // this.colyseusGame.buildUseAction(this.item, this.context, this.contextSlot);
+  doUseAction(): void {
+    this.gameService.sendCommandString(`!use ${this.context.toLowerCase()}`);
   }
 
   automaticallyTakeActionBasedOnOpenWindows(): void {
+    if (!this.context || !this.item || !this.viewingPlayer) return;
 
-    /*
-    if (!this.context || !this.item) return;
+    combineLatest([
+      this.vendor$
+    ])
+    .subscribe(([vendor]) => {
 
-    if (this.context === 'Potion') {
-      this.colyseusGame.sendCommandString('~drink');
-      return;
-    }
-
-    if (this.colyseusGame.showShop.uuid) {
-
-      if (this.context === 'Sack' || this.context === 'Belt' || this.context === 'DemiMagicPouch') {
-        this.doColyseusMoveAction('M');
-        return;
-
-      } else if (this.context === 'Merchant' || this.context === 'Obtainagain') {
-
-        if (this.item.isBeltable) {
-          this.doColyseusMoveAction('B');
-          return;
-
-        } else if (this.item.isSackable) {
-          this.doColyseusMoveAction('S');
-          return;
-
-        } else {
-          this.doColyseusMoveAction('R');
+      // if we have a vendor open, we auto-sell stuff
+      if (vendor) {
+        if (['Right', 'Left', 'Sack', 'Belt', 'DemiMagicPouch'].includes(this.context)) {
+          this.doMoveAction('M');
           return;
         }
+
+        if (this.realItem.isBeltable) {
+          this.doMoveAction('B');
+        } else if (this.realItem.isSackable) {
+          this.doMoveAction('S');
+        } else {
+          this.doMoveAction('R');
+        }
+
+        return;
       }
 
-    }
+      // if we can use it, we use it
+      if (canUseItem(this.viewingPlayer, this.item, this.realItem) && (this.context === 'Right' || this.context === 'Left')) {
+        this.doUseAction();
+        return;
+
+      } else if (this.context !== 'Ground' && this.context !== 'GroundGroup') {
+        if (this.context === 'Right' || this.context === 'Left') {
+          this.doMoveAction('B');
+          return;
+        }
+
+        if (this.context === 'Belt') {
+          this.doMoveAction('R');
+          return;
+        }
+
+        this.doMoveAction('G');
+        return;
+
+      } else if (this.context === 'Ground' || this.context === 'GroundGroup') {
+
+        if (this.isEquippable) {
+          this.doMoveAction('E');
+          return;
+        }
+
+        if (this.realItem.isBeltable) {
+          this.doMoveAction('B');
+          return;
+
+        } else if (this.realItem.isSackable) {
+          this.doMoveAction('S');
+          return;
+        }
+
+      }
+    });
+    /*
 
     if (this.colyseusGame.showLocker.length) {
       if (this.context === 'Wardrobe') {
@@ -302,47 +344,6 @@ export class ItemComponent implements OnDestroy {
         this.doColyseusMoveAction('W');
         return;
       }
-    }
-
-    if (this.item.canUse && this.item.canUse(this.colyseusGame.character) && (this.context === 'Right' || this.context === 'Left')) {
-      this.colyseusGame.buildUseAction(this.item, this.context);
-      return;
-
-    } else if (this.context !== 'Ground' && this.context !== 'GroundGroup') {
-      if (this.context === 'Right' || this.context === 'Left') {
-        this.doColyseusMoveAction('B');
-        return;
-      }
-
-      if (this.context === 'Belt') {
-        this.doColyseusMoveAction('R');
-        return;
-      }
-
-      this.doColyseusMoveAction('G');
-      return;
-
-    } else if (this.context === 'Ground' || this.context === 'GroundGroup') {
-
-      if (this.isEquippable) {
-
-        const slot = ( this.colyseusGame.character as any).getItemSlotToEquipIn(this.item);
-        if (slot !== false) {
-          this.doColyseusMoveAction('E');
-          return;
-        }
-
-      }
-
-      if (this.item.isBeltable) {
-        this.doColyseusMoveAction('B');
-        return;
-
-      } else if (this.item.isSackable) {
-        this.doColyseusMoveAction('S');
-        return;
-      }
-
     }
     */
 

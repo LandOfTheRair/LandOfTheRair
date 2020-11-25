@@ -5,13 +5,16 @@ import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 import { Game } from '../../helpers';
 
-import { IMapData, IMapProperties, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
+import { IMapData, IMapProperties, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
 
 export class WorldMap {
 
   private densityMap: Pathfinder.Grid;
   private planner: any;
   private fov: Mrpas;
+
+  private maxLevelExpPossible: number;
+  private maxSkillExpPossible: number;
 
   private layerHashes: { [key in MapLayer]?: any } = {};
 
@@ -41,6 +44,18 @@ export class WorldMap {
 
   public get maxSkill() {
     return this.properties.maxSkill || 1;
+  }
+
+  public get maxSkillExp() {
+    return this.maxSkillExpPossible;
+  }
+
+  public get maxLevel() {
+    return this.properties.maxLevel || 1;
+  }
+
+  public get maxLevelExp() {
+    return this.maxLevelExpPossible;
   }
 
   public get maxCreatures() {
@@ -125,6 +140,12 @@ export class WorldMap {
     this.destructureJSON();
     this.createPlanner();
     game.groundManager.initGroundForMap(mapName);
+    this.setMaxes();
+  }
+
+  private setMaxes() {
+    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel);
+    this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.maxSkill);
   }
 
   private createPlanner() {
@@ -341,6 +362,10 @@ export class WorldMap {
     steps.shift();
 
     return steps;
+  }
+
+  public canSuccor(player: IPlayer): boolean {
+    return this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
   }
 
 }

@@ -1,8 +1,9 @@
 import { Injectable } from 'injection-js';
-import { isArray } from 'lodash';
+import { isArray, random } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseClass, BaseService, BGM, Currency, Direction, initializePlayer, IPlayer, MessageType, Skill, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction,
+  initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -107,7 +108,6 @@ export class PlayerHelper extends BaseService {
   }
 
   public tick(player: Player, type: 'fast'|'slow'): void {
-
     if (type === 'slow') {
       this.characterHelper.tick(player);
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
@@ -135,6 +135,15 @@ export class PlayerHelper extends BaseService {
   }
 
   public clearActionQueue(player: Player, target?: string) {
+
+    // if we specify a target, we remove them from the queue as convenience
+    if (target) {
+      player.actionQueue.fast = player.actionQueue.fast.filter(x => !(x as any).args.stringArgs.includes(target));
+      player.actionQueue.slow = player.actionQueue.slow.filter(x => !(x as any).args.stringArgs.includes(target));
+      return;
+    }
+
+    // otherwise, just reset the entire queue
     player.actionQueue = { fast: [], slow: [] };
   }
 
@@ -169,7 +178,11 @@ export class PlayerHelper extends BaseService {
 
     // update the players BGM
     const newBGM = map.getBackgroundMusicAt(player.x, player.y);
-    player.bgmSetting = (newBGM ?? 'wilderness') as BGM;
+    const oldBGM = player.bgmSetting;
+
+    if (oldBGM !== newBGM) {
+      player.bgmSetting = (newBGM || 'wilderness') as BGM;
+    }
 
     // send message updates while the player is walking around the world
     if (!ignoreMessages) {
@@ -226,13 +239,30 @@ export class PlayerHelper extends BaseService {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
   }
 
+  // whether or not the player can get skill on the current map
+  public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
+    const { map } = this.worldManager.getMap(player.map);
+    return player.skills[skill.toLowerCase()] < map.maxSkillExp;
+  }
+
+  // whether or not the player can get xp on the current map
+  public canGainExpOnMap(player: IPlayer): boolean {
+    const { map } = this.worldManager.getMap(player.map);
+    return player.exp < map.maxLevelExp;
+  }
+
   // gain exp for a player
   public gainExp(player: IPlayer, xpGained: number): void {
     if (player.gainingAXP && xpGained > 0) return;
 
+    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent);
+    xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
+
     // TODO: modify xpGained for sub
     if (isNaN(xpGained)) throw new Error(`XP gained for ${player.name} is NaN!`);
-    player.exp += Math.max(Math.floor(player.exp + xpGained), 0);
+
+    player.exp = Math.max(Math.floor(player.exp + xpGained), 0);
+    player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
 
   }
 
@@ -246,6 +276,20 @@ export class PlayerHelper extends BaseService {
 
   }
 
+  // gain skill for a character
+  public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
+    if (!skill) skill = Skill.Martial;
+
+    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent);
+    skillGained += Math.floor((xpGainBoostPercent * skillGained) / 100);
+
+    // TODO: modify skillGained for sub
+    if (isNaN(skillGained)) throw new Error(`Skill gained for ${player.name} is NaN!`);
+
+    player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained);
+    player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
+  }
+
   // gain all currently flagged skills
   public gainCurrentSkills(player: IPlayer, skillGained: number): void {
     if (!player.flaggedSkills || !player.flaggedSkills.length) return;
@@ -253,22 +297,22 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.45);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
-      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.15);
-      this.characterHelper.gainSkill(player, quaternary, skillGained * 0.15);
+      this.gainSkill(player, primary, skillGained * 0.45);
+      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, tertiary, skillGained * 0.15);
+      this.gainSkill(player, quaternary, skillGained * 0.15);
 
     } else if (tertiary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.55);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
-      this.characterHelper.gainSkill(player, tertiary, skillGained * 0.20);
+      this.gainSkill(player, primary, skillGained * 0.55);
+      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, tertiary, skillGained * 0.20);
 
     } else if (secondary) {
-      this.characterHelper.gainSkill(player, primary, skillGained * 0.75);
-      this.characterHelper.gainSkill(player, secondary, skillGained * 0.25);
+      this.gainSkill(player, primary, skillGained * 0.75);
+      this.gainSkill(player, secondary, skillGained * 0.25);
 
     } else {
-      this.characterHelper.gainSkill(player, primary, skillGained);
+      this.gainSkill(player, primary, skillGained);
     }
   }
 
@@ -287,6 +331,87 @@ export class PlayerHelper extends BaseService {
   // lose currency for a player (either by taking it, or spending it)
   public loseCurrency(player: IPlayer, currencyLost: number, currency: Currency = Currency.Gold): void {
     this.gainCurrency(player, -currencyLost, currency);
+  }
+
+  // modify rep for a faction
+  public modifyReputationForAllegiance(player: IPlayer, allegiance: Allegiance, mod: number): void {
+    player.allegianceReputation[allegiance] = player.allegianceReputation[allegiance] ?? 0;
+    player.allegianceReputation[allegiance]! += mod;
+  }
+
+  // gain stats for leveling up
+  public gainLevelStats(player: IPlayer): void {
+
+    const con = this.game.characterHelper.getStat(player, Stat.CON);
+    const wis = this.game.characterHelper.getStat(player, Stat.WIS);
+    const int = this.game.characterHelper.getStat(player, Stat.INT);
+
+    const classStats: Record<BaseClass, () => void> = {
+      [BaseClass.Undecided]: () => {
+        const hpGained = Math.floor(random(2, con / 2) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Warrior]: () => {
+        const hpGained = Math.floor(random(1, con / 2) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Thief]: () => {
+        const hpGained = Math.floor(random(2, con) + con / 2);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+      },
+
+      [BaseClass.Healer]: () => {
+        const hpGained = Math.floor(random(con / 5, (3 * con / 5)) + con / 3);
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        const mpGained = Math.floor(random(1, wis) + wis / 3);
+        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+      },
+
+      [BaseClass.Mage]: () => {
+        const hpGained = Math.floor(random(1, con));
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        const mpGained = Math.floor(random(2, int * 2) + int / 5);
+        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+      }
+    };
+
+    classStats[player.baseClass]();
+  }
+
+  // try to level up a player to the maximum possible level they can go based on the trainer they see
+  public tryLevelUp(player: IPlayer, maxLevel = 0): void {
+    do {
+      if (player.level >= maxLevel) break;
+
+      const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(player.level + 1);
+      if (player.exp > neededXp) {
+        player.level += 1;
+        if (player.level > player.highestLevel) {
+          player.highestLevel = player.level;
+          this.gainLevelStats(player);
+        }
+        break;
+      } else {
+        break;
+      }
+    } while (player.level < maxLevel);
+  }
+
+  // teleport the player to the succor location
+  public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
+    if (this.game.characterHelper.isDead(player)) return;
+    const { map } = this.game.worldManager.getMap(player.map);
+    if (!map.canSuccor(player)) {
+      this.game.messageHelper.sendSimpleMessage(player, 'The blob turns to ash in your hand!');
+      return;
+    }
+
+    this.game.messageHelper.sendSimpleMessage(player, 'You are whisked back to the place in your stored memories!');
+    this.game.teleportHelper.teleport(player as Player, succorInfo);
   }
 
 }

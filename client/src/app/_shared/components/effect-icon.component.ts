@@ -61,6 +61,7 @@ import { IStatusEffect } from '../../../interfaces';
 export class EffectIconComponent implements OnInit, OnDestroy {
 
   @Input() public effect: IStatusEffect;
+  @Input() public defaultTransparent: boolean;
 
   public currentTicksLeft = 0;
   tickSub: Subscription;
@@ -74,7 +75,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get bgColor() {
-    return this.iconData?.bgColor ?? '#ccc';
+    return this.iconData?.bgColor ?? (this.defaultTransparent ? '' : '#ccc');
   }
 
   public get color() {
@@ -82,7 +83,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get tooltip() {
-    let baseTooltip = this.effect.tooltip || this.iconData?.desc || '';
+    let baseTooltip = this.effect.effectInfo.tooltip || this.effect.tooltip || this.iconData?.desc || '';
     if (this.effect.sourceName) baseTooltip = `${this.effect.effectName}: ${baseTooltip} [${this.effect.sourceName}]`;
     return baseTooltip;
   }

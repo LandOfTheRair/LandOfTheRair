@@ -21,5 +21,6 @@ export * from './npc';
 export * from './player';
 export * from './settings';
 export * from './sfx';
+export * from './spawner';
 export * from './status-effect';
 export * from './typescript';

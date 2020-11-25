@@ -11,13 +11,25 @@
     -->
 
     <mat-tab label="Interface">
-      <form>
+      <form class="option-container">
         <div class="m-t-5" *ngFor="let option of uiOptions">
           <mat-checkbox [(ngModel)]="options[option.option]"
                         (change)="updateOption(option.option)"
                         [ngModelOptions]="{ standalone: true }">
             {{ option.text }}
           </mat-checkbox>
+        </div>
+  
+        <div class="slider-option-row">
+          <div class="slider-label">Dying Border Width</div>
+          <mat-slider [min]="0" 
+                      [max]="100" 
+                      [step]="5" 
+                      [(ngModel)]="options.dyingBorderWidth" 
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="updateOption('dyingBorderWidth')" 
+                      thumbLabel="true"></mat-slider>
+          <div>{{ options.dyingBorderWidth }}%</div>
         </div>
 
         <div class="radio-row m-t-5">
@@ -42,7 +54,7 @@
     </mat-tab>
 
     <mat-tab label="Audio">
-      <form>
+      <form class="option-container">
         <div>
           <mat-checkbox [(ngModel)]="options.playBGM"
                         (change)="updateOption('playBGM')"
@@ -95,11 +107,11 @@
     </mat-tab>
 
     <mat-tab label="Debug">
-      <p>
-        <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
-      </p>
-
-      <form autocomplete="off">
+      <form autocomplete="off" class="option-container">
+        <p>
+          <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
+        </p>
+        
         <mat-form-field class="full-width" *ngFor="let spritesheet of spritesheets">
           <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
           <input matInput 

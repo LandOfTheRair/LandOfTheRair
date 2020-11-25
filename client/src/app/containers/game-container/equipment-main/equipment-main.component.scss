@@ -19,6 +19,11 @@
     width: 44px;
   }
 
+  td.label {
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
   td.number {
     text-align: right;
     padding-right: 5px;

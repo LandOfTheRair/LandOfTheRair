@@ -1,0 +1,65 @@
+name: Release New Tags
+
+on:
+  push:
+    tags:
+      - 'v*' # Any pushed tag
+
+jobs:
+  build:
+    name: Create Release
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        # os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [windows-latest]
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - run: npm install
+
+    - run: npm run lint
+      
+    - run: npm run build
+    
+    - uses: little-core-labs/get-git-tag@v3.0.1
+      id: loadTagName
+
+    - uses: pCYSl5EDgo/cat@master
+      id: loadChangelog
+      with:
+        path: CHANGELOG-current.md
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: ${{ steps.loadChangelog.outputs.text }}
+        draft: false
+        prerelease: false
+
+    #- name: Post to Reddit
+    #  uses: bluwy/release-for-reddit-action@v1
+    #  with:
+    #    username: ${{ secrets.REDDIT_USERNAME }}
+    #    password: ${{ secrets.REDDIT_PASSWORD }}
+    #    app-id: ${{ secrets.REDDIT_APP_ID }}
+    #    app-secret: ${{ secrets.REDDIT_APP_SECRET }}
+    #    subreddit: Rasterkhann
+    #    title: Rasterkhann ${{ steps.loadTagName.outputs.tag }} Update
+    #    comment: ${{ steps.loadChangelog.outputs.text }}
+    #    url: ${{ steps.create_release.outputs.html_url }}
+    #    notification: true

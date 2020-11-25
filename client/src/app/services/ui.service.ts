@@ -9,8 +9,8 @@ export class UIService {
 
   constructor(private modalService: ModalService, private gameService: GameService) {}
 
-  public buildAndDoDropAction(event, droppedOn) {
-    this.doDropAction(event.dragData, droppedOn);
+  public buildAndDoDropAction(event, droppedOn, dropUUID?: string) {
+    this.doDropAction(event.dragData, droppedOn, dropUUID);
   }
 
   private canMoveBetweenContainers(context: string, choice: string): boolean {
@@ -18,7 +18,7 @@ export class UIService {
     return true;
   }
 
-  private doDropAction(dragData, dropScope) {
+  public doDropAction(dragData, dropScope, dropUUID?: string) {
     // also has { containerUUID, isStackableMaterial }
     const { context, contextSlot, item, realItem } = dragData;
 
@@ -33,7 +33,7 @@ export class UIService {
     if (!this.canMoveBetweenContainers(contextStr, choiceStr)) return;
 
     let ctxArgs = '';
-    const destArgs = '';
+    const destArgs = dropUUID || '';
 
     if (context === 'Ground') {
       ctxArgs = `${realItem.itemClass}:${item.uuid}`;
@@ -44,7 +44,7 @@ export class UIService {
     } else if (context === 'GroundGroup') {
       ctxArgs = `${realItem.itemClass}`;
 
-    } else if (['Sack', 'Belt', 'Equipment', 'DemiMagicPouch'].includes(context)) {
+    } else if (['Sack', 'Belt', 'Equipment', 'DemiMagicPouch', 'Obtainagain'].includes(context)) {
       ctxArgs = `${contextSlot}`;
 
     } else if (context === 'Coin') {
@@ -62,6 +62,25 @@ export class UIService {
 
     } else if (context === 'Merchant') {
 
+      // buy to sack or belt we get a qty prompt
+      if (choiceStr === 'S' || choiceStr === 'B') {
+        const amount = this.modalService.amount(
+          'Buy Items',
+          'How many do you want to buy?',
+          50
+        );
+
+        amount.subscribe((amt) => {
+          this.gameService.sendCommandString(`${cmd} ${contextSlot} ${amt}`);
+        });
+
+      // otherwise we buy 1
+      } else {
+        this.gameService.sendCommandString(`${cmd} ${contextSlot} 1`);
+
+      }
+
+      return;
     }
 
     if (dropScope === 'use') {

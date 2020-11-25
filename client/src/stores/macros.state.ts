@@ -6,7 +6,7 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import * as macros from '../assets/content/_output/macros.json';
 
 import { IMacroBar, IMacroContainer } from '../interfaces';
-import { CreateCustomMacro, DeleteCustomMacro, PlayerReady,
+import { CreateCustomMacro, DeleteCustomMacro, ImportMacros, PlayerReady,
   SetActiveMacro, SetActiveMacroBars, SetDefaultMacros, SetMacroBars } from './actions';
 import { GameState } from './game.state';
 
@@ -103,6 +103,24 @@ export class MacrosState {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
     setState((state: IMacroContainer) => {
+      state.characterMacros = state.characterMacros ?? {};
+      state.characterMacros[curPlayer.username] = state.characterMacros[curPlayer.username] ?? {};
+      state.characterMacros[curPlayer.username][curPlayer.charSlot] = {};
+
+      macroBars.forEach(bar => state.characterMacros[curPlayer.username][curPlayer.charSlot][bar.name] = bar);
+
+      return state;
+    });
+  }
+
+  @Action(ImportMacros)
+  @ImmutableContext()
+  importMacros({ setState }: StateContext<IMacroContainer>, { macroBars, macros: importCustomMacros }: ImportMacros) {
+    const curPlayer = this.store.selectSnapshot(GameState.player);
+
+    setState((state: IMacroContainer) => {
+      Object.assign(state.customMacros, importCustomMacros);
+
       state.characterMacros = state.characterMacros ?? {};
       state.characterMacros[curPlayer.username] = state.characterMacros[curPlayer.username] ?? {};
       state.characterMacros[curPlayer.username][curPlayer.charSlot] = {};

@@ -61,7 +61,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     const curPlayerLevelXP = calculateXPRequiredForLevel(player.level);
     const nextPlayerLevelXP = calculateXPRequiredForLevel(player.level + 1);
 
-    return (playerXP - curPlayerLevelXP) / nextPlayerLevelXP * 100;
+    return (playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100;
   }
 
   unapply($event, effect: IStatusEffect): void {

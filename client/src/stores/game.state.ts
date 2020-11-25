@@ -1,11 +1,12 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { IGame } from '../interfaces';
+import { Currency, IGame } from '../interfaces';
 
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { OpenTrainerWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+import { HideTrainerWindow, HideVendorWindow, OpenTrainerWindow,
+  OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
@@ -21,6 +22,14 @@ const defaultGame: () => IGame = () => {
       npcSprite: 0,
       npcMaxSkill: 0,
       npcMaxLevel: 0
+    },
+    vendorInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
+      npcVendorCurrency: Currency.Gold,
+      npcVendorItems: [],
+      npcVendorDailyItems: []
     },
     mapInfo: {
       players: {},
@@ -108,6 +117,18 @@ export class GameState {
     return state.trainerInfo;
   }
 
+  @Selector()
+  static currentVendorWindow(state: IGame) {
+    return state.vendorInfo;
+  }
+
+  @Selector()
+  static currentBGM(state: IGame) {
+    if (!state.player) return '';
+    if (state.player.combatTicks > 0) return 'combat';
+    return state.player.bgmSetting || 'wilderness';
+  }
+
   constructor(private store: Store) {}
 
   @Action(PlayGame)
@@ -167,23 +188,27 @@ export class GameState {
         if (patch.path === '/hp/current') {
           const hpDiff = patch.value - copyState.player.hp.current;
           if (hpDiff === 0) return;
-          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff}` });
+          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff} HP` });
         }
 
         if (patch.path === '/exp') {
           const xpDiff = patch.value - copyState.player.exp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'right', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+          GameState.box.next({ side: 'left', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} XP` });
         }
 
         if (patch.path === '/axp') {
           const xpDiff = patch.value - copyState.player.axp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'right', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+          GameState.box.next({ side: 'left', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP` });
         }
 
 
-        if (patch.op === 'add' && patch.path.includes('/effect') && patch.value.effectName) {
+        const blacklistedEffects = ['Swimming'];
+        if (patch.op === 'add'
+        && patch.path.includes('/effect')
+        && patch.value.effectName
+        && !blacklistedEffects.includes(patch.value.effectName)) {
           GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
         }
       });
@@ -218,5 +243,33 @@ export class GameState {
     });
 
     this.store.dispatch(new ShowWindow('trainer'));
+  }
+
+  @Action(HideTrainerWindow)
+  hideTrainerWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ trainerInfo: null });
+  }
+
+  @Action(OpenVendorWindow)
+  openVendorWindow(ctx: StateContext<IGame>, {
+    npcUUID, npcName, npcSprite, npcVendorCurrency, npcVendorDailyItems, npcVendorItems
+  }: OpenVendorWindow) {
+    ctx.patchState({
+      vendorInfo: {
+        npcName,
+        npcUUID,
+        npcSprite,
+        npcVendorCurrency,
+        npcVendorItems,
+        npcVendorDailyItems
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('vendor'));
+  }
+
+  @Action(HideVendorWindow)
+  hideVendorWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ vendorInfo: null });
   }
 }

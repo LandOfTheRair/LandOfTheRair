@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass,
+import { BaseService, CombatEffect, DamageClass, GameServerResponse, ICharacter, IPlayer, ISimpleItem, ItemClass,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
@@ -43,6 +43,10 @@ export class CombatHelper extends BaseService {
   // do damage from one person to another, physically
   public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): void {
     this.physical.physicalAttack(attacker, defender, args);
+  }
+
+  public combatEffect(target: ICharacter, defenderUUID: string, effect: CombatEffect): void {
+    this.game.transmissionHelper.sendResponseToPlayer(target as IPlayer, GameServerResponse.PlayCFX, { defenderUUID, effect });
   }
 
   public modifyDamage(attacker: ICharacter | undefined, defender: ICharacter, args: DamageArgs): number {
@@ -156,7 +160,6 @@ export class CombatHelper extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${formattedDefMessage} [${absDmg} ${dmgString}]`,
-          sfx: customSfx || this.determineSfx({ itemClass, isMelee, damage }),
           logInfo: {
             type: 'damage',
             uuid: attacker ? attacker.uuid : '???',
@@ -179,6 +182,8 @@ export class CombatHelper extends BaseService {
       // if there was an attacker, we send a lot of messages
       if (attacker) {
 
+        console.log(attacker.name, 'attack', defender.name);
+
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `%0 was slain by %1!`,
@@ -191,13 +196,20 @@ export class CombatHelper extends BaseService {
 
         // let the killer know they murdered someone
         const killMsg = this.game.messageHelper.formatMessage(attacker, `You killed %0!`, [defender]);
-        this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
+        this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
+          sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
+          setTarget: null
+        });
+
+        // let the target know they died
+        const dieMsg = this.game.messageHelper.formatMessage(defender, `You were killed by %0!`, [attacker]);
+        this.game.messageHelper.sendLogMessageToPlayer(defender, {
+          message: dieMsg,
           setTarget: null,
           sfx: SoundEffect.CombatDie,
         }, [
-          MessageType.Combat, MessageType.Self, MessageType.Kill,
-          this.game.characterHelper.isPlayer(defender) ? MessageType.Player : MessageType.NPC
+          MessageType.Combat, MessageType.Other, MessageType.Kill
         ]);
 
         // only call kill() for players

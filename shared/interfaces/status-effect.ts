@@ -18,6 +18,9 @@ export interface IStatusEffectInfo {
   enrageTimer?: number;               // the enrage timer associated with this effect
   hidden?: boolean;                   // whether or not the effect should be hidden on the client side
   unique?: boolean;                   // whether or not this effect is unique (ie, can have duplicates of)
+  tier?: string;                      // the tier of the effect (used for stat potions)
+  tooltip?: string;                   // the tooltip for the item effect
+  message?: string;                   // the message sent for the item effect
 }
 
 export interface IStatusEffect {
@@ -42,7 +45,7 @@ export interface IStatusEffectData {
   };
 
   effect: {
-    type: 'buff'|'debuff'|'outgoing'|'incoming';
+    type: 'buff'|'debuff'|'outgoing'|'incoming'|'useonly';
     duration: number;             // the default duration for the effect (-1 = permanent)
     extra: IStatusEffectInfo;     // the static meta information
   };

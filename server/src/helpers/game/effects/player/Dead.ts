@@ -1,5 +1,5 @@
-import { ICharacter, IStatusEffect } from '../../../interfaces';
-import { Effect, Player } from '../../../models';
+import { ICharacter, IStatusEffect } from '../../../../interfaces';
+import { Effect, Player } from '../../../../models';
 
 export class Dead extends Effect {
 

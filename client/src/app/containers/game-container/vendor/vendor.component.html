@@ -1,20 +1,80 @@
 <app-window windowName="vendor"
             [head]="headTemplate"
             [body]="bodyTemplate"
-            [canHide]="false"
+            [canHide]="true"
             [initialHide]="true"
             [alwaysOnTop]="true"
 
-            defaultX="670"
-            defaultY="120"
-            defaultWidth="576"
-            defaultHeight="96"
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="372"
+            defaultHeight="472"
 ></app-window>
 
 <ng-template #headTemplate>
-  Vendor NPCNAMEhere
+  {{ vendorInfo.npcName }}
 </ng-template>
 
 <ng-template #bodyTemplate>
-  npcsprite, npc vend items, npc currency required, buyback
+  <div *ngIf="player$ | async as player">
+    <div class="vendor-container" droppable [dropScope]="'merchant'" (onDrop)="uiService.buildAndDoDropAction($event, 'Merchant', vendorInfo.npcUUID)" >
+      <div class="vendor-intro">
+        <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
+
+        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them!
+      </div>
+
+      <div class="vendor-tabs">
+        <mat-tab-group mat-align-tabs="center">
+
+          <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorItems?.length">
+            <div class="item-container">
+              <div class="item-slot item-background" *ngFor="let slot of slots">
+                <app-item *ngIf="vendorInfo.npcVendorItems[slot]"
+                          [context]="'Merchant'"
+                          [contextSlot]="vendorInfo.npcUUID + ':' + 'v:' + slot"
+                          [showDesc]="true"
+                          [showOunces]="true"
+                          [showValue]="true"
+                          [viewingPlayer]="player"
+                          [item]="vendorInfo.npcVendorItems[slot]"></app-item>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab [label]="'Daily Items (' + (vendorInfo.npcVendorDailyItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorDailyItems?.length">
+            <div class="item-container">
+              <div class="item-slot item-background" *ngFor="let slot of slots">
+                <app-item *ngIf="vendorInfo.npcVendorDailyItems[slot]"
+                          [context]="'Merchant'"
+                          [contextSlot]="vendorInfo.npcUUID + ':' + 'd:' + slot"
+                          [showDesc]="true"
+                          [showOunces]="true"
+                          [showValue]="true"
+                          [viewingPlayer]="player"
+                          [item]="vendorInfo.npcVendorDailyItems[slot]"></app-item>
+              </div>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Buy Back Items">
+            <div class="item-container">
+              <div class="item-slot item-background" *ngFor="let slot of buybackSlots">
+                <app-item *ngIf="player.items.buyback[slot]"
+                          [context]="'Obtainagain'"
+                          [contextSlot]="vendorInfo.npcUUID + ':' + slot"
+                          [showDesc]="true"
+                          [showOunces]="true"
+                          [showValue]="true"
+                          [viewingPlayer]="player"
+                          [item]="player.items.buyback[slot]"></app-item>
+              </div>
+            </div>
+          </mat-tab>
+
+        </mat-tab-group>
+      </div>
+
+    </div>
+  </div>
 </ng-template>

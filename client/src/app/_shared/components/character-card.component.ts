@@ -1,14 +1,17 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
+import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { ICharacter, ItemSlot } from '../../../interfaces';
+import { GameServerResponse, ICharacter, ItemSlot } from '../../../interfaces';
 import { GameState } from '../../../stores';
 import { GameService } from '../../services/game.service';
+import { SocketService } from '../../services/socket.service';
 
+@AutoUnsubscribe()
 @Component({
   selector: 'app-character-card',
   template: `
-    <div class="char-card">
+    <div class="char-card" [attr.uuid]="char.uuid">
 
       <div class="char-left-container">
 
@@ -314,7 +317,7 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
   @Input() public char: ICharacter;
 
   public effect = '';
-  private cfx$: any;
+  private cfxId: string;
 
   public get armorItem() {
     return this.char.items?.equipment?.[ItemSlot.Robe2]
@@ -334,23 +337,23 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  constructor(private gameService: GameService) {}
+  constructor(private socketService: SocketService, private gameService: GameService) {}
 
   ngOnInit() {
-    /* TODO: combat fx
-    this.cfx$ = this.colyseusGame.cfx$.subscribe(({ enemyUUID, effect }) => {
-      if(enemyUUID !== this.char.uuid) return;
+    this.cfxId = this.constructor.name + '-' + this.char.uuid;
+
+    this.socketService.registerComponentCallback(this.cfxId, GameServerResponse.PlayCFX, ({ defenderUUID, effect }) => {
+      if (defenderUUID !== this.char.uuid) return;
 
       this.effect = effect;
       setTimeout(() => {
         this.effect = '';
       }, 900);
     });
-    */
   }
 
   ngOnDestroy() {
-    if (this.cfx$) this.cfx$.unsubscribe();
+    this.socketService.unregisterComponentCallbacks(this.cfxId);
   }
 
   public directionTo() {

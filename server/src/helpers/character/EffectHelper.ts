@@ -64,14 +64,22 @@ export class EffectHelper extends BaseService {
 
     }
 
-    // for now, we always overwrite when uniques
+    // for now, we always overwrite when uniques and not worn
     if (effect.effectInfo.unique) {
-      character.effects[type] = character.effects[type].filter(e => e.effectName !== effect.effectName);
+
+      const priorEffect = character.effects[type].find(e => e.effectName === effect.effectName);
+
+      // if the effect is permanent, we do _not_ overwrite, unless we're also permanent
+      if (effect.endsAt === -1 || (priorEffect && priorEffect.endsAt !== -1)) {
+        character.effects[type] = character.effects[type].filter(e => e.effectName !== effect.effectName);
+      }
     }
 
-    character.effects._hash = character.effects._hash || {};
-    character.effects._hash[effect.effectName] = true;
-    character.effects[type].push(effect);
+    if (type !== 'useonly') {
+      character.effects._hash = character.effects._hash || {};
+      character.effects._hash[effect.effectName] = true;
+      character.effects[type].push(effect);
+    }
 
     this.game.effectManager.effectCreate(effectName, character, effect);
     this.game.effectManager.effectApply(effectName, character, effect);

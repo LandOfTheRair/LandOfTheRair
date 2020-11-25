@@ -38,6 +38,8 @@ export class DefaultAIBehavior implements IAI {
   tick() {
     const npc = this.npc;
 
+    if (this.game.characterHelper.isDead(npc)) return;
+
     (npc.behaviors || []).forEach(beh => beh.tick(this.game, npc));
 
     this.game.npcHelper.tick(npc);

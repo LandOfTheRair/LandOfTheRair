@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, get, size } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { BaseService, IGround, IGroundItem, ISimpleItem, ItemClass } from '../../interfaces';
+import { BaseService, IGround, IGroundItem, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
 import { Ground } from '../../models/orm/Ground';
 
 // TODO: when stripped, items should be marked as _canBeSaved even if they don't have an owner; they should also be excluded from the quick GCs
@@ -19,6 +19,7 @@ export class GroundManager extends BaseService {
 
   private ground: Record<string, IGround> = {};
   private saveableGround: Record<string, IGround> = {};
+  private loadedSpawners: Record<string, ISerializableSpawner[]> = {};
 
   // load ground
   public async init() {
@@ -38,8 +39,10 @@ export class GroundManager extends BaseService {
     const grounds = await this.game.groundDB.loadAllGrounds();
     grounds.forEach(groundEntity => {
       this.groundEntities[groundEntity.map] = new Ground();
+      this.groundEntities[groundEntity.map]._id = groundEntity._id;
       this.saveableGround[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.ground[groundEntity.map] = cloneDeep(groundEntity.ground);
+      this.loadedSpawners[groundEntity.map] = cloneDeep(groundEntity.spawners);
     });
   }
 
@@ -48,6 +51,7 @@ export class GroundManager extends BaseService {
     const entity = this.groundEntities[mapName];
     entity.map = mapName;
     entity.ground = this.saveableGround[mapName] || {};
+    entity.spawners = this.collectSpawners(mapName) || [];
     return this.game.groundDB.saveSingleGround(entity);
   }
 
@@ -63,6 +67,7 @@ export class GroundManager extends BaseService {
       const entity = this.groundEntities[map];
       entity.map = map;
       entity.ground = this.saveableGround[map] || {};
+      entity.spawners = this.collectSpawners(map) || [];
       return entity;
     });
 
@@ -87,6 +92,16 @@ export class GroundManager extends BaseService {
     }
 
     timer.stopTimer(`Ground`);
+  }
+
+  public getMapSpawners(mapName: string): ISerializableSpawner[] {
+    return this.loadedSpawners[mapName] || [];
+  }
+
+  // get all serializable spawners for a map for their current state
+  private collectSpawners(mapName: string): ISerializableSpawner[] {
+    const { state } = this.game.worldManager.getMap(mapName);
+    return state.getSerializableSpawners();
   }
 
   public getGround(mapName: string): IGround {

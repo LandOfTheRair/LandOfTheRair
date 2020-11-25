@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, GivesBonusInHandItemClasses, Hostility,
+import { BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
 
 @Injectable()
@@ -52,16 +52,34 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
+  // check if the person has an empty hand
+  public hasEmptyHand(char: ICharacter): boolean {
+    return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
+  }
+
   public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
+    const oldItem = char.items.equipment[slot];
+
+    if (oldItem) {
+      const wearEffect = this.game.itemHelper.getItemProperty(oldItem, 'equipEffect');
+      if (wearEffect) {
+        this.game.effectHelper.removeEffectByName(char, wearEffect.name);
+      }
+    }
+
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { binds, desc, tellsBind, itemClass, owner } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc']);
+      const { binds, desc, tellsBind, itemClass, owner, equipEffect } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc', 'equipEffect']);
       if (itemClass === ItemClass.Corpse) return;
+
+      if (equipEffect) {
+        this.tryToCastEquipmentEffects(char);
+      }
 
       if (binds && (char as IPlayer).username && !owner) {
         this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
-        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${itemClass.toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
+        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
 
         if (tellsBind) {
           this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `*** ${char.name} has looted ${desc}.` });
@@ -137,8 +155,7 @@ export class CharacterHelper extends BaseService {
 
     const curStat = character.stats[stat] ?? 1;
 
-    // TODO: make this based on the max region available
-    const hardBaseCap = 30;
+    const hardBaseCap = this.game.configManager.MAX_STATS;
 
     // cannot exceed the hard cap
     if (curStat + value > hardBaseCap) return false;
@@ -231,6 +248,10 @@ export class CharacterHelper extends BaseService {
   public tick(character: ICharacter): void {
     if (this.isDead(character)) return;
 
+    if (character.combatTicks > 0) {
+      character.combatTicks--;
+    }
+
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 
@@ -243,19 +264,19 @@ export class CharacterHelper extends BaseService {
     return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) + this.getStat(character, `${skill}Bonus` as Stat);
   }
 
-  // gain skill for a character
-  public gainSkill(character: ICharacter, skill: Skill, skillGained: number): void {
-    if (!skill) skill = Skill.Martial;
-
-    // TODO: modify skillGained for sub
-    if (isNaN(skillGained)) throw new Error(`Skill gained for ${character.name} is NaN!`);
-
-    character.skills[skill.toLowerCase()] = Math.max((character.skills[skill.toLowerCase()] ?? 0) + skillGained);
-  }
-
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
 
+      const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['equipEffect', 'itemClass']);
+      if (!equipEffect) return;
+
+      if (EquipHash[itemClass as ItemClass] && EquipHash[itemClass as ItemClass] !== itemSlot) return;
+
+      this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
+    });
   }
 
 }

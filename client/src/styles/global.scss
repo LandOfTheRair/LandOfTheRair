@@ -148,8 +148,44 @@ mat-dialog-actions {
   padding-top: 0;
 }
 
+.mat-dialog-content {
+  overflow: hidden !important;
+}
+
 // https://codepen.io/shanomurphy/pen/ejpVLw
 .cdk-overlay-pane.fancy .mat-dialog-container, .mat-snack-bar-container.fancy .mat-simple-snackbar {
   border: 25px solid #B88846;
   border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='75' height='75'%3E%3Cg fill='none' stroke='%23B88846' stroke-width='2'%3E%3Cpath d='M1 1h73v73H1z'/%3E%3Cpath d='M8 8h59v59H8z'/%3E%3Cpath d='M8 8h16v16H8zM51 8h16v16H51zM51 51h16v16H51zM8 51h16v16H8z'/%3E%3C/g%3E%3Cg fill='%23B88846'%3E%3Ccircle cx='16' cy='16' r='2'/%3E%3Ccircle cx='59' cy='16' r='2'/%3E%3Ccircle cx='59' cy='59' r='2'/%3E%3Ccircle cx='16' cy='59' r='2'/%3E%3C/g%3E%3C/svg%3E") 25;
+}
+
+ngx-mat-color-picker-content {
+  background-color: #212121 !important;
+
+  mat-label.symbol {
+    color: #fff !important;
+  }
+
+  form .row:nth-child(2) mat-form-field:nth-child(3) {
+    display: none;
+  }
+}
+
+.macro-selector-popover {
+
+  .mat-card {
+    min-width: 416px;
+  }
+
+  .selector-buttons-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .selector-macros {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }
 }

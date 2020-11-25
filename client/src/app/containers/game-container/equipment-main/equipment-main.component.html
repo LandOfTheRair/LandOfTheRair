@@ -27,6 +27,9 @@
       <button class="is-selector" mat-icon-button [disabled]="charView === 'Skills'" (click)="changeView('Skills')">
         <app-icon name="broadsword" size="xsmall"></app-icon>
       </button>
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Reputation'" (click)="changeView('Reputation')">
+        <app-icon name="ages" size="xsmall"></app-icon>
+      </button>
     </span>
   </div>
 </ng-template>
@@ -46,14 +49,27 @@
       <ng-container *ngTemplateOutlet="viewSkills"></ng-container>
     </ng-container>
 
+    <ng-container *ngIf="charView === 'Reputation'">
+      <ng-container *ngTemplateOutlet="viewReputation"></ng-container>
+    </ng-container>
+
   </ng-container>
+</ng-template>
+
+<ng-template #viewReputation>
+  <table class="display-table" *ngIf="player$ | async as player">
+    <tr *ngFor="let allegiance of allegiances">
+      <td class="label">{{ allegiance }}</td>
+      <td class="text-right">{{ hostilityForAllegiance(player.allegianceReputation[allegiance] || 0) }}</td>
+    </tr>
+  </table>
 </ng-template>
 
 <ng-template #viewStats>
   <table class="display-table" *ngIf="player$ | async as player">
     <tr *ngFor="let stat of stats">
       <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall" round="true"></app-icon></td>
-      <td>{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
+      <td class="label">{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
       <td class="number">
         {{ player.totalStats[stat.stat] }} 
       </td>
@@ -71,7 +87,7 @@
   <table class="display-table" *ngIf="player$ | async as player">
     <tr *ngFor="let skill of sortedSkills(player.skills)">
       <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true"></app-skill-icon></td>
-      <td>{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
+      <td class="label">{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
       <td class="number">
         {{ skillLevel(player.skills[skill.skill]) }} 
       </td>

@@ -81,6 +81,10 @@ $sides: (top, bottom, left, right);
   text-align: center;
 }
 
+.text-right {
+  text-align: right;
+}
+
 .background-text {
   color: rgba(200, 200, 200, 0.7);
 }
@@ -132,4 +136,13 @@ $sides: (top, bottom, left, right);
 
 .lower-stat {
   color: #ff4e4e;
+}
+
+.error-container {
+  position: relative;
+
+  mat-error {
+    position: absolute;
+    top: -20px;
+  }
 }

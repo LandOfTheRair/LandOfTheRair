@@ -24,6 +24,7 @@ import { AlertErrorHandler } from './services/logger.service';
 import { MacrosService } from './services/macros.service';
 import { ModalService } from './services/modal.service';
 import { SocketService } from './services/socket.service';
+import { SoundService } from './services/sound.service';
 
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
@@ -96,6 +97,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
         return modal;
       },
       deps: [ModalService],
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (sound: SoundService) => () => {
+        sound.init();
+        return sound;
+      },
+      deps: [SoundService],
       multi: true
     },
     {
