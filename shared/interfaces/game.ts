@@ -26,7 +26,7 @@ export interface IGame {
     npcVendorItems: IVendorItem[];
     npcVendorDailyItems: IVendorItem[];
   };
-  
+
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;

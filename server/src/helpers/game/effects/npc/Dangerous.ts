@@ -1,4 +1,4 @@
-import { ICharacter, Stat } from '../../../../interfaces';
+import { ICharacter } from '../../../../interfaces';
 import { Effect } from '../../../../models';
 
 export class Dangerous extends Effect {
