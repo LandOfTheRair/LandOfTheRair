@@ -2,8 +2,8 @@
 
 
 export function distFrom(
-  refPoint: { x: number, y: number }, 
-  checkPoint: { x: number, y: number }, 
+  refPoint: { x: number, y: number },
+  checkPoint: { x: number, y: number },
   vector?: { x: number, y: number }
 ): number {
   let checkX = refPoint.x;
