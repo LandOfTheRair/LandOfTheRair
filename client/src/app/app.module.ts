@@ -23,6 +23,7 @@ import { GameService } from './services/game.service';
 import { AlertErrorHandler } from './services/logger.service';
 import { MacrosService } from './services/macros.service';
 import { ModalService } from './services/modal.service';
+import { OptionsService } from './services/options.service';
 import { SocketService } from './services/socket.service';
 import { SoundService } from './services/sound.service';
 
@@ -54,6 +55,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     })
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (opts: OptionsService) => () => {
+        opts.init();
+        return opts;
+      },
+      deps: [OptionsService],
+      multi: true
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: (sc: SocketService) => () => {
