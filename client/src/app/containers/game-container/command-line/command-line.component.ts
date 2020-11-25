@@ -52,9 +52,12 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.command$ = this.gameService.currentCommand$.subscribe(command => {
       this.currentCommand = command;
-      this.store.dispatch(new ShowWindow('commandLine'));
-      this.store.dispatch(new SetActiveWindow('commandLine'));
-      this.focusInput();
+
+      if (command) {
+        this.store.dispatch(new ShowWindow('commandLine'));
+        this.store.dispatch(new SetActiveWindow('commandLine'));
+        this.focusInput();
+      }
     });
 
     this.globalListener = (ev) => {
