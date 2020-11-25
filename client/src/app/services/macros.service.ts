@@ -3,7 +3,7 @@ import { Select, Selector, Store } from '@ngxs/store';
 import { combineLatest, interval, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { ICharacter, IGame, IMacro, IMacroContainer } from '../../interfaces';
+import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
@@ -14,6 +14,7 @@ import { OptionsService } from './options.service';
 })
 export class MacrosService {
 
+  @Select(GameState.player) private player$: Observable<IPlayer>;
   @Select(GameState.inGame) private inGame$: Observable<boolean>;
   @Select(GameState.currentTarget) private currentTarget$: Observable<ICharacter>;
   @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
@@ -156,9 +157,11 @@ export class MacrosService {
 
   private autoAttackLoop() {
     interval(1000)
-      .pipe(switchMap(() => combineLatest([this.inGame$, this.activeMacro$, this.currentTarget$])))
-      .subscribe(([inGame, macro, target]) => {
+      .pipe(switchMap(() => combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])))
+      .subscribe(([inGame, player, macro, target]) => {
         if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption) return;
+        if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
+
         this.gameService.sendCommandString(macro.macro, target.uuid);
       });
   }
