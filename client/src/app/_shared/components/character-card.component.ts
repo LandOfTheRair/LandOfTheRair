@@ -11,7 +11,7 @@ import { SocketService } from '../../services/socket.service';
 @Component({
   selector: 'app-character-card',
   template: `
-    <div class="char-card">
+    <div class="char-card" [attr.uuid]="char.uuid">
 
       <div class="char-left-container">
 

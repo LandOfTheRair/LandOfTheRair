@@ -444,7 +444,6 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${attackerName} misses!`,
-          setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'miss',
             uuid: attacker.uuid,
@@ -509,7 +508,6 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${attackerName} was blocked by your armor!`,
-          setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-armor',
             uuid: attacker.uuid,
@@ -577,7 +575,6 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${attackerName} was blocked by your ${defenderItemClass.toLowerCase()}!`,
-          setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-weapon',
             uuid: attacker.uuid,
@@ -646,7 +643,6 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${attackerName} was blocked by your shield!`,
-          setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-shield',
             uuid: attacker.uuid,
@@ -716,7 +712,6 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${attackerName} was blocked by your ${defenderItemClass.toLowerCase()}!`,
-          setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-offhand',
             uuid: attacker.uuid,
