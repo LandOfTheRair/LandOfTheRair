@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { basePlayerSprite, basePlayerSwimmingSprite, Direction, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
-import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
+import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 
 const Phaser = (window as any).Phaser;
 
@@ -320,7 +320,9 @@ export class MapScene extends Phaser.Scene {
       if (i._type !== 'Door') return;
       i.setFrame(this.openDoors[i._id] ? i._openFrame : i._closedFrame);
 
-      i._doorTopSprite.visible = !!this.openDoors[i._id];
+      if (i._doorTopSprite) {
+        i._doorTopSprite.visible = !!this.openDoors[i._id];
+      }
     });
   }
 
@@ -356,16 +358,18 @@ export class MapScene extends Phaser.Scene {
         sprite.inputEnabled = true;
       }
 
-      // doors have to store two sprites, and create a door top
+      // vertical doors have to store two sprites, and create a door top
       if (obj.type === 'Door') {
         sprite._closedFrame = sprite._baseFrame;
         sprite._openFrame = sprite._baseFrame + 1;
 
-        const doorTopSprite = this.add.sprite(obj.x + 32, obj.y - 96, tileSet, obj.gid - firstGid + 2);
-        doorTopSprite.visible = false;
-        sprite._doorTopSprite = doorTopSprite;
+        if (VerticalDoorGids[sprite._baseFrame]) {
+          const doorTopSprite = this.add.sprite(obj.x + 32, obj.y - 96, tileSet, obj.gid - firstGid + 2);
+          doorTopSprite.visible = false;
+          sprite._doorTopSprite = doorTopSprite;
 
-        layerGroup.add(doorTopSprite);
+          layerGroup.add(doorTopSprite);
+        }
       }
 
       layerGroup.add(sprite);

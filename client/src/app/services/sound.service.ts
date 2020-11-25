@@ -33,7 +33,7 @@ export class SoundService {
       this.bgm$
     ])
     .subscribe(([inGame, bgm]) => {
-      if (!inGame) {
+      if (!inGame || !bgm) {
         if (this.currentBGM) this.currentBGM.stop();
         return;
       }
