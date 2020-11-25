@@ -1,7 +1,7 @@
 
 import RBush from 'rbush';
 
-import { extend, get, keyBy, pick, setWith, size, unset } from 'lodash';
+import { extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
 import { Game } from '../../helpers';
 import { WorldMap } from './Map';
