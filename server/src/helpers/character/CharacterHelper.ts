@@ -248,7 +248,7 @@ export class CharacterHelper extends BaseService {
   public tick(character: ICharacter): void {
     if (this.isDead(character)) return;
 
-    if(character.combatTicks > 0) {
+    if (character.combatTicks > 0) {
       character.combatTicks--;
     }
 

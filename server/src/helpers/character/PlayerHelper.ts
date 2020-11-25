@@ -3,7 +3,6 @@ import { isArray, random } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction,
-  GameAction,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';

@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter, IPlayer, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
 
 @Injectable()
