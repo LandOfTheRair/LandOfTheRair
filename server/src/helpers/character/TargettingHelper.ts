@@ -103,7 +103,7 @@ export class TargettingHelper extends BaseService {
   }
 
   public doesTargetMatchSearch(target: ICharacter, findStr: string): boolean {
-    return target.uuid === findStr || target.name.toLowerCase().startsWith(findStr.toLowerCase());
+    return target.uuid === findStr || target.name.toLowerCase().startsWith((findStr || '').toLowerCase());
   }
 
 }

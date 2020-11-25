@@ -5,7 +5,7 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
-import { GameState, HideWindow } from '../../../../stores';
+import { GameState, HideVendorWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -51,14 +51,16 @@ export class VendorComponent implements OnInit, OnDestroy {
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
+      this.store.dispatch(new HideVendorWindow());
       this.store.dispatch(new HideWindow('vendor'));
     });
 
     this.vendorInfoSub = this.vendor$.subscribe(data => {
-      this.vendorInfo = cloneDeep(data);
+      this.vendorInfo = cloneDeep(data || {});
     });
 
     this.gameStatusSub = this.inGame$.subscribe((d) => {
+      this.store.dispatch(new HideVendorWindow());
       this.store.dispatch(new HideWindow('vendor'));
     });
   }

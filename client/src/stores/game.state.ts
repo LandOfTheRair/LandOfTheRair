@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { OpenTrainerWindow, OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+import { HideTrainerWindow, HideVendorWindow, OpenTrainerWindow, OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
@@ -233,6 +233,11 @@ export class GameState {
     this.store.dispatch(new ShowWindow('trainer'));
   }
 
+  @Action(HideTrainerWindow)
+  hideTrainerWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ trainerInfo: null });
+  }
+
   @Action(OpenVendorWindow)
   openVendorWindow(ctx: StateContext<IGame>, {
     npcUUID, npcName, npcSprite, npcVendorCurrency, npcVendorDailyItems, npcVendorItems
@@ -249,5 +254,10 @@ export class GameState {
     });
 
     this.store.dispatch(new ShowWindow('vendor'));
+  }
+
+  @Action(HideVendorWindow)
+  hideVendorWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ vendorInfo: null });
   }
 }

@@ -124,5 +124,7 @@ export enum GameAction {
   SettingsCharSlot = '[Settings] Set Char Slot',
 
   NPCActionShowTrainer = '[NPC] Show Trainer',
+  NPCActionHideTrainer = '[NPC] Hide Trainer',
   NPCActionShowVendor = '[NPC] Show Vendor',
+  NPCActionHideVendor = '[NPC] Hide Vendor',
 }

@@ -9,6 +9,7 @@ export interface IGame {
   itemTooltip: string;
   player: IPlayer;
   map: any;
+
   trainerInfo: {
     npcUUID: string;
     npcName: string;
@@ -16,6 +17,7 @@ export interface IGame {
     npcMaxLevel: number;
     npcMaxSkill: number;
   };
+
   vendorInfo: {
     npcUUID: string;
     npcName: string;
@@ -24,6 +26,7 @@ export interface IGame {
     npcVendorItems: IVendorItem[];
     npcVendorDailyItems: IVendorItem[];
   };
+  
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;

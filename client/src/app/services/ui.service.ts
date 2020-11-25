@@ -18,7 +18,7 @@ export class UIService {
     return true;
   }
 
-  private doDropAction(dragData, dropScope, dropUUID?: string) {
+  public doDropAction(dragData, dropScope, dropUUID?: string) {
     // also has { containerUUID, isStackableMaterial }
     const { context, contextSlot, item, realItem } = dragData;
 

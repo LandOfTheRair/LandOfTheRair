@@ -67,6 +67,10 @@ export class OpenTrainerWindow {
   ) {}
 }
 
+export class HideTrainerWindow {
+  static type = GameAction.NPCActionHideTrainer;
+}
+
 // dispatched when greeting a vendor
 export class OpenVendorWindow {
   static type = GameAction.NPCActionShowVendor;
@@ -78,4 +82,8 @@ export class OpenVendorWindow {
     public npcVendorItems: IVendorItem[],
     public npcVendorDailyItems: IVendorItem[]
   ) {}
+}
+
+export class HideVendorWindow {
+  static type = GameAction.NPCActionHideVendor;
 }
