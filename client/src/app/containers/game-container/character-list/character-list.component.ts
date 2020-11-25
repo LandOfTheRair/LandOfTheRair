@@ -62,6 +62,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     this.moveSub = this.pos$.subscribe(() => this.updateCharacterList());
 
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
+      console.log('SET TARGET', data.setTarget)
       if (isUndefined(data.setTarget)) return;
       this.store.dispatch(new SetCurrentTarget(data.setTarget));
     });

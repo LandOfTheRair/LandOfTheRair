@@ -27,18 +27,21 @@ export class SetMap {
 // dispatched when the server wants to do a full SetPlayer instead of patch
 export class SetPlayer {
   static type = GameAction.GameSetPlayer;
+  filterOutFromLogs = true;
   constructor(public player: IPlayer) {}
 }
 
 // dispatched when the server wants to patch the player
 export class PatchPlayer {
   static type = GameAction.GamePatchPlayer;
+  filterOutFromLogs = true;
   constructor(public player: Partial<IPlayer>, public patches: any[]) {}
 }
 
 // dispatched when the server wants to patch the player state (npcs, ground, etc)
 export class PatchGameStateForPlayer {
   static type = GameAction.GamePatchPlayerState;
+  filterOutFromLogs = true;
   constructor(public statePatches: any[]) {}
 }
 

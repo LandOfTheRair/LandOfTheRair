@@ -182,6 +182,8 @@ export class CombatHelper extends BaseService {
       // if there was an attacker, we send a lot of messages
       if (attacker) {
 
+        console.log(attacker.name, 'attack', defender.name);
+
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `%0 was slain by %1!`,
@@ -194,13 +196,20 @@ export class CombatHelper extends BaseService {
 
         // let the killer know they murdered someone
         const killMsg = this.game.messageHelper.formatMessage(attacker, `You killed %0!`, [defender]);
-        this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
+        this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
+          sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
+          setTarget: null
+        });
+
+        // let the target know they died
+        const dieMsg = this.game.messageHelper.formatMessage(defender, `You were killed by %0!`, [attacker]);
+        this.game.messageHelper.sendLogMessageToPlayer(defender, {
+          message: dieMsg,
           setTarget: null,
           sfx: SoundEffect.CombatDie,
         }, [
-          MessageType.Combat, MessageType.Self, MessageType.Kill,
-          this.game.characterHelper.isPlayer(defender) ? MessageType.Player : MessageType.NPC
+          MessageType.Combat, MessageType.Other, MessageType.Kill
         ]);
 
         // only call kill() for players

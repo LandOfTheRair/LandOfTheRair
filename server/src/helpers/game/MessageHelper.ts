@@ -63,6 +63,8 @@ export class MessageHelper extends BaseService {
       let sendMessage = message;
       if (formatArgs.length > 0) sendMessage = this.formatMessage(checkPlayer, sendMessage, formatArgs);
 
+      if (sfx) this.playSoundForPlayer((checkPlayer as Player), sfx);
+
       this.game.transmissionHelper.sendResponseToAccount((checkPlayer as Player).username, GameServerResponse.GameLog, {
         type: GameServerResponse.GameLog,
         messageTypes,
