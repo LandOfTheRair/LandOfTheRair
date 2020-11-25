@@ -295,14 +295,7 @@ export class MapState {
   // get TARGETS for an NPC
   public getPossibleTargetsFor(me: INPC, radius = 0): ICharacter[] {
 
-    let targetArray: ICharacter[] = [];
-
-    // optimization for thirsty monsters
-    if (me.hostility === Hostility.Always && size(me.agro) === 0) {
-      targetArray = this.getPlayersInRange(me, radius);
-    } else {
-      targetArray = this.getAllInRange(me, radius);
-    }
+    const targetArray: ICharacter[] = this.getAllInRange(me, radius);
 
     return targetArray.filter((char: ICharacter) => {
 
@@ -457,8 +450,10 @@ export class MapState {
 
   // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
-    for (let x = player.x - 4; x <= player.x + 4; x++) {
-      for (let y = player.y - 4; y <= player.y + 4; y++) {
+    const knowledgeRadius = 4;
+
+    for (let x = player.x - knowledgeRadius; x <= player.x + knowledgeRadius; x++) {
+      for (let y = player.y - knowledgeRadius; y <= player.y + knowledgeRadius; y++) {
         if (doesKnow) setWith(this.playerKnowledgePositions, [x, y, player.uuid], true, Object);
         else          unset(this.playerKnowledgePositions, [x, y, player.uuid]);
       }
