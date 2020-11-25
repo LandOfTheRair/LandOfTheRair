@@ -66,11 +66,12 @@ export class DeathHelper extends BaseService {
 
     this.game.effectHelper.clearEffectsForDeath(dead);
     dead.dir = Direction.Corpse;
+    dead.combatTicks = 0;
 
     const corpse = this.createCorpse(dead);
 
     if (this.game.characterHelper.isPlayer(dead)) {
-      const shouldMakeCorpse = (killer as INPC)?.shouldEatTier ?? 0 <= 0;
+      const shouldMakeCorpse = ((killer as INPC)?.shouldEatTier ?? 0) <= 0;
       this.playerDie(dead as IPlayer, shouldMakeCorpse ? corpse as ISimpleItem : undefined, killer);
     } else {
       this.npcDie(dead as INPC, corpse, killer);
