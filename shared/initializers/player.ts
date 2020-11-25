@@ -26,6 +26,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     hungerTicks: char.hungerTicks ?? 0,
     partyName: char.partyName ?? '',
     respawnPoint: char.respawnPoint ?? { x: 14, y: 14, map: 'Tutorial' },
-    lastDeathLocation: char.lastDeathLocation ?? undefined
+    lastDeathLocation: char.lastDeathLocation ?? undefined,
+    dailyItems: char.dailyItems ?? {}
   };
 };

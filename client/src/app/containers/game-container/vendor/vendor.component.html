@@ -51,6 +51,7 @@
                           [showDesc]="true"
                           [showOunces]="true"
                           [showValue]="true"
+                          [overrideValue]="boughtDailyAlready(player, vendorInfo.npcVendorDailyItems[slot]) ? 'SOLD OUT' : ''"
                           [viewingPlayer]="player"
                           [item]="vendorInfo.npcVendorDailyItems[slot]"></app-item>
               </div>
