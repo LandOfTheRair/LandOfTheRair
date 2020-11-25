@@ -188,19 +188,19 @@ export class GameState {
         if (patch.path === '/hp/current') {
           const hpDiff = patch.value - copyState.player.hp.current;
           if (hpDiff === 0) return;
-          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff}` });
+          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff} HP` });
         }
 
         if (patch.path === '/exp') {
           const xpDiff = patch.value - copyState.player.exp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'left', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+          GameState.box.next({ side: 'left', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} XP` });
         }
 
         if (patch.path === '/axp') {
           const xpDiff = patch.value - copyState.player.axp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'left', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff}` });
+          GameState.box.next({ side: 'left', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP` });
         }
 
 
