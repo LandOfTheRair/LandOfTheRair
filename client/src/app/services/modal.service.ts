@@ -18,6 +18,7 @@ import { MacroEditorComponent } from '../_shared/modals/macroeditor/macroeditor.
 import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
 import { OptionsComponent } from '../_shared/modals/options/options.component';
 import { TextModalComponent } from '../_shared/modals/text/text.component';
+import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -30,6 +31,7 @@ export class ModalService {
 
   constructor(
     private socketService: SocketService,
+    private optionsService: OptionsService,
     private snackbar: MatSnackBar,
     private dialog: MatDialog
   ) {}
@@ -127,7 +129,7 @@ export class ModalService {
   }
 
   public npcDialog(dialogInfo: IDialogChatAction) {
-    if (this.npcDialogRef) return null;
+    if (this.npcDialogRef || this.optionsService.classicNPCChat) return null;
 
     this.npcDialogRef = this.dialog.open(DialogComponent, {
       width: '450px',

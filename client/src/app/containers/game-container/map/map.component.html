@@ -30,7 +30,9 @@
 
   <div class="map"></div>
 
-  <div class="dying-border" *ngIf="canSeeLowHealthBorder"></div>
+  <div class="dying-border" 
+       [style.--blur-max-size]="optionsService.dyingBorderWidth" 
+       *ngIf="canSeeLowHealthBorder"></div>
 
   <div class="item-text" *ngIf="itemTooltip$ | async" [innerHTML]="itemTooltip$ | async"></div>
 </ng-template>

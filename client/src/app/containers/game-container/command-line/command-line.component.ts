@@ -2,10 +2,12 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 import { ChatMode } from '../../../../interfaces';
 import { HideWindow, LogCurrentCommandInHistory, SetActiveWindow, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -46,6 +48,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private optionsService: OptionsService,
     public gameService: GameService
   ) { }
 
@@ -76,7 +79,11 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
       // allow enter to unfocus chat if there is no command
       if (ev.key === 'Enter' && this.isCmdActive && !this.currentCommand) {
-        this.store.dispatch(new HideWindow('commandLine'));
+
+        if (this.optionsService.enterToggleCMD) {
+          this.store.dispatch(new HideWindow('commandLine'));
+        }
+
         this.commandInput.nativeElement.blur();
         ev.preventDefault();
         ev.stopPropagation();
@@ -91,21 +98,21 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       // if we're not hitting enter, we don't care about this
       if (ev.key !== 'Enter') return;
 
-      this.store.dispatch(new ShowWindow('commandLine'));
-      this.store.dispatch(new SetActiveWindow('commandLine'));
+      if (this.optionsService.enterToggleCMD) {
+        this.store.dispatch(new ShowWindow('commandLine'));
+      }
 
+      this.store.dispatch(new SetActiveWindow('commandLine'));
       this.focusInput();
     };
 
     // TODO: right click send option
     this.sendListener = (ev) => {
-      /*
-      if(environment.production) {
+      if (environment.production) {
         ev.preventDefault();
       }
-      if(!this.rightClickSend) return;
-      this.sendCommand();
-      */
+      if (!this.optionsService.rightClickSend) return;
+      this.sendCommand(ev);
     };
 
     document.addEventListener('keydown', this.globalListener);

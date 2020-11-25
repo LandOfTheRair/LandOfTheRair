@@ -1,19 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { combineLatest, interval, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
-import { IGame, IMacro, IMacroContainer } from '../../interfaces';
+import { ICharacter, IGame, IMacro, IMacroContainer } from '../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
 import * as allMacros from '../../assets/content/_output/macros.json';
+import { OptionsService } from './options.service';
 @Injectable({
   providedIn: 'root'
 })
 export class MacrosService {
 
+  @Select(GameState.inGame) private inGame$: Observable<boolean>;
+  @Select(GameState.currentTarget) private currentTarget$: Observable<ICharacter>;
   @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
   @Select(MacrosState.customMacros) private customMacros$: Observable<Record<string, IMacro>>;
+  @Select(MacrosService.currentPlayerActiveMacro) private activeMacro$: Observable<IMacro>;
 
   private macroMap: Record<string, IMacro> = {};
 
@@ -47,6 +52,7 @@ export class MacrosService {
 
   constructor(
     private store: Store,
+    private optionsService: OptionsService,
     private gameService: GameService
   ) {}
 
@@ -55,6 +61,7 @@ export class MacrosService {
     this.customMacros$.subscribe(c => this.parseMacroMap(c));
 
     this.watchForMacros();
+    this.autoAttackLoop();
   }
 
   public getMacroMatching(key: string): IMacro {
@@ -145,6 +152,15 @@ export class MacrosService {
     };
 
     document.addEventListener('keydown', macroListener);
+  }
+
+  private autoAttackLoop() {
+    interval(1000)
+      .pipe(switchMap(() => combineLatest([this.inGame$, this.activeMacro$, this.currentTarget$])))
+      .subscribe(([inGame, macro, target]) => {
+        if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption) return;
+        this.gameService.sendCommandString(macro.macro, target.uuid);
+      });
   }
 
 }

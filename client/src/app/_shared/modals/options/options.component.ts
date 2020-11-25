@@ -29,7 +29,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
     { option: GameOption.SuppressZeroDamage,    text: 'Suppress 0-damage messages' },
     { option: GameOption.SuppressOutgoingDoT,   text: 'Suppress outgoing DoT damage' },
     { option: GameOption.NoItemAnimations,      text: 'Stop item animations' },
-    { option: GameOption.PinLastTarget,         text: 'Pin last target click position' },
+    // { option: GameOption.PinLastTarget,         text: 'Pin last target click position' },
   ];
 
   public readonly spritesheets = [

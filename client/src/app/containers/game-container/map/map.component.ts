@@ -6,6 +6,7 @@ import { GameServerEvent, IGround, INPC, IPlayer } from '../../../../interfaces'
 import { GameState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
 import { UIService } from '../../../services/ui.service';
 import { FloatingBox } from './floating-box';
@@ -58,7 +59,9 @@ export class MapComponent implements OnInit, OnDestroy {
   private player: IPlayer;
 
   public get canSeeLowHealthBorder(): boolean {
-    return this.player && this.player.hp.current <= this.player.hp.maximum * 0.25;
+    return this.player
+        && this.player.hp.current <= this.player.hp.maximum * 0.25
+        && this.optionsService.canShowDyingBorder;
   }
 
   constructor(
@@ -66,6 +69,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private gameService: GameService,
     private socketService: SocketService,
     private zone: NgZone,
+    public optionsService: OptionsService,
     public uiService: UIService
   ) { }
 
