@@ -63,8 +63,11 @@ export class TrainerComponent implements OnInit, OnDestroy {
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
-      this.store.dispatch(new HideTrainerWindow());
-      this.store.dispatch(new HideWindow('trainer'));
+
+      if (this.trainerInfo.npcUUID) {
+        this.store.dispatch(new HideTrainerWindow());
+        this.store.dispatch(new HideWindow('trainer'));
+      }
     });
 
     this.trainerInfoSub = this.trainer$.subscribe(data => {

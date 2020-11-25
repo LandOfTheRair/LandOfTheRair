@@ -51,8 +51,11 @@ export class VendorComponent implements OnInit, OnDestroy {
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
-      this.store.dispatch(new HideVendorWindow());
-      this.store.dispatch(new HideWindow('vendor'));
+
+      if (this.vendorInfo.npcUUID) {
+        this.store.dispatch(new HideVendorWindow());
+        this.store.dispatch(new HideWindow('vendor'));
+      }
     });
 
     this.vendorInfoSub = this.vendor$.subscribe(data => {
