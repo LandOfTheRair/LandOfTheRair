@@ -100,16 +100,32 @@ export class TransmissionHelper extends BaseService {
 
   // send generic data to an account. probably not too useful.
   public sendDataToAccount(username: string, data: any): void {
+    if (!username) return;
+
     this.game.wsCmdHandler.sendToSocket(username, data);
+  }
+
+  // send an action to a player. also very useful
+  public sendActionToPlayer(player: Player, action: GameAction, data = {}): void {
+    this.sendActionToAccount(player.username, action, data);
   }
 
   // send an action to an account. very useful.
   public sendActionToAccount(username: string, action: GameAction, data: any): void {
+    if (!username) return;
+
     this.game.wsCmdHandler.sendToSocket(username, { action, ...data });
   }
 
   // send a response to an account. very useful.
+  public sendResponseToPlayer(player: IPlayer, type: GameServerResponse, data: any): void {
+    this.sendResponseToAccount(player.username, type, data);
+  }
+
+  // send a response to an account. very useful.
   public sendResponseToAccount(username: string, type: GameServerResponse, data: any): void {
+    if (!username) return;
+
     this.game.wsCmdHandler.sendToSocket(username, { type, ...data });
   }
 

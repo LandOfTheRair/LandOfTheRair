@@ -67,6 +67,7 @@ export class OpenTrainerWindow {
   ) {}
 }
 
+// dispatched when walking away from a trainer
 export class HideTrainerWindow {
   static type = GameAction.NPCActionHideTrainer;
 }
@@ -84,6 +85,7 @@ export class OpenVendorWindow {
   ) {}
 }
 
+// dispatched when walking away from a vendor
 export class HideVendorWindow {
   static type = GameAction.NPCActionHideVendor;
 }

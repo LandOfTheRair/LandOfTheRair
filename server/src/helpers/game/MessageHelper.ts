@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
+import { BaseService, GameAction, GameServerResponse, ICharacter, IPlayer, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
 
 @Injectable()
@@ -28,6 +28,8 @@ export class MessageHelper extends BaseService {
 
     let sendMessage = message;
     if (formatArgs.length > 0) sendMessage = this.formatMessage(ref, sendMessage, formatArgs);
+
+    if (sfx) this.playSoundForPlayer((ref as Player), sfx);
 
     this.game.transmissionHelper.sendResponseToAccount((ref as Player).username, GameServerResponse.GameLog, {
       type: GameServerResponse.GameLog,
@@ -126,6 +128,10 @@ export class MessageHelper extends BaseService {
       return str.replace(new RegExp(`%${idx}`), name);
 
     }, message);
+  }
+
+  public playSoundForPlayer(player: Player, sfx: string): void {
+    this.game.transmissionHelper.sendResponseToPlayer(player, GameServerResponse.PlaySFX, { sfx });
   }
 
 }

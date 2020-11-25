@@ -122,6 +122,13 @@ export class GameState {
     return state.vendorInfo;
   }
 
+  @Selector()
+  static currentBGM(state: IGame) {
+    if (!state.player) return '';
+    if (state.player.combatTicks > 0) return 'combat';
+    return state.player.bgmSetting || 'wilderness';
+  }
+
   constructor(private store: Store) {}
 
   @Action(PlayGame)

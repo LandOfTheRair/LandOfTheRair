@@ -205,10 +205,6 @@ export class DamageHelperPhysical extends BaseService {
     return '';
   }
 
-  private combatEffect(target: ICharacter, defenderUUID: string, effect: CombatEffect): void {
-    // TODO: combat effects
-  }
-
   // get the attacker weapon
   private getWeaponForAttacker(attacker: ICharacter, args: PhysicalAttackArgs): ISimpleItem {
     const { isThrow, throwHand, isOffhand, isKick, isPunch } = args;
@@ -427,7 +423,7 @@ export class DamageHelperPhysical extends BaseService {
 
       const itemClass = this.game.itemHelper.getItemProperty(weapon, 'itemClass');
 
-      this.combatEffect(attacker, defender.uuid, CombatEffect.BlockMiss);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.BlockMiss);
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
@@ -492,7 +488,7 @@ export class DamageHelperPhysical extends BaseService {
 
       const itemClass = this.game.itemHelper.getItemProperty(weapon, 'itemClass');
 
-      this.combatEffect(attacker, defender.uuid, CombatEffect.BlockArmor);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.BlockArmor);
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
@@ -560,7 +556,7 @@ export class DamageHelperPhysical extends BaseService {
       const itemClass = this.game.itemHelper.getItemProperty(weapon, 'itemClass');
       const defenderItemClass = this.game.itemHelper.getItemProperty(defenderScope.blocker, 'itemClass');
 
-      this.combatEffect(attacker, defender.uuid, CombatEffect.BlockWeapon);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.BlockWeapon);
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
@@ -629,7 +625,7 @@ export class DamageHelperPhysical extends BaseService {
 
       const itemClass = this.game.itemHelper.getItemProperty(weapon, 'itemClass');
 
-      this.combatEffect(attacker, defender.uuid, CombatEffect.BlockShield);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.BlockShield);
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
@@ -699,7 +695,7 @@ export class DamageHelperPhysical extends BaseService {
       const itemClass = this.game.itemHelper.getItemProperty(weapon, 'itemClass');
       const defenderItemClass = this.game.itemHelper.getItemProperty(defenderScope.offhand, 'itemClass');
 
-      this.combatEffect(attacker, defender.uuid, CombatEffect.BlockOffhand);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.BlockOffhand);
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
@@ -904,15 +900,15 @@ export class DamageHelperPhysical extends BaseService {
     if (attackerScope.isWeak) {
       damageType = 'was a grazing blow';
       criticality = 0;
-      this.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
 
     } else if (attackerScope.isStrong) {
       damageType = 'left a grievous wound';
       criticality = 2;
-      this.combatEffect(attacker, defender.uuid, CombatEffect.HitStrong);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitStrong);
 
     } else {
-      this.combatEffect(attacker, defender.uuid, CombatEffect.HitNormal);
+      this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitNormal);
     }
 
     if (damageMult) {

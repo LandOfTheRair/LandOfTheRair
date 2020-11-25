@@ -3,6 +3,7 @@ import { isArray, random } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction,
+  GameAction,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
@@ -108,7 +109,6 @@ export class PlayerHelper extends BaseService {
   }
 
   public tick(player: Player, type: 'fast'|'slow'): void {
-
     if (type === 'slow') {
       this.characterHelper.tick(player);
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
@@ -179,7 +179,11 @@ export class PlayerHelper extends BaseService {
 
     // update the players BGM
     const newBGM = map.getBackgroundMusicAt(player.x, player.y);
-    player.bgmSetting = (newBGM ?? 'wilderness') as BGM;
+    const oldBGM = player.bgmSetting;
+
+    if (oldBGM !== newBGM) {
+      player.bgmSetting = (newBGM || 'wilderness') as BGM;
+    }
 
     // send message updates while the player is walking around the world
     if (!ignoreMessages) {

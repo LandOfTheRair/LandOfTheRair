@@ -65,7 +65,9 @@ export enum GameServerResponse {
   SendAlert = 'Game:Response:Alert',
   SendConfirm = 'Game:Response:Confirm',
 
-  DialogChat = 'Game:Response:NPCDialog'
+  DialogChat = 'Game:Response:NPCDialog',
+  PlaySFX = 'Game:Response:PlaySFX',
+  PlayCFX = 'Game:Response:PlayCFX'
 }
 
 export enum GameAction {
@@ -102,7 +104,7 @@ export enum GameAction {
 
   SetCurrentTarget = '[Game] Set Current Target',
   SetCurrentItemTooltip = '[Game] Set Current Item Tooltip',
-
+  
   CreateCustomMacro = '[Macro] Create Custom',
   DeleteCustomMacro = '[Macro] Delete Custom',
   SetActiveMacro = '[Macro] Set Active Macro',

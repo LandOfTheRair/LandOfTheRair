@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, ICharacter, ISimpleItem, ItemClass,
+import { BaseService, CombatEffect, DamageClass, GameServerResponse, ICharacter, IPlayer, ISimpleItem, ItemClass,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
@@ -43,6 +43,10 @@ export class CombatHelper extends BaseService {
   // do damage from one person to another, physically
   public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): void {
     this.physical.physicalAttack(attacker, defender, args);
+  }
+
+  public combatEffect(target: ICharacter, defenderUUID: string, effect: CombatEffect): void {
+    this.game.transmissionHelper.sendResponseToPlayer(target as IPlayer, GameServerResponse.PlayCFX, { defenderUUID, effect });
   }
 
   public modifyDamage(attacker: ICharacter | undefined, defender: ICharacter, args: DamageArgs): number {
@@ -156,7 +160,6 @@ export class CombatHelper extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(defender,
         {
           message: `${formattedDefMessage} [${absDmg} ${dmgString}]`,
-          sfx: customSfx || this.determineSfx({ itemClass, isMelee, damage }),
           logInfo: {
             type: 'damage',
             uuid: attacker ? attacker.uuid : '???',

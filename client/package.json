@@ -37,6 +37,7 @@
     "@ngxs/storage-plugin": "^3.7.0",
     "@ngxs/store": "^3.7.0",
     "fast-json-patch": "3.0.0-1",
+    "howler": "^2.2.1",
     "immer": "^7.0.14",
     "linkifyjs": "^2.1.8",
     "luxon": "^1.25.0",

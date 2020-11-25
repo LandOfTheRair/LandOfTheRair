@@ -248,6 +248,10 @@ export class CharacterHelper extends BaseService {
   public tick(character: ICharacter): void {
     if (this.isDead(character)) return;
 
+    if(character.combatTicks > 0) {
+      character.combatTicks--;
+    }
+
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 

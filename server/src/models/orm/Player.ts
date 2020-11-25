@@ -28,15 +28,15 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) totalStats: StatBlock;
   @Property(PROP_UNSAVED_SHARED()) isGM: boolean;
   @Property(PROP_UNSAVED_SHARED()) isTester: boolean;
+  @Property(PROP_UNSAVED_SHARED()) combatTicks = 0;
+  @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
 
   // temporary props
-  @Property(PROP_TEMPORARY()) combatTicks = 0;
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
   @Property(PROP_TEMPORARY()) actionQueue: { fast: CommandCallback[], slow: CommandCallback[] } = { fast: [], slow: [] };
   @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
-  @Property(PROP_TEMPORARY()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
 
