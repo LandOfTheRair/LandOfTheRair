@@ -77,4 +77,6 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() learnedSpells: { [spellName: string]: LearnedSpell };
 
   @Property() respawnPoint: { x: number, y: number, map: string };
+
+  @Property() dailyItems: Record<string, number>;
 }

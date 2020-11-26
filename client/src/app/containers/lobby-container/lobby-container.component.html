@@ -1,5 +1,5 @@
 
-<div class="lobby" [class.hidden]="gameService.inGame$ | async">
-  <app-lobby class="window-container"></app-lobby>
-  <app-char-select class="window-container"></app-char-select>
+<div class="lobby">
+  <app-lobby class="window-container" [class.hidden]="optionsService.hideLobbyInGame && gameService.inGame$ | async"></app-lobby>
+  <app-char-select class="window-container" [class.hidden]="gameService.inGame$ | async"></app-char-select>
 </div>

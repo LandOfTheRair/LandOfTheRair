@@ -819,6 +819,12 @@ export class MoveItems extends MacroCommand {
     const vitems = subtype === 'v' ? vendorBehavior.vendorItems : vendorBehavior.vendorDailyItems;
     const item = vitems[+subslot];
     const cost = item.mods.value ?? 0;
+    const isDaily = this.game.dailyHelper.isDailyItem(item);
+
+    if (isDaily && !this.game.dailyHelper.canBuyDailyItem(player, item)) {
+      this.sendMessage(player, `**${npc.name}**: Those are sold out for today, come back later!`);
+      return;
+    }
 
     if (!this.doPrelimChecks(player, item, 'M', origSlot, dest, destSlot)) return;
 
@@ -875,7 +881,7 @@ export class MoveItems extends MacroCommand {
       }
 
       case 'B': { // MtL
-        const maxItemsBuyable = Math.min(this.game.playerInventoryHelper.beltSpaceLeft(player), +destSlot);
+        const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.playerInventoryHelper.beltSpaceLeft(player), +destSlot);
         for (let i = 0; i < maxItemsBuyable; i++) {
           const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
@@ -892,7 +898,7 @@ export class MoveItems extends MacroCommand {
       }
 
       case 'S': { // MtL
-        const maxItemsBuyable = Math.min(this.game.playerInventoryHelper.sackSpaceLeft(player), +destSlot);
+        const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.playerInventoryHelper.sackSpaceLeft(player), +destSlot);
         for (let i = 0; i < maxItemsBuyable; i++) {
           const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
@@ -912,6 +918,10 @@ export class MoveItems extends MacroCommand {
         this.game.logger.error('MoveItems', `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
         return this.sendMessage(player, 'Something went wrong, please contact a GM.');
       }
+    }
+
+    if (isDaily) {
+      this.game.dailyHelper.buyDailyItem(player, item);
     }
   }
 

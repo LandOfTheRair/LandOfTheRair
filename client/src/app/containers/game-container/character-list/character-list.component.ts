@@ -1,16 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { isNumber, isUndefined, maxBy, sortBy } from 'lodash';
+import { isBoolean, isNumber, isUndefined, maxBy, sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Direction, GameOption, GameServerResponse, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
+import { Direction, distFrom, GameServerResponse, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 import { MacrosService } from '../../../services/macros.service';
+import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
 
 @AutoUnsubscribe()
@@ -24,19 +25,13 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
   @Select(GameState.currentPosition) pos$: Observable<{ x: number, y: number }>;
-  @Select(SettingsState.options) options$: Observable<Record<GameOption, number|boolean>>;
   @Select(SettingsState.currentCommand) command$: Observable<string>;
   @Select(MacrosService.currentPlayerActiveMacro) macro$: Observable<IMacro>;
 
   charSub: Subscription;
   playerSub: Subscription;
-  optionSub: Subscription;
   timerSub: Subscription;
   moveSub: Subscription;
-
-  public shouldPin: boolean;
-  public shouldSortFriendly: boolean;
-  public shouldSortDistance: boolean;
 
   public player: IPlayer;
   public visibleCharacterList: ICharacter[] = [];
@@ -46,17 +41,13 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private socketService: SocketService,
+    private optionsService: OptionsService,
     public gameService: GameService
   ) { }
 
   ngOnInit() {
     this.playerSub = this.player$.subscribe(p => this.player = p);
     this.charSub = this.characters$.subscribe(c => this.allCharacters = c);
-    this.optionSub = this.options$.subscribe(options => {
-      this.shouldPin = options[GameOption.PinLastTarget] as boolean;
-      this.shouldSortFriendly = options[GameOption.ShouldSortFriendly] as boolean;
-      this.shouldSortDistance = options[GameOption.ShouldSortDistance] as boolean;
-    });
 
     this.timerSub = timer(0, 500).subscribe(() => this.updateCharacterList());
     this.moveSub = this.pos$.subscribe(() => this.updateCharacterList());
@@ -97,11 +88,11 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     if (unsorted.length === 0) return [];
 
-    const shouldSortDistance = this.shouldSortDistance;
-    const shouldSortFriendly = this.shouldSortFriendly;
+    const shouldSortDistance = this.optionsService.sortByDistance;
+    const shouldSortFriendly = this.optionsService.sortFriendlies;
 
     // iterate over unsorted, find their place, or find them a new place (only if we are doing no sorting)
-    if (!shouldSortDistance && !shouldSortFriendly) {
+    if (!isBoolean(shouldSortDistance) && !isBoolean(shouldSortFriendly)) {
       const highestOldSpace = this.previousPlacements[maxBy(Object.keys(this.previousPlacements), key => this.previousPlacements[key])];
       const oldPositionSorting = Array(highestOldSpace).fill(null);
       const newPositionHash = {};
@@ -151,15 +142,15 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     }
 
     // sort them by distance
-    if (shouldSortDistance) {
-      unsorted = sortBy(unsorted, testChar => testChar.distFrom(this.player));
+    if (isBoolean(shouldSortDistance)) {
+      unsorted = sortBy(unsorted, testChar => distFrom(this.player, testChar));
 
-      if (!this.shouldSortDistance) unsorted = unsorted.reverse();
+      if (!shouldSortDistance) unsorted = unsorted.reverse();
     }
 
     // sort them by friendly
-    if (shouldSortFriendly) {
-      const sortOrder = this.shouldSortFriendly ? { neutral: 0, friendly: 1, hostile: 2 } : { hostile: 0, neutral: 1, friendly: 2 };
+    if (isBoolean(shouldSortFriendly)) {
+      const sortOrder = shouldSortFriendly ? { friendly: 0, neutral: 1, hostile: 2 } : { hostile: 0, neutral: 1, friendly: 2 };
       unsorted = sortBy(unsorted, testChar => sortOrder[this.gameService.hostilityLevelFor(this.player, testChar)]);
     }
 

@@ -1,5 +1,4 @@
-import { Color, NgxMatColorPickerComponent, stringInputToObject } from '@angular-material-components/color-picker';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Select, Selector, Store } from '@ngxs/store';
 import { cloneDeep, isUndefined } from 'lodash';
@@ -20,6 +19,7 @@ const defaultMacro = () => ({
   macro: '',
   icon: 'uncertainty',
   color: '#000000',
+  bgColor: '#cccccc',
   mode: 'autoActivate',
   modifiers: { shift: false, ctrl: false, alt: false }
 });
@@ -35,8 +35,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   private readonly ICONS_PER_PAGE = 36;
   private readonly MACROS_PER_PAGE = 16;
 
-  @ViewChild('fgPick', { static: true }) fgPicker: NgxMatColorPickerComponent;
-  @ViewChild('bgPick', { static: true }) bgPicker: NgxMatColorPickerComponent;
+  // @ViewChild('fgPick', { static: true }) fgPicker: NgxMatColorPickerComponent;
+  // @ViewChild('bgPick', { static: true }) bgPicker: NgxMatColorPickerComponent;
 
   @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
@@ -60,8 +60,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public currentIconPage = 0;
   public currentIconsInPage: string[] = [];
 
-  public fgColor = new Color(0, 0, 0);
-  public bgColor = new Color(204, 204, 204);
+  // public fgColor = new Color(0, 0, 0);
+  // public bgColor = new Color(204, 204, 204);
 
   public get allMacroNameIcons(): string[] {
     return macroNames;
@@ -113,8 +113,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.macroBars = cloneDeep(Object.values(bars.macroBars));
     });
 
-    this.fgSub = this.fgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.color = c.toHexString());
-    this.bgSub = this.bgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.bgColor = c.toHexString());
+    // this.fgSub = this.fgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.color = c.toHexString());
+    // this.bgSub = this.bgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.bgColor = c.toHexString());
 
     this.setMacroGroupPage(0);
   }
@@ -139,22 +139,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     this.currentlyEditingMacro.modifiers.alt = altKey;
   }
 
-  private resetColors(fgColor = '#000000', bgColor = '#cccccc') {
-    const fgRGB = stringInputToObject(fgColor);
-    const bgRGB = stringInputToObject(bgColor);
-
-    this.fgColor.r = fgRGB.r;
-    this.fgColor.g = fgRGB.g;
-    this.fgColor.b = fgRGB.b;
-
-    this.bgColor.r = bgRGB.r;
-    this.bgColor.g = bgRGB.g;
-    this.bgColor.b = bgRGB.b;
-  }
-
   // macro state changes
   create() {
-    this.resetColors();
     this.currentlyEditingMacro = defaultMacro();
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
@@ -169,7 +155,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
   edit(macro: IMacro) {
     this.currentlyEditingMacro = macro;
-    this.resetColors(macro.color, macro.bgColor);
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = true;
@@ -178,7 +163,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   copy(macro: IMacro) {
     this.currentlyEditingMacro = cloneDeep(macro);
     this.currentlyEditingMacro.name = `${this.currentlyEditingMacro.name} (copy)`;
-    this.resetColors(macro.color, macro.bgColor);
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = false;

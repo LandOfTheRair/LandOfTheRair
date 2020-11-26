@@ -23,13 +23,13 @@
         <div class="slider-option-row">
           <div class="slider-label">Dying Border Width</div>
           <mat-slider [min]="0" 
-                      [max]="100" 
+                      [max]="300" 
                       [step]="5" 
                       [(ngModel)]="options.dyingBorderWidth" 
                       [ngModelOptions]="{ standalone: true }"
                       (change)="updateOption('dyingBorderWidth')" 
                       thumbLabel="true"></mat-slider>
-          <div>{{ options.dyingBorderWidth }}%</div>
+          <div>{{ options.dyingBorderWidth }}px</div>
         </div>
 
         <div class="radio-row m-t-5">

@@ -3,6 +3,7 @@ import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { UpdateWindowPosition } from '../../../stores';
+import { OptionsService } from '../../services/options.service';
 
 @Directive({
   selector: '[appDraggableWindow]'
@@ -44,6 +45,7 @@ export class DraggableDirective implements OnInit {
   }
 
   constructor(
+    private optionsService: OptionsService,
     public store: Store,
     public element: ElementRef
   ) {}
@@ -92,6 +94,8 @@ export class DraggableDirective implements OnInit {
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
+    if (this.optionsService.lockWindows) return;
+
     if (this.md && this.isDragAllowed) {
       event.preventDefault();
       event.stopPropagation();

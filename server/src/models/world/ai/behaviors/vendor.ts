@@ -17,8 +17,8 @@ export class VendorBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IVendorBehavior) {
 
-    const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, i));
-    const npcVendorDailyItems = (behavior.dailyVendorItems || []).map(i => this.reformatItem(game, i));
+    const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1));
+    const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx));
 
     this.formattedVendorItems = npcVendorItems;
     this.formattedVendorDailyItems = npcVendorDailyItems;
@@ -43,8 +43,11 @@ export class VendorBehavior implements IAIBehavior {
 
   tick() {}
 
-  private reformatItem(game: Game, vItem: IVendorItem) {
+  private reformatItem(game: Game, npc: INPC, vItem: IVendorItem, dailySlot: number) {
     const base: any = { name: vItem.item, mods: {} };
+    if (dailySlot >= 0) {
+      base.uuid = `daily-${npc.map}-${npc.name}-${dailySlot}-${vItem.item}`;
+    }
 
     const baseItem = game.itemHelper.getItemDefinition(vItem.item);
     base.mods.value = baseItem.value;

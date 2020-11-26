@@ -37,4 +37,6 @@ export interface IPlayer extends ICharacter {
   partyName: string;
   respawnPoint: { x: number, y: number, map: string };
   lastDeathLocation?: { map: string, x: number, y: number };
+
+  dailyItems: Record<string, number>;
 }

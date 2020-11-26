@@ -32,7 +32,7 @@ const defaultSettings: () => ISettings = () => {
       [GameOption.NoItemAnimations]: false,
       [GameOption.EnterToggleCMD]: false,
       [GameOption.PinLastTarget]: false,
-      [GameOption.DyingBorderWidth]: 10,
+      [GameOption.DyingBorderWidth]: 20,
       [GameOption.ShouldSortDistance]: false,
       [GameOption.ShouldSortFriendly]: false,
 

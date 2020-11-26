@@ -117,11 +117,13 @@
                   type="text" 
                   placeholder="#000000" 
                   maxlength="7"
-                  [ngxMatColorPicker]="fgPick"
-                  [(ngModel)]="fgColor"
+                  autocomplete="off"
+                  [(colorPicker)]="currentlyEditingMacro.color"
+                  [value]="currentlyEditingMacro.color"
+                  cpPosition="top"
+                  cpAlphaChannel="disabled"
+                  cpOutputFormat="hex"
                   [ngModelOptions]="{ standalone: true }" />
-                <ngx-mat-color-toggle matSuffix [for]="fgPick"></ngx-mat-color-toggle>
-                <ngx-mat-color-picker #fgPick [color]="fgColor"></ngx-mat-color-picker>
               </mat-form-field>
 
               <mat-form-field>
@@ -130,11 +132,13 @@
                   type="text" 
                   placeholder="#cccccc" 
                   maxlength="7"
-                  [ngxMatColorPicker]="bgPick"
-                  [(ngModel)]="bgColor"
+                  autocomplete="off"
+                  [(colorPicker)]="currentlyEditingMacro.bgColor"
+                  [value]="currentlyEditingMacro.bgColor"
+                  cpPosition="top"
+                  cpAlphaChannel="disabled"
+                  cpOutputFormat="hex"
                   [ngModelOptions]="{ standalone: true }" />
-                <ngx-mat-color-toggle matSuffix [for]="bgPick"></ngx-mat-color-toggle>
-                <ngx-mat-color-picker #bgPick [color]="bgColor"></ngx-mat-color-picker>
               </mat-form-field>
             </div>
 

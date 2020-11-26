@@ -10,6 +10,7 @@ import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
 
 @AutoUnsubscribe()
@@ -31,6 +32,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private optionsService: OptionsService,
     private socketService: SocketService,
     public gameService: GameService
   ) { }
@@ -122,6 +124,11 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     // create a small hash to quickly look up messages by type
     message.typeHash = {};
     message.messageTypes.forEach(type => message.typeHash[type] = true);
+
+    if (this.optionsService.suppressOutgoingDoT && message.typeHash[MessageType.OutOvertime]) return;
+    if (this.optionsService.suppressZeroDamage
+    && (message.message.includes('[0') || message.message.includes('misses!') || message.message.includes('blocked by your'))) return;
+
     message.display = marked(message.message, { renderer: this.renderer });
 
     this.messages.push(message);

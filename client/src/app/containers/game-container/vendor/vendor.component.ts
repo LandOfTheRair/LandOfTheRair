@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
+import { DateTime } from 'luxon';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
-import { IPlayer } from '../../../../interfaces';
+import { IPlayer, ISimpleItem } from '../../../../interfaces';
 import { GameState, HideVendorWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -69,5 +70,17 @@ export class VendorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {}
+
+  boughtDailyAlready(player: IPlayer, item: ISimpleItem): boolean {
+    const boughtTime = player.dailyItems?.[item?.uuid];
+    if (!boughtTime) return false;
+
+    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
+    if (+theoreticalResetTime > +DateTime.fromObject({ zone: 'utc' })) {
+      theoreticalResetTime = theoreticalResetTime.minus({ days: 1 });
+    }
+
+    return boughtTime > +theoreticalResetTime;
+  }
 
 }

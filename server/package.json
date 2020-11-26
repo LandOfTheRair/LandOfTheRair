@@ -39,6 +39,7 @@
     "lodash": "^4.17.20",
     "logger-timer": "^1.0.5",
     "lootastic": "^1.1.2",
+    "luxon": "^1.25.0",
     "mongodb": "^3.6.3",
     "mrpas": "^2.0.0",
     "muud": "^1.0.5",

@@ -3,8 +3,9 @@ import { Select } from '@ngxs/store';
 import { Howl } from 'howler';
 import { combineLatest, Observable } from 'rxjs';
 
-import { BGM, GameServerResponse } from '../../interfaces';
-import { GameState } from '../../stores';
+import { BGM, GameOption, GameServerResponse } from '../../interfaces';
+import { GameState, SettingsState } from '../../stores';
+import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -13,48 +14,77 @@ import { SocketService } from './socket.service';
 export class SoundService {
 
   private currentBGM: Howl;
+  private curBGM: string;
 
   @Select(GameState.inGame) inGame$: Observable<boolean>;
   @Select(GameState.currentBGM) bgm$: Observable<BGM>;
+  @Select(SettingsState.options) options$: Observable<Record<GameOption, any>>;
 
-  constructor(private socketService: SocketService) {}
+  constructor(private optionsService: OptionsService, private socketService: SocketService) {}
 
   init() {
     this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.PlaySFX, ({ sfx }) => {
+      if (!this.optionsService.playSFX) return;
+
       const sfxRef = new Howl({
-        src: [this.getSFX(`${sfx}.mp3`)]
+        src: [this.getSFX(sfx)],
+        volume: this.optionsService.sfxVolume
       });
 
       sfxRef.play();
     });
 
+    this.options$.subscribe(opts => {
+      if (!this.currentBGM) return;
+      this.currentBGM.volume(this.optionsService.musicVolume);
+    });
+
     combineLatest([
       this.inGame$,
-      this.bgm$
+      this.bgm$,
+      this.options$
     ])
-    .subscribe(([inGame, bgm]) => {
-      if (!inGame || !bgm) {
+    .subscribe(([inGame, bgm, options]) => {
+      if (!inGame || !bgm || !this.optionsService.playBGM) {
+        this.curBGM = '';
         if (this.currentBGM) this.currentBGM.stop();
         return;
       }
 
-      if (this.currentBGM) this.currentBGM.stop();
+      const fullBGM = options[GameOption.SoundNostalgia] ? `${bgm}-nostalgia` : bgm;
+      if (fullBGM === this.curBGM) return;
 
-      this.currentBGM = new Howl({
-        src: [this.getBGM(`${bgm}.mp3`)],
-        loop: true
-      });
+      this.curBGM = fullBGM;
 
-      this.currentBGM.play();
+      this.updateBGM(fullBGM);
     });
   }
 
+  private updateBGM(bgm: string): void {
+    if (!this.optionsService.playBGM) return;
+
+    if (!bgm) {
+      if (this.currentBGM) this.currentBGM.stop();
+      return;
+    }
+
+    if (this.currentBGM) this.currentBGM.stop();
+
+    this.currentBGM = new Howl({
+      src: [this.getBGM(bgm)],
+      volume: this.optionsService.musicVolume,
+      loop: true
+    });
+
+    this.currentBGM.play();
+  }
+
   private getBGM(path: string): string {
-    return this.getAudio(`bgm/${path}`);
+    return this.getAudio(`bgm/${path}.mp3`);
   }
 
   private getSFX(path: string): string {
-    return this.getAudio(`sfx/${path}`);
+    return this.getAudio(`sfx/${path}.mp3`);
   }
 
   private getAudio(path: string): string {

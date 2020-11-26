@@ -7,6 +7,7 @@ import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
 import { GameState, SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
 
 // const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];
@@ -66,9 +67,8 @@ export class ItemComponent implements OnDestroy {
 
   public scopes: string[] = [];
 
-  // TODO: option to animate
   get shouldAnimate(): boolean {
-    return true;
+    return !this.optionsService.stopItemAnimations;
   }
 
   get displayOnly(): boolean {
@@ -148,6 +148,7 @@ export class ItemComponent implements OnDestroy {
   constructor(
     private store: Store,
     private assetService: AssetService,
+    private optionsService: OptionsService,
     private uiService: UIService,
     private gameService: GameService
   ) {}
