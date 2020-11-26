@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { template } from 'lodash';
+import { sample, template } from 'lodash';
 
 import { BaseService, GameServerResponse, IDialogAction, IDialogActionType,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
@@ -18,9 +18,9 @@ export class DialogActionHelper extends BaseService {
   public init() {}
 
   public async handleDialog(player: IPlayer, npc: INPC, command: string, callbacks): Promise<void> {
-    const messages = await (npc as any).dialogParser.parse(command, { player, callbacks });
+    const messages = await (npc as any).dialogParser.parse(command, { player, callbacks }) || [];
     if ((messages || []).length === 0) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {message: this.getDefaultMessage(), from: npc.name}, [MessageType.NPCChatter]);
+      messages.push(this.getDefaultMessage());
     }
     (messages || []).forEach(message => {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message, from: npc.name }, [MessageType.NPCChatter]);
@@ -53,7 +53,7 @@ export class DialogActionHelper extends BaseService {
       'Can you be more clear?'
     ];
 
-    return defaultMessages[Math.floor(Math.random() * defaultMessages.length)];
+    return sample(defaultMessages);
   }
 
   private handleChatAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
@@ -79,7 +79,6 @@ export class DialogActionHelper extends BaseService {
         .filter(Boolean) as IDialogChatActionOption[]
     };
 
-    // this.game.messageHelper.sendLogMessageToPlayer(player, { message: formattedChat.message, from: npc.name }, [MessageType.NPCChatter]);
     this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
     return { messages: [formattedChat.message], shouldContinue: true };
