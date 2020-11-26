@@ -13,6 +13,11 @@ export class Database extends BaseService {
   private db: Db;
 
   public async init() {
+    if (!process.env.DATABASE_URI) {
+      this.game.logger.error('Database', 'You must specify a DATABASE_URI.');
+      process.exit(0);
+    }
+
     this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
     await this.client.connect();
 

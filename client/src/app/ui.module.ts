@@ -22,8 +22,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MdePopoverModule } from '@material-extended/mde';
+import { ColorPickerModule } from 'ngx-color-picker';
 
-import { MAT_COLOR_FORMATS, MatColorFormats, NgxMatColorPickerModule } from '@angular-material-components/color-picker';
 
 const matImports = [
   MatToolbarModule, MatFormFieldModule, MatButtonModule, MatInputModule,
@@ -34,21 +34,14 @@ const matImports = [
 
   MdePopoverModule,
 
-  NgxMatColorPickerModule
+  ColorPickerModule
 ];
-
-export const CUSTOM_MAT_COLOR_FORMATS: MatColorFormats = {
-  display: {
-      colorInput: 'hex'
-  }
-};
 
 @NgModule({
   declarations: [],
   imports: [CommonModule, ...matImports],
   exports: [...matImports],
   providers: [
-   { provide: MAT_COLOR_FORMATS, useValue: CUSTOM_MAT_COLOR_FORMATS },
    { provide: MAT_TABS_CONFIG, useValue: { animationDuration: '0ms' } }
   ],
 })
