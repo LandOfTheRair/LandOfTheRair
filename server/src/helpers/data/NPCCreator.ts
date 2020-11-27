@@ -149,6 +149,8 @@ export class NPCCreator extends BaseService {
       return { result: skill as unknown as string, chance: 1 };
     });
 
+    baseChar.traitLevels = npcDef.traitLevels || {};
+
     (npcDef.baseEffects || []).forEach(effect => {
       const effectData = {
         extra: effect.extra,

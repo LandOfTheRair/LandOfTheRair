@@ -126,9 +126,18 @@ export enum Stat {
   Perception = 'perception',
 
   // boost stats
-  PhysicalBoost = 'physicalDamageBoost',
-  MagicalBoost = 'magicalDamageBoost',
-  HealingBoost = 'healingBoost',
+  PhysicalBoostPercent = 'physicalDamageBoostPercent',
+  MagicalBoostPercent = 'magicalDamageBoostPercent',
+  HealingBoostPercent = 'healingBoostPercent',
+  
+  // smaller boost stats
+  NecroticBoostPercent = 'necroticBoostPercent',
+  EnergyBoostPercent = 'energyBoostPercent',
+  DiseaseBoostPercent = 'diseaseBoostPercent',
+  PoisonBoostPercent = 'poisonBoostPercent',
+  WaterBoostPercent = 'waterBoostPercent',
+  FireBoostPercent = 'fireBoostPercent',
+  IceBoostPercent = 'iceBoostPercent',
 
   // reflect stats
   PhysicalReflect = 'physicalDamageReflect',

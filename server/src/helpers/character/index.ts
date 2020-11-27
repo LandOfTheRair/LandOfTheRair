@@ -19,4 +19,5 @@ export * from './PlayerHelper';
 export * from './QuestHelper';
 export * from './TargettingHelper';
 export * from './TeleportHelper';
+export * from './TraitHelper';
 export * from './VisibilityHelper';

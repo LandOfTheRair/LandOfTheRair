@@ -849,7 +849,7 @@ export class DamageHelperPhysical extends BaseService {
 
     const damageLeft = attackerScope.damageRolls + attackerScope.level + attackerScope.skill4;
     const damageRight = Math.floor(attackerScope.damageStat + attackerScope.skill);
-    const damageBoost = this.game.characterHelper.getStat(attacker, Stat.PhysicalBoost) + attackerScope.damageBonus;
+    const damageBoost = attackerScope.damageBonus;
 
     // thieves get +25% to the bottom damage range, warriors get +50%
     let damageRollMinimum = 1;
@@ -861,6 +861,8 @@ export class DamageHelperPhysical extends BaseService {
     if (attacker.baseClass === BaseClass.Warrior) damageRollMinimum = 0.25;
 
     let damage = Math.floor(this.game.diceRollerHelper.diceRoll(damageLeft, damageRight, damageRollMinimum)) + damageBoost;
+
+    damage += damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
 
     if (isOffhand) {
       damage = Math.floor(damage * args.offhandMultiplier);

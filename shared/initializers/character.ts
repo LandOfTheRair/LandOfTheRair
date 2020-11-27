@@ -32,6 +32,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
       belt: { items: [] },
       pouch: { items: [] },
       buyback: []
-    }
+    },
+    allTraits: char.allTraits ?? {}
   };
 };

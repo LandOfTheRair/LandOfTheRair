@@ -6,7 +6,7 @@ import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
-  TeleportHelper, VisibilityHelper } from '../character';
+  TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
   GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
@@ -78,6 +78,7 @@ export class Game {
     public dailyHelper: DailyHelper,
 
     public messageHelper: MessageHelper,
+    public traitHelper: TraitHelper,
     public commandHandler: CommandHandler,
 
     public playerManager: PlayerManager,
@@ -105,7 +106,7 @@ export class Game {
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
       'effectHelper', 'groundManager', 'dailyHelper',
-      'commandHandler', 'messageHelper',
+      'commandHandler', 'messageHelper', 'traitHelper',
       'playerManager', 'worldManager', 'configManager'
   ];
 

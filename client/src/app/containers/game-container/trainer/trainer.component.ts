@@ -9,6 +9,7 @@ import { Skill } from '../../../../interfaces';
 import { GameState, HideTrainerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
+import { ModalService } from '../../../services/modal.service';
 
 import { UIService } from '../../../services/ui.service';
 
@@ -53,6 +54,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private modalService: ModalService,
     public uiService: UIService,
     public gameService: GameService
   ) { }
@@ -88,6 +90,15 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   train() {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, train`);
+  }
+
+  resetTraits() {
+    this.modalService.confirm('Reset Traits', 'Are you sure you want to reset your entire trait tree?')
+      .subscribe(res => {
+        if(!res) return;
+
+        this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, reset`);
+      });
   }
 
 }

@@ -119,7 +119,6 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Traits',
-          disabled: true,
           visibleIf: this.gameService.inGame$,
           handler: () => this.store.dispatch(new ShowWindow('traits'))
         },

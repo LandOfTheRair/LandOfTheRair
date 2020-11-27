@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { BaseEntity } from '../../helpers/core/db/base';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, ICharacterItems, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
+  Direction, ICharacterItems, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
   PROP_SERVER_ONLY,
   PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
 
@@ -15,8 +15,12 @@ export class Player extends BaseEntity implements IPlayer {
   // relation props
   @Property(PROP_SERVER_ONLY()) _account: ObjectId;
   @Property(PROP_SERVER_ONLY()) _items: ObjectId;
+  @Property(PROP_SERVER_ONLY()) _traits: ObjectId;
 
   @Property(PROP_UNSAVED_SHARED()) items: ICharacterItems;
+  @Property(PROP_UNSAVED_SHARED()) traits: ICharacterTraits;
+
+  @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
@@ -54,6 +58,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() level: number;
   @Property() highestLevel: number;
+  @Property() ancientLevel: number;
   @Property() currency: CharacterCurrency;
 
   @Property() map: string;

@@ -130,7 +130,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         game.playerHelper.loseCurrency(player, 200);
 
-        return `You have gained ${newLevel - oldLevel} experience levels.`;
+        return `You have gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 2} trait points.`;
       });
 
     if (this.canRevive) {
@@ -151,6 +151,18 @@ export class TrainerBehavior implements IAIBehavior {
           return `I'll bring you right back to me when you die, ${player.name}.`;
         });
     }
+
+    parser.addCommand('reset')
+      .setSyntax(['reset'])
+      .setLogic(async ({ env }) => {
+        const player: Player = env?.player;
+
+        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+
+        game.traitHelper.resetTraits(player);
+
+        return 'Your traits have been reset.';
+      });
   }
 
   tick(game: Game, npc: INPC) {

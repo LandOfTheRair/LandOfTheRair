@@ -1,5 +1,6 @@
 
-import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, ItemSlot, SkillBlock, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, SkillBlock, StatBlock } from './building-blocks';
+import { ICharacterItems } from './characteritems';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
 
@@ -12,16 +13,6 @@ export enum SwimLevel {
   NormalWater = 2,
   ChillWater = 6,
   Lava = 8
-}
-
-export interface ICharacterItems {
-  equipment: { [key in ItemSlot]?: ISimpleItem };
-
-  sack: IItemContainer;
-  belt: IItemContainer;
-  pouch: IItemContainer;
-
-  buyback: ISimpleItem[];
 }
 
 export interface BoundedNumber {
@@ -65,5 +56,7 @@ export interface ICharacter {
 
   agro: { [uuid: string]: number };
   allegianceReputation: { [allegiance in Allegiance]?: number };
+
+  allTraits: Record<string, number>;
 }
 

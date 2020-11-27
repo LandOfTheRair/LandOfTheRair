@@ -18,6 +18,17 @@ import { environment } from '../../../environments/environment';
       font-size: 300%;
     }
 
+    .mac-container.large {
+      min-width: 64px;
+      max-width: 64px;
+      min-height: 64px;
+      max-height: 64px;
+    }
+
+    .mac-container.large .macicons {
+      font-size: 300%;
+    }
+
     .mac-container.nsmall {
       min-width: 40px;
       max-width: 40px;

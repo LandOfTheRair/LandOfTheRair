@@ -25,11 +25,10 @@ app-npc {
   .skills {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 10px;
+  margin-top: 10px;
 
     .skill {
       width: 20%;
-      font-size: 200%;
       display: flex;
       justify-content: center;
       align-items: center;

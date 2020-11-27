@@ -181,8 +181,63 @@ export class CharacterHelper extends BaseService {
 
   }
 
+  // recalculate all traits that exist for this character
+  public recalculateTraits(character: ICharacter): void {
+    character.allTraits = {};
+
+    // base traits from self/learned
+    if (this.isPlayer(character)) {
+      Object.assign(character.allTraits, this.game.traitHelper.getAllLearnedTraits(character as IPlayer));
+    } else {
+      Object.assign(character.allTraits, (character as INPC).traitLevels);
+    }
+
+    // traits from equipment
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
+
+      // no bonus if we can't technically use the item
+      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
+
+      // only some items give bonuses in hands
+      const { itemClass, trait } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'trait']);
+      if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
+      && !GivesBonusInHandItemClasses.includes(itemClass as ItemClass)) return;
+
+      if (trait) {
+        character.allTraits[trait.name] = character.allTraits[trait.name] || 0;
+        character.allTraits[trait.name] += trait.level;
+      }
+    });
+  }
+
+  // get the total stats from traits
+  public getStatValueAddFromTraits(character: ICharacter): Partial<Record<Stat, number>> {
+    const stats = {};
+
+    Object.keys(character.allTraits).forEach(trait => {
+      const traitRef = this.game.traitHelper.getTraitData(trait);
+      if (!traitRef || !traitRef.statsGiven) return;
+
+      Object.keys(traitRef.statsGiven).forEach(stat => {
+        if (!traitRef.statsGiven?.[stat]) return;
+
+        stats[stat] = stats[stat] || 0;
+        stats[stat] += traitRef.statsGiven[stat] * this.game.traitHelper.traitLevel(character, trait);
+      });
+    });
+
+    return stats;
+  }
+
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
+
+    // reassign traits before calculating
+    this.recalculateTraits(character);
+
+    // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
 
     const addStat = (stat: Stat, bonus: number) => {
@@ -209,6 +264,22 @@ export class CharacterHelper extends BaseService {
       });
     });
 
+    // get trait/effect stats
+    const traitStatBoosts = this.getStatValueAddFromTraits(character);
+    const effectStatBoosts = this.game.effectHelper.effectStatBonuses(character);
+
+    if (this.isPlayer(character)) console.log(traitStatBoosts);
+
+    const addStatsFromHash = (hash) => {
+      Object.keys(hash).forEach(stat => {
+        character.totalStats[stat] = character.totalStats[stat] || 0;
+        character.totalStats[stat] += hash[stat];
+      });
+    };
+
+    addStatsFromHash(traitStatBoosts);
+    addStatsFromHash(effectStatBoosts);
+
     // set hp/mp
     if (character.totalStats.hp) {
       character.hp.maximum = character.totalStats.hp;
@@ -222,12 +293,6 @@ export class CharacterHelper extends BaseService {
 
     // can't move more than one screen at a time
     character.totalStats[Stat.Move] = clamp(character.stats[Stat.Move] || 3, 0, 4);
-
-    const statBoosts = this.game.effectHelper.effectStatBonuses(character);
-    Object.keys(statBoosts).forEach(stat => {
-      character.totalStats[stat] = character.totalStats[stat] || 0;
-      character.totalStats[stat] += statBoosts[stat];
-    });
 
     // TODO: adjust stealth / perception
     // TODO: trait bonuses

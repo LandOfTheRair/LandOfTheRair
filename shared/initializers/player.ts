@@ -27,6 +27,8 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     partyName: char.partyName ?? '',
     respawnPoint: char.respawnPoint ?? { x: 14, y: 14, map: 'Tutorial' },
     lastDeathLocation: char.lastDeathLocation ?? undefined,
-    dailyItems: char.dailyItems ?? {}
+    dailyItems: char.dailyItems ?? {},
+    traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {} },
+    ancientLevel: char.ancientLevel ?? 0
   };
 };

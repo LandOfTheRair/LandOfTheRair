@@ -1,0 +1,71 @@
+<app-window windowName="traits"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="550"
+            defaultHeight="650"
+></app-window>
+
+<ng-template #headTemplate>
+  <ng-container *ngIf="player">
+    Traits ({{ player.traits.tp || 0 }} TP)
+  </ng-container>
+</ng-template>
+
+<ng-template #bodyTemplate>
+
+  <div class="true-center background-text full-height" *ngIf="!player || !traitTree">
+    You must dedicate to a profession to progress a trait tree!
+  </div>
+
+  <div class="container" *ngIf="player && traitTree">
+
+    <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
+  
+      <mat-tab *ngFor="let tree of traitTree.treeOrder" [label]="tree + ' (' + traitsSpent(tree) + ')'">
+
+        <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
+
+          <div class="trait-req-container">
+            <div class="trait-req">
+              Level {{ traitRow.requiredLevel }}
+            </div>
+          </div>
+
+          <div class="trait-col" *ngFor="let trait of traitRow.traits">
+            
+            <div class="trait" 
+                 [class.has-trait]="getTraitLevel(trait.name) > 0"
+                 [class.can-buy]="canBuyTrait(trait.name)"
+                 [class.no-buy]="!canBuyTrait(trait.name)"
+                 *ngIf="getTrait(trait.name) as traitData" 
+                 (click)="tryToBuyTrait(trait)"
+                 [matTooltip]="formatTooltip(trait, traitData)">
+
+              <div class="trait-icon"
+                   [style.border-color]="traitData.borderColor">
+                <app-icon [name]="traitData.icon" bgColor="#ccc" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+
+                <div class="trait-level">
+                  {{ getTraitLevel(trait.name) }} / {{ trait.maxLevel }}
+                </div>
+              </div>
+
+              <div class="trait-name">{{ traitData.name }}</div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </div>
+</ng-template>

@@ -1,0 +1,79 @@
+
+.trait-row {
+  display: flex;
+  justify-content: center;
+  position: relative;
+
+  min-height: 100px;
+  
+  &:not(:first-child) {
+    margin-top: 20px;
+  }
+
+  .trait-req-container {
+    min-width: 30px;
+    
+    .trait-req {
+      position: absolute;
+      top: 30px;
+      transform: rotate(270deg);
+      font-weight: bold;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+  }
+
+  .trait-col {
+    flex: 1;
+
+    .trait {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+
+      color: #fff;
+
+      opacity: 0.5;
+
+      &.can-buy {
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.85;
+        }
+      }
+
+      &.no-buy {
+        cursor: not-allowed;
+      }
+
+      &.has-trait {
+        opacity: 1;
+      }
+      
+      .trait-icon {
+        position: relative;
+        border-radius: 5px;
+        border-width: 3px;
+        border-style: solid;
+        max-width: 64px;
+        overflow: hidden;
+
+        .trait-level {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          color: #000;
+          text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+          font-weight: bold;
+        }
+      }
+
+      .trait-name {
+        margin-top: 10px;
+      }
+    }
+  }
+}

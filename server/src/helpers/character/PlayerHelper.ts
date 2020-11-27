@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { isArray, random } from 'lodash';
+import { isArray, random, size } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction,
@@ -51,6 +51,10 @@ export class PlayerHelper extends BaseService {
     if ((player.hp as any).__current) {
       player.hp.current = (player.hp as any).__current;
       delete (player.hp as any).__current;
+    }
+
+    if (!player.traits.tp && size(player.traits.traitsLearned) === 0) {
+      this.game.traitHelper.resetTraits(player);
     }
 
     player.agro = {};
@@ -388,10 +392,11 @@ export class PlayerHelper extends BaseService {
       if (player.level >= maxLevel) break;
 
       const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(player.level + 1);
-      if (player.exp > neededXp) {
+      if (player.exp >= neededXp) {
         player.level += 1;
         if (player.level > player.highestLevel) {
           player.highestLevel = player.level;
+          player.traits.tp += 2;
           this.gainLevelStats(player);
         }
         break;

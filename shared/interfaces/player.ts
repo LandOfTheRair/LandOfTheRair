@@ -1,5 +1,6 @@
 import { DamageClass, LearnedSpell, Skill } from './building-blocks';
 import { ICharacter } from './character';
+import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
 
 export type BGM = 'town' | 'dungeon' | 'wilderness';
@@ -10,6 +11,8 @@ export interface IPlayer extends ICharacter {
   username: string;
   isSubscribed: boolean;
 
+  traits: ICharacterTraits;
+  
   z: number;
 
   exp: number;
@@ -18,6 +21,7 @@ export interface IPlayer extends ICharacter {
   gainingAXP: boolean;
 
   highestLevel: number;
+  ancientLevel: number;
 
   swimLevel: number;
   swimElement: DamageClass | string;

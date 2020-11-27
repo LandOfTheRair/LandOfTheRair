@@ -163,4 +163,5 @@ export interface INPC extends ICharacter {
   dropPool?: any;
 
   allegianceMods: Array<{ delta: number, allegiance: Allegiance }>;
+  traitLevels?: Record<string, number>;
 }

@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import { BaseClass, BaseService, IPlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
+import { PlayerTraits } from '../../../models/orm/PlayerTraits';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -85,10 +86,11 @@ export class CharacterDB extends BaseService {
 
   public async populatePlayer(player: Player, account: Account): Promise<void> {
     const results = await Promise.all([
-      this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items })
+      this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
+      this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits })
     ]);
 
-    let [items] = results;
+    let [items, traits] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -98,13 +100,23 @@ export class CharacterDB extends BaseService {
       player._items = items._id;
     }
 
+    if (!traits) {
+      const newTraits = new PlayerTraits();
+      newTraits._id = new ObjectId();
+
+      traits = newTraits;
+      player._traits = traits._id;
+    }
+
     player.items = items;
+    player.traits = traits;
   }
 
   public async deletePlayer(player: Player): Promise<void> {
     await Promise.all([
       this.db.delete(player),
-      this.db.delete(player.items as PlayerItems)
+      this.db.delete(player.items as PlayerItems),
+      this.db.delete(player.traits as PlayerTraits)
     ]);
   }
 
@@ -113,19 +125,30 @@ export class CharacterDB extends BaseService {
 
     const playerColl = this.db.getCollection(Player);
     const itemsColl = this.db.getCollection(PlayerItems);
+    const traitsColl = this.db.getCollection(PlayerTraits);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
+    const traitOp = traitsColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
       playerOp.find({ _id: player._id }).upsert().replaceOne(this.db.getPersistObject(player));
 
-      itemOp.find({ _id: (player.items as PlayerItems)._id }).upsert().replaceOne(this.db.getPersistObject(player.items as PlayerItems));
+      itemOp
+        .find({ _id: (player.items as PlayerItems)._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.items as PlayerItems));
+
+      traitOp
+        .find({ _id: (player.traits as PlayerTraits)._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.traits as PlayerTraits));
     });
 
     return Promise.all([
       playerOp.execute(),
-      itemOp.execute()
+      itemOp.execute(),
+      traitOp.execute()
     ]);
   }
 
@@ -134,7 +157,8 @@ export class CharacterDB extends BaseService {
 
     await Promise.all([
       this.db.save(player),
-      this.db.save(player.items as PlayerItems)
+      this.db.save(player.items as PlayerItems),
+      this.db.save(player.traits as PlayerTraits)
     ]);
   }
 
