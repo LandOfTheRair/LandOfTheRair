@@ -1,7 +1,6 @@
 
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
-import { start } from 'repl';
 
 import { BaseService, CombatEffect, DamageClass, ICharacter, MagicalAttackArgs, Stat } from '../../interfaces';
 
