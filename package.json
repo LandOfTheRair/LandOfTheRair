@@ -1,6 +1,6 @@
 {
   "name": "landoftherair",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "scripts": {
     "postinstall": "lerna exec -- npm install && lerna exec -- npm run setup",
     "setup": "lerna exec -- npm run setup",
