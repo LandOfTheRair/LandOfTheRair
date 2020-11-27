@@ -93,8 +93,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       // block text entry here if there is a different text input active
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
-      // TODO: check if there is a macro that matches the key we input, if so, swallow
-
       // if we're not hitting enter, we don't care about this
       if (ev.key !== 'Enter') return;
 
@@ -106,7 +104,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       this.focusInput();
     };
 
-    // TODO: right click send option
     this.sendListener = (ev) => {
       if (environment.production) {
         ev.preventDefault();
