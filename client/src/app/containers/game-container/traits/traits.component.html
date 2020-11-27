@@ -13,7 +13,7 @@
 
 <ng-template #headTemplate>
   <ng-container *ngIf="player">
-    Traits ({{ player.traits.tp || 0 }} TP)
+    Traits ({{ player.traits.tp || 0 }} TP<span *ngIf="player.ancientLevel > 0"> / {{ player.traits.ap || 0 }} AP</span>)
   </ng-container>
 </ng-template>
 
