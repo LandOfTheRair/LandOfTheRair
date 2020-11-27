@@ -6,6 +6,8 @@ export interface ISpellData {
   mpCost: number;
 
   damageClass?: DamageClass;
+  willSaveThreshold?: number;
+  willSavePercent?: number;
   potencyMultiplier?: number;
   skillMultiplierChanges?: number[][];
 

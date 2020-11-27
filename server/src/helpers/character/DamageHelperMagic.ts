@@ -1,7 +1,9 @@
 
 import { Injectable } from 'injection-js';
+import { random } from 'lodash';
+import { start } from 'repl';
 
-import { BaseService, CombatEffect, DamageClass, ICharacter, MagicalAttackArgs } from '../../interfaces';
+import { BaseService, CombatEffect, DamageClass, ICharacter, MagicalAttackArgs, Stat } from '../../interfaces';
 
 @Injectable()
 export class DamageHelperMagic extends BaseService {
@@ -12,13 +14,25 @@ export class DamageHelperMagic extends BaseService {
     if (attacker) this.game.characterHelper.engageInCombat(attacker);
     this.game.characterHelper.engageInCombat(defender);
 
-    // TODO: will check, cut damage
+    let startDamage = args.damage ?? 0;
 
+    // try to do a WIL save if possible, default is a 20/30 save
+    if (args.spellData) {
+      const { willSaveThreshold, willSavePercent } = args.spellData;
+      const defWIL = this.game.characterHelper.getStat(defender, Stat.WIL);
+
+      if (random(0, defWIL) >= (willSaveThreshold ?? 20)) {
+        startDamage -= (startDamage * (willSavePercent ?? 30) / 100);
+      }
+    }
+
+    // modify the spell damage before inflicting int
     const damage = this.game.combatHelper.modifyDamage(attacker, defender, {
-      damage: args.damage ?? 0,
+      damage: startDamage,
       damageClass: args.damageClass || DamageClass.Physical
     });
 
+    // and, do the damage
     this.game.combatHelper.dealDamage(attacker, defender, {
       damage,
       damageClass: args.damageClass || DamageClass.Physical,
@@ -28,6 +42,7 @@ export class DamageHelperMagic extends BaseService {
       defenderDamageMessage: args.defMsg
     });
 
+    // send combat effects for heals and stuff
     if (attacker && !args.isAoE && !args.isOverTime) {
       this.game.combatHelper.combatEffect(attacker, defender.uuid, `hit-${damage > 0 ? 'magic' : 'heal'}` as CombatEffect);
     }

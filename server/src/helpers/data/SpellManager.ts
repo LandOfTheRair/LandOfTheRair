@@ -93,7 +93,8 @@ export class SpellManager extends BaseService {
         defMsg: spellData.meta.targetAttackMessage,
         sfx: SoundEffect.CombatHitSpell,
         damage: potency,
-        damageClass: spellData.damageClass || DamageClass.Energy
+        damageClass: spellData.damageClass || DamageClass.Energy,
+        spellData
       });
     }
 

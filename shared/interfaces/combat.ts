@@ -1,6 +1,7 @@
 import { DamageClass, ItemSlot } from './building-blocks';
 import { ISimpleItem } from './item';
 import { SoundEffect } from './sfx';
+import { ISpellData } from './spell';
 
 export enum CombatEffect {
   BlockMiss = 'block-miss',
@@ -43,6 +44,8 @@ export interface PhysicalAttackArgs {
 }
 
 export interface MagicalAttackArgs {
+  spellData?: ISpellData;
+
   atkMsg?: string;
   defMsg?: string;
   damage?: number;
