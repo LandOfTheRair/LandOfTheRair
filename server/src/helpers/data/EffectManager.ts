@@ -19,10 +19,7 @@ export class EffectManager extends BaseService {
 
   // get the metadata for an effect
   public getEffectData(effectName: string): IStatusEffectData {
-    const effectData = allEffects[effectName];
-    if (!effectData) throw new Error(`No effect ${effectName} exists.`);
-
-    return effectData;
+    return allEffects[effectName];
   }
 
   // get a ref to an effect

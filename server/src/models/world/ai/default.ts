@@ -3,7 +3,7 @@ import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
 import { Direction, Hostility, IAI, ICharacter, INPC, ItemSlot, PhysicalAttackArgs, Stat } from '../../../interfaces';
-import { Skill } from '../../macro';
+import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
 import { MapState } from '../MapState';
 import { Spawner } from '../Spawner';
@@ -108,7 +108,7 @@ export class DefaultAIBehavior implements IAI {
       this.checkGroundForItems();
     }
 
-    let chosenSkill: Skill | null = null;
+    let chosenSkill: SkillCommand | null = null;
 
     let isThrowing = false;
 
@@ -159,7 +159,7 @@ export class DefaultAIBehavior implements IAI {
 
       // use a skill that can hit the target
       if (chosenSkill) {
-        const skill: Skill = chosenSkill;
+        const skill: SkillCommand = chosenSkill;
         const opts: PhysicalAttackArgs = {};
         if (isThrowing) opts.throwHand = ItemSlot.RightHand;
         skill.use(npc, this.highestAgro, opts);

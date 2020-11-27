@@ -6,6 +6,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
     fov: char.fov ?? { },
     uuid: char.uuid ?? '',
     agro: char.agro ?? { },
+    learnedSpells: char.learnedSpells ?? { },
     affiliation: char.affiliation ?? '',
     allegianceReputation: char.allegianceReputation ?? { },
     name: char.name ?? '',

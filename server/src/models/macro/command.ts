@@ -1,5 +1,6 @@
 import { Game } from '../../helpers';
-import { BaseClass, Direction, ICharacter, IMacroCommand, IMacroCommandArgs, IPlayer, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
+import { BaseClass, Direction, ICharacter, IItemEffect,
+  IMacroCommand, IMacroCommandArgs, IPlayer, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
 
 export abstract class MacroCommand implements IMacroCommand {
 
@@ -7,6 +8,7 @@ export abstract class MacroCommand implements IMacroCommand {
   canBeInstant = false;         // whether the command can happen immediately (ie, UI-related functions)
   canBeFast = false;            // whether the command can happen on the 'fast' cycle (used for 'faster' commands outside the round timer)
   isGMCommand = false;          // whether or not the command is GM-only
+  requiresLearn = false;        // whether or not the command must be learned first
   canUseWhileDead = false;      // whether or not the command can be used while dead
 
   constructor(protected game: Game) {}
@@ -27,9 +29,9 @@ export abstract class MacroCommand implements IMacroCommand {
   use(executor: ICharacter, target: ICharacter, opts: any): void {}   // used by anyone who has access to the command (players, npcs)
 }
 
-export abstract class Skill extends MacroCommand {
+export abstract class SkillCommand extends MacroCommand {
 
-  mpCost(caster?: ICharacter, targets?: ICharacter[]) { return 0; }
+  mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) { return 0; }
   hpCost(caster?: ICharacter) { return 0; }
   range(caster?: ICharacter) { return 0; }
 
@@ -42,8 +44,8 @@ export abstract class Skill extends MacroCommand {
   }
 
   // try to consume the mp (returning false if we fail)
-  tryToConsumeMP(user: ICharacter, targets?: ICharacter[]): boolean {
-    const mpCost = this.mpCost(user, targets);
+  tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
+    const mpCost = this.mpCost(user, targets, overrideEffect);
 
     // thieves cast with HP instead of MP
     if (user.baseClass === BaseClass.Thief) {
@@ -132,5 +134,28 @@ export abstract class Skill extends MacroCommand {
     if (twoHanded && leftHand) return -1;
 
     return attackRange || defaultRange;
+  }
+}
+
+export class SpellCommand extends SkillCommand {
+  aliases: string[] = [];
+  requiresLearn = true;
+  spellRef = '';
+
+  mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
+    if (overrideEffect) return 0;
+
+    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    if (!spellData) return 0;
+
+    return targets.length * (spellData.mpCost ?? 0);
+  }
+
+  range() {
+    return 5;
+  }
+
+  protected castSpell(caster: ICharacter | null, target: ICharacter, args: IMacroCommandArgs) {
+    this.game.spellManager.castSpell(this.spellRef, caster, target, args.overrideEffect, args.callbacks);
   }
 }

@@ -7,7 +7,7 @@ import { cloneDeep, isArray, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BaseService, BehaviorType, Currency, Hostility,
-  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, MonsterClass, Rollable, Stat } from '../../interfaces';
+  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, LearnedSpell, MonsterClass, Rollable, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper, ItemHelper } from '../character';
 import { DialogActionHelper } from '../character/DialogActionHelper';
@@ -147,6 +147,11 @@ export class NPCCreator extends BaseService {
     baseChar.usableSkills = baseChar.usableSkills.map((skill: Rollable|string) => {
       if ((skill as Rollable).result) return skill as Rollable;
       return { result: skill as unknown as string, chance: 1 };
+    });
+
+    // learn all spells so they can be cast
+    baseChar.usableSkills.forEach(({ result }) => {
+      baseChar.learnedSpells[result.toLowerCase()] = LearnedSpell.FromTraits;
     });
 
     baseChar.traitLevels = npcDef.traitLevels || {};

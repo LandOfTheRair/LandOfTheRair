@@ -248,8 +248,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     ])
     .pipe(first())
     .subscribe(([macroBars, macros, player, account]) => {
-      console.log(macros, player);
-
       const macroSaveData = {
         charName: player.name,
         charSlot: player.charSlot,
@@ -269,7 +267,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   import(e, inputEl) {
-    console.log(e?.target?.files);
     if (!e || !e.target || !e.target.files) return;
 
     combineLatest([

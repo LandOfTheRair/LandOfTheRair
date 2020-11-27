@@ -41,7 +41,7 @@ export class TraitHelper extends BaseService {
     const traitRef = this.getTraitInTree(player.baseClass, trait);
 
     return (traitRef.isAncient ? player.traits.ap > 0 : player.traits.tp > 0)
-        && this.traitLevel(player, trait) < traitRef.maxLevel
+        && (player.traits.traitsLearned[trait] ?? 0) < traitRef.maxLevel
         && player.level >= traitRef.requiredLevel
         && (
           traitRef.requires
@@ -71,7 +71,7 @@ export class TraitHelper extends BaseService {
     player.traits.traitsLearned[trait]++;
 
     // last, recalculate stats because lots of traits affect stats
-    this.game.characterHelper.calculateStatTotals(player);
+    this.game.characterHelper.recalculateEverything(player);
   }
 
   // unlearn a trait! it's the opposite of the above.
@@ -88,7 +88,7 @@ export class TraitHelper extends BaseService {
     player.traits.traitsLearned[trait]--;
 
     // last, recalculate stats because lots of traits affect stats
-    this.game.characterHelper.calculateStatTotals(player);
+    this.game.characterHelper.recalculateEverything(player);
   }
 
   // reset all traits. since everything costs 1 tp, we can sum up all of our learned traits and get the right number.
@@ -100,7 +100,7 @@ export class TraitHelper extends BaseService {
     player.traits.ap = player.ancientLevel || 0;
 
     // last, recalculate stats because lots of traits affect stats
-    this.game.characterHelper.calculateStatTotals(player);
+    this.game.characterHelper.recalculateEverything(player);
 
   }
 

@@ -4,7 +4,7 @@ import { isObject, isString } from 'lodash';
 
 import { BaseService, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
-import { MacroCommand, Skill } from '../../models/macro';
+import { MacroCommand, SkillCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
 
@@ -36,8 +36,8 @@ export class CommandHandler extends BaseService {
   }
 
   // get a ref to a skill
-  public getSkillRef(name: string): Skill {
-    return this.commands[name.toLowerCase()] as Skill;
+  public getSkillRef(name: string): SkillCommand {
+    return this.commands[name.toLowerCase()] as SkillCommand;
   }
 
   // do the command for the player
@@ -61,6 +61,7 @@ export class CommandHandler extends BaseService {
       stringArgs: '',
       arrayArgs: [],
       objArgs: {},
+      overrideEffect: undefined,
       calledAlias: command,
       callbacks
     };
@@ -104,6 +105,24 @@ export class CommandHandler extends BaseService {
     if (commandRef.isGMCommand && !player.isGM) {
       this.messageHelper.sendLogMessageToPlayer(player, { message: `You're not a GM.` });
       return;
+    }
+
+    // check if we need to learn a spell before using it
+    if (commandRef.requiresLearn) {
+      const [prefix, spell] = command.split(' ');
+      let hasLearned = this.game.characterHelper.hasLearned(player, spell);
+      if (!hasLearned && (prefix === 'stance' || prefix === 'powerword')) {
+        hasLearned = this.game.characterHelper.hasLearned(player, `${prefix}${spell}`);
+      }
+
+      if (!hasLearned) {
+        this.messageHelper.sendLogMessageToPlayer(player, { message: `You do not know that ability!` });
+        return;
+      }
+
+      if (this.game.characterHelper.hasLearnedFromItem(player, spell)) {
+        args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, spell);
+      }
     }
 
     // run or queue the command

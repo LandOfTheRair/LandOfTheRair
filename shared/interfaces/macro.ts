@@ -1,10 +1,12 @@
 import { ICharacter } from './character';
+import { IItemEffect } from './effect';
 import { IPlayer } from './player';
 
 export interface IMacroCommandArgs {
   stringArgs: string;
   arrayArgs: string[];
   objArgs: any;
+  overrideEffect?: IItemEffect;
   calledAlias: string;
   callbacks: {
     broadcast: (args) => void,

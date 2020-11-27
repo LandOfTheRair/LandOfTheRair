@@ -1,4 +1,4 @@
-import { DamageClass, LearnedSpell, Skill } from './building-blocks';
+import { DamageClass, Skill } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
@@ -29,8 +29,6 @@ export interface IPlayer extends ICharacter {
   flaggedSkills: Skill[];
 
   corpseRef?: ISimpleItem;
-
-  learnedSpells: { [spellName: string]: LearnedSpell };
 
   lastTileDesc: string;
   lastRegionDesc: string;

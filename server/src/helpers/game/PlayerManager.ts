@@ -75,7 +75,7 @@ export class PlayerManager extends BaseService {
 
   // recalculate stats and do other sync related data
   public updatePlayerData(player: Player) {
-    this.characterHelper.calculateStatTotals(player);
+    this.characterHelper.recalculateEverything(player);
   }
 
   private tick(timer, type: 'slow'|'fast') {

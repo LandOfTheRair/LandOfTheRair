@@ -10,6 +10,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHel
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
   GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
+import { SpellManager } from '../data/SpellManager';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
@@ -75,6 +76,7 @@ export class Game {
     public playerInventoryHelper: PlayerInventoryHelper,
     public effectHelper: EffectHelper,
     public groundManager: GroundManager,
+    public spellManager: SpellManager,
     public dailyHelper: DailyHelper,
 
     public messageHelper: MessageHelper,
@@ -105,7 +107,7 @@ export class Game {
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
-      'effectHelper', 'groundManager', 'dailyHelper',
+      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper',
       'commandHandler', 'messageHelper', 'traitHelper',
       'playerManager', 'worldManager', 'configManager'
   ];

@@ -22,7 +22,7 @@ export class DamageHelperOnesided extends BaseService {
   ): void {
     if (!defender || this.game.characterHelper.isDead(defender)) return;
 
-    const modifiedDamage = this.game.combatHelper.modifyDamage(undefined, defender, {
+    const modifiedDamage = this.game.combatHelper.modifyDamage(null, defender, {
       damage,
       damageClass
     });

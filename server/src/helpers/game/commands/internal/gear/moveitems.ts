@@ -52,7 +52,9 @@ export class MoveItems extends MacroCommand {
     if (updatePlayerSlots[srcSlot] || updatePlayerSlots[destSlot]) state.triggerPlayerUpdateInRadius(player.x, player.y);
     if (updateGroundSlots[srcSlot] || updateGroundSlots[destSlot]) state.triggerGroundUpdateInRadius(player.x, player.y);
 
-    if (updateEquipmentSlots[srcSlot] || updateEquipmentSlots[destSlot]) this.game.characterHelper.calculateStatTotals(player);
+    if (updateEquipmentSlots[srcSlot] || updateEquipmentSlots[destSlot]) {
+      this.game.characterHelper.recalculateEverything(player);
+    }
   }
 
   private doPrelimChecks(
@@ -83,9 +85,20 @@ export class MoveItems extends MacroCommand {
 
     // if we're sending to a merchant, make sure we're in range first
     if (dest === 'M') {
-      const npc = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, destSlot);
+      if (!destSlot) {
+        this.sendMessage(player, 'You do not see anyone nearby!');
+        return false;
+      }
+
+      const npc: INPC = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, destSlot) as INPC;
       if (!npc) {
         this.sendMessage(player, 'You do not see that person.');
+        return false;
+      }
+
+      const vendorBehavior: VendorBehavior = (npc.behaviors || []).find(b => (b as VendorBehavior).vendorItems) as VendorBehavior;
+      if (!vendorBehavior) {
+        this.sendMessage(player, 'That person is not a merchant!');
         return false;
       }
 

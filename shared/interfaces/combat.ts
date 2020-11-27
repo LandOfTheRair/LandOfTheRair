@@ -1,4 +1,5 @@
 import { DamageClass, ItemSlot } from './building-blocks';
+import { ISimpleItem } from './item';
 import { SoundEffect } from './sfx';
 
 export enum CombatEffect {
@@ -39,4 +40,30 @@ export interface PhysicalAttackArgs {
   backstabIgnoreRange?: boolean;
   attackerName?: string;
   damageClass?: DamageClass;
+}
+
+export interface MagicalAttackArgs {
+  atkMsg?: string;
+  defMsg?: string;
+  damage?: number;
+  damageClass?: DamageClass;
+  isOverTime?: boolean;
+  isAoE?: boolean;
+  sfx?: SoundEffect;
+}
+
+export interface DamageArgs {
+  damage: number;
+  damageClass: DamageClass;
+  isMelee?: boolean;
+  attackerDamageMessage?: string;
+  defenderDamageMessage?: string;
+  attackerWeapon?: ISimpleItem;
+  isRanged?: boolean;
+  isOverTime?: boolean;
+  isHeal?: boolean;
+  isWeak?: boolean;
+  isStrong?: boolean;
+  isAttackerVisible?: boolean;
+  customSfx?: SoundEffect;
 }

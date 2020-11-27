@@ -24,6 +24,7 @@ export * from './player';
 export * from './settings';
 export * from './sfx';
 export * from './spawner';
+export * from './spell';
 export * from './status-effect';
 export * from './trait';
 export * from './traittree';

@@ -19,7 +19,6 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     swimElement: char.swimElement ?? '',
     corpseRef: char.corpseRef ?? undefined,
     flaggedSkills: char.flaggedSkills ?? [Skill.Martial],
-    learnedSpells: char.learnedSpells ?? {},
     lastTileDesc: '',
     lastRegionDesc: '',
     bgmSetting: char.bgmSetting ?? 'wilderness',

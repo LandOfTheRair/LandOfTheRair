@@ -1,7 +1,7 @@
 import { ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
-import { Skill } from '../../../../../models/macro';
+import { SkillCommand } from '../../../../../models/macro';
 
-export class AttackCommand extends Skill {
+export class AttackCommand extends SkillCommand {
 
   aliases = ['attack'];
 

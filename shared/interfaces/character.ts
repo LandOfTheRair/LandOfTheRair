@@ -1,5 +1,5 @@
 
-import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, SkillBlock, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacterItems } from './characteritems';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
@@ -58,5 +58,6 @@ export interface ICharacter {
   allegianceReputation: { [allegiance in Allegiance]?: number };
 
   allTraits: Record<string, number>;
+  learnedSpells: { [spellName: string]: LearnedSpell };
 }
 

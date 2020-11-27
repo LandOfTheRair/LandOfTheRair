@@ -1,6 +1,7 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
   IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot, WeaponClass } from '../../../../interfaces';
@@ -233,7 +234,8 @@ export class ItemComponent implements OnDestroy {
     this.scopes = scopes;
   }
 
-  doMoveAction(choice): void {
+  doMoveAction(choice: string, args: { dropUUID?: string } = {}): void {
+    console.log(args)
     this.uiService.doDropAction({
       context: this.context,
       contextSlot: this.contextSlot,
@@ -241,7 +243,7 @@ export class ItemComponent implements OnDestroy {
       isStackableMaterial: this.isStackableMaterial,
       item: this.item,
       realItem: this.realItem
-    }, choice);
+    }, choice, args.dropUUID);
   }
 
   doUseAction(): void {
@@ -254,12 +256,13 @@ export class ItemComponent implements OnDestroy {
     combineLatest([
       this.vendor$
     ])
+    .pipe(first())
     .subscribe(([vendor]) => {
 
       // if we have a vendor open, we auto-sell stuff
       if (vendor) {
         if (['Right', 'Left', 'Sack', 'Belt', 'DemiMagicPouch'].includes(this.context)) {
-          this.doMoveAction('M');
+          this.doMoveAction('M', { dropUUID: vendor.npcUUID });
           return;
         }
 

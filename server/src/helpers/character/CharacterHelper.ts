@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
 import { BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
-  ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../interfaces';
+  ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -181,6 +181,54 @@ export class CharacterHelper extends BaseService {
 
   }
 
+  // recalculate everything, basically when equipment changes usually
+  public recalculateEverything(character: ICharacter): void {
+    this.recalculateTraits(character);
+    this.recalculateLearnedSpells(character);
+    this.calculateStatTotals(character);
+  }
+
+  // recalculate what spells we know based on traits and items
+  public recalculateLearnedSpells(character: ICharacter): void {
+
+    const fromFate = Object.keys(character.learnedSpells).filter(x => character.learnedSpells[x] === LearnedSpell.FromFate);
+
+    character.learnedSpells = {};
+
+    const learnSpell = (spell: string, learnFrom: LearnedSpell) => {
+      if (character.learnedSpells[spell.toLowerCase()]) return;
+
+      character.learnedSpells[spell.toLowerCase()] = learnFrom;
+    };
+
+    // check all traits for spells
+    Object.keys(character.allTraits).forEach(trait => {
+      const traitRef = this.game.traitHelper.getTraitData(trait);
+      if (!traitRef.spellGiven) return;
+
+      learnSpell(traitRef.spellGiven, LearnedSpell.FromTraits);
+    });
+
+    // check all items
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
+
+      // no spells if we can't technically use the item
+      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
+
+      // check if it has an effect, and if we can use that effect
+      const { useEffect } = this.game.itemHelper.getItemProperties(item, ['useEffect']);
+
+      if (useEffect && useEffect.uses) {
+        learnSpell(useEffect.name, LearnedSpell.FromItem);
+      }
+    });
+
+    // re-learn fated spells last
+    fromFate.forEach(spell => learnSpell(spell, LearnedSpell.FromFate));
+  }
+
   // recalculate all traits that exist for this character
   public recalculateTraits(character: ICharacter): void {
     character.allTraits = {};
@@ -234,9 +282,6 @@ export class CharacterHelper extends BaseService {
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
 
-    // reassign traits before calculating
-    this.recalculateTraits(character);
-
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
 
@@ -267,8 +312,6 @@ export class CharacterHelper extends BaseService {
     // get trait/effect stats
     const traitStatBoosts = this.getStatValueAddFromTraits(character);
     const effectStatBoosts = this.game.effectHelper.effectStatBonuses(character);
-
-    if (this.isPlayer(character)) console.log(traitStatBoosts);
 
     const addStatsFromHash = (hash) => {
       Object.keys(hash).forEach(stat => {
@@ -342,6 +385,45 @@ export class CharacterHelper extends BaseService {
 
       this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
     });
+  }
+
+  // whether or not this particular character knows how to cast a spell/ability
+  public hasLearned(character: ICharacter, spell: string): boolean {
+    return (character.learnedSpells[spell] ?? LearnedSpell.Unlearned) !== LearnedSpell.Unlearned;
+  }
+
+  // whether or not this particular character knows how to cast a spell/ability
+  public hasLearnedFromItem(character: ICharacter, spell: string): boolean {
+    return character.learnedSpells[spell] === LearnedSpell.FromItem;
+  }
+
+  // try to break items that have a limited number of uses
+  public abuseItemsForLearnedSkillAndGetEffect(character: ICharacter, spell: string): IItemEffect | undefined {
+    if (character.learnedSpells[spell.toLowerCase()] !== LearnedSpell.FromItem) return;
+
+    let foundItem!: ISimpleItem;
+    let foundSlot!: ItemSlot;
+    let foundEffect!: IItemEffect;
+
+    Object.keys(character.items.equipment).forEach(slot => {
+      if (foundSlot || foundEffect || foundItem) return;
+
+      const item = character.items.equipment[slot];
+      if (!item) return;
+
+      const { useEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['useEffect', 'itemClass']);
+      if (!useEffect || useEffect.name.toLowerCase() !== spell.toLowerCase() || itemClass === ItemClass.Bottle) return;
+
+      foundSlot = slot as ItemSlot;
+      foundItem = item;
+      foundEffect = useEffect;
+    });
+
+    if (foundSlot && foundEffect && foundItem) {
+      this.game.itemHelper.tryToBreakItem(character, foundItem, foundSlot);
+    }
+
+    return foundEffect;
   }
 
 }

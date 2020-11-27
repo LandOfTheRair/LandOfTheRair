@@ -1,33 +1,19 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, CombatEffect, DamageClass, GameServerResponse, ICharacter, IPlayer, ISimpleItem, ItemClass,
+import { BaseService, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
+  MagicalAttackArgs,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
+import { DamageHelperMagic } from './DamageHelperMagic';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
-
-interface DamageArgs {
-  damage: number;
-  damageClass: DamageClass;
-  isMelee?: boolean;
-  attackerDamageMessage?: string;
-  defenderDamageMessage?: string;
-  attackerWeapon?: ISimpleItem;
-  isRanged?: boolean;
-  isOverTime?: boolean;
-  isHeal?: boolean;
-  isWeak?: boolean;
-  isStrong?: boolean;
-  isAttackerVisible?: boolean;
-  customSfx?: SoundEffect;
-}
 
 @Injectable()
 export class CombatHelper extends BaseService {
 
   constructor(
     private onesided: DamageHelperOnesided,
-    // private magic: DamageHelperMagic,
+    private magic: DamageHelperMagic,
     private physical: DamageHelperPhysical
   ) {
     super();
@@ -45,11 +31,15 @@ export class CombatHelper extends BaseService {
     this.physical.physicalAttack(attacker, defender, args);
   }
 
+  public magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs = {}): void {
+    this.magic.magicalAttack(attacker, defender, args);
+  }
+
   public combatEffect(target: ICharacter, defenderUUID: string, effect: CombatEffect): void {
     this.game.transmissionHelper.sendResponseToPlayer(target as IPlayer, GameServerResponse.PlayCFX, { defenderUUID, effect });
   }
 
-  public modifyDamage(attacker: ICharacter | undefined, defender: ICharacter, args: DamageArgs): number {
+  public modifyDamage(attacker: ICharacter | null, defender: ICharacter, args: DamageArgs): number {
     const baseDamage = args.damage;
     const isHeal = baseDamage < 0;
 
@@ -89,7 +79,7 @@ export class CombatHelper extends BaseService {
     return Math.floor(damage);
   }
 
-  public dealDamage(attacker: ICharacter, defender: ICharacter, args: DamageArgs): void {
+  public dealDamage(attacker: ICharacter | null, defender: ICharacter, args: DamageArgs): void {
     if (this.game.characterHelper.isDead(defender)) return;
 
     const { damage, attackerWeapon, isHeal, isMelee, isOverTime,
@@ -181,8 +171,6 @@ export class CombatHelper extends BaseService {
 
       // if there was an attacker, we send a lot of messages
       if (attacker) {
-
-        console.log(attacker.name, 'attack', defender.name);
 
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {

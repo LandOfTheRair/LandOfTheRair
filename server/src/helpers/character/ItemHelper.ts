@@ -143,7 +143,7 @@ export class ItemHelper extends BaseService {
 
     const canGetBenefits = this.canGetBenefitsFromItem(player, item);
     if (!canGetBenefits) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
-    if (!this.tryToUseItem(player, item, source)) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
+    if (!this.tryToUseItem(player, item, source)) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
 
     let shouldRemove = false;
     const totalOunces = ounces ?? 0;
@@ -171,19 +171,9 @@ export class ItemHelper extends BaseService {
     }
   }
 
-  // try to actually use the item
-  public tryToUseItem(player: IPlayer, item: ISimpleItem, source: ItemSlot): boolean {
-    if (!this.canUseItem(player, item)) return false;
-
-    const { itemClass, useEffect, ounces } = this.getItemProperties(item, ['itemClass', 'useEffect', 'ounces']);
-
-    if (useEffect && (useEffect.uses || (ounces && ounces !== 0))) {
-      const { potency, extra, duration } = useEffect;
-      const extraData = cloneDeep(extra || {});
-      extraData.potency = potency;
-
-      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration, extra: extraData } });
-    }
+  // try to break the item
+  public tryToBreakItem(player: ICharacter, item: ISimpleItem, source: ItemSlot): void {
+    const { itemClass, useEffect } = this.getItemProperties(item, ['itemClass', 'useEffect']);
 
     if (useEffect && useEffect.uses && useEffect.uses !== 0) {
 
@@ -196,9 +186,31 @@ export class ItemHelper extends BaseService {
         if (useEffect.uses - 1 <= 0) {
           this.game.characterHelper.setEquipmentSlot(player, source, undefined);
           this.game.messageHelper.sendSimpleMessage(player, `Your ${itemClass?.toLowerCase() || 'item'} has fizzled and turned to dust.`);
+          this.game.characterHelper.recalculateLearnedSpells(player);
         }
       }
     }
+  }
+
+  // try to actually use the item
+  public tryToUseItem(player: IPlayer, item: ISimpleItem, source: ItemSlot): boolean {
+    if (!this.canUseItem(player, item)) return false;
+
+    const { itemClass, useEffect, ounces } = this.getItemProperties(item, ['itemClass', 'useEffect', 'ounces']);
+
+    if (useEffect && (useEffect.uses || (ounces && ounces !== 0))) {
+      if (!this.game.effectManager.getEffectData(useEffect.name)) {
+        return false;
+      }
+
+      const { potency, extra, duration } = useEffect;
+      const extraData = cloneDeep(extra || {});
+      extraData.potency = potency;
+
+      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration, extra: extraData } });
+    }
+
+    this.tryToBreakItem(player, item, source);
 
     if (itemClass === ItemClass.Book) {
       this.game.messageHelper.sendSimpleMessage(player, 'Books are not working yet!');
