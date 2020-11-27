@@ -8,6 +8,7 @@ export class PlayerTraits extends BaseEntity implements ICharacterTraits {
 
   // other props
   @Property() tp = 0;
+  @Property() ap = 0;
   @Property() traitsLearned: Record<string, number> = {};
 
 }
