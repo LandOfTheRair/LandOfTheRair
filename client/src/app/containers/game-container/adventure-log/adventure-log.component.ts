@@ -8,10 +8,10 @@ import { Subscription } from 'rxjs';
 
 import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
-import { WindowComponent } from '../../../_shared/components/window.component';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
+import { WindowComponent } from '../../../_shared/components/window.component';
 
 @AutoUnsubscribe()
 @Component({
