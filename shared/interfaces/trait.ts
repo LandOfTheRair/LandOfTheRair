@@ -6,7 +6,7 @@ export interface ITrait {
   icon: string;
   iconColor: string;
   borderColor: string;
-  
+
   isAncient?: boolean;
   statsGiven?: Partial<Record<Stat, number>>;
   spellGiven?: string;

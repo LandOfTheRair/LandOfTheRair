@@ -129,7 +129,7 @@ export enum Stat {
   PhysicalBoostPercent = 'physicalDamageBoostPercent',
   MagicalBoostPercent = 'magicalDamageBoostPercent',
   HealingBoostPercent = 'healingBoostPercent',
-  
+
   // smaller boost stats
   NecroticBoostPercent = 'necroticBoostPercent',
   EnergyBoostPercent = 'energyBoostPercent',

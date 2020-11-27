@@ -12,7 +12,7 @@ export interface IPlayer extends ICharacter {
   isSubscribed: boolean;
 
   traits: ICharacterTraits;
-  
+
   z: number;
 
   exp: number;
