@@ -48,6 +48,7 @@ export class CombatHelper extends BaseService {
 
     if (attacker) {
       if (!args.isMelee) {
+        damage += Math.floor(damage * this.game.characterHelper.getStat(attacker, `${args.damageClass}BoostPercent` as Stat) / 100);
         damage += Math.floor(damage * this.game.characterHelper.getStat(attacker, Stat.MagicalBoostPercent) / 100);
       }
     }
