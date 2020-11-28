@@ -36,6 +36,14 @@ export class TraitHelper extends BaseService {
     return character.allTraits[trait] || 0;
   }
 
+  // the level of the trait for the character
+  public traitLevelValue(character: ICharacter, trait: string): number {
+    const traitData = this.getTraitData(trait);
+    if (!traitData || !traitData.valuePerTier) return 0;
+
+    return traitData.valuePerTier * (character.allTraits[trait] || 0);
+  }
+
   // whether or not the player can learn the trait
   public canLearnTrait(player: IPlayer, trait: string): boolean {
     const traitRef = this.getTraitInTree(player.baseClass, trait);

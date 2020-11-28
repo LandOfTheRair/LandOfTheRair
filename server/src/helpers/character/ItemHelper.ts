@@ -95,12 +95,18 @@ export class ItemHelper extends BaseService {
 
   // gain or lose condition
   public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+
+    const conditionLossModifier = Math.abs(conditionLoss) * (this.game.traitHelper.traitLevelValue(character, 'CarefulTouch') / 100);
+    if (conditionLoss < 0) {
+      conditionLoss += conditionLossModifier;
+    }
+
     item.mods.condition = item.mods.condition || 20000;
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
 
     if (this.isItemBroken(item)) {
-      this.game.characterHelper.calculateStatTotals(character);
+      this.game.characterHelper.recalculateEverything(character);
     }
   }
 
@@ -186,7 +192,7 @@ export class ItemHelper extends BaseService {
         if (useEffect.uses - 1 <= 0) {
           this.game.characterHelper.setEquipmentSlot(player, source, undefined);
           this.game.messageHelper.sendSimpleMessage(player, `Your ${itemClass?.toLowerCase() || 'item'} has fizzled and turned to dust.`);
-          this.game.characterHelper.recalculateLearnedSpells(player);
+          this.game.characterHelper.recalculateEverything(player);
         }
       }
     }

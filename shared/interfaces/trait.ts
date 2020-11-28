@@ -8,6 +8,7 @@ export interface ITrait {
   borderColor: string;
 
   isAncient?: boolean;
+  valuePerTier?: number;
   statsGiven?: Partial<Record<Stat, number>>;
   spellGiven?: string;
 }
