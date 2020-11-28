@@ -12,6 +12,6 @@ export class GMAllegiance extends MacroCommand {
     const allegiance = Allegiance[args.stringArgs];
     if (!allegiance) return this.sendMessage(player, 'That is not a valid allegiance.');
     player.allegiance = allegiance;
-    return this.sendMessage(player, `Your allegiance is now ${allegiance}.`);
+    this.sendMessage(player, `Your allegiance is now ${allegiance}.`);
   }
 }
