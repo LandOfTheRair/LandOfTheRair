@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>New Spells Learned</h1>
+
+<div mat-dialog-content>
+  <div>
+    You have learned the following spells, would you like to add them to your macro groups?
+  </div>
+
+  <div class="row-container">
+    <div class="row" *ngFor="let spell of data.newSpells">
+      <div class="icon-name">
+        <app-icon [name]="spell.icon" size="xsmall" [fgColor]="spell.color" [bgColor]="spell.bgColor || '#ccc'"></app-icon>
+        <span>{{ spell.name }}</span>
+      </div>
+  
+      <div class="row-buttons">
+        <button mat-button (click)="dontAddToBar(spell)">No</button>
+        <button mat-button (click)="addToBar(spell)" color="primary">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close (click)="noToAll()">No To All</button>
+  <button mat-button mat-dialog-close color="primary" (click)="yesToAll()">Yes To All</button>
+</div>

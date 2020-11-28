@@ -81,10 +81,14 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx } = spellData.meta;
+    const { casterMessage, casterSfx, targetMessage, targetSfx } = spellData.meta;
 
-    if (caster && casterMessage) {
+    if (caster !== target && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
+    }
+
+    if (target && targetMessage) {
+      this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
     }
 
     if (spellData.meta.doesAttack) {

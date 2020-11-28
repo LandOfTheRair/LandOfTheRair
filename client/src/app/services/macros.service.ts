@@ -4,10 +4,11 @@ import { combineLatest, interval, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
-import { GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
+import { CreateCustomMacro, GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
 import * as allMacros from '../../assets/content/_output/macros.json';
+import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class MacrosService {
   @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
   @Select(MacrosState.customMacros) private customMacros$: Observable<Record<string, IMacro>>;
   @Select(MacrosService.currentPlayerActiveMacro) private activeMacro$: Observable<IMacro>;
+  @Select(MacrosService.currentPlayerMacros) private currentMacros$: Observable<any>;
 
   private macroMap: Record<string, IMacro> = {};
 
@@ -30,6 +32,10 @@ export class MacrosService {
     shop: true, marketboard: true, party: true,
     commandLine: true, journal: true
   };
+
+  private get allMacrosHash(): Record<string, IMacro> {
+    return (allMacros as any).default || allMacros;
+  }
 
   @Selector([GameState, MacrosState])
   static currentPlayerMacros(gameState: IGame, macroState: IMacroContainer) {
@@ -53,6 +59,7 @@ export class MacrosService {
 
   constructor(
     private store: Store,
+    private modalService: ModalService,
     private optionsService: OptionsService,
     private gameService: GameService
   ) {}
@@ -61,6 +68,7 @@ export class MacrosService {
     this.activeWindow$.subscribe(w => this.activeWindow = w);
     this.customMacros$.subscribe(c => this.parseMacroMap(c));
 
+    this.watchForNewMacroAlerts();
     this.watchForMacros();
     this.autoAttackLoop();
   }
@@ -163,6 +171,25 @@ export class MacrosService {
         if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
 
         this.gameService.sendCommandString(macro.macro, target.uuid);
+      });
+  }
+
+  private watchForNewMacroAlerts() {
+    combineLatest([this.player$, this.customMacros$, this.currentMacros$])
+      .subscribe(([player, macros, currentMacros]) => {
+        if(!player || !macros || !currentMacros) return;
+
+        const newSpells = Object.keys(player.learnedSpells || {})
+          .map(spell => {
+            return Object.values(this.allMacrosHash).find(macro => macro.name.toLowerCase() === spell)
+          })
+          .filter(spell => spell && !macros[spell.name]);
+
+        this.modalService.newSpells(newSpells, currentMacros.macroBars);
+
+        newSpells.forEach(spell => {
+          this.store.dispatch(new CreateCustomMacro(spell));
+        });
       });
   }
 

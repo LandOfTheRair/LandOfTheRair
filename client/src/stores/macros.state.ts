@@ -102,6 +102,8 @@ export class MacrosState {
   setMacroBars({ setState }: StateContext<IMacroContainer>, { macroBars }: SetMacroBars) {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
+    console.log(macroBars)
+
     setState((state: IMacroContainer) => {
       state.characterMacros = state.characterMacros ?? {};
       state.characterMacros[curPlayer.username] = state.characterMacros[curPlayer.username] ?? {};

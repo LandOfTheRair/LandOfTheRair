@@ -1,0 +1,24 @@
+
+.row-container {
+  max-height: 300px;
+  overflow-y: auto;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+
+  margin-top: 10px;
+  align-items: center;
+}
+
+.icon-name {
+  display: flex;
+
+  app-icon {
+    margin-right: 10px;
+  }
+}

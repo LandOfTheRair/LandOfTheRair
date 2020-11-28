@@ -37,6 +37,7 @@ import { AmountModalComponent } from './_shared/modals/amount/amount.component';
 import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
 import { MacroEditorComponent } from './_shared/modals/macroeditor/macroeditor.component';
 import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
+import { NewSpellsComponent } from './_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from './_shared/modals/options/options.component';
 import { TextModalComponent } from './_shared/modals/text/text.component';
 
@@ -68,7 +69,7 @@ const declarations = [
   WindowComponent, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
-  TextModalComponent
+  TextModalComponent, NewSpellsComponent
 ];
 
 const gameComponents = [

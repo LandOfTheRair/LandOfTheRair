@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
-import { GameServerEvent, GameServerResponse, IDialogChatAction } from '../../interfaces';
+import { GameServerEvent, GameServerResponse, IDialogChatAction, IMacro, IMacroBar } from '../../interfaces';
 import { GameState } from '../../stores';
 
 import { AboutComponent } from '../_shared/modals/about/about.component';
@@ -16,6 +16,7 @@ import { CurrentEventsComponent } from '../_shared/modals/currentevents/currente
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
 import { MacroEditorComponent } from '../_shared/modals/macroeditor/macroeditor.component';
 import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilver.component';
+import { NewSpellsComponent } from '../_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from '../_shared/modals/options/options.component';
 import { TextModalComponent } from '../_shared/modals/text/text.component';
 import { OptionsService } from './options.service';
@@ -28,6 +29,7 @@ export class ModalService {
 
   @Select(GameState.inGame) inGame$: Observable<boolean>;
   private npcDialogRef: MatDialogRef<DialogComponent>;
+  private spellDialogRef: MatDialogRef<NewSpellsComponent>;
 
   constructor(
     private socketService: SocketService,
@@ -126,6 +128,23 @@ export class ModalService {
     });
 
     return text.afterClosed();
+  }
+
+  public newSpells(newSpells: IMacro[], macroBars: IMacroBar[]) {
+    if(this.spellDialogRef) return this.spellDialogRef.afterClosed();
+
+    this.spellDialogRef = this.dialog.open(NewSpellsComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      disableClose: true,
+      data: { newSpells, macroBars }
+    });
+
+    this.spellDialogRef.afterClosed().subscribe(() => {
+      this.spellDialogRef = null;
+    });
+
+    return this.spellDialogRef.afterClosed();
   }
 
   public npcDialog(dialogInfo: IDialogChatAction) {
