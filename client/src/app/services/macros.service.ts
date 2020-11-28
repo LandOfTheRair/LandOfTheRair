@@ -185,6 +185,8 @@ export class MacrosService {
           })
           .filter(spell => spell && !macros[spell.name]);
 
+        if(newSpells.length === 0) return;
+
         this.modalService.newSpells(newSpells, currentMacros.macroBars);
 
         newSpells.forEach(spell => {
