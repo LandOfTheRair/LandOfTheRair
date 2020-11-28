@@ -156,6 +156,9 @@ export class NPCCreator extends BaseService {
 
     baseChar.traitLevels = npcDef.traitLevels || {};
 
+    // green npcs never drop items
+    if (baseChar.hostility === Hostility.Never) baseChar.traitLevels.DeathGrip = 10;
+
     (npcDef.baseEffects || []).forEach(effect => {
       const effectData = {
         extra: effect.extra,
@@ -165,7 +168,7 @@ export class NPCCreator extends BaseService {
       this.game.effectHelper.addEffect(baseChar, '', effect.name, { effect: effectData });
     });
 
-    this.characterHelper.calculateStatTotals(baseChar);
+    this.characterHelper.recalculateEverything(baseChar);
 
     this.characterHelper.healToFull(baseChar);
     this.characterHelper.manaToFull(baseChar);

@@ -46,7 +46,7 @@ export class DamageHelperOnesided extends BaseService {
 
       this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
         message: `%0 was slain!`,
-        sfx: SoundEffect.CombatDie,
+        sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
         except: [defender.uuid]
       }, [
         MessageType.Combat, MessageType.NotMe, MessageType.Kill,

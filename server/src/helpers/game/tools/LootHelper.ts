@@ -117,9 +117,11 @@ export class LootHelper extends BaseService {
     // roll all of the items
     const rolledItems: ISimpleItem[] = rolledResults.map(x => this.game.itemCreator.getSimpleItem(x));
 
-    // we always drop the hands - the golden rule
-    if (npc.items.equipment[ItemSlot.RightHand]) rolledItems.push(npc.items.equipment[ItemSlot.RightHand] as ISimpleItem);
-    if (npc.items.equipment[ItemSlot.LeftHand]) rolledItems.push(npc.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
+    // we always drop the hands - the golden rule (except greens)
+    if (!this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(npc, 'DeathGrip'))) {
+      if (npc.items.equipment[ItemSlot.RightHand]) rolledItems.push(npc.items.equipment[ItemSlot.RightHand] as ISimpleItem);
+      if (npc.items.equipment[ItemSlot.LeftHand]) rolledItems.push(npc.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
+    }
 
     return rolledItems;
   }

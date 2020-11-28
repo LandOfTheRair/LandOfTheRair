@@ -89,6 +89,8 @@ export class CharacterHelper extends BaseService {
   }
 
   public dropHands(char: ICharacter): void {
+    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
+
     const { state } = this.game.worldManager.getMap(char.map);
 
     if (char.items.equipment[ItemSlot.RightHand]) {
@@ -204,7 +206,7 @@ export class CharacterHelper extends BaseService {
     // check all traits for spells
     Object.keys(character.allTraits).forEach(trait => {
       const traitRef = this.game.traitHelper.getTraitData(trait);
-      if (!traitRef.spellGiven) return;
+      if (!traitRef || !traitRef.spellGiven) return;
 
       learnSpell(traitRef.spellGiven, LearnedSpell.FromTraits);
     });

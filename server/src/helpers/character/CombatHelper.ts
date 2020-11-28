@@ -176,7 +176,7 @@ export class CombatHelper extends BaseService {
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `%0 was slain by %1!`,
-          sfx: SoundEffect.CombatDie,
+          sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
           except: [defender.uuid, attacker.uuid]
         }, [
           MessageType.Combat, MessageType.NotMe, MessageType.Kill,
@@ -213,7 +213,7 @@ export class CombatHelper extends BaseService {
       } else {
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `${defender.name} was killed!`,
-          sfx: SoundEffect.CombatDie,
+          sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
         }, [MessageType.Combat, MessageType.Self, MessageType.Kill]);
 
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
