@@ -34,6 +34,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) isTester: boolean;
   @Property(PROP_UNSAVED_SHARED()) combatTicks = 0;
   @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
+  @Property(PROP_UNSAVED_SHARED()) spellCooldowns: Record<string, number>;
 
   // temporary props
   @Property(PROP_TEMPORARY()) swimElement = '';

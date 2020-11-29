@@ -3,8 +3,13 @@
 
   <div class="macro" [mdePopoverTriggerFor]="macroTooltipTemplate">
     <app-icon [name]="iconName"
+              [disabled]="disabled"
               [bgColor]="background"
               [fgColor]="foreground"></app-icon>
+
+    <div class="cooldown" *ngIf="cooldownDisplay">
+      {{ cooldownDisplay }} s
+    </div>
 
     <div class="keybind" *ngIf="macroKeybind">
       {{ macroKeybind }}

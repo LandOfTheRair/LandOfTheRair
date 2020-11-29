@@ -177,6 +177,7 @@ export class CombatHelper extends BaseService {
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `%0 was slain by %1!`,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
+          setTarget: null,
           except: [defender.uuid, attacker.uuid]
         }, [
           MessageType.Combat, MessageType.NotMe, MessageType.Kill,
@@ -214,11 +215,13 @@ export class CombatHelper extends BaseService {
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `${defender.name} was killed!`,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
+          setTarget: null,
         }, [MessageType.Combat, MessageType.Self, MessageType.Kill]);
 
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
           message: `You were killed!`,
           sfx: SoundEffect.CombatDie,
+          setTarget: null,
         }, [MessageType.Combat, MessageType.Other, MessageType.Kill]);
 
 

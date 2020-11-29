@@ -59,5 +59,6 @@ export interface ICharacter {
 
   allTraits: Record<string, number>;
   learnedSpells: { [spellName: string]: LearnedSpell };
+  spellCooldowns: Record<string, number>;
 }
 

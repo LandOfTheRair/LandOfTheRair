@@ -60,8 +60,11 @@ mat-error {
 
       app-icon {
         max-width: 64px;
-        margin-right: 10px;
         border: 1px solid #000;
+      }
+
+      mat-form-field {
+        margin-left: 10px;
       }
     }
 

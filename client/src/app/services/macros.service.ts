@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
+import { cloneDeep } from 'lodash';
 import { combineLatest, interval, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -169,6 +170,7 @@ export class MacrosService {
       .subscribe(([inGame, player, macro, target]) => {
         if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption) return;
         if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
+        if (macro?.for && player.spellCooldowns?.[macro.for] > Date.now()) return;
 
         this.gameService.sendCommandString(macro.macro, target.uuid);
       });
@@ -181,7 +183,9 @@ export class MacrosService {
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map(spell => {
-            return Object.values(this.allMacrosHash).find(macro => macro.name.toLowerCase() === spell)
+            const baseObj = cloneDeep(Object.values(this.allMacrosHash).find(macro => macro.name.toLowerCase() === spell));
+            baseObj.isDefault = true;
+            return baseObj;
           })
           .filter(spell => spell && !macros[spell.name]);
 

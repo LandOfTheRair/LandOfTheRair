@@ -65,9 +65,13 @@ import { environment } from '../../../environments/environment';
     .mac-container.round {
       border-radius: 50%;
     }
+
+    .mac-container.disabled {
+      filter: grayscale(1) opacity(0.5) blur(2px);
+    }
   `],
   template: `
-    <div class="mac-container vertical-center" [ngClass]="[size]" [class.round]="round" [style.background-color]="bgColor">
+    <div class="mac-container vertical-center" [ngClass]="[size]" [class.round]="round" [class.disabled]="disabled" [style.background-color]="bgColor">
       <span class="macicons" [ngClass]="['macicons-'+name]" [style.color]="fgColor"></span>
     </div>
   `
@@ -79,6 +83,7 @@ export class IconComponent {
   @Input() public bgColor = 'white';
   @Input() public fgColor = '#000';
   @Input() public size = 'normal';
+  @Input() public disabled = false;
 
   get imgUrl() {
     const name = this.name || 'undecided';

@@ -35,9 +35,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   private readonly ICONS_PER_PAGE = 36;
   private readonly MACROS_PER_PAGE = 16;
 
-  // @ViewChild('fgPick', { static: true }) fgPicker: NgxMatColorPickerComponent;
-  // @ViewChild('bgPick', { static: true }) bgPicker: NgxMatColorPickerComponent;
-
   @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
   @Select(MacroEditorComponent.currentPlayerMacros) currentPlayerMacros$: Observable<any>;
@@ -60,11 +57,12 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public currentIconPage = 0;
   public currentIconsInPage: string[] = [];
 
-  // public fgColor = new Color(0, 0, 0);
-  // public bgColor = new Color(204, 204, 204);
-
   public get allMacroNameIcons(): string[] {
     return macroNames;
+  }
+
+  public get allPossibleForTargets(): string[] {
+    return (Object.values(allMacros) as IMacro[]).map(x => x.for).filter(Boolean).sort();
   }
 
   public currentlyEditingMacro: IMacro = defaultMacro();
@@ -99,7 +97,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.macroSub = this.customMacros$.subscribe(macs => {
-      const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault);
+      const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault) as IMacro[];
       const customMacros = Object.values(macs);
 
       this.allMacros = Object.assign({}, allMacros, macs);
@@ -112,10 +110,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.activeMacroBars = cloneDeep(bars.activeMacroBars);
       this.macroBars = cloneDeep(Object.values(bars.macroBars));
     });
-
-    // this.fgSub = this.fgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.color = c.toHexString());
-    // this.bgSub = this.bgPicker._selectedChanged.subscribe(c => this.currentlyEditingMacro.bgColor = c.toHexString());
-
     this.setMacroGroupPage(0);
   }
 
@@ -162,7 +156,10 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
   copy(macro: IMacro) {
     this.currentlyEditingMacro = cloneDeep(macro);
+    this.currentlyEditingMacro.isDefault = false;
     this.currentlyEditingMacro.name = `${this.currentlyEditingMacro.name} (copy)`;
+    this.currentlyEditingMacro.color = this.currentlyEditingMacro.color || '#000';
+    this.currentlyEditingMacro.bgColor = this.currentlyEditingMacro.bgColor || '#ccc';
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = false;
@@ -191,7 +188,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
     if (page > maxPage) return;
 
-    const pageStart = this.currentIconPage * pageSize;
+    const pageStart = page * pageSize;
     const currentIconsInPage = this.allMacroNameIcons.slice(pageStart, pageStart + pageSize);
     if (currentIconsInPage.length === 0) return;
 
@@ -402,6 +399,25 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     this.setMacro(this.activeMacroSlotGroup, this.activeMacroSlotIndex, macroName);
 
     this.markActiveSlot(undefined, undefined);
+  }
+
+  guessPragma() {
+    if(!this.currentlyEditingMacro || this.currentlyEditingMacro.for) return;
+
+    const checkString = this.currentlyEditingMacro.name.split(' ').join('').toLowerCase();
+
+    this.macros.forEach(macro => {
+      const str = macro.name;
+
+      if(!checkString.includes(str.toLowerCase())) return;
+
+      this.currentlyEditingMacro.for = str;
+      this.currentlyEditingMacro.icon = macro.icon;
+      this.currentlyEditingMacro.macro = macro.macro;
+      this.currentlyEditingMacro.color = macro.color || '#000';
+      this.currentlyEditingMacro.bgColor = macro.bgColor || '#ccc';
+      this.setPage(this.findPage(this.currentlyEditingMacro.icon));
+    });
   }
 
 }

@@ -125,8 +125,35 @@ export class PlayerHelper extends BaseService {
 
       for (let i = 0; i < actions; i++) {
         const command = queue.shift();
+
+        // if there isn't a command we can't do anything
         if (!command) continue;
 
+        // check if we can actually cast this
+        const args = (command as any).args;
+
+        //  if we have a spell, we gotta do a lot of checks
+        if (args.spell) {
+          const [prefix, spell] = args.spell.split(' ');
+          let hasLearned = this.game.characterHelper.hasLearned(player, spell);
+          if (!hasLearned && (prefix === 'stance' || prefix === 'powerword')) {
+            hasLearned = this.game.characterHelper.hasLearned(player, `${prefix}${spell}`);
+          }
+
+          // if we have to bail because we dont know the spell, we let them know
+          if (!hasLearned) {
+            this.game.messageHelper.sendSimpleMessage(player, 'You do not know that ability!');
+            continue;
+
+          // otherwise, we know it, but we'll try to abuse an item for it
+          } else {
+            if (this.game.characterHelper.hasLearnedFromItem(player, args.spell)) {
+              args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, args.spell);
+            }
+          }
+        }
+
+        // finally, we do the command
         command();
       }
     }

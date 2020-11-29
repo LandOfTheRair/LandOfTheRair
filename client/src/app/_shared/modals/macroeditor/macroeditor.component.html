@@ -37,7 +37,7 @@
             <div class="full-width name-row">
               <app-icon [name]="currentlyEditingMacro.icon" size="small" [fgColor]="currentlyEditingMacro.color" [bgColor]="currentlyEditingMacro.bgColor || '#ccc'"></app-icon>
 
-              <mat-form-field class="full-width">
+              <mat-form-field>
                 <mat-label>Macro Name</mat-label>
                 <input matInput 
                   type="text" 
@@ -46,7 +46,17 @@
                   maxlength="15"
                   [(ngModel)]="currentlyEditingMacro.name"
                   autocomplete="off"
+                  (keyup)="guessPragma()"
                   [ngModelOptions]="{ standalone: true }" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>For Ability</mat-label>
+                <mat-select [disabled]="currentlyEditingMacro.isDefault" [(ngModel)]="currentlyEditingMacro.for" [ngModelOptions]="{ standalone: true }">
+                  <mat-option *ngFor="let for of allPossibleForTargets" [value]="for">
+                    {{ for }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
             </div>
 

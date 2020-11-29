@@ -15,36 +15,40 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="allMacros$ | async as allMacros">
-    <div class="macro-group-container" *ngIf="(macros$ | async) as macros">
-      <div *ngFor="let group of macros.activeMacroBars; let i = index">
-        <div class="macro-group" *ngIf="macros.macroBars[group]">
-    
-          <div class="group-name">
-            <div class="arrow arrow-left" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, -1)">
-              &#9664;
+  <ng-container *ngIf="player$ | async as player">
+    <ng-container *ngIf="allMacros$ | async as allMacros">
+      <div class="macro-group-container" *ngIf="(macros$ | async) as macros">
+        <div *ngFor="let group of macros.activeMacroBars; let i = index">
+          <div class="macro-group" *ngIf="macros.macroBars[group]">
+      
+            <div class="group-name">
+              <div class="arrow arrow-left" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, -1)">
+                &#9664;
+              </div>
+      
+              <div class="text-rotated">
+                {{ group }}
+              </div>
+      
+              <div class="arrow arrow-right" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, 1)">
+                &#9654;
+              </div>
             </div>
-    
-            <div class="text-rotated">
-              {{ group }}
+      
+            <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
+      
+              <app-macro
+                (click)="operateOnMacro(allMacros[macros.macroBars[group].macros[macroIdx]])"
+                [macroRef]="allMacros[macros.macroBars[group].macros[macroIdx]]"
+                [isActive]="macros.macroBars[group].macros[macroIdx] === macros.activeMacro"
+                [disabled]="isMacroDisabled(player, allMacros[macros.macroBars[group].macros[macroIdx]])"
+                [cooldown]="macroCooldown(player, allMacros[macros.macroBars[group].macros[macroIdx]])"
+              ></app-macro>
+      
             </div>
-    
-            <div class="arrow arrow-right" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, 1)">
-              &#9654;
-            </div>
-          </div>
-    
-          <div class="macrobar-item" *ngFor="let macroIdx of macroArray">
-    
-            <app-macro
-              (click)="operateOnMacro(allMacros[macros.macroBars[group].macros[macroIdx]])"
-              [macroRef]="allMacros[macros.macroBars[group].macros[macroIdx]]"
-              [isActive]="macros.macroBars[group].macros[macroIdx] === macros.activeMacro"
-            ></app-macro>
-    
           </div>
         </div>
       </div>
-    </div>
+    </ng-container>
   </ng-container>
 </ng-template>

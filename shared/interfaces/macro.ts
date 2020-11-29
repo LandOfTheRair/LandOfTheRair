@@ -8,6 +8,7 @@ export interface IMacroCommandArgs {
   objArgs: any;
   overrideEffect?: IItemEffect;
   calledAlias: string;
+  spell?: string;
   callbacks: {
     broadcast: (args) => void,
     emit: (args) => void
@@ -64,10 +65,12 @@ export interface IMacro {
 
   name: string;
   icon: string;
+  for?: string;
 
   color: string;
   bgColor?: string;
 
+  isDefault?: boolean;
   isSystem?: boolean;
   requiresLearn?: boolean;
   requireBaseClass?: string;

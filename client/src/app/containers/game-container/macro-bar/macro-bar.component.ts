@@ -3,8 +3,8 @@ import { Select, Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IMacro, IMacroBar } from '../../../../interfaces';
-import { MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
+import { IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
+import { GameState, MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 import { MacrosService } from '../../../services/macros.service';
@@ -17,6 +17,7 @@ import { MacrosService } from '../../../services/macros.service';
 })
 export class MacroBarComponent implements OnInit, OnDestroy {
 
+  @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(MacrosService.currentPlayerMacros) macros$: Observable<any>;
   @Select(MacrosState.allMacros) allMacros$: Observable<any>;
 
@@ -62,6 +63,16 @@ export class MacroBarComponent implements OnInit, OnDestroy {
     newMacroBars[macroBarIndex] = orderedMacroBars[newIndex];
 
     this.store.dispatch(new SetActiveMacroBars(newMacroBars));
+  }
+
+  public macroCooldown(player: IPlayer, macro: IMacro): number {
+    if(!macro?.for) return 0;
+    return player.spellCooldowns?.[macro.for] ?? 0;
+  }
+
+  public isMacroDisabled(player: IPlayer, macro: IMacro): boolean {
+    if(!macro?.for) return false;
+    return !player.learnedSpells[macro.for.toLowerCase()] || player.spellCooldowns?.[macro.for] > Date.now();
   }
 
 }

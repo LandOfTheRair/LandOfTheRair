@@ -63,7 +63,8 @@ export class CommandHandler extends BaseService {
       objArgs: {},
       overrideEffect: undefined,
       calledAlias: command,
-      callbacks
+      callbacks,
+      spell: ''
     };
 
     if (data.args && isString(data.args)) {
@@ -109,20 +110,7 @@ export class CommandHandler extends BaseService {
 
     // check if we need to learn a spell before using it
     if (commandRef.requiresLearn) {
-      const [prefix, spell] = command.split(' ');
-      let hasLearned = this.game.characterHelper.hasLearned(player, spell);
-      if (!hasLearned && (prefix === 'stance' || prefix === 'powerword')) {
-        hasLearned = this.game.characterHelper.hasLearned(player, `${prefix}${spell}`);
-      }
-
-      if (!hasLearned) {
-        this.messageHelper.sendLogMessageToPlayer(player, { message: `You do not know that ability!` });
-        return;
-      }
-
-      if (this.game.characterHelper.hasLearnedFromItem(player, spell)) {
-        args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, spell);
-      }
+      args.spell = command;
     }
 
     // run or queue the command

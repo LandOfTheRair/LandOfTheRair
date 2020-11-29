@@ -45,6 +45,17 @@ export class SpellManager extends BaseService {
     this.game.playerHelper.gainSkill(caster as Player, skillGain, 1);
   }
 
+  private canCastSpell(character: ICharacter, spellName: string): boolean {
+    return Date.now() > (character.spellCooldowns?.[spellName] ?? 0);
+  }
+
+  private cooldownSpell(character: ICharacter, spellName: string, spellData: ISpellData): void {
+    if (!spellData.cooldown) return;
+
+    character.spellCooldowns = character.spellCooldowns || {};
+    character.spellCooldowns[spellName] = Date.now() + (1000 * (spellData.cooldown ?? 0));
+  }
+
   // cast a spell!
   public castSpell(
     spell: string,
@@ -71,14 +82,20 @@ export class SpellManager extends BaseService {
     const chance = override.chance || 100;
     if (!this.game.diceRollerHelper.XInOneHundred(chance)) return;
 
+    // gain skill for the spell cast
+    if (caster) {
+      if (!this.canCastSpell(caster, spell)) {
+        this.game.messageHelper.sendSimpleMessage(caster, 'That spell is still cooling down!');
+        return;
+      }
+
+      this.gainSkill(caster, spellData);
+      this.cooldownSpell(caster, spell, spellData);
+    }
+
     const potency = override.potency || spellRef.getPotency(caster, target, spellData);
     const range = override.range || 0;
     const duration = override.duration || 0;
-
-    // gain skill for the spell cast
-    if (caster) {
-      this.gainSkill(caster, spellData);
-    }
 
     // send messages to caster/target where applicable
     const { casterMessage, casterSfx, targetMessage, targetSfx } = spellData.meta;

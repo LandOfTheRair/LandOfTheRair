@@ -5,6 +5,8 @@ export interface ISpellData {
   maxSkillForGain: number;              // the max skill we can gain skill points from this spell for
   mpCost: number;                       // the mp cost of the skill
 
+  castTime?: number;                    // the time (in seconds) it takes to channel this spell
+  cooldown?: number;                    // the cooldown (in seconds) for recasting this spell
   damageClass?: DamageClass;            // the damage class of the spell
   willSaveThreshold?: number;           // the will save threshold. will roll (1, defWIL) and if it's >= willSaveThreshold, it saves
   willSavePercent?: number;             // the % damage reduced when will save is met

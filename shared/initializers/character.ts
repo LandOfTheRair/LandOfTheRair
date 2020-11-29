@@ -34,6 +34,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
       pouch: { items: [] },
       buyback: []
     },
-    allTraits: char.allTraits ?? {}
+    allTraits: char.allTraits ?? {},
+    spellCooldowns: char.spellCooldowns ?? {}
   };
 };
