@@ -118,6 +118,14 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
+  
+            <div class="full-width checkbox-row">
+              <mat-checkbox [(ngModel)]="currentlyEditingMacro.ignoreAutoAttack"
+                            matTooltip="This macro will not automatically trigger every tick."
+                            [ngModelOptions]="{ standalone: true }">
+                Ignore Auto Attack
+              </mat-checkbox>
+            </div>
 
             <div class="full-width color-row">
 

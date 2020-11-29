@@ -1,4 +1,6 @@
 
+$container-height: 560px;
+
 .mat-dialog-content {
   overflow: hidden;
 }
@@ -20,8 +22,8 @@ mat-error {
 
   .macros-list {
     flex: 1;
-    min-height: 530px;
-    max-height: 530px;
+    min-height: $container-height;
+    max-height: $container-height;
     overflow-y: auto;
     max-width: 50%;
 
@@ -91,6 +93,10 @@ mat-error {
       }
     }
 
+    .checkbox-row {
+      margin-bottom: 10px;
+    }
+
     .icon-action-row {
       display: flex;
       justify-content: space-around;
@@ -129,8 +135,8 @@ mat-error {
   display: flex;
   flex-direction: row;
 
-  min-height: 530px;
-  max-height: 530px;
+  min-height: $container-height;
+  max-height: $container-height;
   overflow-y: auto;
 }
 
