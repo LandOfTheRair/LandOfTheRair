@@ -166,8 +166,6 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     combineLatest([this.command$, this.macro$])
       .pipe(first())
       .subscribe(([cmd, macro]) => {
-        console.log(cmd, macro);
-
         if ((char as INPC).hostility === Hostility.Never) {
           this.gameService.sendCommandString(`${char.uuid}, hello`);
 

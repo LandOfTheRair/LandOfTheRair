@@ -56,13 +56,10 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public isEditing = false;
   public currentIconPage = 0;
   public currentIconsInPage: string[] = [];
+  public allPossibleForTargets: string[] = [];
 
   public get allMacroNameIcons(): string[] {
     return macroNames;
-  }
-
-  public get allPossibleForTargets(): string[] {
-    return (Object.values(allMacros) as IMacro[]).map(x => x.for).filter(Boolean).sort();
   }
 
   public currentlyEditingMacro: IMacro = defaultMacro();
@@ -85,6 +82,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
     return {
       activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
+      learnedMacros: macroState.learnedMacros?.[player.username]?.[player.charSlot] ?? {},
       macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
     };
   }
@@ -96,12 +94,18 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.macroSub = this.customMacros$.subscribe(macs => {
+    this.macroSub = combineLatest([
+      this.customMacros$,
+      this.currentPlayerMacros$
+    ]).subscribe(([macs, currentMacs]) => {
       const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault) as IMacro[];
+      const learnedMacs = Object.values(currentMacs.learnedMacros) as IMacro[];
       const customMacros = Object.values(macs);
 
-      this.allMacros = Object.assign({}, allMacros, macs);
-      this.macros = defaultMacros.concat(customMacros);
+      this.allMacros = Object.assign({}, allMacros, macs, currentMacs.learnedMacros);
+      this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
+
+      this.allPossibleForTargets = learnedMacs.map(x => x.for).filter(Boolean).sort();
     });
 
     this.macroBarSub = this.currentPlayerMacros$.subscribe(bars => {
@@ -110,6 +114,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.activeMacroBars = cloneDeep(bars.activeMacroBars);
       this.macroBars = cloneDeep(Object.values(bars.macroBars));
     });
+
     this.setMacroGroupPage(0);
   }
 

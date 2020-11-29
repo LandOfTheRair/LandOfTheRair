@@ -50,9 +50,9 @@
                   [ngModelOptions]="{ standalone: true }" />
               </mat-form-field>
 
-              <mat-form-field>
+              <mat-form-field matTooltip="Selecting an ability to tie this macro to will allow that custom macro to bind to existing cooldowns and other features.">
                 <mat-label>For Ability</mat-label>
-                <mat-select [disabled]="currentlyEditingMacro.isDefault" [(ngModel)]="currentlyEditingMacro.for" [ngModelOptions]="{ standalone: true }">
+                <mat-select [disabled]="currentlyEditingMacro.isDefault || allPossibleForTargets.length === 0" [(ngModel)]="currentlyEditingMacro.for" [ngModelOptions]="{ standalone: true }">
                   <mat-option *ngFor="let for of allPossibleForTargets" [value]="for">
                     {{ for }}
                   </mat-option>

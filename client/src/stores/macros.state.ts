@@ -6,8 +6,8 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import * as macros from '../assets/content/_output/macros.json';
 
 import { IMacroBar, IMacroContainer } from '../interfaces';
-import { CreateCustomMacro, DeleteCustomMacro, ImportMacros, PlayerReady,
-  SetActiveMacro, SetActiveMacroBars, SetDefaultMacros, SetMacroBars } from './actions';
+import { CreateCustomMacro, DeleteCustomMacro, ImportMacros, LearnMacro,
+  PlayerReady, SetActiveMacro, SetActiveMacroBars, SetDefaultMacros, SetMacroBars } from './actions';
 import { GameState } from './game.state';
 
 
@@ -16,6 +16,7 @@ const defaultMacros: () => IMacroContainer = () => {
     activeMacroBars: {},
     activeMacros: {},
     customMacros: {},
+    learnedMacros: {},
     characterMacros: {}
   };
 };
@@ -45,6 +46,11 @@ export class MacrosState {
   @Selector()
   static characterMacros(state: IMacroContainer) {
     return state.characterMacros;
+  }
+
+  @Selector()
+  static learnedMacros(state: IMacroContainer) {
+    return state.learnedMacros;
   }
 
   constructor(private store: Store) {}
@@ -83,6 +89,21 @@ export class MacrosState {
     });
   }
 
+  @Action(LearnMacro)
+  @ImmutableContext()
+  learnMacro({ setState }: StateContext<IMacroContainer>, { macro }: LearnMacro) {
+    const curPlayer = this.store.selectSnapshot(GameState.player);
+
+    setState((state: IMacroContainer) => {
+      state.learnedMacros = state.learnedMacros ?? {};
+      state.learnedMacros[curPlayer.username] = state.learnedMacros[curPlayer.username] ?? {};
+      state.learnedMacros[curPlayer.username][curPlayer.charSlot] = state.learnedMacros[curPlayer.username][curPlayer.charSlot] ?? {};
+      state.learnedMacros[curPlayer.username][curPlayer.charSlot][macro.name] = macro;
+
+      return state;
+    });
+  }
+
   @Action(SetActiveMacroBars)
   @ImmutableContext()
   setActiveMacroBars({ setState }: StateContext<IMacroContainer>, { macroBarNames }: SetActiveMacroBars) {
@@ -101,8 +122,6 @@ export class MacrosState {
   @ImmutableContext()
   setMacroBars({ setState }: StateContext<IMacroContainer>, { macroBars }: SetMacroBars) {
     const curPlayer = this.store.selectSnapshot(GameState.player);
-
-    console.log(macroBars)
 
     setState((state: IMacroContainer) => {
       state.characterMacros = state.characterMacros ?? {};

@@ -235,7 +235,6 @@ export class ItemComponent implements OnDestroy {
   }
 
   doMoveAction(choice: string, args: { dropUUID?: string } = {}): void {
-    console.log(args)
     this.uiService.doDropAction({
       context: this.context,
       contextSlot: this.contextSlot,

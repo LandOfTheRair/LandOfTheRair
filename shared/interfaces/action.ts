@@ -108,6 +108,7 @@ export enum GameAction {
   CreateCustomMacro = '[Macro] Create Custom',
   DeleteCustomMacro = '[Macro] Delete Custom',
   SetActiveMacro = '[Macro] Set Active Macro',
+  LearnMacro = '[Macro] Learn Macro',
   SetActiveMacroBars = '[Macro] Set Active Bars',
   SetMacroBar = '[Macro] Set Macro Bars',
   SetDefaultMacros = '[Macros] Set Default Macros/Bars',

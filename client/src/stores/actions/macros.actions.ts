@@ -24,6 +24,12 @@ export class DeleteCustomMacro {
   constructor(public macro: IMacro) {}
 }
 
+// dispatched when a macro is learned
+export class LearnMacro {
+  static type = GameAction.LearnMacro;
+  constructor(public macro: IMacro) {}
+}
+
 // dispatched when the users macro bars change
 export class SetMacroBars {
   static type = GameAction.SetMacroBar;

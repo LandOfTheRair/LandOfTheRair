@@ -5,7 +5,7 @@ import { combineLatest, interval, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
-import { CreateCustomMacro, GameState, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
+import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import { GameService } from './game.service';
 
 import * as allMacros from '../../assets/content/_output/macros.json';
@@ -46,6 +46,7 @@ export class MacrosService {
     return {
       activeMacro: macroState.activeMacros?.[player.username]?.[player.charSlot],
       activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
+      learnedMacros: macroState.learnedMacros?.[player.username]?.[player.charSlot] ?? {},
       macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
     };
   }
@@ -177,9 +178,9 @@ export class MacrosService {
   }
 
   private watchForNewMacroAlerts() {
-    combineLatest([this.player$, this.customMacros$, this.currentMacros$])
-      .subscribe(([player, macros, currentMacros]) => {
-        if(!player || !macros || !currentMacros) return;
+    combineLatest([this.player$, this.currentMacros$])
+      .subscribe(([player, currentMacros]) => {
+        if(!player || !currentMacros) return;
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map(spell => {
@@ -187,14 +188,14 @@ export class MacrosService {
             baseObj.isDefault = true;
             return baseObj;
           })
-          .filter(spell => spell && !macros[spell.name]);
+          .filter(spell => spell && !currentMacros.learnedMacros[spell.name]);
 
         if(newSpells.length === 0) return;
 
         this.modalService.newSpells(newSpells, currentMacros.macroBars);
 
         newSpells.forEach(spell => {
-          this.store.dispatch(new CreateCustomMacro(spell));
+          this.store.dispatch(new LearnMacro(spell));
         });
       });
   }
