@@ -168,7 +168,7 @@ export class MacrosService {
     interval(1000)
       .pipe(switchMap(() => combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])))
       .subscribe(([inGame, player, macro, target]) => {
-        if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption) return;
+        if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption || player.spellChannel) return;
         if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
         if (macro?.for && player.spellCooldowns?.[macro.for] > Date.now()) return;
 

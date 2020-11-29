@@ -6,11 +6,12 @@ export class Identify extends SpellCommand {
   aliases = ['cast identify'];
   requiresLearn = true;
   spellRef = 'Identify';
+  canTargetSelf = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
 
-    this.castSpell(player, player, args);
+    this.castSpell(player, args);
   }
 
 }

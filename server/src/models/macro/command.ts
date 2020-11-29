@@ -47,8 +47,6 @@ export abstract class SkillCommand extends MacroCommand {
   tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
-    console.log(mpCost, user.name);
-
     // thieves cast with HP instead of MP
     if (user.baseClass === BaseClass.Thief) {
       if (user.hp.current <= mpCost) {
@@ -143,6 +141,7 @@ export class SpellCommand extends SkillCommand {
   aliases: string[] = [];
   requiresLearn = true;
   spellRef = '';
+  canTargetSelf = false;
 
   mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
     if (overrideEffect) return 0;
@@ -157,7 +156,46 @@ export class SpellCommand extends SkillCommand {
     return 5;
   }
 
-  protected castSpell(caster: ICharacter | null, target: ICharacter, args: IMacroCommandArgs) {
-    this.game.spellManager.castSpell(this.spellRef, caster, target, args.overrideEffect, args.callbacks);
+  // called when a player casts a spell at something
+  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, args.stringArgs);
+    if (!target) return this.youDontSeeThatPerson(caster as IPlayer);
+
+    if (!this.canTargetSelf && target === caster) return;
+
+    this.castSpellAt(caster, target, args);
+  }
+
+  protected castSpellAt(caster: ICharacter | null, target: ICharacter, args: IMacroCommandArgs) {
+    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    if (!spellData) return;
+
+    const doSpellCast = () => {
+
+      if (!target || !this.game.characterHelper.isDead(target)) {
+        if (caster) {
+          delete caster.spellChannel;
+        }
+
+        return this.youDontSeeThatPerson(caster as IPlayer);
+      }
+
+      if (caster) {
+        delete caster.spellChannel;
+
+        if (!this.game.targettingHelper.isTargetInViewRange(caster, target)) return this.youDontSeeThatPerson(caster as IPlayer);
+        if (!this.tryToConsumeMP(caster, [target], args.overrideEffect)) return;
+      }
+
+      this.game.spellManager.castSpell(this.spellRef, caster, target, args.overrideEffect, args.callbacks);
+    };
+
+    if (caster && spellData.castTime) {
+      this.game.messageHelper.sendLogMessageToRadius(caster, 4, { message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...` });
+      caster.spellChannel = { ticks: spellData.castTime, callback: doSpellCast };
+      return;
+    }
+
+    doSpellCast();
   }
 }

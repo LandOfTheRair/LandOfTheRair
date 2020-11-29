@@ -78,6 +78,15 @@ export class TargettingHelper extends BaseService {
     return false;
   }
 
+  public isTargetInViewRange(player: ICharacter, target: ICharacter, useSight = true): boolean {
+    const diffX = target.x - player.x;
+    const diffY = target.y - player.y;
+
+    if (useSight && !this.visibilityHelper.canSee(player, diffX, diffY)) return false;
+
+    return true;
+  }
+
   public getFirstPossibleTargetInViewRange(player: ICharacter, findStr: string, useSight = true): ICharacter {
     return this.getPossibleTargetsInViewRange(player, findStr, useSight)[0];
   }

@@ -48,12 +48,24 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
 
-    return [
+    const base = [
       ...player.effects.buff,
       ...player.effects.debuff,
       ...player.effects.incoming,
       ...player.effects.outgoing
     ].filter(x => !x.effectInfo.hidden);
+
+    if(player.spellChannel) {
+      base.unshift({
+        uuid: 'channel',
+        effectName: 'Channeling',
+        sourceName: '',
+        endsAt: Date.now() + (player.spellChannel.ticks * 1000),
+        effectInfo: { potency: 1 }
+      });
+    }
+
+    return base;
   }
 
   xpPercent(player: IPlayer) {

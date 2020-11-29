@@ -362,6 +362,13 @@ export class CharacterHelper extends BaseService {
       character.combatTicks--;
     }
 
+    if (character.spellChannel) {
+      character.spellChannel.ticks--;
+      if (character.spellChannel.ticks <= 0) {
+        character.spellChannel.callback();
+      }
+    }
+
     const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
     const mpRegen = this.getStat(character, Stat.MPRegen);
 

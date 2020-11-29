@@ -63,6 +63,7 @@ export class DeathHelper extends BaseService {
     if (dead.hp.current === -1) return;
 
     dead.hp.current = -1;
+    delete dead.spellChannel;
 
     this.game.effectHelper.clearEffectsForDeath(dead);
     dead.dir = Direction.Corpse;
