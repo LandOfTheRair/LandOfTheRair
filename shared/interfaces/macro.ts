@@ -71,6 +71,8 @@ export interface IMacro {
   color: string;
   bgColor?: string;
 
+  ignoreAutoAttack?: boolean;
+
   isDefault?: boolean;
   isSystem?: boolean;
   requiresLearn?: boolean;
