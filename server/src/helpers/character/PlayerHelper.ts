@@ -147,8 +147,8 @@ export class PlayerHelper extends BaseService {
 
           // otherwise, we know it, but we'll try to abuse an item for it
           } else {
-            if (this.game.characterHelper.hasLearnedFromItem(player, args.spell)) {
-              args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, args.spell);
+            if (this.game.characterHelper.hasLearnedFromItem(player, spell)) {
+              args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, spell);
             }
           }
         }

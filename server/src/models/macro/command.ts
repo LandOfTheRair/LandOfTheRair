@@ -47,14 +47,16 @@ export abstract class SkillCommand extends MacroCommand {
   tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
+    console.log(mpCost, user.name);
+
     // thieves cast with HP instead of MP
     if (user.baseClass === BaseClass.Thief) {
-      if (user.hp.maximum <= mpCost) {
+      if (user.hp.current <= mpCost) {
         this.sendMessage(user, 'You do not have enough HP!');
         return false;
       }
 
-    } else if (user.mp.maximum < mpCost) {
+    } else if (user.mp.current < mpCost) {
       this.sendMessage(user, 'You do not have enough MP!');
       return false;
     }
