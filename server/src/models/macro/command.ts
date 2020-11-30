@@ -172,7 +172,7 @@ export class SpellCommand extends SkillCommand {
 
     const doSpellCast = () => {
 
-      if (!target || !this.game.characterHelper.isDead(target)) {
+      if (!target || this.game.characterHelper.isDead(target)) {
         if (caster) {
           delete caster.spellChannel;
         }

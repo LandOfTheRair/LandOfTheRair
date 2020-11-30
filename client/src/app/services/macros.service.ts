@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { combineLatest, interval, Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 
 import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
 import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
@@ -168,6 +168,7 @@ export class MacrosService {
   private autoAttackLoop() {
     interval(1000)
       .pipe(switchMap(() => combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])))
+      .pipe(first())
       .subscribe(([inGame, player, macro, target]) => {
         if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption || player.spellChannel) return;
         if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
