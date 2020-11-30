@@ -1,23 +1,18 @@
-## [1.3.2](https://github.com/landoftherair/lotr2/compare/v1.3.1...v1.3.2) (2020-11-29)
+## [1.3.3](https://github.com/landoftherair/lotr2/compare/v1.3.2...v1.3.3) (2020-11-30)
 
 
 ### Bug Fixes
 
-* **combat:** add agro any time damage is taken ([38e8d78](https://github.com/landoftherair/lotr2/commit/38e8d782ad7c7aa63f49c60abbae3d80c20dd2bf))
-* **combat:** boost by magic boost stat ([47a203f](https://github.com/landoftherair/lotr2/commit/47a203f2ad062c2b4f738da7df3fe2b5cf15fa2b))
-* **spells:** spells would cast without consuming item charges, and spells cost no mana ([74b2244](https://github.com/landoftherair/lotr2/commit/74b2244e185329ce034feaf8d5b7e08359feea8f))
-* **ui:** click-to-cast spells work correctly when clicking npc box now ([818cac6](https://github.com/landoftherair/lotr2/commit/818cac6cd5284a9c261480ea47a1f6c38b7bc840))
+* **combat:** auto attack would send too many inputs over time, causing issues ([d7cc934](https://github.com/landoftherair/lotr2/commit/d7cc93410099572317fdab74988c836c2248031c))
 
 
 ### Features
 
-* **macro:** add ignore auto attack checkbox back to macro screen ([7cc5579](https://github.com/landoftherair/lotr2/commit/7cc5579eae0c722b2742b3fd0cf0e5464d5716f7))
-* **macro:** macros can support a pragma that can be assigned. linking a macro will let it display cooldowns ([1da469a](https://github.com/landoftherair/lotr2/commit/1da469a2d0cd3410eeb698daf052f186b0fd104f))
-* **macros:** learned macros do not share between characters ([725f651](https://github.com/landoftherair/lotr2/commit/725f651c7a60e41bb208748871b9f62e0d353684))
-* **macros:** you get prompted to create new macros now ([69132e5](https://github.com/landoftherair/lotr2/commit/69132e562f96e1915999ba9a927f60e782405b4f))
-* **spell:** spells can be channeled now ([077ec77](https://github.com/landoftherair/lotr2/commit/077ec77f0bf75d5a8caee1642fed1431e9b7890e))
-* **trait:** add careful touch ([5757e90](https://github.com/landoftherair/lotr2/commit/5757e9050272a6876b0573f47190127d96595fba))
-* **trait:** death grip implemented. green npcs never drop their hands. ([f536173](https://github.com/landoftherair/lotr2/commit/f5361731ea57a4bfde2e6179fa0cfb1d150c85e8))
+* **character:** all characters regen on a 5 second tick instead of 1 second ([e867a4c](https://github.com/landoftherair/lotr2/commit/e867a4cd9fcb4780e086a429eb121fbdc5d19798))
+* **combat:** not seeing someone removes them as an active target ([86480a5](https://github.com/landoftherair/lotr2/commit/86480a5e21c01663cc1b5466f857207826af6892))
+* **core:** actions are now queued client-side and flushed every 100ms. there is a server side limit of 5 commands per 100ms or subsequent commands get dropped ([4186085](https://github.com/landoftherair/lotr2/commit/4186085942481f84486ff7cd9ec9308be7da1d62))
+* **macros:** learning new macros will allow you to select bars to put them into ([1f40041](https://github.com/landoftherair/lotr2/commit/1f40041e5d6fab52931dcb567e13710d575b4401))
+* **vendor:** show how much currency you have to spend in vendor window ([176e909](https://github.com/landoftherair/lotr2/commit/176e90932355e5e0ed9e759e928252265c891119))
 
 
 
