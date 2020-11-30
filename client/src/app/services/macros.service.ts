@@ -166,16 +166,22 @@ export class MacrosService {
   }
 
   private autoAttackLoop() {
-    interval(1000)
-      .pipe(switchMap(() => combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])))
-      .pipe(first())
-      .subscribe(([inGame, player, macro, target]) => {
-        if (!inGame || !macro || !target || !this.optionsService.autoAttack || macro.ignoreAutoattackOption || player.spellChannel) return;
-        if (this.gameService.hostilityLevelFor(player, target) !== 'hostile') return;
-        if (macro?.for && player.spellCooldowns?.[macro.for] > Date.now()) return;
+    setInterval(() => {
+      combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])
+        .pipe(first())
+        .subscribe(([inGame, player, macro, target]) => {
+          if (!inGame
+          || !macro
+          || !target
+          || !this.optionsService.autoAttack
+          || macro.ignoreAutoattackOption
+          || player.spellChannel
+          || this.gameService.hostilityLevelFor(player, target) !== 'hostile'
+          || (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())) return;
 
-        this.gameService.sendCommandString(macro.macro, target.uuid);
-      });
+          this.gameService.sendCommandString(macro.macro, target.uuid);
+        });
+    }, 1000);
   }
 
   private watchForNewMacroAlerts() {
