@@ -19,6 +19,12 @@ interface INewSpells {
 })
 export class NewSpellsComponent implements OnInit {
 
+  public macroBarsByName: Record<string, string> = {};
+
+  public get macroBarsAddable(): IMacroBar[] {
+    return Object.values(this.data.macroBars).filter(x => this.isMacroBarFree(x));
+  }
+
   constructor(
     private store: Store,
     public dialogRef: MatDialogRef<NewSpellsComponent>,
@@ -62,16 +68,28 @@ export class NewSpellsComponent implements OnInit {
     });
   }
 
+  private isMacroBarFree(bar: IMacroBar): boolean {
+    if(!bar) return false;
+    return bar.macros.filter(Boolean).length < 10;
+  }
+
   private addMacro(spell: IMacro): void {
 
     let foundBarWithSlot = null;
+
+    // first, if it's set to something, we try to add it to that bar
+    const tryBarFirst = this.macroBarsByName[spell.name] === '__NEW' ? null : this.data.macroBars[this.macroBarsByName[spell.name]];
+    if(this.isMacroBarFree(tryBarFirst)) foundBarWithSlot = tryBarFirst;
+
+    // next, if it isn't set, or that bar is full, we try to find a new one
     Object.values(this.data.macroBars).forEach(bar => {
-      if(bar.macros.filter(Boolean).length >= 10) return;
+      if(this.macroBarsByName[spell.name] === '__NEW' || foundBarWithSlot || !this.isMacroBarFree(bar)) return;
 
       foundBarWithSlot = bar;
     });
 
-    if(!foundBarWithSlot) {
+    // finally, if it is supposed to be a new bar, or we didn't find one above, we make a new bar
+    if(!foundBarWithSlot || this.macroBarsByName[spell.name] === '__NEW') {
       let i = 1;
       let newName = '';
 

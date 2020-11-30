@@ -134,7 +134,7 @@ export class ModalService {
     if(this.spellDialogRef) return this.spellDialogRef.afterClosed();
 
     this.spellDialogRef = this.dialog.open(NewSpellsComponent, {
-      width: '450px',
+      width: '650px',
       panelClass: 'fancy',
       disableClose: true,
       data: { newSpells, macroBars }

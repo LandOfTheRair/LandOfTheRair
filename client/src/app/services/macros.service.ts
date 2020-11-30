@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
-import { combineLatest, interval, Observable } from 'rxjs';
-import { first, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
 import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';

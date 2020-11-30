@@ -11,7 +11,7 @@
   display: flex;
   justify-content: space-between;
 
-  margin-top: 10px;
+  margin-top: -1em;
   align-items: center;
 }
 
@@ -21,4 +21,8 @@
   app-icon {
     margin-right: 10px;
   }
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0 !important;
 }

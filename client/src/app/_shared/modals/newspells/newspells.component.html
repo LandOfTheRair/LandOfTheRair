@@ -2,7 +2,11 @@
 
 <div mat-dialog-content>
   <div>
-    You have learned the following spells, would you like to add them to your macro groups?
+    You have learned the following spells, would you like to add them to your macro groups? 
+  </div>
+
+  <div>
+    <em>Note: If a macro will not fit in a bar, it will be automatically assigned to the first available location.</em>
   </div>
 
   <div class="row-container">
@@ -15,6 +19,16 @@
       <div class="row-buttons">
         <button mat-button (click)="dontAddToBar(spell)">No</button>
         <button mat-button (click)="addToBar(spell)" color="primary">Yes</button>
+
+        <mat-form-field>
+          <mat-label>Macro Group</mat-label>
+
+          <mat-select [(value)]="macroBarsByName[spell.name]">
+            <mat-option>Any</mat-option>
+            <mat-option *ngFor="let bar of macroBarsAddable" [value]="bar.name">{{ bar.name }}</mat-option>
+            <mat-option value="__NEW">New Group</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </div>
   </div>
