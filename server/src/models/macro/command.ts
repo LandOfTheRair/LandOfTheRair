@@ -22,7 +22,7 @@ export abstract class MacroCommand implements IMacroCommand {
   }
 
   protected youDontSeeThatPerson(character: ICharacter) {
-    this.sendMessage(character, 'You don\'t see that person.');
+    this.game.messageHelper.sendLogMessageToPlayer(character, { message: 'You don\'t see that person.', setTarget: null });
   }
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void {}        // always used only by people who can execute commands (players)
