@@ -14,6 +14,7 @@ export class DefaultAIBehavior implements IAI {
   private randomWalkRadius: number;
   private leashRadius: number;
   private pathDisrupted: { x: number, y: number } | null = null;
+  private currentTick = 0;
 
   // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
@@ -37,12 +38,13 @@ export class DefaultAIBehavior implements IAI {
 
   tick() {
     const npc = this.npc;
+    this.currentTick++;
 
     if (this.game.characterHelper.isDead(npc)) return;
 
     (npc.behaviors || []).forEach(beh => beh.tick(this.game, npc));
 
-    this.game.npcHelper.tick(npc);
+    this.game.npcHelper.tick(npc, this.currentTick);
 
     if (npc.hostility === Hostility.Never) return;
 

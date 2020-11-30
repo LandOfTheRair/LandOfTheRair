@@ -355,7 +355,7 @@ export class CharacterHelper extends BaseService {
   }
 
   // tick the character - do regen
-  public tick(character: ICharacter): void {
+  public tick(character: ICharacter, tick: number): void {
     if (this.isDead(character)) return;
 
     if (character.combatTicks > 0) {
@@ -369,11 +369,13 @@ export class CharacterHelper extends BaseService {
       }
     }
 
-    const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
-    const mpRegen = this.getStat(character, Stat.MPRegen);
+    if (tick % 5 === 0) {
+      const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
+      const mpRegen = this.getStat(character, Stat.MPRegen);
 
-    if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
-    this.mana(character, mpRegen);
+      if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
+      this.mana(character, mpRegen);
+    }
   }
 
   // get the skill level for the character

@@ -143,20 +143,22 @@ export class Game {
   }
 
   public loop() {
+    const trueTick = this.ticksElapsed / 10;
+
     const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production', dumpThreshold: 50 });
     timer.startTimer('gameloop');
 
     // fast tick actions
     if (this.ticksElapsed % 2 === 0) {
       timer.startTimer('fastTick');
-      this.playerManager.fastTick(timer);
+      this.playerManager.fastTick(timer, trueTick);
       timer.stopTimer('fastTick');
     }
 
     // slow tick actions
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer('slowTick');
-      this.playerManager.slowTick(timer);
+      this.playerManager.slowTick(timer, trueTick);
       this.groundManager.tick(timer);
       timer.stopTimer('slowTick');
     }

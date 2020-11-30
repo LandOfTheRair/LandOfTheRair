@@ -30,10 +30,10 @@ export class NPCHelper extends BaseService {
     return npc.allegiance === Allegiance.NaturalResource;
   }
 
-  public tick(npc: INPC): void {
+  public tick(npc: INPC, tick: number): void {
     if (this.isNaturalResource(npc)) return;
 
-    this.characterHelper.tick(npc);
+    this.characterHelper.tick(npc, tick);
   }
 
   public registerAttackDamage(npc: INPC, char: ICharacter, attack: string, damage: number) {

@@ -111,9 +111,9 @@ export class PlayerHelper extends BaseService {
     });
   }
 
-  public tick(player: Player, type: 'fast'|'slow'): void {
+  public tick(player: Player, type: 'fast'|'slow', tick: number): void {
     if (type === 'slow') {
-      this.characterHelper.tick(player);
+      this.characterHelper.tick(player, tick);
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
     }
 

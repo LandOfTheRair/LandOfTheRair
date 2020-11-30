@@ -78,10 +78,10 @@ export class PlayerManager extends BaseService {
     this.characterHelper.recalculateEverything(player);
   }
 
-  private tick(timer, type: 'slow'|'fast') {
+  private tick(timer, type: 'slow'|'fast', tick: number) {
     Object.values(this.inGamePlayers).forEach(player => {
 
-      this.game.playerHelper.tick(player, type);
+      this.game.playerHelper.tick(player, type, tick);
 
       // effects tick at most once per second
       if (type === 'slow') {
@@ -113,13 +113,13 @@ export class PlayerManager extends BaseService {
   }
 
   // do a fast tick (200ms by default)
-  public fastTick(timer) {
-    this.tick(timer, 'fast');
+  public fastTick(timer, tick: number) {
+    this.tick(timer, 'fast', tick);
   }
 
   // do a slow tick (1000ms by default)
-  public slowTick(timer) {
-    this.tick(timer, 'slow');
+  public slowTick(timer, tick: number) {
+    this.tick(timer, 'slow', tick);
 
     this.currentSlowTick++;
     if ((this.currentSlowTick % this.SAVE_TICK_COUNT) === 0) {
