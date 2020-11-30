@@ -9,7 +9,7 @@ import makeWebSocketObservable, {
 
 import { Store } from '@ngxs/store';
 import { StateReset } from 'ngxs-reset-plugin';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Observable, Subject, Subscription } from 'rxjs';
 import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { GameServerEvent, GameServerResponse } from '../../interfaces';
@@ -49,6 +49,8 @@ export class SocketService {
     [key in GameServerResponse]?: { component: string, callback: (data) => void }[]
   } = {};
 
+  private commandQueue = [];
+
   constructor(
     private store: Store,
     private logger: LoggerService
@@ -85,6 +87,8 @@ export class SocketService {
   }
 
   init() {
+    this.startMessageQueueAutomaticSender();
+
     this.tryDisconnect();
 
     this.socket$ = this.makeJsonWebSocketObservable(environment.server.ws);
@@ -146,8 +150,23 @@ export class SocketService {
     if (this.messages$) this.messages$.unsubscribe();
   }
 
+  startMessageQueueAutomaticSender() {
+    interval(100)
+      .subscribe(() => {
+        const sendCommands = [];
+        for(let i = 0; i < 5; i++) {
+          sendCommands.push(this.commandQueue.shift());
+        }
+
+        sendCommands.forEach(cmd => {
+          if(!cmd) return;
+          this.emit(GameServerEvent.DoCommand, cmd);
+        });
+      });
+  }
+
   sendAction(data: any = {}) {
-    this.emit(GameServerEvent.DoCommand, data);
+    this.commandQueue.push(data);
   }
 
   emit(type: GameServerEvent, data: any = {}) {

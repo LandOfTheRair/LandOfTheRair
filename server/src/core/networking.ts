@@ -117,6 +117,24 @@ export class WebsocketWorker {
 
   // send to game loop
   private emit(socket, data) {
+
+    // do some rate limiting so people don't spam the server
+    if (data.type === GameServerEvent.DoCommand) {
+
+      // you can send 5 commands every 100ms
+      if (socket.sends > 5 && socket.cooldown > Date.now()) return;
+
+      if (Date.now() > socket.cooldown) {
+        socket.sends = 0;
+        socket.cooldown = Date.now() + 100;
+      }
+
+      if (!socket.cooldown) socket.cooldown = Date.now() + 100;
+      if (!socket.sends) socket.sends = 0;
+
+      socket.sends++;
+    }
+
     process.send!({ socketId: socket.uuid, username: socket.username, ...data });
   }
 
