@@ -21,7 +21,7 @@
       <div class="vendor-intro">
         <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
 
-        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them!
+        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them! You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.
       </div>
 
       <div class="vendor-tabs">
