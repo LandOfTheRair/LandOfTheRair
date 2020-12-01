@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, isUndefined } from 'lodash';
 
-import { BaseService, canUseItem, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
+import { Allegiance, BaseService, canUseItem, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
@@ -82,6 +82,9 @@ export class ItemHelper extends BaseService {
   // check if an item is usable
   public canGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): boolean {
     if (!this.ownsAndItemUnbroken(player, item)) return false;
+
+    // GMs can wear everything disregarding requirements
+    if (player.allegiance === Allegiance.GM) return true;
 
     const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
     if (requirements) {

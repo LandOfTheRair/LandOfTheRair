@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { BaseService, ICharacter } from '../../interfaces';
+import { Allegiance, BaseClass, BaseService, ICharacter, INPC, IPlayer, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 
@@ -85,10 +85,78 @@ export class VisibilityHelper extends BaseService {
 
   }
 
+  // whether or not someone can see a spot in their FOV
   public canSee(char: ICharacter, xOffset: number, yOffset: number): boolean {
     if (!char.fov) return false;
     if (!char.fov[xOffset]) return false;
     if (!char.fov[xOffset][yOffset]) return false;
+    return true;
+  }
+
+  // whether or not this spot is hideable (near a wall, or in dark)
+  public canContinueHidingAtSpot(char: ICharacter): boolean {
+    const { map } = this.game.worldManager.getMap(char.map);
+    if (!map.checkIfCanHideAt(char.x, char.y)) return false;
+
+    // TODO: darkness
+
+    return true;
+  }
+
+  // whether or not someone can hide
+  public canHide(char: ICharacter): boolean {
+    if (this.game.effectHelper.hasEffect(char, 'Revealed')) return false;
+    if (this.game.effectHelper.hasEffect(char, 'Hidden')) return false;
+
+    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return false;
+
+    if (!this.canContinueHidingAtSpot(char)) return false;
+
+    return true;
+
+  }
+
+  // the reason you can't hide
+  public reasonUnableToHide(char: ICharacter): string {
+    if (this.game.effectHelper.hasEffect(char, 'Revealed')) return 'You cannot hide right now!';
+    if (this.game.effectHelper.hasEffect(char, 'Hidden')) return 'You are already hidden!';
+
+    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return 'You do not have the stealth to hide!';
+
+    if (!this.canContinueHidingAtSpot(char)) return 'You cannot hide here!';
+
+    return '';
+  }
+
+  // whether or not someone can see through another characters potential stealth
+  public canSeeThroughStealthOf(char: ICharacter, hiding: ICharacter): boolean {
+
+    // if the looker is a GM, they can see everything
+    if (char.allegiance === Allegiance.GM) return true;
+
+    // some creatures appear *only* for certain others (thanksgiving, etc)
+    if ((hiding as INPC).onlyVisibleTo && (hiding as INPC).onlyVisibleTo !== char.uuid) return false;
+
+    // if in same party, they can always see each other
+    if ((hiding as IPlayer).partyName && (char as IPlayer).partyName === (hiding as IPlayer).partyName) return true;
+
+    // if the hider is invisible and the seer does not have truesight, they are not visible
+    if (this.game.effectHelper.hasEffect(hiding, 'Invisible') && !this.game.effectHelper.hasEffect(char, 'TrueSight')) return false;
+
+    // last are stealth checks, if you have hidden it triggers the perception/stealth checks
+    if (this.game.effectHelper.hasEffect(hiding, 'Hidden')) {
+
+      // perception is simple: stats + level. thieves get a multiplier
+      const perception = this.game.characterHelper.getPerception(char);
+
+      // stealth is also simple: stats + level + skill. thieves get a multiplier
+      const stealth = this.game.characterHelper.getStat(hiding, Stat.Stealth);
+
+      const canSee = perception > stealth;
+
+      return canSee;
+    }
+
     return true;
   }
 

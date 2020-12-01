@@ -4,23 +4,23 @@ import { SoundEffect } from './sfx';
 
 
 export interface IStatusEffectInfo {
-  potency: number;                    // the potency of the effect (used to overwrite if necessary)
+  potency: number;                              // the potency of the effect (used to overwrite if necessary)
 
-  currentTick?: number;               // the current tick of the effect
-  statChanges?: Record<Stat, number>; // the stat boosts for this effect
-  charges?: number;                   // the number of charges this effect has remaining
-  buildUpPercent?: number;            // the percentage 0..100 for this effect before it bursts
-  damage?: number;                    // the amount of damage this effect does per tick
-  damageType?: DamageType;            // the type of damage this effect does
-  isFrozen?: boolean;                 // if you're currently frozen from the effect
-  canRemove?: boolean;                // if the effect can be manually unapplied
-  persistThroughDeath?: boolean;      // whether the effect should persist through death or not
-  enrageTimer?: number;               // the enrage timer associated with this effect
-  hidden?: boolean;                   // whether or not the effect should be hidden on the client side
-  unique?: boolean;                   // whether or not this effect is unique (ie, can have duplicates of)
-  tier?: string;                      // the tier of the effect (used for stat potions)
-  tooltip?: string;                   // the tooltip for the item effect
-  message?: string;                   // the message sent for the item effect
+  currentTick?: number;                         // the current tick of the effect
+  statChanges?: Partial<Record<Stat, number>>;  // the stat boosts for this effect
+  charges?: number;                             // the number of charges this effect has remaining
+  buildUpPercent?: number;                      // the percentage 0..100 for this effect before it bursts
+  damage?: number;                              // the amount of damage this effect does per tick
+  damageType?: DamageType;                      // the type of damage this effect does
+  isFrozen?: boolean;                           // if you're currently frozen from the effect
+  canRemove?: boolean;                          // if the effect can be manually unapplied
+  persistThroughDeath?: boolean;                // whether the effect should persist through death or not
+  enrageTimer?: number;                         // the enrage timer associated with this effect
+  hidden?: boolean;                             // whether or not the effect should be hidden on the client side
+  unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
+  tier?: string;                                // the tier of the effect (used for stat potions)
+  tooltip?: string;                             // the tooltip for the item effect
+  message?: string;                             // the message sent for the item effect
 }
 
 export interface IStatusEffect {

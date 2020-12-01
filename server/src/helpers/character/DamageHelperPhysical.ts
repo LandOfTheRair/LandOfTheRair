@@ -738,7 +738,8 @@ export class DamageHelperPhysical extends BaseService {
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
     const { isThrow, throwHand, isBackstab, isOffhand, isKick, damageMult } = args;
     let { isPunch } = args;
-    const isAttackerVisible = true;
+    const isAttackerVisible = this.game.visibilityHelper.canSeeThroughStealthOf(defender, attacker);
+    // TODO: darkness
 
     args.attackerName = isAttackerVisible ? attacker.name : 'somebody';
     args.backstabIgnoreRange = args.backstabIgnoreRange ?? false;
@@ -753,8 +754,6 @@ export class DamageHelperPhysical extends BaseService {
 
     this.game.characterHelper.engageInCombat(attacker);
     this.game.characterHelper.engageInCombat(defender);
-
-    // TODO: stealth
 
     const attackerWeapon = this.getWeaponForAttacker(attacker, args);
     const { type, secondaryType, itemClass, canShoot, damageClass } = this.game.itemHelper.getItemProperties(attackerWeapon,

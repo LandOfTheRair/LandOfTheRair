@@ -57,8 +57,6 @@ export class EffectManager extends BaseService {
     if (applyMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(character, { message: applyMessage, sfx: effectData.meta.applySfx });
     }
-
-    this.game.characterHelper.calculateStatTotals(character);
   }
 
   // called when an effect is ticked
@@ -84,8 +82,6 @@ export class EffectManager extends BaseService {
     if (unapplyMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(character, { message: unapplyMessage });
     }
-
-    this.game.characterHelper.calculateStatTotals(character);
   }
 
   // called when an effect is destroy

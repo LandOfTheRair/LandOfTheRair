@@ -16,7 +16,8 @@ const PLAYER_KEYS = [
   'items.equipment.leftHand', 'items.equipment.rightHand',
   'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
   'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
-  'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects'
+  'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects',
+  'totalStats.stealth'
 ];
 
 const NPC_KEYS = [
@@ -305,8 +306,7 @@ export class MapState {
       // if they can't attack, they're not worth fighting
       if ((char as INPC).hostility === Hostility.Never) return false;
 
-      // TODO: stealth affects sight
-      // if(!me.canSeeThroughStealthOf(char)) return false;
+      if (!this.game.visibilityHelper.canSeeThroughStealthOf(me, char)) return false;
 
       if (this.game.targettingHelper.checkTargetForHostility(me, char)) return true;
 
@@ -379,6 +379,7 @@ export class MapState {
     const nearbyPlayers = this.players
       .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
       .filter(({ uuid }) => uuid !== player.uuid)
+      .filter(p => this.game.visibilityHelper.canSeeThroughStealthOf(player, this.playersByUUID[p.uuid]))
       .map(({ uuid }) => pick(this.playersByUUID[uuid], PLAYER_KEYS))
       .filter(Boolean);
 
@@ -391,6 +392,7 @@ export class MapState {
     // update players
     const nearbyNPCs = this.npcs
     .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
+    .filter(p => this.game.visibilityHelper.canSeeThroughStealthOf(player, this.npcsByUUID[p.uuid]))
     .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
     .filter(Boolean);
 
@@ -542,6 +544,14 @@ export class MapState {
 
     // if player knowledge x/y, update ground
     this.triggerGroundUpdateInRadius(x, y);
+  }
+
+  // update all npcs for players in radius
+  public triggerNPCAndPlayerUpdateInRadius(x: number, y: number) {
+    this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => {
+      this.triggerNPCUpdateForPlayer(player);
+      this.triggerPlayerUpdateForPlayer(player);
+    });
   }
 
   // update all npcs for players in radius

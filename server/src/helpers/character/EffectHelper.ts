@@ -81,7 +81,11 @@ export class EffectHelper extends BaseService {
       character.effects[type].push(effect);
     }
 
+    // any stat changes must be added in effectCreate to be counted immediately
     this.game.effectManager.effectCreate(effectName, character, effect);
+    this.game.characterHelper.calculateStatTotals(character);
+
+    // effect apply hook is for after create
     this.game.effectManager.effectApply(effectName, character, effect);
   }
 
@@ -107,6 +111,9 @@ export class EffectHelper extends BaseService {
     if (!character.effects[type].find(x => x.effectName === effect.effectName)) {
       delete character.effects._hash[effect.effectName];
     }
+
+    // recalculate stats when removed, before calling unapply or destroy
+    this.game.characterHelper.calculateStatTotals(character);
 
     this.game.effectManager.effectUnapply(effect.effectName, character, effect);
     this.game.effectManager.effectDestroy(effect.effectName, character, effect);
@@ -171,7 +178,7 @@ export class EffectHelper extends BaseService {
 
   // check if someone has an effect
   public hasEffect(char: ICharacter, effName: string): boolean {
-    return char.effects._hash?.[effName];
+    return char.effects?._hash?.[effName];
   }
 
 }

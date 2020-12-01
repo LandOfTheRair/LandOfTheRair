@@ -39,7 +39,7 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   public get shouldShow() {
-    return this.player && this.target && this.target.hp.current > 0 && this.isInFOV; // TODO: can see stealth here
+    return this.player && this.target && this.target.hp.current > 0 && this.isInFOV;
   }
 
   public get targetHealth() {

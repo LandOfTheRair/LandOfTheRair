@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 
 import { basePlayerSprite, basePlayerSwimmingSprite, Direction, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
-  ObjectType, spriteOffsetForDirection, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+  ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 
 const Phaser = (window as any).Phaser;
@@ -115,6 +115,8 @@ export class MapScene extends Phaser.Scene {
     sprite.setFrame(newFrame);
 
     this.updateSpritePositionalData(sprite, npc);
+
+    this.stealthUpdate(sprite, npc);
   }
 
   private removeNPCSprite(uuid: string) {
@@ -526,9 +528,6 @@ export class MapScene extends Phaser.Scene {
     setTimeout(() => {
       this.game.gameService.sendCommandString('~move 0 0');
     }, 1000);
-
-    // TODO: adjust if this sprite is visible based on visibility
-    // TODO: if sprite is visible but stealthed, set an alpha of 0.7
   }
 
   public update() {
@@ -544,6 +543,11 @@ export class MapScene extends Phaser.Scene {
     if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
     if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
     if (this.groundUpdate$) this.groundUpdate$.unsubscribe();
+  }
+
+  // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
+  private stealthUpdate(sprite, character: ICharacter) {
+    sprite.alpha = (character.totalStats?.[Stat.Stealth] ?? 0) ? 0.7 : 1;
   }
 
   // sprite updates
@@ -574,6 +578,8 @@ export class MapScene extends Phaser.Scene {
     sprite.setFrame(newFrame);
 
     sprite.alpha = player.dir === Direction.Corpse ? 0 : 1;
+
+    this.stealthUpdate(sprite, player);
   }
 
   private updateSpritePositionalData(sprite, char: ICharacter) {

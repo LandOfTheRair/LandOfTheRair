@@ -256,92 +256,125 @@ export class WorldMap {
     return get(this.layerHashes, [mapLayer, x, y], null);
   }
 
+  // get the terrain tile at x/y
   public getTerrainAt(x: number, y: number): number {
     return this.getArrayLayerData(MapLayer.Terrain, x, y);
   }
 
+  // get the floor tile at x/y
   public getFloorAt(x: number, y: number): number {
     return this.getArrayLayerData(MapLayer.Floors, x, y);
   }
 
+  // get the fluid tile at x/y
   public getFluidAt(x: number, y: number): number {
     return this.getArrayLayerData(MapLayer.Fluids, x, y);
   }
 
+  // get the foliage tile at x/y
   public getFoliageAt(x: number, y: number): number {
     return this.getArrayLayerData(MapLayer.Foliage, x, y);
   }
 
+  // get the wall at x/y
   public getWallAt(x: number, y: number): number {
     return this.getArrayLayerData(MapLayer.Walls, x, y);
   }
 
+  // get the decor at x/y
   public getDecorAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.Decor, x, y);
   }
 
+  // get the densedecor at x/y
   public getDenseDecorAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.DenseDecor, x, y);
   }
 
+  // get the opaquedecor at x/y
   public getOpaqueDecorAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.OpaqueDecor, x, y);
   }
 
+  // get the interactable at the x/y.
   public getInteractableAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.Interactables, x, y);
   }
 
+  // get the GREEN npc at the x/y. green npcs cannot be layered on the same tile
   public getNPCAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.NPCs, x, y);
   }
 
+  // get a spawner at an x/y
   public getSpawnerAt(x: number, y: number): null | any {
     return this.getObjectAt(MapLayer.Spawners, x, y);
   }
 
+  // get the region description for the particular tile
   public getRegionDescriptionAt(x: number, y: number): any {
     const obj = this.getObjectAt(MapLayer.RegionDescriptions, x, y);
     return obj?.properties?.desc || '';
   }
 
+  // get the bgm for the particular tile
   public getBackgroundMusicAt(x: number, y: number): string {
     const obj = this.getObjectAt(MapLayer.BackgroundMusic, x, y);
     return obj?.name || '';
   }
 
+  // get the succorport properties if they exist
   public getSuccorportPropertiesAt(x: number, y: number): null | any {
     const obj = this.getObjectAt(MapLayer.Succorport, x, y);
     return obj?.properties;
   }
 
+  // filter objects at the given x/y for a type of object
   public getInteractableOfTypeAt(x: number, y: number, type: ObjectType): null | any {
     const obj = this.getInteractableAt(x, y);
     return obj?.type === type ? obj : null;
   }
 
+  // check first for dense decor, then secondly for objects at the location
   public getInteractableOrDenseObject(x: number, y: number) {
     return this.getDenseDecorAt(x, y) || this.getInteractableAt(x, y);
   }
 
+  // find a door by a given id
   public findDoorById(id: number) {
     return this.json.layers[MapLayer.Interactables].objects.find(x => x.id === id);
   }
 
-  checkIfDenseObjectAt(x: number, y: number): boolean {
+  // check if there's a dense object or an interactable that isn't a door
+  public checkIfDenseObjectAt(x: number, y: number): boolean {
     const object = this.getInteractableOrDenseObject(x, y);
     return object?.density && object?.type !== ObjectType.Door;
   }
 
-  checkIfActualWallAt(x: number, y: number, shouldAirCountForWall = true): boolean {
+  // whether or not there's a wall or, optionally, an air space at the tile
+  public checkIfActualWallAt(x: number, y: number, shouldAirCountForWall = true): boolean {
     const wallAt = this.getWallAt(x, y);
     return !!(wallAt && (shouldAirCountForWall ? true : wallAt !== TilesWithNoFOVUpdate.Air));
   }
 
-  checkIfHideableTileAt(x: number, y: number, shouldAirCountForWall = true): boolean {
+  // whether or not there is a wall or foliage at the chosen tile
+  public checkIfHideableTileAt(x: number, y: number, shouldAirCountForWall = true): boolean {
     return !!(this.checkIfActualWallAt(x, y, shouldAirCountForWall) || this.getFoliageAt(x, y));
   }
 
+  // whether or not you can hide at a certain position (checks walls and foliage of surrounding tiles)
+  public checkIfCanHideAt(x: number, y: number, shouldAirCountForWall = true): boolean {
+    for (let xx = x - 1; xx <= x + 1; xx++) {
+      for (let yy = y - 1; yy <= y + 1; yy++) {
+        const tile = this.checkIfHideableTileAt(xx, yy, shouldAirCountForWall);
+        if (tile) return true;
+      }
+    }
+
+    return false;
+  }
+
+  // build a path between x/y->x/y
   public findPath(startX: number, startY: number, endX: number, endY: number) {
 
     const grid = this.densityMap.clone();
@@ -364,6 +397,7 @@ export class WorldMap {
     return steps;
   }
 
+  // whether or not the current tile is succorable
   public canSuccor(player: IPlayer): boolean {
     return this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
   }

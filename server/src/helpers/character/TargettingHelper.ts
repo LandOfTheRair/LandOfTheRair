@@ -103,7 +103,7 @@ export class TargettingHelper extends BaseService {
       if (useSight && !this.visibilityHelper.canSee(player, diffX, diffY)) return false;
 
       // you can always see yourself
-      // if(useSight && player !== target && !player.canSeeThroughStealthOf(target)) return false;
+      if (useSight && player !== target && !this.game.visibilityHelper.canSeeThroughStealthOf(player, target)) return false;
 
       return this.doesTargetMatchSearch(target, findStr);
     });

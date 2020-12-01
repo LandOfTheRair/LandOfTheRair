@@ -2,8 +2,11 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
+import { BaseClass, BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
+import { Player } from '../../models';
+
+import * as HideReduction from '../../../content/_output/hidereductions.json';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -164,6 +167,10 @@ export class CharacterHelper extends BaseService {
 
     // but if we're under it, we boost
     character.stats[stat] = (character.stats[stat] ?? 1) + value;
+
+    // recalculate stats
+    this.calculateStatTotals(character);
+
     return true;
 
   }
@@ -284,6 +291,9 @@ export class CharacterHelper extends BaseService {
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
 
+    const oldPerception = character.totalStats[Stat.Perception];
+    const oldStealth = character.totalStats[Stat.Stealth];
+
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
 
@@ -339,8 +349,23 @@ export class CharacterHelper extends BaseService {
     // can't move more than one screen at a time
     character.totalStats[Stat.Move] = clamp(character.stats[Stat.Move] || 3, 0, 4);
 
-    // TODO: adjust stealth / perception
-    // TODO: trait bonuses
+    // if we're a player and our perception changes, we do a full visual update
+    const { state } = this.game.worldManager.getMap(character.map);
+
+    if (this.isPlayer(character) && oldPerception !== character.totalStats[Stat.Perception]) {
+      state.triggerFullUpdateForPlayer(character as Player);
+    }
+
+    // update stealth to do hide reductions
+    if ((character.totalStats[Stat.Stealth] ?? 0) > 0) {
+      character.totalStats[Stat.Stealth] = Math.max(0, (character.totalStats[Stat.Stealth] ?? 0) - this.getStealthPenalty(character));
+
+      // if the stealth is different we gotta trigger an update
+      if (oldStealth !== character.totalStats[Stat.Stealth]) {
+        state.triggerPlayerUpdateInRadius(character.x, character.y);
+      }
+    }
+
     // TODO: adjust pet stats
   }
 
@@ -352,6 +377,37 @@ export class CharacterHelper extends BaseService {
   // get a specific base stat value from a character
   public getBaseStat(character: ICharacter, stat: Stat): number {
     return character.stats[stat] ?? 0;
+  }
+
+  // get the stealth value for a character
+  public getStealth(char: ICharacter): number {
+    let stealth = this.getSkillLevel(char, Skill.Thievery) + char.level + this.getStat(char, Stat.AGI);
+    if (char.baseClass === BaseClass.Thief) stealth *= 1.5;
+
+    return stealth;
+  }
+
+  public getStealthPenalty(char: ICharacter): number {
+
+    const leftHandClass = char.items.equipment[ItemSlot.LeftHand]
+                        ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
+                        : null;
+
+    const rightHandClass = char.items.equipment[ItemSlot.RightHand]
+                         ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.RightHand], 'itemClass')
+                         : null;
+
+    const totalReduction = (HideReduction[leftHandClass]) || 0 + (HideReduction[rightHandClass] || 0);
+
+    return totalReduction;
+  }
+
+  // get perception value for a character
+  public getPerception(char: ICharacter): number {
+    let perception = this.getStat(char, Stat.Perception) + char.level + this.getStat(char, Stat.WIS);
+    if (char.baseClass === BaseClass.Thief) perception *= 1.5;
+
+    return perception;
   }
 
   // tick the character - do regen
