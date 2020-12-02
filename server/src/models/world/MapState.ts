@@ -258,7 +258,7 @@ export class MapState {
   }
 
   // get PLAYERS in range (query)
-  public getPlayersInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+  public getPlayersInRange(ref: ICharacter, radius: number, except: string[] = [], useSight = true): ICharacter[] {
     return this.getPlayersFromQuadtrees(ref, radius)
       .filter(char => char
                    && !this.game.characterHelper.isDead(char)
@@ -267,13 +267,13 @@ export class MapState {
   }
 
   // get PLAYERS in range (query, but able to use args from above)
-  public getAllInRangeRaw(ref: { x: number, y: number }, radius, except: string[] = []): ICharacter[] {
+  public getAllInRangeRaw(ref: { x: number, y: number }, radius: number, except: string[] = []): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char && !except.includes(char.uuid));
   }
 
   // get ALL characters in range
-  public getAllInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+  public getAllInRange(ref: ICharacter, radius: number, except: string[] = [], useSight = true): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char
                    && !this.game.characterHelper.isDead(char)

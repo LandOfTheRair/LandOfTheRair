@@ -35,8 +35,8 @@ export class CharacterHelper extends BaseService {
     if (isNaN(char.hp.current)) char.hp.current = 1;
   }
 
-  public manaDamage(char: ICharacter, hp: number): void {
-    this.mana(char, -hp);
+  public manaDamage(char: ICharacter, mp: number): void {
+    this.mana(char, -mp);
   }
 
   public mana(char: ICharacter, mp: number): void {
@@ -379,6 +379,29 @@ export class CharacterHelper extends BaseService {
     return character.stats[stat] ?? 0;
   }
 
+  // hp regen is a min of 1, affected by a con modifier past 21
+  public getHPRegen(character: ICharacter): number {
+    return Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
+  }
+
+  // thieves and warriors have different mpregen setups
+  public getMPRegen(character: ICharacter): number {
+
+    // thieves not in combat regen faster
+    if (character.baseClass === BaseClass.Thief) {
+      if (character.combatTicks <= 0) return 10;
+      return 1;
+    }
+
+    // warriors are the inverse of thieves
+    if (character.baseClass === BaseClass.Warrior) {
+      if (character.combatTicks <= 0) return -3;
+      return 3;
+    }
+
+    return this.getStat(character, Stat.MPRegen);
+  }
+
   // get the stealth value for a character
   public getStealth(char: ICharacter): number {
     let stealth = this.getSkillLevel(char, Skill.Thievery) + char.level + this.getStat(char, Stat.AGI);
@@ -426,8 +449,8 @@ export class CharacterHelper extends BaseService {
     }
 
     if (tick % 5 === 0) {
-      const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
-      const mpRegen = this.getStat(character, Stat.MPRegen);
+      const hpRegen = this.getHPRegen(character);
+      const mpRegen = this.getMPRegen(character);
 
       if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
       this.mana(character, mpRegen);
