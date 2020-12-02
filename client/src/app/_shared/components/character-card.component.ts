@@ -13,6 +13,15 @@ import { SocketService } from '../../services/socket.service';
   template: `
     <div class="char-card" [attr.uuid]="char.uuid">
 
+      <ng-container *ngIf="currentTarget$ | async as currentTarget">
+        <div class="char-target" *ngIf="currentTarget.uuid === char.uuid">
+          <div class="outer circle"></div>
+          <div class="middle circle"></div>
+          <div class="inner circle"></div>
+          <div class="innermost circle"></div>
+        </div>
+      </ng-container>
+
       <div class="char-left-container">
 
         <div class="char-health d-flex justify-content-center" [ngClass]="[barClass()]">
@@ -29,15 +38,6 @@ import { SocketService } from '../../services/socket.service';
         <div class="effect-container"
              [class.animate]="effect"
              [ngClass]="[effect]"></div>
-
-        <ng-container *ngIf="currentTarget$ | async as currentTarget">
-          <div class="char-target" *ngIf="currentTarget.uuid === char.uuid">
-            <div class="outer circle"></div>
-            <div class="middle circle"></div>
-            <div class="inner circle"></div>
-            <div class="innermost circle"></div>
-          </div>
-        </ng-container>
 
         <div class="char-title" [ngClass]="[barClass()]">
           <div class="char-name">
@@ -73,11 +73,9 @@ import { SocketService } from '../../services/socket.service';
 
   .char-target {
     position: absolute;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-content: center;
+    width: 26px;
+    top: 20px;
+    right: 20px;
   }
 
   .circle {
