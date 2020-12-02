@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseClass, BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
+import { BaseClass, BaseService, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
 import { Player } from '../../models';
 
@@ -60,6 +60,31 @@ export class CharacterHelper extends BaseService {
     return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
   }
 
+  // get an empty hand for the character
+  public getEmptyHand(char: ICharacter): ItemSlot | null {
+    if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
+    if (!char.items.equipment[ItemSlot.LeftHand])  return ItemSlot.LeftHand;
+    return null;
+  }
+
+  public hasCurrency(char: ICharacter, total: number, currency: Currency = Currency.Gold): boolean {
+    return (char.currency[currency] || 0) >= total;
+  }
+
+  // gain currency for a player
+  public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
+    if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${char.name} is NaN!`);
+
+    char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
+
+  }
+
+  // lose currency for a player (either by taking it, or spending it)
+  public loseCurrency(player: ICharacter, currencyLost: number, currency: Currency = Currency.Gold): void {
+    this.gainCurrency(player, -currencyLost, currency);
+  }
+
+  // set the characters equipment slot to something, undefined = unequip
   public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
     const oldItem = char.items.equipment[slot];
 
@@ -113,6 +138,10 @@ export class CharacterHelper extends BaseService {
 
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
+  }
+
+  public hasAgro(char: ICharacter, target: ICharacter): boolean {
+    return target.agro[char.uuid] > 0;
   }
 
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
@@ -367,6 +396,11 @@ export class CharacterHelper extends BaseService {
     }
 
     // TODO: adjust pet stats
+  }
+
+  // get the current currency value for a character
+  public getCurrency(character: ICharacter, currency: Currency = Currency.Gold): number {
+    return character.currency[currency] ?? 0;
   }
 
   // get a specific stat value from a character

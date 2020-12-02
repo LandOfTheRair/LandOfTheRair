@@ -43,6 +43,13 @@ export class ItemCreator extends BaseService {
 
   }
 
+  // get a gold item of the specified value
+  public getGold(value: number): ISimpleItem {
+    const baseGold = this.getSimpleItem('Gold Coin');
+    baseGold.mods.value = value;
+    return baseGold;
+  }
+
   public rerollItem(item: ISimpleItem): ISimpleItem {
     const newItem = cloneDeep(item);
     newItem.uuid = uuid();

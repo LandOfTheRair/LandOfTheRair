@@ -11,12 +11,16 @@ export class Hide extends SkillCommand {
     return this.game.visibilityHelper.canHide(char);
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.game.visibilityHelper.canHide(player)) {
-      this.sendMessage(player, this.game.visibilityHelper.reasonUnableToHide(player));
+  execute(char: ICharacter) {
+    this.use(char);
+  }
+
+  use(char: ICharacter) {
+    if (!this.game.visibilityHelper.canHide(char)) {
+      this.sendMessage(char, this.game.visibilityHelper.reasonUnableToHide(char));
       return;
     }
 
-    this.game.effectHelper.addEffect(player, '', 'Hidden', { effect: { duration: -1 } });
+    this.game.effectHelper.addEffect(char, '', 'Hidden', { effect: { duration: -1 } });
   }
 }

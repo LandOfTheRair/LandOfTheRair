@@ -42,7 +42,7 @@ export class SpellManager extends BaseService {
     if (skillLevel > spellData.maxSkillForGain ?? 0) return;
 
     this.game.playerHelper.flagSkill(caster as Player, [skillGain]);
-    this.game.playerHelper.gainSkill(caster as Player, skillGain, 1);
+    this.game.playerHelper.tryGainSkill(caster as Player, skillGain, 1);
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {

@@ -307,6 +307,13 @@ export class PlayerHelper extends BaseService {
 
   }
 
+  // try to gain skill based on the current map etc
+  public tryGainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
+    if (!this.canGainSkillOnMap(player, skill)) return;
+
+    this.gainSkill(player, skill, skillGained);
+  }
+
   // gain skill for a character
   public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
     if (!skill) skill = Skill.Martial;
@@ -345,23 +352,6 @@ export class PlayerHelper extends BaseService {
     } else {
       this.gainSkill(player, primary, skillGained);
     }
-  }
-
-  public hasCurrency(player: IPlayer, total: number, currency: Currency = Currency.Gold): boolean {
-    return (player.currency[currency] || 0) >= total;
-  }
-
-  // gain currency for a player
-  public gainCurrency(player: IPlayer, currencyGained: number, currency: Currency = Currency.Gold): void {
-    if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${player.name} is NaN!`);
-
-    player.currency[currency] = Math.max(Math.floor((player.currency[currency] ?? 0) + currencyGained), 0);
-
-  }
-
-  // lose currency for a player (either by taking it, or spending it)
-  public loseCurrency(player: IPlayer, currencyLost: number, currency: Currency = Currency.Gold): void {
-    this.gainCurrency(player, -currencyLost, currency);
   }
 
   // modify rep for a faction

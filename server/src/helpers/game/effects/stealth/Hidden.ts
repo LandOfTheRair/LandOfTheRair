@@ -1,4 +1,4 @@
-import { BaseClass, ICharacter, IStatusEffect, Stat } from '../../../../interfaces';
+import { BaseClass, ICharacter, IPlayer, IStatusEffect, Skill, Stat } from '../../../../interfaces';
 import { Effect } from '../../../../models';
 
 export class Hidden extends Effect {
@@ -25,6 +25,10 @@ export class Hidden extends Effect {
 
       const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
       const totalReduction = Math.max(1, numHostile.length - hostileReduction);
+
+      if (this.game.characterHelper.isPlayer(char)) {
+        this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
+      }
 
       this.game.characterHelper.manaDamage(char, totalReduction);
 

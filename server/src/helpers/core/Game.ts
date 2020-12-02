@@ -5,7 +5,7 @@ import { LoggerTimer } from 'logger-timer';
 import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
-  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
+  InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
@@ -73,7 +73,7 @@ export class Game {
     public npcHelper: NPCHelper,
     public characterHelper: CharacterHelper,
     public playerHelper: PlayerHelper,
-    public playerInventoryHelper: PlayerInventoryHelper,
+    public inventoryHelper: InventoryHelper,
     public effectHelper: EffectHelper,
     public groundManager: GroundManager,
     public spellManager: SpellManager,
@@ -81,6 +81,7 @@ export class Game {
 
     public messageHelper: MessageHelper,
     public traitHelper: TraitHelper,
+    public stealHelper: StealHelper,
     public commandHandler: CommandHandler,
 
     public playerManager: PlayerManager,
@@ -106,9 +107,9 @@ export class Game {
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
-      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
+      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper',
-      'commandHandler', 'messageHelper', 'traitHelper',
+      'commandHandler', 'messageHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager'
   ];
 

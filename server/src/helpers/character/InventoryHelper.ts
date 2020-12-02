@@ -1,17 +1,17 @@
 import { Injectable } from 'injection-js';
-import { BaseService, Currency, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { BaseService, Currency, ICharacter, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 
 @Injectable()
-export class PlayerInventoryHelper extends BaseService {
+export class InventoryHelper extends BaseService {
 
   init() {}
 
   // sack functions
-  public sackSpaceLeft(player: IPlayer): number {
+  public sackSpaceLeft(player: ICharacter): number {
     return 25 - player.items.sack.items.length;
   }
 
-  public canAddItemToSack(player: IPlayer, item: ISimpleItem): boolean {
+  public canAddItemToSack(player: ICharacter, item: ISimpleItem): boolean {
     const isSackable = this.game.itemHelper.getItemProperty(item, 'isSackable');
     if (!isSackable) return false;
 
@@ -20,12 +20,12 @@ export class PlayerInventoryHelper extends BaseService {
     return true;
   }
 
-  public addItemToSack(player: IPlayer, item: ISimpleItem): boolean {
+  public addItemToSack(player: ICharacter, item: ISimpleItem): boolean {
     if (!this.canAddItemToSack(player, item)) return false;
 
     const { itemClass, currency, value } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'currency', 'value']);
     if (itemClass === ItemClass.Coin) {
-      this.game.playerHelper.gainCurrency(player, value ?? 0, currency);
+      this.game.characterHelper.gainCurrency(player, value ?? 0, currency);
       return true;
     }
 
@@ -35,7 +35,7 @@ export class PlayerInventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemFromSack(player: IPlayer, slot: number): boolean {
+  public removeItemFromSack(player: ICharacter, slot: number): boolean {
     player.items.sack.items.splice(slot, 1);
     player.items.sack.items = player.items.sack.items.filter(Boolean);
 
@@ -43,11 +43,11 @@ export class PlayerInventoryHelper extends BaseService {
   }
 
   // belt functions
-  public beltSpaceLeft(player: IPlayer): number {
+  public beltSpaceLeft(player: ICharacter): number {
     return 5 - player.items.belt.items.length;
   }
 
-  public canAddItemToBelt(player: IPlayer, item: ISimpleItem): boolean {
+  public canAddItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
     const isBeltable = this.game.itemHelper.getItemProperty(item, 'isBeltable');
     if (!isBeltable) return false;
 
@@ -56,7 +56,7 @@ export class PlayerInventoryHelper extends BaseService {
     return true;
   }
 
-  public addItemToBelt(player: IPlayer, item: ISimpleItem): boolean {
+  public addItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
     if (!this.canAddItemToBelt(player, item)) return false;
 
     player.items.belt.items.push(item);
@@ -65,7 +65,7 @@ export class PlayerInventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemFromBelt(player: IPlayer, slot: number): boolean {
+  public removeItemFromBelt(player: ICharacter, slot: number): boolean {
     player.items.belt.items.splice(slot, 1);
     player.items.belt.items = player.items.belt.items.filter(Boolean);
 
@@ -96,7 +96,7 @@ export class PlayerInventoryHelper extends BaseService {
     this.addItemToBuyback(player, item);
 
     // tell them they sold the item and give em the money
-    this.game.playerHelper.gainCurrency(player, totalSellValue, Currency.Gold);
+    this.game.characterHelper.gainCurrency(player, totalSellValue, Currency.Gold);
     this.game.messageHelper.sendSimpleMessage(player, `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`);
   }
 

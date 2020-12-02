@@ -130,8 +130,7 @@ export class DeathHelper extends BaseService {
       // always drop gold
       const goldHeld = dead.currency?.[Currency.Gold] ?? 0;
       if (goldHeld > 0) {
-        const gold = this.game.itemCreator.getSimpleItem('Gold Coin');
-        gold.mods.value = goldHeld;
+        const gold = this.game.itemCreator.getGold(goldHeld);
         allItems.push(gold);
       }
 

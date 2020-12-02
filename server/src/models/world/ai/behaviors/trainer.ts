@@ -101,8 +101,8 @@ export class TrainerBehavior implements IAIBehavior {
         const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
         if (skillLevel > maxSkillTrain) return `You're way beyond my comprehension.`;
 
-        if (!game.playerHelper.hasCurrency(player, 50)) return `You do need to pay for this, you know. 50 gold is not a lot!`;
-        game.playerHelper.loseCurrency(player, 50);
+        if (!game.characterHelper.hasCurrency(player, 50)) return `You do need to pay for this, you know. 50 gold is not a lot!`;
+        game.characterHelper.loseCurrency(player, 50);
 
         const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
 
@@ -118,7 +118,7 @@ export class TrainerBehavior implements IAIBehavior {
         if (!behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
-        if (!game.playerHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
+        if (!game.characterHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
 
         if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
 
@@ -128,7 +128,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
 
-        game.playerHelper.loseCurrency(player, 200);
+        game.characterHelper.loseCurrency(player, 200);
 
         return `You have gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 2} trait points.`;
       });

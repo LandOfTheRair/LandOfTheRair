@@ -48,7 +48,7 @@ export class DrinkCommand extends MacroCommand {
 
     // we equip the potion we found
     const item = player.items.sack.items[firstHealIndex];
-    this.game.playerInventoryHelper.removeItemFromSack(player, firstHealIndex);
+    this.game.inventoryHelper.removeItemFromSack(player, firstHealIndex);
     this.game.characterHelper.setEquipmentSlot(player, ItemSlot.Potion, item);
     this.game.itemHelper.useItemInSlot(player, ItemSlot.Potion);
   }

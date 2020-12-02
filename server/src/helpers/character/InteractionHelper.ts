@@ -59,7 +59,7 @@ export class InteractionHelper extends BaseService {
           return false;
         }
 
-        this.game.playerHelper.gainSkill(character as IPlayer, Skill.Thievery, skillRequired);
+        this.game.playerHelper.tryGainSkill(character as IPlayer, Skill.Thievery, skillRequired);
         this.game.messageHelper.sendSimpleMessage(character, 'You successfully picked the lock!');
         this.game.characterHelper.setRightHand(character, undefined);
 
