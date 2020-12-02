@@ -94,7 +94,6 @@ export class StealHelper extends BaseService {
 
       const item = sample(target.items.sack.items);
       this.game.inventoryHelper.removeItemFromSack(target, item);
-      target.sack.takeItem(item);
 
       this.game.characterHelper.setEquipmentSlot(char, handName, item);
 
