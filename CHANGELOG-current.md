@@ -1,18 +1,18 @@
-## [1.3.3](https://github.com/landoftherair/lotr2/compare/v1.3.2...v1.3.3) (2020-11-30)
+## [1.3.4](https://github.com/landoftherair/lotr2/compare/v1.3.3...v1.3.4) (2020-12-02)
 
 
 ### Bug Fixes
 
-* **combat:** auto attack would send too many inputs over time, causing issues ([d7cc934](https://github.com/landoftherair/lotr2/commit/d7cc93410099572317fdab74988c836c2248031c))
+* **macro:** don't throw error if a spell doesn't exist ([485231e](https://github.com/landoftherair/lotr2/commit/485231efd9340eeae406a44ea648bb148e2e60bf))
+* **ui:** macro bar click popover for setting bars tweaked to be slightly better ([23225af](https://github.com/landoftherair/lotr2/commit/23225af38cd52f3e2c1a4167ca2b3cefb0513008))
 
 
 ### Features
 
-* **character:** all characters regen on a 5 second tick instead of 1 second ([e867a4c](https://github.com/landoftherair/lotr2/commit/e867a4cd9fcb4780e086a429eb121fbdc5d19798))
-* **combat:** not seeing someone removes them as an active target ([86480a5](https://github.com/landoftherair/lotr2/commit/86480a5e21c01663cc1b5466f857207826af6892))
-* **core:** actions are now queued client-side and flushed every 100ms. there is a server side limit of 5 commands per 100ms or subsequent commands get dropped ([4186085](https://github.com/landoftherair/lotr2/commit/4186085942481f84486ff7cd9ec9308be7da1d62))
-* **macros:** learning new macros will allow you to select bars to put them into ([1f40041](https://github.com/landoftherair/lotr2/commit/1f40041e5d6fab52931dcb567e13710d575b4401))
-* **vendor:** show how much currency you have to spend in vendor window ([176e909](https://github.com/landoftherair/lotr2/commit/176e90932355e5e0ed9e759e928252265c891119))
+* **thief:** basic stealth shenanigans work, weapons detract stealth not by percent anymore, stealth/perception simplified significantly, do not send hidden chars to client anymore, filter out beforehand ([59c8b74](https://github.com/landoftherair/lotr2/commit/59c8b745d46594ba180cc0bad95f1798c4caa386))
+* **thief:** stealing, lots of stealing, stealing traits ([c0def12](https://github.com/landoftherair/lotr2/commit/c0def12b6bf565c8679934ef226351eb36d22089))
+* **thief:** thief stealth bar goes down based on num hostiles nearby, trait to reduce ([b261d62](https://github.com/landoftherair/lotr2/commit/b261d6255f5911f4c17c73fd98c66131f417954a))
+* **ui:** move target so it doesnt cover armor ([6a2f3b8](https://github.com/landoftherair/lotr2/commit/6a2f3b8469fd11f19b6398e71bf62392a7b4b5b6))
 
 
 
