@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { Allegiance, BaseClass, BaseService, ICharacter, INPC, IPlayer, Skill, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, BaseService, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { WorldManager } from '../data';
 

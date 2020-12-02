@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, isUndefined } from 'lodash';
 
-import { Allegiance, BaseService, canUseItem, ICharacter, IItem, IItemRequirements, IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
+import { Allegiance, BaseService, canUseItem, ICharacter, IItem, IItemRequirements,
+  IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item
