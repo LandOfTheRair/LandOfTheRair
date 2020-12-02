@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { ICharacter } from '../../../../interfaces';
 import { SkillCommand } from '../../../../models/macro';
 
 export class Hide extends SkillCommand {

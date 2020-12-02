@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, random, size } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Allegiance, BaseClass, BaseService, BGM, Currency, Direction,
+import { Allegiance, BaseClass, BaseService, BGM, Direction,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
