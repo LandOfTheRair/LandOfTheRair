@@ -3,6 +3,10 @@ import { Effect } from '../../../../models';
 
 export class Hidden extends Effect {
 
+  private breakHide(char: ICharacter) {
+    this.game.effectHelper.removeEffectByName(char, 'Hidden');
+  }
+
   create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = this.game.characterHelper.getStealth(char);
     effect.effectInfo.statChanges = { [Stat.Stealth]: effect.effectInfo.potency };
@@ -33,13 +37,13 @@ export class Hidden extends Effect {
       this.game.characterHelper.manaDamage(char, totalReduction);
 
       if (char.mp.current <= 0) {
-        this.game.effectHelper.removeEffectByName(char, 'Hidden');
+        this.breakHide(char);
       }
     }
 
     if (this.game.visibilityHelper.canContinueHidingAtSpot(char)) return;
 
-    this.game.effectHelper.removeEffectByName(char, 'Hidden');
+    this.breakHide(char);
   }
 
   // update everyone in sight so they can see us again (if they couldn't before)
