@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { BaseService, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
-  MessageType, OnesidedDamageArgs, PhysicalAttackArgs, SoundEffect, Stat } from '../../interfaces';
+  MessageType, OnesidedDamageArgs, PhysicalAttackArgs, PhysicalAttackReturn, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperMagic } from './DamageHelperMagic';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';
@@ -27,8 +27,8 @@ export class CombatHelper extends BaseService {
   }
 
   // do damage from one person to another, physically
-  public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): void {
-    this.physical.physicalAttack(attacker, defender, args);
+  public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): PhysicalAttackReturn {
+    return this.physical.physicalAttack(attacker, defender, args);
   }
 
   public magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs = {}): void {

@@ -43,6 +43,17 @@ export interface PhysicalAttackArgs {
   damageClass?: DamageClass;
 }
 
+export interface PhysicalAttackReturn {
+  isDead?: boolean;
+  dodge?: boolean;
+  block?: boolean;
+  blockedBy?: string;
+  noDamage?: boolean;
+  hit?: boolean;
+  damage?: number;
+  damageType?: DamageClass;
+}
+
 export interface MagicalAttackArgs {
   spellData?: ISpellData;
 

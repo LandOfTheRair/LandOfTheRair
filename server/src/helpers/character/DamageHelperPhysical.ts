@@ -3,8 +3,8 @@ import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
 import { ArmorClass, BaseClass, BaseService, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
-  ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, ShieldClasses, Skill,
-  SoundEffect, Stat, WeaponClass } from '../../interfaces';
+  ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
+  Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
 
 interface WeaponAttackStats {
   base: number;
@@ -53,17 +53,6 @@ interface DefenderScope {
   offhand?: ISimpleItem;
 }
 
-interface PhysicalAttackReturn {
-  isDead?: boolean;
-  dodge?: boolean;
-  block?: boolean;
-  blockedBy?: string;
-  noDamage?: boolean;
-  hit?: boolean;
-  damage?: number;
-  damageType?: DamageClass;
-}
-
 export const BaseItemStatsPerTier: Partial<Record<WeaponClass & ArmorClass, WeaponAttackStats>> = {
   Arrow:                { base: 1, min: 0, max: 2, weakChance: 25, damageBonus: 10 },
   Axe:                  { base: 2, min: 0, max: 2, weakChance: 10, damageBonus: 0 },
@@ -106,8 +95,8 @@ export class DamageHelperPhysical extends BaseService {
   public init() {}
 
   // do a physical attack, and if possible, do it from the offhand too
-  public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): void {
-    this.handlePhysicalAttack(attacker, defender, args);
+  public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
+    const res = this.handlePhysicalAttack(attacker, defender, args);
 
     const { returnsOnThrow, offhand } = this.game.itemHelper.getItemProperties(attacker.items.equipment[ItemSlot.LeftHand], ['returnsOnThrow', 'offhand']);
 
@@ -123,6 +112,7 @@ export class DamageHelperPhysical extends BaseService {
 
     this.game.directionHelper.setDirRelativeTo(attacker, defender);
 
+    return res;
   }
 
   // get the base damage information for a weapon

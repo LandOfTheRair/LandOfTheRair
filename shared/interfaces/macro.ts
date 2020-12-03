@@ -56,7 +56,7 @@ export interface IMacro {
   key?: string;
   modifiers?: { shift: boolean, alt: boolean, ctrl: boolean };
 
-  mode: string; // 'autoActivate' | 'lockActivation' | 'clickToTarget';
+  mode: string; // 'autoActivate' | 'lockActivation' | 'clickToTarget' | 'autoTarget';
   ignoreAutoattackOption?: boolean;
 
   appendTargetToEachMacro?: boolean;
