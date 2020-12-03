@@ -15,6 +15,8 @@ import { DiceRollerHelper, LootHelper } from '../game/tools';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
 
+import * as npcNames from '../../../content/_output/npcnames.json';
+
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs
 
@@ -199,6 +201,10 @@ export class NPCCreator extends BaseService {
       case Allegiance.Underground: return species.cavePerson();
       case Allegiance.Wilderness:  return species.fairy();
       case Allegiance.Adventurers: return species.gnome();
+    }
+
+    if (this.game.diceRollerHelper.XInOneHundred(1)) {
+      return sample((npcNames as any).default || npcNames);
     }
 
     return species.human();
