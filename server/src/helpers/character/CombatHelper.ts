@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
+import { BaseClass, BaseService, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, PhysicalAttackReturn, SoundEffect, Stat } from '../../interfaces';
 import { DamageHelperMagic } from './DamageHelperMagic';
@@ -28,7 +28,19 @@ export class CombatHelper extends BaseService {
 
   // do damage from one person to another, physically
   public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}): PhysicalAttackReturn {
-    return this.physical.physicalAttack(attacker, defender, args);
+    const res = this.physical.physicalAttack(attacker, defender, args);
+
+    if (attacker.baseClass === BaseClass.Warrior) {
+      if (res.block || res.dodge) {
+        this.game.characterHelper.mana(attacker, 5);
+      }
+
+      if (res.hit) {
+        this.game.characterHelper.mana(attacker, 3);
+      }
+    }
+
+    return res;
   }
 
   public magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs = {}): void {

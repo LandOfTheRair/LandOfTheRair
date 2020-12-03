@@ -1,4 +1,4 @@
-import { BaseClass, ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
+import { ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
 export class AttackCommand extends SkillCommand {
@@ -26,16 +26,7 @@ export class AttackCommand extends SkillCommand {
   }
 
   use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
-    const res = this.game.combatHelper.physicalAttack(user, target, opts);
-    if (user.baseClass === BaseClass.Warrior) {
-      if (res.block || res.dodge) {
-        this.game.characterHelper.mana(user, 5);
-      }
-
-      if (res.hit) {
-        this.game.characterHelper.mana(user, 3);
-      }
-    }
+    this.game.combatHelper.physicalAttack(user, target, opts);
   }
 
 }
