@@ -113,7 +113,7 @@ export class DeathHelper extends BaseService {
     }
 
     // drop your hand items
-    if (killer) {
+    if (killer && !this.game.characterHelper.isPlayer(killer)) {
       this.game.characterHelper.dropHands(dead);
     }
   }

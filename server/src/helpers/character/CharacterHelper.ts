@@ -128,7 +128,7 @@ export class CharacterHelper extends BaseService {
 
     if (char.items.equipment[ItemSlot.LeftHand]) {
       state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
-      this.setRightHand(char, undefined);
+      this.setLeftHand(char, undefined);
     }
   }
 
