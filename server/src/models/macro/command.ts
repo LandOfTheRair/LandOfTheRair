@@ -45,6 +45,9 @@ export abstract class SkillCommand extends MacroCommand {
 
   // try to consume the mp (returning false if we fail)
   tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
+
+    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(user, 'Clearcasting'))) return true;
+
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
     if (user.mp.current < mpCost) {
