@@ -54,6 +54,9 @@ export enum DamageClass {
   Fire = 'fire',
   Ice = 'ice',
 
+  // used for healing damage
+  Heal = 'heal',
+
   // used for cheese damage
   GM = 'gm',
 

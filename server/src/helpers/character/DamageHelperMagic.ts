@@ -36,6 +36,7 @@ export class DamageHelperMagic extends BaseService {
       damage,
       damageClass: args.damageClass || DamageClass.Physical,
       customSfx: args.sfx,
+      isHeal: damage < 0,
       isOverTime: args.isOverTime,
       attackerDamageMessage: args.atkMsg,
       defenderDamageMessage: args.defMsg

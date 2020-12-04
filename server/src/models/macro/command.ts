@@ -166,7 +166,10 @@ export class SpellCommand extends SkillCommand {
 
   // called when a player casts a spell at something
   protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, args.stringArgs);
+    let targetString = args.stringArgs.trim();
+    if (!targetString && this.canTargetSelf) targetString = caster?.name ?? '';
+
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString);
     if (!target) return this.youDontSeeThatPerson(caster as IPlayer);
 
     if (!this.canCastSpell(caster, target)) return;
@@ -216,8 +219,6 @@ export class SpellCommand extends SkillCommand {
 
   // default execute, primarily used by players
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!args.stringArgs) return;
-
     this.castSpell(player, args);
   }
 
