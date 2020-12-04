@@ -2,7 +2,7 @@
 import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
-import { Direction, Hostility, IAI, ICharacter, INPC, ItemSlot, PhysicalAttackArgs, Stat } from '../../../interfaces';
+import { Direction, Hostility, IAI, ICharacter, INPC, ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
 import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
 import { MapState } from '../MapState';
@@ -274,14 +274,34 @@ export class DefaultAIBehavior implements IAI {
     }
   }
 
-  // TODO: spawn messages
   private sendSpawnMessage() {
+    const spawnTrigger = this.npc.triggers?.[NPCTriggerType.Spawn];
+    if (!spawnTrigger) return;
 
+    const { messages, sfx, radius } = spawnTrigger;
+
+    let chosenSfx!: SoundEffect;
+    if (sfx) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance || 1) ? sfx.name : undefined;
+
+    this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
+      message: `You hear ${sample(messages)}.`,
+      sfx: chosenSfx
+    });
   }
 
-  // TODO: leash messages
   private sendLeashMessage() {
+    const leashTrigger = this.npc.triggers?.[NPCTriggerType.Leash];
+    if (!leashTrigger) return;
 
+    const { messages, sfx, radius } = leashTrigger;
+
+    let chosenSfx!: SoundEffect;
+    if (sfx) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance || 1) ? sfx.name : undefined;
+
+    this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
+      message: sample(messages),
+      sfx: chosenSfx
+    });
   }
 
   private checkGroundForItems() {

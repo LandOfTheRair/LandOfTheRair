@@ -42,7 +42,7 @@ export class MessageHelper extends BaseService {
   }
 
   public sendLogMessageToRadius(
-    player: ICharacter,
+    character: ICharacter,
     radius: number,
     { message, sfx, from, setTarget, except }: MessageInfo,
     messageTypes: MessageType[] = [MessageType.Miscellaneous],
@@ -51,8 +51,10 @@ export class MessageHelper extends BaseService {
 
     if (from) message = `**${from}**: ${message}`;
 
-    const { state } = this.game.worldManager.getMap(player.map);
-    const allPlayers = state.getAllPlayersInRange(player, radius);
+    const { state } = this.game.worldManager.getMap(character.map);
+    if (!state) return;
+
+    const allPlayers = state.getAllPlayersInRange(character, radius);
 
     allPlayers.forEach(checkPlayer => {
       const account = this.game.lobbyManager.getAccount((checkPlayer as Player).username);

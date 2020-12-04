@@ -31,7 +31,7 @@ export interface INPCDefinition {
   allegiance?: Allegiance;
 
   // the current reputation (how it views other allegiances)
-  allegianceReputation?: { [all in Allegiance]?: number };
+  allegianceReputation?: Partial<Record<Allegiance, number>>;
 
   // whether the npc can only use water
   aquaticOnly?: boolean;
@@ -69,7 +69,7 @@ export interface INPCDefinition {
 
   // gear items that can spawn on the creature
   items?: {
-    equipment?: { [slot in ItemSlot]: Rollable[] };
+    equipment?: Partial<Record<ItemSlot, Rollable[]>>;
     sack?: Rollable[];
     belt?: Rollable[];
   };
@@ -117,10 +117,10 @@ export interface INPCDefinition {
   tansFor?: string;
 
   // the trait levels this creature has
-  traitLevels?: { [trait: string]: number };
+  traitLevels?: Record<string, number>;
 
   // npc triggers
-  triggers?: { [trigger in NPCTriggerType]: any };
+  triggers?: Partial<Record<NPCTriggerType, any>>;
 
   // npc usable skills
   usableSkills: Rollable[];
@@ -164,4 +164,6 @@ export interface INPC extends ICharacter {
 
   allegianceMods: Array<{ delta: number, allegiance: Allegiance }>;
   traitLevels?: Record<string, number>;
+
+  triggers?: Partial<Record<NPCTriggerType, any>>;
 }
