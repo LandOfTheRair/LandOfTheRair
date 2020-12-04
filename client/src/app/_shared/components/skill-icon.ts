@@ -24,7 +24,7 @@ const skillData = {
 @Component({
   selector: 'app-skill-icon',
   template: `
-    <app-icon [size]="size" [name]="icon" [matTooltip]="tooltip" [round]="round"></app-icon>
+    <app-icon [size]="size" [name]="icon" [matTooltipDisabled]="!showTooltip" [matTooltip]="tooltip" [round]="round"></app-icon>
   `,
   styles: [`
   `]
@@ -34,6 +34,7 @@ export class SkillIconComponent {
   @Input() public skill: Skill;
   @Input() public round: boolean;
   @Input() public size = 'small';
+  @Input() public showTooltip = true;
 
   public get icon() {
     return skillData[this.skill]?.icon;
