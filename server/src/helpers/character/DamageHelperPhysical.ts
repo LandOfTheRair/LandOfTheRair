@@ -215,7 +215,7 @@ export class DamageHelperPhysical extends BaseService {
       attackerWeapon = attacker.items.equipment[ItemSlot.Feet] || {
         name: 'feet',
         uuid: 'feet',
-        mods: { itemClass: ItemClass.Boots, tier: 1, condition: 20000 },
+        mods: { itemClass: ItemClass.Boots, type: Skill.Martial, tier: 1, condition: 20000 },
       };
 
     // but the general case, we grab the right hand and/or hands item
