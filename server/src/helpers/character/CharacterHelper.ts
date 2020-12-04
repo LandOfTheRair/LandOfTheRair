@@ -116,6 +116,7 @@ export class CharacterHelper extends BaseService {
     }
   }
 
+  // drop your hands on the ground
   public dropHands(char: ICharacter): void {
     if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
 
@@ -132,18 +133,22 @@ export class CharacterHelper extends BaseService {
     }
   }
 
+  // set right hand to something
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.RightHand, item);
   }
 
+  // set left hand to something
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
   }
 
+  // check if a char has agro with a different char
   public hasAgro(char: ICharacter, target: ICharacter): boolean {
     return target.agro[char.uuid] > 0;
   }
 
+  // add agro for a different char
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
     char.agro[target.uuid] = (char.agro[target.uuid] || 0) + amount;
     target.agro[char.uuid] = (target.agro[char.uuid] || 0) + amount;
@@ -157,12 +162,14 @@ export class CharacterHelper extends BaseService {
 
   }
 
+  // clear agro for a particular char
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
   }
 
+  // begin engaging in combat
   public engageInCombat(char: ICharacter) {
-    char.combatTicks = 10;
+    char.combatTicks = 5;
   }
 
   // check if a character is a player

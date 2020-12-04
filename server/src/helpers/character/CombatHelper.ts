@@ -219,10 +219,8 @@ export class CombatHelper extends BaseService {
           MessageType.Combat, MessageType.Other, MessageType.Kill
         ]);
 
-        // only call kill() for players
-        if (this.game.characterHelper.isPlayer(attacker)) {
-          this.game.deathHelper.kill(attacker, defender);
-        }
+        // killllllllllllllllllll
+        this.game.deathHelper.kill(attacker, defender);
 
         // but everyone die()s
         this.game.deathHelper.die(defender, attacker);

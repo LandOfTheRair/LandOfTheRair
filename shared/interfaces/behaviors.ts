@@ -34,6 +34,10 @@ export interface ICrierBehavior {
   messages: string[];
 }
 
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & {
+export interface IWandersRandomlyBehavior {
+  radius: number;
+}
+
+export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IWandersRandomlyBehavior & {
   type: BehaviorType;
 };

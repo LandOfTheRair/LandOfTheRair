@@ -67,7 +67,8 @@ export class NPCCreator extends BaseService {
     baseChar.drops = npcDef.drops ?? [];
     baseChar.copyDrops = npcDef.copyDrops ?? [];
     baseChar.dropPool = npcDef.dropPool ?? null;
-    baseChar.triggers = npcDef.triggers;
+    baseChar.triggers = npcDef.triggers || {};
+    baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
 
     const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
 

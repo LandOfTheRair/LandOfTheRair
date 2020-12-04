@@ -89,6 +89,7 @@ export class MapState {
       map: this.map.name,
       name: `${this.map.name} Green NPC Spawner`,
       leashRadius: -1,
+      randomWalkRadius: 0,
       respawnRate: 300,
       requireDeadToRespawn: true,
       removeDeadNPCs: false,

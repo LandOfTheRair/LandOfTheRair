@@ -77,6 +77,9 @@ export interface INPCDefinition {
   // the creatures level
   level: number;
 
+  // how far the NPC can wander, in tiles
+  maxWanderRandomlyDistance?: number;
+
   // the creature class (used for rippers, etc)
   monsterClass?: MonsterClass;
 
@@ -166,4 +169,5 @@ export interface INPC extends ICharacter {
   traitLevels?: Record<string, number>;
 
   triggers?: Partial<Record<NPCTriggerType, any>>;
+  maxWanderRandomlyDistance: number;
 }

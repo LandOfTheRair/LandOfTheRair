@@ -15,6 +15,7 @@ export class DefaultAIBehavior implements IAI {
   private leashRadius: number;
   private pathDisrupted: { x: number, y: number } | null = null;
   private currentTick = 0;
+  private startLoc: { x: number, y: number };
 
   // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
@@ -46,8 +47,6 @@ export class DefaultAIBehavior implements IAI {
 
     this.game.npcHelper.tick(npc, this.currentTick);
 
-    if (npc.hostility === Hostility.Never) return;
-
     this.adjustTargetting();
     this.attemptMove();
 
@@ -62,8 +61,10 @@ export class DefaultAIBehavior implements IAI {
 
   private init() {
     const { randomWalkRadius, leashRadius } = this.spawner.walkingAttributes;
-    this.randomWalkRadius = randomWalkRadius;
+    this.randomWalkRadius = this.npc.maxWanderRandomlyDistance || randomWalkRadius;
     this.leashRadius = leashRadius;
+
+    this.startLoc = { x: this.npc.x, y: this.npc.y };
 
     if (this.spawner.hasPaths) {
       this.pickNewPath();
@@ -92,6 +93,9 @@ export class DefaultAIBehavior implements IAI {
       if (!this.highestAgro) this.highestAgro = sample(targetsInRange);
 
       this.currentTarget = this.highestAgro;
+      if (this.currentTarget) {
+        this.game.characterHelper.addAgro(this.npc, this.currentTarget, 1);
+      }
     }
   }
 
@@ -215,7 +219,7 @@ export class DefaultAIBehavior implements IAI {
       }
 
     // move randomly
-    } else {
+    } else if (this.randomWalkRadius > 0) {
       const oldX = npc.x;
       const oldY = npc.y;
       const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
@@ -239,19 +243,22 @@ export class DefaultAIBehavior implements IAI {
     } else {
 
       // check if should leash
-      const distFrom = this.game.directionHelper.distFrom(npc, this.spawner.pos);
+      const startPos = this.startLoc || this.spawner.pos;
+      const distFrom = this.game.directionHelper.distFrom(npc, startPos);
 
       // if we have no path AND no target and its out of the random walk radius, or we're past the leash radius, we leash
       const noLeash = !this.path;
 
       if (noLeash
         && ((!this.currentTarget && this.randomWalkRadius >= 0 && distFrom > this.randomWalkRadius)
-          || (this.leashRadius >= 0 && distFrom > this.leashRadius))) {
+        || (this.leashRadius >= 0 && distFrom > this.leashRadius))
+      ) {
 
         this.sendLeashMessage();
 
-        npc.x = this.spawner.pos.x;
-        npc.y = this.spawner.pos.y;
+        // go back to the NPCs original location or spawner if needed
+        npc.x = startPos.x;
+        npc.y = startPos.y;
 
         // chasing a player, probably - leash, fix hp, fix agro
         if (distFrom > this.leashRadius + 4) {
