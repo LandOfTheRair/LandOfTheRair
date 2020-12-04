@@ -189,13 +189,9 @@ export class DeathHelper extends BaseService {
   // try to strip, try to eat
   private npcKill(killer: INPC, dead: ICharacter): void {
 
-    console.log('npc kill', killer.name, dead.name);
-
     // clear the agro when something is killed by an npc
     this.game.characterHelper.clearAgro(killer, dead);
     this.game.characterHelper.clearAgro(dead, killer);
-
-    console.log(killer.agro);
 
     // TODO: try to strip
     // TODO: try to eat

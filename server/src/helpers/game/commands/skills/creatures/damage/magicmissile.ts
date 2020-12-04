@@ -2,7 +2,7 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class MagicMissile extends SpellCommand {
 
-  aliases = ['cast magicmissile'];
+  aliases = ['magicmissile', 'cast magicmissile'];
   requiresLearn = true;
   spellRef = 'MagicMissile';
 
