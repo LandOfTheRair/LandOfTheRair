@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { basePlayerSprite, BaseService, Currency, Direction, Hostility, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { Player } from '../../models';
 
 @Injectable()
@@ -188,6 +188,11 @@ export class DeathHelper extends BaseService {
 
   // try to strip, try to eat
   private npcKill(killer: INPC, dead: ICharacter): void {
+
+    // clear the agro when something is killed by an npc
+    this.game.characterHelper.clearAgro(killer, dead);
+    this.game.characterHelper.clearAgro(dead, killer);
+
     // TODO: try to strip
     // TODO: try to eat
   }
