@@ -70,6 +70,8 @@ export class NPCCreator extends BaseService {
     baseChar.triggers = npcDef.triggers || {};
     baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
 
+    this.setLevel(baseChar, npcDef);
+
     const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
 
     const rightHandItem = rightHandItemChoice ? this.itemHelper.getItemDefinition(rightHandItemChoice) : null;
@@ -251,6 +253,13 @@ export class NPCCreator extends BaseService {
     npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * 3;
     npc.giveXp.min *= 4;
     npc.giveXp.max *= 4;
+  }
+
+  private setLevel(npc: INPC, npcDef: INPCDefinition): void {
+    npc.level = npcDef.level || 1;
+
+    // npcs that are > lv 10 can have their level fuzzed a bit
+    if (npc.level > 10) npc.level += random(-2, 2);
   }
 
   private shouldLoadContainerItem(itemName: string|any): boolean {
