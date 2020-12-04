@@ -126,7 +126,9 @@ export class MessageHelper extends BaseService {
       if (!c) return str;
 
       let name = c.name;
-      if (!this.game.visibilityHelper.canSee(target, c.x, c.y) || !this.game.visibilityHelper.canSeeThroughStealthOf(target, c)) name = 'somebody';
+
+      if (!this.game.visibilityHelper.canSee(target, c.x - target.x, c.y - target.y)
+      || !this.game.visibilityHelper.canSeeThroughStealthOf(target, c)) name = 'somebody';
       if (target === c) name = 'yourself';
       return str.replace(new RegExp(`%${idx}`), name);
 
