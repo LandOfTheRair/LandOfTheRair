@@ -136,7 +136,8 @@ export class DamageHelperPhysical extends BaseService {
     const baseTier = base * (tier as number);
 
     // go for a weak hit, rarely
-    const didFlub = this.game.diceRollerHelper.XInOneHundred(weakChance);
+    const swashValue = 1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler');
+    const didFlub = this.game.diceRollerHelper.XInOneHundred(weakChance * swashValue);
     const numRolls = didFlub ? minTier : random(minTier, maxTier);
 
     damageRolls += numRolls;
