@@ -40,6 +40,10 @@
 }
 
 .target-name {
+  display: flex;
+  align-items: center;
+  min-height: 25px;
+
   .dir {
     display: inline-block;
     width: 25px !important;
