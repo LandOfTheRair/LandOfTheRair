@@ -4,7 +4,7 @@ This is the backend for Land of the Rair.
 
 ## Requirements
 
-* Node.js 12+
+* Node.js 14+
 * MongoDB (or MongoDB Atlas - easier)
 
 ## Installation
