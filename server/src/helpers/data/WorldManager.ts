@@ -123,7 +123,9 @@ export class WorldManager extends BaseService {
 
     // dead people leaving get auto-respawned
     if (this.game.characterHelper.isDead(player)) {
+      player.isBeingForciblyRespawned = true;
       this.game.deathHelper.restore(player);
+      player.isBeingForciblyRespawned = false;
     }
 
     delete this.playersInMaps[player.name];

@@ -435,6 +435,10 @@ export class MapState {
   }
 
   private movePlayer(player: Player, { oldX, oldY }) {
+
+    // this can happen if you join the game while dead and need to teleport between maps
+    if (!this.bushStorage[player.uuid]) return;
+
     this.triggerAndSendUpdate(oldX, oldY, player);
 
     this.generateKnowledgeRadius({ uuid: player.uuid, x: oldX, y: oldY }, false);

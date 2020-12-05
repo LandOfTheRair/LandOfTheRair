@@ -45,6 +45,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
+  @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
 
   // all characters have these props
   @Property() uuid: string;
