@@ -5,7 +5,7 @@ export class Swimming extends Effect {
 
   tick(char: ICharacter) {
     if ((char as IPlayer).swimElement !== DamageClass.Fire) return;
-    this.game.effectHelper.removeEffectManually(char, 'Swimming');
+    this.game.effectHelper.removeEffectByName(char, 'Swimming');
   }
 
   unapply(char: ICharacter, effect: IStatusEffect) {
