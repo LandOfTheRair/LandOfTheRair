@@ -25,7 +25,7 @@
   "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
     "@clusterws/cws": "1.1.2",
-    "bcrypt": "3.0.7",
+    "bcrypt": "5.0.0",
     "censor-sensor": "^1.0.5",
     "didyoumean2": "3.1.2",
     "dotenv": "^8.1.0",
