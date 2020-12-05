@@ -9,7 +9,15 @@ export class GMXP extends MacroCommand {
   canBeFast = false;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (!args.stringArgs) {
+      this.sendMessage(player, 'Syntax: XPGained');
+      return;
+    }
+
     const value = +args.stringArgs;
     this.game.playerHelper.gainExp(player, value);
+
+    this.sendMessage(player, `You gained ${value} XP.`);
   }
 }

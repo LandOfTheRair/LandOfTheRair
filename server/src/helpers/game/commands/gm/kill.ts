@@ -10,6 +10,11 @@ export class GMKill extends MacroCommand {
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
 
+    if (!args.stringArgs) {
+      this.sendMessage(player, 'Syntax: Target');
+      return;
+    }
+
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
     if (!target) return this.youDontSeeThatPerson(player);
 

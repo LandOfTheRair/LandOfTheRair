@@ -108,6 +108,10 @@ export class CommandHandler extends BaseService {
       return;
     }
 
+    if (commandRef.isGMCommand) {
+      this.game.logger.log(`GMCommand`, `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`);
+    }
+
     // check if we need to learn a spell before using it
     if (commandRef.requiresLearn) {
       args.spell = command;
