@@ -52,6 +52,8 @@ export class MapScene extends Phaser.Scene {
   private groundUpdate$: Subscription;
   private player: IPlayer;
 
+  private isReady: boolean;
+
   private openDoors = {};
   private ground = {};
 
@@ -109,6 +111,8 @@ export class MapScene extends Phaser.Scene {
 
   // npc sprite stuff
   private updateNPCSprite(npc: INPC) {
+    if(!this.isReady) return;
+
     const sprite = this.allNPCSprites[npc.uuid];
     if (!sprite) {
       this.createNPCSprite(npc);
@@ -134,6 +138,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createNPCSprite(npc: INPC) {
+    if(!this.isReady) return;
 
     const sprite = this.add.sprite(
       this.convertPosition(npc.x), this.convertPosition(npc.y),
@@ -156,6 +161,8 @@ export class MapScene extends Phaser.Scene {
 
   // player sprite stuff
   private updatePlayerSprite(player: IPlayer) {
+    if(!this.isReady) return;
+
     const sprite = this.allPlayerSprites[player.uuid];
     if (!sprite) {
       this.createPlayerSprite(player);
@@ -174,6 +181,8 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createPlayerSprite(player: IPlayer) {
+    if(!this.isReady) return;
+
     const spriteGenderBase = basePlayerSprite(player);
     const directionOffset = spriteOffsetForDirection(player.dir);
 
@@ -432,6 +441,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   public create() {
+    this.isReady = true;
 
     const player = this.game.observables.player.getValue();
     this.player = player;

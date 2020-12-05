@@ -140,7 +140,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.hideMap.subscribe(d => {
       this.hideMapFromView = d;
-      console.log('hidden', d);
     });
 
     // reset when we get a quit signal
