@@ -5,7 +5,7 @@ This is a monorepo. For a specific project setup/config, check those project sub
 
 ## Getting Started
 
-You can either use docker, or you can use your own installed Node / Mongo / Redis (or, of course, a hosted Mongo / Redis). If you're installing Node, it should be at least version 14.
+You can either use Docker, or you can use your own installed Node / Mongo / Redis (or, of course, a hosted Mongo / Redis). If you're installing Node, it should be at least version 14.
 
 ### Other Repos
 
@@ -18,7 +18,7 @@ Just run `docker-compose up` and it will build, run, and start the client and se
 
 ### Your Installed Node
 
-You will want to be using Node 12 (at least) to run this project.
+You will want to be using Node 15 (at least) to run this project.
 
 #### Setup
 
