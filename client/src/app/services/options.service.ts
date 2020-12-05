@@ -71,6 +71,10 @@ export class OptionsService {
     return this.opts[GameOption.ShouldSortDistance];
   }
 
+  public get debugUI(): boolean {
+    return this.opts[GameOption.DebugUI];
+  }
+
   // sound options
   public get musicVolume(): number {
     return (this.opts[GameOption.SoundMusicVolume] || 0) / 100;
