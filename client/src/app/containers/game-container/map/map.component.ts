@@ -90,6 +90,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.gameService.currentMap$
     ]).subscribe(([play, player, map]) => {
       if (!play || !player || !map) return;
+      const areMapsDifferent = player?.map && this.currentPlayer.getValue()?.map && player?.map !== this.currentPlayer.getValue()?.map;
       this.map.next(map);
       this.currentPlayer.next(player);
 
@@ -97,6 +98,11 @@ export class MapComponent implements OnInit, OnDestroy {
         this.zone.runOutsideAngular(() => {
           this.initMap();
         });
+      }
+
+      if(this.game && areMapsDifferent) {
+        console.log('restart scene')
+        this.game.scene.getScene('MapScene').scene.restart();
       }
     });
 
@@ -175,6 +181,8 @@ export class MapComponent implements OnInit, OnDestroy {
         ground: this.ground
       }
     );
+
+    (window as any).__game = this.game;
 
     this.game.scene.add('PreloadScene', PreloadScene);
     this.game.scene.add('MapScene', MapScene);

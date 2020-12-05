@@ -68,6 +68,12 @@ export class MapScene extends Phaser.Scene {
 
   // create the fov / subfov sprites
   private createFOV() {
+
+    // if the fov was made before, remove and re-create (we're changing maps)
+    if(this.textures.exists('black')) {
+      this.textures.remove('black');
+    }
+
     const blackBitmapData = this.textures.createCanvas('black', 64, 64);
     blackBitmapData.context.fillStyle = 0x000000;
     blackBitmapData.context.fillRect(0, 0, 64, 64);

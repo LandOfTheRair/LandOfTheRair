@@ -422,6 +422,8 @@ export class MapState {
   }
 
   public removePlayer(player: Player) {
+    delete this.playersByUUID[player.uuid];
+
     this.generateKnowledgeRadius(player, false);
 
     const rbushPlayer = this.bushStorage[player.uuid];
