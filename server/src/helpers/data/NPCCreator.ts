@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
-import { cloneDeep, isArray, isNumber, isString, random, sample } from 'lodash';
+import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BaseService, BehaviorType, Currency, Hostility,
