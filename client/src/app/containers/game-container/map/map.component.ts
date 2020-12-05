@@ -49,6 +49,10 @@ export class MapComponent implements OnInit, OnDestroy {
   // boxes
   private allBoxes: FloatingBox[] = [];
 
+  // hide the map behind a black screen
+  private hideMap = new BehaviorSubject<boolean>(true);
+  public hideMapFromView = true;
+
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
   public loadString: string;
@@ -82,6 +86,10 @@ export class MapComponent implements OnInit, OnDestroy {
     this.meSub = this.player$.subscribe(p => this.player = p);
 
     this.boxSub = GameState.box.subscribe(data => this.createBox(data));
+
+    this.gameService.currentMap$.subscribe(() => {
+      this.hideMap.next(true);
+    });
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -130,6 +138,11 @@ export class MapComponent implements OnInit, OnDestroy {
       });
     });
 
+    this.hideMap.subscribe(d => {
+      this.hideMapFromView = d;
+      console.log('hidden', d);
+    });
+
     // reset when we get a quit signal
     this.gameService.quitGame$.subscribe(() => {
       if (this.game) {
@@ -175,6 +188,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.assetService,
       {
         loadPercent: this.loadPercent,
+        hideMap: this.hideMap,
         player: this.currentPlayer,
         map: this.map,
         allPlayers: this.allPlayers,

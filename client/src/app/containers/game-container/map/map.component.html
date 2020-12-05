@@ -24,6 +24,8 @@
        (onDrop)="uiService.buildAndDoDropAction($event, 'ground')" 
        droppable></div>
 
+  <div class="loading-cover" *ngIf="hideMapFromView"></div>
+
   <app-active-target></app-active-target>
 
   <div class="loader" *ngIf="loadString" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>

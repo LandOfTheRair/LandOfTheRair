@@ -113,7 +113,7 @@ export class MapScene extends Phaser.Scene {
     if (!sprite) {
       this.createNPCSprite(npc);
       return;
-    }
+  }
 
     const directionOffset = spriteOffsetForDirection(npc.dir);
     const newFrame = npc.sprite + directionOffset;
@@ -525,6 +525,7 @@ export class MapScene extends Phaser.Scene {
       text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
     }
     this.game.observables.loadPercent.next(text);
+    this.game.observables.hideMap.next(false);
 
     setTimeout(() => {
       this.game.observables.loadPercent.next('');
