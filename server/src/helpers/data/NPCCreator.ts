@@ -206,9 +206,14 @@ export class NPCCreator extends BaseService {
   }
 
   public getNPCName(npc: INPCDefinition): string {
-    if (isArray(npc.name)) return sample(npc.name);
 
-    if (npc.name) return npc.name;
+    if (isString(npc.name)) return npc.name as string;
+
+    // if the npc has a static name
+    if (npc.name) {
+      if (this.game.diceRollerHelper.XInOneHundred(99)) return npc.name[0];
+      return sample(npc.name);
+    }
 
     switch (npc.monsterClass) {
       case MonsterClass.Dragon:    return species.dragon();

@@ -19,7 +19,7 @@ export interface INPCDefinition {
   sprite: number | number[];
 
   // the npc name - optional - if unspecified, generated randomly
-  name?: string;
+  name?: string[];
 
   // the npc "guild" that it belongs to
   affiliation?: string;
