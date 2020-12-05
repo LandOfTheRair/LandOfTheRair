@@ -91,6 +91,7 @@ export class MapComponent implements OnInit, OnDestroy {
     ]).subscribe(([play, player, map]) => {
       if (!play || !player || !map) return;
       const areMapsDifferent = player?.map && this.currentPlayer.getValue()?.map && player?.map !== this.currentPlayer.getValue()?.map;
+
       this.map.next(map);
       this.currentPlayer.next(player);
 
@@ -101,8 +102,9 @@ export class MapComponent implements OnInit, OnDestroy {
       }
 
       if(this.game && areMapsDifferent) {
-        console.log('restart scene')
-        this.game.scene.getScene('MapScene').scene.restart();
+        this.zone.runOutsideAngular(() => {
+          this.game.scene.getScene('MapScene').scene.restart();
+        });
       }
     });
 
