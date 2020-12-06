@@ -77,6 +77,7 @@ export class MapState {
       npcDef.allegiance = npcDef.allegiance || Allegiance.None;
       npcDef.alignment = npcDef.alignment || Alignment.Neutral;
       npcDef.hostility = npcDef.hostility || Hostility.Never;
+      npcDef.name = npc.name || npcDef.name;
 
       npcDef.extraProps = npc.properties || {};
 

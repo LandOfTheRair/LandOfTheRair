@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
+import { cloneDeep } from 'lodash';
 
 import { BaseService, IItemDefinition, INPCDefinition } from '../../interfaces';
 
@@ -47,7 +48,7 @@ export class ContentManager extends BaseService {
   }
 
   public getNPCScript(npcTag: string) {
-    return this.npcScripts[npcTag];
+    return cloneDeep(this.npcScripts[npcTag]);
   }
 
   public getRecipesForTradeskill(tradeskill) {
