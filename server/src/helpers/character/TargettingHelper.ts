@@ -43,7 +43,7 @@ export class TargettingHelper extends BaseService {
     if (target.allegiance === Allegiance.GM) return false;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
-    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation.NaturalResource) return false;
+    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return false;
 
     // I shouldn't be hostile towards my party members
     if ((me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
