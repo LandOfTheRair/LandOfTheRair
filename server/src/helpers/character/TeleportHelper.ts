@@ -53,7 +53,7 @@ export class TeleportHelper extends BaseService {
       player.z = zSet;
     }
 
-    this.game.playerHelper.resetStatus(player);
+    this.game.playerHelper.resetStatus(player, { sendFOV: false });
 
     // check if the new map even exists before going
     if (map && player.map !== map) {

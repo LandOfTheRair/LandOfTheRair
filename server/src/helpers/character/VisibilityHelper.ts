@@ -19,9 +19,12 @@ export class VisibilityHelper extends BaseService {
   public init() {}
 
   // specifically calculate fov for players and update it afterwards
-  calculatePlayerFOV(player: Player): void {
+  calculatePlayerFOV(player: Player, sendFOV = true): void {
     this.calculateFOV(player);
-    this.game.transmissionHelper.queuePlayerPatch(player, { player: { fov: player.fov } });
+
+    if (sendFOV) {
+      this.game.transmissionHelper.sendFOVPatch(player);
+    }
   }
 
   // calculate a fov for a character and set it

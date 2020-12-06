@@ -46,7 +46,13 @@ export class TransmissionHelper extends BaseService {
       this.playerPatchQueue[player.username].patches.push(...patch.patches.filter(p => {
 
         // ideally, it would not generate these patches, but we take what we can
-        return !p.path.includes('_') && !p.path.includes('createdAt') && !p.path.includes('currentTick');
+        return !p.path.includes('_')
+            && !p.path.includes('createdAt')
+            && !p.path.includes('currentTick')
+            && !p.path.includes('fov')
+            && p.path !== '/x'
+            && p.path !== '/y'
+            && p.path !== '/dir';
       }));
     }
 
@@ -65,13 +71,13 @@ export class TransmissionHelper extends BaseService {
 
     // we twiddle the fov here because it creates a bunch of unnecessary patches
     // hell yeah micro optimizations
-    const fov = player.fov;
-    delete (player as any).fov;
+    // const fov = player.fov;
+    // delete (player as any).fov;
 
     const patches = generate(this.playerPatchWatchers[player.username]);
 
     // reset the fov because we do still need it
-    player.fov = fov;
+    // player.fov = fov;
     this.queuePlayerPatch(player, { patches });
   }
 
@@ -81,6 +87,18 @@ export class TransmissionHelper extends BaseService {
     if (patches.length === 0) return;
 
     this.sendActionToAccount(player.username, GameAction.GamePatchPlayerState, { statePatches: patches });
+  }
+
+  // send a specific patch for player FOV
+  public sendFOVPatch(player: Player) {
+    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, { player: { fov: player.fov } });
+  }
+
+  // send a specific patch for player movement
+  public sendMovementPatch(player: Player) {
+    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, {
+      player: { fov: player.fov, x: player.x, y: player.y, dir: player.dir }
+    });
   }
 
   // send patches to a player about themselves

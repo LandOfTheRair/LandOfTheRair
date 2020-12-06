@@ -179,9 +179,9 @@ export class PlayerHelper extends BaseService {
   }
 
   // reset swim level, fov, region desc
-  public resetStatus(player: Player, ignoreMessages?: boolean) {
+  public resetStatus(player: Player, opts: { ignoreMessages?: boolean, sendFOV?: boolean } = { sendFOV: true }) {
 
-    this.visibilityHelper.calculatePlayerFOV(player);
+    this.visibilityHelper.calculatePlayerFOV(player, opts.sendFOV);
 
     const { map } = this.worldManager.getMap(player.map);
 
@@ -216,7 +216,7 @@ export class PlayerHelper extends BaseService {
     }
 
     // send message updates while the player is walking around the world
-    if (!ignoreMessages) {
+    if (!opts.ignoreMessages) {
 
       const regionDesc = map.getRegionDescriptionAt(player.x, player.y);
 

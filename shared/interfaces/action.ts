@@ -95,6 +95,7 @@ export enum GameAction {
   GameQuit = '[Game] Quit Game',
   GameSetMap = '[Game] Set Map',
   GameSetPlayer = '[Game] Set Player',
+  GameSetPosition = '[Game] Set Position',
   GamePatchPlayer = '[Game] Patch Player',
   GamePatchPlayerState = '[Game] Patch Player State',
 

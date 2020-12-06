@@ -6,7 +6,7 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { HideTrainerWindow, HideVendorWindow, OpenTrainerWindow,
-  OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PlayerReady, PlayGame,
+  OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const defaultGame: () => IGame = () => {
@@ -228,6 +228,20 @@ export class GameState {
     if (!copyState.player || !statePatches) return;
 
     ctx.patchState({ mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches).newDocument });
+  }
+
+  @Action(PatchPlayerPosition)
+  patchPlayerPosition(ctx: StateContext<IGame>, { x, y }: PatchPlayerPosition) {
+    const state = ctx.getState();
+    const copyState = { ...state };
+
+    if(!copyState.player) return;
+
+    copyState.player = { ...copyState.player };
+    copyState.player.x = x;
+    copyState.player.y = y;
+
+    ctx.patchState({ player: copyState.player });
   }
 
   @Action(OpenTrainerWindow)

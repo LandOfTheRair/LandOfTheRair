@@ -543,7 +543,7 @@ export class MapScene extends Phaser.Scene {
 
     // force a move 0,0 to get default rendering info
     setTimeout(() => {
-      this.game.gameService.sendCommandString('~move 0 0');
+      this.game.gameService.sendCommandString('!move 0 0');
     }, 1000);
   }
 

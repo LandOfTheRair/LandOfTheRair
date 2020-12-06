@@ -341,7 +341,6 @@ export class MapState {
     playersToUpdate
       .filter(p => p !== triggeringPlayer)
       .forEach(p => {
-        this.game.playerHelper.resetStatus(p);
         this.triggerFullUpdateForPlayer(p);
       });
   }
