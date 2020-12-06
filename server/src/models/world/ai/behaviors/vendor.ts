@@ -17,11 +17,11 @@ export class VendorBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IVendorBehavior) {
 
-    const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1));
-    const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx));
+    const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1)).filter(Boolean);
+    const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx)).filter(Boolean);
 
-    this.formattedVendorItems = npcVendorItems;
-    this.formattedVendorDailyItems = npcVendorDailyItems;
+    this.formattedVendorItems = npcVendorItems as ISimpleItem[];
+    this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];
 
     parser.addCommand('hello')
       .setSyntax(['hello'])
@@ -43,13 +43,18 @@ export class VendorBehavior implements IAIBehavior {
 
   tick() {}
 
-  private reformatItem(game: Game, npc: INPC, vItem: IVendorItem, dailySlot: number) {
+  private reformatItem(game: Game, npc: INPC, vItem: IVendorItem, dailySlot: number): ISimpleItem | null {
     const base: any = { name: vItem.item, mods: {} };
     if (dailySlot >= 0) {
       base.uuid = `daily-${npc.map}-${npc.name}-${dailySlot}-${vItem.item}`;
     }
 
     const baseItem = game.itemHelper.getItemDefinition(vItem.item);
+    if (!baseItem) {
+      game.logger.error(`Vendor:${npc.name}`, `Could not get item definition for ${vItem.item}.`);
+      return null;
+    }
+
     base.mods.value = baseItem.value;
 
     if (vItem.valueMult) base.mods.value *= vItem.valueMult;
