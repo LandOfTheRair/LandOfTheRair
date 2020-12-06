@@ -100,7 +100,7 @@ export class Spawner {
   }
 
   private get canBeActive(): boolean {
-    if (this.requireHoliday && this.game.holidayHelper.currentHoliday() !== this.requireHoliday) return false;
+    if (this.requireHoliday && this.game.holidayHelper.isHoliday(this.requireHoliday)) return false;
     return true;
   }
 
