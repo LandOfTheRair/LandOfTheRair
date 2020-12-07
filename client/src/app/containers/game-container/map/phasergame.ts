@@ -16,6 +16,7 @@ export class MapRenderGame extends Phaser.Game {
     public assetService: AssetService,
     public observables: {
       loadPercent: BehaviorSubject<string>,
+      hideMap: BehaviorSubject<boolean>,
       player: BehaviorSubject<IPlayer>,
       map: BehaviorSubject<IMapData>,
       allPlayers: Observable<Record<string, Partial<IPlayer>>>,

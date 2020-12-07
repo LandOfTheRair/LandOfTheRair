@@ -14,7 +14,9 @@ export interface ISpellData {
   skillMultiplierChanges?: number[][];  // the skill multiplier buffs when you reach a certain skill threshold
 
   meta: {
+    doesHeal?: boolean;                 // if the spell does a heal (inverse attack), it calls this first
     doesAttack?: boolean;               // if the spell does an attack, it calls this first
+    noHostileTarget?: boolean;          // if the spell heals or buffs, this is set to true so it can't hit enemies
     casterMessage?: string;             // if the spell sends a message to the caster, it sends this if the caster is NOT the target
     casterAttackMessage?: string;       // if the spell does an attack, this is the unformatted message to send to the caster
     casterSfx?: string;                 // if the spell attacks or sends the caster a message, it uses this SFX

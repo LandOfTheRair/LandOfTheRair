@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService, GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
+import { GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class MessageHelper extends BaseService {
@@ -42,7 +43,7 @@ export class MessageHelper extends BaseService {
   }
 
   public sendLogMessageToRadius(
-    player: ICharacter,
+    character: ICharacter,
     radius: number,
     { message, sfx, from, setTarget, except }: MessageInfo,
     messageTypes: MessageType[] = [MessageType.Miscellaneous],
@@ -51,8 +52,10 @@ export class MessageHelper extends BaseService {
 
     if (from) message = `**${from}**: ${message}`;
 
-    const { state } = this.game.worldManager.getMap(player.map);
-    const allPlayers = state.getAllPlayersInRange(player, radius);
+    const { state } = this.game.worldManager.getMap(character.map);
+    if (!state) return;
+
+    const allPlayers = state.getAllPlayersInRange(character, radius);
 
     allPlayers.forEach(checkPlayer => {
       const account = this.game.lobbyManager.getAccount((checkPlayer as Player).username);
@@ -124,7 +127,9 @@ export class MessageHelper extends BaseService {
       if (!c) return str;
 
       let name = c.name;
-      if (!this.game.visibilityHelper.canSee(target, c.x, c.y) || !this.game.visibilityHelper.canSeeThroughStealthOf(target, c)) name = 'somebody';
+
+      if (!this.game.visibilityHelper.canSee(target, c.x - target.x, c.y - target.y)
+      || !this.game.visibilityHelper.canSeeThroughStealthOf(target, c)) name = 'somebody';
       if (target === c) name = 'yourself';
       return str.replace(new RegExp(`%${idx}`), name);
 

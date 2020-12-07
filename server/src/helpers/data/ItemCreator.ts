@@ -3,7 +3,8 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseService, Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
+import { Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 import { ContentManager } from './ContentManager';
 
 // functions related to CREATING an item
@@ -41,6 +42,13 @@ export class ItemCreator extends BaseService {
 
     return item;
 
+  }
+
+  // get a gold item of the specified value
+  public getGold(value: number): ISimpleItem {
+    const baseGold = this.getSimpleItem('Gold Coin');
+    baseGold.mods.value = value;
+    return baseGold;
   }
 
   public rerollItem(item: ISimpleItem): ISimpleItem {

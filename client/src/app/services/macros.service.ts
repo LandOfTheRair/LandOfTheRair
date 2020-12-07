@@ -159,6 +159,18 @@ export class MacrosService {
         return;
       }
 
+      if (macro.mode === 'autoTarget') {
+        this.currentTarget$.pipe(first()).subscribe(target => {
+          if(target) {
+            this.gameService.sendCommandString(macro.macro, target.uuid);
+            return;
+          }
+
+          this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
+        });
+        return;
+      }
+
       this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
     };
 

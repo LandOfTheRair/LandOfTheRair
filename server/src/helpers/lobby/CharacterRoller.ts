@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, ICharacterItems, SkillBlock, StatBlock } from '../../interfaces';
+import { ICharacterItems, SkillBlock, StatBlock } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 import { CalculatorHelper } from '../character';
 import { ContentManager, ItemCreator } from '../data';
 

@@ -34,7 +34,7 @@
     <div class="bars">
       <div class="top-bars">
         <div class="bar-container hp">
-          <span class="bar" [style.width]="(player.hp.current / player.hp.maximum * 100) + '%'"></span>
+          <span class="bar" [style.width]="(player.hp.current / player.hp.maximum * 100) + '%'" *ngIf="player.hp.current !== -1"></span>
           <span class="bar-text">{{ player.hp.current }}/{{ player.hp.maximum }}</span>
         </div>
         <div class="bar-container energy {{ player.baseClass }}">

@@ -9,6 +9,12 @@ export class GMAllegiance extends MacroCommand {
   canBeFast = false;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (!args.stringArgs) {
+      this.sendMessage(player, 'Syntax: NewAllegiance');
+      return;
+    }
+
     const allegiance = Allegiance[args.stringArgs];
     if (!allegiance) return this.sendMessage(player, 'That is not a valid allegiance.');
     player.allegiance = allegiance;

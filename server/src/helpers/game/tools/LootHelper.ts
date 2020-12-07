@@ -3,7 +3,8 @@ import { Injectable } from 'injection-js';
 import { get, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
-import { Allegiance, BaseService, INPC, ISimpleItem, ItemSlot } from '../../../interfaces';
+import { Allegiance, INPC, ISimpleItem, ItemSlot } from '../../../interfaces';
+import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
 export class LootHelper extends BaseService {

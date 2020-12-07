@@ -35,6 +35,7 @@ const defaultSettings: () => ISettings = () => {
       [GameOption.DyingBorderWidth]: 20,
       [GameOption.ShouldSortDistance]: false,
       [GameOption.ShouldSortFriendly]: false,
+      [GameOption.DebugUI]: false,
 
       [GameOption.SoundBGM]: true,
       [GameOption.SoundSFX]: true,

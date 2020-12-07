@@ -3,7 +3,7 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Identify extends SpellCommand {
 
-  aliases = ['cast identify'];
+  aliases = ['identify', 'cast identify'];
   requiresLearn = true;
   spellRef = 'Identify';
   canTargetSelf = true;

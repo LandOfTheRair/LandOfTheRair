@@ -1,32 +1,30 @@
 
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
+import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
 import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
-  ItemHelper, MovementHelper, NPCHelper, PlayerHelper, PlayerInventoryHelper, QuestHelper, TargettingHelper,
+  InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
-  GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
-import { SpellManager } from '../data/SpellManager';
+  GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
-
 import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
-import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
 @Injectable()
 export class Game {
 
   private ticksElapsed = 0;
 
-  public wsCmdHandler: WebsocketCommandHandler;
+  public wsCmdHandler: IWebsocketCommandHandler;
 
   constructor(
 
@@ -73,7 +71,7 @@ export class Game {
     public npcHelper: NPCHelper,
     public characterHelper: CharacterHelper,
     public playerHelper: PlayerHelper,
-    public playerInventoryHelper: PlayerInventoryHelper,
+    public inventoryHelper: InventoryHelper,
     public effectHelper: EffectHelper,
     public groundManager: GroundManager,
     public spellManager: SpellManager,
@@ -81,6 +79,7 @@ export class Game {
 
     public messageHelper: MessageHelper,
     public traitHelper: TraitHelper,
+    public stealHelper: StealHelper,
     public commandHandler: CommandHandler,
 
     public playerManager: PlayerManager,
@@ -89,7 +88,7 @@ export class Game {
 
   ) {}
 
-  public async init(wsCmdHandler: WebsocketCommandHandler) {
+  public async init(wsCmdHandler: IWebsocketCommandHandler) {
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 
@@ -106,9 +105,9 @@ export class Game {
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
-      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'playerInventoryHelper',
+      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper',
-      'commandHandler', 'messageHelper', 'traitHelper',
+      'commandHandler', 'messageHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager'
   ];
 

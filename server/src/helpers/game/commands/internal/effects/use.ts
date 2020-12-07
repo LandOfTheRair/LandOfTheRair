@@ -26,7 +26,7 @@ export class UseCommand extends MacroCommand {
 
       case 'sack': {
         const item = player.items.sack.items[+slot];
-        this.game.playerInventoryHelper.removeItemFromSack(player, +slot);
+        this.game.inventoryHelper.removeItemFromSack(player, +slot);
         this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
         useItemInHand(emptyHand);
         break;

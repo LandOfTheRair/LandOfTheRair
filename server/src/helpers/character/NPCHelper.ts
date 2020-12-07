@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { get, set } from 'lodash';
 
-import { Allegiance, BaseService, ICharacter, INPC, INPCDefinition } from '../../interfaces';
+import { Allegiance, ICharacter, INPC, INPCDefinition } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 

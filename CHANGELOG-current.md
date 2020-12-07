@@ -1,18 +1,19 @@
-## [1.3.3](https://github.com/landoftherair/lotr2/compare/v1.3.2...v1.3.3) (2020-11-30)
+## [1.5.4](https://github.com/landoftherair/lotr2/compare/v1.5.3...v1.5.4) (2020-12-06)
 
 
 ### Bug Fixes
 
-* **combat:** auto attack would send too many inputs over time, causing issues ([d7cc934](https://github.com/landoftherair/lotr2/commit/d7cc93410099572317fdab74988c836c2248031c))
-
-
-### Features
-
-* **character:** all characters regen on a 5 second tick instead of 1 second ([e867a4c](https://github.com/landoftherair/lotr2/commit/e867a4cd9fcb4780e086a429eb121fbdc5d19798))
-* **combat:** not seeing someone removes them as an active target ([86480a5](https://github.com/landoftherair/lotr2/commit/86480a5e21c01663cc1b5466f857207826af6892))
-* **core:** actions are now queued client-side and flushed every 100ms. there is a server side limit of 5 commands per 100ms or subsequent commands get dropped ([4186085](https://github.com/landoftherair/lotr2/commit/4186085942481f84486ff7cd9ec9308be7da1d62))
-* **macros:** learning new macros will allow you to select bars to put them into ([1f40041](https://github.com/landoftherair/lotr2/commit/1f40041e5d6fab52931dcb567e13710d575b4401))
-* **vendor:** show how much currency you have to spend in vendor window ([176e909](https://github.com/landoftherair/lotr2/commit/176e90932355e5e0ed9e759e928252265c891119))
+* **core:** invalid vendor items should log, not throw ([edd0b8a](https://github.com/landoftherair/lotr2/commit/edd0b8a055bc86aad761391fb6ef4de7946a3f15))
+* **death:** dying no longer leaves you in an infinite loop when respawning ([252afea](https://github.com/landoftherair/lotr2/commit/252afeacae9623c91b0adf7184b65163c5b034dd))
+* **map:** fix map reloading when quitting and rejoining game ([6a3765d](https://github.com/landoftherair/lotr2/commit/6a3765d027ce450c0e8bb65b21356d55b9baca6c))
+* **map:** hopefully fix race condition when creating sprites ([301aa49](https://github.com/landoftherair/lotr2/commit/301aa496afc70dd5e824af2dad7d8a95ac1c3210))
+* **npc:** natural resources should not crash the game when you see them ([1791a37](https://github.com/landoftherair/lotr2/commit/1791a37113facd9d9a71c5bfb4e7917245a14068))
+* **npc:** npcs will now get random names correctly, when appropriate ([86123bc](https://github.com/landoftherair/lotr2/commit/86123bc81acf2a2ed765544e945cdb1902586f02))
+* **spawner:** holiday spawners should only spawn on holidays ([6fd72d8](https://github.com/landoftherair/lotr2/commit/6fd72d8e9d2785abb8d463b44c8b5f85f7bfbcb3))
+* **ui:** active target should move dangerous marker to right side ([f8d2919](https://github.com/landoftherair/lotr2/commit/f8d29190446404994255ab5d5aafa296006cdda3))
+* **ui:** put command line back in correct position ([b4e9f41](https://github.com/landoftherair/lotr2/commit/b4e9f413851f7ccca9459873e9bf41cebb5b0580))
+* **ui:** vendor ui should scale better for people with more currency ([6f78b97](https://github.com/landoftherair/lotr2/commit/6f78b9707e90d8abbc6fa45e280f4827d984daaa))
+* **ui:** vendor window was too short ([3d8aa0f](https://github.com/landoftherair/lotr2/commit/3d8aa0f83ecbb725a105e3b8a117a928fc9a5b75))
 
 
 

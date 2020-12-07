@@ -14,7 +14,7 @@
 
 <ng-template #headTemplate>
   <ng-container *ngIf="currentPlayer | async as player">
-    Map - {{ player.map }}
+    Map - {{ player.map }} <span *ngIf="optionsService.debugUI">(X:{{ player.x }} Y:{{ player.y }} Z:{{ player.z }})</span>
   </ng-container>
 </ng-template>
 
@@ -23,6 +23,8 @@
        dropScope="mapground"
        (onDrop)="uiService.buildAndDoDropAction($event, 'ground')" 
        droppable></div>
+
+  <div class="loading-cover" *ngIf="hideMapFromView"></div>
 
   <app-active-target></app-active-target>
 

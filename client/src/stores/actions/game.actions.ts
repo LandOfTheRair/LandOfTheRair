@@ -45,6 +45,13 @@ export class PatchGameStateForPlayer {
   constructor(public statePatches: any[]) {}
 }
 
+// dispatched when the player moves
+export class PatchPlayerPosition {
+  static type = GameAction.GameSetPosition;
+  filterOutFromLogs = true;
+  constructor(public x: number, public y: number) {}
+}
+
 // dispatched when clicking on a targets box
 export class SetCurrentTarget {
   static type = GameAction.SetCurrentTarget;

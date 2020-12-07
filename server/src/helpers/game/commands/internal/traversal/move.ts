@@ -5,6 +5,7 @@ import { MacroCommand } from '../../../../../models/macro';
 export class Move extends MacroCommand {
   aliases = ['move'];
   canBeFast = true;
+  canBeInstant = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
     const [x, y] = args.arrayArgs.map(v => +v);

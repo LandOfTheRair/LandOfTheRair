@@ -1,8 +1,9 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseService, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import * as allSpellRefs from '../game/spells';
 
 @Injectable()
@@ -42,7 +43,7 @@ export class SpellManager extends BaseService {
     if (skillLevel > spellData.maxSkillForGain ?? 0) return;
 
     this.game.playerHelper.flagSkill(caster as Player, [skillGain]);
-    this.game.playerHelper.gainSkill(caster as Player, skillGain, 1);
+    this.game.playerHelper.tryGainSkill(caster as Player, skillGain, 1);
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {
@@ -78,6 +79,15 @@ export class SpellManager extends BaseService {
       return;
     }
 
+    // send messages to caster/target where applicable
+    const { casterMessage, casterSfx, targetMessage, targetSfx, doesAttack, doesHeal, noHostileTarget } = spellData.meta;
+
+    // buff spells can't be cast on hostiles
+    if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
+      this.game.messageHelper.sendSimpleMessage(caster, 'You cannot target that creature with this spell!');
+      return;
+    }
+
     // spell can fail sometimes, usually this only happens when doing a melee attack w/ weapon that casts spells
     const chance = override.chance || 100;
     if (!this.game.diceRollerHelper.XInOneHundred(chance)) return;
@@ -97,9 +107,6 @@ export class SpellManager extends BaseService {
     const range = override.range || 0;
     const duration = override.duration || 0;
 
-    // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx } = spellData.meta;
-
     if (caster !== target && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
     }
@@ -108,13 +115,24 @@ export class SpellManager extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
     }
 
-    if (spellData.meta.doesAttack) {
+    if (doesAttack) {
       this.game.combatHelper.magicalAttack(caster, target, {
         atkMsg: spellData.meta.casterAttackMessage,
         defMsg: spellData.meta.targetAttackMessage,
         sfx: SoundEffect.CombatHitSpell,
         damage: potency,
         damageClass: spellData.damageClass || DamageClass.Energy,
+        spellData
+      });
+    }
+
+    if (doesHeal) {
+      this.game.combatHelper.magicalAttack(caster, target, {
+        atkMsg: spellData.meta.casterAttackMessage,
+        defMsg: spellData.meta.targetAttackMessage,
+        sfx: SoundEffect.SpellHeal,
+        damage: -potency,
+        damageClass: spellData.damageClass || DamageClass.Heal,
         spellData
       });
     }

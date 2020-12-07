@@ -184,7 +184,8 @@ export class SocketService {
     }
 
     if (!this.callbacks[type] || this.callbacks[type].length === 0) {
-      if (type === 'error') return;
+      const blacklist = ['error', GameServerResponse.PlayCFX];
+      if (blacklist.includes(type)) return;
 
       this.logger.error(`[WS Callback]`, `Type ${type} has no callbacks registered.`);
       return;

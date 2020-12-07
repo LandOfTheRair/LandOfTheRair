@@ -23,6 +23,7 @@ export enum GameOption {
   DyingBorderWidth = 'dyingBorderWidth',
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',
+  DebugUI = 'debugUI',
 
   // sound options
   SoundBGM = 'playBGM',

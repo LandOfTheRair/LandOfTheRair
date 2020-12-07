@@ -26,7 +26,7 @@ export abstract class MacroCommand implements IMacroCommand {
   }
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void {}        // always used only by people who can execute commands (players)
-  use(executor: ICharacter, target: ICharacter, opts: any): void {}   // used by anyone who has access to the command (players, npcs)
+  use(executor: ICharacter, target: ICharacter, opts?: any): void {}  // used by anyone who has access to the command (players, npcs)
 }
 
 export abstract class SkillCommand extends MacroCommand {
@@ -45,17 +45,21 @@ export abstract class SkillCommand extends MacroCommand {
 
   // try to consume the mp (returning false if we fail)
   tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
+
+    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(user, 'Clearcasting'))) return true;
+
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
-    // thieves cast with HP instead of MP
-    if (user.baseClass === BaseClass.Thief) {
-      if (user.hp.current <= mpCost) {
-        this.sendMessage(user, 'You do not have enough HP!');
-        return false;
-      }
+    if (user.mp.current < mpCost) {
+      const extraMsg: Record<BaseClass, string> = {
+        [BaseClass.Healer]: 'MP',
+        [BaseClass.Mage]: 'MP',
+        [BaseClass.Thief]: 'Stealth',
+        [BaseClass.Warrior]: 'Rage',
+        [BaseClass.Undecided]: 'Anything'
+      };
 
-    } else if (user.mp.current < mpCost) {
-      this.sendMessage(user, 'You do not have enough MP!');
+      this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
       return false;
     }
 
@@ -156,17 +160,31 @@ export class SpellCommand extends SkillCommand {
     return 5;
   }
 
+  canUse(char: ICharacter, target: ICharacter) {
+    return super.canUse(char, target) && this.canCastSpell(char, target);
+  }
+
   // called when a player casts a spell at something
   protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, args.stringArgs);
+    let targetString = args.stringArgs.trim();
+    if (!targetString && this.canTargetSelf) targetString = caster?.name ?? '';
+
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString);
     if (!target) return this.youDontSeeThatPerson(caster as IPlayer);
 
-    if (!this.canTargetSelf && target === caster) return;
+    if (!this.canCastSpell(caster, target)) return;
 
     this.castSpellAt(caster, target, args);
   }
 
-  protected castSpellAt(caster: ICharacter | null, target: ICharacter, args: IMacroCommandArgs) {
+  // whether or not the spell can be cast - simple check that gets rolled into canUse
+  protected canCastSpell(caster: ICharacter | null, target: ICharacter): boolean {
+    if (!this.canTargetSelf && target === caster) return false;
+    return true;
+  }
+
+  // cast the spell at the target - caster optional
+  protected castSpellAt(caster: ICharacter | null, target: ICharacter, args?: IMacroCommandArgs) {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
     if (!spellData) return;
 
@@ -184,10 +202,10 @@ export class SpellCommand extends SkillCommand {
         delete caster.spellChannel;
 
         if (!this.game.targettingHelper.isTargetInViewRange(caster, target)) return this.youDontSeeThatPerson(caster as IPlayer);
-        if (!this.tryToConsumeMP(caster, [target], args.overrideEffect)) return;
+        if (!this.tryToConsumeMP(caster, [target], args?.overrideEffect)) return;
       }
 
-      this.game.spellManager.castSpell(this.spellRef, caster, target, args.overrideEffect, args.callbacks);
+      this.game.spellManager.castSpell(this.spellRef, caster, target, args?.overrideEffect, args?.callbacks);
     };
 
     if (caster && spellData.castTime) {
@@ -198,4 +216,15 @@ export class SpellCommand extends SkillCommand {
 
     doSpellCast();
   }
+
+  // default execute, primarily used by players
+  execute(player: IPlayer, args: IMacroCommandArgs) {
+    this.castSpell(player, args);
+  }
+
+  // default use, primarily used by npcs
+  use(char: ICharacter, target: ICharacter) {
+    this.castSpellAt(char, target);
+  }
+
 }

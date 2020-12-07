@@ -8,7 +8,7 @@
             defaultX="450"
             defaultY="100"
             defaultWidth="372"
-            defaultHeight="472"
+            defaultHeight="490"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -21,7 +21,9 @@
       <div class="vendor-intro">
         <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
 
-        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them! You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.
+        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them! 
+        <br><br>
+        You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.
       </div>
 
       <div class="vendor-tabs">

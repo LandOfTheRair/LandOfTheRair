@@ -3,17 +3,21 @@ import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
-import { cloneDeep, isArray, isNumber, isString, random, sample } from 'lodash';
+import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
-import { Alignment, Allegiance, BaseService, BehaviorType, Currency, Hostility,
-  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, LearnedSpell, MonsterClass, Rollable, Stat } from '../../interfaces';
+import { Alignment, Allegiance, BehaviorType, Currency, Hostility,
+  IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, LearnedSpell, MonsterClass, Rollable, Skill, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
-import { CharacterHelper, ItemHelper } from '../character';
+import { CharacterHelper } from '../character/CharacterHelper';
 import { DialogActionHelper } from '../character/DialogActionHelper';
+import { ItemHelper } from '../character/ItemHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
+
+import * as npcNames from '../../../content/_output/npcnames.json';
+import { BaseService } from '../../models/BaseService';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs
@@ -65,6 +69,10 @@ export class NPCCreator extends BaseService {
     baseChar.drops = npcDef.drops ?? [];
     baseChar.copyDrops = npcDef.copyDrops ?? [];
     baseChar.dropPool = npcDef.dropPool ?? null;
+    baseChar.triggers = npcDef.triggers || {};
+    baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
+
+    this.setLevel(baseChar, npcDef);
 
     const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
 
@@ -125,6 +133,24 @@ export class NPCCreator extends BaseService {
     baseChar.skills = npcDef.skills || {};
     baseChar.allegianceMods = npcDef.repMod || [];
 
+    if (baseChar.hostility === Hostility.Never) {
+      const statSet = Math.max(5, (baseChar.level || 1) / 3);
+
+      const buffStats: Stat[] = [
+        Stat.STR, Stat.AGI, Stat.DEX,
+        Stat.INT, Stat.WIS, Stat.WIL,
+        Stat.CON, Stat.CHA, Stat.LUK
+      ];
+
+      buffStats.forEach(stat => {
+        this.game.characterHelper.gainPermanentStat(baseChar, stat as Stat, statSet);
+      });
+
+      Object.values(Skill).forEach(skill => {
+        baseChar.skills[skill] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(statSet);
+      });
+    }
+
     if (npcDef.gold) {
       baseChar.currency[Currency.Gold] = random(npcDef.gold.min, npcDef.gold.max);
     }
@@ -182,9 +208,14 @@ export class NPCCreator extends BaseService {
   }
 
   public getNPCName(npc: INPCDefinition): string {
-    if (isArray(npc.name)) return sample(npc.name);
 
-    if (npc.name) return npc.name;
+    if (isString(npc.name)) return npc.name as unknown as string;
+
+    // if the npc has a static name
+    if (npc.name) {
+      if (this.game.diceRollerHelper.XInOneHundred(99)) return npc.name[0];
+      return sample(npc.name);
+    }
 
     switch (npc.monsterClass) {
       case MonsterClass.Dragon:    return species.dragon();
@@ -199,6 +230,10 @@ export class NPCCreator extends BaseService {
       case Allegiance.Underground: return species.cavePerson();
       case Allegiance.Wilderness:  return species.fairy();
       case Allegiance.Adventurers: return species.gnome();
+    }
+
+    if (this.game.diceRollerHelper.XInOneHundred(1)) {
+      return sample((npcNames as any).default || npcNames);
     }
 
     return species.human();
@@ -225,6 +260,13 @@ export class NPCCreator extends BaseService {
     npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * 3;
     npc.giveXp.min *= 4;
     npc.giveXp.max *= 4;
+  }
+
+  private setLevel(npc: INPC, npcDef: INPCDefinition): void {
+    npc.level = npcDef.level || 1;
+
+    // npcs that are > lv 10 can have their level fuzzed a bit
+    if (npc.level > 10) npc.level += random(-2, 2);
   }
 
   private shouldLoadContainerItem(itemName: string|any): boolean {

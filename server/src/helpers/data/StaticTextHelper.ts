@@ -2,7 +2,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, DamageClass, SwimLevel } from '../../interfaces';
+import { DamageClass, SwimLevel } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 
 const WOOD_PILE_DESC = 'You are standing near a pile of logs, stacked neatly so as not to trounce an unsuspecting passerby.';
 const WOOD_SEAT_DESC = 'You are sitting in a somewhat uncomfortable wooden seat.';
@@ -164,7 +165,8 @@ const DecorGids = {
   962: BLOOD_PUDDLE_DESC
 };
 
-const SwimInfo = {
+// mapping of sprite row -> relevant info
+const SwimInfo: Record<number, { element: DamageClass, swimLevel: SwimLevel }> = {
   1:  { element: DamageClass.Water, swimLevel: SwimLevel.SpringWater },
   8:  { element: DamageClass.Water, swimLevel: SwimLevel.NormalWater },
   9:  { element: DamageClass.Fire,  swimLevel: SwimLevel.Lava },

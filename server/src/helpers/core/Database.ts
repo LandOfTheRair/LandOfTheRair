@@ -1,10 +1,10 @@
 
 import { Injectable } from 'injection-js';
 import { Collection, Db, MongoClient } from 'mongodb';
+import { BaseService } from '../../models/BaseService';
 
-import { BaseService } from '../../interfaces';
+import { BaseEntity } from '../../models/BaseEntity';
 import { MetadataStorage } from './db/base';
-import { BaseEntity } from './db/base/BaseEntity';
 
 @Injectable()
 export class Database extends BaseService {

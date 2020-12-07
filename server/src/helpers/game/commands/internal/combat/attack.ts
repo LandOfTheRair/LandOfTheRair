@@ -3,7 +3,7 @@ import { SkillCommand } from '../../../../../models/macro';
 
 export class AttackCommand extends SkillCommand {
 
-  aliases = ['attack'];
+  aliases = ['a', 'attack'];
 
   range(char: ICharacter) {
     return this.calcPlainAttackRange(char);

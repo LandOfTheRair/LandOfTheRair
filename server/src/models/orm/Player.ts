@@ -1,11 +1,10 @@
 
 import { ObjectId } from 'mongodb';
-import { BaseEntity } from '../../helpers/core/db/base';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, ICharacterItems, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
-  PROP_SERVER_ONLY,
-  PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
+  SkillBlock, StatBlock } from '../../interfaces';
+import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
 
@@ -45,6 +44,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
+  @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
 
   // all characters have these props
   @Property() uuid: string;

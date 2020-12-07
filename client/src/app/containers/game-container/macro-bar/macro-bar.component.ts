@@ -3,7 +3,8 @@ import { Select, Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
+import { first } from 'rxjs/operators';
+import { ICharacter, IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -20,6 +21,7 @@ export class MacroBarComponent implements OnInit, OnDestroy {
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(MacrosService.currentPlayerMacros) macros$: Observable<any>;
   @Select(MacrosState.allMacros) allMacros$: Observable<any>;
+  @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
 
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);
 
@@ -43,6 +45,18 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
     if (macro.mode === 'autoActivate') {
       this.gameService.sendCommandString(macro.macro);
+      return;
+    }
+
+    if (macro.mode === 'autoTarget') {
+      this.currentTarget$.pipe(first()).subscribe(target => {
+        if(target) {
+          this.gameService.sendCommandString(macro.macro, target.uuid);
+          return;
+        }
+
+        this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
+      });
       return;
     }
 

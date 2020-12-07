@@ -2,8 +2,9 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class DeathHelper extends BaseService {
@@ -113,7 +114,7 @@ export class DeathHelper extends BaseService {
     }
 
     // drop your hand items
-    if (killer) {
+    if (killer && !this.game.characterHelper.isPlayer(killer)) {
       this.game.characterHelper.dropHands(dead);
     }
   }
@@ -130,8 +131,7 @@ export class DeathHelper extends BaseService {
       // always drop gold
       const goldHeld = dead.currency?.[Currency.Gold] ?? 0;
       if (goldHeld > 0) {
-        const gold = this.game.itemCreator.getSimpleItem('Gold Coin');
-        gold.mods.value = goldHeld;
+        const gold = this.game.itemCreator.getGold(goldHeld);
         allItems.push(gold);
       }
 
@@ -189,6 +189,11 @@ export class DeathHelper extends BaseService {
 
   // try to strip, try to eat
   private npcKill(killer: INPC, dead: ICharacter): void {
+
+    // clear the agro when something is killed by an npc
+    this.game.characterHelper.clearAgro(killer, dead);
+    this.game.characterHelper.clearAgro(dead, killer);
+
     // TODO: try to strip
     // TODO: try to eat
   }

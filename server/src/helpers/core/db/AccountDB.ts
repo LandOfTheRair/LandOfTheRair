@@ -4,8 +4,9 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, merge, pick } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { BaseService, IAccount } from '../../../interfaces';
+import { IAccount } from '../../../interfaces';
 import { Account } from '../../../models';
+import { BaseService } from '../../../models/BaseService';
 import { Database } from '../Database';
 
 @Injectable()

@@ -19,7 +19,7 @@ export interface INPCDefinition {
   sprite: number | number[];
 
   // the npc name - optional - if unspecified, generated randomly
-  name?: string;
+  name?: string[];
 
   // the npc "guild" that it belongs to
   affiliation?: string;
@@ -31,7 +31,7 @@ export interface INPCDefinition {
   allegiance?: Allegiance;
 
   // the current reputation (how it views other allegiances)
-  allegianceReputation?: { [all in Allegiance]?: number };
+  allegianceReputation?: Partial<Record<Allegiance, number>>;
 
   // whether the npc can only use water
   aquaticOnly?: boolean;
@@ -69,13 +69,16 @@ export interface INPCDefinition {
 
   // gear items that can spawn on the creature
   items?: {
-    equipment?: { [slot in ItemSlot]: Rollable[] };
+    equipment?: Partial<Record<ItemSlot, Rollable[]>>;
     sack?: Rollable[];
     belt?: Rollable[];
   };
 
   // the creatures level
   level: number;
+
+  // how far the NPC can wander, in tiles
+  maxWanderRandomlyDistance?: number;
 
   // the creature class (used for rippers, etc)
   monsterClass?: MonsterClass;
@@ -117,10 +120,10 @@ export interface INPCDefinition {
   tansFor?: string;
 
   // the trait levels this creature has
-  traitLevels?: { [trait: string]: number };
+  traitLevels?: Record<string, number>;
 
   // npc triggers
-  triggers?: { [trigger in NPCTriggerType]: any };
+  triggers?: Partial<Record<NPCTriggerType, any>>;
 
   // npc usable skills
   usableSkills: Rollable[];
@@ -164,4 +167,7 @@ export interface INPC extends ICharacter {
 
   allegianceMods: Array<{ delta: number, allegiance: Allegiance }>;
   traitLevels?: Record<string, number>;
+
+  triggers?: Partial<Record<NPCTriggerType, any>>;
+  maxWanderRandomlyDistance: number;
 }

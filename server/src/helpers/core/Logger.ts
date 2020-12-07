@@ -1,8 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import Rollbar from 'rollbar';
-
-import { BaseService } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class Logger extends BaseService {

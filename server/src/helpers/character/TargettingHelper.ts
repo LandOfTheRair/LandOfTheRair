@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { VisibilityHelper } from './VisibilityHelper';
@@ -43,7 +44,7 @@ export class TargettingHelper extends BaseService {
     if (target.allegiance === Allegiance.GM) return false;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
-    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation.NaturalResource) return false;
+    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return false;
 
     // I shouldn't be hostile towards my party members
     if ((me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
@@ -95,7 +96,7 @@ export class TargettingHelper extends BaseService {
     const state = this.worldManager.getMapStateForCharacter(player);
     const allTargets = state.getAllInRange(player, 4, [], useSight);
     const possTargets = allTargets.filter(target => {
-      if (this.characterHelper.isDead(target) || target.uuid === player.uuid) return false;
+      if (this.characterHelper.isDead(target)) return false;
 
       const diffX = target.x - player.x;
       const diffY = target.y - player.y;

@@ -1,6 +1,9 @@
 {
   "name": "landoftherair",
-  "version": "1.3.3",
+  "version": "1.5.4",
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
     "postinstall": "lerna exec -- npm install && lerna exec -- npm run setup",
     "setup": "lerna exec -- npm run setup",

@@ -2,7 +2,7 @@
 import { extend, isArray, random, sample } from 'lodash';
 import { Game } from '../../helpers';
 
-import { Hostility, IAI, INPC, INPCDefinition } from '../../interfaces';
+import { Holiday, Hostility, IAI, INPC, INPCDefinition } from '../../interfaces';
 import { WorldMap } from './Map';
 import { MapState } from './MapState';
 
@@ -37,6 +37,7 @@ export class Spawner {
   private requireDeadToRespawn = false;             // whether the spawner can keep spawning while it has living creatures
   private isDangerous = false;                      // whether the creature is "dangerous" or not (strips)
   private respectKnowledge = true;                  // whether the npcs should be acting if true, they only act where players have knowledge (green, town, and lair spawners always act)
+  private requireHoliday: Holiday;                  // if this spawner requires a holiday to be active, it's set to this
 
   private shouldStrip = false;                      // whether the creature should strip all your gear on death
   private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
@@ -98,6 +99,11 @@ export class Spawner {
     return this.canRespawn && this.isUnderNPCCap && this.isAbleToSpawn;
   }
 
+  private get canBeActive(): boolean {
+    if (this.requireHoliday && !this.game.holidayHelper.isHoliday(this.requireHoliday)) return false;
+    return true;
+  }
+
   constructor(private game: Game, private mapRef: WorldMap, private mapState: MapState, spawnOpts: Partial<Spawner> = {}) {
     extend(this, spawnOpts);
 
@@ -107,6 +113,8 @@ export class Spawner {
 
   // triggers every second
   public steadyTick(): void {
+    if (!this.canBeActive) return;
+
     if (this.requireDeadToRespawn) {
       if (this.npcs.length === 0) this.increaseTick();
     } else {
@@ -184,6 +192,8 @@ export class Spawner {
   }
 
   private createNPC(opts: { npcId?: string, npcDef?: INPCDefinition, createCallback?: (npc: INPC) => void } = {}) {
+    if (!this.canBeActive) return;
+
     const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
       this.game.logger.error('Spawner', `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`);

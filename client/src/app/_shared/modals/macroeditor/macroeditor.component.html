@@ -105,17 +105,23 @@
             <mat-form-field class="full-width">
               <mat-label>Macro Mode</mat-label>
               <mat-select [(ngModel)]="currentlyEditingMacro.mode" [ngModelOptions]="{ standalone: true }">
-                <mat-option value="autoActivate">
-                  Instant (<em>Activates when macro clicked</em>)
-                </mat-option>
 
                 <mat-option value="lockActivation">
                   Locked (<em>Becomes your active macro when clicked</em>)
                 </mat-option>
 
+                <mat-option value="autoActivate">
+                  Instant (<em>Activates when macro clicked</em>)
+                </mat-option>
+
+                <mat-option value="autoTarget">
+                  Auto Target (<em>Activates when macro clicked, targetting the current target</em>)
+                </mat-option>
+
                 <mat-option value="clickToTarget">
                   Needs Target (<em>Needs to target a creature</em>)
                 </mat-option>
+                
               </mat-select>
             </mat-form-field>
   

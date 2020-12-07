@@ -6,8 +6,9 @@ import { zipObject } from 'lodash';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
-import { BaseService, ICharacter, ObjectType } from '../../interfaces';
+import { ICharacter, ObjectType } from '../../interfaces';
 import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class WorldManager extends BaseService {
@@ -123,7 +124,9 @@ export class WorldManager extends BaseService {
 
     // dead people leaving get auto-respawned
     if (this.game.characterHelper.isDead(player)) {
+      player.isBeingForciblyRespawned = true;
       this.game.deathHelper.restore(player);
+      player.isBeingForciblyRespawned = false;
     }
 
     delete this.playersInMaps[player.name];

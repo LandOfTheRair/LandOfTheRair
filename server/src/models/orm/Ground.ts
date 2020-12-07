@@ -1,7 +1,7 @@
 
-import { BaseEntity } from '../../helpers/core/db/base/BaseEntity';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { IGround, ISerializableSpawner } from '../../interfaces';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class Ground extends BaseEntity {

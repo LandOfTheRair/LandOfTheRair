@@ -1,6 +1,7 @@
-import { BaseEffect, ICharacter, IStatusEffect, MessageInfo, MessageType } from '../../interfaces';
+import { ICharacter, IStatusEffect, MessageInfo, MessageType } from '../../interfaces';
 
 import { Game } from '../../helpers';
+import { BaseEffect } from '../BaseEffect';
 
 export class Effect implements BaseEffect {
 

@@ -3,9 +3,10 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { Allegiance, BaseClass, BaseService, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
 import { Player } from '../../models';
-import { WorldManager } from '../data';
+import { BaseService } from '../../models/BaseService';
+import { WorldManager } from '../data/WorldManager';
 
 @Injectable()
 export class VisibilityHelper extends BaseService {
@@ -19,9 +20,12 @@ export class VisibilityHelper extends BaseService {
   public init() {}
 
   // specifically calculate fov for players and update it afterwards
-  calculatePlayerFOV(player: Player): void {
+  calculatePlayerFOV(player: Player, sendFOV = true): void {
     this.calculateFOV(player);
-    this.game.transmissionHelper.queuePlayerPatch(player, { player: { fov: player.fov } });
+
+    if (sendFOV) {
+      this.game.transmissionHelper.sendFOVPatch(player);
+    }
   }
 
   // calculate a fov for a character and set it

@@ -1,3 +1,115 @@
+## [1.5.4](https://github.com/landoftherair/lotr2/compare/v1.5.3...v1.5.4) (2020-12-06)
+
+
+### Bug Fixes
+
+* **core:** invalid vendor items should log, not throw ([edd0b8a](https://github.com/landoftherair/lotr2/commit/edd0b8a055bc86aad761391fb6ef4de7946a3f15))
+* **death:** dying no longer leaves you in an infinite loop when respawning ([252afea](https://github.com/landoftherair/lotr2/commit/252afeacae9623c91b0adf7184b65163c5b034dd))
+* **map:** fix map reloading when quitting and rejoining game ([6a3765d](https://github.com/landoftherair/lotr2/commit/6a3765d027ce450c0e8bb65b21356d55b9baca6c))
+* **map:** hopefully fix race condition when creating sprites ([301aa49](https://github.com/landoftherair/lotr2/commit/301aa496afc70dd5e824af2dad7d8a95ac1c3210))
+* **npc:** natural resources should not crash the game when you see them ([1791a37](https://github.com/landoftherair/lotr2/commit/1791a37113facd9d9a71c5bfb4e7917245a14068))
+* **npc:** npcs will now get random names correctly, when appropriate ([86123bc](https://github.com/landoftherair/lotr2/commit/86123bc81acf2a2ed765544e945cdb1902586f02))
+* **spawner:** holiday spawners should only spawn on holidays ([6fd72d8](https://github.com/landoftherair/lotr2/commit/6fd72d8e9d2785abb8d463b44c8b5f85f7bfbcb3))
+* **ui:** active target should move dangerous marker to right side ([f8d2919](https://github.com/landoftherair/lotr2/commit/f8d29190446404994255ab5d5aafa296006cdda3))
+* **ui:** put command line back in correct position ([b4e9f41](https://github.com/landoftherair/lotr2/commit/b4e9f413851f7ccca9459873e9bf41cebb5b0580))
+* **ui:** vendor ui should scale better for people with more currency ([6f78b97](https://github.com/landoftherair/lotr2/commit/6f78b9707e90d8abbc6fa45e280f4827d984daaa))
+* **ui:** vendor window was too short ([3d8aa0f](https://github.com/landoftherair/lotr2/commit/3d8aa0f83ecbb725a105e3b8a117a928fc9a5b75))
+
+
+
+## [1.5.3](https://github.com/landoftherair/lotr2/compare/v1.5.2...v1.5.3) (2020-12-05)
+
+
+### Bug Fixes
+
+* **npc:** npc names that are static are 99% likely to be first, 1% to be random ([5d1039b](https://github.com/landoftherair/lotr2/commit/5d1039b643b324f53dbffb7efd0011e8b3aa8c13))
+
+
+### Features
+
+* **ui:** hide map while transitioning between maps ([1bec460](https://github.com/landoftherair/lotr2/commit/1bec460459e2d3a25799036ae29928d5a412f87c))
+
+
+
+## [1.5.2](https://github.com/landoftherair/lotr2/compare/v1.5.1...v1.5.2) (2020-12-05)
+
+
+### Bug Fixes
+
+* **map:** hopefully fix 'cannot read property sys of undefined' ([2a557c7](https://github.com/landoftherair/lotr2/commit/2a557c7c5c0b61357f4f433bd107367175aa79b6))
+* **swimming:** swimming in lava immediately does fire damage ([425f5cc](https://github.com/landoftherair/lotr2/commit/425f5cc1a23d18c8a2b08595f8397b2f5dcc0cd1))
+* **targetui:** target ui would jitter when stepping on and off of a targets tile ([aca7c02](https://github.com/landoftherair/lotr2/commit/aca7c023904d1cdb312fa869a0576492ca71c86f))
+
+
+### Features
+
+* **gm:** add gm teleport, add gm command logging ([466d0c7](https://github.com/landoftherair/lotr2/commit/466d0c7d475c5b3a7095350d49af23ceb4561eb9))
+* **options:** reorg options, add new debug ui option ([b0cd1a7](https://github.com/landoftherair/lotr2/commit/b0cd1a7c0d42172e2b197c185a6a280da7a37ee9))
+* **world:** can transition between two maps properly now ([22d97bd](https://github.com/landoftherair/lotr2/commit/22d97bd3d3d3b4e9e77b30433397e6cec4b71690))
+
+
+
+## [1.5.1](https://github.com/landoftherair/lotr2/compare/v1.5.0...v1.5.1) (2020-12-04)
+
+
+### Features
+
+* **spells:** add heal, heal infra, ignore cfx on self casts for heal ([fc6945f](https://github.com/landoftherair/lotr2/commit/fc6945f7af6d1a0173cc07dd1df45eb25b534344))
+
+
+
+# [1.5.0](https://github.com/landoftherair/lotr2/compare/v1.4.0...v1.5.0) (2020-12-04)
+
+
+### Bug Fixes
+
+* **death:** fix dropping left hand and emptying right hand ([65f9578](https://github.com/landoftherair/lotr2/commit/65f9578bec6c7b264a91714486ce63ebc211fdad))
+* **messages:** somebody was killed by somebody fix ([aa3b490](https://github.com/landoftherair/lotr2/commit/aa3b490db879243ef07925b470eb33d15430b622))
+* **npc:** npcs now correctly get a level assigned ([6aa6263](https://github.com/landoftherair/lotr2/commit/6aa62635dcf121ce2b7ebd043a4551a999e3bd4f))
+* **ui:** two tooltips on skill window ([5827122](https://github.com/landoftherair/lotr2/commit/5827122ec28c680a2fe1c74af4c9783edaaf58cf))
+
+
+### Features
+
+* **caster:** add clearcasting trait ([0325641](https://github.com/landoftherair/lotr2/commit/032564195b653ff46823073a2e9cd17cf09c6e98))
+* **combat:** can now kick ([ec55ead](https://github.com/landoftherair/lotr2/commit/ec55ead3e0e02f613597a772944a203998f0e7e5))
+* **combat:** can now throw items ([9e79191](https://github.com/landoftherair/lotr2/commit/9e7919151152ed263106ab332ab20360b929c09d))
+* **npc:** clear agro on npc kill ([a9ecdf6](https://github.com/landoftherair/lotr2/commit/a9ecdf61f452cec50f93fe1e545acf8997247c12))
+* **npc:** green npcs can wander around optionally, and will fight back if attacked ([ebe3816](https://github.com/landoftherair/lotr2/commit/ebe3816489ac9dec89f3d0826ae8ec549e6a9a00))
+* **npc:** green npcs will fight back, move to you, cast spells at you, and can have hp, mp, and levels ([a0445a6](https://github.com/landoftherair/lotr2/commit/a0445a69f13bc14c6bfab24bcedad098be4da768))
+* **npc:** spawn and leash messages/sfx ([fffc7b5](https://github.com/landoftherair/lotr2/commit/fffc7b550f62b96839a52c3a675fa7a6f014e5b2))
+* **warrior:** add swashbuckler trait ([94c2a70](https://github.com/landoftherair/lotr2/commit/94c2a70ef49e2fb3662d8102dee272b80a8a2367))
+
+
+
+# [1.4.0](https://github.com/landoftherair/lotr2/compare/v1.3.4...v1.4.0) (2020-12-03)
+
+
+### Features
+
+* **npc:** npcs can generate with a random, specific name with some nostalgic names already added ([a31387d](https://github.com/landoftherair/lotr2/commit/a31387d85e2c4bb8491e7bea0209ba8237292a53))
+* **warrior:** new macro mode autoTarget, new warrior skill Cleave ([a656eb3](https://github.com/landoftherair/lotr2/commit/a656eb35437fa42f1939093532dd4f816275f3cd))
+
+
+
+## [1.3.4](https://github.com/landoftherair/lotr2/compare/v1.3.3...v1.3.4) (2020-12-02)
+
+
+### Bug Fixes
+
+* **macro:** don't throw error if a spell doesn't exist ([485231e](https://github.com/landoftherair/lotr2/commit/485231efd9340eeae406a44ea648bb148e2e60bf))
+* **ui:** macro bar click popover for setting bars tweaked to be slightly better ([23225af](https://github.com/landoftherair/lotr2/commit/23225af38cd52f3e2c1a4167ca2b3cefb0513008))
+
+
+### Features
+
+* **thief:** basic stealth shenanigans work, weapons detract stealth not by percent anymore, stealth/perception simplified significantly, do not send hidden chars to client anymore, filter out beforehand ([59c8b74](https://github.com/landoftherair/lotr2/commit/59c8b745d46594ba180cc0bad95f1798c4caa386))
+* **thief:** stealing, lots of stealing, stealing traits ([c0def12](https://github.com/landoftherair/lotr2/commit/c0def12b6bf565c8679934ef226351eb36d22089))
+* **thief:** thief stealth bar goes down based on num hostiles nearby, trait to reduce ([b261d62](https://github.com/landoftherair/lotr2/commit/b261d6255f5911f4c17c73fd98c66131f417954a))
+* **ui:** move target so it doesnt cover armor ([6a2f3b8](https://github.com/landoftherair/lotr2/commit/6a2f3b8469fd11f19b6398e71bf62392a7b4b5b6))
+
+
+
 ## [1.3.3](https://github.com/landoftherair/lotr2/compare/v1.3.2...v1.3.3) (2020-11-30)
 
 

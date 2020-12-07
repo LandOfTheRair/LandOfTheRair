@@ -1,9 +1,10 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService } from '../../interfaces';
+import { GameAction } from '../../interfaces';
 import { Player } from '../../models';
-import { WorldManager } from '../data';
+import { BaseService } from '../../models/BaseService';
+import { WorldManager } from '../data/WorldManager';
 
 @Injectable()
 export class TeleportHelper extends BaseService {
@@ -35,7 +36,8 @@ export class TeleportHelper extends BaseService {
   // teleport a player somewhere
   public teleport(
     player: Player,
-    { x, y, map, zChange = 0, zSet = 0 }: { x: number, y: number, map?: string, zChange?: number, zSet?: number }
+    { x, y, map, zChange = 0, zSet = 0, fromLeaveMap = false }:
+      { x: number, y: number, map?: string, zChange?: number, zSet?: number, fromLeaveMap?: boolean }
   ) {
 
     // if we're not changing maps, move on this one
@@ -52,14 +54,13 @@ export class TeleportHelper extends BaseService {
       player.z = zSet;
     }
 
-    this.game.playerHelper.resetStatus(player);
+    this.game.playerHelper.resetStatus(player, { sendFOV: false });
 
     // check if the new map even exists before going
     if (map && player.map !== map) {
 
-      const { state } = this.worldManager.getMap(player.map);
-      const newMapData = this.game.worldManager.getMap(map);
-      if (!newMapData) {
+      const { state: newState, map: newMap } = this.worldManager.getMap(map);
+      if (!newState) {
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Warning: map ${map} does not exist.` });
         return;
       }
@@ -67,9 +68,16 @@ export class TeleportHelper extends BaseService {
       // TODO: players coming in from different teleports will have different z coords. figure this out.
       player.z = 0;
 
-      state.removePlayer(player);
+      if (!player.isBeingForciblyRespawned) {
+        this.game.worldManager.leaveMap(player);
+      }
+
       player.map = map;
-      newMapData.state.addPlayer(player);
+      player.x = x;
+      player.y = y;
+      this.game.worldManager.joinMap(player);
+
+      this.game.transmissionHelper.sendActionToPlayer(player, GameAction.GameSetMap, { map: newMap.mapData });
     }
   }
 

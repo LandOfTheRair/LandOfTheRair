@@ -2,8 +2,9 @@ import didYouMean from 'didyoumean2';
 import { Injectable } from 'injection-js';
 import { isObject, isString } from 'lodash';
 
-import { BaseService, IMacroCommandArgs } from '../../interfaces';
+import { IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { MacroCommand, SkillCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
@@ -106,6 +107,10 @@ export class CommandHandler extends BaseService {
     if (commandRef.isGMCommand && !player.isGM) {
       this.messageHelper.sendLogMessageToPlayer(player, { message: `You're not a GM.` });
       return;
+    }
+
+    if (commandRef.isGMCommand) {
+      this.game.logger.log(`GMCommand`, `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`);
     }
 
     // check if we need to learn a spell before using it

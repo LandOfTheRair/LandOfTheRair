@@ -49,6 +49,10 @@ export class MapComponent implements OnInit, OnDestroy {
   // boxes
   private allBoxes: FloatingBox[] = [];
 
+  // hide the map behind a black screen
+  private hideMap = new BehaviorSubject<boolean>(true);
+  public hideMapFromView = true;
+
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
   public loadString: string;
@@ -83,6 +87,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.boxSub = GameState.box.subscribe(data => this.createBox(data));
 
+    this.gameService.currentMap$.subscribe(() => {
+      this.hideMap.next(true);
+    });
+
     // play game when we get the signal and have a valid map
     combineLatest([
       this.gameService.playGame$,
@@ -90,12 +98,20 @@ export class MapComponent implements OnInit, OnDestroy {
       this.gameService.currentMap$
     ]).subscribe(([play, player, map]) => {
       if (!play || !player || !map) return;
+      const areMapsDifferent = player?.map && this.currentPlayer.getValue()?.map && player?.map !== this.currentPlayer.getValue()?.map;
+
       this.map.next(map);
       this.currentPlayer.next(player);
 
       if (!this.game) {
         this.zone.runOutsideAngular(() => {
           this.initMap();
+        });
+      }
+
+      if(this.game && areMapsDifferent) {
+        this.zone.runOutsideAngular(() => {
+          this.game.scene.getScene('MapScene')?.scene.restart();
         });
       }
     });
@@ -120,6 +136,10 @@ export class MapComponent implements OnInit, OnDestroy {
         this.loadString = d;
         this.fadeOut = false;
       });
+    });
+
+    this.hideMap.subscribe(d => {
+      this.hideMapFromView = d;
     });
 
     // reset when we get a quit signal
@@ -167,6 +187,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.assetService,
       {
         loadPercent: this.loadPercent,
+        hideMap: this.hideMap,
         player: this.currentPlayer,
         map: this.map,
         allPlayers: this.allPlayers,
@@ -175,6 +196,8 @@ export class MapComponent implements OnInit, OnDestroy {
         ground: this.ground
       }
     );
+
+    (window as any).__game = this.game;
 
     this.game.scene.add('PreloadScene', PreloadScene);
     this.game.scene.add('MapScene', MapScene);

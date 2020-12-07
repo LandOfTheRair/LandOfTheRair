@@ -52,6 +52,8 @@ export class MapScene extends Phaser.Scene {
   private groundUpdate$: Subscription;
   private player: IPlayer;
 
+  private isReady: boolean;
+
   private openDoors = {};
   private ground = {};
 
@@ -68,6 +70,12 @@ export class MapScene extends Phaser.Scene {
 
   // create the fov / subfov sprites
   private createFOV() {
+
+    // if the fov was made before, remove and re-create (we're changing maps)
+    if(this.textures.exists('black')) {
+      this.textures.remove('black');
+    }
+
     const blackBitmapData = this.textures.createCanvas('black', 64, 64);
     blackBitmapData.context.fillStyle = 0x000000;
     blackBitmapData.context.fillRect(0, 0, 64, 64);
@@ -103,11 +111,13 @@ export class MapScene extends Phaser.Scene {
 
   // npc sprite stuff
   private updateNPCSprite(npc: INPC) {
+    if(!this.isReady) return;
+
     const sprite = this.allNPCSprites[npc.uuid];
     if (!sprite) {
       this.createNPCSprite(npc);
       return;
-    }
+  }
 
     const directionOffset = spriteOffsetForDirection(npc.dir);
     const newFrame = npc.sprite + directionOffset;
@@ -128,6 +138,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createNPCSprite(npc: INPC) {
+    if(!this.isReady) return;
 
     const sprite = this.add.sprite(
       this.convertPosition(npc.x), this.convertPosition(npc.y),
@@ -150,6 +161,8 @@ export class MapScene extends Phaser.Scene {
 
   // player sprite stuff
   private updatePlayerSprite(player: IPlayer) {
+    if(!this.isReady) return;
+
     const sprite = this.allPlayerSprites[player.uuid];
     if (!sprite) {
       this.createPlayerSprite(player);
@@ -168,6 +181,8 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createPlayerSprite(player: IPlayer) {
+    if(!this.isReady) return;
+
     const spriteGenderBase = basePlayerSprite(player);
     const directionOffset = spriteOffsetForDirection(player.dir);
 
@@ -426,6 +441,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   public create() {
+    this.isReady = true;
 
     const player = this.game.observables.player.getValue();
     this.player = player;
@@ -519,6 +535,7 @@ export class MapScene extends Phaser.Scene {
       text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
     }
     this.game.observables.loadPercent.next(text);
+    this.game.observables.hideMap.next(false);
 
     setTimeout(() => {
       this.game.observables.loadPercent.next('');
@@ -526,7 +543,7 @@ export class MapScene extends Phaser.Scene {
 
     // force a move 0,0 to get default rendering info
     setTimeout(() => {
-      this.game.gameService.sendCommandString('~move 0 0');
+      this.game.gameService.sendCommandString('!move 0 0');
     }, 1000);
   }
 

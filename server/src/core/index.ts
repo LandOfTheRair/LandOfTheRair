@@ -40,8 +40,7 @@ if (cluster.isMaster) {
 
     const workers: any = {
       net: null,
-      gameloop: null,
-      ground: null
+      gameloop: null
     };
 
     const pids = {
@@ -50,7 +49,7 @@ if (cluster.isMaster) {
       ground: 0
     };
 
-    const createWorker = (type: 'net'|'gameloop'|'ground') => {
+    const createWorker = (type: 'net'|'gameloop') => {
       workers[type] = cluster.fork({ [type.toUpperCase()]: 1 });
       pids[type] = workers[type].process.pid;
 
@@ -68,9 +67,6 @@ if (cluster.isMaster) {
     createWorker('gameloop');
     console.log('CORE', `Gameloop started as PID ${pids.gameloop}.`);
 
-    createWorker('ground');
-    console.log('CORE', `Ground watcher started as PID ${pids.ground}.`);
-
     cluster.on('exit', (deadWorker) => {
       switch (deadWorker.process.pid) {
         case pids.net: {
@@ -82,12 +78,6 @@ if (cluster.isMaster) {
         case pids.gameloop: {
           createWorker('gameloop');
           console.log('CORE', `Respawning gameloop as PID ${pids.gameloop}`);
-          break;
-        }
-
-        case pids.ground: {
-          createWorker('ground');
-          console.log('CORE', `Respawning ground as PID ${pids.ground}`);
           break;
         }
       }

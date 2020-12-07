@@ -4,3 +4,4 @@ export * from './hide';
 export * from './lookat';
 export * from './showskills';
 export * from './showstats';
+export * from './steal';

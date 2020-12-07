@@ -1,11 +1,12 @@
 import { Injectable } from 'injection-js';
 import { sample, template } from 'lodash';
 
-import { BaseService, GameServerResponse, IDialogAction, IDialogActionType,
+import { GameServerResponse, IDialogAction, IDialogActionType,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
   IDialogGiveEffectAction,
   IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
+import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
   messages: string[];

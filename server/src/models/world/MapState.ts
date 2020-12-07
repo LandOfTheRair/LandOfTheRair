@@ -77,6 +77,7 @@ export class MapState {
       npcDef.allegiance = npcDef.allegiance || Allegiance.None;
       npcDef.alignment = npcDef.alignment || Alignment.Neutral;
       npcDef.hostility = npcDef.hostility || Hostility.Never;
+      npcDef.name = npc.name || npcDef.name;
 
       npcDef.extraProps = npc.properties || {};
 
@@ -89,6 +90,7 @@ export class MapState {
       map: this.map.name,
       name: `${this.map.name} Green NPC Spawner`,
       leashRadius: -1,
+      randomWalkRadius: 0,
       respawnRate: 300,
       requireDeadToRespawn: true,
       removeDeadNPCs: false,
@@ -258,7 +260,7 @@ export class MapState {
   }
 
   // get PLAYERS in range (query)
-  public getPlayersInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+  public getPlayersInRange(ref: ICharacter, radius: number, except: string[] = [], useSight = true): ICharacter[] {
     return this.getPlayersFromQuadtrees(ref, radius)
       .filter(char => char
                    && !this.game.characterHelper.isDead(char)
@@ -267,13 +269,13 @@ export class MapState {
   }
 
   // get PLAYERS in range (query, but able to use args from above)
-  public getAllInRangeRaw(ref: { x: number, y: number }, radius, except: string[] = []): ICharacter[] {
+  public getAllInRangeRaw(ref: { x: number, y: number }, radius: number, except: string[] = []): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char && !except.includes(char.uuid));
   }
 
   // get ALL characters in range
-  public getAllInRange(ref: ICharacter, radius, except: string[] = [], useSight = true): ICharacter[] {
+  public getAllInRange(ref: ICharacter, radius: number, except: string[] = [], useSight = true): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char
                    && !this.game.characterHelper.isDead(char)
@@ -339,7 +341,6 @@ export class MapState {
     playersToUpdate
       .filter(p => p !== triggeringPlayer)
       .forEach(p => {
-        this.game.playerHelper.resetStatus(p);
         this.triggerFullUpdateForPlayer(p);
       });
   }
@@ -421,6 +422,8 @@ export class MapState {
   }
 
   public removePlayer(player: Player) {
+    delete this.playersByUUID[player.uuid];
+
     this.generateKnowledgeRadius(player, false);
 
     const rbushPlayer = this.bushStorage[player.uuid];
@@ -432,6 +435,10 @@ export class MapState {
   }
 
   private movePlayer(player: Player, { oldX, oldY }) {
+
+    // this can happen if you join the game while dead and need to teleport between maps
+    if (!this.bushStorage[player.uuid]) return;
+
     this.triggerAndSendUpdate(oldX, oldY, player);
 
     this.generateKnowledgeRadius({ uuid: player.uuid, x: oldX, y: oldY }, false);

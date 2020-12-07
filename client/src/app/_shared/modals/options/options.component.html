@@ -12,43 +12,90 @@
 
     <mat-tab label="Interface">
       <form class="option-container">
-        <div class="m-t-5" *ngFor="let option of uiOptions">
-          <mat-checkbox [(ngModel)]="options[option.option]"
-                        (change)="updateOption(option.option)"
-                        [ngModelOptions]="{ standalone: true }">
-            {{ option.text }}
-          </mat-checkbox>
-        </div>
+
+        <fieldset>
+          <legend>Interaction Options</legend>
+
+          <div class="m-t-5" *ngFor="let option of interactionOptions">
+            <mat-checkbox [(ngModel)]="options[option.option]"
+                          (change)="updateOption(option.option)"
+                          [ngModelOptions]="{ standalone: true }">
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Message Options</legend>
+
+          <div class="m-t-5" *ngFor="let option of messageOptions">
+            <mat-checkbox [(ngModel)]="options[option.option]"
+                          (change)="updateOption(option.option)"
+                          [ngModelOptions]="{ standalone: true }">
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Interface Options</legend>
+        
+          <div class="m-t-5" *ngFor="let option of uiOptions">
+            <mat-checkbox [(ngModel)]="options[option.option]"
+                          (change)="updateOption(option.option)"
+                          [ngModelOptions]="{ standalone: true }">
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
   
-        <div class="slider-option-row">
-          <div class="slider-label">Dying Border Width</div>
-          <mat-slider [min]="0" 
-                      [max]="300" 
-                      [step]="5" 
-                      [(ngModel)]="options.dyingBorderWidth" 
-                      [ngModelOptions]="{ standalone: true }"
-                      (change)="updateOption('dyingBorderWidth')" 
-                      thumbLabel="true"></mat-slider>
-          <div>{{ options.dyingBorderWidth }}px</div>
-        </div>
+          <div class="slider-option-row">
+            <div class="slider-label">Dying Border Width</div>
+            <mat-slider [min]="0" 
+                        [max]="300" 
+                        [step]="5" 
+                        [(ngModel)]="options.dyingBorderWidth" 
+                        [ngModelOptions]="{ standalone: true }"
+                        (change)="updateOption('dyingBorderWidth')" 
+                        thumbLabel="true"></mat-slider>
+            <div>{{ options.dyingBorderWidth }}px</div>
+          </div>
 
-        <div class="radio-row m-t-5">
-          <div class="radio-label">Sort friendlies</div>
-          <mat-radio-group [(ngModel)]="options.shouldSortFriendly" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortFriendly')">
-            <mat-radio-button [value]="null">none</mat-radio-button>
-            <mat-radio-button [value]="true">first</mat-radio-button>
-            <mat-radio-button [value]="false">last</mat-radio-button>
-          </mat-radio-group>
-        </div>
+        </fieldset>
 
-        <div class="radio-row m-t-5">
-          <div class="radio-label">Sort by distance</div>
-          <mat-radio-group [(ngModel)]="options.shouldSortDistance" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortDistance')">
-            <mat-radio-button [value]="null">none</mat-radio-button>
-            <mat-radio-button [value]="true">closest</mat-radio-button>
-            <mat-radio-button [value]="false">farthest</mat-radio-button>
-          </mat-radio-group>
-        </div>
+        <fieldset>
+          <legend>Character Sorting Options</legend>
+
+          <div class="radio-row m-t-5">
+            <div class="radio-label">Sort friendlies</div>
+            <mat-radio-group [(ngModel)]="options.shouldSortFriendly" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortFriendly')">
+              <mat-radio-button [value]="null">none</mat-radio-button>
+              <mat-radio-button [value]="true">first</mat-radio-button>
+              <mat-radio-button [value]="false">last</mat-radio-button>
+            </mat-radio-group>
+          </div>
+  
+          <div class="radio-row m-t-5">
+            <div class="radio-label">Sort by distance</div>
+            <mat-radio-group [(ngModel)]="options.shouldSortDistance" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortDistance')">
+              <mat-radio-button [value]="null">none</mat-radio-button>
+              <mat-radio-button [value]="true">closest</mat-radio-button>
+              <mat-radio-button [value]="false">farthest</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </fieldset>
+
+
+        <fieldset>
+          <legend>UI Debug Options</legend>
+          <div class="m-t-5" *ngFor="let option of debugOptions">
+            <mat-checkbox [(ngModel)]="options[option.option]"
+                          (change)="updateOption(option.option)"
+                          [ngModelOptions]="{ standalone: true }">
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
+        </fieldset>
+
       </form>
 
     </mat-tab>

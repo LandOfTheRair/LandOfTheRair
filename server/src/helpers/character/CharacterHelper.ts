@@ -2,11 +2,12 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseClass, BaseService, EquipHash, GivesBonusInHandItemClasses, Hostility,
+import { BaseClass, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
-import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 import * as HideReduction from '../../../content/_output/hidereductions.json';
+import { Player } from '../../models';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -35,8 +36,8 @@ export class CharacterHelper extends BaseService {
     if (isNaN(char.hp.current)) char.hp.current = 1;
   }
 
-  public manaDamage(char: ICharacter, hp: number): void {
-    this.mana(char, -hp);
+  public manaDamage(char: ICharacter, mp: number): void {
+    this.mana(char, -mp);
   }
 
   public mana(char: ICharacter, mp: number): void {
@@ -60,6 +61,31 @@ export class CharacterHelper extends BaseService {
     return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
   }
 
+  // get an empty hand for the character
+  public getEmptyHand(char: ICharacter): ItemSlot | null {
+    if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
+    if (!char.items.equipment[ItemSlot.LeftHand])  return ItemSlot.LeftHand;
+    return null;
+  }
+
+  public hasCurrency(char: ICharacter, total: number, currency: Currency = Currency.Gold): boolean {
+    return (char.currency[currency] || 0) >= total;
+  }
+
+  // gain currency for a player
+  public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
+    if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${char.name} is NaN!`);
+
+    char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
+
+  }
+
+  // lose currency for a player (either by taking it, or spending it)
+  public loseCurrency(player: ICharacter, currencyLost: number, currency: Currency = Currency.Gold): void {
+    this.gainCurrency(player, -currencyLost, currency);
+  }
+
+  // set the characters equipment slot to something, undefined = unequip
   public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
     const oldItem = char.items.equipment[slot];
 
@@ -91,6 +117,7 @@ export class CharacterHelper extends BaseService {
     }
   }
 
+  // drop your hands on the ground
   public dropHands(char: ICharacter): void {
     if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
 
@@ -103,18 +130,26 @@ export class CharacterHelper extends BaseService {
 
     if (char.items.equipment[ItemSlot.LeftHand]) {
       state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
-      this.setRightHand(char, undefined);
+      this.setLeftHand(char, undefined);
     }
   }
 
+  // set right hand to something
   public setRightHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.RightHand, item);
   }
 
+  // set left hand to something
   public setLeftHand(char: ICharacter, item: ISimpleItem | undefined) {
     this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
   }
 
+  // check if a char has agro with a different char
+  public hasAgro(char: ICharacter, target: ICharacter): boolean {
+    return target.agro[char.uuid] > 0;
+  }
+
+  // add agro for a different char
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
     char.agro[target.uuid] = (char.agro[target.uuid] || 0) + amount;
     target.agro[char.uuid] = (target.agro[char.uuid] || 0) + amount;
@@ -128,12 +163,14 @@ export class CharacterHelper extends BaseService {
 
   }
 
+  // clear agro for a particular char
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
   }
 
+  // begin engaging in combat
   public engageInCombat(char: ICharacter) {
-    char.combatTicks = 10;
+    char.combatTicks = 5;
   }
 
   // check if a character is a player
@@ -369,6 +406,11 @@ export class CharacterHelper extends BaseService {
     // TODO: adjust pet stats
   }
 
+  // get the current currency value for a character
+  public getCurrency(character: ICharacter, currency: Currency = Currency.Gold): number {
+    return character.currency[currency] ?? 0;
+  }
+
   // get a specific stat value from a character
   public getStat(character: ICharacter, stat: Stat): number {
     return character.totalStats[stat] ?? 0;
@@ -377,6 +419,29 @@ export class CharacterHelper extends BaseService {
   // get a specific base stat value from a character
   public getBaseStat(character: ICharacter, stat: Stat): number {
     return character.stats[stat] ?? 0;
+  }
+
+  // hp regen is a min of 1, affected by a con modifier past 21
+  public getHPRegen(character: ICharacter): number {
+    return Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
+  }
+
+  // thieves and warriors have different mpregen setups
+  public getMPRegen(character: ICharacter): number {
+
+    // thieves not in combat regen faster
+    if (character.baseClass === BaseClass.Thief) {
+      if (character.combatTicks <= 0) return 10;
+      return 1;
+    }
+
+    // warriors are the inverse of thieves
+    if (character.baseClass === BaseClass.Warrior) {
+      if (character.combatTicks <= 0) return -3;
+      return 3;
+    }
+
+    return this.getStat(character, Stat.MPRegen);
   }
 
   // get the stealth value for a character
@@ -426,8 +491,8 @@ export class CharacterHelper extends BaseService {
     }
 
     if (tick % 5 === 0) {
-      const hpRegen = Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
-      const mpRegen = this.getStat(character, Stat.MPRegen);
+      const hpRegen = this.getHPRegen(character);
+      const mpRegen = this.getMPRegen(character);
 
       if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
       this.mana(character, mpRegen);
