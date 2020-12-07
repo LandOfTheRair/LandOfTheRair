@@ -10,12 +10,10 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHel
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
-  GroundManager, ItemCreator, NPCCreator, StaticTextHelper, WorldManager } from '../data';
-import { SpellManager } from '../data/SpellManager';
+  GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, LobbyManager } from '../lobby';
-
 import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
