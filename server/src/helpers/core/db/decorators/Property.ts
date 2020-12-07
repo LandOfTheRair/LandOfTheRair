@@ -1,7 +1,6 @@
 
 import { isUndefined } from 'lodash';
 
-import { BaseEntity } from '../../../../models/BaseEntity';
 import { MetadataStorage } from '../base/MetadataStorage';
 
 interface PropertyOptions {
@@ -10,7 +9,7 @@ interface PropertyOptions {
 }
 
 export function Property(options?: PropertyOptions) {
-  return (target: BaseEntity, propertyName: string) => {
+  return (target: any, propertyName: string) => {
     options = options || {};
     if (isUndefined(options.persist)) options.persist = true;
 
