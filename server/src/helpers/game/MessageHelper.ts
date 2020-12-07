@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 import { GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
-import { BaseService, Player } from '../../models';
+import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class MessageHelper extends BaseService {

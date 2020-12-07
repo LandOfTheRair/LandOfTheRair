@@ -3,7 +3,7 @@ import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class EffectHelper extends BaseService {

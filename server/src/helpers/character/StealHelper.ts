@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { BaseClass, ICharacter, IPlayer, Skill, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class StealHelper extends BaseService {

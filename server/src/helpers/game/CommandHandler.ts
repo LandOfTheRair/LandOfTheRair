@@ -3,7 +3,8 @@ import { Injectable } from 'injection-js';
 import { isObject, isString } from 'lodash';
 
 import { IMacroCommandArgs } from '../../interfaces';
-import { BaseService, Player } from '../../models';
+import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { MacroCommand, SkillCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';

@@ -4,7 +4,7 @@ import { cloneDeep, isUndefined } from 'lodash';
 
 import { Allegiance, canUseItem, ICharacter, IItem, IItemRequirements,
   IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
 
 // functions related to MODIFYING an item

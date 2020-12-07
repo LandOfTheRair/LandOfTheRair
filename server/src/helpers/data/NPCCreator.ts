@@ -17,7 +17,7 @@ import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
 
 import * as npcNames from '../../../content/_output/npcnames.json';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs

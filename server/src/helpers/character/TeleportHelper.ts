@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 
 import { GameAction } from '../../interfaces';
-import { BaseService, Player } from '../../models';
+import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
 
 @Injectable()

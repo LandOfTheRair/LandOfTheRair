@@ -4,9 +4,10 @@ import { clamp } from 'lodash';
 
 import { BaseClass, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
-import { BaseService, Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 import * as HideReduction from '../../../content/_output/hidereductions.json';
+import { Player } from '../../models';
 
 @Injectable()
 export class CharacterHelper extends BaseService {

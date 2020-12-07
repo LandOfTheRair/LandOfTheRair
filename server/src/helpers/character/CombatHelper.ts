@@ -4,7 +4,7 @@ import { Injectable } from 'injection-js';
 import { BaseClass, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, PhysicalAttackReturn, SoundEffect, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { DamageHelperMagic } from './DamageHelperMagic';
 import { DamageHelperOnesided } from './DamageHelperOnesided';
 import { DamageHelperPhysical } from './DamageHelperPhysical';

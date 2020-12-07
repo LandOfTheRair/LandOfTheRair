@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { ISimpleItem, ItemClass, ItemSlot } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class CorpseManager extends BaseService {

@@ -3,9 +3,8 @@ import { ObjectId } from 'mongodb';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, ICharacterItems, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
-  PROP_SERVER_ONLY,
-  PROP_TEMPORARY, PROP_UNSAVED_SHARED, SkillBlock, StatBlock } from '../../interfaces';
-import { BaseEntity } from '../BaseEntity';
+  SkillBlock, StatBlock } from '../../interfaces';
+import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
 

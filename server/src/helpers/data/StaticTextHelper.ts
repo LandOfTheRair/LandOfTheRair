@@ -3,7 +3,7 @@
 import { Injectable } from 'injection-js';
 
 import { DamageClass, SwimLevel } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 const WOOD_PILE_DESC = 'You are standing near a pile of logs, stacked neatly so as not to trounce an unsuspecting passerby.';
 const WOOD_SEAT_DESC = 'You are sitting in a somewhat uncomfortable wooden seat.';

@@ -5,7 +5,7 @@ import { BaseClass, ICharacter, IClassTraitTree, IPlayer, ITrait, ITraitTreeTrai
 
 import * as allTraitTrees from '../../../content/_output/trait-trees.json';
 import * as allTraits from '../../../content/_output/traits.json';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class TraitHelper extends BaseService {

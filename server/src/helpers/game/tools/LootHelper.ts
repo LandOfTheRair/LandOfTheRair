@@ -4,7 +4,7 @@ import { get, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
 import { Allegiance, INPC, ISimpleItem, ItemSlot } from '../../../interfaces';
-import { BaseService } from '../../../models';
+import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
 export class LootHelper extends BaseService {

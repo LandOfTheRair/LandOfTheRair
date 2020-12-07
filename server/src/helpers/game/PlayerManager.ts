@@ -1,7 +1,8 @@
 import { Injectable } from 'injection-js';
 
 import { GameAction, IPlayer } from '../../interfaces';
-import { Account, BaseService, Player, PlayerState } from '../../models';
+import { Account, Player, PlayerState } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { CharacterHelper } from '../character/CharacterHelper';
 
 

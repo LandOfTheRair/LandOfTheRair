@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 
 import { IAccount } from '../../interfaces';
-import { Account, BaseService, Player } from '../../models';
+import { Account, Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
 import { PlayerManager } from '../game';
 

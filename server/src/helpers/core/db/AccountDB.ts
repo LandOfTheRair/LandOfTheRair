@@ -5,7 +5,8 @@ import { cloneDeep, merge, pick } from 'lodash';
 import { ObjectId } from 'mongodb';
 
 import { IAccount } from '../../../interfaces';
-import { Account, BaseService } from '../../../models';
+import { Account } from '../../../models';
+import { BaseService } from '../../../models/BaseService';
 import { Database } from '../Database';
 
 @Injectable()

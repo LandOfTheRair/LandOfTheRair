@@ -5,7 +5,7 @@ import { clamp, random } from 'lodash';
 import { ArmorClass, BaseClass, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 interface WeaponAttackStats {
   base: number;

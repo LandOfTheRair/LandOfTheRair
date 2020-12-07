@@ -4,7 +4,8 @@ import { Injectable } from 'injection-js';
 import { generate, observe, Observer, unobserve } from 'fast-json-patch';
 
 import { GameAction, GameServerResponse, IPlayer } from '../../interfaces';
-import { BaseService, Player, PlayerState } from '../../models';
+import { Player, PlayerState } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 interface PlayerPatch {
   patches?: any[];

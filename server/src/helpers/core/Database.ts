@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { Collection, Db, MongoClient } from 'mongodb';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 import { BaseEntity } from '../../models/BaseEntity';
 import { MetadataStorage } from './db/base';

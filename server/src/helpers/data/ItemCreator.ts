@@ -4,7 +4,7 @@ import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { ContentManager } from './ContentManager';
 
 // functions related to CREATING an item

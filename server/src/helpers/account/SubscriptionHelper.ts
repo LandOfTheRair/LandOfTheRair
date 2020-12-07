@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 
 import { IAccount, IPlayer, isSubscribed } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class SubscriptionHelper extends BaseService {

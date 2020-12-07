@@ -4,7 +4,8 @@ import { Injectable } from 'injection-js';
 import { get, setWith } from 'lodash';
 
 import { Allegiance, BaseClass, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
-import { BaseService, Player } from '../../models';
+import { Player } from '../../models';
+import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
 
 @Injectable()

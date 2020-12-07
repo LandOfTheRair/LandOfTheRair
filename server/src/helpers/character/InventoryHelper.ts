@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 import { Currency, ICharacter, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class InventoryHelper extends BaseService {

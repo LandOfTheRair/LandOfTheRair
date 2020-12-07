@@ -7,7 +7,8 @@ import path from 'path';
 import readdir from 'recursive-readdir';
 
 import { ICharacter, ObjectType } from '../../interfaces';
-import { BaseService, InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class WorldManager extends BaseService {

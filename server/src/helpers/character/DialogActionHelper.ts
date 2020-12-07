@@ -6,7 +6,7 @@ import { GameServerResponse, IDialogAction, IDialogActionType,
   IDialogGiveEffectAction,
   IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
-import { BaseService } from '../../models';
+import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
   messages: string[];
