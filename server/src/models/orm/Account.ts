@@ -1,8 +1,8 @@
 
 
-import { BaseEntity } from '../../helpers/core/db/base';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { IAccount, IPlayer, PROP_SERVER_ONLY, PROP_TEMPORARY } from '../../interfaces';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class Account extends BaseEntity implements IAccount {

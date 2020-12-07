@@ -1,7 +1,7 @@
 
-import { BaseEntity } from '../../helpers/core/db/base/BaseEntity';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { ICharacterItems, IItemContainer, ISimpleItem, ItemSlot } from '../../interfaces';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class PlayerItems extends BaseEntity implements ICharacterItems {

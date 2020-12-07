@@ -1,7 +1,7 @@
 
 import { ObjectId } from 'mongodb';
-import { PROP_SERVER_ONLY } from '../../../../interfaces';
-import { Property } from '../decorators';
+import { Property } from '../helpers/core/db/decorators';
+import { PROP_SERVER_ONLY } from '../interfaces';
 
 export abstract class BaseEntity {
 

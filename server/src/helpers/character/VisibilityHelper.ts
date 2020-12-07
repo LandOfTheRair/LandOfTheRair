@@ -5,7 +5,7 @@ import { get, setWith } from 'lodash';
 
 import { Allegiance, BaseClass, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
 import { BaseService, Player } from '../../models';
-import { WorldManager } from '../data';
+import { WorldManager } from '../data/WorldManager';
 
 @Injectable()
 export class VisibilityHelper extends BaseService {

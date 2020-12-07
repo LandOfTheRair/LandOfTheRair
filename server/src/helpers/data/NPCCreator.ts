@@ -9,8 +9,9 @@ import { Parser } from 'muud';
 import { Alignment, Allegiance, BehaviorType, Currency, Hostility,
   IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, LearnedSpell, MonsterClass, Rollable, Skill, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
-import { CharacterHelper, ItemHelper } from '../character';
+import { CharacterHelper } from '../character/CharacterHelper';
 import { DialogActionHelper } from '../character/DialogActionHelper';
+import { ItemHelper } from '../character/ItemHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';

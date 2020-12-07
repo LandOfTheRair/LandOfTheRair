@@ -1,6 +1,6 @@
 
-import { BaseEntity } from '../../helpers/core/db/base/BaseEntity';
 import { Entity, Property } from '../../helpers/core/db/decorators';
+import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class WorldSettings extends BaseEntity {

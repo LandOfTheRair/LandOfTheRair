@@ -1,7 +1,7 @@
 
 import { isUndefined } from 'lodash';
 
-import { BaseEntity } from '../base/BaseEntity';
+import { BaseEntity } from '../../../../models/BaseEntity';
 import { MetadataStorage } from '../base/MetadataStorage';
 
 interface PropertyOptions {

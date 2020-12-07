@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { GameAction } from '../../interfaces';
 import { BaseService, Player } from '../../models';
-import { WorldManager } from '../data';
+import { WorldManager } from '../data/WorldManager';
 
 @Injectable()
 export class TeleportHelper extends BaseService {
