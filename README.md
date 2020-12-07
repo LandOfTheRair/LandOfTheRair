@@ -18,7 +18,7 @@ Just run `docker-compose up` and it will build, run, and start the client and se
 
 ### Your Installed Node
 
-You will want to be using Node 15 (at least) to run this project.
+You will want to be using Node 14 (at least) to run this project.
 
 #### Setup
 
