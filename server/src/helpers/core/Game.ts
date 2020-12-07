@@ -1,6 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
+import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
 import { SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
@@ -19,14 +20,13 @@ import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
-import { WebsocketCommandHandler } from './WebsocketCommandHandler';
 
 @Injectable()
 export class Game {
 
   private ticksElapsed = 0;
 
-  public wsCmdHandler: WebsocketCommandHandler;
+  public wsCmdHandler: IWebsocketCommandHandler;
 
   constructor(
 
@@ -90,7 +90,7 @@ export class Game {
 
   ) {}
 
-  public async init(wsCmdHandler: WebsocketCommandHandler) {
+  public async init(wsCmdHandler: IWebsocketCommandHandler) {
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 

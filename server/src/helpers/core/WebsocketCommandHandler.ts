@@ -2,9 +2,10 @@
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
 import { GameServerEvent, GameServerResponse, IServerAction } from '../../interfaces';
+import { IWebsocketCommandHandler } from '../../interfaces/internal';
 import { Game } from './Game';
 
-export class WebsocketCommandHandler {
+export class WebsocketCommandHandler implements IWebsocketCommandHandler {
 
   private game: Game;
 
