@@ -1,10 +1,11 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseClass, BaseService, ICharacter, IClassTraitTree, IPlayer, ITrait, ITraitTreeTrait } from '../../interfaces';
+import { BaseClass, ICharacter, IClassTraitTree, IPlayer, ITrait, ITraitTreeTrait } from '../../interfaces';
 
 import * as allTraitTrees from '../../../content/_output/trait-trees.json';
 import * as allTraits from '../../../content/_output/traits.json';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class TraitHelper extends BaseService {

@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { Alignment, Allegiance, BaseService, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { BaseService } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { VisibilityHelper } from './VisibilityHelper';

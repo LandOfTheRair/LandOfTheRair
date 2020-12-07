@@ -1,8 +1,7 @@
 
 import { CensorSensor } from 'censor-sensor';
 import { Injectable } from 'injection-js';
-
-import { BaseService } from '../../interfaces';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class ProfanityHelper extends BaseService {

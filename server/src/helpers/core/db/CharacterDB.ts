@@ -2,8 +2,8 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
-import { BaseClass, BaseService, IPlayer } from '../../../interfaces';
-import { Account, Player } from '../../../models';
+import { BaseClass, IPlayer } from '../../../interfaces';
+import { Account, BaseService, Player } from '../../../models';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
 import { CharacterRoller } from '../../lobby';

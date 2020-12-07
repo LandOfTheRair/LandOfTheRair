@@ -1,8 +1,8 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { BaseService, DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat } from '../../interfaces';
-import { Player } from '../../models';
+import { DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat } from '../../interfaces';
+import { BaseService, Player } from '../../models';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { CombatHelper } from './CombatHelper';

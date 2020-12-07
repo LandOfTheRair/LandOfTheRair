@@ -3,8 +3,8 @@ import { Injectable } from 'injection-js';
 
 import { generate, observe, Observer, unobserve } from 'fast-json-patch';
 
-import { BaseService, GameAction, GameServerResponse, IPlayer } from '../../interfaces';
-import { Player, PlayerState } from '../../models';
+import { GameAction, GameServerResponse, IPlayer } from '../../interfaces';
+import { BaseService, Player, PlayerState } from '../../models';
 
 interface PlayerPatch {
   patches?: any[];

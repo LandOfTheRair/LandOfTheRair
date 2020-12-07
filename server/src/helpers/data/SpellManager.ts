@@ -1,8 +1,8 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseService, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
-import { Player } from '../../models';
+import { BaseService, Player } from '../../models';
 import * as allSpellRefs from '../game/spells';
 
 @Injectable()

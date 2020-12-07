@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, Holiday, IPlayer } from '../../../interfaces';
+import { Holiday, IPlayer } from '../../../interfaces';
+import { BaseService } from '../../../models';
 
 const holidayChecker = {
 

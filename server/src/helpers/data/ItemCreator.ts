@@ -3,7 +3,8 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BaseService, Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
+import { Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
+import { BaseService } from '../../models';
 import { ContentManager } from './ContentManager';
 
 // functions related to CREATING an item

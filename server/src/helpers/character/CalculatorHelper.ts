@@ -1,8 +1,9 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
+import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel, ICharacter, Skill } from '../../interfaces';
+import { BaseService } from '../../models';
 
 
 @Injectable()

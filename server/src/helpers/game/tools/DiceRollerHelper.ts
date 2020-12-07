@@ -1,8 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { random, sum } from 'lodash';
-
-import { BaseService } from '../../../interfaces';
+import { BaseService } from '../../../models';
 
 @Injectable()
 export class DiceRollerHelper extends BaseService {

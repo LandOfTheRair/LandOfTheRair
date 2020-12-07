@@ -2,9 +2,9 @@ import { Injectable } from 'injection-js';
 import { isArray, random, size } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Allegiance, BaseClass, BaseService, BGM, Direction,
+import { Allegiance, BaseClass, BGM, Direction,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
-import { Account, Player } from '../../models';
+import { Account, BaseService, Player } from '../../models';
 import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';

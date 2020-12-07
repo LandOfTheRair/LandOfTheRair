@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { BaseClass, BaseService, ICharacter, IPlayer, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, ICharacter, IPlayer, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class InteractionHelper extends BaseService {

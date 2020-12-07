@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { BaseService } from '../../../interfaces';
+import { BaseService } from '../../../models';
 import { Ground } from '../../../models/orm/Ground';
 import { Database } from '../Database';
 

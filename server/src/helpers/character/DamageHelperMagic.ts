@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { BaseService, CombatEffect, DamageClass, ICharacter, MagicalAttackArgs, Stat } from '../../interfaces';
+import { CombatEffect, DamageClass, ICharacter, MagicalAttackArgs, Stat } from '../../interfaces';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class DamageHelperMagic extends BaseService {

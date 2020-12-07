@@ -2,9 +2,9 @@
 import { Injectable } from 'injection-js';
 import { clamp } from 'lodash';
 
-import { BaseClass, BaseService, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
+import { BaseClass, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
-import { Player } from '../../models';
+import { BaseService, Player } from '../../models';
 
 import * as HideReduction from '../../../content/_output/hidereductions.json';
 

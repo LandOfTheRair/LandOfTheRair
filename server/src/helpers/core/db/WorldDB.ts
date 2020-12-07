@@ -1,8 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService } from '../../../interfaces';
-import { WorldSettings } from '../../../models';
+import { BaseService, WorldSettings } from '../../../models';
 import { Database } from '../Database';
 
 @Injectable()

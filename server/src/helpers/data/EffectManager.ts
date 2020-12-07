@@ -1,8 +1,8 @@
 import { Injectable } from 'injection-js';
-import { BaseService, ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
+import { ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
 
 import * as allEffects from '../../../content/_output/effect-data.json';
-import { Effect } from '../../models';
+import { BaseService, Effect } from '../../models';
 import * as allEffectRefs from '../game/effects';
 
 @Injectable()

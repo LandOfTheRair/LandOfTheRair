@@ -6,7 +6,7 @@ import { species } from 'fantastical';
 import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
 import { Parser } from 'muud';
 
-import { Alignment, Allegiance, BaseService, BehaviorType, Currency, Hostility,
+import { Alignment, Allegiance, BehaviorType, Currency, Hostility,
   IAIBehavior, initializeNPC, INPC, INPCDefinition, ItemSlot, LearnedSpell, MonsterClass, Rollable, Skill, Stat } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper, ItemHelper } from '../character';
@@ -16,6 +16,7 @@ import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
 
 import * as npcNames from '../../../content/_output/npcnames.json';
+import { BaseService } from '../../models';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs

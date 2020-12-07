@@ -2,8 +2,8 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { basePlayerSprite, BaseService, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
-import { Player } from '../../models';
+import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { BaseService, Player } from '../../models';
 
 @Injectable()
 export class DeathHelper extends BaseService {

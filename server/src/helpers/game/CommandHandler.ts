@@ -2,8 +2,8 @@ import didYouMean from 'didyoumean2';
 import { Injectable } from 'injection-js';
 import { isObject, isString } from 'lodash';
 
-import { BaseService, IMacroCommandArgs } from '../../interfaces';
-import { Player } from '../../models';
+import { IMacroCommandArgs } from '../../interfaces';
+import { BaseService, Player } from '../../models';
 import { MacroCommand, SkillCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';

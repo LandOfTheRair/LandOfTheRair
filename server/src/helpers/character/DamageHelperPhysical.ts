@@ -2,9 +2,10 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { ArmorClass, BaseClass, BaseService, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
+import { ArmorClass, BaseClass, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
+import { BaseService } from '../../models';
 
 interface WeaponAttackStats {
   base: number;

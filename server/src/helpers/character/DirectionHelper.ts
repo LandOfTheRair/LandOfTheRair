@@ -1,7 +1,8 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseService, Direction, distFrom, ICharacter } from '../../interfaces';
+import { Direction, distFrom, ICharacter } from '../../interfaces';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class DirectionHelper extends BaseService {

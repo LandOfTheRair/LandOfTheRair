@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
-import { BaseService, IPlayer, ISimpleItem } from '../../interfaces';
+import { IPlayer, ISimpleItem } from '../../interfaces';
+import { BaseService } from '../../models';
 
 
 @Injectable()

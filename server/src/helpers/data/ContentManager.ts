@@ -2,7 +2,8 @@ import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
-import { BaseService, IItemDefinition, INPCDefinition } from '../../interfaces';
+import { IItemDefinition, INPCDefinition } from '../../interfaces';
+import { BaseService } from '../../models';
 
 @Injectable()
 export class ContentManager extends BaseService {

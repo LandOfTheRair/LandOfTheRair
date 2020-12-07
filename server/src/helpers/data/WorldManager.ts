@@ -6,8 +6,8 @@ import { zipObject } from 'lodash';
 import path from 'path';
 import readdir from 'recursive-readdir';
 
-import { BaseService, ICharacter, ObjectType } from '../../interfaces';
-import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import { ICharacter, ObjectType } from '../../interfaces';
+import { BaseService, InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
 
 @Injectable()
 export class WorldManager extends BaseService {
