@@ -16,11 +16,10 @@ export class GMCreateGold extends MacroCommand {
     }
 
     const gold = this.game.itemCreator.getGold(value);
-    if (!player.items.equipment[ItemSlot.RightHand])
-    {
+    if (!player.items.equipment[ItemSlot.RightHand]) {
       this.game.characterHelper.setRightHand(player, gold);
       this.sendMessage(player, `${value} gold added to your right hand.`);
-    } else {    
+    } else {
       this.game.worldManager.getMap(player.map).state.addItemToGround(player.x, player.y, gold);
       this.sendMessage(player, `${value} gold added to ground.`);
     }
