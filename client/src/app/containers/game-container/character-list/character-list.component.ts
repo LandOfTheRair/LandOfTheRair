@@ -157,7 +157,10 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   }
 
   public doAction(char: ICharacter, $event, index) {
-    this.store.dispatch(new SetCurrentTarget(char.uuid));
+
+    if ((char as INPC).hostility !== Hostility.Never) {
+      this.store.dispatch(new SetCurrentTarget(char.uuid));
+    }
 
     // only select the target if we hit ctrl
     if ($event.ctrlKey) return;

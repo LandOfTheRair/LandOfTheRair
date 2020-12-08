@@ -161,7 +161,7 @@ export class MacrosState {
 
       // if we have no macros, make the default setup
       const macroBars = state.characterMacros?.[curPlayer.username]?.[curPlayer.charSlot];
-      if (Object.keys(macroBars || {}).length === 0) {
+      if (Object.keys(macroBars || {}).length === 0 || !macroBars.default) {
 
         const additionalMacros: Record<BaseClass, string[]> = {
           [BaseClass.Thief]: ['Hide', 'Steal'],

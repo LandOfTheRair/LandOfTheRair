@@ -346,7 +346,8 @@ export class NPCCreator extends BaseService {
     const behaviorTypes: Record<BehaviorType, any> = {
       [BehaviorType.Crier]: AllBehaviors.CrierBehavior,
       [BehaviorType.Trainer]: AllBehaviors.TrainerBehavior,
-      [BehaviorType.Vendor]: AllBehaviors.VendorBehavior
+      [BehaviorType.Vendor]: AllBehaviors.VendorBehavior,
+      [BehaviorType.Peddler]: AllBehaviors.PeddlerBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

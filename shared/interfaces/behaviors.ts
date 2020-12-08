@@ -10,7 +10,8 @@ export interface IAIBehavior {
 export enum BehaviorType {
   Trainer = 'trainer',
   Vendor = 'vendor',
-  Crier = 'crier'
+  Crier = 'crier',
+  Peddler = 'peddler'
 }
 
 export interface IVendorItem {
@@ -34,10 +35,9 @@ export interface ICrierBehavior {
   messages: string[];
 }
 
-export interface IWandersRandomlyBehavior {
-  radius: number;
+export interface IPeddlerBehavior {
 }
 
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IWandersRandomlyBehavior & {
+export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IPeddlerBehavior & {
   type: BehaviorType;
 };
