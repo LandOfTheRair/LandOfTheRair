@@ -6,6 +6,7 @@ import { BaseClass, Currency, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import * as AllegianceStats from '../../../content/_output/allegiancestats.json';
 import * as HideReduction from '../../../content/_output/hidereductions.json';
 import { Player } from '../../models';
 
@@ -339,6 +340,11 @@ export class CharacterHelper extends BaseService {
       character.totalStats[stat]! += bonus;
     };
 
+    // add hidden allegiance bonuses
+    (AllegianceStats[character.allegiance] || []).forEach(({ stat, value }) => {
+      addStat(stat, value);
+    });
+
     // calculate stats from gear
     Object.keys(character.items.equipment).forEach(itemSlot => {
       const item = character.items.equipment[itemSlot];
@@ -501,7 +507,8 @@ export class CharacterHelper extends BaseService {
 
   // get the skill level for the character
   public getSkillLevel(character: ICharacter, skill: Skill) {
-    return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) + this.getStat(character, `${skill}Bonus` as Stat);
+    return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill)
+         + this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat);
   }
 
   // check gear and try to cast effects
