@@ -71,7 +71,7 @@ export class PlayerHelper extends BaseService {
     this.reformatPlayerAfterLoad(player);
   }
 
-  public becomeClass(player: IPlayer, baseClass: BaseClass) {
+  public becomeClass(player: IPlayer, baseClass: BaseClass, recalculateAfterTrait = true) {
     const maxMP: Record<BaseClass, number> = {
       [BaseClass.Healer]: 20,
       [BaseClass.Mage]: 30,
@@ -82,7 +82,19 @@ export class PlayerHelper extends BaseService {
 
     player.baseClass = baseClass;
     player.mp.maximum = maxMP[baseClass];
-    player.stats.mp = maxMP[baseClass];
+    player.stats.mp = 0;
+
+    const learnTrait: Record<BaseClass, string> = {
+      [BaseClass.Healer]: 'Afflict',
+      [BaseClass.Mage]: 'MagicMissile',
+      [BaseClass.Warrior]: 'Cleave',
+      [BaseClass.Thief]: 'ImprovedHide',
+      [BaseClass.Undecided]: ''
+    };
+
+    if (learnTrait[player.baseClass]) {
+      this.game.traitHelper.learnTrait(player, learnTrait[player.baseClass], recalculateAfterTrait);
+    }
   }
 
   public reformatPlayerBeforeSave(player: Player): void {

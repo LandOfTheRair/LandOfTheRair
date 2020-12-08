@@ -53,6 +53,7 @@ export class CharacterDB extends BaseService {
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
     player.level = 1;
+    player.traits.tp = 2;
     player.map = 'Tutorial';
     player.x = 14;
     player.y = 14;
@@ -60,14 +61,7 @@ export class CharacterDB extends BaseService {
     player.hp = { current: 100, maximum: 100, minimum: 0 };
     player.mp = { current: 0, maximum: 0, minimum: 0 };
 
-    if (player.baseClass === BaseClass.Healer) player.mp.maximum = 20;
-    if (player.baseClass === BaseClass.Mage) player.mp.maximum = 30;
-
-    if (player.baseClass === BaseClass.Thief) player.mp.maximum = 100;
-    if (player.baseClass === BaseClass.Warrior) player.mp.maximum = 100;
-
-    player.mp.current = player.mp.maximum;
-    player.stats.mp = player.mp.maximum;
+    this.game.playerHelper.becomeClass(player, player.baseClass, false);
 
     account.players.push(player);
     await this.savePlayer(player);

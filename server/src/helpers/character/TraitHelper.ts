@@ -65,7 +65,7 @@ export class TraitHelper extends BaseService {
   }
 
   // learn a trait! very easy. increment a number, decrement a diff one
-  public learnTrait(player: IPlayer, trait: string): void {
+  public learnTrait(player: IPlayer, trait: string, doRecalculate = true): void {
     if (!this.canLearnTrait(player, trait)) return;
 
     const traitRef = this.getTraitData(trait);
@@ -79,8 +79,10 @@ export class TraitHelper extends BaseService {
     player.traits.traitsLearned[trait] = player.traits.traitsLearned[trait] || 0;
     player.traits.traitsLearned[trait]++;
 
-    // last, recalculate stats because lots of traits affect stats
-    this.game.characterHelper.recalculateEverything(player);
+    if (doRecalculate) {
+      // last, recalculate stats because lots of traits affect stats
+      this.game.characterHelper.recalculateEverything(player);
+    }
   }
 
   // unlearn a trait! it's the opposite of the above.

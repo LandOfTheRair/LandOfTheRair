@@ -39,7 +39,7 @@ export class SetMacroBars {
 // dispatched when the users macro bars change
 export class SetDefaultMacros {
   static type = GameAction.SetDefaultMacros;
-  constructor() {}
+  constructor(public additionalMacros: string[] = []) {}
 }
 
 export class ImportMacros {

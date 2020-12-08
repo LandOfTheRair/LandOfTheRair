@@ -5,7 +5,7 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 
 import * as macros from '../assets/content/_output/macros.json';
 
-import { IMacroBar, IMacroContainer } from '../interfaces';
+import { BaseClass, IMacroBar, IMacroContainer } from '../interfaces';
 import { CreateCustomMacro, DeleteCustomMacro, ImportMacros, LearnMacro,
   PlayerReady, SetActiveMacro, SetActiveMacroBars, SetDefaultMacros, SetMacroBars } from './actions';
 import { GameState } from './game.state';
@@ -162,17 +162,28 @@ export class MacrosState {
       // if we have no macros, make the default setup
       const macroBars = state.characterMacros?.[curPlayer.username]?.[curPlayer.charSlot];
       if (Object.keys(macroBars || {}).length === 0) {
-        this.store.dispatch(new SetDefaultMacros());
+
+        const additionalMacros: Record<BaseClass, string[]> = {
+          [BaseClass.Thief]: ['Hide', 'Steal'],
+          [BaseClass.Mage]: ['MagicMissile'],
+          [BaseClass.Healer]: ['Afflict'],
+          [BaseClass.Warrior]: ['Cleave'],
+          [BaseClass.Undecided]: []
+        }
+
+        this.store.dispatch(new SetDefaultMacros(additionalMacros[curPlayer.baseClass] || []));
       }
     }
   }
 
   @Action(SetDefaultMacros)
-  setDefaultMacros() {
+  setDefaultMacros(ctx: StateContext<IMacroContainer>, { additionalMacros }: SetDefaultMacros) {
     const defaultMacroBar: IMacroBar = {
       macros: ['Attack', 'Search', 'Drink', 'Stairs', 'Climb', 'Restore'],
       name: 'default'
     };
+
+    defaultMacroBar.macros.push(...additionalMacros);
 
     this.store.dispatch(new SetMacroBars([defaultMacroBar]))
       .subscribe(() => {
