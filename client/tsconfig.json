@@ -26,9 +26,5 @@
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
-  },
-  "exclude": [
-    "src/assets/content/**/*.yml",
-    "src/assets/content/**/*.js"
-  ]
+  }
 }

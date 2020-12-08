@@ -43,7 +43,14 @@
             "tsConfig": "tsconfig.app.json",
             "aot": false,
             "assets": [
-              "src/assets",
+              "src/assets/bgm",
+              "src/assets/extra",
+              "src/assets/favicon",
+              "src/assets/fonts",
+              "src/assets/generated",
+              "src/assets/sfx",
+              "src/assets/spritesheets",
+              "src/assets/content/_output",
               "src/_headers"
             ],
             "styles": [
