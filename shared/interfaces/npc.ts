@@ -170,4 +170,6 @@ export interface INPC extends ICharacter {
 
   triggers?: Partial<Record<NPCTriggerType, any>>;
   maxWanderRandomlyDistance: number;
+
+  tansFor?: string;
 }

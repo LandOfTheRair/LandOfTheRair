@@ -155,6 +155,12 @@ export interface ICorpse {
 
   // the username of the player assigned to this corpse. obviously ignored if it's a monster
   corpseUsername?: string;
+
+  // the item this corpse tans for, if applicable
+  tansFor?: string;
+
+  // the people who heard this npc die
+  playersHeardDeath?: string[];
 }
 
 export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & IUsable & {

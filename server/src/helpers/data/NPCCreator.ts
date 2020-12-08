@@ -71,6 +71,7 @@ export class NPCCreator extends BaseService {
     baseChar.dropPool = npcDef.dropPool ?? null;
     baseChar.triggers = npcDef.triggers || {};
     baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
+    baseChar.tansFor = npcDef.tansFor ?? '';
 
     this.setLevel(baseChar, npcDef);
 
@@ -348,7 +349,13 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Trainer]: AllBehaviors.TrainerBehavior,
       [BehaviorType.Vendor]: AllBehaviors.VendorBehavior,
       [BehaviorType.Peddler]: AllBehaviors.PeddlerBehavior,
-      [BehaviorType.Identifier]: AllBehaviors.IdentifierBehavior
+      [BehaviorType.Identifier]: AllBehaviors.IdentifierBehavior,
+      [BehaviorType.Tanner]: AllBehaviors.TannerBehavior,
+      [BehaviorType.Alchemist]: AllBehaviors.AlchemistBehavior,
+      [BehaviorType.Banker]: AllBehaviors.BankerBehavior,
+      [BehaviorType.Encruster]: AllBehaviors.EncrusterBehavior,
+      [BehaviorType.Smith]: AllBehaviors.SmithBehavior,
+      [BehaviorType.Steelrose]: AllBehaviors.SteelroseBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

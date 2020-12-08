@@ -2,7 +2,7 @@ import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, descTextFor, GameServerResponse, IAIBehavior, INPC, IPeddlerBehavior, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
+import { Currency, descTextFor, GameServerResponse, IAIBehavior, IIdentifierBehavior, INPC, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
 
 export class IdentifierBehavior implements IAIBehavior {
 
@@ -10,7 +10,7 @@ export class IdentifierBehavior implements IAIBehavior {
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: IPeddlerBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: IIdentifierBehavior, props: any = {}) {
 
     const { identifyCurrency, identifyCost, identifyTier } = props;
 

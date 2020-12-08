@@ -12,7 +12,13 @@ export enum BehaviorType {
   Vendor = 'vendor',
   Crier = 'crier',
   Peddler = 'peddler',
-  Identifier = 'identifier'
+  Identifier = 'identifier',
+  Tanner = 'tanner',
+  Alchemist = 'alchemist',
+  Smith = 'smith',
+  Encruster = 'encruster',
+  Banker = 'banker',
+  Steelrose = 'steelrose'
 }
 
 export interface IVendorItem {
@@ -42,6 +48,29 @@ export interface IPeddlerBehavior {
 export interface IIdentifierBehavior {
 }
 
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IPeddlerBehavior & IIdentifierBehavior & {
+export interface ITannerBehavior {
+}
+
+export interface ISmithBehavior {
+}
+
+export interface IEncrusterBehavior {
+}
+
+export interface IBankerBehavior {
+}
+
+export interface IAlchemistBehavior {
+}
+
+export interface ISteelroseBehavior {
+
+}
+
+export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior 
+                      & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior 
+                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior 
+                      & 
+{
   type: BehaviorType;
 };

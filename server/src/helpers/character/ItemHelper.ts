@@ -68,6 +68,11 @@ export class ItemHelper extends BaseService {
     return statMod + baseStat + encrustStat;
   }
 
+  // set the owner of an item
+  public setOwner(player: IPlayer, item: ISimpleItem): void {
+    item.mods.owner = player.username;
+  }
+
   // check if an item is broken
   public isItemBroken(item: ISimpleItem) {
     const condition = this.getItemProperty(item, 'condition');

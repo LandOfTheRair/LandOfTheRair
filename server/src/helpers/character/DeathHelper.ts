@@ -147,6 +147,8 @@ export class DeathHelper extends BaseService {
       // attach items to corpse and put that on the ground
       if (corpse) {
         corpse.mods.searchItems = allItems;
+        corpse.mods.tansFor = dead.tansFor;
+        corpse.mods.playersHeardDeath = state.getAllPlayersInRange(dead, 4).map(x => x.uuid);
         state.addItemToGround(dead.x, dead.y, corpse);
 
       // drop items on ground
