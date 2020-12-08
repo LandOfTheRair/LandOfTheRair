@@ -122,6 +122,10 @@ export class WorldManager extends BaseService {
     const oldMap = this.playersInMaps[player.name];
     if (!oldMap) return;
 
+    if (oldMap === 'Tutorial') {
+      player.respawnPoint = { map: 'Rylt', x: 68, y: 13 };
+    }
+
     // dead people leaving get auto-respawned
     if (this.game.characterHelper.isDead(player)) {
       player.isBeingForciblyRespawned = true;
