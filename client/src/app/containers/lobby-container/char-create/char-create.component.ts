@@ -54,9 +54,7 @@ export class CharCreateComponent implements OnInit {
     return [
       'str', 'dex', 'agi',
       'int', 'wis', 'wil',
-      'con', 'cha', 'luk',
-      'hp',
-      'gold'
+      'con', 'cha', 'luk'
     ];
   }
 
