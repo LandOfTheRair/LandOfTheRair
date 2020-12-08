@@ -15,9 +15,6 @@ export class Chase extends MacroCommand {
       return;
     }
 
-    const xDiff = target.x - player.x;
-    const yDiff = target.y - player.y;
-
-    this.game.movementHelper.moveWithPathfinding(player, { xDiff, yDiff });
+    this.game.movementHelper.moveTowards(player, target);
   }
 }

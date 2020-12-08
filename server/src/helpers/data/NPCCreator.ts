@@ -151,6 +151,10 @@ export class NPCCreator extends BaseService {
       });
     }
 
+    if (baseChar.skills[Skill.Thievery] === 0) {
+      baseChar.skills[Skill.Thievery] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.floor(baseChar.level / 2));
+    }
+
     if (npcDef.gold) {
       baseChar.currency[Currency.Gold] = random(npcDef.gold.min, npcDef.gold.max);
     }

@@ -27,6 +27,8 @@ export class Steal extends SkillCommand {
 
     if (target === player) return;
 
+    this.game.movementHelper.moveTowards(player, target);
+
     if (this.game.directionHelper.distFrom(player, target) > 0) return this.sendMessage(player, 'That target is too far away!');
 
     this.use(player, target);

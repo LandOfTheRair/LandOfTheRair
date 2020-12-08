@@ -33,17 +33,12 @@ export class StealHelper extends BaseService {
     }
 
     const myStealth = this.game.characterHelper.getStat(char, Stat.Stealth);
-    if (myStealth <= 0) {
-      this.game.characterHelper.addAgro(char, target, 1);
-      this.sendMessage(char, target, `You aren't hidden enough for that!`, true);
-      return;
-    }
-
-    const mySkill = this.game.characterHelper.getSkillLevel(char, Skill.Thievery) * (char.baseClass === BaseClass.Thief ? 3 : 1.5);
     const yourPerception = this.game.characterHelper.getStat(target, Stat.Perception);
 
-    const baseStealRoll = (myStealth / yourPerception) * 100;
-    const stealRoll = random(baseStealRoll - 10, baseStealRoll + 10);
+    const mySkill = this.game.characterHelper.getSkillLevel(char, Skill.Thievery) * (char.baseClass === BaseClass.Thief ? 1.5 : 1);
+    const yourSkill = this.game.characterHelper.getSkillLevel(target, Skill.Thievery) * (target.baseClass === BaseClass.Thief ? 1.5 : 1);
+
+    const stealRoll = random(-yourSkill, mySkill);
 
     const thiefName = yourPerception > myStealth ? char.name : 'somebody';
 
@@ -51,7 +46,9 @@ export class StealHelper extends BaseService {
     const stealMod = 1 + this.game.traitHelper.traitLevelValue(char, 'ImprovedSteal') + nimbleFingersLevelValue;
 
     if (targetGold > 0) {
-      if (random(0, stealRoll) < 30 - stealMod) {
+      const difficulty = 3;
+
+      if ((stealRoll + stealMod - difficulty) < 0) {
         this.gainThiefSkill(char, 1);
         this.game.characterHelper.addAgro(char, target, 1);
         this.sendMessage(char, target, 'Your stealing attempt was thwarted!', true);
@@ -82,7 +79,9 @@ export class StealHelper extends BaseService {
       return;
 
     } else if (target.items.sack.items.length > 0) {
-      if (random(0, stealRoll) < 60 - stealMod) {
+      const difficulty = 10;
+
+      if ((stealRoll + stealMod - difficulty) < 0) {
         this.gainThiefSkill(char, 1);
         this.game.characterHelper.addAgro(char, target, 1);
         this.sendMessage(char, target, 'Your stealing attempt was thwarted!', true);
@@ -103,8 +102,7 @@ export class StealHelper extends BaseService {
     }
 
     if (char.level < target.level + 3) {
-      const skillGained = baseStealRoll > 100 ? 1 : Math.floor((100 - baseStealRoll) / 5);
-      this.gainThiefSkill(char, skillGained);
+      this.gainThiefSkill(char, 3);
     }
 
   }

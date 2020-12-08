@@ -27,6 +27,13 @@ export class MovementHelper extends BaseService {
 
   init() {}
 
+  moveTowards(source: ICharacter, target: ICharacter): boolean {
+    const xDiff = target.x - source.x;
+    const yDiff = target.y - source.y;
+
+    return this.game.movementHelper.moveWithPathfinding(source, { xDiff, yDiff });
+  }
+
   moveWithPathfinding(character: ICharacter, { xDiff, yDiff }): boolean {
 
     if (isUndefined(xDiff) || isUndefined(yDiff) || isNaN(xDiff) || isNaN(yDiff)) return false;
