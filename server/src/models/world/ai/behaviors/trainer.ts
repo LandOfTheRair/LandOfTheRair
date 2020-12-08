@@ -115,7 +115,7 @@ export class TrainerBehavior implements IAIBehavior {
         const player: Player = env?.player;
 
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
-        if (!behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
+        if (player.baseClass !== BaseClass.Undecided && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
         if (!game.characterHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
