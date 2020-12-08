@@ -148,7 +148,7 @@ export class PlayerHelper extends BaseService {
         //  if we have a spell, we gotta do a lot of checks
         if (args.spell) {
           const [prefix, spell] = args.spell.split(' ');
-          let hasLearned = this.game.characterHelper.hasLearned(player, spell);
+          let hasLearned = this.game.characterHelper.hasLearned(player, spell || prefix);
           if (!hasLearned && (prefix === 'stance' || prefix === 'powerword')) {
             hasLearned = this.game.characterHelper.hasLearned(player, `${prefix}${spell}`);
           }
