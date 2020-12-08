@@ -56,7 +56,7 @@ export class IdentifierBehavior implements IAIBehavior {
 
         game.characterHelper.loseCurrency(player, identifyCost, useCurrency);
 
-        const identMsg = descTextFor(player, rightHand, game.itemHelper.getItemDefinition(rightHand.name));
+        const identMsg = descTextFor(player, rightHand, game.itemHelper.getItemDefinition(rightHand.name), identifyTier);
 
         env?.callbacks.emit({
           type: GameServerResponse.SendAlert,

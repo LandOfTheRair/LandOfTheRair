@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
-import { BaseClass, IPlayer } from '../../../interfaces';
+import { IPlayer } from '../../../interfaces';
 import { Account, Player } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';

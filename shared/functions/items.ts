@@ -60,7 +60,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   return false;
 }
 
-export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem): string {
+export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, identifyTier = 0): string {
 
   const itemClass = getProp(item, itemDef, 'itemClass');
 

@@ -42,35 +42,43 @@ export interface ICrierBehavior {
   messages: string[];
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IPeddlerBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IIdentifierBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface ITannerBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface ISmithBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IEncrusterBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IBankerBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface IAlchemistBehavior {
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface ISteelroseBehavior {
 
 }
 
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior 
-                      & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior 
-                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior 
-                      & 
+export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
+                      & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
+                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior
+                      &
 {
   type: BehaviorType;
 };
