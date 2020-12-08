@@ -4,9 +4,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 interface IConfirmData {
   title: string;
   content: string;
-  okText: string;
-  cancelText: string;
-  extraData: any;
+  extraData: {
+    npcSprite?: number;
+    okText?: string;
+    cancelText?: string;
+  };
 }
 
 @Component({

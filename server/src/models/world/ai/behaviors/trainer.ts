@@ -28,7 +28,7 @@ export class TrainerBehavior implements IAIBehavior {
             type: GameServerResponse.SendConfirm,
             title: `Join the ${behavior.joinClass} Brotherhood?`,
             content: `I cannot train you unless you join the ${behavior.joinClass} brotherhood, ${player.name}. Would you like to join us?`,
-            extraData: { npcSprite: npc.sprite },
+            extraData: { npcSprite: npc.sprite, okText: 'Yes, join!', cancelText: 'No, I need to think more' },
             okAction: { command: `!privatesay`, args: `${npc.uuid}, join` }
           });
 
