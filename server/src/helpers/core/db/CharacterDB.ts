@@ -57,7 +57,7 @@ export class CharacterDB extends BaseService {
     player.x = 14;
     player.y = 14;
 
-    player.hp = { current: 100, maximum: 100, minimum: 100 };
+    player.hp = { current: 100, maximum: 100, minimum: 0 };
     player.mp = { current: 0, maximum: 0, minimum: 0 };
 
     if (player.baseClass === BaseClass.Healer) player.mp.maximum = 20;
