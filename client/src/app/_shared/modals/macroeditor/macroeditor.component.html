@@ -217,7 +217,7 @@
         
                 <app-macro
                   [macroRef]="allMacros[group.macros[macroIdx]]"
-                  [showTooltip]="false"
+                  [showTooltip]="true"
                   (contextmenu)="setMacro(group, macroIdx, null)"
                   (click)="markActiveSlot(group, macroIdx)"
                   [mdePopoverTriggerFor]="macroSelectorPopover"
