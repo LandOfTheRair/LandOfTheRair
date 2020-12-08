@@ -11,7 +11,8 @@ export enum BehaviorType {
   Trainer = 'trainer',
   Vendor = 'vendor',
   Crier = 'crier',
-  Peddler = 'peddler'
+  Peddler = 'peddler',
+  Identifier = 'identifier'
 }
 
 export interface IVendorItem {
@@ -38,6 +39,9 @@ export interface ICrierBehavior {
 export interface IPeddlerBehavior {
 }
 
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IPeddlerBehavior & {
+export interface IIdentifierBehavior {
+}
+
+export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior & IPeddlerBehavior & IIdentifierBehavior & {
   type: BehaviorType;
 };

@@ -347,7 +347,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Crier]: AllBehaviors.CrierBehavior,
       [BehaviorType.Trainer]: AllBehaviors.TrainerBehavior,
       [BehaviorType.Vendor]: AllBehaviors.VendorBehavior,
-      [BehaviorType.Peddler]: AllBehaviors.PeddlerBehavior
+      [BehaviorType.Peddler]: AllBehaviors.PeddlerBehavior,
+      [BehaviorType.Identifier]: AllBehaviors.IdentifierBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

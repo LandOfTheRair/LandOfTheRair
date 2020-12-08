@@ -31,7 +31,7 @@ export class PeddlerBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
@@ -41,7 +41,7 @@ export class PeddlerBehavior implements IAIBehavior {
           okAction: { command: `!privatesay`, args: `${npc.uuid}, buy` }
         });
 
-        return `Hello, ${player.name}! Would you like to BUY my ${peddleItem} for ${peddleCost.toLocaleString()} ${peddleCurrency}?`;
+        return `Hello, ${player.name}! Would you like to BUY my ${peddleItem} for ${peddleCost.toLocaleString()} ${useCurrency}?`;
       });
 
     parser.addCommand('buy')
@@ -50,10 +50,10 @@ export class PeddlerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
-        if (!game.characterHelper.hasCurrency(player, peddleCost, peddleCurrency)) return `You do not have enough ${useCurrency} for that!`;
+        if (!game.characterHelper.hasCurrency(player, peddleCost, useCurrency)) return `You do not have enough ${useCurrency} for that!`;
 
         game.characterHelper.loseCurrency(player, peddleCost, useCurrency);
 
