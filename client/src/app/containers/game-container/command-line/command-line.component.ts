@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { debounce } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -39,6 +40,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   private globalListener: (ev) => void;
   private sendListener: (ev) => void;
+  private debouncedUpdate = debounce((str) => this.store.dispatch(new SetCurrentCommand(str)), 250);
 
   private curIndex = -1;
 
@@ -125,12 +127,12 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SetChatMode(newMode));
   }
 
-  updateCommand(newCommand) {
-    this.store.dispatch(new SetCurrentCommand(newCommand));
+  updateCommand(newCommand: string) {
+    this.currentCommand = newCommand;
+    this.debouncedUpdate(newCommand);
   }
 
   sendCommand(ev) {
-
     let currentCommand = (this.currentCommand || '').trim();
     if (!currentCommand) return;
 
@@ -141,8 +143,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       .subscribe((chatMode: ChatMode) => {
 
         const reset = () => {
-          this.store.dispatch(new LogCurrentCommandInHistory());
-          this.store.dispatch(new SetCurrentCommand(''));
+          this.debouncedUpdate.cancel();
+          this.updateCommand('');
+          this.store.dispatch(new LogCurrentCommandInHistory(currentCommand));
         };
 
         const doCommand = (commandToDo: string) => {
@@ -184,6 +187,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
               const command = history[0];
               if (!command) return;
 
+              this.debouncedUpdate.cancel();
               this.updateCommand(command);
               doCommand(command);
             });
@@ -210,7 +214,8 @@ export class CommandLineComponent implements OnInit, OnDestroy {
           curCommand = '';
         }
 
-        this.store.dispatch(new SetCurrentCommand(curCommand));
+        this.debouncedUpdate.cancel();
+        this.updateCommand(curCommand);
       });
   }
 
