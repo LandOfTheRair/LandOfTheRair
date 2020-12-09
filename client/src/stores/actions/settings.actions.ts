@@ -87,7 +87,7 @@ export class SetLogMode {
 // dispatched when a command happens, and is logged in history
 export class LogCurrentCommandInHistory {
   static type = GameAction.LogCurrentCommand;
-  constructor() {}
+  constructor(public currentCommand: string) {}
 }
 
 // dispatched when something calls to set the current command, typing or otherwise

@@ -246,12 +246,12 @@ export class SettingsState implements NgxsOnInit {
   }
 
   @Action(LogCurrentCommandInHistory)
-  logCommand(ctx: StateContext<ISettings>) {
+  logCommand(ctx: StateContext<ISettings>, { currentCommand }: LogCurrentCommandInHistory) {
     const state = ctx.getState();
     const history = [...(state.commandHistory || [])];
 
-    if (history[0] !== state.currentCommand) {
-      history.unshift(state.currentCommand);
+    if (history[0] !== currentCommand) {
+      history.unshift(currentCommand);
       if (history.length > 20) history.length = 20;
       ctx.patchState({ commandHistory: history });
     }
