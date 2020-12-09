@@ -44,6 +44,10 @@
 }
 
 .dropzone {
+  width: 100%;
+  height: 576px;
+  position: absolute;
+  pointer-events: none;
 
   &.drag-hint-border {
     pointer-events: all;
