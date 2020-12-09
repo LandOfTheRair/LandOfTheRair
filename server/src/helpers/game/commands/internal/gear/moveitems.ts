@@ -65,6 +65,28 @@ export class MoveItems extends MacroCommand {
     const isSackable = this.game.itemHelper.getItemProperty(srcItem, 'isSackable');
     const isBeltable = this.game.itemHelper.getItemProperty(srcItem, 'isBeltable');
 
+    const succorInfo = this.game.itemHelper.getItemProperty(srcItem, 'succorInfo');
+    if (dest === 'G' && succorInfo) {
+
+      let itemSlot: ItemSlot = srcSlot as ItemSlot;
+      let retVal = false;
+
+      if (src !== 'L' && src !== 'R') {
+        const hand = this.game.characterHelper.getEmptyHand(player);
+        if (!hand) {
+          this.sendMessage(player, 'You need an empty hand to do that!');
+          return false;
+        }
+
+        itemSlot = hand;
+        retVal = true;
+      }
+
+      this.game.characterHelper.setEquipmentSlot(player, itemSlot, srcItem);
+      this.game.itemHelper.useItemInSlot(player, itemSlot);
+      return retVal;
+    }
+
     // Dest: S - Items must be sackable
     if (dest === 'S' && !isSackable) {
       this.sendMessage(player, 'That item cannot fit in your sack.');
