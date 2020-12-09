@@ -439,14 +439,23 @@ export class PlayerHelper extends BaseService {
   // teleport the player to the succor location
   public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
     if (this.game.characterHelper.isDead(player)) return;
+
     const { map } = this.game.worldManager.getMap(player.map);
     if (!map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(player, 'The blob turns to ash in your hand!');
       return;
     }
 
+    if(!succorInfo.map || !succorInfo.x || !succorInfo.y) {
+      this.game.messageHelper.sendSimpleMessage(player, 'Your succor is not valid.');
+      this.game.logger.log('PlayerHelper:DoSuccor', `Bad Succor: ${JSON.stringify(succorInfo)}`);
+      return;
+    }
+    
+
     this.game.messageHelper.sendSimpleMessage(player, 'You are whisked back to the place in your stored memories!');
     this.game.teleportHelper.teleport(player as Player, succorInfo);
+    this.game.transmissionHelper.sendMovementPatch(player as Player);
   }
 
 }
