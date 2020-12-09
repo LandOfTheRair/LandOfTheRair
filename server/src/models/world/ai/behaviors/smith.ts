@@ -55,7 +55,7 @@ export class SmithBehavior implements IAIBehavior {
         const missingCondition = maxCondition - (rightHand.mods.condition ?? 20000);
         if (missingCondition <= 0) return 'That item is as good as it\'s gonna get \'round here!';
 
-        const cpt = costPerThousand;
+        const cpt = costPerThousand ?? 100;
 
         const cost = Math.floor(cpt * (missingCondition / 1000));
         if (cost < 0) return 'That item is not in need of repair!';
@@ -77,7 +77,7 @@ export class SmithBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         const maxCondition = game.subscriptionHelper.maxSmithRepair(player, repairsUpToCondition);
-        const cpt = costPerThousand;
+        const cpt = costPerThousand ?? 100;
 
         let totalSpend = 0;
 

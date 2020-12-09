@@ -76,7 +76,7 @@ export class AlchemistBehavior implements IAIBehavior {
           if ((rightHand.mods.ounces || itemOunces) + checkItemOunces > maxOz) return;
           if (checkOunces === 0) return;
 
-          const cost = checkItemOunces * alchCost;
+          const cost = checkItemOunces * (alchCost ?? 1);
           if (!game.characterHelper.hasCurrency(player, cost)) return;
           game.characterHelper.loseCurrency(player, cost);
 
