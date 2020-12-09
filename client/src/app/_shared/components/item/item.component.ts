@@ -81,8 +81,12 @@ export class ItemComponent implements OnDestroy {
     return EquippableItemClasses.includes(this.realItem.itemClass as WeaponClass|ArmorClass);
   }
 
+  get realSuccorInfo() {
+    return this.item.mods.succorInfo || this.realItem.succorInfo;
+  }
+
   get realOunces() {
-    return this.item.mods.ounces;
+    return this.item.mods.ounces || this.realItem.ounces;
   }
 
   get realCount() {
