@@ -532,6 +532,10 @@ export class MapState {
   }
 
   public addItemToGround(x: number, y: number, item: ISimpleItem): void {
+    
+    const destroyOnDrop = this.game.itemHelper.getItemProperty(item, 'destroyOnDrop');
+    if(destroyOnDrop) return;
+
     this.game.groundManager.addItemToGround(this.map.name, x, y, item);
 
     // if player knowledge x/y, update ground
