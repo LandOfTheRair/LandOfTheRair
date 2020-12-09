@@ -43,6 +43,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   const itemClass = getProp(item, itemDef, 'itemClass');
   const useEffect = getProp(item, itemDef, 'useEffect');
   const ounces = getProp(item, itemDef, 'ounces');
+  const succorInfo = getProp(item, itemDef, 'succorInfo');
 
   const condition = item.mods.condition ?? 20000;
 
@@ -54,7 +55,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   if (itemClass === ItemClass.Box) return true;
   if (itemClass === ItemClass.Book) return true;
   if (useEffect && useEffect.uses) return true;
-  if (item.mods.succorInfo) return true;
+  if (succorInfo) return true;
   if (ounces > 0) return true;
 
   return false;

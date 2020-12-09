@@ -1,5 +1,7 @@
 
 import { Injectable } from 'injection-js';
+import { set } from 'lodash';
+
 import { GameAction, GameServerResponse, ICharacter, MessageInfo, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -138,6 +140,31 @@ export class MessageHelper extends BaseService {
 
   public playSoundForPlayer(player: Player, sfx: string): void {
     this.game.transmissionHelper.sendResponseToPlayer(player, GameServerResponse.PlaySFX, { sfx });
+  }
+
+  public getMergeObjectFromArgs(args: string): any {
+    const matches = args.match(/(?:[^\s"']+|['"][^'"]*["'])+/g) || [];
+
+    const mergeObj = matches.reduce((obj, prop) => {
+      const propData = prop.split('=');
+      const key = propData[0];
+      let val: string|number = propData[1];
+
+      if (!val) return obj;
+
+      val = val.trim();
+
+      if (!isNaN(+val)) {
+        val = +val;
+      } else if (val.startsWith('"')) {
+        val = val.substring(1, val.length - 1);
+      }
+
+      set(obj, key.trim(), val);
+      return obj;
+    }, {});
+
+    return mergeObj;
   }
 
 }

@@ -18,7 +18,8 @@ export enum BehaviorType {
   Smith = 'smith',
   Encruster = 'encruster',
   Banker = 'banker',
-  Steelrose = 'steelrose'
+  Steelrose = 'steelrose',
+  Succorer = 'succorer'
 }
 
 export interface IVendorItem {
@@ -72,12 +73,15 @@ export interface IAlchemistBehavior {
 
 // tslint:disable-next-line:no-empty-interface
 export interface ISteelroseBehavior {
+}
 
+// tslint:disable-next-line:no-empty-interface
+export interface ISuccorerBehavior {
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
-                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior
+                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
                       &
 {
   type: BehaviorType;

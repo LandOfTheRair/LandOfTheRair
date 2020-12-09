@@ -226,6 +226,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // the condition of the item
   condition: number;
+
+  // whether or not the item should be destroyed when it's dropped on the ground
+  destroyOnDrop?: boolean;
 };
 
 export interface ISimpleItem {

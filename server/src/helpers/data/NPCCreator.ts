@@ -355,7 +355,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Banker]: AllBehaviors.BankerBehavior,
       [BehaviorType.Encruster]: AllBehaviors.EncrusterBehavior,
       [BehaviorType.Smith]: AllBehaviors.SmithBehavior,
-      [BehaviorType.Steelrose]: AllBehaviors.SteelroseBehavior
+      [BehaviorType.Steelrose]: AllBehaviors.SteelroseBehavior,
+      [BehaviorType.Succorer]: AllBehaviors.SuccorerBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

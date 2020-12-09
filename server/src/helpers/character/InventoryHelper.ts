@@ -43,6 +43,12 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
+  public removeItemsFromSackByUUID(player: ICharacter, uuids: string[]): boolean {
+    player.items.sack.items = player.items.sack.items.filter(x => !uuids.includes(x.uuid));
+
+    return true;
+  }
+
   // belt functions
   public beltSpaceLeft(player: ICharacter): number {
     return 5 - player.items.belt.items.length;
