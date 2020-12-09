@@ -399,7 +399,7 @@ export class WorldMap {
 
   // whether or not the current tile is succorable
   public canSuccor(player: IPlayer): boolean {
-    return this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
+    return !this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
   }
 
 }
