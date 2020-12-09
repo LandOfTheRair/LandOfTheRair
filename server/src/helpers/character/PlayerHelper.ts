@@ -446,12 +446,11 @@ export class PlayerHelper extends BaseService {
       return;
     }
 
-    if(!succorInfo.map || !succorInfo.x || !succorInfo.y) {
+    if (!succorInfo.map || !succorInfo.x || !succorInfo.y) {
       this.game.messageHelper.sendSimpleMessage(player, 'Your succor is not valid.');
       this.game.logger.log('PlayerHelper:DoSuccor', `Bad Succor: ${JSON.stringify(succorInfo)}`);
       return;
     }
-    
 
     this.game.messageHelper.sendSimpleMessage(player, 'You are whisked back to the place in your stored memories!');
     this.game.teleportHelper.teleport(player as Player, succorInfo);

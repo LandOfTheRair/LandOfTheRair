@@ -1,4 +1,3 @@
-import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
@@ -45,7 +44,7 @@ export class SuccorerBehavior implements IAIBehavior {
         succorItem.mods.destroyOnDrop = true;
         succorItem.mods.ounces = game.subscriptionHelper.maxSuccorOz(player, succorOz);
         succorItem.mods.succorInfo = { map: npc.map, x: npc.x, y: npc.y };
-        
+
         game.characterHelper.setRightHand(player, succorItem);
 
         return `You take a succor fruit!`;
