@@ -5,9 +5,9 @@ import { GameServerResponse, IAIBehavior, IDialogChatAction, INPC, IPlayer, ISmi
 
 export class SmithBehavior implements IAIBehavior {
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: ISmithBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ISmithBehavior) {
 
-    let { costPerThousand, repairsUpToCondition } = props;
+    let { costPerThousand, repairsUpToCondition } = behavior;
     costPerThousand ??= 10;
     repairsUpToCondition ??= 20000;
 

@@ -10,7 +10,7 @@ export class TannerBehavior implements IAIBehavior {
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: ITannerBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ITannerBehavior) {
 
     this.messages = [
       `You kill 'em, we clean 'em!`,

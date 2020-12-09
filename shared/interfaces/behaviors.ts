@@ -3,7 +3,7 @@ import { BaseClass, Currency } from './building-blocks';
 import { INPC } from './npc';
 
 export interface IAIBehavior {
-  init(game, npc: INPC, parser, behavior: IBehavior, props?: any): void;
+  init(game, npc: INPC, parser, behavior: IBehavior): void;
   tick(game, npc: INPC): void;
 }
 
@@ -37,38 +37,48 @@ export interface IVendorBehavior {
 export interface ITrainerBehavior {
   joinClass: BaseClass;
   trainClass: BaseClass[];
+  maxLevelUpLevel: number;
+  maxSkillTrain: number;
 }
 
 export interface ICrierBehavior {
   messages: string[];
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IPeddlerBehavior {
+  peddleCost: number;
+  peddleDesc: string;
+  peddleItem: string;
+  peddleCurrency?: Currency;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IIdentifierBehavior {
+  identifyCurrency?: Currency;
+  identifyCost: number;
+  identifyTier: number;
 }
 
-// tslint:disable-next-line:no-empty-interface
-export interface ITannerBehavior {
-}
-
-// tslint:disable-next-line:no-empty-interface
 export interface ISmithBehavior {
+  costPerThousand?: number;
+  repairsUpToCondition?: number;
 }
 
 // tslint:disable-next-line:no-empty-interface
 export interface IEncrusterBehavior {
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IBankerBehavior {
+  bankId?: string;
+  bankName?: string;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IAlchemistBehavior {
+  alchOz?: number;
+  alchCost?: number;
+}
+
+export interface ISuccorerBehavior {
+  succorOz?: number;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -76,7 +86,7 @@ export interface ISteelroseBehavior {
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface ISuccorerBehavior {
+export interface ITannerBehavior {
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
@@ -85,4 +95,5 @@ export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       &
 {
   type: BehaviorType;
+  props?: string[];
 };

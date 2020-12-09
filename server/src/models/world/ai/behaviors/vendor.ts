@@ -23,6 +23,10 @@ export class VendorBehavior implements IAIBehavior {
     this.formattedVendorItems = npcVendorItems as ISimpleItem[];
     this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];
 
+    if (npcVendorDailyItems.length === 0 && npcVendorItems.length === 0) {
+      game.logger.error(`Behavior:Vendor`, `NPC at ${npc.map}-${npc.x},${npc.y} has no items to sell.`);
+    }
+
     parser.addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {

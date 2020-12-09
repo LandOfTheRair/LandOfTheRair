@@ -7,11 +7,16 @@ export class TrainerBehavior implements IAIBehavior {
 
   private canRevive = false;
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior) {
 
     this.canRevive = behavior.trainClass.includes(BaseClass.Healer);
 
-    const { maxLevelUpLevel, maxSkillTrain } = props;
+    const { maxLevelUpLevel, maxSkillTrain } = behavior;
+
+    if (!maxLevelUpLevel || !maxSkillTrain) {
+      game.logger.error(`Behavior:Trainer`, `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`);
+      return;
+    }
 
     // default guidance
     parser.addCommand('hello')

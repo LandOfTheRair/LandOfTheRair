@@ -5,9 +5,9 @@ import { GameServerResponse, IAIBehavior, IAlchemistBehavior, IDialogChatAction,
 
 export class AlchemistBehavior implements IAIBehavior {
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: IAlchemistBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: IAlchemistBehavior) {
 
-    let { alchCost, alchOz } = props;
+    let { alchCost, alchOz } = behavior;
     alchCost ??= 1000;
     alchOz ??= 10;
 

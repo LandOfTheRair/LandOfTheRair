@@ -1,13 +1,13 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IIdentifierBehavior, INPC, IPlayer, ItemSlot } from '../../../../interfaces';
+import { GameServerResponse, IAIBehavior, INPC, IPlayer, ISuccorerBehavior, ItemSlot } from '../../../../interfaces';
 
 export class SuccorerBehavior implements IAIBehavior {
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: IIdentifierBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: ISuccorerBehavior) {
 
-    let { succorOz } = props;
+    let { succorOz } = behavior;
     succorOz ??= 1;
 
     parser.addCommand('hello')

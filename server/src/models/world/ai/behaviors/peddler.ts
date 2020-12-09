@@ -10,19 +10,25 @@ export class PeddlerBehavior implements IAIBehavior {
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: IPeddlerBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: IPeddlerBehavior) {
 
-    const { peddleCurrency, peddleItem, peddleCost, peddleDesc } = props;
+    let { peddleCurrency } = behavior;
+    const { peddleItem, peddleCost, peddleDesc } = behavior;
 
-    const useCurrency = peddleCurrency || Currency.Gold;
+    if (!peddleItem || !peddleCost || !peddleDesc) {
+      game.logger.error(`Behavior:Peddle`, `NPC at ${npc.map}-${npc.x},${npc.y} has invalid peddle item settings.`);
+      return;
+    }
+
+    peddleCurrency ??= Currency.Gold;
 
     game.characterHelper.setRightHand(npc, game.itemCreator.getSimpleItem(peddleItem));
 
     this.messages = [
-      `I ask only ${peddleCost.toLocaleString()} ${useCurrency}, to help my poor children!`,
-      `${peddleItem}, ${peddleCost.toLocaleString()} ${useCurrency}, the best in town!`,
-      `${peddleItem}, ${peddleCost.toLocaleString()} ${useCurrency}, you can't beat the quality!`,
-      `Come on over to get your ${peddleItem}! Only ${peddleCost.toLocaleString()} ${useCurrency}!`,
+      `I ask only ${peddleCost.toLocaleString()} ${peddleCurrency}, to help my poor children!`,
+      `${peddleItem}, ${peddleCost.toLocaleString()} ${peddleCurrency}, the best in town!`,
+      `${peddleItem}, ${peddleCost.toLocaleString()} ${peddleCurrency}, you can't beat the quality!`,
+      `Come on over to get your ${peddleItem}! Only ${peddleCost.toLocaleString()} ${peddleCurrency}!`,
     ];
 
     parser.addCommand('hello')
@@ -41,7 +47,7 @@ export class PeddlerBehavior implements IAIBehavior {
           okAction: { command: `!privatesay`, args: `${npc.uuid}, buy` }
         });
 
-        return `Hello, ${player.name}! Would you like to BUY my ${peddleItem} for ${peddleCost.toLocaleString()} ${useCurrency}?`;
+        return `Hello, ${player.name}! Would you like to BUY my ${peddleItem} for ${peddleCost.toLocaleString()} ${peddleCurrency}?`;
       });
 
     parser.addCommand('buy')
@@ -53,9 +59,9 @@ export class PeddlerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
-        if (!game.characterHelper.hasCurrency(player, peddleCost, useCurrency)) return `You do not have enough ${useCurrency} for that!`;
+        if (!game.characterHelper.hasCurrency(player, peddleCost, peddleCurrency)) return `You do not have enough ${peddleCurrency} for that!`;
 
-        game.characterHelper.loseCurrency(player, peddleCost, useCurrency);
+        game.characterHelper.loseCurrency(player, peddleCost, peddleCurrency);
 
         const item = game.itemCreator.getSimpleItem(peddleItem);
         game.characterHelper.setRightHand(player, item);

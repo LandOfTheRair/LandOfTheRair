@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
-import { cloneDeep, isNumber, isString, random, sample } from 'lodash';
+import { cloneDeep, isNumber, isString, merge, random, sample, zipObject } from 'lodash';
 import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BehaviorType, Currency, Hostility,
@@ -360,9 +360,18 @@ export class NPCCreator extends BaseService {
     };
 
     npcDef.behaviors.forEach(behavior => {
+      behavior = cloneDeep(behavior);
+
       const initBehavior = behaviorTypes[behavior.type];
-      const behaviorInst = new initBehavior();
-      behaviorInst.init(this.game, npc, (npc as any).dialogParser, behavior, npcDef.extraProps);
+      const behaviorInst: IAIBehavior = new initBehavior();
+
+      if (behavior.props) {
+        const propsObj = zipObject(behavior.props, behavior.props.map(x => npcDef.extraProps[x]));
+
+        merge(behavior, propsObj);
+      }
+
+      behaviorInst.init(this.game, npc, (npc as any).dialogParser, behavior);
 
       behaviors.push(behaviorInst);
     });

@@ -10,17 +10,19 @@ export class IdentifierBehavior implements IAIBehavior {
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
 
-  init(game: Game, npc: INPC, parser: Parser, behavior: IIdentifierBehavior, props: any = {}) {
+  init(game: Game, npc: INPC, parser: Parser, behavior: IIdentifierBehavior) {
 
-    const { identifyCurrency, identifyCost, identifyTier } = props;
+    let { identifyCurrency, identifyCost, identifyTier } = behavior;
 
-    const useCurrency = identifyCurrency || Currency.Gold;
+    identifyCurrency ??= Currency.Gold;
+    identifyCost ??= 1000;
+    identifyTier ??= 0;
 
     this.messages = [
-      `I ask only ${identifyCost.toLocaleString()} ${useCurrency}, to help my poor children!`,
-      `${identifyCost.toLocaleString()} ${useCurrency} for the best identify service in town!`,
-      `${identifyCost.toLocaleString()} ${useCurrency} to identify your items!`,
-      `Identify services going for ${identifyCost.toLocaleString()} ${useCurrency}!`
+      `I ask only ${identifyCost.toLocaleString()} ${identifyCurrency}, to help my poor children!`,
+      `${identifyCost.toLocaleString()} ${identifyCurrency} for the best identify service in town!`,
+      `${identifyCost.toLocaleString()} ${identifyCurrency} to identify your items!`,
+      `Identify services going for ${identifyCost.toLocaleString()} ${identifyCurrency}!`
     ];
 
     parser.addCommand('hello')
@@ -34,12 +36,12 @@ export class IdentifierBehavior implements IAIBehavior {
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
           title: `Identify Item?`,
-          content: `Would you like to identify the item in your right hand for ${identifyCost.toLocaleString()} ${useCurrency}?`,
+          content: `Would you like to identify the item in your right hand for ${identifyCost.toLocaleString()} ${identifyCurrency}?`,
           extraData: { npcSprite: npc.sprite, okText: 'Yes, identify!', cancelText: 'No, not now' },
           okAction: { command: `!privatesay`, args: `${npc.uuid}, identify` }
         });
 
-        return `Hello, ${player.name}! Would you like to IDENTIFY the item in your right hand for ${identifyCost.toLocaleString()} ${useCurrency}?`;
+        return `Hello, ${player.name}! Would you like to IDENTIFY the item in your right hand for ${identifyCost.toLocaleString()} ${identifyCurrency}?`;
       });
 
     parser.addCommand('identify')
@@ -52,9 +54,9 @@ export class IdentifierBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
-        if (!game.characterHelper.hasCurrency(player, identifyCost, useCurrency)) return `You do not have enough ${useCurrency} for that!`;
+        if (!game.characterHelper.hasCurrency(player, identifyCost, identifyCurrency)) return `You do not have enough ${identifyCurrency} for that!`;
 
-        game.characterHelper.loseCurrency(player, identifyCost, useCurrency);
+        game.characterHelper.loseCurrency(player, identifyCost, identifyCurrency);
 
         const identMsg = descTextFor(player, rightHand, game.itemHelper.getItemDefinition(rightHand.name), identifyTier);
 
