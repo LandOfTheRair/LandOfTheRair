@@ -53,7 +53,7 @@ export class WebsocketWorker {
       });
     }
 
-    Object.values(HTTPRoutes).forEach((route) => route.setup(app));
+    Object.values(HTTPRoutes).forEach((route) => route.setup(app, { broadcast: (data) => this.broadcast(data) }));
 
     app.listen(process.env.PORT ? +process.env.PORT : 6975, (err: any) => {
       if (err) throw err;
@@ -135,6 +135,11 @@ export class WebsocketWorker {
       socket.sends++;
     }
 
+    this.sendToGame(socket, data);
+
+  }
+
+  private sendToGame(socket, data) {
     process.send!({ socketId: socket.uuid, username: socket.username, ...data });
   }
 
