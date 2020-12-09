@@ -27,7 +27,7 @@
       </div>
 
       <div class="vendor-tabs">
-        <mat-tab-group mat-align-tabs="center">
+        <mat-tab-group mat-align-tabs="center" selectedIndex="0" *ngIf="vendorInfo.npcUUID">
 
           <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorItems?.length">
             <div class="item-container">
