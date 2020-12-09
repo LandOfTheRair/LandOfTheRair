@@ -1,6 +1,6 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, IAIBehavior, INPC, ISimpleItem, IVendorBehavior, IVendorItem } from '../../../../interfaces';
+import { Currency, GameAction, IAIBehavior, INPC, IPlayer, ISimpleItem, IVendorBehavior, IVendorItem } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
 
@@ -26,6 +26,10 @@ export class VendorBehavior implements IAIBehavior {
     parser.addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           action: GameAction.NPCActionShowVendor,
