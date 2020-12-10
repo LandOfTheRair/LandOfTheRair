@@ -31,7 +31,7 @@
       <div class="full-width split-container">
         <div class="m-t-10 half-width text-center">
           <h2>Name</h2>
-          <mat-form-field class="full-width">
+          <mat-form-field class="full-width" appearance="outline">
             <input class="input" matInput type="text" [(ngModel)]="character.name" [ngModelOptions]="{ standalone: true }" (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
           </mat-form-field>
         </div>
