@@ -161,6 +161,9 @@ export interface ICorpse {
   // the item this corpse tans for, if applicable
   tansFor?: string;
 
+  // the level of this corpse, used by tanners
+  corpseLevel?: number;
+
   // the people who heard this npc die
   playersHeardDeath?: string[];
 }

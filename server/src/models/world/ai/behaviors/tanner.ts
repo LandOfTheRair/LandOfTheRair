@@ -12,6 +12,11 @@ export class TannerBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: ITannerBehavior) {
 
+    let { maxTanLevel } = behavior;
+    maxTanLevel ??= 1;
+
+    const tanLevel = maxTanLevel ?? 1;
+
     this.messages = [
       `You kill 'em, we clean 'em!`,
       `Come on over and get all your hides skinned!`,
@@ -49,8 +54,15 @@ export class TannerBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
 
-        const { playersHeardDeath, tansFor } = game.itemHelper.getItemProperties(rightHand, ['playersHeardDeath', 'tansFor']);
+        const {
+          playersHeardDeath,
+          corpseLevel,
+          tansFor
+        } = game.itemHelper.getItemProperties(rightHand, ['playersHeardDeath', 'corpseLevel', 'tansFor']);
+
         if (!tansFor) return `I can't do anything with that!`;
+
+        if ((corpseLevel ?? 0) > tanLevel) return `I don't know what to do with that!`;
 
         if (!playersHeardDeath?.includes(player.uuid)) return `I don't think you had anything to do with this kill!`;
 

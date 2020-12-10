@@ -1,7 +1,8 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, ShieldClasses, WeaponClasses } from '../../../../interfaces';
+import { EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior,
+  INPC, IPlayer, ItemClass, ItemSlot, ShieldClasses, WeaponClasses } from '../../../../interfaces';
 
 export class EncrusterBehavior implements IAIBehavior {
 

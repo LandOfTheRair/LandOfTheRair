@@ -148,6 +148,7 @@ export class DeathHelper extends BaseService {
       if (corpse) {
         corpse.mods.searchItems = allItems;
         corpse.mods.tansFor = dead.tansFor;
+        corpse.mods.corpseLevel = dead.level;
         corpse.mods.playersHeardDeath = state.getAllPlayersInRange(dead, 4).map(x => x.uuid);
         state.addItemToGround(dead.x, dead.y, corpse);
 
