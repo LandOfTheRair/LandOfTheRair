@@ -19,6 +19,15 @@ export class DeathHelper extends BaseService {
     const oldY = player.y;
     const oldMap = player.map;
 
+    // remove our corpse if we have one
+    if (player.corpseRef) {
+      const { state } = this.game.worldManager.getMap(oldMap);
+      state.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
+
+      this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
+      delete player.corpseRef;
+    }
+
     // we're being revived
     if (x && y && map) {
       this.game.teleportHelper.teleport(player as Player, { x, y, map });
@@ -34,15 +43,6 @@ export class DeathHelper extends BaseService {
     this.game.effectHelper.removeEffectByName(player, 'Dead');
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
-
-    // remove our corpse if we have one
-    if (player.corpseRef) {
-      const { state } = this.game.worldManager.getMap(oldMap);
-      state.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
-
-      this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
-      delete player.corpseRef;
-    }
 
     // if we rotted... deal with that
     if (shouldRot) {

@@ -437,6 +437,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   public init(data) {
+    this.isReady = false;
     this.player = data.player;
   }
 
