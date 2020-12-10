@@ -10,8 +10,8 @@ export enum ItemQuality {
   PERFECT = 5
 }
 
-export type IItemEncrust = { strikeEffect: IItemEffect } 
-                         & { stats: StatBlock } 
+export type IItemEncrust = { strikeEffect: IItemEffect }
+                         & { stats: StatBlock }
                          & { slots: Array<ItemSlot | 'weapon' | 'shield'> };
 
 export interface IItemRequirements {
