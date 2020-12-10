@@ -2,6 +2,7 @@
 export * from './allegiance';
 export * from './creategold';
 export * from './examineitem';
+export * from './gainskill';
 export * from './gg';
 export * from './item';
 export * from './kill';
