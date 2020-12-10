@@ -9,9 +9,10 @@ export class GMCreateGold extends MacroCommand {
   canBeFast = false;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    const value = Math.round(Math.abs(+args.arrayArgs[0]));
-    if (!value || isNaN(value) || !isFinite(value)) {
-      this.sendMessage(player, `Enter an amount of gold.`);
+
+    const value = this.game.userInputHelper.cleanNumber(args.arrayArgs[0], 0, { floor: true, abs: true });
+    if (!value) {
+      this.sendMessage(player, 'Enter a valid amount of gold.');
       return;
     }
 

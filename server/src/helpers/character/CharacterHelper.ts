@@ -34,7 +34,7 @@ export class CharacterHelper extends BaseService {
 
   public heal(char: ICharacter, hp: number): void {
     char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
-    if (isNaN(char.hp.current)) char.hp.current = 1;
+    char.hp.current = this.game.userInputHelper.cleanNumber(char.hp.current, 1, { floor: true });
   }
 
   public manaDamage(char: ICharacter, mp: number): void {
@@ -43,7 +43,7 @@ export class CharacterHelper extends BaseService {
 
   public mana(char: ICharacter, mp: number): void {
     char.mp.current = clamp(char.mp.current + mp, char.mp.minimum, char.mp.maximum);
-    if (isNaN(char.mp.current)) char.mp.current = 0;
+    char.mp.current = this.game.userInputHelper.cleanNumber(char.mp.current, 1, { floor: true });
   }
 
   // check if this player is holding sometihng
@@ -75,8 +75,7 @@ export class CharacterHelper extends BaseService {
 
   // gain currency for a player
   public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
-    if (isNaN(currencyGained)) throw new Error(`Currency gained ${currency} for ${char.name} is NaN!`);
-
+    currencyGained = this.game.userInputHelper.cleanNumber(currencyGained, 0, { floor: true });
     char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
 
   }

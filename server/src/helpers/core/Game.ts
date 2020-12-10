@@ -18,6 +18,7 @@ import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
+import { UserInputHelper } from './UserInputHelper';
 
 @Injectable()
 export class Game {
@@ -84,7 +85,8 @@ export class Game {
 
     public playerManager: PlayerManager,
     public worldManager: WorldManager,
-    public configManager: ConfigManager
+    public configManager: ConfigManager,
+    public userInputHelper: UserInputHelper
 
   ) {}
 
@@ -108,7 +110,7 @@ export class Game {
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper',
       'commandHandler', 'messageHelper', 'traitHelper', 'stealHelper',
-      'playerManager', 'worldManager', 'configManager'
+      'playerManager', 'worldManager', 'configManager', 'userInputHelper'
   ];
 
     for (const i of initOrder) {

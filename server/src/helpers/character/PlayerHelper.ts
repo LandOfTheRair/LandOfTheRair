@@ -303,7 +303,7 @@ export class PlayerHelper extends BaseService {
     xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
 
     // TODO: modify xpGained for sub
-    if (isNaN(xpGained)) throw new Error(`XP gained for ${player.name} is NaN!`);
+    xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
 
     player.exp = Math.max(Math.floor(player.exp + xpGained), 0);
     player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
@@ -315,7 +315,7 @@ export class PlayerHelper extends BaseService {
     if (!player.gainingAXP && axpGained > 0) return;
 
     // TODO: modify axpGained for sub
-    if (isNaN(axpGained)) throw new Error(`AXP gained for ${player.name} is NaN!`);
+    axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, { floor: true });
     player.axp = Math.max(Math.floor(player.axp + axpGained), 0);
 
   }
@@ -335,7 +335,7 @@ export class PlayerHelper extends BaseService {
     skillGained += Math.floor((xpGainBoostPercent * skillGained) / 100);
 
     // TODO: modify skillGained for sub
-    if (isNaN(skillGained)) throw new Error(`Skill gained for ${player.name} is NaN!`);
+    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0, { floor: true });
 
     player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);
     player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
