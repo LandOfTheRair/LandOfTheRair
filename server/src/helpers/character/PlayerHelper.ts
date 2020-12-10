@@ -337,7 +337,7 @@ export class PlayerHelper extends BaseService {
     // TODO: modify skillGained for sub
     if (isNaN(skillGained)) throw new Error(`Skill gained for ${player.name} is NaN!`);
 
-    player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained);
+    player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);
     player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
   }
 
