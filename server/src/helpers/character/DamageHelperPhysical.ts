@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { ArmorClass, BaseClass, CombatEffect, DamageClass, HandsClasses, ICharacter, IPlayer,
+import { ArmorClass, BaseClass, CombatEffect, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -922,7 +922,37 @@ export class DamageHelperPhysical extends BaseService {
 
     this.attemptToStun(attacker, defender, attackerWeapon);
 
-    // TODO: apply strikeeffect from weapon encrust if exist, then weapon
+    // if our ammo was shot and can apply an effect, we give it a spin
+    if (canShoot && ammo) {
+      const ammoStrikeEffect: IItemEffect = this.game.itemHelper.getItemProperty(ammo, 'strikeEffect');
+      this.game.spellManager.castSpell(
+        ammoStrikeEffect.name, attacker, defender,
+        { potency: ammoStrikeEffect.potency, chance: ammoStrikeEffect.chance }
+      );
+    }
+
+    const { strikeEffect: weaponStrikeEffect, encrustItem } = this.game.itemHelper.getItemProperties(attackerWeapon, ['strikeEffect', 'encrustItem']);
+
+    // if it has an encrust strike effect, we apply it
+    if (encrustItem) {
+      const realEncrustItem = this.game.itemCreator.getSimpleItem(encrustItem);
+      const encrustGive: IItemEncrust = this.game.itemHelper.getItemProperty(realEncrustItem, 'encrustGive');
+
+      if (encrustGive.strikeEffect) {
+        this.game.spellManager.castSpell(
+          encrustGive.strikeEffect.name, attacker, defender,
+          { potency: encrustGive.strikeEffect.potency, chance: encrustGive.strikeEffect.chance }
+        );
+      }
+    }
+
+    // if our weapon has a strike effect, we apply it
+    if (weaponStrikeEffect) {
+      this.game.spellManager.castSpell(
+        weaponStrikeEffect.name, attacker, defender,
+        { potency: weaponStrikeEffect.potency, chance: weaponStrikeEffect.chance }
+      );
+    }
 
     resolveThrow();
 
