@@ -63,8 +63,8 @@ export interface ISmithBehavior {
   repairsUpToCondition?: number;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IEncrusterBehavior {
+  maxGemLevel?: number;
 }
 
 export interface IBankerBehavior {
@@ -81,12 +81,12 @@ export interface ISuccorerBehavior {
   succorOz?: number;
 }
 
-// tslint:disable-next-line:no-empty-interface
-export interface ISteelroseBehavior {
+export interface ITannerBehavior {
+  maxTanLevel?: number;
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface ITannerBehavior {
+export interface ISteelroseBehavior {
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
