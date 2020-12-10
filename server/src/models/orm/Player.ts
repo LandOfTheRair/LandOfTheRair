@@ -2,7 +2,7 @@
 import { ObjectId } from 'mongodb';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, ICharacterItems, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
+  Direction, IAccountBank, ICharacterItems, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
   SkillBlock, StatBlock } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
@@ -18,8 +18,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property(PROP_UNSAVED_SHARED()) items: ICharacterItems;
   @Property(PROP_UNSAVED_SHARED()) traits: ICharacterTraits;
-
-  @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
+  @Property(PROP_UNSAVED_SHARED()) bank: IAccountBank;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
@@ -35,6 +34,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_UNSAVED_SHARED()) spellCooldowns: Record<string, number>;
   @Property(PROP_UNSAVED_SHARED()) spellChannel: { ticks: number, callback: () => void };
+  @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
 
   // temporary props
   @Property(PROP_TEMPORARY()) swimElement = '';

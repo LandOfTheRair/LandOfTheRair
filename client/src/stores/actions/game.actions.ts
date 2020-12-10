@@ -95,7 +95,24 @@ export class OpenVendorWindow {
   ) {}
 }
 
-// dispatched when walking away from a vendor
+// dispatched when walking away from a banker
 export class HideVendorWindow {
   static type = GameAction.NPCActionHideVendor;
+}
+
+// dispatched when greeting a vendor
+export class OpenBankWindow {
+  static type = GameAction.NPCActionShowBank;
+  constructor(
+    public npcUUID: string,
+    public npcName: string,
+    public npcSprite: number,
+    public npcBank: string,
+    public npcBranch: string
+  ) {}
+}
+
+// dispatched when walking away from a banker
+export class HideBankWindow {
+  static type = GameAction.NPCActionHideBank;
 }

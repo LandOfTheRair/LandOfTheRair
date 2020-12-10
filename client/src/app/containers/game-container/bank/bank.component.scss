@@ -1,0 +1,22 @@
+
+app-npc {
+  float: left;
+  margin-right: 16px;
+}
+
+:host {
+  color: white;
+}
+
+.bank-container {
+  padding: 10px;
+  
+  .bank-intro {
+    min-height: 100px;
+  }
+
+  .bank-action-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+}

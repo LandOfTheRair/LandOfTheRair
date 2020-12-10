@@ -27,6 +27,14 @@ export interface IGame {
     npcVendorDailyItems: IVendorItem[];
   };
 
+  bankInfo: {
+    npcUUID: string;
+    npcName: string;
+    npcSprite: number;
+    npcBank: string;
+    npcBranch: string;
+  };
+
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;

@@ -28,6 +28,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     lastDeathLocation: char.lastDeathLocation ?? undefined,
     dailyItems: char.dailyItems ?? {},
     traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {} },
-    ancientLevel: char.ancientLevel ?? 0
+    ancientLevel: char.ancientLevel ?? 0,
+    bank: char.bank ?? { deposits: {} }
   };
 };

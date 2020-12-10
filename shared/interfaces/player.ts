@@ -1,3 +1,4 @@
+import { IAccountBank } from './accountbank';
 import { DamageClass, Skill } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterTraits } from './charactertraits';
@@ -11,6 +12,7 @@ export interface IPlayer extends ICharacter {
   username: string;
   isSubscribed: boolean;
 
+  bank: IAccountBank;
   traits: ICharacterTraits;
 
   z: number;

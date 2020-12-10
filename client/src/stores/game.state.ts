@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { HideTrainerWindow, HideVendorWindow, OpenTrainerWindow,
+import { HideBankWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
@@ -30,6 +30,13 @@ const defaultGame: () => IGame = () => {
       npcVendorCurrency: Currency.Gold,
       npcVendorItems: [],
       npcVendorDailyItems: []
+    },
+    bankInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
+      npcBank: '',
+      npcBranch: ''
     },
     mapInfo: {
       players: {},
@@ -120,6 +127,11 @@ export class GameState {
   @Selector()
   static currentVendorWindow(state: IGame) {
     return state.vendorInfo;
+  }
+
+  @Selector()
+  static currentBankWindow(state: IGame) {
+    return state.bankInfo;
   }
 
   @Selector()
@@ -285,5 +297,27 @@ export class GameState {
   @Action(HideVendorWindow)
   hideVendorWindow(ctx: StateContext<IGame>) {
     ctx.patchState({ vendorInfo: null });
+  }
+
+  @Action(OpenBankWindow)
+  openBankWindow(ctx: StateContext<IGame>, {
+    npcUUID, npcName, npcSprite, npcBank, npcBranch
+  }: OpenBankWindow) {
+    ctx.patchState({
+      bankInfo: {
+        npcName,
+        npcUUID,
+        npcSprite,
+        npcBank,
+        npcBranch
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('bank'));
+  }
+
+  @Action(HideBankWindow)
+  hideBankWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ bankInfo: null });
   }
 }

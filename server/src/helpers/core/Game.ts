@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
-import { SubscriptionHelper } from '../account';
+import { BankHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StealHelper, TargettingHelper,
@@ -77,6 +77,7 @@ export class Game {
     public groundManager: GroundManager,
     public spellManager: SpellManager,
     public dailyHelper: DailyHelper,
+    public bankHelper: BankHelper,
 
     public messageHelper: MessageHelper,
     public traitHelper: TraitHelper,
@@ -108,7 +109,7 @@ export class Game {
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
-      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper',
+      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper',
       'commandHandler', 'messageHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper'
   ];

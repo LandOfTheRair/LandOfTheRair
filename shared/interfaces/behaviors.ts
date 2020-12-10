@@ -69,7 +69,7 @@ export interface IEncrusterBehavior {
 
 export interface IBankerBehavior {
   bankId?: string;
-  bankName?: string;
+  branchId?: string;
 }
 
 export interface IAlchemistBehavior {

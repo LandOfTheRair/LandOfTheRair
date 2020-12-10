@@ -53,10 +53,12 @@ import { InventoryPouchComponent } from './containers/game-container/inventory-p
 import { InventorySackComponent } from './containers/game-container/inventory-sack/inventory-sack.component';
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 import { MapComponent } from './containers/game-container/map/map.component';
+import { BankComponent } from './containers/game-container/bank/bank.component';
 import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
 import { TrainerComponent } from './containers/game-container/trainer/trainer.component';
 import { TraitsComponent } from './containers/game-container/traits/traits.component';
 import { VendorComponent } from './containers/game-container/vendor/vendor.component';
+
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
@@ -103,6 +105,7 @@ const gameComponents = [
   GroundComponent,
   TrainerComponent,
   VendorComponent,
+  BankComponent,
   TraitsComponent,
 
   JournalComponent

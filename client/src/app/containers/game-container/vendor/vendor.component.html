@@ -17,7 +17,7 @@
 
 <ng-template #bodyTemplate>
   <div *ngIf="player$ | async as player">
-    <div class="vendor-container" droppable [dropScope]="'merchant'" (onDrop)="uiService.buildAndDoDropAction($event, 'Merchant', vendorInfo.npcUUID)" >
+    <div class="vendor-container" droppable [dropScope]="'merchant'" (onDrop)="uiService.buildAndDoDropAction($event, 'Merchant', vendorInfo.npcUUID)">
       <div class="vendor-intro">
         <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
 

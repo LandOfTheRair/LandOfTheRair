@@ -85,11 +85,11 @@ export class TrainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   assess() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, assess ${this.activeSkill}`);
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, assess ${this.activeSkill}`);
   }
 
   train() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, train`);
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, train`);
   }
 
   resetTraits() {
@@ -97,7 +97,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         if(!res) return;
 
-        this.gameService.sendCommandString(`#${this.trainerInfo.npcName}, reset`);
+        this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, reset`);
       });
   }
 

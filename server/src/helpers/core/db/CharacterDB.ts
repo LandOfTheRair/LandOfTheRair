@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { IPlayer } from '../../../interfaces';
-import { Account, Player } from '../../../models';
+import { Account, AccountBank, Player } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
@@ -82,10 +82,11 @@ export class CharacterDB extends BaseService {
   public async populatePlayer(player: Player, account: Account): Promise<void> {
     const results = await Promise.all([
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
-      this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits })
+      this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
+      this.db.findSingle<AccountBank>(AccountBank, { _id: account._id })
     ]);
 
-    let [items, traits] = results;
+    let [items, traits, bank] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -103,8 +104,16 @@ export class CharacterDB extends BaseService {
       player._traits = traits._id;
     }
 
+    if (!bank) {
+      const newBank = new AccountBank();
+      newBank._id = new ObjectId();
+
+      bank = newBank;
+    }
+
     player.items = items;
     player.traits = traits;
+    player.bank = bank;
   }
 
   public async deletePlayer(player: Player): Promise<void> {
@@ -121,13 +130,18 @@ export class CharacterDB extends BaseService {
     const playerColl = this.db.getCollection(Player);
     const itemsColl = this.db.getCollection(PlayerItems);
     const traitsColl = this.db.getCollection(PlayerTraits);
+    const bankColl = this.db.getCollection(AccountBank);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
     const traitOp = traitsColl.initializeUnorderedBulkOp();
+    const bankOp = bankColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
-      playerOp.find({ _id: player._id }).upsert().replaceOne(this.db.getPersistObject(player));
+      playerOp
+        .find({ _id: player._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player));
 
       itemOp
         .find({ _id: (player.items as PlayerItems)._id })
@@ -138,12 +152,18 @@ export class CharacterDB extends BaseService {
         .find({ _id: (player.traits as PlayerTraits)._id })
         .upsert()
         .replaceOne(this.db.getPersistObject(player.traits as PlayerTraits));
+
+      bankOp
+        .find({ _id: player._account })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.bank as AccountBank));
     });
 
     return Promise.all([
       playerOp.execute(),
       itemOp.execute(),
-      traitOp.execute()
+      traitOp.execute(),
+      bankOp.execute()
     ]);
   }
 
@@ -153,7 +173,8 @@ export class CharacterDB extends BaseService {
     await Promise.all([
       this.db.save(player),
       this.db.save(player.items as PlayerItems),
-      this.db.save(player.traits as PlayerTraits)
+      this.db.save(player.traits as PlayerTraits),
+      this.db.save(player.bank as AccountBank)
     ]);
   }
 
