@@ -15,11 +15,13 @@ export class DiceRollerHelper extends BaseService {
 
   // X in one hundred, eg, 1 in 100
   XInOneHundred(myDesiredRollMax: number): boolean {
+    if (myDesiredRollMax === 0) return false;
     return this.XInY(myDesiredRollMax, 100);
   }
 
   // a one in X chance, eg, 1 in 5
   OneInX(x: number): boolean {
+    if (x === 0) return false;
     return random(1, x) === 1;
   }
 

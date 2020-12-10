@@ -38,6 +38,7 @@ export class Spawner {
   private isDangerous = false;                      // whether the creature is "dangerous" or not (strips)
   private respectKnowledge = true;                  // whether the npcs should be acting if true, they only act where players have knowledge (green, town, and lair spawners always act)
   private requireHoliday: Holiday;                  // if this spawner requires a holiday to be active, it's set to this
+  private attributeAddChance = 0;                   // whether the spawner can add random attributes to the npcs it spawns (and the chance for it to do so)
 
   private shouldStrip = false;                      // whether the creature should strip all your gear on death
   private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
@@ -281,6 +282,7 @@ export class Spawner {
     this.game.characterHelper.tryToCastEquipmentEffects(npc);
     this.game.characterHelper.calculateStatTotals(npc);
 
+    this.tryAttribute(npc);
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
@@ -333,6 +335,12 @@ export class Spawner {
     this.currentEliteTick = 0;
 
     this.game.npcCreator.makeElite(npc);
+  }
+
+  // add a random attribute to an npc
+  private tryAttribute(npc: INPC) {
+    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance)) return;
+    this.game.npcCreator.addAttribute(npc);
   }
 
   private increaseTick() {

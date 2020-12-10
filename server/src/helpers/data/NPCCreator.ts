@@ -16,6 +16,7 @@ import { DiceRollerHelper, LootHelper } from '../game/tools';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
 
+import * as attributeStats from '../../../content/_output/attributestats.json';
 import * as npcNames from '../../../content/_output/npcnames.json';
 import { BaseService } from '../../models/BaseService';
 
@@ -242,6 +243,21 @@ export class NPCCreator extends BaseService {
     }
 
     return species.human();
+  }
+
+  // attributes buff npcs in random ways
+  public addAttribute(npc: INPC): void {
+    const { attribute, stats } = sample((attributeStats as any).default || attributeStats);
+    npc.name = `${attribute} ${npc.name}`;
+
+    npc.level += 2;
+    npc.skillOnKill *= 2;
+    npc.giveXp.min *= 2;
+    npc.giveXp.max *= 2;
+
+    stats.forEach(({ stat, boost }) => {
+      this.game.characterHelper.gainPermanentStat(npc, stat as Stat, boost);
+    });
   }
 
   // elite npcs are random and stronger
