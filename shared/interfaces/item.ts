@@ -1,4 +1,4 @@
-import { Alignment, BaseClass, Currency, DamageClass, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
+import { Alignment, BaseClass, Currency, DamageClass, ItemSlot, RandomNumber, Rollable, Stat, StatBlock } from './building-blocks';
 import { IItemEffect } from './effect';
 import { ItemClass } from './itemtypes';
 
@@ -10,7 +10,9 @@ export enum ItemQuality {
   PERFECT = 5
 }
 
-export type IItemEncrust = { effect: IItemEffect } & { stats: StatBlock } & { maxEncrusts: number, requirements?: IItemRequirements };
+export type IItemEncrust = { strikeEffect: IItemEffect } 
+                         & { stats: StatBlock } 
+                         & { slots: Array<ItemSlot | 'weapon' | 'shield'> };
 
 export interface IItemRequirements {
   alignment: Alignment;

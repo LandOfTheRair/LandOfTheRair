@@ -89,6 +89,8 @@ export const SharpWeaponClasses = [
   ItemClass.Shortbow, ItemClass.Shortsword, ItemClass.Spear
 ];
 
+export const WeaponClasses = Object.values(WeaponClass);
+
 export const ShieldClasses = [ItemClass.Shield, ItemClass.Saucer];
 
 export const ArmorClasses = [ItemClass.Tunic, ItemClass.Breastplate, ItemClass.Fur, ItemClass.Fullplate, ItemClass.Scaleplate];
