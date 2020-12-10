@@ -43,6 +43,7 @@ import { TextModalComponent } from './_shared/modals/text/text.component';
 
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
+import { BankComponent } from './containers/game-container/bank/bank.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { EquipmentMainComponent } from './containers/game-container/equipment-main/equipment-main.component';
@@ -53,7 +54,6 @@ import { InventoryPouchComponent } from './containers/game-container/inventory-p
 import { InventorySackComponent } from './containers/game-container/inventory-sack/inventory-sack.component';
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 import { MapComponent } from './containers/game-container/map/map.component';
-import { BankComponent } from './containers/game-container/bank/bank.component';
 import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
 import { TrainerComponent } from './containers/game-container/trainer/trainer.component';
 import { TraitsComponent } from './containers/game-container/traits/traits.component';
