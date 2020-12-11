@@ -6,6 +6,7 @@
     "start:dev": "ng serve -o --host 0.0.0.0 --port 4567",
     "build": "npm run build:app",
     "build:app": "ng build --prod",
+    "build:netlify": "npm run prebuild && npm run build:app",
     "lint": "ng lint",
     "test": "npm run lint && npm run build",
     "setup": "npm i && npm run prebuild",
