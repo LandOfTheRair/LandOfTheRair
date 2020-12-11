@@ -24,6 +24,10 @@ if(fs.existsSync('../../Content')) {
     childProcess.exec('cd content && npm install');
   
     dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
+
+    console.log(require('fs').readdirSync('./'))
+    console.log('---')
+    console.log(require('fs').readdirSync('../'))
   
   });
 }
