@@ -5,3 +5,4 @@
 
 [build]
   ignore = "git diff --quiet HEAD^ HEAD client/"
+  command = "cd client ; npm run setup ; cd .. ; npm run build:netlify"
