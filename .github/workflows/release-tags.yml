@@ -51,6 +51,13 @@ jobs:
         draft: false
         prerelease: false
 
+    - name: Deploy Server
+      uses: AlexxNB/caprover-action@v1
+      with:
+        server: 'https://captain.server.rair.land'
+        password: '${{ secrets.CAPROVER_PASSWORD }}'
+        appname: 'game'
+
     #- name: Post to Reddit
     #  uses: bluwy/release-for-reddit-action@v1
     #  with:
