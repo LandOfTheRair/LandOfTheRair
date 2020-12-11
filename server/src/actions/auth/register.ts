@@ -11,6 +11,8 @@ export class RegisterAction extends ServerAction {
 
   async act(game: Game, { broadcast, emit, register }, data) {
 
+    if (process.env.BLOCK_REGISTER) throw new Error('Registrations are not enabled on this server.');
+
     if (!data.username) throw new Error('Must specify username.');
     if (data.username.length < 1) throw new Error('Username must be >2 characters.');
     if (data.username.length > 20) throw new Error('Username must be <20 characters.');

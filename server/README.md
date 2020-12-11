@@ -20,3 +20,4 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `DATABASE_URI` - the path to your mongodb database
 * `ROLLBAR_TOKEN` - (optional) the POST token for Rollbar
 * `WEBHOOK_SECRET` - (optional) the secret passed along to validate webhook pushes
+* `BLOCK_REGISTER` - (optional) set this to any value to block registration of new accounts - useful if you require accounts to be manually created for some reason
