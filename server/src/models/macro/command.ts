@@ -56,7 +56,7 @@ export abstract class SkillCommand extends MacroCommand {
         [BaseClass.Mage]: 'MP',
         [BaseClass.Thief]: 'Stealth',
         [BaseClass.Warrior]: 'Rage',
-        [BaseClass.Undecided]: 'Anything'
+        [BaseClass.Traveller]: 'Anything'
       };
 
       this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);

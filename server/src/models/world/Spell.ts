@@ -42,7 +42,7 @@ export class Spell implements BaseSpell {
       [BaseClass.Mage]: Stat.INT,
       [BaseClass.Thief]: Stat.INT,
       [BaseClass.Warrior]: Stat.STR,
-      [BaseClass.Undecided]: Stat.LUK
+      [BaseClass.Traveller]: Stat.LUK
     };
 
     let skillsToAverage = [skills[caster.baseClass]];

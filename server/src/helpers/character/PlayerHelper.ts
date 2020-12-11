@@ -77,7 +77,7 @@ export class PlayerHelper extends BaseService {
       [BaseClass.Mage]: 30,
       [BaseClass.Warrior]: 100,
       [BaseClass.Thief]: 100,
-      [BaseClass.Undecided]: 0
+      [BaseClass.Traveller]: 0
     };
 
     player.baseClass = baseClass;
@@ -89,7 +89,7 @@ export class PlayerHelper extends BaseService {
       [BaseClass.Mage]: 'MagicMissile',
       [BaseClass.Warrior]: 'Cleave',
       [BaseClass.Thief]: 'ImprovedHide',
-      [BaseClass.Undecided]: ''
+      [BaseClass.Traveller]: ''
     };
 
     if (learnTrait[player.baseClass]) {
@@ -381,7 +381,7 @@ export class PlayerHelper extends BaseService {
     const int = this.game.characterHelper.getStat(player, Stat.INT);
 
     const classStats: Record<BaseClass, () => void> = {
-      [BaseClass.Undecided]: () => {
+      [BaseClass.Traveller]: () => {
         const hpGained = Math.floor(random(2, con / 2) + con / 2);
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
       },

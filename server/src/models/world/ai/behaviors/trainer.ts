@@ -28,7 +28,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
 
-        if (behavior.joinClass && player.baseClass === BaseClass.Undecided) {
+        if (behavior.joinClass && player.baseClass === BaseClass.Traveller) {
           env?.callbacks.emit({
             type: GameServerResponse.SendConfirm,
             title: `Join the ${behavior.joinClass} Brotherhood?`,
@@ -40,7 +40,7 @@ export class TrainerBehavior implements IAIBehavior {
           return `I cannot currently train you, but would you like to JOIN the ${behavior.joinClass} brotherhood?`;
         }
 
-        if (player.baseClass !== BaseClass.Undecided && !behavior.trainClass.includes(player.baseClass)) {
+        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) {
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
             title: 'Not Trainable',
@@ -71,7 +71,7 @@ export class TrainerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
 
         if (!behavior.joinClass) return `I have no brotherhood for you, ${player.name}.`;
-        if (player.baseClass !== BaseClass.Undecided) return `You seem to have made a choice already.`;
+        if (player.baseClass !== BaseClass.Traveller) return `You seem to have made a choice already.`;
 
         game.playerHelper.becomeClass(player, behavior.joinClass);
 
@@ -120,7 +120,7 @@ export class TrainerBehavior implements IAIBehavior {
         const player: Player = env?.player;
 
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
-        if (player.baseClass !== BaseClass.Undecided && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
+        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
         if (!game.characterHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;

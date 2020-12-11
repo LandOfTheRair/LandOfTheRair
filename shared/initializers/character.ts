@@ -10,7 +10,7 @@ export const initializeCharacter = (char: Partial<ICharacter> = {}): ICharacter 
     affiliation: char.affiliation ?? '',
     allegianceReputation: char.allegianceReputation ?? { },
     name: char.name ?? '',
-    baseClass: char.baseClass ?? BaseClass.Undecided,
+    baseClass: char.baseClass ?? BaseClass.Traveller,
     allegiance: char.allegiance ?? Allegiance.None,
     gender: char.gender ?? 'male',
     x: char.x ?? 14,

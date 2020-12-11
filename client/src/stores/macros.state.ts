@@ -168,7 +168,7 @@ export class MacrosState {
           [BaseClass.Mage]: ['MagicMissile'],
           [BaseClass.Healer]: ['Afflict'],
           [BaseClass.Warrior]: ['Cleave'],
-          [BaseClass.Undecided]: []
+          [BaseClass.Traveller]: []
         }
 
         this.store.dispatch(new SetDefaultMacros(additionalMacros[curPlayer.baseClass] || []));

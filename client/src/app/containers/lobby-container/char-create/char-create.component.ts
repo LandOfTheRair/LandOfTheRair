@@ -47,7 +47,7 @@ export class CharCreateComponent implements OnInit {
     Thief: 'abstract-005',
     Healer: 'abstract-041',
     Warrior: 'abstract-053',
-    Undecided: 'uncertainty'
+    Traveller: 'uncertainty'
   };
 
   public readonly allStats = [

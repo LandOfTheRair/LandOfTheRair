@@ -69,7 +69,7 @@ export enum DamageClass {
 }
 
 export enum BaseClass {
-  Undecided = 'Undecided',
+  Traveller = 'Traveller',
   Mage = 'Mage',
   Thief = 'Thief',
   Healer = 'Healer',
