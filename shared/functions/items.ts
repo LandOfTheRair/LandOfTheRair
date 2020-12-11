@@ -61,7 +61,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   return false;
 }
 
-export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, identifyTier = 0): string {
+export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0): string {
 
   const itemClass = getProp(item, itemDef, 'itemClass');
 
@@ -100,12 +100,12 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const formattedSkill = requirements?.skill?.name === Skill.Wand ? 'Magical Weapons' : requirements?.skill?.name;
   const skillText = requirements && requirements.skill ? `This item requires ${formattedSkill} skill ${requirements.skill.level}. ` : '';
 
-  // TODO: encrust
+  const encrustText = encrustDef ? ` set with ${encrustDef.desc}` : '';
 
   const desc = getProp(item, itemDef, 'desc');
 
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
-  const baseText = `You are looking at ${ozText}${desc}. `;
+  const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
 
   const conditionText = `The item is in ${conditionString(item)} condition. `;
 

@@ -12,7 +12,12 @@ export class Identify extends Spell {
       return;
     }
 
-    const identMsg = descTextFor(caster as IPlayer, rightHand, this.game.itemHelper.getItemDefinition(rightHand.name));
+    const identMsg = descTextFor(
+      caster as IPlayer, 
+      rightHand, 
+      this.game.itemHelper.getItemDefinition(rightHand.name),
+      rightHand.mods?.encrustItem ? this.game.itemHelper.getItemDefinition(rightHand.mods.encrustItem) : undefined
+    );
 
     spellCastArgs.callbacks.emit({
       type: GameServerResponse.SendAlert,
