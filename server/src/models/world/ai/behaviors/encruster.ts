@@ -25,7 +25,6 @@ export class EncrusterBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
         if (!rightHand) return 'You do not have anything in your right hand! Either hold a gem and I can tell you more about it, or hold a gem and an item and I can ENCRUST it for you.';
-        if (!leftHand) return 'You do not have anything in your left hand!';
 
         const {
           itemClass: rightItemClass,
@@ -73,6 +72,7 @@ export class EncrusterBehavior implements IAIBehavior {
           return message;
         }
 
+        if (!leftHand) return 'You do not have anything in your left hand!';
 
         const {
           itemClass: leftItemClass
