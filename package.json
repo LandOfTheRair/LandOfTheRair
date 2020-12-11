@@ -12,6 +12,7 @@
     "start:server": "cd server && npm run start:dev",
     "lint": "lerna exec --parallel -- npm run lint",
     "build": "lerna exec --parallel -- npm run build",
+    "build:netlify": "cd client && npm run build:netlify",
     "changelog:generate": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog:generate:current": "conventional-changelog -p angular -o CHANGELOG-current.md -r 2",
     "changelog:commit": "git commit CHANGELOG.md CHANGELOG-current.md -m \"Update changelog\" || true",
