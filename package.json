@@ -5,8 +5,8 @@
     "node": ">=14"
   },
   "scripts": {
-    "postinstall": "lerna exec -- npm install && lerna exec -- npm run setup",
-    "setup": "lerna exec -- npm run setup",
+    "setup": "lerna exec -- npm install",
+    "setup:full": "npm run setup && lerna exec -- npm run setup",
     "start": "lerna exec --parallel -- npm run start:dev",
     "start:client": "cd client && npm run start:dev",
     "start:server": "cd server && npm run start:dev",

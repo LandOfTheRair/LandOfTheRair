@@ -22,8 +22,8 @@ You will want to be using Node 14 (at least) to run this project.
 
 #### Setup
 
-* `npm install` - install dependencies for the client and server.
-* `npm run setup` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
+* `npm install` - set up the monorepo
+* `npm run setup:full` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
 
 #### Developing Content
 
