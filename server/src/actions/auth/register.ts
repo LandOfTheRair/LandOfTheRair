@@ -22,7 +22,7 @@ export class RegisterAction extends ServerAction {
     if (data.password.length > 256)                       return { message: 'Password must be less than <256 characters.' };
 
     if (!data.email)                                      return { message: 'Must specify email.' };
-    if (!data.email.includes('.') 
+    if (!data.email.includes('.')
     || !data.email.includes('@'))                         return { message: 'Email must match basic format.' };
 
     if (game.profanityHelper.hasProfanity(data.username)) return { message: 'Pick a different username.' };
