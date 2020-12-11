@@ -23,6 +23,8 @@ jobs:
     
     - run: npm install
 
+    - run: npm run setup:full
+
     - run: npm run lint
       
     - run: npm run build
