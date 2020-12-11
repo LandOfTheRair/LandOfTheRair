@@ -25,9 +25,8 @@ if(fs.existsSync('../../Content')) {
   
     dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
 
-    console.log(require('fs').readdirSync('./'))
-    console.log('---')
-    console.log(require('fs').readdirSync('../'))
+    console.log(require('fs').readdirSync('./content'))
+    console.log(require('fs').readdirSync('./content/_output'))
   
   });
 }
