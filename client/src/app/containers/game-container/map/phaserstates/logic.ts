@@ -52,7 +52,9 @@ export class MapScene extends Phaser.Scene {
   private groundUpdate$: Subscription;
   private player: IPlayer;
 
-  private isReady: boolean;
+  private get isReady(): boolean {
+    return this.sys;
+  }
 
   private openDoors = {};
   private ground = {};
@@ -437,13 +439,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   public init(data) {
-    this.isReady = false;
     this.player = data.player;
   }
 
   public create() {
-    this.isReady = true;
-
     const player = this.game.observables.player.getValue();
     this.player = player;
 
