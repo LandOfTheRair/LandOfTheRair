@@ -1,10 +1,10 @@
-name: Manual Deploy
+name: Manual Deploy (Client Only)
 
 on: workflow_dispatch
 
 jobs:
   build:
-    name: Manual Deploy
+    name: Manual Deploy (Client Only)
 
     runs-on: ${{ matrix.os }}
 
@@ -22,18 +22,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     
-    - run: npm install
+    - run: cd client && npm run setup
 
-    - run: npm run lint
+    - run: cd client && npm run lint
       
-    - run: npm run build
-
-    - name: Deploy Server
-      uses: AlexxNB/caprover-action@v1
-      with:
-        server: 'https://captain.server.rair.land'
-        password: '${{ secrets.CAPROVER_PASSWORD }}'
-        appname: 'game'
+    - run: cd client && npm run build
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v1.1

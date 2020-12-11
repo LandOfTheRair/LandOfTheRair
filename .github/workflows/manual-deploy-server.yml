@@ -1,0 +1,36 @@
+name: Manual Deploy (Server Only)
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Manual Deploy (Server Only)
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        # os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [windows-latest]
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - run: cd server && npm run setup
+
+    - run: cd server && npm run lint
+      
+    - run: cd server && npm run build
+
+    - name: Deploy Server
+      uses: AlexxNB/caprover-action@v1
+      with:
+        server: 'https://captain.server.rair.land'
+        password: '${{ secrets.CAPROVER_PASSWORD }}'
+        appname: 'game'
