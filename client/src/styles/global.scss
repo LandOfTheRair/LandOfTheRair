@@ -194,3 +194,8 @@ ngx-mat-color-picker-content {
 .mat-dialog-actions .mat-button-base {
   margin-left: 8px !important;
 }
+
+mat-horizontal-stepper.disable .mat-horizontal-stepper-header-container {
+  pointer-events: none !important;
+  cursor: not-allowed !important;
+}

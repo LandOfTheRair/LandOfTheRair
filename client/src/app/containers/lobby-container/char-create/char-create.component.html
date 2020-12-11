@@ -8,8 +8,11 @@
       <td colspan="11">
         You are 
         <strong>{{ character.name }}</strong>
+        <span *ngIf="!character.gender && !character.baseclass">...</span>
         <span *ngIf="character.gender || character.baseclass" class="m-r-5">, the</span> 
+        <span *ngIf="character.baseclass && !character.gender">...</span>
         <span *ngIf="character.gender" class="m-r-5">{{ character.gender }}</span> 
+        <span *ngIf="character.gender && !character.baseclass">...</span>
         <span *ngIf="character.baseclass">{{ character.baseclass || 'Undecided' }}.</span>
       </td>
     </tr>
@@ -19,20 +22,30 @@
     <tr>
       <td colspan="11">Your base stats are as follows:</td>
     </tr>
-    <tr>
-      <td *ngFor="let stat of allStats" class="p-5 bordered">
-        {{ stat | uppercase }} <strong>{{ stats[stat] }}</strong>
+    <tr class="stat-row">
+      <td>
+        <div *ngFor="let stat of allStats" class="p-5 bordered" [matTooltip]="stat.tooltip">
+          {{ stat.stat | uppercase }} <strong>{{ stats[stat.stat] }}</strong>
+        </div>
       </td>
     </tr>
   </table>
 
-  <mat-horizontal-stepper>
-    <mat-step label="Pick a name and sex">
+  <mat-horizontal-stepper [class.disable]="!character.name">
+
+    <mat-step label="Pick a name and sex"
+              [color]="character.name && character.gender ? 'success' : 'warn'">
       <div class="full-width split-container">
         <div class="m-t-10 half-width text-center">
           <h2>Name</h2>
-          <mat-form-field class="full-width" appearance="outline">
-            <input class="input" matInput type="text" [(ngModel)]="character.name" [ngModelOptions]="{ standalone: true }" (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
+          <mat-form-field class="full-width">
+            <input class="input" 
+                   matInput
+                   type="text" 
+                   autocomplete="off"
+                   [(ngModel)]="character.name" 
+                   [ngModelOptions]="{ standalone: true }" 
+                   (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
           </mat-form-field>
         </div>
   
@@ -47,7 +60,8 @@
 
     </mat-step>
 
-    <mat-step label="Pick an allegiance">
+    <mat-step label="Pick an allegiance"
+              [color]="character.allegiance ? 'success' : 'warn'">
       <div class="text-center">
         <mat-button-toggle-group  [(ngModel)]="character.allegiance">
           <mat-button-toggle [value]="allegiance.name" 
@@ -59,7 +73,8 @@
       <div class="text-center desc-area" [innerHTML]="descs.allegiance || 'Choose an allegiance!'"></div>
     </mat-step>
 
-    <mat-step label="Pick a class">
+    <mat-step label="Pick a class" 
+              [color]="character.baseclass ? 'success' : 'warn'">
       <div class="text-center">
         <mat-button-toggle-group [(ngModel)]="character.baseclass">
           <mat-button-toggle [value]="baseclass.name" 
@@ -75,6 +90,7 @@
 
       <div class="text-center desc-area" [innerHTML]="descs.baseclass || 'Choose a class!'"></div>
     </mat-step>
+
   </mat-horizontal-stepper>
 
 </mat-dialog-content>

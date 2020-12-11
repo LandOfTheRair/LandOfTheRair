@@ -36,6 +36,7 @@ export class CharSelectComponent implements OnInit, OnDestroy {
 
   create(charCreateData: ICharacterCreateInfo, slot: number, needsOverwrite: boolean) {
     const dialogRef = this.dialog.open(CharCreateComponent, {
+      panelClass: 'fancy',
       data: { needsOverwrite, slot, charCreateData }
     });
 

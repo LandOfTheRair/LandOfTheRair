@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ICharacterCreateInfo } from '../../../../interfaces';
+import { ICharacterCreateInfo, Stat } from '../../../../interfaces';
 
 @Component({
   selector: 'app-char-create',
@@ -50,13 +50,17 @@ export class CharCreateComponent implements OnInit {
     Undecided: 'uncertainty'
   };
 
-  public get allStats() {
-    return [
-      'str', 'dex', 'agi',
-      'int', 'wis', 'wil',
-      'con', 'cha', 'luk'
-    ];
-  }
+  public readonly allStats = [
+    { stat: Stat.STR, icon: 'biceps',      tooltip: 'STR: Affects how likely you are to hit in combat and how much damage you deal' },
+    { stat: Stat.DEX, icon: 'bowman',      tooltip: 'DEX: Affects how likely you are to hit in combat' },
+    { stat: Stat.AGI, icon: 'sprint',      tooltip: 'AGI: Affects how likely you are to dodge physical attacks in combat' },
+    { stat: Stat.INT, icon: 'smart',       tooltip: 'INT: Affects damage for Conjuration damage and Mage level up MP' },
+    { stat: Stat.WIS, icon: 'wisdom',      tooltip: 'WIS: Affects damage and healing for Restoration damage and Healers level up MP' },
+    { stat: Stat.WIL, icon: 'aura',        tooltip: 'WIL: Affects your saving throw for magical attacks' },
+    { stat: Stat.CON, icon: 'glass-heart', tooltip: 'CON: Affects how likely you are to get stunned in combat and level up HP' },
+    { stat: Stat.CHA, icon: 'rose',        tooltip: 'CHA: Affects merchant shop prices' },
+    { stat: Stat.LUK, icon: 'clover',      tooltip: 'LUK: Affects random drop chance and crit chance' }
+  ];
 
   public get charCreateData(): ICharacterCreateInfo {
     return this.data.charCreateData;

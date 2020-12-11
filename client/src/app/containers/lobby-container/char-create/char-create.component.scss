@@ -8,10 +8,26 @@
   }
 }
 
+mat-button-toggle-group {
+  margin-top: 10px;
+}
+
 .desc-area {
   min-height: 150px;
   max-width: 550px;
   margin-top: 40px;
   margin-left: 30px;
   margin-right: 30px;
+}
+
+table {
+  width: 100%;
+  margin-bottom: 10px;
+
+  .stat-row td {
+    padding-top: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
 }
