@@ -7,6 +7,7 @@ COPY ./server /usr/src/app/server
 COPY ./shared /usr/src/app/shared
 RUN npm install
 RUN cd server && npm run setup && npm cache clean --force
+RUN cd server/content && npm install
 RUN cd server && npm run build
 ENV NODE_ENV production
 ENV PORT 80
