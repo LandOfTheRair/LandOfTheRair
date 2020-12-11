@@ -13,8 +13,8 @@ export class Identify extends Spell {
     }
 
     const identMsg = descTextFor(
-      caster as IPlayer, 
-      rightHand, 
+      caster as IPlayer,
+      rightHand,
       this.game.itemHelper.getItemDefinition(rightHand.name),
       rightHand.mods?.encrustItem ? this.game.itemHelper.getItemDefinition(rightHand.mods.encrustItem) : undefined
     );

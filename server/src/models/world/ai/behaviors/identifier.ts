@@ -59,8 +59,8 @@ export class IdentifierBehavior implements IAIBehavior {
         game.characterHelper.loseCurrency(player, identifyCost, identifyCurrency);
 
         const identMsg = descTextFor(
-          player, 
-          rightHand, 
+          player,
+          rightHand,
           game.itemHelper.getItemDefinition(rightHand.name),
           rightHand.mods?.encrustItem ? game.itemHelper.getItemDefinition(rightHand.mods.encrustItem) : undefined,
           identifyTier
