@@ -43,6 +43,7 @@ export class TeleportHelper extends BaseService {
     // if we're not changing maps, move on this one
     if (!map || player.map === map) {
       this.setCharXY(player, x, y);
+      this.game.transmissionHelper.sendMovementPatch(player);
     }
 
     // adjust your Z level for up/down nav
@@ -75,9 +76,11 @@ export class TeleportHelper extends BaseService {
       player.map = map;
       player.x = x;
       player.y = y;
+
       this.game.worldManager.joinMap(player);
 
       this.game.transmissionHelper.sendActionToPlayer(player, GameAction.GameSetMap, { map: newMap.mapData });
+      this.game.transmissionHelper.sendMovementPatch(player);
     }
   }
 

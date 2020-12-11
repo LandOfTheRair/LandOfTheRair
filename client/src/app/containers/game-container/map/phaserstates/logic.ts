@@ -1,7 +1,7 @@
 import { difference, get, setWith, size } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { basePlayerSprite, basePlayerSwimmingSprite, Direction, ICharacter, IMapData, INPC,
+import { basePlayerSprite, basePlayerSwimmingSprite, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
