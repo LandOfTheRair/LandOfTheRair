@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "setup": "npm i && npm run setup:content",
+    "setup:prod": "npm i && npm run setup:content:prod",
     "setup:content": "node scripts/setup",
+    "setup:content:prod": "node server/scripts/setup",
     "start": "node dist/server/src/core/index",
     "start:dev": "ts-node-dev --cls --respawn --exit-child --watch --transpile-only --debounce --clear src/core/index.ts",
     "lint": "tslint --project tsconfig.json",
