@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
-    "start": "node src/core/index",
+    "start": "node dist/server/src/core/index",
     "start:dev": "ts-node-dev --cls --respawn --exit-child --watch --transpile-only --debounce --clear src/core/index.ts",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
