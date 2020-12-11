@@ -565,6 +565,8 @@ export class MapScene extends Phaser.Scene {
 
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
   private stealthUpdate(sprite, character: ICharacter) {
+    if(character.hp.current <= 0) return;
+
     sprite.alpha = (character.totalStats?.[Stat.Stealth] ?? 0) ? 0.7 : 1;
   }
 
@@ -595,7 +597,7 @@ export class MapScene extends Phaser.Scene {
 
     sprite.setFrame(newFrame);
 
-    sprite.alpha = player.dir === Direction.Corpse ? 0 : 1;
+    sprite.alpha = player.hp.current <= 0 ? 0 : 1;
 
     this.stealthUpdate(sprite, player);
   }

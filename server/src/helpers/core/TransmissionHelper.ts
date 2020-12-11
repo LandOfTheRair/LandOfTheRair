@@ -53,7 +53,8 @@ export class TransmissionHelper extends BaseService {
             && !p.path.includes('fov')
             && p.path !== '/x'
             && p.path !== '/y'
-            && p.path !== '/dir';
+            && p.path !== '/dir'
+            && p.path !== '/corpseRef';
       }));
     }
 
