@@ -20,7 +20,7 @@ export class ChangeDiscordTagAction extends ServerAction {
 
     } catch (e) {
       game.logger.error('ChangeDiscordTag', e);
-      throw new Error('Could not change Discord tag?');
+      return { message: 'Could not change Discord tag? Try again, or contact a GM if this persists.' };
     }
 
     return {

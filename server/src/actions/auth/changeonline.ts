@@ -14,7 +14,7 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
 
     } catch (e) {
       game.logger.error('ChangeAlwaysOnline', e);
-      throw new Error('Could not change password?');
+      return { message: 'Could not change online status? Try again, or contact a GM if this persists.' };
     }
 
     return {

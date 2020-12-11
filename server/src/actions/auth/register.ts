@@ -11,27 +11,28 @@ export class RegisterAction extends ServerAction {
 
   async act(game: Game, { broadcast, emit, register }, data) {
 
-    if (process.env.BLOCK_REGISTER) throw new Error('Registrations are not enabled on this server.');
+    if (process.env.BLOCK_REGISTER)                       return { message: 'Registrations are not enabled on this server.' };
 
-    if (!data.username) throw new Error('Must specify username.');
-    if (data.username.length < 1) throw new Error('Username must be >2 characters.');
-    if (data.username.length > 20) throw new Error('Username must be <20 characters.');
+    if (!data.username)                                   return { message: 'Must specify username.' };
+    if (data.username.length < 1)                         return { message: 'Username must be >2 characters.' };
+    if (data.username.length > 20)                        return { message: 'Username must be <20 characters.' };
 
-    if (!data.password) throw new Error('Must specify password.');
-    if (data.password.length < 11) throw new Error('Password must be >10 characters.');
-    if (data.password.length > 256) throw new Error('Password must be less than <256 characters.');
+    if (!data.password)                                   return { message: 'Must specify password.' };
+    if (data.password.length < 11)                        return { message: 'Password must be >10 characters.' };
+    if (data.password.length > 256)                       return { message: 'Password must be less than <256 characters.' };
 
-    if (!data.email) throw new Error('Must specify email.');
-    if (!data.email.includes('.') || !data.email.includes('@')) throw new Error('Email must match basic format.');
+    if (!data.email)                                      return { message: 'Must specify email.' };
+    if (!data.email.includes('.') 
+    || !data.email.includes('@'))                         return { message: 'Email must match basic format.' };
 
-    if (game.profanityHelper.hasProfanity(data.username)) throw new Error('Pick a different username.');
+    if (game.profanityHelper.hasProfanity(data.username)) return { message: 'Pick a different username.' };
 
     const doesExist = await game.accountDB.doesAccountExist(data);
-    if (doesExist) throw new Error('Username already registered.');
+    if (doesExist)                                        return { message: 'Username already registered.' };
 
     try {
       const account = await game.accountDB.createAccount(data);
-      if (!account) throw new Error('Could not register.');
+      if (!account)                                       return { message: 'Could not register.' };
 
       game.logger.log('Auth:Register', `${data.username} registered.`);
 

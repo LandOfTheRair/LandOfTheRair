@@ -26,7 +26,7 @@ export class ChatAction extends ServerAction {
 
     } catch (e) {
       game.logger.error('ChatAction', e);
-      throw new Error('Could not send chat message?');
+      return { message: 'Could not send chat message? Try again, or if this persists contact a GM.' };
     }
 
     return {};

@@ -8,7 +8,7 @@ export class QuitAction extends ServerAction {
 
   async act(game: Game, { broadcast, emit }, data) {
 
-    if (!game.lobbyManager.isAccountInGame(data.account)) throw new Error('Not in game.');
+    if (!game.lobbyManager.isAccountInGame(data.account)) return { message: 'Not in game.' };
 
     const player = game.playerManager.getPlayerInGame(data.account);
 

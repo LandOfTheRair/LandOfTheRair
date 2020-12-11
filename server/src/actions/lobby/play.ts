@@ -8,7 +8,7 @@ export class PlayAction extends ServerAction {
   requiredKeys = ['charSlot'];
 
   async act(game: Game, { broadcast, emit }, data) {
-    if (game.lobbyManager.isAccountInGame(data.account)) throw new Error('Already in game.');
+    if (game.lobbyManager.isAccountInGame(data.account))  return { message: 'Already in game.' };
 
     const charSlot = data.charSlot;
 
@@ -18,7 +18,7 @@ export class PlayAction extends ServerAction {
       player = checkPlayer;
     }
 
-    if (!player) throw new Error(`No character in slot ${charSlot}.`);
+    if (!player)                                          return { message: `No character in slot ${charSlot}.` };
     const mapName = player.map;
 
     let map: WorldMap = game.worldManager.getMap(mapName).map;

@@ -11,25 +11,25 @@ export class LoginAction extends ServerAction {
   requiresLoggedIn = false;
 
   async act(game: Game, { broadcast, emit, register }, data) {
-    if (!data.username) return { wasSuccess: false, message: 'No username specified.' };
-    if (!data.password) return { wasSuccess: false, message: 'No password specified.' };
+    if (!data.username)                               return { wasSuccess: false, message: 'No username specified.' };
+    if (!data.password)                               return { wasSuccess: false, message: 'No password specified.' };
 
     let account;
     try {
       account = await game.accountDB.getAccountForLoggingIn(data.username);
     } catch (e) {
       game.logger.error('LoginAction#getAccount', e);
-      throw new Error('Could not get account; try again.');
+      return { message: 'Could not get account; try again or contact a GM if this persists.' };
     }
 
-    if (!account) return { wasSuccess: false, message: 'Username not registered.' };
+    if (!account)                                     return { wasSuccess: false, message: 'Username not registered.' };
 
     if (!game.accountDB.checkPassword(data, account)) return { wasSuccess: false, message: 'Incorrect password.' };
 
     try {
 
       const realAccount = await game.accountDB.getAccount(data.username);
-      if (!realAccount) throw new Error('Could not get real account from login.');
+      if (!realAccount)                               return { message: 'Could not get real account from login.' };
 
       game.lobbyManager.removeAccount(data.username);
 

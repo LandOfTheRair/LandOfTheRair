@@ -9,7 +9,7 @@ export class SetMOTDAction extends ServerAction {
   async act(game: Game, { broadcast }, data) {
 
     const account = game.lobbyManager.getAccount(data.username);
-    if (!account || !account.isGameMaster) throw new Error('Not a GM.');
+    if (!account || !account.isGameMaster) return { message: 'Not a GM.' };
 
     try {
 
@@ -22,7 +22,7 @@ export class SetMOTDAction extends ServerAction {
 
     } catch (e) {
       game.logger.error('SetMOTDAction', e);
-      throw new Error('Could not set MOTD?');
+      return { message: 'Could not set MOTD? I would normally say to contact a GM, but this is probably your fault.' };
     }
 
     return {};
