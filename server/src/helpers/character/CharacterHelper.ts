@@ -418,7 +418,9 @@ export class CharacterHelper extends BaseService {
 
   // get a specific stat value from a character
   public getStat(character: ICharacter, stat: Stat): number {
-    return character.totalStats[stat] ?? 0;
+    const value = character.totalStats[stat] ?? 0;
+    if(value === 0 && stat === Stat.DamageFactor) return 1;
+    return value;
   }
 
   // get a specific base stat value from a character

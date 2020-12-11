@@ -88,6 +88,11 @@ export class CombatHelper extends BaseService {
 
     }
 
+    if (attacker) {
+      const damageFactor = this.game.characterHelper.getStat(attacker, Stat.DamageFactor);
+      damage = Math.floor(damage * damageFactor);
+    }
+
     if (isNaN(damage)) damage = 0;
 
     return Math.floor(damage);
