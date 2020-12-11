@@ -7,7 +7,7 @@ export const environment = {
   production: true,
 
   server: {
-    ws: 'ws://127.0.0.1:6975/'
+    ws: 'wss://server.rair.land/'
   },
 
   client: {
