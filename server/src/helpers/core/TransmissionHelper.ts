@@ -97,7 +97,18 @@ export class TransmissionHelper extends BaseService {
   }
 
   // send a specific patch for player movement
-  public sendMovementPatch(player: Player) {
+  public sendMovementPatch(player: Player, blankFOV = false) {
+
+    const fov = blankFOV ? {} : player.fov;
+    if (blankFOV) {
+      for (let x = -4; x <= 4; x++) {
+        fov[x] = fov[x] || {};
+        for (let y = -4; y <= 4; y++) {
+          fov[x][y] = false;
+        }
+      }
+    }
+
     this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, {
       player: { fov: player.fov, x: player.x, y: player.y, dir: player.dir }
     });
