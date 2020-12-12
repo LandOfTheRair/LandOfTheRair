@@ -185,6 +185,9 @@ export class MenuComponent implements OnInit {
     }
   ];
 
+  // show the warning or not, default yes, unsaved
+  public showResolutionWarning = true;
+
   // show the message or not, default no, unsaved
   public showDailyResetMessage: boolean;
 
@@ -238,6 +241,10 @@ export class MenuComponent implements OnInit {
         if (this.nowTimestamp > this.resetTimestamp) setResetTimestamp();
         formatTimestring();
       });
+  }
+
+  public hideResolution() {
+    this.showResolutionWarning = false;
   }
 
 }
