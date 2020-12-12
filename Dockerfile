@@ -2,6 +2,7 @@ FROM node:15.4.0-alpine
 RUN apk --no-cache add git
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
+ADD https://www.google.com /time.now
 COPY ./package.json /usr/src/app
 COPY ./tsconfig.json /usr/src/app
 COPY ./server /usr/src/app/server
