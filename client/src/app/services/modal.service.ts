@@ -52,22 +52,22 @@ export class ModalService {
     });
 
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.Error,
+      'Modal', GameServerResponse.Error,
       (data) => this.notifyError(data.error)
     );
 
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.SendNotification,
+      'Modal', GameServerResponse.SendNotification,
       (data) => this.notify(data.message)
     );
 
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.SendAlert,
+      'Modal', GameServerResponse.SendAlert,
       (data) => this.alert(data.title, data.content, data.extraData)
     );
 
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.SendConfirm,
+      'Modal', GameServerResponse.SendConfirm,
       (data) => {
         const confirm = this.confirm(data.title, data.content, data.extraData);
         confirm.subscribe(choice => {

@@ -51,7 +51,6 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
   sendMessage() {

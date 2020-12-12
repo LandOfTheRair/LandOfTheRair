@@ -13,7 +13,7 @@ export class GameContainerComponent implements OnInit {
   constructor(private socketService: SocketService, public gameService: GameService) { }
 
   ngOnInit() {
-    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.DialogChat, (data) => {
+    this.socketService.registerComponentCallback('GameContainer', GameServerResponse.DialogChat, (data) => {
       this.gameService.showNPCDialog(data);
     });
   }

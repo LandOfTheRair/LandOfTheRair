@@ -46,12 +46,12 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       this.messages = [];
     });
 
-    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
+    this.socketService.registerComponentCallback('AdventureLog', GameServerResponse.GameLog, (data) => {
       if (data.messageTypes.includes(MessageType.Chatter)) data.message = `<local:${data.from}> ${data.message}`;
       this.addMessage(data);
     });
 
-    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.Chat, (data) => {
+    this.socketService.registerComponentCallback('AdventureLog', GameServerResponse.Chat, (data) => {
       this.addMessage({
         messageTypes: [MessageType.Lobby, MessageType.Chatter, MessageType.PlayerChat],
         message: `<lobby:${data.from}> ${data.message}`
@@ -80,7 +80,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
+    this.socketService.unregisterComponentCallbacks('AdventureLog');
   }
 
   private initMarkdownRenderer() {

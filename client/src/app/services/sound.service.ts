@@ -23,7 +23,7 @@ export class SoundService {
   constructor(private optionsService: OptionsService, private socketService: SocketService) {}
 
   init() {
-    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.PlaySFX, ({ sfx }) => {
+    this.socketService.registerComponentCallback('Sound', GameServerResponse.PlaySFX, ({ sfx }) => {
       if (!this.optionsService.playSFX) return;
 
       const sfxRef = new Howl({

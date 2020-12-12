@@ -52,14 +52,14 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     this.timerSub = timer(0, 500).subscribe(() => this.updateCharacterList());
     this.moveSub = this.pos$.subscribe(() => this.updateCharacterList());
 
-    this.socketService.registerComponentCallback(this.constructor.name, GameServerResponse.GameLog, (data) => {
+    this.socketService.registerComponentCallback('CharacterList', GameServerResponse.GameLog, (data) => {
       if (isUndefined(data.setTarget)) return;
       this.store.dispatch(new SetCurrentTarget(data.setTarget));
     });
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
+    this.socketService.unregisterComponentCallbacks('CharacterList');
   }
 
   private updateCharacterList() {

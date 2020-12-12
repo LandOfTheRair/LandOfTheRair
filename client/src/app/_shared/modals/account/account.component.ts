@@ -45,7 +45,6 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
   public changeTag() {

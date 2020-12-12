@@ -27,7 +27,6 @@ export class CharSelectComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
   }
 
   public setCharSlot(event) {

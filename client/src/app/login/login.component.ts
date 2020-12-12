@@ -44,12 +44,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.newAccount = { username: '', password: '', email: '', autologin: false };
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.Error,
+      'Login', GameServerResponse.Error,
       (data) => this.setErrorMessage(data.error)
     );
 
     this.socketService.registerComponentCallback(
-      this.constructor.name, GameServerResponse.Login,
+      'Login', GameServerResponse.Login,
       (data) => this.setAccount(data)
     );
 
@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks(this.constructor.name);
+    this.socketService.unregisterComponentCallbacks('Login');
   }
 
   public registerMode() {
