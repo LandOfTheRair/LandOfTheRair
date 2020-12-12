@@ -43,13 +43,6 @@ export class RegisterAction extends ServerAction {
         user: simpleAccount
       });
 
-      broadcast({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: `Welcome ${data.username} to Land of the Rair!`,
-        from: '★System'
-      });
-
       register(account.username);
       game.lobbyManager.addAccount(account);
 
