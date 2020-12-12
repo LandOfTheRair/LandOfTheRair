@@ -55,7 +55,7 @@ export class WebsocketWorker {
 
     Object.values(HTTPRoutes).forEach((route) => route.setup(app, { broadcast: (data) => this.broadcast(data) }));
 
-    app.listen(process.env.PORT ? +process.env.PORT : 6975, (err: any) => {
+    app.listen(process.env.PORT ? +process.env.PORT : 6975, process.env.BIND_ADDR || '127.0.0.1', (err: any) => {
       if (err) throw err;
 
       console.log('NET', `Started HTTP server on port ${process.env.PORT || 6975}.`);
