@@ -151,6 +151,11 @@ mat-dialog-actions {
 .mat-dialog-content {
   overflow: hidden !important;
   max-height: 700px !important;
+
+  @media only screen and (max-height: 900px) {
+    max-height: 400px !important;
+    overflow-y: scroll !important;
+  }
 }
 
 // https://codepen.io/shanomurphy/pen/ejpVLw
