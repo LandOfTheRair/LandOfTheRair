@@ -127,7 +127,7 @@ export class Game {
 
   private setupEmergencyHandlers() {
     [
-      'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGKILL', 'SIGTRAP', 'SIGABRT',
+      'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTRAP', 'SIGABRT',
       'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
     ].forEach((sig) => {
       process.on(sig as any, () => {
