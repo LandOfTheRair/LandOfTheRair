@@ -63,6 +63,8 @@ export class CharacterDB extends BaseService {
 
     this.game.playerHelper.becomeClass(player, player.baseClass, false);
 
+    player.items.sack.items = [this.game.itemCreator.getSimpleItem('Newbie Book')];
+
     account.players.push(player);
     await this.savePlayer(player);
 
