@@ -17,6 +17,7 @@ export * from './MovementHelper';
 export * from './NPCHelper';
 export * from './PlayerHelper';
 export * from './QuestHelper';
+export * from './StatisticsHelper';
 export * from './StealHelper';
 export * from './TargettingHelper';
 export * from './TeleportHelper';

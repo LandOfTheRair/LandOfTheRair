@@ -6,14 +6,14 @@ import { IWebsocketCommandHandler } from '../../interfaces/internal';
 import { BankHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
-  InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StealHelper, TargettingHelper,
+  InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
-import { DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
-import { CharacterRoller, LobbyManager } from '../lobby';
+import { BonusHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
+import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { Database } from './Database';
 import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
@@ -78,8 +78,10 @@ export class Game {
     public spellManager: SpellManager,
     public dailyHelper: DailyHelper,
     public bankHelper: BankHelper,
+    public statisticsHelper: StatisticsHelper,
 
     public messageHelper: MessageHelper,
+    public bonusHelper: BonusHelper,
     public traitHelper: TraitHelper,
     public stealHelper: StealHelper,
     public commandHandler: CommandHandler,
@@ -87,7 +89,8 @@ export class Game {
     public playerManager: PlayerManager,
     public worldManager: WorldManager,
     public configManager: ConfigManager,
-    public userInputHelper: UserInputHelper
+    public userInputHelper: UserInputHelper,
+    public discordHelper: DiscordHelper
 
   ) {}
 
@@ -110,8 +113,10 @@ export class Game {
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper',
-      'commandHandler', 'messageHelper', 'traitHelper', 'stealHelper',
-      'playerManager', 'worldManager', 'configManager', 'userInputHelper'
+      'statisticsHelper',
+      'commandHandler', 'messageHelper', 'bonusHelper', 'traitHelper', 'stealHelper',
+      'playerManager', 'worldManager', 'configManager', 'userInputHelper',
+      'discordHelper'
   ];
 
     for (const i of initOrder) {
