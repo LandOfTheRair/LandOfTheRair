@@ -130,6 +130,8 @@ export class DialogActionHelper extends BaseService {
     let didSucceed = false;
 
     (slot || []).forEach(checkSlot => {
+      if (didSucceed) return;
+
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
 
@@ -154,6 +156,8 @@ export class DialogActionHelper extends BaseService {
     let didSucceed = false;
 
     (slot || []).forEach(checkSlot => {
+      if (didSucceed) return;
+
       const slotItem = player.items.equipment[checkSlot];
       if (slotItem) return;
 
