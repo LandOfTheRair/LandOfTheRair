@@ -24,7 +24,7 @@ export interface IDialogRequirement {
   statValue?: number;
 }
 
-// different types of 
+// different types of dialog actions
 export interface IDialogCheckQuestAction {
   quest: string;
   maxDistance?: number;

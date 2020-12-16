@@ -90,7 +90,7 @@ export class DialogActionHelper extends BaseService {
   }
 
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
-    const { slot, item, fromHands, fromSack, checkPassActions, checkFailActions } = action;
+    const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
