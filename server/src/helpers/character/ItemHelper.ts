@@ -79,8 +79,12 @@ export class ItemHelper extends BaseService {
     return condition <= 0;
   }
 
+  public isOwnedBy(character: ICharacter, item: ISimpleItem): boolean {
+    return isOwnedBy(character as IPlayer, item);
+  }
+
   public ownsAndItemUnbroken(character: ICharacter, item: ISimpleItem): boolean {
-    if (!isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
+    if (!this.isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
     if (this.isItemBroken(item)) return false;
 
     return true;
@@ -247,7 +251,7 @@ export class ItemHelper extends BaseService {
     const page = bookCurrentPage ?? 0;
     const readPage = (bookPages || [])[page];
 
-    if(!readPage) {
+    if (!readPage) {
       this.game.messageHelper.sendSimpleMessage(player, `This book has no pages to read!`);
       return;
     }

@@ -65,6 +65,7 @@ export class MoveItems extends MacroCommand {
     const isSackable = this.game.itemHelper.getItemProperty(srcItem, 'isSackable');
     const isBeltable = this.game.itemHelper.getItemProperty(srcItem, 'isBeltable');
 
+    const itemClass = this.game.itemHelper.getItemProperty(srcItem, 'itemClass');
     const succorInfo = this.game.itemHelper.getItemProperty(srcItem, 'succorInfo');
     if (dest === 'G' && succorInfo) {
 
@@ -105,7 +106,7 @@ export class MoveItems extends MacroCommand {
       return false;
     }
 
-    // if we're sending to a merchant, make sure we're in range first
+    // if we're sending to a merchant, make sure we're in range first and we can sell the item
     if (dest === 'M') {
       if (!destSlot) {
         this.sendMessage(player, 'You do not see anyone nearby!');
@@ -126,6 +127,21 @@ export class MoveItems extends MacroCommand {
 
       if (this.game.directionHelper.distFrom(player, npc) > 2) {
         this.sendMessage(player, 'You are too far away from that person!');
+        return false;
+      }
+
+      if (!this.game.itemHelper.isOwnedBy(player, srcItem)) {
+        this.sendMessage(player, 'You do not own that item!');
+        return false;
+      }
+
+      if (itemClass === ItemClass.Corpse) {
+        this.sendMessage(player, 'Ew! Get that off my counter.');
+        return false;
+      }
+
+      if (itemClass === ItemClass.Coin) {
+        this.sendMessage(player, 'Why would you think I would buy currency?');
         return false;
       }
     }
