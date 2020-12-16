@@ -24,6 +24,8 @@
         <input matInput 
                type="email" 
                placeholder="Email Address" 
+               name="email"
+               autocomplete="email"
                [(ngModel)]="newAccount.email"
                [disabled]="isActing"
                [ngModelOptions]="{ standalone: true }" />
@@ -33,13 +35,15 @@
         <mat-form-field>
           <input matInput 
                  type="text" 
+                 name="username"
+                 autocomplete="text"
                  placeholder="Username" 
                  [(ngModel)]="newAccount.username" 
                  [disabled]="isActing"
                  [ngModelOptions]="{ standalone: true }" />
         </mat-form-field>
 
-        <button mat-icon-button [matMenuTriggerFor]="accountSwitcher" *ngIf="!isRegistering && (gameService.accounts$ | async).length > 0">
+        <button mat-icon-button [matMenuTriggerFor]="accountSwitcher" *ngIf="!isRegistering && (gameService.accounts$ | async).length > 0" type="button">
           <mat-icon>swap_horizontal_circle</mat-icon>
         </button>
 
@@ -58,6 +62,7 @@
         <input matInput 
                type="password" 
                placeholder="Password" 
+               autocomplete="password"
                [(ngModel)]="newAccount.password" 
                [disabled]="isActing"
                [ngModelOptions]="{ standalone: true }" />
@@ -70,12 +75,12 @@
           I've read the <a href="https://rair.land/docs/code-of-conduct/" target="_blank">Code of Conduct</a> and agree to the <a href="https://rair.land/docs/privacy/" target="_blank">Privacy Policy</a>
         </mat-checkbox>
       </div>
-      
-      <button mat-stroked-button color="accent" class="m-r-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
 
       <button mat-flat-button color="primary" *ngIf="!isRegistering" [disabled]="isActing || !canLogin" (click)="login()">Login</button>
 
       <button mat-flat-button color="primary" *ngIf="isRegistering" [disabled]="isActing || !canRegister" (click)="register()">Register</button>
+      
+      <button mat-stroked-button color="accent" class="m-l-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
       
       <mat-checkbox class="m-l-10"
                     [(ngModel)]="newAccount.autologin"
