@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, isUndefined } from 'lodash';
 
-import { Allegiance, canUseItem, ICharacter, IItem, IItemRequirements,
+import { Allegiance, canUseItem, GameServerResponse, ICharacter, IDialogChatAction, IItem, IItemRequirements,
   IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
@@ -229,8 +229,8 @@ export class ItemHelper extends BaseService {
     this.tryToBreakItem(player, item, source);
 
     if (itemClass === ItemClass.Book) {
-      this.game.messageHelper.sendSimpleMessage(player, 'Books are not working yet!');
-      return false;
+      this.useBook(player, item, source);
+      return true;
     }
 
     if (itemClass === ItemClass.Box) {
@@ -239,6 +239,31 @@ export class ItemHelper extends BaseService {
     }
 
     return true;
+  }
+
+  public useBook(player: IPlayer, book: ISimpleItem, source: ItemSlot): void {
+    const { bookCurrentPage, bookPages } = this.getItemProperties(book, ['bookCurrentPage', 'bookPages']);
+
+    const page = bookCurrentPage ?? 0;
+    const readPage = (bookPages || [])[page];
+
+    if(!readPage) {
+      this.game.messageHelper.sendSimpleMessage(player, `This book has no pages to read!`);
+      return;
+    }
+
+    const formattedChat: IDialogChatAction = {
+      displayTitle: 'Book',
+      message: readPage.text,
+      displayItemName: book.name,
+      options: [
+        { text: 'Previous Page', action: `prevpage ${source}` },
+        { text: 'Next Page', action: `nextpage ${source}` },
+        { text: 'Close Book', action: 'noop' },
+      ]
+    };
+
+    this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
   }
 
 }

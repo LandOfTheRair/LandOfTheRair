@@ -28,6 +28,7 @@ export class AlchemistBehavior implements IAIBehavior {
 
         const formattedChat: IDialogChatAction = {
           message,
+          displayTitle: npc.name,
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,

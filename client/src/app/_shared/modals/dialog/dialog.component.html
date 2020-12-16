@@ -1,7 +1,9 @@
-<h1 mat-dialog-title>{{ data.displayNPCName || 'A Mysterious Voice' }}</h1>
+<h1 mat-dialog-title>{{ data.displayTitle || 'A Mysterious Voice' }}</h1>
 <div mat-dialog-content>
 
-  <app-npc [sprite]="data.displayNPCSprite"></app-npc>
+  <app-npc *ngIf="data.displayNPCSprite" [sprite]="data.displayNPCSprite"></app-npc>
+
+  <app-item *ngIf="data.displayItemName" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
 
   {{ data.message || 'I don\'t know what to say.' }}
   

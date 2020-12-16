@@ -25,6 +25,7 @@ export class SmithBehavior implements IAIBehavior {
 
         const formattedChat: IDialogChatAction = {
           message: text,
+          displayTitle: npc.name,
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,

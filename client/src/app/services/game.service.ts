@@ -158,14 +158,16 @@ export class GameService {
     return 'neutral';
   }
 
-  public showNPCDialog(dialogInfo: IDialogChatAction) {
-    const res = this.modalService.npcDialog(dialogInfo);
+  public showCommandableDialog(dialogInfo: IDialogChatAction) {
+    const res = this.modalService.commandDialog(dialogInfo);
     if (!res) return;
 
     res.subscribe(result => {
-      if (result && result !== 'noop') {
-        this.sendCommandString(`#${dialogInfo.displayNPCUUID || dialogInfo.displayNPCName}, ${result}`);
-      }
+      if (!result || result === 'noop') return;
+
+      const npcQuery = dialogInfo.displayNPCUUID || dialogInfo.displayNPCName;
+      const cmd = npcQuery ? `${npcQuery}, ${result}` : result;
+      this.sendCommandString(`#${cmd}`);
     });
   }
 }

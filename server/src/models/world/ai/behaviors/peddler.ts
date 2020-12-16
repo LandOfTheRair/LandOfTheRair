@@ -76,7 +76,7 @@ export class PeddlerBehavior implements IAIBehavior {
       return;
     }
 
-    this.ticksForNextMessage = random(15, 20);
+    this.ticksForNextMessage = random(15, 45);
     const nextMessage = sample(this.messages.filter(x => x !== this.lastMessageShouted));
     this.lastMessageShouted = nextMessage;
 

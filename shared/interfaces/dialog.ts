@@ -55,6 +55,8 @@ export interface IDialogChatAction {
   displayNPCSprite?: number;
   displayNPCName?: string;
   displayNPCUUID?: string;
+  displayItemName?: string;
+  displayTitle?: string;
   maxDistance?: number;
   message: string;
   options: IDialogChatActionOption[];

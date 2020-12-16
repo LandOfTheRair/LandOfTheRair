@@ -85,7 +85,7 @@ export class IdentifierBehavior implements IAIBehavior {
       return;
     }
 
-    this.ticksForNextMessage = random(5, 10);
+    this.ticksForNextMessage = random(15, 30);
     const nextMessage = sample(this.messages.filter(x => x !== this.lastMessageShouted));
     this.lastMessageShouted = nextMessage;
 

@@ -28,7 +28,7 @@ import { SocketService } from './socket.service';
 export class ModalService {
 
   @Select(GameState.inGame) inGame$: Observable<boolean>;
-  private npcDialogRef: MatDialogRef<DialogComponent>;
+  private commandDialogRef: MatDialogRef<DialogComponent>;
   private spellDialogRef: MatDialogRef<NewSpellsComponent>;
 
   constructor(
@@ -40,8 +40,8 @@ export class ModalService {
 
   public init() {
     this.inGame$.subscribe(val => {
-      if (!val && this.npcDialogRef) {
-        this.npcDialogRef.close();
+      if (!val && this.commandDialogRef) {
+        this.commandDialogRef.close();
       }
     });
 
@@ -147,20 +147,21 @@ export class ModalService {
     return this.spellDialogRef.afterClosed();
   }
 
-  public npcDialog(dialogInfo: IDialogChatAction) {
-    if (this.npcDialogRef || this.optionsService.classicNPCChat) return null;
+  public commandDialog(dialogInfo: IDialogChatAction) {
+    if (this.commandDialogRef) return null;
+    if((dialogInfo.displayNPCName || dialogInfo.displayNPCUUID) && this.optionsService.classicNPCChat) return null;
 
-    this.npcDialogRef = this.dialog.open(DialogComponent, {
+    this.commandDialogRef = this.dialog.open(DialogComponent, {
       width: '450px',
       panelClass: 'fancy',
       data: dialogInfo
     });
 
-    this.npcDialogRef.afterClosed().subscribe((result) => {
-      this.npcDialogRef = null;
+    this.commandDialogRef.afterClosed().subscribe((result) => {
+      this.commandDialogRef = null;
     });
 
-    return this.npcDialogRef.afterClosed();
+    return this.commandDialogRef.afterClosed();
   }
 
   public showAbout() {

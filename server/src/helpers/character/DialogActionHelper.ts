@@ -66,6 +66,7 @@ export class DialogActionHelper extends BaseService {
 
     const formattedChat: IDialogChatAction = {
       message: template(action.message)(player),
+      displayTitle: npc.name,
       displayNPCName: npc.name,
       displayNPCSprite: npc.sprite,
       displayNPCUUID: npc.uuid,

@@ -14,7 +14,7 @@ export class GameContainerComponent implements OnInit {
 
   ngOnInit() {
     this.socketService.registerComponentCallback('GameContainer', GameServerResponse.DialogChat, (data) => {
-      this.gameService.showNPCDialog(data);
+      this.gameService.showCommandableDialog(data);
     });
   }
 
