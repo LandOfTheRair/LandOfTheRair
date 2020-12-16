@@ -54,9 +54,9 @@ export class IdentifierBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
-        if (!game.characterHelper.hasCurrency(player, identifyCost, identifyCurrency)) return `You do not have enough ${identifyCurrency} for that!`;
+        if (!game.currencyHelper.hasCurrency(player, identifyCost, identifyCurrency)) return `You do not have enough ${identifyCurrency} for that!`;
 
-        game.characterHelper.loseCurrency(player, identifyCost, identifyCurrency);
+        game.currencyHelper.loseCurrency(player, identifyCost, identifyCurrency);
 
         const identMsg = descTextFor(
           player,

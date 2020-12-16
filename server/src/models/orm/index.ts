@@ -4,5 +4,6 @@ export * from './AccountBank';
 export * from './Ground';
 export * from './Player';
 export * from './PlayerItems';
+export * from './PlayerQuests';
 export * from './PlayerTraits';
 export * from './WorldSettings';

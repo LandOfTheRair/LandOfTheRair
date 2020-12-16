@@ -18,11 +18,9 @@ export class GMKill extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
     if (!target) return this.youDontSeeThatPerson(player);
 
-    this.game.combatHelper.dealOnesidedDamage(target, {
+    this.game.combatHelper.dealDamage(player, target, {
       damage: target.hp.maximum,
-      damageClass: DamageClass.GM,
-      damageMessage: 'You were extremely killed for no reason!',
-      suppressIfNegative: true
+      damageClass: DamageClass.GM
     });
 
   }

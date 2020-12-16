@@ -1,6 +1,7 @@
 import { IAccountBank } from './accountbank';
 import { DamageClass, Skill } from './building-blocks';
 import { ICharacter } from './character';
+import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
 
@@ -14,6 +15,7 @@ export interface IPlayer extends ICharacter {
 
   bank: IAccountBank;
   traits: ICharacterTraits;
+  quests: ICharacterQuests;
 
   z: number;
 

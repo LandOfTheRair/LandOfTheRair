@@ -169,7 +169,7 @@ export class MoveItems extends MacroCommand {
         return false;
       }
 
-      if (!this.game.characterHelper.hasCurrency(player, buybackItem.mods.buybackValue ?? 0, Currency.Gold)) {
+      if (!this.game.currencyHelper.hasCurrency(player, buybackItem.mods.buybackValue ?? 0, Currency.Gold)) {
         this.sendMessage(player, 'You cannot afford to buy that item back!');
         return false;
       }
@@ -211,11 +211,11 @@ export class MoveItems extends MacroCommand {
     if (!validDestinations.C.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
     const value = this.game.userInputHelper.cleanNumber(origSlot, 0, { floor: true });
-    const amount = Math.min(this.game.characterHelper.getCurrency(player), value);
+    const amount = Math.min(this.game.currencyHelper.getCurrency(player), value);
     if (amount <= 0) return;
 
     const srcItem = this.game.itemCreator.getGold(amount);
-    this.game.characterHelper.loseCurrency(player, amount, Currency.Gold);
+    this.game.currencyHelper.loseCurrency(player, amount, Currency.Gold);
 
     switch (dest) {
       case 'R': { // CtR
@@ -882,7 +882,7 @@ export class MoveItems extends MacroCommand {
     switch (dest) {
       case 'R': { // MtR
 
-        if (!this.game.characterHelper.hasCurrency(player, cost, Currency.Gold)) {
+        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
           this.sendMessage(player, 'You do not have enough to buy that!');
           return false;
         }
@@ -901,13 +901,13 @@ export class MoveItems extends MacroCommand {
           this.game.characterHelper.setRightHand(player, createdItem);
         }
 
-        this.game.characterHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
 
         break;
       }
 
       case 'L': { // MtL
-        if (!this.game.characterHelper.hasCurrency(player, cost, Currency.Gold)) {
+        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
           this.sendMessage(player, 'You do not have enough to buy that!');
           return;
         }
@@ -926,7 +926,7 @@ export class MoveItems extends MacroCommand {
           this.game.characterHelper.setLeftHand(player, createdItem);
         }
 
-        this.game.characterHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
 
         break;
       }
@@ -936,12 +936,12 @@ export class MoveItems extends MacroCommand {
         for (let i = 0; i < maxItemsBuyable; i++) {
           const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
-          if (!this.game.characterHelper.hasCurrency(player, cost, Currency.Gold)
+          if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
           || !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)) {
             return;
           }
 
-          this.game.characterHelper.loseCurrency(player, cost, Currency.Gold);
+          this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
           this.game.inventoryHelper.addItemToBelt(player, createdItem);
         }
 
@@ -953,12 +953,12 @@ export class MoveItems extends MacroCommand {
         for (let i = 0; i < maxItemsBuyable; i++) {
           const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
-          if (!this.game.characterHelper.hasCurrency(player, cost, Currency.Gold)
+          if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
           || !this.game.inventoryHelper.canAddItemToSack(player, createdItem)) {
             return;
           }
 
-          this.game.characterHelper.loseCurrency(player, cost, Currency.Gold);
+          this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
           this.game.inventoryHelper.addItemToSack(player, createdItem);
         }
 
@@ -985,7 +985,7 @@ export class MoveItems extends MacroCommand {
 
     if (!this.doPrelimChecks(player, srcItem, 'O', origSlot, dest, destSlot)) return;
 
-    this.game.characterHelper.loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
+    this.game.currencyHelper.loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
 
     switch (dest) {
       case 'R': { // OtR

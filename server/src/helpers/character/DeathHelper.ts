@@ -177,6 +177,8 @@ export class DeathHelper extends BaseService {
 
     const npc: INPC = dead as INPC;
 
+    this.game.questHelper.tryUpdateQuestProgressForKill(killer, npc.npcId);
+
     if (this.game.playerHelper.canGainExpOnMap(killer)) {
       const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
       this.game.playerHelper.gainExp(killer, earnedExp);

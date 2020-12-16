@@ -38,7 +38,7 @@ export class BankerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, { floor: true });
-        amount = Math.min(amount, game.characterHelper.getCurrency(player, Currency.Gold));
+        amount = Math.min(amount, game.currencyHelper.getCurrency(player, Currency.Gold));
         if (amount <= 0) return 'You cannot deposit that much.';
 
         game.bankHelper.deposit(player, amount);

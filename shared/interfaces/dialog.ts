@@ -6,7 +6,9 @@ export enum IDialogActionType {
   CheckItem = 'checkItem',
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
-  GiveEffect = 'giveEffect'
+  GiveEffect = 'giveEffect',
+  CheckQuest = 'checkQuest',
+  GiveQuest = 'giveQuest'
 }
 
 // dialog items, used for check/take/give
@@ -22,7 +24,17 @@ export interface IDialogRequirement {
   statValue?: number;
 }
 
-// different types of actions
+// different types of 
+export interface IDialogCheckQuestAction {
+  quest: string;
+  maxDistance?: number;
+}
+
+export interface IDialogGiveQuestAction {
+  quest: string;
+  maxDistance?: number;
+}
+
 export interface IDialogGiveEffectAction {
   effect: string;
   duration: number;
@@ -39,6 +51,8 @@ export interface IDialogTakeItemAction {
 }
 
 export interface IDialogCheckItemAction {
+  fromHands?: boolean;
+  fromSack?: boolean;
   slot: ItemSlot[];
   item: IDialogItem;
   checkPassActions: IDialogAction[];
@@ -64,7 +78,7 @@ export interface IDialogChatAction {
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
                           & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
-                          & { type: IDialogActionType };
+                          & { type: IDialogActionType, maxDistance?: number };
 
 export interface IDialogTree {
   keyword: Record<string, { actions: IDialogAction[] }>;

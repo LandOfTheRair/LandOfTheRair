@@ -57,6 +57,12 @@ export class CharacterHelper extends BaseService {
         || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
   }
 
+  // take an item from either hand
+  public takeItemFromEitherHand(char: ICharacter, item: string): void {
+    if (this.hasHeldItem(char, item, 'left'))  this.setEquipmentSlot(char, ItemSlot.LeftHand, undefined);
+    if (this.hasHeldItem(char, item, 'right')) this.setEquipmentSlot(char, ItemSlot.RightHand, undefined);
+  }
+
   // check if the person has an empty hand
   public hasEmptyHand(char: ICharacter): boolean {
     return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
@@ -67,22 +73,6 @@ export class CharacterHelper extends BaseService {
     if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
     if (!char.items.equipment[ItemSlot.LeftHand])  return ItemSlot.LeftHand;
     return null;
-  }
-
-  public hasCurrency(char: ICharacter, total: number, currency: Currency = Currency.Gold): boolean {
-    return (char.currency[currency] || 0) >= total;
-  }
-
-  // gain currency for a player
-  public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
-    currencyGained = this.game.userInputHelper.cleanNumber(currencyGained, 0, { floor: true });
-    char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
-
-  }
-
-  // lose currency for a player (either by taking it, or spending it)
-  public loseCurrency(player: ICharacter, currencyLost: number, currency: Currency = Currency.Gold): void {
-    this.gainCurrency(player, -currencyLost, currency);
   }
 
   // set the characters equipment slot to something, undefined = unequip
@@ -409,11 +399,6 @@ export class CharacterHelper extends BaseService {
     }
 
     // TODO: adjust pet stats
-  }
-
-  // get the current currency value for a character
-  public getCurrency(character: ICharacter, currency: Currency = Currency.Gold): number {
-    return character.currency[currency] ?? 0;
   }
 
   // get a specific stat value from a character

@@ -23,7 +23,7 @@ export class StealHelper extends BaseService {
 
   public async trySteal(char: ICharacter, target: ICharacter): Promise<void> {
 
-    const targetGold = this.game.characterHelper.getCurrency(target);
+    const targetGold = this.game.currencyHelper.getCurrency(target);
 
     // if they have nothing to steal, we bail
     if (target.items.sack.items.length === 0 && targetGold <= 0) {
@@ -70,7 +70,7 @@ export class StealHelper extends BaseService {
       const handName = this.game.characterHelper.getEmptyHand(char);
       if (!handName) return;
 
-      this.game.characterHelper.loseCurrency(target, stolenGold);
+      this.game.currencyHelper.loseCurrency(target, stolenGold);
       const item = this.game.itemCreator.getGold(stolenGold);
 
       this.game.characterHelper.setEquipmentSlot(char, handName, item);

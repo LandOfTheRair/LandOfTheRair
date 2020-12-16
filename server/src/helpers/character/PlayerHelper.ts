@@ -69,6 +69,8 @@ export class PlayerHelper extends BaseService {
     player.lastTileDesc = '';
 
     this.reformatPlayerAfterLoad(player);
+
+    this.game.questHelper.recalculateQuestKillsAndStatRewards(player);
   }
 
   public becomeClass(player: IPlayer, baseClass: BaseClass, recalculateAfterTrait = true) {

@@ -26,7 +26,7 @@ export class InventoryHelper extends BaseService {
 
     const { itemClass, currency, value } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'currency', 'value']);
     if (itemClass === ItemClass.Coin) {
-      this.game.characterHelper.gainCurrency(player, value ?? 0, currency);
+      this.game.currencyHelper.gainCurrency(player, value ?? 0, currency);
       return true;
     }
 
@@ -103,7 +103,7 @@ export class InventoryHelper extends BaseService {
     this.addItemToBuyback(player, item);
 
     // tell them they sold the item and give em the money
-    this.game.characterHelper.gainCurrency(player, totalSellValue, Currency.Gold);
+    this.game.currencyHelper.gainCurrency(player, totalSellValue, Currency.Gold);
     this.game.messageHelper.sendSimpleMessage(player, `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`);
   }
 

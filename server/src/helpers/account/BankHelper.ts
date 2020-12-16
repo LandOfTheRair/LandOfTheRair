@@ -15,7 +15,7 @@ export class BankHelper extends BaseService {
 
     player.bank.deposits[currency] = Math.max(player.bank.deposits[currency]!, 0);
 
-    this.game.characterHelper.loseCurrency(player, amount, currency);
+    this.game.currencyHelper.loseCurrency(player, amount, currency);
   }
 
   // withdraw coins
@@ -25,7 +25,7 @@ export class BankHelper extends BaseService {
 
     player.bank.deposits[currency] = Math.max(player.bank.deposits[currency]!, 0);
 
-    this.game.characterHelper.gainCurrency(player, amount, currency);
+    this.game.currencyHelper.gainCurrency(player, amount, currency);
   }
 
 }

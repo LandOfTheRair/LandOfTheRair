@@ -260,10 +260,12 @@ export enum Currency {
   July,
   August,
   September,
-  October = 'halloween',
-  November = 'thanksgiving',
-  December = 'winter',
+  October = 'pumpkin coins',
+  November = 'turkey coins',
+  December = 'snowflake coins',
 
+  Fate = 'threads of fate',
+  Silver = 'silver',
   Gold = 'gold'
 }
 

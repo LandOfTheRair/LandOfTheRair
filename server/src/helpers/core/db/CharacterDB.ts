@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { IPlayer } from '../../../interfaces';
-import { Account, AccountBank, Player } from '../../../models';
+import { Account, AccountBank, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
@@ -85,10 +85,11 @@ export class CharacterDB extends BaseService {
     const results = await Promise.all([
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
+      this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
       this.db.findSingle<AccountBank>(AccountBank, { _id: account._id })
     ]);
 
-    let [items, traits, bank] = results;
+    let [items, traits, quests, bank] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -106,6 +107,14 @@ export class CharacterDB extends BaseService {
       player._traits = traits._id;
     }
 
+    if (!quests) {
+      const newQuests = new PlayerQuests();
+      newQuests._id = new ObjectId();
+
+      quests = newQuests;
+      player._quests = quests._id;
+    }
+
     if (!bank) {
       const newBank = new AccountBank();
       newBank._id = new ObjectId();
@@ -115,6 +124,7 @@ export class CharacterDB extends BaseService {
 
     player.items = items;
     player.traits = traits;
+    player.quests = quests;
     player.bank = bank;
   }
 
@@ -122,7 +132,8 @@ export class CharacterDB extends BaseService {
     await Promise.all([
       this.db.delete(player),
       this.db.delete(player.items as PlayerItems),
-      this.db.delete(player.traits as PlayerTraits)
+      this.db.delete(player.traits as PlayerTraits),
+      this.db.delete(player.quests as PlayerQuests)
     ]);
   }
 
@@ -132,11 +143,13 @@ export class CharacterDB extends BaseService {
     const playerColl = this.db.getCollection(Player);
     const itemsColl = this.db.getCollection(PlayerItems);
     const traitsColl = this.db.getCollection(PlayerTraits);
+    const questsColl = this.db.getCollection(PlayerQuests);
     const bankColl = this.db.getCollection(AccountBank);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
     const traitOp = traitsColl.initializeUnorderedBulkOp();
+    const questOp = questsColl.initializeUnorderedBulkOp();
     const bankOp = bankColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
@@ -155,6 +168,11 @@ export class CharacterDB extends BaseService {
         .upsert()
         .replaceOne(this.db.getPersistObject(player.traits as PlayerTraits));
 
+      questOp
+        .find({ _id: (player.quests as PlayerQuests)._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.quests as PlayerQuests));
+
       bankOp
         .find({ _id: player._account })
         .upsert()
@@ -165,6 +183,7 @@ export class CharacterDB extends BaseService {
       playerOp.execute(),
       itemOp.execute(),
       traitOp.execute(),
+      questOp.execute(),
       bankOp.execute()
     ]);
   }
@@ -176,6 +195,7 @@ export class CharacterDB extends BaseService {
       this.db.save(player),
       this.db.save(player.items as PlayerItems),
       this.db.save(player.traits as PlayerTraits),
+      this.db.save(player.quests as PlayerQuests),
       this.db.save(player.bank as AccountBank)
     ]);
   }

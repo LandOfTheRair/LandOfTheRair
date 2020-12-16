@@ -61,9 +61,9 @@ export class SmithBehavior implements IAIBehavior {
         const cost = Math.floor(cpt * (missingCondition / 1000));
         if (cost < 0) return 'That item is not in need of repair!';
 
-        if (!game.characterHelper.hasCurrency(player, cost)) return `You need ${cost.toLocaleString()} gold to repair that item!`;
+        if (!game.currencyHelper.hasCurrency(player, cost)) return `You need ${cost.toLocaleString()} gold to repair that item!`;
 
-        game.characterHelper.loseCurrency(player, cost);
+        game.currencyHelper.loseCurrency(player, cost);
         rightHand.mods.condition = maxCondition;
 
         return 'Done!';
@@ -93,9 +93,9 @@ export class SmithBehavior implements IAIBehavior {
 
           totalSpend += cost;
 
-          if (!game.characterHelper.hasCurrency(player, cost)) return;
+          if (!game.currencyHelper.hasCurrency(player, cost)) return;
 
-          game.characterHelper.loseCurrency(player, cost);
+          game.currencyHelper.loseCurrency(player, cost);
           item.mods.condition = maxCondition;
         });
 

@@ -3,8 +3,9 @@ import { sample, template } from 'lodash';
 
 import { GameServerResponse, IDialogAction, IDialogActionType,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
+  IDialogCheckQuestAction,
   IDialogGiveEffectAction,
-  IDialogGiveItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
+  IDialogGiveItemAction, IDialogGiveQuestAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -35,7 +36,9 @@ export class DialogActionHelper extends BaseService {
       [IDialogActionType.CheckItem]:    this.handleCheckItemAction,
       [IDialogActionType.TakeItem]:     this.handleTakeItemAction,
       [IDialogActionType.GiveItem]:     this.handleGiveItemAction,
-      [IDialogActionType.GiveEffect]:   this.handleGiveEffectAction
+      [IDialogActionType.GiveEffect]:   this.handleGiveEffectAction,
+      [IDialogActionType.CheckQuest]:   this.handleCheckQuestAction,
+      [IDialogActionType.GiveQuest]:    this.handleGiveQuestAction
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -87,25 +90,27 @@ export class DialogActionHelper extends BaseService {
   }
 
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
-    const { slot, item, checkPassActions, checkFailActions } = action;
+    const { slot, item, fromHands, fromSack, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
     let didSucceed = false;
 
-    (slot || []).forEach(checkSlot => {
-      const slotItem = player.items.equipment[checkSlot];
-      if (!slotItem) return;
+    if (fromHands) {
+      (slot || []).forEach(checkSlot => {
+        const slotItem = player.items.equipment[checkSlot];
+        if (!slotItem) return;
 
-      const { name, owner } = item;
-      if (slotItem.name !== name) return;
-      if (owner && slotItem.mods.owner !== player.username) {
-        retMessages.push('Hey! You need to bring me an item owned by you.');
-        return;
-      }
+        const { name, owner } = item;
+        if (slotItem.name !== name) return;
+        if (owner && slotItem.mods.owner !== player.username) {
+          retMessages.push('Hey! You need to bring me an item owned by you.');
+          return;
+        }
 
-      didSucceed = true;
-    });
+        didSucceed = true;
+      });
+    }
 
     const actions = didSucceed ? checkPassActions : checkFailActions;
 
@@ -168,6 +173,74 @@ export class DialogActionHelper extends BaseService {
     this.game.effectHelper.addEffect(player, npc, effect, { effect: { duration } });
 
     return { messages: [], shouldContinue: true };
+  }
+
+  private handleCheckQuestAction(action: IDialogCheckQuestAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const maxDistance = action.maxDistance ?? 3;
+    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+      return { messages: ['Please come closer.'], shouldContinue: false };
+    }
+
+    const { quest } = action;
+    const questRef = this.game.questHelper.getQuest(quest);
+
+    if (!questRef) {
+      this.game.logger.error('DialogActionHelper:GiveQuest', `Quest ${quest} does not exist.`);
+      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+    }
+
+    // if we don't have the quest, we skip - dialog continues
+    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+
+    // if we have the quest and it's complete, we send completion, and give rewards
+    if (this.game.questHelper.isQuestComplete(player, quest)) {
+      const compMsg = this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`);
+      this.game.questHelper.completeQuest(player, quest);
+
+      return { messages: [compMsg], shouldContinue: false };
+    }
+
+
+    // should continue is false if we have the quest and it's incomplete
+    // check if quest not complete, if not, send incomplete message
+    // if complete, do complete
+
+    return { messages: [
+      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || `You're not done with this quest yet.`)
+    ], shouldContinue: false };
+  }
+
+  private handleGiveQuestAction(action: IDialogGiveQuestAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const maxDistance = action.maxDistance ?? 3;
+    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+      return { messages: ['Please come closer.'], shouldContinue: false };
+    }
+
+    const { quest } = action;
+    const questRef = this.game.questHelper.getQuest(quest);
+
+    if (!questRef) {
+      this.game.logger.error('DialogActionHelper:GiveQuest', `Quest ${quest} does not exist.`);
+      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+    }
+
+    if (!this.game.questHelper.canStartQuest(player, quest)) {
+      return { messages: [
+        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.permComplete || 'You already completed that quest!')
+      ], shouldContinue: false };
+    }
+
+    if (this.game.questHelper.hasQuest(player, quest)) {
+      return { messages: [
+        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.alreadyHas || 'You are already on that quest!')
+      ], shouldContinue: true };
+    }
+
+    this.game.questHelper.startQuest(player, quest);
+
+    return { messages: [`You've accepted the quest "${quest}".`], shouldContinue: true };
   }
 
   private meetsRequirement(player: IPlayer, requirement: IDialogRequirement): boolean {

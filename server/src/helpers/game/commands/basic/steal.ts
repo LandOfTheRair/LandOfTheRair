@@ -18,7 +18,7 @@ export class Steal extends SkillCommand {
     }
 
     return this.game.directionHelper.distFrom(char, target) > 0
-        && (this.game.characterHelper.getCurrency(char) > 0 || target.items.sack.items.length > 0);
+        && (this.game.currencyHelper.getCurrency(char) > 0 || target.items.sack.items.length > 0);
   }
 
   execute(player: IPlayer, args: IMacroCommandArgs) {

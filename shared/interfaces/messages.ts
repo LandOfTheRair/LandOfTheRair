@@ -16,6 +16,7 @@ export enum MessageType {
   NotMe = 'notme',
   Player = 'player',
   NPC = 'npc',
+  Quest = 'quest',
 
   // combat subtypes
   Combat = 'combat',

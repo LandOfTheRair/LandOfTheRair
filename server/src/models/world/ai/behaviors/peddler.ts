@@ -59,9 +59,9 @@ export class PeddlerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
-        if (!game.characterHelper.hasCurrency(player, peddleCost, peddleCurrency)) return `You do not have enough ${peddleCurrency} for that!`;
+        if (!game.currencyHelper.hasCurrency(player, peddleCost, peddleCurrency)) return `You do not have enough ${peddleCurrency} for that!`;
 
-        game.characterHelper.loseCurrency(player, peddleCost, peddleCurrency);
+        game.currencyHelper.loseCurrency(player, peddleCost, peddleCurrency);
 
         const item = game.itemCreator.getSimpleItem(peddleItem);
         game.characterHelper.setRightHand(player, item);

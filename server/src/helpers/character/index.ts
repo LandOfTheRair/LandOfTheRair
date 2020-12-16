@@ -2,6 +2,7 @@
 export * from './CalculatorHelper';
 export * from './CharacterHelper';
 export * from './CombatHelper';
+export * from './CurrencyHelper';
 export * from './DailyHelper';
 export * from './DamageHelperMagic';
 export * from './DamageHelperOnesided';

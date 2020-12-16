@@ -4,7 +4,7 @@ import { LoggerTimer } from 'logger-timer';
 import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
 import { BankHelper, SubscriptionHelper } from '../account';
-import { CalculatorHelper, CharacterHelper, CombatHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
+import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
@@ -47,6 +47,7 @@ export class Game {
     public lobbyManager: LobbyManager,
     public subscriptionHelper: SubscriptionHelper,
     public characterRoller: CharacterRoller,
+    public currencyHelper: CurrencyHelper,
     public itemCreator: ItemCreator,
     public dialogActionHelper: DialogActionHelper,
     public npcCreator: NPCCreator,
@@ -105,7 +106,7 @@ export class Game {
       'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB',
       'profanityHelper', 'effectManager', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
-      'characterRoller',
+      'characterRoller', 'currencyHelper',
       'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',
       'damageHelperOnesided', 'damageHelperMagic', 'damageHelperPhysical', 'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',

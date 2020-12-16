@@ -48,6 +48,10 @@
       color: mediumpurple;
     }
 
+    &.quest {
+      font-style: italic;
+    }
+
     &.combat {
       &.self {
         color: #0f0;
