@@ -234,12 +234,10 @@ export class ItemHelper extends BaseService {
 
     if (itemClass === ItemClass.Book) {
       this.useBook(player, item, source);
-      return true;
     }
 
     if (itemClass === ItemClass.Box) {
-      this.game.messageHelper.sendSimpleMessage(player, 'Boxes are not working yet!');
-      return false;
+      this.useRNGBox(player, item, source);
     }
 
     return true;
@@ -268,6 +266,30 @@ export class ItemHelper extends BaseService {
     };
 
     this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+  }
+
+  public useRNGBox(player: IPlayer, box: ISimpleItem, source: ItemSlot): void {
+    if (!this.game.itemHelper.isOwnedBy(player, box)) {
+      this.game.messageHelper.sendSimpleMessage(player, `This box isn't yours to open!`);
+      return;
+    }
+
+    const { containedItems } = this.game.itemHelper.getItemProperties(box, ['containedItems']);
+    if (!containedItems || containedItems.length === 0) {
+      this.game.messageHelper.sendSimpleMessage(player, `The box was empty!`);
+      return;
+    }
+
+    const choice = this.game.lootHelper.chooseWithReplacement(containedItems, 1)[0];
+    if (choice === 'none') {
+      this.game.messageHelper.sendSimpleMessage(player, `The box was empty! Better luck next time!`);
+      return;
+    }
+
+    const itemRef = this.game.itemCreator.getSimpleItem(choice);
+    this.game.characterHelper.setEquipmentSlot(player, source, itemRef);
+
+    this.game.messageHelper.sendSimpleMessage(player, 'You got something out of the box!');
   }
 
 }
