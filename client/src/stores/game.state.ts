@@ -9,6 +9,8 @@ import { HideBankWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, Op
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
+const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = player;
+
 const defaultGame: () => IGame = () => {
   return {
     inGame: false,
@@ -168,6 +170,8 @@ export class GameState {
     const state = ctx.getState();
     const hasPlayer = !!state.player;
 
+    setPlayerForDiscord(player);
+
     ctx.patchState({ player });
 
     if (!hasPlayer) this.store.dispatch(new PlayerReady());
@@ -193,6 +197,7 @@ export class GameState {
 
     if (player) {
       copyState.player = Object.assign({}, copyState.player, player);
+      setPlayerForDiscord(copyState.player);
     }
 
     if (patches) {
@@ -252,6 +257,8 @@ export class GameState {
     copyState.player = { ...copyState.player };
     copyState.player.x = x;
     copyState.player.y = y;
+
+    setPlayerForDiscord(copyState.player);
 
     ctx.patchState({ player: copyState.player });
   }
