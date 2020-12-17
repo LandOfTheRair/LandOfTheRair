@@ -459,7 +459,7 @@ export class MapState {
 
   // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
   private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
-    const knowledgeRadius = 4;
+    const knowledgeRadius = 8;
 
     for (let x = player.x - knowledgeRadius; x <= player.x + knowledgeRadius; x++) {
       for (let y = player.y - knowledgeRadius; y <= player.y + knowledgeRadius; y++) {
