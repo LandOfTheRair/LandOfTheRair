@@ -1,8 +1,9 @@
 import { Injectable } from 'injection-js';
 import { sample, template } from 'lodash';
 
-import { GameServerResponse, IDialogAction, IDialogActionType,
+import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
+  IDialogCheckLevelAction,
   IDialogCheckQuestAction,
   IDialogGiveEffectAction,
   IDialogGiveItemAction, IDialogGiveQuestAction, IDialogRequirement, IDialogTakeItemAction, INPC,
@@ -31,14 +32,15 @@ export class DialogActionHelper extends BaseService {
 
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
-    const actions: Record<IDialogActionType, (act, npc, player) => IActionResult> = {
-      [IDialogActionType.Chat]:         this.handleChatAction,
-      [IDialogActionType.CheckItem]:    this.handleCheckItemAction,
-      [IDialogActionType.TakeItem]:     this.handleTakeItemAction,
-      [IDialogActionType.GiveItem]:     this.handleGiveItemAction,
-      [IDialogActionType.GiveEffect]:   this.handleGiveEffectAction,
-      [IDialogActionType.CheckQuest]:   this.handleCheckQuestAction,
-      [IDialogActionType.GiveQuest]:    this.handleGiveQuestAction
+    const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
+      [DialogActionType.Chat]:         this.handleChatAction,
+      [DialogActionType.CheckItem]:    this.handleCheckItemAction,
+      [DialogActionType.TakeItem]:     this.handleTakeItemAction,
+      [DialogActionType.GiveItem]:     this.handleGiveItemAction,
+      [DialogActionType.GiveEffect]:   this.handleGiveEffectAction,
+      [DialogActionType.CheckQuest]:   this.handleCheckQuestAction,
+      [DialogActionType.GiveQuest]:    this.handleGiveQuestAction,
+      [DialogActionType.CheckLevel]:   this.handleCheckLevelAction
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -89,6 +91,25 @@ export class DialogActionHelper extends BaseService {
     return { messages: [formattedChat.message], shouldContinue: true };
   }
 
+  private handleCheckLevelAction(action: IDialogCheckLevelAction, npc: INPC, player: IPlayer): IActionResult {
+    const { level, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = player.level >= level;
+
+    const actions = didSucceed ? checkPassActions : checkFailActions;
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
 
@@ -98,6 +119,8 @@ export class DialogActionHelper extends BaseService {
 
     if (fromHands) {
       (slot || []).forEach(checkSlot => {
+        if (didSucceed) return;
+
         const slotItem = player.items.equipment[checkSlot];
         if (!slotItem) return;
 
@@ -190,7 +213,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:GiveQuest', `Quest ${quest} does not exist.`);
+      this.game.logger.error('DialogActionHelper:CheckQuest', `Quest ${quest} does not exist.`);
       return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
     }
 

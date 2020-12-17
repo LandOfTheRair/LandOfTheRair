@@ -46,10 +46,14 @@ export class CharacterHelper extends BaseService {
     char.mp.current = this.game.userInputHelper.cleanNumber(char.mp.current, 1, { floor: true });
   }
 
-  // check if this player is holding sometihng
+  // check if this player is holding something
   public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
     const ref = char.items.equipment[`${hand}Hand`];
-    return (ref && ref.name === item && ref.mods.owner === (char as IPlayer).username);
+    return (ref && ref.name === item && (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username));
+  }
+
+  public hasHeldItemInEitherHand(char: ICharacter, item: string): boolean {
+    return this.hasHeldItem(char, item, 'right') || this.hasHeldItem(char, item, 'left');
   }
 
   public hasHeldItems(char: ICharacter, item1: string, item2: string): boolean {
@@ -321,6 +325,12 @@ export class CharacterHelper extends BaseService {
     const oldPerception = character.totalStats[Stat.Perception];
     const oldStealth = character.totalStats[Stat.Stealth];
 
+    let bonusStats = {};
+
+    if (this.isPlayer(character)) {
+      bonusStats = (character as IPlayer).quests.questStats;
+    }
+
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
 
@@ -328,6 +338,11 @@ export class CharacterHelper extends BaseService {
       character.totalStats[stat] = character.totalStats[stat] || 0;
       character.totalStats[stat]! += bonus;
     };
+
+    // add quest completion bonuses
+    Object.keys(bonusStats).forEach(stat => {
+      addStat(stat as Stat, bonusStats[stat]);
+    });
 
     // add hidden allegiance bonuses
     (AllegianceStats[character.allegiance] || []).forEach(({ stat, value }) => {
@@ -415,7 +430,8 @@ export class CharacterHelper extends BaseService {
 
   // hp regen is a min of 1, affected by a con modifier past 21
   public getHPRegen(character: ICharacter): number {
-    return Math.max(1, this.getStat(character, Stat.HPRegen) + Math.max(0, this.getStat(character, Stat.CON) - 21));
+    const baseHPRegen = 1 + this.getStat(character, Stat.HPRegen);
+    return Math.max(baseHPRegen, baseHPRegen + Math.max(0, this.getStat(character, Stat.CON) - 21));
   }
 
   // thieves and warriors have different mpregen setups

@@ -1,14 +1,15 @@
 
 import { ItemSlot } from './building-blocks';
 
-export enum IDialogActionType {
+export enum DialogActionType {
   Chat = 'chat',
   CheckItem = 'checkItem',
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
-  GiveQuest = 'giveQuest'
+  GiveQuest = 'giveQuest',
+  CheckLevel = 'checkLevel'
 }
 
 // dialog items, used for check/take/give
@@ -59,6 +60,12 @@ export interface IDialogCheckItemAction {
   checkFailActions: IDialogAction[];
 }
 
+export interface IDialogCheckLevelAction {
+  level: number;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
 export interface IDialogChatActionOption {
   text: string;
   action: string;
@@ -78,7 +85,8 @@ export interface IDialogChatAction {
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
                           & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
-                          & { type: IDialogActionType, maxDistance?: number };
+                          & IDialogCheckLevelAction
+                          & { type: DialogActionType, maxDistance?: number };
 
 export interface IDialogTree {
   keyword: Record<string, { actions: IDialogAction[] }>;
