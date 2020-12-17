@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { ArmorClass, BaseClass, CombatEffect, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
+import { ArmorClass, BaseClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -903,7 +903,7 @@ export class DamageHelperPhysical extends BaseService {
       damage = Math.floor(damage * damageMult);
     }
 
-    const damageArgs = {
+    const damageArgs: DamageArgs = {
       damage,
       damageClass: args.damageClass || DamageClass.Physical,
       isMelee: true,
@@ -918,6 +918,8 @@ export class DamageHelperPhysical extends BaseService {
 
     // TODO: mug, assassinate, backstab
     const totalDamageDealt = this.game.combatHelper.modifyDamage(attacker, defender, damageArgs);
+    damageArgs.damage = totalDamageDealt;
+
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
     this.attemptToStun(attacker, defender, attackerWeapon);
