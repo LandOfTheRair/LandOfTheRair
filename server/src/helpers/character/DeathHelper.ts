@@ -28,6 +28,9 @@ export class DeathHelper extends BaseService {
       delete player.corpseRef;
     }
 
+    player.hp.current = 1;
+    player.dir = Direction.South;
+
     // we're being revived
     if (x && y && map) {
       this.game.teleportHelper.teleport(player as Player, { x, y, map });
@@ -36,9 +39,6 @@ export class DeathHelper extends BaseService {
     } else {
       this.game.teleportHelper.teleportToRespawnPoint(player as Player);
     }
-
-    player.hp.current = 1;
-    player.dir = Direction.South;
 
     this.game.effectHelper.removeEffectByName(player, 'Dead');
 
