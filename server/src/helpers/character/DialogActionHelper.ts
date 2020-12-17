@@ -6,7 +6,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckLevelAction,
   IDialogCheckQuestAction,
   IDialogGiveEffectAction,
-  IDialogGiveItemAction, IDialogGiveQuestAction, IDialogRequirement, IDialogTakeItemAction, INPC,
+  IDialogGiveItemAction, IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -37,6 +37,7 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.CheckItem]:    this.handleCheckItemAction,
       [DialogActionType.TakeItem]:     this.handleTakeItemAction,
       [DialogActionType.GiveItem]:     this.handleGiveItemAction,
+      [DialogActionType.ModifyItem]:   this.handleModifyItemAction,
       [DialogActionType.GiveEffect]:   this.handleGiveEffectAction,
       [DialogActionType.CheckQuest]:   this.handleCheckQuestAction,
       [DialogActionType.GiveQuest]:    this.handleGiveQuestAction,
@@ -171,6 +172,25 @@ export class DialogActionHelper extends BaseService {
     if (!didSucceed) messages.push('Hey! You need to bring me an item owned by you.');
 
     return { messages, shouldContinue: didSucceed };
+  }
+
+  private handleModifyItemAction(action: IDialogModifyItemAction, npc: INPC, player: IPlayer): IActionResult {
+    const { slot, mods } = action;
+
+    let didSucceed = false;
+
+    (slot || []).forEach(checkSlot => {
+      if (didSucceed) return;
+
+      const slotItem = player.items.equipment[checkSlot];
+      if (!slotItem) return;
+
+      Object.assign(slotItem.mods, mods);
+
+      didSucceed = true;
+    });
+
+    return { messages: [], shouldContinue: didSucceed };
   }
 
   private handleGiveItemAction(action: IDialogGiveItemAction, npc: INPC, player: IPlayer): IActionResult {

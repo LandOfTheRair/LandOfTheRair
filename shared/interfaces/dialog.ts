@@ -1,5 +1,6 @@
 
 import { ItemSlot } from './building-blocks';
+import { IItem } from './item';
 
 export enum DialogActionType {
   Chat = 'chat',
@@ -9,7 +10,8 @@ export enum DialogActionType {
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
   GiveQuest = 'giveQuest',
-  CheckLevel = 'checkLevel'
+  CheckLevel = 'checkLevel',
+  ModifyItem = 'modifyItem'
 }
 
 // dialog items, used for check/take/give
@@ -44,6 +46,11 @@ export interface IDialogGiveEffectAction {
 export interface IDialogGiveItemAction {
   slot: ItemSlot[];
   item: IDialogItem;
+}
+
+export interface IDialogModifyItemAction {
+  slot: ItemSlot[];
+  mods: Partial<IItem>;
 }
 
 export interface IDialogTakeItemAction {
