@@ -55,6 +55,7 @@ import { InventorySackComponent } from './containers/game-container/inventory-sa
 import { MacroBarComponent } from './containers/game-container/macro-bar/macro-bar.component';
 import { MapComponent } from './containers/game-container/map/map.component';
 import { PlayerStatusComponent } from './containers/game-container/player-status/player-status.component';
+import { QuestsComponent } from './containers/game-container/quests/quests.component';
 import { TrainerComponent } from './containers/game-container/trainer/trainer.component';
 import { TraitsComponent } from './containers/game-container/traits/traits.component';
 import { VendorComponent } from './containers/game-container/vendor/vendor.component';
@@ -107,6 +108,7 @@ const gameComponents = [
   VendorComponent,
   BankComponent,
   TraitsComponent,
+  QuestsComponent,
 
   JournalComponent
 ];

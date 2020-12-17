@@ -204,3 +204,11 @@ mat-horizontal-stepper.disable .mat-horizontal-stepper-header-container {
   pointer-events: none !important;
   cursor: not-allowed !important;
 }
+
+mat-tab-group.bring-to-top .mat-tab-header {
+  margin-bottom: 0 !important;
+}
+
+.mat-line {
+  white-space: normal !important;
+}

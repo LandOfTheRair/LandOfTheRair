@@ -1,0 +1,55 @@
+<app-window windowName="quests"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="550"
+            defaultHeight="650"
+></app-window>
+
+<ng-template #headTemplate>
+  <ng-container *ngIf="player">
+    Quest Log
+  </ng-container>
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <ng-container *ngIf="player">
+
+    <mat-tab-group mat-align-tabs="center" class="bring-to-top">
+  
+      <mat-tab label="Active Quests">
+        <mat-list>
+          <ng-container *ngFor="let playerQuest of player.quests.activeQuestProgress | keyvalue">
+            <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
+              <h2 matLine>{{ quest.name }}</h2>
+              <h5 matLine>Given By: {{ quest.giver }}</h5>
+              <p matLine>
+                {{ quest.desc }}
+              </p>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+      </mat-tab>
+
+      <mat-tab label="Completed Quests">
+        <mat-list>
+          <ng-container *ngFor="let playerQuest of player.quests.permanentQuestCompletion | keyvalue">
+            <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
+              <h2 matLine>{{ quest.name }}</h2>
+              <h5 matLine>Given By: {{ quest.giver }}</h5>
+              <p matLine>
+                {{ quest.desc }}
+              </p>
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+      </mat-tab>
+
+    </mat-tab-group>
+  </ng-container>
+</ng-template>

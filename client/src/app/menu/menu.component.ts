@@ -118,6 +118,11 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('party'))
         },
         {
+          name: 'Quests',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('quests'))
+        },
+        {
           name: 'Traits',
           visibleIf: this.gameService.inGame$,
           handler: () => this.store.dispatch(new ShowWindow('traits'))

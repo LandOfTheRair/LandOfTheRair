@@ -34,6 +34,7 @@ export type IQuestRequirement = IQuestRequirementKill & IQuestRequirementItem & 
 export interface IQuest {
   name: string;
   desc: string;
+  giver: string;
 
   isDaily?: boolean;
   isRepeatable?: boolean;
