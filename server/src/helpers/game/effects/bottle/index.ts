@@ -1,6 +1,8 @@
 
 export * from './ExactHeal';
 
+export * from './MinorHP';
+export * from './MinorMP';
 export * from './PermanentAGI';
 export * from './PermanentCHA';
 export * from './PermanentCON';
