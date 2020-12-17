@@ -7,7 +7,7 @@
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
     "start": "node dist/server/src/core/index",
-    "start:dev": "ts-node-dev --cls --respawn --exit-child --watch --transpile-only --debounce --clear src/core/index.ts",
+    "start:dev": "tsc-watch --onSuccess \"node dist/server/src/core/index.js\"",
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
     "postbuild": "madge --circular --warning dist/server/src/core/index.js"
@@ -61,6 +61,7 @@
     "madge": "^3.12.0",
     "symlink-dir": "4.1.0",
     "ts-node": "9.1.0",
+    "tsc-watch": "^4.2.9",
     "tslint": "5.20.0",
     "typescript": "4.1.2"
   }
