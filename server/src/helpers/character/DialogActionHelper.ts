@@ -2,11 +2,11 @@ import { Injectable } from 'injection-js';
 import { sample, template } from 'lodash';
 
 import { DialogActionType, GameServerResponse, IDialogAction,
-  IDialogChatAction, IDialogChatActionOption, IDialogCheckItemAction,
+  IDialogChatAction, IDialogChatActionOption, IDialogCheckAlignmentAction,
+  IDialogCheckItemAction,
   IDialogCheckLevelAction,
-  IDialogCheckQuestAction,
-  IDialogGiveEffectAction,
-  IDialogGiveItemAction, IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogTakeItemAction, INPC,
+  IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
+  IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -33,15 +33,17 @@ export class DialogActionHelper extends BaseService {
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
     const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
-      [DialogActionType.Chat]:         this.handleChatAction,
-      [DialogActionType.CheckItem]:    this.handleCheckItemAction,
-      [DialogActionType.TakeItem]:     this.handleTakeItemAction,
-      [DialogActionType.GiveItem]:     this.handleGiveItemAction,
-      [DialogActionType.ModifyItem]:   this.handleModifyItemAction,
-      [DialogActionType.GiveEffect]:   this.handleGiveEffectAction,
-      [DialogActionType.CheckQuest]:   this.handleCheckQuestAction,
-      [DialogActionType.GiveQuest]:    this.handleGiveQuestAction,
-      [DialogActionType.CheckLevel]:   this.handleCheckLevelAction
+      [DialogActionType.Chat]:            this.handleChatAction,
+      [DialogActionType.CheckItem]:       this.handleCheckItemAction,
+      [DialogActionType.TakeItem]:        this.handleTakeItemAction,
+      [DialogActionType.GiveItem]:        this.handleGiveItemAction,
+      [DialogActionType.ModifyItem]:      this.handleModifyItemAction,
+      [DialogActionType.GiveEffect]:      this.handleGiveEffectAction,
+      [DialogActionType.CheckQuest]:      this.handleCheckQuestAction,
+      [DialogActionType.GiveQuest]:       this.handleGiveQuestAction,
+      [DialogActionType.CheckLevel]:      this.handleCheckLevelAction,
+      [DialogActionType.CheckAlignment]:  this.handleCheckAlignmentAction,
+      [DialogActionType.SetAlignment]:    this.handleSetAlignmentAction,
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -63,6 +65,7 @@ export class DialogActionHelper extends BaseService {
     return sample(defaultMessages);
   }
 
+  // DO a generic chat w/ modal
   private handleChatAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
@@ -92,6 +95,36 @@ export class DialogActionHelper extends BaseService {
     return { messages: [formattedChat.message], shouldContinue: true };
   }
 
+  // SET alignment via an action
+  private handleSetAlignmentAction(action: IDialogSetAlignmentAction, npc: INPC, player: IPlayer): IActionResult {
+    const { alignment } = action;
+
+    player.alignment = alignment;
+
+    return { messages: [], shouldContinue: true };
+  }
+
+  // CHECK alignment
+  private handleCheckAlignmentAction(action: IDialogCheckAlignmentAction, npc: INPC, player: IPlayer): IActionResult {
+    const { alignment, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = player.alignment === alignment;
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
+  // CHECK the player level
   private handleCheckLevelAction(action: IDialogCheckLevelAction, npc: INPC, player: IPlayer): IActionResult {
     const { level, checkPassActions, checkFailActions } = action;
 
@@ -111,6 +144,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: retMessages, shouldContinue: true };
   }
 
+  // CHECK the item(s) the player is holding
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
 
@@ -148,6 +182,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: retMessages, shouldContinue: true };
   }
 
+  // TAKE an item from the player
   private handleTakeItemAction(action: IDialogTakeItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item } = action;
 
@@ -174,6 +209,7 @@ export class DialogActionHelper extends BaseService {
     return { messages, shouldContinue: didSucceed };
   }
 
+  // MODIFY an item held by the player
   private handleModifyItemAction(action: IDialogModifyItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, mods } = action;
 
@@ -193,6 +229,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: [], shouldContinue: didSucceed };
   }
 
+  // GIVE an item to the player
   private handleGiveItemAction(action: IDialogGiveItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item } = action;
 
@@ -213,6 +250,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: [], shouldContinue: didSucceed };
   }
 
+  // GIVE an effect to the player
   private handleGiveEffectAction(action: IDialogGiveEffectAction, npc: INPC, player: IPlayer): IActionResult {
 
     const { effect, duration } = action;
@@ -222,6 +260,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: [], shouldContinue: true };
   }
 
+  // CHECK if the player has a quest complete (and complete it if they do)
   private handleCheckQuestAction(action: IDialogCheckQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
@@ -258,6 +297,7 @@ export class DialogActionHelper extends BaseService {
     ], shouldContinue: false };
   }
 
+  // GIVE the player a quest
   private handleGiveQuestAction(action: IDialogGiveQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
@@ -290,6 +330,7 @@ export class DialogActionHelper extends BaseService {
     return { messages: [`You've accepted the quest "${quest}".`], shouldContinue: true };
   }
 
+  // check if the player meets the requirement for the dialog option
   private meetsRequirement(player: IPlayer, requirement: IDialogRequirement): boolean {
     if (requirement.stat && requirement.statValue) {
       const stat = this.game.characterHelper.getStat(player, requirement.stat as Stat);

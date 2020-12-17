@@ -1,5 +1,5 @@
 
-import { ItemSlot } from './building-blocks';
+import { Alignment, ItemSlot } from './building-blocks';
 import { IItem } from './item';
 
 export enum DialogActionType {
@@ -7,11 +7,13 @@ export enum DialogActionType {
   CheckItem = 'checkItem',
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
+  ModifyItem = 'modifyItem',
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
   GiveQuest = 'giveQuest',
   CheckLevel = 'checkLevel',
-  ModifyItem = 'modifyItem'
+  CheckAlignment = 'checkAlignment',
+  SetAlignment = 'setAlignment'
 }
 
 // dialog items, used for check/take/give
@@ -73,6 +75,16 @@ export interface IDialogCheckLevelAction {
   checkFailActions: IDialogAction[];
 }
 
+export interface IDialogCheckAlignmentAction {
+  alignment: Alignment;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogSetAlignmentAction {
+  alignment: Alignment;
+}
+
 export interface IDialogChatActionOption {
   text: string;
   action: string;
@@ -92,7 +104,7 @@ export interface IDialogChatAction {
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
                           & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
-                          & IDialogCheckLevelAction
+                          & IDialogCheckLevelAction & IDialogCheckAlignmentAction & IDialogSetAlignmentAction
                           & { type: DialogActionType, maxDistance?: number };
 
 export interface IDialogTree {
