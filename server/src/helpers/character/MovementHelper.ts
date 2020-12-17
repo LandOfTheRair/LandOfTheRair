@@ -90,7 +90,7 @@ export class MovementHelper extends BaseService {
       // aquatic npcs can't leave the water
       if (!this.characterHelper.isPlayer(character)) {
         const nextTileFluid = map.getFluidAt(nextX, nextY);
-        if ((character as any as INPC).aquaticOnly && !nextTileFluid) return;
+        if ((character as INPC).aquaticOnly && !nextTileFluid) return;
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);

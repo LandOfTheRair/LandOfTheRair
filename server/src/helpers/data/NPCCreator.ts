@@ -70,7 +70,8 @@ export class NPCCreator extends BaseService {
     baseChar.drops = npcDef.drops ?? [];
     baseChar.copyDrops = npcDef.copyDrops ?? [];
     baseChar.dropPool = npcDef.dropPool ?? null;
-    baseChar.triggers = npcDef.triggers || {};
+    baseChar.triggers = npcDef.triggers ?? {};
+    baseChar.aquaticOnly = npcDef.aquaticOnly ?? false;
     baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
     baseChar.tansFor = npcDef.tansFor ?? '';
 
