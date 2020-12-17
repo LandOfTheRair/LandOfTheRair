@@ -7,4 +7,6 @@ mat-radio-group {
 
 .option-container {
   min-height: 555px;
+  max-height: 555px;
+  overflow-y: auto;
 }
