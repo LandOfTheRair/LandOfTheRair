@@ -416,6 +416,8 @@ export class PlayerHelper extends BaseService {
     };
 
     classStats[player.baseClass]();
+
+    this.game.characterHelper.recalculateEverything(player);
   }
 
   // try to level up a player to the maximum possible level they can go based on the trainer they see
