@@ -5,14 +5,14 @@ import * as HTTPRoutes from '../http';
 
 import uuid from 'uuid/v4';
 
-import { WebSocketServer } from '@clusterws/cws';
+import * as WebSocket from 'ws';
 import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 
 export class WebsocketWorker {
 
   private sockets: { [uuidOrUsername: string]: any } = {};
 
-  private wsServer: WebSocketServer;
+  private wsServer: WebSocket.Server;
 
   async start() {
     console.log('NET', 'Starting network handler...');
@@ -62,19 +62,24 @@ export class WebsocketWorker {
     });
 
     // set up WS
-    const wsServer = new WebSocketServer({
+    const wsServer = new WebSocket.Server({
       server: app.server
     });
 
     this.wsServer = wsServer;
 
     // prevent disconnects by doing a heartbeat
-    wsServer.startAutoPing(20000);
+    // wsServer.startAutoPing(20000);
 
     wsServer.on('connection', (socket: any) => {
       socket.uuid = uuid();
+      socket.isAlive = true;
 
       this.sockets[socket.uuid] = socket;
+
+      socket.on('pong', () => {
+        socket.isAlive = true;
+      });
 
       socket.on('message', (msg) => {
         try {
@@ -100,9 +105,7 @@ export class WebsocketWorker {
       });
 
       socket.on('error', (err) => {
-        const ignoredMessages = [
-          'cWs invalid status code or invalid UTF-8 sequence'
-        ];
+        const ignoredMessages: string[] = [];
 
         if (ignoredMessages.includes(err.message)) return;
 
@@ -113,6 +116,21 @@ export class WebsocketWorker {
     wsServer.on('error', (err) => {
       console.error('NET', `[WS Server Error]`, err);
     });
+
+    this.watchForDeadConnections();
+  }
+
+  private watchForDeadConnections() {
+    setInterval(() => {
+      this.wsServer.clients.forEach((socket: any) => {
+        if (socket === (this.wsServer as any)) return;
+
+        if (!socket.isAlive) return socket.terminate();
+
+        socket.isAlive = false;
+        socket.ping(() => {});
+      });
+    }, 30000);
   }
 
   // send to game loop
@@ -158,7 +176,10 @@ export class WebsocketWorker {
     if (!this.wsServer) return;
 
     const sendMessage = this.transformData(data);
-    this.wsServer.broadcast(sendMessage);
+    this.wsServer.clients.forEach(socket => {
+      if (socket === (this.wsServer as any) || socket.readyState !== WebSocket.OPEN) return;
+      socket.send(sendMessage);
+    });
   }
 
   private handleMessage({ socketId, ...data }) {

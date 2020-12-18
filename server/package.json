@@ -26,8 +26,8 @@
   },
   "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
-    "@clusterws/cws": "1.1.2",
     "bcrypt": "5.0.0",
+    "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
     "didyoumean2": "3.1.2",
     "dotenv": "8.1.0",
@@ -51,12 +51,15 @@
     "recursive-readdir": "2.2.2",
     "reflect-metadata": "0.1.13",
     "rollbar": "2.19.4",
-    "uuid": "3.3.3"
+    "utf-8-validate": "^5.0.3",
+    "uuid": "3.3.3",
+    "ws": "^7.4.1"
   },
   "devDependencies": {
     "@sytten/ts-node-dev": "^1.0.3",
     "@types/mongodb": "3.3.13",
     "@types/node": "12.7.11",
+    "@types/ws": "^7.4.0",
     "codelyzer": "5.1.2",
     "madge": "^3.12.0",
     "symlink-dir": "4.1.0",
