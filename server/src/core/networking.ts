@@ -1,4 +1,8 @@
 
+import 'reflect-metadata';
+
+import { parentPort } from 'worker_threads';
+
 import fastify from 'fastify';
 import rateLimit from 'fastify-rate-limit';
 import * as HTTPRoutes from '../http';
@@ -18,15 +22,12 @@ export class WebsocketWorker {
     console.log('NET', 'Starting network handler...');
 
     // set up IPC
-    process.on('message', msg => {
+    parentPort?.on('message', msg => {
       if (msg.__ready) {
         console.log('NET', 'Starting API server...');
         this.setup();
         return;
       }
-
-      // networking ignores ground messages
-      if (msg.__ground) return;
 
       this.handleMessage(msg);
     });
@@ -158,7 +159,7 @@ export class WebsocketWorker {
   }
 
   private sendToGame(socket, data) {
-    process.send!({ socketId: socket.uuid, username: socket.username, ...data });
+    parentPort?.postMessage({ target: 'gameloop', socketId: socket.uuid, username: socket.username, ...data });
   }
 
   private transformData(data) {

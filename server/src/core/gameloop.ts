@@ -1,4 +1,8 @@
 
+import 'reflect-metadata';
+
+import { parentPort } from 'worker_threads';
+
 import { WebsocketCommandHandler } from '../helpers';
 import { GameServerResponse } from '../interfaces';
 
@@ -8,7 +12,10 @@ export class GameloopWorker {
 
   async start() {
     console.log('GAME', 'Starting game loop...');
-    process.on('message', msg => this.handleMessage(msg));
+
+    parentPort?.on('message', message => {
+      this.handleMessage(message);
+    });
 
     process.on('unhandledRejection', (error) => {
       console.error('GAME', `Unhandled Rejection`, error);
@@ -23,7 +30,8 @@ export class GameloopWorker {
     await this.wsCommands.init((id, data) => this.emit(id, data));
 
     console.log('GAME', 'Sending ready signal...');
-    process.send!({ __ready: true });
+
+    parentPort?.postMessage({ target: 'networking', __ready: true });
   }
 
   // parse / send to the appropriate API command
@@ -55,7 +63,7 @@ export class GameloopWorker {
 
   // send to networking loop
   private emit(socketId, data) {
-    process.send!({ socketId, ...data });
+    parentPort?.postMessage({ target: 'networking', socketId, ...data });
   }
 
 }
