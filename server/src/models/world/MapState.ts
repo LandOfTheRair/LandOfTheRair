@@ -359,6 +359,7 @@ export class MapState {
   // update the entire gamestate for the players fov
   private updateStateForPlayer(player: Player) {
     const state = this.game.playerManager.getPlayerState(player);
+    if (!state) return;
 
     // update players
     this.triggerPlayerUpdateForPlayer(player);
@@ -375,6 +376,7 @@ export class MapState {
 
   private triggerPlayerUpdateForPlayer(player: IPlayer) {
     const state = this.game.playerManager.getPlayerState(player);
+    if (!state) return;
 
     // update players
     const nearbyPlayers = this.players
@@ -389,6 +391,7 @@ export class MapState {
 
   private triggerNPCUpdateForPlayer(player: IPlayer) {
     const state = this.game.playerManager.getPlayerState(player);
+    if (!state) return;
 
     // update players
     const nearbyNPCs = this.npcs
@@ -402,6 +405,7 @@ export class MapState {
 
   private triggerGroundUpdateForPlayer(player: IPlayer) {
     const state = this.game.playerManager.getPlayerState(player);
+    if (!state) return;
 
     // update players
     state.ground = this.getGroundVision(player.x, player.y, 4);
