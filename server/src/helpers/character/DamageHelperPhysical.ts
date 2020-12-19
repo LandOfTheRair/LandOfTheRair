@@ -733,7 +733,7 @@ export class DamageHelperPhysical extends BaseService {
     const isAttackerVisible = this.game.visibilityHelper.canSeeThroughStealthOf(defender, attacker);
     // TODO: darkness
 
-    args.attackerName = isAttackerVisible ? attacker.name : 'somebody';
+    args.attackerName = isAttackerVisible ? attacker?.name || 'somebody' : 'somebody';
     args.backstabIgnoreRange = args.backstabIgnoreRange ?? false;
     args.accuracyLoss = args.accuracyLoss ?? 0;
     args.damageClass = args.damageClass ?? DamageClass.Physical;
@@ -927,10 +927,13 @@ export class DamageHelperPhysical extends BaseService {
     // if our ammo was shot and can apply an effect, we give it a spin
     if (canShoot && ammo) {
       const ammoStrikeEffect: IItemEffect = this.game.itemHelper.getItemProperty(ammo, 'strikeEffect');
-      this.game.spellManager.castSpell(
-        ammoStrikeEffect.name, attacker, defender,
-        { potency: ammoStrikeEffect.potency, chance: ammoStrikeEffect.chance }
-      );
+
+      if (ammoStrikeEffect) {
+        this.game.spellManager.castSpell(
+          ammoStrikeEffect.name, attacker, defender,
+          { potency: ammoStrikeEffect.potency, chance: ammoStrikeEffect.chance }
+        );
+      }
     }
 
     const { strikeEffect: weaponStrikeEffect, encrustItem } = this.game.itemHelper.getItemProperties(attackerWeapon, ['strikeEffect', 'encrustItem']);
