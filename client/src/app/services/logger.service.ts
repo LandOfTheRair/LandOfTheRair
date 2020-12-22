@@ -7,7 +7,10 @@ import { AlertComponent } from '../_shared/modals/alert/alert.component';
 })
 export class LoggerService {
 
-  private ignoredErrorMessages = {};
+  private ignoredErrorMessages = {
+    'TypeError: Cannot read property \'sys\' of null': true
+  };
+
   private canShowErrors = true;
 
   constructor(
