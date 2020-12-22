@@ -39,8 +39,8 @@ export class PlayerManager extends BaseService {
   }
 
   // get a player state based on the player
-  public getPlayerState(player: IPlayer): PlayerState {
-    return this.playerStates[player.username];
+  public getPlayerState(player: IPlayer): PlayerState | undefined {
+    return this.playerStates?.[player.username];
   }
 
   // add a player to the game
