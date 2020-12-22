@@ -18,7 +18,7 @@ export class LoggerService {
   ) {}
 
   public showErrorWindow(title: string, content: string) {
-    if (this.ignoredErrorMessages[title] || !this.canShowErrors || !title || !content) return;
+    if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
 
     this.dialog.afterAllClosed.subscribe(() => {
       this.canShowErrors = true;
@@ -39,6 +39,16 @@ export class LoggerService {
 
   public error(...data) {
     console.error(...data);
+
+    if(data[0]?.message) {
+      data[1] = data[0].message;
+      data[0] = 'New Caught Error';
+    }
+
+    if(data[1]?.message) {
+      data[0] = 'New Caught Error';
+      data[1] = data[1].message;
+    }
 
     if (data.length === 1) this.showErrorWindow('New Caught Error', data[0]);
     if (data.length >= 2)  this.showErrorWindow(data[0], data[1]);

@@ -73,7 +73,7 @@ export class TraitsComponent implements OnInit, OnDestroy {
   public traitsSpent(tree: string): number {
     const allSkills = Object.keys(this.player.allTraits)
       .filter(k => this.player.allTraits[k] > 0)
-      .filter(k => this.getTraitInTree(k).treeName === tree)
+      .filter(k => this.getTraitInTree(k)?.treeName === tree)
       .map(k => this.player.allTraits[k])
 
     return sum(allSkills);
