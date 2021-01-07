@@ -27,7 +27,7 @@ You will want to be using Node 14 (at least) to run this project.
 
 #### Developing Content
 
-One option you have to run Land of the Rair and actively work on the content, is to clone [the Content repo](https://github.com/LandOfTheRair/Content) right alongside Land of ther Rair (meaning you'll have `folder/LandOfTheRair` and `folder/Content`). If you have the Content repo available and run `npm run setup`, it will symlink the Content repo so you can develop it concurrently without having to commit, push, pull, and update. Or copying, or whatever.
+One option you have to run Land of the Rair and actively work on the content, is to clone [the Content repo](https://github.com/LandOfTheRair/Content) right alongside Land of the Rair (meaning you'll have `folder/LandOfTheRair` and `folder/Content`). If you have the Content repo available and run `npm run setup`, it will symlink the Content repo so you can develop it concurrently without having to commit, push, pull, and update. Or copying, or whatever.
 
 #### Running Both Projects
 
