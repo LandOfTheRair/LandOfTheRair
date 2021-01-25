@@ -29,6 +29,7 @@ const allVars = {
   version: gitRev
 };
 
-const content = `export const BUILDVARS = ${JSON.stringify(allVars, null, 2)};`;
+const content = `/* eslint-disable */
+export const BUILDVARS = ${JSON.stringify(allVars, null, 2)};`;
 
 fs.writeFileSync(`${__dirname}/../src/environments/_vars.ts`, content, 'utf8');
