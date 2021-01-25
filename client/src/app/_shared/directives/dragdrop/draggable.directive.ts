@@ -1,5 +1,5 @@
 
-// tslint:disable
+/* eslint-disable */
 
 import { Directive, ElementRef, EventEmitter, HostBinding, HostListener, Input, NgZone, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
 import { DomHelper } from './dom-helper';

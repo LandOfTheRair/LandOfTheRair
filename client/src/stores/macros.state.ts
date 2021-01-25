@@ -11,15 +11,13 @@ import { CreateCustomMacro, DeleteCustomMacro, ImportMacros, LearnMacro,
 import { GameState } from './game.state';
 
 
-const defaultMacros: () => IMacroContainer = () => {
-  return {
+const defaultMacros: () => IMacroContainer = () => ({
     activeMacroBars: {},
     activeMacros: {},
     customMacros: {},
     learnedMacros: {},
     characterMacros: {}
-  };
-};
+  });
 
 @State<IMacroContainer>({
   name: 'macros',
@@ -169,7 +167,7 @@ export class MacrosState {
           [BaseClass.Healer]: ['Afflict'],
           [BaseClass.Warrior]: ['Cleave'],
           [BaseClass.Traveller]: []
-        }
+        };
 
         this.store.dispatch(new SetDefaultMacros(additionalMacros[curPlayer.baseClass] || []));
       }

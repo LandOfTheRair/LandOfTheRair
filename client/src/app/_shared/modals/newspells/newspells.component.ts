@@ -94,7 +94,7 @@ export class NewSpellsComponent implements OnInit {
       let newName = '';
 
       do {
-        newName = `skills (${i})`
+        newName = `skills (${i})`;
 
       } while(i++ && this.data.macroBars[newName]);
       foundBarWithSlot = { name: newName, macros: [] };

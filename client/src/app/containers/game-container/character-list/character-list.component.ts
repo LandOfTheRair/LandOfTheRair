@@ -24,7 +24,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
-  @Select(GameState.currentPosition) pos$: Observable<{ x: number, y: number }>;
+  @Select(GameState.currentPosition) pos$: Observable<{ x: number; y: number }>;
   @Select(SettingsState.currentCommand) command$: Observable<string>;
   @Select(MacrosService.currentPlayerActiveMacro) macro$: Observable<IMacro>;
 
@@ -156,14 +156,14 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     return unsorted;
   }
 
-  public doAction(char: ICharacter, $event, index) {
+  public doAction(char: ICharacter, $event?: any) {
 
     if ((char as INPC).hostility !== Hostility.Never) {
       this.store.dispatch(new SetCurrentTarget(char.uuid));
     }
 
     // only select the target if we hit ctrl
-    if ($event.ctrlKey) return;
+    if ($event?.ctrlKey) return;
 
     combineLatest([this.command$, this.macro$])
       .pipe(first())
@@ -185,7 +185,8 @@ export class CharacterListComponent implements OnInit, OnDestroy {
       });
   }
 
-  public doAltAction(char: ICharacter) {
+  public doAltAction(char: ICharacter, $event?: any) {
+    this.doAction(char, $event);
   }
 
 }

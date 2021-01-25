@@ -74,7 +74,7 @@ export class TraitsComponent implements OnInit, OnDestroy {
     const allSkills = Object.keys(this.player.allTraits)
       .filter(k => this.player.allTraits[k] > 0)
       .filter(k => this.getTraitInTree(k)?.treeName === tree)
-      .map(k => this.player.allTraits[k])
+      .map(k => this.player.allTraits[k]);
 
     return sum(allSkills);
   }
@@ -103,7 +103,7 @@ export class TraitsComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         if(!res) return;
 
-        this.gameService.sendCommandString(`!learntrait ${trait.name}`)
+        this.gameService.sendCommandString(`!learntrait ${trait.name}`);
       });
   }
 

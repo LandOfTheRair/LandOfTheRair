@@ -19,7 +19,7 @@ export class UpdateWindowPosition {
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
-    public windowProps: { x?: number, y?: number, width?: number, height?: number, hidden?: boolean },
+    public windowProps: { x?: number; y?: number; width?: number; height?: number; hidden?: boolean },
     public overwrite?: boolean
   ) {}
 }
@@ -30,7 +30,7 @@ export class SetDefaultWindowPosition {
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
-    public windowProps: { x?: number, y?: number  }
+    public windowProps: { x?: number; y?: number  }
   ) {}
 }
 

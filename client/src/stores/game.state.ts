@@ -1,18 +1,17 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
-import { Currency, IGame } from '../interfaces';
 
 import { Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
+import { Currency, IGame } from '../interfaces';
 import { HideBankWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
 
 const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = player;
 
-const defaultGame: () => IGame = () => {
-  return {
+const defaultGame: () => IGame = () => ({
     inGame: false,
     currentTarget: '',
     itemTooltip: '',
@@ -46,8 +45,7 @@ const defaultGame: () => IGame = () => {
       ground: {},
       openDoors: {}
     }
-  };
-};
+  });
 
 @State<IGame>({
   name: 'game',
@@ -56,7 +54,7 @@ const defaultGame: () => IGame = () => {
 @Injectable()
 export class GameState {
 
-  static box = new Subject<{ side: 'left'|'right', color: string, text: string }>();
+  static box = new Subject<{ side: 'left'|'right'; color: string; text: string }>();
 
   @Selector()
   static player(state: IGame) {

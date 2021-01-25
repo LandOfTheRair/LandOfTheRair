@@ -6,9 +6,9 @@ import { first } from 'rxjs/operators';
 
 import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
 import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
+import * as allMacros from '../../assets/content/_output/macros.json';
 import { GameService } from './game.service';
 
-import * as allMacros from '../../assets/content/_output/macros.json';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 @Injectable({

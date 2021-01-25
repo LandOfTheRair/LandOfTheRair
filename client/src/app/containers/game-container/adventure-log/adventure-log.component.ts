@@ -23,7 +23,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
-  public messages: Array<{ messageTypes: MessageType[], message: string }> = [];
+  public messages: Array<{ messageTypes: MessageType[]; message: string }> = [];
 
   private mutationObserver: MutationObserver;
   private renderer: marked.Renderer;

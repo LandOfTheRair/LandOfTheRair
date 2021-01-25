@@ -197,6 +197,7 @@ export class MapComponent implements OnInit, OnDestroy {
       }
     );
 
+    // eslint-disable-next-line no-underscore-dangle
     (window as any).__game = this.game;
 
     this.game.scene.add('PreloadScene', PreloadScene);

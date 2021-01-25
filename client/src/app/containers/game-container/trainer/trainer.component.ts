@@ -21,7 +21,7 @@ import { UIService } from '../../../services/ui.service';
 })
 export class TrainerComponent implements OnInit, OnDestroy {
 
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number, y: number }>;
+  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
   @Select(GameState.currentTrainerWindow) trainer$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
 
@@ -76,7 +76,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
       this.trainerInfo = cloneDeep(data || {});
     });
 
-    this.gameStatusSub = this.inGame$.subscribe((d) => {
+    this.gameStatusSub = this.inGame$.subscribe(() => {
       this.store.dispatch(new HideTrainerWindow());
       this.store.dispatch(new HideWindow('trainer'));
     });

@@ -71,7 +71,11 @@ import { environment } from '../../../environments/environment';
     }
   `],
   template: `
-    <div class="mac-container vertical-center" [ngClass]="[size]" [class.round]="round" [class.disabled]="disabled" [style.background-color]="bgColor">
+    <div class="mac-container vertical-center"
+         [ngClass]="[size]"
+         [class.round]="round"
+         [class.disabled]="disabled"
+         [style.background-color]="bgColor">
       <span class="macicons" [ngClass]="['macicons-'+name]" [style.color]="fgColor"></span>
     </div>
   `

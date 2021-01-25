@@ -4,8 +4,7 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { IAccount } from '../interfaces';
 import { Login, Logout, SetCharacterSlotInformation } from './actions';
 
-const defaultAccount: () => IAccount = () => {
-  return {
+const defaultAccount: () => IAccount = () => ({
     username: '',
     email: '',
     players: [],
@@ -19,8 +18,7 @@ const defaultAccount: () => IAccount = () => {
 
     discordTag: '',
     alwaysOnline: false
-  };
-};
+  });
 
 @State<IAccount>({
   name: 'account',

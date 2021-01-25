@@ -1,5 +1,5 @@
 
-// tslint:disable
+/* eslint-disable */
 
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 
@@ -139,8 +139,8 @@ export class DroppableDirective implements OnInit, OnDestroy {
     allowDrop(): Observable<boolean> {
         let allowed: boolean | Observable<boolean> = false;
 
-        /* tslint:disable:curly */
-        /* tslint:disable:one-line */
+        /* eslint-disable curly */
+        /* eslint-disable brace-style */
         if (typeof this.dropScope === 'string') {
             if (typeof this.ng2DragDropService.scope === 'string')
                 allowed = this.ng2DragDropService.scope === this.dropScope;
@@ -160,8 +160,8 @@ export class DroppableDirective implements OnInit, OnDestroy {
             }
         }
 
-        /* tslint:enable:curly */
-        /* tslint:disable:one-line */
+        /* eslint-enable curly */
+        /* eslint-disable brace-style */
 
         return observableOf(allowed && this.dropEnabled);
     }

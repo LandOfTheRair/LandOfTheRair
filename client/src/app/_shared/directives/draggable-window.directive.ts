@@ -22,7 +22,7 @@ export class DraggableDirective implements OnInit {
     this.isDragAllowed = value;
   }
 
-  @Input('windowHandle')
+  @Input()
   set windowHandle(handle: HTMLElement) {
     this.handle = handle;
 

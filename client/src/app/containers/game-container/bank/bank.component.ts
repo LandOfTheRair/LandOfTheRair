@@ -19,7 +19,7 @@ import { UIService } from '../../../services/ui.service';
 })
 export class BankComponent implements OnInit, OnDestroy {
 
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number, y: number }>;
+  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
   @Select(GameState.currentBankWindow) bank$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -55,7 +55,7 @@ export class BankComponent implements OnInit, OnDestroy {
       this.bankInfo = cloneDeep(data || {});
     });
 
-    this.gameStatusSub = this.inGame$.subscribe((d) => {
+    this.gameStatusSub = this.inGame$.subscribe(() => {
       this.store.dispatch(new HideBankWindow());
       this.store.dispatch(new HideWindow('bank'));
     });

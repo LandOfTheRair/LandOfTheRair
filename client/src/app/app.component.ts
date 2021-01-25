@@ -3,11 +3,11 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
 import { environment } from '../environments/environment';
+import { IAccount, isSubscribed } from '../interfaces';
+import { AccountState } from '../stores';
 import { GameService } from './services/game.service';
 import { SocketService } from './services/socket.service';
 
-import { IAccount, isSubscribed } from '../interfaces';
-import { AccountState } from '../stores';
 
 @Component({
   selector: 'app-root',

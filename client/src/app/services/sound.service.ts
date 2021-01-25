@@ -34,7 +34,7 @@ export class SoundService {
       sfxRef.play();
     });
 
-    this.options$.subscribe(opts => {
+    this.options$.subscribe(() => {
       if (!this.currentBGM) return;
       this.currentBGM.volume(this.optionsService.musicVolume);
     });

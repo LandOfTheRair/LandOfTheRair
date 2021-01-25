@@ -8,8 +8,7 @@ import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
 
 const defaultWindowPositions = {};
 
-const defaultSettings: () => ISettings = () => {
-  return {
+const defaultSettings: () => ISettings = () => ({
     accounts: [],
     windows: {},
     activeWindow: '',
@@ -51,8 +50,7 @@ const defaultSettings: () => ISettings = () => {
       [GameOption.SpritesheetTerrain]: '',
       [GameOption.SpritesheetWalls]: '',
     }
-  };
-};
+  });
 
 @State<ISettings>({
   name: 'settings',

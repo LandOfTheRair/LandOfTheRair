@@ -46,7 +46,7 @@ export class SocketService {
   }
 
   private callbacks: {
-    [key in GameServerResponse]?: { component: string, callback: (data) => void }[]
+    [key in GameServerResponse]?: { component: string; callback: (data) => void }[]
   } = {};
 
   private commandQueue = [];
@@ -61,7 +61,7 @@ export class SocketService {
     const socket$ = makeWebSocketObservable<string>(url);
     return socket$.pipe(
       map((getResponses: GetWebSocketResponses<string>) =>
-        (input$: Observable<object>) =>
+        (input$: Observable<any>) =>
           getResponses(
             input$.pipe(
               map(request => JSON.stringify(request)),
@@ -143,6 +143,7 @@ export class SocketService {
       },
     });
 
+    // eslint-disable-next-line no-underscore-dangle
     (window as any).__rawSendSocketData = (t, d) => this.emit(t, d);
   }
 

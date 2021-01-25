@@ -157,7 +157,7 @@ export class ModalService {
       data: dialogInfo
     });
 
-    this.commandDialogRef.afterClosed().subscribe((result) => {
+    this.commandDialogRef.afterClosed().subscribe(() => {
       this.commandDialogRef = null;
     });
 

@@ -10,11 +10,11 @@ import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
-import { GameModule } from './game.module';
 
 import { environment } from '../environments/environment';
 
 import * as AllStores from '../stores';
+import { GameModule } from './game.module';
 
 import { AppComponent } from './app.component';
 

@@ -15,14 +15,14 @@ export class MapRenderGame extends Phaser.Game {
     public socketService: SocketService,
     public assetService: AssetService,
     public observables: {
-      loadPercent: BehaviorSubject<string>,
-      hideMap: BehaviorSubject<boolean>,
-      player: BehaviorSubject<IPlayer>,
-      map: BehaviorSubject<IMapData>,
-      allPlayers: Observable<Record<string, Partial<IPlayer>>>,
-      allNPCs: Observable<Record<string, Partial<INPC>>>,
-      openDoors: Observable<Record<number, boolean>>,
-      ground: Observable<IGround>
+      loadPercent: BehaviorSubject<string>;
+      hideMap: BehaviorSubject<boolean>;
+      player: BehaviorSubject<IPlayer>;
+      map: BehaviorSubject<IMapData>;
+      allPlayers: Observable<Record<string, Partial<IPlayer>>>;
+      allNPCs: Observable<Record<string, Partial<INPC>>>;
+      openDoors: Observable<Record<number, boolean>>;
+      ground: Observable<IGround>;
     }
     ) {
       super(config);

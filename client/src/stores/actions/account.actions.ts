@@ -3,7 +3,7 @@ import { GameAction, IAccount, ICharacter, IChatUser } from '../../interfaces';
 // dispatched when the user is fully logged in
 export class Login {
   static type = GameAction.Login;
-  constructor(public info: { motd: string, onlineUsers: IChatUser[], account: IAccount }) {}
+  constructor(public info: { motd: string; onlineUsers: IChatUser[]; account: IAccount }) {}
 }
 
 // dispatched when the user is logged out (or kicked)

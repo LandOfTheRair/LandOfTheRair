@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { difference, get, setWith, size } from 'lodash';
 import { Subscription } from 'rxjs';
 

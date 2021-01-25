@@ -43,8 +43,8 @@ export class LobbyState {
 
   private sortUsers(users: IChatUser[]): IChatUser[] {
     return users.sort((user1, user2) => {
-      if (user1!.tier > user2!.tier) return -1;
-      if (user1!.tier < user2!.tier) return 1;
+      if (user1?.tier > user2?.tier) return -1;
+      if (user1?.tier < user2?.tier) return 1;
 
       if (user1.username > user2.username) return 1;
       if (user1.username < user2.username) return -1;

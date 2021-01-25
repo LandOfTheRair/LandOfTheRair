@@ -1,9 +1,9 @@
 
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { IJournal } from '../interfaces';
 import { UpdateJournal } from './actions';
 
-import { IJournal } from '../interfaces';
 
 @State<IJournal>({
   name: 'journal',
