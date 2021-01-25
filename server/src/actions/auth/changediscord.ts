@@ -7,7 +7,7 @@ export class ChangeDiscordTagAction extends ServerAction {
   requiredKeys = ['discordTag'];
   requiresLoggedIn = true;
 
-  async act(game: Game, { emit }, data) {
+  async act(game: Game, callbacks, data) {
 
     try {
       try {
@@ -25,7 +25,7 @@ export class ChangeDiscordTagAction extends ServerAction {
 
     return {
       wasSuccess: true,
-      message: `Successfully changed your Discord tag.`
+      message: 'Successfully changed your Discord tag.'
     };
   }
 }

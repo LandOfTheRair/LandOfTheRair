@@ -19,6 +19,7 @@ export class Logger extends BaseService {
   }
 
   private _logWithTs(type: 'log'|'error', tag, ...args) {
+    // eslint-disable-next-line no-console
     console[type](new Date().toISOString(), `[${tag}]`, ...args);
   }
 

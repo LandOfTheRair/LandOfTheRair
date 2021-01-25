@@ -2,7 +2,8 @@ import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, descTextFor, GameServerResponse, IAIBehavior, IIdentifierBehavior, INPC, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
+import { Currency, descTextFor, GameServerResponse, IAIBehavior,
+  IIdentifierBehavior, INPC, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
 
 export class IdentifierBehavior implements IAIBehavior {
 
@@ -35,13 +36,14 @@ export class IdentifierBehavior implements IAIBehavior {
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
-          title: `Identify Item?`,
+          title: 'Identify Item?',
           content: `Would you like to identify the item in your right hand for ${identifyCost.toLocaleString()} ${identifyCurrency}?`,
           extraData: { npcSprite: npc.sprite, okText: 'Yes, identify!', cancelText: 'No, not now' },
-          okAction: { command: `!privatesay`, args: `${npc.uuid}, identify` }
+          okAction: { command: '!privatesay', args: `${npc.uuid}, identify` }
         });
 
-        return `Hello, ${player.name}! Would you like to IDENTIFY the item in your right hand for ${identifyCost.toLocaleString()} ${identifyCurrency}?`;
+        return `Hello, ${player.name}!
+        Would you like to IDENTIFY the item in your right hand for ${identifyCost.toLocaleString()} ${identifyCurrency}?`;
       });
 
     parser.addCommand('identify')
@@ -54,7 +56,9 @@ export class IdentifierBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
-        if (!game.currencyHelper.hasCurrency(player, identifyCost, identifyCurrency)) return `You do not have enough ${identifyCurrency} for that!`;
+        if (!game.currencyHelper.hasCurrency(player, identifyCost, identifyCurrency)) {
+          return `You do not have enough ${identifyCurrency} for that!`;
+        }
 
         game.currencyHelper.loseCurrency(player, identifyCost, identifyCurrency);
 
@@ -68,7 +72,7 @@ export class IdentifierBehavior implements IAIBehavior {
 
         env?.callbacks.emit({
           type: GameServerResponse.SendAlert,
-          title: `Identify`,
+          title: 'Identify',
           content: identMsg,
           extraData: { itemName: rightHand.name },
         });

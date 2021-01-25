@@ -15,8 +15,8 @@ export class DirectionalMovement extends MacroCommand {
     }
 
     totalMoves.slice(0, this.game.characterHelper.getStat(player, Stat.Move)).forEach(element => {
-        const { x, y } = this.game.directionHelper.getXYFromDir( element as Direction);
-        this.game.movementHelper.moveWithPathfinding(player, { xDiff: x, yDiff: y });
-      });
+      const { x, y } = this.game.directionHelper.getXYFromDir( element as Direction);
+      this.game.movementHelper.moveWithPathfinding(player, { xDiff: x, yDiff: y });
+    });
   }
 }

@@ -56,7 +56,7 @@ export class CombatHelper extends BaseService {
     const baseDamage = args.damage;
     const isHeal = baseDamage < 0;
 
-    let mitigatedPercent = 0;
+    // let mitigatedPercent = 0;
     let damage = args.damage;
 
     if (attacker) {
@@ -78,7 +78,7 @@ export class CombatHelper extends BaseService {
         damage -= magicReduction;
       }
 
-      mitigatedPercent = (damage / baseDamage);
+      // mitigatedPercent = (damage / baseDamage);
 
       if (damage < 0) damage = 0;
 
@@ -109,7 +109,7 @@ export class CombatHelper extends BaseService {
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
-          message: `Your attack did no visible damage!`,
+          message: 'Your attack did no visible damage!',
           logInfo: {
             type: 'hit-physical',
             uuid: attacker ? attacker.uuid : '???',
@@ -198,7 +198,7 @@ export class CombatHelper extends BaseService {
 
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
-          message: `%0 was slain by %1!`,
+          message: '%0 was slain by %1!',
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
           setTarget: null,
           except: [defender.uuid, attacker.uuid]
@@ -208,7 +208,7 @@ export class CombatHelper extends BaseService {
         ], [defender, attacker]);
 
         // let the killer know they murdered someone
-        const killMsg = this.game.messageHelper.formatMessage(attacker, `You killed %0!`, [defender]);
+        const killMsg = this.game.messageHelper.formatMessage(attacker, 'You killed %0!', [defender]);
         this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
@@ -216,7 +216,7 @@ export class CombatHelper extends BaseService {
         });
 
         // let the target know they died
-        const dieMsg = this.game.messageHelper.formatMessage(defender, `You were killed by %0!`, [attacker]);
+        const dieMsg = this.game.messageHelper.formatMessage(defender, 'You were killed by %0!', [attacker]);
         this.game.messageHelper.sendLogMessageToPlayer(defender, {
           message: dieMsg,
           setTarget: null,
@@ -240,7 +240,7 @@ export class CombatHelper extends BaseService {
         }, [MessageType.Combat, MessageType.Self, MessageType.Kill]);
 
         this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
-          message: `You were killed!`,
+          message: 'You were killed!',
           sfx: SoundEffect.CombatDie,
           setTarget: null,
         }, [MessageType.Combat, MessageType.Other, MessageType.Kill]);

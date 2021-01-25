@@ -1,6 +1,7 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { BaseClass, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ItemClass, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
+import { BaseClass, GameAction, GameServerResponse, IAIBehavior,
+  INPC, IPlayer, ItemClass, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
 import { Player } from '../../../orm';
 
 export class TrainerBehavior implements IAIBehavior {
@@ -14,7 +15,7 @@ export class TrainerBehavior implements IAIBehavior {
     const { maxLevelUpLevel, maxSkillTrain } = behavior;
 
     if (!maxLevelUpLevel || !maxSkillTrain) {
-      game.logger.error(`Behavior:Trainer`, `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`);
+      game.logger.error('Behavior:Trainer', `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`);
       return;
     }
 
@@ -34,7 +35,7 @@ export class TrainerBehavior implements IAIBehavior {
             title: `Join the ${behavior.joinClass} Brotherhood?`,
             content: `I cannot train you unless you join the ${behavior.joinClass} brotherhood, ${player.name}. Would you like to join us?`,
             extraData: { npcSprite: npc.sprite, okText: 'Yes, join!', cancelText: 'No, I need to think more' },
-            okAction: { command: `!privatesay`, args: `${npc.uuid}, join` }
+            okAction: { command: '!privatesay', args: `${npc.uuid}, join` }
           });
 
           return `I cannot currently train you, but would you like to JOIN the ${behavior.joinClass} brotherhood?`;
@@ -71,7 +72,7 @@ export class TrainerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
 
         if (!behavior.joinClass) return `I have no brotherhood for you, ${player.name}.`;
-        if (player.baseClass !== BaseClass.Traveller) return `You seem to have made a choice already.`;
+        if (player.baseClass !== BaseClass.Traveller) return 'You seem to have made a choice already.';
 
         game.playerHelper.becomeClass(player, behavior.joinClass);
 
@@ -104,9 +105,9 @@ export class TrainerBehavior implements IAIBehavior {
         if ((ignores[behavior.joinClass] || []).includes(skill)) return 'I\'m afraid I can\'t help you with that skill.';
 
         const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
-        if (skillLevel > maxSkillTrain) return `You're way beyond my comprehension.`;
+        if (skillLevel > maxSkillTrain) return 'You\'re way beyond my comprehension.';
 
-        if (!game.currencyHelper.hasCurrency(player, 50)) return `You do need to pay for this, you know. 50 gold is not a lot!`;
+        if (!game.currencyHelper.hasCurrency(player, 50)) return 'You do need to pay for this, you know. 50 gold is not a lot!';
         game.currencyHelper.loseCurrency(player, 50);
 
         const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
@@ -123,7 +124,7 @@ export class TrainerBehavior implements IAIBehavior {
         if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
-        if (!game.currencyHelper.hasCurrency(player, 200)) return `You do need to pay for this, you know. 200 gold is not a lot!`;
+        if (!game.currencyHelper.hasCurrency(player, 200)) return 'You do need to pay for this, you know. 200 gold is not a lot!';
 
         if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
 
@@ -146,7 +147,7 @@ export class TrainerBehavior implements IAIBehavior {
 
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
-            title: `Respawn Point Set`,
+            title: 'Respawn Point Set',
             content: `I'll bring you right back to me when you die, ${player.name}.`,
             extraData: { npcSprite: npc.sprite },
           });

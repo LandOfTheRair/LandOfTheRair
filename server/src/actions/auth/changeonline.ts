@@ -19,7 +19,7 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
 
     return {
       wasSuccess: true,
-      message: `Successfully changed your always online status.`
+      message: 'Successfully changed your always online status.'
     };
   }
 }

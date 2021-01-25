@@ -11,7 +11,9 @@ export class PrevPage extends MacroCommand {
     const book = player.items.equipment[args.stringArgs];
     if (!book) return this.sendMessage(player, 'You do not have anything in that hand!');
 
-    const { itemClass, bookCurrentPage, bookPages } = this.game.itemHelper.getItemProperties(book, ['itemClass', 'bookCurrentPage', 'bookPages']);
+    const { itemClass, bookCurrentPage, bookPages } = this.game.itemHelper.getItemProperties(book,
+      ['itemClass', 'bookCurrentPage', 'bookPages']
+    );
     if (itemClass !== ItemClass.Book) return this.sendMessage(player, 'You are not holding a book!');
 
     let currentPage = (bookCurrentPage ?? 0) - 1;

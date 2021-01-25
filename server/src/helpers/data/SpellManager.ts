@@ -69,13 +69,13 @@ export class SpellManager extends BaseService {
 
     const spellData = this.getSpellData(spell);
     if (!spellData) {
-      this.game.logger.error(`SpellManager`, new Error(`Tried to cast invalid spell ${spell}.`));
+      this.game.logger.error('SpellManager', new Error(`Tried to cast invalid spell ${spell}.`));
       return;
     }
 
     const spellRef = this.getSpell(spell);
     if (!spellRef) {
-      this.game.logger.error(`SpellManager`, new Error(`Tried to ref invalid spell ${spell}.`));
+      this.game.logger.error('SpellManager', new Error(`Tried to ref invalid spell ${spell}.`));
       return;
     }
 

@@ -192,7 +192,7 @@ export class Spawner {
     });
   }
 
-  private createNPC(opts: { npcId?: string, npcDef?: INPCDefinition, createCallback?: (npc: INPC) => void } = {}) {
+  private createNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}) {
     if (!this.canBeActive) return;
 
     const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
@@ -251,7 +251,6 @@ export class Spawner {
     npc.map = this.mapRef.name;
 
     let ai = 'default';
-    let aiInst: IAI;
     if (this.npcAISettings.length > 0) {
       let aiSettings: any = this.npcAISettings;
       if (!isArray(aiSettings)) aiSettings = [aiSettings];
@@ -263,7 +262,7 @@ export class Spawner {
       return;
     }
 
-    aiInst = new AllAIBehaviors[ai](this.game, this.mapRef, this.mapState, this, npc);
+    const aiInst = new AllAIBehaviors[ai](this.game, this.mapRef, this.mapState, this, npc);
 
     npc.shouldStrip = this.shouldStrip;
     npc.shouldEatTier = this.shouldEatTier;

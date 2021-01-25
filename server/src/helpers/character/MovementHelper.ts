@@ -72,7 +72,7 @@ export class MovementHelper extends BaseService {
   // returns true or false based on if the steps were all taken or not
   takeSequenceOfSteps(
     character: ICharacter,
-    steps: Array<{ x: number, y: number }>,
+    steps: Array<{ x: number; y: number }>,
     opts: { isChasing: boolean } = { isChasing: false }
   ): boolean {
     const { map, state } = this.worldManager.getMap(character.map);
@@ -142,8 +142,8 @@ export class MovementHelper extends BaseService {
 
   private handleInteractable(player: Player, obj): void {
     switch (obj.type) {
-      case 'Fall':     return this.handleTeleport(player, obj, true);
-      case 'Teleport': return this.handleTeleport(player, obj);
+    case 'Fall':     return this.handleTeleport(player, obj, true);
+    case 'Teleport': return this.handleTeleport(player, obj);
 
       // TODO: lockers
       // case 'Locker':   return this.handleLocker(player, obj);

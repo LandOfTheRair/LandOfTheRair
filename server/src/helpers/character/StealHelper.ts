@@ -28,7 +28,7 @@ export class StealHelper extends BaseService {
     // if they have nothing to steal, we bail
     if (target.items.sack.items.length === 0 && targetGold <= 0) {
       this.game.characterHelper.addAgro(char, target, 1);
-      this.sendMessage(char, target, `You can't seem to find anything to take!`, true);
+      this.sendMessage(char, target, 'You can\'t seem to find anything to take!', true);
       return;
     }
 

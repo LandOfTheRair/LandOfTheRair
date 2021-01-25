@@ -7,19 +7,13 @@ import { BaseService } from '../../../models/BaseService';
 const holidayChecker = {
 
   // takes place in October, all month
-  Halloween: () => {
-    return new Date().getMonth() === 9;
-  },
+  Halloween: () => new Date().getMonth() === 9,
 
   // takes place in November, all month
-  Thanksgiving: () => {
-    return new Date().getMonth() === 10;
-  },
+  Thanksgiving: () => new Date().getMonth() === 10,
 
   // takes place in December, all month
-  Christmas: () => {
-    return new Date().getMonth() === 11;
-  }
+  Christmas: () => new Date().getMonth() === 11
 };
 
 const holidayDescriptions = {

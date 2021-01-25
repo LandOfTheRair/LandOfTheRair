@@ -21,9 +21,17 @@ export class Stairs extends MacroCommand {
 
     const { teleportMap, teleportX, teleportY, requireParty, subscriberOnly, requireHoliday } = interactable.properties;
 
-    if (subscriberOnly && !this.game.subscriptionHelper.isPlayerSubscribed(player))  return this.sendMessage(player, 'You found an easter egg! Sadly, it\'s spoiled.');
-    if (requireParty && !player.partyName)                                           return this.sendMessage(player, 'You must gather your party before venturing forth.');
-    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday))        return this.sendMessage(player, `That location is only seasonally open during "${requireHoliday}"!`);
+    if (subscriberOnly && !this.game.subscriptionHelper.isPlayerSubscribed(player)) {
+      return this.sendMessage(player, 'You found an easter egg! Sadly, it\'s spoiled.');
+    }
+
+    if (requireParty && !player.partyName) {
+      return this.sendMessage(player, 'You must gather your party before venturing forth.');
+    }
+
+    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
+      return this.sendMessage(player, `That location is only seasonally open during "${requireHoliday}"!`);
+    }
 
     this.sendMessage(player, `You ${interactable.type === 'StairsUp' ? 'ascend' : 'descend'} the staircase.`, SoundEffect.EnvStairs);
 

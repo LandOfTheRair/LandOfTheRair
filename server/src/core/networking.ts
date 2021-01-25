@@ -5,11 +5,11 @@ import { parentPort } from 'worker_threads';
 
 import fastify from 'fastify';
 import rateLimit from 'fastify-rate-limit';
-import * as HTTPRoutes from '../http';
 
 import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
+import * as HTTPRoutes from '../http';
 import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 
 export class WebsocketWorker {
@@ -33,11 +33,11 @@ export class WebsocketWorker {
     });
 
     process.on('unhandledRejection', (error) => {
-      console.error('NET', `Unhandled Rejection`, error);
+      console.error('NET', 'Unhandled Rejection', error);
     });
 
     process.on('uncaughtException', (error) => {
-      console.error('NET', `Uncaught Exception`, error);
+      console.error('NET', 'Uncaught Exception', error);
     });
 
   }
@@ -110,12 +110,12 @@ export class WebsocketWorker {
 
         if (ignoredMessages.includes(err.message)) return;
 
-        console.error('NET', `[Socket Error]`, err);
+        console.error('NET', '[Socket Error]', err);
       });
     });
 
     wsServer.on('error', (err) => {
-      console.error('NET', `[WS Server Error]`, err);
+      console.error('NET', '[WS Server Error]', err);
     });
 
     this.watchForDeadConnections();

@@ -14,7 +14,7 @@ export class Spell implements BaseSpell {
     this.game.messageHelper.sendLogMessageToPlayer(character, message, messageTypes);
   }
 
-  public formatMessage(message: string, args: { target?: string, caster?: string }): string {
+  public formatMessage(message: string, args: { target?: string; caster?: string }): string {
     return message
       .split('%target').join(args.target ?? 'somebody')
       .split('%caster').join(args.caster ?? 'somebody');
@@ -49,7 +49,9 @@ export class Spell implements BaseSpell {
     if (!skills[caster.baseClass]) {
 
       if (caster.items.equipment[ItemSlot.RightHand]) {
-        const { type, secondaryType } = this.game.itemHelper.getItemProperties(caster.items.equipment[ItemSlot.RightHand], ['type', 'secondaryType']);
+        const { type, secondaryType } = this.game.itemHelper.getItemProperties(
+          caster.items.equipment[ItemSlot.RightHand], ['type', 'secondaryType']
+        );
         skillsToAverage = [type, secondaryType];
       } else {
         skillsToAverage = [Skill.Martial];

@@ -20,13 +20,13 @@ export class SuccorerBehavior implements IAIBehavior {
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
-          title: `Get Succor Fruit?`,
-          content: `Would you like to take a SUCCOR fruit?`,
+          title: 'Get Succor Fruit?',
+          content: 'Would you like to take a SUCCOR fruit?',
           extraData: { npcSprite: npc.sprite, okText: 'Yes, take!', cancelText: 'No, not now' },
-          okAction: { command: `!privatesay`, args: `${npc.uuid}, succor` }
+          okAction: { command: '!privatesay', args: `${npc.uuid}, succor` }
         });
 
-        return `Would you like to take a SUCCOR fruit?`;
+        return 'Would you like to take a SUCCOR fruit?';
       });
 
     parser.addCommand('succor')
@@ -47,7 +47,7 @@ export class SuccorerBehavior implements IAIBehavior {
 
         game.characterHelper.setRightHand(player, succorItem);
 
-        return `You take a succor fruit!`;
+        return 'You take a succor fruit!';
       });
   }
 

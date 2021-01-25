@@ -18,11 +18,11 @@ export class GameloopWorker {
     });
 
     process.on('unhandledRejection', (error) => {
-      console.error('GAME', `Unhandled Rejection`, error);
+      console.error('GAME', 'Unhandled Rejection', error);
     });
 
     process.on('uncaughtException', (error) => {
-      console.error('GAME', `Uncaught Exception`, error);
+      console.error('GAME', 'Uncaught Exception', error);
     });
 
     console.log('GAME', 'Creating WSCMD...');
@@ -38,7 +38,7 @@ export class GameloopWorker {
   private async handleMessage(msg) {
     const { socketId, type, ...args } = msg;
     if (!type) {
-      this.emit(socketId, { type: GameServerResponse.Error, error: `You must specify a \`type\` when sending commands.` });
+      this.emit(socketId, { type: GameServerResponse.Error, error: 'You must specify a `type` when sending commands.' });
       return;
     }
 

@@ -15,9 +15,7 @@ export class CrierBehavior implements IAIBehavior {
 
     parser.addCommand('hello')
       .setSyntax(['hello'])
-      .setLogic(async () => {
-        return `Hello, adventurer! I love yelling out helpful things, feel free to stick around!`;
-      });
+      .setLogic(async () => 'Hello, adventurer! I love yelling out helpful things, feel free to stick around!');
   }
 
   tick(game: Game, npc: INPC) {

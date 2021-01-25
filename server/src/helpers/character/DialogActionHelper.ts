@@ -281,7 +281,9 @@ export class DialogActionHelper extends BaseService {
 
     // if we have the quest and it's complete, we send completion, and give rewards
     if (this.game.questHelper.isQuestComplete(player, quest)) {
-      const compMsg = this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`);
+      const compMsg = this.game.questHelper.formatQuestMessage(
+        player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`
+      );
       this.game.questHelper.completeQuest(player, quest);
 
       return { messages: [compMsg], shouldContinue: false };
@@ -293,7 +295,7 @@ export class DialogActionHelper extends BaseService {
     // if complete, do complete
 
     return { messages: [
-      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || `You're not done with this quest yet.`)
+      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
     ], shouldContinue: false };
   }
 

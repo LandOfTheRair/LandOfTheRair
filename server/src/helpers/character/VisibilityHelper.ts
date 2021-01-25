@@ -53,12 +53,10 @@ export class VisibilityHelper extends BaseService {
     } else {
       map.fovCalculator.compute(
         character.x, character.y, dist,
-      (x, y) => {
-        return get(affected, [x - character.x, y - character.y]);
-      },
-      (x, y) => {
-        setWith(affected, [x - character.x, y - character.y], true, Object);
-      });
+        (x, y) => get(affected, [x - character.x, y - character.y]),
+        (x, y) => {
+          setWith(affected, [x - character.x, y - character.y], true, Object);
+        });
 
       /*
       if(!character.hasEffect('DarkVision')) {

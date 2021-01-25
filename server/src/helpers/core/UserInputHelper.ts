@@ -8,7 +8,7 @@ export class UserInputHelper extends BaseService {
   public init() {}
 
   // make sure numbers are cleaned up appropriately because js lets you do some dumb shit
-  public cleanNumber(num: number|string, defaultValue = 0, opts: { round?: boolean, floor?: boolean, abs?: boolean } = {}): number {
+  public cleanNumber(num: number|string, defaultValue = 0, opts: { round?: boolean; floor?: boolean; abs?: boolean } = {}): number {
 
     num = +num;
     if (isNaN(num)) return defaultValue;

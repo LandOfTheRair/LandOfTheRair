@@ -76,7 +76,7 @@ export class GroundManager extends BaseService {
   }
 
   tick(timer) {
-    timer.startTimer(`Ground`);
+    timer.startTimer('Ground');
 
     this.currentTick++;
     if ((this.currentTick % this.SAVE_TICKS) === 0) {
@@ -87,12 +87,12 @@ export class GroundManager extends BaseService {
 
     // expire the ground every so often
     if ((this.currentTick % this.EXPIRE_TICKS) === 0) {
-      timer.startTimer(`Ground Expire`);
+      timer.startTimer('Ground Expire');
       this.checkGroundExpire(this.game.worldManager.currentlyActiveMaps);
-      timer.stopTimer(`Ground Expire`);
+      timer.stopTimer('Ground Expire');
     }
 
-    timer.stopTimer(`Ground`);
+    timer.stopTimer('Ground');
   }
 
   public getMapSpawners(mapName: string): ISerializableSpawner[] {

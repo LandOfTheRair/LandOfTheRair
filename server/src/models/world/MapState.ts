@@ -4,11 +4,11 @@ import RBush from 'rbush';
 import { extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
 import { Game } from '../../helpers';
-import { WorldMap } from './Map';
 
 import { Alignment, Allegiance, Hostility, ICharacter, IGround,
   IGroundItem, INPC, IPlayer, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
 import { Player } from '../orm';
+import { WorldMap } from './Map';
 import { Spawner } from './Spawner';
 
 const PLAYER_KEYS = [
@@ -154,12 +154,10 @@ export class MapState {
 
   // get all possible serializable spawners for quit
   public getSerializableSpawners(): ISerializableSpawner[] {
-    return this.spawners.filter(x => x.canBeSaved).map(s => {
-      return {
-        ...s.pos,
-        currentTick: s.currentTickForSave
-      };
-    });
+    return this.spawners.filter(x => x.canBeSaved).map(s => ({
+      ...s.pos,
+      currentTick: s.currentTickForSave
+    }));
   }
 
   // check if door is open
@@ -231,7 +229,7 @@ export class MapState {
   // query functions
 
   // get all PLAYERS from the quadtree
-  private getPlayersFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): Player[] {
+  private getPlayersFromQuadtrees(ref: { x: number; y: number }, radius: number = 0): Player[] {
     return this.players
       .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
       .map(({ uuid }) => this.playersByUUID[uuid])
@@ -239,7 +237,7 @@ export class MapState {
   }
 
   // get all NPCS from the quadtree
-  private getNPCsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): INPC[] {
+  private getNPCsFromQuadtrees(ref: { x: number; y: number }, radius: number = 0): INPC[] {
     return this.npcs
       .search({ minX: ref.x - radius, maxX: ref.x + radius, minY: ref.y - radius, maxY: ref.y + radius })
       .map(({ uuid }) => this.npcsByUUID[uuid])
@@ -247,7 +245,7 @@ export class MapState {
   }
 
   // get all PLAYERS AND NPCS from the quadtree
-  private getAllTargetsFromQuadtrees(ref: { x: number, y: number }, radius: number = 0): ICharacter[] {
+  private getAllTargetsFromQuadtrees(ref: { x: number; y: number }, radius: number = 0): ICharacter[] {
     return [
       ...this.getPlayersFromQuadtrees(ref, radius),
       ...this.getNPCsFromQuadtrees(ref, radius)
@@ -255,7 +253,7 @@ export class MapState {
   }
 
   // get all PLAYERS in range (simple)
-  public getAllPlayersInRange(ref: { x: number, y: number }, radius: number): Player[] {
+  public getAllPlayersInRange(ref: { x: number; y: number }, radius: number): Player[] {
     return this.getPlayersFromQuadtrees(ref, radius);
   }
 
@@ -269,7 +267,7 @@ export class MapState {
   }
 
   // get PLAYERS in range (query, but able to use args from above)
-  public getAllInRangeRaw(ref: { x: number, y: number }, radius: number, except: string[] = []): ICharacter[] {
+  public getAllInRangeRaw(ref: { x: number; y: number }, radius: number, except: string[] = []): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
       .filter(char => char && !except.includes(char.uuid));
   }
@@ -395,10 +393,10 @@ export class MapState {
 
     // update players
     const nearbyNPCs = this.npcs
-    .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
-    .filter(p => this.game.visibilityHelper.canSeeThroughStealthOf(player, this.npcsByUUID[p.uuid]))
-    .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
-    .filter(Boolean);
+      .search({ minX: player.x - 4, maxX: player.x + 4, minY: player.y - 4, maxY: player.y + 4 })
+      .filter(p => this.game.visibilityHelper.canSeeThroughStealthOf(player, this.npcsByUUID[p.uuid]))
+      .map(({ uuid }) => pick(this.npcsByUUID[uuid], NPC_KEYS))
+      .filter(Boolean);
 
     state.npcs = keyBy(nearbyNPCs, 'uuid');
   }
@@ -462,7 +460,7 @@ export class MapState {
   }
 
   // generate a radius that will notify a player anytime something there changes (npc, player, ground, door state)
-  private generateKnowledgeRadius(player: { uuid: string, x: number, y: number }, doesKnow: boolean) {
+  private generateKnowledgeRadius(player: { uuid: string; x: number; y: number }, doesKnow: boolean) {
     const knowledgeRadius = 8;
 
     for (let x = player.x - knowledgeRadius; x <= player.x + knowledgeRadius; x++) {

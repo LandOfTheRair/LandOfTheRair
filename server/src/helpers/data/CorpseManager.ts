@@ -8,7 +8,7 @@ export class CorpseManager extends BaseService {
 
   private corpseRefs: Record<string, ISimpleItem> = {};                                  // corpseuuid:corpseitem
   private corpsePlayers: Record<string, string> = {};                                    // the record of username:corpseuuid
-  private corpsePositions: Record<string, { x: number, y: number, map: string }> = {};   // corpseuuid:map,x,y
+  private corpsePositions: Record<string, { x: number; y: number; map: string }> = {};   // corpseuuid:map,x,y
   private corpseExpiration: Record<string, number> = {};                                 // corpseuuid:rottime
 
   public async init() {}

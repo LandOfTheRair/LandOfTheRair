@@ -16,14 +16,17 @@ export function Property(options?: PropertyOptions) {
     // temporary props are not sent to client or are they saved, so they can't be patched
     if (!options.persist && options.hidden) {
       Object.defineProperty(target, propertyName, {
-        get() { return undefined; },
+        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+        get() {
+          return undefined;
+        },
         set(this: any, val: any) {
-            Object.defineProperty(this, propertyName, {
-                value: val,
-                writable: true,
-                enumerable: false,
-                configurable: true
-            });
+          Object.defineProperty(this, propertyName, {
+            value: val,
+            writable: true,
+            enumerable: false,
+            configurable: true
+          });
         },
         enumerable: false
       });

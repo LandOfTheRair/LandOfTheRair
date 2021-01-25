@@ -56,7 +56,7 @@ export class TraitHelper extends BaseService {
           traitRef.requires
             ? this.traitLevel(player, traitRef.requires) >= this.getTraitInTree(player.baseClass, traitRef.requires).maxLevel
             : true
-          );
+        );
   }
 
   // get all of the learned traits, used mostly for recalculating the trait hash

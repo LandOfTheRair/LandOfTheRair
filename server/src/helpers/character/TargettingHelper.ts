@@ -63,7 +63,7 @@ export class TargettingHelper extends BaseService {
 
     // if my hostility is based on faction, and either the target or my faction is hostile to each other, yes
     if ((me as INPC).hostility === Hostility.Faction && (
-         isHostileTo(me, target.allegiance)
+      isHostileTo(me, target.allegiance)
       || isHostileTo(target, me.allegiance))) return true;
 
     // if we are of the same allegiance, no hostility

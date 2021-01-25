@@ -1,9 +1,9 @@
 
+import path from 'path';
 import { Injectable } from 'injection-js';
 
 import fs from 'fs-extra';
 import { zipObject } from 'lodash';
-import path from 'path';
 import readdir from 'recursive-readdir';
 
 import { ICharacter, ObjectType } from '../../interfaces';
@@ -53,7 +53,7 @@ export class WorldManager extends BaseService {
 
     const allMaps = await readdir('content/maps');
 
-    const loadedMaps: Array<{ name: string, map: any }> = await Promise.all(
+    const loadedMaps: Array<{ name: string; map: any }> = await Promise.all(
       allMaps.map(async x => ({ name: path.basename(x, '.json'), map: await fs.readJson(x) }))
     );
 
@@ -74,7 +74,7 @@ export class WorldManager extends BaseService {
     this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
   }
 
-  public getMap(mapName: string): { map: WorldMap, state: MapState } {
+  public getMap(mapName: string): { map: WorldMap; state: MapState } {
     return {
       map: this.instances[mapName] || this.maps[mapName],
       state: this.mapStates[mapName]
@@ -113,7 +113,7 @@ export class WorldManager extends BaseService {
     this.addCharacter(player);
     this.mapStates[mapName].addPlayer(player);
 
-    this.game.logger.log(`Map:Join`, `${player.name} joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`);
+    this.game.logger.log('Map:Join', `${player.name} joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`);
 
     // TODO: join instanced map
   }
@@ -148,7 +148,7 @@ export class WorldManager extends BaseService {
       this.game.groundManager.saveSingleGround(oldMap);
     }
 
-    this.game.logger.log(`Map:Leave`, `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
+    this.game.logger.log('Map:Leave', `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
   }
 
   public steadyTick(timer) {

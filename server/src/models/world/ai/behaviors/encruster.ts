@@ -24,7 +24,10 @@ export class EncrusterBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (!rightHand) return 'You do not have anything in your right hand! Either hold a gem and I can tell you more about it, or hold a gem and an item and I can ENCRUST it for you.';
+        if (!rightHand) {
+          return `You do not have anything in your right hand!
+                  Either hold a gem and I can tell you more about it, or hold a gem and an item and I can ENCRUST it for you.`;
+        }
 
         const {
           itemClass: rightItemClass,
@@ -34,18 +37,18 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if (rightItemClass === ItemClass.Gem) {
 
-          let message = ``;
+          let message = '';
 
-          if (!rightEncrustGive) message = `This gem has no encrustable qualities. You can encrust it anyway, of course.`;
+          if (!rightEncrustGive) message = 'This gem has no encrustable qualities. You can encrust it anyway, of course.';
 
           if (rightEncrustGive?.stats && rightEncrustGive?.strikeEffect) {
-            message = `It looks like this gem gives you an attribute bonus and allows you to impart some effect onto your weapon.`;
+            message = 'It looks like this gem gives you an attribute bonus and allows you to impart some effect onto your weapon.';
 
           } else if (rightEncrustGive?.stats) {
-            message = `It looks like this gem gives you an attribute bonus.`;
+            message = 'It looks like this gem gives you an attribute bonus.';
 
           } else if (rightEncrustGive?.strikeEffect) {
-            message = `It looks like this gem allows you to impart some effect onto your weapon.`;
+            message = 'It looks like this gem allows you to impart some effect onto your weapon.';
           }
 
           if (rightRequirements?.level) {
@@ -60,7 +63,8 @@ export class EncrusterBehavior implements IAIBehavior {
             }
           }
 
-          message = `${message} You can slot this item into the following slots: ${rightEncrustGive?.slots.map(s => s.toUpperCase()).join(', ')}.`;
+          message = `${message}
+          You can slot this item into the following slots: ${rightEncrustGive?.slots.map(s => s.toUpperCase()).join(', ')}.`;
 
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
@@ -82,10 +86,10 @@ export class EncrusterBehavior implements IAIBehavior {
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
-          title: `Encrust Gem Into Item?`,
-          content: `Would you like to encrust the gem into the item in your right hand?`,
+          title: 'Encrust Gem Into Item?',
+          content: 'Would you like to encrust the gem into the item in your right hand?',
           extraData: { npcSprite: npc.sprite, okText: 'Yes, encrust!', cancelText: 'No, not now' },
-          okAction: { command: `!privatesay`, args: `${npc.uuid}, encrust` }
+          okAction: { command: '!privatesay', args: `${npc.uuid}, encrust` }
         });
 
         return `Hello, ${player.name}! Would you like to ENCRUST the item in your right hand?`;
@@ -115,7 +119,7 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if (leftItemClass !== ItemClass.Gem) return 'You are not holding a gem in your left hand!';
 
-        if ((leftRequirements?.level ?? 0) > player.level) return `You aren't strong enough to use this gem yet!`;
+        if ((leftRequirements?.level ?? 0) > player.level) return 'You aren\'t strong enough to use this gem yet!';
 
         const slots = leftEncrustGive?.slots ?? [];
         const shouldPass = (slots.includes('weapon') && WeaponClasses.includes(itemClass))

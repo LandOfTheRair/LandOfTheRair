@@ -31,9 +31,15 @@ export abstract class MacroCommand implements IMacroCommand {
 
 export abstract class SkillCommand extends MacroCommand {
 
-  mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) { return 0; }
-  hpCost(caster?: ICharacter) { return 0; }
-  range(caster?: ICharacter) { return 0; }
+  mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) {
+    return 0;
+  }
+  hpCost(caster?: ICharacter) {
+    return 0;
+  }
+  range(caster?: ICharacter) {
+    return 0;
+  }
 
   // whether or not we can use the skill
   canUse(user: ICharacter, target: ICharacter): boolean {
@@ -209,7 +215,9 @@ export class SpellCommand extends SkillCommand {
     };
 
     if (caster && spellData.castTime) {
-      this.game.messageHelper.sendLogMessageToRadius(caster, 4, { message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...` });
+      this.game.messageHelper.sendLogMessageToRadius(caster, 4, {
+        message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...`
+      });
       caster.spellChannel = { ticks: spellData.castTime, callback: doSpellCast };
       return;
     }

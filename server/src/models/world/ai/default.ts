@@ -2,7 +2,8 @@
 import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
-import { Direction, Hostility, IAI, ICharacter, INPC, ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
+import { Direction, Hostility, IAI, ICharacter, INPC,
+  ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
 import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
 import { MapState } from '../MapState';
@@ -10,12 +11,12 @@ import { Spawner } from '../Spawner';
 
 export class DefaultAIBehavior implements IAI {
 
-  private path: Array<{ x: number, y: number }>;
+  private path: Array<{ x: number; y: number }>;
   private randomWalkRadius: number;
   private leashRadius: number;
-  private pathDisrupted: { x: number, y: number } | null = null;
+  private pathDisrupted: { x: number; y: number } | null = null;
   private currentTick = 0;
-  private startLoc: { x: number, y: number };
+  private startLoc: { x: number; y: number };
 
   // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
@@ -316,7 +317,7 @@ export class DefaultAIBehavior implements IAI {
   }
 
 
-  private moveTowards(target: { x: number, y: number }, moveRate: number) {
+  private moveTowards(target: { x: number; y: number }, moveRate: number) {
     const npc = this.npc;
     const oldX = npc.x;
     const oldY = npc.y;

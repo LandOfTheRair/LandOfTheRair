@@ -35,13 +35,13 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) combatTicks = 0;
   @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_UNSAVED_SHARED()) spellCooldowns: Record<string, number>;
-  @Property(PROP_UNSAVED_SHARED()) spellChannel: { ticks: number, callback: () => void };
+  @Property(PROP_UNSAVED_SHARED()) spellChannel: { ticks: number; callback: () => void };
   @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
 
   // temporary props
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
-  @Property(PROP_TEMPORARY()) actionQueue: { fast: CommandCallback[], slow: CommandCallback[] } = { fast: [], slow: [] };
+  @Property(PROP_TEMPORARY()) actionQueue: { fast: CommandCallback[]; slow: CommandCallback[] } = { fast: [], slow: [] };
   @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) partyName = '';
@@ -85,7 +85,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() learnedSpells: { [spellName: string]: LearnedSpell };
 
-  @Property() respawnPoint: { x: number, y: number, map: string };
+  @Property() respawnPoint: { x: number; y: number; map: string };
 
   @Property() dailyItems: Record<string, number>;
 }

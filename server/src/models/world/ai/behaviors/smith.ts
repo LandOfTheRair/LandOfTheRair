@@ -19,7 +19,8 @@ export class SmithBehavior implements IAIBehavior {
 
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
-        const text = `Hello, ${player.name}! I am a Smith. I can repair your weapons and armor - just hold them in your right hand and say REPAIR!
+        const text = `Hello, ${player.name}! I am a Smith.
+        I can repair your weapons and armor - just hold them in your right hand and say REPAIR!
         Or, you can tell me REPAIRALL and I'll repair everything you're wearing and holding.
         `;
 

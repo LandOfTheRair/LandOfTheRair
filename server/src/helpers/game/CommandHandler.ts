@@ -90,7 +90,7 @@ export class CommandHandler extends BaseService {
     }
 
     if (this.game.characterHelper.isDead(player) && !commandRef.canUseWhileDead) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: `You can't do that while you're dead!` });
+      this.messageHelper.sendLogMessageToPlayer(player, { message: 'You can\'t do that while you\'re dead!' });
       return;
     }
 
@@ -105,12 +105,12 @@ export class CommandHandler extends BaseService {
     }
 
     if (commandRef.isGMCommand && !player.isGM) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: `You're not a GM.` });
+      this.messageHelper.sendLogMessageToPlayer(player, { message: 'You\'re not a GM.' });
       return;
     }
 
     if (commandRef.isGMCommand) {
-      this.game.logger.log(`GMCommand`, `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`);
+      this.game.logger.log('GMCommand', `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`);
     }
 
     // check if we need to learn a spell before using it

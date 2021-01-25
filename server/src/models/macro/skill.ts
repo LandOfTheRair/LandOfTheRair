@@ -9,10 +9,18 @@ export class MacroSkill extends MacroCommand implements IMacroSkill {
   targetsFriendly = false;
   requiresLearn = false;
 
-  range(char: ICharacter) { return 0; }
-  cost(char: ICharacter) { return 0; }
-  modifyCost(char: ICharacter, cost: number) { return cost; }
-  canUse(char: ICharacter, target: ICharacter) { return true; }
+  range(char: ICharacter) {
+    return 0;
+  }
+  cost(char: ICharacter) {
+    return 0;
+  }
+  modifyCost(char: ICharacter, cost: number) {
+    return cost;
+  }
+  canUse(char: ICharacter, target: ICharacter) {
+    return true;
+  }
 
   use(char: ICharacter, target: ICharacter, opts?: any) {}
 

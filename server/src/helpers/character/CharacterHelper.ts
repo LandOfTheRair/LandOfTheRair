@@ -49,7 +49,7 @@ export class CharacterHelper extends BaseService {
   // check if this player is holding something
   public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
     const ref = char.items.equipment[`${hand}Hand`];
-    return (ref && ref.name === item && (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username));
+    return !!(ref && ref.name === item && (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username));
   }
 
   public hasHeldItemInEitherHand(char: ICharacter, item: string): boolean {
@@ -93,7 +93,9 @@ export class CharacterHelper extends BaseService {
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { binds, desc, tellsBind, itemClass, owner, equipEffect } = this.game.itemHelper.getItemProperties(item, ['binds', 'tellsBind', 'itemClass', 'owner', 'desc', 'equipEffect']);
+      const { binds, desc, tellsBind, itemClass, owner, equipEffect } = this.game.itemHelper.getItemProperties(item,
+        ['binds', 'tellsBind', 'itemClass', 'owner', 'desc', 'equipEffect']
+      );
       if (itemClass === ItemClass.Corpse) return;
 
       if (equipEffect) {
@@ -102,7 +104,9 @@ export class CharacterHelper extends BaseService {
 
       if (binds && (char as IPlayer).username && !owner) {
         this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
-        this.game.messageHelper.sendLogMessageToPlayer(char, { message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.` });
+        this.game.messageHelper.sendLogMessageToPlayer(char, {
+          message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`
+        });
 
         if (tellsBind) {
           this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `*** ${char.name} has looted ${desc}.` });
@@ -463,12 +467,12 @@ export class CharacterHelper extends BaseService {
   public getStealthPenalty(char: ICharacter): number {
 
     const leftHandClass = char.items.equipment[ItemSlot.LeftHand]
-                        ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
-                        : null;
+      ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
+      : null;
 
     const rightHandClass = char.items.equipment[ItemSlot.RightHand]
-                         ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.RightHand], 'itemClass')
-                         : null;
+      ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.RightHand], 'itemClass')
+      : null;
 
     const totalReduction = (HideReduction[leftHandClass]) || 0 + (HideReduction[rightHandClass] || 0);
 

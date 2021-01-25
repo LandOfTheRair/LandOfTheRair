@@ -21,17 +21,17 @@ export class Break extends MacroCommand {
     // TODO: check if item has a destroy effect?
 
     switch (breakItem) {
-      case 'left':
-        this.game.characterHelper.setLeftHand(player, undefined);
-        message = `You break the item in your left hand!`;
-        break;
-      case 'right':
-        this.game.characterHelper.setRightHand(player, undefined);
-        message = `You break the item in your right hand!`;
-        break;
-      default:
-        message = 'That is not one of your hands!';
-        break;
+    case 'left':
+      this.game.characterHelper.setLeftHand(player, undefined);
+      message = 'You break the item in your left hand!';
+      break;
+    case 'right':
+      this.game.characterHelper.setRightHand(player, undefined);
+      message = 'You break the item in your right hand!';
+      break;
+    default:
+      message = 'That is not one of your hands!';
+      break;
     }
     this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
   }

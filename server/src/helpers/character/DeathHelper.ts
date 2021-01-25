@@ -12,7 +12,7 @@ export class DeathHelper extends BaseService {
   public init() {}
 
   // revive the player from their death
-  public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number, y?: number, map?: string, shouldRot?: boolean } = {}): void {
+  public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number; y?: number; map?: string; shouldRot?: boolean } = {}): void {
 
     // store old pos to look up corpse
     const oldX = player.x;

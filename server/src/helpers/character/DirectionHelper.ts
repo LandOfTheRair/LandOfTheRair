@@ -48,21 +48,21 @@ export class DirectionHelper extends BaseService {
   getXYFromDir(dir: Direction) {
     const checkDir = dir.toUpperCase();
     switch (checkDir) {
-      case Direction.North:     return { x: 0,   y: -1 };
-      case Direction.East:      return { x: 1,   y: 0 };
-      case Direction.South:     return { x: 0,   y: 1 };
-      case Direction.West:      return { x: -1,  y: 0 };
+    case Direction.North:     return { x: 0,   y: -1 };
+    case Direction.East:      return { x: 1,   y: 0 };
+    case Direction.South:     return { x: 0,   y: 1 };
+    case Direction.West:      return { x: -1,  y: 0 };
 
-      case Direction.Northwest: return { x: -1,  y: -1 };
-      case Direction.Northeast: return { x: 1,   y: -1 };
-      case Direction.Southwest: return { x: -1,  y: 1 };
-      case Direction.Southeast: return { x: 1,   y: 1 };
+    case Direction.Northwest: return { x: -1,  y: -1 };
+    case Direction.Northeast: return { x: 1,   y: -1 };
+    case Direction.Southwest: return { x: -1,  y: 1 };
+    case Direction.Southeast: return { x: 1,   y: 1 };
 
-      default:                  return { x: 0,   y: 0 };
+    default:                  return { x: 0,   y: 0 };
     }
   }
 
-  distFrom(refPoint: { x: number, y: number }, checkPoint: { x: number, y: number }, vector?: { x: number, y: number }): number {
+  distFrom(refPoint: { x: number; y: number }, checkPoint: { x: number; y: number }, vector?: { x: number; y: number }): number {
     return distFrom(refPoint, checkPoint, vector);
   }
 

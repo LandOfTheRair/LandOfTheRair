@@ -14,7 +14,7 @@ export class RestoreCommand extends MacroCommand {
       return;
     }
 
-    this.sendMessage(player, `Your soul departs the scene of it's death and returns to the mortal realm...`);
+    this.sendMessage(player, 'Your soul departs the scene of it\'s death and returns to the mortal realm...');
 
     this.game.deathHelper.restore(player);
   }

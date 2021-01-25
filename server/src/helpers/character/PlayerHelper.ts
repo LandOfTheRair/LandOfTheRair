@@ -194,7 +194,7 @@ export class PlayerHelper extends BaseService {
   }
 
   // reset swim level, fov, region desc
-  public resetStatus(player: Player, opts: { ignoreMessages?: boolean, sendFOV?: boolean } = { sendFOV: true }) {
+  public resetStatus(player: Player, opts: { ignoreMessages?: boolean; sendFOV?: boolean } = { sendFOV: true }) {
 
     this.visibilityHelper.calculatePlayerFOV(player, opts.sendFOV);
 

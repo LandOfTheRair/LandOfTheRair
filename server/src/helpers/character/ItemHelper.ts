@@ -163,7 +163,9 @@ export class ItemHelper extends BaseService {
 
     const canGetBenefits = this.canGetBenefitsFromItem(player, item);
     if (!canGetBenefits) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
-    if (!this.tryToUseItem(player, item, source)) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
+    if (!this.tryToUseItem(player, item, source)) {
+      return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
+    }
 
     let shouldRemove = false;
     const totalOunces = ounces ?? 0;
@@ -250,7 +252,7 @@ export class ItemHelper extends BaseService {
     const readPage = (bookPages || [])[page];
 
     if (!readPage) {
-      this.game.messageHelper.sendSimpleMessage(player, `This book has no pages to read!`);
+      this.game.messageHelper.sendSimpleMessage(player, 'This book has no pages to read!');
       return;
     }
 
@@ -270,19 +272,19 @@ export class ItemHelper extends BaseService {
 
   public useRNGBox(player: IPlayer, box: ISimpleItem, source: ItemSlot): void {
     if (!this.game.itemHelper.isOwnedBy(player, box)) {
-      this.game.messageHelper.sendSimpleMessage(player, `This box isn't yours to open!`);
+      this.game.messageHelper.sendSimpleMessage(player, 'This box isn\'t yours to open!');
       return;
     }
 
     const { containedItems } = this.game.itemHelper.getItemProperties(box, ['containedItems']);
     if (!containedItems || containedItems.length === 0) {
-      this.game.messageHelper.sendSimpleMessage(player, `The box was empty!`);
+      this.game.messageHelper.sendSimpleMessage(player, 'The box was empty!');
       return;
     }
 
     const choice = this.game.lootHelper.chooseWithReplacement(containedItems, 1)[0];
     if (choice === 'none') {
-      this.game.messageHelper.sendSimpleMessage(player, `The box was empty! Better luck next time!`);
+      this.game.messageHelper.sendSimpleMessage(player, 'The box was empty! Better luck next time!');
       return;
     }
 

@@ -18,10 +18,10 @@ export class TannerBehavior implements IAIBehavior {
     const tanLevel = maxTanLevel ?? 1;
 
     this.messages = [
-      `You kill 'em, we clean 'em!`,
-      `Come on over and get all your hides skinned!`,
-      `Any scales are better than chain!`,
-      `Finest robes and armor made from your kills!`
+      'You kill \'em, we clean \'em!',
+      'Come on over and get all your hides skinned!',
+      'Any scales are better than chain!',
+      'Finest robes and armor made from your kills!'
     ];
 
     parser.addCommand('hello')
@@ -34,10 +34,10 @@ export class TannerBehavior implements IAIBehavior {
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
-          title: `Tan Item?`,
-          content: `Would you like to tan the item in your right hand?`,
+          title: 'Tan Item?',
+          content: 'Would you like to tan the item in your right hand?',
           extraData: { npcSprite: npc.sprite, okText: 'Yes, tan!', cancelText: 'No, not now' },
-          okAction: { command: `!privatesay`, args: `${npc.uuid}, tan` }
+          okAction: { command: '!privatesay', args: `${npc.uuid}, tan` }
         });
 
         return `Hello, ${player.name}! Would you like to TAN the item in your right hand?`;
@@ -60,11 +60,11 @@ export class TannerBehavior implements IAIBehavior {
           tansFor
         } = game.itemHelper.getItemProperties(rightHand, ['playersHeardDeath', 'corpseLevel', 'tansFor']);
 
-        if (!tansFor) return `I can't do anything with that!`;
+        if (!tansFor) return 'I can\'t do anything with that!';
 
-        if ((corpseLevel ?? 0) > tanLevel) return `I don't know what to do with that!`;
+        if ((corpseLevel ?? 0) > tanLevel) return 'I don\'t know what to do with that!';
 
-        if (!playersHeardDeath?.includes(player.uuid)) return `I don't think you had anything to do with this kill!`;
+        if (!playersHeardDeath?.includes(player.uuid)) return 'I don\'t think you had anything to do with this kill!';
 
         const item = game.itemCreator.getSimpleItem(tansFor);
         game.itemHelper.setOwner(player, item);

@@ -104,7 +104,10 @@ export class InventoryHelper extends BaseService {
 
     // tell them they sold the item and give em the money
     this.game.currencyHelper.gainCurrency(player, totalSellValue, Currency.Gold);
-    this.game.messageHelper.sendSimpleMessage(player, `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`);
+    this.game.messageHelper.sendSimpleMessage(
+      player,
+      `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`
+    );
   }
 
   // buyback functions

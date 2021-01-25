@@ -54,9 +54,7 @@ export class MetadataStorage {
     const entityName = this.getTypeForEntity(object);
     if (!entityName) return null;
 
-    return pickBy(object, (value, key) => {
-      return this.persistPropertiesByEntity[entityName][key];
-    });
+    return pickBy(object, (value, key) => this.persistPropertiesByEntity[entityName][key]);
   }
 
 }

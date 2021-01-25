@@ -36,8 +36,8 @@ export class TeleportHelper extends BaseService {
   // teleport a player somewhere
   public teleport(
     player: Player,
-    { x, y, map, zChange = 0, zSet = 0, fromLeaveMap = false }:
-      { x: number, y: number, map?: string, zChange?: number, zSet?: number, fromLeaveMap?: boolean }
+    { x, y, map, zChange = 0, zSet = 0 }:
+    { x: number; y: number; map?: string; zChange?: number; zSet?: number }
   ) {
 
     // if we're not changing maps, move on this one

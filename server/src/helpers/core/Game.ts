@@ -118,7 +118,7 @@ export class Game {
       'commandHandler', 'messageHelper', 'bonusHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
       'discordHelper'
-  ];
+    ];
 
     for (const i of initOrder) {
       this.logger.log('Game:Init', `Initializing ${i}...`);
@@ -142,10 +142,10 @@ export class Game {
           this.playerManager.saveAllPlayers(),
           this.groundManager.saveGround()
         ])
-        .then(() => {
-          this.logger.log('Game:Exit', 'Finished save of players and ground.');
-          process.exit(0);
-        });
+          .then(() => {
+            this.logger.log('Game:Exit', 'Finished save of players and ground.');
+            process.exit(0);
+          });
       });
     });
   }

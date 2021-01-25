@@ -21,7 +21,7 @@ export class Identify extends Spell {
 
     spellCastArgs.callbacks.emit({
       type: GameServerResponse.SendAlert,
-      title: `Identify`,
+      title: 'Identify',
       content: identMsg,
       extraData: { itemName: rightHand.name },
     });

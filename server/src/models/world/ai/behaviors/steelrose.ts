@@ -8,9 +8,7 @@ export class SteelroseBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ISteelroseBehavior) {
     parser.addCommand('hello')
       .setSyntax(['hello'])
-      .setLogic(async () => {
-        return `Hello, adventurer!`;
-      });
+      .setLogic(async () => 'Hello, adventurer!');
   }
 
   tick() {}

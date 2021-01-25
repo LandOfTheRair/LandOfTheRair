@@ -1,4 +1,5 @@
-import { Currency, EquipHash, IGroundItem, IMacroCommandArgs, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
+import { Currency, EquipHash, IGroundItem, IMacroCommandArgs,
+  INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 import { VendorBehavior } from '../../../../../models/world/ai/behaviors';
 
@@ -218,51 +219,51 @@ export class MoveItems extends MacroCommand {
     this.game.currencyHelper.loseCurrency(player, amount, Currency.Gold);
 
     switch (dest) {
-      case 'R': { // CtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // CtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, srcItem);
+      if (rightHand && !leftHand) {
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
 
-        } else if (!rightHand) {
-          this.game.characterHelper.setRightHand(player, srcItem);
-        }
-
-        break;
+      } else if (!rightHand) {
+        this.game.characterHelper.setRightHand(player, srcItem);
       }
 
-      case 'L': { // CtL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+      break;
+    }
 
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+    case 'L': { // CtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (leftHand && !rightHand) {
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, srcItem);
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
 
-        } else if (!leftHand) {
-          this.game.characterHelper.setLeftHand(player, srcItem);
-        }
+      if (leftHand && !rightHand) {
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
 
-        break;
+      } else if (!leftHand) {
+        this.game.characterHelper.setLeftHand(player, srcItem);
       }
 
-      case 'G': { // CtG
-        const { state } = this.game.worldManager.getMap(player.map);
-        state.addItemToGround(player.x, player.y, srcItem);
+      break;
+    }
 
-        break;
-      }
+    case 'G': { // CtG
+      const { state } = this.game.worldManager.getMap(player.map);
+      state.addItemToGround(player.x, player.y, srcItem);
 
-      default: {
+      break;
+    }
+
+    default: {
       this.game.logger.error('MoveItems', `handleC ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
       return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+    }
     }
 
   }
@@ -275,69 +276,69 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, srcItem, 'L', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // LtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
+    case 'R': { // LtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
 
-        this.game.characterHelper.setLeftHand(player, rightHand);
-        this.game.characterHelper.setRightHand(player, srcItem);
-        break;
-      }
+      this.game.characterHelper.setLeftHand(player, rightHand);
+      this.game.characterHelper.setRightHand(player, srcItem);
+      break;
+    }
 
-      case 'S': { // LtS
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+    case 'S': { // LtS
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
 
-        this.game.inventoryHelper.addItemToSack(player, srcItem);
-        this.game.characterHelper.setLeftHand(player, undefined);
-        break;
-      }
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      break;
+    }
 
-      case 'B': { // LtB
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+    case 'B': { // LtB
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
 
-        this.game.inventoryHelper.addItemToBelt(player, srcItem);
-        this.game.characterHelper.setLeftHand(player, undefined);
-        break;
-      }
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      break;
+    }
 
-      case 'E': { // LtE
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+    case 'E': { // LtE
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
 
-        const equipSlot = this.getEquipmentSlot(player, srcItem);
-        if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+      const equipSlot = this.getEquipmentSlot(player, srcItem);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
-        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
 
-        this.game.characterHelper.setLeftHand(player, undefined);
-        this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      case 'G': { // LtG
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        const { state } = this.game.worldManager.getMap(player.map);
+    case 'G': { // LtG
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      const { state } = this.game.worldManager.getMap(player.map);
 
-        this.game.characterHelper.setLeftHand(player, undefined);
-        state.addItemToGround(player.x, player.y, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      state.addItemToGround(player.x, player.y, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      case 'M': { // LtM
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+    case 'M': { // LtM
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
 
-        this.game.characterHelper.setLeftHand(player, undefined);
-        this.game.inventoryHelper.sellItem(player, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      this.game.inventoryHelper.sellItem(player, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleL ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+    default: {
+      this.game.logger.error('MoveItems', `handleL ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }
@@ -350,69 +351,69 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, srcItem, 'R', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'L': { // RtL
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'L': { // RtL
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        this.game.characterHelper.setLeftHand(player, srcItem);
-        this.game.characterHelper.setRightHand(player, leftHand);
-        break;
-      }
+      this.game.characterHelper.setLeftHand(player, srcItem);
+      this.game.characterHelper.setRightHand(player, leftHand);
+      break;
+    }
 
-      case 'S': { // RtS
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+    case 'S': { // RtS
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
 
-        this.game.inventoryHelper.addItemToSack(player, srcItem);
-        this.game.characterHelper.setRightHand(player, undefined);
-        break;
-      }
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      break;
+    }
 
-      case 'B': { // RtB
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+    case 'B': { // RtB
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
 
-        this.game.inventoryHelper.addItemToBelt(player, srcItem);
-        this.game.characterHelper.setRightHand(player, undefined);
-        break;
-      }
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      break;
+    }
 
-      case 'E': { // RtE
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+    case 'E': { // RtE
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
 
-        const equipSlot = this.getEquipmentSlot(player, srcItem);
-        if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+      const equipSlot = this.getEquipmentSlot(player, srcItem);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
 
-        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
 
-        this.game.characterHelper.setRightHand(player, undefined);
-        this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      case 'G': { // RtG
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-        const { state } = this.game.worldManager.getMap(player.map);
+    case 'G': { // RtG
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      const { state } = this.game.worldManager.getMap(player.map);
 
-        this.game.characterHelper.setRightHand(player, undefined);
-        state.addItemToGround(player.x, player.y, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      state.addItemToGround(player.x, player.y, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      case 'M': { // RtM
-        if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+    case 'M': { // RtM
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
 
-        this.game.characterHelper.setRightHand(player, undefined);
-        this.game.inventoryHelper.sellItem(player, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      this.game.inventoryHelper.sellItem(player, srcItem);
 
-        break;
-      }
+      break;
+    }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleR ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+    default: {
+      this.game.logger.error('MoveItems', `handleR ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }
@@ -426,73 +427,73 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, srcItem, 'E', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // EtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // EtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, srcItem);
-
-        } else if (!rightHand) {
-          this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-          this.game.characterHelper.setRightHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'L': { // EtL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
-
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (leftHand && !rightHand) {
-          this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-
-        } else if (!leftHand) {
-          this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'S': { // EtS
-        if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
-
-        this.game.inventoryHelper.addItemToSack(player, srcItem);
+      if (rightHand && !leftHand) {
         this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-        break;
-      }
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
 
-      case 'B': { // EtB
-        if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
-
-        this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      } else if (!rightHand) {
         this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
-        break;
+        this.game.characterHelper.setRightHand(player, srcItem);
       }
 
-      case 'G': { // EtG
+      break;
+    }
+
+    case 'L': { // EtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
         this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
 
-        const { state } = this.game.worldManager.getMap(player.map);
-        state.addItemToGround(player.x, player.y, srcItem);
-
-        break;
+      } else if (!leftHand) {
+        this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+        this.game.characterHelper.setLeftHand(player, srcItem);
       }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+      break;
+    }
+
+    case 'S': { // EtS
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+      break;
+    }
+
+    case 'B': { // EtB
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+      break;
+    }
+
+    case 'G': { // EtG
+      this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+
+      const { state } = this.game.worldManager.getMap(player.map);
+      state.addItemToGround(player.x, player.y, srcItem);
+
+      break;
+    }
+
+    default: {
+      this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }
@@ -508,97 +509,97 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, srcItem, 'B', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // BtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // BtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from belt.');
-
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, srcItem);
-
-        } else if (!rightHand) {
-          const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from belt.');
-
-          this.game.characterHelper.setRightHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'L': { // BtL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
-
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (leftHand && !rightHand) {
-          const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from belt.');
-
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-
-        } else if (!leftHand) {
-          const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from belt.');
-
-          this.game.characterHelper.setLeftHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'S': { // BtS
-        if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
-
-        this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
-        this.game.inventoryHelper.addItemToSack(player, srcItem);
-        break;
-      }
-
-      case 'E': { // BtE
-        const equipSlot = this.getEquipmentSlot(player, srcItem);
-        if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
-
-        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
-
+      if (rightHand && !leftHand) {
         const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
-        this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
 
-        break;
-      }
-
-      case 'G': { // BtG
+      } else if (!rightHand) {
         const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
-        const { state } = this.game.worldManager.getMap(player.map);
-        state.addItemToGround(player.x, player.y, srcItem);
-
-        break;
+        this.game.characterHelper.setRightHand(player, srcItem);
       }
 
-      case 'M': { // BtM
+      break;
+    }
+
+    case 'L': { // BtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
         const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
-        this.game.inventoryHelper.sellItem(player, srcItem);
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
 
-        break;
+      } else if (!leftHand) {
+        const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from belt.');
+
+        this.game.characterHelper.setLeftHand(player, srcItem);
       }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+      break;
+    }
+
+    case 'S': { // BtS
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+      this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      break;
+    }
+
+    case 'E': { // BtE
+      const equipSlot = this.getEquipmentSlot(player, srcItem);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
+      const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from belt.');
+
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+
+      break;
+    }
+
+    case 'G': { // BtG
+      const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from belt.');
+
+      const { state } = this.game.worldManager.getMap(player.map);
+      state.addItemToGround(player.x, player.y, srcItem);
+
+      break;
+    }
+
+    case 'M': { // BtM
+      const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from belt.');
+
+      this.game.inventoryHelper.sellItem(player, srcItem);
+
+      break;
+    }
+
+    default: {
+      this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }
@@ -614,97 +615,97 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, srcItem, 'S', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // StR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // StR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from sack.');
-
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, srcItem);
-
-        } else if (!rightHand) {
-          const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from sack.');
-
-          this.game.characterHelper.setRightHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'L': { // StL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
-
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (leftHand && !rightHand) {
-          const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from sack.');
-
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-
-        } else if (!leftHand) {
-          const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
-          if (!did) return this.sendMessage(player, 'Could not take item from sack.');
-
-          this.game.characterHelper.setLeftHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'B': { // StB
-        if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
-
-        this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
-        this.game.inventoryHelper.addItemToBelt(player, srcItem);
-        break;
-      }
-
-      case 'E': { // StE
-        const equipSlot = this.getEquipmentSlot(player, srcItem);
-        if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
-
-        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
-
+      if (rightHand && !leftHand) {
         const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
-        this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
 
-        break;
-      }
-
-      case 'G': { // StG
+      } else if (!rightHand) {
         const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
-        const { state } = this.game.worldManager.getMap(player.map);
-        state.addItemToGround(player.x, player.y, srcItem);
-
-        break;
+        this.game.characterHelper.setRightHand(player, srcItem);
       }
 
-      case 'M': { // StM
+      break;
+    }
+
+    case 'L': { // StL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
         const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
         if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
-        this.game.inventoryHelper.sellItem(player, srcItem);
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
 
-        break;
+      } else if (!leftHand) {
+        const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.characterHelper.setLeftHand(player, srcItem);
       }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+      break;
+    }
+
+    case 'B': { // StB
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+      this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      break;
+    }
+
+    case 'E': { // StE
+      const equipSlot = this.getEquipmentSlot(player, srcItem);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
+      const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+
+      break;
+    }
+
+    case 'G': { // StG
+      const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      const { state } = this.game.worldManager.getMap(player.map);
+      state.addItemToGround(player.x, player.y, srcItem);
+
+      break;
+    }
+
+    case 'M': { // StM
+      const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      this.game.inventoryHelper.sellItem(player, srcItem);
+
+      break;
+    }
+
+    default: {
+      this.game.logger.error('MoveItems', `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
   }
 
@@ -722,124 +723,124 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, items[0].item, 'G', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // GtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // GtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, items[0].item);
+      if (rightHand && !leftHand) {
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, items[0].item);
 
-        } else if (!rightHand) {
-          this.game.characterHelper.setRightHand(player, items[0].item);
+      } else if (!rightHand) {
+        this.game.characterHelper.setRightHand(player, items[0].item);
+      }
+
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+
+      break;
+    }
+
+    case 'L': { // GtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, items[0].item);
+
+      } else if (!leftHand) {
+        this.game.characterHelper.setLeftHand(player, items[0].item);
+      }
+
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+
+      break;
+    }
+
+    case 'E': { // GtE
+      const equipSlot = this.getEquipmentSlot(player, items[0].item);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, items[0].item);
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+
+      break;
+    }
+
+    case 'S': { // GtS
+
+      const spaceLeft = this.game.inventoryHelper.sackSpaceLeft(player);
+      const addItems: ISimpleItem[] = [];
+      const uuidRemoveCounts: Record<string, number> = {};
+
+      items.forEach(item => {
+        if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
+        if (addItems.length >= spaceLeft) return;
+
+        for (let i = 0; i < item.count; i++) {
+          if (addItems.length >= spaceLeft) break;
+
+          uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
+          uuidRemoveCounts[item.item.uuid]++;
+
+          addItems.push(this.game.itemCreator.rerollItem(item.item));
         }
+      });
 
-        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+      addItems.forEach(item => {
+        if (!this.game.inventoryHelper.canAddItemToSack(player, item)) return this.sendMessage(player, 'Your sack is full.');
+        this.game.inventoryHelper.addItemToSack(player, item);
+      });
 
-        break;
-      }
+      Object.keys(uuidRemoveCounts).forEach(removeUUID => {
+        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, uuidRemoveCounts[removeUUID]);
+      });
 
-      case 'L': { // GtL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+      break;
+    }
 
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+    case 'B': { // GtB
 
-        if (leftHand && !rightHand) {
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, items[0].item);
+      const spaceLeft = this.game.inventoryHelper.beltSpaceLeft(player);
+      const addItems: ISimpleItem[] = [];
+      const uuidRemoveCounts: Record<string, number> = {};
 
-        } else if (!leftHand) {
-          this.game.characterHelper.setLeftHand(player, items[0].item);
+      items.forEach(item => {
+        if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
+        if (addItems.length >= spaceLeft) return;
+
+        for (let i = 0; i < item.count; i++) {
+          if (addItems.length >= spaceLeft) break;
+
+          uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
+          uuidRemoveCounts[item.item.uuid]++;
+
+          addItems.push(this.game.itemCreator.rerollItem(item.item));
         }
+      });
 
-        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+      addItems.forEach(item => {
+        if (!this.game.inventoryHelper.canAddItemToBelt(player, item)) return this.sendMessage(player, 'Your belt is full.');
+        this.game.inventoryHelper.addItemToBelt(player, item);
+      });
 
-        break;
-      }
+      Object.keys(uuidRemoveCounts).forEach(removeUUID => {
+        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, uuidRemoveCounts[removeUUID]);
+      });
 
-      case 'E': { // GtE
-        const equipSlot = this.getEquipmentSlot(player, items[0].item);
-        if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+      break;
+    }
 
-        if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
-
-        this.game.characterHelper.setEquipmentSlot(player, equipSlot, items[0].item);
-        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
-
-        break;
-      }
-
-      case 'S': { // GtS
-
-        const spaceLeft = this.game.inventoryHelper.sackSpaceLeft(player);
-        const addItems: ISimpleItem[] = [];
-        const uuidRemoveCounts: Record<string, number> = {};
-
-        items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
-          if (addItems.length >= spaceLeft) return;
-
-          for (let i = 0; i < item.count; i++) {
-            if (addItems.length >= spaceLeft) break;
-
-            uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
-            uuidRemoveCounts[item.item.uuid]++;
-
-            addItems.push(this.game.itemCreator.rerollItem(item.item));
-          }
-        });
-
-        addItems.forEach(item => {
-          if (!this.game.inventoryHelper.canAddItemToSack(player, item)) return this.sendMessage(player, 'Your sack is full.');
-          this.game.inventoryHelper.addItemToSack(player, item);
-        });
-
-        Object.keys(uuidRemoveCounts).forEach(removeUUID => {
-          state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, uuidRemoveCounts[removeUUID]);
-        });
-
-        break;
-      }
-
-      case 'B': { // GtB
-
-        const spaceLeft = this.game.inventoryHelper.beltSpaceLeft(player);
-        const addItems: ISimpleItem[] = [];
-        const uuidRemoveCounts: Record<string, number> = {};
-
-        items.forEach(item => {
-          if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
-          if (addItems.length >= spaceLeft) return;
-
-          for (let i = 0; i < item.count; i++) {
-            if (addItems.length >= spaceLeft) break;
-
-            uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
-            uuidRemoveCounts[item.item.uuid]++;
-
-            addItems.push(this.game.itemCreator.rerollItem(item.item));
-          }
-        });
-
-        addItems.forEach(item => {
-          if (!this.game.inventoryHelper.canAddItemToBelt(player, item)) return this.sendMessage(player, 'Your belt is full.');
-          this.game.inventoryHelper.addItemToBelt(player, item);
-        });
-
-        Object.keys(uuidRemoveCounts).forEach(removeUUID => {
-          state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, uuidRemoveCounts[removeUUID]);
-        });
-
-        break;
-      }
-
-      default: {
-        this.game.logger.error('MoveItems', `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+    default: {
+      this.game.logger.error('MoveItems', `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }
@@ -880,95 +881,95 @@ export class MoveItems extends MacroCommand {
     if (!this.doPrelimChecks(player, item, 'M', origSlot, dest, destSlot)) return;
 
     switch (dest) {
-      case 'R': { // MtR
+    case 'R': { // MtR
 
-        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
-          this.sendMessage(player, 'You do not have enough to buy that!');
-          return false;
-        }
-
-        const createdItem = this.game.itemCreator.getSimpleItem(item.name);
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
-
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (rightHand && !leftHand) {
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, createdItem);
-
-        } else if (!rightHand) {
-          this.game.characterHelper.setRightHand(player, createdItem);
-        }
-
-        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
-
-        break;
+      if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
+        this.sendMessage(player, 'You do not have enough to buy that!');
+        return false;
       }
 
-      case 'L': { // MtL
-        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
-          this.sendMessage(player, 'You do not have enough to buy that!');
+      const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (rightHand && !leftHand) {
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, createdItem);
+
+      } else if (!rightHand) {
+        this.game.characterHelper.setRightHand(player, createdItem);
+      }
+
+      this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+
+      break;
+    }
+
+    case 'L': { // MtL
+      if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
+        this.sendMessage(player, 'You do not have enough to buy that!');
+        return;
+      }
+
+      const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
+        this.game.characterHelper.setRightHand(player, rightHand);
+        this.game.characterHelper.setLeftHand(player, createdItem);
+
+      } else if (!leftHand) {
+        this.game.characterHelper.setLeftHand(player, createdItem);
+      }
+
+      this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+
+      break;
+    }
+
+    case 'B': { // MtL
+      const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.beltSpaceLeft(player), +destSlot);
+      for (let i = 0; i < maxItemsBuyable; i++) {
+        const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+
+        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+          || !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)) {
           return;
         }
 
+        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.inventoryHelper.addItemToBelt(player, createdItem);
+      }
+
+      break;
+    }
+
+    case 'S': { // MtL
+      const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.sackSpaceLeft(player), +destSlot);
+      for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (leftHand && !rightHand) {
-          this.game.characterHelper.setRightHand(player, rightHand);
-          this.game.characterHelper.setLeftHand(player, createdItem);
-
-        } else if (!leftHand) {
-          this.game.characterHelper.setLeftHand(player, createdItem);
+        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+          || !this.game.inventoryHelper.canAddItemToSack(player, createdItem)) {
+          return;
         }
 
         this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
-
-        break;
+        this.game.inventoryHelper.addItemToSack(player, createdItem);
       }
 
-      case 'B': { // MtL
-        const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.beltSpaceLeft(player), +destSlot);
-        for (let i = 0; i < maxItemsBuyable; i++) {
-          const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+      break;
+    }
 
-          if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
-          || !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)) {
-            return;
-          }
-
-          this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
-          this.game.inventoryHelper.addItemToBelt(player, createdItem);
-        }
-
-        break;
-      }
-
-      case 'S': { // MtL
-        const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.sackSpaceLeft(player), +destSlot);
-        for (let i = 0; i < maxItemsBuyable; i++) {
-          const createdItem = this.game.itemCreator.getSimpleItem(item.name);
-
-          if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
-          || !this.game.inventoryHelper.canAddItemToSack(player, createdItem)) {
-            return;
-          }
-
-          this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
-          this.game.inventoryHelper.addItemToSack(player, createdItem);
-        }
-
-        break;
-      }
-
-      default: {
-        this.game.logger.error('MoveItems', `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
-      }
+    default: {
+      this.game.logger.error('MoveItems', `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
     if (isDaily) {
@@ -988,64 +989,64 @@ export class MoveItems extends MacroCommand {
     this.game.currencyHelper.loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
 
     switch (dest) {
-      case 'R': { // OtR
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+    case 'R': { // OtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
-        if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
-        if (rightHand && !leftHand) {
-          this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-          this.game.characterHelper.setLeftHand(player, rightHand);
-          this.game.characterHelper.setRightHand(player, srcItem);
-
-        } else if (!rightHand) {
-          this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-          this.game.characterHelper.setRightHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'L': { // OtL
-        const rightHand = player.items.equipment[ItemSlot.RightHand];
-        const leftHand = player.items.equipment[ItemSlot.LeftHand];
-
-        if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
-
-        if (leftHand && !rightHand) {
-          this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-          this.game.characterHelper.setRightHand(player, leftHand);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-
-        } else if (!leftHand) {
-          this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-          this.game.characterHelper.setLeftHand(player, srcItem);
-        }
-
-        break;
-      }
-
-      case 'S': { // OtS
-        if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
-
-        this.game.inventoryHelper.addItemToSack(player, srcItem);
+      if (rightHand && !leftHand) {
         this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-        break;
-      }
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
 
-      case 'B': { // OtB
-        if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
-
-        this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      } else if (!rightHand) {
         this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
-        break;
+        this.game.characterHelper.setRightHand(player, srcItem);
       }
 
-      default: {
-        this.game.logger.error('MoveItems', `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
-        return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+      break;
+    }
+
+    case 'L': { // OtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
+        this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
+
+      } else if (!leftHand) {
+        this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
+        this.game.characterHelper.setLeftHand(player, srcItem);
       }
+
+      break;
+    }
+
+    case 'S': { // OtS
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
+      break;
+    }
+
+    case 'B': { // OtB
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
+      break;
+    }
+
+    default: {
+      this.game.logger.error('MoveItems', `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
     }
 
   }

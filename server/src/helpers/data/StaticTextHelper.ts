@@ -166,7 +166,7 @@ const DecorGids = {
 };
 
 // mapping of sprite row -> relevant info
-const SwimInfo: Record<number, { element: DamageClass, swimLevel: SwimLevel }> = {
+const SwimInfo: Record<number, { element: DamageClass; swimLevel: SwimLevel }> = {
   1:  { element: DamageClass.Water, swimLevel: SwimLevel.SpringWater },
   8:  { element: DamageClass.Water, swimLevel: SwimLevel.NormalWater },
   9:  { element: DamageClass.Fire,  swimLevel: SwimLevel.Lava },

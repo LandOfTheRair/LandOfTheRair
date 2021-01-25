@@ -24,29 +24,29 @@ export class UseCommand extends MacroCommand {
 
     switch (context) {
 
-      case 'sack': {
-        const item = player.items.sack.items[+slot];
-        this.game.inventoryHelper.removeItemFromSack(player, +slot);
-        this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
+    case 'sack': {
+      const item = player.items.sack.items[+slot];
+      this.game.inventoryHelper.removeItemFromSack(player, +slot);
+      this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
+      useItemInHand(emptyHand);
+      break;
+    }
+
+    case 'ground': {
+      const [itemType, uuid] = slot.split(':');
+      const { state } = this.game.worldManager.getMap(player.map);
+      const items = state.getItemsFromGround(player.x, player.y, itemType as ItemClass, uuid);
+      if (items[0]) {
+        this.game.characterHelper.setEquipmentSlot(player, emptyHand, items[0].item);
+        state.removeItemFromGround(player.x, player.y, itemType as ItemClass, uuid);
         useItemInHand(emptyHand);
-        break;
       }
+      break;
+    }
 
-      case 'ground': {
-        const [itemType, uuid] = slot.split(':');
-        const { state } = this.game.worldManager.getMap(player.map);
-        const items = state.getItemsFromGround(player.x, player.y, itemType as ItemClass, uuid);
-        if (items[0]) {
-          this.game.characterHelper.setEquipmentSlot(player, emptyHand, items[0].item);
-          state.removeItemFromGround(player.x, player.y, itemType as ItemClass, uuid);
-          useItemInHand(emptyHand);
-        }
-        break;
-      }
-
-      default: {
-        this.sendMessage(player, 'You can\'t use that item from there.');
-      }
+    default: {
+      this.sendMessage(player, 'You can\'t use that item from there.');
+    }
     }
   }
 

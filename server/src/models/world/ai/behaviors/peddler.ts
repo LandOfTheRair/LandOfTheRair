@@ -16,7 +16,7 @@ export class PeddlerBehavior implements IAIBehavior {
     const { peddleItem, peddleCost, peddleDesc } = behavior;
 
     if (!peddleItem || !peddleCost || !peddleDesc) {
-      game.logger.error(`Behavior:Peddle`, `NPC at ${npc.map}-${npc.x},${npc.y} has invalid peddle item settings.`);
+      game.logger.error('Behavior:Peddle', `NPC at ${npc.map}-${npc.x},${npc.y} has invalid peddle item settings.`);
       return;
     }
 
@@ -44,7 +44,7 @@ export class PeddlerBehavior implements IAIBehavior {
           title: `Buy ${peddleItem}?`,
           content: `Would you like to buy a ${peddleItem}? ${peddleDesc}`,
           extraData: { npcSprite: npc.sprite, okText: 'Yes, buy!', cancelText: 'No, not now' },
-          okAction: { command: `!privatesay`, args: `${npc.uuid}, buy` }
+          okAction: { command: '!privatesay', args: `${npc.uuid}, buy` }
         });
 
         return `Hello, ${player.name}! Would you like to BUY my ${peddleItem} for ${peddleCost.toLocaleString()} ${peddleCurrency}?`;
@@ -59,7 +59,9 @@ export class PeddlerBehavior implements IAIBehavior {
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
-        if (!game.currencyHelper.hasCurrency(player, peddleCost, peddleCurrency)) return `You do not have enough ${peddleCurrency} for that!`;
+        if (!game.currencyHelper.hasCurrency(player, peddleCost, peddleCurrency)) {
+          return `You do not have enough ${peddleCurrency} for that!`;
+        }
 
         game.currencyHelper.loseCurrency(player, peddleCost, peddleCurrency);
 

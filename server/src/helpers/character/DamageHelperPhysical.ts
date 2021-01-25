@@ -99,7 +99,9 @@ export class DamageHelperPhysical extends BaseService {
   public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
     const res = this.handlePhysicalAttack(attacker, defender, args);
 
-    const { returnsOnThrow, offhand } = this.game.itemHelper.getItemProperties(attacker.items.equipment[ItemSlot.LeftHand], ['returnsOnThrow', 'offhand']);
+    const { returnsOnThrow, offhand } = this.game.itemHelper.getItemProperties(attacker.items.equipment[ItemSlot.LeftHand],
+      ['returnsOnThrow', 'offhand']
+    );
 
     const shouldOffhandAttackAsWell = (!args.isThrow && !args.isKick && !args.isPunch)
                                    || (args.isThrow && returnsOnThrow);
@@ -120,8 +122,8 @@ export class DamageHelperPhysical extends BaseService {
   private determineWeaponInformation(
     attacker: ICharacter, weapon: ISimpleItem, bonusRolls = 0
   ): {
-    damageRolls: number, damageBonus: number, isWeak: boolean, isStrong: boolean
-  } {
+      damageRolls: number; damageBonus: number; isWeak: boolean; isStrong: boolean;
+    } {
 
     const { itemClass, tier } = this.game.itemHelper.getItemProperties(weapon, ['itemClass', 'tier']);
 
@@ -166,8 +168,8 @@ export class DamageHelperPhysical extends BaseService {
     if (returnsOnThrow) return;
 
     const breakTypes = {
-      Bottle: `You hear the sound of glass shattering!`,
-      Trap: `You hear a mechanical snap and see parts fly all over!`
+      Bottle: 'You hear the sound of glass shattering!',
+      Trap: 'You hear a mechanical snap and see parts fly all over!'
     };
 
     if (breakTypes[itemClass as ItemClass]) {
@@ -238,8 +240,8 @@ export class DamageHelperPhysical extends BaseService {
   private getDefenderArmor(
     defender: ICharacter
   ): {
-    armor: ISimpleItem, blocker: ISimpleItem, shield: ISimpleItem|undefined, offhand: ISimpleItem|undefined
-  } {
+      armor: ISimpleItem; blocker: ISimpleItem; shield: ISimpleItem|undefined; offhand: ISimpleItem|undefined;
+    } {
     let defenderArmor: ISimpleItem | undefined;
 
     // check all of the valid armor slots
@@ -419,7 +421,7 @@ export class DamageHelperPhysical extends BaseService {
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
-          message: `You miss!`,
+          message: 'You miss!',
           sfx: SoundEffect.CombatMiss,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
@@ -483,7 +485,7 @@ export class DamageHelperPhysical extends BaseService {
 
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
-          message: `You were blocked by armor!`,
+          message: 'You were blocked by armor!',
           sfx: SoundEffect.CombatBlockArmor,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
@@ -723,9 +725,11 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   // try to combat-stun from a melee hit
+  /*
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
 
   }
+  */
 
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
     const { isThrow, throwHand, isBackstab, isOffhand, isKick, damageMult } = args;
@@ -883,16 +887,16 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     let damageType = 'was a successful strike';
-    let criticality: 0|1|2 = 1;
+    // let criticality: 0|1|2 = 1;
 
     if (attackerScope.isWeak) {
       damageType = 'was a grazing blow';
-      criticality = 0;
+      // criticality = 0;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
 
     } else if (attackerScope.isStrong) {
       damageType = 'left a grievous wound';
-      criticality = 2;
+      // criticality = 2;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitStrong);
 
     } else {
@@ -922,7 +926,7 @@ export class DamageHelperPhysical extends BaseService {
 
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
-    this.attemptToStun(attacker, defender, attackerWeapon);
+    // this.attemptToStun(attacker, defender, attackerWeapon);
 
     // if our ammo was shot and can apply an effect, we give it a spin
     if (canShoot && ammo) {
@@ -936,7 +940,9 @@ export class DamageHelperPhysical extends BaseService {
       }
     }
 
-    const { strikeEffect: weaponStrikeEffect, encrustItem } = this.game.itemHelper.getItemProperties(attackerWeapon, ['strikeEffect', 'encrustItem']);
+    const { strikeEffect: weaponStrikeEffect, encrustItem } = this.game.itemHelper.getItemProperties(attackerWeapon,
+      ['strikeEffect', 'encrustItem']
+    );
 
     // if it has an encrust strike effect, we apply it
     if (encrustItem) {

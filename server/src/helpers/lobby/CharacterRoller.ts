@@ -19,7 +19,7 @@ export class CharacterRoller extends BaseService {
 
   public async init() {}
 
-  rollCharacter({ allegiance, baseclass }): { skills: SkillBlock, stats: StatBlock, gold: number, items: Partial<ICharacterItems> } {
+  rollCharacter({ allegiance, baseclass }): { skills: SkillBlock; stats: StatBlock; gold: number; items: Partial<ICharacterItems> } {
     const charSelectData = this.contentManager.charSelectData;
 
     const coreStats = charSelectData.baseStats;
