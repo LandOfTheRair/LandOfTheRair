@@ -7,6 +7,10 @@ export class Steal extends SkillCommand {
   canBeInstant = false;
   canBeFast = false;
 
+  range() {
+    return 0;
+  }
+
   canUse(char: ICharacter, target: ICharacter): boolean {
     if (!this.game.characterHelper.hasEmptyHand(char)) return false;
 
