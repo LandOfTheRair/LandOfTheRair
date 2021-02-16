@@ -37,8 +37,6 @@ export class QuestHelper extends BaseService {
   // check if the player has completed a particular requirement (item or kill)
   public isRequirementComplete(player: IPlayer, quest: string, requirement: IQuestRequirement): boolean {
 
-    console.log(requirement);
-
     // items only require being held
     if (requirement.type === QuestRequirementType.Item) {
       const req = requirement as IQuestRequirementItem;

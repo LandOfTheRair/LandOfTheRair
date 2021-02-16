@@ -30,8 +30,6 @@ export class RegisterAction extends ServerAction {
     const doesExist = await game.accountDB.doesAccountExist(data.username);
     if (doesExist)                                        return { message: 'Username already registered.' };
 
-    console.log(doesExist);
-
     try {
       const account = await game.accountDB.createAccount(data);
       if (!account)                                       return { message: 'Could not register.' };
