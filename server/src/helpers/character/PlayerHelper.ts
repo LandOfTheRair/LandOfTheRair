@@ -337,7 +337,7 @@ export class PlayerHelper extends BaseService {
     skillGained += Math.floor((xpGainBoostPercent * skillGained) / 100);
 
     // TODO: modify skillGained for sub
-    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0, { floor: true });
+    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
     player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);
     player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
