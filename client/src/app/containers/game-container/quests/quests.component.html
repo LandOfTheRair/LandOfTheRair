@@ -21,8 +21,10 @@
   <ng-container *ngIf="player">
 
     <mat-tab-group mat-align-tabs="center" class="bring-to-top">
-  
+
       <mat-tab label="Active Quests">
+        <div class="vertical-center full-width full-height background-text" *ngIf="(player.quests.activeQuestProgress | keyvalue).length === 0">You don't have any active quests</div>
+
         <mat-list>
           <ng-container *ngFor="let playerQuest of player.quests.activeQuestProgress | keyvalue">
             <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
@@ -37,6 +39,8 @@
       </mat-tab>
 
       <mat-tab label="Completed Quests">
+        <div class="vertical-center full-width full-height background-text" *ngIf="(player.quests.permanentQuestCompletion | keyvalue).length === 0">You don't have any completed quests</div>
+
         <mat-list>
           <ng-container *ngFor="let playerQuest of player.quests.permanentQuestCompletion | keyvalue">
             <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
