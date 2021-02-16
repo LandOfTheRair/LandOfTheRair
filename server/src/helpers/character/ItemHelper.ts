@@ -167,11 +167,11 @@ export class ItemHelper extends BaseService {
       return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
     }
 
-    let shouldRemove = false;
     const totalOunces = ounces ?? 0;
+    let shouldRemove = totalOunces <= 0;
 
     // if it's an empty bottle currently, we just remove it
-    if (itemClass === ItemClass.Bottle && ounces === 0) {
+    if (itemClass === ItemClass.Bottle && totalOunces === 0) {
       shouldRemove = true;
       this.game.messageHelper.sendSimpleMessage(player, 'The bottle was empty.');
 

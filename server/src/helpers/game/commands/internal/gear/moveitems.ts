@@ -81,9 +81,15 @@ export class MoveItems extends MacroCommand {
         }
 
         itemSlot = hand;
-        retVal = true;
+        retVal = false;
+
+      // if we have a succor in our hands already, drop it
+      } else if (src === 'L' || src === 'R') {
+        itemSlot = src === 'L' ? ItemSlot.LeftHand : ItemSlot.RightHand;
+        retVal = false;
       }
 
+      this.game.inventoryHelper.removeItemsFromSackByUUID(player, [srcItem.uuid]);
       this.game.characterHelper.setEquipmentSlot(player, itemSlot, srcItem);
       this.game.itemHelper.useItemInSlot(player, itemSlot);
       return retVal;

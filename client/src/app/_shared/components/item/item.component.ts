@@ -82,15 +82,15 @@ export class ItemComponent implements OnDestroy {
   }
 
   get realSuccorInfo() {
-    return this.item.mods.succorInfo || this.realItem.succorInfo;
+    return this.item.mods.succorInfo ?? this.realItem.succorInfo;
   }
 
   get realOunces() {
-    return this.item.mods.ounces || this.realItem.ounces;
+    return this.item.mods.ounces ?? this.realItem.ounces;
   }
 
   get realCount() {
-    return this.count || this.item.mods.shots;
+    return this.count ?? this.item.mods.shots;
   }
 
   get imgUrl() {
