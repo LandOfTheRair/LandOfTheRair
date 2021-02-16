@@ -13,7 +13,8 @@
     "postbuild": "madge --circular --warning dist/server/src/core/index.js"
   },
   "engines": {
-    "node": ">= 12"
+    "node": "14.0.0",
+    "npm": "6.0.0"
   },
   "repository": {
     "type": "git",

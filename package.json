@@ -2,7 +2,8 @@
   "name": "landoftherair",
   "version": "1.9.1",
   "engines": {
-    "node": ">=14"
+    "node": "14.0.0",
+    "npm": "6.0.0"
   },
   "scripts": {
     "setup": "lerna exec -- npm install",
