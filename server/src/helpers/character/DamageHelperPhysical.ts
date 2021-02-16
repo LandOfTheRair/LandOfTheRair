@@ -774,9 +774,9 @@ export class DamageHelperPhysical extends BaseService {
     // flag skills for the attack
     if (isAttackerPlayer) {
       const flagSkills = [type ?? Skill.Martial];
-      if (secondaryType)                     flagSkills.push(secondaryType);
-      if (isThrow)                           flagSkills.push(Skill.Throwing);
-      if (!isAttackerVisible || isBackstab)  flagSkills.push(Skill.Thievery);
+      if (secondaryType)                                                                            flagSkills.push(secondaryType);
+      if (isThrow)                                                                                  flagSkills.push(Skill.Throwing);
+      if (!isAttackerVisible || isBackstab || this.game.effectHelper.hasEffect(attacker, 'Hidden')) flagSkills.push(Skill.Thievery);
 
       this.game.playerHelper.flagSkill(attacker as IPlayer, flagSkills as Skill[]);
     }
