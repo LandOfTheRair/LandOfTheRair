@@ -22,7 +22,7 @@ export class AttackCommand extends SkillCommand {
 
     if (this.game.directionHelper.distFrom(player, target) > range) return this.sendMessage(player, 'That target is too far away!');
 
-    this.use(player, target);
+    this.use(player, target, { attackRange: range });
   }
 
   use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
