@@ -53,7 +53,7 @@ export class ItemCreator extends BaseService {
 
   public rerollItem(item: ISimpleItem): ISimpleItem {
     const newItem = cloneDeep(item);
-    newItem.uuid = uuid();
+    this.resetUUID(newItem);
 
     const itemDefinition = this.content.getItemDefinition(item.name);
     if (itemDefinition) {
@@ -61,6 +61,10 @@ export class ItemCreator extends BaseService {
     }
 
     return newItem;
+  }
+
+  public resetUUID(item: ISimpleItem): void {
+    item.uuid = uuid();
   }
 
   // do randomStats, randomTrait, assign quality
