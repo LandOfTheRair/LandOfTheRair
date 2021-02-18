@@ -26,7 +26,7 @@ import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, U
         (mousedown)="makeActive()"
     >
       <mat-toolbar class="window-header">
-        <span #windowDrag>
+        <span #windowDrag class="window-drag">
           <ng-template [ngTemplateOutlet]="head"></ng-template>
         </span>
 
@@ -44,6 +44,10 @@ import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, U
   .window {
     position: absolute;
     z-index: 1000;
+  }
+
+  .window-drag {
+    z-index: 1002;
   }
 
   .window.active {

@@ -12,11 +12,11 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  <div class="window-has-more-buttons" *ngIf="charView$ | async as charView">
+  <span class="window-has-more-buttons" *ngIf="charView$ | async as charView">
     <span>
       My {{ charView }}
     </span>
-  
+
     <span class="window-extra-buttons">
       <button class="is-selector" mat-icon-button [disabled]="charView === 'Equipment'" (click)="changeView('Equipment')">
         <app-icon name="battle-gear" size="xsmall"></app-icon>
@@ -31,7 +31,7 @@
         <app-icon name="ages" size="xsmall"></app-icon>
       </button>
     </span>
-  </div>
+  </span>
 </ng-template>
 
 <ng-template #bodyTemplate>
@@ -71,10 +71,10 @@
       <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall" round="true"></app-icon></td>
       <td class="label">{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
       <td class="number">
-        {{ player.totalStats[stat.stat] }} 
+        {{ player.totalStats[stat.stat] }}
       </td>
       <td class="number">
-        <span [class.higher-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]" 
+        <span [class.higher-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]"
               [class.lower-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
               (<span *ngIf="player.totalStats[stat.stat] - player.stats[stat.stat] > 0">+</span>{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
         </span>
@@ -89,7 +89,7 @@
       <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true" [showTooltip]="false"></app-skill-icon></td>
       <td class="label">{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
       <td class="number">
-        {{ skillLevel(player.skills[skill.skill]) }} 
+        {{ skillLevel(player.skills[skill.skill]) }}
       </td>
     </tr>
   </table>
@@ -97,20 +97,20 @@
 
 <ng-template #viewEquipment>
   <div class="item-container" *ngIf="player$ | async as player">
-    <div class="item-slot" *ngFor="let slot of slots" 
-                           [class.item-background]="slot.template || slot.slot" 
+    <div class="item-slot" *ngFor="let slot of slots"
+                           [class.item-background]="slot.template || slot.slot"
                            [dropScope]="slot.scope || slot.slot"
-                           (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)" 
+                           (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)"
                            droppable>
 
       <ng-container *ngIf="!slot.template">
         <ng-container *ngTemplateOutlet="itemGenericTemplate; context: createContext(slot, player)"></ng-container>
       </ng-container>
-      
+
       <ng-container *ngIf="slot.template === 'coin'">
         <ng-container *ngTemplateOutlet="itemCoinTemplate; context: createContext(slot, player)"></ng-container>
       </ng-container>
-      
+
       <ng-container *ngIf="slot.template === 'hand'">
         <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
       </ng-container>

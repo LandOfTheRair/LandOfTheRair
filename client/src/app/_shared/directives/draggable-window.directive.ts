@@ -61,17 +61,17 @@ export class DraggableDirective implements OnInit {
       .subscribe(({ top, left }: any) => this.dispatchElementCoordinates(top, left));
   }
 
-  private dispatchElementCoordinates(top, left) {
+  private dispatchElementCoordinates(top: number, left: number) {
     this.store.dispatch(new UpdateWindowPosition(this.windowName, { x: left, y: top }, true));
   }
 
-  private saveCoordinates(top, left) {
+  private saveCoordinates(top: number, left: number) {
     if (!this.windowName) return;
 
     this.updates.next({ top, left });
   }
 
-  private setElementCoords(top, left) {
+  private setElementCoords(top: number, left: number) {
     this.saveCoordinates(top, left);
     this.element.nativeElement.style.top = `${top}px`;
     this.element.nativeElement.style.left = `${left}px`;
@@ -80,6 +80,7 @@ export class DraggableDirective implements OnInit {
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     // prevents right click drag
+    console.log(event, this.handle, event.target);
     if (event.button === 2 || (this.handle !== undefined && event.target !== this.handle)) return;
 
     this.md = true;

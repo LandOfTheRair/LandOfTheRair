@@ -20,7 +20,7 @@
     font-size: 16px;
     line-height: 32px;
     letter-spacing: 2px;
-    
+
     overflow: hidden;
     padding-right: 0;
     border-bottom: 1px solid $titleColor;
@@ -36,12 +36,14 @@
 .window-has-more-buttons {
   display: flex;
   justify-content: space-between;
+  pointer-events: none;
 
   .window-extra-buttons {
     margin-right: 40px;
     display: inline-flex;
 
     button {
+      pointer-events: all;
       max-height: 32px;
       max-width: 32px;
       height: 32px;
