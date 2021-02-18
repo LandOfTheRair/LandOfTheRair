@@ -53,6 +53,8 @@ export class MapScene extends Phaser.Scene {
   private groundUpdate$: Subscription;
   private player: IPlayer;
 
+  private hideWelcome: boolean;
+
   private get isReady(): boolean {
     return this.sys;
   }
@@ -440,6 +442,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   public init(data) {
+    this.hideWelcome = data.hideWelcome;
     this.player = data.player;
   }
 
@@ -535,6 +538,9 @@ export class MapScene extends Phaser.Scene {
     if (tiledJSON.properties.creator) {
       text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
     }
+
+    if(this.hideWelcome) text = '';
+
     this.game.observables.loadPercent.next(text);
     this.game.observables.hideMap.next(false);
 

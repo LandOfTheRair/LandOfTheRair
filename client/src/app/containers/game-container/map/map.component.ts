@@ -111,7 +111,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
       if(this.game && areMapsDifferent) {
         this.zone.runOutsideAngular(() => {
-          this.game.scene.getScene('MapScene')?.scene.restart();
+          this.game.scene.getScene('MapScene')?.scene.restart({ hideWelcome: true });
         });
       }
     });
