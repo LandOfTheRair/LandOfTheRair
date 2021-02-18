@@ -168,7 +168,7 @@ export class ItemHelper extends BaseService {
     }
 
     const totalOunces = ounces ?? 0;
-    let shouldRemove = totalOunces <= 0;
+    let shouldRemove = totalOunces <= 0 && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food);
 
     // if it's an empty bottle currently, we just remove it
     if (itemClass === ItemClass.Bottle && totalOunces === 0) {
@@ -257,7 +257,7 @@ export class ItemHelper extends BaseService {
     }
 
     const formattedChat: IDialogChatAction = {
-      displayTitle: 'Book',
+      displayTitle: `Book (page ${page + 1}/${bookPages?.length ?? 0})`,
       message: readPage.text,
       displayItemName: book.name,
       options: [
