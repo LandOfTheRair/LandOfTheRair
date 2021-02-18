@@ -40,11 +40,7 @@ export class SuccorerBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (rightHand) return 'Your right hand cannot pick a fruit!';
 
-        const succorItem = game.itemCreator.getSimpleItem('Succor Blob');
-        succorItem.mods.destroyOnDrop = true;
-        succorItem.mods.ounces = game.subscriptionHelper.maxSuccorOz(player, succorOz);
-        succorItem.mods.succorInfo = { map: npc.map, x: npc.x, y: npc.y };
-
+        const succorItem = game.itemCreator.createSuccorItem(npc.map, npc.x, npc.y, game.subscriptionHelper.maxSuccorOz(player, succorOz));
         game.characterHelper.setRightHand(player, succorItem);
 
         return 'You take a succor fruit!';

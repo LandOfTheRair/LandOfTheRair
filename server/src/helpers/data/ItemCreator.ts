@@ -51,6 +51,18 @@ export class ItemCreator extends BaseService {
     return baseGold;
   }
 
+  // create a succor item at this location
+  public createSuccorItem(map: string, x: number, y: number, ounces: number = 1): ISimpleItem {
+
+    const succorItem = this.game.itemCreator.getSimpleItem('Succor Blob');
+    succorItem.mods.destroyOnDrop = true;
+    succorItem.mods.ounces = ounces;
+    succorItem.mods.succorInfo = { map, x, y };
+    succorItem.mods.desc = `a blob of spatial memories from ${map}`;
+
+    return succorItem;
+  }
+
   public rerollItem(item: ISimpleItem): ISimpleItem {
     const newItem = cloneDeep(item);
     this.resetUUID(newItem);
