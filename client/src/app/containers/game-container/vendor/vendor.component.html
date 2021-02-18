@@ -21,13 +21,13 @@
       <div class="vendor-intro">
         <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
 
-        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them! 
+        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them!
         <br><br>
         You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.
       </div>
 
       <div class="vendor-tabs">
-        <mat-tab-group mat-align-tabs="center" selectedIndex="0" *ngIf="vendorInfo.npcUUID">
+        <mat-tab-group mat-align-tabs="center" [selectedIndex]="0" *ngIf="vendorInfo.npcUUID">
 
           <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'" *ngIf="vendorInfo.npcVendorItems?.length">
             <div class="item-container">

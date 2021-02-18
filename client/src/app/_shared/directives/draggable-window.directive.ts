@@ -80,7 +80,6 @@ export class DraggableDirective implements OnInit {
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     // prevents right click drag
-    console.log(event, this.handle, event.target);
     if (event.button === 2 || (this.handle !== undefined && event.target !== this.handle)) return;
 
     this.md = true;

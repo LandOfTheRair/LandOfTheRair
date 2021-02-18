@@ -34,7 +34,7 @@ import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, U
         <app-button-close *ngIf="canHide" (click)="hideWindow()"></app-button-close>
       </mat-toolbar>
 
-      <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll">
+      <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll" *ngIf="!windowProps.hidden">
         <ng-template [ngTemplateOutlet]="body"></ng-template>
       </div>
     </div>

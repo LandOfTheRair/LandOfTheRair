@@ -12,15 +12,13 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  <ng-container *ngIf="player">
-    Quest Log
-  </ng-container>
+  Quest Log
 </ng-template>
 
 <ng-template #bodyTemplate>
   <ng-container *ngIf="player">
 
-    <mat-tab-group mat-align-tabs="center" class="bring-to-top">
+    <mat-tab-group mat-align-tabs="center" class="bring-to-top" [selectedIndex]="0" animationDuration="0ms">
 
       <mat-tab label="Active Quests">
         <div class="vertical-center full-width full-height background-text" *ngIf="(player.quests.activeQuestProgress | keyvalue).length === 0">You don't have any active quests</div>

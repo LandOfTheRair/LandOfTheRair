@@ -5,7 +5,7 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer, IQuest } from '../../../../interfaces';
-import { GameState } from '../../../../stores';
+import { GameState, SettingsState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -19,6 +19,7 @@ import * as allQuests from '../../../../assets/content/_output/quests.json';
 })
 export class QuestsComponent implements OnInit, OnDestroy {
 
+  @Select(SettingsState.activeWindow) public activeWindow$: Observable<string>;
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   playerSub: Subscription;

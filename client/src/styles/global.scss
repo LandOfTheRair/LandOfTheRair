@@ -2,7 +2,7 @@
 body {
   $background-dark: rgba(50, 50, 50, 0.1);
   $background-light: rgba(200, 200, 200, 0.1);
-  
+
   background-color: #8c3310;
   background-image:
     repeating-linear-gradient(120deg, $background-light, $background-light 1px, transparent 1px, transparent 60px),
@@ -64,11 +64,11 @@ mat-dialog-actions {
   .mat-form-field-infix {
     border-top: 0;
   }
-  
+
   .mat-form-field-underline {
     display: none;
   }
-  
+
   // these are panels
   &.mat-select-panel .mat-option {
     height: 32px;
@@ -203,6 +203,14 @@ ngx-mat-color-picker-content {
 mat-horizontal-stepper.disable .mat-horizontal-stepper-header-container {
   pointer-events: none !important;
   cursor: not-allowed !important;
+}
+
+md-tabs [role="tabpanel"] {
+  transition: none;
+}
+
+.mat-ink-bar {
+  transition: none !important;
 }
 
 mat-tab-group.bring-to-top .mat-tab-header {
