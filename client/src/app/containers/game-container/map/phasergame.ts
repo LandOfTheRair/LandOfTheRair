@@ -23,6 +23,7 @@ export class MapRenderGame extends Phaser.Game {
       allNPCs: Observable<Record<string, Partial<INPC>>>;
       openDoors: Observable<Record<number, boolean>>;
       ground: Observable<IGround>;
+      windowChange: Observable<any>;
     }
     ) {
       super(config);

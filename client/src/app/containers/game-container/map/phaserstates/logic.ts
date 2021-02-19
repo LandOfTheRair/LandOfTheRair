@@ -51,6 +51,7 @@ export class MapScene extends Phaser.Scene {
   private allNPCsUpdate$: Subscription;
   private openDoorsUpdate$: Subscription;
   private groundUpdate$: Subscription;
+  private windowUpdate$: Subscription;
   private player: IPlayer;
 
   private hideWelcome: boolean;
@@ -402,15 +403,17 @@ export class MapScene extends Phaser.Scene {
   private setupMapInteractions() {
     this.input.mouse.disableContextMenu();
 
-    this.input.on('pointerdown', ({ worldX, worldY }) => {
+    this.input.on('pointerdown', (pointer) => {
       if (this.input.activePointer.rightButtonDown() || !this.player) return;
 
-      const xCoord = Math.floor(worldX / 64);
-      const yCoord = Math.floor(worldY / 64);
+      const xCoord = Math.floor(pointer.worldX / 64);
+      const yCoord = Math.floor(pointer.worldY / 64);
 
       // adjust X/Y so they're relative to the player
       const xDiff = xCoord - this.player.x;
       const yDiff = yCoord - this.player.y;
+
+      console.log(pointer);
 
       const doMove = () => {
         this.game.socketService.sendAction({ command: `~move`, args: `${xDiff} ${yDiff}` });
@@ -491,6 +494,11 @@ export class MapScene extends Phaser.Scene {
 
     this.createPlayerSprite(player);
 
+    // watch for and update map bounds when the window moves
+    this.windowUpdate$ = this.game.observables.windowChange.subscribe(() => {
+      this.scale.updateBounds();
+    });
+
     // watch for player updates
     this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
       this.player = updPlayer;
@@ -567,6 +575,7 @@ export class MapScene extends Phaser.Scene {
     if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
     if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
     if (this.groundUpdate$) this.groundUpdate$.unsubscribe();
+    if (this.windowUpdate$) this.windowUpdate$.unsubscribe();
   }
 
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well

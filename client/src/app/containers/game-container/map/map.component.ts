@@ -1,9 +1,10 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { GameServerEvent, IGround, INPC, IPlayer } from '../../../../interfaces';
-import { GameState } from '../../../../stores';
+import { GameState, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
@@ -72,6 +73,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private assetService: AssetService,
     private gameService: GameService,
     private socketService: SocketService,
+    private store: Store,
     private zone: NgZone,
     public optionsService: OptionsService,
     public uiService: UIService
@@ -193,7 +195,8 @@ export class MapComponent implements OnInit, OnDestroy {
         allPlayers: this.allPlayers,
         allNPCs: this.allNPCs,
         openDoors: this.openDoors,
-        ground: this.ground
+        ground: this.ground,
+        windowChange: this.store.select(SettingsState.window).pipe(map(x => x('map')))
       }
     );
 
