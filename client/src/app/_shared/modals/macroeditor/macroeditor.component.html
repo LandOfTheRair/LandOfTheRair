@@ -8,7 +8,7 @@
       <div class="macro-editor-container">
 
         <div class="macros-list">
-          <div class="macro-inline" 
+          <div class="macro-inline"
                (mouseover)="showEdit[macro.name] = true"
                (mouseleave)="showEdit[macro.name] = false"
                *ngFor="let macro of macros">
@@ -39,10 +39,10 @@
 
               <mat-form-field>
                 <mat-label>Macro Name</mat-label>
-                <input matInput 
-                  type="text" 
+                <input matInput
+                  type="text"
                   [disabled]="isEditing"
-                  placeholder="Macro Name (must be unique)" 
+                  placeholder="Macro Name (must be unique)"
                   maxlength="15"
                   [(ngModel)]="currentlyEditingMacro.name"
                   autocomplete="off"
@@ -66,9 +66,9 @@
 
             <mat-form-field class="full-width">
               <mat-label>Macro Commands</mat-label>
-              <textarea matInput 
-                type="text" 
-                placeholder="Macro Commands (separate multiple commands with semicolons)" 
+              <textarea matInput
+                type="text"
+                placeholder="Macro Commands (separate multiple commands with semicolons)"
                 maxlength="300"
                 [(ngModel)]="currentlyEditingMacro.macro"
                 [ngModelOptions]="{ standalone: true }"></textarea>
@@ -78,9 +78,9 @@
 
               <mat-form-field class="full-width">
                 <mat-label>Key</mat-label>
-                <input matInput 
-                  type="text" 
-                  placeholder="Key" 
+                <input matInput
+                  type="text"
+                  placeholder="Key"
                   [(ngModel)]="currentlyEditingMacro.key"
                   autocomplete="off"
                   (keydown)="updateKey($event)"
@@ -121,10 +121,10 @@
                 <mat-option value="clickToTarget">
                   Needs Target (<em>Needs to target a creature</em>)
                 </mat-option>
-                
+
               </mat-select>
             </mat-form-field>
-  
+
             <div class="full-width checkbox-row">
               <mat-checkbox [(ngModel)]="currentlyEditingMacro.ignoreAutoAttack"
                             matTooltip="This macro will not automatically trigger every tick."
@@ -137,9 +137,9 @@
 
               <mat-form-field>
                 <mat-label>Foreground Color</mat-label>
-                <input matInput 
-                  type="text" 
-                  placeholder="#000000" 
+                <input matInput
+                  type="text"
+                  placeholder="#000000"
                   maxlength="7"
                   autocomplete="off"
                   [(colorPicker)]="currentlyEditingMacro.color"
@@ -151,9 +151,9 @@
 
               <mat-form-field>
                 <mat-label>Background Color</mat-label>
-                <input matInput 
-                  type="text" 
-                  placeholder="#cccccc" 
+                <input matInput
+                  type="text"
+                  placeholder="#cccccc"
                   maxlength="7"
                   autocomplete="off"
                   [(colorPicker)]="currentlyEditingMacro.bgColor"
@@ -168,18 +168,18 @@
               <button mat-icon-button color="primary" (click)="setPage(currentIconPage - 1)">
                 <mat-icon>navigate_before</mat-icon>
               </button>
-              
+
               <div>Page {{ currentIconPage + 1 }}</div>
 
               <button mat-icon-button color="primary" (click)="setPage(currentIconPage + 1)">
                 <mat-icon>navigate_next</mat-icon>
-              </button> 
+              </button>
             </div>
-           
+
             <div class="icons">
-              <app-icon size="small" 
-                        [name]="icon" 
-                        [fgColor]="currentlyEditingMacro.color" 
+              <app-icon size="small"
+                        [name]="icon"
+                        [fgColor]="currentlyEditingMacro.color"
                         [bgColor]="currentlyEditingMacro.bgColor || '#ccc'"
                         (click)="currentlyEditingMacro.icon = icon"
                         [class.selected]="currentlyEditingMacro.icon === icon"
@@ -194,7 +194,7 @@
 
     <mat-tab label="Macro Bars">
       <div class="macro-bar-editor-container">
-        
+
         <div class="macro-group-container">
           <div class="text-center">
             <em>(left click to add or change a macro, right click to remove it)</em>
@@ -202,7 +202,7 @@
 
           <div *ngFor="let group of macroBars; let i = index">
             <div class="macro-group">
-        
+
               <div class="group-name">
                 <div class="name">{{ group.name }}</div>
                 <div class="actions">
@@ -212,17 +212,17 @@
                   <button mat-stroked-button color="warn" *ngIf="group.name !== 'default'" (click)="removeMacroGroup(group.name)">&times;</button>
                 </div>
               </div>
-        
+
               <div class="macrobar-item" *ngFor="let macroIdx of macroArray" [class.active]="activeMacroSlotGroup === group && activeMacroSlotIndex === macroIdx">
-        
+
                 <app-macro
                   [macroRef]="allMacros[group.macros[macroIdx]]"
-                  [showTooltip]="true"
+                  [showTooltip]="false"
                   (contextmenu)="setMacro(group, macroIdx, null)"
                   (click)="markActiveSlot(group, macroIdx)"
                   [mdePopoverTriggerFor]="macroSelectorPopover"
                 ></app-macro>
-        
+
               </div>
             </div>
           </div>
@@ -233,15 +233,15 @@
     </mat-tab>
 
   </mat-tab-group>
-      
-  <mde-popover #macroSelectorPopover="mdePopover" 
-              class="macro-selector-popover" 
+
+  <mde-popover #macroSelectorPopover="mdePopover"
+              class="macro-selector-popover"
               (close)="markActiveSlot(undefined, undefined)"
               [mdePopoverArrowWidth]="0"
-              [mdePopoverLeaveDelay]="1000"
+              [mdePopoverLeaveDelay]="0"
               [mdePopoverPositionY]="'below'"
-              [mdePopoverCloseOnClick]="true"
-              [mdePopoverTriggerOn]="'click'" 
+              [mdePopoverCloseOnClick]="false"
+              [mdePopoverTriggerOn]="'click'"
               [mdePopoverOverlapTrigger]="false">
     <mat-card class="tooltip-card">
       <mat-card-title>
@@ -253,12 +253,12 @@
           <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage - 1, $event)">
             <mat-icon>navigate_before</mat-icon>
           </button>
-          
+
           <div>Page {{ currentMacroPage + 1 }}</div>
 
           <button mat-icon-button color="primary" (click)="setMacroGroupPage(currentMacroPage + 1, $event)">
             <mat-icon>navigate_next</mat-icon>
-          </button> 
+          </button>
         </div>
 
         <div class="selector-macros">
@@ -272,7 +272,7 @@
       </mat-card-content>
     </mat-card>
   </mde-popover>
-  
+
 </div>
 
 <div mat-dialog-actions>
@@ -284,6 +284,6 @@
   <input type="file" #uploadMacros class="hidden" accept=".json" (change)="import($event, uploadMacros)"/>
   <button mat-button (click)="export()" color="accent" *ngIf="currentTab === 0">Export Macros</button>
   <button mat-button (click)="uploadMacros.click()" color="accent" *ngIf="currentTab === 0">Import Macros</button>
-  
+
   <button mat-button (click)="createMacroGroup()" color="primary" *ngIf="currentTab === 1">New Macro Group</button>
 </div>
