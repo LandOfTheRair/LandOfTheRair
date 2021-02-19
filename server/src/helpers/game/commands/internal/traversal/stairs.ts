@@ -37,7 +37,7 @@ export class Stairs extends MacroCommand {
 
     this.game.teleportHelper.teleport(
       player,
-      { x: teleportX, y: teleportY, map: teleportMap, zChange: interactable.type === 'StairsUp' ? 1 : -1 }
+      { x: teleportX, y: teleportY, map: teleportMap }
     );
 
   }

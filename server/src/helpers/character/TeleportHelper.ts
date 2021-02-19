@@ -36,8 +36,8 @@ export class TeleportHelper extends BaseService {
   // teleport a player somewhere
   public teleport(
     player: Player,
-    { x, y, map, zChange = 0, zSet = 0 }:
-    { x: number; y: number; map?: string; zChange?: number; zSet?: number }
+    { x, y, map }:
+    { x: number; y: number; map?: string }
   ) {
 
     // if we're not changing maps, move on this one
@@ -45,15 +45,6 @@ export class TeleportHelper extends BaseService {
       this.setCharXY(player, x, y);
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
       this.game.transmissionHelper.sendMovementPatch(player);
-    }
-
-    // adjust your Z level for up/down nav
-    if (zChange) {
-      player.z += zChange;
-    }
-
-    if (zSet) {
-      player.z = zSet;
     }
 
     // check if the new map even exists before going
@@ -64,9 +55,6 @@ export class TeleportHelper extends BaseService {
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Warning: map ${map} does not exist.` });
         return;
       }
-
-      // TODO: players coming in from different teleports will have different z coords. figure this out.
-      player.z = 0;
 
       if (!player.isBeingForciblyRespawned) {
         this.game.worldManager.leaveMap(player);

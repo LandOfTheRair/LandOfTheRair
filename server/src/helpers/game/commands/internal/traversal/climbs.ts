@@ -37,7 +37,7 @@ export class Climbs extends MacroCommand {
 
     this.game.teleportHelper.teleport(
       player,
-      { x: teleportX, y: teleportY, map: teleportMap, zChange: interactable.type === 'ClimbUp' ? 1 : -1 }
+      { x: teleportX, y: teleportY, map: teleportMap }
     );
 
   }

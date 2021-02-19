@@ -203,7 +203,8 @@ export class WorldMap {
     [
       MapLayer.RegionDescriptions,
       MapLayer.BackgroundMusic,
-      MapLayer.Succorport
+      MapLayer.Succorport,
+      MapLayer.ZLevel
     ].forEach(layer => {
       this.parseRectangleDataIntoPositionalHash(layer);
     });
@@ -338,6 +339,11 @@ export class WorldMap {
   // check first for dense decor, then secondly for objects at the location
   public getInteractableOrDenseObject(x: number, y: number) {
     return this.getDenseDecorAt(x, y) || this.getInteractableAt(x, y);
+  }
+
+  // check the Z level for an x/y
+  public getZLevelAt(x: number, y: number): number {
+    return this.getObjectAt(MapLayer.ZLevel, x, y)?.properties.z ?? 0;
   }
 
   // find a door by a given id

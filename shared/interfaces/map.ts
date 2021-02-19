@@ -22,7 +22,8 @@ export enum MapLayer {
   RegionDescriptions = 11,
   BackgroundMusic = 12,
   Succorport = 13,
-  SpawnerZones = 14
+  SpawnerZones = 14,
+  ZLevel = 15
 }
 
 // types of interactables and other objects present on a map

@@ -200,6 +200,9 @@ export class PlayerHelper extends BaseService {
 
     const { map } = this.worldManager.getMap(player.map);
 
+    const z = map.getZLevelAt(player.x, player.y);
+    player.z = z;
+
     const swimTile = map.getFluidAt(player.x, player.y);
     const swimInfo = GetSwimLevel(swimTile);
 
