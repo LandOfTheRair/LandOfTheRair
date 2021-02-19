@@ -175,6 +175,10 @@ export class Spawner {
   }
 
   private doInitialSpawn() {
+
+    if (this.name === 'Saraxa Spawner') {
+      console.log(this.initialSpawn);
+    }
     if (this.hasDoneInitialSpawn) return;
     this.hasDoneInitialSpawn = true;
 
@@ -187,6 +191,7 @@ export class Spawner {
     }
 
     // npcDefs means we have to maintain these and spawn them all at once
+    // primarily this exists for the green spawner
     (this.npcDefs || []).forEach(npcDef => {
       this.createNPC({ npcDef });
     });

@@ -33,19 +33,19 @@ export class ContentManager extends BaseService {
   }
 
   public getDropablesForRegion(region: string) {
-    return this.regionDroptables[region];
+    return cloneDeep(this.regionDroptables[region]);
   }
 
   public getDroptablesForMap(mapName: string) {
-    return this.mapDroptables[mapName];
+    return cloneDeep(this.mapDroptables[mapName]);
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
-    return this.items[itemName];
+    return cloneDeep(this.items[itemName]);
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.npcs[npcId];
+    return cloneDeep(this.npcs[npcId]);
   }
 
   public getNPCScript(npcTag: string) {
@@ -53,11 +53,11 @@ export class ContentManager extends BaseService {
   }
 
   public getRecipesForTradeskill(tradeskill) {
-    return this.recipes[tradeskill] || [];
+    return cloneDeep(this.recipes[tradeskill] || []);
   }
 
   public getSpawnerByTag(spawnerTag: string) {
-    return this.spawners[spawnerTag];
+    return cloneDeep(this.spawners[spawnerTag]);
   }
 
   private loadCharSelect() {
