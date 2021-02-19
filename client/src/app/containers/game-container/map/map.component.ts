@@ -98,11 +98,11 @@ export class MapComponent implements OnInit, OnDestroy {
       this.gameService.playGame$,
       this.gameService.currentPlayer$,
       this.gameService.currentMap$
-    ]).subscribe(([play, player, map]) => {
-      if (!play || !player || !map) return;
+    ]).subscribe(([play, player, mapData]) => {
+      if (!play || !player || !mapData) return;
       const areMapsDifferent = player?.map && this.currentPlayer.getValue()?.map && player?.map !== this.currentPlayer.getValue()?.map;
 
-      this.map.next(map);
+      this.map.next(mapData);
       this.currentPlayer.next(player);
 
       if (!this.game) {
