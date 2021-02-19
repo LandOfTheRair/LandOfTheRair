@@ -182,7 +182,7 @@ export class MapState {
     door.density = !state;
     door.opacity = !state;
 
-    this.triggerAndSendUpdate(door.x / 64, (door.y / 64) - 1);
+    this.triggerAndSendUpdateWithFOV(door.x / 64, (door.y / 64) - 1);
   }
 
   // tick spawners (respawn, buffs, etc)
@@ -333,12 +333,23 @@ export class MapState {
     }
   }
 
-  // update all players for a particular coordinate
+  // update all players for a particular coordinate as well as their FOV
   public triggerAndSendUpdate(x: number, y: number, triggeringPlayer?: Player) {
     const playersToUpdate = this.getPlayersToUpdate(x, y);
     playersToUpdate
       .filter(p => p !== triggeringPlayer)
       .forEach(p => {
+        this.triggerFullUpdateForPlayer(p);
+      });
+  }
+
+  // update all players for a particular coordinate
+  public triggerAndSendUpdateWithFOV(x: number, y: number, triggeringPlayer?: Player) {
+    const playersToUpdate = this.getPlayersToUpdate(x, y);
+    playersToUpdate
+      .filter(p => p !== triggeringPlayer)
+      .forEach(p => {
+        this.game.visibilityHelper.calculatePlayerFOV(p);
         this.triggerFullUpdateForPlayer(p);
       });
   }
