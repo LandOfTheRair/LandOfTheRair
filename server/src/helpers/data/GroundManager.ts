@@ -218,7 +218,6 @@ export class GroundManager extends BaseService {
   }
 
   public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
-
     // re-initialize the map as needed
     const mapGround = this.ground[mapName] || {};
     mapGround[x] = mapGround[x] || {};
@@ -240,7 +239,7 @@ export class GroundManager extends BaseService {
     gItem.count -= maxStackSize;
 
     // if we have an sItem (saved item) we decrement count here, too, but I don't expect this will happen
-    const sItem = mapGround[x][y][itemClass].find(i => i.item.uuid === uuid);
+    const sItem = saveGround[x][y][itemClass].find(i => i.item.uuid === uuid);
     if (sItem) {
       sItem.count -= maxStackSize;
     }
