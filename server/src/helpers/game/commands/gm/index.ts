@@ -1,5 +1,6 @@
 
 export * from './allegiance';
+export * from './crash';
 export * from './creategold';
 export * from './dupe';
 export * from './examineitem';

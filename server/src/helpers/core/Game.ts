@@ -196,6 +196,13 @@ export class Game {
     timer.dumpTimers();
 
     this.ticksElapsed++;
-    setTimeout(() => this.loop(), 100);
+    setTimeout(() => {
+      try {
+        this.loop();
+      } catch (e) {
+        this.logger.error('CrashRecovery', e);
+        this.loop();
+      }
+    }, 100);
   }
 }

@@ -180,7 +180,7 @@ export class SocketService {
     const { type, ...other } = data;
 
     if (!type) {
-      this.logger.error(`[WS Callback]`, `Payload ${JSON.stringify(data)} has no type.`);
+      this.logger.error(`WSCallback`, `Payload ${JSON.stringify(data)} has no type.`);
       return;
     }
 
@@ -188,7 +188,7 @@ export class SocketService {
       const blacklist = ['error', GameServerResponse.PlayCFX];
       if (blacklist.includes(type)) return;
 
-      this.logger.error(`[WS Callback]`, `Type ${type} has no callbacks registered.`);
+      this.logger.error(`WSCallback`, `Type ${type} has no callbacks registered.`);
       return;
     }
 
