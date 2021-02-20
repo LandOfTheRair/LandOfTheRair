@@ -199,7 +199,7 @@ export class MacrosService {
   private watchForNewMacroAlerts() {
     combineLatest([this.player$, this.currentMacros$])
       .subscribe(([player, currentMacros]) => {
-        if(!player || !currentMacros) return;
+        if(!player || !currentMacros || !currentMacros.macroBars || !currentMacros.activeMacro) return;
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map(spell => {
@@ -209,7 +209,12 @@ export class MacrosService {
             baseObj.isDefault = true;
             return baseObj;
           })
-          .filter(spell => spell && !currentMacros.learnedMacros[spell.name]);
+          .filter(spell => spell && !currentMacros.learnedMacros[spell.name])
+          .filter(spell => !Object.keys(currentMacros.macroBars || {})
+                              .map(bar => currentMacros.macroBars[bar].macros)
+                              .flat()
+                              .includes(spell.name)
+          );
 
         if(newSpells.length === 0) return;
 
