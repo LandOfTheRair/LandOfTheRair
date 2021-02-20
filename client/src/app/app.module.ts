@@ -14,6 +14,7 @@ import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 import { environment } from '../environments/environment';
 
 import * as AllStores from '../stores';
+import { GameAction } from '../interfaces';
 import { GameModule } from './game.module';
 
 import { AppComponent } from './app.component';
@@ -51,7 +52,24 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production,
       collapsed: true,
-      filter: action => !action.filterOutFromLogs
+      filter: action => {
+        if(!action.type) return !action.filterOutFromLogs;
+
+        const ignoreActions = {
+          [GameAction.GameSetPlayer]: true,
+          [GameAction.GamePatchPlayer]: true,
+          [GameAction.GamePatchPlayerState]: true,
+          [GameAction.GameSetPosition]: true,
+          [GameAction.SetCurrentItemTooltip]: true,
+          [GameAction.SettingsUpdateWindowPosition]: true,
+          [GameAction.SettingsSetDefaultWindowPosition]: true,
+          [GameAction.SettingsShowWindow]: true,
+          [GameAction.SettingsActiveWindow]: true,
+          [GameAction.SetCurrentCommand]: true
+        };
+
+        return !ignoreActions[action.type];
+      }
     })
   ],
   providers: [
