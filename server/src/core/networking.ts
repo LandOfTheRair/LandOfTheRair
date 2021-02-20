@@ -212,7 +212,8 @@ export class WebsocketWorker {
         oldSocket.username = null;
         delete this.sockets[socket.username];
         this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
-        oldSocket.close(5000, 'disconnected from another login location');
+
+        oldSocket.close(1008, 'disconnected from another login location');
       }
 
       this.sockets[socket.username] = socket;
