@@ -1,7 +1,8 @@
 
 import { sum } from 'lodash';
 
-import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData, IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
+import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData,
+  IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseSpell } from '../../interfaces/BaseSpell';
