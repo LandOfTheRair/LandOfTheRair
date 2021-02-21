@@ -17,7 +17,7 @@
     min-width: 200px;
     max-width: 200px;
     border-right: 1px solid var(--title-background-color);
-  
+
     .user-list {
 
       padding: 3px;
@@ -27,7 +27,7 @@
         padding: 0;
         list-style-type: none;
       }
-  
+
       .user {
 
         // margin-right: 16px !important;
@@ -46,22 +46,22 @@
           border-radius: 50%;
           display: inline-block;
           margin-right: 5px;
-    
+
           &.tier-10 {
             background: purple;
             background: linear-gradient(135deg, #ad3486 0%, #4100db 50%, #bdf3fd 100%);
           }
-    
+
           &.tier-5, &.tier-1 {
             background: #9f8914;
             background: linear-gradient(135deg, #9f8914 0%, #3e370e 50%, #ffd700 100%);
           }
-    
+
           &.tier-0 {
             background: gray;
             background: linear-gradient(135deg, #ccc 0%, #555 50%, #eee 100%);
           }
-    
+
           &.tier-7 {
             background: blue;
             background: linear-gradient(135deg, #00f 0%, #004 50%, #0aa 100%);
@@ -82,18 +82,18 @@
       }
     }
   }
-  
+
   .right-side {
     height: 100%;
     flex: 1;
     display: flex;
     flex-direction: column;
-    
+
     .motd {
       min-height: 16px;
       padding: 3px;
     }
-  
+
     .output-area {
       flex: 1;
       border-top: 1px solid var(--title-background-color);
@@ -101,7 +101,7 @@
       overflow-y: scroll;
 
       .message {
-        word-break: break-all;
+        word-break: break-word;
         font-size: 1.2rem;
 
         .timestamp {
@@ -114,7 +114,7 @@
         }
       }
     }
-  
+
     .input-area {
       min-height: 32px;
 
