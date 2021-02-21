@@ -102,7 +102,12 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
 
   const encrustText = encrustDef ? ` set with ${encrustDef.desc}` : '';
 
-  const desc = getProp(item, itemDef, 'desc');
+  let desc = getProp(item, itemDef, 'desc');
+
+  if(itemClass === ItemClass.Coin) {
+    const value = getProp(item, itemDef, 'value');
+    desc = `${value.toLocaleString()} ${desc}`;
+  }
 
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
