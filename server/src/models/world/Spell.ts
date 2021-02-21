@@ -1,7 +1,7 @@
 
 import { sum } from 'lodash';
 
-import { BaseClass, ICharacter, IItemEffect, ISpellData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
+import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData, IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseSpell } from '../../interfaces/BaseSpell';
@@ -21,6 +21,19 @@ export class Spell implements BaseSpell {
   }
 
   public cast(caster: ICharacter | null, target: ICharacter | null, override: Partial<IItemEffect>): void {}
+
+  public getOverrideEffectInfo(
+    caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData
+  ): DeepPartial<IStatusEffectData> {
+    return {
+      effect: {
+        duration: this.getDuration(caster, target, spellData),
+        extra: {
+          potency: this.getPotency(caster, target, spellData)
+        }
+      }
+    };
+  }
 
   public getDuration(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
     return 0;

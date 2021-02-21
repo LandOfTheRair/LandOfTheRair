@@ -49,7 +49,7 @@ export class EffectHelper extends BaseService {
       tooltip: effectData.tooltip.desc,
       effectName,
       endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
-      effectInfo: extra,
+      effectInfo: extra || {},
       effectRef: effectData.meta.effectRef,
       sourceName: ''
     };
