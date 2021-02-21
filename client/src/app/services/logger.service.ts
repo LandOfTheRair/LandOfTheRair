@@ -9,7 +9,9 @@ export class LoggerService {
 
   private ignoredErrorMessages = {
     'TypeError: Cannot read property \'sys\' of null': true,
-    'TypeError: Cannot read property \'sys\' of undefined': true
+    'Cannot read property \'sys\' of null': true,
+    'TypeError: Cannot read property \'sys\' of undefined': true,
+    'Cannot read property \'sys\' of undefined': true
   };
 
   private canShowErrors = true;
