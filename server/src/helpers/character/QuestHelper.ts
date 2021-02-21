@@ -50,7 +50,7 @@ export class QuestHelper extends BaseService {
       const req = requirement as IQuestRequirementKill;
       const data = player.quests.activeQuestProgress[quest];
       if (!data) return false;
-      if (data.kills < req.killsRequired) return false;
+      if ((data.kills ?? 0) < req.killsRequired) return false;
 
       return true;
     }
@@ -212,8 +212,8 @@ export class QuestHelper extends BaseService {
 
     if (questRef.requirements.type === QuestRequirementType.Kill) {
       const data = player.quests.activeQuestProgress[quest];
-      scope.current = data.kills;
-      scope.total = questRef.requirements.killsRequired;
+      scope.current = data.kills ?? 0;
+      scope.total = questRef.requirements.killsRequired ?? 0;
       scope.remaining = scope.total - scope.current;
     }
 
