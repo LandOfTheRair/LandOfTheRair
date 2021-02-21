@@ -32,8 +32,15 @@ export class Spell implements BaseSpell {
         extra: {
           potency: this.getPotency(caster, target, spellData)
         }
+      },
+      tooltip: {
+        desc: this.getUnformattedTooltipDesc(caster, target, spellData)
       }
     };
+  }
+
+  public getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {
+    return '';
   }
 
   public getDuration(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {

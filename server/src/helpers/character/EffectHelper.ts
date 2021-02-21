@@ -10,6 +10,11 @@ export class EffectHelper extends BaseService {
 
   public init() {}
 
+  private formatEffectMessage(message: string, effectData: IStatusEffectData): string {
+    return message
+      .split('%potency').join(effectData.effect.extra.potency?.toLocaleString());
+  }
+
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
     const { effectMeta: meta } = this.game.effectManager.getEffectData(effect.effectName);
@@ -46,7 +51,7 @@ export class EffectHelper extends BaseService {
 
     const effect: IStatusEffect = {
       uuid: uuid(),
-      tooltip: effectData.tooltip.desc,
+      tooltip: this.formatEffectMessage(effectData.tooltip.desc, effectData),
       effectName,
       endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
       effectInfo: extra || {},
