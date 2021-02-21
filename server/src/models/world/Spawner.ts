@@ -175,10 +175,6 @@ export class Spawner {
   }
 
   private doInitialSpawn() {
-
-    if (this.name === 'Saraxa Spawner') {
-      console.log(this.initialSpawn);
-    }
     if (this.hasDoneInitialSpawn) return;
     this.hasDoneInitialSpawn = true;
 

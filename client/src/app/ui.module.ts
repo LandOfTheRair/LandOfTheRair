@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
@@ -31,7 +32,7 @@ const matImports = [
   MatIconModule, MatMenuModule, MatProgressSpinnerModule, MatChipsModule,
   MatCheckboxModule, MatButtonToggleModule, MatDialogModule, MatStepperModule,
   MatSelectModule, MatTooltipModule, MatCardModule, MatSnackBarModule, MatTabsModule,
-  MatSliderModule, MatRadioModule, MatListModule,
+  MatSliderModule, MatRadioModule, MatListModule, MatProgressBarModule,
 
   MdePopoverModule,
 

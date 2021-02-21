@@ -8,3 +8,15 @@ mat-list {
   max-height: 573px;
   overflow-y: auto;
 }
+
+.progress-container {
+
+  position: relative;
+  overflow: visible;
+
+  .progress-value {
+    position: absolute;
+    right: 0;
+    top: -20px;
+  }
+}

@@ -26,8 +26,12 @@
         <mat-list>
           <ng-container *ngFor="let playerQuest of player.quests.activeQuestProgress | keyvalue">
             <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
-              <h2 matLine>{{ quest.name }}</h2>
-              <h5 matLine>Given By: {{ quest.giver }}</h5>
+              <h2 matLine><strong>{{ quest.name }}</strong></h2>
+              <div class="progress-container" matLine *ngIf="playerQuest.value.percentComplete">
+                <span class="progress-value">{{ playerQuest.value.rawValue }} / {{ playerQuest.value.rawValueMax }}</span>
+                <mat-progress-bar mode="determinate" [value]="playerQuest.value.percentComplete * 100"></mat-progress-bar>
+              </div>
+              <h5 matLine><em>Given By: {{ quest.giver }}</em></h5>
               <p matLine>
                 {{ quest.desc }}
               </p>

@@ -81,6 +81,10 @@ export class QuestHelper extends BaseService {
     data.kills = data.kills || 0;
     data.kills++;
 
+    data.percentComplete = data.kills / questRef.requirements.killsRequired;
+    data.rawValue = data.kills;
+    data.rawValueMax = questRef.requirements.killsRequired;
+
     this.updateQuestData(player, quest, data);
 
     if (questRef.messages.kill && data.kills <= questRef.requirements.killsRequired) {
