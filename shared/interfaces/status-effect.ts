@@ -50,7 +50,7 @@ export interface IStatusEffectData {
     extra: IStatusEffectInfo;     // the static meta information
   };
 
-  meta: {
+  effectMeta: {
     castSfx?: SoundEffect;        // the sound effect sent to the caster when the effect starts
     applySfx?: SoundEffect;       // the sound effect sent to the creature when the effect starts
 

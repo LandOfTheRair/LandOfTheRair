@@ -80,7 +80,7 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx, doesAttack, doesHeal, doesOvertime, noHostileTarget } = spellData.meta;
+    const { casterMessage, casterSfx, targetMessage, targetSfx, doesAttack, doesHeal, doesOvertime, noHostileTarget } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
@@ -117,8 +117,8 @@ export class SpellManager extends BaseService {
 
     if (doesAttack) {
       this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.meta.casterAttackMessage,
-        defMsg: spellData.meta.targetAttackMessage,
+        atkMsg: spellData.spellMeta.casterAttackMessage,
+        defMsg: spellData.spellMeta.targetAttackMessage,
         sfx: SoundEffect.CombatHitSpell,
         damage: potency,
         damageClass: spellData.damageClass || DamageClass.Energy,
@@ -128,8 +128,8 @@ export class SpellManager extends BaseService {
 
     if (doesHeal) {
       this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.meta.casterAttackMessage,
-        defMsg: spellData.meta.targetAttackMessage,
+        atkMsg: spellData.spellMeta.casterAttackMessage,
+        defMsg: spellData.spellMeta.targetAttackMessage,
         sfx: SoundEffect.SpellHeal,
         damage: -potency,
         damageClass: spellData.damageClass || DamageClass.Heal,

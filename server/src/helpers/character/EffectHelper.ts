@@ -12,7 +12,7 @@ export class EffectHelper extends BaseService {
 
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
-    const { meta } = this.game.effectManager.getEffectData(effect.effectName);
+    const { effectMeta: meta } = this.game.effectManager.getEffectData(effect.effectName);
     if (!meta.effectRef) return;
 
     this.game.effectManager.effectTick(effect.effectName, character, effect);
@@ -50,7 +50,7 @@ export class EffectHelper extends BaseService {
       effectName,
       endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
       effectInfo: extra || {},
-      effectRef: effectData.meta.effectRef,
+      effectRef: effectData.effectMeta.effectRef,
       sourceName: ''
     };
 

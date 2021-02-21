@@ -38,9 +38,9 @@ export class EffectManager extends BaseService {
     const effectData = this.getEffectData(effectName);
 
     // send the cast message to the caster
-    const createMessage = this.formatMessage(effectData.meta.castMessage || '', { target: character.name });
+    const createMessage = this.formatMessage(effectData.effectMeta.castMessage || '', { target: character.name });
     if (character.uuid !== effect.sourceUUID && effect.sourceUUID && createMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(effect.sourceUUID, { message: createMessage, sfx: effectData.meta.castSfx });
+      this.game.messageHelper.sendLogMessageToPlayer(effect.sourceUUID, { message: createMessage, sfx: effectData.effectMeta.castSfx });
     }
   }
 
@@ -54,9 +54,9 @@ export class EffectManager extends BaseService {
     const effectData = this.getEffectData(effectName);
 
     // send the apply message to the target
-    const applyMessage = this.formatMessage(effectData.meta.applyMessage || '', { target: character.name });
+    const applyMessage = this.formatMessage(effectData.effectMeta.applyMessage || '', { target: character.name });
     if (applyMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(character, { message: applyMessage, sfx: effectData.meta.applySfx });
+      this.game.messageHelper.sendLogMessageToPlayer(character, { message: applyMessage, sfx: effectData.effectMeta.applySfx });
     }
   }
 
@@ -79,7 +79,7 @@ export class EffectManager extends BaseService {
     const effectData = this.getEffectData(effectName);
 
     // send the unapply message to the target
-    const unapplyMessage = this.formatMessage(effectData.meta.unapplyMessage || '', { target: character.name });
+    const unapplyMessage = this.formatMessage(effectData.effectMeta.unapplyMessage || '', { target: character.name });
     if (unapplyMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(character, { message: unapplyMessage });
     }
