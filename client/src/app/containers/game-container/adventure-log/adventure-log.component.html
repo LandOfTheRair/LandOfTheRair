@@ -5,7 +5,7 @@
 
             defaultX="4"
             defaultY="401"
-            defaultWidth="344"
+            defaultWidth="380"
             defaultHeight="308"
 
 ></app-window>
@@ -21,9 +21,9 @@
     </ng-container>
   </div>
   <div class="log-area" *ngIf="(gameService.logMode$ | async) as logMode">
-    <div class="message" 
-         *ngFor="let message of messages" 
-         [ngClass]="message.messageTypes" 
+    <div class="message"
+         *ngFor="let message of messages"
+         [ngClass]="message.messageTypes"
          [class.hidden]="!isMessageVisible(logMode, message)"
          [innerHTML]="message.display">
     </div>

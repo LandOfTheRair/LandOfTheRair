@@ -19,6 +19,7 @@ export class LoggerService {
   ) {}
 
   public showErrorWindow(title: string, content: string) {
+    console.log('CAUGHT', title, content);
     if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
 
     this.dialog.afterAllClosed.subscribe(() => {

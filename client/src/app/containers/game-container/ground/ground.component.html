@@ -6,7 +6,7 @@
 
             defaultX="4"
             defaultY="710"
-            defaultWidth="344"
+            defaultWidth="380"
             defaultHeight="208"
 
 ></app-window>
@@ -19,7 +19,7 @@
   <div *ngIf="currentGround"
        class="full-height"
        dropScope="ground"
-       (onDrop)="uiService.buildAndDoDropAction($event, 'ground')" 
+       (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
        droppable>
 
     <ng-container *ngIf="groundGroups.length === 0">
@@ -28,7 +28,7 @@
 
     <ng-container *ngIf="groundGroups.length > 0">
       <div class="item-classes">
-        <app-item *ngFor="let itemGroup of groundGroups" 
+        <app-item *ngFor="let itemGroup of groundGroups"
                   (click)="changeItemClass(itemGroup.itemClass)"
                   [class.selected]="itemGroup.itemClass === currentItemClass"
                   [size]="'lg'"
@@ -41,11 +41,11 @@
                   [viewingPlayer]="player"
                   [item]="{ name: itemGroup.name, mods: { sprite: itemGroup.sprite, value: itemGroup.value || 0 } }"></app-item>
       </div>
-  
+
       <div class="item-sub">
         <div class="true-center background-text full-height full-width" *ngIf="!currentItemClass">Select an item category</div>
 
-        <app-item *ngFor="let item of (currentGround[currentItemClass] || [])" 
+        <app-item *ngFor="let item of (currentGround[currentItemClass] || [])"
                   [size]="'lg'"
                   context="Ground"
                   [contextSlot]="item.item.uuid"

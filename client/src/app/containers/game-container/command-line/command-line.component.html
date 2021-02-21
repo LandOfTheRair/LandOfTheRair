@@ -4,7 +4,7 @@
             [canHide]="true"
             [initialHide]="true"
 
-            defaultX="349"
+            defaultX="385"
             defaultY="802"
             defaultWidth="576"
             defaultHeight="64"
@@ -21,7 +21,7 @@
     <mat-form-field class="mode-select" floatLabel="never">
       <mat-label>Mode</mat-label>
       <mat-select [value]="gameService.chatMode$ | async"
-                  panelClass="game" 
+                  panelClass="game"
                   (selectionChange)="updateChatMode($event.value)">
         <mat-option value="cmd">Command</mat-option>
         <mat-option value="say">Local</mat-option>
@@ -29,9 +29,9 @@
         <mat-option value="global">Lobby</mat-option>
       </mat-select>
     </mat-form-field>
-  
+
     <mat-form-field class="text-entry" floatLabel="never">
-      <input matInput 
+      <input matInput
              #commandInput
              [value]="currentCommand"
              (keydown.arrowup)="searchCommandHistory($event, 1)"
@@ -39,7 +39,7 @@
              (keydown.escape)="updateCommand('')"
              (keydown.enter)="sendCommand($event)"
              (input)="updateCommand(commandInput.value)"
-             [placeholder]="placeholderTexts[gameService.chatMode$ | async] || 'Enter text here...'" 
+             [placeholder]="placeholderTexts[gameService.chatMode$ | async] || 'Enter text here...'"
              autocomplete="off"
              autocorrect="off"
              autocapitalize="off"

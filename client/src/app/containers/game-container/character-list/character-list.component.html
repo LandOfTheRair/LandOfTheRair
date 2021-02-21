@@ -5,7 +5,7 @@
 
             defaultX="4"
             defaultY="101"
-            defaultWidth="344"
+            defaultWidth="380"
             defaultHeight="300"
 ></app-window>
 
@@ -15,7 +15,7 @@
 
 <ng-template #bodyTemplate>
   <ng-container *ngIf="player">
-    <div class="p-1 char-container">
+    <div class="p-bottom-20 p-left-5 p-right-25 char-container">
       <div class="vertical-center full-width full-height background-text" *ngIf="visibleCharacterList.length === 0">You don't see anyone nearby</div>
       <div class="char-card-container" *ngFor="let character of visibleCharacterList; let i = index">
         <app-character-card [origin]="player" [char]="character" *ngIf="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(character, $event)"></app-character-card>

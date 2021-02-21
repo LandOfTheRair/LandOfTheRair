@@ -413,8 +413,6 @@ export class MapScene extends Phaser.Scene {
       const xDiff = xCoord - this.player.x;
       const yDiff = yCoord - this.player.y;
 
-      console.log(pointer);
-
       const doMove = () => {
         this.game.socketService.sendAction({ command: `~move`, args: `${xDiff} ${yDiff}` });
       };

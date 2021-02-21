@@ -3,7 +3,7 @@
             [body]="bodyTemplate"
             [canHide]="false"
 
-            defaultX="349"
+            defaultX="385"
             defaultY="4"
             defaultWidth="576"
             defaultHeight="96"
@@ -17,10 +17,10 @@
 
 <ng-template #bodyTemplate>
   <div class="container" *ngIf="player">
-    
+
     <div class="buffs"
          droppable
-         (onDrop)="uiService.buildAndDoDropAction($event, 'use')" 
+         (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
          dropScope="use">
       <ng-container *ngIf="effects.length > 0; else noEffects">
         <app-effect-icon [effect]="effect" defaultTransparent="true" *ngFor="let effect of effects; trackBy:trackEffectBy" (contextmenu)="unapply($event, effect)"></app-effect-icon>
