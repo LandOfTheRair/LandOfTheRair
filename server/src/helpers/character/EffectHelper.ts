@@ -48,6 +48,12 @@ export class EffectHelper extends BaseService {
   ): void {
     const effectData: IStatusEffectData = merge({}, this.game.effectManager.getEffectData(effectName), modifyEffectInfo);
     const { type, extra, duration } = effectData.effect;
+    const { recentlyRef } = effectData.effectMeta;
+
+    // if this effect has a recently associated with it, we do not apply if they have that
+    if (recentlyRef && this.hasEffect(character, recentlyRef)) {
+      return;
+    }
 
     const effect: IStatusEffect = {
       uuid: uuid(),
@@ -110,6 +116,7 @@ export class EffectHelper extends BaseService {
   public removeEffect(character: ICharacter, effect: IStatusEffect): void {
     const effectData = this.game.effectManager.getEffectData(effect.effectName);
     const { type } = effectData.effect;
+    const { recentlyRef } = effectData.effectMeta;
 
     character.effects[type] = character.effects[type].filter(e => e.uuid !== effect.uuid);
 
@@ -123,6 +130,11 @@ export class EffectHelper extends BaseService {
 
     this.game.effectManager.effectUnapply(effect.effectName, character, effect);
     this.game.effectManager.effectDestroy(effect.effectName, character, effect);
+
+    // if this spell has a recently associated with it, we apply it now
+    if (recentlyRef) {
+      this.addEffect(character, '', recentlyRef);
+    }
   }
 
   public removeEffectManually(character: ICharacter, effectNameOrUUID: string): void {

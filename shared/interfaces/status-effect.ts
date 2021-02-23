@@ -58,5 +58,6 @@ export interface IStatusEffectData {
     applyMessage?: string;        // the message sent to the creature when the effect starts
     unapplyMessage?: string;      // the message sent to the creature when the effect ends
     effectRef?: string;           // the string reference to the effect code, if needed
+    recentlyRef?: string;         // the "recently" effect for this effect. if exists on the target, effectRef cannot be applied. automatically applied when effectRef fades.
   };
 }
