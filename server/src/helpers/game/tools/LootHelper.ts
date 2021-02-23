@@ -1,9 +1,9 @@
 
 import { Injectable } from 'injection-js';
-import { get, random } from 'lodash';
+import { get, isString, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
-import { Allegiance, INPC, ISimpleItem, ItemSlot } from '../../../interfaces';
+import { Allegiance, INPC, ISimpleItem, ItemSlot, Rollable } from '../../../interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -19,28 +19,44 @@ export class LootHelper extends BaseService {
   public init() {}
 
   // choose items to drop with replacing, aka, pick from the same pool each time (no removals)
-  public chooseWithReplacement(choices: any[], number = 1) {
+  public chooseWithReplacement(choices: Rollable[]|string[], number = 1, bonus = 0) {
     if (choices.length === 0) return [];
-    const table = new LootTable(choices);
+    const table = new LootTable(this.applyBonusToTable(choices, bonus));
     return table.chooseWithReplacement(number);
   }
 
   // choose items to drop without replacing, aka, keep taking from the pool
-  private chooseWithoutReplacement(choices: any[], number = 1) {
+  private chooseWithoutReplacement(choices: Rollable[]|string[], number = 1, bonus = 0) {
     if (choices.length === 0) return [];
-    const table = new LootTable(choices);
+    const table = new LootTable(this.applyBonusToTable(choices, bonus));
     return table.chooseWithoutReplacement(number);
   }
 
   // try to drop each item in the loot table
-  private tryEachItem(choices: any[]) {
+  private tryEachItem(choices: Rollable[]|string[], bonus = 0) {
     if (choices.length === 0) return [];
-    const table = new LootTable(choices);
+    const table = new LootTable(this.applyBonusToTable(choices, bonus));
     return table.tryToDropEachItem(0);
   }
 
+  private applyBonusToTable(dropTable: any[], bonus = 0): Rollable[]|string[] {
+    return dropTable.map(dt => {
+      if (isString(dt)) return dt;
+
+      if (dt.noLuckBonus) return dt;
+
+      if (dt.maxChance) {
+        dt.chance = Math.min(dt.maxChance, dt.chance + bonus);
+      } else {
+        dt.chance += bonus;
+      }
+
+      return dt;
+    });
+  }
+
   // filter out things that can't actually drop. basically, just holiday stuff
-  private filterDropTable(dropTable: any[]) {
+  private filterDropTable(dropTable: Rollable[]) {
     return dropTable.filter(item => item.requireHoliday ? this.game.holidayHelper.isHoliday(item.requireHoliday) : true);
   }
 
@@ -96,7 +112,7 @@ export class LootHelper extends BaseService {
 
       // roll the drops if we have any
       if (drops.length > 0) {
-        rolledResults.push(...this.tryEachItem(this.filterDropTable(drops)));
+        rolledResults.push(...this.tryEachItem(this.filterDropTable(drops as Rollable[])));
       }
     }
 

@@ -293,6 +293,7 @@ export interface Rollable {
   result: string;
   maxChance?: number;
   requireHoliday?: Holiday;
+  noLuckBonus?: boolean;
 }
 
 export interface RandomNumber {

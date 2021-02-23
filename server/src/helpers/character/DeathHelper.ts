@@ -140,8 +140,10 @@ export class DeathHelper extends BaseService {
         allItems.push(...dead.items.sack.items);
       }
 
+      const bonus = killer ? this.game.characterHelper.getStat(killer, Stat.LUK) : 0;
+
       // roll items for the npc specifically
-      const rolledItems = this.game.lootHelper.getNPCLoot(dead);
+      const rolledItems = this.game.lootHelper.getNPCLoot(dead, bonus);
       allItems.push(...rolledItems);
 
       // attach items to corpse and put that on the ground
