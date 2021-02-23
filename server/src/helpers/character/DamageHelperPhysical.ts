@@ -725,11 +725,24 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   // try to combat-stun from a melee hit
-  /*
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
+    // TODO: prone/push
 
+    // first we get the diff between atk STR and def CON
+    // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa
+    // then we multiply by the def CON to get our 1/x
+    // this means there's always a chance of c-stun, but high con and having higher CON than your attackers will mitigate it effectively
+    let conMultiplier = 20;
+    const defCon = this.game.characterHelper.getStat(defender, Stat.CON);
+    const atkStr = this.game.characterHelper.getStat(attacker, Stat.STR);
+
+    const diff = atkStr - defCon;
+    conMultiplier = Math.max(1, conMultiplier - diff);
+
+    if (this.game.diceRollerHelper.OneInX(defCon * conMultiplier)) {
+      this.game.effectHelper.addEffect(defender, attacker, 'Stun', { effect: { duration: 5 } });
+    }
   }
-  */
 
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
     const { isThrow, throwHand, isBackstab, isOffhand, isKick, damageMult } = args;
@@ -926,7 +939,7 @@ export class DamageHelperPhysical extends BaseService {
 
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
-    // this.attemptToStun(attacker, defender, attackerWeapon);
+    this.attemptToStun(attacker, defender, attackerWeapon);
 
     // if our ammo was shot and can apply an effect, we give it a spin
     if (canShoot && ammo) {
