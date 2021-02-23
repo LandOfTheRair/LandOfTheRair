@@ -48,8 +48,10 @@ export class DefaultAIBehavior implements IAI {
 
     this.game.npcHelper.tick(npc, this.currentTick);
 
-    this.adjustTargetting();
-    this.attemptMove();
+    if (this.game.characterHelper.canAct(npc)) {
+      this.adjustTargetting();
+      this.attemptMove();
+    }
 
     if (this.stanceCooldown > 0) this.stanceCooldown--;
     this.highestAgro = null;

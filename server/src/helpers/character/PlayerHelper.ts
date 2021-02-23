@@ -133,7 +133,7 @@ export class PlayerHelper extends BaseService {
     }
 
     // do actions if we have any
-    if (player.actionQueue) {
+    if (player.actionQueue && this.game.characterHelper.canAct(player)) {
       const queue = player.actionQueue[type] || [];
 
       const actions = type === 'fast' ? 1 : (this.getStat(player as IPlayer, Stat.ActionSpeed) || 1);

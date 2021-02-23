@@ -20,6 +20,12 @@ export class CharacterHelper extends BaseService {
     return char.hp.current <= 0 || this.game.effectHelper.hasEffect(char, 'Dead');
   }
 
+  // check if the character can currently act
+  public canAct(char: ICharacter): boolean {
+    const stunned = this.game.effectHelper.hasEffect(char, 'Stun');
+    return !stunned;
+  }
+
   public healToFull(char: ICharacter): void {
     this.heal(char, char.hp.maximum);
   }
