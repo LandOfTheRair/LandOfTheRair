@@ -79,6 +79,12 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
+  public removeItemsFromBeltByUUID(player: ICharacter, uuids: string[]): boolean {
+    player.items.belt.items = player.items.belt.items.filter(x => !uuids.includes(x.uuid));
+
+    return true;
+  }
+
   // sell items / deal with buyback
   public sellItem(player: IPlayer, item: ISimpleItem): void {
 

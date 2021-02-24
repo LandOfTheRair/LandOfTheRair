@@ -153,7 +153,6 @@ export interface INPC extends ICharacter {
   shouldStrip?: boolean;
   shouldEatTier?: number;
   stripRadius?: number;
-  stripOnSpawner?: boolean;
   stripX?: number;
   stripY?: number;
 

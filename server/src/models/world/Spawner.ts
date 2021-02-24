@@ -42,9 +42,8 @@ export class Spawner {
 
   private shouldStrip = false;                      // whether the creature should strip all your gear on death
   private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
-  private stripOnSpawner = true;                    // whether you should strip on the spawner or not
-  private stripX: number;                           // the specific x to strip to (overrides stripOnSpawner)
-  private stripY: number;                           // the specific y to strip to (overrides stripOnSpawner)
+  private stripX: number;                           // the specific x to strip to (default: spawner x)
+  private stripY: number;                           // the specific y to strip to (default: spawner y)
   private shouldEatTier = 0;                        // if the creature eats, and if so, how badly it does
 
   private eliteTickCap = 50;                        // the number of creatures required to spawn an elite (-1 = no elites)
@@ -268,9 +267,8 @@ export class Spawner {
     npc.shouldStrip = this.shouldStrip;
     npc.shouldEatTier = this.shouldEatTier;
     npc.stripRadius = this.stripRadius;
-    npc.stripOnSpawner = this.stripOnSpawner;
-    npc.stripX = this.stripX;
-    npc.stripY = this.stripY;
+    npc.stripX = this.stripX || this.x;
+    npc.stripY = this.stripY || this.y;
 
     if (this.isDangerous) {
       this.game.effectHelper.addEffect(npc, '', 'Dangerous');

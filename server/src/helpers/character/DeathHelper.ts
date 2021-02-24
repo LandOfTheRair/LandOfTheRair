@@ -1,8 +1,8 @@
 
 import { Injectable } from 'injection-js';
-import { random } from 'lodash';
+import { random, sample } from 'lodash';
 
-import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -70,7 +70,7 @@ export class DeathHelper extends BaseService {
     dead.dir = Direction.Corpse;
     dead.combatTicks = 0;
 
-    const corpse = this.createCorpse(dead);
+    const corpse = this.createCorpse(dead, killer);
 
     if (this.game.characterHelper.isPlayer(dead)) {
       const shouldMakeCorpse = ((killer as INPC)?.shouldEatTier ?? 0) <= 0;
@@ -117,6 +117,8 @@ export class DeathHelper extends BaseService {
     if (killer && !this.game.characterHelper.isPlayer(killer)) {
       this.game.characterHelper.dropHands(dead);
     }
+
+    this.game.characterHelper.calculateStatTotals(dead);
   }
 
   // dispatch ai death, calculate loot drops
@@ -201,13 +203,91 @@ export class DeathHelper extends BaseService {
     this.game.characterHelper.clearAgro(killer, dead);
     this.game.characterHelper.clearAgro(dead, killer);
 
-    // TODO: try to strip
-    // TODO: try to eat
+    // if they can strip, they strip
+    if (killer.shouldStrip && killer.stripX && killer.stripY) {
+      this.strip(dead, killer.stripX, killer.stripY, killer.stripRadius);
+    }
+
+    // if they can eat, they eat
+    const eatTier = killer.shouldEatTier ?? 0;
+
+    if (eatTier > 0) {
+      this.game.messageHelper.sendLogMessageToPlayer(dead, { message: `${killer.name} makes a quick meal out of you!` });
+
+      const lostXP = Math.floor((this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) / 40) * eatTier);
+      const lostSkill = Math.floor(500 * eatTier);
+      const randomSkill = sample(Object.keys(dead.skills));
+
+      this.game.characterHelper.losePermanentStat(dead, Stat.HP, Math.floor(eatTier));
+
+      this.game.playerHelper.loseExp(dead as IPlayer, lostXP);
+      this.game.playerHelper.loseSkill(dead as IPlayer, randomSkill, lostSkill);
+    }
+  }
+
+  // strip a character to a location w/ a radius
+  private strip(character: ICharacter, x: number, y: number, radius = 0): void {
+    if (this.game.effectHelper.hasEffect(character, 'Secondwind')) return;
+
+    this.game.messageHelper.sendLogMessageToPlayer(character, {
+      message: 'You see a flaming wisp dance before your eyes, taking your equipment with it!'
+    });
+
+    const pickSlot = () => ({ x: random(x - radius, x + radius), y: random(y - radius, y + radius) });
+
+    this.game.characterHelper.dropHands(character);
+
+    const allItemDrops: Array<{ x: number; y: number; item: ISimpleItem }> = [];
+
+    // take the gold
+    const goldTotal = this.game.currencyHelper.getCurrency(character, Currency.Gold);
+    if (goldTotal > 0) {
+      this.game.currencyHelper.loseCurrency(character, goldTotal, Currency.Gold);
+
+      const goldItem = this.game.itemCreator.getGold(goldTotal);
+      allItemDrops.push({ ...pickSlot(), item: goldItem });
+    }
+
+    // take the gear
+    Object.keys(character.items.equipment).forEach(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return;
+
+      allItemDrops.push({ ...pickSlot(), item });
+      this.game.characterHelper.setEquipmentSlot(character, itemSlot as ItemSlot, undefined);
+    });
+
+    // take the belt & sack
+    const sackItems = character.items.sack.items
+      .filter(item => {
+        const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
+        return !succorInfo;
+      })
+      .map(item => ({ ...pickSlot(), item }));
+
+    this.game.inventoryHelper.removeItemsFromSackByUUID(character, sackItems.map(i => i.item.uuid));
+    allItemDrops.push(...sackItems);
+
+    const beltItems = character.items.belt.items
+      .filter(item => {
+        const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
+        return !succorInfo;
+      })
+      .map(item => ({ ...pickSlot(), item }));
+
+    this.game.inventoryHelper.removeItemsFromBeltByUUID(character, beltItems.map(i => i.item.uuid));
+    allItemDrops.push(...beltItems);
+
+    // finally, banish them to the ground
+    const { state } = this.game.worldManager.getMap(character.map);
+    state.addItemsToGroundSpread(allItemDrops, { x, y }, radius);
   }
 
   // corpse creating
-  private createCorpse(character: ICharacter): ISimpleItem|undefined {
+  private createCorpse(character: ICharacter, killer?: ICharacter): ISimpleItem|undefined {
     if (this.game.characterHelper.isPlayer(character)) {
+      if (((killer as INPC)?.shouldEatTier ?? 0) > 0) return undefined;
+
       return this.createPlayerCorpse(character as IPlayer);
     } else {
       return this.createNPCCorpse(character as INPC);

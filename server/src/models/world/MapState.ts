@@ -537,13 +537,41 @@ export class MapState {
     return ground;
   }
 
+  // add multiple items to the ground across various x/y
+  public addItemsToGroundSpread(
+    itemlocs: Array<{ x: number; y: number; item: ISimpleItem }>,
+    center: { x: number; y: number },
+    radius = 0
+  ): void {
+    itemlocs.forEach(ref => {
+      const destroyOnDrop = this.game.itemHelper.getItemProperty(ref.item, 'destroyOnDrop');
+      if (destroyOnDrop) return;
+
+      this.game.groundManager.addItemToGround(this.map.name, ref.x, ref.y, ref.item);
+    });
+
+    // if player knowledge x/y, update ground
+    for (let x = center.x - radius; x < center.x + radius; x++) {
+      for (let y = center.y - radius; y < center.y + radius; y++) {
+        this.triggerGroundUpdateInRadius(x, y);
+      }
+    }
+  }
+
+  // add multiple items to the ground at x/y
   public addItemsToGround(x: number, y: number, items: ISimpleItem[]): void {
-    items.forEach(item => this.game.groundManager.addItemToGround(this.map.name, x, y, item));
+    items.forEach(item => {
+      const destroyOnDrop = this.game.itemHelper.getItemProperty(item, 'destroyOnDrop');
+      if (destroyOnDrop) return;
+
+      this.game.groundManager.addItemToGround(this.map.name, x, y, item);
+    });
 
     // if player knowledge x/y, update ground
     this.triggerGroundUpdateInRadius(x, y);
   }
 
+  // add a single item to the ground at x/y
   public addItemToGround(x: number, y: number, item: ISimpleItem): void {
 
     const destroyOnDrop = this.game.itemHelper.getItemProperty(item, 'destroyOnDrop');

@@ -300,15 +300,22 @@ export class PlayerHelper extends BaseService {
     return player.exp < map.maxLevelExp;
   }
 
+  // lose exp (eat, suck)
+  public loseExp(player: IPlayer, xpLost: number): void {
+    this.gainExp(player, -xpLost);
+  }
+
   // gain exp for a player
   public gainExp(player: IPlayer, xpGained: number): void {
     if (player.gainingAXP && xpGained > 0) return;
 
-    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent);
-    xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
+    if (xpGained > 0) {
+      const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent);
+      xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
 
-    // TODO: modify xpGained for sub
-    xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
+      // TODO: modify xpGained for sub
+      xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
+    }
 
     player.exp = Math.max(Math.floor(player.exp + xpGained), 0);
     player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
@@ -330,6 +337,11 @@ export class PlayerHelper extends BaseService {
     if (!this.canGainSkillOnMap(player, skill)) return;
 
     this.gainSkill(player, skill, skillGained);
+  }
+
+  // lose some skill (eat, suck)
+  public loseSkill(player: IPlayer, skill: Skill, skillLost: number): void {
+    this.gainSkill(player, skill, -skillLost);
   }
 
   // gain skill for a character
