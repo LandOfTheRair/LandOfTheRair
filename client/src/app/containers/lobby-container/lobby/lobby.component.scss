@@ -105,7 +105,8 @@
         font-size: 1.2rem;
 
         .timestamp {
-          margin-right: 5px;
+          min-width: 55px;
+          display: inline-block;
         }
 
         .username {
