@@ -153,7 +153,7 @@ export class Game {
   public loop() {
     const trueTick = this.ticksElapsed / 10;
 
-    const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production', dumpThreshold: 50 });
+    const timer = new LoggerTimer({ isActive: process.env.NODE_ENV !== 'production', dumpThreshold: 250 });
     timer.startTimer('gameloop');
 
     // fast tick actions
