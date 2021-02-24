@@ -259,20 +259,14 @@ export class DeathHelper extends BaseService {
 
     // take the belt & sack
     const sackItems = character.items.sack.items
-      .filter(item => {
-        const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
-        return !succorInfo;
-      })
+      .filter(item => !this.game.itemHelper.getItemProperty(item, 'succorInfo'))
       .map(item => ({ ...pickSlot(), item }));
 
     this.game.inventoryHelper.removeItemsFromSackByUUID(character, sackItems.map(i => i.item.uuid));
     allItemDrops.push(...sackItems);
 
     const beltItems = character.items.belt.items
-      .filter(item => {
-        const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
-        return !succorInfo;
-      })
+      .filter(item => !this.game.itemHelper.getItemProperty(item, 'succorInfo'))
       .map(item => ({ ...pickSlot(), item }));
 
     this.game.inventoryHelper.removeItemsFromBeltByUUID(character, beltItems.map(i => i.item.uuid));
