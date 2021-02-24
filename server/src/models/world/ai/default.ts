@@ -309,7 +309,7 @@ export class DefaultAIBehavior implements IAI {
     if (sfx) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance || 1) ? sfx.name : undefined;
 
     this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
-      message: sample(messages),
+      message: `You hear ${sample(messages)}.`,
       sfx: chosenSfx
     });
   }
