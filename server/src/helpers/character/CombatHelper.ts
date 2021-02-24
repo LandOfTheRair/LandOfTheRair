@@ -249,7 +249,6 @@ export class CombatHelper extends BaseService {
         this.game.deathHelper.die(defender);
       }
 
-
     }
   }
 

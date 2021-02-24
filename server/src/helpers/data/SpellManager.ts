@@ -67,6 +67,8 @@ export class SpellManager extends BaseService {
   ): void {
     if (!caster && !target) return;
 
+    if (this.game.characterHelper.isDead(target)) return;
+
     const spellData = this.getSpellData(spell);
     if (!spellData) {
       this.game.logger.error('SpellManager', new Error(`Tried to cast invalid spell ${spell}.`));

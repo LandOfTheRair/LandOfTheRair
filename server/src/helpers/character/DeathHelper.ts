@@ -85,10 +85,10 @@ export class DeathHelper extends BaseService {
     this.game.playerHelper.clearActionQueue(dead as Player);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
+    this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
+    dead.dir = Direction.Corpse;
 
     if (corpse) {
-      this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
-      dead.dir = Direction.Corpse;
       dead.corpseRef = corpse;
 
       const { state } = this.game.worldManager.getMap(dead.map);
@@ -97,7 +97,7 @@ export class DeathHelper extends BaseService {
     } else {
 
       this.game.teleportHelper.teleportToRespawnPoint(dead as Player);
-      this.restore(dead);
+      // this.restore(dead);
     }
 
     // lose a CON if you die (min of 1)
