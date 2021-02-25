@@ -52,6 +52,18 @@ export class ItemHelper extends BaseService {
     baseItem.mods.encrustItem = encrustItem.name;
   }
 
+  // upgrade an item with another item
+  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string): void {
+    const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
+    if (!upgradeRef) return;
+
+    const { maxUpgrades } = this.getItemProperties(baseItem, ['maxUpgrades']);
+    baseItem.mods.upgrades = baseItem.mods.upgrades || [];
+
+    if ((maxUpgrades ?? 0) <= baseItem.mods.upgrades.length) return;
+    baseItem.mods.upgrades.push(upgradeItem);
+  }
+
   // get an items stat
   public getStat(item: ISimpleItem, stat: Stat): number {
     const statMod = item.mods?.stats?.[stat] ?? 0;
@@ -65,7 +77,17 @@ export class ItemHelper extends BaseService {
       encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
     }
 
-    return statMod + baseStat + encrustStat;
+    let upgradeStat = 0;
+    if (item.mods.upgrades) {
+      item.mods.upgrades.forEach(upgrade => {
+        const upgradeItem = this.getItemDefinition(upgrade);
+        if (!upgradeItem) return;
+
+        upgradeStat += upgradeItem.stats?.[stat] ?? 0;
+      });
+    }
+
+    return statMod + baseStat + encrustStat + upgradeStat;
   }
 
   // set the owner of an item

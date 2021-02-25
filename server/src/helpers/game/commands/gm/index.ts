@@ -10,4 +10,5 @@ export * from './item';
 export * from './kill';
 export * from './moditem';
 export * from './teleport';
+export * from './upgrade';
 export * from './xp';

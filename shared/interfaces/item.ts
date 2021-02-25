@@ -234,6 +234,12 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // whether or not the item should be destroyed when it's dropped on the ground
   destroyOnDrop?: boolean;
+
+  // the maximum number of upgrades this item can hold
+  maxUpgrades?: number;
+
+  // the upgrades associated with this item
+  upgrades?: string[];
 };
 
 export interface ISimpleItem {
