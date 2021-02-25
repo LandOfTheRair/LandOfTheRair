@@ -6,7 +6,7 @@ import { IPlayer } from './player';
 export interface IGame {
   inGame: boolean;
   currentTarget: string;
-  itemTooltip: string;
+  itemTooltip: { tooltip: string, upgrades: string[] };
   player: IPlayer;
   map: any;
 

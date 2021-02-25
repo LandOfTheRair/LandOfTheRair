@@ -41,6 +41,10 @@
   border-radius: 0.25rem;
 
   user-select: none;
+
+  .item-upgrades {
+    display: flex;
+  }
 }
 
 .dropzone {
@@ -72,7 +76,7 @@
   position: absolute;
   pointer-events: none;
   bottom: 0;
-  
+
   box-shadow: 0px 0px 0px 1px #f00 inset;
   animation: dying 500ms linear infinite alternate;
 

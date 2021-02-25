@@ -36,5 +36,12 @@
        [style.--blur-max-size]="optionsService.dyingBorderWidth"
        *ngIf="canSeeLowHealthBorder"></div>
 
-  <div class="item-text" *ngIf="itemTooltip$ | async" [innerHTML]="itemTooltip$ | async"></div>
+  <ng-container *ngIf="itemTooltip$ | async as tooltipData">
+    <div class="item-text" *ngIf="tooltipData.tooltip">
+      <div [innerHTML]="tooltipData.tooltip"></div>
+      <div class="item-upgrades">
+        <app-item [size]="'small'" [item]="{ name: item, mods: { itemClass: 'Rock' } }" *ngFor="let item of tooltipData.upgrades"></app-item>
+      </div>
+    </div>
+  </ng-container>
 </ng-template>

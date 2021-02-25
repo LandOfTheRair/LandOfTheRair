@@ -53,14 +53,14 @@ export class ItemHelper extends BaseService {
   }
 
   // upgrade an item with another item
-  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string): void {
+  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string, bypassLimit = false): void {
     const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
     if (!upgradeRef) return;
 
     const { maxUpgrades } = this.getItemProperties(baseItem, ['maxUpgrades']);
     baseItem.mods.upgrades = baseItem.mods.upgrades || [];
 
-    if ((maxUpgrades ?? 0) <= baseItem.mods.upgrades.length) return;
+    if (!bypassLimit && (maxUpgrades ?? 0) <= baseItem.mods.upgrades.length) return;
     baseItem.mods.upgrades.push(upgradeItem);
   }
 

@@ -62,7 +62,7 @@ export class SetCurrentTarget {
 export class SetCurrentItemTooltip {
   static type = GameAction.SetCurrentItemTooltip;
   filterOutFromLogs = true;
-  constructor(public tooltip: string) {}
+  constructor(public tooltip: string, public upgrades: string[]) {}
 }
 
 // dispatched when greeting a trainer

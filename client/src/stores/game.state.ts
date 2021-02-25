@@ -14,7 +14,7 @@ const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = p
 const defaultGame: () => IGame = () => ({
     inGame: false,
     currentTarget: '',
-    itemTooltip: '',
+    itemTooltip: { tooltip: '', upgrades: [] },
     player: null,
     map: null,
     trainerInfo: {
@@ -181,8 +181,8 @@ export class GameState {
   }
 
   @Action(SetCurrentItemTooltip)
-  setItemTooltip(ctx: StateContext<IGame>, { tooltip }: SetCurrentItemTooltip) {
-    ctx.patchState({ itemTooltip: tooltip });
+  setItemTooltip(ctx: StateContext<IGame>, { tooltip, upgrades }: SetCurrentItemTooltip) {
+    ctx.patchState({ itemTooltip: { tooltip, upgrades } });
   }
 
   @Action(PatchPlayer)
