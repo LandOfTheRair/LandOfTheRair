@@ -91,6 +91,12 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // TODO: sense level 1
   // TODO: sense level 2
 
+  // display the number of upgrades an item has/available
+  const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
+  const upgrades = getProp(item, itemDef, 'upgrades');
+
+  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0) ? `It has ${maxUpgrades} carved slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
+
   // various requirements for the item
   const requirements = getProp(item, itemDef, 'requirements');
   const levelText = requirements && requirements.level ? `You must be level ${requirements.level} to use this item. ` : '';
@@ -121,7 +127,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // TODO: appraise
   // TODO: stat boosts for thief/mage skill
 
-  return `${starText} ${baseText}${isValuableText}
+  return `${starText} ${baseText}${upgradeText}${isValuableText}
     ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}
     ${conditionText}${ownedText}`;
 }
