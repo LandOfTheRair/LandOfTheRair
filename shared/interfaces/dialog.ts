@@ -8,6 +8,8 @@ export enum DialogActionType {
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
   ModifyItem = 'modifyItem',
+  CheckItemCanUpgrade = 'checkItemCanUpgrade',
+  AddUpgradeItem = 'addItemUpgrade',
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
   GiveQuest = 'giveQuest',
@@ -60,6 +62,18 @@ export interface IDialogTakeItemAction {
   item: IDialogItem;
 }
 
+export interface IDialogCheckItemCanUpgradeAction {
+  slot: ItemSlot;
+  upgrade?: string;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogAddItemUpgradeAction {
+  slot: ItemSlot;
+  upgrade: string;
+}
+
 export interface IDialogCheckItemAction {
   fromHands?: boolean;
   fromSack?: boolean;
@@ -105,6 +119,7 @@ export interface IDialogChatAction {
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
                           & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
                           & IDialogCheckLevelAction & IDialogCheckAlignmentAction & IDialogSetAlignmentAction
+                          & IDialogCheckItemCanUpgradeAction & IDialogAddItemUpgradeAction
                           & { type: DialogActionType, maxDistance?: number };
 
 export interface IDialogTree {

@@ -19,7 +19,8 @@ export enum BehaviorType {
   Encruster = 'encruster',
   Banker = 'banker',
   Steelrose = 'steelrose',
-  Succorer = 'succorer'
+  Succorer = 'succorer',
+  Upgrader = 'upgrader'
 }
 
 export interface IVendorItem {
@@ -85,14 +86,16 @@ export interface ITannerBehavior {
   maxTanLevel?: number;
 }
 
-// tslint:disable-next-line:no-empty-interface
+export interface IUpgraderBehavior {
+}
+
 export interface ISteelroseBehavior {
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
                       & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
-                      &
+                      & IUpgraderBehavior &
 {
   type: BehaviorType;
   props?: string[];

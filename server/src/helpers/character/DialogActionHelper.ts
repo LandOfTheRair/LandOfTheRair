@@ -2,8 +2,10 @@ import { Injectable } from 'injection-js';
 import { sample, template } from 'lodash';
 
 import { DialogActionType, GameServerResponse, IDialogAction,
+  IDialogAddItemUpgradeAction,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckAlignmentAction,
   IDialogCheckItemAction,
+  IDialogCheckItemCanUpgradeAction,
   IDialogCheckLevelAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
@@ -33,17 +35,19 @@ export class DialogActionHelper extends BaseService {
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
     const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
-      [DialogActionType.Chat]:            this.handleChatAction,
-      [DialogActionType.CheckItem]:       this.handleCheckItemAction,
-      [DialogActionType.TakeItem]:        this.handleTakeItemAction,
-      [DialogActionType.GiveItem]:        this.handleGiveItemAction,
-      [DialogActionType.ModifyItem]:      this.handleModifyItemAction,
-      [DialogActionType.GiveEffect]:      this.handleGiveEffectAction,
-      [DialogActionType.CheckQuest]:      this.handleCheckQuestAction,
-      [DialogActionType.GiveQuest]:       this.handleGiveQuestAction,
-      [DialogActionType.CheckLevel]:      this.handleCheckLevelAction,
-      [DialogActionType.CheckAlignment]:  this.handleCheckAlignmentAction,
-      [DialogActionType.SetAlignment]:    this.handleSetAlignmentAction,
+      [DialogActionType.Chat]:                this.handleChatAction,
+      [DialogActionType.CheckItem]:           this.handleCheckItemAction,
+      [DialogActionType.TakeItem]:            this.handleTakeItemAction,
+      [DialogActionType.GiveItem]:            this.handleGiveItemAction,
+      [DialogActionType.ModifyItem]:          this.handleModifyItemAction,
+      [DialogActionType.CheckItemCanUpgrade]: this.handleItemCanUpgradeAction,
+      [DialogActionType.AddUpgradeItem]:      this.handleAddItemUpgradeAction,
+      [DialogActionType.GiveEffect]:          this.handleGiveEffectAction,
+      [DialogActionType.CheckQuest]:          this.handleCheckQuestAction,
+      [DialogActionType.GiveQuest]:           this.handleGiveQuestAction,
+      [DialogActionType.CheckLevel]:          this.handleCheckLevelAction,
+      [DialogActionType.CheckAlignment]:      this.handleCheckAlignmentAction,
+      [DialogActionType.SetAlignment]:        this.handleSetAlignmentAction,
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -248,6 +252,42 @@ export class DialogActionHelper extends BaseService {
     });
 
     return { messages: [], shouldContinue: didSucceed };
+  }
+
+  // CHECK if an item can be upgraded
+  private handleItemCanUpgradeAction(action: IDialogCheckItemCanUpgradeAction, npc: INPC, player: IPlayer): IActionResult {
+    const { slot, upgrade, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const checkItem = player.items.equipment[slot];
+    let didSucceed = checkItem && this.game.itemHelper.isOwnedBy(player, checkItem) && this.game.itemHelper.canUpgradeItem(checkItem);
+    if (upgrade && checkItem?.mods.upgrades?.includes(upgrade)) {
+      didSucceed = false;
+    }
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
+  // GIVE an upgrade to a particular item
+  private handleAddItemUpgradeAction(action: IDialogAddItemUpgradeAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const { slot, upgrade } = action;
+    const checkItem = player.items.equipment[slot];
+    if (!checkItem) return { messages: ['Nothing to upgrade?'], shouldContinue: false };
+
+    this.game.itemHelper.upgradeItem(checkItem, upgrade);
+
+    return { messages: [], shouldContinue: true };
   }
 
   // GIVE an effect to the player

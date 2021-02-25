@@ -52,16 +52,28 @@ export class ItemHelper extends BaseService {
     baseItem.mods.encrustItem = encrustItem.name;
   }
 
-  // upgrade an item with another item
-  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string, bypassLimit = false): void {
-    const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
-    if (!upgradeRef) return;
+  // check if an item can be used as an upgrade material
+  public canUseItemForUpgrade(upgradeItem: ISimpleItem): boolean {
+    return this.getItemProperty(upgradeItem, 'canUpgradeWith');
+  }
 
+  // check if an item can be upgraded
+  public canUpgradeItem(baseItem: ISimpleItem, bypassLimit = false): boolean {
+    if (bypassLimit) return true;
     const { maxUpgrades } = this.getItemProperties(baseItem, ['maxUpgrades']);
-    baseItem.mods.upgrades = baseItem.mods.upgrades || [];
+    return (baseItem.mods.upgrades?.length ?? 0) < (maxUpgrades ?? 0);
+  }
 
-    if (!bypassLimit && (maxUpgrades ?? 0) <= baseItem.mods.upgrades.length) return;
+  // upgrade an item with another item
+  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string, bypassLimit = false): boolean {
+    const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
+    if (!upgradeRef) return false;
+    if (!this.canUpgradeItem(baseItem, bypassLimit)) return false;
+
+    baseItem.mods.upgrades = baseItem.mods.upgrades || [];
     baseItem.mods.upgrades.push(upgradeItem);
+
+    return true;
   }
 
   // get an items stat

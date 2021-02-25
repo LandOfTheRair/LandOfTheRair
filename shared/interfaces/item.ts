@@ -138,6 +138,18 @@ export interface IGem {
   encrustGive?: IItemEncrust;
 }
 
+export interface IUpgradeable {
+
+  // the maximum number of upgrades this item can hold
+  maxUpgrades?: number;
+}
+
+export interface IUpgradeMaterial {
+
+  // whether or not the item can be used as an upgrade material
+  canUpgradeWith?: boolean;
+}
+
 export interface ISuccorable {
 
   // succor info stored on the item
@@ -168,7 +180,10 @@ export interface ICorpse {
   playersHeardDeath?: string[];
 }
 
-export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem & ISuccorable & ICoin & ICorpse & IUsable & {
+export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
+                  & IGem & ISuccorable & ICoin & ICorpse & IUsable
+                  & IUpgradeable & IUpgradeMaterial &
+{
   // the name of the item
   name: string;
 
@@ -234,9 +249,6 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook & IGem 
 
   // whether or not the item should be destroyed when it's dropped on the ground
   destroyOnDrop?: boolean;
-
-  // the maximum number of upgrades this item can hold
-  maxUpgrades?: number;
 
   // the upgrades associated with this item
   upgrades?: string[];
