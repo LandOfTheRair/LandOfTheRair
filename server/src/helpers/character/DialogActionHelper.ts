@@ -164,9 +164,9 @@ export class DialogActionHelper extends BaseService {
         const slotItem = player.items.equipment[checkSlot];
         if (!slotItem) return;
 
-        const { name, owner } = item;
+        const { name } = item;
         if (slotItem.name !== name) return;
-        if (owner && slotItem.mods.owner !== player.username) {
+        if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
           retMessages.push('Hey! You need to bring me an item owned by you.');
           return;
         }
@@ -216,9 +216,9 @@ export class DialogActionHelper extends BaseService {
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
 
-      const { name, owner } = item;
+      const { name } = item;
       if (slotItem.name !== name) return;
-      if (owner && slotItem.mods.owner !== player.username) return;
+      if (!this.game.itemHelper.isOwnedBy(player, slotItem)) return;
 
       this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, undefined);
 

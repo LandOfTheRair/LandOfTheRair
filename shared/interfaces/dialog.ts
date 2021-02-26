@@ -22,7 +22,6 @@ export enum DialogActionType {
 export interface IDialogItem {
   name: string;
   amount: number; // defaults to 1
-  owner?: string; // if present, we care about the owner
 }
 
 // requirements for some dialog options
