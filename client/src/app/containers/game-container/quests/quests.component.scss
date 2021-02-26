@@ -12,7 +12,7 @@ mat-list {
 .progress-container {
 
   position: relative;
-  overflow: visible;
+  overflow: visible !important;
 
   .progress-value {
     position: absolute;
