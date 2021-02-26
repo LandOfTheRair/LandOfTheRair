@@ -58,7 +58,7 @@ export interface IDialogModifyItemAction {
 }
 
 export interface IDialogTakeItemAction {
-  slot: ItemSlot[];
+  slot: (ItemSlot | 'sack')[];
   item: IDialogItem;
 }
 
@@ -77,7 +77,7 @@ export interface IDialogAddItemUpgradeAction {
 export interface IDialogCheckItemAction {
   fromHands?: boolean;
   fromSack?: boolean;
-  slot: ItemSlot[];
+  slot: (ItemSlot | 'sack')[];
   item: IDialogItem;
   checkPassActions: IDialogAction[];
   checkFailActions: IDialogAction[];

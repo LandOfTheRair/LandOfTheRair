@@ -156,6 +156,7 @@ export class DialogActionHelper extends BaseService {
 
     let didSucceed = false;
 
+    // if we check hands
     if (fromHands) {
       (slot || []).forEach(checkSlot => {
         if (didSucceed) return;
@@ -172,6 +173,14 @@ export class DialogActionHelper extends BaseService {
 
         didSucceed = true;
       });
+    }
+
+    // we do something different to take from sack
+    if ((slot || [])[0] === 'sack') {
+      const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
+      if (matchingItems.length >= (item.amount ?? 1)) {
+        didSucceed = true;
+      }
     }
 
     const actions = didSucceed ? checkPassActions : checkFailActions;
@@ -194,6 +203,15 @@ export class DialogActionHelper extends BaseService {
 
     (slot || []).forEach(checkSlot => {
       if (didSucceed) return;
+
+      // we do something different to take from sack
+      if (checkSlot === 'sack') {
+        const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
+        const itemUUIDS = matchingItems.slice(0, item.amount ?? 1).map(x => x.uuid);
+        this.game.inventoryHelper.removeItemsFromSackByUUID(player, itemUUIDS);
+        didSucceed = true;
+        return;
+      }
 
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
