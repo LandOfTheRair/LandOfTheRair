@@ -1,19 +1,28 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabGroup } from '@angular/material/tabs';
 import { Store } from '@ngxs/store';
-import { GameServerEvent, ICharacterCreateInfo } from '../../../../interfaces';
+import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { combineLatest, Subscription } from 'rxjs';
+import { GameServerEvent, IAccount, ICharacterCreateInfo, IPlayer, basePlayerSprite } from '../../../../interfaces';
 import { SetActiveWindow, SetCharSlot } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 import { CharCreateComponent } from '../char-create/char-create.component';
 
+@AutoUnsubscribe()
 @Component({
   selector: 'app-char-select',
   templateUrl: './char-select.component.html',
   styleUrls: ['./char-select.component.scss']
 })
-export class CharSelectComponent implements OnInit, OnDestroy {
+export class CharSelectComponent implements AfterViewInit, OnDestroy {
+
+  @ViewChild('tabs', { static: false }) tabs: MatTabGroup;
+  public account: IAccount;
+  public charSlot: number;
+  public charSlotAccount$: Subscription;
 
   constructor(
     private store: Store,
@@ -23,14 +32,35 @@ export class CharSelectComponent implements OnInit, OnDestroy {
     public assetService: AssetService
   ) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    this.charSlotAccount$ = combineLatest([
+      this.gameService.account$,
+      this.gameService.charSlot$
+    ]).subscribe(([account, charSlot]) => {
+
+      // we don't talk about this mess
+      setTimeout(() => {
+        this.account = account;
+        this.charSlot = charSlot.slot;
+
+        setTimeout(() => {
+          // otherwise the tab index is set to the last one every time, for some reason
+          if(this.tabs.selectedIndex !== this.tabs._tabs.length - 1) return;
+          this.tabs.selectedIndex = charSlot.slot;
+        }, 0);
+      }, 0);
+    });
   }
 
   ngOnDestroy() {
   }
 
   public setCharSlot(event) {
-    this.store.dispatch(new SetCharSlot(event.value));
+    this.store.dispatch(new SetCharSlot(event.index));
+  }
+
+  public spriteForPlayer(player: IPlayer): number {
+    return basePlayerSprite(player);
   }
 
   create(charCreateData: ICharacterCreateInfo, slot: number, needsOverwrite: boolean) {

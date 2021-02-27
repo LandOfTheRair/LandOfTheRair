@@ -61,6 +61,7 @@
           "error",
           "multi-line"
         ],
+        "no-underscore-dangle": "off",
         "import/order": "error",
         "max-len": [
           "error",

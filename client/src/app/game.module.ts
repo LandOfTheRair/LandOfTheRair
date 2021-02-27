@@ -66,9 +66,11 @@ import { LobbyContainerComponent } from './containers/lobby-container/lobby-cont
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 
 import { JournalComponent } from './journal/journal.component';
+import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
+import { ErrorComponent } from './_shared/modals/error/error.component';
 
 const declarations = [
-  AlertComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
+  AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
@@ -110,7 +112,9 @@ const gameComponents = [
   TraitsComponent,
   QuestsComponent,
 
-  JournalComponent
+  JournalComponent,
+
+  EquipmentViewOnlyComponent
 ];
 
 

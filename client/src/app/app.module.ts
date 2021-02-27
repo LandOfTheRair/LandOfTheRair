@@ -21,7 +21,7 @@ import { AppComponent } from './app.component';
 
 import { AssetService } from './services/asset.service';
 import { GameService } from './services/game.service';
-import { AlertErrorHandler } from './services/logger.service';
+import { AlertErrorHandler, LoggerService } from './services/logger.service';
 import { MacrosService } from './services/macros.service';
 import { ModalService } from './services/modal.service';
 import { OptionsService } from './services/options.service';
@@ -73,6 +73,15 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
     })
   ],
   providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (logger: LoggerService) => () => {
+        logger.init();
+        return logger;
+      },
+      deps: [LoggerService],
+      multi: true
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: (opts: OptionsService) => () => {

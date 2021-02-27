@@ -1,6 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AlertComponent } from '../_shared/modals/alert/alert.component';
+import { ErrorComponent } from '../_shared/modals/error/error.component';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +20,9 @@ export class LoggerService {
     private dialog: MatDialog
   ) {}
 
+  public init() {}
+
   public showErrorWindow(title: string, content: string) {
-    console.log('CAUGHT', title, content, this.ignoredErrorMessages, this.ignoredErrorMessages[content]);
     if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
 
     this.dialog.afterAllClosed.subscribe(() => {
@@ -30,7 +31,7 @@ export class LoggerService {
 
     this.canShowErrors = false;
 
-    this.dialog.open(AlertComponent, {
+    this.dialog.open(ErrorComponent, {
       width: '450px',
       panelClass: 'fancy',
       data: { title, content }
@@ -44,6 +45,7 @@ export class LoggerService {
   public error(...data) {
     console.error(...data);
 
+    /*
     if(data[0]?.message) {
       data[1] = data[0].message;
       data[0] = 'New Caught Error';
@@ -56,6 +58,7 @@ export class LoggerService {
 
     if (data.length === 1) this.showErrorWindow('New Caught Error', data[0]);
     if (data.length >= 2)  this.showErrorWindow(data[0], data[1]);
+    */
   }
 }
 
