@@ -21,6 +21,7 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `ROLLBAR_TOKEN` - (optional) the POST token for Rollbar
 * `WEBHOOK_SECRET` - (optional) the secret passed along to validate webhook pushes
 * `BLOCK_REGISTER` - (optional) set this to any value to block registration of new accounts - useful if you require accounts to be manually created for some reason
+* `BIND_ADDR` - (optional) set this to `0.0.0.0` or any other IP you want to bind the server to - useful in Docker-like contexts
 * `DISCORD_SECRET` - (optional) set this to the Discord API secret for the Discord bot
 * `DISCORD_GUILD_ID` - (optional) set this to the Discord Guild ID you want the bot to listen to
 * `DISCORD_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to bridge messages between
