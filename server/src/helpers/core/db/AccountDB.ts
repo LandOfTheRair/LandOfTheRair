@@ -47,6 +47,12 @@ export class AccountDB extends BaseService {
     return account;
   }
 
+  // register an IP with an account
+  public async registerIP(username: string, ip: string): Promise<any> {
+    return this.db.getCollection(Account).updateOne({ username }, { $addToSet: { ips: ip } });
+  }
+
+  // create a new account from the info given
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
 
     const account = new Account();
@@ -88,6 +94,26 @@ export class AccountDB extends BaseService {
 
   public async changeEventWatcher(account: Account, eventWatcher: boolean): Promise<void> {
     account.eventWatcher = eventWatcher;
+    await this.db.save(account);
+  }
+
+  public async toggleTester(account: Account): Promise<void> {
+    account.isTester = !account.isTester;
+    await this.db.save(account);
+  }
+
+  public async toggleGM(account: Account): Promise<void> {
+    account.isGameMaster = !account.isGameMaster;
+    await this.db.save(account);
+  }
+
+  public async toggleMute(account: Account): Promise<void> {
+    account.isMuted = !account.isMuted;
+    await this.db.save(account);
+  }
+
+  public async ban(account: Account): Promise<void> {
+    account.isBanned = true;
     await this.db.save(account);
   }
 

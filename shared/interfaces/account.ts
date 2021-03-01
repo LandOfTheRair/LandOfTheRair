@@ -10,6 +10,9 @@ export interface IAccount {
   isTester: boolean;
   isSubscribed: boolean;
 
+  isMuted: boolean;
+  isBanned: boolean;
+
   subscriptionEndsTimestamp: number;
   trialEndsTimestamp: number;
 

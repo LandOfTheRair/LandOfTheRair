@@ -25,8 +25,7 @@ export class WorldDB extends BaseService {
   }
 
   public async loadSettings() {
-    this.settings = await this.db.getCollection(WorldSettings)
-      .findOne({ _id: { $exists: true } } as any) as WorldSettings;
+    this.settings = await this.db.findSingle<WorldSettings>(WorldSettings, { _id: { $exists: true } }) as WorldSettings;
 
     if (!this.settings) {
       this.settings = new WorldSettings();

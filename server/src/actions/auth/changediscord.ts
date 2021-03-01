@@ -15,7 +15,7 @@ export class ChangeDiscordTagAction extends ServerAction {
 
         const isUserInDiscord = await game.discordHelper.isTagInDiscord(data.discordTag);
         if (data.discordTag && !isUserInDiscord) {
-          return { wasSuccess: false, message: 'That Discord user ID is not in the Land of the Rair Discord. Join here: http://discord.gg/QKkQfte' };
+          return { wasSuccess: false, message: 'That Discord user ID is not in the Land of the Rair Discord. Join here: https://discord.rair.land' };
         }
 
         await game.accountDB.changeDiscordTag(data.account, data.discordTag);

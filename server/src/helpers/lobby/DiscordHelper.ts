@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import * as Discord from 'discord.js';
 
 import { BaseService } from '../../models/BaseService';
-import { IAccount } from '../../interfaces';
+import { IAccount, IDiscordCommand } from '../../interfaces';
 
 import * as commands from './discord-commands';
 
@@ -15,7 +15,7 @@ export class DiscordHelper extends BaseService {
   private discordChannel: Discord.TextChannel | undefined;
   private discordBotCommandChannel: Discord.TextChannel | undefined;
 
-  private discordCommands: Record<string, any> = {};
+  private discordCommands: Record<string, IDiscordCommand> = {};
 
   public async init() {
     if (!process.env.DISCORD_SECRET || !process.env.DISCORD_GUILD_ID) return;

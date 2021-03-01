@@ -1,11 +1,13 @@
 
 import { Injectable } from 'injection-js';
 
-import { GameServerResponse, IAccount } from '../../interfaces';
+import { GameServerResponse, IAccount, ILobbyCommand } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
 import { PlayerManager } from '../game';
+
+import * as commands from './lobby-commands';
 
 class LobbyState {
   users: IAccount[] = [];
@@ -26,6 +28,7 @@ export class LobbyManager extends BaseService {
   }
 
   private state: LobbyState;
+  private lobbyCommands: Record<string, ILobbyCommand> = {};
 
   public get usersInGame() {
     return this.state.usersInGame;
@@ -41,6 +44,7 @@ export class LobbyManager extends BaseService {
 
   public init() {
     this.state = new LobbyState();
+    this.initCommands();
   }
 
   // add an account to the lobby
@@ -122,5 +126,25 @@ export class LobbyManager extends BaseService {
         count
       });
     }
+  }
+
+  public hasCommand(cmd: string): boolean {
+    return !!this.lobbyCommands[cmd];
+  }
+
+  public getCommandSyntax(cmd: string): string {
+    return this.lobbyCommands[cmd].syntax;
+  }
+
+  public doCommand(cmd: string, message: string, emit: (args) => void): boolean {
+    if (!this.lobbyCommands[cmd]) return false;
+    return this.lobbyCommands[cmd].do(message, this.game, emit);
+  }
+
+  private initCommands() {
+    Object.values(commands).forEach(command => {
+      const cmdInst = new command();
+      this.lobbyCommands[cmdInst.name] = cmdInst;
+    });
   }
 }

@@ -72,9 +72,10 @@ export class WebsocketWorker {
     // prevent disconnects by doing a heartbeat
     // wsServer.startAutoPing(20000);
 
-    wsServer.on('connection', (socket: any) => {
+    wsServer.on('connection', (socket: any, req: any) => {
       socket.uuid = uuid();
       socket.isAlive = true;
+      socket.ip = req.socket.remoteAddress;
 
       this.sockets[socket.uuid] = socket;
 
@@ -159,7 +160,7 @@ export class WebsocketWorker {
   }
 
   private sendToGame(socket, data) {
-    parentPort?.postMessage({ target: 'gameloop', socketId: socket.uuid, username: socket.username, ...data });
+    parentPort?.postMessage({ target: 'gameloop', socketId: socket.uuid, socketIp: socket.ip, username: socket.username, ...data });
   }
 
   private transformData(data) {

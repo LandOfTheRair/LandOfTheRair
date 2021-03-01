@@ -8,6 +8,17 @@ export class PlayAction extends ServerAction {
   requiredKeys = ['charSlot'];
 
   async act(game: Game, { broadcast, emit }, data) {
+    if (data.account.isBanned) {
+      emit({
+        action: GameAction.ChatAddMessage,
+        timestamp: Date.now(),
+        message: 'You are not able to enter the game at this time. Contact a GM or email help@rair.land if you believe this is in error.',
+        from: '★System'
+      });
+
+      return {};
+    }
+
     if (game.lobbyManager.isAccountInGame(data.account))  return { message: 'Already in game.' };
 
     const charSlot = data.charSlot;

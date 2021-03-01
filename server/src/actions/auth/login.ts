@@ -26,10 +26,14 @@ export class LoginAction extends ServerAction {
 
     if (!game.accountDB.checkPassword(data, account)) return { wasSuccess: false, message: 'Incorrect password.' };
 
+    if (account.isBanned)                             return { wasSuccess: false, message: 'You are banned.' };
+
     try {
 
       const realAccount = await game.accountDB.getAccount(data.username);
       if (!realAccount)                               return { message: 'Could not get real account from login.' };
+
+      game.accountDB.registerIP(data.username, data.socketIp);
 
       game.lobbyManager.removeAccount(data.username);
 
@@ -43,7 +47,7 @@ export class LoginAction extends ServerAction {
       register(data.username);
       game.lobbyManager.addAccount(realAccount);
 
-      game.logger.log('Auth:Login', `${data.username} logged in.`);
+      game.logger.log('Auth:Login', `${data.username} logged in (${data.socketIp}).`);
 
       emit({
         type: GameServerResponse.Login,

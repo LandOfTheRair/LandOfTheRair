@@ -13,6 +13,9 @@ const defaultAccount: () => IAccount = () => ({
     isTester: false,
     isSubscribed: false,
 
+    isMuted: false,
+    isBanned: false,
+
     subscriptionEndsTimestamp: -1,
     trialEndsTimestamp: -1,
 

@@ -22,6 +22,9 @@ export class Account extends BaseEntity implements IAccount {
   @Property() isTester = false;
   @Property() isSubscribed = false;
 
+  @Property() isMuted = false;
+  @Property() isBanned = false;
+
   @Property() subscriptionEndsTimestamp = -1;
   @Property() trialEndsTimestamp = -1;
 

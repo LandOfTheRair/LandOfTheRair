@@ -1,9 +1,10 @@
 
 import * as Discord from 'discord.js';
+import { IDiscordCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
-export class EventsCommand {
+export class EventsCommand implements IDiscordCommand {
   name = '!events';
 
   do(message: Discord.Message, game: Game) {

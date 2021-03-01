@@ -20,7 +20,7 @@ export class ProfanityHelper extends BaseService {
   }
 
   public cleanMessage(msg: string): string {
-    return this.censorSensor.cleanProfanity(msg);
+    return this.censorSensor.cleanProfanity(msg).trim();
   }
 
 }
