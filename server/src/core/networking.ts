@@ -75,7 +75,9 @@ export class WebsocketWorker {
     wsServer.on('connection', (socket: any, req: any) => {
       socket.uuid = uuid();
       socket.isAlive = true;
-      socket.ip = req.socket.remoteAddress;
+
+      const ip = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(/\s*,\s*/)[0] : req.socket.remoteAddress;
+      socket.ip = ip;
 
       this.sockets[socket.uuid] = socket;
 
