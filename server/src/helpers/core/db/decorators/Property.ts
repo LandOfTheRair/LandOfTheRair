@@ -1,4 +1,6 @@
 
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
+
 import { isUndefined } from 'lodash';
 
 import { MetadataStorage } from '../base/MetadataStorage';
@@ -16,7 +18,6 @@ export function Property(options?: PropertyOptions) {
     // temporary props are not sent to client or are they saved, so they can't be patched
     if (!options.persist && options.hidden) {
       Object.defineProperty(target, propertyName, {
-        // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
         get() {
           return undefined;
         },
