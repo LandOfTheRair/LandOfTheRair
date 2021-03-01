@@ -12,22 +12,22 @@ jobs:
       matrix:
         # os: [macos-latest, ubuntu-latest, windows-latest]
         os: [ubuntu-latest]
-        node-version: [15.x]
+        node-version: [14.x]
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    
+
     - run: npm install
 
     - run: npm run setup:full
 
     - run: npm run lint
-      
+
     - run: npm run build
 
     - name: Deploy Server
