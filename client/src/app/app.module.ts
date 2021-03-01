@@ -75,15 +75,6 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: (logger: LoggerService) => () => {
-        logger.init();
-        return logger;
-      },
-      deps: [LoggerService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
       useFactory: (opts: OptionsService) => () => {
         opts.init();
         return opts;
