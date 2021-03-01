@@ -55,8 +55,7 @@
     "rollbar": "2.19.4",
     "utf-8-validate": "^5.0.3",
     "uuid": "3.3.3",
-    "ws": "^7.4.1",
-    "zlib-sync": "^0.1.7"
+    "ws": "^7.4.1"
   },
   "devDependencies": {
     "@sytten/ts-node-dev": "^1.0.3",
