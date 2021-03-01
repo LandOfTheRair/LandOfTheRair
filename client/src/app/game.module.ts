@@ -121,7 +121,7 @@ const gameComponents = [
 
 @NgModule({
   declarations: [...declarations, ...gameComponents],
-  providers: [...declarations.filter(x => x.name.includes('Pipe'))],
+  providers: [DiscordEmojiPipe, GoldifyPipe, LinkifyPipe],
   imports: [CommonModule, FormsModule, UIModule],
   exports: [...declarations, ...gameComponents]
 })

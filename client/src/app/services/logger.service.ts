@@ -20,6 +20,8 @@ export class LoggerService {
     private dialog: MatDialog
   ) {}
 
+  public init() {}
+
   public showErrorWindow(title: string, content: string) {
     if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
 
