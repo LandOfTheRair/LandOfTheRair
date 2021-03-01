@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { GameServerEvent, IChatMessage, IChatUser } from '../../../../interfaces';
+import { GameServerEvent, GameServerResponse, IChatMessage, IChatUser } from '../../../../interfaces';
 import { LobbyState } from '../../../../stores';
 import { SocketService } from '../../../services/socket.service';
 import { WindowComponent } from '../../../_shared/components/window.component';
@@ -19,6 +19,7 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(LobbyState.users) public users$: Observable<IChatUser[]>;
   @Select(LobbyState.messages) public messages$: Observable<IChatMessage[]>;
 
+  public discordCount = 0;
   public currentMessage: string;
 
   private mutationObserver: MutationObserver;
@@ -28,6 +29,10 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.socketService.registerComponentCallback(
+      'Lobby', GameServerResponse.UserCountUpdate,
+      (data) => this.discordCount = data.count
+    );
   }
 
   ngAfterViewInit() {
@@ -51,6 +56,7 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.socketService.unregisterComponentCallbacks('Lobby');
   }
 
   sendMessage() {

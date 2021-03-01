@@ -91,6 +91,7 @@ export class MessageHelper extends BaseService {
 
   public broadcastSystemMessage(message: string): void {
     this.sendMessage('★System', message);
+    this.game.discordHelper.broadcastSystemMessage(message);
   }
 
   public broadcastChatMessage(player: ICharacter, message: string): void {
@@ -103,23 +104,31 @@ export class MessageHelper extends BaseService {
     this.sendMessage(username, message);
   }
 
-  private sendMessage(from: string, message: string): void {
+  public sendMessage(from: string, message: string, fromDiscord = false, verified = false): void {
     message = message.trim();
     if (!message) return;
+
+    const source = fromDiscord ? `${verified ? 'ᐎ' : ''}Discord` : 'Game';
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message,
-      from
+      from,
+      source
     });
 
     this.game.wsCmdHandler.broadcast({
       type: GameServerResponse.Chat,
       timestamp: Date.now(),
       message,
-      from
+      from,
+      source
     });
+
+    if (!fromDiscord) {
+      this.game.discordHelper.chatMessage(from, message);
+    }
   }
 
   public formatMessage(target: ICharacter, message: string, formatArgs: any[]): string {

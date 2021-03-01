@@ -18,6 +18,7 @@ export interface IChatMessage {
   from: string;
   message: string;
   timestamp: number;
+  source: string;
 }
 
 export type IChatUser = IAccount & {

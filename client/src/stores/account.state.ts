@@ -17,7 +17,8 @@ const defaultAccount: () => IAccount = () => ({
     trialEndsTimestamp: -1,
 
     discordTag: '',
-    alwaysOnline: false
+    alwaysOnline: false,
+    eventWatcher: false
   });
 
 @State<IAccount>({

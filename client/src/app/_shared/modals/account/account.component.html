@@ -4,9 +4,9 @@
   <ng-container *ngIf="account">
     <form>
       <mat-form-field class="full-width">
-        <input matInput 
-               type="email" 
-               placeholder="Email Address" 
+        <input matInput
+               type="email"
+               placeholder="Email Address"
                [(ngModel)]="account.email"
                [disabled]="true"
                [ngModelOptions]="{ standalone: true }" />
@@ -18,22 +18,22 @@
         </legend>
 
         <mat-form-field class="full-width">
-          <input matInput 
-                 type="password" 
-                 placeholder="Current Password" 
+          <input matInput
+                 type="password"
+                 placeholder="Current Password"
                  [(ngModel)]="currentPassword"
                  [ngModelOptions]="{ standalone: true }" />
         </mat-form-field>
-  
+
         <div class="split-button">
           <mat-form-field class="full-width">
-            <input matInput 
-                   type="password" 
-                   placeholder="New Password" 
+            <input matInput
+                   type="password"
+                   placeholder="New Password"
                    [(ngModel)]="newPassword"
                    [ngModelOptions]="{ standalone: true }" />
           </mat-form-field>
-  
+
           <div class="m-l-20 true-center">
             <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangePassword" (click)="changePassword()">Update</button>
           </div>
@@ -47,24 +47,39 @@
 
         <div class="split-button">
           <mat-form-field class="full-width">
-            <input matInput 
-                  type="text" 
-                  placeholder="Discord Tag (Username#0000)" 
+            <input matInput
+                  type="text"
+                  placeholder="Discord ID (123456789123456789)"
                   [(ngModel)]="account.discordTag"
                   [ngModelOptions]="{ standalone: true }" />
           </mat-form-field>
-  
+
           <div class="m-l-20 true-center">
             <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangeTag" (click)="changeTag()">Update</button>
           </div>
         </div>
-  
+
+        <div class="m-b-10">
+          <small>
+            <em>To get your ID, enable Developer Settings in Appearance > Developer Mode, then right-click yourself and click "Copy ID"</em>
+          </small>
+        </div>
+
         <mat-checkbox [(ngModel)]="account.alwaysOnline"
                       matTooltip="When you're always online, if you're online in Discord, you'll also show as online in the lobby."
                       matTooltipPosition="right"
                       (change)="changeOnline()"
                       [ngModelOptions]="{ standalone: true }">
           Always Online
+        </mat-checkbox>
+
+        <mat-checkbox [(ngModel)]="account.eventWatcher"
+                      matTooltip="When you're watching events, you'll receive a ping when an in-game event happens."
+                      matTooltipPosition="right"
+                      (change)="changeEvents()"
+                      class="m-l-20"
+                      [ngModelOptions]="{ standalone: true }">
+          Event Watcher
         </mat-checkbox>
       </fieldset>
     </form>

@@ -10,6 +10,7 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
   async act(game: Game, callbacks, data) {
     try {
       await game.accountDB.changeAlwaysOnline(data.account, data.alwaysOnline);
+      await game.discordHelper.updateDiscordRoles(data.account);
       game.logger.log('Auth:ChangeAlwaysOnline', `${data.username} changed always online.`);
 
     } catch (e) {

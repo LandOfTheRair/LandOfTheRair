@@ -29,8 +29,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   public get canChangeTag() {
     return !this.account.discordTag
         || (this.account.discordTag
-        && this.account.discordTag.includes('#')
-        && this.account.discordTag.split('#')[1].length === 4);
+        && this.account.discordTag.length === 18);
   }
 
   constructor(
@@ -53,6 +52,10 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   public changeOnline() {
     this.socketService.emit(GameServerEvent.ChangeAlwaysOnline, { alwaysOnline: this.account.alwaysOnline });
+  }
+
+  public changeEvents() {
+    this.socketService.emit(GameServerEvent.ChangeEventWatcher, { eventWatcher: this.account.eventWatcher });
   }
 
   public changePassword() {

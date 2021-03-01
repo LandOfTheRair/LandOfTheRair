@@ -32,6 +32,7 @@ export enum GameServerEvent {
   ChangePassword = 'Auth:Emit:ChangePassword',
   ChangeDiscordTag = 'Auth:Emit:ChangeDiscordTag',
   ChangeAlwaysOnline = 'Auth:Emit:ChangeAlwaysOnline',
+  ChangeEventWatcher = 'Auth:Emit:ChangeEventWatcher',
 
   SetMOTD = 'GM:Emit:SetMOTD',
 
@@ -54,6 +55,7 @@ export enum GameServerResponse {
   Login = 'Auth:Response:Login',
   UserJoin = 'Lobby:Response:UserJoin',
   UserLeave = 'Lobby:Response:UserLeave',
+  UserCountUpdate = 'Lobby:Response:UserCountUpdate',
 
   Chat = 'Chat:Response:Message',
 

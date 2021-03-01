@@ -62,10 +62,10 @@ export class LobbyState {
   }
 
   @Action(AddMessage)
-  addMessage(ctx: StateContext<ILobbyContainer>, { from, message, timestamp }: AddMessage) {
+  addMessage(ctx: StateContext<ILobbyContainer>, { from, message, timestamp, source }: AddMessage) {
     const state = ctx.getState();
 
-    const messages = [...state.messages, { from, message, timestamp }];
+    const messages = [...state.messages, { from, message, timestamp, source }];
     while (messages.length > 300) messages.shift();
 
     ctx.patchState({ messages });

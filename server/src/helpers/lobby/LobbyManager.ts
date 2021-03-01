@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { IAccount } from '../../interfaces';
+import { GameServerResponse, IAccount } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
@@ -9,8 +9,10 @@ import { PlayerManager } from '../game';
 
 class LobbyState {
   users: IAccount[] = [];
-  userHash: { [username: string]: IAccount } = {};
-  usersInGame: { [username: string]: boolean } = {};
+  userHash: Record<string, IAccount> = {};
+  usersInGame: Record<string, boolean> = {};
+  discordIDToName: Record<string, string> = {};
+  discordOnlineCount = 0;
 }
 
 @Injectable()
@@ -33,6 +35,10 @@ export class LobbyManager extends BaseService {
     return this.state.users;
   }
 
+  public get discordHash() {
+    return this.state.discordIDToName;
+  }
+
   public init() {
     this.state = new LobbyState();
   }
@@ -42,6 +48,9 @@ export class LobbyManager extends BaseService {
     this.state.users.push(account);
 
     this.rebuildUserHash();
+
+    this.game.discordHelper.updateDiscordRoles(account);
+    this.game.discordHelper.updateLobbyChannel();
   }
 
   // get an account
@@ -58,12 +67,19 @@ export class LobbyManager extends BaseService {
     delete this.state.usersInGame[username];
 
     this.rebuildUserHash();
+    this.game.discordHelper.updateLobbyChannel();
   }
 
   // build a hash of users to their account objects
   private rebuildUserHash() {
     this.state.userHash = this.state.users.reduce((prev, cur) => {
       prev[cur.username] = cur;
+      return prev;
+    }, {});
+
+    this.state.discordIDToName = this.state.users.reduce((prev, cur) => {
+      if (!cur.discordTag) return prev;
+      prev[cur.discordTag] = cur.username;
       return prev;
     }, {});
   }
@@ -76,6 +92,7 @@ export class LobbyManager extends BaseService {
   // enter game as a particular player
   public accountEnterGame(account: Account, player: Player): void {
     this.state.usersInGame[account.username] = true;
+    this.game.discordHelper.updateLobbyChannel();
 
     this.game.playerHelper.migrate(player, account);
     this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
@@ -86,10 +103,24 @@ export class LobbyManager extends BaseService {
   // leave the game
   public accountLeaveGame(account: Account): void {
     delete this.state.usersInGame[account.username];
+    this.game.discordHelper.updateLobbyChannel();
 
     const player = this.playerManager.getPlayerInGame(account);
     this.worldManager.leaveMap(player);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGameByAccount(account);
+  }
+
+  // set the number of online discord users with "Online In Lobby"
+  public setDiscordOnlineCount(count: number) {
+    const oldCount = this.state.discordOnlineCount;
+    this.state.discordOnlineCount = count;
+
+    if (count !== oldCount) {
+      this.game.wsCmdHandler.broadcast({
+        type: GameServerResponse.UserCountUpdate,
+        count
+      });
+    }
   }
 }

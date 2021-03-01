@@ -31,14 +31,16 @@
     "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
     "didyoumean2": "3.1.2",
+    "discord.js": "^12.5.1",
     "dotenv": "8.1.0",
     "download-github-repo": "0.1.4",
+    "erlpack": "^0.1.3",
     "fantastical": "1.0.2",
     "fast-json-patch": "3.0.0-1",
     "fastify": "2.15.1",
     "fastify-rate-limit": "2.4.0",
     "fs-extra": "8.1.0",
-    "injection-js": "2.3.0",
+    "injection-js": "^2.3.0",
     "lodash": "4.17.20",
     "logger-timer": "1.0.5",
     "lootastic": "1.1.2",
@@ -54,7 +56,8 @@
     "rollbar": "2.19.4",
     "utf-8-validate": "^5.0.3",
     "uuid": "3.3.3",
-    "ws": "^7.4.1"
+    "ws": "^7.4.1",
+    "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "@sytten/ts-node-dev": "^1.0.3",

@@ -1,5 +1,6 @@
 
 export * from './changediscord';
+export * from './changeevents';
 export * from './changepw';
 export * from './changeonline';
 export * from './login';

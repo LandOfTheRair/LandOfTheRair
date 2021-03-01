@@ -65,7 +65,7 @@ export class AccountDB extends BaseService {
 
   public simpleAccount(account: Account): Partial<Account> {
     const accountObj = cloneDeep(account);
-    return pick(accountObj, ['alwaysOnline', 'isGameMaster', 'isSubscribed', 'isTester', 'tier', 'username']);
+    return pick(accountObj, ['alwaysOnline', 'eventWatcher', 'isGameMaster', 'isSubscribed', 'isTester', 'tier', 'username']);
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {
@@ -83,6 +83,11 @@ export class AccountDB extends BaseService {
 
   public async changeAlwaysOnline(account: Account, alwaysOnline: boolean): Promise<void> {
     account.alwaysOnline = alwaysOnline;
+    await this.db.save(account);
+  }
+
+  public async changeEventWatcher(account: Account, eventWatcher: boolean): Promise<void> {
+    account.eventWatcher = eventWatcher;
     await this.db.save(account);
   }
 

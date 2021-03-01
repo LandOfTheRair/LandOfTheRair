@@ -11,7 +11,7 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Global Chat ({{ (users$ | async).length }} online)
+  Global Chat [{{ (users$ | async).length }} online<span *ngIf="discordCount">, {{ discordCount }} Discord Player(s)</span>]
 </ng-template>
 
 <ng-template #bodyTemplate>
@@ -36,8 +36,8 @@
       <div class="output-area">
         <div *ngFor="let message of messages$ | async" class="message">
           <span class="timestamp">[{{ message.timestamp | date:'hh:mm' }}]</span>
-          <span class="username">{{ message.from }}:</span>
-          <span class="usermessage" [innerHTML]="message.message | linkify"></span>
+          <span class="username">{{ message.from }}<span *ngIf="message.source"> [{{ message.source }}]</span>:</span>
+          <span class="usermessage" [innerHTML]="message.message | linkify | replaceDiscordEmoji:16"></span>
         </div>
       </div>
 

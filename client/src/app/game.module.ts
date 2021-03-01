@@ -25,6 +25,7 @@ import { DraggableDirective as DraggableWindowDirective } from './_shared/direct
 import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
 import { DialogComponent } from './_shared/modals/dialog/dialog.component';
 
+import { DiscordEmojiPipe } from './_shared/pipes/discord-emoji.pipe';
 import { GoldifyPipe } from './_shared/pipes/goldify.pipe';
 import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 
@@ -71,7 +72,7 @@ import { ErrorComponent } from './_shared/modals/error/error.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
-  WindowComponent, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
+  WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
   TextModalComponent, NewSpellsComponent
@@ -120,6 +121,7 @@ const gameComponents = [
 
 @NgModule({
   declarations: [...declarations, ...gameComponents],
+  providers: [...declarations.filter(x => x.name.includes('Pipe'))],
   imports: [CommonModule, FormsModule, UIModule],
   exports: [...declarations, ...gameComponents]
 })

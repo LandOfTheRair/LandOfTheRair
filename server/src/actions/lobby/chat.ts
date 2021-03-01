@@ -10,19 +10,7 @@ export class ChatAction extends ServerAction {
     data.content = game.profanityHelper.cleanMessage(data.content);
 
     try {
-      broadcast({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: data.content,
-        from: data.username
-      });
-
-      broadcast({
-        type: GameServerResponse.Chat,
-        timestamp: Date.now(),
-        message: data.content,
-        from: data.username
-      });
+      game.messageHelper.sendMessage(data.username, data.content);
 
     } catch (e) {
       game.logger.error('ChatAction', e);

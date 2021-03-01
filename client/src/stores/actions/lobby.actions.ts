@@ -3,7 +3,7 @@ import { GameAction, ICharacterCreateInfo, IChatUser } from '../../interfaces';
 // dispatched when a new chat message is received
 export class AddMessage {
   static type = GameAction.ChatAddMessage;
-  constructor(public from: string, public message: string, public timestamp: number) {}
+  constructor(public from: string, public message: string, public timestamp: number, public source: string) {}
 }
 
 // dispatched by the server when the user joins or the motd changes

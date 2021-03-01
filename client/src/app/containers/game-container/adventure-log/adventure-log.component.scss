@@ -18,11 +18,12 @@
   overflow: auto;
 
   color: var(--text-color);
-  
+
   .message {
     font-size: 0.9rem;
     letter-spacing: 1px;
     padding-left: 5px;
+    position: relative;
 
     &.font-size-xlarge {
       font-size: 1.3rem;

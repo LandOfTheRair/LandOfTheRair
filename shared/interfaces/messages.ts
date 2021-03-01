@@ -36,6 +36,7 @@ export enum MessageType {
 
 export interface MessageInfo {
   message: string;
+  fromDiscord?: string;
   sfx?: SoundEffect;
   from?: string;
   setTarget?: string|null;

@@ -12,6 +12,7 @@ import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
 import { WindowComponent } from '../../../_shared/components/window.component';
+import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
 
 @AutoUnsubscribe()
 @Component({
@@ -34,6 +35,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     private store: Store,
     private optionsService: OptionsService,
     private socketService: SocketService,
+    private discordEmojiPipe: DiscordEmojiPipe,
     public gameService: GameService
   ) { }
 
@@ -129,7 +131,9 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.optionsService.suppressZeroDamage
     && (message.message.includes('[0') || message.message.includes('misses!') || message.message.includes('blocked by your'))) return;
 
-    message.display = marked(message.message, { renderer: this.renderer });
+    message.display = this.discordEmojiPipe.transform(marked(message.message, { renderer: this.renderer }), 12);
+
+    if (message.source) message.display = `[${message.source}] ${message.display}`;
 
     this.messages.push(message);
 

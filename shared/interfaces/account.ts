@@ -15,4 +15,5 @@ export interface IAccount {
 
   discordTag: string;
   alwaysOnline: boolean;
+  eventWatcher: boolean;
 }
