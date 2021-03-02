@@ -310,9 +310,9 @@ export class PlayerHelper extends BaseService {
     if (player.gainingAXP && xpGained > 0) return;
 
     if (xpGained > 0) {
-      const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent);
+      const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent)
+                               + this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
       xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
-
       // TODO: modify xpGained for sub
       xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
     }
@@ -348,8 +348,9 @@ export class PlayerHelper extends BaseService {
   public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
     if (!skill) skill = Skill.Martial;
 
-    const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent);
-    skillGained += Math.floor((xpGainBoostPercent * skillGained) / 100);
+    const skillGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent)
+                                + this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
+    skillGained += Math.floor((skillGainBoostPercent * skillGained) / 100);
 
     // TODO: modify skillGained for sub
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);

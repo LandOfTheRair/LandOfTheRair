@@ -2,8 +2,20 @@
 
 <div mat-dialog-content>
 
-  Under construction!
-  
+  <div class="event-container" *ngIf="events$ | async as events">
+    <div class="event" *ngFor="let event of events">
+      <div class="event-name">
+        <strong>{{ event.name }}</strong>&nbsp;&nbsp;<em>(ends at roughly {{ event.endsAt | date:'short' }})</em>
+      </div>
+      <div class="event-desc">
+        {{ event.description }}
+      </div>
+      <div class="stats">
+        Stat Boosts: {{ statString(event) }}
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div mat-dialog-actions>

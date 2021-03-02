@@ -11,6 +11,7 @@ export * from './characterquests';
 export * from './charactertraits';
 export * from './combat';
 export * from './dialog';
+export * from './dynamicevent';
 export * from './effect';
 export * from './game';
 export * from './ground';

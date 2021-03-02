@@ -1,15 +1,22 @@
 
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
+
+import { uniqBy } from 'lodash';
+
 import { IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
 import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser,
-  Login, RemoveUser, SetCharacterCreateInformation, SetMOTD, SetUsers } from './actions';
+  CreateEvent,
+  DeleteEvent,
+  Login, RemoveUser, SetCharacterCreateInformation,
+  SetEvents, SetMOTD, SetUsers } from './actions';
 
 @State<ILobbyContainer>({
   name: 'chat',
   defaults: {
     messages: [],
     users: [],
+    events: [],
     motd: '',
     charCreate: {
       allegiances: [],
@@ -39,6 +46,11 @@ export class LobbyState {
   @Selector()
   static messages(state: ILobbyContainer) {
     return state.messages;
+  }
+
+  @Selector()
+  static events(state: ILobbyContainer) {
+    return state.events;
   }
 
   private sortUsers(users: IChatUser[]): IChatUser[] {
@@ -74,6 +86,27 @@ export class LobbyState {
   @Action(SetMOTD)
   setMOTD(ctx: StateContext<ILobbyContainer>, { motd }: SetMOTD) {
     ctx.patchState({ motd });
+  }
+
+  @Action(SetEvents)
+  setEvents(ctx: StateContext<ILobbyContainer>, { events }: SetEvents) {
+    ctx.patchState({ events });
+  }
+
+  @Action(CreateEvent)
+  createEvent(ctx: StateContext<ILobbyContainer>, { event }: CreateEvent) {
+    const state = ctx.getState();
+    const events = uniqBy([event, ...state.events], 'name');
+
+    ctx.patchState({ events });
+  }
+
+  @Action(DeleteEvent)
+  deleteEvent(ctx: StateContext<ILobbyContainer>, { event }: DeleteEvent) {
+    const state = ctx.getState();
+    const events = state.events.filter(x => x.name !== event.name);
+
+    ctx.patchState({ events });
   }
 
   @Action(SetUsers)

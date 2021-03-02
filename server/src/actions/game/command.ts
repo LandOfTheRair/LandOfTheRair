@@ -7,7 +7,7 @@ export class CommandAction extends ServerAction {
   requiredKeys = ['command'];
 
   async act(game: Game, callbacks, data) {
-    if (!game.lobbyManager.isAccountInGame(data.account)) return { message: 'Not in game.' };
+    if (!game.lobbyManager.isAccountInGame(data.account)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);
     if (!player) return { message: 'Player ref is not available.' };

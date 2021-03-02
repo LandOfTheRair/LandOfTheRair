@@ -66,6 +66,11 @@ export class LoginAction extends ServerAction {
         assetHash: meta.hash
       });
 
+      emit({
+        action: GameAction.EventSetList,
+        events: game.dynamicEventHelper.getEventsForPlayer()
+      });
+
       const sortedPlayers = realAccount.players.reduce((prev, cur) => {
         prev[cur.charSlot] = cur;
         return prev;

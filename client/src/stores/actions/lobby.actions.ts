@@ -1,4 +1,4 @@
-import { GameAction, ICharacterCreateInfo, IChatUser } from '../../interfaces';
+import { GameAction, ICharacterCreateInfo, IChatUser, IDynamicEvent } from '../../interfaces';
 
 // dispatched when a new chat message is received
 export class AddMessage {
@@ -46,4 +46,22 @@ export class AccountEnterGame {
 export class AccountLeaveGame {
   static type = GameAction.ChatUserLeaveGame;
   constructor(public username: string) {}
+}
+
+// dispatched by the server when the user joins
+export class SetEvents {
+  static type = GameAction.EventSetList;
+  constructor(public events: IDynamicEvent[]) {}
+}
+
+// dispatched by the server when an event starts
+export class CreateEvent {
+  static type = GameAction.EventCreate;
+  constructor(public event: IDynamicEvent) {}
+}
+
+// dispatched by the server when an event ends
+export class DeleteEvent {
+  static type = GameAction.EventDelete;
+  constructor(public event: IDynamicEvent) {}
 }

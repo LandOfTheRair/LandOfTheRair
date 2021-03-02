@@ -1,4 +1,5 @@
 import { IAccount } from './account';
+import { IDynamicEvent } from './dynamicevent';
 
 export enum SubscriptionTier {
   None = 0,
@@ -29,6 +30,7 @@ export type IChatUser = IAccount & {
 export interface ILobbyContainer {
   messages: IChatMessage[];
   users: IChatUser[];
+  events: IDynamicEvent[];
   motd: string;
   charCreate: ICharacterCreateInfo;
 }

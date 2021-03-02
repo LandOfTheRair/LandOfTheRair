@@ -62,6 +62,10 @@ export enum GameServerResponse {
   CharacterCreateInformation = 'Creator:Response:CharacterSelect',
   CharacterCreate = 'Creator:Response:CharacterCreate',
 
+  SetEvents = 'Event:Response:Set',
+  CreateEvent = 'Event:Response:Create',
+  DeleteEvent = 'Event:Response:Delete',
+
   GameLog = 'Game:Response:Message',
   SendNotification = 'Game:Response:Notification',
   SendAlert = 'Game:Response:Alert',
@@ -91,6 +95,10 @@ export enum GameAction {
   SettingsSetCharacterView = '[Settings] Set Character View',
 
   SetCharacterCreateInformation = '[CharSelect] Set Create Info',
+
+  EventSetList = '[Events] Set List',
+  EventCreate = '[Events] Create Event',
+  EventDelete = '[Events] Delete Event',
 
   GamePlay = '[Game] Play Game',
   GamePlayerReady = '[Game] Player Ready',

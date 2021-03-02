@@ -12,10 +12,10 @@ import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
-import { BonusHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
+import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { Database } from './Database';
-import { AccountDB, CharacterDB, GroundDB, WorldDB } from './db';
+import { AccountDB, CharacterDB, EventsDB, GroundDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
 import { UserInputHelper } from './UserInputHelper';
@@ -39,6 +39,7 @@ export class Game {
     public characterDB: CharacterDB,
     public worldDB: WorldDB,
     public groundDB: GroundDB,
+    public eventsDB: EventsDB,
 
     public profanityHelper: ProfanityHelper,
 
@@ -82,7 +83,7 @@ export class Game {
     public statisticsHelper: StatisticsHelper,
 
     public messageHelper: MessageHelper,
-    public bonusHelper: BonusHelper,
+    public dynamicEventHelper: DynamicEventHelper,
     public traitHelper: TraitHelper,
     public stealHelper: StealHelper,
     public commandHandler: CommandHandler,
@@ -103,7 +104,7 @@ export class Game {
       'logger',
       'transmissionHelper',
       'contentManager',
-      'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB',
+      'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
       'profanityHelper', 'effectManager', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller', 'currencyHelper',
@@ -115,7 +116,7 @@ export class Game {
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper',
       'statisticsHelper',
-      'commandHandler', 'messageHelper', 'bonusHelper', 'traitHelper', 'stealHelper',
+      'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
       'discordHelper'
     ];
@@ -185,11 +186,15 @@ export class Game {
       timer.stopTimer('npcTick');
     }
 
-    // map ticks (npcs)
+    // map ticks (corpses) & event tick
     if (this.ticksElapsed % 50 === 0) {
       timer.startTimer('corpseTick');
       this.corpseManager.tick(timer);
       timer.stopTimer('corpseTick');
+
+      timer.startTimer('dynamicEventTick');
+      this.dynamicEventHelper.tick(timer);
+      timer.stopTimer('dynamicEventTick');
     }
 
     timer.stopTimer('gameloop');
