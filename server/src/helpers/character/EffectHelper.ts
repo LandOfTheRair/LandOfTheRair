@@ -11,7 +11,7 @@ export class EffectHelper extends BaseService {
   public init() {}
 
   private formatEffectMessage(message: string, effectData: IStatusEffectData): string {
-    return message
+    return (message || '')
       .split('%potency').join(effectData.effect.extra.potency?.toLocaleString());
   }
 
