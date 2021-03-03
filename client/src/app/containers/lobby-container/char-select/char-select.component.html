@@ -16,64 +16,68 @@
 
 <ng-template #bodyTemplate>
 
-  <mat-tab-group mat-align-tabs="center" #tabs (selectedTabChange)="setCharSlot($event)" *ngIf="account">
-    <mat-tab *ngFor="let player of account.players; let i = index">
-      <ng-template mat-tab-label>
-        <div *ngIf="player">
-          {{ player.name }}
+  <ng-container *ngIf="account">
+    <div class="char-buttons">
+      <ng-container *ngFor="let player of account.players; let i = index">
+        <button class="tab-button" mat-raised-button [color]="(charSlot === i) ? 'primary' : ''" (click)="setCharSlot(i)">
+          <div *ngIf="player">
+            {{ player.name }}
+            <br>
+            <small>Level {{ player.level }} {{ player.baseClass }}</small>
+          </div>
+
+          <div *ngIf="!player">
+            Slot {{ i + 1 }}
+          </div>
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="create-area vertical-center full-width full-height background-text" *ngIf="!account.players[charSlot]">
+      You do not currently have a character in this slot.
+
+      <ng-container *ngIf="gameService.charCreateData$ | async as charCreateData">
+        <button mat-flat-button color="accent" class="create-button m-t-20" (click)="create(charCreateData, charSlot, account.players[charSlot])">
+          Create Character
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="char-viewer" *ngIf="account.players[charSlot] as player">
+      <div class="left-side">
+        <div class="about-player">
+          <div class="sprite">
+            <app-npc [sprite]="spriteForPlayer(player)"></app-npc>
+          </div>
+
+          <div class="about">
+            <strong class="name">{{ player.name }}</strong>
+            <br>
+            Level {{ player.level }} {{ player.baseClass }}
+            <br>
+            In {{ player.map }}
+          </div>
         </div>
 
-        <div *ngIf="!player">
-          Slot {{ i + 1 }}
-        </div>
-      </ng-template>
-
-      <div class="create-area vertical-center full-width full-height background-text" *ngIf="!player">
-        You do not currently have a character in this slot.
-
-        <ng-container *ngIf="gameService.charCreateData$ | async as charCreateData">
-          <button mat-flat-button color="accent" class="create-button m-t-20" (click)="create(charCreateData, charSlot, account.players[charSlot])">
-            Create Character
+        <div class="actions" *ngIf="gameService.charCreateData$ | async as charCreateData">
+          <button mat-flat-button color="accent" class="create-button" (click)="create(charCreateData, charSlot, account.players[charSlot])">
+            {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
           </button>
-        </ng-container>
-      </div>
 
-      <div class="char-viewer" *ngIf="player">
-        <div class="left-side">
-          <div class="about-player">
-            <div class="sprite">
-              <app-npc [sprite]="spriteForPlayer(player)"></app-npc>
-            </div>
+          <button mat-flat-button color="primary" class="play-button" [disabled]="!account.players[charSlot]" (click)="play(charSlot)" *ngIf="assetService.assetsLoaded">
+            Play
+          </button>
 
-            <div class="about">
-              <strong class="name">{{ player.name }}</strong>
-              <br>
-              Level {{ player.level }} {{ player.baseClass }}
-              <br>
-              In {{ player.map }}
-            </div>
-          </div>
-
-          <div class="actions" *ngIf="gameService.charCreateData$ | async as charCreateData">
-            <button mat-flat-button color="accent" class="create-button" (click)="create(charCreateData, charSlot, account.players[charSlot])">
-              {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
-            </button>
-
-            <button mat-flat-button color="primary" class="play-button" [disabled]="!account.players[charSlot]" (click)="play(charSlot)" *ngIf="assetService.assetsLoaded">
-              Play
-            </button>
-
-            <button mat-flat-button color="primary" class="play-button" [disabled]="true" *ngIf="!assetService.assetsLoaded">
-              Loading...
-            </button>
-          </div>
-        </div>
-
-        <div class="right-side">
-          <app-equipment-viewonly [player]="player"></app-equipment-viewonly>
+          <button mat-flat-button color="primary" class="play-button" [disabled]="true" *ngIf="!assetService.assetsLoaded">
+            Loading...
+          </button>
         </div>
       </div>
 
-    </mat-tab>
-  </mat-tab-group>
+      <div class="right-side">
+        <app-equipment-viewonly [player]="player"></app-equipment-viewonly>
+      </div>
+    </div>
+  </ng-container>
+
 </ng-template>

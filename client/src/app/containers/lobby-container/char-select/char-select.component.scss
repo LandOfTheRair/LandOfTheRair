@@ -1,4 +1,17 @@
 
+.char-buttons {
+  display: flex;
+  justify-content: space-around;
+
+  .tab-button {
+    flex: 1;
+    line-height: 22px;
+    height: 45px;
+    border-radius: 0;
+    outline: 1px solid #212121;
+  }
+}
+
 mat-button-toggle-group {
   display: flex;
   flex-direction: column;
@@ -30,6 +43,7 @@ mat-button-toggle-group {
 .char-viewer {
 
   display: flex;
+  padding-top: 10px;
 
   .left-side {
     min-width: 200px;

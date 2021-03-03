@@ -42,12 +42,6 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         this.account = account;
         this.charSlot = charSlot.slot;
-
-        setTimeout(() => {
-          // otherwise the tab index is set to the last one every time, for some reason
-          if (this.tabs.selectedIndex !== this.tabs._tabs.length - 1) return;
-          this.tabs.selectedIndex = charSlot.slot;
-        }, 0);
       }, 0);
     });
   }
@@ -55,8 +49,8 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
   }
 
-  public setCharSlot(event) {
-    this.store.dispatch(new SetCharSlot(event.index));
+  public setCharSlot(index) {
+    this.store.dispatch(new SetCharSlot(index));
   }
 
   public spriteForPlayer(player: IPlayer): number {
