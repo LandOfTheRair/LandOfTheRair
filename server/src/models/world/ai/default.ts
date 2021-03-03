@@ -324,34 +324,45 @@ export class DefaultAIBehavior implements IAI {
     const oldX = npc.x;
     const oldY = npc.y;
 
-    const steps: any[] = [];
-    let stepdiffX = clamp(target.x - npc.x, -moveRate, moveRate);
-    let stepdiffY = clamp(target.y - npc.y, -moveRate, moveRate);
+    // one space away = no pathfinding
+    if (this.game.directionHelper.distFrom(target, npc) <= 1) {
 
-    for (let curStep = 0; curStep < moveRate; curStep++) {
-      const step = { x: 0, y: 0 };
+      const steps: any[] = [];
 
-      if (stepdiffX < 0) {
-        step.x = -1;
-        stepdiffX++;
-      } else if (stepdiffX > 0) {
-        step.x = 1;
-        stepdiffX--;
+      let stepdiffX = clamp(target.x - npc.x, -moveRate, moveRate);
+      let stepdiffY = clamp(target.y - npc.y, -moveRate, moveRate);
+
+      for (let curStep = 0; curStep < moveRate; curStep++) {
+        const step = { x: 0, y: 0 };
+
+        if (stepdiffX < 0) {
+          step.x = -1;
+          stepdiffX++;
+        } else if (stepdiffX > 0) {
+          step.x = 1;
+          stepdiffX--;
+        }
+
+        if (stepdiffY < 0) {
+          step.y = -1;
+          stepdiffY++;
+        } else if (stepdiffY > 0) {
+          step.y = 1;
+          stepdiffY--;
+        }
+
+        steps[curStep] = step;
+
       }
 
-      if (stepdiffY < 0) {
-        step.y = -1;
-        stepdiffY++;
-      } else if (stepdiffY > 0) {
-        step.y = 1;
-        stepdiffY--;
-      }
+      this.game.movementHelper.takeSequenceOfSteps(npc, steps, { isChasing: true });
 
-      steps[curStep] = step;
+    // if we're more than one space away, use normal pathfinding
+    } else {
+      this.game.movementHelper.moveTowards(npc, target);
 
     }
 
-    this.game.movementHelper.takeSequenceOfSteps(npc, steps, { isChasing: true });
     const diffX = npc.x - oldX;
     const diffY = npc.y - oldY;
 

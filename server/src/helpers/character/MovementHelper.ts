@@ -27,7 +27,7 @@ export class MovementHelper extends BaseService {
 
   init() {}
 
-  moveTowards(source: ICharacter, target: ICharacter): boolean {
+  moveTowards(source: ICharacter, target: { x: number; y: number }): boolean {
     const xDiff = target.x - source.x;
     const yDiff = target.y - source.y;
 
