@@ -176,26 +176,6 @@ ngx-mat-color-picker-content {
   }
 }
 
-.macro-selector-popover {
-
-  .mat-card {
-    min-width: 416px;
-  }
-
-  .selector-buttons-row {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .selector-macros {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-  }
-}
-
 .mat-dialog-actions .mat-button-base {
   margin-left: 8px !important;
 }

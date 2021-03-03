@@ -70,7 +70,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);
   public currentMacroPage = 1;
   public currentMacrosInPage: IMacro[] = [];
-  public activeMacroSlotGroup: IMacroBar;
+  public activeMacroSlotGroup: number;
   public activeMacroSlotIndex: number;
 
   @Selector([GameState, MacrosState])
@@ -354,7 +354,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SetActiveMacroBars(this.activeMacroBars));
   }
 
-  setMacro(group: IMacroBar, macroIdx: number, macro: string | null) {
+  setMacro(groupIdx: number, macroIdx: number, macro: string | null) {
+    const group = this.macroBars[groupIdx];
     if (group.macros[macroIdx] === macro) return;
 
     group.macros[macroIdx] = macro;
@@ -396,7 +397,13 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     this.currentMacrosInPage = currentMacrosInPage;
   }
 
-  markActiveSlot(group: IMacroBar, idx: number) {
+  markActiveSlot(group: number, idx: number) {
+    if (this.activeMacroSlotGroup === group && this.activeMacroSlotIndex === idx) {
+      this.activeMacroSlotGroup = null;
+      this.activeMacroSlotIndex = null;
+      return;
+    }
+
     this.activeMacroSlotGroup = group;
     this.activeMacroSlotIndex = idx;
   }
@@ -424,6 +431,10 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.currentlyEditingMacro.bgColor = macro.bgColor || '#ccc';
       this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     });
+  }
+
+  trackMacroBy(idx: number) {
+    return idx;
   }
 
 }

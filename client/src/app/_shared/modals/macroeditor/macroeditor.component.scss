@@ -116,7 +116,7 @@ mat-error {
 
           box-shadow: 0px 0px 1px 1px #fff;
           animation: glow 1000ms linear infinite alternate;
-  
+
           @keyframes glow {
             to {
               box-shadow: 0px 0px 3px 3px #bbb;
@@ -174,6 +174,27 @@ mat-error {
         margin-right: 5px;
       }
     }
+  }
+}
+
+.macro-selector {
+
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #B88846;
+  padding: 10px;
+
+  .selector-buttons-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .selector-macros {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 
