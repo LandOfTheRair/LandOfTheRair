@@ -95,7 +95,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
   resetTraits() {
     this.modalService.confirm('Reset Traits', 'Are you sure you want to reset your entire trait tree?')
       .subscribe(res => {
-        if(!res) return;
+        if (!res) return;
 
         this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, reset`);
       });

@@ -155,12 +155,12 @@ export class SocketService {
     interval(100)
       .subscribe(() => {
         const sendCommands = [];
-        for(let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++) {
           sendCommands.push(this.commandQueue.shift());
         }
 
         sendCommands.forEach(cmd => {
-          if(!cmd) return;
+          if (!cmd) return;
           this.emit(GameServerEvent.DoCommand, cmd);
         });
       });

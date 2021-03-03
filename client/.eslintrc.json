@@ -63,6 +63,7 @@
         ],
         "no-underscore-dangle": "off",
         "import/order": "error",
+        "keyword-spacing": "error",
         "max-len": [
           "error",
           {

@@ -34,9 +34,11 @@ export abstract class SkillCommand extends MacroCommand {
   mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) {
     return 0;
   }
+
   hpCost(caster?: ICharacter) {
     return 0;
   }
+
   range(caster?: ICharacter) {
     return 0;
   }

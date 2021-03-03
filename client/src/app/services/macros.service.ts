@@ -161,7 +161,7 @@ export class MacrosService {
 
       if (macro.mode === 'autoTarget') {
         this.currentTarget$.pipe(first()).subscribe(target => {
-          if(target) {
+          if (target) {
             this.gameService.sendCommandString(macro.macro, target.uuid);
             return;
           }
@@ -199,12 +199,12 @@ export class MacrosService {
   private watchForNewMacroAlerts() {
     combineLatest([this.player$, this.currentMacros$])
       .subscribe(([player, currentMacros]) => {
-        if(!player || !currentMacros || !currentMacros.macroBars || !currentMacros.activeMacro) return;
+        if (!player || !currentMacros || !currentMacros.macroBars || !currentMacros.activeMacro) return;
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map(spell => {
             const baseObj = cloneDeep(Object.values(this.allMacrosHash).find(macro => macro.name.toLowerCase() === spell));
-            if(!baseObj) return null;
+            if (!baseObj) return null;
 
             baseObj.isDefault = true;
             return baseObj;
@@ -216,7 +216,7 @@ export class MacrosService {
                               .includes(spell.name)
           );
 
-        if(newSpells.length === 0) return;
+        if (newSpells.length === 0) return;
 
         this.modalService.newSpells(newSpells, currentMacros.macroBars);
 

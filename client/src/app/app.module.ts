@@ -53,7 +53,7 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
       disabled: environment.production,
       collapsed: true,
       filter: action => {
-        if(!action.type) return !action.filterOutFromLogs;
+        if (!action.type) return !action.filterOutFromLogs;
 
         const ignoreActions = {
           [GameAction.GameSetPlayer]: true,

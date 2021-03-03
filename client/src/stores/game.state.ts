@@ -250,7 +250,7 @@ export class GameState {
     const state = ctx.getState();
     const copyState = { ...state };
 
-    if(!copyState.player) return;
+    if (!copyState.player) return;
 
     copyState.player = { ...copyState.player };
     copyState.player.x = x;

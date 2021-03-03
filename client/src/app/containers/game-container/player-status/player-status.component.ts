@@ -55,7 +55,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
       ...player.effects.outgoing
     ].filter(x => !x.effectInfo.hidden);
 
-    if(player.spellChannel) {
+    if (player.spellChannel) {
       base.unshift({
         uuid: 'channel',
         effectName: 'Channeling',

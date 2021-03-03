@@ -131,7 +131,7 @@ export class ModalService {
   }
 
   public newSpells(newSpells: IMacro[], macroBars: IMacroBar[]) {
-    if(this.spellDialogRef) return this.spellDialogRef.afterClosed();
+    if (this.spellDialogRef) return this.spellDialogRef.afterClosed();
 
     this.spellDialogRef = this.dialog.open(NewSpellsComponent, {
       width: '650px',
@@ -149,7 +149,7 @@ export class ModalService {
 
   public commandDialog(dialogInfo: IDialogChatAction) {
     if (this.commandDialogRef) return null;
-    if((dialogInfo.displayNPCName || dialogInfo.displayNPCUUID) && this.optionsService.classicNPCChat) return null;
+    if ((dialogInfo.displayNPCName || dialogInfo.displayNPCUUID) && this.optionsService.classicNPCChat) return null;
 
     this.commandDialogRef = this.dialog.open(DialogComponent, {
       width: '450px',

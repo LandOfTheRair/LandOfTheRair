@@ -408,14 +408,14 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   guessPragma() {
-    if(!this.currentlyEditingMacro || this.currentlyEditingMacro.for) return;
+    if (!this.currentlyEditingMacro || this.currentlyEditingMacro.for) return;
 
     const checkString = this.currentlyEditingMacro.name.split(' ').join('').toLowerCase();
 
     this.macros.forEach(macro => {
       const str = macro.name;
 
-      if(!checkString.includes(str.toLowerCase())) return;
+      if (!checkString.includes(str.toLowerCase())) return;
 
       this.currentlyEditingMacro.for = str;
       this.currentlyEditingMacro.icon = macro.icon;

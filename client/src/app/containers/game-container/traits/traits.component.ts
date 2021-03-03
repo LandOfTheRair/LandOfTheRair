@@ -43,7 +43,7 @@ export class TraitsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   private setPlayer(player: IPlayer) {
-    if(!player) {
+    if (!player) {
       this.player = null;
       this.traitTree = null;
       return;
@@ -55,7 +55,7 @@ export class TraitsComponent implements OnInit, OnDestroy {
 
   public formatTooltip(treeTrait: ITraitTreeTrait, trait: ITrait): string {
     let base = trait.desc.split('$').join('');
-    if(treeTrait.requires) {
+    if (treeTrait.requires) {
       base = `${base} Requires ${this.getTrait(treeTrait.requires).name}.`;
     }
 
@@ -97,11 +97,11 @@ export class TraitsComponent implements OnInit, OnDestroy {
   }
 
   public tryToBuyTrait(trait: ITraitTreeTrait): void {
-    if(!this.canBuyTrait(trait.name)) return;
+    if (!this.canBuyTrait(trait.name)) return;
 
     this.modalService.confirm('Buy Trait', 'Are you sure you want to buy this trait?')
       .subscribe(res => {
-        if(!res) return;
+        if (!res) return;
 
         this.gameService.sendCommandString(`!learntrait ${trait.name}`);
       });

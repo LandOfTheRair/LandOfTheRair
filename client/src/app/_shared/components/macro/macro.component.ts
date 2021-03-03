@@ -58,14 +58,14 @@ export class MacroComponent implements OnInit, OnDestroy {
     this.cooldownSub = interval(100)
       .pipe(switchMap(() => this.cooldownDisplayValue))
       .subscribe(v => {
-        if(Date.now() > v) {
+        if (Date.now() > v) {
           this.cooldownDisplay = '';
           return;
         }
 
         const numberValue = Math.abs((Date.now() - v) / 1000);
 
-        if(numberValue < 10) {
+        if (numberValue < 10) {
           this.cooldownDisplay = numberValue.toFixed(1);
           return;
         }

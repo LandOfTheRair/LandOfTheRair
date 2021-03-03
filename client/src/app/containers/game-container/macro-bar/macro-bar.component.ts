@@ -50,7 +50,7 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
     if (macro.mode === 'autoTarget') {
       this.currentTarget$.pipe(first()).subscribe(target => {
-        if(target) {
+        if (target) {
           this.gameService.sendCommandString(macro.macro, target.uuid);
           return;
         }
@@ -80,12 +80,12 @@ export class MacroBarComponent implements OnInit, OnDestroy {
   }
 
   public macroCooldown(player: IPlayer, macro: IMacro): number {
-    if(!macro?.for) return 0;
+    if (!macro?.for) return 0;
     return player.spellCooldowns?.[macro.for] ?? 0;
   }
 
   public isMacroDisabled(player: IPlayer, macro: IMacro): boolean {
-    if(!macro?.for) return false;
+    if (!macro?.for) return false;
     return !player.learnedSpells[macro.for.toLowerCase()] || player.spellCooldowns?.[macro.for] > Date.now();
   }
 

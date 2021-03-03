@@ -78,7 +78,7 @@ export class MapScene extends Phaser.Scene {
   private createFOV() {
 
     // if the fov was made before, remove and re-create (we're changing maps)
-    if(this.textures.exists('black')) {
+    if (this.textures.exists('black')) {
       this.textures.remove('black');
     }
 
@@ -117,7 +117,7 @@ export class MapScene extends Phaser.Scene {
 
   // npc sprite stuff
   private updateNPCSprite(npc: INPC) {
-    if(!this.isReady) return;
+    if (!this.isReady) return;
 
     const sprite = this.allNPCSprites[npc.uuid];
     if (!sprite) {
@@ -144,7 +144,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createNPCSprite(npc: INPC) {
-    if(!this.isReady) return;
+    if (!this.isReady) return;
 
     const sprite = this.add.sprite(
       this.convertPosition(npc.x), this.convertPosition(npc.y),
@@ -167,7 +167,7 @@ export class MapScene extends Phaser.Scene {
 
   // player sprite stuff
   private updatePlayerSprite(player: IPlayer) {
-    if(!this.isReady) return;
+    if (!this.isReady) return;
 
     const sprite = this.allPlayerSprites[player.uuid];
     if (!sprite) {
@@ -187,7 +187,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createPlayerSprite(player: IPlayer) {
-    if(!this.isReady) return;
+    if (!this.isReady) return;
 
     const spriteGenderBase = basePlayerSprite(player);
     const directionOffset = spriteOffsetForDirection(player.dir);
@@ -545,7 +545,7 @@ export class MapScene extends Phaser.Scene {
       text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
     }
 
-    if(this.hideWelcome) text = '';
+    if (this.hideWelcome) text = '';
 
     this.game.observables.loadPercent.next(text);
     this.game.observables.hideMap.next(false);
@@ -578,7 +578,7 @@ export class MapScene extends Phaser.Scene {
 
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
   private stealthUpdate(sprite, character: ICharacter) {
-    if(character.hp.current <= 0) return;
+    if (character.hp.current <= 0) return;
 
     sprite.alpha = (character.totalStats?.[Stat.Stealth] ?? 0) ? 0.7 : 1;
   }
