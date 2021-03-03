@@ -291,7 +291,7 @@ export class PlayerHelper extends BaseService {
   // whether or not the player can get skill on the current map
   public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
     const { map } = this.worldManager.getMap(player.map);
-    return player.skills[skill.toLowerCase()] < map.maxSkillExp;
+    return (player.skills[skill.toLowerCase()] ?? 0) < map.maxSkillExp;
   }
 
   // whether or not the player can get xp on the current map
