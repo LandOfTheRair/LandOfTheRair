@@ -109,7 +109,7 @@ export class MoveItems extends MacroCommand {
 
     // Dest: E - Items must be able to be used by the equipper
     if (dest === 'E' && !this.game.itemHelper.canGetBenefitsFromItem(player, srcItem)) {
-      this.sendMessage(player, 'You cannot equip that item!');
+      this.sendMessage(player, this.game.itemHelper.reasonCantGetBenefitsFromItem(player, srcItem));
       return false;
     }
 

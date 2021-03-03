@@ -141,6 +141,18 @@ export class ItemHelper extends BaseService {
     return true;
   }
 
+  // check if an item is usable
+  public reasonCantGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): string {
+    const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
+    if (requirements) {
+      if (requirements.alignment && player.alignment !== requirements.alignment) return 'Your alignment does not match this items!';
+      if (requirements.baseClass && player.baseClass !== requirements.baseClass) return 'You are not the correct class for this item!';
+      if (requirements.level && player.level < requirements.level) return 'You are not high enough level for this item!';
+    }
+
+    return 'You cannot use this item. Who knows why, the item must not like you?';
+  }
+
   // gain or lose condition
   public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
 
