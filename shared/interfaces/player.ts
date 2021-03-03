@@ -1,9 +1,11 @@
 import { IAccountBank } from './accountbank';
 import { DamageClass, Skill } from './building-blocks';
 import { ICharacter } from './character';
+import { ICharacterItems } from './characteritems';
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
+import { ICharacterStatistics } from './statistics';
 
 export type BGM = 'town' | 'dungeon' | 'wilderness';
 
@@ -14,8 +16,10 @@ export interface IPlayer extends ICharacter {
   isSubscribed: boolean;
 
   bank: IAccountBank;
+  items: ICharacterItems;
   traits: ICharacterTraits;
   quests: ICharacterQuests;
+  statistics: ICharacterStatistics;
 
   z: number;
 

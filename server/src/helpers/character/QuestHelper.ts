@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
 import { Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementItem,
-  IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat } from '../../interfaces';
+  IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import * as AllQuests from '../../../content/_output/quests.json';
@@ -118,6 +118,8 @@ export class QuestHelper extends BaseService {
 
     // non-repeatable quests are marked off forever
     if (!questRef.isRepeatable) player.quests.permanentQuestCompletion[quest] = true;
+
+    if (questRef.isRepeatable) this.game.statisticsHelper.addStatistic(player, TrackedStatistic.RepeatableQuests);
 
     this.giveQuestRewards(player, quest);
     this.recalculateQuestKillsAndStatRewards(player);

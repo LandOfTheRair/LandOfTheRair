@@ -6,6 +6,7 @@ import { IPlayer } from '../../../interfaces';
 import { Account, AccountBank, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
+import { PlayerStatistics } from '../../../models/orm/PlayerStatistics';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
@@ -86,10 +87,11 @@ export class CharacterDB extends BaseService {
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
       this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
-      this.db.findSingle<AccountBank>(AccountBank, { _id: account._id })
+      this.db.findSingle<AccountBank>(AccountBank, { _id: account._id }),
+      this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics })
     ]);
 
-    let [items, traits, quests, bank] = results;
+    let [items, traits, quests, bank, statistics] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -122,10 +124,19 @@ export class CharacterDB extends BaseService {
       bank = newBank;
     }
 
+    if (!statistics) {
+      const newStats = new PlayerStatistics();
+      newStats._id = new ObjectId();
+
+      statistics = newStats;
+      player._statistics = statistics._id;
+    }
+
     player.items = items;
     player.traits = traits;
     player.quests = quests;
     player.bank = bank;
+    player.statistics = statistics;
   }
 
   public async deletePlayer(player: Player): Promise<void> {
@@ -133,7 +144,8 @@ export class CharacterDB extends BaseService {
       this.db.delete(player),
       this.db.delete(player.items as PlayerItems),
       this.db.delete(player.traits as PlayerTraits),
-      this.db.delete(player.quests as PlayerQuests)
+      this.db.delete(player.quests as PlayerQuests),
+      this.db.delete(player.statistics as PlayerStatistics)
     ]);
   }
 
@@ -144,12 +156,14 @@ export class CharacterDB extends BaseService {
     const itemsColl = this.db.getCollection(PlayerItems);
     const traitsColl = this.db.getCollection(PlayerTraits);
     const questsColl = this.db.getCollection(PlayerQuests);
+    const statsColl = this.db.getCollection(PlayerStatistics);
     const bankColl = this.db.getCollection(AccountBank);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
     const traitOp = traitsColl.initializeUnorderedBulkOp();
     const questOp = questsColl.initializeUnorderedBulkOp();
+    const statsOp = statsColl.initializeUnorderedBulkOp();
     const bankOp = bankColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
@@ -173,6 +187,11 @@ export class CharacterDB extends BaseService {
         .upsert()
         .replaceOne(this.db.getPersistObject(player.quests as PlayerQuests));
 
+      statsOp
+        .find({ _id: (player.statistics as PlayerStatistics)._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.statistics as PlayerStatistics));
+
       bankOp
         .find({ _id: player._account })
         .upsert()
@@ -184,6 +203,7 @@ export class CharacterDB extends BaseService {
       itemOp.execute(),
       traitOp.execute(),
       questOp.execute(),
+      statsOp.execute(),
       bankOp.execute()
     ]);
   }
@@ -196,6 +216,7 @@ export class CharacterDB extends BaseService {
       this.db.save(player.items as PlayerItems),
       this.db.save(player.traits as PlayerTraits),
       this.db.save(player.quests as PlayerQuests),
+      this.db.save(player.statistics as PlayerStatistics),
       this.db.save(player.bank as AccountBank)
     ]);
   }

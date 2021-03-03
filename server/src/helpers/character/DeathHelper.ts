@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat } from '../../interfaces';
+import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -83,6 +83,8 @@ export class DeathHelper extends BaseService {
   // mark last death location, add dead effect, clear action queue, check low con, drop hands if npc killed me
   private playerDie(dead: IPlayer, corpse?: ISimpleItem, killer?: ICharacter): void {
     this.game.playerHelper.clearActionQueue(dead as Player);
+
+    this.game.statisticsHelper.addStatistic(dead, TrackedStatistic.Deaths);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
     this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
@@ -179,6 +181,12 @@ export class DeathHelper extends BaseService {
     this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
     if (this.game.characterHelper.isPlayer(dead)) return;
 
+    this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.Kills);
+
+    if (this.game.effectHelper.hasEffect(dead, 'Dangerous')) {
+      this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.KillsLair);
+    }
+
     const npc: INPC = dead as INPC;
 
     this.game.questHelper.tryUpdateQuestProgressForKill(killer, npc.npcId);
@@ -228,6 +236,10 @@ export class DeathHelper extends BaseService {
   // strip a character to a location w/ a radius
   private strip(character: ICharacter, x: number, y: number, radius = 0): void {
     if (this.game.effectHelper.hasEffect(character, 'Secondwind')) return;
+
+    if (this.game.characterHelper.isPlayer(character)) {
+      this.game.statisticsHelper.addStatistic(character as IPlayer, TrackedStatistic.Strips);
+    }
 
     this.game.messageHelper.sendLogMessageToPlayer(character, {
       message: 'You see a flaming wisp dance before your eyes, taking your equipment with it!'

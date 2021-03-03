@@ -9,7 +9,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckLevelAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
-  IPlayer, ItemSlot, MessageType, Stat } from '../../interfaces';
+  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -23,10 +23,15 @@ export class DialogActionHelper extends BaseService {
   public init() {}
 
   public async handleDialog(player: IPlayer, npc: INPC, command: string, callbacks): Promise<void> {
+    if (command === 'hello') {
+      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.NPCsGreeted);
+    }
+
     const messages = await (npc as any).dialogParser.parse(command, { player, callbacks }) || [];
     if ((messages || []).length === 0) {
       messages.push(this.getDefaultMessage());
     }
+
     (messages || []).forEach(message => {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message, from: npc.name }, [MessageType.NPCChatter]);
     });

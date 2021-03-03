@@ -2,7 +2,8 @@
 import { ObjectId } from 'mongodb';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits, IEffectContainer, IMacroCommandArgs, IPlayer, LearnedSpell,
+  Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
+  IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
   SkillBlock, StatBlock } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
@@ -16,11 +17,13 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_SERVER_ONLY()) _items: ObjectId;
   @Property(PROP_SERVER_ONLY()) _traits: ObjectId;
   @Property(PROP_SERVER_ONLY()) _quests: ObjectId;
+  @Property(PROP_SERVER_ONLY()) _statistics: ObjectId;
 
   @Property(PROP_UNSAVED_SHARED()) items: ICharacterItems;
   @Property(PROP_UNSAVED_SHARED()) traits: ICharacterTraits;
   @Property(PROP_UNSAVED_SHARED()) quests: ICharacterQuests;
   @Property(PROP_UNSAVED_SHARED()) bank: IAccountBank;
+  @Property(PROP_UNSAVED_SHARED()) statistics: ICharacterStatistics;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;

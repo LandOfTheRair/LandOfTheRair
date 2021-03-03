@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat } from '../../interfaces';
+import { DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
@@ -56,6 +56,7 @@ export class MovementHelper extends BaseService {
 
     if (this.characterHelper.isPlayer(character)) {
       this.playerHelper.resetStatus(character as Player, { sendFOV: false });
+      this.game.statisticsHelper.addStatistic(character as Player, TrackedStatistic.Steps, steps.length);
       this.game.transmissionHelper.sendMovementPatch(character as Player);
 
       const mapData = this.game.worldManager.getMap(character.map);

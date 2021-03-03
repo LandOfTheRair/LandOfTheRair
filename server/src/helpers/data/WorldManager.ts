@@ -113,7 +113,10 @@ export class WorldManager extends BaseService {
     this.addCharacter(player);
     this.mapStates[mapName].addPlayer(player);
 
-    this.game.logger.log('Map:Join', `${player.name} joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`);
+    this.game.logger.log(
+      'Map:Join',
+      `${player.name} (${player.username}) joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`
+    );
 
     // TODO: join instanced map
   }
@@ -148,7 +151,10 @@ export class WorldManager extends BaseService {
       this.game.groundManager.saveSingleGround(oldMap);
     }
 
-    this.game.logger.log('Map:Leave', `${player.name} leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`);
+    this.game.logger.log(
+      'Map:Leave',
+      `${player.name} (${player.username}) leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`
+    );
   }
 
   public steadyTick(timer) {
