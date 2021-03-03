@@ -30,6 +30,8 @@ export class InventoryHelper extends BaseService {
       return true;
     }
 
+    this.game.itemHelper.tryToBindItem(player, item);
+
     player.items.sack.items.push(item);
     player.items.sack.items = player.items.sack.items.filter(Boolean);
 
@@ -68,6 +70,8 @@ export class InventoryHelper extends BaseService {
 
     player.items.belt.items.push(item);
     player.items.belt.items = player.items.belt.items.filter(Boolean);
+
+    this.game.itemHelper.tryToBindItem(player, item);
 
     return true;
   }

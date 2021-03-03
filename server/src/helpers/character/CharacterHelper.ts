@@ -99,25 +99,14 @@ export class CharacterHelper extends BaseService {
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { binds, desc, tellsBind, itemClass, owner, equipEffect } = this.game.itemHelper.getItemProperties(item,
-        ['binds', 'tellsBind', 'itemClass', 'owner', 'desc', 'equipEffect']
-      );
+      const { itemClass, equipEffect } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'equipEffect']);
       if (itemClass === ItemClass.Corpse) return;
 
       if (equipEffect) {
         this.tryToCastEquipmentEffects(char);
       }
 
-      if (binds && (char as IPlayer).username && !owner) {
-        this.game.itemHelper.setItemProperty(item, 'owner', (char as IPlayer).username);
-        this.game.messageHelper.sendLogMessageToPlayer(char, {
-          message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`
-        });
-
-        if (tellsBind) {
-          this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `*** ${char.name} has looted ${desc}.` });
-        }
-      }
+      this.game.itemHelper.tryToBindItem(char, item);
     }
   }
 

@@ -328,4 +328,23 @@ export class ItemHelper extends BaseService {
     this.game.messageHelper.sendSimpleMessage(player, 'You got something out of the box!');
   }
 
+  // try to bind the item to the player, like when picking it up or equipping it
+  public tryToBindItem(character: ICharacter, item: ISimpleItem): void {
+
+    const { binds, desc, tellsBind, itemClass, owner } = this.getItemProperties(item,
+      ['binds', 'tellsBind', 'itemClass', 'owner', 'desc']
+    );
+
+    if (binds && (character as IPlayer).username && !owner) {
+      this.setItemProperty(item, 'owner', (character as IPlayer).username);
+      this.game.messageHelper.sendLogMessageToPlayer(character, {
+        message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`
+      });
+
+      if (tellsBind) {
+        this.game.messageHelper.sendLogMessageToRadius(character, 4, { message: `*** ${character.name} has looted ${desc}.` });
+      }
+    }
+  }
+
 }
