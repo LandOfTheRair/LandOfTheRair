@@ -739,7 +739,8 @@ export class DamageHelperPhysical extends BaseService {
     const diff = atkStr - defCon;
     conMultiplier = Math.max(1, conMultiplier - diff);
 
-    if (this.game.diceRollerHelper.OneInX(defCon * conMultiplier)) {
+    if (this.game.diceRollerHelper.OneInX(defCon * conMultiplier) && !this.game.effectHelper.hasEffect(defender, 'Stun')) {
+      this.game.messageHelper.sendLogMessageToPlayer(defender, { message: 'You have been knocked flat!' }, [MessageType.Combat]);
       this.game.effectHelper.addEffect(defender, attacker, 'Stun', { effect: { duration: 5 } });
     }
   }
