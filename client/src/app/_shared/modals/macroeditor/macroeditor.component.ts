@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Select, Selector, Store } from '@ngxs/store';
-import { cloneDeep, isUndefined } from 'lodash';
+import { cloneDeep, merge, isUndefined } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
@@ -155,7 +155,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   edit(macro: IMacro) {
-    this.currentlyEditingMacro = macro;
+    this.currentlyEditingMacro = merge({}, macro);
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = true;

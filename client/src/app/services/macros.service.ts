@@ -19,6 +19,7 @@ export class MacrosService {
   @Select(GameState.player) private player$: Observable<IPlayer>;
   @Select(GameState.inGame) private inGame$: Observable<boolean>;
   @Select(GameState.currentTarget) private currentTarget$: Observable<ICharacter>;
+  @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
   @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
   @Select(MacrosState.customMacros) private customMacros$: Observable<Record<string, IMacro>>;
   @Select(MacrosService.currentPlayerActiveMacro) private activeMacro$: Observable<IMacro>;
@@ -68,7 +69,10 @@ export class MacrosService {
 
   public init() {
     this.activeWindow$.subscribe(w => this.activeWindow = w);
-    this.customMacros$.subscribe(c => this.parseMacroMap(c));
+    combineLatest([this.customMacros$, this.charSlot$])
+      .subscribe(([macros, charSlot]) => {
+        this.parseMacroMap(macros, charSlot.slot);
+      });
 
     this.watchForNewMacroAlerts();
     this.watchForMacros();
@@ -94,12 +98,12 @@ export class MacrosService {
     return macroString;
   }
 
-  private parseMacroMap(macroMap: Record<string, IMacro>) {
+  private parseMacroMap(macroMap: Record<string, IMacro>, charSlot: number) {
     this.macroMap = {};
 
     const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault);
 
-    const allCheckableMacros = Object.values(macroMap).concat(defaultMacros);
+    const allCheckableMacros = Object.values(macroMap).filter(macro => macro.createdCharSlot === charSlot).concat(defaultMacros);
 
     allCheckableMacros.forEach(macro => {
       if (!macro.key) return;
