@@ -11,7 +11,7 @@ import { macroNames } from '../../../../assets/generated/macicons.json';
 import { IAccount, IGame, IMacro, IMacroBar, IMacroContainer, IPlayer } from '../../../../interfaces';
 import { AccountState, CreateCustomMacro, DeleteCustomMacro, GameState,
   ImportMacros,
-  MacrosState, SetActiveMacroBars, SetMacroBars } from '../../../../stores';
+  MacrosState, SetActiveMacroBars, SetMacroBars, SettingsState } from '../../../../stores';
 
 const defaultMacro = () => ({
   name: '',
@@ -33,10 +33,11 @@ const defaultMacro = () => ({
 export class MacroEditorComponent implements OnInit, OnDestroy {
 
   private readonly ICONS_PER_PAGE = 36;
-  private readonly MACROS_PER_PAGE = 16;
+  private readonly MACROS_PER_PAGE = 24;
 
   @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
+  @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
   @Select(MacroEditorComponent.currentPlayerMacros) currentPlayerMacros$: Observable<any>;
   @Select(MacrosState.customMacros) customMacros$: Observable<Record<string, IMacro>>;
 
@@ -96,11 +97,12 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.macroSub = combineLatest([
       this.customMacros$,
-      this.currentPlayerMacros$
-    ]).subscribe(([macs, currentMacs]) => {
+      this.currentPlayerMacros$,
+      this.charSlot$
+    ]).subscribe(([macs, currentMacs, charSlot]) => {
       const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault) as IMacro[];
       const learnedMacs = Object.values(currentMacs.learnedMacros) as IMacro[];
-      const customMacros = Object.values(macs);
+      const customMacros = Object.values(macs).filter(mac => mac.createdCharSlot === charSlot.slot);
 
       this.allMacros = Object.assign({}, allMacros, macs, currentMacs.learnedMacros);
       this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);

@@ -79,5 +79,7 @@ export interface IMacro {
   requireBaseClass?: string;
   requireCharacterLevel?: number;
   requireSkillLevel?: number;
+
+  createdCharSlot?: number;
 }
 

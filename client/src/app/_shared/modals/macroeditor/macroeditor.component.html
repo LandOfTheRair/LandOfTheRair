@@ -241,7 +241,7 @@
               <div class="selector-macros">
                 <app-macro
                   [macroRef]="allMacros[macro.name]"
-                  [showTooltip]="false"
+                  [showTooltip]="true"
                   (click)="setMarkedMacroSlot(macro.name)"
                   *ngFor="let macro of currentMacrosInPage"
                 ></app-macro>

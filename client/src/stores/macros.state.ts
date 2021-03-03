@@ -56,6 +56,9 @@ export class MacrosState {
   @Action(CreateCustomMacro)
   createCustomMacro(ctx: StateContext<IMacroContainer>, { macro }: CreateCustomMacro) {
     const state = ctx.getState();
+    const curPlayer = this.store.selectSnapshot(GameState.player);
+
+    macro.createdCharSlot = curPlayer.charSlot;
 
     const copyMacros = { ... state.customMacros };
     copyMacros[macro.name] = macro;
