@@ -38,6 +38,8 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   private allCharacters: ICharacter[] = [];
   private previousPlacements: { [key: string]: number } = {};
 
+  public disableInteractions = false;
+
   constructor(
     private store: Store,
     private socketService: SocketService,
@@ -158,12 +160,24 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
   public doAction(char: ICharacter, $event?: any) {
 
+    if (this.disableInteractions) return;
+
+    // can't interact with the dead
+    if (char.hp.current <= 0) return;
+
+    // if they're not green, we can target them for future interactions
     if ((char as INPC).hostility !== Hostility.Never) {
       this.store.dispatch(new SetCurrentTarget(char.uuid));
     }
 
     // only select the target if we hit ctrl
     if ($event?.ctrlKey) return;
+
+    // disable ui interactions for a bit so we don't spam
+    this.disableInteractions = true;
+    setTimeout(() => {
+      this.disableInteractions = false;
+    }, 250);
 
     combineLatest([this.command$, this.macro$])
       .pipe(first())

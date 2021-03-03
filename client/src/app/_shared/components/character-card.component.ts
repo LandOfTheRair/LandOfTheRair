@@ -11,7 +11,7 @@ import { SocketService } from '../../services/socket.service';
 @Component({
   selector: 'app-character-card',
   template: `
-    <div class="char-card" [attr.uuid]="char.uuid">
+    <div class="char-card" [attr.uuid]="char.uuid" [class.disabled]="disabled">
 
       <ng-container *ngIf="currentTarget$ | async as currentTarget">
         <div class="char-target" *ngIf="currentTarget.uuid === char.uuid">
@@ -69,6 +69,10 @@ import { SocketService } from '../../services/socket.service';
     max-height: 50px;
     margin-top: 4px;
     position: relative;
+  }
+
+  .char-card.disabled {
+    opacity: 0.6;
   }
 
   .char-target {
@@ -311,6 +315,7 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
 
   @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
 
+  @Input() public disabled: boolean;
   @Input() public origin: ICharacter;
   @Input() public char: ICharacter;
 
