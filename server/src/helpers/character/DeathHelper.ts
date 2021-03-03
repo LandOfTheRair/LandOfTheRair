@@ -2,7 +2,8 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { basePlayerSprite, Currency, Direction, ICharacter, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat, TrackedStatistic } from '../../interfaces';
+import { basePlayerSprite, Currency, Direction, ICharacter, INPC,
+  IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
