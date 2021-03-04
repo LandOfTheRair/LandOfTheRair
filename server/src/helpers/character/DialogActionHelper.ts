@@ -4,11 +4,12 @@ import { sample, template } from 'lodash';
 import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogAddItemUpgradeAction,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckAlignmentAction,
-  IDialogCheckItemAction,
+  IDialogCheckItemAction, IDialogCheckDailyQuestAction,
   IDialogCheckItemCanUpgradeAction,
-  IDialogCheckLevelAction,
+  IDialogCheckLevelAction, IDialogGiveDailyQuestAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
-  IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement, IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
+  IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
+  IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -49,7 +50,9 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.AddUpgradeItem]:      this.handleAddItemUpgradeAction,
       [DialogActionType.GiveEffect]:          this.handleGiveEffectAction,
       [DialogActionType.CheckQuest]:          this.handleCheckQuestAction,
+      [DialogActionType.CheckDailyQuest]:     this.handleCheckDailyQuestAction,
       [DialogActionType.GiveQuest]:           this.handleGiveQuestAction,
+      [DialogActionType.GiveDailyQuest]:      this.handleGiveDailyQuestAction,
       [DialogActionType.CheckLevel]:          this.handleCheckLevelAction,
       [DialogActionType.CheckAlignment]:      this.handleCheckAlignmentAction,
       [DialogActionType.SetAlignment]:        this.handleSetAlignmentAction,
@@ -324,6 +327,55 @@ export class DialogActionHelper extends BaseService {
   }
 
   // CHECK if the player has a quest complete (and complete it if they do)
+  private handleCheckDailyQuestAction(action: IDialogCheckDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const maxDistance = action.maxDistance ?? 3;
+    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+      return { messages: ['Please come closer.'], shouldContinue: false };
+    }
+
+    const { quests, npc: npcName } = action;
+
+    if (!this.game.dailyHelper.canDoDailyQuest(player, npcName)) {
+      return {
+        messages: ['Thanks, but you\'ve done all you can today. Come back tomorrow - I\'m sure there\'ll be work for you.'],
+        shouldContinue: false
+      };
+    }
+
+    const questTodayIndex = this.game.calculatorHelper.getCurrentDailyDayOfYear(player) % quests.length;
+    const quest = quests[questTodayIndex];
+    const questRef = this.game.questHelper.getQuest(quest);
+
+    if (!questRef) {
+      this.game.logger.error('DialogActionHelper:CheckDailyQuest', `Quest ${quest} does not exist.`);
+      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+    }
+
+    // if we don't have the quest, we skip - dialog continues
+    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+
+    // if we have the quest and it's complete, we send completion, and give rewards
+    if (this.game.questHelper.isQuestComplete(player, quest)) {
+      const compMsg = this.game.questHelper.formatQuestMessage(
+        player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`
+      );
+      this.game.questHelper.completeQuest(player, quest, npcName);
+
+      return { messages: [compMsg], shouldContinue: false };
+    }
+
+
+    // should continue is false if we have the quest and it's incomplete
+    // check if quest not complete, if not, send incomplete message
+    // if complete, do complete
+
+    return { messages: [
+      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
+    ], shouldContinue: false };
+  }
+
+  // CHECK if the player has a quest complete (and complete it if they do)
   private handleCheckQuestAction(action: IDialogCheckQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
@@ -360,6 +412,42 @@ export class DialogActionHelper extends BaseService {
     return { messages: [
       this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
     ], shouldContinue: false };
+  }
+
+  // GIVE the player a daily quest
+  private handleGiveDailyQuestAction(action: IDialogGiveDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const maxDistance = action.maxDistance ?? 3;
+    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+      return { messages: ['Please come closer.'], shouldContinue: false };
+    }
+
+    const { quests } = action;
+
+    const questTodayIndex = this.game.calculatorHelper.getCurrentDailyDayOfYear(player) % quests.length;
+    const quest = quests[questTodayIndex];
+    const questRef = this.game.questHelper.getQuest(quest);
+
+    if (!questRef) {
+      this.game.logger.error('DialogActionHelper:GiveDailyQuest', `Quest ${quest} does not exist.`);
+      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+    }
+
+    if (!this.game.questHelper.canStartQuest(player, quest)) {
+      return { messages: [
+        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.permComplete || 'You already completed that quest!')
+      ], shouldContinue: false };
+    }
+
+    if (this.game.questHelper.hasQuest(player, quest)) {
+      return { messages: [
+        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.alreadyHas || 'You are already on that quest!')
+      ], shouldContinue: true };
+    }
+
+    this.game.questHelper.startQuest(player, quest);
+
+    return { messages: [`You've accepted the quest "${quest}".`], shouldContinue: true };
   }
 
   // GIVE the player a quest

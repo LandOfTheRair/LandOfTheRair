@@ -33,9 +33,22 @@ export class DailyHelper extends BaseService {
     return false;
   }
 
+  public canDoDailyQuest(player: IPlayer, questGiverName: string): boolean {
+    player.quests.npcDailyQuests = player.quests.npcDailyQuests || {};
+    if (!player.quests.npcDailyQuests[questGiverName]) return true;
+    if (this.canDailyActivate(player.quests.npcDailyQuests[questGiverName])) return true;
+
+    return false;
+  }
+
   public buyDailyItem(player: IPlayer, item: ISimpleItem) {
     player.dailyItems = player.dailyItems || {};
     player.dailyItems[item.uuid] = +DateTime.fromObject({ zone: 'utc' });
+  }
+
+  public finishDailyQuest(player: IPlayer, questGiverName: string) {
+    player.quests.npcDailyQuests = player.quests.npcDailyQuests || {};
+    player.quests.npcDailyQuests[questGiverName] = +DateTime.fromObject({ zone: 'utc' });
   }
 
 }

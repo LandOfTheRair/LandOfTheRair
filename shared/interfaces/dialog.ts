@@ -12,7 +12,9 @@ export enum DialogActionType {
   AddUpgradeItem = 'addItemUpgrade',
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
+  CheckDailyQuest = 'checkDailyQuest',
   GiveQuest = 'giveQuest',
+  GiveDailyQuest = 'giveDailyQuest',
   CheckLevel = 'checkLevel',
   CheckAlignment = 'checkAlignment',
   SetAlignment = 'setAlignment'
@@ -36,8 +38,19 @@ export interface IDialogCheckQuestAction {
   maxDistance?: number;
 }
 
+export interface IDialogCheckDailyQuestAction {
+  quests: string[];
+  npc: string;
+  maxDistance?: number;
+}
+
 export interface IDialogGiveQuestAction {
   quest: string;
+  maxDistance?: number;
+}
+
+export interface IDialogGiveDailyQuestAction {
+  quests: string[];
   maxDistance?: number;
 }
 

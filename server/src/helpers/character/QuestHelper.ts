@@ -103,10 +103,30 @@ export class QuestHelper extends BaseService {
   }
 
   // complete the quest, cleaning up old data & giving rewards
-  public completeQuest(player: IPlayer, quest: string): void {
+  public completeQuest(player: IPlayer, quest: string, questGiver?: string): void {
     const questRef = this.getQuest(quest);
     if (!questRef) return;
 
+    // daily quests get a few things sorted - statistic & extra logic for finishing
+    if (questRef.isDaily) {
+      if (!questGiver) {
+        this.game.logger.error('Quest:Daily', `Quest ${quest} does not have a quest giver associated.`);
+        return;
+      }
+
+      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.DailyQuests);
+      this.game.dailyHelper.finishDailyQuest(player, questGiver);
+    }
+
+    // non-repeatable quests are marked off forever
+    if (!questRef.isRepeatable) player.quests.permanentQuestCompletion[quest] = true;
+
+    // repeatable non-daily quests get a statistic tracked
+    if (questRef.isRepeatable && !questRef.isDaily) {
+      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.RepeatableQuests);
+    }
+
+    // if the quest required a held item, we take it
     if (questRef.requirements.type === QuestRequirementType.Item) {
       if (questRef.requirements.fromHands) {
         this.game.characterHelper.takeItemFromEitherHand(player, questRef.requirements.item);
@@ -115,11 +135,6 @@ export class QuestHelper extends BaseService {
 
     // remove progress from complete quest
     delete player.quests.activeQuestProgress[quest];
-
-    // non-repeatable quests are marked off forever
-    if (!questRef.isRepeatable) player.quests.permanentQuestCompletion[quest] = true;
-
-    if (questRef.isRepeatable) this.game.statisticsHelper.addStatistic(player, TrackedStatistic.RepeatableQuests);
 
     this.giveQuestRewards(player, quest);
     this.recalculateQuestKillsAndStatRewards(player);

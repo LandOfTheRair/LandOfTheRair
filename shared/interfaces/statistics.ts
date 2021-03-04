@@ -6,7 +6,8 @@ export enum TrackedStatistic {
   Strips = 'strips',
   Steps = 'steps',
   NPCsGreeted = 'npcsgreeted',
-  RepeatableQuests = 'repeatablequests'
+  RepeatableQuests = 'repeatablequests',
+  DailyQuests = 'dailyquests'
 }
 
 export interface ICharacterStatistics {

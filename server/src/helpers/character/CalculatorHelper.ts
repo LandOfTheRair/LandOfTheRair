@@ -1,8 +1,9 @@
 
 import { Injectable } from 'injection-js';
+import { DateTime } from 'luxon';
 
 import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
-  calculateXPRequiredForLevel, ICharacter, Skill } from '../../interfaces';
+  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 
@@ -45,5 +46,22 @@ export class CalculatorHelper extends BaseService {
     const percentWay = Math.max(0, (normalizedCurrent / normalizedMax * 100)).toFixed(3);
 
     return percentWay;
+  }
+
+  // get the "seed" for players daily quests
+  public getDailyOffset(player: IPlayer): number {
+    return player.name.charCodeAt(0);
+  }
+
+  // get the day of year
+  public getCurrentDailyDayOfYear(player: IPlayer): number {
+
+    const now = DateTime.fromObject({ zone: 'utc' });
+    const start = DateTime.fromObject({ zone: 'utc', year: now.year, month: 1, day: 1 });
+    const diff = +now - +start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const day = Math.floor(diff / oneDay);
+
+    return day + this.getDailyOffset(player);
   }
 }

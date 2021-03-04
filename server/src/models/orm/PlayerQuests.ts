@@ -9,6 +9,7 @@ export class PlayerQuests extends BaseEntity implements ICharacterQuests {
   // other props
   @Property() activeQuestProgress: Record<string, any> = {};
   @Property() permanentQuestCompletion: Record<string, boolean> = {};
+  @Property() npcDailyQuests: Record<string, number> = {};
 
   @Property(PROP_TEMPORARY()) questStats: Partial<Record<Stat, number>> = {};
   @Property(PROP_TEMPORARY()) questKillWatches: Record<string, string> = {};

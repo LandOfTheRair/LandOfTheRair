@@ -32,6 +32,6 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, pouch: { items: [] }, buyback: [] },
     statistics: char.statistics ?? { statistics: {} },
     bank: char.bank ?? { deposits: {} },
-    quests: char.quests ?? { permanentQuestCompletion: {}, activeQuestProgress: {}, questKillWatches: {}, questStats: {} }
+    quests: char.quests ?? { permanentQuestCompletion: {}, npcDailyQuests: {}, activeQuestProgress: {}, questKillWatches: {}, questStats: {} }
   };
 };
