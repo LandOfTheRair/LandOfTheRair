@@ -19,13 +19,16 @@ export class CharacterRoller extends BaseService {
 
   public async init() {}
 
-  rollCharacter({ allegiance, baseclass }): { skills: SkillBlock; stats: StatBlock; gold: number; items: Partial<ICharacterItems> } {
+  rollCharacter(
+    { allegiance, baseclass, weapons }
+  ): { skills: SkillBlock; stats: StatBlock; gold: number; items: Partial<ICharacterItems> } {
     const charSelectData = this.contentManager.charSelectData;
 
     const coreStats = charSelectData.baseStats;
 
     const foundAllegiance = charSelectData.allegiances.find(x => x.name === allegiance);
     const foundClass = charSelectData.classes.find(x => x.name === baseclass);
+    const foundWeapons = charSelectData.weapons.find(x => x.name === weapons);
 
     Object.keys(foundAllegiance.statMods).forEach(stat => {
       coreStats[stat] = coreStats[stat] || 0;
@@ -38,13 +41,13 @@ export class CharacterRoller extends BaseService {
     });
 
     const skills = {};
-    Object.keys(foundAllegiance.baseSkills).forEach(skill => {
-      skills[skill] = this.calculatorHelper.calculateSkillXPRequiredForLevel(foundAllegiance.baseSkills[skill]);
+    Object.keys(foundWeapons.baseSkills).forEach(skill => {
+      skills[skill] = this.calculatorHelper.calculateSkillXPRequiredForLevel(foundWeapons.baseSkills[skill]);
     });
 
     const items = {};
-    Object.keys(foundAllegiance.baseItems).forEach(slot => {
-      items[slot] = this.itemCreator.getSimpleItem(foundAllegiance.baseItems[slot]);
+    Object.keys(foundWeapons.baseItems).forEach(slot => {
+      items[slot] = this.itemCreator.getSimpleItem(foundWeapons.baseItems[slot]);
     });
 
     const { gold, ...stats } = coreStats;

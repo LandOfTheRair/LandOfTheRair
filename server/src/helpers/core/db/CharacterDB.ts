@@ -23,7 +23,7 @@ export class CharacterDB extends BaseService {
 
   public async init() {}
 
-  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender }): Promise<IPlayer> {
+  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
 
     const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
 
@@ -32,7 +32,7 @@ export class CharacterDB extends BaseService {
       account.players.splice(oldPlayerSlot, 1);
     }
 
-    const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass });
+    const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass, weapons });
 
     const player = new Player();
     player._id = new ObjectId();

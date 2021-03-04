@@ -16,6 +16,7 @@ export class CharCreateComponent implements OnInit {
     gender: '',
     allegiance: '',
     baseclass: '',
+    weapons: ''
   };
 
   public stats = {
@@ -34,12 +35,13 @@ export class CharCreateComponent implements OnInit {
 
   public descs = {
     baseclass: '',
-    allegiance: ''
+    allegiance: '',
+    weapon: ''
   };
 
   public statMods = {
     baseclass: [],
-    allegiance: []
+    allegiance: {}
   };
 
   public icons = {
@@ -71,6 +73,7 @@ export class CharCreateComponent implements OnInit {
         && this.character.allegiance
         && this.character.gender
         && this.character.baseclass
+        && this.character.weapons
         && (this.data.needsOverwrite ? this.overwriteChecked : true);
   }
 
@@ -139,6 +142,11 @@ export class CharCreateComponent implements OnInit {
     Object.keys(baseclass.statMods).forEach((stat) => {
       this.stats[stat] += baseclass.statMods[stat];
     });
+  }
+
+  public chooseWeapons(weapons) {
+    this.character.weapons = weapons.name;
+    this.descs.weapon = weapons.description.split('\n').join('<br><br>');
   }
 
 }

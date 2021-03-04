@@ -7,7 +7,7 @@ export class RollCharacterAction extends ServerAction {
   requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
 
   async act(game: Game, { emit }, data) {
-    const { gender, allegiance, baseclass, account } = data;
+    const { gender, allegiance, baseclass, weapons, account } = data;
     let { slot, name } = data;
 
     slot = Math.round(slot);
@@ -16,6 +16,7 @@ export class RollCharacterAction extends ServerAction {
 
     if (!charCreateData.allegiances.find(x => x.name === allegiance))   return { message: 'Bad allegiance.' };
     if (!charCreateData.classes.find(x => x.name === baseclass))        return { message: 'Bad class.' };
+    if (!charCreateData.weapons.find(x => x.name === weapons))          return { message: 'Bad specialization.' };
     if (!['male', 'female'].find(x => x === gender))                    return { message: 'Bad gender.' };
     if (slot < 0 || slot > 3)                                           return { message: 'Bad slot.' }; // TODO: track premium in account, mark here to check against account max slots
 
@@ -25,7 +26,7 @@ export class RollCharacterAction extends ServerAction {
 
     if (name.length < 2)                                                return { message: 'Bad name.' };
 
-    const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass });
+    const player = await game.characterDB.createCharacter(account, { slot, name, gender, allegiance, baseclass, weapons });
 
     emit({
       action: GameAction.SetCharacterSlotInformation,

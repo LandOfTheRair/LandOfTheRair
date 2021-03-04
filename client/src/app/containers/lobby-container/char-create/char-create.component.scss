@@ -31,3 +31,13 @@ table {
     justify-content: space-between;
   }
 }
+
+.stat-area .stats {
+  display: flex;
+  justify-content: center;
+
+  .stat {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+}
