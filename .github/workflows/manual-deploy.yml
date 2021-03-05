@@ -15,13 +15,12 @@ jobs:
         node-version: [14.x]
 
     steps:
-    - name: Deploy Stage
+    - name: Reboot Notification
       uses: fjogeleit/http-request-action@master
       with:
         url: 'https://server.rair.land/debug/reboot'
         method: 'POST'
-        data:
-          secret: ${{ secrets.WEBHOOK_SECRET }}
+        data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
 
     - uses: actions/checkout@v2
 
