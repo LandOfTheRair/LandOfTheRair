@@ -121,7 +121,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   get spriteLocation() {
-    if (!this.item) return '0px 0px';
+    if (!this.item || !this.realItem) return '0px 0px';
     const divisor = this.realItem.itemClass === ItemClass.Corpse ? 40 : 32;
     const sprite = this.item.mods.sprite || this.realItem.sprite;
     const y = Math.floor(sprite / divisor);
