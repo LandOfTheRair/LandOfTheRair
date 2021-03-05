@@ -6,11 +6,11 @@
   <app-item *ngIf="data.displayItemName" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
 
   {{ data.message || 'I don\'t know what to say.' }}
-  
+
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button 
+  <button mat-button
           [mat-dialog-close]="option.action"
           [color]="option.action !== 'noop' ? 'primary' : ''"
           *ngFor="let option of data.options">{{ option.text }}</button>

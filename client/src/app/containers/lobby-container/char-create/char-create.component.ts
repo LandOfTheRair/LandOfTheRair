@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ICharacterCreateInfo, Stat } from '../../../../interfaces';
+import { Allegiance, basePlayerSprite, ICharacterCreateInfo, Stat } from '../../../../interfaces';
 
 @Component({
   selector: 'app-char-create',
@@ -18,6 +18,8 @@ export class CharCreateComponent implements OnInit {
     baseclass: '',
     weapons: ''
   };
+
+  public displayWeapon: string;
 
   public stats = {
     str: 10,
@@ -147,6 +149,12 @@ export class CharCreateComponent implements OnInit {
   public chooseWeapons(weapons) {
     this.character.weapons = weapons.name;
     this.descs.weapon = weapons.description.split('\n').join('<br><br>');
+
+    this.displayWeapon = weapons.baseItems.rightHand;
+  }
+
+  public spriteForPlayer(): number {
+    return basePlayerSprite({ allegiance: this.character.allegiance as Allegiance, gender: this.character.gender as 'male'|'female' });
   }
 
 }

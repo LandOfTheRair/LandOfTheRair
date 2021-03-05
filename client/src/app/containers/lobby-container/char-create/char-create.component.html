@@ -3,6 +3,11 @@
 
 <mat-dialog-content>
 
+  <div class="sprite-container">
+    <app-npc [sprite]="spriteForPlayer()" *ngIf="character.gender && character.allegiance"></app-npc>
+    <app-item [item]="{ name: displayWeapon, mods: {} }" *ngIf="character.weapons" ></app-item>
+  </div>
+
   <table *ngIf="character.name">
     <tr>
       <td colspan="11">

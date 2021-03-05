@@ -1,7 +1,7 @@
 import { Allegiance, Direction, IPlayer } from '../interfaces';
 
 
-export const basePlayerSprite = (player: IPlayer) => {
+export const basePlayerSprite = (player: IPlayer | { allegiance: Allegiance, gender: 'male'|'female' }) => {
   let choices = { male: 725, female: 675 };
 
   switch (player.allegiance) {
