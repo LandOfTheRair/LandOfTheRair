@@ -39,6 +39,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
   public readonly uiOptions = [
     { option: GameOption.LockWindows,           text: 'Lock all window positions' },
     { option: GameOption.NoItemAnimations,      text: 'Stop item animations' },
+    { option: GameOption.ShrinkCharacterBoxes,  text: 'Shrink character boxes to health + name only' }
     // { option: GameOption.PinLastTarget,         text: 'Pin last target click position' },
   ];
 

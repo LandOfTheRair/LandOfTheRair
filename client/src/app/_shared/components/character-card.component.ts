@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { GameServerResponse, ICharacter, ItemSlot } from '../../../interfaces';
 import { GameState } from '../../../stores';
 import { GameService } from '../../services/game.service';
+import { OptionsService } from '../../services/options.service';
 import { SocketService } from '../../services/socket.service';
 
 @AutoUnsubscribe()
@@ -28,7 +29,7 @@ import { SocketService } from '../../services/socket.service';
           <app-life-heart [target]="char"></app-life-heart>
         </div>
 
-        <div class="char-direction vertical-center">
+        <div class="char-direction vertical-center" *ngIf="!optionService.shrinkCharacterBoxes">
           {{ directionTo() }}
         </div>
       </div>
@@ -46,7 +47,7 @@ import { SocketService } from '../../services/socket.service';
 
         </div>
 
-        <div class="char-gear">
+        <div class="char-gear" *ngIf="!optionService.shrinkCharacterBoxes">
           <div class="gear-item right">
             <app-item size="xsmall" [showDesc]="false" [showEncrust]="false" [showCount]="false" [item]="rightHand"></app-item>
           </div>
@@ -130,12 +131,14 @@ import { SocketService } from '../../services/socket.service';
     border: 1px solid #000;
     border-right: none;
     border-bottom: none;
-    min-height: 16px;
-    max-height: 16px;
+    min-height: 18px;
+    max-height: 18px;
+    border-bottom: 1px solid #000;
   }
 
   .char-direction {
-    border: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
     border-right: none;
     color: #fff;
     max-height: 18px;
@@ -176,6 +179,7 @@ import { SocketService } from '../../services/socket.service';
 
   .char-title {
     height: 18px;
+    width: 96px;
     font-weight: bold;
   }
 
@@ -340,7 +344,11 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  constructor(private socketService: SocketService, private gameService: GameService) {}
+  constructor(
+    private socketService: SocketService,
+    private gameService: GameService,
+    public optionService: OptionsService
+  ) {}
 
   ngOnInit() {
     this.cfxId = this.constructor.name + '-' + this.char.uuid;

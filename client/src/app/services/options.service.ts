@@ -71,6 +71,10 @@ export class OptionsService {
     return this.opts[GameOption.ShouldSortDistance];
   }
 
+  public get shrinkCharacterBoxes(): string {
+    return this.opts[GameOption.ShrinkCharacterBoxes];
+  }
+
   public get debugUI(): boolean {
     return this.opts[GameOption.DebugUI];
   }
