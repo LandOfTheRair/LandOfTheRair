@@ -62,6 +62,11 @@ export class ModalService {
     );
 
     this.socketService.registerComponentCallback(
+      'Modal', GameServerResponse.SendImportantNotification,
+      (data) => this.notifyImportant(data.message)
+    );
+
+    this.socketService.registerComponentCallback(
       'Modal', GameServerResponse.SendAlert,
       (data) => this.alert(data.title, data.content, data.extraData)
     );
@@ -82,6 +87,12 @@ export class ModalService {
     return this.snackbar.open(text, 'Close', {
       panelClass: ['fancy', 'normal'],
       duration: 3000
+    });
+  }
+
+  public notifyImportant(text: string) {
+    return this.snackbar.open(text, 'Close', {
+      panelClass: ['fancy', 'normal']
     });
   }
 

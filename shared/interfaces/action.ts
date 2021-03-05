@@ -68,6 +68,7 @@ export enum GameServerResponse {
 
   GameLog = 'Game:Response:Message',
   SendNotification = 'Game:Response:Notification',
+  SendImportantNotification = 'Game:Response:ImportantNotification',
   SendAlert = 'Game:Response:Alert',
   SendConfirm = 'Game:Response:Confirm',
 

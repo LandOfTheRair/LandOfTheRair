@@ -15,6 +15,13 @@ jobs:
         node-version: [14.x]
 
     steps:
+    - name: Deploy Stage
+      uses: fjogeleit/http-request-action@master
+      with:
+        url: 'https://server.rair.land/debug/reboot'
+        method: 'POST'
+        secret: ${{ secrets.WEBHOOK_SECRET }}
+
     - uses: actions/checkout@v2
 
     - name: Use Node.js ${{ matrix.node-version }}
