@@ -60,6 +60,7 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
   create(charCreateData: ICharacterCreateInfo, slot: number, needsOverwrite: boolean) {
     const dialogRef = this.dialog.open(CharCreateComponent, {
       panelClass: 'fancy',
+      disableClose: true,
       data: { needsOverwrite, slot, charCreateData }
     });
 
