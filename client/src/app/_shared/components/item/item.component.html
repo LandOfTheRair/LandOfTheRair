@@ -1,27 +1,28 @@
 
-<div class="item-container" 
+<div class="item-container"
     [ngClass]="[size]"
     [class.transparent]="showOutline"
     draggable
     [dragScope]="scopes"
     [dragEnabled]="item && !displayOnly"
-    [dragData]="{ item: item, realItem: realItem, context: context, contextSlot: contextSlot, containerUUID: containerUUID, isStackableMaterial: isStackableMaterial }"
+    [dragData]="getDragData()"
+    (click)="attemptToMultiselect($event)"
     (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
     (mouseover)="updateWithDesc()"
     (mouseenter)="determineScopes()"
     (mouseout)="removeDesc()"
     (mouseleave)="removeDesc()">
-  <img [src]="imgUrl" 
-      [style.object-position]="spriteLocation" 
-      [class.hidden]="!item" 
-      [class.animate]="shouldAnimate" 
+  <img [src]="imgUrl"
+      [style.object-position]="spriteLocation"
+      [class.hidden]="!item"
+      [class.animate]="shouldAnimate"
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
   <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.mods.encrustItem" />
   <div class="item-background" *ngIf="item && showBackground"></div>
   <div class="glow-container" [ngClass]="[glowColor]" *ngIf="item && showDesc"></div>
   <div class="animation-container"
-      [class.animate]="shouldAnimate" 
-      [ngClass]="['cosmetic-bg-' + cosmeticName]" 
+      [class.animate]="shouldAnimate"
+      [ngClass]="['cosmetic-bg-' + cosmeticName]"
       *ngIf="item && cosmeticName"></div>
   <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount | number }} <small>x</small></span>
   <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces | number }} <small>oz</small></span>

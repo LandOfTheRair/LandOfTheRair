@@ -4,6 +4,11 @@
   background-color: #ccc;
   box-shadow: 3px 3px 5px #aaa;
   border-radius: 3px;
+
+  &.selected {
+    background-color: #888;
+    box-shadow: 3px 3px 5px #666;
+  }
 }
 
 .item-slot {

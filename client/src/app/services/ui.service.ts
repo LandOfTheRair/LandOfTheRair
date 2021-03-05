@@ -7,10 +7,68 @@ import { ModalService } from './modal.service';
 })
 export class UIService {
 
-  constructor(private modalService: ModalService, private gameService: GameService) {}
+  private anySelected = 0;
+  public selected = {
+    sack: [],
+    belt: [],
+    equipment: {}
+  };
 
+  constructor(
+    private modalService: ModalService,
+    private gameService: GameService
+  ) {}
+
+  // reset selection
+  public resetSelection() {
+    this.selected.sack = [];
+    this.selected.belt = [];
+    this.selected.equipment = {};
+    this.anySelected = 0;
+  }
+
+  // toggle selection of a particular item
+  public select(container: string, slot: number|string, data: any) {
+    if (this.selected[container][slot]) {
+      delete this.selected[container][slot];
+      this.anySelected--;
+      return;
+    }
+
+    this.selected[container][slot] = data;
+    this.anySelected++;
+  }
+
+  // build and do a drop on a spot. if any selections, we handle all of them
   public buildAndDoDropAction(event, droppedOn, dropUUID?: string) {
-    this.doDropAction(event.dragData, droppedOn, dropUUID);
+
+    // if we have selections, we gotta do all of them
+    if (this.anySelected > 0) {
+
+      for (let i = this.selected.sack.length; i > 0; i--) {
+        const dragData = this.selected.sack[i];
+        if (!dragData) continue;
+
+        this.doDropAction(dragData, droppedOn, dropUUID);
+      }
+
+      for (let i = this.selected.belt.length; i > 0; i--) {
+        const dragData = this.selected.belt[i];
+        if (!dragData) continue;
+
+        this.doDropAction(dragData, droppedOn, dropUUID);
+      }
+
+      Object.values(this.selected.equipment).forEach(dragData => {
+        this.doDropAction(dragData, droppedOn, dropUUID);
+      });
+
+    // if no selections, do a normal drop
+    } else {
+      this.doDropAction(event.dragData, droppedOn, dropUUID);
+    }
+
+    this.resetSelection();
   }
 
   private canMoveBetweenContainers(context: string, choice: string): boolean {
@@ -88,6 +146,6 @@ export class UIService {
       return;
     }
 
-    this.gameService.sendCommandString(cmd.trim() + ' ' + ctxArgs.trim() + ' ' + destArgs.trim());
+    this.gameService.queueAction(cmd.trim(), (ctxArgs.trim() + ' ' + destArgs.trim()).trim());
   }
 }

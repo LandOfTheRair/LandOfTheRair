@@ -164,6 +164,28 @@ export class ItemComponent implements OnDestroy {
     }, 0);
   }
 
+  getDragData() {
+    return {
+      item: this.item,
+      realItem: this.realItem,
+      context: this.context,
+      contextSlot: this.contextSlot,
+      containerUUID: this.containerUUID,
+      isStackableMaterial: this.isStackableMaterial
+    };
+  }
+
+  attemptToMultiselect($event) {
+    if (!this.item || !['Belt', 'Sack', 'Equipment'].includes(this.context)) return;
+
+    if (!$event.ctrlKey) {
+      this.uiService.resetSelection();
+      return;
+    }
+
+    this.uiService.select(this.context.toLowerCase(), this.contextSlot, this.getDragData());
+  }
+
   determineScopes(): void {
     if (!this.context || !this.item || !this.realItem || !this.viewingPlayer) return;
 

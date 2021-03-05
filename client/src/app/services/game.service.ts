@@ -83,6 +83,10 @@ export class GameService {
     this.socketService.emit(action, args);
   }
 
+  public queueAction(command: string, args?: string) {
+    this.socketService.sendAction({ command, args });
+  }
+
   private parseCommand(cmd: string) {
     const arr = cmd.split(' ');
     const multiPrefixes = ['party', 'look', 'show', 'cast', 'stance', 'powerword', 'art'];
