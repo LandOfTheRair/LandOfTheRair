@@ -90,7 +90,7 @@ export class MessageHelper extends BaseService {
   }
 
   public broadcastSystemMessage(message: string): void {
-    this.sendMessage('★System', message);
+    this.sendMessage('★System', message, true);
     this.game.discordHelper.broadcastSystemMessage(message);
   }
 
