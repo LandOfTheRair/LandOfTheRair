@@ -225,6 +225,33 @@ export class CharacterHelper extends BaseService {
     this.recalculateTraits(character);
     this.recalculateLearnedSpells(character);
     this.calculateStatTotals(character);
+    this.checkEncumberance(character);
+  }
+
+  // check if this character is encumbered
+  public checkEncumberance(character: ICharacter): void {
+
+    // only players can be encumbered
+    if (!this.isPlayer(character)) return;
+
+    // warrior, healer, traveller can wear heavy armor
+    if ([BaseClass.Warrior, BaseClass.Healer, BaseClass.Traveller].includes(character.baseClass)) return;
+
+    let castEncumber = false;
+    Object.values(character.items.equipment).forEach(item => {
+      const isHeavy = this.game.itemHelper.getItemProperty(item, 'isHeavy');
+      if (!isHeavy) return;
+
+      castEncumber = true;
+    });
+
+    if (castEncumber) {
+      this.game.effectHelper.addEffect(character, '', 'Encumbered');
+
+    } else if (this.game.effectHelper.hasEffect(character, 'Encumbered')) {
+      this.game.effectHelper.removeEffectByName(character, 'Encumbered');
+
+    }
   }
 
   // recalculate what spells we know based on traits and items
@@ -455,6 +482,7 @@ export class CharacterHelper extends BaseService {
   public getStealth(char: ICharacter): number {
     let stealth = this.getSkillLevel(char, Skill.Thievery) + char.level + this.getStat(char, Stat.AGI);
     if (char.baseClass === BaseClass.Thief) stealth *= 1.5;
+    if (this.game.effectHelper.hasEffect(char, 'Encumbered')) stealth /= 2;
 
     return stealth;
   }

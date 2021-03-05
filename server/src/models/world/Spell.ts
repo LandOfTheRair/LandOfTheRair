@@ -98,7 +98,10 @@ export class Spell implements BaseSpell {
     retPotency *= maxMult;
     retPotency *= (spellData.potencyMultiplier || 1);
 
-    // TODO: encumber
+    // encumberance cuts potency exactly in half
+    if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
+      retPotency /= 2;
+    }
 
     return Math.max(1, Math.floor(retPotency));
   }
