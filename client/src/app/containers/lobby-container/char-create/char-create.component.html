@@ -8,8 +8,8 @@
     <app-item [item]="{ name: displayWeapon, mods: {} }" *ngIf="character.weapons" ></app-item>
   </div>
 
-  <table *ngIf="character.name">
-    <tr>
+  <table>
+    <tr *ngIf="character.name">
       <td colspan="11">
         You are
         <strong>{{ character.name }}</strong>
@@ -43,21 +43,21 @@
 
     <mat-step label="Pick a name and sex"
               [color]="character.name && character.gender ? 'success' : 'warn'">
-      <div class="full-width split-container">
-        <div class="m-t-10 half-width text-center">
+      <div class="content-container">
+        <div class="m-t-10 text-center">
           <h2>Name</h2>
           <mat-form-field class="full-width">
             <input class="input"
-                   matInput
-                   type="text"
-                   autocomplete="off"
-                   [(ngModel)]="character.name"
-                   [ngModelOptions]="{ standalone: true }"
-                   (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
+                  matInput
+                  type="text"
+                  autocomplete="off"
+                  [(ngModel)]="character.name"
+                  [ngModelOptions]="{ standalone: true }"
+                  (keyup)="validateName()" placeholder="Character name here, all letters, one word, no numbers" />
           </mat-form-field>
         </div>
 
-        <div class="m-t-10 half-width text-center">
+        <div class="m-t-10 text-center">
           <h2>Sex</h2>
           <mat-button-toggle-group  [(ngModel)]="character.gender">
             <mat-button-toggle value="male">Male</mat-button-toggle>
@@ -70,26 +70,25 @@
 
     <mat-step label="Pick a class"
               [color]="character.baseclass ? 'success' : 'warn'">
-      <div class="text-center">
-        <mat-button-toggle-group [(ngModel)]="character.baseclass">
-          <mat-button-toggle [value]="baseclass.name"
-                             class="icon-button"
-                             (click)="chooseBaseClass(baseclass)"
-                             *ngFor="let baseclass of data.charCreateData.classes">
+      <div class="content-container">
+        <div class="text-center">
+          <mat-button-toggle-group [(ngModel)]="character.baseclass">
+            <mat-button-toggle [value]="baseclass.name"
+                              (click)="chooseBaseClass(baseclass)"
+                              *ngFor="let baseclass of data.charCreateData.classes">
+              {{ baseclass.name }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
 
-            <app-icon [name]="icons[baseclass.name]" *ngIf="icons[baseclass.name]" bgColor="transparent" fgColor="white" size="xsmall"></app-icon>
-            {{ baseclass.name }}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+        <div class="text-center desc-area" [innerHTML]="descs.baseclass || 'Choose a class!'"></div>
 
-      <div class="text-center desc-area" [innerHTML]="descs.baseclass || 'Choose a class!'"></div>
-
-      <div class="text-center stat-area" *ngIf="(statMods.baseclass | keyvalue).length > 0">
-        <div class="text">Your stats change as follows:</div>
-        <div class="stats">
-          <div class="stat" *ngFor="let stat of allStats" class="m-5 p-5 bordered" [class.hidden]="!statMods.baseclass[stat.stat]">
-            {{ stat.stat | uppercase }} <strong>{{ statMods.baseclass[stat.stat] > 0 ? '+' : '' }}{{ statMods.baseclass[stat.stat] || 0 }}</strong>
+        <div class="text-center stat-area" *ngIf="(statMods.baseclass | keyvalue).length > 0">
+          <div class="text">Your stats change as follows:</div>
+          <div class="stats">
+            <div class="stat" *ngFor="let stat of allStats" class="m-5 p-5 bordered" [class.hidden]="!statMods.baseclass[stat.stat]">
+              {{ stat.stat | uppercase }} <strong>{{ statMods.baseclass[stat.stat] > 0 ? '+' : '' }}{{ statMods.baseclass[stat.stat] || 0 }}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -97,21 +96,23 @@
 
     <mat-step label="Pick an allegiance"
               [color]="character.allegiance ? 'success' : 'warn'">
-      <div class="text-center">
-        <mat-button-toggle-group  [(ngModel)]="character.allegiance">
-          <mat-button-toggle [value]="allegiance.name"
-                             (click)="chooseAllegiance(allegiance)"
-                             *ngFor="let allegiance of data.charCreateData.allegiances">{{ allegiance.name }}</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+      <div class="content-container">
+        <div class="text-center">
+          <mat-button-toggle-group  [(ngModel)]="character.allegiance">
+            <mat-button-toggle [value]="allegiance.name"
+                               (click)="chooseAllegiance(allegiance)"
+                               *ngFor="let allegiance of data.charCreateData.allegiances">{{ allegiance.name }}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
 
-      <div class="text-center desc-area" [innerHTML]="descs.allegiance || 'Choose an allegiance!'"></div>
+        <div class="text-center desc-area" [innerHTML]="descs.allegiance || 'Choose an allegiance!'"></div>
 
-      <div class="text-center stat-area" *ngIf="(statMods.allegiance | keyvalue).length > 0">
-        <div class="text">Your stats change as follows:</div>
-        <div class="stats">
-          <div class="stat" *ngFor="let stat of allStats" class="m-5 p-5 bordered" [class.hidden]="!statMods.allegiance[stat.stat]">
-            {{ stat.stat | uppercase }} <strong>{{ statMods.allegiance[stat.stat] > 0 ? '+' : '' }}{{ statMods.allegiance[stat.stat] || 0 }}</strong>
+        <div class="text-center stat-area" *ngIf="(statMods.allegiance | keyvalue).length > 0">
+          <div class="text">Your stats change as follows:</div>
+          <div class="stats">
+            <div class="stat" *ngFor="let stat of allStats" class="m-5 p-5 bordered" [class.hidden]="!statMods.allegiance[stat.stat]">
+              {{ stat.stat | uppercase }} <strong>{{ statMods.allegiance[stat.stat] > 0 ? '+' : '' }}{{ statMods.allegiance[stat.stat] || 0 }}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -119,15 +120,17 @@
 
     <mat-step label="Pick a specialization"
               [color]="character.weapons ? 'success' : 'warn'">
-      <div class="text-center">
-        <mat-button-toggle-group  [(ngModel)]="character.weapons">
-          <mat-button-toggle [value]="weapon.name"
-                             (click)="chooseWeapons(weapon)"
-                             *ngFor="let weapon of data.charCreateData.weapons">{{ weapon.name }}</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
+      <div class="content-container">
+        <div class="text-center">
+          <mat-button-toggle-group  [(ngModel)]="character.weapons">
+            <mat-button-toggle [value]="weapon.name"
+                              (click)="chooseWeapons(weapon)"
+                              *ngFor="let weapon of data.charCreateData.weapons">{{ weapon.name }}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
 
-      <div class="text-center desc-area" [innerHTML]="descs.weapon || 'Choose a specialization!'"></div>
+        <div class="text-center desc-area" [innerHTML]="descs.weapon || 'Choose a specialization!'"></div>
+      </div>
     </mat-step>
 
   </mat-horizontal-stepper>
