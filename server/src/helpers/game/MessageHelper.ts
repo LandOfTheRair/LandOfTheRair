@@ -108,7 +108,7 @@ export class MessageHelper extends BaseService {
     message = message.trim();
     if (!message) return;
 
-    const source = fromDiscord ? `${verified ? 'ᐎ' : ''}Discord` : '';
+    const source = fromDiscord && from !== '★System' ? `${verified ? 'ᐎ' : ''}Discord` : '';
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatAddMessage,
