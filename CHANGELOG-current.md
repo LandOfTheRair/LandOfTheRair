@@ -1,30 +1,23 @@
-## [1.10.1](https://github.com/landoftherair/lotr2/compare/v1.10.0...v1.10.1) (2021-03-03)
+## [1.10.2](https://github.com/landoftherair/lotr2/compare/v1.10.1...v1.10.2) (2021-03-05)
 
 
 ### Bug Fixes
 
-* **bind:** items should bind on add to sack/belt as well as hands ([8380356](https://github.com/landoftherair/lotr2/commit/8380356c1cbd1c8dc167d239bd9f65cd2776ed07))
-* **bottle:** healing bottles would throw an error on drink ([74c9acf](https://github.com/landoftherair/lotr2/commit/74c9acfbd39d8b7f0d5b1c1976f914d17ce07fbe))
-* **combat:** "you dont see that person" should show up less - clicking is disabled for 250ms after clicking to avoid spam ([a72bd61](https://github.com/landoftherair/lotr2/commit/a72bd617de5cda75820504e2665fcb3654cdfd1d))
-* **combat:** attempt  to make cstun not hit the same person twice while they're stunned ([2491c31](https://github.com/landoftherair/lotr2/commit/2491c315f6e8279e0410b266f18a460abe07abdf))
-* **combat:** target would be cleared in strange situations for no reason ([b5ad374](https://github.com/landoftherair/lotr2/commit/b5ad374370e8b3bf968b4faa34e5ae5010183907))
-* **lobby:** character select no longer uses mat-tabs - homegrown solution instead - will work for now ([9641d53](https://github.com/landoftherair/lotr2/commit/9641d5349c3588996a80e09dfe6de88307c787aa))
-* **macro:** custom macros are now per-character, and macros with hotkeys will only work on the character they were made for ([adeb74d](https://github.com/landoftherair/lotr2/commit/adeb74df578f1659680c5d1f5f21f5310cdcaf0d))
-* **macro:** macro popup no longer exists; instead it is inline ([754785b](https://github.com/landoftherair/lotr2/commit/754785b37508f3dd877225e3745885e73c1b5414))
-* **macro:** macros are now only accessible to the character slot that created them ([87103c9](https://github.com/landoftherair/lotr2/commit/87103c91f5d407e4a82d3822567580b464e017e5))
-* **npc:** npcs should always pathfind if they're >1 space away from their target ([0589317](https://github.com/landoftherair/lotr2/commit/05893176e7bb6deb0902313391150e3a65aeda16))
-* **skill:** skill gain was not working when you had a skill you had never used before ([479c4c2](https://github.com/landoftherair/lotr2/commit/479c4c2cdb11d11a0292520dab1cac818455e0de))
-* **ui:** unhide progress/max for quests ([9c0e71e](https://github.com/landoftherair/lotr2/commit/9c0e71e0d17ccfc6351c60fcdefc06a6ee7345c0))
+* **chat:** announcements from system would erroneously be labeled from discord in some cases ([926dc13](https://github.com/landoftherair/lotr2/commit/926dc134865478e1829c6eba33f05364845e23b8))
+* **creator:** char create will no longer close on a click outside or esc ([596c8b4](https://github.com/landoftherair/lotr2/commit/596c8b4444bc69936e59e483ba22bd18993b3469))
+* **discord:** discord will no longer double post new joiners ([ccf6e6e](https://github.com/landoftherair/lotr2/commit/ccf6e6ef5fca9fcd8b234950db6d5d564703613d))
 
 
 ### Features
 
-* **events:** introduce dynamic event system. for now, only applies to gm-started festivals, but will be expanded ([64d9e80](https://github.com/landoftherair/lotr2/commit/64d9e807e5efa9c0d6de3eb55ffe7a76969c43f4))
-* **game:** add discord support: events command, cross-chat support, emoji support, welcome broadcasts ([2deb2e0](https://github.com/landoftherair/lotr2/commit/2deb2e0e042c10c9e13f94955fde74276baa36f6))
-* **gm:** add gm lobby commands: alert, ban, creategm, createtester, motd, mute ([0e3da68](https://github.com/landoftherair/lotr2/commit/0e3da686692d3dc823c2014549182f445b5ac2e8))
-* **stats:** track some internal statistics for a leaderboard ([f8934a1](https://github.com/landoftherair/lotr2/commit/f8934a143f4176b1d88245752a439d6558f76c0d))
-* **ui:** items will now tell you why you can't use them ([0a07b6c](https://github.com/landoftherair/lotr2/commit/0a07b6ccf5190339a40ac032bb42a2caa133fe69))
-* **ui:** new character select screen! ([c67b581](https://github.com/landoftherair/lotr2/commit/c67b581fbec1b35c7121965c317791f7d3c324bc))
+* **item:** items can be heavy again. all breastplates and fullplates are heavy. heavy items inflict encumber. thieves and mages can be encumbered. encumberance now affects stealth too ([450977d](https://github.com/landoftherair/lotr2/commit/450977d449e01004cece83bc13b0cf01556cfb47))
+* **lobby:** character creator now shows stat deltas on class/allegiance & lets you pick a weapon spec from the start ([030c88e](https://github.com/landoftherair/lotr2/commit/030c88ea1d0f7bcf0987a4454a1594ef04e87350))
+* **quests:** add daily quests ([bed67f9](https://github.com/landoftherair/lotr2/commit/bed67f912cb6b1e23427a6a05a0f8970d80d8125))
+* **ui:** new drag/drop/multiselect capabilities - ctrl click equipment, sack, belt to select stuff ([8712cb5](https://github.com/landoftherair/lotr2/commit/8712cb51e4147b0478c03dbf0c8d077db43977bb))
+* **ui:** new option to shrink character boxes down to name+health ([76d053b](https://github.com/landoftherair/lotr2/commit/76d053bebff84586d728155989f4ed07125ae14a))
+* **ui:** remove jank from character create modal ([5d70eb1](https://github.com/landoftherair/lotr2/commit/5d70eb18eb981d1e9258e67ec2167f33acc4e1bf))
+* **ui:** show character and item when in character create ([32fd8e8](https://github.com/landoftherair/lotr2/commit/32fd8e8032d90c9f33bd647fc958abb9d3e3f30a))
+* **ui:** when game is getting updated, send a notification to let players know that an update is incoming ([2fdbf64](https://github.com/landoftherair/lotr2/commit/2fdbf64b4585c273c618d78efd99f280198827dc))
 
 
 
