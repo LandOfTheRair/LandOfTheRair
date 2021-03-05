@@ -20,7 +20,8 @@ jobs:
       with:
         url: 'https://server.rair.land/debug/reboot'
         method: 'POST'
-        secret: ${{ secrets.WEBHOOK_SECRET }}
+        data:
+          secret: ${{ secrets.WEBHOOK_SECRET }}
 
     - uses: actions/checkout@v2
 
