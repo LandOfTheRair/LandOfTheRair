@@ -21,6 +21,7 @@ jobs:
         url: 'https://server.rair.land/debug/reboot'
         method: 'POST'
         data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
+        preventFailureOnNoResponse: 'true'
 
     - uses: actions/checkout@v2
 
