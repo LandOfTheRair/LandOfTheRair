@@ -7,7 +7,7 @@ import { GameAction, GameServerResponse } from '../interfaces';
 export class RebootRoute {
 
   static setup(fastify: any, { broadcast }) {
-    fastify.post('/debug/reboot', async (req) => {
+    fastify.post('/debug/reboot', async (req, res) => {
 
       if (process.env.NODE_ENV === 'production') {
         const secret = process.env.WEBHOOK_SECRET;
@@ -27,6 +27,8 @@ export class RebootRoute {
         type: GameServerResponse.SendImportantNotification,
         message: 'The game just received an update and will be rebooting shortly, please exit the game to ensure your data is saved!'
       });
+
+      res.send({});
     });
   }
 
