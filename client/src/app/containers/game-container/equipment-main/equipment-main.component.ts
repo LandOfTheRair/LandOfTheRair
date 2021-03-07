@@ -4,13 +4,15 @@ import { sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { Allegiance, calculateSkillLevelFromXP, getSkillDescription, getStatDescription,
+import { Allegiance, calculateSkillLevelFromXP, getStatDescription,
   IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat } from '../../../../interfaces';
 import { GameState, SetCharacterView, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
+
+import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 
 @AutoUnsubscribe()
 @Component({
@@ -208,7 +210,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   }
 
   skillText(skill: Skill, skillValue: number): string {
-    return getSkillDescription(skill, this.skillLevel(skillValue));
+    return this.getSkillDescription(skill, this.skillLevel(skillValue));
   }
 
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {
@@ -220,6 +222,10 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     if (repValue < -100) return 'Hostile';
     if (repValue > 100)  return 'Friendly';
     return 'Neutral';
+  }
+
+  private getSkillDescription(skill: Skill, skillLevel: number): string {
+    return skillDescs[skill][Math.min(skillDescs[skill].length - 1, skillLevel)];
   }
 
 }
