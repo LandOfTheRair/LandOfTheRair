@@ -2,17 +2,20 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { ArmorClass, BaseClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
+import { ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
-  Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
+  Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import * as allStatMultipliers from '../../../content/_output/statdamagemultipliers.json';
+import * as weaponTiers from '../../../content/_output/weapontiers.json';
+
 interface WeaponAttackStats {
-  base: number;
-  min: number;
-  max: number;
-  weakChance: number;
-  damageBonus: number;
+  damage: number[];
+  variance: { min: number; max: number };
+  scaling: number[];
+  weakPercent: number;
+  strongPercent: number;
 }
 
 interface AttackerScope {
@@ -24,8 +27,7 @@ interface AttackerScope {
   damageStat: number;
   damageStat4: number;
   level: number;
-  damageRolls: number;
-  damageBonus: number;
+  damage: number;
   isWeak: boolean;
   isStrong: boolean;
   weapon: ISimpleItem;
@@ -53,37 +55,6 @@ interface DefenderScope {
   shield?: ISimpleItem;
   offhand?: ISimpleItem;
 }
-
-export const BaseItemStatsPerTier: Partial<Record<WeaponClass & ArmorClass, WeaponAttackStats>> = {
-  Arrow:                { base: 1, min: 0, max: 2, weakChance: 25, damageBonus: 10 },
-  Axe:                  { base: 2, min: 0, max: 2, weakChance: 10, damageBonus: 0 },
-  Blunderbuss:          { base: 2, min: 0, max: 4, weakChance: 30, damageBonus: 0 },
-  Broadsword:           { base: 2, min: 0, max: 2, weakChance: 5,  damageBonus: 5 },
-  Claws:                { base: 3, min: 0, max: 1, weakChance: 10, damageBonus: 0 },
-  Club:                 { base: 1, min: 0, max: 1, weakChance: 10, damageBonus: 5 },
-  Crossbow:             { base: 0, min: 0, max: 3, weakChance: 10, damageBonus: 5 },
-  Dagger:               { base: 2, min: 0, max: 1, weakChance: 1,  damageBonus: 10 },
-  Flail:                { base: 0, min: 1, max: 4, weakChance: 10, damageBonus: 0 },
-  Gloves:               { base: 2, min: 0, max: 2, weakChance: 10, damageBonus: 5 },
-  Hands:                { base: 1, min: 0, max: 1, weakChance: 10, damageBonus: 5 },
-  Boots:                { base: 2, min: 1, max: 3, weakChance: 10, damageBonus: 5 },
-  Greataxe:             { base: 5, min: 1, max: 2, weakChance: 10, damageBonus: 5 },
-  Greatmace:            { base: 5, min: 1, max: 2, weakChance: 10, damageBonus: 5 },
-  Greatsword:           { base: 3, min: 1, max: 4, weakChance: 10, damageBonus: 5 },
-  Halberd:              { base: 1, min: 0, max: 8, weakChance: 5,  damageBonus: 0 },
-  Hammer:               { base: 1, min: 0, max: 1, weakChance: 20, damageBonus: 10 },
-  Longbow:              { base: 4, min: 1, max: 3, weakChance: 10, damageBonus: 0 },
-  Longsword:            { base: 2, min: 1, max: 2, weakChance: 15, damageBonus: 5 },
-  Mace:                 { base: 2, min: 0, max: 2, weakChance: 10, damageBonus: 5 },
-  Saucer:               { base: 0, min: 0, max: 0, weakChance: 10, damageBonus: 0 },
-  Shield:               { base: 0, min: 0, max: 0, weakChance: 10, damageBonus: 0 },
-  Shortbow:             { base: 3, min: 1, max: 2, weakChance: 10, damageBonus: 0 },
-  Shortsword:           { base: 1, min: 1, max: 3, weakChance: 15, damageBonus: 5 },
-  Spear:                { base: 1, min: 0, max: 3, weakChance: 10, damageBonus: 0 },
-  Staff:                { base: 2, min: 0, max: 1, weakChance: 35, damageBonus: 0 },
-  Totem:                { base: 1, min: 0, max: 1, weakChance: 50, damageBonus: 0 },
-  Wand:                 { base: 1, min: 0, max: 1, weakChance: 50, damageBonus: 0 }
-};
 
 @Injectable()
 export class DamageHelperPhysical extends BaseService {
@@ -120,39 +91,61 @@ export class DamageHelperPhysical extends BaseService {
 
   // get the base damage information for a weapon
   private determineWeaponInformation(
-    attacker: ICharacter, weapon: ISimpleItem, bonusRolls = 0
+    attacker: ICharacter, weapon: ISimpleItem, weaponSkill: number, bonusRolls = 0
   ): {
-      damageRolls: number; damageBonus: number; isWeak: boolean; isStrong: boolean;
+      damage: number; isWeak: boolean; isStrong: boolean;
     } {
 
-    const { itemClass, tier } = this.game.itemHelper.getItemProperties(weapon, ['itemClass', 'tier']);
+    const { itemClass, tier, attackRange } = this.game.itemHelper.getItemProperties(weapon, ['itemClass', 'tier', 'attackRange']);
 
-    if (!BaseItemStatsPerTier[itemClass as ItemClass]) {
-      return { damageRolls: 0, damageBonus: 0, isWeak: false, isStrong: false };
+    const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
+    const statMultipliers: number[] = allStatMultipliers[scaleStat];
+    const weaponStats: WeaponAttackStats = weaponTiers[itemClass ?? ItemClass.Mace];
+
+    if (!weaponStats) {
+      return { damage: 0, isWeak: false, isStrong: false };
     }
 
-    const { base, min, max, weakChance, damageBonus } = BaseItemStatsPerTier[itemClass as ItemClass];
+    const attackerScaleStatValue = this.game.characterHelper.getStat(attacker, scaleStat);
+    const scaleStatValue = statMultipliers[Math.min(statMultipliers.length - 1, attackerScaleStatValue)];
 
-    let damageRolls = bonusRolls;
-    const minTier = min * (tier as number);
-    const maxTier = max * (tier as number);
-    const baseTier = base * (tier as number);
+    const { damage, variance, scaling, weakPercent, strongPercent } = weaponStats;
 
-    // go for a weak hit, rarely
+    // pre-calculate strong/weak hits
     const swashValue = 1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler');
-    const didFlub = this.game.diceRollerHelper.XInOneHundred(weakChance * swashValue);
-    const numRolls = didFlub ? minTier : random(minTier, maxTier);
+    const didFlub = this.game.diceRollerHelper.XInOneHundred(weakPercent * swashValue);
+    const didCrit = this.game.diceRollerHelper.XInOneHundred(strongPercent);
 
-    damageRolls += numRolls;
+    let canBeWeak = false;
+    let canBeStrong = false;
+
+    // 50/50 whether we roll the strong or weak dice
+    if (this.game.diceRollerHelper.XInOneHundred(50)) {
+      canBeStrong = true;
+    } else {
+      canBeWeak = true;
+    }
 
     // check if weak or strong hit
-    const isWeak = min !== max && didFlub;
-    const isStrong = min !== max && bonusRolls === maxTier;
+    const isWeak = canBeWeak && didFlub;
+    const isStrong = canBeStrong && didCrit;
 
-    // add base tier damage if no flub
-    if (!didFlub) damageRolls += baseTier;
+    const baseDamage = damage[tier ?? 0] ?? 1;
 
-    return { damageRolls, damageBonus: damageBonus * (tier as number), isWeak, isStrong };
+    // damage is baseDamage * scale value * stat scale value * (variance [rolled `bonusRolls` + 1 times])
+    let totalDamage = baseDamage;
+    totalDamage *= scaling[Math.min(scaling.length - 1, weaponSkill)];
+    totalDamage *= scaleStatValue;
+
+    // apply one variance hit + 1 per bonus roll
+    let bonusDamage = 0;
+    for (let i = 0; i < 1 + bonusRolls; i++) {
+      bonusDamage += totalDamage * (random(variance.min, variance.max) / 100);
+    }
+
+    totalDamage += bonusDamage;
+
+    return { damage: totalDamage, isWeak, isStrong };
   }
 
   // check if an item is a shield
@@ -316,11 +309,11 @@ export class DamageHelperPhysical extends BaseService {
     // if we have ammo, we grab the bonus from that
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
     if (canShoot && ammo) {
-      const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier', 'shots']);
+      const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
       bonusAttackRolls += tier ?? 0;
     }
 
-    const { damageRolls, damageBonus, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, bonusAttackRolls);
+    const { damage, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, attackerSkill, bonusAttackRolls);
 
     return {
       skill:        attackerSkill,
@@ -331,8 +324,7 @@ export class DamageHelperPhysical extends BaseService {
       damageStat:   Math.floor(baseDamageStat * offhandMultiplier),
       damageStat4:  Math.floor((baseDamageStat / 4) * offhandMultiplier),
       level:        attacker.level,
-      damageRolls:  Math.max(1, damageRolls),
-      damageBonus,
+      damage,
       isWeak,
       isStrong,
       weapon,
@@ -855,21 +847,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     // eyy, if you get here, that means you're out of hell. I mean, it means you can hit the target for real damage. probably.
-
-    const damageLeft = attackerScope.damageRolls + attackerScope.level + attackerScope.skill4;
-    const damageRight = Math.floor(attackerScope.damageStat + attackerScope.skill);
-    const damageBoost = attackerScope.damageBonus;
-
-    // thieves get +25% to the bottom damage range, warriors get +50%
-    let damageRollMinimum = 1;
-
-    /** PERK:CLASS:THIEF:Thieves always do at least 15% of their damage roll when rolling dice. */
-    if (attacker.baseClass === BaseClass.Thief) damageRollMinimum = 0.15;
-
-    /** PERK:CLASS:WARRIOR:Warriors always do at least 25% of their damage roll when rolling dice. */
-    if (attacker.baseClass === BaseClass.Warrior) damageRollMinimum = 0.25;
-
-    let damage = Math.floor(this.game.diceRollerHelper.diceRoll(damageLeft, damageRight, damageRollMinimum)) + damageBoost;
+    let damage = Math.floor(attackerScope.damage);
 
     damage += damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
 
