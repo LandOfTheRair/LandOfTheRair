@@ -139,7 +139,15 @@ export class DamageHelperPhysical extends BaseService {
 
     // apply one variance hit + 1 per bonus roll
     let bonusDamage = 0;
-    for (let i = 0; i < 1 + bonusRolls; i++) {
+    let totalBonusRolls = 1 + bonusRolls;
+
+    // weak hits remove all variance, always hit the min possible
+    if (isWeak) totalBonusRolls = 0;
+
+    // strong hits add 2 bonus variance rolls
+    if (isStrong) totalBonusRolls += 2;
+
+    for (let i = 0; i < totalBonusRolls; i++) {
       bonusDamage += totalDamage * (random(variance.min, variance.max) / 100);
     }
 
