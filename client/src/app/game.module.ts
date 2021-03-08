@@ -41,6 +41,7 @@ import { ManageSilverComponent } from './_shared/modals/managesilver/managesilve
 import { NewSpellsComponent } from './_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from './_shared/modals/options/options.component';
 import { TextModalComponent } from './_shared/modals/text/text.component';
+import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
 
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
@@ -48,6 +49,7 @@ import { BankComponent } from './containers/game-container/bank/bank.component';
 import { CharacterListComponent } from './containers/game-container/character-list/character-list.component';
 import { CommandLineComponent } from './containers/game-container/command-line/command-line.component';
 import { EquipmentMainComponent } from './containers/game-container/equipment-main/equipment-main.component';
+import { EquipmentViewTargetComponent } from './containers/game-container/equipment-view-target/equipment-view-target.component';
 import { GameContainerComponent } from './containers/game-container/game-container.component';
 import { GroundComponent } from './containers/game-container/ground/ground.component';
 import { InventoryBeltComponent } from './containers/game-container/inventory-belt/inventory-belt.component';
@@ -67,7 +69,6 @@ import { LobbyContainerComponent } from './containers/lobby-container/lobby-cont
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 
 import { JournalComponent } from './journal/journal.component';
-import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
 
 const declarations = [
@@ -115,7 +116,8 @@ const gameComponents = [
 
   JournalComponent,
 
-  EquipmentViewOnlyComponent
+  EquipmentViewOnlyComponent,
+  EquipmentViewTargetComponent
 ];
 
 

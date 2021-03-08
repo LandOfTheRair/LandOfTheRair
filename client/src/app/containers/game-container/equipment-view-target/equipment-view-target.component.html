@@ -1,0 +1,22 @@
+<app-window windowName="equipmentViewTarget"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="350"
+            defaultHeight="385"
+></app-window>
+
+<ng-template #headTemplate>
+  Viewing <ng-container *ngIf="char$ | async as char">{{ char.name }}</ng-container>
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <ng-container *ngIf="char$ | async as char">
+    <app-equipment-viewonly [player]="char" [hideGold]="true"></app-equipment-viewonly>
+  </ng-container>
+</ng-template>

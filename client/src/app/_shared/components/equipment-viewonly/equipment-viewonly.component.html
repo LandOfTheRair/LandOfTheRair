@@ -1,7 +1,7 @@
 
 <div class="item-container">
   <div class="item-slot" *ngFor="let slot of slots"
-                          [class.item-background]="slot.template || slot.slot">
+                          [class.item-background]="(slot.template || slot.slot) && slot.canShow()">
 
     <ng-container *ngIf="!slot.template">
       <ng-container *ngTemplateOutlet="itemGenericTemplate; context: createContext(slot, player)"></ng-container>
@@ -42,5 +42,6 @@
   <app-item [size]="'lg'"
             showValue="true"
             [viewingPlayer]="player"
+            *ngIf="!hideGold"
             [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: player.currency.gold } }"></app-item>
 </ng-template>

@@ -7,7 +7,7 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Direction, distFrom, GameServerResponse, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
-import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState } from '../../../../stores';
+import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState, ViewCharacterEquipment } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 import { MacrosService } from '../../../services/macros.service';
@@ -200,6 +200,16 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   }
 
   public doAltAction(char: ICharacter, $event?: any) {
+
+    $event?.preventDefault();
+    $event?.stopPropagation();
+
+    // we can view characters loadouts
+    if ((char as IPlayer).username) {
+      this.store.dispatch(new ViewCharacterEquipment(char));
+      return;
+    }
+
     this.doAction(char, $event);
   }
 

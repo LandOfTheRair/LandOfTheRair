@@ -1,4 +1,4 @@
-import { Currency, GameAction, IPlayer, IVendorItem } from '../../interfaces';
+import { Currency, GameAction, ICharacter, IPlayer, IVendorItem } from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -56,6 +56,12 @@ export class PatchPlayerPosition {
 export class SetCurrentTarget {
   static type = GameAction.SetCurrentTarget;
   constructor(public target: string) {}
+}
+
+// dispatched when clicking on a targets box
+export class ViewCharacterEquipment {
+  static type = GameAction.ViewCharacterEquipment;
+  constructor(public character: ICharacter) {}
 }
 
 // dispatched when hovering over an item

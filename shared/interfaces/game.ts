@@ -1,5 +1,6 @@
 import { IVendorItem } from './behaviors';
 import { Currency } from './building-blocks';
+import { ICharacter } from './character';
 import { INPC } from './npc';
 import { IPlayer } from './player';
 
@@ -41,4 +42,6 @@ export interface IGame {
     ground: any;
     openDoors: Record<number, boolean>;
   };
+
+  inspectingCharacter: ICharacter | null;
 }

@@ -13,8 +13,7 @@ import { Spawner } from './Spawner';
 
 const PLAYER_KEYS = [
   'dir', 'swimLevel', 'uuid', 'partyName', 'name', 'agro',
-  'items.equipment.leftHand', 'items.equipment.rightHand',
-  'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
+  'items.equipment', 'username',
   'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects',
   'totalStats.stealth'

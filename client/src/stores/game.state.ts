@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
 import { HideBankWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
-  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow } from './actions';
+  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, ViewCharacterEquipment } from './actions';
 
 const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = player;
 
@@ -44,7 +44,8 @@ const defaultGame: () => IGame = () => ({
       npcs: {},
       ground: {},
       openDoors: {}
-    }
+    },
+    inspectingCharacter: null
   });
 
 @State<IGame>({
@@ -139,6 +140,11 @@ export class GameState {
     if (!state.player) return '';
     if (state.player.combatTicks > 0) return 'combat';
     return state.player.bgmSetting || 'wilderness';
+  }
+
+  @Selector()
+  static inspectingCharacter(state: IGame) {
+    return state.inspectingCharacter;
   }
 
   constructor(private store: Store) {}
@@ -324,5 +330,12 @@ export class GameState {
   @Action(HideBankWindow)
   hideBankWindow(ctx: StateContext<IGame>) {
     ctx.patchState({ bankInfo: null });
+  }
+
+  @Action(ViewCharacterEquipment)
+  viewCharacterEquipment(ctx: StateContext<IGame>, { character }: ViewCharacterEquipment) {
+    ctx.patchState({ inspectingCharacter: character });
+
+    this.store.dispatch(new ShowWindow('equipmentViewTarget'));
   }
 }
