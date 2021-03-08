@@ -11,6 +11,8 @@ export interface ISpellData {
   willSaveThreshold?: number;           // the will save threshold. will roll (1, defWIL) and if it's >= willSaveThreshold, it saves
   willSavePercent?: number;             // the % damage reduced when will save is met
   potencyMultiplier?: number;           // the overall multiplier to the potency of the skill
+  bonusRollsMin?: number;               // the number of bonus rolls this spell will roll at minimum (default 0)
+  bonusRollsMax?: number;               // the number of bonus rolls this spell will roll at maximum (default 0)
   skillMultiplierChanges?: number[][];  // the skill multiplier buffs when you reach a certain skill threshold
 
   spellMeta: {

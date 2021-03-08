@@ -1,5 +1,5 @@
 
-import { sum } from 'lodash';
+import { random, sum } from 'lodash';
 
 import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData,
   IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
@@ -88,7 +88,8 @@ export class Spell implements BaseSpell {
 
     const statMult = caster ? this.game.characterHelper.getStat(caster, stats[caster.baseClass]) : 1;
 
-    let retPotency = this.game.diceRollerHelper.diceRoll(baseSkillValue, statMult);
+    const bonusRolls = random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
+    let retPotency = this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
     let maxMult = 1;
     (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
       if (baseSkillValue < baseSkill) return;
