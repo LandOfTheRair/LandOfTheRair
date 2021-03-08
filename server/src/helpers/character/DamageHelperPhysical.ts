@@ -14,6 +14,7 @@ interface WeaponAttackStats {
   damage: number[];
   variance: { min: number; max: number };
   scaling: number[];
+  bonus: number[];
   weakPercent: number;
   strongPercent: number;
 }
@@ -109,7 +110,7 @@ export class DamageHelperPhysical extends BaseService {
     const attackerScaleStatValue = this.game.characterHelper.getStat(attacker, scaleStat);
     const scaleStatValue = statMultipliers[Math.min(statMultipliers.length - 1, attackerScaleStatValue)];
 
-    const { damage, variance, scaling, weakPercent, strongPercent } = weaponStats;
+    const { damage, variance, scaling, bonus, weakPercent, strongPercent } = weaponStats;
 
     // pre-calculate strong/weak hits
     const swashValue = 1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler');
@@ -152,6 +153,9 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     totalDamage += bonusDamage;
+
+    // add bonus damage based on skill to give weapons a little extra oomph early on
+    totalDamage += bonus[Math.min(bonus.length - 1, weaponSkill)];
 
     return { damage: totalDamage, isWeak, isStrong };
   }
