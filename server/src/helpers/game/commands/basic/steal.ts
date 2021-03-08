@@ -27,7 +27,7 @@ export class Steal extends SkillCommand {
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player as IPlayer, args.stringArgs);
-    if (!target) return this.youDontSeeThatPerson(player as IPlayer);
+    if (!target) return this.youDontSeeThatPerson(player as IPlayer, args.stringArgs);
 
     if (target === player) return;
 

@@ -1,6 +1,7 @@
 import { Game } from '../../helpers';
 import { BaseClass, Direction, ICharacter, IItemEffect,
   IMacroCommand, IMacroCommandArgs, IPlayer, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
+import { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
 
@@ -21,8 +22,13 @@ export abstract class MacroCommand implements IMacroCommand {
     this.game.messageHelper.sendLogMessageToPlayer(character, { message, sfx }, [MessageType.PlayerChat]);
   }
 
-  protected youDontSeeThatPerson(character: ICharacter) {
+  protected youDontSeeThatPerson(character: ICharacter, targetArgs: string) {
     this.game.messageHelper.sendLogMessageToPlayer(character, { message: 'You don\'t see that person.', setTarget: null });
+
+    // clear the queue of this person if we don't see them
+    if (targetArgs) {
+      this.game.playerHelper.clearActionQueue(character as Player, targetArgs);
+    }
   }
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void {}        // always used only by people who can execute commands (players)
@@ -120,7 +126,7 @@ export abstract class SkillCommand extends MacroCommand {
     }
 
     if (!target) {
-      this.youDontSeeThatPerson(user);
+      this.youDontSeeThatPerson(user, args);
       return null;
     }
 
@@ -178,7 +184,7 @@ export class SpellCommand extends SkillCommand {
     if (!targetString && this.canTargetSelf) targetString = caster?.name ?? '';
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString);
-    if (!target) return this.youDontSeeThatPerson(caster as IPlayer);
+    if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args.stringArgs);
 
     if (!this.canCastSpell(caster, target)) return;
 
@@ -203,13 +209,16 @@ export class SpellCommand extends SkillCommand {
           delete caster.spellChannel;
         }
 
-        return this.youDontSeeThatPerson(caster as IPlayer);
+        return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
       }
 
       if (caster) {
         delete caster.spellChannel;
 
-        if (!this.game.targettingHelper.isTargetInViewRange(caster, target)) return this.youDontSeeThatPerson(caster as IPlayer);
+        if (!this.game.targettingHelper.isTargetInViewRange(caster, target)) {
+          return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+        }
+
         if (!this.tryToConsumeMP(caster, [target], args?.overrideEffect)) return;
       }
 

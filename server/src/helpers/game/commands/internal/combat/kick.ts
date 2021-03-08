@@ -16,7 +16,7 @@ export class KickCommand extends SkillCommand {
     if (range === -1) return;
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
-    if (!target) return this.youDontSeeThatPerson(player);
+    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if (target === player) return;
 

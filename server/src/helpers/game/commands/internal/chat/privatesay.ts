@@ -12,7 +12,7 @@ export class PrivateSay extends MacroCommand {
     if (aargs.length < 2) return;
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, aargs[0]);
-    if (!target) return this.youDontSeeThatPerson(player);
+    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if ((target as any).dialogParser) {
       this.game.dialogActionHelper.handleDialog(player, target as INPC, aargs[1], args.callbacks);

@@ -13,7 +13,7 @@ export class ThrowCommand extends SkillCommand {
     const [hand, char] = args.arrayArgs;
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, char);
-    if (!target) return this.youDontSeeThatPerson(player);
+    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if (target === player) return;
 

@@ -16,7 +16,7 @@ export class AttackCommand extends SkillCommand {
     if (range === -1) return this.sendMessage(player, 'You need to have your left hand empty to use that weapon!');
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
-    if (!target) return this.youDontSeeThatPerson(player);
+    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if (target === player) return;
 
