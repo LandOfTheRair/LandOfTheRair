@@ -75,6 +75,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() stats: StatBlock;
   @Property() skills: SkillBlock;
+  @Property() paidSkills: SkillBlock;
   @Property() effects: IEffectContainer;
   @Property() allegianceReputation: { [allegiance in Allegiance]?: number } = {};
 

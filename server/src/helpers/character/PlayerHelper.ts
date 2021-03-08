@@ -288,6 +288,12 @@ export class PlayerHelper extends BaseService {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
   }
 
+  // flag a certain skill for a player
+  public trainSkill(player: IPlayer, skill: Skill, amt: number): void {
+    player.paidSkills[skill] = player.paidSkills[skill] ?? 0;
+    player.paidSkills[skill]! += amt;
+  }
+
   // whether or not the player can get skill on the current map
   public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
     const { map } = this.worldManager.getMap(player.map);
@@ -351,6 +357,13 @@ export class PlayerHelper extends BaseService {
     const skillGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent)
                                 + this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
     skillGained += Math.floor((skillGainBoostPercent * skillGained) / 100);
+
+    // paid skill is doubled as long as we have money in it
+    const paidVal = player.paidSkills[skill] ?? 0;
+    if (paidVal > 0) {
+      player.paidSkills[skill] = paidVal - skillGained;
+      skillGained *= 2;
+    }
 
     // TODO: modify skillGained for sub
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);

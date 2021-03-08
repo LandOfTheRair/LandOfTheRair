@@ -89,7 +89,13 @@
       <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true" [showTooltip]="false"></app-skill-icon></td>
       <td class="label">{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
       <td class="number">
-        {{ skillLevel(player.skills[skill.skill]) }}
+        <div class="number-container">
+          <div class="number-value">
+            {{ skillLevel(player.skills[skill.skill]) }}
+          </div>
+
+          <app-item size="xsmall" [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: 0 } }" *ngIf="player.paidSkills[skill.skill] > 10"></app-item>
+        </div>
       </td>
     </tr>
   </table>

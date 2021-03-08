@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import { BaseClass, GameAction, GameServerResponse, IAIBehavior,
-  INPC, IPlayer, ItemClass, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
+  INPC, IPlayer, ItemClass, ItemSlot, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
 import { Player } from '../../../orm';
 
 export class TrainerBehavior implements IAIBehavior {
@@ -113,6 +113,39 @@ export class TrainerBehavior implements IAIBehavior {
         const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
 
         return `You're ${percentWay}% of the way to your next ${skill.toUpperCase()} skill level.`;
+      });
+
+    parser.addCommand('trainskill')
+      .setSyntax(['trainskill <string:skill*>'])
+      .setLogic(async ({ env, args }) => {
+        const player = env?.player;
+        const skill = args['skill*'].toLowerCase();
+
+        const checkSkill = Object.values(Skill).includes(skill);
+        if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
+
+        const ignores = {
+          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Thievery, Skill.Conjuration],
+          [BaseClass.Mage]:       [Skill.Restoration, Skill.Thievery],
+          [BaseClass.Healer]:     [Skill.Thievery, Skill.Conjuration],
+          [BaseClass.Thief]:      [Skill.Wand, Skill.Restoration, Skill.Conjuration]
+        };
+
+        if ((ignores[behavior.joinClass] || []).includes(skill)) return 'I\'m afraid I can\'t help you with that skill.';
+
+        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
+        if (skillLevel > maxSkillTrain) return 'You\'re way beyond my comprehension.';
+
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        if (!rightHand) return 'You need to hold coins in your right hand!';
+        if (rightHand.name !== 'Gold Coin') return 'You need to hold coins in your right hand!';
+
+        const numCoins = rightHand.mods.value ?? 1;
+        game.playerHelper.trainSkill(player, skill, numCoins);
+
+        game.characterHelper.setRightHand(player, undefined);
+
+        return 'I hope the training pays off!';
       });
 
     parser.addCommand('train')

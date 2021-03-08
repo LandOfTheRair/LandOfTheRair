@@ -89,7 +89,11 @@ export class TrainerComponent implements OnInit, OnDestroy {
   }
 
   train() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, train`);
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, train ${this.activeSkill}`);
+  }
+
+  trainSkill() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`);
   }
 
   resetTraits() {

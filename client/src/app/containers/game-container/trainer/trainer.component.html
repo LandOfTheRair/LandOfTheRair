@@ -8,7 +8,7 @@
             defaultX="670"
             defaultY="120"
             defaultWidth="600"
-            defaultHeight="384"
+            defaultHeight="444"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -20,13 +20,13 @@
     <div class="trainer-intro">
       <app-npc [sprite]="trainerInfo.npcSprite"></app-npc>
 
-      Hello, adventurer! I can train you to a maximum of level {{ trainerInfo.npcMaxLevel }}/{{ trainerInfo.npcMaxSkill }}. I can also assess your skills if you so desire!
+      Hello, adventurer! I can train you to a maximum of level {{ trainerInfo.npcMaxLevel }}/{{ trainerInfo.npcMaxSkill }}. I can also assess your skills and aid in your training if you so desire!
     </div>
 
     <div class="buttons">
       <button mat-raised-button color="primary" (click)="train()">Level Up</button>
       <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="assess()">Assess Skill</button>
-      <button mat-raised-button color="secondary" disabled>Train Skill</button>
+      <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="trainSkill()">Train Skill</button>
       <button mat-raised-button color="warn" (click)="resetTraits()">Reset Traits</button>
     </div>
 

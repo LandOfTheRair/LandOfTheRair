@@ -21,6 +21,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     flaggedSkills: char.flaggedSkills ?? [Skill.Martial],
     lastTileDesc: '',
     lastRegionDesc: '',
+    paidSkills: char.paidSkills ?? { },
     bgmSetting: char.bgmSetting ?? 'wilderness',
     hungerTicks: char.hungerTicks ?? 0,
     partyName: char.partyName ?? '',

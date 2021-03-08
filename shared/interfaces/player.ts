@@ -1,5 +1,5 @@
 import { IAccountBank } from './accountbank';
-import { DamageClass, Skill } from './building-blocks';
+import { DamageClass, Skill, SkillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterItems } from './characteritems';
 import { ICharacterQuests } from './characterquests';
@@ -35,6 +35,7 @@ export interface IPlayer extends ICharacter {
   swimElement: DamageClass | string;
 
   flaggedSkills: Skill[];
+  paidSkills: SkillBlock;
 
   corpseRef?: ISimpleItem;
 

@@ -25,8 +25,21 @@
   }
 
   td.number {
-    text-align: right;
-    padding-right: 5px;
+    padding-right: 40px;
     font-size: 1.3rem;
+
+    .number-container {
+      position: relative;
+
+      .number-value {
+
+      }
+
+      app-item {
+        position: absolute;
+        right: -20px;
+        top: 0;
+      }
+    }
   }
 }
