@@ -529,6 +529,7 @@ export class CharacterHelper extends BaseService {
       let hpRegen = this.getHPRegen(character);
       let mpRegen = this.getMPRegen(character);
 
+      // if out of combat, regen 25% per tick
       if (character.combatTicks <= 0) {
         hpRegen = character.hp.maximum / 4;
         mpRegen = character.mp.maximum / 4;
