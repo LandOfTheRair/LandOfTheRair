@@ -37,7 +37,7 @@ app-npc {
       &.active app-skill-icon {
         border-radius: 50%;
         box-shadow: 0px 0px 1px 1px #aaa;
-        animation: glow 1000ms linear infinite alternate;
+        animation: glow 500ms linear infinite alternate;
 
         @keyframes glow {
           to {

@@ -201,7 +201,7 @@ export class ItemHelper extends BaseService {
     if (!item) return;
 
     const { map } = this.game.worldManager.getMap(player.map);
-    const { succorInfo, ounces, itemClass } = this.getItemProperties(item, ['succorInfo', 'ounces', 'itemClass']);
+    const { succorInfo, ounces, itemClass, trait } = this.getItemProperties(item, ['succorInfo', 'ounces', 'itemClass', 'trait']);
     if (succorInfo && !map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(player, 'You stop, unable to envision the place in your memory!');
       return;
@@ -213,8 +213,24 @@ export class ItemHelper extends BaseService {
       return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
     }
 
+    const isUsableScroll = item.name.includes('Rune Scroll') && itemClass === ItemClass.Scroll;
+    if (trait && isUsableScroll) {
+      if (player.learnedRunes.includes(item.name)) {
+        return this.game.messageHelper.sendSimpleMessage(player, 'You already know that rune!');
+      }
+
+      console.log(trait, trait.restrict);
+
+      if (!trait.restrict?.includes(player.baseClass)) {
+        return this.game.messageHelper.sendSimpleMessage(player, 'You cannot learn that rune!');
+      }
+
+      player.learnedRunes.push(item.name);
+      this.game.messageHelper.sendSimpleMessage(player, `You've learned the rune symbol to enhance ${trait?.name}!`);
+    }
+
     const totalOunces = ounces ?? 0;
-    let shouldRemove = totalOunces <= 0 && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food);
+    let shouldRemove = totalOunces <= 0 && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food || isUsableScroll);
 
     // if it's an empty bottle currently, we just remove it
     if (itemClass === ItemClass.Bottle && totalOunces === 0) {

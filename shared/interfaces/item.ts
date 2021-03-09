@@ -31,6 +31,8 @@ export interface ISuccorInfo {
 export interface IItemTrait {
   name: string;
   level: number;
+
+  restrict?: string[];
 }
 
 export interface IGear {

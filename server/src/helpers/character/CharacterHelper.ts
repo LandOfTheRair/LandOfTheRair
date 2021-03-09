@@ -324,6 +324,17 @@ export class CharacterHelper extends BaseService {
         character.allTraits[trait.name] += trait.level;
       }
     });
+
+    // get benefits from inscribed rune scrolls
+    if (this.isPlayer(character)) {
+      (character as IPlayer).runes.forEach(rune => {
+        const item = this.game.itemHelper.getItemDefinition(rune);
+        if (!item.trait) return;
+
+        character.allTraits[item.trait.name] = character.allTraits[item.trait.name] || 0;
+        character.allTraits[item.trait.name] += item.trait.level;
+      });
+    }
   }
 
   // get the total stats from traits

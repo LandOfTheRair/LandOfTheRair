@@ -52,6 +52,8 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   if (itemClass === ItemClass.Trap) return false;
   if (!isOwnedBy(player, item)) return false;
 
+  if (item.name.includes('Rune Scroll')) return true;
+
   if (itemClass === ItemClass.Box) return true;
   if (itemClass === ItemClass.Book) return true;
   if (useEffect && useEffect.uses) return true;

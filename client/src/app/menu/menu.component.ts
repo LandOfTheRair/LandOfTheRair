@@ -123,6 +123,11 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('quests'))
         },
         {
+          name: 'Rune Codex',
+          visibleIf: this.gameService.inGame$,
+          handler: () => this.store.dispatch(new ShowWindow('runecodex'))
+        },
+        {
           name: 'Traits',
           visibleIf: this.gameService.inGame$,
           handler: () => this.store.dispatch(new ShowWindow('traits'))

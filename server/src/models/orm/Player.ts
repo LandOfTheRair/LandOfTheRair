@@ -92,4 +92,6 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() respawnPoint: { x: number; y: number; map: string };
 
   @Property() dailyItems: Record<string, number>;
+  @Property() runes: string[];
+  @Property() learnedRunes: string[];
 }

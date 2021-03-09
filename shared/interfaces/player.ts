@@ -50,4 +50,7 @@ export interface IPlayer extends ICharacter {
   lastDeathLocation?: { map: string, x: number, y: number };
 
   dailyItems: Record<string, number>;
+
+  runes: string[];
+  learnedRunes: string[]
 }
