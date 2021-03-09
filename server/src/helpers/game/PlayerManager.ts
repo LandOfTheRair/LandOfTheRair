@@ -29,12 +29,12 @@ export class PlayerManager extends BaseService {
   }
 
   // get a player in game based on the account username
-  public getPlayerInGame(account: Account): Player {
+  public getPlayerInGame(account: Account): Player | undefined {
     return this.getPlayerByUsername(account.username);
   }
 
   // get a player in game based on the account username
-  public getPlayerByUsername(username: string): Player {
+  public getPlayerByUsername(username: string): Player | undefined {
     return this.inGamePlayers[username];
   }
 

@@ -54,7 +54,10 @@ export class WebsocketWorker {
       });
     }
 
-    Object.values(HTTPRoutes).forEach((route) => route.setup(app, { broadcast: (data) => this.broadcast(data) }));
+    Object.values(HTTPRoutes).forEach((route) => route.setup(app, {
+      broadcast: (data) => this.broadcast(data),
+      sendToGame: (data) => this.sendInternalToGame(data)
+    }));
 
     app.listen(process.env.PORT ? +process.env.PORT : 6975, process.env.BIND_ADDR || '127.0.0.1', (err: any) => {
       if (err) throw err;
@@ -159,6 +162,10 @@ export class WebsocketWorker {
 
     this.sendToGame(socket, data);
 
+  }
+
+  private sendInternalToGame(data) {
+    parentPort?.postMessage({ target: 'gameloop', socketId: '★System', socketIp: '★System', username: '★System', ...data });
   }
 
   private sendToGame(socket, data) {

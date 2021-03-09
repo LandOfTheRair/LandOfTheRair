@@ -48,7 +48,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
     const register = (username) => this.registerAccountSocket(username, socketId);
     const unregister = (username) => this.unregisterAccountSocket(username);
 
-    if (action.requiresLoggedIn) {
+    if (action.requiresLoggedIn && !action.canBeUnattended) {
       const account = this.game.lobbyManager.getAccount(data.username);
       if (!account) throw new Error('Not logged in.');
 

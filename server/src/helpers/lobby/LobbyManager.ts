@@ -15,6 +15,7 @@ class LobbyState {
   usersInGame: Record<string, boolean> = {};
   discordIDToName: Record<string, string> = {};
   discordOnlineCount = 0;
+  blockGameEnter = false;
 }
 
 @Injectable()
@@ -110,6 +111,8 @@ export class LobbyManager extends BaseService {
     this.game.discordHelper.updateLobbyChannel();
 
     const player = this.playerManager.getPlayerInGame(account);
+    if (!player) return;
+
     this.worldManager.leaveMap(player);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGameByAccount(account);
@@ -146,5 +149,17 @@ export class LobbyManager extends BaseService {
       const cmdInst = new command();
       this.lobbyCommands[cmdInst.name] = cmdInst;
     });
+  }
+
+  public getAllAccountsInGame(): IAccount[] {
+    return this.state.users;
+  }
+
+  public isBlocked(): boolean {
+    return this.state.blockGameEnter;
+  }
+
+  public toggleBlock(): void {
+    this.state.blockGameEnter = !this.state.blockGameEnter;
   }
 }

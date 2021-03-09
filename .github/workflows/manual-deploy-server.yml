@@ -38,6 +38,19 @@ jobs:
 
     - run: cd server && npm run build
 
+    - name: Kick And Save Players
+      uses: fjogeleit/http-request-action@master
+      with:
+        url: 'https://server.rair.land/debug/lockgame'
+        method: 'POST'
+        data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
+        preventFailureOnNoResponse: 'true'
+
+    - name: Wait 30 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
     - name: Deploy Server
       uses: AlexxNB/caprover-action@v1
       with:

@@ -18,6 +18,7 @@ export interface IServerAction {
   type: GameServerEvent;
   requiredKeys: string[];
   requiresLoggedIn: boolean;
+  canBeUnattended: boolean;
 
   validate(args?): boolean;
   act(game, { broadcast, emit, register, unregister }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean, message?: string }>;
@@ -35,6 +36,7 @@ export enum GameServerEvent {
   ChangeEventWatcher = 'Auth:Emit:ChangeEventWatcher',
 
   SetMOTD = 'GM:Emit:SetMOTD',
+  BlockAndKickAll = 'GM:Emit:BlockAndKickAll',
 
   CharacterCreateInformation = 'Creator:Emit:CharacterSelect',
 

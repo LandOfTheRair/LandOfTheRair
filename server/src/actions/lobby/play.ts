@@ -19,6 +19,18 @@ export class PlayAction extends ServerAction {
       return {};
     }
 
+    if (game.lobbyManager.isBlocked()) {
+      emit({
+        action: GameAction.ChatAddMessage,
+        timestamp: Date.now(),
+        message: `The game is currently updating, so play is disabled for a few minutes.
+        If this persists for too long, contact a GM or email help@rair.land.`,
+        from: '★System'
+      });
+
+      return {};
+    }
+
     if (game.lobbyManager.isAccountInGame(data.account))  return { message: 'Already in game.' };
 
     const charSlot = data.charSlot;

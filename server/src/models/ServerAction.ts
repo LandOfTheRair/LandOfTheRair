@@ -4,6 +4,7 @@ import { GameServerEvent, GameServerResponse, IServerAction } from '../interface
 export class ServerAction implements IServerAction {
   type = GameServerEvent.Default;
   requiresLoggedIn = true;
+  canBeUnattended = false;
   requiredKeys: string[] = [];
 
   validate(args) {

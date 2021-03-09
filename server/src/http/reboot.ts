@@ -19,13 +19,13 @@ export class RebootRoute {
       broadcast({
         action: GameAction.ChatAddMessage,
         timestamp: Date.now(),
-        message: 'The game just received an update and will be rebooting shortly, please exit the game to ensure your data is saved!',
+        message: 'The game just received an update and will be rebooting shortly. You will be kicked soon to ensure your data gets saved.',
         from: '★System'
       });
 
       broadcast({
         type: GameServerResponse.SendImportantNotification,
-        message: 'The game just received an update and will be rebooting shortly, please exit the game to ensure your data is saved!'
+        message: 'The game just received an update and will be rebooting shortly. You will be kicked soon to ensure your data gets saved.'
       });
 
       res.send({});
