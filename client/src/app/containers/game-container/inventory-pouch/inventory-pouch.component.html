@@ -16,5 +16,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <app-inventory context="DemiMagicPouch" container="pouch" [size]="5"></app-inventory>
+  <ng-container *ngIf="player$ | async as player">
+    <app-inventory context="DemiMagicPouch" [container]="player.items.pouch" [size]="5"></app-inventory>
+  </ng-container>
 </ng-template>

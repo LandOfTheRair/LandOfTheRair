@@ -122,3 +122,18 @@ export class OpenBankWindow {
 export class HideBankWindow {
   static type = GameAction.NPCActionHideBank;
 }
+
+
+// dispatched when opening a locker
+export class OpenLockerWindow {
+  static type = GameAction.LockerActionShow;
+  constructor(
+    public regionId: string,
+    public lockerName: string
+  ) {}
+}
+
+// dispatched when walking away from a banker
+export class HideLockerWindow {
+  static type = GameAction.LockerActionHide;
+}

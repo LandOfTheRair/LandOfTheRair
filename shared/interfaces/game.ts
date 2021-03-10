@@ -43,5 +43,10 @@ export interface IGame {
     openDoors: Record<number, boolean>;
   };
 
+  lockerInfo: {
+    regionId: string;
+    lockerName: string;
+  },
+
   inspectingCharacter: ICharacter | null;
 }

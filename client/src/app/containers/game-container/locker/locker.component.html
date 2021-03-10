@@ -1,0 +1,33 @@
+<app-window windowName="locker"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="350"
+            defaultHeight="440"
+></app-window>
+
+<ng-template #headTemplate>
+  {{ lockerInfo.lockerName }} Wardrobe
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div *ngIf="player && lockerRegionNames.length > 0">
+    <mat-tab-group mat-align-tabs="center" [selectedIndex]="activeLockerSlot">
+
+      <mat-tab *ngFor="let regionName of lockerRegionNames" [label]="regionName.lockerId">
+
+        <app-inventory dropContext="Wardrobe"
+                       [context]="'Wardrobe:' + regionName.regionId + ':' + regionName.lockerId"
+                       [container]="player.lockers.lockers[regionName.regionId][regionName.lockerId]"
+                       [size]="25"></app-inventory>
+
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+</ng-template>

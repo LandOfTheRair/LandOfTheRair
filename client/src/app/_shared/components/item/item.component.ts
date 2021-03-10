@@ -302,6 +302,20 @@ export class ItemComponent implements OnDestroy {
         return;
       }
 
+      // if we have a wardrobe open, we try to belt, then sack, if nothing else equip
+      if (this.context.includes('Wardrobe')) {
+
+        if (this.realItem.isBeltable) {
+          this.doMoveAction('B');
+        } else if (this.realItem.isSackable) {
+          this.doMoveAction('S');
+        } else {
+          this.doMoveAction('E');
+        }
+
+        return;
+      }
+
       // if we can use it, we use it
       if (canUseItem(this.viewingPlayer, this.item, this.realItem) && (this.context === 'Right' || this.context === 'Left')) {
         this.doUseAction();

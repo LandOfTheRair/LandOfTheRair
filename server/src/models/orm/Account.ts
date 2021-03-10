@@ -32,6 +32,4 @@ export class Account extends BaseEntity implements IAccount {
   @Property() alwaysOnline = false;
   @Property() eventWatcher = false;
 
-  // TODO: shared lockers and bank should be properties of account (bank needs region separators)
-
 }

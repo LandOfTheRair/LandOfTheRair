@@ -1,16 +1,18 @@
 
 <div class="item-container" droppable
-                            [dropScope]="context.toLowerCase()"
+                            [dropScope]="realDropContext.toLowerCase()"
                             (onDrop)="uiService.buildAndDoDropAction($event, context)"
                             *ngIf="player$ | async as player">
-  <div class="item-slot item-background" *ngFor="let slot of slots" [class.selected]="uiService.selected[container][slot]">
-    <app-item *ngIf="player.items[container]?.items[slot]"
+
+  <div class="item-slot item-background" *ngFor="let slot of slots" [class.selected]="uiService.isSelected(realDropContext, slot)">
+
+    <app-item *ngIf="container?.items[slot]"
               [size]="displaySize"
               [context]="context"
               [contextSlot]="slot"
               [showDesc]="true"
               [showOunces]="true"
               [viewingPlayer]="player"
-              [item]="player.items[container].items[slot]"></app-item>
+              [item]="container.items[slot]"></app-item>
   </div>
 </div>

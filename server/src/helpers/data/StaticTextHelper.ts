@@ -15,7 +15,8 @@ const FURNACE_DESC = 'You are standing near a furnace. It is hot.';
 const WEAPON_RACK_DESC = 'You are standing near a rack of weapons. They look very pointy.';
 const ARMOR_STATUE_DESC = 'You are standing near a suit of armor.';
 const COFFIN_DESC = 'You are standing near a coffin. You\'re concerned that something might jump out to scare you.';
-const LOCKER_DESC = 'You are standing near a wardrobe. Every time you touch it, it feels warm and strangely familiar.';
+const LOCKER_DESC = `You are standing near a wardrobe. Every time you examine it, it looks strangely familiar.
+                     You open the interdimensional storage system in front of you and take a peek inside.`;
 const STONE_BRIDGE_DESC = 'You are standing on a bridge made of stone.';
 const WOOD_BRIDGE_DESC = 'You are standing on a bridge fashioned out of a fallen tree.';
 const WATER_PUDDLE_DESC = 'You are standing in a puddle.';

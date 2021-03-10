@@ -71,6 +71,7 @@ import { LobbyComponent } from './containers/lobby-container/lobby/lobby.compone
 
 import { JournalComponent } from './journal/journal.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
+import { LockerComponent } from './containers/game-container/locker/locker.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
@@ -114,6 +115,7 @@ const gameComponents = [
   BankComponent,
   TraitsComponent,
   QuestsComponent,
+  LockerComponent,
 
   JournalComponent,
 

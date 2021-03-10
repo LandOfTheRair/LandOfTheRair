@@ -6,6 +6,7 @@ import { IPlayer } from '../../../interfaces';
 import { Account, AccountBank, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
+import { PlayerLockers } from '../../../models/orm/PlayerLockers';
 import { PlayerStatistics } from '../../../models/orm/PlayerStatistics';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
 import { CharacterRoller } from '../../lobby';
@@ -88,10 +89,11 @@ export class CharacterDB extends BaseService {
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
       this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
       this.db.findSingle<AccountBank>(AccountBank, { _id: account._id }),
-      this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics })
+      this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics }),
+      this.db.findSingle<PlayerLockers>(PlayerLockers, { _id: player._lockers })
     ]);
 
-    let [items, traits, quests, bank, statistics] = results;
+    let [items, traits, quests, bank, statistics, lockers] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -132,11 +134,20 @@ export class CharacterDB extends BaseService {
       player._statistics = statistics._id;
     }
 
+    if (!lockers) {
+      const newLockers = new PlayerLockers();
+      newLockers._id = new ObjectId();
+
+      lockers = newLockers;
+      player._lockers = newLockers._id;
+    }
+
     player.items = items;
     player.traits = traits;
     player.quests = quests;
     player.bank = bank;
     player.statistics = statistics;
+    player.lockers = lockers;
   }
 
   public async deletePlayer(player: Player): Promise<void> {
@@ -145,7 +156,8 @@ export class CharacterDB extends BaseService {
       this.db.delete(player.items as PlayerItems),
       this.db.delete(player.traits as PlayerTraits),
       this.db.delete(player.quests as PlayerQuests),
-      this.db.delete(player.statistics as PlayerStatistics)
+      this.db.delete(player.statistics as PlayerStatistics),
+      this.db.delete(player.lockers as PlayerLockers)
     ]);
   }
 
@@ -157,6 +169,7 @@ export class CharacterDB extends BaseService {
     const traitsColl = this.db.getCollection(PlayerTraits);
     const questsColl = this.db.getCollection(PlayerQuests);
     const statsColl = this.db.getCollection(PlayerStatistics);
+    const lockersColl = this.db.getCollection(PlayerLockers);
     const bankColl = this.db.getCollection(AccountBank);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
@@ -164,6 +177,7 @@ export class CharacterDB extends BaseService {
     const traitOp = traitsColl.initializeUnorderedBulkOp();
     const questOp = questsColl.initializeUnorderedBulkOp();
     const statsOp = statsColl.initializeUnorderedBulkOp();
+    const lockersOp = lockersColl.initializeUnorderedBulkOp();
     const bankOp = bankColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
@@ -192,6 +206,11 @@ export class CharacterDB extends BaseService {
         .upsert()
         .replaceOne(this.db.getPersistObject(player.statistics as PlayerStatistics));
 
+      lockersOp
+        .find({ _id: (player.lockers as PlayerLockers)._id })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.lockers as PlayerLockers));
+
       bankOp
         .find({ _id: player._account })
         .upsert()
@@ -204,6 +223,7 @@ export class CharacterDB extends BaseService {
       traitOp.execute(),
       questOp.execute(),
       statsOp.execute(),
+      lockersOp.execute(),
       bankOp.execute()
     ]);
   }
@@ -217,6 +237,7 @@ export class CharacterDB extends BaseService {
       this.db.save(player.traits as PlayerTraits),
       this.db.save(player.quests as PlayerQuests),
       this.db.save(player.statistics as PlayerStatistics),
+      this.db.save(player.lockers as PlayerLockers),
       this.db.save(player.bank as AccountBank)
     ]);
   }

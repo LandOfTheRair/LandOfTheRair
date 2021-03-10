@@ -6,7 +6,7 @@ import { IWebsocketCommandHandler } from '../../interfaces/internal';
 import { BankHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
-  InventoryHelper, ItemHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
+  InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
@@ -80,6 +80,7 @@ export class Game {
     public spellManager: SpellManager,
     public dailyHelper: DailyHelper,
     public bankHelper: BankHelper,
+    public lockerHelper: LockerHelper,
     public statisticsHelper: StatisticsHelper,
 
     public messageHelper: MessageHelper,
@@ -114,7 +115,7 @@ export class Game {
       'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
-      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper',
+      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',
       'statisticsHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',

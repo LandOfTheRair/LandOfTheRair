@@ -145,9 +145,7 @@ export class MovementHelper extends BaseService {
     switch (obj.type) {
     case 'Fall':     return this.handleTeleport(player, obj, true);
     case 'Teleport': return this.handleTeleport(player, obj);
-
-      // TODO: lockers
-      // case 'Locker':   return this.handleLocker(player, obj);
+    case 'Locker':   return this.handleLocker(player, obj.name, obj.properties?.lockerId);
     }
   }
 
@@ -216,5 +214,9 @@ export class MovementHelper extends BaseService {
     } else {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'Your surroundings shift.' });
     }
+  }
+
+  private handleLocker(player: Player, lockerName: string, lockerId: string) {
+    this.game.lockerHelper.openLocker(player, lockerName, lockerId);
   }
 }

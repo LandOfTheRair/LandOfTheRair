@@ -5,7 +5,7 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenTrainerWindow,
+import { HideBankWindow, HideLockerWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenLockerWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, ViewCharacterEquipment } from './actions';
 
@@ -44,6 +44,10 @@ const defaultGame: () => IGame = () => ({
       npcs: {},
       ground: {},
       openDoors: {}
+    },
+    lockerInfo: {
+      regionId: '',
+      lockerName: ''
     },
     inspectingCharacter: null
   });
@@ -133,6 +137,11 @@ export class GameState {
   @Selector()
   static currentBankWindow(state: IGame) {
     return state.bankInfo;
+  }
+
+  @Selector()
+  static currentLockerWindow(state: IGame) {
+    return state.lockerInfo;
   }
 
   @Selector()
@@ -337,5 +346,22 @@ export class GameState {
     ctx.patchState({ inspectingCharacter: character });
 
     this.store.dispatch(new ShowWindow('equipmentViewTarget'));
+  }
+
+  @Action(OpenLockerWindow)
+  openLockerWindow(ctx: StateContext<IGame>, { regionId, lockerName }: OpenLockerWindow) {
+    ctx.patchState({
+      lockerInfo: {
+        regionId,
+        lockerName
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('locker'));
+  }
+
+  @Action(HideLockerWindow)
+  hideLockerWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ lockerInfo: null });
   }
 }

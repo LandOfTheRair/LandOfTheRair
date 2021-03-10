@@ -147,4 +147,7 @@ export enum GameAction {
   NPCActionHideVendor = '[NPC] Hide Vendor',
   NPCActionShowBank = '[NPC] Show Bank',
   NPCActionHideBank = '[NPC] Hide Bank',
+
+  LockerActionShow = '[Locker] Show Locker',
+  LockerActionHide = '[Locker] Hide Locker',
 }

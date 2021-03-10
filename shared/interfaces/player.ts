@@ -2,6 +2,7 @@ import { IAccountBank } from './accountbank';
 import { DamageClass, Skill, SkillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterItems } from './characteritems';
+import { ICharacterLockers } from './characterlockers';
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
@@ -20,6 +21,7 @@ export interface IPlayer extends ICharacter {
   traits: ICharacterTraits;
   quests: ICharacterQuests;
   statistics: ICharacterStatistics;
+  lockers: ICharacterLockers;
 
   z: number;
 

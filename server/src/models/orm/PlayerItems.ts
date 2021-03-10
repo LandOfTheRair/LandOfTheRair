@@ -17,6 +17,4 @@ export class PlayerItems extends BaseEntity implements ICharacterItems {
 
   @Property() buyback: ISimpleItem[] = [];
 
-  // TODO: lockers
-
 }

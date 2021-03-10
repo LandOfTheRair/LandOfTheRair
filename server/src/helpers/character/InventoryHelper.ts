@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { Currency, ICharacter, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import { Currency, ICharacter, IItemContainer, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -85,6 +85,36 @@ export class InventoryHelper extends BaseService {
 
   public removeItemsFromBeltByUUID(player: ICharacter, uuids: string[]): boolean {
     player.items.belt.items = player.items.belt.items.filter(x => !uuids.includes(x.uuid));
+
+    return true;
+  }
+
+  // locker functions
+  public lockerSpaceLeft(player: ICharacter, locker: IItemContainer): number {
+    return 25 - locker.items.length;
+  }
+
+  public canAddItemToLocker(player: ICharacter, item: ISimpleItem, locker: IItemContainer): boolean {
+    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse) return false;
+
+    if (locker.items.length >= 25) return false;
+
+    return true;
+  }
+
+  public addItemToLocker(player: ICharacter, item: ISimpleItem, locker: IItemContainer): boolean {
+    locker.items.push(item);
+    locker.items = locker.items.filter(Boolean);
+
+    this.game.itemHelper.tryToBindItem(player, item);
+
+    return true;
+  }
+
+  public removeItemFromLocker(player: ICharacter, slot: number, locker: IItemContainer): boolean {
+    locker.items.splice(slot, 1);
+    locker.items = locker.items.filter(Boolean);
 
     return true;
   }

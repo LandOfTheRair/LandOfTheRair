@@ -27,6 +27,10 @@ export class UIService {
     this.anySelected = 0;
   }
 
+  public isSelected(container: string, slot: number|string): boolean {
+    return !!this.selected[container.toLowerCase()]?.[slot];
+  }
+
   // toggle selection of a particular item
   public select(container: string, slot: number|string, data: any) {
     if (this.selected[container][slot]) {
@@ -76,7 +80,7 @@ export class UIService {
     return true;
   }
 
-  public doDropAction(dragData, dropScope, dropUUID?: string) {
+  public doDropAction(dragData, dropScope: string, dropUUID?: string) {
     // also has { containerUUID, isStackableMaterial }
     const { context, contextSlot, item, realItem } = dragData;
 
@@ -91,8 +95,8 @@ export class UIService {
     if (!this.canMoveBetweenContainers(contextStr, choiceStr)) return;
 
     let ctxArgs = '';
-    const destArgs = dropUUID || '';
 
+    // context arg parsing
     if (context === 'Ground') {
       ctxArgs = `${realItem.itemClass}:${item.uuid}`;
 
@@ -139,6 +143,16 @@ export class UIService {
       }
 
       return;
+
+    } else if (context.includes('Wardrobe')) {
+      ctxArgs = `${context}:${contextSlot}`;
+    }
+
+    let destArgs = dropUUID || '';
+
+    // dest arg parsing
+    if (dropScope.includes('Wardrobe')) {
+      destArgs = dropScope;
     }
 
     if (dropScope === 'use') {
