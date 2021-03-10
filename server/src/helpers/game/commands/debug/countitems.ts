@@ -8,7 +8,7 @@ export class DebugCountItems extends MacroCommand {
   canBeFast = false;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    let message = `[Debug] There are currently ${this.game.groundManager.getItemsFromGround.length} items on the ground in this world.`
+    const message = `[Debug] There are currently ${this.game.groundManager.getItemsFromGround.length} items on the ground in this world.`;
     this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
   }
 }
