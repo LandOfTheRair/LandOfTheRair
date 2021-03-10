@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, MessageType } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
@@ -16,16 +16,20 @@ export class Break extends MacroCommand {
       return;
     }
 
-    // TODO: retrieve item to be broken
-    // TODO: check if item is owned by another player
     // TODO: check if item has a destroy effect?
 
     switch (breakItem) {
     case 'left':
+      const litem = player.items.equipment[ItemSlot.LeftHand];
+      if (!litem) return this.sendMessage(player, 'You are not even holding an item there!');
+      if (!this.game.itemHelper.isOwnedBy(player, litem)) return this.sendMessage(player, 'That item is not yours to break!');
       this.game.characterHelper.setLeftHand(player, undefined);
       message = 'You break the item in your left hand!';
       break;
     case 'right':
+      const ritem = player.items.equipment[ItemSlot.RightHand];
+      if (!ritem) return this.sendMessage(player, 'You are not even holding an item there!');
+      if (!this.game.itemHelper.isOwnedBy(player, ritem)) return this.sendMessage(player, 'That item is not yours to break!');
       this.game.characterHelper.setRightHand(player, undefined);
       message = 'You break the item in your right hand!';
       break;
