@@ -97,6 +97,14 @@ export class PlayerHelper extends BaseService {
     if (learnTrait[player.baseClass]) {
       this.game.traitHelper.learnTrait(player, learnTrait[player.baseClass], recalculateAfterTrait);
     }
+
+    if (baseClass === BaseClass.Healer) {
+      player.skills[Skill.Restoration] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+    }
+
+    if (baseClass === BaseClass.Mage) {
+      player.skills[Skill.Conjuration] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+    }
   }
 
   public reformatPlayerBeforeSave(player: Player): void {
