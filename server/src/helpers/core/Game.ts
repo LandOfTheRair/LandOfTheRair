@@ -6,7 +6,8 @@ import { IWebsocketCommandHandler } from '../../interfaces/internal';
 import { BankHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
-  InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper, QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
+  InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
+  QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
