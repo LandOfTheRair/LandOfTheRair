@@ -132,7 +132,7 @@ export class InventoryHelper extends BaseService {
 
   public addMaterial(player: IPlayer, material: string, number = 1): void {
     if (isNaN(number)) {
-      this.game.logger.error('MaterialStorage', new Error(`Attempting to add NaN to material storage for ${player.name}/${material}!`));
+      this.game.logger.error('MaterialStorage', new Error(`Adding NaN to materials: ${player.name} (${player.username})/${material}!`));
       return;
     }
 
