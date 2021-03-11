@@ -57,3 +57,16 @@ jobs:
         server: 'https://captain.server.rair.land'
         password: '${{ secrets.CAPROVER_PASSWORD }}'
         appname: 'game'
+
+    - name: Wait 30 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
+    - name: Reboot Done
+      uses: fjogeleit/http-request-action@master
+      with:
+        url: 'https://server.rair.land/reboot/done'
+        method: 'POST'
+        data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
+        preventFailureOnNoResponse: 'true'

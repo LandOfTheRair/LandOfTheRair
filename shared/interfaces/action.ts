@@ -37,6 +37,7 @@ export enum GameServerEvent {
 
   SetMOTD = 'GM:Emit:SetMOTD',
   BlockAndKickAll = 'GM:Emit:BlockAndKickAll',
+  Announce = 'GM:Emit:Announce',
 
   CharacterCreateInformation = 'Creator:Emit:CharacterSelect',
 

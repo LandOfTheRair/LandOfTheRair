@@ -1,12 +1,12 @@
 
 import { get } from 'lodash';
 
-import { GameAction, GameServerResponse } from '../interfaces';
+import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 
 
 export class RebootRoute {
 
-  static setup(fastify: any, { broadcast }) {
+  static setup(fastify: any, { sendToGame, broadcast }) {
     fastify.post('/debug/reboot', async (req, res) => {
 
       if (process.env.NODE_ENV === 'production') {
@@ -16,11 +16,9 @@ export class RebootRoute {
         if (secret !== testSecret) return;
       }
 
-      broadcast({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: 'The game just received an update and will be rebooting shortly. You will be kicked soon to ensure your data gets saved.',
-        from: '★System'
+      sendToGame({
+        type: GameServerEvent.Announce,
+        message: 'The game just received an update and will be rebooting shortly. All players will be kicked soon.'
       });
 
       broadcast({
