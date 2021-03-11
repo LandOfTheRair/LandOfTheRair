@@ -11,7 +11,17 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Sack
+  <span class="window-has-more-buttons">
+    <span>
+      Sack
+    </span>
+
+    <span class="window-extra-buttons">
+      <button mat-icon-button (click)="depositAll()">
+        <app-icon name="expense" size="xsmall"></app-icon>
+      </button>
+    </span>
+  </span>
 </ng-template>
 
 <ng-template #bodyTemplate>

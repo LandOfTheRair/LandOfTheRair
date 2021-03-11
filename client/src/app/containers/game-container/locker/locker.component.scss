@@ -1,0 +1,27 @@
+
+.material-storage {
+  overflow-y: auto;
+  height: 350px;
+
+  .header {
+    color: #fff;
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 10px;
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+  }
+
+  .item-slot {
+    margin: 2px;
+    width: 64px;
+  }
+}
+
+.locker {
+  padding-left: 10px;
+}

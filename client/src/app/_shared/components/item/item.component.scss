@@ -25,6 +25,10 @@ img {
   position: absolute;
   top: 0;
   pointer-events: none;
+
+  &.transparent {
+    opacity: 0.5;
+  }
 }
 
 .count, .value, .ounces {

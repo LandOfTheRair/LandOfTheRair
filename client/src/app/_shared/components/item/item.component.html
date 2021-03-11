@@ -16,6 +16,7 @@
       [style.object-position]="spriteLocation"
       [class.hidden]="!item"
       [class.animate]="shouldAnimate"
+      [class.transparent]="transparent"
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
   <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.mods.encrustItem" />
   <div class="item-background" *ngIf="item && showBackground"></div>
@@ -28,5 +29,5 @@
   <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces | number }} <small>oz</small></span>
   <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
   <span class="value" *ngIf="item && showOunces && realSuccorInfo">{{ realSuccorInfo.map }}</span>
-  <span class="ounces" *ngIf="item && showDesc && realItem.trapEffect && realItem.itemClass === 'Trap'">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
+  <span class="ounces" *ngIf="item && showDesc && realItem?.trapEffect && realItem?.itemClass === 'Trap'">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
 </div>

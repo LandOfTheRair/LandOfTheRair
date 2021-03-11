@@ -10,5 +10,6 @@ export class AccountBank extends BaseEntity implements IAccountBank {
   // relation props
   @Property(PROP_SERVER_ONLY()) _account: ObjectId;
 
+  // other props
   @Property() deposits: Partial<Record<Currency, number>> = {};
 }

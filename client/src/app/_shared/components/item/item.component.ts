@@ -16,7 +16,7 @@ import { UIService } from '../../../services/ui.service';
 export type MenuContext = 'Sack' | 'Belt' | 'Ground' | 'DemiMagicPouch'
                         | 'GroundGroup' | 'Equipment' | 'Left'
                         | 'Right' | 'Coin' | 'Merchant' | 'Potion'
-                        | 'Obtainagain' | 'Wardrobe' | 'WardrobeMaterial' | 'Tradeskill';
+                        | 'Obtainagain' | 'Wardrobe' | 'Kollection' | 'Tradeskill';
 
 @Component({
   selector: 'app-item',
@@ -64,6 +64,8 @@ export class ItemComponent implements OnDestroy {
   @Input() public containerUUID: string;
   @Input() public overrideValue: number|string;
   @Input() public viewingPlayer: IPlayer;
+  @Input() public transparent = false;
+  @Input() public withdrawInStacks = false;
   @Input() public size: 'xsmall' | 'small' | 'normal' = 'normal';
 
   public scopes: string[] = [];
@@ -77,7 +79,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   get isEquippable(): boolean {
-    if (!this.item) return false;
+    if (!this.item || !this.realItem) return false;
     return EquippableItemClasses.includes(this.realItem.itemClass as WeaponClass|ArmorClass);
   }
 
@@ -94,6 +96,8 @@ export class ItemComponent implements OnDestroy {
   }
 
   get imgUrl() {
+    if (!this.item || !this.realItem) return this.assetService.itemsUrl;
+
     if (this.item && this.realItem.itemClass === ItemClass.Corpse) {
       return this.assetService.creaturesUrl;
     }
@@ -102,7 +106,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   get cosmeticName(): string {
-    if (!this.item) return '';
+    if (!this.item || !this.realItem) return '';
     if (this.item.mods.searchItems) return 'UnsearchedCorpse';
 
     const cosmetic = this.item.mods?.cosmetic || this.realItem.cosmetic;
@@ -145,9 +149,7 @@ export class ItemComponent implements OnDestroy {
 
   get isStackableMaterial(): boolean {
     if (!this.item) return false;
-    return false;
-    // if (!isNumber(ValidMaterialItems[this.item.name])) return false;
-    // return MaterialSlotInfo[ValidMaterialItems[this.item.name]].withdrawInOunces;
+    return this.withdrawInStacks;
   }
 
   constructor(
@@ -213,12 +215,17 @@ export class ItemComponent implements OnDestroy {
       if (itemType) scopes.push(itemType.toLowerCase());
     }
 
+    // materials can additionally go to left, right, sack
+    if (this.context === 'Kollection') scopes.push('left', 'right', 'sack');
+
     // you can sell anything on your person if it isn't a coin or a corpse
     if (this.realItem.itemClass !== ItemClass.Coin
     && this.realItem.itemClass !== ItemClass.Corpse
     && this.context !== 'Obtainagain'
     && this.context !== 'Equipment'
     && this.context !== 'GroundGroup'
+    && this.context !== 'Wardrobe'
+    && this.context !== 'Kollection'
     && this.context !== 'Merchant'
     && this.context !== 'Ground') scopes.push('merchant');
 
@@ -226,17 +233,7 @@ export class ItemComponent implements OnDestroy {
     // who the hell would put a corpse in their locker anyway?
     if (this.realItem.itemClass !== ItemClass.Coin
     && this.realItem.itemClass !== ItemClass.Corpse) {
-      scopes.push('wardrobe');
-
-      /*
-      if (this.context !== 'GroundGroup') {
-        POSSIBLE_TRADESKILL_SCOPES.forEach(skill => {
-          if (this.colyseusGame[`show${skill}`].uuid) {
-            scopes.push(skill.toLowerCase());
-          }
-        });
-      }
-      */
+      scopes.push('wardrobe', 'kollection');
     }
 
     // if we have a bottle and it's on our person, we can equip it
@@ -255,7 +252,11 @@ export class ItemComponent implements OnDestroy {
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
-    && this.context !== 'GroundGroup' && this.context !== 'Merchant' && this.context !== 'Obtainagain') scopes.push('use');
+    && this.context !== 'GroundGroup'
+    && this.context !== 'Merchant'
+    && this.context !== 'Obtainagain'
+    && this.context !== 'Kollection'
+    && this.context !== 'Wardrobe') scopes.push('use');
 
     this.scopes = scopes;
   }
@@ -353,42 +354,6 @@ export class ItemComponent implements OnDestroy {
 
       }
     });
-    /*
-
-    if (this.colyseusGame.showLocker.length) {
-      if (this.context === 'Wardrobe') {
-        if (this.isEquippable) {
-
-          const slot = ( this.colyseusGame.character as any).getItemSlotToEquipIn(this.item);
-          if (slot === false) {
-            this.doColyseusMoveAction('S');
-            return;
-          }
-
-          this.doColyseusMoveAction('E');
-          return;
-        }
-
-        if (this.item.isBeltable) {
-          this.doColyseusMoveAction('B');
-          return;
-        }
-
-        if (this.item.isSackable) {
-          this.doColyseusMoveAction('S');
-          return;
-        }
-
-      } else if (this.context === 'WardrobeMaterial') {
-        this.doColyseusMoveAction('S');
-        return;
-
-      } else {
-        this.doColyseusMoveAction('W');
-        return;
-      }
-    }
-    */
 
   }
 

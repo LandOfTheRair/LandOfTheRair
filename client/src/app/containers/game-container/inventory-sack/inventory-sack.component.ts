@@ -28,4 +28,8 @@ export class InventorySackComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
   }
 
+  depositAll() {
+    this.gameService.sendCommandString('depositall');
+  }
+
 }

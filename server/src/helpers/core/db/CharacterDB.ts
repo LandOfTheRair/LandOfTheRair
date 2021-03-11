@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { IPlayer } from '../../../interfaces';
-import { Account, AccountBank, Player, PlayerQuests } from '../../../models';
+import { Account, AccountBank, AccountLockers, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerLockers } from '../../../models/orm/PlayerLockers';
@@ -88,12 +88,13 @@ export class CharacterDB extends BaseService {
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
       this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
-      this.db.findSingle<AccountBank>(AccountBank, { _id: account._id }),
+      this.db.findSingle<AccountBank>(AccountBank, { _account: account._id }),
+      this.db.findSingle<AccountLockers>(AccountLockers, { _account: account._id }),
       this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics }),
       this.db.findSingle<PlayerLockers>(PlayerLockers, { _id: player._lockers })
     ]);
 
-    let [items, traits, quests, bank, statistics, lockers] = results;
+    let [items, traits, quests, bank, acctLockers, statistics, lockers] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -122,8 +123,17 @@ export class CharacterDB extends BaseService {
     if (!bank) {
       const newBank = new AccountBank();
       newBank._id = new ObjectId();
+      newBank._account = account._id;
 
       bank = newBank;
+    }
+
+    if (!acctLockers) {
+      const newAcctLockers = new AccountLockers();
+      newAcctLockers._id = new ObjectId();
+      newAcctLockers._account = account._id;
+
+      acctLockers = newAcctLockers;
     }
 
     if (!statistics) {
@@ -146,6 +156,7 @@ export class CharacterDB extends BaseService {
     player.traits = traits;
     player.quests = quests;
     player.bank = bank;
+    player.accountLockers = acctLockers;
     player.statistics = statistics;
     player.lockers = lockers;
   }
@@ -171,6 +182,7 @@ export class CharacterDB extends BaseService {
     const statsColl = this.db.getCollection(PlayerStatistics);
     const lockersColl = this.db.getCollection(PlayerLockers);
     const bankColl = this.db.getCollection(AccountBank);
+    const acctLockerColl = this.db.getCollection(AccountLockers);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
@@ -179,6 +191,7 @@ export class CharacterDB extends BaseService {
     const statsOp = statsColl.initializeUnorderedBulkOp();
     const lockersOp = lockersColl.initializeUnorderedBulkOp();
     const bankOp = bankColl.initializeUnorderedBulkOp();
+    const acctLockerOp = acctLockerColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
       playerOp
@@ -212,9 +225,14 @@ export class CharacterDB extends BaseService {
         .replaceOne(this.db.getPersistObject(player.lockers as PlayerLockers));
 
       bankOp
-        .find({ _id: player._account })
+        .find({ _account: player._account })
         .upsert()
         .replaceOne(this.db.getPersistObject(player.bank as AccountBank));
+
+      acctLockerOp
+        .find({ _account: player._account })
+        .upsert()
+        .replaceOne(this.db.getPersistObject(player.accountLockers as AccountLockers));
     });
 
     return Promise.all([
@@ -224,7 +242,8 @@ export class CharacterDB extends BaseService {
       questOp.execute(),
       statsOp.execute(),
       lockersOp.execute(),
-      bankOp.execute()
+      bankOp.execute(),
+      acctLockerOp.execute()
     ]);
   }
 
@@ -238,7 +257,8 @@ export class CharacterDB extends BaseService {
       this.db.save(player.quests as PlayerQuests),
       this.db.save(player.statistics as PlayerStatistics),
       this.db.save(player.lockers as PlayerLockers),
-      this.db.save(player.bank as AccountBank)
+      this.db.save(player.bank as AccountBank),
+      this.db.save(player.accountLockers as AccountLockers)
     ]);
   }
 

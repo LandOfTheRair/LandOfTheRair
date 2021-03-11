@@ -4,7 +4,7 @@ import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
   IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
-  SkillBlock, StatBlock, ICharacterLockers } from '../../interfaces';
+  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
@@ -26,6 +26,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) bank: IAccountBank;
   @Property(PROP_UNSAVED_SHARED()) statistics: ICharacterStatistics;
   @Property(PROP_UNSAVED_SHARED()) lockers: ICharacterLockers;
+  @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers & IMaterialStorage;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;

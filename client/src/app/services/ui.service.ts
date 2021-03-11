@@ -81,8 +81,8 @@ export class UIService {
   }
 
   public doDropAction(dragData, dropScope: string, dropUUID?: string) {
-    // also has { containerUUID, isStackableMaterial }
-    const { context, contextSlot, item, realItem } = dragData;
+    // also has { containerUUID }
+    const { context, contextSlot, item, realItem, isStackableMaterial } = dragData;
 
     if (!context) return;
 
@@ -146,6 +146,24 @@ export class UIService {
 
     } else if (context.includes('Wardrobe')) {
       ctxArgs = `${context}:${contextSlot}`;
+
+    } else if (context.includes('Kollection')) {
+      ctxArgs = `${context}:${contextSlot}`;
+
+      if (isStackableMaterial) {
+        const amount = this.modalService.amount(
+          'Take Materials',
+          'How many of this material do you want to take from your stash?',
+          1000
+        );
+
+        amount.subscribe((amt) => {
+          this.gameService.sendCommandString(`${cmd} ${ctxArgs} ${amt}`);
+        });
+
+        return;
+      }
+
     }
 
     let destArgs = dropUUID || '';

@@ -2,6 +2,8 @@ import { Injectable } from 'injection-js';
 import { Currency, ICharacter, IItemContainer, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import * as materialData from '../../../content/_output/materialstorage.json';
+
 @Injectable()
 export class InventoryHelper extends BaseService {
 
@@ -94,7 +96,7 @@ export class InventoryHelper extends BaseService {
     return 25 - locker.items.length;
   }
 
-  public canAddItemToLocker(player: ICharacter, item: ISimpleItem, locker: IItemContainer): boolean {
+  public canAddItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
     if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse) return false;
 
@@ -103,7 +105,7 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
-  public addItemToLocker(player: ICharacter, item: ISimpleItem, locker: IItemContainer): boolean {
+  public addItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
     locker.items.push(item);
     locker.items = locker.items.filter(Boolean);
 
@@ -112,11 +114,34 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemFromLocker(player: ICharacter, slot: number, locker: IItemContainer): boolean {
+  public removeItemFromLocker(player: IPlayer, slot: number, locker: IItemContainer): boolean {
     locker.items.splice(slot, 1);
     locker.items = locker.items.filter(Boolean);
 
     return true;
+  }
+
+  // material functions
+  public materialSpaceLeft(player: IPlayer, material: string): number {
+    return 1000 - (player.accountLockers.materials[material] ?? 0);
+  }
+
+  public canAddMaterial(player: IPlayer, material: string): boolean {
+    return !!materialData.slots[material];
+  }
+
+  public addMaterial(player: IPlayer, material: string, number = 1): void {
+    if (isNaN(number)) {
+      this.game.logger.error('MaterialStorage', new Error(`Attempting to add NaN to material storage for ${player.name}/${material}!`));
+      return;
+    }
+
+    player.accountLockers.materials[material] = player.accountLockers.materials[material] ?? 0;
+    player.accountLockers.materials[material] += number;
+  }
+
+  public removeMaterial(player: IPlayer, material: string, number = 1): void {
+    this.addMaterial(player, material, -number);
   }
 
   // sell items / deal with buyback

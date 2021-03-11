@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 
@@ -10,6 +10,7 @@ import { GameState, HideBankWindow, HideWindow } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 
 import { UIService } from '../../../services/ui.service';
+import * as materialLayout from '../../../../assets/content/_output/materialstorage.json';
 
 @AutoUnsubscribe()
 @Component({
@@ -34,6 +35,10 @@ export class LockerComponent implements OnInit, OnDestroy {
   lockerInfoSub: Subscription;
   posSub: Subscription;
   gameStatusSub: Subscription;
+
+  public get materialData() {
+    return materialLayout;
+  }
 
   constructor(
     private store: Store,
@@ -65,14 +70,26 @@ export class LockerComponent implements OnInit, OnDestroy {
       if (player && this.lockerInfo.lockerName && this.lockerRegionNames.length === 0) {
         const lockers = [];
 
+        Object.keys(player.accountLockers?.lockers ?? {}).forEach(regionId => {
+          Object.keys(player.accountLockers?.lockers?.[regionId] || {}).forEach(lockerId => {
+            lockers.push({ regionId, lockerId });
+          });
+        });
+
         Object.keys(player.lockers?.lockers ?? {}).forEach(regionId => {
           Object.keys(player.lockers?.lockers?.[regionId] || {}).forEach(lockerId => {
             lockers.push({ regionId, lockerId });
           });
         });
 
-        this.lockerRegionNames = lockers.filter(x => x.regionId === this.lockerInfo.regionId);
-        this.activeLockerSlot = lockers.findIndex(x => x.lockerId === lockerInfo.lockerName);
+        this.lockerRegionNames = sortBy(
+          lockers.filter(x => x.regionId === this.lockerInfo.regionId || x.regionId === 'shared'),
+          'lockerName'
+        );
+
+        this.lockerRegionNames.unshift(({ regionId: 'shared', lockerId: 'Materials' }));
+
+        this.activeLockerSlot = this.lockerRegionNames.findIndex(x => x.lockerId === lockerInfo.lockerName);
       }
     });
 

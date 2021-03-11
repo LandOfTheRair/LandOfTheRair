@@ -7,7 +7,7 @@
 
             defaultX="450"
             defaultY="100"
-            defaultWidth="350"
+            defaultWidth="370"
             defaultHeight="440"
 ></app-window>
 
@@ -21,13 +21,50 @@
 
       <mat-tab *ngFor="let regionName of lockerRegionNames" [label]="regionName.lockerId">
 
-        <app-inventory dropContext="Wardrobe"
-                       [context]="'Wardrobe:' + regionName.regionId + ':' + regionName.lockerId"
-                       [container]="player.lockers.lockers[regionName.regionId][regionName.lockerId]"
-                       [size]="25"></app-inventory>
+        <ng-container *ngIf="regionName.lockerId === 'Materials'">
+          <ng-container *ngTemplateOutlet="materialStorage; context: { player: player }"></ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="regionName.lockerId !== 'Materials'">
+          <ng-container *ngTemplateOutlet="lockerStorage; context: { player: player, region: regionName.regionId, locker: regionName.lockerId }"></ng-container>
+        </ng-container>
 
       </mat-tab>
 
     </mat-tab-group>
+  </div>
+</ng-template>
+
+<ng-template #materialStorage let-player="player">
+  <div class="material-storage" droppable
+                                dropScope="kollection"
+                                (onDrop)="uiService.buildAndDoDropAction($event, 'Kollection')">
+    <div *ngFor="let group of materialData.layouts">
+      <div class="header">{{ group.category }}</div>
+
+      <div class="items">
+        <div class="item-slot" *ngFor="let itemSlot of group.items" [class.item-background]="itemSlot">
+          <app-item *ngIf="itemSlot && materialData.slots[itemSlot]"
+                    [showDesc]="false"
+                    showCount="true"
+                    context="Kollection"
+                    [contextSlot]="itemSlot"
+                    [viewingPlayer]="player"
+                    [count]="(player.accountLockers.materials || {})[itemSlot] || 0"
+                    [transparent]="!(player.accountLockers.materials || {})[itemSlot]"
+                    [withdrawInStacks]="materialData.slots[itemSlot].withdrawInOunces"
+                    [item]="{ name: materialData.slots[itemSlot].items[0], mods: { } }"></app-item>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #lockerStorage let-player="player" let-region="region" let-locker="locker">
+  <div class="locker">
+    <app-inventory dropContext="Wardrobe"
+                   [context]="'Wardrobe:' + region + ':' + locker"
+                   [container]="player.lockers.lockers[region][locker]"
+                   [size]="25"></app-inventory>
   </div>
 </ng-template>

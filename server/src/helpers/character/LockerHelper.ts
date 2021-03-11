@@ -3,6 +3,8 @@ import { Injectable } from 'injection-js';
 import { GameAction, IItemContainer, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import * as materialData from '../../../content/_output/materialstorage.json';
+
 @Injectable()
 export class LockerHelper extends BaseService {
 
@@ -17,6 +19,14 @@ export class LockerHelper extends BaseService {
       lockerName,
       regionId
     });
+  }
+
+  public getMaterialRef(itemName: string): string | undefined {
+    return Object.keys(materialData.slots).find(x => materialData.slots[x].items.includes(itemName));
+  }
+
+  public getMaterialData(material: string) {
+    return materialData.slots[material];
   }
 
   public hasLockerFromString(player: IPlayer, lockerString: string): boolean {
