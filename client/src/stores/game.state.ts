@@ -46,7 +46,6 @@ const defaultGame: () => IGame = () => ({
       openDoors: {}
     },
     lockerInfo: {
-      regionId: '',
       lockerName: '',
       showLockers: [],
       playerLockers: {}
@@ -351,10 +350,9 @@ export class GameState {
   }
 
   @Action(OpenLockerWindow)
-  openLockerWindow(ctx: StateContext<IGame>, { regionId, lockerName, showLockers, playerLockers }: OpenLockerWindow) {
+  openLockerWindow(ctx: StateContext<IGame>, { lockerName, showLockers, playerLockers }: OpenLockerWindow) {
     ctx.patchState({
       lockerInfo: {
-        regionId,
         lockerName,
         showLockers,
         playerLockers

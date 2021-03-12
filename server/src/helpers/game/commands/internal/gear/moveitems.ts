@@ -202,8 +202,8 @@ export class MoveItems extends MacroCommand {
         if (!destSlot) return false;
         if (!this.game.lockerHelper.hasLockerFromString(player, destSlot)) return false;
 
-        const [w, region, name] = destSlot.split(':');
-        const canAdd = this.game.inventoryHelper.canAddItemToLocker(player, srcItem, player.lockers.lockers[region][name]);
+        const [w, name] = destSlot.split(':');
+        const canAdd = this.game.inventoryHelper.canAddItemToLocker(player, srcItem, player.lockers.lockers[name]);
         if (!canAdd) {
           this.sendMessage(player, 'That item cannot fit in your wardrobe!');
           return false;
@@ -1263,7 +1263,7 @@ export class MoveItems extends MacroCommand {
     if (!validDestinations.W.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
 
     const origLocker = this.game.lockerHelper.getLockerFromString(player, origSlot);
-    const [w, region, locker, origLockerSlot] = origSlot.split(':');
+    const [w, locker, origLockerSlot] = origSlot.split(':');
     const srcItem = origLocker.items[+origLockerSlot];
 
     switch (dest) {

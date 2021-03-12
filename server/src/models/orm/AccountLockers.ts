@@ -12,6 +12,6 @@ export class AccountLockers extends BaseEntity implements ICharacterLockers, IMa
 
   // other props
   @Property() materials: Record<string, number>;
-  @Property() lockers: Record<string, Record<string, IItemContainer>>;
+  @Property() lockers: Record<string, IItemContainer>;
 
 }

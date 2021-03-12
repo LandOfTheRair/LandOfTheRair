@@ -128,9 +128,8 @@ export class HideBankWindow {
 export class OpenLockerWindow {
   static type = GameAction.LockerActionShow;
   constructor(
-    public regionId: string,
     public lockerName: string,
-    public showLockers: Array<{ regionId: string; lockerId: string }>,
+    public showLockers: string[],
     public playerLockers: Record<string, Record<string, IItemContainer>>
   ) {}
 }

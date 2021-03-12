@@ -1,7 +1,7 @@
 import { IItemContainer } from './character';
 
 export interface ICharacterLockers {
-  lockers: Record<string, Record<string, IItemContainer>>;    // region -> name -> items
+  lockers: Record<string, IItemContainer>;    // name -> items
 }
 
 export interface IMaterialStorage {

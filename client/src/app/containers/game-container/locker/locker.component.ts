@@ -28,7 +28,7 @@ export class LockerComponent implements OnInit, OnDestroy {
   private lastPos = { x: 0, y: 0 };
   public player: IPlayer;
   public lockerInfo: any = {};
-  public lockerRegionNames = [];
+  public lockerNames = [];
   public activeLockerSlot = -1;
   public amount = 0;
   public allLockers = {};
@@ -54,10 +54,10 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
 
-      if (this.lockerInfo.regionId) {
+      if (this.lockerInfo.lockerId) {
         this.store.dispatch(new HideLockerWindow());
         this.store.dispatch(new HideWindow('locker'));
-        this.lockerRegionNames = [];
+        this.lockerNames = [];
       }
     });
 
@@ -71,16 +71,16 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.allLockers = {};
       Object.assign(this.allLockers, this.lockerInfo.playerLockers || {}, player?.lockers.lockers || {});
 
-      if (player && this.lockerInfo.lockerName && this.lockerRegionNames.length === 0) {
-        this.lockerRegionNames = this.lockerInfo.showLockers;
-        this.activeLockerSlot = this.lockerRegionNames.findIndex(x => x.lockerId === this.lockerInfo.lockerName);
+      if (player && this.lockerInfo.lockerName && this.lockerNames.length === 0) {
+        this.lockerNames = this.lockerInfo.showLockers;
+        this.activeLockerSlot = this.lockerNames.findIndex(x => x === this.lockerInfo.lockerName);
       }
     });
 
     this.gameStatusSub = this.inGame$.subscribe(() => {
       this.store.dispatch(new HideLockerWindow());
       this.store.dispatch(new HideWindow('locker'));
-      this.lockerRegionNames = [];
+      this.lockerNames = [];
     });
   }
 

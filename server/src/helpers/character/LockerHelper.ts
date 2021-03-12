@@ -13,37 +13,27 @@ export class LockerHelper extends BaseService {
 
   public init() {}
 
-  public openLocker(player: IPlayer, lockerName: string, regionId: string) {
+  public openLocker(player: IPlayer, lockerName: string) {
 
-    this.ensureLockerExists(player, lockerName, regionId);
+    this.ensureLockerExists(player, lockerName);
 
     const lockers: any[] = [];
 
-    Object.keys(player.accountLockers?.lockers ?? {}).forEach(lockerRegion => {
-      Object.keys(player.accountLockers?.lockers?.[regionId] || {}).forEach(lockerId => {
-        lockers.push({ regionId: lockerRegion, lockerId });
-      });
+    Object.keys(player.accountLockers?.lockers ?? {}).forEach(checkLockerId => {
+      lockers.push(checkLockerId);
     });
 
-    Object.keys(player.lockers?.lockers ?? {}).forEach(lockerRegion => {
-      Object.keys(player.lockers?.lockers?.[lockerRegion] || {}).forEach(lockerId => {
-        lockers.push({ regionId: lockerRegion, lockerId });
-      });
+    Object.keys(player.lockers?.lockers ?? {}).forEach(checkLockerId => {
+      lockers.push(checkLockerId);
     });
 
-    const showLockers = sortBy(
-      lockers.filter(x => x.regionId === regionId || x.regionId === 'shared'),
-      'lockerId'
-    );
+    const showLockers = lockers.slice().sort();
 
-    showLockers.unshift(({ regionId: 'shared', lockerId: 'Materials' }));
-
-    this.game.transmissionHelper.patchPlayer(player as Player);
+    showLockers.unshift('Materials');
 
     this.game.wsCmdHandler.sendToSocket(player.username, {
       action: GameAction.LockerActionShow,
       lockerName,
-      regionId,
       showLockers,
       playerLockers: player.lockers.lockers
     });
@@ -62,14 +52,13 @@ export class LockerHelper extends BaseService {
   }
 
   public getLockerFromString(player: IPlayer, lockerString: string): IItemContainer {
-    const [w, region, locker] = lockerString.split(':');
-    return player.lockers.lockers[region]?.[locker];
+    const [w, locker] = lockerString.split(':');
+    return player.lockers.lockers?.[locker];
   }
 
-  private ensureLockerExists(player: IPlayer, lockerName: string, regionId: string): void {
+  private ensureLockerExists(player: IPlayer, lockerId: string): void {
     if (!player.lockers.lockers) player.lockers.lockers = {};
-    if (!player.lockers.lockers[regionId]) player.lockers.lockers[regionId] = {};
-    if (!player.lockers.lockers[regionId][lockerName]) player.lockers.lockers[regionId][lockerName] = { items: [] };
+    if (!player.lockers.lockers[lockerId]) player.lockers.lockers[lockerId] = { items: [] };
   }
 
 }

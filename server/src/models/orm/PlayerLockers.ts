@@ -9,6 +9,6 @@ export class PlayerLockers extends BaseEntity implements ICharacterLockers {
   // relation props
 
   // other props
-  @Property() lockers: Record<string, Record<string, IItemContainer>>;
+  @Property() lockers: Record<string, IItemContainer>;
 
 }
