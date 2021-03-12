@@ -45,7 +45,7 @@ export interface IGame {
 
   lockerInfo: {
     lockerName: string;
-    showLockers: Array<{ lockerId: string }>;
+    showLockers: string[];
     playerLockers: Record<string, IItemContainer>;
   };
 
