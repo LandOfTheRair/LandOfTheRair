@@ -8,7 +8,7 @@ export class Poison extends Effect {
 
     this.game.combatHelper.dealDamage(null, char, {
       damage: effect.effectInfo.potency,
-      damageClass: DamageClass.Necrotic,
+      damageClass: DamageClass.Poison,
       defenderDamageMessage: 'You are poisoned!'
     });
   }
