@@ -190,7 +190,7 @@ export class MacrosService {
           || !macro
           || !target
           || !this.optionsService.autoAttack
-          || macro.ignoreAutoattackOption
+          || macro.ignoreAutoAttack
           || player.spellChannel
           || this.gameService.hostilityLevelFor(player, target) !== 'hostile'
           || (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())) return;

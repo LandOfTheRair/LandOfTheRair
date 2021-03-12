@@ -57,7 +57,6 @@ export interface IMacro {
   modifiers?: { shift: boolean, alt: boolean, ctrl: boolean };
 
   mode: string; // 'autoActivate' | 'lockActivation' | 'clickToTarget' | 'autoTarget';
-  ignoreAutoattackOption?: boolean;
 
   appendTargetToEachMacro?: boolean;
   macro: string;
