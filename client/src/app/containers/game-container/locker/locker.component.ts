@@ -5,7 +5,7 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
-import { GameState, HideBankWindow, HideLockerWindow, HideWindow } from '../../../../stores';
+import { GameState, HideLockerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
