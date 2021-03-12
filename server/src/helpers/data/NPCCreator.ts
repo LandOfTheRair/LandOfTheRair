@@ -135,6 +135,7 @@ export class NPCCreator extends BaseService {
     baseChar.stats = npcDef.stats || {};
     baseChar.skills = npcDef.skills || {};
     baseChar.allegianceMods = npcDef.repMod || [];
+    baseChar.monsterGroup = npcDef.monsterGroup;
 
     if (baseChar.hostility === Hostility.Never) {
       const statSet = Math.max(5, (baseChar.level || 1) / 3);

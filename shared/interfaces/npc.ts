@@ -83,6 +83,9 @@ export interface INPCDefinition {
   // the creature class (used for rippers, etc)
   monsterClass?: MonsterClass;
 
+  // the monster grouping, so Hostility.Always dont infight with themselves
+  monsterGroup?: string;
+
   // the owner of the creature (used for summons)
   owner?: string;
 
@@ -143,6 +146,7 @@ export interface INPC extends ICharacter {
   hostility?: Hostility;
   owner?: string;
   usableSkills: Rollable[] | string[];
+  monsterGroup?: string;
 
   skillOnKill: number;
   giveXp: { min: number, max: number };

@@ -280,9 +280,23 @@ export class MapState {
                    && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
   }
 
+  // get ALL characters in range (even those that can't see ref)
+  public getAllInRangeWithoutVisibilityTo(ref: ICharacter, radius: number, except: string[] = []): ICharacter[] {
+    return this.getAllTargetsFromQuadtrees(ref, radius)
+      .filter(char => char
+                   && !this.game.characterHelper.isDead(char)
+                   && !except.includes(char.uuid));
+  }
+
   // get ONLY HOSTILES in range
   public getAllHostilesInRange(ref: ICharacter, radius): ICharacter[] {
     const targets = this.getAllInRange(ref, radius);
+    return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
+  }
+
+  // get ONLY HOSTILES that CAN SEE YOU in range
+  public getAllHostilesWithoutVisibilityTo(ref: ICharacter, radius: number): ICharacter[] {
+    const targets = this.getAllInRangeWithoutVisibilityTo(ref, radius);
     return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
   }
 
@@ -301,9 +315,6 @@ export class MapState {
 
       // no hitting myself
       if (me === char) return false;
-
-      // if they can't attack, they're not worth fighting
-      if ((char as INPC).hostility === Hostility.Never) return false;
 
       if (!this.game.visibilityHelper.canSeeThroughStealthOf(me, char)) return false;
 

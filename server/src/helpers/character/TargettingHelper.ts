@@ -62,15 +62,17 @@ export class TargettingHelper extends BaseService {
     // if(target.hasEffect('Disguise') && me.getTotalStat('wil') < target.getTotalStat('cha')) return false;
 
     // if my hostility is based on faction, and either the target or my faction is hostile to each other, yes
-    if ((me as INPC).hostility === Hostility.Faction && (
-      isHostileTo(me, target.allegiance)
-      || isHostileTo(target, me.allegiance))) return true;
+    if ((me as INPC).hostility === Hostility.Faction
+    && (isHostileTo(me, target.allegiance)
+       || isHostileTo(target, me.allegiance))) return true;
+
+    // if either of us is an npc and always hostile and not same monster group, yes
+    const isSomeoneHostileAlways = (me as INPC).hostility === Hostility.Always || (target as INPC).hostility === Hostility.Always;
+    const areTargetsDifferentGroups = (me as INPC).monsterGroup !== (target as INPC).monsterGroup;
+    if (isSomeoneHostileAlways && areTargetsDifferentGroups) return true;
 
     // if we are of the same allegiance, no hostility
     if (me.allegiance === target.allegiance) return false;
-
-    // if either of us is an npc and always hostile, yes
-    if ((me as INPC).hostility === Hostility.Always || (target as INPC).hostility === Hostility.Always) return true;
 
     // if I am evil, all do-gooders are hostile
     if (me.alignment === Alignment.Evil && target.alignment === Alignment.Good) return true;

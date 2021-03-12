@@ -23,9 +23,7 @@ export class Hidden extends Effect {
     // thieves have to use their stealth bar
     if (char.baseClass === BaseClass.Thief) {
       const { state } = this.game.worldManager.getMap(char.map);
-      const targets = state.getAllInRange(char, 4, [char.uuid], false);
-      const numHostile = targets.filter(x => this.game.targettingHelper.checkTargetForHostility(char, x)
-                                          && this.game.targettingHelper.isVisibleTo(x, char, true));
+      const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
       if (numHostile.length === 0) return;
 
       const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
