@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { cloneDeep, sortBy } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
-import { GameState, HideBankWindow, HideWindow } from '../../../../stores';
+import { GameState, HideBankWindow, HideLockerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -31,6 +31,7 @@ export class LockerComponent implements OnInit, OnDestroy {
   public lockerRegionNames = [];
   public activeLockerSlot = -1;
   public amount = 0;
+  public allLockers = {};
 
   lockerInfoSub: Subscription;
   posSub: Subscription;
@@ -54,7 +55,7 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.lastPos.y = pos.y;
 
       if (this.lockerInfo.regionId) {
-        this.store.dispatch(new HideBankWindow());
+        this.store.dispatch(new HideLockerWindow());
         this.store.dispatch(new HideWindow('locker'));
         this.lockerRegionNames = [];
       }
@@ -67,34 +68,18 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.lockerInfo = cloneDeep(lockerInfo || {});
       this.player = player;
 
+      this.allLockers = {};
+      Object.assign(this.allLockers, this.lockerInfo.playerLockers || {}, player?.lockers.lockers || {});
+      console.log(this.allLockers);
+
       if (player && this.lockerInfo.lockerName && this.lockerRegionNames.length === 0) {
-        const lockers = [];
-
-        Object.keys(player.accountLockers?.lockers ?? {}).forEach(regionId => {
-          Object.keys(player.accountLockers?.lockers?.[regionId] || {}).forEach(lockerId => {
-            lockers.push({ regionId, lockerId });
-          });
-        });
-
-        Object.keys(player.lockers?.lockers ?? {}).forEach(regionId => {
-          Object.keys(player.lockers?.lockers?.[regionId] || {}).forEach(lockerId => {
-            lockers.push({ regionId, lockerId });
-          });
-        });
-
-        this.lockerRegionNames = sortBy(
-          lockers.filter(x => x.regionId === this.lockerInfo.regionId || x.regionId === 'shared'),
-          'lockerName'
-        );
-
-        this.lockerRegionNames.unshift(({ regionId: 'shared', lockerId: 'Materials' }));
-
-        this.activeLockerSlot = this.lockerRegionNames.findIndex(x => x.lockerId === lockerInfo.lockerName);
+        this.lockerRegionNames = this.lockerInfo.showLockers;
+        this.activeLockerSlot = this.lockerRegionNames.findIndex(x => x.lockerId === this.lockerInfo.lockerName);
       }
     });
 
     this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideBankWindow());
+      this.store.dispatch(new HideLockerWindow());
       this.store.dispatch(new HideWindow('locker'));
       this.lockerRegionNames = [];
     });

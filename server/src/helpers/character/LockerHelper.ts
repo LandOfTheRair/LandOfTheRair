@@ -1,9 +1,12 @@
 
 import { Injectable } from 'injection-js';
+import { sortBy } from 'lodash';
+
 import { GameAction, IItemContainer, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import * as materialData from '../../../content/_output/materialstorage.json';
+import { Player } from '../../models';
 
 @Injectable()
 export class LockerHelper extends BaseService {
@@ -14,10 +17,35 @@ export class LockerHelper extends BaseService {
 
     this.ensureLockerExists(player, lockerName, regionId);
 
+    const lockers: any[] = [];
+
+    Object.keys(player.accountLockers?.lockers ?? {}).forEach(lockerRegion => {
+      Object.keys(player.accountLockers?.lockers?.[regionId] || {}).forEach(lockerId => {
+        lockers.push({ regionId: lockerRegion, lockerId });
+      });
+    });
+
+    Object.keys(player.lockers?.lockers ?? {}).forEach(lockerRegion => {
+      Object.keys(player.lockers?.lockers?.[lockerRegion] || {}).forEach(lockerId => {
+        lockers.push({ regionId: lockerRegion, lockerId });
+      });
+    });
+
+    const showLockers = sortBy(
+      lockers.filter(x => x.regionId === regionId || x.regionId === 'shared'),
+      'lockerId'
+    );
+
+    showLockers.unshift(({ regionId: 'shared', lockerId: 'Materials' }));
+
+    this.game.transmissionHelper.patchPlayer(player as Player);
+
     this.game.wsCmdHandler.sendToSocket(player.username, {
       action: GameAction.LockerActionShow,
       lockerName,
-      regionId
+      regionId,
+      showLockers,
+      playerLockers: player.lockers.lockers
     });
   }
 

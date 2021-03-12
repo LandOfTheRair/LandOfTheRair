@@ -64,7 +64,7 @@
   <div class="locker">
     <app-inventory dropContext="Wardrobe"
                    [context]="'Wardrobe:' + region + ':' + locker"
-                   [container]="player.lockers.lockers[region][locker]"
+                   [container]="allLockers[region][locker]"
                    [size]="25"></app-inventory>
   </div>
 </ng-template>

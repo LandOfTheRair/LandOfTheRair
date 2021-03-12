@@ -1,6 +1,6 @@
 import { IVendorItem } from './behaviors';
 import { Currency } from './building-blocks';
-import { ICharacter } from './character';
+import { ICharacter, IItemContainer } from './character';
 import { INPC } from './npc';
 import { IPlayer } from './player';
 
@@ -46,7 +46,9 @@ export interface IGame {
   lockerInfo: {
     regionId: string;
     lockerName: string;
-  },
+    showLockers: Array<{ regionId: string, lockerId: string }>;
+    playerLockers: Record<string, Record<string, IItemContainer>>;
+  };
 
   inspectingCharacter: ICharacter | null;
 }

@@ -1,4 +1,4 @@
-import { Currency, GameAction, ICharacter, IPlayer, IVendorItem } from '../../interfaces';
+import { Currency, GameAction, ICharacter, IItemContainer, IPlayer, IVendorItem } from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -129,7 +129,9 @@ export class OpenLockerWindow {
   static type = GameAction.LockerActionShow;
   constructor(
     public regionId: string,
-    public lockerName: string
+    public lockerName: string,
+    public showLockers: Array<{ regionId: string; lockerId: string }>,
+    public playerLockers: Record<string, Record<string, IItemContainer>>
   ) {}
 }
 
