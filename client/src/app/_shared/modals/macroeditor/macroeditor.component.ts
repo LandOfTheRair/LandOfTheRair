@@ -108,6 +108,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
 
       this.allPossibleForTargets = learnedMacs.map(x => x.for).filter(Boolean).sort();
+
+      this.setMacroGroupPage(0);
     });
 
     this.macroBarSub = this.currentPlayerMacros$.subscribe(bars => {
