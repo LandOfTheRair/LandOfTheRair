@@ -111,6 +111,9 @@ export class DefaultAIBehavior implements IAI {
 
     const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
     let numSteps = random(0, Math.min(moveRate, this.path ? this.path.length : moveRate));
+
+    // if no target and no path, we only move a max of one space
+    if (!this.currentTarget && !this.path) numSteps = Math.min(numSteps, 1);
     if (numSteps < 0) numSteps = 0;
 
     if (this.game.diceRollerHelper.OneInX(100)) {
