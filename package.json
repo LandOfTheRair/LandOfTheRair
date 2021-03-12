@@ -1,6 +1,6 @@
 {
   "name": "landoftherair",
-  "version": "1.10.3",
+  "version": "1.11.0",
   "engines": {
     "node": "14.0.0",
     "npm": "6.0.0"
