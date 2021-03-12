@@ -195,6 +195,10 @@ export class DeathHelper extends BaseService {
     if (this.game.playerHelper.canGainExpOnMap(killer)) {
       const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
       this.game.playerHelper.gainExp(killer, earnedExp);
+
+    // gain only 1 xp if you outpaced the map
+    } else {
+      this.game.playerHelper.gainExp(killer, 1);
     }
 
     killer.flaggedSkills = killer.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(killer, x));
