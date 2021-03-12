@@ -143,6 +143,14 @@ export class TrainerBehavior implements IAIBehavior {
         const numCoins = rightHand.mods.value ?? 1;
         game.playerHelper.trainSkill(player, skill, numCoins);
 
+        let expGained = 1;
+        if (game.playerHelper.canGainExpOnMap(player)) {
+          expGained = Math.floor(numCoins / 10);
+          if (expGained < 1) expGained = 1;
+        }
+
+        game.playerHelper.gainExp(player, expGained);
+
         game.characterHelper.setRightHand(player, undefined);
 
         return 'I hope the training pays off!';
