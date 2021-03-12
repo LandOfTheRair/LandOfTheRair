@@ -6,7 +6,13 @@ export class Poison extends Effect {
   tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    this.game.combatHelper.dealDamage(null, char, {
+    let caster: ICharacter | null = null;
+    if (effect.sourceUUID) {
+      const mapState = this.game.worldManager.getMap(char.map).state;
+      caster = mapState.getCharacterByUUID(effect.sourceUUID);
+    }
+
+    this.game.combatHelper.dealDamage(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Poison,
       defenderDamageMessage: 'You are poisoned!'

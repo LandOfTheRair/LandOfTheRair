@@ -8,7 +8,7 @@ export class Poison extends Spell {
   }
 
   public getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {
-    return 'Taking %potency necrotic damage per tick.';
+    return 'Taking %potency poison damage per tick.';
   }
 
   cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {

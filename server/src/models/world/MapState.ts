@@ -531,6 +531,10 @@ export class MapState {
     this.triggerAndSendUpdate(npc.x, npc.y);
   }
 
+  public getCharacterByUUID(uuid: string): ICharacter | null {
+    return this.npcsByUUID[uuid] || this.playersByUUID[uuid];
+  }
+
   // GROUND FUNCTIONS
   public getGroundVision(x: number, y: number, radius = 4): IGround {
     const baseGround = this.game.groundManager.getGround(this.map.name);
