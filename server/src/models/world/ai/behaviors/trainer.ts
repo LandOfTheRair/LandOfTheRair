@@ -140,18 +140,32 @@ export class TrainerBehavior implements IAIBehavior {
         if (!rightHand) return 'You need to hold coins in your right hand!';
         if (rightHand.name !== 'Gold Coin') return 'You need to hold coins in your right hand!';
 
-        const numCoins = rightHand.mods.value ?? 1;
-        game.playerHelper.trainSkill(player, skill, numCoins);
+        // you can only spend as much as the trainer can train to
+        const heldValue = rightHand.mods.value ?? 1;
+        const maxCoins = game.calculatorHelper.calculateSkillXPRequiredForLevel(maxSkillTrain);
+        const curValue = player.skills[skill] ?? 0;
+        const curTrain = player.paidSkills[skill] ?? 0;
 
+        const coinsTaken = Math.floor(Math.max(0, Math.min(heldValue, maxCoins - curValue - curTrain)));
+
+        if (coinsTaken <= 0) return 'I cannot train you any more!';
+
+        game.playerHelper.trainSkill(player, skill, coinsTaken);
+
+        // gain 1/10 of the gold as exp
         let expGained = 1;
         if (game.playerHelper.canGainExpOnMap(player)) {
-          expGained = Math.floor(numCoins / 10);
+          expGained = Math.floor(coinsTaken / 10);
           if (expGained < 1) expGained = 1;
         }
 
         game.playerHelper.gainExp(player, expGained);
 
-        game.characterHelper.setRightHand(player, undefined);
+        // if we ran out of gold, banish it
+        rightHand.mods.value -= coinsTaken;
+        if (rightHand.mods.value <= 0) {
+          game.characterHelper.setRightHand(player, undefined);
+        }
 
         return 'I hope the training pays off!';
       });
