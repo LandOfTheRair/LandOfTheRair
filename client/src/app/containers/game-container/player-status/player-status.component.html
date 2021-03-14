@@ -17,19 +17,19 @@
       </span>
 
       <span class="window-extra-buttons">
-        <button mat-icon-button (click)="showWindow('equipmentMain')">
+        <button mat-icon-button (click)="showWindow('equipmentMain')" matTooltip="Toggle Equipment">
           <app-icon name="battle-gear" size="xsmall"></app-icon>
         </button>
-        <button mat-icon-button (click)="showWindow('equipmentQuick')">
+        <button mat-icon-button (click)="showWindow('equipmentQuick')" matTooltip="Toggle Quick Gear">
           <app-icon name="hand" size="xsmall"></app-icon>
         </button>
-        <button mat-icon-button (click)="showWindow('inventorySack')">
+        <button mat-icon-button (click)="showWindow('inventorySack')" matTooltip="Toggle Sack">
           <app-icon name="swap-bag" size="xsmall"></app-icon>
         </button>
-        <button mat-icon-button (click)="showWindow('inventoryPouch')" *ngIf="false">
+        <button mat-icon-button (click)="showWindow('inventoryPouch')" matTooltip="Toggle Pouch" *ngIf="false">
           <app-icon name="knapsack" size="xsmall"></app-icon>
         </button>
-        <button mat-icon-button (click)="showWindow('inventoryBelt')">
+        <button mat-icon-button (click)="showWindow('inventoryBelt')" matTooltip="Toggle Belt">
           <app-icon name="belt" size="xsmall"></app-icon>
         </button>
       </span>

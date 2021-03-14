@@ -18,16 +18,16 @@
     </span>
 
     <span class="window-extra-buttons">
-      <button class="is-selector" mat-icon-button [disabled]="charView === 'Equipment'" (click)="changeView('Equipment')">
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Equipment'" (click)="changeView('Equipment')" matTooltip="Show Equipment">
         <app-icon name="battle-gear" size="xsmall"></app-icon>
       </button>
-      <button class="is-selector" mat-icon-button [disabled]="charView === 'Stats'" (click)="changeView('Stats')">
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Stats'" (click)="changeView('Stats')" matTooltip="Show Stats">
         <app-icon name="biceps" size="xsmall"></app-icon>
       </button>
-      <button class="is-selector" mat-icon-button [disabled]="charView === 'Skills'" (click)="changeView('Skills')">
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Skills'" (click)="changeView('Skills')" matTooltip="Show Skills">
         <app-icon name="broadsword" size="xsmall"></app-icon>
       </button>
-      <button class="is-selector" mat-icon-button [disabled]="charView === 'Reputation'" (click)="changeView('Reputation')">
+      <button class="is-selector" mat-icon-button [disabled]="charView === 'Reputation'" (click)="changeView('Reputation')" matTooltip="Show Reputation">
         <app-icon name="ages" size="xsmall"></app-icon>
       </button>
     </span>
