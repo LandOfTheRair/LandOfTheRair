@@ -2,9 +2,17 @@ import { StatBlock } from './building-blocks';
 import { IStatusEffect } from './status-effect';
 
 export enum BuffType {
+
+  // buffs. positive effects. generally unique.
   Buff = 'buff',
+
+  // debuffs. negative effects/dots. sometimes unique.
   Debuff = 'debuff',
+
+  // outgoing modifiers. used to modify your own outgoing damage.
   OutgoingModifier = 'outgoing',
+
+  // incoming modifiers. used to modify incoming damage.
   IncomingModifier = 'incoming'
 }
 
