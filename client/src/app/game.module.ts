@@ -72,6 +72,7 @@ import { LobbyComponent } from './containers/lobby-container/lobby/lobby.compone
 import { JournalComponent } from './journal/journal.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
 import { LockerComponent } from './containers/game-container/locker/locker.component';
+import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
@@ -107,6 +108,7 @@ const gameComponents = [
   InventorySackComponent,
 
   EquipmentMainComponent,
+  EquipmentQuickComponent,
   PlayerStatusComponent,
   CharacterListComponent,
   GroundComponent,

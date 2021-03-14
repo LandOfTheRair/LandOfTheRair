@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 import { IPlayer, IStatusEffect } from '../../../../interfaces';
-import { GameState } from '../../../../stores';
+import { GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -26,6 +26,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   playerSub: Subscription;
 
   constructor(
+    private store: Store,
     public uiService: UIService,
     public gameService: GameService
   ) { }
@@ -80,6 +81,10 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     $event.stopPropagation();
     $event.preventDefault();
     this.gameService.sendCommandString(`!removeeffect ${effect.uuid}`);
+  }
+
+  showWindow(window: string): void {
+    this.store.dispatch(new ToggleWindow(window));
   }
 
 }

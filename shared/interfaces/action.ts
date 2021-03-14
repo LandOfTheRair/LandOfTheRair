@@ -139,6 +139,7 @@ export enum GameAction {
   SettingsResetWindowPositions = '[Settings] Reset Window Positions',
   SettingsHideWindow = '[Settings] Hide Window',
   SettingsShowWindow = '[Settings] Show Window',
+  SettingsToggleWindow = '[Settings] Toggle Window',
   SettingsActiveWindow = '[Settings] Set Active Window',
   SettingsCharSlot = '[Settings] Set Char Slot',
 

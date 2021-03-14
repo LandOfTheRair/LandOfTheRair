@@ -4,7 +4,7 @@ import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameOption, ISettings } from '../interfaces';
 import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
   RemoveAccount, ResetWindowPositions, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
-  SetCurrentCommand, SetDefaultWindowPosition, SetLogMode, SetOption, ShowWindow, UpdateWindowPosition } from './actions';
+  SetCurrentCommand, SetDefaultWindowPosition, SetLogMode, SetOption, ShowWindow, ToggleWindow, UpdateWindowPosition } from './actions';
 
 const defaultWindowPositions = {};
 
@@ -214,6 +214,17 @@ export class SettingsState implements NgxsOnInit {
     const windows = { ...state.windows };
     if (windows[windowName]) {
       windows[windowName] = Object.assign({}, windows[windowName], { hidden: true });
+    }
+
+    ctx.patchState({ windows });
+  }
+
+  @Action(ToggleWindow)
+  toggleWindow(ctx: StateContext<ISettings>, { windowName }: ToggleWindow) {
+    const state = ctx.getState();
+    const windows = { ...state.windows };
+    if (windows[windowName]) {
+      windows[windowName] = Object.assign({}, windows[windowName], { hidden: !windows[windowName].hidden });
     }
 
     ctx.patchState({ windows });

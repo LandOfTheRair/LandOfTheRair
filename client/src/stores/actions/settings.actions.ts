@@ -53,6 +53,13 @@ export class ShowWindow {
   constructor(public windowName: string) {}
 }
 
+// dispatched when a window is toggled
+export class ToggleWindow {
+  static type = GameAction.SettingsToggleWindow;
+  filterOutFromLogs = true;
+  constructor(public windowName: string) {}
+}
+
 // dispatched when a window is marked active (usually via click)
 export class SetActiveWindow {
   static type = GameAction.SettingsActiveWindow;
