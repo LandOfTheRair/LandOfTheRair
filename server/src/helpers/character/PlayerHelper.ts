@@ -254,6 +254,7 @@ export class PlayerHelper extends BaseService {
       // we do this to avoid unnecessary lookups
       if (!desc) {
         desc = this.staticTextHelper.getGidDescription(map.getFluidAt(player.x, player.y));
+        console.log(map.getFluidAt(player.x, player.y));
       }
 
       if (!desc) {

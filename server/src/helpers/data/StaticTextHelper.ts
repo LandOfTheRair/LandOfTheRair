@@ -24,6 +24,7 @@ const SLUDGE_PUDDLE_DESC = 'You are standing in some sludge. Eww.';
 const BLOOD_PUDDLE_DESC = 'You are standing in a puddle of blood.';
 const ORNATE_RUG_DESC = 'You are standing on an ornate rug.';
 const STYLISH_RUG_DESC = 'You are standing on a stylish rug.';
+const SPRING_WATER_DESC = 'You are swimming in spring water.';
 
 const DecorGids = {
   172: WOOD_PILE_DESC,
@@ -163,7 +164,17 @@ const DecorGids = {
   959: BLOOD_PUDDLE_DESC,
   960: BLOOD_PUDDLE_DESC,
   961: BLOOD_PUDDLE_DESC,
-  962: BLOOD_PUDDLE_DESC
+  962: BLOOD_PUDDLE_DESC,
+
+  975: SPRING_WATER_DESC,
+  976: SPRING_WATER_DESC,
+  977: SPRING_WATER_DESC,
+  978: SPRING_WATER_DESC,
+  979: SPRING_WATER_DESC,
+  980: SPRING_WATER_DESC,
+  981: SPRING_WATER_DESC,
+  982: SPRING_WATER_DESC,
+  983: SPRING_WATER_DESC,
 };
 
 // mapping of sprite row -> relevant info
@@ -175,7 +186,7 @@ const SwimInfo: Record<number, { element: DamageClass; swimLevel: SwimLevel }> =
 };
 
 export const GetSwimLevel = (gid) => {
-  if (gid >= 2288 && gid <= 2296 || gid === 2200) return SwimInfo[1];
+  if (gid >= 2288 && gid <= 2296 || gid === 2200 || gid > 2300) return SwimInfo[1];
   return SwimInfo[Math.floor((gid - 1) / 48)];
 };
 
