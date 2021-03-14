@@ -67,11 +67,11 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   tickSub: Subscription;
 
   public get iconData() {
-    return effectData[this.effect.effectName].tooltip;
+    return (effectData[this.effect.effectRef] || effectData[this.effect.effectName]).tooltip;
   }
 
   public get iconName() {
-    return this.iconData?.icon ?? 'undefined';
+    return this.effect.effectInfo.effectIcon || (this.iconData?.icon ?? 'undefined');
   }
 
   public get bgColor() {

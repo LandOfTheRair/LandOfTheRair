@@ -1,4 +1,4 @@
-import { ICharacter, IStatusEffect, MessageInfo, MessageType } from '../../interfaces';
+import { DamageArgs, ICharacter, IStatusEffect, MessageInfo, MessageType } from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseEffect } from '../BaseEffect';
@@ -9,6 +9,10 @@ export class Effect implements BaseEffect {
 
   public sendMessage(character: ICharacter|string, message: MessageInfo) {
     this.game.messageHelper.sendLogMessageToPlayer(character, message, [MessageType.Miscellaneous]);
+  }
+
+  public formatEffectName(char: ICharacter, effect: IStatusEffect): string {
+    return effect.effectName;
   }
 
   public create(char: ICharacter, effect: IStatusEffect) {}
@@ -23,5 +27,9 @@ export class Effect implements BaseEffect {
   public unapply(char: ICharacter, effect: IStatusEffect) {}
 
   public destroy(char: ICharacter, effect: IStatusEffect) {}
+
+  public incoming(effect: IStatusEffect, char: ICharacter, attacker: ICharacter | null, args: DamageArgs, currentDamage: number): number {
+    return currentDamage;
+  }
 
 }

@@ -28,14 +28,20 @@ export class EffectManager extends BaseService {
     return this.effects[effectName];
   }
 
+  // get a ref to an effect
+  public getEffectName(target: ICharacter, effect: IStatusEffect): string {
+    const effectRef = this.getEffectRef(effect.effectRef ?? effect.effectName);
+    return effectRef.formatEffectName(target, effect);
+  }
+
   // called when an effect is created
   public effectCreate(effectName: string, character: ICharacter, effect: IStatusEffect) {
-    const effectRef = this.getEffectRef(effectName);
+    const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
       effectRef.create(character, effect);
     }
 
-    const effectData = this.getEffectData(effectName);
+    const effectData = this.getEffectData(effect.effectRef || effectName);
 
     // send the cast message to the caster
     const createMessage = this.formatMessage(effectData.effectMeta.castMessage || '', { target: character.name });
@@ -46,12 +52,12 @@ export class EffectManager extends BaseService {
 
   // called when an effect is applied
   public effectApply(effectName: string, character: ICharacter, effect: IStatusEffect) {
-    const effectRef = this.getEffectRef(effectName);
+    const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
       effectRef.apply(character, effect);
     }
 
-    const effectData = this.getEffectData(effectName);
+    const effectData = this.getEffectData(effect.effectRef || effectName);
 
     // send the apply message to the target
     const applyMessage = this.formatMessage(effectData.effectMeta.applyMessage || '', { target: character.name });
@@ -63,7 +69,7 @@ export class EffectManager extends BaseService {
   // called when an effect is ticked
   public effectTick(effectName: string, character: ICharacter, effect: IStatusEffect) {
 
-    const effectRef = this.getEffectRef(effectName);
+    const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
       effectRef.tick(character, effect);
     }
@@ -71,12 +77,12 @@ export class EffectManager extends BaseService {
 
   // called when an effect is unapply
   public effectUnapply(effectName: string, character: ICharacter, effect: IStatusEffect) {
-    const effectRef = this.getEffectRef(effectName);
+    const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
       effectRef.unapply(character, effect);
     }
 
-    const effectData = this.getEffectData(effectName);
+    const effectData = this.getEffectData(effect.effectRef || effectName);
 
     // send the unapply message to the target
     const unapplyMessage = this.formatMessage(effectData.effectMeta.unapplyMessage || '', { target: character.name });
@@ -87,7 +93,7 @@ export class EffectManager extends BaseService {
 
   // called when an effect is destroy
   public effectDestroy(effectName: string, character: ICharacter, effect: IStatusEffect) {
-    const effectRef = this.getEffectRef(effectName);
+    const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
       effectRef.destroy(character, effect);
     }

@@ -459,7 +459,6 @@ export class MapScene extends Phaser.Scene {
     tiledJSON.tileHeight = tiledJSON.tileheight;
 
     this.allMapData = mapData;
-    console.log(mapData);
 
     // create some phaser data
     this.createLayers();

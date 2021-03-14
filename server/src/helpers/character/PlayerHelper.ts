@@ -254,7 +254,6 @@ export class PlayerHelper extends BaseService {
       // we do this to avoid unnecessary lookups
       if (!desc) {
         desc = this.staticTextHelper.getGidDescription(map.getFluidAt(player.x, player.y));
-        console.log(map.getFluidAt(player.x, player.y));
       }
 
       if (!desc) {
@@ -368,7 +367,7 @@ export class PlayerHelper extends BaseService {
     skillGained += Math.floor((skillGainBoostPercent * skillGained) / 100);
 
     // paid skill is doubled as long as we have money in it
-    const paidVal = player.paidSkills[skill] ?? 0;
+    const paidVal = player.paidSkills?.[skill] ?? 0;
     if (paidVal > 0) {
       player.paidSkills[skill] = paidVal - skillGained;
       skillGained *= 2;

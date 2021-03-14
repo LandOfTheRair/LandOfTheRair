@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
+import { DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class EffectHelper extends BaseService {
 
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
-    const { effectMeta: meta } = this.game.effectManager.getEffectData(effect.effectName);
+    const { effectMeta: meta } = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
     if (!meta.effectRef) return;
 
     this.game.effectManager.effectTick(effect.effectName, character, effect);
@@ -64,6 +64,10 @@ export class EffectHelper extends BaseService {
       effectRef: effectData.effectMeta.effectRef,
       sourceName: ''
     };
+
+    if (effectData.effectMeta?.effectRef) {
+      effect.effectName = this.game.effectManager.getEffectName(character, effect);
+    }
 
     // environments doing damage or effects would get this
     if (isString(source)) {
@@ -197,6 +201,20 @@ export class EffectHelper extends BaseService {
   // check if someone has an effect
   public hasEffect(char: ICharacter, effName: string): boolean {
     return char.effects?._hash?.[effName];
+  }
+
+  // modify incoming damage based on incoming effects
+  public modifyIncomingDamage(char: ICharacter, attacker: ICharacter | null, damageArgs: DamageArgs): number {
+    let currentDamage = damageArgs.damage;
+
+    char.effects.incoming.forEach(eff => {
+      const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
+      if (!ref) return;
+
+      currentDamage = ref.incoming(eff, char, attacker, damageArgs, currentDamage);
+    });
+
+    return currentDamage;
   }
 
 }

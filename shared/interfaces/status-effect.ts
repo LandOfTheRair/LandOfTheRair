@@ -15,15 +15,17 @@ export interface IStatusEffectInfo {
   isFrozen?: boolean;                           // if you're currently frozen from the effect
   canRemove?: boolean;                          // if the effect can be manually unapplied
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
-  enrageTimer?: number;                         // the enrage timer associated with this effect
-  startTimer?: number;                          // when this effect starts
-  currentMood?: number;                         // the current mood associated with this effect
+  enrageTimer?: number;                         // the enrage timer associated with this effect (Mood)
+  startTimer?: number;                          // when this effect starts (Mood)
+  currentMood?: number;                         // the current mood associated with this effect (Mood)
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
   unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
   tier?: string;                                // the tier of the effect (used for stat potions)
+  effectIcon?: string;                          // an override of the icon for the effect
   tooltip?: string;                             // the tooltip for the item effect
   tooltipColor?: string;                        // the tooltip color to override for the effect
   message?: string;                             // the message sent for the item effect
+  unableToShred?: boolean;                      // whether or not the effect can be shredded (Attribute)
 }
 
 export interface IStatusEffect {

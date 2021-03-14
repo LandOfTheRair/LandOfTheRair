@@ -146,6 +146,7 @@ export interface INPC extends ICharacter {
   hostility?: Hostility;
   owner?: string;
   usableSkills: Rollable[] | string[];
+  monsterClass?: MonsterClass;
   monsterGroup?: string;
 
   skillOnKill: number;

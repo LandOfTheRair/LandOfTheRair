@@ -78,8 +78,6 @@ export class CombatHelper extends BaseService {
         damage -= magicReduction;
       }
 
-      // mitigatedPercent = (damage / baseDamage);
-
       if (damage < 0) damage = 0;
 
     // boost healing
@@ -92,6 +90,8 @@ export class CombatHelper extends BaseService {
       const damageFactor = this.game.characterHelper.getStat(attacker, Stat.DamageFactor);
       damage *= damageFactor;
     }
+
+    damage = this.game.effectHelper.modifyIncomingDamage(defender, attacker, args);
 
     if (isNaN(damage)) damage = 0;
 

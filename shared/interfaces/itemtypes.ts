@@ -10,6 +10,17 @@ export type DamageType =
 | 'poison'
 | 'disease';
 
+export const MagicClasses: Record<DamageType, boolean> = {
+  physical: false,
+  necrotic: true,
+  fire: true,
+  ice: true,
+  water: true,
+  energy: true,
+  poison: true,
+  disease: true
+};
+
 export enum WeaponClass {
   Arrow = 'Arrow',
   Axe = 'Axe',
@@ -83,11 +94,21 @@ export const ItemClass = Object.assign({}, WeaponClass, ArmorClass, MiscClass);
 
 export const AmmoClasses = [ItemClass.Arrow];
 
-export const SharpWeaponClasses = [
-  ItemClass.Axe, ItemClass.Blunderbuss, ItemClass.Broadsword, ItemClass.Crossbow, ItemClass.Dagger,
-  ItemClass.Greataxe, ItemClass.Greatsword, ItemClass.Halberd, ItemClass.Longbow, ItemClass.Longsword,
-  ItemClass.Shortbow, ItemClass.Shortsword, ItemClass.Spear
-];
+export const SharpWeaponClasses = {
+  [ItemClass.Axe]: true,
+  [ItemClass.Blunderbuss]: true,
+  [ItemClass.Broadsword]: true,
+  [ItemClass.Crossbow]: true,
+  [ItemClass.Dagger]: true,
+  [ItemClass.Greataxe]: true,
+  [ItemClass.Greatsword]: true,
+  [ItemClass.Halberd]: true,
+  [ItemClass.Longbow]: true,
+  [ItemClass.Longsword]: true,
+  [ItemClass.Shortbow]: true,
+  [ItemClass.Shortsword]: true,
+  [ItemClass.Spear]: true
+};
 
 export const WeaponClasses = Object.values(WeaponClass);
 

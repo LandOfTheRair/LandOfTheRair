@@ -135,6 +135,7 @@ export class NPCCreator extends BaseService {
     baseChar.stats = npcDef.stats || {};
     baseChar.skills = npcDef.skills || {};
     baseChar.allegianceMods = npcDef.repMod || [];
+    baseChar.monsterClass = npcDef.monsterClass;
     baseChar.monsterGroup = npcDef.monsterGroup;
 
     if (baseChar.hostility === Hostility.Never) {
