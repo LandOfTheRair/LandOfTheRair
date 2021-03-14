@@ -20,7 +20,8 @@ export enum BehaviorType {
   Banker = 'banker',
   Steelrose = 'steelrose',
   Succorer = 'succorer',
-  Upgrader = 'upgrader'
+  Upgrader = 'upgrader',
+  HallOfHeroes = 'hallofheroes'
 }
 
 export interface IVendorItem {
@@ -44,6 +45,10 @@ export interface ITrainerBehavior {
 
 export interface ICrierBehavior {
   messages: string[];
+}
+
+export interface IHallOfHeroesBehavior {
+  message: string;
 }
 
 export interface IPeddlerBehavior {
@@ -95,7 +100,7 @@ export interface ISteelroseBehavior {
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
                       & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
-                      & IUpgraderBehavior &
+                      & IUpgraderBehavior & IHallOfHeroesBehavior &
 {
   type: BehaviorType;
   props?: string[];

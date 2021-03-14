@@ -375,7 +375,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Smith]: AllBehaviors.SmithBehavior,
       [BehaviorType.Steelrose]: AllBehaviors.SteelroseBehavior,
       [BehaviorType.Succorer]: AllBehaviors.SuccorerBehavior,
-      [BehaviorType.Upgrader]: AllBehaviors.UpgraderBehavior
+      [BehaviorType.Upgrader]: AllBehaviors.UpgraderBehavior,
+      [BehaviorType.HallOfHeroes]: AllBehaviors.HallOfHeroesBehavior,
     };
 
     npcDef.behaviors.forEach(behavior => {

@@ -3,6 +3,7 @@ export * from './alchemist';
 export * from './banker';
 export * from './crier';
 export * from './encruster';
+export * from './hallofheroes';
 export * from './identifier';
 export * from './peddler';
 export * from './smith';
