@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { BaseClass, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
+import { Allegiance, BaseClass, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
   MessageType, OnesidedDamageArgs, PhysicalAttackArgs, PhysicalAttackReturn, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -196,9 +196,17 @@ export class CombatHelper extends BaseService {
       // if there was an attacker, we send a lot of messages
       if (attacker) {
 
+        // let the killer know they murdered someone
+        let verb = 'killed';
+        if (defender.allegiance === Allegiance.NaturalResource) {
+          verb = 'shredded';
+          if (defender.name.includes('tree')) verb = 'taken down';
+          if (defender.name.includes('vein')) verb = 'smashed';
+        }
+
         // let the defender know they were killed in an aoe
         this.game.messageHelper.sendLogMessageToRadius(defender, 4, {
-          message: '%0 was slain by %1!',
+          message: `%0 was ${verb} by %1!`,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
           except: [defender.uuid, attacker.uuid]
         }, [
@@ -206,8 +214,7 @@ export class CombatHelper extends BaseService {
           this.game.characterHelper.isPlayer(defender) ? MessageType.Player : MessageType.NPC
         ], [defender, attacker]);
 
-        // let the killer know they murdered someone
-        const killMsg = this.game.messageHelper.formatMessage(attacker, 'You killed %0!', [defender]);
+        const killMsg = this.game.messageHelper.formatMessage(attacker, `You ${verb} %0!`, [defender]);
         this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,

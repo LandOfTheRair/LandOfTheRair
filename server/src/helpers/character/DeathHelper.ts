@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { basePlayerSprite, Currency, Direction, ICharacter, INPC,
+import { Allegiance, basePlayerSprite, Currency, Direction, ICharacter, INPC,
   IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -300,7 +300,10 @@ export class DeathHelper extends BaseService {
       if (((killer as INPC)?.shouldEatTier ?? 0) > 0) return undefined;
 
       return this.createPlayerCorpse(character as IPlayer);
+
     } else {
+
+      if (character.allegiance === Allegiance.NaturalResource) return undefined;
       return this.createNPCCorpse(character as INPC);
     }
   }

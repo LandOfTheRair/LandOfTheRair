@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
+import { Allegiance, ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItem, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -893,16 +893,16 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     let damageType = 'was a successful strike';
-    // let criticality: 0|1|2 = 1;
+    let criticality = 2;
 
     if (attackerScope.isWeak) {
       damageType = 'was a grazing blow';
-      // criticality = 0;
+      criticality = 1;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
 
     } else if (attackerScope.isStrong) {
       damageType = 'left a grievous wound';
-      // criticality = 2;
+      criticality = 4;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitStrong);
 
     } else {
@@ -927,7 +927,13 @@ export class DamageHelperPhysical extends BaseService {
     };
 
     // TODO: mug, assassinate, backstab
-    const totalDamageDealt = this.game.combatHelper.modifyDamage(attacker, defender, damageArgs);
+    let totalDamageDealt = this.game.combatHelper.modifyDamage(attacker, defender, damageArgs);
+
+    if (defender.allegiance === Allegiance.NaturalResource) {
+      totalDamageDealt = criticality;
+      this.doExtraDurabilityDamageForNaturalResources(attacker, defender, attackerWeapon);
+    }
+
     damageArgs.damage = totalDamageDealt;
 
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
@@ -980,6 +986,35 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     return { hit: true, damage: totalDamageDealt, damageType: args.damageClass };
+  }
+
+  private doExtraDurabilityDamageForNaturalResources(attacker: ICharacter, defender: ICharacter, attackerItem: ISimpleItem): void {
+
+    const { itemClass, type, condition } = this.game.itemHelper.getItemProperties(attackerItem, ['itemClass', 'type', 'condition']);
+
+    // I mean, don't use bottles to attack ore veins
+    if (itemClass === ItemClass.Bottle) {
+      this.game.messageHelper.sendLogMessageToPlayer(
+        attacker,
+        { message: 'Your bottle is in critical condition!' },
+        [MessageType.Combat]
+      );
+
+      this.game.itemHelper.loseCondition(attackerItem, condition ?? 20000, attacker);
+
+      return;
+    }
+
+    const conditionDamage = 50;
+    let modifierMultiplier = 1;
+
+    if (defender.name.includes('vein')) {
+      if (type !== Skill.Mace) modifierMultiplier = 2;
+    } else {
+      if (type === Skill.Mace || type === Skill.Staff) modifierMultiplier = 2;
+    }
+
+    this.game.itemHelper.loseCondition(attackerItem, conditionDamage * modifierMultiplier, attacker);
   }
 
 }
