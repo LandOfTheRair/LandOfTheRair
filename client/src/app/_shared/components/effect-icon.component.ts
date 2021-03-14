@@ -79,7 +79,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get color() {
-    return this.iconData?.color ?? '#000';
+    return this.effect.effectInfo.tooltipColor || (this.iconData?.color ?? '#000');
   }
 
   public get tooltip() {

@@ -16,10 +16,13 @@ export interface IStatusEffectInfo {
   canRemove?: boolean;                          // if the effect can be manually unapplied
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
   enrageTimer?: number;                         // the enrage timer associated with this effect
+  startTimer?: number;                          // when this effect starts
+  currentMood?: number;                         // the current mood associated with this effect
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
   unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
   tier?: string;                                // the tier of the effect (used for stat potions)
   tooltip?: string;                             // the tooltip for the item effect
+  tooltipColor?: string;                        // the tooltip color to override for the effect
   message?: string;                             // the message sent for the item effect
 }
 

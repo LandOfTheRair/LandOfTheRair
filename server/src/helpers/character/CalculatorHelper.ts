@@ -12,6 +12,7 @@ export class CalculatorHelper extends BaseService {
 
   public init() {}
 
+  // xp required for a particular level
   public calculateXPRequiredForLevel(level: number): number {
     return calculateXPRequiredForLevel(level);
   }
