@@ -186,7 +186,7 @@ const SwimInfo: Record<number, { element: DamageClass; swimLevel: SwimLevel }> =
 };
 
 export const GetSwimLevel = (gid) => {
-  if (gid >= 2288 && gid <= 2296 || gid === 2200 || gid > 2300) return SwimInfo[1];
+  if ((gid >= 2288 && gid <= 2296) || gid === 2200 || (gid >= 2304 && gid <= 2312)) return SwimInfo[1];
   return SwimInfo[Math.floor((gid - 1) / 48)];
 };
 
