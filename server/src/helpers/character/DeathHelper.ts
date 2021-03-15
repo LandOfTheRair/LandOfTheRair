@@ -291,7 +291,7 @@ export class DeathHelper extends BaseService {
 
     // finally, banish them to the ground
     const { state } = this.game.worldManager.getMap(character.map);
-    state.addItemsToGroundSpread(allItemDrops, { x, y }, radius);
+    state.addItemsToGroundSpread(allItemDrops, { x, y }, radius, true);
   }
 
   // corpse creating

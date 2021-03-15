@@ -555,13 +555,14 @@ export class MapState {
   public addItemsToGroundSpread(
     itemlocs: Array<{ x: number; y: number; item: ISimpleItem }>,
     center: { x: number; y: number },
-    radius = 0
+    radius = 0,
+    forceSave = false
   ): void {
     itemlocs.forEach(ref => {
       const destroyOnDrop = this.game.itemHelper.getItemProperty(ref.item, 'destroyOnDrop');
       if (destroyOnDrop) return;
 
-      this.game.groundManager.addItemToGround(this.map.name, ref.x, ref.y, ref.item);
+      this.game.groundManager.addItemToGround(this.map.name, ref.x, ref.y, ref.item, forceSave);
     });
 
     // if player knowledge x/y, update ground
@@ -573,12 +574,12 @@ export class MapState {
   }
 
   // add multiple items to the ground at x/y
-  public addItemsToGround(x: number, y: number, items: ISimpleItem[]): void {
+  public addItemsToGround(x: number, y: number, items: ISimpleItem[], forceSave = false): void {
     items.forEach(item => {
       const destroyOnDrop = this.game.itemHelper.getItemProperty(item, 'destroyOnDrop');
       if (destroyOnDrop) return;
 
-      this.game.groundManager.addItemToGround(this.map.name, x, y, item);
+      this.game.groundManager.addItemToGround(this.map.name, x, y, item, forceSave);
     });
 
     // if player knowledge x/y, update ground
@@ -586,12 +587,12 @@ export class MapState {
   }
 
   // add a single item to the ground at x/y
-  public addItemToGround(x: number, y: number, item: ISimpleItem): void {
+  public addItemToGround(x: number, y: number, item: ISimpleItem, forceSave = false): void {
 
     const destroyOnDrop = this.game.itemHelper.getItemProperty(item, 'destroyOnDrop');
     if (destroyOnDrop) return;
 
-    this.game.groundManager.addItemToGround(this.map.name, x, y, item);
+    this.game.groundManager.addItemToGround(this.map.name, x, y, item, forceSave);
 
     // if player knowledge x/y, update ground
     this.triggerGroundUpdateInRadius(x, y);

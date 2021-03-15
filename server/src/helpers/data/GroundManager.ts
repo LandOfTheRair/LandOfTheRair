@@ -109,7 +109,7 @@ export class GroundManager extends BaseService {
     return this.ground[mapName];
   }
 
-  public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem): void {
+  public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem, forceSave?: boolean): void {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
 
     // corpses get a lil special treatment
@@ -139,7 +139,7 @@ export class GroundManager extends BaseService {
     const isModified = size(item.mods) > 0;
 
     // if the item has an owner, it expires in 24h. else, 3h.
-    const expiresAt = Date.now() + (1000 * (item.mods.owner ? 86400 : 10800));
+    const expiresAt = Date.now() + (1000 * ((item.mods.owner || forceSave) ? 86400 : 10800));
 
     const groundItem: IGroundItem = {
       item,
@@ -182,7 +182,7 @@ export class GroundManager extends BaseService {
       } else {
         mapGround[x][y][itemClass].push(groundItem);
 
-        if (item.mods.owner) {
+        if (item.mods.owner || forceSave) {
           addToSaveableGround(x, y, itemClass, groundItem);
         }
       }
@@ -191,7 +191,7 @@ export class GroundManager extends BaseService {
     } else {
       mapGround[x][y][itemClass].push(groundItem);
 
-      if (item.mods.owner) {
+      if (item.mods.owner || forceSave) {
         addToSaveableGround(x, y, itemClass, groundItem);
       }
     }
