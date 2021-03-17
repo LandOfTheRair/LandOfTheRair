@@ -8,16 +8,19 @@ export class ShowStats extends MacroCommand {
   canBeFast = true;
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
-    let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.`;
-    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
-    message = `Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
-    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
+    let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.<br>`;
+    message = `${message}Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
 
-    // TODO: show stats all (only show non-zero stats)
+    const showAll = !!args.stringArgs;
+    const hash = showAll ? player.totalStats : player.stats;
 
-    Object.keys(player.stats).forEach(key => {
-      message = `Your ${key.toUpperCase()} is ${this.game.characterHelper.getStat(player, key as Stat)}.`;
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
+    Object.keys(hash).forEach(key => {
+      const value = this.game.characterHelper.getStat(player, key as Stat);
+      if (value === 0) return;
+
+      message = `${message}<br>Your ${key.toUpperCase()} is ${this.game.characterHelper.getStat(player, key as Stat)}.`;
     });
+
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
   }
 }
