@@ -1,6 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { random, sum } from 'lodash';
+import { ICharacter, IPlayer, Stat } from '../../../interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -33,6 +34,11 @@ export class DiceRollerHelper extends BaseService {
   // "dice roll" - close enough - roll dice and sum the values
   diceRoll(rolls: number, sides: number, minimumMult = 0): number {
     return sum(Array(rolls).fill(0).map(() => random(Math.floor(sides * minimumMult), sides)));
+  }
+
+  // a one-to-luk roll, which will be used for anything rolling luk
+  OneToLUK(char: ICharacter): number {
+    return random(1, this.game.characterHelper.getStat(char, Stat.LUK));
   }
 
 }

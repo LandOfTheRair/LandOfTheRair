@@ -145,7 +145,7 @@ export class DeathHelper extends BaseService {
         allItems.push(...dead.items.sack.items);
       }
 
-      const bonus = killer ? this.game.characterHelper.getStat(killer, Stat.LUK) : 0;
+      const bonus = killer ? this.game.diceRollerHelper.OneToLUK(killer) : 0;
 
       // roll items for the npc specifically
       const rolledItems = this.game.lootHelper.getNPCLoot(dead, bonus);

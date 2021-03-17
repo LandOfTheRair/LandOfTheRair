@@ -121,7 +121,7 @@ export class DamageHelperPhysical extends BaseService {
     let canBeStrong = false;
 
     // 50/50 chance to use weak dice at 10 luk. more luk = more chance of crit
-    const strongChance = 50 + (this.game.characterHelper.getStat(attacker, Stat.LUK) - 10);
+    const strongChance = 50 + (this.game.diceRollerHelper.OneToLUK(attacker) - 10);
 
     if (this.game.diceRollerHelper.XInOneHundred(strongChance)) {
       canBeStrong = true;
