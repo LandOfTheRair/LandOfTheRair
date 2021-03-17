@@ -63,7 +63,7 @@ export class PlayerHelper extends BaseService {
     player.isGM = playerAccount.isGameMaster;
     player.isTester = playerAccount.isTester;
     player.username = playerAccount.username;
-    player.subscriptionTier = playerAccount.premium.subscriptionTier;
+    player.subscriptionTier = this.game.subscriptionHelper.getSubscriptionTier(playerAccount);
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';

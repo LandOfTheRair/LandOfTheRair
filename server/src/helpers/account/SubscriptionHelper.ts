@@ -24,6 +24,12 @@ export class SubscriptionHelper extends BaseService {
     return player.subscriptionTier > 0;
   }
 
+  public getSubscriptionTier(account: IAccount): SubscriptionTier {
+    if (account.isGameMaster) return SubscriptionTier.GM;
+    if (account.isTester) return SubscriptionTier.Tester;
+    return account.premium.subscriptionTier;
+  }
+
   public async checkAccountForExpiration(account: IAccount) {
     if (Date.now() < account.premium.subscriptionEnds) return;
 
