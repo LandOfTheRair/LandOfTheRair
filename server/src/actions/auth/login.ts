@@ -56,7 +56,8 @@ export class LoginAction extends ServerAction {
         type: GameServerResponse.Login,
         account: game.db.prepareForTransmission(realAccount),
         motd: game.worldDB.motd,
-        onlineUsers: game.lobbyManager.onlineUsers.map(a => game.accountDB.simpleAccount(a as Account))
+        onlineUsers: game.lobbyManager.onlineUsers.map(a => game.accountDB.simpleAccount(a as Account)),
+        currentHoliday: game.holidayHelper.currentHoliday()
       });
 
       emit({

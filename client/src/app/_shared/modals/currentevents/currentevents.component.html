@@ -2,6 +2,18 @@
 
 <div mat-dialog-content>
 
+  <div class="current-holiday" *ngIf="holiday$ | async as holiday">
+    <div>
+      <strong>{{ holidayDescs[holiday].name }}</strong>
+    </div>
+    <div>
+      <small><em>Takes place between {{ holidayDescs[holiday].duration }}</em></small>
+    </div>
+    <div>
+      {{ holidayDescs[holiday].text }}
+    </div>
+  </div>
+
   <div class="event-container" *ngIf="events$ | async as events">
     <div class="event" *ngIf="events.length === 0">
       Nothing is currently happening.

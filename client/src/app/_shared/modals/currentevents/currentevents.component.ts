@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { IDynamicEvent } from '../../../../interfaces';
-import { LobbyState } from '../../../../stores';
+import { Holiday, IDynamicEvent } from '../../../../interfaces';
+import { GameState, LobbyState } from '../../../../stores';
+
+import * as holidayDescs from '../../../../assets/content/_output/holidaydescs.json';
 
 @Component({
   selector: 'app-currentevents',
@@ -12,7 +14,12 @@ import { LobbyState } from '../../../../stores';
 })
 export class CurrentEventsComponent implements OnInit {
 
+  @Select(GameState.currentHoliday) holiday$: Observable<Holiday>;
   @Select(LobbyState.events) events$: Observable<IDynamicEvent>;
+
+  public get holidayDescs() {
+    return holidayDescs;
+  }
 
   constructor(
     public dialogRef: MatDialogRef<CurrentEventsComponent>

@@ -5,7 +5,7 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideLockerWindow, HideTrainerWindow, HideVendorWindow, OpenBankWindow, OpenLockerWindow, OpenTrainerWindow,
+import { HideBankWindow, HideLockerWindow, HideTrainerWindow, HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, ViewCharacterEquipment } from './actions';
 
@@ -17,6 +17,7 @@ const defaultGame: () => IGame = () => ({
     itemTooltip: { tooltip: '', upgrades: [] },
     player: null,
     map: null,
+    currentHoliday: null,
     trainerInfo: {
       npcUUID: '',
       npcName: '',
@@ -158,7 +159,17 @@ export class GameState {
     return state.inspectingCharacter;
   }
 
+  @Selector()
+  static currentHoliday(state: IGame) {
+    return state.currentHoliday;
+  }
+
   constructor(private store: Store) {}
+
+  @Action(Login)
+  login(ctx: StateContext<IGame>, { info }: Login) {
+    ctx.patchState({ currentHoliday: info.currentHoliday });
+  }
 
   @Action(PlayGame)
   playGame(ctx: StateContext<IGame>) {

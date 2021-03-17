@@ -1,5 +1,5 @@
 import { IVendorItem } from './behaviors';
-import { Currency } from './building-blocks';
+import { Currency, Holiday } from './building-blocks';
 import { ICharacter, IItemContainer } from './character';
 import { INPC } from './npc';
 import { IPlayer } from './player';
@@ -10,6 +10,7 @@ export interface IGame {
   itemTooltip: { tooltip: string, upgrades: string[] };
   player: IPlayer;
   map: any;
+  currentHoliday: Holiday | null;
 
   trainerInfo: {
     npcUUID: string;

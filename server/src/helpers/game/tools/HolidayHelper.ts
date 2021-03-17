@@ -16,12 +16,6 @@ const holidayChecker = {
   Christmas: () => new Date().getMonth() === 11
 };
 
-const holidayDescriptions = {
-  Halloween: 'Go smash some zombies, take their brains, and go trick-or-treating!',
-  Thanksgiving: 'Help some pilgrims shoot some turkeys, test your shooting accuracy, and gather food for a feast!',
-  Christmas: 'Stop Jack Frost from taking over Christmas, help some elves, and find some reindeer!'
-};
-
 @Injectable()
 export class HolidayHelper extends BaseService {
 
@@ -46,10 +40,6 @@ export class HolidayHelper extends BaseService {
     });
 
     return holiday as Holiday;
-  }
-
-  currentHolidayDescription(holiday: Holiday|string): string {
-    return holidayDescriptions[holiday];
   }
 
   tryGrantHolidayTokens(player: IPlayer, amt: number): void {
