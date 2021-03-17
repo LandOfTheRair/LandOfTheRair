@@ -13,4 +13,11 @@ export class StatisticsHelper extends BaseService {
     player.statistics.statistics[statistic]! += number ?? 0;
   }
 
+  public syncBaseStatistics(player: IPlayer): void {
+    player.statistics.baseClass = player.baseClass;
+    player.statistics.xp = player.exp;
+    player.statistics.name = player.name;
+    player.statistics.level = player.level;
+  }
+
 }

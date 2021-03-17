@@ -1,3 +1,4 @@
+import { BaseClass } from './building-blocks';
 
 export enum TrackedStatistic {
   Kills = 'kills',
@@ -12,4 +13,8 @@ export enum TrackedStatistic {
 
 export interface ICharacterStatistics {
   statistics: Partial<Record<TrackedStatistic, number>>;
+  baseClass: BaseClass;
+  name: string;
+  level: number;
+  xp: number;
 }

@@ -257,6 +257,7 @@ export class CharacterDB extends BaseService {
 
   public async savePlayer(player: Player): Promise<void> {
     this.game.playerHelper.reformatPlayerBeforeSave(player);
+    this.game.statisticsHelper.syncBaseStatistics(player);
 
     const saves = [
       this.db.save(player),
