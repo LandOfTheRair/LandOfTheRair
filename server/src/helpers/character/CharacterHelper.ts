@@ -144,14 +144,30 @@ export class CharacterHelper extends BaseService {
 
   // add agro for a different char
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
-    char.agro[target.uuid] = (char.agro[target.uuid] || 0) + amount;
-    target.agro[char.uuid] = (target.agro[char.uuid] || 0) + amount;
 
-    if (char.agro[target.uuid] <= 0) {
-      delete char.agro[target.uuid];
+    const modifyAgro = (agroChar: ICharacter, agroTarget: ICharacter, modAmount: number) => {
+      agroChar.agro[agroTarget.uuid] = (agroChar.agro[agroTarget.uuid] || 0) + modAmount;
+
+      if (agroChar.agro[agroTarget.uuid] <= 0) {
+        delete agroChar.agro[agroTarget.uuid];
+      }
+    };
+
+    modifyAgro(char, target, amount);
+    modifyAgro(target, char, amount);
+
+    if (this.isPlayer(char) && !this.isPlayer(target)) {
+      this.game.partyHelper.getAllPartyMembersInRange(char as IPlayer).forEach(otherPlayer => {
+        modifyAgro(target, otherPlayer, 1);
+        modifyAgro(otherPlayer, target, 1);
+      });
     }
-    if (target.agro[char.uuid] <= 0) {
-      delete target.agro[char.uuid];
+
+    if (this.isPlayer(target) && !this.isPlayer(char)) {
+      this.game.partyHelper.getAllPartyMembersInRange(target as IPlayer).forEach(otherPlayer => {
+        modifyAgro(char, otherPlayer, 1);
+        modifyAgro(otherPlayer, char, 1);
+      });
     }
 
   }
@@ -159,6 +175,12 @@ export class CharacterHelper extends BaseService {
   // clear agro for a particular char
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
+
+    if (this.isPlayer(target) && !this.isPlayer(char)) {
+      this.game.partyHelper.getAllPartyMembersInRange(target as IPlayer).forEach(otherPlayer => {
+        delete char.agro[otherPlayer.uuid];
+      });
+    }
   }
 
   // begin engaging in combat

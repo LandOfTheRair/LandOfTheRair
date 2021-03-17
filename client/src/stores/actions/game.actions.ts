@@ -1,4 +1,4 @@
-import { Currency, GameAction, ICharacter, IItemContainer, IPlayer, IVendorItem } from '../../interfaces';
+import { Currency, GameAction, ICharacter, IItemContainer, IParty, IPartyMember, IPlayer, IVendorItem } from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -138,4 +138,13 @@ export class OpenLockerWindow {
 // dispatched when walking away from a banker
 export class HideLockerWindow {
   static type = GameAction.LockerActionHide;
+}
+
+// dispatched on the slow tick for party updates
+export class UpdateParty {
+  static type = GameAction.PartyUpdate;
+  constructor(
+    public party: IParty,
+    public partyMembers: Record<string, IPartyMember>
+  ) {}
 }

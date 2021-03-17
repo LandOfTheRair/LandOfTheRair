@@ -2,6 +2,7 @@ import { IVendorItem } from './behaviors';
 import { Currency, Holiday } from './building-blocks';
 import { ICharacter, IItemContainer } from './character';
 import { INPC } from './npc';
+import { IParty, IPartyMember } from './party';
 import { IPlayer } from './player';
 
 export interface IGame {
@@ -50,6 +51,11 @@ export interface IGame {
     playerLockers: Record<string, IItemContainer>;
     accountLockers: Record<string, IItemContainer>;
   };
+
+  partyInfo: {
+    party: IParty;
+    partyMembers: Record<string, IPartyMember>;
+  }
 
   inspectingCharacter: ICharacter | null;
 }

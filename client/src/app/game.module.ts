@@ -73,6 +73,7 @@ import { JournalComponent } from './journal/journal.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
 import { LockerComponent } from './containers/game-container/locker/locker.component';
 import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';
+import { PartyComponent } from './containers/game-container/party/party.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
@@ -123,7 +124,8 @@ const gameComponents = [
 
   EquipmentViewOnlyComponent,
   EquipmentViewTargetComponent,
-  RuneCodexComponent
+  RuneCodexComponent,
+  PartyComponent
 ];
 
 

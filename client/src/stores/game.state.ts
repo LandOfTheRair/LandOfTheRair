@@ -7,7 +7,7 @@ import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
 import { HideBankWindow, HideLockerWindow, HideTrainerWindow, HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
-  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, ViewCharacterEquipment } from './actions';
+  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, UpdateParty, ViewCharacterEquipment } from './actions';
 
 const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = player;
 
@@ -51,6 +51,10 @@ const defaultGame: () => IGame = () => ({
       showLockers: [],
       playerLockers: {},
       accountLockers: {}
+    },
+    partyInfo: {
+      party: null,
+      partyMembers: null
     },
     inspectingCharacter: null
   });
@@ -162,6 +166,11 @@ export class GameState {
   @Selector()
   static currentHoliday(state: IGame) {
     return state.currentHoliday;
+  }
+
+  @Selector()
+  static party(state: IGame) {
+    return state.partyInfo;
   }
 
   constructor(private store: Store) {}
@@ -378,5 +387,10 @@ export class GameState {
   @Action(HideLockerWindow)
   hideLockerWindow(ctx: StateContext<IGame>) {
     ctx.patchState({ lockerInfo: null });
+  }
+
+  @Action(UpdateParty)
+  updateParty(ctx: StateContext<IGame>, { party, partyMembers }: UpdateParty) {
+    ctx.patchState({ partyInfo: { party, partyMembers } });
   }
 }

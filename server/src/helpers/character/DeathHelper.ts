@@ -190,22 +190,35 @@ export class DeathHelper extends BaseService {
 
     const npc: INPC = dead as INPC;
 
-    this.game.questHelper.tryUpdateQuestProgressForKill(killer, npc.npcId);
+    const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
 
-    if (this.game.playerHelper.canGainExpOnMap(killer)) {
-      const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
-      this.game.playerHelper.gainExp(killer, earnedExp);
+    const gainKillRewards = (rewarded: IPlayer, multiplier = 1) => {
 
-    // gain only 1 xp if you outpaced the map
-    } else {
-      this.game.playerHelper.gainExp(killer, 1);
-    }
+      this.game.questHelper.tryUpdateQuestProgressForKill(rewarded, npc.npcId);
 
-    killer.flaggedSkills = killer.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(killer, x));
-    this.game.playerHelper.gainCurrentSkills(killer, npc.skillOnKill);
+      if (this.game.playerHelper.canGainExpOnMap(rewarded)) {
+        this.game.playerHelper.gainExp(rewarded, earnedExp * multiplier);
 
-    npc.allegianceMods.forEach(({ delta, allegiance }) => {
-      this.game.playerHelper.modifyReputationForAllegiance(killer, allegiance, delta);
+      // gain only 1 xp if you outpaced the map
+      } else {
+        this.game.playerHelper.gainExp(rewarded, 1);
+      }
+
+      rewarded.flaggedSkills = rewarded.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(rewarded, x));
+      this.game.playerHelper.gainCurrentSkills(rewarded, npc.skillOnKill * multiplier);
+
+      npc.allegianceMods.forEach(({ delta, allegiance }) => {
+        this.game.playerHelper.modifyReputationForAllegiance(rewarded, allegiance, delta);
+      });
+    };
+
+    gainKillRewards(killer);
+
+    const partyMembers = this.game.partyHelper.getAllPartyMembersInRange(killer);
+    const partyMultiplier = this.game.partyHelper.getMultiplierBasedOnPartySize(partyMembers.length + 1);
+
+    partyMembers.forEach(otherPlayer => {
+      gainKillRewards(otherPlayer, partyMultiplier);
     });
   }
 

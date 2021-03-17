@@ -9,6 +9,8 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyH
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
   QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
+import { PartyHelper } from '../character/PartyHelper';
+import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
@@ -83,6 +85,8 @@ export class Game {
     public bankHelper: BankHelper,
     public lockerHelper: LockerHelper,
     public statisticsHelper: StatisticsHelper,
+    public partyHelper: PartyHelper,
+    public partyManager: PartyManager,
 
     public messageHelper: MessageHelper,
     public dynamicEventHelper: DynamicEventHelper,
@@ -117,7 +121,7 @@ export class Game {
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',
-      'statisticsHelper',
+      'statisticsHelper', 'partyHelper', 'partyManager',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
       'discordHelper'
@@ -171,6 +175,7 @@ export class Game {
       timer.startTimer('slowTick');
       this.playerManager.slowTick(timer, trueTick);
       this.groundManager.tick(timer);
+      this.partyManager.tick(timer);
       timer.stopTimer('slowTick');
     }
 

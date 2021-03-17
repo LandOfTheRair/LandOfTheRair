@@ -65,7 +65,7 @@ mat-dialog-actions {
     border-top: 0;
   }
 
-  .mat-form-field-underline {
+  mat-form-field:not(.show-underline) .mat-form-field-underline {
     display: none;
   }
 

@@ -107,8 +107,14 @@ export class GameService {
   }
 
   // get the direction from a character to another one
-  public directionTo(from: ICharacter, to: ICharacter) {
+  public directionTo(from: { x: number; y: number; z?: number }, to: { x: number; y: number; z?: number }): string {
     if (!to || !from) return '';
+
+    const toZ = to.z ?? 0;
+    const fromZ = from.z ?? 0;
+
+    if (toZ > fromZ) return 'Above';
+    if (toZ < fromZ) return 'Below';
 
     const diffX = to.x - from.x;
     const diffY = to.y - from.y;

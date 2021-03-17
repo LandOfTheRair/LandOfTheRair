@@ -25,6 +25,7 @@ export * from './macro';
 export * from './map';
 export * from './messages';
 export * from './npc';
+export * from './party';
 export * from './player';
 export * from './quest';
 export * from './settings';

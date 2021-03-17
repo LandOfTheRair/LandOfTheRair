@@ -114,6 +114,7 @@ export class LobbyManager extends BaseService {
     const player = this.playerManager.getPlayerInGame(account);
     if (!player) return;
 
+    this.game.partyHelper.leaveParty(player);
     this.worldManager.leaveMap(player);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGameByAccount(account);

@@ -113,7 +113,6 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Party',
-          disabled: true,
           visibleIf: this.gameService.inGame$,
           handler: () => this.store.dispatch(new ShowWindow('party'))
         },

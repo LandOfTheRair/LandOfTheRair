@@ -65,7 +65,8 @@ const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).
           [GameAction.SettingsSetDefaultWindowPosition]: true,
           [GameAction.SettingsShowWindow]: true,
           [GameAction.SettingsActiveWindow]: true,
-          [GameAction.SetCurrentCommand]: true
+          [GameAction.SetCurrentCommand]: true,
+          [GameAction.PartyUpdate]: true
         };
 
         return !ignoreActions[action.type];
