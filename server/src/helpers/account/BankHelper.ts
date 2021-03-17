@@ -10,7 +10,7 @@ export class BankHelper extends BaseService {
 
   // deposit coins
   public deposit(player: IPlayer, amount: number, currency = Currency.Gold): void {
-    player.bank.deposits[currency] = player.bank.deposits[currency] ?? 0;
+    player.bank.deposits[currency] ??= 0;
     player.bank.deposits[currency]! += amount;
 
     player.bank.deposits[currency] = Math.max(player.bank.deposits[currency]!, 0);
@@ -20,7 +20,7 @@ export class BankHelper extends BaseService {
 
   // withdraw coins
   public withdraw(player: IPlayer, amount: number, currency = Currency.Gold): void {
-    player.bank.deposits[currency] = player.bank.deposits[currency] ?? 0;
+    player.bank.deposits[currency] ??= 0;
     player.bank.deposits[currency]! -= amount;
 
     player.bank.deposits[currency] = Math.max(player.bank.deposits[currency]!, 0);

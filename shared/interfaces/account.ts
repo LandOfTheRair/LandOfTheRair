@@ -1,3 +1,4 @@
+import { IAccountPremium } from './accountpremium';
 
 export interface IAccount {
   username: string;
@@ -8,15 +9,13 @@ export interface IAccount {
 
   isGameMaster: boolean;
   isTester: boolean;
-  isSubscribed: boolean;
 
   isMuted: boolean;
   isBanned: boolean;
 
-  subscriptionEndsTimestamp: number;
-  trialEndsTimestamp: number;
-
   discordTag: string;
   alwaysOnline: boolean;
   eventWatcher: boolean;
+
+  premium: IAccountPremium;
 }

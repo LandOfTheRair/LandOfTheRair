@@ -63,10 +63,13 @@ export class PlayerHelper extends BaseService {
     player.isGM = playerAccount.isGameMaster;
     player.isTester = playerAccount.isTester;
     player.username = playerAccount.username;
-    player.isSubscribed = this.subscriptionHelper.isSubscribed(playerAccount);
+    player.subscriptionTier = playerAccount.premium.subscriptionTier;
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';
+
+    if (!player.accountLockers.lockers) player.accountLockers.lockers = { Shared: { items: [] } };
+    if (!player.accountLockers.pouch) player.accountLockers.pouch = { items: [] };
 
     this.reformatPlayerAfterLoad(player);
 
@@ -298,7 +301,7 @@ export class PlayerHelper extends BaseService {
 
   // flag a certain skill for a player
   public trainSkill(player: IPlayer, skill: Skill, amt: number): void {
-    player.paidSkills[skill] = player.paidSkills[skill] ?? 0;
+    player.paidSkills[skill] ??= 0;
     player.paidSkills[skill]! += amt;
   }
 
@@ -327,7 +330,7 @@ export class PlayerHelper extends BaseService {
       const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent)
                                + this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
       xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
-      // TODO: modify xpGained for sub
+      xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
       xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
     }
 
@@ -340,7 +343,7 @@ export class PlayerHelper extends BaseService {
   public gainAxp(player: IPlayer, axpGained: number): void {
     if (!player.gainingAXP && axpGained > 0) return;
 
-    // TODO: modify axpGained for sub
+    axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
     axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, { floor: true });
     player.axp = Math.max(Math.floor(player.axp + axpGained), 0);
 
@@ -373,7 +376,7 @@ export class PlayerHelper extends BaseService {
       skillGained *= 2;
     }
 
-    // TODO: modify skillGained for sub
+    skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
     player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);

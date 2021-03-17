@@ -91,7 +91,7 @@ export class DiscordHelper extends BaseService {
     }
 
     if (subscriber) {
-      if (account.isGameMaster || account.isSubscribed || account.isTester) {
+      if (this.game.subscriptionHelper.isSubscribed(account)) {
         this.addRole(user, subscriber);
       } else {
         this.removeRole(user, subscriber);

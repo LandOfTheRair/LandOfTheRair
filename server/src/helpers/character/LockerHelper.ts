@@ -19,15 +19,17 @@ export class LockerHelper extends BaseService {
 
     const lockers: any[] = [];
 
-    Object.keys(player.accountLockers?.lockers ?? {}).forEach(checkLockerId => {
-      lockers.push(checkLockerId);
-    });
-
     Object.keys(player.lockers?.lockers ?? {}).forEach(checkLockerId => {
       lockers.push(checkLockerId);
     });
 
     const showLockers = lockers.slice().sort();
+
+    if (this.game.subscriptionHelper.hasSharedLocker(player)) {
+      Object.keys(player.accountLockers?.lockers ?? {}).forEach(checkLockerId => {
+        showLockers.unshift(checkLockerId);
+      });
+    }
 
     showLockers.unshift('Materials');
 
@@ -35,7 +37,8 @@ export class LockerHelper extends BaseService {
       action: GameAction.LockerActionShow,
       lockerName,
       showLockers,
-      playerLockers: player.lockers.lockers
+      playerLockers: player.lockers.lockers,
+      accountLockers: player.accountLockers.lockers
     });
   }
 
@@ -53,10 +56,13 @@ export class LockerHelper extends BaseService {
 
   public getLockerFromString(player: IPlayer, lockerString: string): IItemContainer {
     const [w, locker] = lockerString.split(':');
+    if (locker.includes('Shared')) return player.accountLockers.lockers?.[locker];
     return player.lockers.lockers?.[locker];
   }
 
   private ensureLockerExists(player: IPlayer, lockerId: string): void {
+    if (lockerId.includes('Shared')) throw new Error('Trying to ensure a shared locker exists');
+
     if (!player.lockers.lockers) player.lockers.lockers = {};
     if (!player.lockers.lockers[lockerId]) player.lockers.lockers[lockerId] = { items: [] };
   }

@@ -21,6 +21,9 @@ export const environment = {
     terrain: 0,
     walls: 0
   },
+  stripe: {
+    key: 'pk_test_TNxhxgcsao9B4ouQwRXeUnmm'
+  },
   version: 'localdev'
 };
 

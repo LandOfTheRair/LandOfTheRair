@@ -53,7 +53,7 @@ export class PlayAction extends ServerAction {
       player.y = 14;
     }
 
-    game.lobbyManager.accountEnterGame(data.account, player);
+    await game.lobbyManager.accountEnterGame(data.account, player);
 
     emit({
       action: GameAction.GamePlay

@@ -66,7 +66,7 @@ export class LobbyState {
   }
 
   private formatUser(user: IChatUser): IChatUser {
-    if (user.isSubscribed) user.tier = SubscriptionTier.Normal;
+    if (user.premium?.subscriptionTier) user.tier = user.premium?.subscriptionTier;
     if (user.isTester) user.tier = SubscriptionTier.Tester;
     if (user.isGameMaster) user.tier = SubscriptionTier.GM;
 

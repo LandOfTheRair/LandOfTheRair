@@ -79,7 +79,7 @@ export class DamageHelperPhysical extends BaseService {
                                    || (args.isThrow && returnsOnThrow);
 
     if (shouldOffhandAttackAsWell && offhand) {
-      args = args ?? {};
+      args ??= {};
       args.isOffhand = true;
       args.throwHand = ItemSlot.LeftHand;
       this.handlePhysicalAttack(attacker, defender, args);

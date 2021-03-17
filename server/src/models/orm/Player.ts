@@ -4,7 +4,7 @@ import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
   IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
-  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage } from '../../interfaces';
+  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage, SubscriptionTier, ICharacterPouch } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
@@ -26,13 +26,13 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) bank: IAccountBank;
   @Property(PROP_UNSAVED_SHARED()) statistics: ICharacterStatistics;
   @Property(PROP_UNSAVED_SHARED()) lockers: ICharacterLockers;
-  @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers & IMaterialStorage;
+  @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers & IMaterialStorage & ICharacterPouch;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
   @Property(PROP_UNSAVED_SHARED()) swimLevel = 0;
   @Property(PROP_UNSAVED_SHARED()) username: string;
-  @Property(PROP_UNSAVED_SHARED()) isSubscribed: boolean;
+  @Property(PROP_UNSAVED_SHARED()) subscriptionTier: SubscriptionTier;
   @Property(PROP_UNSAVED_SHARED()) fov = {};
   @Property(PROP_UNSAVED_SHARED()) agro = {};
   @Property(PROP_UNSAVED_SHARED()) totalStats: StatBlock;

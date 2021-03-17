@@ -47,6 +47,7 @@ export interface IGame {
     lockerName: string;
     showLockers: string[];
     playerLockers: Record<string, IItemContainer>;
+    accountLockers: Record<string, IItemContainer>;
   };
 
   inspectingCharacter: ICharacter | null;

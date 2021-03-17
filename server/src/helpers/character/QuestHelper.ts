@@ -157,13 +157,13 @@ export class QuestHelper extends BaseService {
         this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} gold!`);
       }
 
-      // TODO: reward silver
       if (reward.type === QuestRewardType.Silver) {
+        this.game.subscriptionHelper.gainSilver(player, reward.value);
         this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} silver!`);
       }
 
-      // TODO: check holiday, if exists, gain token
       if (reward.type === QuestRewardType.HolidayTokens) {
+        this.game.holidayHelper.tryGrantHolidayTokens(player, reward.value);
       }
 
     });

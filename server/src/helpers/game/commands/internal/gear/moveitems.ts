@@ -9,6 +9,7 @@ const origins = [
   'E',  // equipment
   'B',  // belt
   'S',  // sack
+  'D',  // demimagicpouch
   'C',  // coin
   'G',  // ground
   'M',  // merchant
@@ -18,17 +19,18 @@ const origins = [
 ];
 
 const validDestinations = {
-  E: ['B', 'S', 'L', 'R', 'G', 'W'],
-  B: ['L', 'R', 'S', 'E', 'G', 'M', 'W'],
-  S: ['L', 'R', 'B', 'E', 'G', 'M', 'W', 'K'],
-  L: ['R', 'E', 'B', 'S', 'G', 'M', 'W', 'K'],
-  R: ['L', 'E', 'B', 'S', 'G', 'M', 'W', 'K'],
+  E: ['B', 'S', 'L', 'R', 'G', 'W', 'D'],
+  B: ['L', 'R', 'S', 'E', 'G', 'M', 'W', 'D'],
+  S: ['L', 'R', 'B', 'E', 'G', 'M', 'W', 'K', 'D'],
+  L: ['R', 'E', 'B', 'S', 'G', 'M', 'W', 'K', 'D'],
+  R: ['L', 'E', 'B', 'S', 'G', 'M', 'W', 'K', 'D'],
   C: ['R', 'L', 'G'],
-  G: ['R', 'L', 'E', 'B', 'S', 'W', 'K'],
-  M: ['R', 'L', 'B', 'S'],
-  O: ['R', 'L', 'B', 'S'],
-  W: ['R', 'L', 'B', 'S', 'E', 'G'],
-  K: ['R', 'L', 'S', 'G']
+  G: ['R', 'L', 'E', 'B', 'S', 'W', 'K', 'D'],
+  M: ['R', 'L', 'B', 'S', 'D'],
+  O: ['R', 'L', 'B', 'S', 'D'],
+  W: ['R', 'L', 'B', 'S', 'E', 'G', 'D'],
+  K: ['R', 'L', 'S', 'G', 'D'],
+  D: ['R', 'L', 'S', 'B', 'G', 'E', 'W', 'M', 'K']
 };
 
 const allAliases = origins.map(o => validDestinations[o].map(sub => `${o}t${sub}`)).flat();
@@ -201,9 +203,13 @@ export class MoveItems extends MacroCommand {
       if (dest === 'W') {
         if (!destSlot) return false;
         if (!this.game.lockerHelper.hasLockerFromString(player, destSlot)) return false;
+        if (destSlot.includes('Shared') && !this.game.subscriptionHelper.hasSharedLocker(player)) {
+          this.sendMessage(player, 'You do not have a shared wardrobe!');
+          return false;
+        }
 
-        const [w, name] = destSlot.split(':');
-        const canAdd = this.game.inventoryHelper.canAddItemToLocker(player, srcItem, player.lockers.lockers[name]);
+        const lockerRef = this.game.lockerHelper.getLockerFromString(player, destSlot);
+        const canAdd = this.game.inventoryHelper.canAddItemToLocker(player, srcItem, lockerRef);
         if (!canAdd) {
           this.sendMessage(player, 'That item cannot fit in your wardrobe!');
           return false;
@@ -225,6 +231,10 @@ export class MoveItems extends MacroCommand {
           return false;
         }
       }
+    }
+
+    if (dest === 'D') {
+      if (!this.game.subscriptionHelper.hasPouch(player)) return false;
     }
 
     return true;
@@ -344,6 +354,15 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'D': { // LtD
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
+      this.game.characterHelper.setLeftHand(player, undefined);
+      break;
+    }
+
     case 'B': { // LtB
       if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
       if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
@@ -452,6 +471,15 @@ export class MoveItems extends MacroCommand {
       if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
 
       this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.characterHelper.setRightHand(player, undefined);
+      break;
+    }
+
+    case 'D': { // RtD
+      if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
       this.game.characterHelper.setRightHand(player, undefined);
       break;
     }
@@ -598,6 +626,14 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'D': { // EtD
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
+      this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
+      break;
+    }
+
     case 'B': { // EtB
       if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
 
@@ -691,6 +727,14 @@ export class MoveItems extends MacroCommand {
 
       this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
       this.game.inventoryHelper.addItemToSack(player, srcItem);
+      break;
+    }
+
+    case 'D': { // BtD
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
       break;
     }
 
@@ -805,6 +849,14 @@ export class MoveItems extends MacroCommand {
 
       this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
       this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      break;
+    }
+
+    case 'D': { // StD
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
       break;
     }
 
@@ -970,6 +1022,38 @@ export class MoveItems extends MacroCommand {
       addItems.forEach(item => {
         if (!this.game.inventoryHelper.canAddItemToSack(player, item)) return this.sendMessage(player, 'Your sack is full.');
         this.game.inventoryHelper.addItemToSack(player, item);
+      });
+
+      Object.keys(uuidRemoveCounts).forEach(removeUUID => {
+        state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, uuidRemoveCounts[removeUUID]);
+      });
+
+      break;
+    }
+
+    case 'D': { // GtD
+
+      const spaceLeft = this.game.inventoryHelper.pouchSpaceLeft(player);
+      const addItems: ISimpleItem[] = [];
+      const uuidRemoveCounts: Record<string, number> = {};
+
+      items.forEach(item => {
+        if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
+        if (addItems.length >= spaceLeft) return;
+
+        for (let i = 0; i < item.count; i++) {
+          if (addItems.length >= spaceLeft) break;
+
+          uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
+          uuidRemoveCounts[item.item.uuid]++;
+
+          addItems.push(this.game.itemCreator.rerollItem(item.item));
+        }
+      });
+
+      addItems.forEach(item => {
+        if (!this.game.inventoryHelper.canAddItemToPouch(player, item)) return this.sendMessage(player, 'Your pouch is full.');
+        this.game.inventoryHelper.addItemToPouch(player, item);
       });
 
       Object.keys(uuidRemoveCounts).forEach(removeUUID => {
@@ -1173,6 +1257,23 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'D': { // MtD
+      const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.pouchSpaceLeft(player), +destSlot);
+      for (let i = 0; i < maxItemsBuyable; i++) {
+        const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+
+        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+          || !this.game.inventoryHelper.canAddItemToPouch(player, createdItem)) {
+          return;
+        }
+
+        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.inventoryHelper.addItemToPouch(player, createdItem);
+      }
+
+      break;
+    }
+
     default: {
       this.game.logger.error('MoveItems', `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
       return this.sendMessage(player, 'Something went wrong, please contact a GM.');
@@ -1238,6 +1339,14 @@ export class MoveItems extends MacroCommand {
       if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
 
       this.game.inventoryHelper.addItemToSack(player, srcItem);
+      this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
+      break;
+    }
+
+    case 'D': { // OtD
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
       this.game.inventoryHelper.removeItemFromBuyback(player, itemSlot);
       break;
     }
@@ -1351,6 +1460,17 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'D': { // WtD
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      const didTake = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
+      if (!didTake) return this.sendMessage(player, 'Could not take item from locker.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
+
+      break;
+    }
+
     case 'E': { // WtE
       const equipSlot = this.getEquipmentSlot(player, srcItem);
       if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
@@ -1442,12 +1562,167 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'S': { // KtS
+      if (!this.game.inventoryHelper.canAddItemToPouch(player, srcItem)) return this.sendMessage(player, 'Your pouch is full.');
+
+      this.game.inventoryHelper.addItemToPouch(player, srcItem);
+      break;
+    }
+
     default: {
       this.game.logger.error('MoveItems', `handleK ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
       return this.sendMessage(player, 'Something went wrong, please contact a GM.');
     }
     }
 
+  }
+
+  // handle D as an origin
+  handleD(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
+    if (!validDestinations.D.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+
+    const srcItem = player.accountLockers.pouch.items[+origSlot];
+
+    if (!srcItem) return this.sendMessage(player, 'You don\'t have an item there!');
+
+    if (!this.doPrelimChecks(player, srcItem, 'D', origSlot, dest, destSlot)) return;
+
+    switch (dest) {
+    case 'R': { // DtR
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (rightHand && !leftHand) {
+        const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.characterHelper.setLeftHand(player, rightHand);
+        this.game.characterHelper.setRightHand(player, srcItem);
+
+      } else if (!rightHand) {
+        const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.characterHelper.setRightHand(player, srcItem);
+      }
+
+      break;
+    }
+
+    case 'L': { // DtL
+      const rightHand = player.items.equipment[ItemSlot.RightHand];
+      const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+      if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
+
+      if (leftHand && !rightHand) {
+        const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.characterHelper.setRightHand(player, leftHand);
+        this.game.characterHelper.setLeftHand(player, srcItem);
+
+      } else if (!leftHand) {
+        const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+        if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+        this.game.characterHelper.setLeftHand(player, srcItem);
+      }
+
+      break;
+    }
+
+    case 'B': { // DtB
+      if (!this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) return this.sendMessage(player, 'Your belt is full.');
+
+      this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      this.game.inventoryHelper.addItemToBelt(player, srcItem);
+      break;
+    }
+
+    case 'S': { // DtS
+      if (!this.game.inventoryHelper.canAddItemToSack(player, srcItem)) return this.sendMessage(player, 'Your sack is full.');
+
+      this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      this.game.inventoryHelper.addItemToSack(player, srcItem);
+      break;
+    }
+
+    case 'E': { // DtE
+      const equipSlot = this.getEquipmentSlot(player, srcItem);
+      if (!equipSlot) return this.sendMessage(player, 'That item doesn\'t fit there.');
+
+      if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
+
+      const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, srcItem);
+
+      break;
+    }
+
+    case 'G': { // DtG
+      const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      const { state } = this.game.worldManager.getMap(player.map);
+      state.addItemToGround(player.x, player.y, srcItem);
+
+      break;
+    }
+
+    case 'M': { // DtM
+      const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      this.game.inventoryHelper.sellItem(player, srcItem);
+
+      break;
+    }
+
+    case 'W': { // DtW
+      const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+      if (!did) return this.sendMessage(player, 'Could not take item from sack.');
+
+      this.game.inventoryHelper.addItemToLocker(player, srcItem, this.game.lockerHelper.getLockerFromString(player, destSlot));
+      break;
+    }
+
+    case 'K': { // DtK
+      const materialRef = this.game.lockerHelper.getMaterialRef(srcItem.name);
+      if (!materialRef) return this.sendMessage(player, 'That is not a material!');
+
+      const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+
+      const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
+      if (withdrawInOunces) {
+        const totalOz = this.game.itemHelper.getItemProperty(srcItem, 'ounces') ?? 1;
+        const takeOz = Math.min(materialSpaceLeft, totalOz);
+
+        srcItem.mods.ounces = totalOz - takeOz;
+        this.game.inventoryHelper.addMaterial(player, materialRef, takeOz);
+
+        if (srcItem.mods.ounces <= 0) {
+          this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+        }
+
+      } else {
+        this.game.inventoryHelper.addMaterial(player, materialRef, 1);
+        this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
+
+      }
+
+      break;
+    }
+
+    default: {
+      this.game.logger.error('MoveItems', `handleD ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
+      return this.sendMessage(player, 'Something went wrong, please contact a GM.');
+    }
+    }
   }
 
 }

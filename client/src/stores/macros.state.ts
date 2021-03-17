@@ -82,8 +82,8 @@ export class MacrosState {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
     setState((state: IMacroContainer) => {
-      state.activeMacros = state.activeMacros ?? {};
-      state.activeMacros[curPlayer.username] = state.activeMacros[curPlayer.username] ?? {};
+      state.activeMacros ??= {};
+      state.activeMacros[curPlayer.username] ??= {};
       state.activeMacros[curPlayer.username][curPlayer.charSlot] = macroName;
 
       return state;
@@ -96,9 +96,9 @@ export class MacrosState {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
     setState((state: IMacroContainer) => {
-      state.learnedMacros = state.learnedMacros ?? {};
-      state.learnedMacros[curPlayer.username] = state.learnedMacros[curPlayer.username] ?? {};
-      state.learnedMacros[curPlayer.username][curPlayer.charSlot] = state.learnedMacros[curPlayer.username][curPlayer.charSlot] ?? {};
+      state.learnedMacros ??= {};
+      state.learnedMacros[curPlayer.username] ??= {};
+      state.learnedMacros[curPlayer.username][curPlayer.charSlot] ??= {};
       state.learnedMacros[curPlayer.username][curPlayer.charSlot][macro.name] = macro;
 
       return state;
@@ -111,8 +111,8 @@ export class MacrosState {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
     setState((state: IMacroContainer) => {
-      state.activeMacroBars = state.activeMacroBars ?? {};
-      state.activeMacroBars[curPlayer.username] = state.activeMacroBars[curPlayer.username] ?? {};
+      state.activeMacroBars ??= {};
+      state.activeMacroBars[curPlayer.username] ??= {};
       state.activeMacroBars[curPlayer.username][curPlayer.charSlot] = macroBarNames;
 
       return state;
@@ -125,8 +125,8 @@ export class MacrosState {
     const curPlayer = this.store.selectSnapshot(GameState.player);
 
     setState((state: IMacroContainer) => {
-      state.characterMacros = state.characterMacros ?? {};
-      state.characterMacros[curPlayer.username] = state.characterMacros[curPlayer.username] ?? {};
+      state.characterMacros ??= {};
+      state.characterMacros[curPlayer.username] ??= {};
       state.characterMacros[curPlayer.username][curPlayer.charSlot] = {};
 
       macroBars.forEach(bar => state.characterMacros[curPlayer.username][curPlayer.charSlot][bar.name] = bar);
@@ -143,8 +143,8 @@ export class MacrosState {
     setState((state: IMacroContainer) => {
       Object.assign(state.customMacros, importCustomMacros);
 
-      state.characterMacros = state.characterMacros ?? {};
-      state.characterMacros[curPlayer.username] = state.characterMacros[curPlayer.username] ?? {};
+      state.characterMacros ??= {};
+      state.characterMacros[curPlayer.username] ??= {};
       state.characterMacros[curPlayer.username][curPlayer.charSlot] = {};
 
       macroBars.forEach(bar => state.characterMacros[curPlayer.username][curPlayer.charSlot][bar.name] = bar);

@@ -1,6 +1,7 @@
 
 export * from './account';
 export * from './accountbank';
+export * from './accountpremium';
 export * from './action';
 export * from './ai';
 export * from './behaviors';

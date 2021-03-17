@@ -49,7 +49,10 @@ export enum GameServerEvent {
 
   QuitGame = 'Game:Emit:QuitGame',
 
-  DoCommand = 'Game:Emit:DoCommand'
+  DoCommand = 'Game:Emit:DoCommand',
+
+  PremiumBuy = 'Premium:Buy:Item',
+  PremiumSilverBuy = 'Premium:SilverBuy:Item'
 }
 
 export enum GameServerResponse {
@@ -84,6 +87,7 @@ export enum GameAction {
   Login = '[Account] Log in',
   Logout = '[Account] Log out',
   SetCharacterSlotInformation = '[Account] Set Charslot Info',
+  SetAccount = '[Account] Set Account',
 
   ChatAddMessage = '[Chat] Add message',
   ChatSetMOTD = '[Chat] Set MOTD',

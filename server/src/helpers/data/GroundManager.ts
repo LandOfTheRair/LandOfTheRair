@@ -7,8 +7,6 @@ import { IGround, IGroundItem, ISerializableSpawner, ISimpleItem, ItemClass } fr
 import { BaseService } from '../../models/BaseService';
 import { Ground } from '../../models/orm/Ground';
 
-// TODO: when stripped OR dying and dropping hands, items should be marked as _canBeSaved even if they don't have an owner; they should also be excluded from the quick GCs
-
 @Injectable()
 export class GroundManager extends BaseService {
 

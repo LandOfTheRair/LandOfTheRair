@@ -1,5 +1,5 @@
 import { Game } from '../../helpers';
-import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
+import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {

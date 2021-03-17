@@ -3,6 +3,10 @@
 <div mat-dialog-content>
 
   <div class="event-container" *ngIf="events$ | async as events">
+    <div class="event" *ngIf="events.length === 0">
+      Nothing is currently happening.
+    </div>
+
     <div class="event" *ngFor="let event of events">
       <div class="event-name">
         <strong>{{ event.name }}</strong>&nbsp;&nbsp;<em>(ends at roughly {{ event.endsAt | date:'short' }})</em>

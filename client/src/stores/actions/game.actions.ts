@@ -130,7 +130,8 @@ export class OpenLockerWindow {
   constructor(
     public lockerName: string,
     public showLockers: string[],
-    public playerLockers: Record<string, IItemContainer>
+    public playerLockers: Record<string, IItemContainer>,
+    public accountLockers: Record<string, IItemContainer>
   ) {}
 }
 

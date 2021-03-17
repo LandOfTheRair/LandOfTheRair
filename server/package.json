@@ -53,6 +53,7 @@
     "recursive-readdir": "2.2.2",
     "reflect-metadata": "0.1.13",
     "rollbar": "2.19.4",
+    "stripe": "^8.138.0",
     "utf-8-validate": "^5.0.3",
     "uuid": "3.3.3",
     "ws": "^7.4.1"

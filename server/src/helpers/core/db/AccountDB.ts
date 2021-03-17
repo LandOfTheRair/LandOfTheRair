@@ -5,7 +5,7 @@ import { cloneDeep, merge, pick } from 'lodash';
 import { ObjectId } from 'mongodb';
 
 import { IAccount } from '../../../interfaces';
-import { Account } from '../../../models';
+import { Account, AccountPremium } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { Database } from '../Database';
 
@@ -40,9 +40,25 @@ export class AccountDB extends BaseService {
     if (!account) return null;
 
     const players = await this.game.characterDB.loadPlayers(account);
-
     account.players = players;
-    if (account.players.length < 4) account.players.length = 4;
+
+    let [premium] = await Promise.all([
+      this.db.findSingle<AccountPremium>(AccountPremium, { _account: account._id })
+    ]);
+
+    if (!premium) {
+      const newPrem = new AccountPremium();
+      newPrem._id = new ObjectId();
+      newPrem._account = account._id;
+
+      premium = newPrem;
+    }
+
+    account.premium = premium;
+
+    // post-load setup
+    const maxPlayers = this.game.subscriptionHelper.maxCharacters(account, 4);
+    if (account.players.length < maxPlayers) account.players.length = maxPlayers;
 
     return account;
   }
@@ -64,14 +80,18 @@ export class AccountDB extends BaseService {
       password: this.bcryptPassword(accountInfo.password as string)
     });
 
-    await this.db.save(account);
+    await this.saveAccount(account);
 
     return this.getAccount(account.username);
   }
 
   public simpleAccount(account: Account): Partial<Account> {
     const accountObj = cloneDeep(account);
-    return pick(accountObj, ['alwaysOnline', 'eventWatcher', 'isGameMaster', 'isSubscribed', 'isTester', 'tier', 'username']);
+    return pick(accountObj, ['alwaysOnline', 'eventWatcher', 'isGameMaster', 'premium.subscriptionTier', 'isTester', 'username']);
+  }
+
+  private bcryptPassword(password: string): string {
+    return bcrypt.hashSync(password, 10);
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {
@@ -82,39 +102,46 @@ export class AccountDB extends BaseService {
     return bcrypt.compareSync(passwordCheck, account.password);
   }
 
+  public async saveAccount(account: Account): Promise<void> {
+    await Promise.all([
+      this.db.save(account),
+      this.db.save(account.premium as AccountPremium)
+    ]);
+  }
+
   public async changePassword(account: Account, newPassword: string): Promise<void> {
     account.password = this.bcryptPassword(newPassword);
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async changeAlwaysOnline(account: Account, alwaysOnline: boolean): Promise<void> {
     account.alwaysOnline = alwaysOnline;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async changeEventWatcher(account: Account, eventWatcher: boolean): Promise<void> {
     account.eventWatcher = eventWatcher;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async toggleTester(account: Account): Promise<void> {
     account.isTester = !account.isTester;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async toggleGM(account: Account): Promise<void> {
     account.isGameMaster = !account.isGameMaster;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async toggleMute(account: Account): Promise<void> {
     account.isMuted = !account.isMuted;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async ban(account: Account): Promise<void> {
     account.isBanned = true;
-    await this.db.save(account);
+    await this.saveAccount(account);
   }
 
   public async changeDiscordTag(account: Account, discordTag: string): Promise<void> {
@@ -125,11 +152,7 @@ export class AccountDB extends BaseService {
     }
 
     account.discordTag = discordTag;
-    await this.db.save(account);
-  }
-
-  private bcryptPassword(password: string): string {
-    return bcrypt.hashSync(password, 10);
+    await this.saveAccount(account);
   }
 
 }

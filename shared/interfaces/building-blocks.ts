@@ -251,15 +251,15 @@ export enum LearnedSpell {
 }
 
 export enum Currency {
-  January,
-  February,
-  March,
-  April,
-  May,
-  June,
-  July,
-  August,
-  September,
+  January = 'new year coins',
+  February = 'heart coins',
+  March = 'spring coins',
+  April = 'rain coins',
+  May = 'flower coins',
+  June = 'celebration coins',
+  July = 'fireworks coins',
+  August = 'autumn coins',
+  September = 'school coins',
   October = 'pumpkin coins',
   November = 'turkey coins',
   December = 'snowflake coins',
@@ -270,9 +270,9 @@ export enum Currency {
 }
 
 export enum Holiday {
-  Halloween = 'Halloween',
-  Thanksgiving = 'Thanksgiving',
-  Christmas = 'Christmas'
+  Halloween = 'October',
+  Thanksgiving = 'November',
+  Christmas = 'December'
 }
 
 export enum MonsterClass {

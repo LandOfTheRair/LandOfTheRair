@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { Holiday, IPlayer } from '../../../interfaces';
+import { Holiday, IPlayer, Currency } from '../../../interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 const holidayChecker = {
@@ -36,7 +36,7 @@ export class HolidayHelper extends BaseService {
     return Object.keys(holidayChecker).map(hol => holidayChecker[hol]()).some(Boolean);
   }
 
-  currentHoliday(): string {
+  currentHoliday(): Holiday {
     let holiday = '';
 
     // we do this in case we have sub-holidays, ie, new years is the last week of christmas (for example)
@@ -45,7 +45,7 @@ export class HolidayHelper extends BaseService {
       holiday = checkHoliday;
     });
 
-    return holiday;
+    return holiday as Holiday;
   }
 
   currentHolidayDescription(holiday: Holiday|string): string {
@@ -55,12 +55,10 @@ export class HolidayHelper extends BaseService {
   tryGrantHolidayTokens(player: IPlayer, amt: number): void {
     if (!this.isAnyHoliday()) return;
 
-    // TODO: subs earn 2x holiday currency
-    // if(player.$$room.subscriptionHelper.isSubscribed(player)) amt *= 2;
+    if (player.subscriptionTier > 0) amt *= 2;
 
-    // TODO: player gain currency
-    // player.earnCurrency(<Currency>this.currentHoliday().toLowerCase(), amt);
-    // player.sendClientMessage({ message: `You also earned ${amt} holiday tokens!`, grouping: 'always' });
+    this.game.currencyHelper.gainCurrency(player, amt, Currency[this.currentHoliday()]);
+    this.game.messageHelper.sendSimpleMessage(player, `You also earned ${amt} ${Currency[this.currentHoliday()]}!`);
   }
 
 }

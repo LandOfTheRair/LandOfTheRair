@@ -2,9 +2,13 @@
 .char-buttons {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
+  min-height: 90px;
 
   .tab-button {
     flex: 1;
+    min-width: 20%;
+    max-width: 25%;
     line-height: 22px;
     height: 45px;
     border-radius: 0;

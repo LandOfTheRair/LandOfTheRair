@@ -8,7 +8,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
   return {
     ...baseChar,
     username: char.username ?? '',
-    isSubscribed: char.isSubscribed ?? false,
+    subscriptionTier: char.subscriptionTier ?? 0,
     z: char.z ?? 0,
     charSlot: char.charSlot ?? 0,
     exp: char.exp ?? 1000,
@@ -30,11 +30,11 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     dailyItems: char.dailyItems ?? {},
     traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {} },
     ancientLevel: char.ancientLevel ?? 0,
-    items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, pouch: { items: [] }, buyback: [] },
+    items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, buyback: [] },
     statistics: char.statistics ?? { statistics: {} },
     lockers: char.lockers ?? { lockers: {} },
     bank: char.bank ?? { deposits: {} },
-    accountLockers: char.accountLockers ?? { lockers: {}, materials: {} },
+    accountLockers: char.accountLockers ?? { lockers: {}, materials: {}, pouch: { items: [] } },
     quests: char.quests ?? { permanentQuestCompletion: {}, npcDailyQuests: {}, activeQuestProgress: {}, questKillWatches: {}, questStats: {} },
     runes: char.runes ?? [],
     learnedRunes: char.learnedRunes ?? []

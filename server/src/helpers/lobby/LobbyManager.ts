@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { GameServerResponse, IAccount, ILobbyCommand } from '../../interfaces';
+import { GameAction, GameServerResponse, IAccount, ILobbyCommand } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
@@ -95,10 +95,11 @@ export class LobbyManager extends BaseService {
   }
 
   // enter game as a particular player
-  public accountEnterGame(account: Account, player: Player): void {
+  public async accountEnterGame(account: Account, player: Player): Promise<void> {
     this.state.usersInGame[account.username] = true;
     this.game.discordHelper.updateLobbyChannel();
 
+    await this.game.characterDB.reloadPlayerAccountInfo(player, account);
     this.game.playerHelper.migrate(player, account);
     this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
     this.playerManager.addPlayerToGame(player);
@@ -161,5 +162,12 @@ export class LobbyManager extends BaseService {
 
   public toggleBlock(): void {
     this.state.blockGameEnter = !this.state.blockGameEnter;
+  }
+
+  public updateAccount(account: IAccount): void {
+    this.game.wsCmdHandler.sendToSocket(account.username, {
+      action: GameAction.SetAccount,
+      account: this.game.db.prepareForTransmission(account),
+    });
   }
 }

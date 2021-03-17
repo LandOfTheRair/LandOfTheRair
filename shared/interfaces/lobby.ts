@@ -1,14 +1,6 @@
 import { IAccount } from './account';
 import { IDynamicEvent } from './dynamicevent';
 
-export enum SubscriptionTier {
-  None = 0,
-  Trial = 1,
-  Normal = 5,
-  Tester = 7,
-  GM = 10
-}
-
 export interface ICharacterCreateInfo {
   allegiances: Array<{ description: string, name: string, statMods: Array<{ name: string, value: number }> }>;
   baseStats: Array<{ name: string, value: number }>;

@@ -7,3 +7,7 @@ export interface ICharacterLockers {
 export interface IMaterialStorage {
   materials: Record<string, number>;
 }
+
+export interface ICharacterPouch {
+  pouch: IItemContainer;
+}

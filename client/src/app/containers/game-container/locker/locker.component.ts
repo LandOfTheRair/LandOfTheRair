@@ -69,7 +69,13 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.player = player;
 
       this.allLockers = {};
-      Object.assign(this.allLockers, this.lockerInfo.playerLockers || {}, player?.lockers.lockers || {});
+      Object.assign(
+        this.allLockers,
+        this.lockerInfo.playerLockers || {},
+        this.lockerInfo.accountLockers || {},
+        player?.lockers.lockers || {},
+        player?.accountLockers?.lockers || {}
+      );
 
       if (player && this.lockerInfo.lockerName && this.lockerNames.length === 0) {
         this.lockerNames = this.lockerInfo.showLockers;

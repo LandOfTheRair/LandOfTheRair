@@ -8,7 +8,6 @@ export interface ICharacterItems {
 
   sack: IItemContainer;
   belt: IItemContainer;
-  pouch: IItemContainer;
 
   buyback: ISimpleItem[];
 }

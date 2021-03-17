@@ -3,8 +3,8 @@ import { Select, Store } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { IPlayer, IStatusEffect } from '../../../../interfaces';
-import { GameState, ToggleWindow } from '../../../../stores';
+import { IAccount, IPlayer, IStatusEffect, SilverPurchase } from '../../../../interfaces';
+import { AccountState, GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
@@ -19,11 +19,15 @@ import { UIService } from '../../../services/ui.service';
 })
 export class PlayerStatusComponent implements OnInit, OnDestroy {
 
+  @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) player$: Observable<IPlayer>;
+  public account: IAccount;
   public player: IPlayer;
   public effects: IStatusEffect[] = [];
+  public showPouch: boolean;
 
   playerSub: Subscription;
+  accountSub: Subscription;
 
   constructor(
     private store: Store,
@@ -33,13 +37,19 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.playerSub = this.player$.subscribe(p => this.setPlayer(p));
+    this.accountSub = this.account$.subscribe(a => this.setAccount(a));
   }
 
   ngOnDestroy() {}
 
-  private setPlayer(p) {
+  private setPlayer(p: IPlayer) {
     this.player = p;
     this.effects = this.getEffects(p);
+  }
+
+  private setAccount(a: IAccount) {
+    this.account = a;
+    this.showPouch = !!a.premium.silverPurchases?.[SilverPurchase.MagicPouch];
   }
 
   trackEffectBy(effect: IStatusEffect) {

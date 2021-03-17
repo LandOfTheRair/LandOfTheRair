@@ -1,8 +1,9 @@
 
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { IAccount } from '../interfaces';
-import { Login, Logout, SetCharacterSlotInformation } from './actions';
+
+import { IAccount, SilverPurchase, SubscriptionTier } from '../interfaces';
+import { Login, Logout, SetCharacterSlotInformation, SetAccount } from './actions';
 
 const defaultAccount: () => IAccount = () => ({
     username: '',
@@ -11,17 +12,21 @@ const defaultAccount: () => IAccount = () => ({
 
     isGameMaster: false,
     isTester: false,
-    isSubscribed: false,
 
     isMuted: false,
     isBanned: false,
 
-    subscriptionEndsTimestamp: -1,
-    trialEndsTimestamp: -1,
-
     discordTag: '',
     alwaysOnline: false,
-    eventWatcher: false
+    eventWatcher: false,
+
+    premium: {
+      subscriptionTier: SubscriptionTier.None,
+      hasDoneTrial: false,
+      silver: 0,
+      silverPurchases: {},
+      subscriptionEnds: -1
+    }
   });
 
 @State<IAccount>({
@@ -45,10 +50,32 @@ export class AccountState {
   login(ctx: StateContext<IAccount>, { info }: Login) {
     window.document.title = `[${info.account.username}] Land of the Rair`;
 
+    const maxPlayers = 4 + (info.account?.premium.silverPurchases?.[SilverPurchase.MoreCharacters] ?? 0);
     if (!info.account.players) info.account.players = [];
-    if (info.account.players.length < 4) info.account.players.length = 4;
+    if (info.account.players.length < maxPlayers) info.account.players.length = maxPlayers;
 
     ctx.setState(Object.assign({}, ctx.getState(), info.account));
+  }
+
+  @Action(SetAccount)
+  setAccount(ctx: StateContext<IAccount>, { account }: SetAccount) {
+
+    const maxPlayers = 4 + (account?.premium.silverPurchases?.[SilverPurchase.MoreCharacters] ?? 0);
+
+    const state = { ...ctx.getState() };
+
+    const players = [...state.players];
+    if (players.length < maxPlayers) players.length = maxPlayers;
+
+    const premium = { ...state.premium };
+    Object.assign(premium, account.premium);
+
+    const perks = { ...premium.silverPurchases };
+    Object.assign(perks, account.premium.silverPurchases);
+
+    // TODO: WTF?
+
+    ctx.setState({ ...state, players, premium: { ...premium, silverPurchases: { ...perks } } });
   }
 
   @Action(Logout)

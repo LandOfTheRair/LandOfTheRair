@@ -1,8 +1,9 @@
 import { IAccountBank } from './accountbank';
+import { SubscriptionTier } from './accountpremium';
 import { DamageClass, Skill, SkillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterItems } from './characteritems';
-import { ICharacterLockers, IMaterialStorage } from './characterlockers';
+import { ICharacterLockers, ICharacterPouch, IMaterialStorage } from './characterlockers';
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
@@ -14,7 +15,7 @@ export interface IPlayer extends ICharacter {
   charSlot: number;
 
   username: string;
-  isSubscribed: boolean;
+  subscriptionTier: SubscriptionTier;
 
   bank: IAccountBank;
   items: ICharacterItems;
@@ -22,7 +23,7 @@ export interface IPlayer extends ICharacter {
   quests: ICharacterQuests;
   statistics: ICharacterStatistics;
   lockers: ICharacterLockers;
-  accountLockers: ICharacterLockers & IMaterialStorage;
+  accountLockers: ICharacterLockers & IMaterialStorage & ICharacterPouch;
 
   z: number;
 

@@ -2,8 +2,90 @@
 
 <div mat-dialog-content>
 
-  Under construction!
-  
+  <ng-container *ngIf="(account$ | async) as account">
+
+    <div class="current">
+      <img src="https://rair.land/img/coin.png" width="64" height="64" />
+
+      You have {{ account.premium.silver || 0 | number }} silver.
+    </div>
+
+    <mat-tab-group mat-align-tabs="center">
+
+      <mat-tab label="Subscribe & Silver">
+
+        <mat-card class="m-b-40">
+          <strong>Hey, {{ account.username }}!</strong> Your purchases here are not treated as profits. All money earned goes back into making the game more sustainable, as well as paying for any help the dev team receives. This includes things like beefier servers, more resilient databases, and any royalties incurred. <strong>When making a payment, please wait for the popup AFTER the payment popup to confirm your payment!</strong>
+        </mat-card>
+
+        <div class="purchases">
+          <div class="subscriptions">
+            <div *ngFor="let sub of allPremium.silverTiers.subscription" class="purchase">
+              <img src="https://rair.land/img/scroll.png" width="32" height="32" />
+
+              <div class="desc">
+                <div>{{ sub.duration }}-month Subscription <span class="notice" *ngIf="sub.percentOverAverage">({{ sub.percentOverAverage }} free months!)</span></div>
+                <div>
+                  <button mat-button color="primary" (click)="buy(account, sub)">Buy for ${{ sub.price / 100 | number }}!</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="silver">
+            <div *ngFor="let mtx of allPremium.silverTiers.microtransaction" class="purchase">
+              <img src="https://rair.land/img/coin.png" width="32" height="32" />
+
+              <div class="desc">
+                <div>{{ mtx.silver | number }} Silver <span class="notice" *ngIf="mtx.percentOverAverage">(+{{ mtx.percentOverAverage }}%!)</span></div>
+                <div>
+                  <button mat-button color="primary" (click)="buy(account, mtx)">Buy for ${{ mtx.price / 100 | number }}!</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <mat-card *ngIf="(account.premium.subscriptionTier || 0) <= 1" class="text-center">
+          <a href="https://rair.land/docs/subscriber-benefits/" target="_blank">Click this link to see all the awesome perks of subscribing!</a>
+        </mat-card>
+
+        <mat-card *ngIf="(account.premium.subscriptionTier || 0) <= 1">
+          If you're interested in trying before buying, contact a GM to set up a trial subscription. The trial will last 30 days, but you can always go back to playing for free.
+        </mat-card>
+
+        <mat-card *ngIf="account.premium.subscriptionTier > 1">
+          You have an active subscription that will end on {{ account.premium.subscriptionEnds | date:'medium' }}! Thanks! You can add more months to your subscription above if you're interested.
+        </mat-card>
+      </mat-tab>
+
+      <mat-tab label="Silver Perks">
+        <div class="perks-container">
+          <div class="perk" *ngFor="let perk of allPremium.silverPurchases">
+            <app-icon [name]="perk.icon"
+                      bgColor="transparent"
+                      [fgColor]="perk.fgColor"></app-icon>
+
+            <div class="perk-text">
+              <div>
+                <strong>{{ perk.name }}</strong>&nbsp;
+                <span *ngIf="perk.maxPurchases > 0">({{ (account.premium.silverPurchases || {})[perk.key] || 0 }} / {{ perk.maxPurchases }})</span>
+                <span *ngIf="perk.maxPurchases === -1">({{ (account.premium.silverPurchases || {})[perk.key] || 0 }})</span>
+              </div>
+              <div>{{ perk.desc }}</div>
+            </div>
+
+            <button mat-button color="primary" (click)="buySilverItem(perk)" [disabled]="perk.maxPurchases > 0 && ((account.premium.silverPurchases || {})[perk.key] || 0) >= perk.maxPurchases">
+              Buy for {{ perk.cost | number }} Silver
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+
+  </ng-container>
+
 </div>
 
 <div mat-dialog-actions>

@@ -12,6 +12,12 @@ export class Logout {
   constructor(public manualDisconnect?: boolean, public kick?: boolean) {}
 }
 
+// dispatched when the user is fully logged in
+export class SetAccount {
+  static type = GameAction.SetAccount;
+  constructor(public account: IAccount) {}
+}
+
 // dispatched by the server to set character information for a slot
 export class SetCharacterSlotInformation {
   static type = GameAction.SetCharacterSlotInformation;

@@ -83,18 +83,44 @@ export class CharacterDB extends BaseService {
     return players;
   }
 
+  public async reloadPlayerAccountInfo(player: Player, account: Account): Promise<void> {
+    const results = await Promise.all([
+      this.db.findSingle<AccountBank>(AccountBank, { _account: account._id }),
+      this.db.findSingle<AccountLockers>(AccountLockers, { _account: account._id }),
+    ]);
+
+    let [bank, acctLockers] = results;
+
+    if (!bank) {
+      const newBank = new AccountBank();
+      newBank._id = new ObjectId();
+      newBank._account = account._id;
+
+      bank = newBank;
+    }
+
+    if (!acctLockers) {
+      const newAcctLockers = new AccountLockers();
+      newAcctLockers._id = new ObjectId();
+      newAcctLockers._account = account._id;
+
+      acctLockers = newAcctLockers;
+    }
+
+    player.bank = bank;
+    player.accountLockers = acctLockers;
+  }
+
   public async populatePlayer(player: Player, account: Account): Promise<void> {
     const results = await Promise.all([
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
       this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
-      this.db.findSingle<AccountBank>(AccountBank, { _account: account._id }),
-      this.db.findSingle<AccountLockers>(AccountLockers, { _account: account._id }),
       this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics }),
       this.db.findSingle<PlayerLockers>(PlayerLockers, { _id: player._lockers })
     ]);
 
-    let [items, traits, quests, bank, acctLockers, statistics, lockers] = results;
+    let [items, traits, quests, statistics, lockers] = results;
 
     if (!items) {
       const newItems = new PlayerItems();
@@ -120,22 +146,6 @@ export class CharacterDB extends BaseService {
       player._quests = quests._id;
     }
 
-    if (!bank) {
-      const newBank = new AccountBank();
-      newBank._id = new ObjectId();
-      newBank._account = account._id;
-
-      bank = newBank;
-    }
-
-    if (!acctLockers) {
-      const newAcctLockers = new AccountLockers();
-      newAcctLockers._id = new ObjectId();
-      newAcctLockers._account = account._id;
-
-      acctLockers = newAcctLockers;
-    }
-
     if (!statistics) {
       const newStats = new PlayerStatistics();
       newStats._id = new ObjectId();
@@ -155,8 +165,6 @@ export class CharacterDB extends BaseService {
     player.items = items;
     player.traits = traits;
     player.quests = quests;
-    player.bank = bank;
-    player.accountLockers = acctLockers;
     player.statistics = statistics;
     player.lockers = lockers;
   }
@@ -250,16 +258,19 @@ export class CharacterDB extends BaseService {
   public async savePlayer(player: Player): Promise<void> {
     this.game.playerHelper.reformatPlayerBeforeSave(player);
 
-    await Promise.all([
+    const saves = [
       this.db.save(player),
       this.db.save(player.items as PlayerItems),
       this.db.save(player.traits as PlayerTraits),
       this.db.save(player.quests as PlayerQuests),
       this.db.save(player.statistics as PlayerStatistics),
       this.db.save(player.lockers as PlayerLockers),
-      this.db.save(player.bank as AccountBank),
-      this.db.save(player.accountLockers as AccountLockers)
-    ]);
+    ];
+
+    if (player.bank)           saves.push(this.db.save(player.bank as AccountBank));
+    if (player.accountLockers) saves.push(this.db.save(player.accountLockers as AccountLockers));
+
+    await Promise.all(saves);
   }
 
 }

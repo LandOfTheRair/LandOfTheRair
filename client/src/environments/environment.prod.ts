@@ -16,6 +16,10 @@ export const environment = {
     port: 443
   },
 
+  stripe: {
+    key: 'pk_live_dHe4YokXv14cVzmj38NYbqVU'
+  },
+
   assetHashes: BUILDVARS.hashes,
   version: `${buildVersion} (built on ${buildDate})`
 };

@@ -14,11 +14,13 @@ export class RollCharacterAction extends ServerAction {
 
     const charCreateData = game.contentManager.charSelectData;
 
+    const maxCharacters = game.subscriptionHelper.maxCharacters(account);
+
     if (!charCreateData.allegiances.find(x => x.name === allegiance))   return { message: 'Bad allegiance.' };
     if (!charCreateData.classes.find(x => x.name === baseclass))        return { message: 'Bad class.' };
     if (!charCreateData.weapons.find(x => x.name === weapons))          return { message: 'Bad specialization.' };
     if (!['male', 'female'].find(x => x === gender))                    return { message: 'Bad gender.' };
-    if (slot < 0 || slot > 3)                                           return { message: 'Bad slot.' }; // TODO: track premium in account, mark here to check against account max slots
+    if (slot < 0 || slot > maxCharacters - 1)                           return { message: 'Bad slot.' };
 
     name = name.slice(0, 1).toUpperCase() + name.slice(1).toLowerCase();
     name = name.replace(/[^a-zA-Z]/g, '');

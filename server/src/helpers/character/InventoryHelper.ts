@@ -91,6 +91,44 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
+  // pouch functions
+  public pouchSpaceLeft(player: IPlayer): number {
+    return 5 - player.accountLockers.pouch.items.length;
+  }
+
+  public canAddItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
+    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin) return false;
+
+    if (player.accountLockers.pouch.items.length >= 5) return false;
+
+    return true;
+  }
+
+  public addItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
+    if (!this.canAddItemToPouch(player, item)) return false;
+
+    player.accountLockers.pouch.items.push(item);
+    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(Boolean);
+
+    this.game.itemHelper.tryToBindItem(player, item);
+
+    return true;
+  }
+
+  public removeItemFromPouch(player: IPlayer, slot: number): boolean {
+    player.accountLockers.pouch.items.splice(slot, 1);
+    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(Boolean);
+
+    return true;
+  }
+
+  public removeItemsFromPouchByUUID(player: IPlayer, uuids: string[]): boolean {
+    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(x => !uuids.includes(x.uuid));
+
+    return true;
+  }
+
   // locker functions
   public lockerSpaceLeft(player: ICharacter, locker: IItemContainer): number {
     return 25 - locker.items.length;
@@ -123,7 +161,7 @@ export class InventoryHelper extends BaseService {
 
   // material functions
   public materialSpaceLeft(player: IPlayer, material: string): number {
-    return 1000 - (player.accountLockers.materials[material] ?? 0);
+    return this.game.subscriptionHelper.maxMaterialStorageSpace(player, 200) - (player.accountLockers.materials[material] ?? 0);
   }
 
   public canAddMaterial(player: IPlayer, material: string): boolean {
@@ -136,7 +174,7 @@ export class InventoryHelper extends BaseService {
       return;
     }
 
-    player.accountLockers.materials[material] = player.accountLockers.materials[material] ?? 0;
+    player.accountLockers.materials[material] ??= 0;
     player.accountLockers.materials[material] += number;
   }
 

@@ -45,6 +45,9 @@ export class LoginAction extends ServerAction {
       });
 
       register(data.username);
+
+      game.subscriptionHelper.checkAccountForExpiration(realAccount);
+
       game.lobbyManager.addAccount(realAccount);
 
       game.logger.log('Auth:Login', `${data.username} logged in (${data.socketIp}).`);

@@ -13,7 +13,6 @@ export class PlayerItems extends BaseEntity implements ICharacterItems {
 
   @Property() sack: IItemContainer = { items: [] };
   @Property() belt: IItemContainer = { items: [] };
-  @Property() pouch: IItemContainer = { items: [] };
 
   @Property() buyback: ISimpleItem[] = [];
 
