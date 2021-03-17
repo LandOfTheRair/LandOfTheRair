@@ -73,8 +73,6 @@ export class AccountState {
     const perks = { ...premium.silverPurchases };
     Object.assign(perks, account.premium.silverPurchases);
 
-    // TODO: WTF?
-
     ctx.setState({ ...state, players, premium: { ...premium, silverPurchases: { ...perks } } });
   }
 
