@@ -54,7 +54,7 @@ export class LockerComponent implements OnInit, OnDestroy {
       this.lastPos.x = pos.x;
       this.lastPos.y = pos.y;
 
-      if (this.lockerInfo.lockerId) {
+      if (this.lockerInfo.lockerName) {
         this.store.dispatch(new HideLockerWindow());
         this.store.dispatch(new HideWindow('locker'));
         this.lockerNames = [];
