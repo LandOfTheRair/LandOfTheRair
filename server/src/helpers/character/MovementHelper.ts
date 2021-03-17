@@ -153,7 +153,7 @@ export class MovementHelper extends BaseService {
     const {
       teleportX, teleportY, teleportMap,
       requireHeld, requireParty, requireHoliday,
-      // requireQuest, requireQuestProgress, requireQuestComplete,
+      requireQuest, requireQuestProgress, requireQuestComplete,
       damagePercent
     } = obj.properties;
 
@@ -174,28 +174,26 @@ export class MovementHelper extends BaseService {
     && !this.characterHelper.hasHeldItem(player, requireHeld, 'right')) return;
 
     // check if player has a quest (and the corresponding quest progress, if necessary)
-    /* TODO: quests
-    if(requireQuest) {
+    if (requireQuest) {
 
       // if the player has permanent completion for it, they can always get through
-      if(!player.hasPermanentCompletionFor(requireQuest)) {
+      if (!this.game.questHelper.isQuestComplete(player, requireQuest)) {
 
         // but if not, we check if we need a certain quest progress
-        if(requireQuestProgress) {
-          const questData = player.getQuestData({ name: requireQuest });
-          if(!questData || !questData[requireQuestProgress]) return;
+        if (requireQuestProgress) {
+          const questData = this.game.questHelper.getQuestProgress(player, requireQuest);
+          if (!questData || !questData[requireQuestProgress]) return;
         }
 
         // then we check if they have the quest
-        if(!player.hasQuest({ name: requireQuest })) return;
+        if (!this.game.questHelper.hasQuest(player, requireQuest)) return;
       }
     }
 
     // check if player has completed quest
-    if(requireQuestComplete) {
-      if(!player.hasPermanentCompletionFor(requireQuestComplete)) return;
+    if (requireQuestComplete) {
+      if (!this.game.questHelper.isQuestComplete(player, requireQuestComplete)) return;
     }
-    */
 
     this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
 

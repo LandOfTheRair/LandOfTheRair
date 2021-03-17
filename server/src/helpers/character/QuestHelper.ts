@@ -72,6 +72,10 @@ export class QuestHelper extends BaseService {
     player.quests.activeQuestProgress[quest] = Object.assign({}, player.quests.activeQuestProgress[quest], newData);
   }
 
+  public getQuestProgress(player: IPlayer, quest: string): any {
+    return player.quests.activeQuestProgress[quest];
+  }
+
   // increment kills for a particular quest
   public updateQuestProgressKill(player: IPlayer, quest: string): void {
     const questRef = this.getQuest(quest);
