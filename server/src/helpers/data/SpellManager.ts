@@ -142,7 +142,8 @@ export class SpellManager extends BaseService {
     spellRef.cast(caster, target, { potency, range, duration, callbacks, spellData });
 
     if (doesOvertime) {
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellRef.getOverrideEffectInfo(caster, target, spellData));
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
+      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
     }
   }
 
