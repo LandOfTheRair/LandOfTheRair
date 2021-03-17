@@ -63,7 +63,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   return false;
 }
 
-export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0): string {
+export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0, thiefTier = 0): string {
 
   const itemClass = getProp(item, itemDef, 'itemClass');
 
@@ -90,8 +90,20 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   let usesText = usesString(item, itemDef);
   usesText = usesText ? `The item ${usesText}. ` : '';
 
-  // TODO: sense level 1
-  // TODO: sense level 2
+  const extendedDesc = getProp(item, itemDef, 'extendedDesc');
+  const sense1Text = identifyTier > 0 && extendedDesc ? `This item is ${extendedDesc}. ` : '';
+
+  const stats = getProp(item, itemDef, 'stats');
+  const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense) ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
+
+  const useEffect = getProp(item, itemDef, 'useEffect');
+  const strikeEffect = getProp(item, itemDef, 'strikeEffect');
+
+  let sense2Text = '';
+  if(identifyTier > 1 && itemClass !== ItemClass.Bottle && (useEffect || strikeEffect)) {
+    sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${(useEffect || strikeEffect).name}.`
+    sense2Text = (useEffect || strikeEffect).potency ? `${sense2Text} with a potency of ${(useEffect || strikeEffect).potency}. ` : `${sense2Text}. `;
+  }
 
   // display the number of upgrades an item has/available
   const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
@@ -112,13 +124,15 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
 
   let desc = getProp(item, itemDef, 'desc');
 
+  const value = getProp(item, itemDef, 'value');
   if(itemClass === ItemClass.Coin) {
-    const value = getProp(item, itemDef, 'value');
     desc = `${value.toLocaleString()} ${desc}`;
   }
 
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
+
+  const appraiseText = thiefTier > 0 ? `The item is worth ${value} gold. ` : '';
 
   const conditionText = `The item is in ${conditionString(item)} condition. `;
 
@@ -126,10 +140,8 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
 
   // TODO: expiration
-  // TODO: appraise
-  // TODO: stat boosts for thief/mage skill
 
-  return `${starText} ${baseText}${upgradeText}${isValuableText}
+  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
     ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}
-    ${conditionText}${ownedText}`;
+    ${conditionText}${ownedText}${appraiseText}`;
 }

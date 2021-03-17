@@ -17,7 +17,7 @@ export class IdentifierBehavior implements IAIBehavior {
 
     identifyCurrency ??= Currency.Gold;
     identifyCost ??= 1000;
-    identifyTier ??= 0;
+    identifyTier ??= 1;
 
     this.messages = [
       `I ask only ${identifyCost.toLocaleString()} ${identifyCurrency}, to help my poor children!`,
