@@ -100,6 +100,11 @@ export class OptionsService {
     return this.opts[GameOption.SoundNostalgia];
   }
 
+  // other options
+  public get autoExec(): string {
+    return this.opts[GameOption.OtherAutoExec];
+  }
+
   constructor() {}
 
   init() {

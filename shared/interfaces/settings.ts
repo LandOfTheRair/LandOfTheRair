@@ -41,6 +41,9 @@ export enum GameOption {
   SpritesheetSwimming = 'spritesheetSwimmingUrl',
   SpritesheetTerrain = 'spritesheetTerrainUrl',
   SpritesheetEffects = 'spritesheetEffectsUrl',
+
+  // other options
+  OtherAutoExec = 'otherAutoExec'
 }
 
 export interface ISettings {

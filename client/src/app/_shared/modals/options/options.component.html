@@ -39,7 +39,7 @@
 
         <fieldset>
           <legend>Interface Options</legend>
-        
+
           <div class="m-t-5" *ngFor="let option of uiOptions">
             <mat-checkbox [(ngModel)]="options[option.option]"
                           (change)="updateOption(option.option)"
@@ -47,15 +47,15 @@
               {{ option.text }}
             </mat-checkbox>
           </div>
-  
+
           <div class="slider-option-row">
             <div class="slider-label">Dying Border Width</div>
-            <mat-slider [min]="0" 
-                        [max]="300" 
-                        [step]="5" 
-                        [(ngModel)]="options.dyingBorderWidth" 
+            <mat-slider [min]="0"
+                        [max]="300"
+                        [step]="5"
+                        [(ngModel)]="options.dyingBorderWidth"
                         [ngModelOptions]="{ standalone: true }"
-                        (change)="updateOption('dyingBorderWidth')" 
+                        (change)="updateOption('dyingBorderWidth')"
                         thumbLabel="true"></mat-slider>
             <div>{{ options.dyingBorderWidth }}px</div>
           </div>
@@ -73,7 +73,7 @@
               <mat-radio-button [value]="false">last</mat-radio-button>
             </mat-radio-group>
           </div>
-  
+
           <div class="radio-row m-t-5">
             <div class="radio-label">Sort by distance</div>
             <mat-radio-group [(ngModel)]="options.shouldSortDistance" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortDistance')">
@@ -109,7 +109,7 @@
             Play Background Music
           </mat-checkbox>
         </div>
-  
+
         <div>
           <mat-checkbox [(ngModel)]="options.playSFX"
                         (change)="updateOption('playSFX')"
@@ -117,7 +117,7 @@
             Play Sound Effects
           </mat-checkbox>
         </div>
-  
+
         <div>
           <mat-checkbox [(ngModel)]="options.playNostalgia"
                         (change)="updateOption('playNostalgia')"
@@ -125,27 +125,27 @@
             Play Nostalgia Background Music & Sound Effects
           </mat-checkbox>
         </div>
-  
+
         <div class="slider-option-row">
           <div class="slider-label">Music Volume</div>
-          <mat-slider [min]="0" 
-                      [max]="100" 
-                      [step]="5" 
-                      [(ngModel)]="options.volumeMusic" 
+          <mat-slider [min]="0"
+                      [max]="100"
+                      [step]="5"
+                      [(ngModel)]="options.volumeMusic"
                       [ngModelOptions]="{ standalone: true }"
-                      (change)="updateOption('volumeMusic')" 
+                      (change)="updateOption('volumeMusic')"
                       thumbLabel="true"></mat-slider>
           <div>{{ options.volumeMusic }}%</div>
         </div>
-  
+
         <div class="slider-option-row">
           <div class="slider-label">SFX Volume</div>
-          <mat-slider [min]="0" 
-                      [max]="100" 
-                      [step]="5" 
-                      [(ngModel)]="options.volumeSFX" 
+          <mat-slider [min]="0"
+                      [max]="100"
+                      [step]="5"
+                      [(ngModel)]="options.volumeSFX"
                       [ngModelOptions]="{ standalone: true }"
-                      (change)="updateOption('volumeSFX')" 
+                      (change)="updateOption('volumeSFX')"
                       thumbLabel="true"></mat-slider>
           <div>{{ options.volumeSFX }}%</div>
         </div>
@@ -153,19 +153,35 @@
 
     </mat-tab>
 
+    <mat-tab label="Other">
+      <form autocomplete="off" class="option-container">
+        <mat-form-field class="full-width">
+          <mat-label>Auto Exec</mat-label>
+          <textarea matInput
+            type="text"
+            placeholder="Auto-Exec Commands (separate multiple commands with semicolons)"
+            maxlength="300"
+            rows="5"
+            [(ngModel)]="options.otherAutoExec"
+            (change)="updateOption('otherAutoExec')"
+            [ngModelOptions]="{ standalone: true }"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-tab>
+
     <mat-tab label="Debug">
       <form autocomplete="off" class="option-container">
         <p>
           <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
         </p>
-        
+
         <mat-form-field class="full-width" *ngFor="let spritesheet of spritesheets" appearance="outline">
           <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
-          <input matInput 
-            type="text" 
+          <input matInput
+            type="text"
             [id]="spritesheet"
             [name]="spritesheet"
-            [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.png'" 
+            [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.png'"
             [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
             autocomplete="off"
             (change)="updateOption('spritesheet' + spritesheet + 'Url')"
@@ -175,7 +191,7 @@
     </mat-tab>
 
   </mat-tab-group>
-  
+
 </div>
 
 <div mat-dialog-actions>

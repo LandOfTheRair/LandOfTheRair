@@ -50,6 +50,8 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.SpritesheetSwimming]: '',
       [GameOption.SpritesheetTerrain]: '',
       [GameOption.SpritesheetWalls]: '',
+
+      [GameOption.OtherAutoExec]: ''
     }
   });
 

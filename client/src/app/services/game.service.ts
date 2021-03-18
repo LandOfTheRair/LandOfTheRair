@@ -6,6 +6,7 @@ import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, 
 import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
 
 import { ModalService } from './modal.service';
+import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
 @Injectable({
@@ -40,6 +41,7 @@ export class GameService {
 
   constructor(
     private socketService: SocketService,
+    private optionsService: OptionsService,
     private modalService: ModalService
   ) {}
 
@@ -47,11 +49,21 @@ export class GameService {
     this.inGame$.subscribe(val => {
       if (val) {
         this.playGame.next(true);
+        this.handleAutoExec();
         return;
       }
 
       this.playGame.next(false);
       this.quitGame.next();
+    });
+  }
+
+  private handleAutoExec() {
+    if (!this.optionsService.autoExec) return;
+
+    const commands = this.optionsService.autoExec.split('\n');
+    commands.forEach(cmd => {
+      this.sendCommandString(cmd);
     });
   }
 
