@@ -15,8 +15,8 @@ export class ContentManager extends BaseService {
 
   private mapDroptables: any;
   private regionDroptables: any;
-  private items: { [itemName: string]: IItemDefinition };
-  private npcs: { [npcName: string]: INPCDefinition };
+  private items: Record<string, IItemDefinition>;
+  private npcs: Record<string, INPCDefinition>;
   private npcScripts: any;
   private recipes: any; // { tradeskill: recipe[] }
   private spawners: any;

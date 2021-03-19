@@ -22,14 +22,14 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   public currentCommand = '';
 
-  public placeholderTexts: { [key in ChatMode]: string } = {
+  public placeholderTexts: Record<ChatMode, string> = {
     cmd: 'Enter your command here...',
     say: 'Talk to local players here...',
     party: 'Talk to your party here...',
     global: 'Talk to the lobby here...'
   };
 
-  public nextModes: { [key in ChatMode]: ChatMode } = {
+  public nextModes: Record<ChatMode, ChatMode> = {
     cmd: 'say',
     say: 'party',
     party: 'global',

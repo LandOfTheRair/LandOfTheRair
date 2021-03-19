@@ -11,8 +11,8 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
 
   constructor() {}
 
-  private actions: { [key: string]: IServerAction } = {};
-  private accountSocketIds: { [username: string]: string } = {};
+  private actions: Record<string, IServerAction> = {};
+  private accountSocketIds: Record<string, string> = {};
 
   private emitCallback: (id, data) => void;
 

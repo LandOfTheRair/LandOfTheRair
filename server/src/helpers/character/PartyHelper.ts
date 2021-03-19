@@ -29,6 +29,13 @@ export class PartyHelper extends BaseService {
     return party.members[0] === player.username;
   }
 
+  public partyName(player: IPlayer): string {
+    const partyMember = this.game.partyManager.getPartyMember(player.username);
+    if (!partyMember) return '';
+
+    return partyMember.partyName;
+  }
+
   public reformatAsPartyMember(player: IPlayer, partyName: string): IPartyMember {
     return {
       baseClass: player.baseClass,

@@ -38,12 +38,13 @@ export enum ObjectType {
   Fall = 'Fall',
   Teleport = 'Teleport',
   Fillable = 'Fillable',
-  EventSource = 'EventSource'
+  EventSource = 'EventSource',
+  TreasureChest = 'TreasureChest'
 }
 
 export interface IMapData {
   tiledJSON: any;
-  layerData: { [key in MapLayer]?: any };
+  layerData: Partial<Record<MapLayer, any>>;
 }
 
 export interface IMapProperties {
@@ -63,8 +64,8 @@ export interface IMapProperties {
   // the max # of creatures on this map
   maxCreatures: number;
 
-  // whether this map should spawn creatures
-  disableCreatureSpawn: boolean;
+  // whether this map should respawn creatures
+  disableCreatureRespawn: boolean;
 
   // how many hours it takes items to expire on this map by default (owned items only)
   itemExpirationHours: number;
@@ -91,12 +92,28 @@ export interface IMapProperties {
   script: string;
 
   // the map you get kicked to from this instance
-  kickMap: string;
+  kickMap?: string;
 
   // the x you get kicked to from this instance
-  kickX: number;
+  kickX?: number;
 
   // the y you get kicked to from this instances
-  kickY: number;
+  kickY?: number;
 
+  // the map your gear gets bopped to if you die/get stripped
+  gearDropMap?: string;
+
+  // the x your gear goes to for the above map
+  gearDropX?: number;
+
+  // the y your gear goes to for the above map
+  gearDropY?: number;
+
+}
+
+export interface IMapScript {
+  name: string;
+
+  setup: (game, map, mapState) => void;
+  events: (game, map, mapState) => void;
 }

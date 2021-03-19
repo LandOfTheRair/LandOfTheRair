@@ -11,7 +11,12 @@ export class PartyCreate extends MacroCommand {
     if (this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are already in a party!');
     if (this.game.partyManager.getParty(args.stringArgs)) return this.sendMessage(player, 'That party already exists!');
 
-    this.game.partyHelper.createParty(player, args.stringArgs.substring(0, 15));
+    const partyName = args.stringArgs.substring(0, 15).trim();
+    if (!partyName) {
+      return this.sendMessage(player, 'You need to specify a valid party name!');
+    }
+
+    this.game.partyHelper.createParty(player, partyName);
     this.sendMessage(player, `You've created the "${args.stringArgs}" party!`);
   }
 

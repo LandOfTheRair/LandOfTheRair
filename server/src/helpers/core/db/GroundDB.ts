@@ -23,6 +23,11 @@ export class GroundDB extends BaseService {
     return this.db.save(ground);
   }
 
+  public async removeAllGroundsByParty(partyName: string): Promise<any> {
+    const groundColl = this.db.getCollection(Ground);
+    return groundColl.deleteMany({ partyName });
+  }
+
   public async saveAllGrounds(grounds: Ground[]): Promise<any> {
     if (grounds.length === 0) return;
 

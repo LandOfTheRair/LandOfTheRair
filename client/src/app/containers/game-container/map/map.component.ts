@@ -71,7 +71,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private assetService: AssetService,
-    private gameService: GameService,
+    public gameService: GameService,
     private socketService: SocketService,
     private store: Store,
     private zone: NgZone,

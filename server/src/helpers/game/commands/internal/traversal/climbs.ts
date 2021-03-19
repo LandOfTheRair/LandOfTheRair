@@ -25,12 +25,16 @@ export class Climbs extends MacroCommand {
       return this.sendMessage(player, 'You found an easter egg! Sadly, it\'s spoiled.');
     }
 
-    if (requireParty && !player.partyName) {
+    if (requireParty && !this.game.partyHelper.isInParty(player)) {
       return this.sendMessage(player, 'You must gather your party before venturing forth.');
     }
 
     if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
       return this.sendMessage(player, `That location is only seasonally open during "${requireHoliday}"!`);
+    }
+
+    if (!this.game.teleportHelper.canTeleport(player, teleportMap)) {
+      return this.sendMessage(player, 'You cannot enter this area.');
     }
 
     this.sendMessage(player, `You climb ${interactable.type === 'ClimbUp' ? 'up' : 'down'}.`, SoundEffect.EnvStairs);

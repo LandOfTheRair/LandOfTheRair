@@ -16,7 +16,7 @@ export class WorldMap {
   private maxLevelExpPossible: number;
   private maxSkillExpPossible: number;
 
-  private layerHashes: { [key in MapLayer]?: any } = {};
+  private layerHashes: Partial<Record<MapLayer, any>> = {};
 
   public get width(): number {
     return this.json.width;
@@ -62,12 +62,12 @@ export class WorldMap {
     return this.properties.maxCreatures;
   }
 
-  public get disableCreatureSpawn() {
-    return this.properties.disableCreatureSpawn;
+  public get disableCreatureRespawn() {
+    return this.properties.disableCreatureRespawn;
   }
 
   public get canSpawnCreatures() {
-    return !this.disableCreatureSpawn;
+    return !this.disableCreatureRespawn;
   }
 
   public get decayRateHours() {
@@ -98,6 +98,12 @@ export class WorldMap {
     const { kickMap, kickX, kickY } = this.properties;
     if (!kickMap || !kickX || !kickY) return null;
     return { kickMap, kickX, kickY };
+  }
+
+  public get gearDropPoint() {
+    const { gearDropMap, gearDropX, gearDropY } = this.properties;
+    if (!gearDropMap || !gearDropX || !gearDropY) return null;
+    return { gearDropMap, gearDropX, gearDropY };
   }
 
   public get canMemorize() {
@@ -136,10 +142,10 @@ export class WorldMap {
     return this.mapName;
   }
 
-  constructor(private game: Game, private mapName: string, private json: any) {
+  constructor(private game: Game, private mapName: string, private json: any, partyName?: string) {
     this.destructureJSON();
     this.createPlanner();
-    game.groundManager.initGroundForMap(mapName);
+    game.groundManager.initGroundForMap(mapName, partyName);
     this.setMaxes();
   }
 
@@ -349,6 +355,11 @@ export class WorldMap {
   // find a door by a given id
   public findDoorById(id: number) {
     return this.json.layers[MapLayer.Interactables].objects.find(x => x.id === id);
+  }
+
+  // find an interactable by its name
+  public findInteractableByName(name: string) {
+    return this.json.layers[MapLayer.Interactables].objects.find(x => x.name === name);
   }
 
   // check if there's a dense object or an interactable that isn't a door

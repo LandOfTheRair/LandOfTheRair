@@ -94,6 +94,12 @@ export class MessageHelper extends BaseService {
     this.game.discordHelper.broadcastSystemMessage(message);
   }
 
+  public sendMessageToMap(map: string, msgInfo: MessageInfo): void {
+    this.game.worldManager.getCharactersInMap(map).forEach(char => {
+      this.sendLogMessageToPlayer(char, msgInfo);
+    });
+  }
+
   public broadcastChatMessage(player: ICharacter, message: string): void {
 
     const account = this.game.lobbyManager.getAccount((player as Player).username);

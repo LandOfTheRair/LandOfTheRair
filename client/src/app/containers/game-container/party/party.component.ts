@@ -57,11 +57,15 @@ export class PartyComponent implements OnInit, OnDestroy {
     this.gameService.sendCommandString(`party give ${member}`);
   }
 
+  reset() {
+    this.gameService.sendCommandString(`party resetinstances`);
+  }
+
   directionTo(me: IPlayer, them: IPartyMember): string {
 
     if (me.username === them.username) return '✧';
 
-    if (me.map !== them.map) return them.map;
+    if (me.map !== them.map) return this.gameService.reformatMapName(them.map);
 
     return this.gameService.directionTo(me, them);
   }

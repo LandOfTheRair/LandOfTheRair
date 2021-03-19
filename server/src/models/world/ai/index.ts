@@ -1,4 +1,5 @@
 
+import { CrazedSaraxaAIBehavior } from './crazedsaraxa';
 import { DedlaenEscortAI } from './dedlaenescort';
 import { DefaultAIBehavior } from './default';
 import { ResourceAI } from './resource';
@@ -10,5 +11,6 @@ export const AllAIBehaviors = {
   resource: ResourceAI,
   trainingdummy: TrainingDummyAI,
   dedlaenescort: DedlaenEscortAI,
-  steffenlostchild: SteffenLostChildAI
+  steffenlostchild: SteffenLostChildAI,
+  crazedsaraxa: CrazedSaraxaAIBehavior
 };

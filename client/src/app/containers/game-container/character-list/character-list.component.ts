@@ -36,7 +36,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   public player: IPlayer;
   public visibleCharacterList: ICharacter[] = [];
   private allCharacters: ICharacter[] = [];
-  private previousPlacements: { [key: string]: number } = {};
+  private previousPlacements: Record<string, number> = {};
 
   public disableInteractions = false;
 

@@ -282,11 +282,11 @@ export enum MonsterClass {
   Undead = 'Undead'
 }
 
-export type SkillBlock = { [skill in Skill]?: number };
+export type SkillBlock = Partial<Record<Skill, number>>;
 
-export type StatBlock = { [stat in Stat]?: number };
+export type StatBlock = Partial<Record<Stat, number>>;
 
-export type CharacterCurrency = { [currency in Currency]?: number };
+export type CharacterCurrency = Partial<Record<Currency, number>>;
 
 export interface Rollable {
   chance: number;

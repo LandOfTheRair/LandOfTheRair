@@ -15,9 +15,9 @@ interface PlayerPatch {
 @Injectable()
 export class TransmissionHelper extends BaseService {
 
-  private playerPatchWatchers: { [key: string]: Observer<Player> } = {};
-  private playerStateWatchers: { [key: string]: Observer<PlayerState> } = {};
-  private playerPatchQueue: { [key: string]: { patches: any[]; player: Partial<IPlayer> } } = {};
+  private playerPatchWatchers: Record<string, Observer<Player>> = {};
+  private playerStateWatchers: Record<string, Observer<PlayerState>> = {};
+  private playerPatchQueue: Record<string, { patches: any[]; player: Partial<IPlayer> }> = {};
 
   public async init() {}
 

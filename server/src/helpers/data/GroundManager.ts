@@ -26,11 +26,38 @@ export class GroundManager extends BaseService {
   }
 
   // create new entities where necessary
-  public initGroundForMap(map: string) {
+  public initGroundForMap(map: string, partyName?: string) {
     if (this.groundEntities[map]) return;
 
     this.groundEntities[map] = new Ground();
     this.groundEntities[map]._id = new ObjectId();
+    this.groundEntities[map].treasureChests = {};
+
+    if (partyName) {
+      this.groundEntities[map].partyName = partyName;
+    }
+  }
+
+  public async removeGroundsForParties(partyName: string): Promise<void> {
+
+    await this.game.groundDB.removeAllGroundsByParty(partyName);
+
+    Object.keys(this.groundEntities).forEach(groundName => {
+      if (this.groundEntities[groundName].partyName !== partyName) return;
+
+      delete this.groundEntities[groundName];
+      delete this.saveableGround[groundName];
+      delete this.ground[groundName];
+      delete this.loadedSpawners[groundName];
+    });
+  }
+
+  public isChestLooted(map: string, chestName: string): boolean {
+    return this.groundEntities[map].treasureChests?.[chestName];
+  }
+
+  public lootChest(map: string, chestName: string) {
+    this.groundEntities[map].treasureChests[chestName] = true;
   }
 
   // load the ground from the db and sort it out
@@ -39,6 +66,8 @@ export class GroundManager extends BaseService {
     grounds.forEach(groundEntity => {
       this.groundEntities[groundEntity.map] = new Ground();
       this.groundEntities[groundEntity.map]._id = groundEntity._id;
+      this.groundEntities[groundEntity.map].partyName = groundEntity.partyName;
+      this.groundEntities[groundEntity.map].treasureChests = groundEntity.treasureChests || {};
       this.saveableGround[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.ground[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.loadedSpawners[groundEntity.map] = cloneDeep(groundEntity.spawners);

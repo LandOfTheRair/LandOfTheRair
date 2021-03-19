@@ -80,7 +80,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() skills: SkillBlock;
   @Property() paidSkills: SkillBlock;
   @Property() effects: IEffectContainer;
-  @Property() allegianceReputation: { [allegiance in Allegiance]?: number } = {};
+  @Property() allegianceReputation: Partial<Record<Allegiance, number>> = {};
 
   // player-specific props
   @Property() exp: number;
@@ -90,7 +90,7 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() hungerTicks: number;
 
-  @Property() learnedSpells: { [spellName: string]: LearnedSpell };
+  @Property() learnedSpells: Record<string, LearnedSpell>;
 
   @Property() respawnPoint: { x: number; y: number; map: string };
 

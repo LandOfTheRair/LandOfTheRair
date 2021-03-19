@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
+import { startCase } from 'lodash';
+
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
   ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
@@ -65,6 +67,10 @@ export class GameService {
     commands.forEach(cmd => {
       this.sendCommandString(cmd);
     });
+  }
+
+  public reformatMapName(mapName: string): string {
+    return startCase(mapName.split('-Dungeon')[0]);
   }
 
   public sendCommandString(cmdString: string, target?: string) {

@@ -14,7 +14,7 @@ import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 
 export class WebsocketWorker {
 
-  private sockets: { [uuidOrUsername: string]: any } = {};
+  private sockets: Record<string, any> = {};
 
   private wsServer: WebSocket.Server;
 

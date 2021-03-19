@@ -11,7 +11,7 @@ export class PartyLeave extends MacroCommand {
     if (!this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are not in a party!');
 
     this.game.partyHelper.leaveParty(player);
-    this.sendMessage(player, `You've left the "${args.stringArgs}" party.`);
+    this.sendMessage(player, 'You\'ve left the party.');
   }
 
 }

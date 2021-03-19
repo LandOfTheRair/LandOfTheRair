@@ -114,15 +114,15 @@ export class CharacterHelper extends BaseService {
   public dropHands(char: ICharacter): void {
     if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
 
-    const { state } = this.game.worldManager.getMap(char.map);
+    const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(char, char.x, char.y);
 
     if (char.items.equipment[ItemSlot.RightHand]) {
-      state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.RightHand] as ISimpleItem);
+      state.addItemToGround(dropX, dropY, char.items.equipment[ItemSlot.RightHand] as ISimpleItem);
       this.setRightHand(char, undefined);
     }
 
     if (char.items.equipment[ItemSlot.LeftHand]) {
-      state.addItemToGround(char.x, char.y, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
+      state.addItemToGround(dropX, dropY, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
       this.setLeftHand(char, undefined);
     }
   }

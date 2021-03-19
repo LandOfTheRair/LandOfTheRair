@@ -1,4 +1,5 @@
 
+import uuid from 'uuid/v4';
 import { extend, isArray, random, sample } from 'lodash';
 import { Game } from '../../helpers';
 
@@ -9,6 +10,8 @@ import { MapState } from './MapState';
 import { AllAIBehaviors } from './ai';
 
 export class Spawner {
+
+  public readonly id = uuid();
 
   private x: number;
   private y: number;
@@ -79,12 +82,16 @@ export class Spawner {
     return { x: this.x, y: this.y };
   }
 
+  public get spawnerName() {
+    return this.name;
+  }
+
   public get currentTickForSave() {
     return this.currentTick;
   }
 
   private get canRespawn(): boolean {
-    return this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0;
+    return !this.mapRef.disableCreatureRespawn && (this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0);
   }
 
   private get isUnderNPCCap(): boolean {
@@ -92,7 +99,7 @@ export class Spawner {
   }
 
   private get isAbleToSpawn(): boolean {
-    return this.alwaysSpawn || (this.mapRef.canSpawnCreatures);
+    return this.alwaysSpawn || this.mapRef.canSpawnCreatures;
   }
 
   private get canISpawnAnNPCRightNow(): boolean {
@@ -107,7 +114,7 @@ export class Spawner {
   constructor(private game: Game, private mapRef: WorldMap, private mapState: MapState, spawnOpts: Partial<Spawner> = {}) {
     extend(this, spawnOpts);
 
-    if (this.mapRef.disableCreatureSpawn) this.currentTick = 0;
+    if (this.mapRef.disableCreatureRespawn) this.currentTick = 0;
     if (this.doInitialSpawnImmediately && this.currentTick === 0) this.doInitialSpawn();
   }
 
@@ -160,12 +167,21 @@ export class Spawner {
       }
 
       this.npcAI[npc.uuid].tick();
+      this.npcAI[npc.uuid].mechanicTick();
 
     });
 
     if (this.npcs.length === 0 && this.removeWhenNoNPCs) {
       this.removeSelf();
     }
+  }
+
+  public getNPCAI(npcUUID: string): IAI {
+    return this.npcAI[npcUUID];
+  }
+
+  public forceSpawnNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}) {
+    this.createNPC(opts);
   }
 
   // triggers every second, for clearing buffs
@@ -290,7 +306,7 @@ export class Spawner {
   private addNPC(npc: INPC, ai: IAI, npcDef?: INPCDefinition): void {
     this.npcs.push(npc);
     this.npcAI[npc.uuid] = ai;
-    this.mapState.addNPC(npc);
+    this.mapState.addNPC(npc, this);
 
     if (npcDef) {
       this.replaceNPCDefs[npc.uuid] = npcDef;

@@ -40,14 +40,17 @@ interface RBushCharacter {
 export class MapState {
 
   private spawners: Spawner[] = [];
+  private spawnersById: Record<string, Spawner> = {};
 
   private players = new RBush();
   private npcs = new RBush();
 
-  private bushStorage: { [uuid: string]: RBushCharacter } = {};
+  private bushStorage: Record<string, RBushCharacter> = {};
 
-  private npcsByUUID: { [uuid: string]: INPC } = {};
-  private playersByUUID: { [uuid: string]: IPlayer } = {};
+  private npcsByUUID: Record<string, INPC> = {};
+  private playersByUUID: Record<string, IPlayer> = {};
+  private npcsBySpawner: Record<string, Spawner> = {};
+  private spawnersByName: Record<string, Spawner> = {};
 
   private playerKnowledgePositions = {};
 
@@ -144,11 +147,15 @@ export class MapState {
   // add spawner to our list of tickable spawners
   public addSpawner(spawner: Spawner) {
     this.spawners.push(spawner);
+    this.spawnersById[spawner.id] = spawner;
+    this.spawnersByName[spawner.spawnerName] = spawner;
   }
 
   // remove a dead or useless spawner
   public removeSpawner(spawner: Spawner) {
     this.spawners = this.spawners.filter(x => x !== spawner);
+    delete this.spawners[spawner.id];
+    delete this.spawners[spawner.spawnerName];
   }
 
   // get all possible serializable spawners for quit
@@ -493,8 +500,9 @@ export class MapState {
   }
 
   // npc functions
-  public addNPC(npc: INPC) {
+  public addNPC(npc: INPC, spawner: Spawner) {
     this.npcsByUUID[npc.uuid] = npc;
+    this.npcsBySpawner[npc.uuid] = spawner;
     this.game.worldManager.addCharacter(npc);
 
     const rbushNPC = this.toRBushFormat(npc);
@@ -533,6 +541,14 @@ export class MapState {
 
   public getCharacterByUUID(uuid: string): ICharacter | null {
     return this.npcsByUUID[uuid] || this.playersByUUID[uuid];
+  }
+
+  public getNPCSpawner(uuid: string): Spawner | null {
+    return this.npcsBySpawner[uuid];
+  }
+
+  public getNPCSpawnerByName(name: string): Spawner | null {
+    return this.spawnersByName[name];
   }
 
   // GROUND FUNCTIONS

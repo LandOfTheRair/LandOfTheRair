@@ -128,6 +128,9 @@ export class DeathHelper extends BaseService {
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
   private npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
 
+    const ai = this.game.worldManager.getMap(dead.map).state.getNPCSpawner(dead.uuid)?.getNPCAI(dead.uuid);
+    ai?.death(killer);
+
     if (!dead.noItemDrop) {
       const { state } = this.game.worldManager.getMap(dead.map);
 
@@ -263,7 +266,9 @@ export class DeathHelper extends BaseService {
       message: 'You see a flaming wisp dance before your eyes, taking your equipment with it!'
     });
 
-    const pickSlot = () => ({ x: random(x - radius, x + radius), y: random(y - radius, y + radius) });
+    const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(character, x, y);
+
+    const pickSlot = () => ({ x: random(dropX - radius, dropX + radius), y: random(dropY - radius, dropY + radius) });
 
     this.game.characterHelper.dropHands(character);
 
@@ -303,8 +308,7 @@ export class DeathHelper extends BaseService {
     allItemDrops.push(...beltItems);
 
     // finally, banish them to the ground
-    const { state } = this.game.worldManager.getMap(character.map);
-    state.addItemsToGroundSpread(allItemDrops, { x, y }, radius, true);
+    state.addItemsToGroundSpread(allItemDrops, { x: dropX, y: dropY }, radius, true);
   }
 
   // corpse creating

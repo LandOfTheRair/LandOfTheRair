@@ -194,6 +194,12 @@ export class SpellCommand extends SkillCommand {
   // whether or not the spell can be cast - simple check that gets rolled into canUse
   protected canCastSpell(caster: ICharacter | null, target: ICharacter): boolean {
     if (!this.canTargetSelf && target === caster) return false;
+
+    // if they're hostile - no buffing
+    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    const { noHostileTarget } = spellData.spellMeta;
+    if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) return false;
+
     return true;
   }
 

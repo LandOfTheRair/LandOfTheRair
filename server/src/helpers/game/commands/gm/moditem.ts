@@ -6,7 +6,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMModItem extends MacroCommand {
 
-  aliases = ['@moditem'];
+  aliases = ['@moditem', '@itemmod'];
   isGMCommand = true;
   canBeInstant = false;
   canBeFast = false;

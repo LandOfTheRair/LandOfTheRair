@@ -18,8 +18,8 @@ export class PlayerManager extends BaseService {
     super();
   }
 
-  private inGamePlayers: { [account: string]: Player } = {};
-  private playerStates: { [account: string]: PlayerState } = {};
+  private inGamePlayers: Record<string, Player> = {};
+  private playerStates: Record<string, PlayerState> = {};
 
   public init() {}
 

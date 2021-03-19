@@ -194,8 +194,8 @@ export class DamageHelperPhysical extends BaseService {
     } else {
       this.game.characterHelper.setEquipmentSlot(attacker, hand, undefined);
 
-      const { state } = this.game.worldManager.getMap(attacker.map);
-      state.addItemToGround(defender.x, defender.y, item);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(attacker, defender.x, defender.y);
+      state.addItemToGround(dropX, dropY, item);
     }
   }
 
@@ -936,9 +936,9 @@ export class DamageHelperPhysical extends BaseService {
 
     damageArgs.damage = totalDamageDealt;
 
-    this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
-
     this.attemptToStun(attacker, defender, attackerWeapon);
+
+    this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
     // if our ammo was shot and can apply an effect, we give it a spin
     if (canShoot && ammo) {

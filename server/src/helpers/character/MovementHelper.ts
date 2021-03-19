@@ -157,7 +157,7 @@ export class MovementHelper extends BaseService {
       damagePercent
     } = obj.properties;
 
-    if (requireParty && !player.partyName) {
+    if (requireParty && !this.game.partyHelper.isInParty(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You must gather your party before venturing forth.' });
       return;
     }

@@ -106,4 +106,13 @@ export class InteractionHelper extends BaseService {
     return true;
   }
 
+  // open a treasure chest
+  public openChest(character: ICharacter, chest: any): void {
+    if (!chest.searchItems || chest.searchItems.length === 0) return;
+
+    this.game.groundManager.lootChest(character.map, chest.name);
+    this.game.worldManager.getMap(character.map).state.addItemsToGround(character.x, character.y, chest.searchItems);
+    chest.searchItems = [];
+  }
+
 }

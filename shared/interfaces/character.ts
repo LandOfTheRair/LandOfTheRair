@@ -54,11 +54,11 @@ export interface ICharacter {
 
   combatTicks: number;
 
-  agro: { [uuid: string]: number };
-  allegianceReputation: { [allegiance in Allegiance]?: number };
+  agro: Record<string, number>;
+  allegianceReputation: Partial<Record<Allegiance, number>>;
 
   allTraits: Record<string, number>;
-  learnedSpells: { [spellName: string]: LearnedSpell };
+  learnedSpells: Record<string, LearnedSpell>;
   spellCooldowns: Record<string, number>;
   spellChannel?: { ticks: number, callback: () => void };
 }

@@ -4,7 +4,7 @@ import { ISimpleItem } from './item';
 
 
 export interface ICharacterItems {
-  equipment: { [key in ItemSlot]?: ISimpleItem };
+  equipment: Partial<Record<ItemSlot, ISimpleItem>>;
 
   sack: IItemContainer;
   belt: IItemContainer;

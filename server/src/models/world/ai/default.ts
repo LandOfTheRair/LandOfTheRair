@@ -302,7 +302,7 @@ export class DefaultAIBehavior implements IAI {
     });
   }
 
-  private sendLeashMessage() {
+  public sendLeashMessage() {
     const leashTrigger = this.npc.triggers?.[NPCTriggerType.Leash];
     if (!leashTrigger) return;
 

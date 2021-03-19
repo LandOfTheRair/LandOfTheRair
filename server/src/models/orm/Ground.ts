@@ -9,5 +9,7 @@ export class Ground extends BaseEntity {
   @Property() map: string;
   @Property() ground: IGround;
   @Property() spawners: ISerializableSpawner[];
+  @Property() partyName?: string;
+  @Property() treasureChests: Record<string, boolean>;
 
 }

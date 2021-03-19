@@ -24,6 +24,10 @@
       <ng-container *ngIf="player$ | async as player">
         <ng-container *ngIf="party$ | async as partyInfo">
 
+          <button mat-icon-button color="warn" (click)="reset()" matTooltip="Reset Party Instances" *ngIf="player.username === partyInfo.party?.members[0]">
+            <app-icon name="boss-key" size="xsmall"></app-icon>
+          </button>
+
           <button mat-icon-button color="warn" (click)="leave()" matTooltip="Leave Party" *ngIf="player.username === partyInfo.party?.members[0]">
             <app-icon name="invisible" size="xsmall"></app-icon>
           </button>

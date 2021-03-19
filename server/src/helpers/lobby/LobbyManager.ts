@@ -115,7 +115,7 @@ export class LobbyManager extends BaseService {
     if (!player) return;
 
     this.game.partyHelper.leaveParty(player);
-    this.worldManager.leaveMap(player);
+    this.worldManager.leaveMap(player, true);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGameByAccount(account);
   }

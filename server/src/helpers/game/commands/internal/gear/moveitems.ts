@@ -315,8 +315,8 @@ export class MoveItems extends MacroCommand {
     }
 
     case 'G': { // CtG
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -388,10 +388,10 @@ export class MoveItems extends MacroCommand {
 
     case 'G': { // LtG
       if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-      const { state } = this.game.worldManager.getMap(player.map);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
 
       this.game.characterHelper.setLeftHand(player, undefined);
-      state.addItemToGround(player.x, player.y, srcItem);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -509,10 +509,10 @@ export class MoveItems extends MacroCommand {
 
     case 'G': { // RtG
       if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
-      const { state } = this.game.worldManager.getMap(player.map);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
 
       this.game.characterHelper.setRightHand(player, undefined);
-      state.addItemToGround(player.x, player.y, srcItem);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -651,8 +651,8 @@ export class MoveItems extends MacroCommand {
     case 'G': { // EtG
       this.game.characterHelper.setEquipmentSlot(player, origSlot as ItemSlot, undefined);
 
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -756,8 +756,8 @@ export class MoveItems extends MacroCommand {
       const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -878,8 +878,8 @@ export class MoveItems extends MacroCommand {
       const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -1432,8 +1432,8 @@ export class MoveItems extends MacroCommand {
       const didTake = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
       if (!didTake) return this.sendMessage(player, 'Could not take item from locker.');
 
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -1549,8 +1549,8 @@ export class MoveItems extends MacroCommand {
     }
 
     case 'G': { // KtG
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
 
       break;
     }
@@ -1668,9 +1668,8 @@ export class MoveItems extends MacroCommand {
       const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
-      const { state } = this.game.worldManager.getMap(player.map);
-      state.addItemToGround(player.x, player.y, srcItem);
-
+      const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(player, player.x, player.y);
+      state.addItemToGround(dropX, dropY, srcItem);
       break;
     }
 

@@ -19,7 +19,7 @@ export class CommandHandler extends BaseService {
     super();
   }
 
-  private commands: { [key: string]: MacroCommand } = {};
+  private commands: Record<string, MacroCommand> = {};
   private commandStrings: string[] = [];
 
   private parseArgs(args: string): string[] {
