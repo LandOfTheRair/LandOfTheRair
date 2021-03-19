@@ -103,10 +103,14 @@ export class AccountDB extends BaseService {
   }
 
   public async saveAccount(account: Account): Promise<void> {
-    await Promise.all([
-      this.db.save(account),
-      this.db.save(account.premium as AccountPremium)
-    ]);
+
+    const promises = [this.db.save(account)];
+
+    if (account.premium) {
+      promises.push(this.db.save(account.premium as AccountPremium));
+    }
+
+    await Promise.all(promises);
   }
 
   public async changePassword(account: Account, newPassword: string): Promise<void> {
