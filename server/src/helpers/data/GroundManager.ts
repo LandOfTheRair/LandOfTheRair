@@ -157,6 +157,10 @@ export class GroundManager extends BaseService {
     const saveableGround = this.saveableGround[mapName] || {};
 
     const addToSaveableGround = (sx, sy, sitemClass, sitem) => {
+
+      // corpses cannot be saved
+      if (sitemClass === ItemClass.Corpse) return;
+
       saveableGround[sx] = saveableGround[sx] || {};
       saveableGround[sx][sy] = saveableGround[sx][sy] || {};
       saveableGround[sx][sy][sitemClass] = saveableGround[sx][sy][sitemClass] || [];
