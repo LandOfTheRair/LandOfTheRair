@@ -45,7 +45,7 @@ export class LookCommand extends MacroCommand {
       }
 
       // make sure we have items to check
-      const len = items[itemType].length;
+      const len = items[itemType].reduce((prev, cur) => prev + cur.count, 0);
       if (len === 0) return '';
 
       // check if we should add an s to the end of the item
