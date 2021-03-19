@@ -1,34 +1,40 @@
-# [1.11.0](https://github.com/landoftherair/lotr2/compare/v1.10.3...v1.11.0) (2021-03-12)
+# [1.12.0](https://github.com/landoftherair/lotr2/compare/v1.11.0...v1.12.0) (2021-03-19)
 
 
 ### Bug Fixes
 
-* **break:** can only break items you own ([3607cbe](https://github.com/landoftherair/lotr2/commit/3607cbe2c8dd75648f59cb4724aac525ec209ea5))
-* **combat:** remove ooc regen (for now) ([7f48c6d](https://github.com/landoftherair/lotr2/commit/7f48c6d0fe214e306212b48071e7f21c07e9ba97))
-* **locker:** lockers would not show correctly if you had never visited the current one before ([e9f4437](https://github.com/landoftherair/lotr2/commit/e9f443771e2b54a85299e81f78c4d7d973f74773))
-* **macro:** ignore auto attack macros would still fire in some weird situations ([8c0fe57](https://github.com/landoftherair/lotr2/commit/8c0fe5744824e842131d5317236629c52ef80c70))
-* **macro:** macros would not immediately show up in selector after creation ([b0e270a](https://github.com/landoftherair/lotr2/commit/b0e270a26aae4a2a070bc0ad2c31421a1cfedf67))
-* **spell:** poison gives xp on kill, flags hostiles correctly as a dot ([14f80f7](https://github.com/landoftherair/lotr2/commit/14f80f742bfb435ceb120a6d4117e67cdbc6f934))
-* **spell:** poison should do poison damage, not necrotic ([783da3d](https://github.com/landoftherair/lotr2/commit/783da3da2151bbfa9888ce4e82b31cc4513b22d5))
-* **spell:** spells no longer allow you to cast non-unique multiple times against the same target as the same caster. multiple unique casters will still stack ([105cf38](https://github.com/landoftherair/lotr2/commit/105cf38b0538707586bc36994b92316e916bbd83))
-* **ui:** trainer would not let level ups happen ([3b09d5d](https://github.com/landoftherair/lotr2/commit/3b09d5d7c1bfbff90d75ed435f8c884a652e54ea))
+* **bottles:** useonly bottles would break because there is no effect list for useonly ([0761ec1](https://github.com/landoftherair/lotr2/commit/0761ec1fc297a4c452d10343e73faeebde2bcfe5))
+* **ground:** can no longer save corpses in the DB ([dec9d10](https://github.com/landoftherair/lotr2/commit/dec9d10d6c68d98ce06ac39bb3bf8497e31fada9))
+* **locker:** fix auto close on locker ([23bd963](https://github.com/landoftherair/lotr2/commit/23bd9635f80ba670c271bb82d195108e213b0f0c))
+* **locker:** lockers should not nest two layers deep for no reason ([049a3b6](https://github.com/landoftherair/lotr2/commit/049a3b665825d5484dc386fa7d4aae8cf84d402b))
+* **map:** fix spring water tiles not swimming properly ([60f043f](https://github.com/landoftherair/lotr2/commit/60f043f309692f887fa9d69390f524ef3cca60f4))
+* **map:** render different layers correctly when crossing file boundaries ([6d1ea09](https://github.com/landoftherair/lotr2/commit/6d1ea0905bddbed39b1de5b9c0c9d3b0bcda4d68))
+* **premium:** premium tier should be correctly set for gm/tester accounts on player login ([da1aae2](https://github.com/landoftherair/lotr2/commit/da1aae223f2f24b70dee2c622fae6cec1996590e))
+* **ui:** ground item stacking would incorrectly report number of items if they were the same item but a different count ([e9eba0c](https://github.com/landoftherair/lotr2/commit/e9eba0c3a957d56f807a85489e09587de84e485e))
+* **ui:** hide quick/codex by default ([5d31b76](https://github.com/landoftherair/lotr2/commit/5d31b76eb26970033917a5e4d5c88bd950cff7d4))
+* **ui:** make char selector same height as lobby ([31a6eb2](https://github.com/landoftherair/lotr2/commit/31a6eb2a7621f192c63455d68aa3090fb0338c0b))
 
 
 ### Features
 
-* **character:** mages and healers now start with skill 1 of their respective caster skills ([2aca43f](https://github.com/landoftherair/lotr2/commit/2aca43f562c88a4dc260606cfab89a6197e35800))
-* **combat:** luck now contributes minorly to ensuring crit hits ([17174f4](https://github.com/landoftherair/lotr2/commit/17174f41e91126dc459df525decfe0b5d5d8f8c0))
-* **combat:** when out of combat, you will regen 25% hp/mp per tick ([e61b3bf](https://github.com/landoftherair/lotr2/commit/e61b3bff348178a0b26569bf174f0f44c4617742))
-* **core:** gain 1 xp per kill if you surpass map cap so you have a better indicator of when to move on ([5c8eddb](https://github.com/landoftherair/lotr2/commit/5c8eddb4c8496a48c33864718a6705b7c3364fc5))
-* **core:** kick and save all players when updating game automatically; add kick command to kick people ([e16a305](https://github.com/landoftherair/lotr2/commit/e16a3058f3426bfb4d47b12aafeb353b8a072a4b))
-* **core:** reboot notifications go to discord. notification on complete update as well ([8a7611f](https://github.com/landoftherair/lotr2/commit/8a7611f483edaa170b76715c8cd3fe0c0add8055))
-* **locker:** add lockers. still needs some testing, but should work alright ([0e88d35](https://github.com/landoftherair/lotr2/commit/0e88d35c019b1c0b4350ac030972597d56068357))
-* **locker:** re-add material storage. add deposit all button. ([af375e3](https://github.com/landoftherair/lotr2/commit/af375e39ff39024dd12894659c67e7adc2c92099))
-* **npc:** npcs now have subgroups that stop them from infighting even if they are Hostility.Always. Allegiance.Enemy will no longer prevent infighting. ([06d9968](https://github.com/landoftherair/lotr2/commit/06d9968811aa3957a3288a1ec6637b0541a5dba8))
-* **npc:** npcs without a path or target will now move a max of 1 space at a time, to prevent them from being too unwieldy ([4c45ebe](https://github.com/landoftherair/lotr2/commit/4c45ebe670d8705f1ea8e55c3cee90d695e885a9))
-* **runes:** rune scrolls come back in this exciting new feature. a codex slot opens up every 5 levels, and you can learn/reinscribe rune scrolls any time (except in combat). you cannot duplicate them anymore, but you can stack different tiers together. ([2cb427c](https://github.com/landoftherair/lotr2/commit/2cb427cc8709b8b95ae2b23f20c9d721e4db14ae))
-* **trainer:** when skill training, you can only spend as much coin as would get you to the max skill level of the trainer ([30914c1](https://github.com/landoftherair/lotr2/commit/30914c110d9f3ac4f04ba0d3d9dd5a87dcc81c7a))
-* **trainer:** when skill training, you now gain xp at a rate of 1/10th of the gold spent ([92b5ac3](https://github.com/landoftherair/lotr2/commit/92b5ac3977db08bb16b3f194ca6a7485c168ec24))
+* **door:** doors can now require quest completion or progress to pass ([5ec56f8](https://github.com/landoftherair/lotr2/commit/5ec56f861789abb6f5b8c6f19c2df317d958c6da))
+* **gear:** force save gear that is stripped off always ([61475e8](https://github.com/landoftherair/lotr2/commit/61475e8a1b380260f3b8605d5676d67c2549935e))
+* **identify:** add sense1, sense2, and thief1 to identify ([bf79f7e](https://github.com/landoftherair/lotr2/commit/bf79f7e0f1c1c67257f830a9846e117f69e7e6a9))
+* **instances:** instanced maps. treasure chests. crazed saraxa. ([126f710](https://github.com/landoftherair/lotr2/commit/126f71036f5a210903df7178fff090c68cbd0121))
+* **luk:** luk now rolls 1..luk as a bonus instead of just rolling straight +luk for everything ([0a91574](https://github.com/landoftherair/lotr2/commit/0a915744acad0c90568c3a07739e3ad2f4ab82f3))
+* **npc:** add hall of heroes npcs correctly ([41cd397](https://github.com/landoftherair/lotr2/commit/41cd397c8975a653c1046d1dfb08e55ef1c029f7))
+* **npc:** mood attribute works ([45180b2](https://github.com/landoftherair/lotr2/commit/45180b20b552835f564e97309b9ee1843bad81db))
+* **npc:** npcs can now have attributes again ([136601e](https://github.com/landoftherair/lotr2/commit/136601e91b953923fb6213ef7bd78268019091d7))
+* **parties:** add parties ([b7399e0](https://github.com/landoftherair/lotr2/commit/b7399e00e51c418691b3dbe43902a0e0fb186d94))
+* **premium:** add premium. all perks work, but cosmetics cannot be retrieved yet ([470abd8](https://github.com/landoftherair/lotr2/commit/470abd8ba7f4804635e9e7b51b8aae3e2492bb20))
+* **resources:** resources now take the correct amount of physical damage and deal condition damage appropriately ([5728aff](https://github.com/landoftherair/lotr2/commit/5728aff2bfc3aebb73ee360b35630b6f756796ec))
+* **showstats:** show stats command now offers 'all' again ([20c7949](https://github.com/landoftherair/lotr2/commit/20c7949eb3467bfe2651d50cfeec6b3cb02d2c7a))
+* **spell:** add truesight ([cdce5e1](https://github.com/landoftherair/lotr2/commit/cdce5e1295e089dcb13fffd49876fd8b1e4b90de))
+* **statistics:** track name and class and xp and level ([308d13d](https://github.com/landoftherair/lotr2/commit/308d13d7c3a6232f35f1121c7ded3b23e7ff0dbe))
+* **ui:** add quick ui w/ left,right,coin,potion slots ([6077b70](https://github.com/landoftherair/lotr2/commit/6077b709171ea95fb063cc8e72affef50c1fbf57)), closes [#29](https://github.com/landoftherair/lotr2/issues/29)
+* **ui:** add tooltips to all small buttons on the ui bars ([9c6d65e](https://github.com/landoftherair/lotr2/commit/9c6d65e5b7de4cca308b3765d48ae903714bbc0e))
+* **ui:** can now auto exec commands on join game ([aa952b9](https://github.com/landoftherair/lotr2/commit/aa952b9c1a073d47a5759e3ce604e3ee5fdf1d75))
+* **ui:** show current holiday on popup if there is one going on ([4082b89](https://github.com/landoftherair/lotr2/commit/4082b895a92380bdf394682d92b5f19d99b3be11))
 
 
 
