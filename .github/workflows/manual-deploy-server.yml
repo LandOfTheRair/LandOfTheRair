@@ -18,10 +18,11 @@ jobs:
     - name: Reboot Notification
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://server.rair.land/debug/reboot'
+        url: 'https://server.rair.land/reboot/start'
         method: 'POST'
         data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
         preventFailureOnNoResponse: 'true'
+        ignoreStatusCodes: '404'
 
     - uses: actions/checkout@v2
 
@@ -41,10 +42,11 @@ jobs:
     - name: Kick And Save Players
       uses: fjogeleit/http-request-action@master
       with:
-        url: 'https://server.rair.land/debug/lockgame'
+        url: 'https://server.rair.land/reboot/lockgame'
         method: 'POST'
         data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
         preventFailureOnNoResponse: 'true'
+        ignoreStatusCodes: '404'
 
     - name: Wait 30 seconds
       uses: jakejarvis/wait-action@master

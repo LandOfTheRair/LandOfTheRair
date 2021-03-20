@@ -7,7 +7,7 @@ import { GameServerEvent } from '../interfaces';
 export class LockGameRoute {
 
   static setup(fastify: any, { sendToGame }) {
-    fastify.post('/debug/lockgame', async (req, res) => {
+    fastify.post('/reboot/lockgame', async (req, res) => {
 
       if (process.env.NODE_ENV === 'production') {
         const secret = process.env.WEBHOOK_SECRET;

@@ -7,7 +7,7 @@ import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
 export class RebootRoute {
 
   static setup(fastify: any, { sendToGame, broadcast }) {
-    fastify.post('/debug/reboot', async (req, res) => {
+    fastify.post('/reboot/start', async (req, res) => {
 
       if (process.env.NODE_ENV === 'production') {
         const secret = process.env.WEBHOOK_SECRET;
