@@ -70,6 +70,7 @@ export class PlayerHelper extends BaseService {
 
     if (!player.accountLockers.lockers) player.accountLockers.lockers = { Shared: { items: [] } };
     if (!player.accountLockers.pouch) player.accountLockers.pouch = { items: [] };
+    if (!player.accountLockers.materials) player.accountLockers.materials = {};
 
     this.reformatPlayerAfterLoad(player);
 
