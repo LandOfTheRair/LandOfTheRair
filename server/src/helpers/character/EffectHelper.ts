@@ -170,7 +170,7 @@ export class EffectHelper extends BaseService {
       if (!isArray(effectContainer)) return;
 
       effectContainer.forEach(effect => {
-        const meta = this.game.effectManager.getEffectData(effect.effectRef);
+        const meta = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
         if (meta.effect.extra.persistThroughDeath) return;
 
         this.removeEffect(character, effect);
