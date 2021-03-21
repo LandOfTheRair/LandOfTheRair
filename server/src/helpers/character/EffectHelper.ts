@@ -118,7 +118,7 @@ export class EffectHelper extends BaseService {
 
   // remove a stale or removed effect
   public removeEffect(character: ICharacter, effect: IStatusEffect): void {
-    const effectData = this.game.effectManager.getEffectData(effect.effectName);
+    const effectData = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
     const { type } = effectData.effect;
     const { recentlyRef } = effectData.effectMeta;
 
@@ -158,7 +158,7 @@ export class EffectHelper extends BaseService {
 
     if (!effect) return;
 
-    const meta = this.game.effectManager.getEffectData(effect.effectName);
+    const meta = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
     if (!meta.effect.extra.canRemove) return;
 
     this.removeEffect(character, effect);
@@ -170,7 +170,7 @@ export class EffectHelper extends BaseService {
       if (!isArray(effectContainer)) return;
 
       effectContainer.forEach(effect => {
-        const meta = this.game.effectManager.getEffectData(effect.effectName);
+        const meta = this.game.effectManager.getEffectData(effect.effectRef);
         if (meta.effect.extra.persistThroughDeath) return;
 
         this.removeEffect(character, effect);
