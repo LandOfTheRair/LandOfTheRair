@@ -1501,7 +1501,7 @@ export class MoveItems extends MacroCommand {
     const { items, withdrawInOunces } = this.game.lockerHelper.getMaterialData(source);
 
     const numTaken = withdrawInOunces ? this.game.userInputHelper.cleanNumber(destSlot, 0, { floor: true }) : 1;
-    const totalTakeable = player.accountLockers.materials[source];
+    const totalTakeable = player.accountLockers.materials[source] ?? 0;
 
     const totalToTake = Math.min(numTaken, totalTakeable);
     if (totalToTake === 0) return this.sendMessage(player, 'You cannot take that many items!');

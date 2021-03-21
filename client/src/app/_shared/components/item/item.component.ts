@@ -66,6 +66,7 @@ export class ItemComponent implements OnDestroy {
   @Input() public viewingPlayer: IPlayer;
   @Input() public transparent = false;
   @Input() public withdrawInStacks = false;
+  @Input() public canDrag = true;
   @Input() public size: 'xsmall' | 'small' | 'normal' = 'normal';
 
   public scopes: string[] = [];
@@ -189,7 +190,7 @@ export class ItemComponent implements OnDestroy {
   }
 
   determineScopes(): void {
-    if (!this.context || !this.item || !this.realItem || !this.viewingPlayer) return;
+    if (!this.context || !this.item || !this.realItem || !this.viewingPlayer || !this.canDrag) return;
 
     const scopes = [];
 

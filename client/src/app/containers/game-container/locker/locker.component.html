@@ -53,6 +53,7 @@
                     [count]="(player.accountLockers.materials || {})[itemSlot] || 0"
                     [transparent]="!(player.accountLockers.materials || {})[itemSlot]"
                     [withdrawInStacks]="materialData.slots[itemSlot].withdrawInOunces"
+                    [canDrag]="((player.accountLockers.materials || {})[itemSlot] || 0) > 0"
                     [item]="{ name: materialData.slots[itemSlot].items[0], mods: { } }"></app-item>
         </div>
       </div>
