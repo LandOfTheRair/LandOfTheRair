@@ -137,7 +137,7 @@ export class NPCCreator extends BaseService {
     baseChar.allegianceMods = npcDef.repMod || [];
     baseChar.monsterClass = npcDef.monsterClass;
     baseChar.monsterGroup = npcDef.monsterGroup;
-    baseChar.giveXp = cloneDeep(npcDef.giveXp);
+    baseChar.giveXp = cloneDeep(npcDef.giveXp) || { min: 1, max: 100 };
     baseChar.skillOnKill = npcDef.skillOnKill;
 
     if (baseChar.hostility === Hostility.Never) {
