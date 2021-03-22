@@ -392,6 +392,7 @@ export class CharacterHelper extends BaseService {
 
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
+    character.totalStats[Stat.Move] = character.totalStats[Stat.Move] ?? 3;
 
     const addStat = (stat: Stat, bonus: number) => {
       character.totalStats[stat] = character.totalStats[stat] || 0;
@@ -453,7 +454,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // can't move more than one screen at a time
-    character.totalStats[Stat.Move] = clamp(character.stats[Stat.Move] || 3, 0, 4);
+    character.totalStats[Stat.Move] = clamp(character.totalStats[Stat.Move], 0, 4);
 
     // if we're a player and our perception changes, we do a full visual update
     const { state } = this.game.worldManager.getMap(character.map);

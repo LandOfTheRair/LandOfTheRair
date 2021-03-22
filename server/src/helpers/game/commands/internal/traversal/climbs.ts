@@ -9,7 +9,7 @@ export class Climbs extends MacroCommand {
 
   execute(player: Player, args: IMacroCommandArgs) {
 
-    // TODO: Snare
+    if (this.game.effectHelper.hasEffect(player, 'Snare')) return this.sendMessage(player, 'You are snared!');
 
     const { map } = this.game.worldManager.getMap(player.map);
     const interactable = map.getInteractableAt(player.x, player.y);
