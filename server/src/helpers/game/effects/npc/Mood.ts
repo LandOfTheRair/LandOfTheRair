@@ -70,6 +70,8 @@ export class Mood extends Effect {
   }
 
   private changeMood(char: ICharacter, effect: IStatusEffect, mood: MoodStatus): void {
+    if (mood === effect.effectInfo.currentMood) return;
+
     effect.effectInfo.currentMood = mood;
     effect.effectInfo.tooltip = moods[mood].text;
     effect.effectInfo.tooltipColor = moods[mood].color;
