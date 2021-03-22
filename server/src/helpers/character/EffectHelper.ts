@@ -93,7 +93,7 @@ export class EffectHelper extends BaseService {
       }
 
       character.effects._hash = character.effects._hash || {};
-      character.effects._hash[effect.effectName] = true;
+      character.effects._hash[effect.effectName] = effect;
       character.effects[type].push(effect);
     }
 
@@ -200,7 +200,12 @@ export class EffectHelper extends BaseService {
 
   // check if someone has an effect
   public hasEffect(char: ICharacter, effName: string): boolean {
-    return char.effects?._hash?.[effName];
+    return !!char.effects?._hash?.[effName];
+  }
+
+  // get the potency of an effect
+  public getEffectPotency(char: ICharacter, effName: string): number {
+    return char.effects?._hash?.[effName]?.effectInfo.potency ?? 0;
   }
 
   // modify incoming damage based on incoming effects

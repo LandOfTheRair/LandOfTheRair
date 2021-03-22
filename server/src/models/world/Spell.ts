@@ -50,7 +50,6 @@ export class Spell implements BaseSpell {
   public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
 
     if (!caster || !target) return 1;
-    // TODO: daze
 
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,
@@ -102,6 +101,13 @@ export class Spell implements BaseSpell {
     // encumberance cuts potency exactly in half
     if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
       retPotency /= 2;
+    }
+
+    if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
+       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Daze'))
+    ) {
+      retPotency /= 2;
+      this.sendMessage(caster, { message: 'You struggle to concentrate!' });
     }
 
     return Math.max(1, Math.floor(retPotency));

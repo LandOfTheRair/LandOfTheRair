@@ -23,7 +23,7 @@ export interface IEffectContainer {
   [BuffType.IncomingModifier]: IStatusEffect[];
 
   // used to check if a character has an effect associated with them
-  _hash: Record<string, true>;
+  _hash: Record<string, IStatusEffect>;
 }
 
 export interface IItemEffectExtra {
