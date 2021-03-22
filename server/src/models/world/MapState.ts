@@ -430,6 +430,8 @@ export class MapState {
   }
 
   private triggerGroundUpdateForPlayer(player: IPlayer) {
+    if (!player) return;
+
     const state = this.game.playerManager.getPlayerState(player);
     if (!state) return;
 
