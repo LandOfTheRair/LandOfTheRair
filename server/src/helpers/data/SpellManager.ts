@@ -82,7 +82,8 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx, doesAttack, doesHeal, doesOvertime, noHostileTarget } = spellData.spellMeta;
+    const { casterMessage, casterSfx, targetMessage, targetSfx,
+      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
@@ -137,6 +138,10 @@ export class SpellManager extends BaseService {
         damageClass: spellData.damageClass || DamageClass.Heal,
         spellData
       });
+    }
+
+    if (bonusAgro && caster) {
+      this.game.characterHelper.addAgro(caster, target, bonusAgro);
     }
 
     spellRef.cast(caster, target, { potency, range, duration, callbacks, spellData });

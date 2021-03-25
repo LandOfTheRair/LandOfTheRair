@@ -16,6 +16,7 @@ export interface ISpellData {
   skillMultiplierChanges?: number[][];  // the skill multiplier buffs when you reach a certain skill threshold
 
   spellMeta: {
+    bonusAgro?: number;                 // bonus agro given from the caster to the target - primarily used for debuffs
     doesHeal?: boolean;                 // if the spell does a heal (inverse attack), it calls this first
     doesAttack?: boolean;               // if the spell does an attack, it calls this first
     doesOvertime?: boolean;             // if the spell has an over-time component, it is applied automatically
