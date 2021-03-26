@@ -1,4 +1,5 @@
 
+export * from './Aid';
 export * from './BarFire';
 export * from './BarFrost';
 export * from './BarNecro';
