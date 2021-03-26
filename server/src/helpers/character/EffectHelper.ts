@@ -46,7 +46,13 @@ export class EffectHelper extends BaseService {
     effectName: string,
     modifyEffectInfo: DeepPartial<IStatusEffectData> = {}
   ): void {
-    const effectData: IStatusEffectData = merge({}, this.game.effectManager.getEffectData(effectName), modifyEffectInfo);
+    const rawEffectData = this.game.effectManager.getEffectData(effectName);
+    if (!rawEffectData) {
+      this.game.logger.error('EffectHelper:AddEffect', `Could not find an effect ${effectName}.`);
+      return;
+    }
+
+    const effectData: IStatusEffectData = merge({}, rawEffectData, modifyEffectInfo);
     const { type, extra, duration } = effectData.effect;
     const { recentlyRef } = effectData.effectMeta;
 
