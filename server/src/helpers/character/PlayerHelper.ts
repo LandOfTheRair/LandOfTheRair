@@ -471,7 +471,7 @@ export class PlayerHelper extends BaseService {
         player.level += 1;
         if (player.level > player.highestLevel) {
           player.highestLevel = player.level;
-          player.traits.tp += 2;
+          player.traits.tp += 1;
           this.gainLevelStats(player);
         }
         break;

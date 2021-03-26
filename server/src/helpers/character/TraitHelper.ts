@@ -107,7 +107,7 @@ export class TraitHelper extends BaseService {
 
     // unlearn them all and recalculate the max tp
     player.traits.traitsLearned = {};
-    player.traits.tp = (player.level || 1) * 2;
+    player.traits.tp = (player.level || 1);
     player.traits.ap = player.ancientLevel || 0;
 
     // last, recalculate stats because lots of traits affect stats
