@@ -26,7 +26,7 @@
   <div class="container" *ngIf="player && traitTree">
 
     <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
-  
+
       <mat-tab *ngFor="let tree of traitTree.treeOrder" [label]="tree + ' (' + traitsSpent(tree) + ')'">
 
         <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
@@ -38,18 +38,18 @@
           </div>
 
           <div class="trait-col" *ngFor="let trait of traitRow.traits">
-            
-            <div class="trait" 
+
+            <div class="trait"
                  [class.has-trait]="getTraitLevel(trait.name) > 0"
                  [class.can-buy]="canBuyTrait(trait.name)"
                  [class.no-buy]="!canBuyTrait(trait.name)"
-                 *ngIf="getTrait(trait.name) as traitData" 
+                 *ngIf="getTrait(trait.name) as traitData"
                  (click)="tryToBuyTrait(trait)"
                  [matTooltip]="formatTooltip(trait, traitData)">
 
               <div class="trait-icon"
                    [style.border-color]="traitData.borderColor">
-                <app-icon [name]="traitData.icon" bgColor="#ccc" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+                <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
 
                 <div class="trait-level">
                   {{ getTraitLevel(trait.name) }} / {{ trait.maxLevel }}
