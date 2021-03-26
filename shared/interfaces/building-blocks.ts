@@ -149,7 +149,7 @@ export enum Stat {
   // resist stats
   Mitigation = 'mitigation',
   MagicalResist = 'magicalResist',
-  PhyiscalResist = 'physicalResist',
+  PhysicalResist = 'physicalResist',
   NecroticResist = 'necroticResist',
   EnergyResist = 'energyResist',
   WaterResist = 'waterResist',
