@@ -256,7 +256,7 @@ export class DeathHelper extends BaseService {
 
   // strip a character to a location w/ a radius
   private strip(character: ICharacter, x: number, y: number, radius = 0): void {
-    if (this.game.effectHelper.hasEffect(character, 'Secondwind')) return;
+    if (this.game.effectHelper.hasEffect(character, 'SecondWind')) return;
 
     if (this.game.characterHelper.isPlayer(character)) {
       this.game.statisticsHelper.addStatistic(character as IPlayer, TrackedStatistic.Strips);

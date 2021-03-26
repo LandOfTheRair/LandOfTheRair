@@ -4,4 +4,5 @@ export * from './BarFrost';
 export * from './BarNecro';
 export * from './BarWater';
 export * from './EagleEye';
+export * from './SecondWind';
 export * from './TrueSight';
