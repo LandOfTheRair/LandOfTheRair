@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, IPlayer, ISpellData, Skill, SoundEffect } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
@@ -83,7 +83,7 @@ export class SpellManager extends BaseService {
 
     // send messages to caster/target where applicable
     const { casterMessage, casterSfx, targetMessage, targetSfx,
-      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro } = spellData.spellMeta;
+      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, targetsParty } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
@@ -106,50 +106,58 @@ export class SpellManager extends BaseService {
       this.cooldownSpell(caster, spell, spellData);
     }
 
-    const potency = override.potency || spellRef.getPotency(caster, target, spellData);
-    const range = override.range || 0;
-    const duration = override.duration || 0;
-
-    if (caster !== target && caster && casterMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
+    let targets = [target];
+    if (caster && targetsParty) {
+      targets = this.game.partyHelper.getAllPartyMembersInRange(caster as IPlayer);
+      targets.push(caster);
     }
 
-    if (target && targetMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
-    }
+    targets.forEach(chosenTarget => {
+      const potency = override.potency || spellRef.getPotency(caster, chosenTarget, spellData);
+      const range = override.range || 0;
+      const duration = override.duration || 0;
 
-    if (doesAttack) {
-      this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.spellMeta.casterAttackMessage,
-        defMsg: spellData.spellMeta.targetAttackMessage,
-        sfx: SoundEffect.CombatHitSpell,
-        damage: potency,
-        damageClass: spellData.damageClass || DamageClass.Energy,
-        spellData
-      });
-    }
+      if (caster !== chosenTarget && caster && casterMessage) {
+        this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
+      }
 
-    if (doesHeal) {
-      this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.spellMeta.casterAttackMessage,
-        defMsg: spellData.spellMeta.targetAttackMessage,
-        sfx: SoundEffect.SpellHeal,
-        damage: -potency,
-        damageClass: spellData.damageClass || DamageClass.Heal,
-        spellData
-      });
-    }
+      if (chosenTarget && targetMessage) {
+        this.game.messageHelper.sendLogMessageToPlayer(chosenTarget, { message: targetMessage, sfx: targetSfx as SoundEffect });
+      }
 
-    if (bonusAgro && caster) {
-      this.game.characterHelper.addAgro(caster, target, bonusAgro);
-    }
+      if (doesAttack) {
+        this.game.combatHelper.magicalAttack(caster, chosenTarget, {
+          atkMsg: spellData.spellMeta.casterAttackMessage,
+          defMsg: spellData.spellMeta.targetAttackMessage,
+          sfx: SoundEffect.CombatHitSpell,
+          damage: potency,
+          damageClass: spellData.damageClass || DamageClass.Energy,
+          spellData
+        });
+      }
 
-    spellRef.cast(caster, target, { potency, range, duration, callbacks, spellData });
+      if (doesHeal) {
+        this.game.combatHelper.magicalAttack(caster, chosenTarget, {
+          atkMsg: spellData.spellMeta.casterAttackMessage,
+          defMsg: spellData.spellMeta.targetAttackMessage,
+          sfx: SoundEffect.SpellHeal,
+          damage: -potency,
+          damageClass: spellData.damageClass || DamageClass.Heal,
+          spellData
+        });
+      }
 
-    if (doesOvertime) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
-    }
+      if (bonusAgro && caster) {
+        this.game.characterHelper.addAgro(caster, chosenTarget, bonusAgro);
+      }
+
+      spellRef.cast(caster, chosenTarget, { potency, range, duration, callbacks, spellData });
+
+      if (doesOvertime) {
+        const spellEffInfo = spellRef.getOverrideEffectInfo(caster, chosenTarget, spellData);
+        this.game.effectHelper.addEffect(chosenTarget, caster ?? 'somebody', spell, spellEffInfo);
+      }
+    });
   }
 
 }
