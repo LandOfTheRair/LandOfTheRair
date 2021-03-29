@@ -238,6 +238,8 @@ export class TrainerBehavior implements IAIBehavior {
 
       game.deathHelper.restore(player, { map: npc.map, x: npc.x, y: npc.y });
       game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
+
+      game.messageHelper.sendSimpleMessage(player, `${npc.name} revived you!`);
     });
   }
 }
