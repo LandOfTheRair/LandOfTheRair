@@ -198,9 +198,13 @@ export class MovementHelper extends BaseService {
     this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
 
     if (isFall) {
-      const hpLost = Math.floor(player.hp.maximum * ((damagePercent || 15) / 100));
+      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || 15) / 100));
 
-      // TODO: fleetoffoot does 1 damage if you fall
+      // Fleet Of Foot reduces fall damage to 1
+      if (this.game.effectHelper.hasEffect(player, 'FleetOfFoot')) {
+        hpLost = 1;
+      }
+
       const damage = hpLost;
       this.combatHelper.dealOnesidedDamage(player, {
         damage,

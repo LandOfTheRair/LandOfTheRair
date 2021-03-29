@@ -6,6 +6,7 @@ export * from './BarFrost';
 export * from './BarNecro';
 export * from './BarWater';
 export * from './EagleEye';
+export * from './FleetOfFoot';
 export * from './Haste';
 export * from './Protection';
 export * from './Regen';

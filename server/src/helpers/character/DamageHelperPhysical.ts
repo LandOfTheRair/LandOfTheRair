@@ -732,7 +732,7 @@ export class DamageHelperPhysical extends BaseService {
 
   // try to combat-stun from a melee hit
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
-    // TODO: prone/push
+    // TODO: prone/push/fleetoffoot prevents prone/push
 
     // first we get the diff between atk STR and def CON
     // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa
