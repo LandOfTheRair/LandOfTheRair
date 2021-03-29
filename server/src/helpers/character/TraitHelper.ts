@@ -34,7 +34,7 @@ export class TraitHelper extends BaseService {
 
   // the level of the trait for the character
   public traitLevel(character: ICharacter, trait: string): number {
-    return character.allTraits[trait] || 0;
+    return character.allTraits[trait] ?? 0;
   }
 
   // the level of the trait for the character
