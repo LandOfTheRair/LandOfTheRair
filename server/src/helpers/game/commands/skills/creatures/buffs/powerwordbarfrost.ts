@@ -1,16 +1,16 @@
 import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class PowerwordBarNecro extends SpellCommand {
+export class PowerwordBarFrost extends SpellCommand {
 
-  aliases = ['powerword barnecro'];
+  aliases = ['powerword barfrost'];
   requiresLearn = true;
   canTargetSelf = true;
-  spellDataRef = 'PowerwordBarNecro';
-  spellRef = 'BarNecro';
+  spellDataRef = 'PowerwordBarFrost';
+  spellRef = 'BarFrost';
 
   canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'BarNecro');
+    return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'BarFrost');
   }
 
   execute(player: IPlayer, args: IMacroCommandArgs) {
