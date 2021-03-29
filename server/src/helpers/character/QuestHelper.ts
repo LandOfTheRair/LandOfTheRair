@@ -100,10 +100,12 @@ export class QuestHelper extends BaseService {
 
   // try to update quest based on an npc id that was just killed
   public tryUpdateQuestProgressForKill(player: IPlayer, npcId: string): void {
-    const updateQuest = player.quests.questKillWatches[npcId];
-    if (!updateQuest) return;
+    const updateQuests = player.quests.questKillWatches[npcId];
+    if (!updateQuests || updateQuests.length === 0) return;
 
-    this.updateQuestProgressKill(player, updateQuest);
+    updateQuests.forEach(quest => {
+      this.updateQuestProgressKill(player, quest);
+    });
   }
 
   // complete the quest, cleaning up old data & giving rewards
@@ -182,7 +184,7 @@ export class QuestHelper extends BaseService {
   // used to calculate a hash of npcId:QuestName for when a player kills something, so it can easily be looked up
   // should be recalculated only when accepting a new quest or completing an old one
   // should not be persisted
-  public calculateKillHash(player: IPlayer): Record<string, string> {
+  public calculateKillHash(player: IPlayer): Record<string, string[]> {
     const questKills = {};
 
     Object.keys(player.quests.activeQuestProgress).forEach(quest => {
@@ -193,7 +195,8 @@ export class QuestHelper extends BaseService {
       if (!req.npcIds || !req.killsRequired) return;
 
       req.npcIds.forEach(npcId => {
-        questKills[npcId] = quest;
+        questKills[npcId] = questKills[npcId] || [];
+        questKills[npcId].push(quest);
       });
     });
 
