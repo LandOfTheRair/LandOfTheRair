@@ -159,12 +159,13 @@ export class SpellCommand extends SkillCommand {
   aliases: string[] = [];
   requiresLearn = true;
   spellRef = '';
+  spellDataRef = '';
   canTargetSelf = false;
 
   mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
     if (overrideEffect) return 0;
 
-    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
     if (!spellData) return 0;
 
     return targets.length * (spellData.mpCost ?? 0);
@@ -183,12 +184,22 @@ export class SpellCommand extends SkillCommand {
     let targetString = args.stringArgs.trim();
     if (!targetString && this.canTargetSelf) targetString = caster?.name ?? '';
 
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString);
-    if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args.stringArgs);
+    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
 
-    if (!this.canCastSpell(caster, target)) return;
+    // if the spell is party-based, target the whole party
+    let targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
+    if (caster && spellData.spellMeta.targetsParty) {
+      targets = this.game.partyHelper.getAllPartyMembersInRange(caster as IPlayer);
+      targets.push(caster);
+    }
 
-    this.castSpellAt(caster, target, args);
+    targets.forEach(target => {
+      if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args.stringArgs);
+
+      if (!this.canCastSpell(caster, target)) return;
+
+      this.castSpellAt(caster, target, args);
+    });
   }
 
   // whether or not the spell can be cast - simple check that gets rolled into canUse

@@ -6,7 +6,8 @@ export class PowerwordHeal extends SpellCommand {
   aliases = ['powerword heal'];
   requiresLearn = true;
   canTargetSelf = true;
-  spellRef = 'PowerwordHeal';
+  spellDataRef = 'PowerwordHeal';
+  spellRef = 'Cure';
 
   canUse(caster: ICharacter, target: ICharacter): boolean {
     return false;
