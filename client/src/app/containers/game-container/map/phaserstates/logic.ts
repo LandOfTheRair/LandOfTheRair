@@ -475,7 +475,7 @@ export class MapScene extends Phaser.Scene {
     map.addTilesetImage('Decor', 'Decor');
 
     // create the base 5 layers
-    map.createStaticLayer('Terrain', 'Terrain');
+    map.createStaticLayer('Terrain', ['Decor', 'Terrain']);
     map.createStaticLayer('Floors', ['Decor', 'Terrain']);
     map.createStaticLayer('Fluids', ['Decor', 'Terrain']);
     map.createStaticLayer('Foliage', 'Decor');

@@ -1,5 +1,5 @@
 
-import { get, setWith } from 'lodash';
+import { cloneDeep, get, setWith } from 'lodash';
 
 import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
@@ -12,6 +12,7 @@ export class WorldMap {
   private densityMap: Pathfinder.Grid;
   private planner: any;
   private fov: Mrpas;
+  private formattedJson: any;
 
   private maxLevelExpPossible: number;
   private maxSkillExpPossible: number;
@@ -27,7 +28,7 @@ export class WorldMap {
   }
 
   public get mapData(): IMapData {
-    return { tiledJSON: this.json, layerData: this.layerHashes };
+    return { tiledJSON: this.formattedJson, layerData: this.layerHashes };
   }
 
   public get properties(): IMapProperties {
@@ -147,6 +148,23 @@ export class WorldMap {
     this.createPlanner();
     game.groundManager.initGroundForMap(mapName, partyName);
     this.setMaxes();
+    this.reformatJSON();
+  }
+
+  private reformatJSON() {
+    this.formattedJson = cloneDeep(this.json);
+
+    this.formattedJson.layers.length = 10;
+    this.formattedJson.tilesets.forEach(tileset => {
+      delete tileset.terrains;
+    });
+
+    const mapWallTiles = this.formattedJson.layers[MapLayer.Walls].data;
+
+    // clear air tiles that are on the wall layer because they're see-through
+    for (let i = 0; i < mapWallTiles.length; i++) {
+      if (mapWallTiles[i] === TilesWithNoFOVUpdate.Air) mapWallTiles[i] = TilesWithNoFOVUpdate.Empty;
+    }
   }
 
   private setMaxes() {
