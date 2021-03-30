@@ -58,8 +58,8 @@ export class LobbyState {
       if (user1?.tier > user2?.tier) return -1;
       if (user1?.tier < user2?.tier) return 1;
 
-      if (user1.username > user2.username) return 1;
-      if (user1.username < user2.username) return -1;
+      if (user1.username.toLowerCase() > user2.username.toLowerCase()) return 1;
+      if (user1.username.toLowerCase() < user2.username.toLowerCase()) return -1;
 
       return 0;
     });
