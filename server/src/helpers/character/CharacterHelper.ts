@@ -52,6 +52,19 @@ export class CharacterHelper extends BaseService {
     char.mp.current = this.game.userInputHelper.cleanNumber(char.mp.current, 1, { floor: true });
   }
 
+  // get the primary spell casting stat for a character
+  public castStat(char: ICharacter): Stat {
+    const stats: Record<BaseClass, Stat> = {
+      [BaseClass.Healer]: Stat.WIS,
+      [BaseClass.Mage]: Stat.INT,
+      [BaseClass.Thief]: Stat.INT,
+      [BaseClass.Warrior]: Stat.STR,
+      [BaseClass.Traveller]: Stat.LUK
+    };
+
+    return stats[char.baseClass];
+  }
+
   // check if this player is holding something
   public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
     const ref = char.items.equipment[`${hand}Hand`];

@@ -17,6 +17,7 @@ export interface ISpellData {
 
   spellMeta: {
     bonusAgro?: number;                 // bonus agro given from the caster to the target - primarily used for debuffs
+    canBeResisted?: boolean;            // whether or not the spell can be resisted outright
     doesHeal?: boolean;                 // if the spell does a heal (inverse attack), it calls this first
     doesAttack?: boolean;               // if the spell does an attack, it calls this first
     doesOvertime?: boolean;             // if the spell has an over-time component, it is applied automatically

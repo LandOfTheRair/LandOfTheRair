@@ -57,14 +57,6 @@ export class Spell implements BaseSpell {
       [BaseClass.Thief]: Skill.Thievery
     };
 
-    const stats: Record<BaseClass, Stat> = {
-      [BaseClass.Healer]: Stat.WIS,
-      [BaseClass.Mage]: Stat.INT,
-      [BaseClass.Thief]: Stat.INT,
-      [BaseClass.Warrior]: Stat.STR,
-      [BaseClass.Traveller]: Stat.LUK
-    };
-
     let skillsToAverage = [skills[caster.baseClass]];
     if (!skills[caster.baseClass]) {
 
@@ -85,7 +77,7 @@ export class Spell implements BaseSpell {
       skillsToAverage.map(skill => this.game.calculatorHelper.calcSkillLevelForCharacter(caster, skill) + 1)
     ) / skillsToAverage.length);
 
-    const statMult = caster ? this.game.characterHelper.getStat(caster, stats[caster.baseClass]) : 1;
+    const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
 
     const bonusRolls = random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
     let retPotency = this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);

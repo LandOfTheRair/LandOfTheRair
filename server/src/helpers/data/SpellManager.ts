@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
@@ -87,7 +87,7 @@ export class SpellManager extends BaseService {
 
     // send messages to caster/target where applicable
     const { casterMessage, casterSfx, targetMessage, targetSfx,
-      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, targetsParty } = spellData.spellMeta;
+      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
@@ -108,6 +108,23 @@ export class SpellManager extends BaseService {
 
       this.gainSkill(caster, spellData);
       this.cooldownSpell(caster, spell, spellData);
+    }
+
+    // always apply agro
+    if (bonusAgro && caster) {
+      this.game.characterHelper.addAgro(caster, target, bonusAgro);
+    }
+
+    // try to resist the spell
+    if (caster && canBeResisted) {
+      const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster));
+      const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL);
+
+      if (targetRoll > casterRoll) {
+        this.game.messageHelper.sendSimpleMessage(caster, `${target.name} resisted your spell!`);
+        return;
+      }
+
     }
 
     const potency = override.potency || spellRef.getPotency(caster, target, spellData);
@@ -142,10 +159,6 @@ export class SpellManager extends BaseService {
         damageClass: spellData.damageClass || DamageClass.Heal,
         spellData
       });
-    }
-
-    if (bonusAgro && caster) {
-      this.game.characterHelper.addAgro(caster, target, bonusAgro);
     }
 
     spellRef.cast(caster, target, { potency, range, duration, callbacks, spellData });

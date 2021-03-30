@@ -37,8 +37,12 @@ export class DiceRollerHelper extends BaseService {
   }
 
   // a one-to-luk roll, which will be used for anything rolling luk
+  OneToStat(char: ICharacter, stat: Stat): number {
+    return random(1, this.game.characterHelper.getStat(char, stat));
+  }
+
   OneToLUK(char: ICharacter): number {
-    return random(1, this.game.characterHelper.getStat(char, Stat.LUK));
+    return this.OneToStat(char, Stat.LUK);
   }
 
 }
