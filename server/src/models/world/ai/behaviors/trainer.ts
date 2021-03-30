@@ -125,9 +125,9 @@ export class TrainerBehavior implements IAIBehavior {
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
         const ignores = {
-          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Thievery, Skill.Conjuration],
-          [BaseClass.Mage]:       [Skill.Restoration, Skill.Thievery],
-          [BaseClass.Healer]:     [Skill.Thievery, Skill.Conjuration],
+          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Conjuration],
+          [BaseClass.Mage]:       [Skill.Restoration],
+          [BaseClass.Healer]:     [Skill.Conjuration],
           [BaseClass.Thief]:      [Skill.Wand, Skill.Restoration, Skill.Conjuration]
         };
 
