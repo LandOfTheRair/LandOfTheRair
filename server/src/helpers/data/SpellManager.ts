@@ -42,8 +42,12 @@ export class SpellManager extends BaseService {
     const skillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, skillGain);
     if (skillLevel > spellData.maxSkillForGain ?? 0) return;
 
-    this.game.playerHelper.flagSkill(caster as Player, [skillGain]);
-    this.game.playerHelper.tryGainSkill(caster as Player, skillGain, 1);
+    const skillsFlagged = this.game.effectHelper.hasEffect(caster, 'Hidden') && skillGain !== Skill.Thievery
+      ? [skillGain, Skill.Thievery]
+      : [skillGain];
+
+    this.game.playerHelper.flagSkill(caster as Player, skillsFlagged);
+    this.game.playerHelper.gainCurrentSkills(caster as Player, 1);
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {

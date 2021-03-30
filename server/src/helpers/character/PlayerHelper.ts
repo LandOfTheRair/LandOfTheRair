@@ -391,22 +391,22 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      this.gainSkill(player, primary, skillGained * 0.45);
-      this.gainSkill(player, secondary, skillGained * 0.25);
-      this.gainSkill(player, tertiary, skillGained * 0.15);
-      this.gainSkill(player, quaternary, skillGained * 0.15);
+      this.tryGainSkill(player, primary, skillGained * 0.45);
+      this.tryGainSkill(player, secondary, skillGained * 0.25);
+      this.tryGainSkill(player, tertiary, skillGained * 0.15);
+      this.tryGainSkill(player, quaternary, skillGained * 0.15);
 
     } else if (tertiary) {
-      this.gainSkill(player, primary, skillGained * 0.55);
-      this.gainSkill(player, secondary, skillGained * 0.25);
-      this.gainSkill(player, tertiary, skillGained * 0.20);
+      this.tryGainSkill(player, primary, skillGained * 0.55);
+      this.tryGainSkill(player, secondary, skillGained * 0.25);
+      this.tryGainSkill(player, tertiary, skillGained * 0.20);
 
     } else if (secondary) {
-      this.gainSkill(player, primary, skillGained * 0.75);
-      this.gainSkill(player, secondary, skillGained * 0.25);
+      this.tryGainSkill(player, primary, skillGained * 0.75);
+      this.tryGainSkill(player, secondary, skillGained * 0.25);
 
     } else {
-      this.gainSkill(player, primary, skillGained);
+      this.tryGainSkill(player, primary, skillGained);
     }
   }
 
