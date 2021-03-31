@@ -118,7 +118,8 @@ export class SpellManager extends BaseService {
     // try to resist the spell
     if (caster && canBeResisted) {
       const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster));
-      const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL);
+      const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL)
+                       + this.game.traitHelper.traitLevelValue(target, 'InternalFortitude');
 
       if (targetRoll > casterRoll) {
         this.game.messageHelper.sendSimpleMessage(caster, `${target.name} resisted your spell!`);
