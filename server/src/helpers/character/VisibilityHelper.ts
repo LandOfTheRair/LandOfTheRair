@@ -37,17 +37,14 @@ export class VisibilityHelper extends BaseService {
 
     const dist = 4;
 
-    // darkness obscures all vision
-    /*
-    if(character.hasEffect('Blind') || (this.isDarkAt(character.x, character.y) && !character.hasEffect('DarkVision'))) {
-      for(let xx = character.x - dist; xx <= character.x + dist; xx++) {
-        for(let yy = character.y - dist; yy <= character.y + dist; yy++) {
+    if (this.game.effectHelper.hasEffect(character, 'Blind')
+    || (this.isDarkAt(character.map, character.x, character.y) && !this.game.effectHelper.hasEffect(character, 'DarkVision'))) {
+      for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
+        for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
           affected[xx - character.x] = affected[xx - character.x] || {};
           affected[xx - character.x][yy - character.y] = false;
         }
       }
-    */
-    if (false) {
 
     // no dark, calculate fov
     } else {
@@ -58,17 +55,15 @@ export class VisibilityHelper extends BaseService {
           setWith(affected, [x - character.x, y - character.y], true, Object);
         });
 
-      /*
-      if(!character.hasEffect('DarkVision')) {
-        for(let xx = character.x - dist; xx <= character.x + dist; xx++) {
-          for(let yy = character.y - dist; yy <= character.y + dist; yy++) {
-            if(!this.isDarkAt(xx, yy)) continue;
+      if (!this.game.effectHelper.hasEffect(character, 'DarkVision')) {
+        for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
+          for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
+            if (!this.isDarkAt(character.map, xx, yy)) continue;
             affected[xx - character.x] = affected[xx - character.x] || {};
             affected[xx - character.x][yy - character.y] = false;
           }
         }
       }
-      */
     }
 
     /*
@@ -95,12 +90,15 @@ export class VisibilityHelper extends BaseService {
     return true;
   }
 
+  public isDarkAt(map: string, x: number, y: number): boolean {
+    return false;
+  }
+
   // whether or not this spot is hideable (near a wall, or in dark)
   public canContinueHidingAtSpot(char: ICharacter): boolean {
     const { map } = this.game.worldManager.getMap(char.map);
     if (!map.checkIfCanHideAt(char.x, char.y)) return false;
-
-    // TODO: darkness
+    if (this.isDarkAt(char.map, char.x, char.y)) return true;
 
     return true;
   }
