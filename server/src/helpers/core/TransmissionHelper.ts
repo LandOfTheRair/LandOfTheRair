@@ -44,18 +44,18 @@ export class TransmissionHelper extends BaseService {
   // queue data to be sent to a player during their next patch
   public queuePlayerPatch(player: Player, patch: PlayerPatch) {
     if (patch.patches) {
-      this.playerPatchQueue[player.username].patches.push(...patch.patches.filter(p =>
+      this.playerPatchQueue[player.username].patches.push(...patch.patches.filter(p => {
+        if (p.path.includes('/effects/_hash')) return true;
 
         // ideally, it would not generate these patches, but we take what we can
-        !p.path.includes('_')
-            && !p.path.includes('createdAt')
-            && !p.path.includes('currentTick')
-            && !p.path.includes('fov')
-            && p.path !== '/x'
-            && p.path !== '/y'
-            && p.path !== '/dir'
-            && p.path !== '/corpseRef'
-      ));
+        if (['/x', '/y', '/dir', '/corpseRef'].includes(p.path)) return false;
+        if (p.path.includes('createdAt')) return false;
+        if (p.path.includes('currentTick')) return false;
+        if (p.path.includes('fov')) return false;
+        if (p.path.includes('_')) return false;
+
+        return true;
+      }));
     }
 
     if (patch.player) {
