@@ -1,4 +1,5 @@
 
+export * from './Blind';
 export * from './Daze';
 export * from './Disease';
 export * from './Poison';

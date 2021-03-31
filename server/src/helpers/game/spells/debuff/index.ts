@@ -1,4 +1,5 @@
 
+export * from './Blind';
 export * from './Daze';
 export * from './Poison';
 export * from './Snare';

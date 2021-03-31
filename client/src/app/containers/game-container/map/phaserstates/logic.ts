@@ -271,19 +271,17 @@ export class MapScene extends Phaser.Scene {
         }
 
         // tile effects
-        /* TODO: darkness / darkvision
-        if(fovState && this.isDarkAt(x, y)) {
-          if(this.isLightAt(x, y)) {
+        if (fovState && this.isDarkAt(x, y)) {
+          if (this.isLightAt(x, y)) {
             fovSprite.alpha = 0;
             continue;
           }
 
-          if(this.canDarkSee(x, y)) {
+          if (this.canDarkSee(x, y)) {
             fovSprite.alpha = 0.5;
             continue;
           }
         }
-        */
 
         fovSprite.alpha = fovState ? 0 : 1;
         fovSprite2.alpha = fovState ? 0 : 1;
@@ -336,6 +334,19 @@ export class MapScene extends Phaser.Scene {
 
       }
     }
+  }
+
+  private canDarkSee(x: number, y: number): boolean {
+    if (!this.player) return false;
+    if (this.player.effects._hash.Blind) return false;
+
+    const darkCheck = this.isDarkAt(x, y);
+    return (darkCheck === -1 || darkCheck > 0) && !!this.player.effects._hash.DarkVision;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private isDarkAt(x: number, y: number): number {
+    return 0;
   }
 
   private updateDoors() {
@@ -622,7 +633,7 @@ export class MapScene extends Phaser.Scene {
 
   // truesight functions
   private checkTruesight(player: IPlayer) {
-    const hasTruesight = player.effects.buff.find(x => x.effectName === 'TrueSight');
+    const hasTruesight = player.effects._hash.TrueSight;
 
     if (this.specialRenders.truesight && !hasTruesight) {
       this.handleTruesight(false);
