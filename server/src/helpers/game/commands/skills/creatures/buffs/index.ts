@@ -15,3 +15,4 @@ export * from './protection';
 export * from './regen';
 export * from './secondwind';
 export * from './truesight';
+export * from './vitalessence';

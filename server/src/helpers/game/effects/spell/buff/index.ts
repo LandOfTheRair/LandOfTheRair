@@ -8,3 +8,4 @@ export * from './BarWater';
 export * from './Haste';
 export * from './Protection';
 export * from './Regen';
+export * from './VitalEssence';

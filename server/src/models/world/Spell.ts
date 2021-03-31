@@ -30,6 +30,7 @@ export class Spell implements BaseSpell {
       effect: {
         duration: this.getDuration(caster, target, spellData),
         extra: {
+          charges: this.getCharges(caster, target, spellData),
           potency: this.getPotency(caster, target, spellData)
         }
       },
@@ -44,6 +45,10 @@ export class Spell implements BaseSpell {
   }
 
   public getDuration(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
+    return 0;
+  }
+
+  public getCharges(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
     return 0;
   }
 

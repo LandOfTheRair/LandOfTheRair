@@ -222,7 +222,16 @@ export class EffectHelper extends BaseService {
       const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
       if (!ref) return;
 
-      currentDamage = ref.incoming(eff, char, attacker, damageArgs, currentDamage);
+      if (eff.effectInfo.charges) {
+        eff.effectInfo.charges -= 1;
+        if (eff.effectInfo.charges <= 0) {
+          this.removeEffectManually(char, eff.effectName);
+        }
+      }
+
+      if (ref.incoming) {
+        currentDamage = ref.incoming(eff, char, attacker, damageArgs, currentDamage);
+      }
     });
 
     return currentDamage;

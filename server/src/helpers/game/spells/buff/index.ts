@@ -12,3 +12,4 @@ export * from './Protection';
 export * from './Regen';
 export * from './SecondWind';
 export * from './TrueSight';
+export * from './VitalEssence';
