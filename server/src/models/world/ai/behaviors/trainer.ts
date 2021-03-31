@@ -191,7 +191,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         game.currencyHelper.loseCurrency(player, 200);
 
-        return `You have gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
+        return `You've gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
       });
 
     if (this.canRevive) {

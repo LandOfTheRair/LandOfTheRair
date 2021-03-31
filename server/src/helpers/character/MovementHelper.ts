@@ -209,7 +209,7 @@ export class MovementHelper extends BaseService {
       this.combatHelper.dealOnesidedDamage(player, {
         damage,
         damageClass: DamageClass.Physical,
-        damageMessage: 'You have fallen!',
+        damageMessage: 'You\'ve fallen!',
         suppressIfNegative: true,
         overrideSfx: SoundEffect.CombatHitMelee
       });

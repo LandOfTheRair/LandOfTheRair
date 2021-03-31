@@ -42,7 +42,7 @@ export class DrinkCommand extends MacroCommand {
     });
 
     if (firstHealIndex === -1) {
-      this.sendMessage(player, 'You have no potions to drink!');
+      this.sendMessage(player, 'You\'ve got no potions to drink!');
       return;
     }
 
