@@ -91,7 +91,10 @@ export class CombatHelper extends BaseService {
       damage *= damageFactor;
     }
 
-    damage = this.game.effectHelper.modifyIncomingDamage(defender, attacker, args);
+    // clone the args so we dont accidentally override something
+    const damageArgs = Object.assign({}, args);
+    damageArgs.damage = damage;
+    damage = this.game.effectHelper.modifyIncomingDamage(defender, attacker, damageArgs);
 
     if (isNaN(damage)) damage = 0;
 
