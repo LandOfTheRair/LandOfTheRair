@@ -732,7 +732,15 @@ export class DamageHelperPhysical extends BaseService {
 
   // try to combat-stun from a melee hit
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
-    // TODO: prone/push/fleetoffoot prevents prone/push
+
+    const hasFleetOfFoot = this.game.effectHelper.hasEffect(defender, 'FleetOfFoot');
+    const hasUnshakeable = this.game.effectHelper.hasEffect(defender, 'Unshakeable');
+    const proneChance = this.game.itemHelper.getItemProperty(attackerWeapon, 'proneChance');
+
+    // if we can prone a target, we prone a target
+    if (!hasFleetOfFoot && !hasUnshakeable && proneChance > 0) {
+      this.game.spellManager.castSpell('Push', attacker, defender, { potency: 999, chance: proneChance });
+    }
 
     // first we get the diff between atk STR and def CON
     // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa

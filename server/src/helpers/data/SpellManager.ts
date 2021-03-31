@@ -99,8 +99,8 @@ export class SpellManager extends BaseService {
     const chance = override.chance || 100;
     if (!this.game.diceRollerHelper.XInOneHundred(chance)) return;
 
-    // gain skill for the spell cast
-    if (caster) {
+    // gain skill for the spell cast, but only if you're actually casting it
+    if (caster && chance === 100) {
       if (!this.canCastSpell(caster, spell)) {
         this.game.messageHelper.sendSimpleMessage(caster, 'That spell is still cooling down!');
         return;
