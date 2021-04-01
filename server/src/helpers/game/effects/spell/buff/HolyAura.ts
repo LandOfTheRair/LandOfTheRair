@@ -1,5 +1,5 @@
 
-import { ICharacter, IStatusEffect, Stat, Skill, DamageArgs } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, DamageArgs } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class HolyAura extends Effect {

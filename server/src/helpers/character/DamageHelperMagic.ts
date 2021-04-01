@@ -16,6 +16,11 @@ export class DamageHelperMagic extends BaseService {
 
     let startDamage = args.damage ?? 0;
 
+    // try to do critical damage if possible
+    if(attacker && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent))) {
+      startDamage *= 2;
+    }
+
     // try to do a WIL save if possible, default is a 20/30 save
     if (args.spellData) {
       const { willSaveThreshold, willSavePercent } = args.spellData;
