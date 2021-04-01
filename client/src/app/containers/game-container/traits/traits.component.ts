@@ -49,6 +49,8 @@ export class TraitsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    console.log(player);
+
     this.player = player;
     this.traitTree = allTraitTrees[player.baseClass];
   }
@@ -71,27 +73,31 @@ export class TraitsComponent implements OnInit, OnDestroy {
   }
 
   public traitsSpent(tree: string): number {
-    const allSkills = Object.keys(this.player.allTraits)
-      .filter(k => this.player.allTraits[k] > 0)
+    const allSkills = Object.keys(this.player.traits.traitsLearned)
+      .filter(k => this.player.traits.traitsLearned[k] > 0)
       .filter(k => this.getTraitInTree(k)?.treeName === tree)
-      .map(k => this.player.allTraits[k]);
+      .map(k => this.player.traits.traitsLearned[k]);
 
     return sum(allSkills);
   }
 
   public getTraitLevel(traitName: string): number {
-    return this.player.allTraits[traitName] || 0;
+    return this.player.allTraits[traitName] ?? 0;
+  }
+
+  public getTraitBoughtLevel(traitName: string): number {
+    return this.player.traits.traitsLearned[traitName] ?? 0;
   }
 
   public canBuyTrait(trait: string): boolean {
     const traitRef = this.getTraitInTree(trait);
 
     return (traitRef.isAncient ? this.player.traits.ap > 0 : this.player.traits.tp > 0)
-        && this.getTraitLevel(trait) < traitRef.maxLevel
+        && this.getTraitBoughtLevel(trait) < traitRef.maxLevel
         && this.player.level >= traitRef.requiredLevel
         && (
           traitRef.requires
-            ? this.getTraitLevel(traitRef.requires) >= this.getTraitInTree(traitRef.requires).maxLevel
+            ? this.getTraitBoughtLevel(traitRef.requires) >= this.getTraitInTree(traitRef.requires).maxLevel
             : true
           );
   }

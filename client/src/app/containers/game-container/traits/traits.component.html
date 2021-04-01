@@ -52,7 +52,7 @@
                 <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
 
                 <div class="trait-level">
-                  {{ getTraitLevel(trait.name) }} / {{ trait.maxLevel }}
+                  <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
                 </div>
               </div>
 

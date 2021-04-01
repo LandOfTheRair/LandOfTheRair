@@ -5,14 +5,14 @@
   position: relative;
 
   min-height: 100px;
-  
+
   &:not(:first-child) {
     margin-top: 20px;
   }
 
   .trait-req-container {
     min-width: 30px;
-    
+
     .trait-req {
       position: absolute;
       top: 30px;
@@ -52,7 +52,7 @@
       &.has-trait {
         opacity: 1;
       }
-      
+
       .trait-icon {
         position: relative;
         border-radius: 5px;
@@ -68,6 +68,13 @@
           color: #000;
           text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
           font-weight: bold;
+
+          .trait-current-level {
+            &.is-boosted {
+              color: #0f0;
+              text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+            }
+          }
         }
       }
 
