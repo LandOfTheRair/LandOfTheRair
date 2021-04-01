@@ -1,5 +1,5 @@
 
-import { ICharacter, IStatusEffect, Stat, Skill } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, Stat, Skill, DamageArgs } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class VitalEssence extends Effect {
@@ -13,6 +13,24 @@ export class VitalEssence extends Effect {
     };
 
     effect.effectInfo.tooltip = `Increase HP by ${effect.effectInfo.potency} and AC by ${skill}.`;
+  }
+
+  public incoming(
+    effect: IStatusEffect,
+    char: ICharacter,
+    attacker: ICharacter | null,
+    damageArgs: DamageArgs,
+    currentDamage: number
+  ): number {
+
+    if(effect.effectInfo.charges) {
+      effect.effectInfo.charges -= 1;
+      if (effect.effectInfo.charges <= 0) {
+        this.game.effectHelper.removeEffect(char, effect);
+      }
+    }
+
+    return currentDamage;
   }
 
 }
