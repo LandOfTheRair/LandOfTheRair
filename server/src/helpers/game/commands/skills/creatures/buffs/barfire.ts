@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../../../interfaces';
+import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class BarFire extends SpellCommand {

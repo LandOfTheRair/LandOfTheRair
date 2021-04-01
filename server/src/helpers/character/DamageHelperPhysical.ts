@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { Allegiance, ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItem, IItemEffect, IItemEncrust, IPlayer,
+import { Allegiance, ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';

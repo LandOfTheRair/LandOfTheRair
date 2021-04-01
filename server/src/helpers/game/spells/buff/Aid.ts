@@ -1,4 +1,4 @@
-import { ICharacter, ISpellData, SpellCastArgs, Stat } from '../../../../interfaces';
+import { ICharacter, SpellCastArgs, Stat } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Aid extends Spell {

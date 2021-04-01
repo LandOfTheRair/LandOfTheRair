@@ -12,6 +12,7 @@
         "eslint-plugin-jsdoc",
         "eslint-plugin-prefer-arrow",
         "eslint-plugin-import",
+        "unused-imports",
         "@typescript-eslint",
         "@typescript-eslint/tslint"
     ],
@@ -241,6 +242,7 @@
         ],
         "use-isnan": "error",
         "valid-typeof": "off",
+        "unused-imports/no-unused-imports": "error",
         "@typescript-eslint/tslint/config": [
             "error",
             {

@@ -1,4 +1,4 @@
-import { ICharacter, IPlayer, ItemSlot, SpellCastArgs } from '../../../../interfaces';
+import { ICharacter, ItemSlot, SpellCastArgs } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Wellspring extends Spell {

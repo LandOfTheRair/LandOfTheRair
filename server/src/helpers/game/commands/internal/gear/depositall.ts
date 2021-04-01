@@ -1,5 +1,5 @@
 
-import { IMacroCommandArgs, IPlayer, ItemClass } from '../../../../../interfaces';
+import { IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class DepositAllCommand extends MacroCommand {

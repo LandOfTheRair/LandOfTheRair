@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { random, sum } from 'lodash';
-import { ICharacter, IPlayer, Stat } from '../../../interfaces';
+import { ICharacter, Stat } from '../../../interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()

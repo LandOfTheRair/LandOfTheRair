@@ -1,4 +1,4 @@
-import { Allegiance, IMacroCommandArgs, IPlayer, MessageType, Skill } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer, MessageType } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class DebugCountItems extends MacroCommand {

@@ -1,4 +1,4 @@
-import { DamageClass, ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Haste extends Effect {

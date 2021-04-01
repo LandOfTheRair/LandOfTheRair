@@ -1,7 +1,7 @@
 
 import { get } from 'lodash';
 
-import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
+import { GameServerEvent, GameServerResponse } from '../interfaces';
 
 
 export class RebootRoute {

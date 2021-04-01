@@ -1,12 +1,10 @@
 
 import { Injectable } from 'injection-js';
-import { sortBy } from 'lodash';
 
 import { GameAction, IItemContainer, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import * as materialData from '../../../content/_output/materialstorage.json';
-import { Player } from '../../models';
 
 @Injectable()
 export class LockerHelper extends BaseService {

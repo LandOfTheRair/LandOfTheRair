@@ -1,4 +1,4 @@
-import { DamageClass, ICharacter, IStatusEffect, Skill, Stat } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, Skill, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Aid extends Effect {

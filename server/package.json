@@ -71,6 +71,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsdoc": "^31.3.3",
     "eslint-plugin-prefer-arrow": "^1.2.2",
+    "eslint-plugin-unused-imports": "^1.1.1",
     "madge": "^4.0.1",
     "source-map-support": "^0.5.19",
     "symlink-dir": "4.1.0",

@@ -2,7 +2,7 @@
 import { random, sum } from 'lodash';
 
 import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData,
-  IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill, Stat } from '../../interfaces';
+  IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill } from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseSpell } from '../../interfaces/BaseSpell';
