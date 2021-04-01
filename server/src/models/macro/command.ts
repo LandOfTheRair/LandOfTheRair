@@ -1,6 +1,6 @@
 import { Game } from '../../helpers';
 import { BaseClass, Direction, ICharacter, IItemEffect,
-  IMacroCommand, IMacroCommandArgs, IPlayer, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
+  IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
 import { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
@@ -167,7 +167,26 @@ export class SpellCommand extends SkillCommand {
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
     if (!spellData) return 0;
 
-    return targets.length * (spellData.mpCost ?? 0);
+    let cost = targets.length * (spellData.mpCost ?? 0);
+
+    // try to do wand/totem specialty
+    if (caster) {
+      const rightHand = caster.items.equipment[ItemSlot.RightHand];
+
+      if (rightHand) {
+        const itemClass = this.game.itemHelper.getItemProperty(rightHand, 'itemClass');
+
+        if (itemClass === ItemClass.Wand) {
+          cost *= (1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty'));
+        }
+
+        if (itemClass === ItemClass.Totem) {
+          cost *= (1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty'));
+        }
+      }
+    }
+
+    return Math.floor(cost);
   }
 
   range() {
