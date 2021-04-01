@@ -6,6 +6,7 @@ export * from './BarFrost';
 export * from './BarNecro';
 export * from './BarWater';
 export * from './Haste';
+export * from './HolyAura';
 export * from './ImbueFrost';
 export * from './Protection';
 export * from './Regen';
