@@ -22,8 +22,13 @@ export class CharacterHelper extends BaseService {
 
   // check if the character can currently act
   public canAct(char: ICharacter): boolean {
-    const stunned = this.game.effectHelper.hasEffect(char, 'Stun');
-    return !stunned;
+    const stunned = this.game.effectHelper.getEffect(char, 'Stun');
+    const chilled = this.game.effectHelper.getEffect(char, 'Chilled');
+
+    const isStunned = stunned.effectInfo.isFrozen;
+    const isChilled = chilled.effectInfo.isFrozen;
+
+    return !isStunned && !isChilled;
   }
 
   public healToFull(char: ICharacter): void {
