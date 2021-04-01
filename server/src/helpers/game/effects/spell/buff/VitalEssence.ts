@@ -23,7 +23,7 @@ export class VitalEssence extends Effect {
     currentDamage: number
   ): number {
 
-    if(effect.effectInfo.charges) {
+    if (effect.effectInfo.charges) {
       effect.effectInfo.charges -= 1;
       if (effect.effectInfo.charges <= 0) {
         this.game.effectHelper.removeEffect(char, effect);

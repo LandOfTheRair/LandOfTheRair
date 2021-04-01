@@ -17,7 +17,7 @@ export class DamageHelperMagic extends BaseService {
     let startDamage = args.damage ?? 0;
 
     // try to do critical damage if possible
-    if(attacker && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent))) {
+    if (attacker && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent))) {
       startDamage *= 2;
     }
 
