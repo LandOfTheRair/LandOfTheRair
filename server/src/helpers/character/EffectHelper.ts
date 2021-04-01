@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
+import { BuffType, DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -235,6 +235,15 @@ export class EffectHelper extends BaseService {
     });
 
     return currentDamage;
+  }
+
+  public dispellableEffects(char: ICharacter): IStatusEffect[] {
+    return char.effects[BuffType.Buff].filter(x => {
+      if (x.endsAt === -1) return false;
+      if (!x.effectInfo.canRemove) return false;
+
+      return true;
+    });
   }
 
 }

@@ -23,6 +23,10 @@ export class Revive extends Spell {
 
       didRevive = true;
     });
+
+    if (!didRevive) {
+      this.game.messageHelper.sendSimpleMessage(caster, 'There are no corpses here to revive.');
+    }
   }
 
 }
