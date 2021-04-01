@@ -209,6 +209,11 @@ export class EffectHelper extends BaseService {
     return !!char.effects?._hash?.[effName];
   }
 
+  // check if someone has an effect
+  public getEffect(char: ICharacter, effName: string): IStatusEffect {
+    return char.effects?._hash?.[effName];
+  }
+
   // get the potency of an effect
   public getEffectPotency(char: ICharacter, effName: string): number {
     return char.effects?._hash?.[effName]?.effectInfo.potency ?? 0;

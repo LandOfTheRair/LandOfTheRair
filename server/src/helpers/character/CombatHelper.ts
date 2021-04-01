@@ -192,6 +192,9 @@ export class CombatHelper extends BaseService {
     // finally, absolutely finally, we can do some damage
     this.game.characterHelper.damage(defender, args.damage);
 
+    // try to do some debuffing based on damage element
+    this.doElementalDebuffing(defender, args.damageClass, args.damage);
+
     // lets see if they died
     const wasFatal = this.game.characterHelper.isDead(defender);
     if (wasFatal) {
@@ -266,6 +269,30 @@ export class CombatHelper extends BaseService {
     if (itemClass === ItemClass.Blunderbuss) return SoundEffect.CombatSpecialBlunderbuss;
 
     return isMelee ? SoundEffect.CombatHitMelee : SoundEffect.CombatHitSpell;
+  }
+
+  private getElementalDebuff(damageClass: DamageClass): [string, string, string] {
+    switch (damageClass) {
+    case DamageClass.Fire: return ['BuildupHeat', 'Burning', 'RecentlyBurned'];
+    case DamageClass.Ice:  return ['BuildupChill', 'Chilled', 'RecentlyChilled'];
+    }
+
+    return ['', '', ''];
+  }
+
+  private doElementalDebuffing(defender: ICharacter, damageClass: DamageClass, damage: number): void {
+    const [buildup, burst, recently] = this.getElementalDebuff(damageClass);
+    if (!buildup || !burst || !recently) return;
+    if (this.game.effectHelper.hasEffect(defender, burst) || this.game.effectHelper.hasEffect(defender, recently)) return;
+
+    const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
+    if (!buildupEffect) {
+      this.game.effectHelper.addEffect(defender, '', buildup, { effect: { extra: {
+        buildUpDecay: 3,
+        buildUpCurrent: 5,
+        buildUpMax: 200 + (defender.level * 10)
+      } } });
+    }
   }
 
 }

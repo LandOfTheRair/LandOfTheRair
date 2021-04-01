@@ -9,7 +9,9 @@ export interface IStatusEffectInfo {
   currentTick?: number;                         // the current tick of the effect
   statChanges?: Partial<Record<Stat, number>>;  // the stat boosts for this effect
   charges?: number;                             // the number of charges this effect has remaining
-  buildUpPercent?: number;                      // the percentage 0..100 for this effect before it bursts
+  buildUpMax?: number;                          // the max buildup value required for this to burst
+  buildUpCurrent?: number;                      // the current buildup value
+  buildUpDecay?: number;                        // the decay value for the buildup
   damage?: number;                              // the amount of damage this effect does per tick
   damageType?: DamageType;                      // the type of damage this effect does
   isFrozen?: boolean;                           // if you're currently frozen from the effect

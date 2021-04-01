@@ -93,7 +93,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get buildUpPercent() {
-    return this.effect.effectInfo.buildUpPercent ?? 0;
+    return Math.floor(this.effect.effectInfo.buildUpCurrent / this.effect.effectInfo.buildUpMax * 100);
   }
 
   public get ticks(): number {
