@@ -13,10 +13,4 @@ export class PowerwordBarNecro extends SpellCommand {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'BarNecro');
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
-
-    this.castSpell(player, args);
-  }
-
 }

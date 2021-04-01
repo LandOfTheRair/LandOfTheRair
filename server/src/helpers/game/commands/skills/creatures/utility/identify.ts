@@ -8,10 +8,4 @@ export class Identify extends SpellCommand {
   spellRef = 'Identify';
   canTargetSelf = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
-
-    this.castSpell(player, args);
-  }
-
 }

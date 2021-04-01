@@ -13,10 +13,4 @@ export class PowerwordBarFrost extends SpellCommand {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'BarFrost');
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
-
-    this.castSpell(player, args);
-  }
-
 }

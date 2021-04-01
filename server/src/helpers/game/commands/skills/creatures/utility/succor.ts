@@ -8,10 +8,4 @@ export class Succor extends SpellCommand {
   spellRef = 'Succor';
   canTargetSelf = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
-
-    this.castSpell(player, args);
-  }
-
 }

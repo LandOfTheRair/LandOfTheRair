@@ -8,10 +8,4 @@ export class ConjureHealing extends SpellCommand {
   spellRef = 'ConjureHealing';
   canTargetSelf = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.tryToConsumeMP(player, [], args.overrideEffect)) return;
-
-    this.castSpell(player, args);
-  }
-
 }
