@@ -29,6 +29,7 @@ export interface ISpellData {
     targetAttackMessage?: string;       // if the spell does an attack, this is the unformatted message to send to the caster
     targetSfx?: string;                 // if the spell does NOT attack, this is the SFX it sends along with targetMessage
     targetsParty?: boolean;             // if the spell targets the entire casters party (aka, powerwords)
+    range?: number;                     // if the spell is an aoe, this is the default range from the center it targets (default 0)
     spellRef: string;                   // the reference to the spell for casting purposes
   };
 

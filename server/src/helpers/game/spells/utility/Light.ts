@@ -12,7 +12,7 @@ export class Light extends Spell {
     const duration = basePotency * 1000;
 
     this.sendMessage(caster, { message: 'You cast away the darkness.' });
-    this.game.darknessHelper.removeDarkness(caster.map, target.x, target.y, 1, Date.now() + duration);
+    this.game.darknessHelper.removeDarkness(caster.map, target.x, target.y, spellCastArgs.range, Date.now() + duration);
   }
 
 }

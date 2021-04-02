@@ -87,7 +87,7 @@ export class SpellManager extends BaseService {
 
     // send messages to caster/target where applicable
     const { casterMessage, casterSfx, targetMessage, targetSfx,
-      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted } = spellData.spellMeta;
+      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
@@ -128,9 +128,9 @@ export class SpellManager extends BaseService {
 
     }
 
-    const potency = override.potency || spellRef.getPotency(caster, target, spellData);
-    const range = override.range || 0;
-    const duration = override.duration || 0;
+    const potency = override.potency ?? spellRef.getPotency(caster, target, spellData);
+    const spellRange = override.range ?? range ?? 0;
+    const duration = override.duration ?? 0;
 
     if (caster !== target && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
@@ -162,7 +162,7 @@ export class SpellManager extends BaseService {
       });
     }
 
-    spellRef.cast(caster, target, { potency, range, duration, callbacks, spellData });
+    spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData });
 
     if (doesOvertime) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);

@@ -12,7 +12,7 @@ export class Darkness extends Spell {
     const duration = basePotency * 1000;
 
     this.sendMessage(caster, { message: 'You cloak the area in a veil of darkness.' });
-    this.game.darknessHelper.createDarkness(caster.map, target.x, target.y, 1, Date.now() + duration);
+    this.game.darknessHelper.createDarkness(caster.map, target.x, target.y, spellCastArgs.range, Date.now() + duration);
   }
 
 }
