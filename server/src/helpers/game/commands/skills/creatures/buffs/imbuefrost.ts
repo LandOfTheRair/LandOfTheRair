@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../../../interfaces';
+import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ImbueFrost extends SpellCommand {
@@ -10,10 +10,6 @@ export class ImbueFrost extends SpellCommand {
 
   canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'ImbueFrost');
-  }
-
-  execute(player: IPlayer, args: IMacroCommandArgs) {
-    this.castSpell(player, args);
   }
 
 }

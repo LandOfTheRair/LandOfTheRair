@@ -16,6 +16,7 @@ export interface ISpellData {
   skillMultiplierChanges?: number[][];  // the skill multiplier buffs when you reach a certain skill threshold
 
   spellMeta: {
+    aoe?: boolean;                      // whether or not this spell is an aoe
     bonusAgro?: number;                 // bonus agro given from the caster to the target - primarily used for debuffs
     canBeResisted?: boolean;            // whether or not the spell can be resisted outright
     doesHeal?: boolean;                 // if the spell does a heal (inverse attack), it calls this first

@@ -114,6 +114,17 @@ export class TargettingHelper extends BaseService {
     return possTargets;
   }
 
+  public getPossibleAOETargets(center: ICharacter, radius = 0): ICharacter[] {
+    const state = this.worldManager.getMapStateForCharacter(center);
+    const allTargets = state.getAllInRange(center, radius, [], false);
+    const possTargets = allTargets.filter(target => {
+      if (this.characterHelper.isDead(target)) return false;
+      return true;
+    });
+
+    return possTargets;
+  }
+
   public doesTargetMatchSearch(target: ICharacter, findStr: string): boolean {
     return target.uuid === findStr || target.name.toLowerCase().startsWith((findStr || '').toLowerCase());
   }

@@ -209,6 +209,12 @@ export class SpellCommand extends SkillCommand {
 
     if (targetString) {
       targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
+
+      // aoe spells use the first target as a center for all the others
+      if (spellData.spellMeta.aoe) {
+        targets = this.game.targettingHelper.getPossibleAOETargets(targets[0], spellData.spellMeta.range ?? 0);
+      }
+
     } else if (caster && this.canTargetSelf) {
       targets = [caster];
     }
