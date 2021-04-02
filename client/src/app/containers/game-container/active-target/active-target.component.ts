@@ -3,7 +3,10 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { ICharacter, IStatusEffect } from '../../../../interfaces';
+
+import { get } from 'lodash';
+
+import { FOVVisibility, ICharacter, IStatusEffect } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -31,11 +34,7 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
     const diffX = this.target.x - this.player.x;
     const diffY = this.target.y - this.player.y;
 
-    if (!this.player.fov) return false;
-    if (!this.player.fov[diffX]) return false;
-    if (!this.player.fov[diffX][diffY]) return false;
-
-    return true;
+    return get(this.player.fov, [diffX, diffY]) >= FOVVisibility.CanSee;
   }
 
   public get shouldShow() {

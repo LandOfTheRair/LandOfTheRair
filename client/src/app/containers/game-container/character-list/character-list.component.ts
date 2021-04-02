@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { isBoolean, isNumber, isUndefined, maxBy, sortBy } from 'lodash';
+import { get, isBoolean, isNumber, isUndefined, maxBy, sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Direction, distFrom, GameServerResponse, Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
+import { Direction, distFrom, FOVVisibility, GameServerResponse,
+  Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState, ViewCharacterEquipment } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -80,9 +81,8 @@ export class CharacterListComponent implements OnInit, OnDestroy {
       const diffX = testChar.x - this.player.x;
       const diffY = testChar.y - this.player.y;
 
-      if (!fov) return false;
-      if (!fov[diffX]) return false;
-      if (!fov[diffX][diffY]) return false;
+      const canSee = get(fov, [diffX, diffY]) >= FOVVisibility.CanSee;
+      if (!canSee) return false;
 
       return testChar;
     }).filter(Boolean);

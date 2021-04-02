@@ -1,5 +1,5 @@
 
-import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, FOVVisibility, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacterItems } from './characteritems';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
@@ -34,7 +34,7 @@ export interface ICharacter {
   mp: BoundedNumber;
 
   gender: 'male'|'female';
-  fov: any;
+  fov: Record<number, Record<number, FOVVisibility>>;
   map: string;
   x: number;
   y: number;

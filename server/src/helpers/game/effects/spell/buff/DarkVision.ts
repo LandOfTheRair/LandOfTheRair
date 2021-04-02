@@ -1,0 +1,20 @@
+import { ICharacter, IStatusEffect } from '../../../../../interfaces';
+import { Effect, Player } from '../../../../../models';
+
+export class DarkVision extends Effect {
+
+  public apply(char: ICharacter, effect: IStatusEffect) {
+    if (this.game.characterHelper.isPlayer(char)) {
+      this.game.visibilityHelper.calculatePlayerFOV(char as Player);
+      this.game.worldManager.getMap(char.map).state.triggerFullUpdateForPlayer(char as Player);
+    }
+  }
+
+  public unapply(char: ICharacter, effect: IStatusEffect) {
+    if (this.game.characterHelper.isPlayer(char)) {
+      this.game.visibilityHelper.calculatePlayerFOV(char as Player);
+      this.game.worldManager.getMap(char.map).state.triggerFullUpdateForPlayer(char as Player);
+    }
+  }
+
+}

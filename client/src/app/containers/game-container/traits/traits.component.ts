@@ -49,8 +49,6 @@ export class TraitsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log(player);
-
     this.player = player;
     this.traitTree = allTraitTrees[player.baseClass];
   }

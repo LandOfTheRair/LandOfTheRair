@@ -23,6 +23,7 @@ export abstract class MacroCommand implements IMacroCommand {
   }
 
   protected youDontSeeThatPerson(character: ICharacter, targetArgs: string) {
+    console.log(new Error().stack);
     this.game.messageHelper.sendLogMessageToPlayer(character, { message: 'You don\'t see that person.', setTarget: null });
 
     // clear the queue of this person if we don't see them
@@ -199,13 +200,19 @@ export class SpellCommand extends SkillCommand {
 
   // called when a player casts a spell at something
   protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
-    let targetString = args.stringArgs.trim();
-    if (!targetString && this.canTargetSelf) targetString = caster?.name ?? '';
+    const targetString = args.stringArgs.trim();
 
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
 
     // if the spell is party-based, target the whole party
-    let targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
+    let targets: ICharacter[] = [];
+
+    if (targetString) {
+      targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
+    } else if (caster && this.canTargetSelf) {
+      targets = [caster];
+    }
+
     if (caster && spellData.spellMeta.targetsParty) {
       targets = this.game.partyHelper.getAllPartyMembersInRange(caster as IPlayer);
       targets.push(caster);
@@ -250,7 +257,7 @@ export class SpellCommand extends SkillCommand {
       if (caster) {
         delete caster.spellChannel;
 
-        if (!this.game.targettingHelper.isTargetInViewRange(caster, target)) {
+        if (caster !== target && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
           return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
         }
 

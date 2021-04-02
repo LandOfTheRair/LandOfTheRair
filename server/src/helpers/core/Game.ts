@@ -12,7 +12,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyH
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
-import { ConfigManager, ContentManager, CorpseManager, EffectManager,
+import { ConfigManager, ContentManager, CorpseManager, DarknessHelper, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
@@ -87,6 +87,7 @@ export class Game {
     public statisticsHelper: StatisticsHelper,
     public partyHelper: PartyHelper,
     public partyManager: PartyManager,
+    public darknessHelper: DarknessHelper,
 
     public messageHelper: MessageHelper,
     public dynamicEventHelper: DynamicEventHelper,
@@ -121,7 +122,7 @@ export class Game {
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',
-      'statisticsHelper', 'partyHelper', 'partyManager',
+      'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
       'discordHelper'
@@ -198,6 +199,10 @@ export class Game {
       timer.startTimer('corpseTick');
       this.corpseManager.tick(timer);
       timer.stopTimer('corpseTick');
+
+      timer.startTimer('darknessTick');
+      this.darknessHelper.tick(timer);
+      timer.stopTimer('darknessTick');
 
       timer.startTimer('dynamicEventTick');
       this.dynamicEventHelper.tick(timer);

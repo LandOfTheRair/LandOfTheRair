@@ -244,6 +244,12 @@ export enum Hostility {
   Always = 'Always'
 }
 
+export enum FOVVisibility {
+  CantSee = 0,
+  CanSee = 1,
+  CanSeeButDark = 2
+}
+
 export enum LearnedSpell {
   FromFate = -2,
   FromItem = -1,

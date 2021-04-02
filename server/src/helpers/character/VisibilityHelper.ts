@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { Allegiance, BaseClass, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
+import { Allegiance, BaseClass, FOVVisibility, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
@@ -41,8 +41,7 @@ export class VisibilityHelper extends BaseService {
     || (this.isDarkAt(character.map, character.x, character.y) && !this.game.effectHelper.hasEffect(character, 'DarkVision'))) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
         for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
-          affected[xx - character.x] = affected[xx - character.x] || {};
-          affected[xx - character.x][yy - character.y] = false;
+          setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CantSee, Object);
         }
       }
 
@@ -50,17 +49,23 @@ export class VisibilityHelper extends BaseService {
     } else {
       map.fovCalculator.compute(
         character.x, character.y, dist,
-        (x, y) => get(affected, [x - character.x, y - character.y]),
+        (x, y) => get(affected, [x - character.x, y - character.y]) >= FOVVisibility.CanSee,
         (x, y) => {
-          setWith(affected, [x - character.x, y - character.y], true, Object);
-        });
+          if (this.isDarkAt(character.map, x, y)
+          && this.game.effectHelper.hasEffect(character, 'DarkVision')) {
+            setWith(affected, [x - character.x, y - character.y], FOVVisibility.CanSeeButDark, Object);
+
+          } else {
+            setWith(affected, [x - character.x, y - character.y], FOVVisibility.CanSee, Object);
+          }
+        }
+      );
 
       if (!this.game.effectHelper.hasEffect(character, 'DarkVision')) {
         for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
           for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
             if (!this.isDarkAt(character.map, xx, yy)) continue;
-            affected[xx - character.x] = affected[xx - character.x] || {};
-            affected[xx - character.x][yy - character.y] = false;
+            setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CantSee, Object);
           }
         }
       }
@@ -79,19 +84,15 @@ export class VisibilityHelper extends BaseService {
 
     character.fov = affected;
 
-
   }
 
   // whether or not someone can see a spot in their FOV
   public canSee(char: ICharacter, xOffset: number, yOffset: number): boolean {
-    if (!char.fov) return false;
-    if (!char.fov[xOffset]) return false;
-    if (!char.fov[xOffset][yOffset]) return false;
-    return true;
+    return get(char.fov, [xOffset, yOffset]) >= FOVVisibility.CanSee;
   }
 
   public isDarkAt(map: string, x: number, y: number): boolean {
-    return false;
+    return this.game.darknessHelper.isDarkAt(map, x, y);
   }
 
   // whether or not this spot is hideable (near a wall, or in dark)

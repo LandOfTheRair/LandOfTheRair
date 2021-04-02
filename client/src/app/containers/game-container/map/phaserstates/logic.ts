@@ -2,7 +2,7 @@
 import { difference, get, setWith, size } from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { basePlayerSprite, basePlayerSwimmingSprite, ICharacter, IMapData, INPC,
+import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
@@ -216,7 +216,7 @@ export class MapScene extends Phaser.Scene {
   private shouldRenderXY(x: number, y: number): boolean {
     if (!this.player) return false;
 
-    return get(this.player.fov, [x, y]);
+    return get(this.player.fov, [x, y]) >= FOVVisibility.CanSee;
   }
 
   // check if there's a wall at a location (used to render fov for hidden areas)
@@ -271,16 +271,9 @@ export class MapScene extends Phaser.Scene {
         }
 
         // tile effects
-        if (fovState && this.isDarkAt(x, y)) {
-          if (this.isLightAt(x, y)) {
-            fovSprite.alpha = 0;
-            continue;
-          }
-
-          if (this.canDarkSee(x, y)) {
-            fovSprite.alpha = 0.5;
-            continue;
-          }
+        if (fovState && this.canSeeThroughDarkAt(x, y)) {
+          fovSprite.alpha = 0.5;
+          continue;
         }
 
         fovSprite.alpha = fovState ? 0 : 1;
@@ -336,17 +329,12 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
-  private canDarkSee(x: number, y: number): boolean {
+  private canSeeThroughDarkAt(x: number, y: number): boolean {
     if (!this.player) return false;
     if (this.player.effects._hash.Blind) return false;
 
-    const darkCheck = this.isDarkAt(x, y);
-    return (darkCheck === -1 || darkCheck > 0) && !!this.player.effects._hash.DarkVision;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private isDarkAt(x: number, y: number): number {
-    return 0;
+    const darkCheck = get(this.player.fov, [x, y]) === FOVVisibility.CanSeeButDark;
+    return darkCheck && !!this.player.effects._hash.DarkVision;
   }
 
   private updateDoors() {
