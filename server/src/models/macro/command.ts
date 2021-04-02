@@ -23,7 +23,6 @@ export abstract class MacroCommand implements IMacroCommand {
   }
 
   protected youDontSeeThatPerson(character: ICharacter, targetArgs: string) {
-    console.log(new Error().stack);
     this.game.messageHelper.sendLogMessageToPlayer(character, { message: 'You don\'t see that person.', setTarget: null });
 
     // clear the queue of this person if we don't see them
