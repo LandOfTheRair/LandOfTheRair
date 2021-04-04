@@ -238,7 +238,7 @@ export class WorldManager extends BaseService {
     }
 
     this.removeCharacter(player);
-    this.mapStates[oldMap].removePlayer(player);
+    this.mapStates[oldMap]?.removePlayer(player);
 
     if (this.mapPlayerCounts[oldMap] === 0) {
       this.game.groundManager.saveSingleGround(oldMap);
