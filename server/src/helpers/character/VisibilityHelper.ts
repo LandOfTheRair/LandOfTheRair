@@ -132,6 +132,8 @@ export class VisibilityHelper extends BaseService {
   // whether or not someone can see through another characters potential stealth
   public canSeeThroughStealthOf(char: ICharacter, hiding: ICharacter): boolean {
 
+    if (!char || !hiding) return false;
+
     // if the looker is a GM, they can see everything
     if (char.allegiance === Allegiance.GM) return true;
 
