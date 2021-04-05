@@ -1,6 +1,7 @@
 
 export * from './absorption';
 export * from './aid';
+export * from './autoheal';
 export * from './barfire';
 export * from './barfrost';
 export * from './barnecro';
