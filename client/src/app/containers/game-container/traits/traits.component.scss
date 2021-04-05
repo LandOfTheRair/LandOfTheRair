@@ -25,6 +25,7 @@
 
   .trait-col {
     flex: 1;
+    min-height: 120px !important;
 
     .trait {
       display: flex;
@@ -80,7 +81,7 @@
 
       .trait-name {
         margin-top: 10px;
-        height: 40px;
+        min-height: 40px;
       }
     }
   }
