@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, IMacroCommandArgs, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect,
+  IMacroCommandArgs, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
