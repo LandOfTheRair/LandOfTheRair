@@ -4,7 +4,9 @@ import { Spell } from '../../../../models/world/Spell';
 export class Blind extends Spell {
 
   getDuration(caster: ICharacter | null) {
-    return caster ? Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2) : 15;
+    if (!caster) return 15;
+    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2)
+         + this.game.traitHelper.traitLevelValue(caster, 'DazingOutlook');
   }
 
   getPotency(caster: ICharacter | null) {
