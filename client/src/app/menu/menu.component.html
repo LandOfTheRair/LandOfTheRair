@@ -1,7 +1,9 @@
 
 <img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="gameService.loggedIn$ | async" [matMenuTriggerFor]="menu" />
 <img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="(gameService.loggedIn$ | async) === false" />
-<div class="activated" *ngIf="gameService.loggedIn$ | async"></div>
+<div class="activated" *ngIf="gameService.loggedIn$ | async">
+  <div class="menu-text">⚙</div>
+</div>
 
 <div class="status-indicator">
 
@@ -41,7 +43,7 @@
   <ng-container *ngFor="let menuItem of menuItems; let i = index">
     <ng-container *ngIf="menuItem.children">
       <hr *ngIf="menuItem.borderTop">
-      
+
       <button mat-menu-item
               [matMenuTriggerFor]="subMenu"
               [class.hidden]="!menuItem.name"
