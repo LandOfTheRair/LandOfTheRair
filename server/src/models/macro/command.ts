@@ -269,7 +269,7 @@ export class SpellCommand extends SkillCommand {
         if (!this.tryToConsumeMP(caster, [target], args?.overrideEffect)) return;
       }
 
-      this.game.spellManager.castSpell(this.spellRef, caster, target, args?.overrideEffect, args?.callbacks);
+      this.game.spellManager.castSpell(this.spellRef, caster, target, args?.overrideEffect, args?.callbacks, args);
     };
 
     if (caster && spellData.castTime) {

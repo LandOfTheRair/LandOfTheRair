@@ -56,6 +56,10 @@ export class MapState {
 
   private openDoors: Record<number, boolean> = {};
 
+  public get allNPCS(): INPC[] {
+    return Object.values(this.npcsByUUID);
+  }
+
   constructor(private game: Game, private map: WorldMap) {
     this.createSpawners();
   }

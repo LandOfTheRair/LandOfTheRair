@@ -1,4 +1,4 @@
-import { DeepPartial, ICharacter, ISpellData, IStatusEffectData } from '../../../shared/interfaces';
+import { DeepPartial, ICharacter, IMacroCommandArgs, ISpellData, IStatusEffectData } from '../../../shared/interfaces';
 
 export interface BaseSpell {
 
@@ -15,4 +15,5 @@ export interface SpellCastArgs {
   range: number;
   spellData: ISpellData;
   callbacks: any;
+  originalArgs?: IMacroCommandArgs;
 }

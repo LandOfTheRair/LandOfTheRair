@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
+import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect, IMacroCommandArgs, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
@@ -67,7 +67,8 @@ export class SpellManager extends BaseService {
     caster: ICharacter|null = null,
     target: ICharacter,
     override: Partial<IItemEffect> = {},
-    callbacks?: any
+    callbacks?: any,
+    originalArgs?: IMacroCommandArgs
   ): void {
     if (!caster && !target) return;
 
@@ -163,7 +164,7 @@ export class SpellManager extends BaseService {
       });
     }
 
-    spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData });
+    spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData, originalArgs });
 
     if (doesOvertime) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
