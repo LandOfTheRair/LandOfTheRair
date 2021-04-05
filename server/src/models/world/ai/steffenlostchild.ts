@@ -1,5 +1,5 @@
 import { DefaultAIBehavior } from './default';
 
 export class SteffenLostChildAI extends DefaultAIBehavior {
-  tick() {}
+  override tick(): void {}
 }

@@ -4,14 +4,14 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Leash extends SpellCommand {
 
-  aliases = ['leash'];
-  requiresLearn = true;
+  override aliases = ['leash'];
+  override requiresLearn = true;
 
-  canUse() {
+  override canUse(): boolean {
     return true;
   }
 
-  use(executor: ICharacter) {
+  override use(executor: ICharacter) {
     if (this.game.characterHelper.isPlayer(executor)) return;
 
     const state = this.game.worldManager.getMap(executor.map).state;

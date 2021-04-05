@@ -2,10 +2,10 @@ import { Direction, IMacroCommandArgs, IPlayer, Stat } from '../../../../interfa
 import { MacroCommand } from '../../../../models/macro';
 
 export class DirectionalMovement extends MacroCommand {
-  aliases = ['e', 'w', 's', 'n', 'nw', 'ne', 'sw', 'se'];
-  canBeFast = true;
+  override aliases = ['e', 'w', 's', 'n', 'nw', 'ne', 'sw', 'se'];
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const totalMoves: Direction[] = [];
     totalMoves.push(args.calledAlias as Direction);
 

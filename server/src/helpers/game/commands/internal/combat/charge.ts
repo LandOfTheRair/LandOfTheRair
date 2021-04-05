@@ -3,13 +3,13 @@ import { SkillCommand } from '../../../../../models/macro';
 
 export class ChargeCommand extends SkillCommand {
 
-  aliases = ['c', 'charge'];
+  override aliases = ['c', 'charge'];
 
-  range(char: ICharacter) {
+  override range(char: ICharacter) {
     return this.calcPlainAttackRange(char);
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return false;
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
@@ -29,7 +29,7 @@ export class ChargeCommand extends SkillCommand {
     this.use(player, target, { attackRange: range });
   }
 
-  use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
+  override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
     this.game.movementHelper.moveTowards(user, target);
 
     this.game.combatHelper.physicalAttack(user, target, opts);

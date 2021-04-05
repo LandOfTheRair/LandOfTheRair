@@ -3,11 +3,11 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeEventWatcherAction extends ServerAction {
-  type = GameServerEvent.ChangeEventWatcher;
-  requiredKeys = ['eventWatcher'];
-  requiresLoggedIn = true;
+  override type = GameServerEvent.ChangeEventWatcher;
+  override requiredKeys = ['eventWatcher'];
+  override requiresLoggedIn = true;
 
-  async act(game: Game, callbacks, data) {
+  override async act(game: Game, callbacks, data) {
     try {
       await game.accountDB.changeEventWatcher(data.account, data.eventWatcher);
       await game.discordHelper.updateDiscordRoles(data.account);

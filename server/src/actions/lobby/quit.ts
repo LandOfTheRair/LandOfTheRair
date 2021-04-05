@@ -3,10 +3,10 @@ import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class QuitAction extends ServerAction {
-  type = GameServerEvent.QuitGame;
-  requiredKeys = [];
+  override type = GameServerEvent.QuitGame;
+  override requiredKeys = [];
 
-  async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: Game, { broadcast, emit }, data) {
 
     if (!game.lobbyManager.isAccountInGame(data.account)) return { message: '' };
 

@@ -10,7 +10,6 @@ export class Account extends BaseEntity implements IAccount {
   @Property(PROP_SERVER_ONLY()) players: IPlayer[];
 
   // server only props
-  @Property(PROP_SERVER_ONLY()) createdAt = new Date();
   @Property(PROP_SERVER_ONLY()) password: string;
 
   @Property(PROP_TEMPORARY()) inGame: boolean;

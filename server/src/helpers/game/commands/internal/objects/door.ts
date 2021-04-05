@@ -3,10 +3,10 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class Door extends MacroCommand {
 
-  aliases = ['open', 'close'];
-  canBeFast = true;
+  override aliases = ['open', 'close'];
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return;
 
     let { x, y } = this.game.directionHelper.getXYFromDir(args.stringArgs as Direction);

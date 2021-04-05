@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class EagleEye extends SpellCommand {
 
-  aliases = ['eagleeye', 'cast eagleeye'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'EagleEye';
+  override aliases = ['eagleeye', 'cast eagleeye'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'EagleEye';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'EagleEye');
   }
 

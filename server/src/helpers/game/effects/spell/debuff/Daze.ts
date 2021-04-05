@@ -3,7 +3,7 @@ import { Effect } from '../../../../../models';
 
 export class Daze extends Effect {
 
-  public create(char: ICharacter, effect: IStatusEffect) {
+  public override create(char: ICharacter, effect: IStatusEffect) {
   }
 
 }

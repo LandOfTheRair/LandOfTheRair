@@ -3,11 +3,11 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Disease extends SpellCommand {
 
-  aliases = ['disease', 'cast disease'];
-  requiresLearn = true;
-  spellRef = 'Disease';
+  override aliases = ['disease', 'cast disease'];
+  override requiresLearn = true;
+  override spellRef = 'Disease';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'Disease');
   }
 

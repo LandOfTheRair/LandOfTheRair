@@ -4,9 +4,9 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class InscribeCommand extends MacroCommand {
 
-  aliases = ['inscribe'];
+  override aliases = ['inscribe'];
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     if (player.combatTicks > 0) {
       this.sendMessage(player, 'You cannot inscribe in combat!');

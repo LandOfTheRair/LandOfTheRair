@@ -4,7 +4,7 @@ import { Effect } from '../../../../../models';
 
 export class Autoheal extends Effect {
 
-  public incoming(
+  public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
     attacker: ICharacter | null,

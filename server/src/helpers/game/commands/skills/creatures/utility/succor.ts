@@ -2,9 +2,9 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Succor extends SpellCommand {
 
-  aliases = ['succor', 'cast succor'];
-  requiresLearn = true;
-  spellRef = 'Succor';
-  canTargetSelf = true;
+  override aliases = ['succor', 'cast succor'];
+  override requiresLearn = true;
+  override spellRef = 'Succor';
+  override canTargetSelf = true;
 
 }

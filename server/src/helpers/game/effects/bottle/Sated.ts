@@ -3,10 +3,10 @@ import { Effect } from '../../../../models';
 
 export class Sated extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
   }
 
-  unapply(char: ICharacter) {
+  override unapply(char: ICharacter) {
 
     // if we're nourished, we don't get malnourished
     if (this.game.effectHelper.hasEffect(char, 'Nourishment')) return;

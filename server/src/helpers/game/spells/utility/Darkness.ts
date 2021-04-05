@@ -5,7 +5,7 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class Darkness extends Spell {
 
-  cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
+  override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!caster || !target) return;
 
     const basePotency = spellCastArgs.potency ?? 10;

@@ -3,12 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateItem extends MacroCommand {
 
-  aliases = ['@item'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@item'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     if (!args.stringArgs) {
       this.sendMessage(player, 'Syntax: ItemName');

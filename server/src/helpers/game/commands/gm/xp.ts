@@ -3,12 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMXP extends MacroCommand {
 
-  aliases = ['@xp'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@xp'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     if (!args.stringArgs) {
       this.sendMessage(player, 'Syntax: XPGained');

@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class MinorMP extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
 
     if (char.baseClass === BaseClass.Thief || char.baseClass === BaseClass.Warrior) {
       return this.sendMessage(char, { message: 'Yuck! That tasted like thinking.' });

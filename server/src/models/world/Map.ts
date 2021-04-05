@@ -440,11 +440,11 @@ export class WorldMap {
 }
 
 export class InstancedWorldMap extends WorldMap {
-  public get canMemorize() {
+  public override get canMemorize() {
     return false;
   }
 
-  public get canPartyAction() {
+  public override get canPartyAction() {
     return false;
   }
 }

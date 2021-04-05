@@ -3,13 +3,13 @@ import { SkillCommand } from '../../../../../models/macro';
 
 export class ThrowCommand extends SkillCommand {
 
-  aliases = ['t', 'throw'];
+  override aliases = ['t', 'throw'];
 
-  range() {
+  override range(): number {
     return 5;
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [hand, char] = args.arrayArgs;
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, char);
@@ -25,7 +25,7 @@ export class ThrowCommand extends SkillCommand {
     this.use(player, target, { throwHand: itemSlot });
   }
 
-  use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
+  override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
     opts.isThrow = true;
     opts.throwHand = opts.throwHand || ItemSlot.RightHand;
     opts.attackRange = this.range();

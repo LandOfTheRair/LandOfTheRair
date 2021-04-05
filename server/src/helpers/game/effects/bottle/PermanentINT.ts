@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class PermanentINT extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
 
     const canGainMP = char.baseClass === BaseClass.Mage && this.game.characterHelper.getBaseStat(char, Stat.MP) < 200;
     if (canGainMP) {

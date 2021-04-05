@@ -3,12 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateGold extends MacroCommand {
 
-  aliases = ['@gold'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@gold'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const value = this.game.userInputHelper.cleanNumber(args.arrayArgs[0], 0, { floor: true, abs: true });
     if (!value) {

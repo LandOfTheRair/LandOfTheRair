@@ -6,7 +6,7 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class Dispel extends Spell {
 
-  cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
+  override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!target) return;
 
     const effects = this.game.effectHelper.dispellableEffects(target);

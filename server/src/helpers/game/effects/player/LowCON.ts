@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class LowCON extends Effect {
 
-  tick(char: ICharacter) {
+  override tick(char: ICharacter) {
     if (this.game.characterHelper.getBaseStat(char, Stat.CON) <= 3) return;
     this.game.effectHelper.removeEffectByName(char, 'LowCON');
   }

@@ -4,11 +4,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class UseCommand extends MacroCommand {
 
-  aliases = ['use', 'eat', 'consume'];
-  canBeFast = true;
-  canBeInstant = true;
+  override aliases = ['use', 'eat', 'consume'];
+  override canBeFast = true;
+  override canBeInstant = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const useItemInHand = (itemSlot: ItemSlot) => {
       this.game.itemHelper.useItemInSlot(player, itemSlot);
     };

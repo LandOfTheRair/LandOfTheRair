@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
 
-  aliases = ['break'];
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['break'];
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     let message;
     const breakItem = args.stringArgs;
     if (!breakItem) {

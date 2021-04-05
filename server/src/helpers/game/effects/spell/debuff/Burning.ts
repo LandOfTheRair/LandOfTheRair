@@ -3,7 +3,7 @@ import { Effect } from '../../../../../models';
 
 export class Burning extends Effect {
 
-  tick(char: ICharacter, effect: IStatusEffect) {
+  override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
     this.game.combatHelper.dealDamage(null, char, {

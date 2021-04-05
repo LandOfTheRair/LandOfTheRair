@@ -3,10 +3,10 @@ import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class SetMOTDAction extends ServerAction {
-  type = GameServerEvent.SetMOTD;
-  requiredKeys = ['motd'];
+  override type = GameServerEvent.SetMOTD;
+  override requiredKeys = ['motd'];
 
-  async act(game: Game, { broadcast }, data) {
+  override async act(game: Game, { broadcast }, data) {
 
     const account = game.lobbyManager.getAccount(data.username);
     if (!account || !account.isGameMaster) return { message: 'Not a GM.' };

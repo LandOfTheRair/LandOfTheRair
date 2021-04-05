@@ -3,10 +3,10 @@ import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RollCharacterAction extends ServerAction {
-  type = GameServerEvent.CreateCharacter;
-  requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
+  override type = GameServerEvent.CreateCharacter;
+  override requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
 
-  async act(game: Game, { emit }, data) {
+  override async act(game: Game, { emit }, data) {
     const { gender, allegiance, baseclass, weapons, account } = data;
     let { slot, name } = data;
 

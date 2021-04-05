@@ -7,18 +7,18 @@ export class Hidden extends Effect {
     this.game.effectHelper.removeEffectByName(char, 'Hidden');
   }
 
-  create(char: ICharacter, effect: IStatusEffect) {
+  override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = this.game.characterHelper.getStealth(char);
     effect.effectInfo.statChanges = { [Stat.Stealth]: effect.effectInfo.potency };
   }
 
   // update everyone in sight so they can't see us (maybe)
-  apply(char: ICharacter) {
+  override apply(char: ICharacter) {
     const { state } = this.game.worldManager.getMap(char.map);
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }
 
-  tick(char: ICharacter) {
+  override tick(char: ICharacter) {
 
     // thieves have to use their stealth bar
     if (char.baseClass === BaseClass.Thief) {
@@ -46,7 +46,7 @@ export class Hidden extends Effect {
   }
 
   // update everyone in sight so they can see us again (if they couldn't before)
-  unapply(char: ICharacter) {
+  override unapply(char: ICharacter) {
     const { state } = this.game.worldManager.getMap(char.map);
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }

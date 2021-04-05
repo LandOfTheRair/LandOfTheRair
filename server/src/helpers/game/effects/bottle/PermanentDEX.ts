@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class PermanentDEX extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
 
     const max = this.game.configManager.MAX_POTION_STAT[effect.effectInfo.tier as string];
     if (this.game.characterHelper.getBaseStat(char, Stat.DEX) >= max) {

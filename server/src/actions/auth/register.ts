@@ -5,11 +5,11 @@ import { ServerAction } from '../../models/ServerAction';
 import * as meta from '../../../content/_output/meta.json';
 
 export class RegisterAction extends ServerAction {
-  type = GameServerEvent.Register;
-  requiredKeys = [];
-  requiresLoggedIn = false;
+  override type = GameServerEvent.Register;
+  override requiredKeys = [];
+  override requiresLoggedIn = false;
 
-  async act(game: Game, { broadcast, emit, register }, data) {
+  override async act(game: Game, { broadcast, emit, register }, data) {
 
     if (process.env.BLOCK_REGISTER)                       return { message: 'Registrations are not enabled on this server.' };
 

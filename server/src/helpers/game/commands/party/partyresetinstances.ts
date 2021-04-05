@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class PartyResetInstances extends MacroCommand {
 
-  aliases = ['party resetinstances'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['party resetinstances'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  async execute(player: IPlayer, args: IMacroCommandArgs) {
+  async override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are not in a party!');
     if (!this.game.partyHelper.isLeader(player)) return this.sendMessage(player, 'You are not the party leader!');
 

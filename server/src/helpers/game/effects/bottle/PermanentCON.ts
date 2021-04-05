@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class PermanentCON extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
 
     const canGainHP = this.game.characterHelper.getBaseStat(char, Stat.HP) < 100;
     if (canGainHP) {

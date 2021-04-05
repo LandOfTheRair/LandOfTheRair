@@ -3,7 +3,7 @@ import { Effect } from '../../../../models';
 
 export class MinorHP extends Effect {
 
-  apply(char: ICharacter, effect: IStatusEffect) {
+  override apply(char: ICharacter, effect: IStatusEffect) {
 
     if (this.game.characterHelper.getBaseStat(char, Stat.HP) >= 200) {
       return this.sendMessage(char, { message: 'The fluid was tasteless.' });

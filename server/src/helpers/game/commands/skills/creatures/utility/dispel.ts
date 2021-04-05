@@ -3,11 +3,11 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Dispel extends SpellCommand {
 
-  aliases = ['dispel', 'cast dispel'];
-  requiresLearn = true;
-  spellRef = 'Dispel';
+  override aliases = ['dispel', 'cast dispel'];
+  override requiresLearn = true;
+  override spellRef = 'Dispel';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return this.game.effectHelper.dispellableEffects(target).length > 0;
   }
 

@@ -3,12 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMGainSkill extends MacroCommand {
 
-  aliases = ['@skill'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@skill'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     if (!args.stringArgs) {
       this.sendMessage(player, 'Syntax: SkillName Amount');

@@ -2,9 +2,9 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Light extends SpellCommand {
 
-  aliases = ['light', 'cast light'];
-  requiresLearn = true;
-  spellRef = 'Light';
-  canTargetSelf = true;
+  override aliases = ['light', 'cast light'];
+  override requiresLearn = true;
+  override spellRef = 'Light';
+  override canTargetSelf = true;
 
 }

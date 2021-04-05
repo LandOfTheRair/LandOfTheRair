@@ -3,15 +3,15 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class Protection extends Spell {
 
-  getDuration(caster: ICharacter | null) {
+  override getDuration(caster: ICharacter | null) {
     return caster ? this.game.characterHelper.getStat(caster, Stat.INT) * 50 : 600;
   }
 
-  public getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {
+  public override getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {
     return 'Resisting %potency physical damage.';
   }
 
-  cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
+  override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
   }
 
 }

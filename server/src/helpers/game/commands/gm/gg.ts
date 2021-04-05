@@ -3,12 +3,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMGG extends MacroCommand {
 
-  aliases = ['@gg'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@gg'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     this.game.combatHelper.dealOnesidedDamage(player, {
       damage: player.hp.maximum,
       damageClass: DamageClass.GM,

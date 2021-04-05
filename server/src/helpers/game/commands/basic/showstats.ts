@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class ShowStats extends MacroCommand {
 
-  aliases = ['show stats'];
-  canBeInstant = false;
-  canBeFast = true;
+  override aliases = ['show stats'];
+  override canBeInstant = false;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.<br>`;
     message = `${message}Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
 

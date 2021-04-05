@@ -4,11 +4,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class Interact extends MacroCommand {
 
-  aliases = ['interact'];
-  canBeFast = true;
-  canBeInstant = true;
+  override aliases = ['interact'];
+  override canBeFast = true;
+  override canBeInstant = true;
 
-  execute(player: Player, args: IMacroCommandArgs) {
+  override execute(player: Player, args: IMacroCommandArgs) {
     const [x, y] = args.arrayArgs.map(v => +v);
     if (Math.abs(x) > 1 || Math.abs(y) > 1) return;
 

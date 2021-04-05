@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Protection extends SpellCommand {
 
-  aliases = ['protection', 'cast protection'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'Protection';
+  override aliases = ['protection', 'cast protection'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'Protection';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'Protection');
   }
 

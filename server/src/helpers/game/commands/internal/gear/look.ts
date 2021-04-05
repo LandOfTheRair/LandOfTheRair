@@ -4,9 +4,9 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class LookCommand extends MacroCommand {
 
-  aliases = ['look'];
-  canBeFast = true;
-  canUseWhileDead = true;
+  override aliases = ['look'];
+  override canBeFast = true;
+  override canUseWhileDead = true;
 
   private getStringForNum(num: number) {
     if (num === 1) return 'a';
@@ -20,7 +20,7 @@ export class LookCommand extends MacroCommand {
     return 'zounds of';
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     args.callbacks.emit({
       action: GameAction.SettingsShowWindow,

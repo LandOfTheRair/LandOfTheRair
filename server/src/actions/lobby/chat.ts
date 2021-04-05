@@ -3,10 +3,10 @@ import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
-  type = GameServerEvent.Chat;
-  requiredKeys = ['content'];
+  override type = GameServerEvent.Chat;
+  override requiredKeys = ['content'];
 
-  async act(game: Game, { emit }, data) {
+  override async act(game: Game, { emit }, data) {
     if (data.account.isMuted || data.account.isBanned) {
       emit({
         action: GameAction.ChatAddMessage,

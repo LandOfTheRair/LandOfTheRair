@@ -3,10 +3,10 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models';
 
 export class BuyPremiumWithSilverAction extends ServerAction {
-  type = GameServerEvent.PremiumSilverBuy;
-  requiredKeys = ['item'];
+  override type = GameServerEvent.PremiumSilverBuy;
+  override requiredKeys = ['item'];
 
-  async act(game: Game, { emit }, data) {
+  override async act(game: Game, { emit }, data) {
 
     if (game.lobbyManager.isAccountInGame(data.account)) {
       return { wasSuccess: false, message: 'You cannot buy silver perks while in game.' };

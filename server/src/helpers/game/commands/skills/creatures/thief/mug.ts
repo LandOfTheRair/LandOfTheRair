@@ -3,15 +3,15 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Mug extends SpellCommand {
 
-  aliases = ['mug'];
-  requiresLearn = true;
-  spellRef = 'Mug';
+  override aliases = ['mug'];
+  override requiresLearn = true;
+  override spellRef = 'Mug';
 
-  range() {
+  override range(): number {
     return 0;
   }
 
-  canUse(char: ICharacter, target: ICharacter): boolean {
+  override canUse(char: ICharacter, target: ICharacter): boolean {
     if (!this.game.characterHelper.hasEmptyHand(char)) return false;
 
     const rightHand = char.items.equipment[ItemSlot.RightHand];
@@ -25,7 +25,7 @@ export class Mug extends SpellCommand {
         && (this.game.currencyHelper.getCurrency(char) > 0 || target.items.sack.items.length > 0);
   }
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player as IPlayer, args.stringArgs);
     if (!target) return this.youDontSeeThatPerson(player as IPlayer, args.stringArgs);
 
@@ -40,7 +40,7 @@ export class Mug extends SpellCommand {
     this.use(player, target);
   }
 
-  use(char: ICharacter, target: ICharacter): void {
+  override use(char: ICharacter, target: ICharacter): void {
     this.game.stealHelper.trySteal(char, target);
 
     const res = this.game.combatHelper.physicalAttack(char, target, { isMug: true, attackRange: this.range() });

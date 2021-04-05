@@ -21,11 +21,11 @@ const moods = [
 
 export class Mood extends Effect {
 
-  public apply(char: ICharacter, effect: IStatusEffect) {
+  public override apply(char: ICharacter, effect: IStatusEffect) {
     this.changeMood(char, effect, MoodStatus.Calm);
   }
 
-  tick(char: ICharacter, effect: IStatusEffect) {
+  override tick(char: ICharacter, effect: IStatusEffect) {
 
     // reset when out of combat
     if (char.combatTicks <= 0) {

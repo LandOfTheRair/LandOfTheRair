@@ -3,7 +3,7 @@ import { Effect } from '../../../../../models';
 
 export class BarNecro extends Effect {
 
-  public create(char: ICharacter, effect: IStatusEffect) {
+  public override create(char: ICharacter, effect: IStatusEffect) {
     const boost = 1 + (this.game.traitHelper.traitLevelValue(char, 'NecroticWard'));
     effect.effectInfo.potency = Math.floor(boost * effect.effectInfo.potency);
 

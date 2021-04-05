@@ -4,11 +4,11 @@ import { Effect } from '../../../../../models';
 
 export class HolyAura extends Effect {
 
-  public create(char: ICharacter, effect: IStatusEffect) {
+  public override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.charges = effect.effectInfo.potency * 50;
   }
 
-  public incoming(
+  public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
     attacker: ICharacter | null,

@@ -3,12 +3,12 @@ import { Effect } from '../../../../models';
 
 export class Swimming extends Effect {
 
-  tick(char: ICharacter) {
+  override tick(char: ICharacter) {
     if ((char as IPlayer).swimElement !== DamageClass.Fire) return;
     this.game.effectHelper.removeEffectByName(char, 'Swimming');
   }
 
-  unapply(char: ICharacter, effect: IStatusEffect) {
+  override unapply(char: ICharacter, effect: IStatusEffect) {
     this.game.effectHelper.addEffect(char, '', 'Drowning', { effect: { duration: -1 } });
   }
 

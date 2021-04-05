@@ -3,10 +3,10 @@ import { GameAction, GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LogoutAction extends ServerAction {
-  type = GameServerEvent.Logout;
-  requiredKeys = ['username'];
+  override type = GameServerEvent.Logout;
+  override requiredKeys = ['username'];
 
-  async act(game: Game, { broadcast, unregister }, data) {
+  override async act(game: Game, { broadcast, unregister }, data) {
 
     try {
 

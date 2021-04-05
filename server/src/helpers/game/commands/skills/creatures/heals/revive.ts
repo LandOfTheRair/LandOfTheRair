@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Revive extends SpellCommand {
 
-  aliases = ['revive', 'cast revive'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'Revive';
+  override aliases = ['revive', 'cast revive'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'Revive';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return false;
   }
 }

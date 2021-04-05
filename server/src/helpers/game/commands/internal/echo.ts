@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class Echo extends MacroCommand {
 
-  aliases = ['echo'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['echo'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     this.sendMessage(player, args.stringArgs);
   }
 

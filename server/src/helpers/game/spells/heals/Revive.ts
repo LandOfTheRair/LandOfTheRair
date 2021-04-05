@@ -3,7 +3,7 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class Revive extends Spell {
 
-  cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
+  override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!caster) return;
 
     let didRevive = false;

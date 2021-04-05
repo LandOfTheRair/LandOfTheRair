@@ -4,11 +4,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class DrinkCommand extends MacroCommand {
 
-  aliases = ['drink'];
-  canBeFast = true;
-  canBeInstant = true;
+  override aliases = ['drink'];
+  override canBeFast = true;
+  override canBeInstant = true;
 
-  execute(player: IPlayer) {
+  override execute(player: IPlayer) {
 
     // try to use from potion first
     if (player.items.equipment[ItemSlot.Potion]) {

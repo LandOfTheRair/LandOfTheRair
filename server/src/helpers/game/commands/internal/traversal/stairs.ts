@@ -4,10 +4,10 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class Stairs extends MacroCommand {
 
-  aliases = ['up', 'down'];
-  canBeFast = true;
+  override aliases = ['up', 'down'];
+  override canBeFast = true;
 
-  execute(player: Player, args: IMacroCommandArgs) {
+  override execute(player: Player, args: IMacroCommandArgs) {
 
     if (this.game.effectHelper.hasEffect(player, 'Snare')) return this.sendMessage(player, 'You are snared!');
 

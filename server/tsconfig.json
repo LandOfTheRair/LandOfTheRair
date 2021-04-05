@@ -10,6 +10,7 @@
     "noUnusedParameters": false,
     "noImplicitAny": false,
     "noImplicitReturns": true,
+    "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "target": "es2018",
     "module": "commonjs",

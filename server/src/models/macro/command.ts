@@ -45,7 +45,7 @@ export abstract class SkillCommand extends MacroCommand {
     return 0;
   }
 
-  range(caster?: ICharacter) {
+  range(caster?: ICharacter): number {
     return 0;
   }
 
@@ -155,13 +155,13 @@ export abstract class SkillCommand extends MacroCommand {
 }
 
 export class SpellCommand extends SkillCommand {
-  aliases: string[] = [];
-  requiresLearn = true;
+  override aliases: string[] = [];
+  override requiresLearn = true;
   spellRef = '';
   spellDataRef = '';
   canTargetSelf = false;
 
-  mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
+  override mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
     if (overrideEffect) return 0;
 
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
@@ -189,11 +189,11 @@ export class SpellCommand extends SkillCommand {
     return Math.floor(cost);
   }
 
-  range() {
+  override range(): number {
     return 5;
   }
 
-  canUse(char: ICharacter, target: ICharacter) {
+  override canUse(char: ICharacter, target: ICharacter) {
     return super.canUse(char, target) && this.canCastSpell(char, target);
   }
 
@@ -284,12 +284,12 @@ export class SpellCommand extends SkillCommand {
   }
 
   // default execute, primarily used by players
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     this.castSpell(player, args);
   }
 
   // default use, primarily used by npcs
-  use(char: ICharacter, target: ICharacter) {
+  override use(char: ICharacter, target: ICharacter) {
     this.castSpellAt(char, target);
   }
 

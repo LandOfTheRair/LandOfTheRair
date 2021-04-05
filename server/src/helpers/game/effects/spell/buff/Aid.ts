@@ -3,7 +3,7 @@ import { Effect } from '../../../../../models';
 
 export class Aid extends Effect {
 
-  public create(char: ICharacter, effect: IStatusEffect) {
+  public override create(char: ICharacter, effect: IStatusEffect) {
     const skill = this.game.characterHelper.getSkillLevel(char, Skill.Restoration) + 1;
 
     effect.effectInfo.statChanges = {

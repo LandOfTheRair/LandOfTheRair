@@ -6,11 +6,11 @@ import { Account } from '../../models/orm';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LoginAction extends ServerAction {
-  type = GameServerEvent.Login;
-  requiredKeys = ['username', 'password'];
-  requiresLoggedIn = false;
+  override type = GameServerEvent.Login;
+  override requiredKeys = ['username', 'password'];
+  override requiresLoggedIn = false;
 
-  async act(game: Game, { broadcast, emit, register }, data) {
+  override async act(game: Game, { broadcast, emit, register }, data) {
     if (!data.username)                               return { wasSuccess: false, message: 'No username specified.' };
     if (!data.password)                               return { wasSuccess: false, message: 'No password specified.' };
 

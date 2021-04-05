@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class LookAt extends MacroCommand {
 
-  aliases = ['look at', 'consider'];
-  canBeInstant = false;
-  canBeFast = true;
+  override aliases = ['look at', 'consider'];
+  override canBeInstant = false;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target) {

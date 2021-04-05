@@ -3,7 +3,7 @@ import { Effect } from '../../../../../models';
 
 export class Poison extends Effect {
 
-  tick(char: ICharacter, effect: IStatusEffect) {
+  override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
     let caster: ICharacter | null = null;

@@ -4,11 +4,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class RestoreCommand extends MacroCommand {
 
-  aliases = ['restore'];
-  canBeFast = true;
-  canUseWhileDead = true;
+  override aliases = ['restore'];
+  override canBeFast = true;
+  override canUseWhileDead = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.characterHelper.isDead(player)) {
       this.sendMessage(player, 'You aren\'t dead!');
       return;

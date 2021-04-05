@@ -3,11 +3,11 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeDiscordTagAction extends ServerAction {
-  type = GameServerEvent.ChangeDiscordTag;
-  requiredKeys = ['discordTag'];
-  requiresLoggedIn = true;
+  override type = GameServerEvent.ChangeDiscordTag;
+  override requiredKeys = ['discordTag'];
+  override requiresLoggedIn = true;
 
-  async act(game: Game, callbacks, data) {
+  override async act(game: Game, callbacks, data) {
 
     try {
       try {

@@ -3,11 +3,11 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeAlwaysOnlineAction extends ServerAction {
-  type = GameServerEvent.ChangeAlwaysOnline;
-  requiredKeys = ['alwaysOnline'];
-  requiresLoggedIn = true;
+  override type = GameServerEvent.ChangeAlwaysOnline;
+  override requiredKeys = ['alwaysOnline'];
+  override requiresLoggedIn = true;
 
-  async act(game: Game, callbacks, data) {
+  override async act(game: Game, callbacks, data) {
     try {
       await game.accountDB.changeAlwaysOnline(data.account, data.alwaysOnline);
       await game.discordHelper.updateDiscordRoles(data.account);

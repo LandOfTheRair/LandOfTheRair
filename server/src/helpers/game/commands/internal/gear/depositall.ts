@@ -4,9 +4,9 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class DepositAllCommand extends MacroCommand {
 
-  aliases = ['depositall'];
+  override aliases = ['depositall'];
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     let materialsDeposited = 0;
 

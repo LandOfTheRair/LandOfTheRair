@@ -6,7 +6,7 @@ import { Effect } from '../../../../../models';
 
 export class BuildupHeat extends Effect {
 
-  tick(char: ICharacter, effect: IStatusEffect) {
+  override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
     if (effect.effectInfo.buildUpCurrent) {
@@ -17,7 +17,7 @@ export class BuildupHeat extends Effect {
     }
   }
 
-  public incoming(
+  public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
     attacker: ICharacter | null,

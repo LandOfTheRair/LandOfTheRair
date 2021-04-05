@@ -3,7 +3,7 @@ import { Effect, Player } from '../../../../models';
 
 export class Dead extends Effect {
 
-  unapply(char: ICharacter, effect: IStatusEffect) {
+  override unapply(char: ICharacter, effect: IStatusEffect) {
     // if you're not still dead, we won't rot
     if (!this.game.characterHelper.isDead(char)) return;
 

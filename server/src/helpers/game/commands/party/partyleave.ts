@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class PartyLeave extends MacroCommand {
 
-  aliases = ['party leave'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['party leave'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are not in a party!');
 
     this.game.partyHelper.leaveParty(player);

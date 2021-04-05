@@ -15,7 +15,7 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
   }
 
 
-  mechanicTick() {
+  override mechanicTick(): void {
 
     const npc = this.npc;
     const hpPercent = npc.hp.current / npc.hp.maximum * 100;
@@ -44,11 +44,11 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
     }
   }
 
-  damageTaken() {
+  override damageTaken(): void {
 
   }
 
-  death() {
+  override death(): void {
     const npc = this.npc;
 
     this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: 'EeeaAAaarrrGGGgghhhh!' });

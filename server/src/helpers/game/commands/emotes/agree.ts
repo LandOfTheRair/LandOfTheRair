@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class Agree extends MacroCommand {
 
-  aliases = ['agree'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['agree'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const state = this.game.worldManager.getMapStateForCharacter(player);
     const playersInView = state.getAllPlayersInRange(player, 4);
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);

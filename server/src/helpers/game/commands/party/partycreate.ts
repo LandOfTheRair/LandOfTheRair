@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class PartyCreate extends MacroCommand {
 
-  aliases = ['party create'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['party create'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are already in a party!');
     if (this.game.partyManager.getParty(args.stringArgs)) return this.sendMessage(player, 'That party already exists!');
 

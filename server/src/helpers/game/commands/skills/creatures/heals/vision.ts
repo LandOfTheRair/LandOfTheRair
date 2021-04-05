@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Vision extends SpellCommand {
 
-  aliases = ['vision', 'cast vision'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'Vision';
+  override aliases = ['vision', 'cast vision'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'Vision';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && this.game.effectHelper.hasEffect(target, 'Blind');
   }
 }

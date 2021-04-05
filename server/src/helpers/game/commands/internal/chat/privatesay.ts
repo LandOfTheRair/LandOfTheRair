@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class PrivateSay extends MacroCommand {
 
-  aliases = ['privatesay'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['privatesay'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const aargs = args.stringArgs.split(',').map(x => x.trim());
     if (aargs.length < 2) return;
 

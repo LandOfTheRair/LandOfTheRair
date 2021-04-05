@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class LearnTrait extends MacroCommand {
 
-  aliases = ['learntrait'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['learntrait'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const trait = args.stringArgs;
 
     if (!this.game.traitHelper.canLearnTrait(player, trait)) {

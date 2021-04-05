@@ -4,10 +4,10 @@ import { LookCommand } from './look';
 
 export class SearchCommand extends LookCommand {
 
-  aliases = ['search'];
-  canBeFast = true;
+  override aliases = ['search'];
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const { map, state } = this.game.worldManager.getMap(player.map);
     const corpses = state.getItemsFromGround(player.x, player.y, ItemClass.Corpse) || [];

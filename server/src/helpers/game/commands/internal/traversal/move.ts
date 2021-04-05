@@ -3,11 +3,11 @@ import { IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class Move extends MacroCommand {
-  aliases = ['move'];
-  canBeFast = true;
-  canBeInstant = true;
+  override aliases = ['move'];
+  override canBeFast = true;
+  override canBeInstant = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [x, y] = args.arrayArgs.map(v => +v);
     this.game.movementHelper.moveWithPathfinding(player, { xDiff: x, yDiff: y });
   }

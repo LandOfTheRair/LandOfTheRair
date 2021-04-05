@@ -6,12 +6,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMModItem extends MacroCommand {
 
-  aliases = ['@moditem', '@itemmod'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@moditem', '@itemmod'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const rightHand = player.items.equipment[ItemSlot.RightHand];
     if (!rightHand) return this.sendMessage(player, 'You need to hold something in your right hand.');

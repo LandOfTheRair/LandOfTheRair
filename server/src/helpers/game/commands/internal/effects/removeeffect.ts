@@ -4,11 +4,11 @@ import { MacroCommand } from '../../../../../models/macro';
 
 export class RemoveEffectCommand extends MacroCommand {
 
-  aliases = ['removeeffect'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['removeeffect'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     this.game.effectHelper.removeEffectManually(player, args.stringArgs.trim());
   }
 

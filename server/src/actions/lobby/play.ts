@@ -4,10 +4,10 @@ import { Player, WorldMap } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class PlayAction extends ServerAction {
-  type = GameServerEvent.PlayCharacter;
-  requiredKeys = ['charSlot'];
+  override type = GameServerEvent.PlayCharacter;
+  override requiredKeys = ['charSlot'];
 
-  async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: Game, { broadcast, emit }, data) {
     if (data.account.isBanned) {
       emit({
         action: GameAction.ChatAddMessage,

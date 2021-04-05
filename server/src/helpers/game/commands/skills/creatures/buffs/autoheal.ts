@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Autoheal extends SpellCommand {
 
-  aliases = ['autoheal', 'cast autoheal'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'Autoheal';
+  override aliases = ['autoheal', 'cast autoheal'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'Autoheal';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target)
         && !this.game.effectHelper.hasEffect(target, 'Autoheal');
   }

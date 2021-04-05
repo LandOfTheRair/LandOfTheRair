@@ -2,9 +2,9 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class ConjureHealing extends SpellCommand {
 
-  aliases = ['conjurehealing', 'cast conjurehealing'];
-  requiresLearn = true;
-  spellRef = 'ConjureHealing';
-  canTargetSelf = true;
+  override aliases = ['conjurehealing', 'cast conjurehealing'];
+  override requiresLearn = true;
+  override spellRef = 'ConjureHealing';
+  override canTargetSelf = true;
 
 }

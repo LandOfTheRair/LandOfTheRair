@@ -2,9 +2,9 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class Wellspring extends SpellCommand {
 
-  aliases = ['wellspring', 'cast wellspring'];
-  requiresLearn = true;
-  spellRef = 'Wellspring';
-  canTargetSelf = true;
+  override aliases = ['wellspring', 'cast wellspring'];
+  override requiresLearn = true;
+  override spellRef = 'Wellspring';
+  override canTargetSelf = true;
 
 }

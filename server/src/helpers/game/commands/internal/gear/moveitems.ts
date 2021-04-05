@@ -37,11 +37,11 @@ const allAliases = origins.map(o => validDestinations[o].map(sub => `${o}t${sub}
 
 export class MoveItems extends MacroCommand {
 
-  aliases = allAliases;
-  canBeFast = true;
-  canBeInstant = true;
+  override aliases = allAliases;
+  override canBeFast = true;
+  override canBeInstant = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [o, d] = args.calledAlias.split(' ')[0].split('t');
 
     if (!this[`handle${o}`]) return this.sendMessage(player, 'Invalid item move origin.');

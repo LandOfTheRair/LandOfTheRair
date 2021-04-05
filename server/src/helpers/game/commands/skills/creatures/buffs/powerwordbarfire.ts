@@ -3,13 +3,13 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class PowerwordBarFire extends SpellCommand {
 
-  aliases = ['powerword barfire'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellDataRef = 'PowerwordBarFire';
-  spellRef = 'BarFire';
+  override aliases = ['powerword barfire'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellDataRef = 'PowerwordBarFire';
+  override spellRef = 'BarFire';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'BarFire');
   }
 

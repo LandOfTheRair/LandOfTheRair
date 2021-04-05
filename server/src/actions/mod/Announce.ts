@@ -3,11 +3,11 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class AnnounceAction extends ServerAction {
-  type = GameServerEvent.Announce;
-  canBeUnattended = true;
-  requiredKeys = ['message'];
+  override type = GameServerEvent.Announce;
+  override canBeUnattended = true;
+  override requiredKeys = ['message'];
 
-  async act(game: Game, {}, data) {
+  override async act(game: Game, {}, data) {
 
     const account = game.lobbyManager.getAccount(data.username);
     if ((!account || !account.isGameMaster) && data.username !== '★System') return { message: 'Not a GM.' };

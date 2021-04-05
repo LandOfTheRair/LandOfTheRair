@@ -31,11 +31,11 @@ const ResistanceShredders = {
 
 export class Attribute extends Effect {
 
-  public formatEffectName(char: ICharacter, effect: IStatusEffect): string {
+  public override formatEffectName(char: ICharacter, effect: IStatusEffect): string {
     return effect.effectInfo.damageType + effect.effectName;
   }
 
-  public apply(char: ICharacter, effect: IStatusEffect) {
+  public override apply(char: ICharacter, effect: IStatusEffect) {
     const effInfo = effect.effectInfo;
 
     const damageType: AttributeType = effInfo.damageType ?? 'physical' as AttributeType;
@@ -57,7 +57,7 @@ export class Attribute extends Effect {
     if (effInfo.unableToShred) effInfo.tooltip = `${effInfo.tooltip} Not bypassable.`;
   }
 
-  public incoming(
+  public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
     attacker: ICharacter | null,

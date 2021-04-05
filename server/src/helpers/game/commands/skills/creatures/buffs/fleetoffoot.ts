@@ -3,12 +3,12 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class FleetOfFoot extends SpellCommand {
 
-  aliases = ['fleetoffoot', 'cast fleetoffoot'];
-  requiresLearn = true;
-  canTargetSelf = true;
-  spellRef = 'FleetOfFoot';
+  override aliases = ['fleetoffoot', 'cast fleetoffoot'];
+  override requiresLearn = true;
+  override canTargetSelf = true;
+  override spellRef = 'FleetOfFoot';
 
-  canUse(caster: ICharacter, target: ICharacter): boolean {
+  override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'FleetOfFoot');
   }
 

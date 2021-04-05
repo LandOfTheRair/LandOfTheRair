@@ -3,11 +3,11 @@ import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangePasswordAction extends ServerAction {
-  type = GameServerEvent.ChangePassword;
-  requiredKeys = ['newPassword', 'oldPassword'];
-  requiresLoggedIn = true;
+  override type = GameServerEvent.ChangePassword;
+  override requiredKeys = ['newPassword', 'oldPassword'];
+  override requiresLoggedIn = true;
 
-  async act(game: Game, callbacks, data) {
+  override async act(game: Game, callbacks, data) {
     if (data.newPassword.length < 11)   return { wasSuccess: false, message: 'Password must be >10 characters.' };
     if (data.newPassword.length > 256)  return { wasSuccess: false, message: 'Password must be less than <256 characters.' };
 

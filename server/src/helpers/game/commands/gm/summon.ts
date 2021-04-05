@@ -4,12 +4,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMSummon extends MacroCommand {
 
-  aliases = ['@summon'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@summon'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const target = args.stringArgs;
     if (!target) {

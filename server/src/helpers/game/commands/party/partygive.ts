@@ -3,11 +3,11 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class PartyGive extends MacroCommand {
 
-  aliases = ['party give'];
-  canBeInstant = true;
-  canBeFast = true;
+  override aliases = ['party give'];
+  override canBeInstant = true;
+  override canBeFast = true;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are not in a party!');
     if (!this.game.partyHelper.isLeader(player)) return this.sendMessage(player, 'You are not the party leader!');
     if (player.username === args.stringArgs) return this.sendMessage(player, 'You cannot give lead to yourself!');

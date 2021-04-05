@@ -3,10 +3,10 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class PrevPage extends MacroCommand {
 
-  aliases = ['prevpage'];
-  canBeInstant = false;
+  override aliases = ['prevpage'];
+  override canBeInstant = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const book = player.items.equipment[args.stringArgs];
     if (!book) return this.sendMessage(player, 'You do not have anything in that hand!');

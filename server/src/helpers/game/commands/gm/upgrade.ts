@@ -4,12 +4,12 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMUpgradeItem extends MacroCommand {
 
-  aliases = ['@upgradeitem'];
-  isGMCommand = true;
-  canBeInstant = false;
-  canBeFast = false;
+  override aliases = ['@upgradeitem'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
 
-  execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     const rightHand = player.items.equipment[ItemSlot.RightHand];
     if (!rightHand) return this.sendMessage(player, 'You need to hold something to upgrade in your right hand.');

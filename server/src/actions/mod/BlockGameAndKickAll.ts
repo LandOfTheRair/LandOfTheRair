@@ -4,11 +4,11 @@ import { Account } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BlockGameAndKickAllAction extends ServerAction {
-  type = GameServerEvent.BlockAndKickAll;
-  canBeUnattended = true;
-  requiredKeys = [];
+  override type = GameServerEvent.BlockAndKickAll;
+  override canBeUnattended = true;
+  override requiredKeys = [];
 
-  async act(game: Game, {}, data) {
+  override async act(game: Game, {}, data) {
 
     const account = game.lobbyManager.getAccount(data.username);
     if ((!account || !account.isGameMaster) && data.username !== '★System') return { message: 'Not a GM.' };
