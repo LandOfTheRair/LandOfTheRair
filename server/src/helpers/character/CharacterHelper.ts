@@ -44,6 +44,8 @@ export class CharacterHelper extends BaseService {
   }
 
   public heal(char: ICharacter, hp: number): void {
+    if (hp === 0) return;
+
     char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
     char.hp.current = this.game.userInputHelper.cleanNumber(char.hp.current, 1, { floor: true });
   }

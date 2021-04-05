@@ -123,8 +123,6 @@ export class CombatHelper extends BaseService {
         },
         [MessageType.Combat, MessageType.Self, MessageType.Blocked]
       );
-
-      return;
     }
 
     const absDmg = Math.round(Math.abs(damage));
@@ -186,7 +184,7 @@ export class CombatHelper extends BaseService {
 
     // add agro = to damage
     if (attacker) {
-      this.game.characterHelper.addAgro(defender, attacker, args.damage);
+      this.game.characterHelper.addAgro(defender, attacker, args.damage ?? 1);
     }
 
     // finally, absolutely finally, we can do some damage
@@ -281,8 +279,11 @@ export class CombatHelper extends BaseService {
   }
 
   private doElementalDebuffing(defender: ICharacter, damageClass: DamageClass, damage: number): void {
+    if (damage === 0) return;
+
     const [buildup, burst, recently] = this.getElementalDebuff(damageClass);
     if (!buildup || !burst || !recently) return;
+
     if (this.game.effectHelper.hasEffect(defender, burst) || this.game.effectHelper.hasEffect(defender, recently)) return;
 
     const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
