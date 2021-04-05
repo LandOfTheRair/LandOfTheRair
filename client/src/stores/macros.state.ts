@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { ImmutableContext } from '@ngxs-labs/immer-adapter';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 
+import { cloneDeep } from 'lodash';
+
 import * as macros from '../assets/content/_output/macros.json';
 
 import { BaseClass, IMacroBar, IMacroContainer } from '../interfaces';
@@ -172,7 +174,21 @@ export class MacrosState {
           [BaseClass.Traveller]: []
         };
 
-        this.store.dispatch(new SetDefaultMacros(additionalMacros[curPlayer.baseClass] || []));
+        const learns = additionalMacros[curPlayer.baseClass] || [];
+
+        const learnedSpells = learns.map(spell => {
+          const baseObj = cloneDeep(Object.values(macros).find(macro => macro.name === spell));
+          if (!baseObj || baseObj.isDefault) return null;
+
+          baseObj.isDefault = true;
+          return baseObj;
+        }).filter(Boolean);
+
+        this.store.dispatch(new SetDefaultMacros(learnedSpells.map(x => x.name)));
+
+        learnedSpells.forEach(spell => {
+          this.store.dispatch(new LearnMacro(spell));
+        });
       }
     }
   }
