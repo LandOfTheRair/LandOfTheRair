@@ -4,11 +4,15 @@ import { Spell } from '../../../../models/world/Spell';
 export class Daze extends Spell {
 
   getDuration(caster: ICharacter | null) {
-    return caster ? Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2) : 15;
+    if (!caster) return 15;
+    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2)
+         + this.game.traitHelper.traitLevelValue(caster, 'DazingOutlook');
   }
 
   getPotency(caster: ICharacter | null) {
-    return caster ? this.game.characterHelper.getStat(caster, Stat.WIS) : 10;
+    if (!caster) return 10;
+    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2)
+         + this.game.traitHelper.traitLevelValue(caster, 'DazingOutlook');
   }
 
   public getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {

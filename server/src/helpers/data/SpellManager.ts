@@ -86,7 +86,7 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx,
+    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait,
       doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
@@ -117,7 +117,8 @@ export class SpellManager extends BaseService {
 
     // try to resist the spell
     if (caster && canBeResisted) {
-      const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster));
+      const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster))
+                       + (resistLowerTrait ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait) : 0);
       const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL)
                        + this.game.traitHelper.traitLevelValue(target, 'InternalFortitude');
 
