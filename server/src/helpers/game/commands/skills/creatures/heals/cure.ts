@@ -5,6 +5,7 @@ export class Cure extends SpellCommand {
 
   override aliases = ['cure', 'cast cure'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Cure';
 

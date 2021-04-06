@@ -5,6 +5,7 @@ export class PowerwordBarFrost extends SpellCommand {
 
   override aliases = ['powerword barfrost'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellDataRef = 'PowerwordBarFrost';
   override spellRef = 'BarFrost';

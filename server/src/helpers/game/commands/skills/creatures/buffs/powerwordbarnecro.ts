@@ -5,6 +5,7 @@ export class PowerwordBarNecro extends SpellCommand {
 
   override aliases = ['powerword barnecro'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellDataRef = 'PowerwordBarNecro';
   override spellRef = 'BarNecro';

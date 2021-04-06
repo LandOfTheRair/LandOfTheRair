@@ -5,6 +5,7 @@ export class BarNecro extends SpellCommand {
 
   override aliases = ['barnecro', 'cast barnecro'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'BarNecro';
 

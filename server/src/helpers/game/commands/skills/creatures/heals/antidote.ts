@@ -5,6 +5,7 @@ export class Antidote extends SpellCommand {
 
   override aliases = ['antidote', 'cast antidote'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Antidote';
 

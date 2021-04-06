@@ -1,7 +1,6 @@
 import { ICharacter, IMacroSkill } from '../../interfaces';
 import { MacroCommand } from './command';
 
-// TODO: https://github.com/LandOfTheRair/landoftherair/blob/master/src/server/base/Skill.ts
 export class MacroSkill extends MacroCommand implements IMacroSkill {
 
   override aliases = [];

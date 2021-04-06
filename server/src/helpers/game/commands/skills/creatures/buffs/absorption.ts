@@ -5,6 +5,7 @@ export class Absorption extends SpellCommand {
 
   override aliases = ['absorption', 'cast absorption'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Absorption';
 

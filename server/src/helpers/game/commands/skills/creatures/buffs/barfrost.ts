@@ -5,6 +5,7 @@ export class BarFrost extends SpellCommand {
 
   override aliases = ['barfrost', 'cast barfrost'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'BarFrost';
 

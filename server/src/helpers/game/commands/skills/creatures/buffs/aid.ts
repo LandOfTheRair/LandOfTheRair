@@ -5,6 +5,7 @@ export class Aid extends SpellCommand {
 
   override aliases = ['aid', 'cast aid'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Aid';
 

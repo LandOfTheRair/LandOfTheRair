@@ -5,6 +5,7 @@ export class Vision extends SpellCommand {
 
   override aliases = ['vision', 'cast vision'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Vision';
 

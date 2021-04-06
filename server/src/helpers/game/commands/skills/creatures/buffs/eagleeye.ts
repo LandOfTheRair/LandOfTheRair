@@ -5,6 +5,7 @@ export class EagleEye extends SpellCommand {
 
   override aliases = ['eagleeye', 'cast eagleeye'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'EagleEye';
 

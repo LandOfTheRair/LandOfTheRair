@@ -149,17 +149,15 @@ export class DefaultAIBehavior implements IAI {
       }
 
       // if it's a buff, it works slightly differently
-      /*
-      const skillRef = CommandExecutor.getSkillRef(skill);
-      if(skillRef && skillRef.targetsFriendly) {
-        const newTarget = this.findValidAllyInView(skillRef, skill);
-        if(!newTarget) return;
+      const skillRef = this.game.commandHandler.getSkillRef(skill);
+      if (skillRef?.targetsFriendly) {
+        const newTarget = this.findValidAllyInView(skillRef);
+        if (!newTarget) return;
 
-        currentTarget = newTarget;
+        this.currentTarget = newTarget;
         chosenSkill = skillRef;
         return;
       }
-      */
 
       if (!this.currentTarget) return;
       chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
@@ -234,12 +232,11 @@ export class DefaultAIBehavior implements IAI {
       diffY = npc.y - oldY;
     }
 
-    /*
-    if(!highestAgro && chosenSkill && currentTarget) {
-      chosenSkill.use(npc, currentTarget);
-      npc.mp.sub(chosenSkill.mpCost(npc));
+    if (!this.highestAgro && chosenSkill && this.currentTarget) {
+      const skill: SkillCommand = chosenSkill;
+      skill.use(npc, this.currentTarget);
+      this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
     }
-    */
 
     if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
 
@@ -323,6 +320,13 @@ export class DefaultAIBehavior implements IAI {
 
   private checkGroundForItems() {
 
+  }
+
+  private findValidAllyInView(skillRef: SkillCommand): ICharacter | undefined {
+    const allies = this.game.worldManager.getMapStateForCharacter(this.npc).getAllAlliesInRange(this.npc, 4);
+    if (allies.length === 0) return;
+
+    return sample(allies.filter(ally => skillRef.canUse(this.npc, ally)));
   }
 
 

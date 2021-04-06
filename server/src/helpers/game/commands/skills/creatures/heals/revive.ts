@@ -5,6 +5,7 @@ export class Revive extends SpellCommand {
 
   override aliases = ['revive', 'cast revive'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Revive';
 

@@ -5,6 +5,7 @@ export class ImbueFrost extends SpellCommand {
 
   override aliases = ['imbuefrost', 'cast imbuefrost'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'ImbueFrost';
 

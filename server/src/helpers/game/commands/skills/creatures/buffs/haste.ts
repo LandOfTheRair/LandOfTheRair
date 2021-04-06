@@ -5,6 +5,7 @@ export class Haste extends SpellCommand {
 
   override aliases = ['haste', 'cast haste'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Haste';
 

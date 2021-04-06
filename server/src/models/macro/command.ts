@@ -37,6 +37,8 @@ export abstract class MacroCommand implements IMacroCommand {
 
 export abstract class SkillCommand extends MacroCommand {
 
+  targetsFriendly = false;      // whether or not the command can target friendly creatures (for enemies)
+
   mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) {
     return 0;
   }

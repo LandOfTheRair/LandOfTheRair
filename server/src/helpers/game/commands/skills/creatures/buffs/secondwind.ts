@@ -5,6 +5,7 @@ export class SecondWind extends SpellCommand {
 
   override aliases = ['secondwind', 'cast secondwind'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'SecondWind';
 

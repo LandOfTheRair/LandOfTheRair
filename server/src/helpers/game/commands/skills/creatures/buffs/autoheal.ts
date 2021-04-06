@@ -5,6 +5,7 @@ export class Autoheal extends SpellCommand {
 
   override aliases = ['autoheal', 'cast autoheal'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Autoheal';
 

@@ -5,6 +5,7 @@ export class Protection extends SpellCommand {
 
   override aliases = ['protection', 'cast protection'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Protection';
 

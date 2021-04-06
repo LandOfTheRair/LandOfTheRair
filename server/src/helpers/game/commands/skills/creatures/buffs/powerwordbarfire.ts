@@ -5,6 +5,7 @@ export class PowerwordBarFire extends SpellCommand {
 
   override aliases = ['powerword barfire'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellDataRef = 'PowerwordBarFire';
   override spellRef = 'BarFire';

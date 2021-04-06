@@ -5,6 +5,7 @@ export class BarWater extends SpellCommand {
 
   override aliases = ['barwater', 'cast barwater'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'BarWater';
 

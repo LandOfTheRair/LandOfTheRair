@@ -5,6 +5,7 @@ export class FleetOfFoot extends SpellCommand {
 
   override aliases = ['fleetoffoot', 'cast fleetoffoot'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'FleetOfFoot';
 

@@ -5,6 +5,7 @@ export class DarkVision extends SpellCommand {
 
   override aliases = ['darkvision', 'cast darkvision'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'DarkVision';
 

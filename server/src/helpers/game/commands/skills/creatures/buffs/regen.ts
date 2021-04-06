@@ -5,6 +5,7 @@ export class Regen extends SpellCommand {
 
   override aliases = ['regen', 'cast regen'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'Regen';
 

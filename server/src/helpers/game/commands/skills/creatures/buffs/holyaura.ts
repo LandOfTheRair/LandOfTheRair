@@ -5,6 +5,7 @@ export class HolyAura extends SpellCommand {
 
   override aliases = ['holyaura', 'cast holyaura'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'HolyAura';
 

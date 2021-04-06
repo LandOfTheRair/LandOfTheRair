@@ -5,6 +5,7 @@ export class PowerwordHeal extends SpellCommand {
 
   override aliases = ['powerword heal'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellDataRef = 'PowerwordHeal';
   override spellRef = 'Cure';

@@ -5,6 +5,7 @@ export class VitalEssence extends SpellCommand {
 
   override aliases = ['vitalessence', 'cast vitalessence'];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override canTargetSelf = true;
   override spellRef = 'VitalEssence';
 
