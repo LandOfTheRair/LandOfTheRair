@@ -20,7 +20,7 @@ export class Disease extends Effect {
           [Stat.Accuracy]: statReduction
         };
 
-        effect.effectInfo.tooltip = `${effect.tooltip} ${statReduction} CON/WIL/Accuracy`;
+        effect.effectInfo.tooltip = `${effect.tooltip} ${statReduction} CON/WIL/Accuracy.`;
       }
     }
   }

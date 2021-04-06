@@ -6,28 +6,32 @@ import { SoundEffect } from './sfx';
 export interface IStatusEffectInfo {
   potency: number;                              // the potency of the effect (used to overwrite if necessary)
 
-  currentTick?: number;                         // the current tick of the effect
-  statChanges?: Partial<Record<Stat, number>>;  // the stat boosts for this effect
-  charges?: number;                             // the number of charges this effect has remaining
-  buildUpMax?: number;                          // the max buildup value required for this to burst
-  buildUpCurrent?: number;                      // the current buildup value
-  buildUpDecay?: number;                        // the decay value for the buildup
+  canRemove?: boolean;                          // if the effect can be manually unapplied
   damage?: number;                              // the amount of damage this effect does per tick
   damageType?: DamageType;                      // the type of damage this effect does
-  isFrozen?: boolean;                           // if you're currently frozen from the effect
-  canRemove?: boolean;                          // if the effect can be manually unapplied
-  persistThroughDeath?: boolean;                // whether the effect should persist through death or not
-  enrageTimer?: number;                         // the enrage timer associated with this effect (Mood)
-  startTimer?: number;                          // when this effect starts (Mood)
-  currentMood?: number;                         // the current mood associated with this effect (Mood)
-  hidden?: boolean;                             // whether or not the effect should be hidden on the client side
-  unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
-  tier?: string;                                // the tier of the effect (used for stat potions)
-  summonCreatures?: string[];                   // the creature summoned by this effect
+  currentTick?: number;                         // the current tick of the effect
+  statChanges?: Partial<Record<Stat, number>>;  // the stat boosts for this effect
   effectIcon?: string;                          // an override of the icon for the effect
   tooltip?: string;                             // the tooltip for the item effect
   tooltipColor?: string;                        // the tooltip color to override for the effect
   message?: string;                             // the message sent for the item effect
+  persistThroughDeath?: boolean;                // whether the effect should persist through death or not
+  hidden?: boolean;                             // whether or not the effect should be hidden on the client side
+  unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
+
+  charges?: number;                             // the number of charges this effect has remaining
+
+  buildUpMax?: number;                          // the max buildup value required for this to burst
+  buildUpCurrent?: number;                      // the current buildup value
+  buildUpDecay?: number;                        // the decay value for the buildup
+
+  isContagious?: boolean;                       // if this effect is contagious and spreads to nearby creatures (Plague)
+  isFrozen?: boolean;                           // if you're currently frozen from the effect (Stun, Chill)
+  enrageTimer?: number;                         // the enrage timer associated with this effect (Mood)
+  startTimer?: number;                          // when this effect starts (Mood)
+  currentMood?: number;                         // the current mood associated with this effect (Mood)
+  tier?: string;                                // the tier of the effect (used for stat potions)
+  summonCreatures?: string[];                   // the creature summoned by this effect (FindFamiliar)
   unableToShred?: boolean;                      // whether or not the effect can be shredded (Attribute)
 }
 
