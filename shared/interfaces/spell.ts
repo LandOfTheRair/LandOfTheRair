@@ -18,7 +18,8 @@ export interface ISpellData {
   spellMeta: {
     aoe?: boolean;                      // whether or not this spell is an aoe
     bonusAgro?: number;                 // bonus agro given from the caster to the target - primarily used for debuffs
-    canBeResisted?: boolean;            // whether or not the spell can be resisted outright
+    canBeResisted?: boolean;            // whether or not the spell can be resisted outright\
+    creatureSummoned?: string;          // if this spell summons a creature, this is the npc id
     doesHeal?: boolean;                 // if the spell does a heal (inverse attack), it calls this first
     doesAttack?: boolean;               // if the spell does an attack, it calls this first
     doesOvertime?: boolean;             // if the spell has an over-time component, it is applied automatically

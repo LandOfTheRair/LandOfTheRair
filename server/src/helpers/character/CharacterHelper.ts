@@ -164,6 +164,8 @@ export class CharacterHelper extends BaseService {
 
   // add agro for a different char
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
+    if ((char as INPC).owner && target === (char as INPC).owner) return;
+    if ((target as INPC).owner && char === (target as INPC).owner) return;
 
     const modifyAgro = (agroChar: ICharacter, agroTarget: ICharacter, modAmount: number) => {
       agroChar.agro[agroTarget.uuid] = (agroChar.agro[agroTarget.uuid] || 0) + modAmount;
@@ -217,7 +219,7 @@ export class CharacterHelper extends BaseService {
   public canGainSkillFromTarget(target: ICharacter): boolean {
     if (!target) return false;
     if ((target as INPC).hostility === Hostility.Never) return false;
-    if ((target as INPC).owner === Hostility.Never) return false;
+    if ((target as INPC).owner) return false;
     return true;
   }
 
@@ -374,7 +376,7 @@ export class CharacterHelper extends BaseService {
         if (!item.trait) return;
 
         character.allTraits[item.trait.name] = character.allTraits[item.trait.name] || 0;
-        character.allTraits[item.trait.name] += item.trait.level;
+        character.allTraits[item.trait.name] += item.trait.level ?? 0;
       });
     }
   }
@@ -391,7 +393,7 @@ export class CharacterHelper extends BaseService {
         if (!traitRef.statsGiven?.[stat]) return;
 
         stats[stat] = stats[stat] || 0;
-        stats[stat] += traitRef.statsGiven[stat] * this.game.traitHelper.traitLevel(character, trait);
+        stats[stat] += (traitRef.statsGiven[stat] ?? 0) * (this.game.traitHelper.traitLevel(character, trait) ?? 0);
       });
     });
 
@@ -416,7 +418,7 @@ export class CharacterHelper extends BaseService {
 
     const addStat = (stat: Stat, bonus: number) => {
       character.totalStats[stat] = character.totalStats[stat] || 0;
-      character.totalStats[stat]! += bonus;
+      character.totalStats[stat]! += (bonus ?? 0);
     };
 
     // add quest completion bonuses
@@ -651,6 +653,22 @@ export class CharacterHelper extends BaseService {
     }
 
     return foundEffect;
+  }
+
+  // add a pet
+  public addPet(owner: ICharacter, pet: INPC): void {
+    pet.owner = owner;
+
+    owner.pets = owner.pets || [];
+    owner.pets.push(pet);
+  }
+
+  // remove a pet
+  public removePet(owner: ICharacter, pet: INPC): void {
+    delete pet.owner;
+
+    owner.pets = owner.pets || [];
+    owner.pets = owner.pets.filter(x => x !== pet);
   }
 
 }

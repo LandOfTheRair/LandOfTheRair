@@ -877,8 +877,8 @@ export class DamageHelperPhysical extends BaseService {
 
     damage += damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
 
-    if (isOffhand) {
-      damage = Math.floor(damage * args.offhandMultiplier);
+    if (isOffhand && args.offhandMultiplier) {
+      damage = Math.floor(damage * (args.offhandMultiplier ?? 0.3));
     }
 
     if (damage > 0) {

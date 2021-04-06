@@ -13,7 +13,6 @@ export const initializeNPC = (char: Partial<INPCDefinition> = {}): INPC => {
     usableSkills: char.usableSkills ?? [],
     skillOnKill: char.skillOnKill ?? 1,
     giveXp: char.giveXp ?? { min: 1, max: 100 },
-    owner: char.owner ?? '',
     sprite: char.sprite as number ?? -1
   };
 };

@@ -107,7 +107,7 @@ export class GameService {
 
   private parseCommand(cmd: string) {
     const arr = cmd.split(' ');
-    const multiPrefixes = ['party', 'look', 'show', 'cast', 'stance', 'powerword', 'art'];
+    const multiPrefixes = ['party', 'look', 'show', 'cast', 'stance', 'powerword', 'art', 'findfamiliar'];
 
     let argsIndex = 1;
 

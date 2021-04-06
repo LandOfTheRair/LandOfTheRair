@@ -23,6 +23,7 @@ export interface IStatusEffectInfo {
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
   unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
   tier?: string;                                // the tier of the effect (used for stat potions)
+  summonCreatures?: string[];                   // the creature summoned by this effect
   effectIcon?: string;                          // an override of the icon for the effect
   tooltip?: string;                             // the tooltip for the item effect
   tooltipColor?: string;                        // the tooltip color to override for the effect
@@ -49,6 +50,7 @@ export interface IStatusEffectData {
     color: string;                // the foreground color for the icon
     bgColor: string;              // the background color for the icon
     desc: string;                 // the description for the tooltip
+    icon: string;                 // the icon for the tooltip
   };
 
   effect: {

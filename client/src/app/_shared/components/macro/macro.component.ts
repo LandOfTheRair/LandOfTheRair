@@ -70,7 +70,7 @@ export class MacroComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.cooldownDisplay = numberValue.toString();
+        this.cooldownDisplay = numberValue.toFixed(0);
       });
   }
 

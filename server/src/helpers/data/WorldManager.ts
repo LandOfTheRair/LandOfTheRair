@@ -229,6 +229,11 @@ export class WorldManager extends BaseService {
 
     }
 
+    // cannot keep summons when going between maps
+    if (this.game.effectHelper.hasEffect(player, 'FindFamiliar')) {
+      this.game.effectHelper.removeEffectByName(player, 'FindFamiliar');
+    }
+
     delete this.playersInMaps[player.username];
 
     this.mapPlayerCounts[oldMap] = this.mapPlayerCounts[oldMap] || 0;

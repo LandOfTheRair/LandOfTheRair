@@ -176,7 +176,11 @@ export class DeathHelper extends BaseService {
     if (this.game.characterHelper.isPlayer(killer)) {
       this.playerKill(killer as IPlayer, dead);
     } else {
-      this.npcKill(killer as INPC, dead);
+      if ((killer as INPC).owner) {
+        this.playerKill((killer as INPC).owner as IPlayer, dead);
+      } else {
+        this.npcKill(killer as INPC, dead);
+      }
     }
   }
 

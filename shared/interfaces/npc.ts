@@ -1,6 +1,6 @@
 import { IAIBehavior, IBehavior } from './behaviors';
 import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot,
-  MonsterClass, RandomNumber, Rollable, SkillBlock, StatBlock } from './building-blocks';
+  MonsterClass, RandomNumber, Rollable, Skill, SkillBlock, Stat, StatBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { IDialogTree } from './dialog';
 import { IStatusEffectInfo } from './status-effect';
@@ -116,6 +116,12 @@ export interface INPCDefinition {
   // the stats this creature has
   stats: StatBlock;
 
+  // the modifiers (based on potency) for each stat to modify this character by
+  summonStatModifiers?: Record<Stat, number>;
+
+  // the modifiers (based on potency) for each skill to modify this character by
+  summonSkillModifiers?: Record<Skill, number>;
+
   // the skill required to tan this creature
   tanSkillRequired?: number;
 
@@ -144,7 +150,7 @@ export interface INPC extends ICharacter {
   aquaticOnly?: boolean;
   avoidWater?: boolean;
   hostility?: Hostility;
-  owner?: string;
+  owner?: ICharacter;
   usableSkills: Rollable[] | string[];
   monsterClass?: MonsterClass;
   monsterGroup?: string;

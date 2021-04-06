@@ -1,6 +1,8 @@
 import { Injectable } from 'injection-js';
+import { cloneDeep } from 'lodash';
+
 import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect,
-  IMacroCommandArgs, ISpellData, Skill, SoundEffect, Stat } from '../../interfaces';
+  IMacroCommandArgs, ISpellData, IStatusEffectData, Skill, SoundEffect, Stat } from '../../interfaces';
 
 import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
@@ -88,7 +90,7 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait,
+    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait, creatureSummoned,
       doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
@@ -170,10 +172,23 @@ export class SpellManager extends BaseService {
     if (doesOvertime) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
       if (caster && noHostileTarget && spellEffInfo.effect?.duration) {
-        spellEffInfo.effect.duration *= (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'));
+        spellEffInfo.effect.duration = Math.floor(
+          spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
+        );
       }
 
       this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
+    }
+
+    if (creatureSummoned) {
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData);
+      const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
+      ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
+      ffEffectData.effect.extra.potency = spellEffInfo.effect?.extra?.potency ?? 10;
+      ffEffectData.effect.extra.effectIcon = ffEffectData.tooltip.icon;
+      ffEffectData.effect.extra.summonCreatures = [spellData.spellMeta.creatureSummoned ?? 'Mage Summon Deer'];
+
+      this.game.effectHelper.addEffect(target, caster ?? 'somebody', 'FindFamiliar', ffEffectData);
     }
   }
 

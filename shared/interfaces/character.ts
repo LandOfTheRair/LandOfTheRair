@@ -3,6 +3,7 @@ import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, FOVVisi
 import { ICharacterItems } from './characteritems';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
+import { INPC } from './npc';
 
 export interface IItemContainer {
   items: ISimpleItem[];
@@ -61,5 +62,7 @@ export interface ICharacter {
   learnedSpells: Record<string, LearnedSpell>;
   spellCooldowns: Record<string, number>;
   spellChannel?: { ticks: number, callback: () => void };
+
+  pets?: INPC[];
 }
 

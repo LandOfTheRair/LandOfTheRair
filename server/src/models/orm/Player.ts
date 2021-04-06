@@ -4,7 +4,7 @@ import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
   IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
-  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage, SubscriptionTier, ICharacterPouch } from '../../interfaces';
+  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage, SubscriptionTier, ICharacterPouch, INPC } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
@@ -41,7 +41,6 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) combatTicks = 0;
   @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_UNSAVED_SHARED()) spellCooldowns: Record<string, number>;
-  @Property(PROP_UNSAVED_SHARED()) spellChannel: { ticks: number; callback: () => void };
   @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
 
   // temporary props
@@ -53,6 +52,8 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) lastDeathLocation;
   @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
+  @Property(PROP_TEMPORARY()) spellChannel: { ticks: number; callback: () => void };
+  @Property(PROP_TEMPORARY()) pets: INPC[];
 
   // all characters have these props
   @Property() uuid: string;

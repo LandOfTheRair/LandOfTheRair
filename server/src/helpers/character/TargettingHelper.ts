@@ -50,9 +50,7 @@ export class TargettingHelper extends BaseService {
     if ((me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
 
     // if I am a pet (owned by a player), and my prospective target is a player, we won't do this
-    // only present on server
-    // TODO: pets
-    // if(me.$$owner && me.$$owner.isPlayer() && target.isPlayer()) return false;
+    if ((me as INPC).owner && this.game.characterHelper.isPlayer(target)) return false;
 
     // if either of us are agro'd to each other, there is hostility
     if (me.agro[target.uuid] || target.agro[me.uuid]) return true;

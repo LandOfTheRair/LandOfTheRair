@@ -225,7 +225,7 @@ export class DefaultAIBehavior implements IAI {
       }
 
     // move randomly
-    } else if (this.randomWalkRadius > 0) {
+    } else if (this.randomWalkRadius > 0 || this.randomWalkRadius === -1) {
       const oldX = npc.x;
       const oldY = npc.y;
       const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
@@ -244,7 +244,11 @@ export class DefaultAIBehavior implements IAI {
     if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
 
     if (npc.owner) {
-      // TODO: leash to owner
+      const distFrom = this.game.directionHelper.distFrom(npc, npc.owner);
+      if (distFrom > 5) {
+        npc.x = npc.owner.x;
+        npc.y = npc.owner.y;
+      }
 
     } else {
 

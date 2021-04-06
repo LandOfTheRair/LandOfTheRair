@@ -30,7 +30,10 @@ export class CommandHandler extends BaseService {
   // load all skills
   public init() {
     Object.values(Commands).map(x => new x(this.game)).forEach(command => {
-      command.aliases.forEach(alias => this.commands[alias.toLowerCase()] = command);
+      command.aliases.forEach(alias => {
+        if (!alias) return;
+        this.commands[alias.toLowerCase()] = command;
+      });
     });
 
     this.commandStrings = Object.keys(this.commands);
