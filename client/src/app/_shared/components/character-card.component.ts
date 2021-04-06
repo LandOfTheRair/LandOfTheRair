@@ -368,7 +368,7 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
   }
 
   public directionTo() {
-    return this.gameService.directionTo(this.origin, this.char);
+    return this.gameService.directionTo(this.origin, this.char, false);
   }
 
   public barClass() {
