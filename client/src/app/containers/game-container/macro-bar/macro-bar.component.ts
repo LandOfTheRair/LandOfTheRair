@@ -35,8 +35,8 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {}
 
-  public operateOnMacro(macro: IMacro) {
-    if (!macro) return;
+  public operateOnMacro(player: IPlayer, macro: IMacro) {
+    if (!macro || this.isMacroDisabled(player, macro)) return;
 
     if (macro.mode === 'lockActivation') {
       this.store.dispatch(new SetActiveMacro(macro.name));
