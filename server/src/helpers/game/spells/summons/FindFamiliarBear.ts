@@ -6,7 +6,7 @@ export class FindFamiliarBear extends Spell {
 
   override getDuration(caster: ICharacter | null) {
     if (!caster) return 0;
-    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 250);
+    return Math.floor(this.game.characterHelper.getStat(caster, Stat.CON) * 250);
   }
 
   override getPotency(caster: ICharacter | null) {
