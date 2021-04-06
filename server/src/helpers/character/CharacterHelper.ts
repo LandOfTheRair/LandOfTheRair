@@ -306,7 +306,8 @@ export class CharacterHelper extends BaseService {
     character.learnedSpells = {};
 
     const learnSpell = (spell: string, learnFrom: LearnedSpell) => {
-      if (character.learnedSpells[spell.toLowerCase()]) return;
+      const curLearnedStatus = character.learnedSpells[spell.toLowerCase()];
+      if (curLearnedStatus === LearnedSpell.FromTraits) return;
 
       character.learnedSpells[spell.toLowerCase()] = learnFrom;
     };
