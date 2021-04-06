@@ -1,7 +1,29 @@
-import { DamageClass, ICharacter, IStatusEffect } from '../../../../../interfaces';
+import { DamageClass, ICharacter, IStatusEffect, Skill, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Disease extends Effect {
+
+  public override create(char: ICharacter, effect: IStatusEffect) {
+
+    if (effect.sourceUUID) {
+      const mapState = this.game.worldManager.getMap(char.map).state;
+      const caster = mapState.getCharacterByUUID(effect.sourceUUID);
+
+      if (caster) {
+        const mult = this.game.traitHelper.traitLevelValue(caster, 'DebilitatingDisease');
+        const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, Skill.Restoration);
+        const statReduction = -Math.floor(skill * mult);
+
+        effect.effectInfo.statChanges = {
+          [Stat.CON]: statReduction,
+          [Stat.WIL]: statReduction,
+          [Stat.Accuracy]: statReduction
+        };
+
+        effect.effectInfo.tooltip = `${effect.tooltip} ${statReduction} CON/WIL/Accuracy`;
+      }
+    }
+  }
 
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
