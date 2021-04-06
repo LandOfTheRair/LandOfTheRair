@@ -10,6 +10,7 @@ export class Antidote extends SpellCommand {
   override spellRef = 'Antidote';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && this.game.effectHelper.hasEffect(target, 'Poison');
+    return super.canUse(caster, target)
+        && (this.game.effectHelper.hasEffect(target, 'Poison') || this.game.effectHelper.hasEffect(target, 'Disease'));
   }
 }
