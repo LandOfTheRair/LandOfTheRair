@@ -129,6 +129,8 @@ export class TargettingHelper extends BaseService {
   }
 
   public getPossibleAOETargets(center: ICharacter, radius = 0): ICharacter[] {
+    if (!center || this.game.characterHelper.isDead(center)) return [];
+
     const state = this.worldManager.getMapStateForCharacter(center);
     const allTargets = state.getAllInRange(center, radius, [], false);
     const possTargets = allTargets.filter(target => {

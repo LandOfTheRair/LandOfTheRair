@@ -104,8 +104,29 @@ export class CombatHelper extends BaseService {
   public dealDamage(attacker: ICharacter | null, defender: ICharacter, args: DamageArgs): void {
     if (this.game.characterHelper.isDead(defender)) return;
 
-    const { damage, attackerWeapon, isHeal, isMelee, isOverTime,
+    const { damage, attackerWeapon, isHeal, isMelee, isOverTime, hasBeenReflected,
       damageClass, attackerDamageMessage, defenderDamageMessage, customSfx } = args;
+
+    const reflectPhysical = this.game.characterHelper.getStat(defender, Stat.PhysicalReflect);
+    const reflectMagical = this.game.characterHelper.getStat(defender, Stat.MagicalReflect);
+
+    if (attacker && damage > 0 && reflectPhysical > 0 && damageClass === DamageClass.Physical && !hasBeenReflected) {
+      this.dealDamage(defender, attacker, {
+        damage: reflectPhysical,
+        damageClass: DamageClass.Physical,
+        hasBeenReflected: true,
+        defenderDamageMessage: '%0 reflected your attack!'
+      });
+    }
+
+    if (attacker && damage > 0 && reflectMagical > 0 && damageClass !== DamageClass.Physical && !hasBeenReflected) {
+      this.dealDamage(defender, attacker, {
+        damage: reflectMagical,
+        damageClass,
+        hasBeenReflected: true,
+        defenderDamageMessage: '%0 reflected your attack!'
+      });
+    }
 
     // if no damage, bail
     if (attacker && attacker !== defender && damage === 0) {

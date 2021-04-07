@@ -80,4 +80,5 @@ export interface DamageArgs {
   isStrong?: boolean;
   isAttackerVisible?: boolean;
   customSfx?: SoundEffect;
+  hasBeenReflected?: boolean;
 }

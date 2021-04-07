@@ -145,6 +145,7 @@ export enum Stat {
   // reflect stats
   PhysicalReflect = 'physicalDamageReflect',
   MagicalReflect = 'magicalDamageReflect',
+  SpellReflectChance = 'spellReflectChance',
 
   // resist stats
   Mitigation = 'mitigation',
