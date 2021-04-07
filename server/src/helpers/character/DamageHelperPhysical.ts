@@ -734,11 +734,10 @@ export class DamageHelperPhysical extends BaseService {
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
 
     const hasFleetOfFoot = this.game.effectHelper.hasEffect(defender, 'FleetOfFoot');
-    const hasUnshakeable = this.game.effectHelper.hasEffect(defender, 'Unshakeable');
     const proneChance = this.game.itemHelper.getItemProperty(attackerWeapon, 'proneChance');
 
     // if we can prone a target, we prone a target
-    if (!hasFleetOfFoot && !hasUnshakeable && proneChance > 0) {
+    if (!hasFleetOfFoot && proneChance > 0) {
       this.game.spellManager.castSpell('Push', attacker, defender, { potency: 999, chance: proneChance });
     }
 

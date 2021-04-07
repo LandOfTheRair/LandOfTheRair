@@ -7,6 +7,17 @@ import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { VisibilityHelper } from './VisibilityHelper';
 
+interface TargettingOpts {
+  self: boolean;
+  party: boolean;
+  pet: boolean;
+  agro: boolean;
+  faction: boolean;
+  allegiance: boolean;
+  evil: boolean;
+  def: boolean;
+}
+
 @Injectable()
 export class TargettingHelper extends BaseService {
 
@@ -35,48 +46,53 @@ export class TargettingHelper extends BaseService {
 
   // hostility check: order is important
   // important: updates to this _might_ need to be made to client/hostilityLevelFor()
-  public checkTargetForHostility(me: ICharacter, target: ICharacter): boolean {
+  public checkTargetForHostility(
+    me: ICharacter,
+    target: ICharacter,
+    targetOpts: TargettingOpts = { agro: true, allegiance: true, evil: true, faction: true, party: true, pet: true, self: true, def: false }
+  ): boolean {
 
     // I can never be hostile to myself
-    if (me === target) return false;
+    if (targetOpts.self && me === target) return targetOpts.def;
 
     // GMs are never hostile
-    if (target.allegiance === Allegiance.GM) return false;
+    if (target.allegiance === Allegiance.GM) return targetOpts.def;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
-    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return false;
+    if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return targetOpts.def;
 
     // I shouldn't be hostile towards my party members
-    if ((me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
+    if (targetOpts.party && (me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return targetOpts.def;
 
     // if I am a pet (owned by a player), and my prospective target is a player, we won't do this
-    if ((me as INPC).owner && this.game.characterHelper.isPlayer(target)) return false;
+    if (targetOpts.pet && (me as INPC).owner && this.game.characterHelper.isPlayer(target)) return targetOpts.def;
 
     // if either of us are agro'd to each other, there is hostility
-    if (me.agro[target.uuid] || target.agro[me.uuid]) return true;
+    if (targetOpts.agro && (me.agro[target.uuid] || target.agro[me.uuid])) return !targetOpts.def;
 
     // if the target is disguised, and my wil is less than the targets cha, he is not hostile to me
     // TODO: disguise
     // if(target.hasEffect('Disguise') && me.getTotalStat('wil') < target.getTotalStat('cha')) return false;
 
     // if my hostility is based on faction, and either the target or my faction is hostile to each other, yes
-    if ((me as INPC).hostility === Hostility.Faction
+    if (targetOpts.faction
+    && (me as INPC).hostility === Hostility.Faction
     && (isHostileTo(me, target.allegiance)
-       || isHostileTo(target, me.allegiance))) return true;
+       || isHostileTo(target, me.allegiance))) return !targetOpts.def;
 
     // if either of us is an npc and always hostile and not same monster group, yes
     const isSomeoneHostileAlways = (me as INPC).hostility === Hostility.Always || (target as INPC).hostility === Hostility.Always;
     const areTargetsDifferentGroups = (me as INPC).monsterGroup !== (target as INPC).monsterGroup;
-    if (isSomeoneHostileAlways && areTargetsDifferentGroups) return true;
+    if (isSomeoneHostileAlways && areTargetsDifferentGroups) return !targetOpts.def;
 
     // if we are of the same allegiance, no hostility
-    if (me.allegiance === target.allegiance) return false;
+    if (targetOpts.allegiance && me.allegiance === target.allegiance) return targetOpts.def;
 
     // if I am evil, all do-gooders are hostile
-    if (me.alignment === Alignment.Evil && target.alignment === Alignment.Good) return true;
+    if (targetOpts.evil && me.alignment === Alignment.Evil && target.alignment === Alignment.Good) return !targetOpts.def;
 
-    // no hostility
-    return false;
+    // no hostility (by default)
+    return targetOpts.def;
   }
 
   public isTargetInViewRange(player: ICharacter, target: ICharacter, useSight = true): boolean {
@@ -117,6 +133,18 @@ export class TargettingHelper extends BaseService {
     const allTargets = state.getAllInRange(center, radius, [], false);
     const possTargets = allTargets.filter(target => {
       if (this.characterHelper.isDead(target)) return false;
+
+      if (!this.checkTargetForHostility(center, target, {
+        agro: false,
+        allegiance: false,
+        evil: false,
+        faction: false,
+        party: true,
+        pet: true,
+        self: true,
+        def: true
+      })) return false;
+
       return true;
     });
 

@@ -13,6 +13,9 @@ export class Push extends Spell {
     if ((target as INPC).hostility === Hostility.Never) return;
     if ((target as INPC).allegiance === Allegiance.NaturalResource) return;
 
+    const hasUnshakeable = this.game.effectHelper.hasEffect(target, 'Unshakeable');
+    if (hasUnshakeable) return;
+
     let x = 0;
     let y = 0;
 
@@ -39,8 +42,6 @@ export class Push extends Spell {
 
     // first, try to push them in a direction
     const didFirstPushWork = this.game.movementHelper.moveWithPathfinding(target, { xDiff: x, yDiff: y });
-
-    console.log('first', x, y);
 
     // then, reset the values and set up for another push
     let didSecondPushWork = false;
