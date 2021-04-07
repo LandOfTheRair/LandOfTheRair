@@ -1,7 +1,7 @@
 import { DamageArgs, DamageClass, ICharacter, IStatusEffect } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
-export class ImbueFrost extends Effect {
+export class ImbueFlame extends Effect {
 
   public override outgoing(
     effect: IStatusEffect,
@@ -13,10 +13,10 @@ export class ImbueFrost extends Effect {
     if (!this.game.diceRollerHelper.XInOneHundred(15)) return;
 
     this.game.damageHelperMagic.magicalAttack(char, target, {
-      atkMsg: 'You strike %0 for bonus ice damage!',
-      defMsg: '%0 struck you with a chilling burst!',
+      atkMsg: 'You strike %0 for bonus fire damage!',
+      defMsg: '%0 struck you with a blast of heat!',
       damage: effect.effectInfo.potency,
-      damageClass: DamageClass.Ice
+      damageClass: DamageClass.Fire
     });
   }
 

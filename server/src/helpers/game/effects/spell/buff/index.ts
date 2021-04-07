@@ -10,6 +10,8 @@ export * from './DarkVision';
 export * from './FindFamiliar';
 export * from './Haste';
 export * from './HolyAura';
+export * from './ImbueEnergy';
+export * from './ImbueFlame';
 export * from './ImbueFrost';
 export * from './FindFamiliar';
 export * from './Protection';

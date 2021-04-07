@@ -11,6 +11,8 @@ export * from './eagleeye';
 export * from './fleetoffoot';
 export * from './haste';
 export * from './holyaura';
+export * from './imbueenergy';
+export * from './imbueflame';
 export * from './imbuefrost';
 export * from './powerwordbarfire';
 export * from './powerwordbarfrost';

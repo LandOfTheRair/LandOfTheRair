@@ -11,6 +11,8 @@ export * from './EagleEye';
 export * from './FleetOfFoot';
 export * from './Haste';
 export * from './HolyAura';
+export * from './ImbueEnergy';
+export * from './ImbueFlame';
 export * from './ImbueFrost';
 export * from './Protection';
 export * from './Regen';

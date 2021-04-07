@@ -1,13 +1,13 @@
 import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class ImbueFrost extends SpellCommand {
+export class ImbueEnergy extends SpellCommand {
 
-  override aliases = ['imbuefrost', 'cast imbuefrost'];
+  override aliases = ['imbueenergy', 'cast imbueenergy'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;
-  override spellRef = 'ImbueFrost';
+  override spellRef = 'ImbueEnergy';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return super.canUse(caster, target) && !target.effects.outgoing.length;
