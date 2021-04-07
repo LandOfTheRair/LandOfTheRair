@@ -1,6 +1,6 @@
 import { Game } from '../../helpers';
 import { BaseClass, Direction, ICharacter, IItemEffect,
-  IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect } from '../../interfaces';
+  IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect, Stat } from '../../interfaces';
 import { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
@@ -260,6 +260,7 @@ export class SpellCommand extends SkillCommand {
 
     const doSpellCast = () => {
 
+      // if there's no target, we bail
       if (!target || this.game.characterHelper.isDead(target)) {
         if (caster) {
           delete caster.spellChannel;
@@ -268,6 +269,7 @@ export class SpellCommand extends SkillCommand {
         return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
       }
 
+      // if we have a caster, they are no longer channeling, and we need to take their mp
       if (caster) {
         delete caster.spellChannel;
 
@@ -278,7 +280,15 @@ export class SpellCommand extends SkillCommand {
         if (!this.tryToConsumeMP(caster, [target], args?.overrideEffect)) return;
       }
 
-      this.game.spellManager.castSpell(this.spellRef, caster, target, args?.overrideEffect, args?.callbacks, args);
+      // try to reflect the spell if possible
+      let hitTarget = target;
+      if (caster
+      && target !== caster
+      && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(target, Stat.SpellReflectChance))) {
+        hitTarget = caster;
+      }
+
+      this.game.spellManager.castSpell(this.spellRef, caster, hitTarget, args?.overrideEffect, args?.callbacks, args);
     };
 
     if (caster && spellData.castTime) {
