@@ -190,6 +190,11 @@ export class CombatHelper extends BaseService {
     // finally, absolutely finally, we can do some damage
     this.game.characterHelper.damage(defender, args.damage);
 
+    // handle outgoing effects that happen post-damage
+    if (attacker) {
+      this.game.effectHelper.handleOutgoingEffects(attacker, defender, args);
+    }
+
     // try to do some debuffing based on damage element
     this.doElementalDebuffing(defender, args.damageClass, args.damage);
 

@@ -32,4 +32,6 @@ export class Effect implements BaseEffect {
     return currentDamage;
   }
 
+  public outgoing(effect: IStatusEffect, char: ICharacter, target: ICharacter, args: DamageArgs): void {}
+
 }

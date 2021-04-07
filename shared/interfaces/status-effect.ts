@@ -17,7 +17,7 @@ export interface IStatusEffectInfo {
   message?: string;                             // the message sent for the item effect
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
-  unique?: boolean;                             // whether or not this effect is unique (ie, can have duplicates of)
+  unique?: boolean|string;                      // whether or not this effect is unique (ie, can have duplicates of) - if string, similar effects will be removed (imbue, stance)
 
   charges?: number;                             // the number of charges this effect has remaining
 
