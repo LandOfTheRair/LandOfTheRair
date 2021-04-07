@@ -213,7 +213,14 @@ export class SpellCommand extends SkillCommand {
 
       // aoe spells use the first target as a center for all the others
       if (spellData.spellMeta.aoe) {
-        targets = this.game.targettingHelper.getPossibleAOETargets(targets[0], spellData.spellMeta.range ?? 0);
+
+        // attempt to boost the range of the spell
+        let rangeBoost = 0;
+        if (caster && spellData.spellMeta.aoeRangeTrait) {
+          rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
+        }
+
+        targets = this.game.targettingHelper.getPossibleAOETargets(targets[0], (spellData.spellMeta.range ?? 0) + rangeBoost);
       }
 
     } else if (caster && this.canTargetSelf) {

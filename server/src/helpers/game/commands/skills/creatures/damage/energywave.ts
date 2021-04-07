@@ -13,6 +13,8 @@ export class EnergyWave extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+    this.sendMessage(player, 'You release a surge of energy!');
+
     args.stringArgs = player.name;
     this.castSpell(player, args);
   }

@@ -17,6 +17,7 @@ export interface ISpellData {
 
   spellMeta: {
     aoe?: boolean;                      // whether or not this spell is an aoe
+    aoeRangeTrait?: string;             // the trait that boosts the aoe of this spell
     bonusAgro?: number;                 // bonus agro given from the caster to the target - primarily used for debuffs
     canBeResisted?: boolean;            // whether or not the spell can be resisted outright\
     creatureSummoned?: string;          // if this spell summons a creature, this is the npc id
