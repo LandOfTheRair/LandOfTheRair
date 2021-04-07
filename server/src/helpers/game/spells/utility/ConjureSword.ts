@@ -7,8 +7,10 @@ export class ConjureSword extends Spell {
     if (!caster) return;
 
     const rightHand = caster.items.equipment[ItemSlot.RightHand];
-    if (rightHand) {
-      this.sendMessage(caster, { message: 'You need to empty your right hand!' });
+    const leftHand = caster.items.equipment[ItemSlot.LeftHand];
+
+    if (rightHand && leftHand) {
+      this.sendMessage(caster, { message: 'You need to empty a hand!' });
       return;
     }
 
@@ -30,7 +32,11 @@ export class ConjureSword extends Spell {
 
     this.game.itemHelper.setOwner(caster as IPlayer, item);
 
-    this.game.characterHelper.setRightHand(caster, item);
+    if (!rightHand) {
+      this.game.characterHelper.setRightHand(caster, item);
+    } else if (!leftHand) {
+      this.game.characterHelper.setLeftHand(caster, item);
+    }
 
   }
 
