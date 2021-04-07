@@ -38,21 +38,24 @@ export class Push extends Spell {
     }
 
     // first, try to push them in a direction
-    const didFirstPushWork = this.game.movementHelper.takeSequenceOfSteps(target, [{ x, y }]);
+    const didFirstPushWork = this.game.movementHelper.moveWithPathfinding(target, { xDiff: x, yDiff: y });
+
+    console.log('first', x, y);
 
     // then, reset the values and set up for another push
-    x = 0;
-    y = 0;
     let didSecondPushWork = false;
-
-    while (!didFirstPushWork && x === 0 && y === 0) {
-      x = random(-1, 1);
-      y = random(-1, 1);
-    }
 
     // then, try to push them randomly if the first fails
     if (!didFirstPushWork) {
-      didSecondPushWork = this.game.movementHelper.takeSequenceOfSteps(target, [{ x, y }]);
+      x = 0;
+      y = 0;
+
+      while (x === 0 && y === 0) {
+        x = random(-1, 1);
+        y = random(-1, 1);
+      }
+
+      didSecondPushWork = this.game.movementHelper.moveWithPathfinding(target, { xDiff: x, yDiff: y });
     }
 
     if (didFirstPushWork || didSecondPushWork) {
