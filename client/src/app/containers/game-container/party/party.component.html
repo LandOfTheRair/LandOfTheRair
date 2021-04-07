@@ -28,7 +28,7 @@
             <app-icon name="boss-key" size="xsmall"></app-icon>
           </button>
 
-          <button mat-icon-button color="warn" (click)="leave()" matTooltip="Leave Party" *ngIf="player.username === partyInfo.party?.members[0]">
+          <button mat-icon-button color="warn" (click)="leave()" matTooltip="Leave Party" *ngIf="partyInfo.party">
             <app-icon name="invisible" size="xsmall"></app-icon>
           </button>
 
