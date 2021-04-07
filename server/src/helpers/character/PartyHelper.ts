@@ -77,6 +77,8 @@ export class PartyHelper extends BaseService {
     joiner.partyName = partyName;
 
     this.partyMessage(party, `${joiner.name} has joined the party.`);
+
+    this.clearAgroForAllPartyMembers(joiner);
   }
 
   public leaveParty(leaver: IPlayer, sendMessage = true): void {
@@ -177,6 +179,22 @@ export class PartyHelper extends BaseService {
     if (partySize <= 8)  return 0.4;
     if (partySize <= 10) return 0.2;
     return 0.05;
+  }
+
+  private clearAgroForAllPartyMembers(newJoiner: IPlayer): void {
+    const partyMember = this.game.partyManager.getPartyMember(newJoiner.username);
+    if (!partyMember) return;
+
+    const party = this.game.partyManager.getParty(partyMember.partyName);
+    if (!party) return;
+
+    party.members.forEach(member => {
+      const playerRef = this.game.playerManager.getPlayerByUsername(member);
+      if (!playerRef) return;
+
+      this.game.characterHelper.clearAgro(newJoiner, playerRef);
+      this.game.characterHelper.clearAgro(playerRef, newJoiner);
+    });
   }
 
 }
