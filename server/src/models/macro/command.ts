@@ -220,7 +220,7 @@ export class SpellCommand extends SkillCommand {
           rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
         }
 
-        targets = this.game.targettingHelper.getPossibleAOETargets(targets[0], (spellData.spellMeta.range ?? 0) + rangeBoost);
+        targets = this.game.targettingHelper.getPossibleAOETargets(caster, targets[0], (spellData.spellMeta.range ?? 0) + rangeBoost);
       }
 
     } else if (caster && this.canTargetSelf) {

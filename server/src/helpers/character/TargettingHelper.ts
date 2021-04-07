@@ -55,6 +55,10 @@ export class TargettingHelper extends BaseService {
     // I can never be hostile to myself
     if (targetOpts.self && me === target) return targetOpts.def;
 
+    // players and enemies are always hostile
+    if (this.game.characterHelper.isPlayer(me) && target.allegiance === Allegiance.Enemy
+    || this.game.characterHelper.isPlayer(target) && me.allegiance === Allegiance.Enemy) return true;
+
     // GMs are never hostile
     if (target.allegiance === Allegiance.GM) return targetOpts.def;
 
@@ -128,7 +132,7 @@ export class TargettingHelper extends BaseService {
     return possTargets;
   }
 
-  public getPossibleAOETargets(center: ICharacter, radius = 0): ICharacter[] {
+  public getPossibleAOETargets(caster: ICharacter | null, center: ICharacter, radius = 0): ICharacter[] {
     if (!center || this.game.characterHelper.isDead(center)) return [];
 
     const state = this.worldManager.getMapStateForCharacter(center);
@@ -136,11 +140,11 @@ export class TargettingHelper extends BaseService {
     const possTargets = allTargets.filter(target => {
       if (this.characterHelper.isDead(target)) return false;
 
-      if (!this.checkTargetForHostility(center, target, {
+      if (caster && !this.checkTargetForHostility(caster, target, {
         agro: false,
         allegiance: false,
         evil: false,
-        faction: false,
+        faction: true,
         party: true,
         pet: true,
         self: true,
