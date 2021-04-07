@@ -59,6 +59,7 @@ export class PartyHelper extends BaseService {
     };
 
     const leaderMember = this.reformatAsPartyMember(leader, partyName);
+    leader.partyName = partyName;
 
     this.game.partyManager.addParty(party);
     this.game.partyManager.addPartyMember(leaderMember);
@@ -73,6 +74,8 @@ export class PartyHelper extends BaseService {
     const joinerMember = this.reformatAsPartyMember(joiner, partyName);
     this.game.partyManager.addPartyMember(joinerMember);
 
+    joiner.partyName = partyName;
+
     this.partyMessage(party, `${joiner.name} has joined the party.`);
   }
 
@@ -85,6 +88,8 @@ export class PartyHelper extends BaseService {
 
     party.members = party.members.filter(x => x !== leaver.username);
     this.game.partyManager.removePartyMember(partyMember);
+
+    leaver.partyName = '';
 
     if (party.members.length === 0) {
       this.game.partyManager.removeParty(party);
@@ -104,6 +109,8 @@ export class PartyHelper extends BaseService {
 
     party.members = party.members.filter(x => x !== kicked.username);
     this.game.partyManager.removePartyMember(partyMember);
+
+    kicked.partyName = '';
 
     this.partyMessage(party, `${kicked.name} was kicked from the party.`);
   }

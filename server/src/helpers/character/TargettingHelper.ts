@@ -62,7 +62,7 @@ export class TargettingHelper extends BaseService {
     if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return targetOpts.def;
 
     // I shouldn't be hostile towards my party members
-    if (targetOpts.party && (me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return targetOpts.def;
+    if (targetOpts.party && (me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
 
     // if I am a pet (owned by a player), and my prospective target is a player, we won't do this
     if (targetOpts.pet && (me as INPC).owner && this.game.characterHelper.isPlayer(target)) return targetOpts.def;
