@@ -36,7 +36,7 @@ export class Plague extends Effect {
     // spread the contagion
     if (effect.effectInfo.isContagious && ((effect.effectInfo.currentTick ?? 0) % 3) === 0) {
       const mapState = this.game.worldManager.getMap(char.map).state;
-      const nearby = mapState.getAllAlliesInRange(char, 1).filter(x => x !== char);
+      const nearby = mapState.getAllAlliesInRange(char, 1).filter(x => x !== char && !this.game.effectHelper.hasEffect(x, 'Plague'));
 
       const spreadTo = sample(nearby);
       if (spreadTo) {
