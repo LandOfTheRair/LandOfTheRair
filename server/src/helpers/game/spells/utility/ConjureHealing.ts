@@ -6,9 +6,9 @@ export class ConjureHealing extends Spell {
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!caster) return;
 
-    const rightHand = caster?.items.equipment[ItemSlot.RightHand];
+    const rightHand = caster.items.equipment[ItemSlot.RightHand];
     if (rightHand) {
-      this.sendMessage(caster, { message: 'You need to empty right hand!' });
+      this.sendMessage(caster, { message: 'You need to empty your right hand!' });
       return;
     }
 

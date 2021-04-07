@@ -1,6 +1,8 @@
 
 export * from './Augury';
 export * from './ConjureHealing';
+export * from './ConjureShield';
+export * from './ConjureSword';
 export * from './Darkness';
 export * from './Dispel';
 export * from './Identify';
