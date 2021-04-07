@@ -111,10 +111,11 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public isMessageVisible(logMode: 'All'|'General'|'Combat'|'NPC', message): boolean {
+    if (logMode === 'NPC') return message.typeHash[MessageType.NPCChatter];
+
     if (message.typeHash[MessageType.Miscellaneous]) return true;
 
     if (logMode === 'All') return true;
-    if (logMode === 'NPC') return message.typeHash[MessageType.NPCChatter];
     if (logMode === 'Combat') return message.typeHash[MessageType.Combat];
     if (logMode === 'General') return !message.typeHash[MessageType.Combat];
 
