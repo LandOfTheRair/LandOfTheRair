@@ -22,7 +22,7 @@ export class ConjureSword extends Spell {
 
     item.mods.destroyOnDrop = true;
     item.mods.offhand = true;
-    item.mods.tier = Math.floor(skill / 4);
+    item.mods.tier = Math.floor(skill / 4) + 1;
 
     item.mods.stats = {};
     item.mods.stats[Stat.WeaponArmorClass] = Math.floor(skill / 6);
