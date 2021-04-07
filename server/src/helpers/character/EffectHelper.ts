@@ -235,12 +235,32 @@ export class EffectHelper extends BaseService {
     return currentDamage;
   }
 
+  // handle outgoing effects (damage bonuses, etc) effects
+  public handleOutgoingEffects(char: ICharacter, attacker: ICharacter, damageArgs: DamageArgs): void {
+    char.effects.outgoing.forEach(eff => {
+      const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
+      if (!ref || !ref.outgoing) return;
+
+      ref.outgoing(eff, char, attacker, damageArgs);
+    });
+  }
+
+  // dispellable effects are only in buff (not incoming or outgoing), and they must be self-removable
   public dispellableEffects(char: ICharacter): IStatusEffect[] {
     return char.effects[BuffType.Buff].filter(x => {
       if (x.endsAt === -1) return false;
       if (!x.effectInfo.canRemove) return false;
 
       return true;
+    });
+  }
+
+  // remove similar effects based on a query (such as for stances and imbues)
+  public removeSimilarEffects(char: ICharacter, query: string, except: string): void {
+    Object.keys(char.effects._hash).forEach(effectName => {
+      if (effectName === except || !effectName.includes(query)) return;
+
+      this.removeEffect(char, char.effects._hash[effectName]);
     });
   }
 

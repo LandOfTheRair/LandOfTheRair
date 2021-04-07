@@ -1,4 +1,7 @@
 import { Injectable } from 'injection-js';
+
+import { isString } from 'lodash';
+
 import { ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
 
 import * as allEffects from '../../../content/_output/effect-data.json';
@@ -38,6 +41,10 @@ export class EffectManager extends BaseService {
   public effectCreate(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
+      if (isString(effect.effectInfo.unique)) {
+        this.game.effectHelper.removeSimilarEffects(character, effect.effectInfo.unique as string, effectName);
+      }
+
       effectRef.create(character, effect);
     }
 
