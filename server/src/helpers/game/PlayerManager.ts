@@ -86,16 +86,16 @@ export class PlayerManager extends BaseService {
 
       // effects tick at most once per second
       if (type === 'slow') {
-        timer.startTimer(`slow-- ${player.name}`);
+        timer.startTimer(`slow-- ${player.username}/${player.name}`);
         this.game.effectHelper.tickEffects(player);
-        timer.stopTimer(`slow-- ${player.name}`);
+        timer.stopTimer(`slow-- ${player.username}/${player.name}`);
       }
 
       // not sure if this will be a good idea or not, we'll see
       if (type === 'fast') {
-        timer.startTimer(`fast-- ${player.name}`);
+        timer.startTimer(`fast-- ${player.username}/${player.name}`);
         this.game.transmissionHelper.tryAutoPatchPlayer(player);
-        timer.stopTimer(`fast-- ${player.name}`);
+        timer.stopTimer(`fast-- ${player.username}/${player.name}`);
       }
     });
   }
