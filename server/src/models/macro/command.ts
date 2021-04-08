@@ -208,23 +208,32 @@ export class SpellCommand extends SkillCommand {
     // if the spell is party-based, target the whole party
     let targets: ICharacter[] = [];
 
+    const refineTargetsIntoAOE = (center: ICharacter) => {
+
+      // attempt to boost the range of the spell
+      let rangeBoost = 0;
+      if (caster && spellData.spellMeta.aoeRangeTrait) {
+        rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
+      }
+
+      targets = this.game.targettingHelper.getPossibleAOETargets(caster, center, (spellData.spellMeta.range ?? 0) + rangeBoost);
+    };
+
     if (targetString) {
       targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
 
       // aoe spells use the first target as a center for all the others
       if (spellData.spellMeta.aoe) {
-
-        // attempt to boost the range of the spell
-        let rangeBoost = 0;
-        if (caster && spellData.spellMeta.aoeRangeTrait) {
-          rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
-        }
-
-        targets = this.game.targettingHelper.getPossibleAOETargets(caster, targets[0], (spellData.spellMeta.range ?? 0) + rangeBoost);
+        refineTargetsIntoAOE(targets[0]);
       }
 
     } else if (caster && this.canTargetSelf) {
       targets = [caster];
+
+      // aoe spells cast on self use you as a center
+      if (spellData.spellMeta.aoe) {
+        refineTargetsIntoAOE(caster);
+      }
     }
 
     if (caster && spellData.spellMeta.targetsParty) {
