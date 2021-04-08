@@ -56,5 +56,7 @@ export interface IPlayer extends ICharacter {
   dailyItems: Record<string, number>;
 
   runes: string[];
-  learnedRunes: string[]
+  learnedRunes: string[];
+
+  teleportLocations: Record<string, { x: number, y: number, map: string }>;
 }

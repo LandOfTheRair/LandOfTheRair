@@ -1,7 +1,9 @@
 
 import { Injectable } from 'injection-js';
 
-import { GameAction } from '../../interfaces';
+import { truncate } from 'lodash';
+
+import { GameAction, IPlayer } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
@@ -97,6 +99,68 @@ export class TeleportHelper extends BaseService {
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
       this.game.transmissionHelper.sendMovementPatch(player);
     }
+  }
+
+  // these are all related to the teleport skill
+  public maxLocations(player: IPlayer): number {
+    return 20 + this.game.traitHelper.traitLevelValue(player, 'ExpandedMemory');
+  }
+
+  public memorizeLocation(player: IPlayer, name: string): boolean {
+    name = truncate(name, { length: 20, omission: '' }).trim();
+    const { map } = this.game.worldManager.getMap(player.map);
+
+    if (!map.canMemorize || !map.canTeleport(player)) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'The surroundings swirl together in your head, making it hard to concentrate.'
+      });
+      return false;
+    }
+
+    const maxTeleports = this.maxLocations(player);
+    if (Object.keys(player.teleportLocations || {}).length >= maxTeleports) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You find it difficult to remember any more locations.'
+      });
+      return false;
+    }
+
+    if (player.teleportLocations?.[name]) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You already know a place by that name!'
+      });
+      return false;
+    }
+
+    player.teleportLocations = player.teleportLocations || {};
+    player.teleportLocations[name] = { x: player.x, y: player.y, map: player.map };
+
+    return true;
+  }
+
+  public forgetLocation(player: IPlayer, name: string): boolean {
+    if (player.teleportLocations?.[name]) {
+      delete player.teleportLocations[name];
+      return true;
+    }
+
+    return false;
+  }
+
+  public showTeleports(player: IPlayer) {
+    const teleports = Object.keys(player.teleportLocations || {});
+    if (teleports.length === 0) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You have not memorized any locations to teleport to.' });
+      return;
+    }
+
+    let msg = `Your teleports (${teleports.length}/${this.maxLocations(player)}):`;
+    teleports.forEach((tp, i) => {
+      msg = `${msg}<br>${i + 1}: ${tp} - ${player.teleportLocations[tp].map}`;
+    });
+
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg });
+
   }
 
 }

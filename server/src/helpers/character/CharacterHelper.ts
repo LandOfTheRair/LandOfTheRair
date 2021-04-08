@@ -619,7 +619,7 @@ export class CharacterHelper extends BaseService {
 
   // whether or not this particular character knows how to cast a spell/ability
   public hasLearned(character: ICharacter, spell: string): boolean {
-    return (character.learnedSpells[spell] ?? LearnedSpell.Unlearned) !== LearnedSpell.Unlearned;
+    return (character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned) !== LearnedSpell.Unlearned;
   }
 
   // whether or not this particular character knows how to cast a spell/ability

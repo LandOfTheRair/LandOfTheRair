@@ -55,6 +55,9 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) spellChannel: { ticks: number; callback: () => void };
   @Property(PROP_TEMPORARY()) pets: INPC[];
 
+  // other server props
+  @Property(PROP_SERVER_ONLY()) teleportLocations: Record<string, { x: number; y: number; map: string }>;
+
   // all characters have these props
   @Property() uuid: string;
   @Property() name: string;

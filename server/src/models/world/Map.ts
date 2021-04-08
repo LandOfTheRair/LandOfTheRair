@@ -437,6 +437,11 @@ export class WorldMap {
     return !this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
   }
 
+  // whether or not the current tile is teleportable
+  public canTeleport(player: IPlayer): boolean {
+    return !this.getSuccorportPropertiesAt(player.x, player.y)?.restrictTeleport;
+  }
+
 }
 
 export class InstancedWorldMap extends WorldMap {
