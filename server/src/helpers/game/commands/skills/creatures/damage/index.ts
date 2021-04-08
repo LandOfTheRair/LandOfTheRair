@@ -1,5 +1,6 @@
 
 export * from './afflict';
+export * from './antipode';
 export * from './combust';
 export * from './energywave';
 export * from './hail';
