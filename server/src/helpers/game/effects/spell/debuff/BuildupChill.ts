@@ -30,7 +30,7 @@ export class BuildupChill extends Effect {
       effect.effectInfo.buildUpCurrent ??= 0;
 
       effect.effectInfo.potency += currentDamage;
-      effect.effectInfo.buildUpCurrent += random(15, 25);
+      effect.effectInfo.buildUpCurrent += random(15, 25) + (attacker ? this.game.traitHelper.traitLevelValue(attacker, 'ChilledCore') : 0);
 
       if (effect.effectInfo.buildUpCurrent >= (effect.effectInfo.buildUpMax ?? 200)) {
         this.game.effectHelper.removeEffect(char, effect);
