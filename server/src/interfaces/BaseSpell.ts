@@ -16,4 +16,7 @@ export interface SpellCastArgs {
   spellData: ISpellData;
   callbacks: any;
   originalArgs?: IMacroCommandArgs;
+  x?: number;
+  y?: number;
+  map?: string;
 }

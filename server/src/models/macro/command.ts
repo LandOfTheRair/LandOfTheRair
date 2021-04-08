@@ -200,7 +200,7 @@ export class SpellCommand extends SkillCommand {
   }
 
   // called when a player casts a spell at something
-  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
+  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs, targetsPosition?: { x: number; y: number; map: string }) {
     const targetString = args.stringArgs.trim();
 
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
@@ -248,6 +248,18 @@ export class SpellCommand extends SkillCommand {
 
       this.castSpellAt(caster, target, args);
     });
+
+    if ((caster || targetsPosition) && targets.length === 0 && spellData.spellMeta.aoe) {
+      // TODO: directional casting - parse target string here
+      const x = targetsPosition?.x ?? caster?.x ?? 0;
+      const y = targetsPosition?.y ?? caster?.y ?? 0;
+      const map = targetsPosition?.map ?? caster?.map ?? '';
+
+      if (x > 0 && y > 0 && map) {
+        this.castSpellAt(caster, null, args, { x, y, map });
+      }
+
+    }
   }
 
   // whether or not the spell can be cast - simple check that gets rolled into canUse
@@ -263,14 +275,19 @@ export class SpellCommand extends SkillCommand {
   }
 
   // cast the spell at the target - caster optional
-  protected castSpellAt(caster: ICharacter | null, target: ICharacter, args?: IMacroCommandArgs) {
+  protected castSpellAt(
+    caster: ICharacter | null,
+    target: ICharacter | null,
+    args?: IMacroCommandArgs,
+    targetsPosition?: { x: number; y: number; map: string }
+  ) {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
     if (!spellData) return;
 
     const doSpellCast = () => {
 
       // if there's no target, we bail
-      if (!target || this.game.characterHelper.isDead(target)) {
+      if (!targetsPosition && (!target || this.game.characterHelper.isDead(target))) {
         if (caster) {
           delete caster.spellChannel;
         }
@@ -282,23 +299,25 @@ export class SpellCommand extends SkillCommand {
       if (caster) {
         delete caster.spellChannel;
 
-        if (caster !== target && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
+        if (caster !== target && target && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
           return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
         }
 
-        if (!this.tryToConsumeMP(caster, [target], args?.overrideEffect)) return;
+        const castTargets = target ? [target] : [];
+        if (!this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
       }
 
       // try to reflect the spell if possible
       let hitTarget = target;
       if (caster
+      && target
       && target !== caster
       && !spellData.spellMeta.noReflect
       && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(target, Stat.SpellReflectChance))) {
         hitTarget = caster;
       }
 
-      this.game.spellManager.castSpell(this.spellRef, caster, hitTarget, args?.overrideEffect, args?.callbacks, args);
+      this.game.spellManager.castSpell(this.spellRef, caster, hitTarget, args?.overrideEffect, args?.callbacks, args, targetsPosition);
     };
 
     if (caster && spellData.castTime) {

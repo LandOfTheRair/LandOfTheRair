@@ -68,14 +68,15 @@ export class SpellManager extends BaseService {
   public castSpell(
     spell: string,
     caster: ICharacter|null = null,
-    target: ICharacter,
+    target: ICharacter|null = null,
     override: Partial<IItemEffect> = {},
     callbacks?: any,
-    originalArgs?: IMacroCommandArgs
+    originalArgs?: IMacroCommandArgs,
+    targetsPosition?: { x: number; y: number; map: string }
   ): void {
     if (!caster && !target) return;
 
-    if (this.game.characterHelper.isDead(target)) return;
+    if (target && this.game.characterHelper.isDead(target)) return;
 
     const spellData = this.getSpellData(spell);
     if (!spellData) {
@@ -94,7 +95,7 @@ export class SpellManager extends BaseService {
       doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
-    if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
+    if (caster && target && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
       this.game.messageHelper.sendSimpleMessage(caster, 'You cannot target that creature with this spell!');
       return;
     }
@@ -115,12 +116,12 @@ export class SpellManager extends BaseService {
     }
 
     // always apply agro
-    if (bonusAgro && caster) {
+    if (bonusAgro && caster && target) {
       this.game.characterHelper.addAgro(caster, target, bonusAgro);
     }
 
     // try to resist the spell
-    if (caster && canBeResisted) {
+    if (caster && target && canBeResisted) {
       const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster))
                        + (resistLowerTrait ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait) : 0);
       const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL)
@@ -150,7 +151,7 @@ export class SpellManager extends BaseService {
       const spellRange = override.range ?? range ?? 0;
       const duration = override.duration ?? 0;
 
-      if (doesAttack) {
+      if (target && doesAttack) {
         this.game.combatHelper.magicalAttack(caster, target, {
           atkMsg: spellData.spellMeta.casterAttackMessage,
           defMsg: spellData.spellMeta.targetAttackMessage,
@@ -161,7 +162,7 @@ export class SpellManager extends BaseService {
         });
       }
 
-      if (doesHeal) {
+      if (target && doesHeal) {
         this.game.combatHelper.magicalAttack(caster, target, {
           atkMsg: spellData.spellMeta.casterAttackMessage,
           defMsg: spellData.spellMeta.targetAttackMessage,
@@ -172,10 +173,13 @@ export class SpellManager extends BaseService {
         });
       }
 
-      spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData, originalArgs });
+      spellRef.cast(caster, target, {
+        potency, range: spellRange, duration, callbacks, spellData, originalArgs,
+        ...(targetsPosition || {})
+      });
     }
 
-    if (doesOvertime) {
+    if (doesOvertime && target) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
       if (caster && noHostileTarget && spellEffInfo.effect?.duration) {
         spellEffInfo.effect.duration = Math.floor(
@@ -186,7 +190,7 @@ export class SpellManager extends BaseService {
       this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
     }
 
-    if (creatureSummoned) {
+    if (creatureSummoned && target) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData);
       const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
       ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;

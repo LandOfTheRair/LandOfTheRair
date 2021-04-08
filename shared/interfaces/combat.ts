@@ -16,6 +16,17 @@ export enum CombatEffect {
   HitMagic = 'hit-magic'
 }
 
+export enum VisualEffect {
+  FireFloor = 0,
+  IceMist = 1,
+  WaterPool = 2,
+  FireMist = 3,
+  DustMist = 4,
+  SnowFloor = 5,
+  IceStorm = 6,
+  SludgeFloor = 7
+}
+
 export interface OnesidedDamageArgs {
   damage: number;
   damageClass: DamageClass;

@@ -1,3 +1,4 @@
+import { VisualEffect } from './combat';
 import { SoundEffect } from './sfx';
 
 export enum MessageType {
@@ -38,6 +39,8 @@ export interface MessageInfo {
   message: string;
   fromDiscord?: string;
   sfx?: SoundEffect;
+  vfx?: VisualEffect;
+  vfxRadius?: number;
   from?: string;
   setTarget?: string|null;
   logInfo?: any;
