@@ -8,6 +8,8 @@ export * from './BarNecro';
 export * from './BarWater';
 export * from './DarkVision';
 export * from './FindFamiliar';
+export * from './FirethornsAura';
+export * from './FrostspikesAura';
 export * from './Haste';
 export * from './HolyAura';
 export * from './ImbueEnergy';
