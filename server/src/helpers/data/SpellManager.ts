@@ -90,7 +90,7 @@ export class SpellManager extends BaseService {
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait, creatureSummoned,
+    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait, creatureSummoned, extraAttackTrait,
       doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
@@ -133,10 +133,6 @@ export class SpellManager extends BaseService {
 
     }
 
-    const potency = override.potency ?? spellRef.getPotency(caster, target, spellData);
-    const spellRange = override.range ?? range ?? 0;
-    const duration = override.duration ?? 0;
-
     if (caster !== target && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
     }
@@ -145,29 +141,39 @@ export class SpellManager extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
     }
 
-    if (doesAttack) {
-      this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.spellMeta.casterAttackMessage,
-        defMsg: spellData.spellMeta.targetAttackMessage,
-        sfx: SoundEffect.CombatHitSpell,
-        damage: potency,
-        damageClass: spellData.damageClass || DamageClass.Energy,
-        spellData
-      });
-    }
+    let numCasts = 1;
+    if (caster && extraAttackTrait) numCasts += this.game.traitHelper.traitLevelValue(caster, extraAttackTrait);
 
-    if (doesHeal) {
-      this.game.combatHelper.magicalAttack(caster, target, {
-        atkMsg: spellData.spellMeta.casterAttackMessage,
-        defMsg: spellData.spellMeta.targetAttackMessage,
-        sfx: SoundEffect.SpellHeal,
-        damage: -potency,
-        damageClass: spellData.damageClass || DamageClass.Heal,
-        spellData
-      });
-    }
+    for (let i = 0; i < numCasts; i++) {
 
-    spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData, originalArgs });
+      const potency = override.potency ?? spellRef.getPotency(caster, target, spellData);
+      const spellRange = override.range ?? range ?? 0;
+      const duration = override.duration ?? 0;
+
+      if (doesAttack) {
+        this.game.combatHelper.magicalAttack(caster, target, {
+          atkMsg: spellData.spellMeta.casterAttackMessage,
+          defMsg: spellData.spellMeta.targetAttackMessage,
+          sfx: SoundEffect.CombatHitSpell,
+          damage: potency,
+          damageClass: spellData.damageClass || DamageClass.Energy,
+          spellData
+        });
+      }
+
+      if (doesHeal) {
+        this.game.combatHelper.magicalAttack(caster, target, {
+          atkMsg: spellData.spellMeta.casterAttackMessage,
+          defMsg: spellData.spellMeta.targetAttackMessage,
+          sfx: SoundEffect.SpellHeal,
+          damage: -potency,
+          damageClass: spellData.damageClass || DamageClass.Heal,
+          spellData
+        });
+      }
+
+      spellRef.cast(caster, target, { potency, range: spellRange, duration, callbacks, spellData, originalArgs });
+    }
 
     if (doesOvertime) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
