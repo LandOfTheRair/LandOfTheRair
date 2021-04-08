@@ -14,6 +14,7 @@ export * from './HolyAura';
 export * from './ImbueEnergy';
 export * from './ImbueFlame';
 export * from './ImbueFrost';
+export * from './MagicMirror';
 export * from './Protection';
 export * from './Regen';
 export * from './SecondWind';

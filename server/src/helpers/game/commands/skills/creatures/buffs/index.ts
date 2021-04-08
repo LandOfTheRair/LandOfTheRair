@@ -14,6 +14,7 @@ export * from './holyaura';
 export * from './imbueenergy';
 export * from './imbueflame';
 export * from './imbuefrost';
+export * from './magicmirror';
 export * from './powerwordbarfire';
 export * from './powerwordbarfrost';
 export * from './powerwordbarnecro';
