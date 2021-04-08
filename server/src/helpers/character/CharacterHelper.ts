@@ -167,6 +167,14 @@ export class CharacterHelper extends BaseService {
     if ((char as INPC).owner && target === (char as INPC).owner) return;
     if ((target as INPC).owner && char === (target as INPC).owner) return;
 
+    if (this.game.effectHelper.hasEffect(char, 'Invisibility')) {
+      this.game.effectHelper.removeEffectByName(char, 'Invisibility');
+    }
+
+    if (this.game.effectHelper.hasEffect(target, 'Invisibility')) {
+      this.game.effectHelper.removeEffectByName(target, 'Invisibility');
+    }
+
     const modifyAgro = (agroChar: ICharacter, agroTarget: ICharacter, modAmount: number) => {
       agroChar.agro[agroTarget.uuid] = (agroChar.agro[agroTarget.uuid] || 0) + modAmount;
 

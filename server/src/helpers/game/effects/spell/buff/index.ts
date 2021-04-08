@@ -17,4 +17,5 @@ export * from './MagicMirror';
 export * from './FindFamiliar';
 export * from './Protection';
 export * from './Regen';
+export * from './TrueSight';
 export * from './VitalEssence';

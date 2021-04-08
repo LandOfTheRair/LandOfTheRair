@@ -144,7 +144,7 @@ export class VisibilityHelper extends BaseService {
     if ((hiding as IPlayer).partyName && (char as IPlayer).partyName === (hiding as IPlayer).partyName) return true;
 
     // if the hider is invisible and the seer does not have truesight, they are not visible
-    if (this.game.effectHelper.hasEffect(hiding, 'Invisible') && !this.game.effectHelper.hasEffect(char, 'TrueSight')) return false;
+    if (this.game.effectHelper.hasEffect(hiding, 'Invisibility') && !this.game.effectHelper.hasEffect(char, 'TrueSight')) return false;
 
     // last are stealth checks, if you have hidden it triggers the perception/stealth checks
     if (this.game.effectHelper.hasEffect(hiding, 'Hidden')) {
