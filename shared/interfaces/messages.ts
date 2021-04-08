@@ -41,6 +41,9 @@ export interface MessageInfo {
   sfx?: SoundEffect;
   vfx?: VisualEffect;
   vfxRadius?: number;
+  vfxTimeout?: number;
+  vfxX?: number;
+  vfxY?: number;
   from?: string;
   setTarget?: string|null;
   logInfo?: any;

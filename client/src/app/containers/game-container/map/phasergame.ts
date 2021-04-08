@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { IGround, IMapData, INPC, IPlayer } from '../../../../interfaces';
+import { IGround, IMapData, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
@@ -24,6 +24,7 @@ export class MapRenderGame extends Phaser.Game {
       openDoors: Observable<Record<number, boolean>>;
       ground: Observable<IGround>;
       windowChange: Observable<any>;
+      vfx: Observable<{ vfx: VisualEffect; vfxX: number; vfxY: number; vfxRadius: number }>;
     }
     ) {
       super(config);

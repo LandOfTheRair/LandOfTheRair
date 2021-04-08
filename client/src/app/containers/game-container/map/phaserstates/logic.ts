@@ -52,6 +52,7 @@ export class MapScene extends Phaser.Scene {
   private openDoorsUpdate$: Subscription;
   private groundUpdate$: Subscription;
   private windowUpdate$: Subscription;
+  private vfxUpdate$: Subscription;
   private player: IPlayer;
 
   private hideWelcome: boolean;
@@ -496,6 +497,11 @@ export class MapScene extends Phaser.Scene {
       this.scale.updateBounds();
     });
 
+    // watch for incoming vfx so we can render them
+    this.vfxUpdate$ = this.game.observables.vfx.subscribe((vfx) => {
+      this.drawVFX(vfx);
+    });
+
     // watch for player updates
     this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
       this.player = updPlayer;
@@ -573,6 +579,7 @@ export class MapScene extends Phaser.Scene {
     if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
     if (this.groundUpdate$) this.groundUpdate$.unsubscribe();
     if (this.windowUpdate$) this.windowUpdate$.unsubscribe();
+    if (this.vfxUpdate$) this.vfxUpdate$.unsubscribe();
   }
 
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
@@ -765,6 +772,25 @@ export class MapScene extends Phaser.Scene {
         sprite.destroy();
       }
     });
+  }
+
+  private drawVFX(vfxData): void {
+
+    const { vfx, vfxX, vfxY, vfxRadius, vfxTimeout } = vfxData;
+
+    for (let x = vfxX - vfxRadius; x <= vfxX + vfxRadius; x++) {
+      for (let y = vfxY - vfxRadius; y <= vfxY + vfxRadius; y++) {
+        try {
+
+          const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Effects', vfx);
+
+          setTimeout(() => {
+            sprite.destroy();
+          }, vfxTimeout ?? 2000);
+
+        } catch {}
+      }
+    }
   }
 
   private goldSpriteForLocation(x: number, y: number) {

@@ -47,7 +47,7 @@ export class MessageHelper extends BaseService {
   public sendLogMessageToRadius(
     character: ICharacter | { x: number; y: number; map: string },
     radius: number,
-    { message, sfx, from, setTarget, except }: MessageInfo,
+    { message, sfx, vfx, vfxRadius, vfxX, vfxY, vfxTimeout, from, setTarget, except }: MessageInfo,
     messageTypes: MessageType[] = [MessageType.Miscellaneous],
     formatArgs: ICharacter[] = []
   ): void {
@@ -75,6 +75,11 @@ export class MessageHelper extends BaseService {
         messageTypes,
         message: sendMessage,
         sfx,
+        vfx,
+        vfxRadius,
+        vfxX,
+        vfxY,
+        vfxTimeout,
         setTarget
       });
     });

@@ -1,9 +1,9 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { GameServerEvent, IGround, INPC, IPlayer } from '../../../../interfaces';
+import { GameServerEvent, GameServerResponse, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { GameState, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
@@ -38,6 +38,7 @@ export class MapComponent implements OnInit, OnDestroy {
   public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
   public openDoors = new BehaviorSubject<Record<number, boolean>>({ });
   public ground = new BehaviorSubject<IGround>({ });
+  public vfx = new Subject<{ vfx: VisualEffect; vfxX: number; vfxY: number; vfxRadius: number; vfxTimeout: number }>();
 
   // subs
   meSub: Subscription;
@@ -91,6 +92,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.gameService.currentMap$.subscribe(() => {
       this.hideMap.next(true);
+    });
+
+    this.socketService.registerComponentCallback('VFX', GameServerResponse.GameLog, (data) => {
+      if (!data.vfx || !data.vfxX || !data.vfxY) return;
+
+      this.vfx.next({ vfx: data.vfx, vfxX: data.vfxX, vfxY: data.vfxY, vfxRadius: data.vfxRadius ?? 0, vfxTimeout: data.vfxTimeout });
     });
 
     // play game when we get the signal and have a valid map
@@ -196,6 +203,7 @@ export class MapComponent implements OnInit, OnDestroy {
         allNPCs: this.allNPCs,
         openDoors: this.openDoors,
         ground: this.ground,
+        vfx: this.vfx,
         windowChange: this.store.select(SettingsState.window).pipe(map(x => x('map')))
       }
     );
