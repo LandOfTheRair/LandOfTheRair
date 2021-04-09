@@ -41,6 +41,16 @@ export class CombatHelper extends BaseService {
       }
     }
 
+    const drainChance = this.game.traitHelper.traitLevelValue(attacker, 'DrainSlash');
+    if (drainChance > 0 && this.game.diceRollerHelper.XInOneHundred(drainChance)) {
+      this.game.spellManager.castSpell('Drain', attacker, defender);
+    }
+
+    const asperChance = this.game.traitHelper.traitLevelValue(attacker, 'AsperSlash');
+    if (asperChance > 0 && this.game.diceRollerHelper.XInOneHundred(asperChance)) {
+      this.game.spellManager.castSpell('Asper', attacker, defender);
+    }
+
     return res;
   }
 

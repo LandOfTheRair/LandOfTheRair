@@ -1,7 +1,9 @@
 
 export * from './afflict';
 export * from './antipode';
+export * from './asper';
 export * from './combust';
+export * from './drain';
 export * from './energywave';
 export * from './firemist';
 export * from './hail';

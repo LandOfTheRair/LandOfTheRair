@@ -1,7 +1,9 @@
 
 export * from './Afflict';
 export * from './Antipode';
+export * from './Asper';
 export * from './Combust';
+export * from './Drain';
 export * from './EnergyWave';
 export * from './FireMist';
 export * from './Hail';
