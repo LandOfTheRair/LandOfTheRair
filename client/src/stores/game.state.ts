@@ -265,7 +265,9 @@ export class GameState {
         }
       });
 
-      copyState.player = applyPatch(cloneDeep(copyState.player), patches).newDocument;
+      try {
+        copyState.player = applyPatch(cloneDeep(copyState.player), patches).newDocument;
+      } catch {}
     }
 
     ctx.patchState(copyState);
