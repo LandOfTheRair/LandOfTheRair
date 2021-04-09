@@ -11,3 +11,4 @@ export * from './HolyFire';
 export * from './IceMist';
 export * from './MagicBolt';
 export * from './MagicMissile';
+export * from './RiftSlash';

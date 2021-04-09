@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { truncate } from 'lodash';
 
-import { GameAction, IPlayer } from '../../interfaces';
+import { GameAction, ICharacter, IPlayer } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
@@ -17,7 +17,7 @@ export class TeleportHelper extends BaseService {
 
   public init() {}
 
-  public setCharXY(player: Player, x: number, y: number) {
+  public setCharXY(player: ICharacter, x: number, y: number) {
 
     const oldPos = { oldX: player.x, oldY: player.y };
 
@@ -34,7 +34,9 @@ export class TeleportHelper extends BaseService {
 
     state.moveNPCOrPlayer(player, oldPos);
 
-    this.game.visibilityHelper.calculatePlayerFOV(player);
+    if (this.game.characterHelper.isPlayer(player)) {
+      this.game.visibilityHelper.calculatePlayerFOV(player as Player);
+    }
   }
 
   // teleport a player to their respawn point

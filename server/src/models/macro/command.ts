@@ -191,7 +191,7 @@ export class SpellCommand extends SkillCommand {
     return Math.floor(cost);
   }
 
-  override range(): number {
+  override range(char: ICharacter): number {
     return 5;
   }
 
