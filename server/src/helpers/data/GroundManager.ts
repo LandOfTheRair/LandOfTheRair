@@ -129,7 +129,7 @@ export class GroundManager extends BaseService {
   // get all serializable spawners for a map for their current state
   private collectSpawners(mapName: string): ISerializableSpawner[] {
     const { state } = this.game.worldManager.getMap(mapName);
-    return state.getSerializableSpawners();
+    return state?.getSerializableSpawners() ?? [];
   }
 
   public getGround(mapName: string): IGround {
