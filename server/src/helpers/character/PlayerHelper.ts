@@ -187,7 +187,7 @@ export class PlayerHelper extends BaseService {
 
     // if we're on a dense tile, "respawn"
     const { map } = this.worldManager.getMap(player.map);
-    if (map.getWallAt(player.x, player.y) || map.getDenseDecorAt(player.x, player.y)) {
+    if (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y)) {
       this.teleportHelper.teleportToRespawnPoint(player);
     }
   }
