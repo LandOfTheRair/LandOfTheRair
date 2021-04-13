@@ -107,7 +107,9 @@ export class DamageHelperPhysical extends BaseService {
       return { damage: 0, isWeak: false, isStrong: false };
     }
 
-    const attackerScaleStatValue = this.game.characterHelper.getStat(attacker, scaleStat);
+    let attackerScaleStatValue = this.game.characterHelper.getStat(attacker, scaleStat);
+    attackerScaleStatValue += Math.floor(attackerScaleStatValue * this.game.traitHelper.traitLevelValue(attacker, 'StrongMind'));
+
     const scaleStatValue = statMultipliers[Math.min(statMultipliers.length - 1, attackerScaleStatValue)];
 
     const { damage, variance, scaling, bonus, weakPercent, strongPercent } = weaponStats;
