@@ -11,7 +11,12 @@ export class Boost extends Effect {
       [Stat.AGI]: effect.effectInfo.potency
     };
 
-    this.game.effectHelper.addEffect(char, char, 'Stun', { effect: { duration: 5 } });
+    this.game.effectHelper.addEffect(char, char, 'Stun', {
+      effect: {
+        duration: 5,
+        extra: { disableMessages: true, disableRecently: true }
+      }
+    });
   }
 
 }

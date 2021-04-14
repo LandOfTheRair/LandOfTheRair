@@ -64,7 +64,12 @@ export class Push extends Spell {
     } else {
       this.game.messageHelper.sendLogMessageToRadius(target, 4, { message: `${target.name} was knocked over!` });
 
-      this.game.spellManager.castSpell('Stun', caster, target, { potency: 1, duration: 1 });
+      this.game.effectHelper.addEffect(target, target, 'Stun', {
+        effect: {
+          duration: 1,
+          extra: { disableMessages: true, disableRecently: true }
+        }
+      });
     }
   }
 

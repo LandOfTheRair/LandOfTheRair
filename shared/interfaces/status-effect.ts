@@ -18,6 +18,8 @@ export interface IStatusEffectInfo {
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
   unique?: boolean|string;                      // whether or not this effect is unique (ie, can have duplicates of) - if string, similar effects will be removed (imbue, stance)
+  disableMessages?: boolean;                    // whether or not to disable apply/unapply messages
+  disableRecently?: boolean;                    // whether or not to disable recently effects
 
   charges?: number;                             // the number of charges this effect has remaining
 
