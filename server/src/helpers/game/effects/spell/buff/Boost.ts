@@ -10,6 +10,8 @@ export class Boost extends Effect {
       [Stat.DEX]: effect.effectInfo.potency,
       [Stat.AGI]: effect.effectInfo.potency
     };
+
+    this.game.effectHelper.addEffect(char, char, 'Stun', { effect: { duration: 5 } });
   }
 
 }
