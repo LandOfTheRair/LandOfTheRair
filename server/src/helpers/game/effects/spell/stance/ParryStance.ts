@@ -43,6 +43,12 @@ export class ParryStance extends Effect {
   ): number {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) return currentDamage;
 
+    // if we're on someone and we can riposte, give it a try
+    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'Riposte'))
+    && this.game.directionHelper.distFrom(char, attacker) === 0) {
+      this.game.combatHelper.physicalAttack(char, attacker);
+    }
+
     return Math.floor(currentDamage * (1 - (effect.effectInfo.potency / 100)));
   }
 
