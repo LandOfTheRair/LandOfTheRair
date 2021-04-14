@@ -104,7 +104,7 @@ export class ItemHelper extends BaseService {
 
   // set the owner of an item
   public setOwner(player: IPlayer, item: ISimpleItem): void {
-    item.mods.owner = player.username;
+    this.setItemProperty(item, 'owner', player.username);
   }
 
   // check if an item is broken

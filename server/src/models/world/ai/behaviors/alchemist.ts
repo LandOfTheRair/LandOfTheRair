@@ -55,7 +55,7 @@ export class AlchemistBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold something in your right hand!';
 
-        const maxOz = game.subscriptionHelper.maxSmithRepair(player, alchOz);
+        const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
         const { itemClass, ounces, useEffect } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'ounces', 'useEffect']);
 
         const itemOunces = ounces ?? 0;
@@ -71,6 +71,7 @@ export class AlchemistBehavior implements IAIBehavior {
           const { useEffect: checkEffect, ounces: checkOunces } = game.itemHelper.getItemProperties(item, ['useEffect', 'ounces']);
           const checkItemOunces = checkOunces ?? 0;
 
+          if (rightHand.name !== item.name) return;
           if (!checkEffect) return;
           if (checkEffect.name !== useEffect.name) return;
           if (checkEffect.potency !== useEffect.potency) return;
@@ -89,6 +90,8 @@ export class AlchemistBehavior implements IAIBehavior {
         if (itemsRemoved === 0) return 'I was not able to combine any bottles.';
 
         game.inventoryHelper.removeItemsFromSackByUUID(player, removeUUIDs);
+
+        game.itemHelper.setOwner(player, rightHand);
 
         return `I've combined ${itemsRemoved} bottles from your sack and combined them with the one in your hand, enjoy!`;
       });
