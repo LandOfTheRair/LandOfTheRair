@@ -775,7 +775,13 @@ export class DamageHelperPhysical extends BaseService {
     args.accuracyLoss = args.accuracyLoss ?? 0;
     args.damageClass = args.damageClass ?? DamageClass.Physical;
     args.offhandMultiplier = args.offhandMultiplier ?? 1;
-    if (isOffhand) args.offhandMultiplier = 0.2;
+
+    // this is a bit complicated, but how it works is offhands deal 20% damage by default
+    if (isOffhand) {
+      args.offhandMultiplier = (args.offhandMultiplier - 0.8) + this.game.traitHelper.traitLevelValue(attacker, 'OffhandFinesse');
+
+      if (args.offhandMultiplier < 0.1) args.offhandMultiplier = 0.1;
+    }
 
     const isAttackerPlayer = this.game.characterHelper.isPlayer(attacker);
 
@@ -879,7 +885,7 @@ export class DamageHelperPhysical extends BaseService {
     damage += damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
 
     if (isOffhand && args.offhandMultiplier) {
-      damage = Math.floor(damage * (args.offhandMultiplier ?? 0.3));
+      damage = Math.floor(damage * (args.offhandMultiplier ?? 0.2));
     }
 
     if (damage > 0) {
