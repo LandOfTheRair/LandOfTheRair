@@ -25,6 +25,8 @@ export class RegisterAction extends ServerAction {
     if (!data.email.includes('.')
     || !data.email.includes('@'))                         return { message: 'Email must match basic format.' };
 
+    if (/[^A-Za-z0-9]/.test(data.username))               return { message: 'Username must only have letters and numbers.' };
+
     if (game.profanityHelper.hasProfanity(data.username)) return { message: 'Pick a different username.' };
 
     const doesExist = await game.accountDB.doesAccountExist(data.username);
