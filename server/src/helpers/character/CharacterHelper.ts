@@ -431,6 +431,7 @@ export class CharacterHelper extends BaseService {
     const addStat = (stat: Stat, bonus: number) => {
       character.totalStats[stat] = character.totalStats[stat] || 0;
       character.totalStats[stat]! += (bonus ?? 0);
+      character.totalStats[stat] = Math.max(character.totalStats[stat]!, 0);
     };
 
     // add quest completion bonuses

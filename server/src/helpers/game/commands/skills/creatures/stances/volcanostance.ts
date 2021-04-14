@@ -10,7 +10,7 @@ export class VolcanoStance extends SpellCommand {
   override spellRef = 'VolcanoStance';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !target.effects.outgoing.length;
+    return super.canUse(caster, target) && !caster.effects.outgoing.length;
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

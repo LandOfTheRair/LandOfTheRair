@@ -10,7 +10,7 @@ export class GlacierStance extends SpellCommand {
   override spellRef = 'GlacierStance';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !target.effects.outgoing.length;
+    return super.canUse(caster, target) && !caster.effects.incoming.length;
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
