@@ -1128,6 +1128,39 @@ export class MoveItems extends MacroCommand {
       break;
     }
 
+    case 'K': { // GtK
+
+      items.forEach(item => {
+
+        const materialRef = this.game.lockerHelper.getMaterialRef(item.item.name);
+        if (!materialRef) return this.sendMessage(player, 'That is not a material!');
+
+        const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+
+        const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
+        if (withdrawInOunces) {
+          const totalOz = this.game.itemHelper.getItemProperty(item.item, 'ounces') ?? 1;
+          const takeOz = Math.min(materialSpaceLeft, totalOz);
+
+          item.item.mods.ounces = totalOz - takeOz;
+          this.game.inventoryHelper.addMaterial(player, materialRef, takeOz);
+
+          if (item.item.mods.ounces <= 0) {
+            state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, item.item.uuid, 1);
+          }
+
+        } else {
+          const totalPossible = Math.min(materialSpaceLeft, item.count);
+
+          this.game.inventoryHelper.addMaterial(player, materialRef, totalPossible);
+          state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, item.item.uuid, totalPossible);
+
+        }
+      });
+
+      break;
+    }
+
     default: {
       this.game.logger.error('MoveItems', `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`);
       return this.sendMessage(player, 'Something went wrong, please contact a GM.');
