@@ -89,6 +89,12 @@ export class PlayerHelper extends BaseService {
     player.baseClass = baseClass;
     player.mp.maximum = maxMP[baseClass];
     player.stats.mp = 0;
+    
+    player.mp.current = maxMP[baseClass];
+    
+    if (baseClass === BaseClass.Warrior) {
+      player.mp.current = 0;
+    }
 
     const learnTrait: Record<BaseClass, string> = {
       [BaseClass.Healer]: 'Afflict',
