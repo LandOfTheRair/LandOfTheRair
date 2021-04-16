@@ -45,10 +45,10 @@ export class ParryStance extends Effect {
 
     // we can parry magic attacks if glowingweapon exists
     if (damageArgs.damageClass !== DamageClass.Physical
-    && !this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'GlowingWeapon'))) return currentDamage;
+    && !this.game.traitHelper.rollTraitValue(char, 'GlowingWeapon')) return currentDamage;
 
     // if we're on someone and we can riposte, give it a try
-    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'Riposte'))
+    if (this.game.traitHelper.rollTraitValue(char, 'Riposte')
     && this.game.directionHelper.distFrom(char, attacker) === 0) {
       this.game.combatHelper.physicalAttack(char, attacker);
     }

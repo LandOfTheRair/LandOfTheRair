@@ -48,7 +48,7 @@ export class RageStance extends Effect {
     this.game.characterHelper.mana(char, 1);
 
     // if we're on someone and we can viciously assault, give it a try
-    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'ViciousAssault'))
+    if (this.game.traitHelper.rollTraitValue(char, 'ViciousAssault')
     && this.game.directionHelper.distFrom(char, target) === 0) {
       this.game.spellManager.castSpell('Cleave', char, target);
     }

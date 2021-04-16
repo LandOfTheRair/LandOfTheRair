@@ -132,7 +132,7 @@ export class CharacterHelper extends BaseService {
 
   // drop your hands on the ground
   public dropHands(char: ICharacter): void {
-    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
+    if (this.game.traitHelper.rollTraitValue(char, 'DeathGrip')) return;
 
     const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(char, char.x, char.y);
 
@@ -456,6 +456,11 @@ export class CharacterHelper extends BaseService {
       const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
       if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
       && !GivesBonusInHandItemClasses.includes(itemClass)) return;
+
+      // shields don't work in right hand unless you have the trait
+      if (itemClass === ItemClass.Shield
+      && itemSlot === ItemSlot.RightHand
+      && !this.game.traitHelper.traitLevel(character, 'Shieldbearer')) return;
 
       Object.values(Stat).forEach(stat => {
         const bonus = this.game.itemHelper.getStat(item, stat);
