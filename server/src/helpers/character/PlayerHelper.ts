@@ -88,7 +88,7 @@ export class PlayerHelper extends BaseService {
 
     player.baseClass = baseClass;
     player.mp.maximum = maxMP[baseClass];
-    player.stats.mp = 0;
+    player.stats.mp = maxMP[baseClass];
 
     const learnTrait: Record<BaseClass, string> = {
       [BaseClass.Healer]: 'Afflict',
