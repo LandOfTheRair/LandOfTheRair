@@ -457,6 +457,11 @@ export class CharacterHelper extends BaseService {
       if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
       && !GivesBonusInHandItemClasses.includes(itemClass)) return;
 
+      // shields don't work in right hand unless you have the trait
+      if (itemClass === ItemClass.Shield
+      && itemSlot === ItemSlot.RightHand
+      && !this.game.traitHelper.traitLevel(character, 'Shieldbearer')) return;
+
       Object.values(Stat).forEach(stat => {
         const bonus = this.game.itemHelper.getStat(item, stat);
         addStat(stat, bonus);
