@@ -403,7 +403,7 @@ export class MapScene extends Phaser.Scene {
   private setupMapInteractions() {
     this.input.mouse.disableContextMenu();
 
-    this.input.on('pointerdown', (pointer) => {
+    this.input.on('pointerup', (pointer) => {
       if (this.input.activePointer.rightButtonDown() || !this.player) return;
 
       const xCoord = Math.floor(pointer.worldX / 64);
