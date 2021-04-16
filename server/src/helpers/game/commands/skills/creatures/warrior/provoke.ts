@@ -5,8 +5,6 @@ export class Provoke extends SpellCommand {
 
   override aliases = ['provoke', 'art provoke'];
   override requiresLearn = true;
-  override targetsFriendly = true;
-  override canTargetSelf = true;
   override spellRef = 'Provoke';
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
