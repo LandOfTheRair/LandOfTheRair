@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
-import { IPlayer } from '../../../interfaces';
+import { initializeCharacter, IPlayer } from '../../../interfaces';
 import { Account, AccountBank, AccountLockers, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
@@ -36,6 +36,7 @@ export class CharacterDB extends BaseService {
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass, weapons });
 
     const player = new Player();
+    Object.assign(player, initializeCharacter());
     player._id = new ObjectId();
 
     player._account = account._id;
@@ -45,7 +46,6 @@ export class CharacterDB extends BaseService {
     Object.keys(characterDetails.items).forEach(itemSlot => {
       player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
-
     player.charSlot = slot;
     player.name = name;
     player.allegiance = allegiance;
@@ -54,16 +54,10 @@ export class CharacterDB extends BaseService {
     player.currency = { gold: characterDetails.gold };
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
-    player.level = 1;
     player.traits.tp = 2;
-    player.map = 'Tutorial';
-    player.x = 14;
-    player.y = 14;
 
-    player.hp = { current: 100, maximum: 100, minimum: 0 };
-    player.mp = { current: 0, maximum: 0, minimum: 0 };
-
-    this.game.playerHelper.becomeClass(player, player.baseClass, false);
+    this.game.playerHelper.becomeClass(player, player.baseClass);
+    this.game.characterHelper.healToFull(player);
 
     player.items.sack.items = [this.game.itemCreator.getSimpleItem('Newbie Book')];
 
