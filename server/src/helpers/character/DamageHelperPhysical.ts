@@ -925,7 +925,7 @@ export class DamageHelperPhysical extends BaseService {
       criticality = 1;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
 
-      if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(defender, 'SterlingArmor'))) {
+      if (this.game.traitHelper.rollTraitValue(defender, 'SterlingArmor')) {
         damage = 0;
       }
 

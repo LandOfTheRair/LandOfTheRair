@@ -132,7 +132,7 @@ export class CharacterHelper extends BaseService {
 
   // drop your hands on the ground
   public dropHands(char: ICharacter): void {
-    if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'DeathGrip'))) return;
+    if (this.game.traitHelper.rollTraitValue(char, 'DeathGrip')) return;
 
     const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(char, char.x, char.y);
 
