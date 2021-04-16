@@ -925,6 +925,10 @@ export class DamageHelperPhysical extends BaseService {
       criticality = 1;
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitWeak);
 
+      if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(defender, 'SterlingArmor'))) {
+        damage = 0;
+      }
+
     } else if (attackerScope.isStrong) {
       damageType = 'left a grievous wound';
       criticality = 4;
