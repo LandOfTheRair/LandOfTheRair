@@ -55,12 +55,12 @@ export class TargettingHelper extends BaseService {
     // I can never be hostile to myself
     if (targetOpts.self && me === target) return false;
 
+    // GMs are never hostile
+    if (target.allegiance === Allegiance.GM) return false;
+
     // players and enemies are always hostile
     if (this.game.characterHelper.isPlayer(me) && target.allegiance === Allegiance.Enemy
     || this.game.characterHelper.isPlayer(target) && me.allegiance === Allegiance.Enemy) return true;
-
-    // GMs are never hostile
-    if (target.allegiance === Allegiance.GM) return false;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
     if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return targetOpts.def;
