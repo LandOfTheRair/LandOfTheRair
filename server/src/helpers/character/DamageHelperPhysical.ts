@@ -758,7 +758,11 @@ export class DamageHelperPhysical extends BaseService {
     // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa
     // then we multiply by the def CON to get our 1/x
     // this means there's always a chance of c-stun, but high con and having higher CON than your attackers will mitigate it effectively
-    let conMultiplier = 20;
+    let conMultiplier = 21;
+    if (!attacker.items.equipment[ItemSlot.RightHand]) {
+      conMultiplier -= this.game.traitHelper.traitLevelValue(attacker, 'StunningFist');
+    }
+
     const defCon = this.game.characterHelper.getStat(defender, Stat.CON);
     const atkStr = this.game.characterHelper.getStat(attacker, Stat.STR);
 
