@@ -79,8 +79,8 @@ export class PlayerHelper extends BaseService {
 
   public becomeClass(player: IPlayer, baseClass: BaseClass, recalculateAfterTrait = true) {
     const maxMP: Record<BaseClass, number> = {
-      [BaseClass.Healer]: 20,
-      [BaseClass.Mage]: 30,
+      [BaseClass.Healer]: 50,
+      [BaseClass.Mage]: 70,
       [BaseClass.Warrior]: 100,
       [BaseClass.Thief]: 100,
       [BaseClass.Traveller]: 0
