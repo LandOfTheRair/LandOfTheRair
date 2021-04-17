@@ -83,4 +83,8 @@ export class VendorComponent implements OnInit, OnDestroy {
     return boughtTime > +theoreticalResetTime;
   }
 
+  assess() {
+    this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, assess`);
+  }
+
 }

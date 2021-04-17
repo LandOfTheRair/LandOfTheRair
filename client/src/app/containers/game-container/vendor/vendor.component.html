@@ -8,11 +8,21 @@
             defaultX="450"
             defaultY="100"
             defaultWidth="372"
-            defaultHeight="490"
+            defaultHeight="510"
 ></app-window>
 
 <ng-template #headTemplate>
-  {{ vendorInfo.npcName }}
+  <span class="window-has-more-buttons">
+    <span>
+      {{ vendorInfo.npcName }}
+    </span>
+
+    <span class="window-extra-buttons">
+      <button mat-icon-button (click)="assess()" matTooltip="Assess Item">
+        <app-icon name="two-coins" size="xsmall"></app-icon>
+      </button>
+    </span>
+  </span>
 </ng-template>
 
 <ng-template #bodyTemplate>
@@ -21,9 +31,9 @@
       <div class="vendor-intro">
         <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
 
-        Hello, savvy shopper! I have many fine wares to sell, and I accept {{ vendorInfo.npcVendorCurrency }} for them!
+        Hello, savvy shopper! I have many fine wares to sell, and I accept <strong>{{ vendorInfo.npcVendorCurrency }}</strong> for them! I can also assess the item in your right hand!
         <br><br>
-        You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.
+        <div class="text-center">You have {{ player.currency[vendorInfo.npcVendorCurrency] | number }} {{ vendorInfo.npcVendorCurrency }} to spend.</div>
       </div>
 
       <div class="vendor-tabs">

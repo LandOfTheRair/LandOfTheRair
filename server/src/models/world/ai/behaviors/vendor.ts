@@ -1,6 +1,6 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, IAIBehavior, INPC, IPlayer, ISimpleItem, IVendorBehavior, IVendorItem } from '../../../../interfaces';
+import { Currency, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
 
@@ -19,6 +19,7 @@ export class VendorBehavior implements IAIBehavior {
 
     const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1)).filter(Boolean);
     const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx)).filter(Boolean);
+    const npcVendorCurrency = behavior.vendorCurrency || Currency.Gold;
 
     this.formattedVendorItems = npcVendorItems as ISimpleItem[];
     this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];
@@ -40,12 +41,48 @@ export class VendorBehavior implements IAIBehavior {
           npcUUID: npc.uuid,
           npcName: npc.name,
           npcSprite: npc.sprite,
-          npcVendorCurrency: behavior.vendorCurrency || Currency.Gold,
+          npcVendorCurrency,
           npcVendorItems,
           npcVendorDailyItems
         });
 
         return `Hello, ${env?.player.name}!`;
+      });
+
+    parser.addCommand('assess')
+      .setSyntax(['assess'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        if (!rightHand) return 'You need to hold something in your right hand!';
+
+        const canSellItem = game.inventoryHelper.canSellItem(player, rightHand);
+
+        if (!canSellItem) {
+
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: 'Assess Item',
+            content: 'I won\'t buy that item from you.',
+            extraData: { npcSprite: npc.sprite }
+          });
+
+          return 'I won\'t buy that item from you.';
+        }
+
+        env?.callbacks.emit({
+          type: GameServerResponse.SendConfirm,
+          title: 'Assess Item',
+          content: `I would pay ${game.inventoryHelper.itemValue(player, rightHand).toLocaleString()} gold for that item. Want to sell it?`,
+          extraData: { npcSprite: npc.sprite, okText: 'Yes, buy it from me!', cancelText: 'No thanks' },
+          okAction: { command: '!RtM', args: `_ ${npc.uuid}` }
+        });
+
+        return `I would pay ${game.inventoryHelper.itemValue(player, rightHand).toLocaleString()} for that item.`;
       });
   }
 
