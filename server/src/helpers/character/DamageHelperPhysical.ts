@@ -336,7 +336,8 @@ export class DamageHelperPhysical extends BaseService {
       skill4:       Math.floor(attackerSkill / 4),
       offense:      Math.floor(this.game.characterHelper.getStat(attacker, Stat.Offense) * offhandMultiplier),
       accuracy:     Math.floor(this.game.characterHelper.getStat(attacker, Stat.DEX) * offhandMultiplier) - accuracyLoss,
-      dex:          Math.floor(this.game.characterHelper.getStat(attacker, Stat.DEX) * offhandMultiplier),
+      dex:          Math.floor(this.game.characterHelper.getStat(attacker, Stat.DEX) * offhandMultiplier)
+                    + this.game.traitHelper.traitLevelValue(attacker, 'MartialAcuity'),
       damageStat:   Math.floor(baseDamageStat * offhandMultiplier),
       damageStat4:  Math.floor((baseDamageStat / 4) * offhandMultiplier),
       level:        attacker.level,
