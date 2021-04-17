@@ -5,7 +5,8 @@ export class LoweredDefenses extends Effect {
 
   public override create(char: ICharacter, effect: IStatusEffect) {
 
-    const potency = 50;
+    const potency = effect.effectInfo.potency;
+    effect.effectInfo.tooltip = `Defenses lowered by ${potency}%.`;
 
     effect.effectInfo.statChanges = {
       [Stat.Mitigation]: Math.floor(this.game.characterHelper.getStat(char, Stat.Mitigation) * (potency / 100)),

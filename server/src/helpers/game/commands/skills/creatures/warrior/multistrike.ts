@@ -30,7 +30,7 @@ export class Multistrike extends SpellCommand {
 
     const state = this.game.worldManager.getMapStateForCharacter(user);
 
-    const numTargets = 4;
+    const numTargets = 4 + this.game.traitHelper.traitLevelValue(user, 'Multitarget');
     const targets = state.getAllHostilesInRange(user, 0);
     const foundTargets = sampleSize(targets, numTargets);
 
@@ -43,7 +43,10 @@ export class Multistrike extends SpellCommand {
       this.game.combatHelper.physicalAttack(user, chosenTarget, { ...opts, damageMult: 0.5 });
     });
 
-    this.game.effectHelper.addEffect(user, user, 'LoweredDefenses');
+    const defensePenalty = 50 - this.game.traitHelper.traitLevelValue(user, 'Multifocus');
+    if (defensePenalty > 0) {
+      this.game.effectHelper.addEffect(user, user, 'LoweredDefenses', { effect: { extra: { potency: defensePenalty } } });
+    }
 
 
   }
