@@ -26,13 +26,20 @@ export class Rapidpunch extends SpellCommand {
 
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
 
-    const numAttacks = 4;
+    const improvedLevel = this.game.traitHelper.traitLevelValue(user, 'ImprovedRapidpunch');
+
+    const numAttacks = 3 + improvedLevel;
     const damageMult = 0.65;
     const accuracy = this.game.characterHelper.getStat(user, Stat.Accuracy);
-    const accuracyLoss = accuracy / 16;
+    const accuracyLoss = (accuracy / 16) - (improvedLevel * 2);
 
     for (let i = 0; i < numAttacks; i++) {
       this.game.combatHelper.physicalAttack(user, target, { ...opts, isPunch: true, damageMult, accuracyLoss });
+    }
+
+    const defensePenalty = 25;
+    if (defensePenalty > 0) {
+      this.game.effectHelper.addEffect(user, user, 'LoweredDefenses', { effect: { extra: { potency: defensePenalty } } });
     }
   }
 
