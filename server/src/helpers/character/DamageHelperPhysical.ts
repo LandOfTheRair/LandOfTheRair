@@ -99,6 +99,11 @@ export class DamageHelperPhysical extends BaseService {
 
     const { itemClass, tier, attackRange } = this.game.itemHelper.getItemProperties(weapon, ['itemClass', 'tier', 'attackRange']);
 
+    let totalTier = tier ?? 1;
+    if (itemClass === ItemClass.Hands || itemClass === ItemClass.Gloves || itemClass === ItemClass.Claws) {
+      totalTier += this.game.traitHelper.traitLevelValue(attacker, 'BrassKnuckles');
+    }
+
     const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
     const statMultipliers: number[] = allStatMultipliers[scaleStat];
     const weaponStats: WeaponAttackStats = weaponTiers[itemClass ?? ItemClass.Mace];
@@ -135,7 +140,7 @@ export class DamageHelperPhysical extends BaseService {
     const isWeak = canBeWeak && didFlub;
     const isStrong = canBeStrong && didCrit;
 
-    const baseDamage = damage[tier ?? 0] ?? 1;
+    const baseDamage = damage[totalTier ?? 0] ?? 1;
 
     // damage is baseDamage * scale value * stat scale value * (variance [rolled `bonusRolls` + 1 times])
     let totalDamage = baseDamage;
