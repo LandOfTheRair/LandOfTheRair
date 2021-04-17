@@ -22,5 +22,6 @@ export * from './MagicMirror';
 export * from './Protection';
 export * from './Regen';
 export * from './SecondWind';
+export * from './Shield';
 export * from './TrueSight';
 export * from './VitalEssence';

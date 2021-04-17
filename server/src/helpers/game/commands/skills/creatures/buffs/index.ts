@@ -25,5 +25,6 @@ export * from './powerwordbarnecro';
 export * from './protection';
 export * from './regen';
 export * from './secondwind';
+export * from './shield';
 export * from './truesight';
 export * from './vitalessence';
