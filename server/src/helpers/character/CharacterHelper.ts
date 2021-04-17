@@ -409,9 +409,11 @@ export class CharacterHelper extends BaseService {
       });
     });
 
+    // handle reflective coating - boost spell reflect
     const reflectiveBoost = this.game.traitHelper.traitLevelValue(character, 'ReflectiveCoating');
     if (reflectiveBoost > 0) {
       stats[Stat.SpellReflectChance] = stats[Stat.SpellReflectChance] ?? 0;
+
       const leftHand = character.items.equipment[ItemSlot.LeftHand];
       const rightHand = character.items.equipment[ItemSlot.RightHand];
 
@@ -421,6 +423,22 @@ export class CharacterHelper extends BaseService {
 
       if (rightHand && this.game.itemHelper.getItemProperty(rightHand, 'itemClass') === ItemClass.Shield) {
         stats[Stat.SpellReflectChance] += reflectiveBoost;
+      }
+    }
+
+    // handle unarmored savant - set base mitigation
+    const savantBoost = this.game.traitHelper.traitLevelValue(character, 'UnarmoredSavant');
+    if (savantBoost > 0) {
+      stats[Stat.Mitigation] = stats[Stat.Mitigation] ?? 0;
+
+      const item = character.items.equipment[ItemSlot.Armor];
+      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+
+      if (!item || [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)) {
+        stats[Stat.Mitigation] += savantBoost;
+
+        // adjust for fur being a base 10 already
+        if (itemClass === ItemClass.Fur) stats[Stat.Mitigation] -= 10;
       }
     }
 
