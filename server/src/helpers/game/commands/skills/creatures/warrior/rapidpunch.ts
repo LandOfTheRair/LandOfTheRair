@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, PhysicalAttackArgs, Stat } from '../../../../../../interfaces';
+import { ICharacter, IMacroCommandArgs, IPlayer, ItemSlot, PhysicalAttackArgs, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Rapidpunch extends SpellCommand {
@@ -15,12 +15,6 @@ export class Rapidpunch extends SpellCommand {
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
     if (weapon) return this.sendMessage(player, 'You cannot punch effectively with an item in your right hand!');
-
-    const leftHand = player.items.equipment[ItemSlot.LeftHand];
-    if (leftHand) {
-      const leftType = this.game.itemHelper.getItemProperty(leftHand, 'itemClass');
-      if (leftType !== ItemClass.Shield) return this.sendMessage(player, 'You cannot punch effectively with that in your left hand!');
-    }
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
     if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);

@@ -78,7 +78,7 @@ export class DamageHelperPhysical extends BaseService {
     const shouldOffhandAttackAsWell = (!args.isThrow && !args.isKick && !args.isPunch)
                                    || (args.isThrow && returnsOnThrow);
 
-    if (shouldOffhandAttackAsWell && offhand) {
+    if (shouldOffhandAttackAsWell && offhand && attacker.items.equipment[ItemSlot.RightHand]) {
       args ??= {};
       args.isOffhand = true;
       args.throwHand = ItemSlot.LeftHand;
