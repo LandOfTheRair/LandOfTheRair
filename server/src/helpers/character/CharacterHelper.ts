@@ -409,6 +409,21 @@ export class CharacterHelper extends BaseService {
       });
     });
 
+    const reflectiveBoost = this.game.traitHelper.traitLevelValue(character, 'ReflectiveCoating');
+    if (reflectiveBoost > 0) {
+      stats[Stat.SpellReflectChance] = stats[Stat.SpellReflectChance] ?? 0;
+      const leftHand = character.items.equipment[ItemSlot.LeftHand];
+      const rightHand = character.items.equipment[ItemSlot.RightHand];
+
+      if (leftHand && this.game.itemHelper.getItemProperty(leftHand, 'itemClass') === ItemClass.Shield) {
+        stats[Stat.SpellReflectChance] += reflectiveBoost;
+      }
+
+      if (rightHand && this.game.itemHelper.getItemProperty(rightHand, 'itemClass') === ItemClass.Shield) {
+        stats[Stat.SpellReflectChance] += reflectiveBoost;
+      }
+    }
+
     return stats;
   }
 
