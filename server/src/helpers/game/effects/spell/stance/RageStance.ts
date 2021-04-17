@@ -5,10 +5,10 @@ export class RageStance extends Effect {
 
   public override create(char: ICharacter, effect: IStatusEffect) {
 
-    this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `${char.name} takes on a offensive stance.` });
-
     const rightHand = char.items.equipment[ItemSlot.RightHand];
     if (!rightHand) return;
+
+    this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `${char.name} takes on a offensive stance.` });
 
     effect.effectInfo.usedWeapon = rightHand.uuid;
 
