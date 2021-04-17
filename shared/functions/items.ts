@@ -82,7 +82,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   }
 
   // how full it is, if at all
-  const ounces = item.mods.ounces || 0;
+  const ounces = item.mods.ounces ?? itemDef.ounces ?? 0;
   let fluidText = itemClass === ItemClass.Bottle && ounces > 0 ? `It is filled with ${ounces} oz of fluid. ` : '';
   if (itemClass === ItemClass.Bottle && ounces === 0) fluidText = 'It is empty.';
 
