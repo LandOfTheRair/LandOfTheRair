@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { difference, get, setWith, size } from 'lodash';
+import { difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 
 import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
