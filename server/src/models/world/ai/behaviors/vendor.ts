@@ -1,6 +1,7 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, GameServerResponse, IAIBehavior, INPC, IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem } from '../../../../interfaces';
+import { Currency, GameAction, GameServerResponse, IAIBehavior, INPC,
+  IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
 
