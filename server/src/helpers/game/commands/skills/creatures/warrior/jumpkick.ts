@@ -28,6 +28,10 @@ export class Jumpkick extends SpellCommand {
     this.game.movementHelper.moveTowards(user, target);
 
     this.game.combatHelper.physicalAttack(user, target, { ...opts, isKick: true });
+
+    if (this.game.traitHelper.traitLevel(user, 'Punchkick')) {
+      this.game.combatHelper.physicalAttack(user, target, { ...opts, isPunch: true });
+    }
   }
 
 }
