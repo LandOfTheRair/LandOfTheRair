@@ -182,11 +182,8 @@ export class InventoryHelper extends BaseService {
     this.addMaterial(player, material, -number);
   }
 
-  // sell items / deal with buyback
-  public sellItem(player: IPlayer, item: ISimpleItem): void {
-
-    // some items have a raw value they sell for
-    const { value, sellValue, itemClass } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'itemClass']);
+  public itemValue(player: IPlayer, item: ISimpleItem): number {
+    const { value, sellValue } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'itemClass']);
     const baseItemValue = sellValue || value || 1;
 
     // default sell percent is 25% of value if it doesn't have a set sellValue
@@ -201,6 +198,24 @@ export class InventoryHelper extends BaseService {
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
     const totalSellValue = Math.max(1, Math.floor(baseItemValue * (sellPercent / 100)));
+
+    return totalSellValue;
+  }
+
+  // whether or not the player can sell an item
+  public canSellItem(player: IPlayer, item: ISimpleItem): boolean {
+    const value = this.itemValue(player, item);
+    return value > 10;
+  }
+
+  // sell items / deal with buyback
+  public sellItem(player: IPlayer, item: ISimpleItem): void {
+
+    // some items have a raw value they sell for
+    const { itemClass } = this.game.itemHelper.getItemProperties(item, ['itemClass']);
+
+    // get the total value, assign it to buyback (in case they wanna buy it back)
+    const totalSellValue = this.itemValue(player, item);
 
     item.mods.buybackValue = totalSellValue;
     this.addItemToBuyback(player, item);

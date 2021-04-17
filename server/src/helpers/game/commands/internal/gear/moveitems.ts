@@ -398,6 +398,7 @@ export class MoveItems extends MacroCommand {
 
     case 'M': { // LtM
       if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canSellItem(player, srcItem)) return this.sendMessage(player, 'The merchant won\'t accept that.');
 
       this.game.characterHelper.setLeftHand(player, undefined);
       this.game.inventoryHelper.sellItem(player, srcItem);
@@ -519,6 +520,7 @@ export class MoveItems extends MacroCommand {
 
     case 'M': { // RtM
       if (!srcItem) return this.sendMessage(player, 'You aren\'t holding anything in that hand!');
+      if (!this.game.inventoryHelper.canSellItem(player, srcItem)) return this.sendMessage(player, 'The merchant won\'t accept that.');
 
       this.game.characterHelper.setRightHand(player, undefined);
       this.game.inventoryHelper.sellItem(player, srcItem);
@@ -763,6 +765,8 @@ export class MoveItems extends MacroCommand {
     }
 
     case 'M': { // BtM
+      if (!this.game.inventoryHelper.canSellItem(player, srcItem)) return this.sendMessage(player, 'The merchant won\'t accept that.');
+
       const did = this.game.inventoryHelper.removeItemFromBelt(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from belt.');
 
@@ -885,6 +889,8 @@ export class MoveItems extends MacroCommand {
     }
 
     case 'M': { // StM
+      if (!this.game.inventoryHelper.canSellItem(player, srcItem)) return this.sendMessage(player, 'The merchant won\'t accept that.');
+
       const did = this.game.inventoryHelper.removeItemFromSack(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
@@ -1707,6 +1713,8 @@ export class MoveItems extends MacroCommand {
     }
 
     case 'M': { // DtM
+      if (!this.game.inventoryHelper.canSellItem(player, srcItem)) return this.sendMessage(player, 'The merchant won\'t accept that.');
+
       const did = this.game.inventoryHelper.removeItemFromPouch(player, +origSlot);
       if (!did) return this.sendMessage(player, 'Could not take item from sack.');
 
