@@ -409,9 +409,14 @@ export class DamageHelperPhysical extends BaseService {
       attackerBlockLeftSide, attackerBlockRightSide
     ) + attackerScope.accuracy;
 
-    const defenderDodgeRoll = -this.game.diceRollerHelper.uniformRoll(
+    let defenderDodgeRoll = -this.game.diceRollerHelper.uniformRoll(
       defenderDodgeLeftSide, defenderDodgeRightSide
     ) + defenderScope.dodgeBonus;
+
+    const defenderDodgeBoost = this.game.traitHelper.traitLevelValue(defender, 'MartialAgility');
+    if (!defender.items.equipment[ItemSlot.RightHand] && defenderDodgeBoost > 0) {
+      defenderDodgeRoll *= (1 + defenderDodgeBoost);
+    }
 
     let attackDistance = attackRange ? attackRange : 0;
     const distBetween = this.game.directionHelper.distFrom(attacker, defender);
