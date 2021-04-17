@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { Allegiance, ArmorClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
+import { Allegiance, ArmorClass, BaseClass, CombatEffect, DamageArgs, DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -782,8 +782,8 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
-    const { isThrow, throwHand, isBackstab, isOffhand, isKick, damageMult } = args;
-    let { isPunch } = args;
+    const { isThrow, throwHand, isBackstab, isOffhand, isKick } = args;
+    let { isPunch, damageMult } = args;
     let isAttackerVisible = this.game.visibilityHelper.canSeeThroughStealthOf(defender, attacker);
 
     if (this.game.visibilityHelper.isDarkAt(defender.map, defender.x, defender.y)
@@ -953,15 +953,27 @@ export class DamageHelperPhysical extends BaseService {
       this.game.combatHelper.combatEffect(attacker, defender.uuid, CombatEffect.HitNormal);
     }
 
-    if (damageMult) {
-      damage = Math.floor(damage * damageMult);
+    damageMult ??= 1;
+
+    let isEnraged = false;
+    const consumingRage = this.game.traitHelper.traitLevel(attacker, 'ConsumingRage');
+    if (consumingRage
+    && attacker.baseClass === BaseClass.Warrior
+    && attacker.mp.current > 30
+    && this.game.diceRollerHelper.XInOneHundred(30)) {
+
+      isEnraged = true;
+      damageMult += 0.2;
+      this.game.characterHelper.manaDamage(attacker, 20);
     }
+
+    damage = Math.floor(damage * damageMult);
 
     const damageArgs: DamageArgs = {
       damage,
       damageClass: args.damageClass || DamageClass.Physical,
       isMelee: true,
-      attackerDamageMessage: damage > 0 ? `Your attack ${damageType}!` : '',
+      attackerDamageMessage: damage > 0 ? `Your ${isEnraged ? 'enraged ' : ''}attack ${damageType}!` : '',
       defenderDamageMessage: msg,
       attackerWeapon,
       isRanged: attackerScope.attackerDamageStat === Stat.DEX,
