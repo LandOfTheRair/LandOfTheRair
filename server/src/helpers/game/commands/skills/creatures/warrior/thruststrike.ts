@@ -34,6 +34,10 @@ export class Thruststrike extends SpellCommand {
     this.game.movementHelper.moveTowards(user, target);
 
     this.game.combatHelper.physicalAttack(user, target, { ...opts, damageMult: 1.25 });
+
+    if (this.game.traitHelper.traitLevel(user, 'DoubleThrust')) {
+      this.game.combatHelper.physicalAttack(user, target, { ...opts });
+    }
   }
 
 }
