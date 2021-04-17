@@ -673,7 +673,9 @@ export class MapScene extends Phaser.Scene {
         const itemsXY = this.ground[x][y];
         if (!itemsXY) continue;
 
-        const numItemsHere = size(itemsXY);
+        // Get the number of items on the tile, by summing the amount of items in each array
+        const numItemsHere = Object.keys(itemsXY).map((type) => itemsXY[type].length).reduce((a, b) => a + b, 0);
+
         Object.keys(itemsXY).forEach(itemType => {
           if (itemsXY[itemType].length === 0 || (itemType === ItemClass.Coin && numItemsHere > 1)) {
             if (get(this.goldSprites, [x, y])) this.createTreasureSprite(x, y);
