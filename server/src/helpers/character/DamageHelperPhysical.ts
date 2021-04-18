@@ -968,6 +968,11 @@ export class DamageHelperPhysical extends BaseService {
       this.game.characterHelper.manaDamage(attacker, 20);
     }
 
+    if (isBackstab) {
+      const bonusMultiplier = 1.5;
+      damageMult += bonusMultiplier;
+    }
+
     damage = Math.floor(damage * damageMult);
 
     const damageArgs: DamageArgs = {
