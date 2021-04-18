@@ -94,6 +94,7 @@ export class SetLogMode {
 // dispatched when a command happens, and is logged in history
 export class LogCurrentCommandInHistory {
   static type = GameAction.LogCurrentCommand;
+  filterOutFromLogs = true;
   constructor(public currentCommand: string) {}
 }
 
