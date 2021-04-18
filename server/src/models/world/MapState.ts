@@ -628,6 +628,16 @@ export class MapState {
     return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
   }
 
+  public removeItemsFromGround(x: number, y: number, items: IGroundItem[]): void {
+    items.forEach(item => {
+      const itemClass = this.game.itemHelper.getItemProperty(item.item, 'itemClass');
+      this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, item.item.uuid, item.count);
+    });
+
+    // if player knowledge x/y, update ground
+    this.triggerGroundUpdateInRadius(x, y);
+  }
+
   public removeItemFromGround(x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
     this.game.groundManager.removeItemFromGround(this.map.name, x, y, itemClass, uuid, count);
 

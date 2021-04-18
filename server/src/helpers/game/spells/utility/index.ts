@@ -11,4 +11,5 @@ export * from './MassTeleport';
 export * from './Push';
 export * from './Succor';
 export * from './Teleport';
+export * from './Vortex';
 export * from './Wellspring';
