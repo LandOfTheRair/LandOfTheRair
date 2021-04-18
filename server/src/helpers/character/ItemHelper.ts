@@ -196,7 +196,7 @@ export class ItemHelper extends BaseService {
   }
 
   // try to use the item in the equipment slot for the player
-  public useItemInSlot(player: IPlayer, source: ItemSlot) {
+  public useItemInSlot(player: IPlayer, source: ItemSlot, tryEffect = true) {
     const item = player.items.equipment[source];
     if (!item) return;
 
@@ -209,7 +209,7 @@ export class ItemHelper extends BaseService {
 
     const canGetBenefits = this.canGetBenefitsFromItem(player, item);
     if (!canGetBenefits) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
-    if (!this.tryToUseItem(player, item, source)) {
+    if (tryEffect && !this.tryToUseItem(player, item, source)) {
       return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
     }
 

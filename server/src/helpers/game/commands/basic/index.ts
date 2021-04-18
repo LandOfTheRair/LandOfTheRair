@@ -8,3 +8,4 @@ export * from './reveal';
 export * from './showskills';
 export * from './showstats';
 export * from './steal';
+export * from './write';
