@@ -243,7 +243,7 @@ export class GroundManager extends BaseService {
 
     return [itemStack];
   }
-  
+
   public getAllItemsFromGround(mapName: string): IGroundItem[] {
     const items: IGroundItem[] = [];
     Object.keys(this.ground[mapName] || {}).forEach(x => {
