@@ -37,8 +37,6 @@ export class LoginAction extends ServerAction {
 
       if (game.lobbyManager.isAccountInGame(realAccount)) {
         game.lobbyManager.accountLeaveGame(realAccount);
-        realAccount = await game.accountDB.getAccount(data.username);
-        if (!realAccount)                             return { message: 'Could not reload account from login.' };
       }
 
       const simpleAccount = game.accountDB.simpleAccount(realAccount);
