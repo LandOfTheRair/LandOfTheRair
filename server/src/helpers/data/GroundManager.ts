@@ -245,7 +245,7 @@ export class GroundManager extends BaseService {
   }
   
   public getAllItemsFromGround(mapName: string): IGroundItem[] {
-    let items: IGroundItem[] = []
+    const items: IGroundItem[] = [];
     Object.keys(this.ground[mapName] || {}).forEach(x => {
       Object.keys(this.ground[mapName][x] || {}).forEach(y => {
         Object.keys(this.ground[mapName][x][y] || {}).forEach(itemClass => {
