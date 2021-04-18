@@ -178,7 +178,7 @@ export class DiscordHelper extends BaseService {
 
       if (channel.id === this.discordChannel.id) {
         let realName = this.game.lobbyManager.discordHash[author.id];
-        if (!realName) realName = member?.nickname ?? 'unknown';
+        if (!realName) realName = member?.nickname ?? member?.displayName ?? 'unknown';
 
         this.game.messageHelper.sendMessage(realName, cleanContent, true, !!this.game.lobbyManager.discordHash[author.id]);
       }
