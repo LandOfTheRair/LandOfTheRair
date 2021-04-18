@@ -9,4 +9,5 @@ export * from './sheathe';
 export * from './showskills';
 export * from './showstats';
 export * from './steal';
+export * from './wield';
 export * from './write';
