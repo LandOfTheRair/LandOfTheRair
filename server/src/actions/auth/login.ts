@@ -35,7 +35,9 @@ export class LoginAction extends ServerAction {
 
       game.accountDB.registerIP(data.username, data.socketIp);
 
-      game.lobbyManager.removeAccount(data.username);
+      if (game.lobbyManager.isAccountInGame(realAccount)) {
+        game.lobbyManager.accountLeaveGame(realAccount);
+      }
 
       const simpleAccount = game.accountDB.simpleAccount(realAccount);
 

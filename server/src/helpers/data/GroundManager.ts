@@ -244,6 +244,20 @@ export class GroundManager extends BaseService {
     return [itemStack];
   }
 
+  public getAllItemsFromGround(mapName: string): IGroundItem[] {
+    const items: IGroundItem[] = [];
+    Object.keys(this.ground[mapName] || {}).forEach(x => {
+      Object.keys(this.ground[mapName][x] || {}).forEach(y => {
+        Object.keys(this.ground[mapName][x][y] || {}).forEach(itemClass => {
+          (this.ground[mapName][x][y][itemClass] || []).forEach((item: IGroundItem) => {
+            items.push(item);
+          });
+        });
+      });
+    });
+    return items;
+  }
+
   public convertItemStackToList(item: IGroundItem, count = 1): ISimpleItem[] {
     return Array(count).fill(null).map(() => this.game.itemCreator.rerollItem(item.item));
   }
