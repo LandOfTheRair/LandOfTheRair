@@ -12,11 +12,12 @@ export class Reveal extends SkillCommand {
   }
 
   override use(char: ICharacter) {
-    if (!this.game.effectHelper.hasEffect(char, 'Hidden')) {
+    if (!this.game.effectHelper.hasEffect(char, 'Hidden') && !this.game.effectHelper.hasEffect(char, 'Shadowmeld')) {
       this.sendMessage(char, 'You are not hidden!');
       return;
     }
 
     this.game.effectHelper.removeEffectByName(char, 'Hidden');
+    this.game.effectHelper.removeEffectByName(char, 'Shadowmeld');
   }
 }

@@ -20,6 +20,7 @@ export * from './MagicMirror';
 export * from './FindFamiliar';
 export * from './Protection';
 export * from './Regen';
+export * from './Shadowmeld';
 export * from './Shield';
 export * from './TrueSight';
 export * from './VitalEssence';

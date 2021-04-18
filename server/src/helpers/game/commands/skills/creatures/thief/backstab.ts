@@ -9,11 +9,15 @@ export class Backstab extends SkillCommand {
     return this.calcPlainAttackRange(char);
   }
 
+  override canUse(char: ICharacter) {
+    return this.game.effectHelper.hasEffect(char, 'Hidden') || this.game.effectHelper.hasEffect(char, 'Shadowmeld');
+  }
+
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return false;
 
     const hidden = this.game.effectHelper.hasEffect(player, 'Hidden');
-    const shadowMeld = this.game.effectHelper.hasEffect(player, 'ShadowMeld');
+    const shadowMeld = this.game.effectHelper.hasEffect(player, 'Shadowmeld');
     if (!hidden && !shadowMeld) return this.sendMessage(player, 'You are not hidden!');
 
     const weapon = player.items.equipment[ItemSlot.RightHand];

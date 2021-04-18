@@ -146,6 +146,9 @@ export class VisibilityHelper extends BaseService {
     // if the hider is invisible and the seer does not have truesight, they are not visible
     if (this.game.effectHelper.hasEffect(hiding, 'Invisibility') && !this.game.effectHelper.hasEffect(char, 'TrueSight')) return false;
 
+    // nothing can see shadowmeld
+    if (this.game.effectHelper.hasEffect(hiding, 'Shadowmeld')) return false;
+
     // last are stealth checks, if you have hidden it triggers the perception/stealth checks
     if (this.game.effectHelper.hasEffect(hiding, 'Hidden')) {
 
