@@ -969,7 +969,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     if (isBackstab) {
-      const bonusMultiplier = 1.5;
+      const bonusMultiplier = 1.5 + this.game.traitHelper.traitLevelValue(attacker, 'BetterBackstab');
       damageMult += bonusMultiplier;
     }
 
