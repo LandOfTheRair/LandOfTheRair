@@ -3,6 +3,7 @@ export * from './chase';
 export * from './hide';
 export * from './lookat';
 export * from './nextpage';
+export * from './place';
 export * from './prevpage';
 export * from './reveal';
 export * from './sheathe';

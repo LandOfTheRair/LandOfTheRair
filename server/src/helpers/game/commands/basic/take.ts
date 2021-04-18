@@ -52,7 +52,5 @@ export class Take extends MacroCommand {
 
     if (!rightHand) this.game.characterHelper.setRightHand(char, item);
     else            this.game.characterHelper.setLeftHand(char, item);
-
-    // this.game.commandHandler.doCommand(char as Player, { command: `~${capitalize(hand).substring(0, 1)}tB` }, args.callbacks);
   }
 }
