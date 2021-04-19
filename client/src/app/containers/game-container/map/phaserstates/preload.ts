@@ -1,7 +1,9 @@
-
-const Phaser = (window as any).Phaser;
+import * as Phaser from 'phaser';
+import { MapRenderGame } from '../phasergame';
 
 export class PreloadScene extends Phaser.Scene {
+
+  public game: MapRenderGame;
 
   constructor() {
     super({ key: 'PreloadScene' });

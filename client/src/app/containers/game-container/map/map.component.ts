@@ -1,6 +1,6 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import * as Phaser from 'phaser';
 import { Select, Store } from '@ngxs/store';
-
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GameServerEvent, GameServerResponse, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
@@ -13,8 +13,6 @@ import { UIService } from '../../../services/ui.service';
 import { FloatingBox } from './floating-box';
 import { MapRenderGame } from './phasergame';
 import { MapScene, PreloadScene } from './phaserstates';
-
-const Phaser = (window as any).Phaser;
 
 @Component({
   selector: 'app-map',

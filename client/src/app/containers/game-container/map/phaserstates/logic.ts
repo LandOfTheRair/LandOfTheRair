@@ -1,19 +1,20 @@
 /* eslint-disable no-underscore-dangle */
 import { difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
+import * as Phaser from 'phaser';
 
 import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 
-const Phaser = (window as any).Phaser;
 
 export class MapScene extends Phaser.Scene {
 
   // the current map in JSON form
   private allMapData: IMapData;
-
+  public game: MapRenderGame;
   private layers = {
     decor: null,
     densedecor: null,
@@ -58,7 +59,7 @@ export class MapScene extends Phaser.Scene {
   private hideWelcome: boolean;
 
   private get isReady(): boolean {
-    return this.sys;
+    return this.sys as any;
   }
 
   private openDoors = {};
@@ -70,7 +71,8 @@ export class MapScene extends Phaser.Scene {
 
   private createLayers() {
     Object.keys(this.layers).forEach((layer, index) => {
-      this.layers[layer] = this.add.container();
+      const thisadd = this.add as any;
+      this.layers[layer] = thisadd.container();
       this.layers[layer].depth = index + 1;
     });
   }
@@ -84,10 +86,9 @@ export class MapScene extends Phaser.Scene {
     }
 
     const blackBitmapData = this.textures.createCanvas('black', 64, 64);
-    blackBitmapData.context.fillStyle = 0x000000;
+    blackBitmapData.context.fillStyle = '#000';
     blackBitmapData.context.fillRect(0, 0, 64, 64);
     blackBitmapData.refresh();
-
     /*
     const debugBitmapData = this.g.add.bitmapData(64, 64);
     debugBitmapData.ctx.beginPath();
@@ -98,7 +99,7 @@ export class MapScene extends Phaser.Scene {
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
-        const dark = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData);
+        const dark = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData as any);
         dark.alpha = 0;
         dark.setScrollFactor(0);
 
@@ -106,7 +107,7 @@ export class MapScene extends Phaser.Scene {
         this.fovSprites[x][y] = dark;
         this.layers.fov.add(dark);
 
-        const dark2 = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData);
+        const dark2 = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData as any);
         dark2.alpha = 0;
         dark2.setScrollFactor(0);
 
@@ -145,7 +146,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createNPCSprite(npc: INPC) {
-    if (!this.isReady) return;
+    if (!this.isReady) return null;
 
     const sprite = this.add.sprite(
       this.convertPosition(npc.x), this.convertPosition(npc.y),
@@ -188,7 +189,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private createPlayerSprite(player: IPlayer) {
-    if (!this.isReady) return;
+    if (!this.isReady) return null;
 
     const spriteGenderBase = basePlayerSprite(player);
     const directionOffset = spriteOffsetForDirection(player.dir);
@@ -364,7 +365,7 @@ export class MapScene extends Phaser.Scene {
       const firstGid = isWall ? wallFirstGid : decorFirstGid;
       const tileSet = isWall ? 'Walls' : 'Decor';
 
-      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, obj.gid - firstGid);
+      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, obj.gid - firstGid) as any;
       sprite._baseFrame = sprite.frame.name;
       sprite._type = obj.type;
       sprite._id = obj.id;
@@ -712,7 +713,7 @@ export class MapScene extends Phaser.Scene {
     const isCorpse = realItem.itemClass === ItemClass.Corpse;
     const spritesheet = isCorpse ? 'Creatures' : 'Items';
     const itemSpriteNumber = isCorpse ? item.mods.sprite : realItem.sprite;
-    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), spritesheet, itemSpriteNumber);
+    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), spritesheet, itemSpriteNumber) as any;
     this.visibleItemSprites[x][y][realItem.itemClass] = sprite;
     this.visibleItemUUIDHash[sprite.uuid] = sprite;
 
@@ -737,7 +738,7 @@ export class MapScene extends Phaser.Scene {
       currentItemSprite.destroy();
     }
 
-    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Terrain', spritePos);
+    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Terrain', spritePos) as any;
     this.goldSprites[x][y] = sprite;
 
     sprite._realX = x;
