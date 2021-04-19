@@ -20,7 +20,7 @@ if(fs.existsSync('../../Content')) {
 
   dl('LandOfTheRair/Assets', 'src/assets', () => {
     dl('LandOfTheRair/Content', 'src/assets/content', () => {
-      childProcess.exec('cd src/assets/content && npm install', () => {
+      childProcess.exec('cd src/assets/content && npm install --unsafe-perm', () => {
       });
     });
   });
