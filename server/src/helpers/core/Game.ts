@@ -8,7 +8,7 @@ import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyH
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
   QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
-  TeleportHelper, TraitHelper, VisibilityHelper } from '../character';
+  TeleportHelper, TraitHelper, TrapHelper, VisibilityHelper } from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
@@ -88,6 +88,7 @@ export class Game {
     public partyHelper: PartyHelper,
     public partyManager: PartyManager,
     public darknessHelper: DarknessHelper,
+    public trapHelper: TrapHelper,
 
     public messageHelper: MessageHelper,
     public dynamicEventHelper: DynamicEventHelper,
@@ -122,7 +123,7 @@ export class Game {
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',
-      'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper',
+      'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper', 'trapHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
       'discordHelper'

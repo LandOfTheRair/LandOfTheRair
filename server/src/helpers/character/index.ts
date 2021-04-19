@@ -24,4 +24,5 @@ export * from './StealHelper';
 export * from './TargettingHelper';
 export * from './TeleportHelper';
 export * from './TraitHelper';
+export * from './TrapHelper';
 export * from './VisibilityHelper';

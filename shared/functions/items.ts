@@ -74,6 +74,8 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // whether the item has an implicit sell price or not
   const isValuableText = getProp(item, itemDef, 'sellValue') ? 'It looks valuable. ' : '';
 
+  const trapSetText = itemClass === ItemClass.TrapSet ? `This trap is live. ` : '';
+
   // the owner text
   let ownedText = '';
   if (item.mods.owner) {
@@ -142,6 +144,6 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // TODO: expiration
 
   return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
-    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}
+    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${trapSetText}
     ${conditionText}${ownedText}${appraiseText}`;
 }

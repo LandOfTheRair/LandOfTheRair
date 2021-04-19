@@ -96,15 +96,17 @@ export class UIService {
 
     let ctxArgs = '';
 
+    console.log(item, realItem, dragData);
+
     // context arg parsing
     if (context === 'Ground') {
-      ctxArgs = `${realItem.itemClass}:${item.uuid}`;
+      ctxArgs = `${item.mods.itemClass ?? realItem.itemClass}:${item.uuid}`;
 
     } else if (['Right', 'Left'].includes(context)) {
       ctxArgs = '_';
 
     } else if (context === 'GroundGroup') {
-      ctxArgs = `${realItem.itemClass}`;
+      ctxArgs = `${item.mods.itemClass ?? realItem.itemClass}`;
 
     } else if (['Sack', 'Belt', 'Equipment', 'DemiMagicPouch', 'Obtainagain'].includes(context)) {
       ctxArgs = `${contextSlot}`;

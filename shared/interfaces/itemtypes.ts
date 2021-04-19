@@ -86,6 +86,7 @@ export enum MiscClass {
   Rock = 'Rock',
   Scroll = 'Scroll',
   Trap = 'Trap',
+  TrapSet = 'TrapSet',
   Twig = 'Twig'
 }
 

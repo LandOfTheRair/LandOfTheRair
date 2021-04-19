@@ -133,8 +133,12 @@ export class MovementHelper extends BaseService {
     if (character.y > map.height) character.y = map.height;
 
     // TODO: handle event sources
-    // TODO: trigger traps
     this.directionHelper.setDirBasedOnXYDiff(character, character.x - oldX, character.y - oldY);
+
+    const trap = this.game.trapHelper.getTrapAt(character.map, character.x, character.y);
+    if (trap) {
+      this.game.trapHelper.triggerTrap(character, trap);
+    }
 
     state.moveNPCOrPlayer(character, { oldX, oldY });
 

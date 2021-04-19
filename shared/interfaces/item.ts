@@ -93,6 +93,9 @@ export interface ITrap {
 
   // the effect that happens when the trap is stepped on
   trapEffect?: IItemEffect;
+
+  // who set the trap - uuid
+  trapSetBy?: string;
 }
 
 export interface IUsable {

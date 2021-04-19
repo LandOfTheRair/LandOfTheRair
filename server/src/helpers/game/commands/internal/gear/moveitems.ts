@@ -237,6 +237,16 @@ export class MoveItems extends MacroCommand {
       if (!this.game.subscriptionHelper.hasPouch(player)) return false;
     }
 
+    if (src === 'G' && srcItem.mods.itemClass === ItemClass.TrapSet) {
+      if (srcItem.mods.trapSetBy !== player.uuid) {
+        this.sendMessage(player, 'That is not your trap!');
+        return false;
+      }
+
+      delete srcItem.mods.itemClass;
+      srcItem.mods.trapUses = 1;
+    }
+
     return true;
   }
 
