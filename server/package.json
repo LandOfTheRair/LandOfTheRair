@@ -7,7 +7,7 @@
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
     "start": "node dist/server/src/core/index",
-    "start:dev": "tsc-watch --sourceMap --onSuccess \"node -r source-map-support/register dist/server/src/core/index.js\"",
+    "start:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/server/src/core/index.js\"",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
     "build": "tsc",
     "postbuild": "madge --circular --warning dist/server/src/core/index.js"

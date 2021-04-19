@@ -17,6 +17,11 @@ export class InteractionHelper extends BaseService {
 
     if (requireEventToOpen) return false;
 
+    if (this.game.directionHelper.distFromMapObject(character, door) > 1) {
+      this.game.messageHelper.sendSimpleMessage(character, 'You can\'t reach the door!');
+      return false;
+    }
+
     const { state } = this.game.worldManager.getMap(character.map);
 
     const isCurrentlyOpen = state.isDoorOpen(door.id);
