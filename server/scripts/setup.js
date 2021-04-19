@@ -21,7 +21,7 @@ if(fs.existsSync('../../Content')) {
   console.log('[Server] No Content repo, downloading a simple non-git copy of it.');
 
   dl('LandOfTheRair/Content', 'content', async () => {
-    childProcess.exec('cd content && npm install');
+    childProcess.exec('cd content && npm install --unsafe-perm');
   
     dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
   
