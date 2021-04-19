@@ -96,6 +96,9 @@ export interface ITrap {
 
   // who set the trap - uuid
   trapSetBy?: string;
+
+  // the skill of the user who set the trap
+  trapSetSkill?: number;
 }
 
 export interface IUsable {

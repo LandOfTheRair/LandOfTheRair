@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { ICharacter, IGroundItem, IItemEffect, ISimpleItem, ItemClass } from '../../interfaces';
+import { ICharacter, IGroundItem, IItemEffect, ISimpleItem, ItemClass, Skill } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -44,16 +44,21 @@ export class TrapHelper extends BaseService {
     trap = this.game.itemCreator.rerollItem(trap);
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
+    trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(placer, Skill.Thievery);
     trap.mods.trapUses = 1;
 
     this.setTrap(placer.map, x, y, trap);
+  }
+
+  public canDisarmTrap(user: ICharacter, trap: ISimpleItem): boolean {
+    return this.game.characterHelper.getSkillLevel(user, Skill.Thievery) > (trap.mods.trapSetSkill ?? 1);
   }
 
   private setTrap(map: string, x: number, y: number, trap: ISimpleItem) {
     this.game.worldManager.getMap(map).state.addItemToGround(x, y, trap);
   }
 
-  private removeTrap(map: string, x: number, y: number, trap: IGroundItem) {
+  public removeTrap(map: string, x: number, y: number, trap: IGroundItem) {
     this.game.worldManager.getMap(map).state.removeItemsFromGround(x, y, [trap]);
   }
 

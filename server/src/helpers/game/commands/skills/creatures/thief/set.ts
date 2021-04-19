@@ -17,6 +17,8 @@ export class Set extends SkillCommand {
     const { itemClass, trapUses, trapEffect } = this.game.itemHelper.getItemProperties(rightHand, ['itemClass', 'trapUses', 'trapEffect']);
     if (itemClass !== ItemClass.Trap) return this.sendMessage(player, 'You are not holding a trap!');
 
+    if (!this.game.itemHelper.canGetBenefitsFromItem(player, rightHand)) return this.sendMessage(player, 'You cannot use that trap!');
+
     const target = this.getTarget(player, args.stringArgs, true, true);
     if (!target) return;
 
