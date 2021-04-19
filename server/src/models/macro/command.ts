@@ -92,13 +92,17 @@ export abstract class SkillCommand extends MacroCommand {
     let target: ICharacter|null = null;
     args = args.trim();
 
+    const range = this.range(user);
+
     // try to do directional casting, ie, n w w e
     const splitArgs = args.split(' ');
     if (allowDirection && (splitArgs.length > 0 || args.length <= 2)) {
       let curX = user.x;
       let curY = user.y;
 
-      for (let i = 0; i < splitArgs.length; i++) {
+      // can only go as many steps as range
+      for (let i = 0; i < Math.min(range, splitArgs.length); i++) {
+
         // you can specify a max of 4 directions
         if (i >= 4) continue;
 
@@ -130,8 +134,6 @@ export abstract class SkillCommand extends MacroCommand {
       this.youDontSeeThatPerson(user, args);
       return null;
     }
-
-    const range = this.range(user);
 
     if (this.game.directionHelper.distFrom(target, user) > range) {
       this.sendMessage(user, 'That target is too far away!');
