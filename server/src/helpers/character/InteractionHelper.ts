@@ -58,7 +58,9 @@ export class InteractionHelper extends BaseService {
       && character.baseClass === BaseClass.Thief
       && this.game.characterHelper.hasHeldItem(character, 'Lockpick', 'right')) {
 
-        const charSkill = this.game.characterHelper.getSkillLevel(character, Skill.Thievery) + random(-2, 2);
+        const charSkill = this.game.characterHelper.getSkillLevel(character, Skill.Thievery)
+                        + random(-2, 2)
+                        + this.game.traitHelper.traitLevelValue(character, 'LockpickSpecialty');
 
         if (charSkill < skillRequired) {
           this.game.messageHelper.sendSimpleMessage(character, 'Your lockpick attempt failed!');
