@@ -45,7 +45,7 @@ export class TrapHelper extends BaseService {
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
     trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(placer, Skill.Thievery);
-    trap.mods.trapUses = 1;
+    trap.mods.trapUses = 1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
 
     this.setTrap(placer.map, x, y, trap);
   }
