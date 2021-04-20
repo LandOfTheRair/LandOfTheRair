@@ -50,6 +50,7 @@ export class TrapHelper extends BaseService {
 
     const trapEffect: IItemEffect = cloneDeep(this.game.itemHelper.getItemProperty(trap, 'trapEffect'));
     trapEffect.potency *= (1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps'));
+    trapEffect.range = (trapEffect.range ?? 1) + this.game.traitHelper.traitLevelValue(placer, 'WiderTraps');
     trap.mods.trapEffect = trapEffect;
 
     this.setTrap(placer.map, x, y, trap);
