@@ -3,7 +3,7 @@ import * as Phaser from 'phaser';
 import { Select, Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { GameServerEvent, GameServerResponse, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
+import { GameServerEvent, GameServerResponse, ICharacter, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { GameState, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
@@ -24,6 +24,7 @@ export class MapComponent implements OnInit, OnDestroy {
   @Select(GameState.itemTooltip) public itemTooltip$: Observable<string>;
 
   @Select(GameState.player) private player$: Observable<IPlayer>;
+  @Select(GameState.currentTarget) private currentTarget$: Observable<ICharacter>;
   @Select(GameState.players) private allPlayers$: Observable<Record<string, Partial<IPlayer>>>;
   @Select(GameState.npcs) private allNPCs$: Observable<Record<string, Partial<INPC>>>;
   @Select(GameState.openDoors) private openDoors$: Observable<Record<number, boolean>>;
@@ -32,6 +33,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
   public currentPlayer = new BehaviorSubject<IPlayer>(null);
+  public currentTarget = new BehaviorSubject<ICharacter>(null);
   public allPlayers = new BehaviorSubject<Record<string, Partial<IPlayer>>>({ });
   public allNPCs = new BehaviorSubject<Record<string, Partial<INPC>>>({ });
   public openDoors = new BehaviorSubject<Record<number, boolean>>({ });
@@ -97,6 +99,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
       this.vfx.next({ vfx: data.vfx, vfxX: data.vfxX, vfxY: data.vfxY, vfxRadius: data.vfxRadius ?? 0, vfxTimeout: data.vfxTimeout });
     });
+
+    this.currentTarget$.subscribe(target => {this.currentTarget.next(target);});
 
     // play game when we get the signal and have a valid map
     combineLatest([
@@ -196,6 +200,7 @@ export class MapComponent implements OnInit, OnDestroy {
         loadPercent: this.loadPercent,
         hideMap: this.hideMap,
         player: this.currentPlayer,
+        target: this.currentTarget,
         map: this.map,
         allPlayers: this.allPlayers,
         allNPCs: this.allNPCs,

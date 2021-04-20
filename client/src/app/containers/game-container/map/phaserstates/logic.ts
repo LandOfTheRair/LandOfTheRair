@@ -3,11 +3,13 @@ import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
 
+import { OutlinePipeline } from 'client/src/app/pipelines/OutlinePipeline';
 import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
+import Sprite = Phaser.GameObjects.Sprite;
 
 
 export class MapScene extends Phaser.Scene {
@@ -48,6 +50,7 @@ export class MapScene extends Phaser.Scene {
   private goldSprites = {};
 
   private playerUpdate$: Subscription;
+  private currentTarget$: Subscription;
   private allPlayersUpdate$: Subscription;
   private allNPCsUpdate$: Subscription;
   private openDoorsUpdate$: Subscription;
@@ -55,6 +58,7 @@ export class MapScene extends Phaser.Scene {
   private windowUpdate$: Subscription;
   private vfxUpdate$: Subscription;
   private player: IPlayer;
+  private targetUUID: string;
 
   private hideWelcome: boolean;
 
@@ -121,20 +125,49 @@ export class MapScene extends Phaser.Scene {
   private updateNPCSprite(npc: INPC) {
     if (!this.isReady) return;
 
-    const sprite = this.allNPCSprites[npc.uuid];
-    if (!sprite) {
-      this.createNPCSprite(npc);
-      return;
-  }
-
     const directionOffset = spriteOffsetForDirection(npc.dir);
     const newFrame = npc.sprite + directionOffset;
 
-    sprite.setFrame(newFrame);
+    let sprite = this.allNPCSprites[npc.uuid];
+    if (!sprite) {
+      sprite = this.add.sprite(0, 0, 'Creatures', newFrame);
+      this.layers.npcSprites.add(sprite);
+      this.allNPCSprites[npc.uuid] = sprite;
+    } else {
+      sprite.setFrame(newFrame);
+    }
 
     this.updateSpritePositionalData(sprite, npc);
 
     this.stealthUpdate(sprite, npc);
+  }
+
+  private updateTarget(character: ICharacter) {
+    if (!this.isReady) return;
+    const oldUUID = this.targetUUID;
+    const newUUID = character?.uuid;
+    if (oldUUID === newUUID) return;
+    this.setOutline(newUUID);
+    this.clearShaders(oldUUID);
+    this.targetUUID = newUUID;
+  }
+  private clearShaders(uuid: string) {
+    if (!uuid) return;
+    const target = this.allNPCSprites[uuid] as Sprite;
+    if (!target) return;
+    target.resetPipeline();
+  }
+
+  private setOutline(uuid: string) {
+    if (!uuid) return;
+    const target = this.allNPCSprites[uuid] as Sprite;
+    if (!target) return;
+    target.setPipeline(OutlinePipeline.KEY);
+    target.pipeline.setFloat2(
+      'uTextureSize',
+      target.texture.getSourceImage().width,
+      target.texture.getSourceImage().height
+    );
   }
 
   private removeNPCSprite(uuid: string) {
@@ -143,28 +176,6 @@ export class MapScene extends Phaser.Scene {
 
     delete this.allNPCSprites[uuid];
     sprite.destroy();
-  }
-
-  private createNPCSprite(npc: INPC) {
-    if (!this.isReady) return null;
-
-    const sprite = this.add.sprite(
-      this.convertPosition(npc.x), this.convertPosition(npc.y),
-      'Creatures', npc.sprite
-    );
-
-    const directionOffset = spriteOffsetForDirection(npc.dir);
-    const newFrame = npc.sprite + directionOffset;
-
-    sprite.setFrame(newFrame);
-
-    this.layers.npcSprites.add(sprite);
-
-    this.allNPCSprites[npc.uuid] = sprite;
-
-    this.updateSpritePositionalData(sprite, npc);
-
-    return sprite;
   }
 
   // player sprite stuff
@@ -503,6 +514,10 @@ export class MapScene extends Phaser.Scene {
       this.drawVFX(vfx);
     });
 
+    this.currentTarget$ = this.game.observables.target.subscribe(updTarget => {
+      this.updateTarget(updTarget);
+    });
+
     // watch for player updates
     this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
       this.player = updPlayer;
@@ -575,6 +590,7 @@ export class MapScene extends Phaser.Scene {
 
   private destroy() {
     if (this.playerUpdate$) this.playerUpdate$.unsubscribe();
+    if (this.currentTarget$) this.currentTarget$.unsubscribe();
     if (this.allPlayersUpdate$) this.allPlayersUpdate$.unsubscribe();
     if (this.allNPCsUpdate$) this.allNPCsUpdate$.unsubscribe();
     if (this.openDoorsUpdate$) this.openDoorsUpdate$.unsubscribe();
