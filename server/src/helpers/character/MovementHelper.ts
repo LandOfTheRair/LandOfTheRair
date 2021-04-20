@@ -136,7 +136,7 @@ export class MovementHelper extends BaseService {
     this.directionHelper.setDirBasedOnXYDiff(character, character.x - oldX, character.y - oldY);
 
     const trap = this.game.trapHelper.getTrapAt(character.map, character.x, character.y);
-    if (trap) {
+    if (trap && !this.game.traitHelper.traitLevel(character, 'GentleStep')) {
       this.game.trapHelper.triggerTrap(character, trap);
     }
 
