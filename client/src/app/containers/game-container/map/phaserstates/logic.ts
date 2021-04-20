@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { difference, get, setWith } from 'lodash';
+import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
 
@@ -454,7 +454,7 @@ export class MapScene extends Phaser.Scene {
 
     // set up map - must happen first
     const mapData = { ...this.game.observables.map.getValue() };
-    const tiledJSON = { ... mapData.tiledJSON };
+    const tiledJSON = { ...cloneDeep(mapData.tiledJSON) };
 
     tiledJSON.tileWidth = tiledJSON.tilewidth;
     tiledJSON.tileHeight = tiledJSON.tileheight;
