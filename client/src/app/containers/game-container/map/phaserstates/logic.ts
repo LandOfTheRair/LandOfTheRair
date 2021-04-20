@@ -404,7 +404,7 @@ export class MapScene extends Phaser.Scene {
     this.input.mouse.disableContextMenu();
 
     this.input.on('pointerup', (pointer) => {
-      if (this.input.activePointer.rightButtonDown() || !this.player) return;
+      if (this.input.activePointer.rightButtonDown() || pointer.event.button === 2 || pointer.event.which === 3 || !this.player) return;
 
       const xCoord = Math.floor(pointer.worldX / 64);
       const yCoord = Math.floor(pointer.worldY / 64);
