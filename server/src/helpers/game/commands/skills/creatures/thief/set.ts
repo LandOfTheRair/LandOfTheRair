@@ -6,7 +6,7 @@ export class Set extends SkillCommand {
   override aliases = ['set'];
 
   override range(char: ICharacter) {
-    return 1;
+    return 1 + this.game.traitHelper.traitLevelValue(char, 'ThrownTraps');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
