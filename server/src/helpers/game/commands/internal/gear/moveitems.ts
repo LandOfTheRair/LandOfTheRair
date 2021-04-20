@@ -244,6 +244,7 @@ export class MoveItems extends MacroCommand {
       }
 
       delete srcItem.mods.itemClass;
+      delete srcItem.mods.trapEffect;
       srcItem.mods.trapUses = 1;
     }
 

@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { cloneDeep } from 'lodash';
 
 import { ICharacter, IGroundItem, IItemEffect, ISimpleItem, ItemClass, Skill } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -46,6 +47,10 @@ export class TrapHelper extends BaseService {
     trap.mods.trapSetBy = placer.uuid;
     trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(placer, Skill.Thievery);
     trap.mods.trapUses = 1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
+
+    const trapEffect: IItemEffect = cloneDeep(this.game.itemHelper.getItemProperty(trap, 'trapEffect'));
+    trapEffect.potency *= (1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps'));
+    trap.mods.trapEffect = trapEffect;
 
     this.setTrap(placer.map, x, y, trap);
   }
