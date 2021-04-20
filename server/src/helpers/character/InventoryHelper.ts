@@ -182,19 +182,21 @@ export class InventoryHelper extends BaseService {
     this.addMaterial(player, material, -number);
   }
 
-  public itemValue(player: IPlayer, item: ISimpleItem): number {
+  public itemValue(check: ICharacter | null, item: ISimpleItem): number {
     const { value, sellValue } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'itemClass']);
     const baseItemValue = sellValue || value || 1;
 
     // default sell percent is 25% of value if it doesn't have a set sellValue
     let sellPercent = sellValue ? 100 : 25;
 
-    // sliding scale % based on CHA
-    const cha = this.game.characterHelper.getStat(player, Stat.CHA);
+    if (check) {
+      // sliding scale % based on CHA
+      const cha = this.game.characterHelper.getStat(check, Stat.CHA);
 
-    // at a base of 10, you get +0.2% value per CHA
-    const sellPercentMod = (cha - 10) / 5;
-    sellPercent += sellPercentMod;
+      // at a base of 10, you get +0.2% value per CHA
+      const sellPercentMod = (cha - 10) / 5;
+      sellPercent += sellPercentMod;
+    }
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
     const totalSellValue = Math.max(1, Math.floor(baseItemValue * (sellPercent / 100)));
