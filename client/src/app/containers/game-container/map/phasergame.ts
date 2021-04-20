@@ -1,11 +1,10 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import * as Phaser from 'phaser';
 
 import { IGround, IMapData, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
-
-const Phaser = (window as any).Phaser;
 
 export class MapRenderGame extends Phaser.Game {
 
