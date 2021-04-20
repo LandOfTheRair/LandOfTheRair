@@ -1,3 +1,4 @@
+import { OutlinePipeline } from 'client/src/app/pipelines/OutlinePipeline';
 import * as Phaser from 'phaser';
 import { MapRenderGame } from '../phasergame';
 
@@ -51,6 +52,12 @@ export class PreloadScene extends Phaser.Scene {
       this.load.audio(`sfx-${sfx}`, `assets/sfx/${sfx}.mp3`);
       this.load.audio(`sfx-${sfx}-nostalgia`, `assets/sfx/${sfx}-nostalgia.mp3`);
     });
+    if (this.game.renderer instanceof Phaser.Renderer.WebGL.WebGLRenderer) {
+      this.game.renderer.addPipeline(
+        OutlinePipeline.KEY,
+        new OutlinePipeline(this.game)
+      );
+    }
   }
 
   public create() {
