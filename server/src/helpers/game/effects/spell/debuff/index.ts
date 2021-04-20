@@ -3,6 +3,7 @@ export * from './Blind';
 export * from './BuildupChill';
 export * from './BuildupHeat';
 export * from './Burning';
+export * from './ChainKunai';
 export * from './Chilled';
 export * from './Daze';
 export * from './Disease';

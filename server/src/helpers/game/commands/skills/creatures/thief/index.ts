@@ -1,5 +1,6 @@
 
 export * from './backstab';
+export * from './chainkunai';
 export * from './disguise';
 export * from './disarm';
 export * from './mug';
