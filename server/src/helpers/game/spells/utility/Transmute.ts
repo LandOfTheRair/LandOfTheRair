@@ -9,7 +9,7 @@ export class Transmute extends Spell {
 
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     const center = target ? target : { x: spellCastArgs.x ?? 0, y: spellCastArgs.y ?? 0, map: spellCastArgs.map ?? '' };
-    const potency = spellCastArgs.potency;
+    const potency = spellCastArgs.potency + (caster ? this.game.traitHelper.traitLevelValue(caster, 'PhilosophersStone') : 0);
 
     const mapData = this.game.worldManager.getMap(center.map);
     if (!mapData) return;
