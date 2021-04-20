@@ -134,7 +134,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
 
-  const appraiseText = thiefTier > 0 ? `The item is worth ${value} gold. ` : '';
+  const appraiseText = thiefTier > 0 ? `The item is worth ${value.toLocaleString()} gold. ` : '';
 
   const conditionText = `The item is in ${conditionString(item)} condition. `;
 
@@ -144,6 +144,6 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // TODO: expiration
 
   return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
-    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${trapSetText}
-    ${conditionText}${ownedText}${appraiseText}`;
+    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${trapSetText}
+    ${conditionText}${ownedText}`;
 }

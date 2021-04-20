@@ -17,10 +17,7 @@ export class Identify extends Spell {
     if (conjSkillLevel >= 10) castTier = 1;
     if (conjSkillLevel >= 20) castTier = 2;
 
-    const thiefSkillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, Skill.Thievery);
-    let thiefTier = 0;
-    if (thiefSkillLevel >= 10) thiefTier = 1;
-    if (thiefSkillLevel >= 20) thiefTier = 2;
+    const thiefTier = this.game.traitHelper.traitLevel(caster, 'Appraise') ? 1 : 0;
 
     const identMsg = descTextFor(
       caster as IPlayer,
