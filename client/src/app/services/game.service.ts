@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { startCase } from 'lodash';
 
 import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo } from '../../interfaces';
+  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo, Stat } from '../../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
 
 import { ModalService } from './modal.service';
@@ -163,8 +163,7 @@ export class GameService {
 
     if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) return 'hostile';
 
-    // TODO: disguise
-    // if(me.hasEffect('Disguise') && me.getTotalStat('cha') > compare.getTotalStat('wil')) return 'neutral';
+    if (origin.effects._hash.Disguise && origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]) return 'neutral';
 
     const hostility = (compare as INPC).hostility;
 

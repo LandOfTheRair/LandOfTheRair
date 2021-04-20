@@ -1,7 +1,7 @@
 
 import { Injectable } from 'injection-js';
 
-import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer, isHostileTo } from '../../interfaces';
+import { Alignment, Allegiance, Hostility, ICharacter, INPC, IPlayer, isHostileTo, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
@@ -75,8 +75,8 @@ export class TargettingHelper extends BaseService {
     if (targetOpts.agro && (me.agro[target.uuid] || target.agro[me.uuid])) return !targetOpts.def;
 
     // if the target is disguised, and my wil is less than the targets cha, he is not hostile to me
-    // TODO: disguise
-    // if(target.hasEffect('Disguise') && me.getTotalStat('wil') < target.getTotalStat('cha')) return false;
+    if (this.game.effectHelper.hasEffect(target, 'Disguise')
+    && this.game.characterHelper.getStat(me, Stat.WIL) < this.game.characterHelper.getStat(target, Stat.CHA)) return false;
 
     // if my hostility is based on faction, and either the target or my faction is hostile to each other, yes
     if (targetOpts.faction
