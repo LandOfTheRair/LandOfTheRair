@@ -11,7 +11,7 @@ export class AcolyteOverseer extends Effect {
       this.game.effectHelper.removeEffectByName(char, 'AcolyteOverseer');
     };
 
-    const ai = this.game.worldManager.getMap(char.map).state.getNPCSpawner(char.uuid)?.getNPCAI(char.uuid) as CrazedSaraxaAIBehavior;
+    const ai = this.game.worldManager.getMap(char.map)?.state.getNPCSpawner(char.uuid)?.getNPCAI(char.uuid) as CrazedSaraxaAIBehavior;
     if (!ai) {
       clear();
       return;

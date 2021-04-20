@@ -7,7 +7,8 @@ export class Teleport extends Spell {
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!caster) return;
 
-    const { map } = this.game.worldManager.getMap(caster.map);
+    const map = this.game.worldManager.getMap(caster.map)?.map;
+    if (!map) return;
 
     if (!map.canTeleport(caster as IPlayer)) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, {

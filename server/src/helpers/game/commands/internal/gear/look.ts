@@ -32,7 +32,9 @@ export class LookCommand extends MacroCommand {
       windowName: 'ground'
     });
 
-    const { state } = this.game.worldManager.getMap(player.map);
+    const state = this.game.worldManager.getMap(player.map)?.state;
+    if (!state) return;
+
     const items = state.getEntireGround(player.x, player.y);
 
     const allTypes = Object.keys(items);

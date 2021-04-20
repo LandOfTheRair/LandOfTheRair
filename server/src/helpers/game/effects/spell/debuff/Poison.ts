@@ -8,8 +8,8 @@ export class Poison extends Effect {
 
     let caster: ICharacter | null = null;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map).state;
-      caster = mapState.getCharacterByUUID(effect.sourceUUID);
+      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? null;
     }
 
     this.game.combatHelper.dealDamage(caster, char, {

@@ -6,8 +6,8 @@ export class Disease extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
 
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map).state;
-      const caster = mapState.getCharacterByUUID(effect.sourceUUID);
+      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
         const mult = this.game.traitHelper.traitLevelValue(caster, 'DebilitatingDisease');
@@ -30,8 +30,8 @@ export class Disease extends Effect {
 
     let caster: ICharacter | null = null;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map).state;
-      caster = mapState.getCharacterByUUID(effect.sourceUUID);
+      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? null;
     }
 
     this.game.combatHelper.dealDamage(caster, char, {

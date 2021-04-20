@@ -6,7 +6,6 @@ import { Allegiance, BaseClass, BGM, Direction,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
-import { SubscriptionHelper } from '../account';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { TeleportHelper } from './TeleportHelper';
@@ -20,7 +19,6 @@ export class PlayerHelper extends BaseService {
     private characterHelper: CharacterHelper,
     private staticTextHelper: StaticTextHelper,
     private visibilityHelper: VisibilityHelper,
-    private subscriptionHelper: SubscriptionHelper,
     private teleportHelper: TeleportHelper,
     private worldManager: WorldManager
   ) {
@@ -192,7 +190,7 @@ export class PlayerHelper extends BaseService {
     }
 
     // if we're on a dense tile, "respawn"
-    const { map } = this.worldManager.getMap(player.map);
+    const map = this.worldManager.getMap(player.map)?.map;
     if (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y)) {
       this.teleportHelper.teleportToRespawnPoint(player);
     }
@@ -216,7 +214,8 @@ export class PlayerHelper extends BaseService {
 
     this.visibilityHelper.calculatePlayerFOV(player, opts.sendFOV);
 
-    const { map } = this.worldManager.getMap(player.map);
+    const map = this.worldManager.getMap(player.map)?.map;
+    if (!map) return;
 
     const z = map.getZLevelAt(player.x, player.y);
     player.z = z;
@@ -314,13 +313,17 @@ export class PlayerHelper extends BaseService {
 
   // whether or not the player can get skill on the current map
   public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
-    const { map } = this.worldManager.getMap(player.map);
+    const map = this.worldManager.getMap(player.map)?.map;
+    if (!map) return false;
+
     return (player.skills[skill.toLowerCase()] ?? 0) < map.maxSkillExp;
   }
 
   // whether or not the player can get xp on the current map
   public canGainExpOnMap(player: IPlayer): boolean {
-    const { map } = this.worldManager.getMap(player.map);
+    const map = this.worldManager.getMap(player.map)?.map;
+    if (!map) return false;
+
     return player.exp < map.maxLevelExp;
   }
 
@@ -491,7 +494,9 @@ export class PlayerHelper extends BaseService {
   public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
     if (this.game.characterHelper.isDead(player)) return;
 
-    const { map } = this.game.worldManager.getMap(player.map);
+    const map = this.worldManager.getMap(player.map)?.map;
+    if (!map) return;
+
     if (!map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(player, 'The blob turns to ash in your hand!');
       return;

@@ -54,7 +54,7 @@ export class MessageHelper extends BaseService {
 
     if (from) message = `**${from}**: ${message}`;
 
-    const { state } = this.game.worldManager.getMap(character.map);
+    const state = this.game.worldManager.getMap(character.map)?.state;
     if (!state) return;
 
     const allPlayers = state.getAllPlayersInRange(character, radius);

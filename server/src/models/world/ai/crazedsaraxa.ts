@@ -54,7 +54,7 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
     this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: 'EeeaAAaarrrGGGgghhhh!' });
     this.game.messageHelper.sendMessageToMap(npc.map, { message: 'You hear a lock click in the distance.' });
 
-    const chestDoor = this.game.worldManager.getMap(npc.map).map.findInteractableByName('Chest Door');
+    const chestDoor = this.game.worldManager.getMap(npc.map)?.map.findInteractableByName('Chest Door');
     chestDoor.properties.requireLockpick = false;
   }
 
@@ -66,12 +66,12 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
     const msgObject = { from: npc.name, message: 'Come forth, my acolyte!', subClass: 'chatter' };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject);
 
-    const npcSpawner = this.game.worldManager.getMap(npc.map).state.getNPCSpawnerByName(`Acolyte Spawner ${spawnId}`);
+    const npcSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnerByName(`Acolyte Spawner ${spawnId}`);
     if (npcSpawner) {
       npcSpawner.forceSpawnNPC({ createCallback: (acolyte) => this.acolytes[spawnId] = acolyte });
     }
 
-    const rockySpawner = this.game.worldManager.getMap(npc.map).state.getNPCSpawnerByName('Crazed Saraxa Rocky Spawner');
+    const rockySpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnerByName('Crazed Saraxa Rocky Spawner');
     if (rockySpawner && !rockySpawner.areAnyNPCsAlive) {
       rockySpawner.forceSpawnNPC();
     }

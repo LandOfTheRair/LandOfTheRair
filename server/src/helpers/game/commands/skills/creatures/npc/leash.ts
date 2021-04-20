@@ -14,7 +14,9 @@ export class Leash extends SpellCommand {
   override use(executor: ICharacter) {
     if (this.game.characterHelper.isPlayer(executor)) return;
 
-    const state = this.game.worldManager.getMap(executor.map).state;
+    const state = this.game.worldManager.getMap(executor.map)?.state;
+    if (!state) return;
+
     const spawner = state.getNPCSpawner(executor.uuid);
     if (!spawner) return;
 

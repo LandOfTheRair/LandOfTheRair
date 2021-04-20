@@ -26,7 +26,7 @@ export class CorpseManager extends BaseService {
       if (expTime > now || !activeMaps[corpsePos.map]) return;
 
       this.searchCorpse(corpseUUID);
-      this.game.worldManager.getMap(corpsePos.map).state.removeItemFromGround(corpsePos.x, corpsePos.y, ItemClass.Corpse, corpseUUID);
+      this.game.worldManager.getMap(corpsePos.map)?.state.removeItemFromGround(corpsePos.x, corpsePos.y, ItemClass.Corpse, corpseUUID);
     });
 
     timer.stopTimer('corpse expiration');
@@ -69,7 +69,7 @@ export class CorpseManager extends BaseService {
       delete corpseRef.mods.searchItems;
     });
 
-    this.game.worldManager.getMap(firstCorpse.map).state.addItemsToGround(firstCorpse.x, firstCorpse.y, allItems);
+    this.game.worldManager.getMap(firstCorpse.map)?.state.addItemsToGround(firstCorpse.x, firstCorpse.y, allItems);
   }
 
   // search a corpse and drop its items on the ground
@@ -78,7 +78,7 @@ export class CorpseManager extends BaseService {
     if (!corpseRef || !corpseRef.mods.searchItems) return;
 
     const corpsePos = this.corpsePositions[uuid];
-    this.game.worldManager.getMap(corpsePos.map).state.addItemsToGround(corpsePos.x, corpsePos.y, corpseRef.mods.searchItems ?? []);
+    this.game.worldManager.getMap(corpsePos.map)?.state.addItemsToGround(corpsePos.x, corpsePos.y, corpseRef.mods.searchItems ?? []);
     delete corpseRef.mods.searchItems;
   }
 

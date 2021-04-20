@@ -22,8 +22,8 @@ export class DeathHelper extends BaseService {
 
     // remove our corpse if we have one
     if (player.corpseRef) {
-      const { state } = this.game.worldManager.getMap(oldMap);
-      state.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
+      const state = this.game.worldManager.getMap(oldMap)?.state;
+      state?.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
 
       this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
       delete player.corpseRef;
@@ -94,8 +94,8 @@ export class DeathHelper extends BaseService {
     if (corpse) {
       dead.corpseRef = corpse;
 
-      const { state } = this.game.worldManager.getMap(dead.map);
-      state.addItemToGround(dead.x, dead.y, corpse);
+      const state = this.game.worldManager.getMap(dead.map)?.state;
+      state?.addItemToGround(dead.x, dead.y, corpse);
 
     } else {
 
@@ -128,11 +128,12 @@ export class DeathHelper extends BaseService {
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
   private npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
 
-    const ai = this.game.worldManager.getMap(dead.map).state.getNPCSpawner(dead.uuid)?.getNPCAI(dead.uuid);
+    const ai = this.game.worldManager.getMap(dead.map)?.state.getNPCSpawner(dead.uuid)?.getNPCAI(dead.uuid);
     ai?.death(killer);
 
     if (!dead.noItemDrop) {
-      const { state } = this.game.worldManager.getMap(dead.map);
+      const state = this.game.worldManager.getMap(dead.map)?.state;
+      if (!state) return;
 
       const allItems: ISimpleItem[] = [];
 

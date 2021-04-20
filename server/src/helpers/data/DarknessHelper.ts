@@ -110,7 +110,7 @@ export class DarknessHelper extends BaseService {
   }
 
   private updateDarkness(map: string, x: number, y: number): void {
-    this.game.worldManager.getMap(map).state?.triggerAndSendUpdateWithFOV(x, y);
+    this.game.worldManager.getMap(map)?.state?.triggerAndSendUpdateWithFOV(x, y);
   }
 
   private setDarkness(map: string, x: number, y: number, endsAt: number): void {

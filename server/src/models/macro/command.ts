@@ -108,7 +108,8 @@ export abstract class SkillCommand extends MacroCommand {
 
         const { x, y } = this.game.directionHelper.getXYFromDir(splitArgs[i] as Direction);
 
-        const { map } = this.game.worldManager.getMap(user.map);
+        const map = this.game.worldManager.getMap(user.map)?.map;
+        if (!map) continue;
 
         // if you specify a wall tile, your cast is halted
         if (map.checkIfActualWallAt(curX + x, curY + y)) break;

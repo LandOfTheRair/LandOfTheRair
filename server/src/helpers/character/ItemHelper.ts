@@ -200,7 +200,9 @@ export class ItemHelper extends BaseService {
     const item = player.items.equipment[source];
     if (!item) return;
 
-    const { map } = this.game.worldManager.getMap(player.map);
+    const map = this.game.worldManager.getMap(player.map)?.map;
+    if (!map) return;
+
     const { succorInfo, ounces, itemClass, trait } = this.getItemProperties(item, ['succorInfo', 'ounces', 'itemClass', 'trait']);
     if (succorInfo && !map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(player, 'You stop, unable to envision the place in your memory!');

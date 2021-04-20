@@ -6,6 +6,8 @@ export class FindFamiliar extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
 
     const mapData = this.game.worldManager.getMap(char.map);
+    if (!mapData) return;
+
     const potency = char.level;
 
     const npcCreateCallback = (npc: INPC) => {

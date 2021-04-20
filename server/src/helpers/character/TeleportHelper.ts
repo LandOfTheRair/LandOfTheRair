@@ -24,7 +24,10 @@ export class TeleportHelper extends BaseService {
     player.x = x;
     player.y = y;
 
-    const { map, state } = this.game.worldManager.getMap(player.map);
+    const mapData = this.game.worldManager.getMap(player.map);
+    if (!mapData) return;
+
+    const { map, state } = mapData;
 
     if (player.x > map.width - 4 || player.x < 4 || player.y > map.height - 4 || player.y < 4) {
       player.x = map.respawnPoint.x;
@@ -71,8 +74,10 @@ export class TeleportHelper extends BaseService {
       const destinationMapName = this.worldManager.getDestinationMapName(player, map);
       this.game.worldManager.ensureMapExists(map, this.game.partyHelper.partyName(player), destinationMapName);
 
-      const { state: newState, map: newMap } = this.worldManager.getMap(destinationMapName);
-      if (!newState) {
+      const mapData = this.worldManager.getMap(destinationMapName);
+      if (!mapData) return;
+
+      if (!mapData.state) {
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Warning: map ${map} does not exist.` });
         return;
       }
@@ -95,7 +100,7 @@ export class TeleportHelper extends BaseService {
       player.y = y;
 
       // then we send them the new map
-      this.game.transmissionHelper.sendActionToPlayer(player, GameAction.GameSetMap, { map: newMap.mapData });
+      this.game.transmissionHelper.sendActionToPlayer(player, GameAction.GameSetMap, { map: mapData.map.mapData });
 
       // then we update their status based on the new map, and send them the new movement patch with their real FOV
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
@@ -110,7 +115,8 @@ export class TeleportHelper extends BaseService {
 
   public memorizeLocation(player: IPlayer, name: string): boolean {
     name = truncate(name, { length: 20, omission: '' }).trim();
-    const { map } = this.game.worldManager.getMap(player.map);
+    const map = this.game.worldManager.getMap(player.map)?.map;
+    if (!map) return false;
 
     if (!map.canMemorize || !map.canTeleport(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {

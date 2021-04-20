@@ -44,7 +44,8 @@ export class MovementHelper extends BaseService {
     xDiff = clamp(xDiff, -4, 4);
     yDiff = clamp(yDiff, -4, 4);
 
-    const { map } = this.worldManager.getMap(character.map);
+    const map = this.worldManager.getMap(character.map)?.map;
+    if (!map) return false;
 
     const steps = map.findPath(character.x, character.y, character.x + xDiff, character.y + yDiff);
 
@@ -60,7 +61,7 @@ export class MovementHelper extends BaseService {
       this.game.transmissionHelper.sendMovementPatch(character as Player);
 
       const mapData = this.game.worldManager.getMap(character.map);
-      const interactable = mapData.map.getInteractableAt(character.x, character.y);
+      const interactable = mapData?.map.getInteractableAt(character.x, character.y);
 
       if (interactable) {
         this.handleInteractable(character as Player, interactable);
@@ -76,7 +77,10 @@ export class MovementHelper extends BaseService {
     steps: Array<{ x: number; y: number }>,
     opts: { isChasing: boolean } = { isChasing: false }
   ): boolean {
-    const { map, state } = this.worldManager.getMap(character.map);
+    const mapData = this.worldManager.getMap(character.map);
+    if (!mapData) return false;
+
+    const { map, state } = mapData;
 
     let wasSuccessfulWithNoInterruptions = true;
 

@@ -7,7 +7,10 @@ export class MassTeleport extends Spell {
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
     if (!caster) return;
 
-    const { map, state } = this.game.worldManager.getMap(caster.map);
+    const mapData = this.game.worldManager.getMap(caster.map);
+    if (!mapData) return;
+
+    const { map, state } = mapData;
 
     if (!map.canTeleport(caster as IPlayer)) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, {

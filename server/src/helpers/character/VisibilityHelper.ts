@@ -31,7 +31,8 @@ export class VisibilityHelper extends BaseService {
   // calculate a fov for a character and set it
   calculateFOV(character: ICharacter): void {
 
-    const { map } = this.worldManager.getMap(character.map);
+    const map = this.worldManager.getMap(character.map)?.map;
+    if (!map) return;
 
     const affected = {};
 
@@ -97,7 +98,8 @@ export class VisibilityHelper extends BaseService {
 
   // whether or not this spot is hideable (near a wall, or in dark)
   public canContinueHidingAtSpot(char: ICharacter): boolean {
-    const { map } = this.game.worldManager.getMap(char.map);
+    const map = this.game.worldManager.getMap(char.map)?.map;
+    if (!map) return false;
     if (!map.checkIfCanHideAt(char.x, char.y)) return false;
     if (this.isDarkAt(char.map, char.x, char.y)) return true;
 

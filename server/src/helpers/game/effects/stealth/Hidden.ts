@@ -14,7 +14,9 @@ export class Hidden extends Effect {
 
   // update everyone in sight so they can't see us (maybe)
   override apply(char: ICharacter) {
-    const { state } = this.game.worldManager.getMap(char.map);
+    const state = this.game.worldManager.getMap(char.map)?.state;
+    if (!state) return;
+
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }
 
@@ -22,7 +24,9 @@ export class Hidden extends Effect {
 
     // thieves have to use their stealth bar
     if (char.baseClass === BaseClass.Thief) {
-      const { state } = this.game.worldManager.getMap(char.map);
+      const state = this.game.worldManager.getMap(char.map)?.state;
+      if (!state) return;
+
       const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
       if (numHostile.length === 0) return;
 
@@ -47,7 +51,9 @@ export class Hidden extends Effect {
 
   // update everyone in sight so they can see us again (if they couldn't before)
   override unapply(char: ICharacter) {
-    const { state } = this.game.worldManager.getMap(char.map);
+    const state = this.game.worldManager.getMap(char.map)?.state;
+    if (!state) return;
+
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }
 

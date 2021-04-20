@@ -9,15 +9,17 @@ export class SearchCommand extends LookCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
 
-    const { map, state } = this.game.worldManager.getMap(player.map);
-    const corpses = state.getItemsFromGround(player.x, player.y, ItemClass.Corpse) || [];
+    const mapData = this.game.worldManager.getMap(player.map);
+    if (!mapData) return;
+
+    const corpses = mapData.state.getItemsFromGround(player.x, player.y, ItemClass.Corpse) || [];
 
     const uuids = corpses.filter(x => (x.item.mods?.searchItems?.length ?? 0) > 0).map(x => x.item.uuid);
     if (uuids.length > 0) {
       this.game.corpseManager.searchCorpses(uuids);
     }
 
-    const chest = map.getInteractableOfTypeAt(player.x, player.y, ObjectType.TreasureChest);
+    const chest = mapData.map.getInteractableOfTypeAt(player.x, player.y, ObjectType.TreasureChest);
     if (chest) {
       this.game.interactionHelper.openChest(player, chest);
     }

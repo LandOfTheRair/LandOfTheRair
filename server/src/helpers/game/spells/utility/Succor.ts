@@ -12,7 +12,9 @@ export class Succor extends Spell {
       return;
     }
 
-    const map = this.game.worldManager.getMap(caster.map).map;
+    const map = this.game.worldManager.getMap(caster.map)?.map;
+    if (!map) return;
+
     if (!map.canSuccor(caster as IPlayer)) {
       return this.sendMessage(caster, { message: 'A haze clouds your mind.' });
     }

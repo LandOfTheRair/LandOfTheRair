@@ -13,6 +13,8 @@ export class Interact extends MacroCommand {
     if (Math.abs(x) > 1 || Math.abs(y) > 1) return;
 
     const mapData = this.game.worldManager.getMap(player.map);
+    if (!mapData) return;
+
     const interactable = mapData.map.getInteractableAt(player.x + x, player.y + y);
     if (!interactable) return;
 

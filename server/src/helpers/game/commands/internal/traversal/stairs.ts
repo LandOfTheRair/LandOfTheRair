@@ -11,7 +11,9 @@ export class Stairs extends MacroCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'Snare')) return this.sendMessage(player, 'You are snared!');
 
-    const { map } = this.game.worldManager.getMap(player.map);
+    const map = this.game.worldManager.getMap(player.map)?.map;
+    if (!map) return;
+
     const interactable = map.getInteractableAt(player.x, player.y);
 
     if (!interactable || !['StairsUp', 'StairsDown'].includes(interactable.type)) {

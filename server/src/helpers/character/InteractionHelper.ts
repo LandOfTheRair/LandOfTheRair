@@ -22,7 +22,8 @@ export class InteractionHelper extends BaseService {
       return false;
     }
 
-    const { state } = this.game.worldManager.getMap(character.map);
+    const state = this.game.worldManager.getMap(character.map)?.state;
+    if (!state) return false;
 
     const isCurrentlyOpen = state.isDoorOpen(door.id);
 
@@ -118,7 +119,7 @@ export class InteractionHelper extends BaseService {
     if (!chest.searchItems || chest.searchItems.length === 0) return;
 
     this.game.groundManager.lootChest(character.map, chest.name);
-    this.game.worldManager.getMap(character.map).state.addItemsToGround(character.x, character.y, chest.searchItems);
+    this.game.worldManager.getMap(character.map)?.state.addItemsToGround(character.x, character.y, chest.searchItems);
     chest.searchItems = [];
   }
 

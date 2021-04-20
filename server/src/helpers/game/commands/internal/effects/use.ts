@@ -34,7 +34,9 @@ export class UseCommand extends MacroCommand {
 
     case 'ground': {
       const [itemType, uuid] = slot.split(':');
-      const { state } = this.game.worldManager.getMap(player.map);
+      const state = this.game.worldManager.getMap(player.map)?.state;
+      if (!state) break;
+
       const items = state.getItemsFromGround(player.x, player.y, itemType as ItemClass, uuid);
       if (items[0]) {
         this.game.characterHelper.setEquipmentSlot(player, emptyHand, items[0].item);

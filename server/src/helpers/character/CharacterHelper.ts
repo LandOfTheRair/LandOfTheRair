@@ -530,7 +530,8 @@ export class CharacterHelper extends BaseService {
     character.totalStats[Stat.Move] = clamp(character.totalStats[Stat.Move], 0, 4);
 
     // if we're a player and our perception changes, we do a full visual update
-    const { state } = this.game.worldManager.getMap(character.map);
+    const state = this.game.worldManager.getMap(character.map)?.state;
+    if (!state) return;
 
     if (this.isPlayer(character) && oldPerception !== character.totalStats[Stat.Perception]) {
       state.triggerFullUpdateForPlayer(character as Player);

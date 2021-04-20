@@ -68,7 +68,9 @@ export class LootHelper extends BaseService {
 
   public getNPCLoot(npc: INPC, bonus = 0): ISimpleItem[] {
 
-    const { map } = this.game.worldManager.getMap(npc.map);
+    const map = this.game.worldManager.getMap(npc.map)?.map;
+    if (!map) return [];
+
     const { mapDroptables, regionDroptables } = map;
 
     // npcs can give bonuses in certain circumstances

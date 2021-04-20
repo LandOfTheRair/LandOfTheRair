@@ -130,7 +130,7 @@ export class WorldManager extends BaseService {
     this.instanceNameToInstancePrototype[mapNameWithParty] = mapName;
   }
 
-  public getMap(mapName: string): { map: WorldMap; state: MapState } {
+  public getMap(mapName: string): { map: WorldMap; state: MapState } | undefined {
     return {
       map: this.instances[mapName] || this.maps[mapName],
       state: this.mapStates[mapName]
@@ -171,7 +171,11 @@ export class WorldManager extends BaseService {
   public checkPlayerForDoorsBeforeJoiningGame(player: Player): void {
     const { x, y } = player;
 
-    const { map, state } = this.getMap(player.map);
+    const mapData = this.getMap(player.map);
+    if (!mapData) return;
+
+    const { map, state } = mapData;
+
     const door = map.getInteractableOfTypeAt(x, y, ObjectType.Door);
 
     if (door && !state.isDoorOpen(door.id)) {

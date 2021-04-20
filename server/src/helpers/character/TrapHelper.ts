@@ -35,7 +35,9 @@ export class TrapHelper extends BaseService {
     const trapEffect: IItemEffect = this.game.itemHelper.getItemProperty(trap.item, 'trapEffect');
     if (!trapEffect) return;
 
-    const mapState = this.game.worldManager.getMap(target.map).state;
+    const mapState = this.game.worldManager.getMap(target.map)?.state;
+    if (!mapState) return;
+
     const caster = mapState.getCharacterByUUID(trap.item.mods.trapSetBy ?? '');
 
     this.game.spellManager.castSpell(trapEffect.name, caster, target, trapEffect);
@@ -61,11 +63,11 @@ export class TrapHelper extends BaseService {
   }
 
   private setTrap(map: string, x: number, y: number, trap: ISimpleItem) {
-    this.game.worldManager.getMap(map).state.addItemToGround(x, y, trap);
+    this.game.worldManager.getMap(map)?.state.addItemToGround(x, y, trap);
   }
 
   public removeTrap(map: string, x: number, y: number, trap: IGroundItem) {
-    this.game.worldManager.getMap(map).state.removeItemsFromGround(x, y, [trap]);
+    this.game.worldManager.getMap(map)?.state.removeItemsFromGround(x, y, [trap]);
   }
 
 }
