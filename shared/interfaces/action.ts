@@ -146,6 +146,7 @@ export enum GameAction {
   SettingsToggleWindow = '[Settings] Toggle Window',
   SettingsActiveWindow = '[Settings] Set Active Window',
   SettingsCharSlot = '[Settings] Set Char Slot',
+  SettingsLastPlayedCharSlot = '[Settings] Last Played Char Slot',
 
   NPCActionShowTrainer = '[NPC] Show Trainer',
   NPCActionHideTrainer = '[NPC] Hide Trainer',

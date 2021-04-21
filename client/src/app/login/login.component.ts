@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   @Select(SettingsState.wasKicked) public wasKicked$: Observable<boolean>;
   @Select(SettingsState.autologin) public autologin$: Observable<string>;
+  @Select(SettingsState.lastCharSlot) public lastCharSlot$: Observable<number>;
 
   public isActing: boolean;
   public isRegistering: boolean;
@@ -102,11 +103,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SetActiveWindow('lobby'));
     this.store.dispatch(new Login(accountData));
     if (this.optionsService.autoJoin) {
-      const charSlotToLoad = localStorage.getItem('lastCharSlot');
-      if (charSlotToLoad !== null && (accountData?.account?.players?.length ?? -1) > +charSlotToLoad) {
-        this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: +charSlotToLoad });
+      this.lastCharSlot$.pipe(take(1)).subscribe(slot => {
+        console.log(slot, accountData?.account?.players);
+        if (slot === -1 || !accountData?.account?.players?.[slot]) return;
+        this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: slot });
         this.store.dispatch(new SetActiveWindow('map'));
-      }
+      });
     }
   }
 

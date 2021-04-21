@@ -54,9 +54,14 @@ export class LoginAction extends ServerAction {
 
       game.logger.log('Auth:Login', `${data.username} logged in (${data.socketIp}).`);
 
+      const sortedPlayers = realAccount.players.reduce((prev, cur) => {
+        prev[cur.charSlot] = cur;
+        return prev;
+      }, [] as any[]);
+
       emit({
         type: GameServerResponse.Login,
-        account: game.db.prepareForTransmission(realAccount),
+        account: { ...game.db.prepareForTransmission(realAccount), players: sortedPlayers },
         motd: game.worldDB.motd,
         onlineUsers: game.lobbyManager.onlineUsers.map(a => game.accountDB.simpleAccount(a as Account)),
         currentHoliday: game.holidayHelper.currentHoliday()
@@ -76,22 +81,6 @@ export class LoginAction extends ServerAction {
         action: GameAction.EventSetList,
         events: game.dynamicEventHelper.getEventsForPlayer()
       });
-
-      const sortedPlayers = realAccount.players.reduce((prev, cur) => {
-        prev[cur.charSlot] = cur;
-        return prev;
-      }, [] as any[]);
-
-      for (let i = 0; i < sortedPlayers.length; i++) {
-
-        const player = sortedPlayers[i];
-
-        emit({
-          action: GameAction.SetCharacterSlotInformation,
-          slot: i,
-          characterInfo: player ? game.db.prepareForTransmission(player) : null
-        });
-      }
 
     } catch (e) {
       game.logger.error('LoginAction', e);

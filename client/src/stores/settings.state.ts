@@ -4,7 +4,8 @@ import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameOption, ISettings } from '../interfaces';
 import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
   RemoveAccount, ResetWindowPositions, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
-  SetCurrentCommand, SetDefaultWindowPosition, SetLogMode, SetOption, ShowWindow, ToggleWindow, UpdateWindowPosition } from './actions';
+  SetCurrentCommand, SetDefaultWindowPosition, SetLastCharSlotPlayed, SetLogMode, SetOption,
+  ShowWindow, ToggleWindow, UpdateWindowPosition } from './actions';
 
 const defaultWindowPositions = {};
 
@@ -13,6 +14,7 @@ const defaultSettings: () => ISettings = () => ({
     windows: {},
     activeWindow: '',
     charSlot: 0,
+    lastCharSlot: -1,
     wasKicked: false,
     assetHash: '',
     chatMode: 'cmd',
@@ -96,6 +98,11 @@ export class SettingsState implements NgxsOnInit {
   @Selector()
   static charSlot(state: ISettings) {
     return { slot: state.charSlot };
+  }
+
+  @Selector()
+  static lastCharSlot(state: ISettings) {
+    return state.lastCharSlot;
   }
 
   @Selector()
@@ -283,6 +290,11 @@ export class SettingsState implements NgxsOnInit {
     options[option] = value;
 
     ctx.patchState({ options });
+  }
+
+  @Action(SetLastCharSlotPlayed)
+  setLastCharSlot(ctx: StateContext<ISettings>, { charSlot }: SetLastCharSlotPlayed) {
+    ctx.patchState({ lastCharSlot: charSlot });
   }
 
 }

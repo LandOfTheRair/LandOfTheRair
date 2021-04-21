@@ -116,3 +116,9 @@ export class SetCharacterView {
   static type = GameAction.SettingsSetCharacterView;
   constructor(public charMode: 'Equipment'|'Stats'|'Skills'|'Reputation') {}
 }
+
+// dispatched when the user hits play game
+export class SetLastCharSlotPlayed {
+  static type = GameAction.SettingsLastPlayedCharSlot;
+  constructor(public charSlot: number) {}
+}

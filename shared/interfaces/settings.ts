@@ -52,6 +52,7 @@ export interface ISettings {
   windows: Record<string, { x: number, y: number, width: number, height: number, hidden?: boolean }>;
   activeWindow: string;
   charSlot: number;
+  lastCharSlot: number;
   wasKicked: boolean;
   assetHash: string;
   chatMode: ChatMode;

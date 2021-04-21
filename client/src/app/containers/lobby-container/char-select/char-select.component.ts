@@ -5,7 +5,7 @@ import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Subscription } from 'rxjs';
 import { GameServerEvent, IAccount, ICharacterCreateInfo, IPlayer, basePlayerSprite } from '../../../../interfaces';
-import { SetActiveWindow, SetCharSlot } from '../../../../stores';
+import { SetActiveWindow, SetCharSlot, SetLastCharSlotPlayed } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
@@ -73,7 +73,7 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
   play(charSlot: number) {
     this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot });
     this.store.dispatch(new SetActiveWindow('map'));
-    localStorage.setItem('lastCharSlot', String(charSlot));
+    this.store.dispatch(new SetLastCharSlotPlayed(charSlot));
   }
 
 }
