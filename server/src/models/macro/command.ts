@@ -182,11 +182,11 @@ export class SpellCommand extends SkillCommand {
         const itemClass = this.game.itemHelper.getItemProperty(rightHand, 'itemClass');
 
         if (itemClass === ItemClass.Wand) {
-          cost *= (1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty'));
+          cost *= Math.max(0, (1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty')));
         }
 
         if (itemClass === ItemClass.Totem) {
-          cost *= (1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty'));
+          cost *= Math.max(0, (1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty')));
         }
       }
     }

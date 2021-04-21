@@ -121,7 +121,7 @@ export class DamageHelperPhysical extends BaseService {
     const { damage, variance, scaling, bonus, weakPercent, strongPercent } = weaponStats;
 
     // pre-calculate strong/weak hits
-    const swashValue = 1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler');
+    const swashValue = Math.max(0, 1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler'));
     const didFlub = this.game.diceRollerHelper.XInOneHundred(weakPercent * swashValue);
     const didCrit = this.game.diceRollerHelper.XInOneHundred(strongPercent);
 

@@ -53,7 +53,7 @@ export class ParryStance extends Effect {
       this.game.combatHelper.physicalAttack(char, attacker);
     }
 
-    return Math.floor(currentDamage * (1 - (effect.effectInfo.potency / 100)));
+    return Math.floor(currentDamage * Math.max(0, (1 - (effect.effectInfo.potency / 100))));
   }
 
 }

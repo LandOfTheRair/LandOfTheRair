@@ -611,8 +611,9 @@ export class CharacterHelper extends BaseService {
       : null;
 
     const totalReduction = (HideReduction[leftHandClass]) || 0 + (HideReduction[rightHandClass] || 0);
+    const shadowSheathMultiplier = Math.max(0, 1 - this.game.traitHelper.traitLevelValue(char, 'ShadowSheath'));
 
-    return totalReduction;
+    return Math.floor(totalReduction * shadowSheathMultiplier);
   }
 
   // get perception value for a character
