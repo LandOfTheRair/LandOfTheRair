@@ -73,6 +73,7 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
   play(charSlot: number) {
     this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot });
     this.store.dispatch(new SetActiveWindow('map'));
+    localStorage.setItem('lastCharSlot', String(charSlot));
   }
 
 }

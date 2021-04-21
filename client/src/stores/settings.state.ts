@@ -23,6 +23,7 @@ const defaultSettings: () => ISettings = () => ({
     options: {
       [GameOption.RightClickCMDSend]: false,
       [GameOption.AutoAttack]: true,
+      [GameOption.AutoJoin]: false,
       [GameOption.HideLobbyWhilePlaying]: true,
       [GameOption.NoNPCModals]: false,
       [GameOption.LockWindows]: false,
