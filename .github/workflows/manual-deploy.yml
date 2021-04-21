@@ -12,7 +12,7 @@ jobs:
       matrix:
         # os: [macos-latest, ubuntu-latest, windows-latest]
         os: [ubuntu-latest]
-        node-version: [14.x]
+        node-version: [16.x]
 
     steps:
     - name: Reboot Notification
