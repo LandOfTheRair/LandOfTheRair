@@ -4,7 +4,7 @@ import { Spell } from '../../../../models/world/Spell';
 export class Venom extends Spell {
 
   override getDuration(caster: ICharacter | null) {
-    return caster ? this.game.characterHelper.getStat(caster, Stat.DEX) : 10;
+    return caster ? this.game.characterHelper.getStat(caster, Stat.DEX) * 3 : 10;
   }
 
   public override getUnformattedTooltipDesc(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): string {
