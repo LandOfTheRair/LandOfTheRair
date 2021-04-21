@@ -117,6 +117,8 @@ export class CombatHelper extends BaseService {
     const { damage, attackerWeapon, isHeal, isMelee, isOverTime, hasBeenReflected,
       damageClass, attackerDamageMessage, defenderDamageMessage, customSfx } = args;
 
+    if (isNaN(damage)) return;
+
     const reflectPhysical = this.game.characterHelper.getStat(defender, Stat.PhysicalReflect);
     const reflectMagical = this.game.characterHelper.getStat(defender, Stat.MagicalReflect);
 
