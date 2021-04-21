@@ -783,13 +783,17 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
-    const { isThrow, throwHand, isBackstab, isOffhand, isKick } = args;
-    let { isPunch, damageMult } = args;
+    const { isThrow, throwHand, isOffhand, isKick } = args;
+    let { isPunch, isBackstab, damageMult } = args;
     let isAttackerVisible = this.game.visibilityHelper.canSeeThroughStealthOf(defender, attacker);
 
     if (this.game.visibilityHelper.isDarkAt(defender.map, defender.x, defender.y)
     && !this.game.effectHelper.hasEffect(defender, 'DarkVision')) {
       isAttackerVisible = false;
+    }
+
+    if (!isAttackerVisible && this.game.effectHelper.hasEffect(defender, 'Debilitate')) {
+      isBackstab = true;
     }
 
     args.attackerName = isAttackerVisible ? attacker?.name || 'somebody' : 'somebody';

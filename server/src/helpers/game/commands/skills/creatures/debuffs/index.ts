@@ -1,6 +1,7 @@
 
 export * from './blind';
 export * from './daze';
+export * from './debilitate';
 export * from './disease';
 export * from './plague';
 export * from './poison';
