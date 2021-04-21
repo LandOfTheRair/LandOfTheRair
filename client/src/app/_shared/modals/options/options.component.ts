@@ -28,6 +28,7 @@ export class OptionsComponent implements OnInit, OnDestroy {
     { option: GameOption.EnterToggleCMD,        text: 'Use Enter to toggle command line visibility' },
     { option: GameOption.NoNPCModals,           text: 'Classic NPC chat (no dialog popups)' },
     { option: GameOption.AutoAttack,            text: 'Auto-attack while there is an active target' },
+    { option: GameOption.AutoJoin,              text: 'Join the game with the last character used' },
   ];
 
   public readonly messageOptions = [

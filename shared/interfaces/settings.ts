@@ -12,6 +12,7 @@ export enum GameOption {
   // interface options
   RightClickCMDSend = 'rightClickCMDSend',
   AutoAttack = 'autoAttack',
+  AutoJoin = 'autoJoin',
   HideLobbyWhilePlaying = 'hideLobbyWhileInGame',
   LockWindows = 'lockWindows',
   SuppressZeroDamage = 'suppressZeroDamageMessage',

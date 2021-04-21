@@ -6,6 +6,7 @@ import { take } from 'rxjs/operators';
 import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../interfaces';
 import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
 import { AnnouncementService } from '../services/announcement.service';
+import { OptionsService } from '../services/options.service';
 import { GameService } from '../services/game.service';
 import { SocketService } from '../services/socket.service';
 
@@ -38,6 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     public announcementService: AnnouncementService,
     public gameService: GameService,
     public socketService: SocketService,
+    public optionsService: OptionsService,
     private store: Store
   ) { }
 
@@ -96,10 +98,16 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private setAccount(accountData: any) {
     this.isActing = false;
-
     this.store.dispatch(new AddAccount(this.newAccount.username, this.newAccount.password, this.newAccount.autologin));
     this.store.dispatch(new SetActiveWindow('lobby'));
     this.store.dispatch(new Login(accountData));
+    if (this.optionsService.autoJoin) {
+      const charSlotToLoad = localStorage.getItem('lastCharSlot');
+      if (charSlotToLoad !== null && (accountData?.account?.players?.length ?? -1) > +charSlotToLoad) {
+        this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: +charSlotToLoad });
+        this.store.dispatch(new SetActiveWindow('map'));
+      }
+    }
   }
 
   private setErrorMessage(error: string) {
