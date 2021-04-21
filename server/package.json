@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
-    "bcrypt": "5.0.0",
+    "bcryptjs": "^2.4.3",
     "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
     "didyoumean2": "3.1.2",

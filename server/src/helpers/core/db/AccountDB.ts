@@ -1,5 +1,5 @@
 
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, pick } from 'lodash';
 import { ObjectId } from 'mongodb';
