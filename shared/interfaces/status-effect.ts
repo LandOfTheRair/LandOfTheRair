@@ -1,4 +1,5 @@
 import { Stat } from './building-blocks';
+import { IItemEffect } from './effect';
 import { DamageType } from './itemtypes';
 import { SoundEffect } from './sfx';
 
@@ -20,6 +21,8 @@ export interface IStatusEffectInfo {
   unique?: boolean|string;                      // whether or not this effect is unique (ie, can have duplicates of) - if string, similar effects will be removed (imbue, stance)
   disableMessages?: boolean;                    // whether or not to disable apply/unapply messages
   disableRecently?: boolean;                    // whether or not to disable recently effects
+
+  applyEffect?: IItemEffect;                    // the applied effect (Apply)
 
   charges?: number;                             // the number of charges this effect has remaining
 

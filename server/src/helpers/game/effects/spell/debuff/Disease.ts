@@ -14,13 +14,15 @@ export class Disease extends Effect {
         const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, Skill.Restoration);
         const statReduction = -Math.floor(skill * mult);
 
-        effect.effectInfo.statChanges = {
-          [Stat.CON]: statReduction,
-          [Stat.WIL]: statReduction,
-          [Stat.Accuracy]: statReduction
-        };
+        if (statReduction > 0) {
+          effect.effectInfo.statChanges = {
+            [Stat.CON]: statReduction,
+            [Stat.WIL]: statReduction,
+            [Stat.Accuracy]: statReduction
+          };
 
-        effect.effectInfo.tooltip = `${effect.tooltip} ${statReduction} CON/WIL/Accuracy.`;
+          effect.effectInfo.tooltip = `${effect.tooltip} ${statReduction} CON/WIL/Accuracy.`;
+        }
       }
     }
   }
