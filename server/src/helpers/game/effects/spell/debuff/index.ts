@@ -1,5 +1,6 @@
 
 export * from './Blind';
+export * from './BlurredVision';
 export * from './BuildupChill';
 export * from './BuildupHeat';
 export * from './Burning';
