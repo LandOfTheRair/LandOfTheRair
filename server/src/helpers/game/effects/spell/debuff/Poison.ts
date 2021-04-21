@@ -10,7 +10,7 @@ export class Poison extends Effect {
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster && this.game.traitHelper.traitLevel(caster, 'CorrosivePoison')) {
-        const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, Skill.Restoration);
+        const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, Skill.Thievery);
         const reduction = (Math.floor(skill / 3) + 1);
         effect.effectInfo.statChanges = {
           [Stat.Mitigation]: -reduction
