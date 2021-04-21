@@ -6,3 +6,4 @@ export * from './plague';
 export * from './poison';
 export * from './snare';
 export * from './stun';
+export * from './venom';
