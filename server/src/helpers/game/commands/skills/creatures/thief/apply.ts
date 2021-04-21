@@ -18,7 +18,8 @@ export class Apply extends SkillCommand {
 
     this.game.itemHelper.useItemInSlot(player, ItemSlot.LeftHand, false);
 
-    this.game.effectHelper.addEffect(player, '', 'Applied', { effect: { duration: 300, extra: { applyEffect: useEffect } } });
+    const duration = 300 + this.game.traitHelper.traitLevelValue(player, 'EnhancedApplications');
+    this.game.effectHelper.addEffect(player, '', 'Applied', { effect: { duration, extra: { applyEffect: useEffect } } });
   }
 
 }
