@@ -159,13 +159,14 @@ export class DamageHelperPhysical extends BaseService {
     if (isStrong) totalBonusRolls += 2;
 
     for (let i = 0; i < totalBonusRolls; i++) {
-      bonusDamage += totalDamage * (random(variance.min, variance.max) / 100);
+      const varianceMultiplier = (random(variance.min, variance.max) / 100);
+      bonusDamage += totalDamage * varianceMultiplier;
     }
 
     totalDamage += bonusDamage;
 
     // add bonus damage based on skill to give weapons a little extra oomph early on
-    totalDamage += bonus[Math.min(bonus.length - 1, weaponSkill)];
+    totalDamage += random(0, bonus[Math.min(bonus.length - 1, weaponSkill)]);
 
     return { damage: totalDamage, isWeak, isStrong };
   }
