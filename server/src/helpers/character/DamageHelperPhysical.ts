@@ -800,6 +800,7 @@ export class DamageHelperPhysical extends BaseService {
     if (!isBackstab && this.game.traitHelper.rollTraitValue(attacker, 'ShadowDaggers')) {
       this.game.messageHelper.sendLogMessageToPlayer(attacker, { message: 'Your shadow daggers unsheathe themselves!' });
       isBackstab = true;
+      args.backstabIgnoreRange = true;
     }
 
     args.attackerName = isAttackerVisible ? attacker?.name || 'somebody' : 'somebody';
