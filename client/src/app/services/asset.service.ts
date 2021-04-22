@@ -71,7 +71,7 @@ export class AssetService {
       sheet = sheet.toLowerCase();
 
       const img = new Image();
-      img.src = `assets/spritesheets/${sheet}.png?t=${environment.assetHashes[sheet]}`;
+      img.src = `assets/spritesheets/${sheet}.png?c=${environment.assetHashes[sheet]}`;
       this.spritesheets[idx] = false;
       img.onload = () => this.spritesheets[idx] = true;
     });
