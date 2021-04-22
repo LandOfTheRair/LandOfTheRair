@@ -1008,7 +1008,6 @@ export class DamageHelperPhysical extends BaseService {
       isAttackerVisible
     };
 
-    // TODO: mug, assassinate, backstab
     let totalDamageDealt = this.game.combatHelper.modifyDamage(attacker, defender, damageArgs);
 
     if (defender.allegiance === Allegiance.NaturalResource) {

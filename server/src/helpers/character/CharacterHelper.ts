@@ -546,8 +546,6 @@ export class CharacterHelper extends BaseService {
         state.triggerPlayerUpdateInRadius(character.x, character.y);
       }
     }
-
-    // TODO: adjust pet stats
   }
 
   // get a specific stat value from a character
