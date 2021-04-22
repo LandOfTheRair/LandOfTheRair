@@ -11,7 +11,6 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   public preload() {
-
     this.load.crossOrigin = 'anonymous';
     this.load.addListener('progress', (prog) => {
       const pct = Math.floor(prog * 100);
@@ -34,14 +33,15 @@ export class PreloadScene extends Phaser.Scene {
       'monster-rocks', 'monster-skeleton', 'monster-turkey', 'monster-wolf'
     ];
 
-    this.load.spritesheet('Terrain', 'assets/spritesheets/terrain.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Walls', 'assets/spritesheets/walls.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Decor', 'assets/spritesheets/decor.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Swimming', 'assets/spritesheets/swimming.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Creatures', 'assets/spritesheets/creatures.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Items', 'assets/spritesheets/items.png', { frameHeight: 64, frameWidth: 64 });
-    this.load.spritesheet('Effects', 'assets/spritesheets/effects.png', { frameHeight: 64, frameWidth: 64 });
+    const frameSize = { frameHeight: 64, frameWidth: 64 };
 
+    this.load.spritesheet('Terrain', this.game.assetService.terrainUrl, frameSize);
+    this.load.spritesheet('Walls', this.game.assetService.wallsUrl, frameSize);
+    this.load.spritesheet('Decor', this.game.assetService.decorUrl, frameSize);
+    this.load.spritesheet('Swimming', this.game.assetService.swimmingUrl, frameSize);
+    this.load.spritesheet('Creatures', this.game.assetService.creaturesUrl, frameSize);
+    this.load.spritesheet('Items', this.game.assetService.itemsUrl, frameSize);
+    this.load.spritesheet('Effects', this.game.assetService.effectsUrl, frameSize);
 
     bgms.forEach(bgm => {
       this.load.audio(`bgm-${bgm}`, `assets/bgm/${bgm}.mp3`);
