@@ -117,7 +117,11 @@ export class TraitHelper extends BaseService {
 
   // shorthand to roll a trait
   public rollTraitValue(char: ICharacter, trait: string): boolean {
-    return this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, trait));
+    const levelValue = this.game.traitHelper.traitLevelValue(char, trait);
+    if (levelValue <= 0) return false;
+    if (levelValue >= 100) return true;
+
+    return this.game.diceRollerHelper.XInOneHundred(levelValue);
   }
 
 }

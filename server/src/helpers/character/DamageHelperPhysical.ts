@@ -333,7 +333,7 @@ export class DamageHelperPhysical extends BaseService {
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
     if (canShoot && ammo) {
       const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
-      bonusAttackRolls += tier ?? 0;
+      bonusAttackRolls += (tier ?? 0) + this.game.traitHelper.traitLevelValue(attacker, 'StrongShots');
     }
 
     const { damage, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, attackerSkill, bonusAttackRolls);
@@ -873,8 +873,11 @@ export class DamageHelperPhysical extends BaseService {
       }
 
       const numShots = shots ?? 0;
-      this.game.itemHelper.setItemProperty(ammo, 'shots', numShots - 1);
-      if (numShots - 1 <= 0) this.game.characterHelper.setEquipmentSlot(attacker, ItemSlot.Ammo, undefined);
+
+      if (!this.game.traitHelper.rollTraitValue(attacker, 'EndlessQuiver')) {
+        this.game.itemHelper.setItemProperty(ammo, 'shots', numShots - 1);
+        if (numShots - 1 <= 0) this.game.characterHelper.setEquipmentSlot(attacker, ItemSlot.Ammo, undefined);
+      }
     }
 
     const attackerScope = this.getAttackerScope(attacker, attackerWeapon, args);
