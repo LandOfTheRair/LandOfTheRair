@@ -3,6 +3,7 @@ import * as Phaser from 'phaser';
 import { Select, Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import OutlinePipeline from '../../../pipelines/OutlinePipeline';
 import { GameServerEvent, GameServerResponse, ICharacter, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { GameState, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
@@ -188,7 +189,8 @@ export class MapComponent implements OnInit, OnDestroy {
         width: 9 * 64,
         height: 9 * 64
       },
-      banner: false
+      banner: false,
+      pipeline: { OutlinePipeline,}
     };
 
     this.game = new MapRenderGame(
