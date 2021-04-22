@@ -15,10 +15,10 @@ export type IItemEncrust = { strikeEffect: IItemEffect }
                          & { slots: Array<ItemSlot | 'weapon' | 'shield'> };
 
 export interface IItemRequirements {
-  alignment: Alignment;
-  baseClass: BaseClass;
-  level: number;
-  quest: string;
+  alignment?: Alignment;
+  baseClass?: BaseClass;
+  level?: number;
+  quest?: string;
 }
 
 export interface ISuccorInfo {

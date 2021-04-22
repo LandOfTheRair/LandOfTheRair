@@ -134,14 +134,41 @@ export class SpellManager extends BaseService {
 
     }
 
+    // send a message to the caster if they're not the target
     if (caster !== target && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
     }
 
+    // send a message to the target
     if (target && targetMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
     }
 
+    // try to add a buff effect if needed
+    if (doesOvertime && target) {
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
+      if (caster && noHostileTarget && spellEffInfo.effect?.duration) {
+        spellEffInfo.effect.duration = Math.floor(
+          spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
+        );
+      }
+
+      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
+    }
+
+    // try to summon creatures if possible
+    if (creatureSummoned && target) {
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData);
+      const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
+      ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
+      ffEffectData.effect.extra.potency = spellEffInfo.effect?.extra?.potency ?? 10;
+      ffEffectData.effect.extra.effectIcon = ffEffectData.tooltip.icon;
+      ffEffectData.effect.extra.summonCreatures = spellData.spellMeta.creatureSummoned ?? ['Mage Summon Deer'];
+
+      this.game.effectHelper.addEffect(target, caster ?? 'somebody', 'FindFamiliar', ffEffectData);
+    }
+
+    // cast the spell however many number of times
     let numCasts = 1;
     if (caster && extraAttackTrait) numCasts += this.game.traitHelper.traitLevelValue(caster, extraAttackTrait);
 
@@ -177,28 +204,6 @@ export class SpellManager extends BaseService {
         potency, range: spellRange, duration, callbacks, spellData, originalArgs,
         ...(targetsPosition || {})
       });
-    }
-
-    if (doesOvertime && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
-      if (caster && noHostileTarget && spellEffInfo.effect?.duration) {
-        spellEffInfo.effect.duration = Math.floor(
-          spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
-        );
-      }
-
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
-    }
-
-    if (creatureSummoned && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData);
-      const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
-      ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
-      ffEffectData.effect.extra.potency = spellEffInfo.effect?.extra?.potency ?? 10;
-      ffEffectData.effect.extra.effectIcon = ffEffectData.tooltip.icon;
-      ffEffectData.effect.extra.summonCreatures = [spellData.spellMeta.creatureSummoned ?? 'Mage Summon Deer'];
-
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', 'FindFamiliar', ffEffectData);
     }
   }
 

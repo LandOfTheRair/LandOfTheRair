@@ -1,4 +1,4 @@
-import { Hostility, ICharacter, INPC, IStatusEffect, Skill } from '../../../../../interfaces';
+import { Hostility, ICharacter, INPC, IStatusEffect, ItemSlot, Skill } from '../../../../../interfaces';
 import { Effect, Spawner } from '../../../../../models';
 
 export class FindFamiliar extends Effect {
@@ -90,9 +90,42 @@ export class FindFamiliar extends Effect {
   public override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    if (!char.pets || !char.pets.length || char.pets.every(x => this.game.characterHelper.isDead(x))) {
+    const pets = char.pets;
+
+    if (!pets || !pets.length || pets.every(x => this.game.characterHelper.isDead(x))) {
       this.game.effectHelper.removeEffect(char, effect);
+      return;
     }
+
+    // shadow clones do something special
+    pets.forEach(pet => {
+      if (pet.npcId !== 'Thief Shadow Clone') return;
+
+      const tryToCloneItem = (itemSlot: ItemSlot) => {
+        const itemRef = char.items.equipment[itemSlot];
+
+        // don't do anything if it's the same item
+        if (pet.items.equipment[itemSlot]?.name === itemRef?.name) return;
+
+        // try to copy the item
+        if (itemRef && this.game.itemHelper.canGetBenefitsFromItem(char, itemRef)) {
+          const copyItem = this.game.itemCreator.rerollItem(itemRef);
+          copyItem.mods.destroyOnDrop = true;
+          copyItem.mods.owner = '';
+          copyItem.mods.requirements = {};
+
+          this.game.characterHelper.setEquipmentSlot(pet, itemSlot, copyItem);
+
+        } else if (!itemRef) {
+          this.game.characterHelper.setEquipmentSlot(pet, itemSlot, undefined);
+
+        }
+      };
+
+      tryToCloneItem(ItemSlot.RightHand);
+      tryToCloneItem(ItemSlot.LeftHand);
+
+    });
   }
 
   public override unapply(char: ICharacter, effect: IStatusEffect) {

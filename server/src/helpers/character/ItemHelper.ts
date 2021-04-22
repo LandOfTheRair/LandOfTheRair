@@ -125,17 +125,17 @@ export class ItemHelper extends BaseService {
   }
 
   // check if an item is usable
-  public canGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): boolean {
-    if (!this.ownsAndItemUnbroken(player, item)) return false;
+  public canGetBenefitsFromItem(char: ICharacter, item: ISimpleItem): boolean {
+    if (!this.ownsAndItemUnbroken(char, item)) return false;
 
     // GMs can wear everything disregarding requirements
-    if (player.allegiance === Allegiance.GM) return true;
+    if (char.allegiance === Allegiance.GM) return true;
 
     const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
     if (requirements) {
-      if (requirements.alignment && player.alignment !== requirements.alignment) return false;
-      if (requirements.baseClass && player.baseClass !== requirements.baseClass) return false;
-      if (requirements.level && player.level < requirements.level) return false;
+      if (requirements.alignment && char.alignment !== requirements.alignment) return false;
+      if (requirements.baseClass && char.baseClass !== requirements.baseClass) return false;
+      if (requirements.level && char.level < requirements.level) return false;
     }
 
     return true;

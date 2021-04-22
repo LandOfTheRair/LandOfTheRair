@@ -44,6 +44,10 @@ export class DefaultAIBehavior implements IAI {
 
     if (this.game.characterHelper.isDead(npc)) return;
 
+    if (npc.owner) {
+      Object.assign(npc.agro, npc.owner.agro ?? {});
+    }
+
     (npc.behaviors || []).forEach(beh => beh.tick(this.game, npc));
 
     this.game.npcHelper.tick(npc, this.currentTick);
