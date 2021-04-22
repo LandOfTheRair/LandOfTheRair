@@ -783,6 +783,15 @@ export class DamageHelperPhysical extends BaseService {
     }
   }
 
+  private attemptToShadowSwap(attacker: ICharacter): void {
+    if (this.game.effectHelper.hasEffect(attacker, 'Hidden') || this.game.effectHelper.hasEffect(attacker, 'Revealed')) return;
+    if (!this.game.visibilityHelper.canHide(attacker)) return;
+    if (!this.game.traitHelper.rollTraitValue(attacker, 'ShadowSwap')) return;
+
+    this.game.messageHelper.sendLogMessageToPlayer(attacker, { message: 'You swap places with your shadow!' });
+    this.game.effectHelper.addEffect(attacker, '', 'Hidden', { effect: { duration: -1 } });
+  }
+
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
     const { isThrow, throwHand, isOffhand, isKick } = args;
     let { isPunch, isBackstab, damageMult } = args;
@@ -1010,6 +1019,7 @@ export class DamageHelperPhysical extends BaseService {
     damageArgs.damage = totalDamageDealt;
 
     this.attemptToStun(attacker, defender, attackerWeapon);
+    this.attemptToShadowSwap(attacker);
 
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 

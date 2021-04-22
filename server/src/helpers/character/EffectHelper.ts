@@ -91,7 +91,7 @@ export class EffectHelper extends BaseService {
       // for now, we always overwrite when uniques and not worn
       // but still only one cast per target per caster (so you can't stack 6 poison on the same target)
       const priorEffect = character.effects[type].find(e => e.effectName === effect.effectName
-                                                         && effect.effectInfo.unique ? true : e.sourceUUID === effect.sourceUUID);
+                                                         && (effect.effectInfo.unique ? true : e.sourceUUID === effect.sourceUUID));
 
       // if the effect is permanent, we do _not_ overwrite, at all
       if (priorEffect && priorEffect.endsAt === -1) {
