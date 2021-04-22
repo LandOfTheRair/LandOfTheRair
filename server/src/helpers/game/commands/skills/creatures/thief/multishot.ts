@@ -33,8 +33,13 @@ export class Multishot extends SpellCommand {
 
   override use(char: ICharacter, target: ICharacter): void {
 
-    const attacks = 2;
-    const damageMult = 0.8;
+    let attacks = 2;
+    let damageMult = 0.8;
+
+    if (this.game.traitHelper.traitLevelValue(char, 'TripleShot')) {
+      attacks += 1;
+      damageMult -= 0.1;
+    }
 
     for (let i = 0; i < attacks; i++) {
       this.game.combatHelper.physicalAttack(char, target, { damageMult, attackRange: 4 });
