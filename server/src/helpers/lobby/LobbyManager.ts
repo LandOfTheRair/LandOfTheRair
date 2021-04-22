@@ -117,7 +117,7 @@ export class LobbyManager extends BaseService {
     this.game.partyHelper.leaveParty(player);
     this.worldManager.leaveMap(player, true);
     this.playerManager.savePlayer(player);
-    this.playerManager.removePlayerFromGameByAccount(account);
+    this.playerManager.removePlayerFromGame(player);
   }
 
   // set the number of online discord users with "Online In Lobby"
