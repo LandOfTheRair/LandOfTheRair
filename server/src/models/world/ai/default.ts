@@ -244,7 +244,8 @@ export class DefaultAIBehavior implements IAI {
 
     if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
 
-    if (npc.owner) {
+    // only leash to owner if it can move
+    if (npc.owner && (npc.stats[Stat.Move] ?? 0) > 0) {
       const distFrom = this.game.directionHelper.distFrom(npc, npc.owner);
       if (distFrom > 5) {
         npc.x = npc.owner.x;
