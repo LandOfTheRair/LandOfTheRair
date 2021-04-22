@@ -93,10 +93,16 @@ export class EffectHelper extends BaseService {
       const priorEffect = character.effects[type].find(e => e.effectName === effect.effectName
                                                          && effect.effectInfo.unique ? true : e.sourceUUID === effect.sourceUUID);
 
-      // if the effect is permanent, we do _not_ overwrite, unless we're also permanent
-      if (effect.endsAt === -1 || (priorEffect && priorEffect.endsAt !== -1)) {
-        character.effects[type] = character.effects[type].filter(e => e.effectName !== effect.effectName);
+      // if the effect is permanent, we do _not_ overwrite, at all
+      if (priorEffect && priorEffect.endsAt === -1) {
+        this.game.messageHelper.sendSimpleMessage(
+          character,
+          `An attempt was made to cast ${priorEffect.effectName} on you, but you have a permanent instance.`
+        );
+        return;
       }
+
+      character.effects[type] = character.effects[type].filter(e => e.effectName !== effect.effectName);
 
       character.effects._hash = character.effects._hash || {};
       character.effects._hash[effect.effectName] = effect;
