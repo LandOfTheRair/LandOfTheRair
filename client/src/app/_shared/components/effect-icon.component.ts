@@ -84,7 +84,10 @@ export class EffectIconComponent implements OnInit, OnDestroy {
 
   public get tooltip() {
     let baseTooltip = this.effect.effectInfo.tooltip || this.effect.tooltip || this.iconData?.desc || '';
-    if (this.effect.sourceName) baseTooltip = `${this.effect.effectName}: ${baseTooltip} [${this.effect.sourceName}]`;
+    if (this.effect.sourceName) {
+      baseTooltip = `${this.effect.effectInfo.tooltipName || this.effect.effectName}: ${baseTooltip} [${this.effect.sourceName}]`;
+    }
+
     return baseTooltip;
   }
 
@@ -97,7 +100,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get ticks(): number {
-    if (this.effect.endsAt === -1) return 0;
+    if (this.effect.endsAt === -1 || this.effect.effectInfo.hideTicks) return 0;
     return Math.floor((this.effect.endsAt - Date.now()) / 1000);
   }
 

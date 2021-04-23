@@ -3,6 +3,7 @@ export * from './buff';
 export * from './damage';
 export * from './debuff';
 export * from './heals';
+export * from './songs';
 export * from './stance';
 export * from './summons';
 export * from './thief';

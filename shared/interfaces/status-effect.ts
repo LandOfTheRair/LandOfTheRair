@@ -14,6 +14,7 @@ export interface IStatusEffectInfo {
   statChanges?: Partial<Record<Stat, number>>;  // the stat boosts for this effect
   effectIcon?: string;                          // an override of the icon for the effect
   tooltip?: string;                             // the tooltip for the item effect
+  tooltipName?: string;                         // the name for the tooltip for the effect (display only)
   tooltipColor?: string;                        // the tooltip color to override for the effect
   message?: string;                             // the message sent for the item effect
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
@@ -21,8 +22,7 @@ export interface IStatusEffectInfo {
   unique?: boolean|string;                      // whether or not this effect is unique (ie, can have duplicates of) - if string, similar effects will be removed (imbue, stance)
   disableMessages?: boolean;                    // whether or not to disable apply/unapply messages
   disableRecently?: boolean;                    // whether or not to disable recently effects
-
-  applyEffect?: IItemEffect;                    // the applied effect (Apply)
+  hideTicks?: boolean;                          // whether or not the effect should hide ticks (used for aura-related effects generally)
 
   charges?: number;                             // the number of charges this effect has remaining
 
@@ -30,6 +30,7 @@ export interface IStatusEffectInfo {
   buildUpCurrent?: number;                      // the current buildup value
   buildUpDecay?: number;                        // the decay value for the buildup
 
+  applyEffect?: IItemEffect;                    // the applied effect (Apply)
   isContagious?: boolean;                       // if this effect is contagious and spreads to nearby creatures (Plague)
   isFrozen?: boolean;                           // if you're currently frozen from the effect (Stun, Chill)
   enrageTimer?: number;                         // the enrage timer associated with this effect (Mood)
