@@ -14,7 +14,9 @@ export class DeadlyDirgeSong extends Song {
     super.tick(char, effect);
 
     const enemies = this.game.worldManager.getMapStateForCharacter(char).getAllHostilesWithoutVisibilityTo(char, 4);
-    const numAttacks = 1;
+    if (enemies.length === 0) return;
+
+    const numAttacks = 1 + this.game.traitHelper.traitLevelValue(char, 'DirgeOfCerberus');
 
     for (let i = 0; i < numAttacks; i++) {
       this.game.damageHelperMagic.magicalAttack(char, sample(enemies), {
