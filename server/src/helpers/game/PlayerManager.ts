@@ -67,13 +67,6 @@ export class PlayerManager extends BaseService {
     this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });
   }
 
-  // remove a player from the game by their account ref
-  public async removePlayerFromGameByAccount(account: Account) {
-    delete this.inGamePlayers[account.username];
-
-    this.game.transmissionHelper.sendActionToAccount(account.username, GameAction.GameSetPlayer, { player: null });
-  }
-
   // recalculate stats and do other sync related data
   public updatePlayerData(player: Player) {
     this.characterHelper.recalculateEverything(player);
