@@ -83,7 +83,7 @@ export class CombatHelper extends BaseService {
       damage -= damageReduced;
 
       // non-physical attacks are magical
-      if (!args.isMelee && args.damageClass !== DamageClass.GM) {
+      if (!args.isMelee && args.damageClass !== DamageClass.GM && args.damageClass !== DamageClass.Sonic) {
         const magicReduction = this.game.characterHelper.getStat(defender, Stat.MagicalResist);
         damage -= magicReduction;
       }

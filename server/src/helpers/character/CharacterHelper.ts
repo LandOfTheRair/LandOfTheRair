@@ -572,8 +572,8 @@ export class CharacterHelper extends BaseService {
     // thieves not in combat regen faster
     if (character.baseClass === BaseClass.Thief) {
 
-      // hidden thieves have no regen
-      if (this.game.effectHelper.hasEffect(character, 'Hidden')) return 0;
+      // hidden or singing thieves have no regen
+      if (this.game.effectHelper.hasEffect(character, 'Hidden') || this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
 
       // thieves in combat get less regen than out of
       if (character.combatTicks <= 0) return 10;

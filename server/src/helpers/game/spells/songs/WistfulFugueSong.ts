@@ -5,7 +5,7 @@ import { Spell } from '../../../../models/world/Spell';
 export class WistfulFugueSong extends Spell {
 
   override getDuration(caster: ICharacter | null) {
-    return 600;
+    return -1;
   }
 
   override getPotency(caster: ICharacter | null) {
