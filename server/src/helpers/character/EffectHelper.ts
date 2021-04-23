@@ -160,9 +160,10 @@ export class EffectHelper extends BaseService {
     Object.values(character.effects).forEach(effectContainer => {
       if (!isArray(effectContainer)) return;
 
-      effectContainer.forEach(checkEffect => {
+      effectContainer.forEach((checkEffect: IStatusEffect) => {
         if (effect) return;
         if (checkEffect.effectName !== effectNameOrUUID && checkEffect.uuid !== effectNameOrUUID) return;
+        if (checkEffect.endsAt === -1) return;
 
         effect = checkEffect;
       });
