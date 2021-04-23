@@ -22,7 +22,7 @@ export class Song extends Effect {
       this.game.effectHelper.removeEffect(char, effect);
     }
 
-    if (this.game.effectHelper.hasEffect(char, 'Hidden')) {
+    if (this.game.effectHelper.hasEffect(char, 'Hidden') && !this.game.traitHelper.traitLevel(char, 'Shadowsong')) {
       this.sendMessage(char, { message: 'Your singing gives your position away!' });
       this.game.effectHelper.removeEffectByName(char, 'Hidden');
     }

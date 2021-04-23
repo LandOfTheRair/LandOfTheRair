@@ -110,6 +110,7 @@ export class VisibilityHelper extends BaseService {
   public canHide(char: ICharacter): boolean {
     if (this.game.effectHelper.hasEffect(char, 'Revealed')) return false;
     if (this.game.effectHelper.hasEffect(char, 'Hidden')) return false;
+    if (this.game.effectHelper.hasEffect(char, 'Singing') && !this.game.traitHelper.traitLevel(char, 'Shadowsong')) return false;
 
     if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return false;
 
