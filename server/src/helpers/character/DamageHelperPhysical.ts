@@ -784,8 +784,6 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   private attemptToShadowSwap(attacker: ICharacter): void {
-    if (this.game.effectHelper.hasEffect(attacker, 'Hidden')
-    || this.game.effectHelper.hasEffect(attacker, 'Revealed')) return;
     if (!this.game.visibilityHelper.canHide(attacker)) return;
     if (!this.game.traitHelper.rollTraitValue(attacker, 'ShadowSwap')) return;
 
