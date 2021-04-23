@@ -270,7 +270,7 @@ export class SettingsState implements NgxsOnInit {
     const state = ctx.getState();
     const history = [...(state.commandHistory || [])];
 
-    if (history[0] !== currentCommand) {
+    if (history[0] !== currentCommand && currentCommand.trim() !== '.') {
       history.unshift(currentCommand);
       if (history.length > 20) history.length = 20;
       ctx.patchState({ commandHistory: history });
