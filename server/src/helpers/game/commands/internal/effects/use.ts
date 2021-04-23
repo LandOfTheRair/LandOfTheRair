@@ -10,46 +10,64 @@ export class UseCommand extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const useItemInHand = (itemSlot: ItemSlot) => {
+      const item = player.items.equipment[itemSlot];
+      if (!item) {
+        return this.sendMessage(player, 'You don\'t have an item in that slot.');
+      }
       this.game.itemHelper.useItemInSlot(player, itemSlot);
     };
 
-    const [context, slot] = args.arrayArgs;
+    const [place, detail] = [args.arrayArgs[0] ?? '', args.arrayArgs[1] ?? ''];
 
-    if (context === 'left')  return useItemInHand(ItemSlot.LeftHand);
-    if (context === 'right') return useItemInHand(ItemSlot.RightHand);
-
-    if (!this.game.characterHelper.hasEmptyHand(player)) return this.sendMessage(player, 'Your hands are full.');
-
-    const emptyHand = player.items.equipment[ItemSlot.RightHand] ? ItemSlot.LeftHand : ItemSlot.RightHand;
-
-    switch (context) {
-
-    case 'sack': {
-      const item = player.items.sack.items[+slot];
-      this.game.inventoryHelper.removeItemFromSack(player, +slot);
-      this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
-      useItemInHand(emptyHand);
-      break;
+    if (place === 'left')  return useItemInHand(ItemSlot.LeftHand);
+    if (place === 'right') return useItemInHand(ItemSlot.RightHand);
+    if (place === 'potion') return useItemInHand(ItemSlot.Potion);
+    if (place !== 'sack' && place !== 'ground') {
+      this.sendMessage(player, 'You can\'t use an item from there.');
+      return;
+    }
+    const emptyHand = this.game.characterHelper.getEmptyHand(player);
+    if (!emptyHand) {
+      return this.sendMessage(player, 'Your hands are full.');
     }
 
-    case 'ground': {
-      const [itemType, uuid] = slot.split(':');
+    if (place === 'sack') {
+      const slot = +(detail ?? 0);
+      const item = player.items.sack.items[slot];
+      if (item) {
+        this.game.inventoryHelper.removeItemFromSack(player, slot);
+        this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
+        useItemInHand(emptyHand);
+      } else {
+        this.sendMessage(player, 'You reach into your sack, and grab air.');
+      }
+      return;
+    }
+
+    if (place === 'ground') {
+      const [itemType, uuid] = detail?.split(':');
       const state = this.game.worldManager.getMap(player.map)?.state;
-      if (!state) break;
+      if (!state) {
+        return this.sendMessage(player, 'You reach down to pick up the item, but the ground was missing.');
+      }
 
       const items = state.getItemsFromGround(player.x, player.y, itemType as ItemClass, uuid);
-      if (items[0]) {
-        this.game.characterHelper.setEquipmentSlot(player, emptyHand, items[0].item);
-        state.removeItemFromGround(player.x, player.y, itemType as ItemClass, uuid);
+      const groundItem = items[0];
+      if (groundItem) {
+        const item = groundItem.item;
+        const itemDefType = this.game.itemHelper.getItemProperty(item, 'itemClass');
+        this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
+        state.removeItemFromGround(player.x, player.y, itemDefType, item.uuid);
         useItemInHand(emptyHand);
+      } else {
+        if (uuid) {
+          return this.sendMessage(player, 'You reach down to pick up the item, but it isn\'t there anymore.');
+        }
+        if (itemType) {
+          return this.sendMessage(player, `You reach down to pick up a type of ${itemType}, but you couldn\'t find one`);
+        }
+        return this.sendMessage(player, 'You reach down to pick up an item, but you couldn\'t find one.');
       }
-      break;
-    }
-
-    default: {
-      this.sendMessage(player, 'You can\'t use that item from there.');
-    }
     }
   }
-
 }
