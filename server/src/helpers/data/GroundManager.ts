@@ -235,8 +235,18 @@ export class GroundManager extends BaseService {
   }
 
   public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', count = 1): IGroundItem[] {
-    const potentialItems: IGroundItem[] = get(this.ground, [mapName, x, y, itemClass], []);
-
+    const ground = get(this.ground, [mapName, x, y], {}) as Record<ItemClass, IGroundItem[]>;
+    if (!ground) return [];
+    let potentialItems: IGroundItem[] = [];
+    if (itemClass) {
+      potentialItems = ground[itemClass] ?? [];
+    } else {
+      Object.keys(ground).forEach(itemClassKey => {
+        (ground[itemClassKey] || []).forEach((item: IGroundItem) => {
+          potentialItems.push(item);
+        });
+      });
+    }
     // no uuid means grab the entire group
     if (!uuid) return potentialItems;
 
