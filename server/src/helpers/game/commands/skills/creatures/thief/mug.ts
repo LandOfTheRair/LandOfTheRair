@@ -31,7 +31,14 @@ export class Mug extends SpellCommand {
 
     if (target === player) return;
 
-    if (!player.items.equipment[ItemSlot.RightHand]) return this.sendMessage(player, 'You need an item in your right hand to mug someone!');
+    const rightHand = player.items.equipment[ItemSlot.RightHand];
+
+    if (!rightHand) return this.sendMessage(player, 'You need an item in your right hand to mug someone!');
+
+    if (rightHand) {
+      const twoHanded = this.game.itemHelper.getItemProperty(rightHand, 'twoHanded');
+      if (twoHanded) return this.sendMessage(player, 'That weapon is too heavy to mug with!');
+    }
 
     this.game.movementHelper.moveTowards(player, target);
 
