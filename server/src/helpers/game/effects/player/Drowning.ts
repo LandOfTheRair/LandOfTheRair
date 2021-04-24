@@ -9,7 +9,7 @@ export class Drowning extends Effect {
   }
 
   override tick(char: ICharacter, effect: IStatusEffect) {
-    const minDamage = (Date.now() - effect.effectInfo.startTimer!) / 4000 + 1;
+    const minDamage = ((Date.now() - effect.effectInfo.startTimer!) / 4000) + 1;
     const hpLost = Math.max(Math.floor(char.hp.maximum * (effect.effectInfo.potency / 100)), minDamage);
     this.game.combatHelper.dealOnesidedDamage(char, {
       damage: hpLost,
