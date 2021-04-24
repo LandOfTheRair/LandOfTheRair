@@ -95,10 +95,6 @@ export class EffectHelper extends BaseService {
 
       // if the effect is permanent, we do _not_ overwrite, at all
       if (priorEffect && priorEffect.endsAt === -1) {
-        this.game.messageHelper.sendSimpleMessage(
-          character,
-          `An attempt was made to cast ${priorEffect.effectName} on you, but you have a permanent instance.`
-        );
         return;
       }
 
