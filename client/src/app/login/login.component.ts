@@ -105,8 +105,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.optionsService.autoJoin) {
       this.lastCharSlot$.pipe(take(1)).subscribe(slot => {
         if (slot === -1 || !accountData?.account?.players?.[slot]) return;
-        this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: slot });
-        this.store.dispatch(new SetActiveWindow('map'));
+
+        setTimeout(() => {
+          this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: slot });
+          this.store.dispatch(new SetActiveWindow('map'));
+        }, 0);
       });
     }
   }
