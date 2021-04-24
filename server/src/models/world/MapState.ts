@@ -90,23 +90,27 @@ export class MapState {
       return npcDef;
     }).filter(Boolean);
 
-    const spawner = new Spawner(this.game, this.map, this, {
-      x: 0,
-      y: 0,
-      map: this.map.name,
-      name: `${this.map.name} Green NPC Spawner`,
-      leashRadius: -1,
-      randomWalkRadius: 0,
-      respawnRate: 300,
-      requireDeadToRespawn: true,
-      removeDeadNPCs: false,
-      doInitialSpawnImmediately: true,
-      eliteTickCap: -1,
-      respectKnowledge: false,
-      npcDefs
-    } as Partial<Spawner>);
+    npcDefs.forEach(def => {
+      const spawner = new Spawner(this.game, this.map, this, {
+        x: 0,
+        y: 0,
+        map: this.map.name,
+        name: `${this.map.name} Green NPC Spawner (${def.tag})`,
+        leashRadius: -1,
+        randomWalkRadius: 0,
+        initialSpawn: 0,
+        maxCreatures: 1,
+        respawnRate: 30,
+        requireDeadToRespawn: true,
+        removeDeadNPCs: false,
+        doInitialSpawnImmediately: true,
+        eliteTickCap: -1,
+        respectKnowledge: false,
+        npcDefs: [def]
+      } as Partial<Spawner>);
 
-    this.addSpawner(spawner);
+      this.addSpawner(spawner);
+    });
   }
 
   // create mob spawners

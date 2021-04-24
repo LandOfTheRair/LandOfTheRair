@@ -139,6 +139,7 @@ export class Spawner {
   // triggers on world slow ticks
   public npcTick(): void {
     this.npcs.forEach(npc => {
+
       if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && !this.replaceNPCDefs[npc.uuid]) {
         this.removeNPC(npc);
         return;
@@ -271,6 +272,10 @@ export class Spawner {
       let aiSettings: any = this.npcAISettings;
       if (!isArray(aiSettings)) aiSettings = [aiSettings];
       ai = sample(aiSettings);
+    }
+
+    if (chosenNPCDef.forceAI) {
+      ai = chosenNPCDef.forceAI;
     }
 
     if (!AllAIBehaviors[ai]) {

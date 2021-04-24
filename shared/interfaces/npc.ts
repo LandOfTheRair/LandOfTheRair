@@ -67,6 +67,9 @@ export interface INPCDefinition {
   // extra properties pulled in from the map, varies depending on the NPC
   extraProps?: any;
 
+  // the AI to force on this creature
+  forceAI?: string;
+
   // gear items that can spawn on the creature
   items?: {
     equipment?: Partial<Record<ItemSlot, Rollable[]>>;
