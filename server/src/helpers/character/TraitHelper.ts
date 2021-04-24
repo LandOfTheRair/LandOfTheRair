@@ -111,6 +111,7 @@ export class TraitHelper extends BaseService {
     player.traits.ap = player.ancientLevel || 0;
 
     // last, recalculate stats because lots of traits affect stats
+    this.game.effectHelper.removeSimilarEffects(player, 'Stance', '');
     this.game.characterHelper.recalculateEverything(player);
 
   }
