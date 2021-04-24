@@ -96,8 +96,6 @@ export class UIService {
 
     let ctxArgs = '';
 
-    console.log(item, realItem, dragData);
-
     // context arg parsing
     if (context === 'Ground') {
       ctxArgs = `${item.mods.itemClass ?? realItem.itemClass}:${item.uuid}`;

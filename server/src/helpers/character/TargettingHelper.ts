@@ -132,11 +132,18 @@ export class TargettingHelper extends BaseService {
     return possTargets;
   }
 
-  public getPossibleAOETargets(caster: ICharacter | null, center: ICharacter, radius = 0): ICharacter[] {
-    if (!center || this.game.characterHelper.isDead(center)) return [];
+  public getPossibleAOETargets(
+    caster: ICharacter | null,
+    center: ICharacter | { x: number; y: number; map: string },
+    radius = 0
+  ): ICharacter[] {
+    if (!center) return [];
+    if ((center as ICharacter).name && this.game.characterHelper.isDead(center as ICharacter)) return [];
 
-    const state = this.worldManager.getMapStateForCharacter(center);
-    const allTargets = state.getAllInRange(center, radius, [], false);
+    const state = this.worldManager.getMap(center.map)?.state;
+    if (!state) return [];
+
+    const allTargets = state.getAllInRangeForAOE(center, radius, []);
     const possTargets = allTargets.filter(target => {
       if (this.characterHelper.isDead(target)) return false;
 

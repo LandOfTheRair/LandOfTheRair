@@ -23,7 +23,6 @@ export class CommandHandler extends BaseService {
   private commandStrings: string[] = [];
 
   private parseArgs(args: string): string[] {
-    // TODO: support target=$target dir=$dir,n,e,a for advanced macros, pos=$pos (for targetting in a particular position)
     return (args || '').split(' ');
   }
 

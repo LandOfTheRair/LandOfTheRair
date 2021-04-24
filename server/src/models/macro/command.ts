@@ -87,7 +87,10 @@ export abstract class SkillCommand extends MacroCommand {
     return true;
   }
 
-  getTarget(user: ICharacter, args: string, allowSelf = false, allowDirection = false): ICharacter|any {
+  // get either the target character or the center for an aoe
+  getTarget(
+    user: ICharacter, args: string, allowSelf = false, allowDirection = false
+  ): ICharacter | { x: number; y: number; map: string } | null {
 
     let target: ICharacter|null = null;
     args = args.trim();
@@ -96,6 +99,7 @@ export abstract class SkillCommand extends MacroCommand {
 
     // try to do directional casting, ie, n w w e
     const splitArgs = args.split(' ');
+
     if (allowDirection && (splitArgs.length > 0 || args.length <= 2)) {
       let curX = user.x;
       let curY = user.y;
@@ -119,7 +123,7 @@ export abstract class SkillCommand extends MacroCommand {
       }
 
       if (curX !== user.x || curY !== user.y) {
-        return { x: curX, y: curY };
+        return { map: user.map, x: curX, y: curY };
       }
     }
 
@@ -203,15 +207,24 @@ export class SpellCommand extends SkillCommand {
   }
 
   // called when a player casts a spell at something
-  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs, targetsPosition?: { x: number; y: number; map: string }) {
-    const targetString = args.stringArgs.trim();
-
-    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
 
     // if the spell is party-based, target the whole party
     let targets: ICharacter[] = [];
+    let primaryTarget: { x: number; y: number; map: string } | ICharacter | null = null;
 
-    const refineTargetsIntoAOE = (center: ICharacter) => {
+    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+
+    // if we're not a party target spell, we look for a primary target (location or character)
+    if (caster && !spellData.spellMeta.targetsParty) {
+      primaryTarget = this.getTarget(caster, args.stringArgs.trim(), this.canTargetSelf, spellData.spellMeta.allowDirectional);
+      if ((primaryTarget as ICharacter)?.name) {
+        targets = [primaryTarget as ICharacter];
+      }
+    }
+
+    // if we have a primary target and we have an aoe spell
+    if (primaryTarget && spellData.spellMeta.aoe) {
 
       // attempt to boost the range of the spell
       let rangeBoost = 0;
@@ -219,31 +232,16 @@ export class SpellCommand extends SkillCommand {
         rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
       }
 
-      targets = this.game.targettingHelper.getPossibleAOETargets(caster, center, (spellData.spellMeta.range ?? 0) + rangeBoost);
-    };
-
-    if (targetString) {
-      targets = [this.game.targettingHelper.getFirstPossibleTargetInViewRange(caster as IPlayer, targetString)];
-
-      // aoe spells use the first target as a center for all the others
-      if (spellData.spellMeta.aoe) {
-        refineTargetsIntoAOE(targets[0]);
-      }
-
-    } else if (caster && this.canTargetSelf) {
-      targets = [caster];
-
-      // aoe spells cast on self use you as a center
-      if (spellData.spellMeta.aoe) {
-        refineTargetsIntoAOE(caster);
-      }
+      targets = this.game.targettingHelper.getPossibleAOETargets(caster, primaryTarget, (spellData.spellMeta.range ?? 0) + rangeBoost);
     }
 
+    // if we target the party we do it all differently
     if (caster && spellData.spellMeta.targetsParty) {
       targets = this.game.partyHelper.getAllPartyMembersInRange(caster as IPlayer);
       targets.push(caster);
     }
 
+    // hit each of the targets
     targets.forEach(target => {
       if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args.stringArgs);
 
@@ -252,11 +250,11 @@ export class SpellCommand extends SkillCommand {
       this.castSpellAt(caster, target, args);
     });
 
-    if ((caster || targetsPosition) && targets.length === 0 && spellData.spellMeta.aoe) {
-      // TODO: directional casting - parse target string here
-      const x = targetsPosition?.x ?? caster?.x ?? 0;
-      const y = targetsPosition?.y ?? caster?.y ?? 0;
-      const map = targetsPosition?.map ?? caster?.map ?? '';
+    // visually cast the spell anyway
+    if ((caster || primaryTarget) && spellData.spellMeta.aoe) {
+      const x = primaryTarget?.x ?? caster?.x ?? 0;
+      const y = primaryTarget?.y ?? caster?.y ?? 0;
+      const map = primaryTarget?.map ?? caster?.map ?? '';
 
       if (x > 0 && y > 0 && map) {
         this.castSpellAt(caster, null, args, { x, y, map });

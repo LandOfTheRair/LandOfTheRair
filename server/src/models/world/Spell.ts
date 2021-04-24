@@ -54,7 +54,7 @@ export class Spell implements BaseSpell {
 
   public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
 
-    if (!caster || !target) return 1;
+    if (!caster) return 1;
 
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,

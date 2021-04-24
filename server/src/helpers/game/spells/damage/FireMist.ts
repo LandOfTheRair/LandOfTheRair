@@ -4,7 +4,9 @@ import { Spell } from '../../../../models/world/Spell';
 export class FireMist extends Spell {
 
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
-    const center = target ? target : { x: spellCastArgs.x ?? 0, y: spellCastArgs.y ?? 0, map: spellCastArgs.map ?? '' };
+    if (target) return;
+
+    const center = { x: spellCastArgs.x ?? 0, y: spellCastArgs.y ?? 0, map: spellCastArgs.map ?? '' };
 
     const radius = spellCastArgs.range + (caster ? this.game.traitHelper.traitLevelValue(caster, 'FireMistWiden') : 0);
 

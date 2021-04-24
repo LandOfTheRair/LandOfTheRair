@@ -291,6 +291,14 @@ export class MapState {
                    && this.game.targettingHelper.isVisibleTo(ref, char, useSight));
   }
 
+  // get ALL characters in range for an AOE
+  public getAllInRangeForAOE(ref: ICharacter | { x: number; y: number; map: string }, radius: number, except: string[] = []): ICharacter[] {
+    return this.getAllTargetsFromQuadtrees(ref, radius)
+      .filter(char => char
+                   && !this.game.characterHelper.isDead(char)
+                   && !except.includes(char.uuid));
+  }
+
   // get ALL characters in range (even those that can't see ref)
   public getAllInRangeWithoutVisibilityTo(ref: ICharacter, radius: number, except: string[] = []): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius)
