@@ -64,7 +64,7 @@ export class UseCommand extends MacroCommand {
           return this.sendMessage(player, 'You reach down to pick up the item, but it isn\'t there anymore.');
         }
         if (itemType) {
-          return this.sendMessage(player, `You reach down to pick up a type of ${itemType}, but you couldn\'t find one`);
+          return this.sendMessage(player, `You reach down to pick up a type of ${itemType}, but you couldn\'t find one.`);
         }
         return this.sendMessage(player, 'You reach down to pick up an item, but you couldn\'t find one.');
       }
