@@ -7,7 +7,6 @@ export class LogoutAction extends ServerAction {
   override requiredKeys = ['username'];
 
   override async act(game: Game, { broadcast, unregister }, data) {
-
     try {
 
       broadcast({
