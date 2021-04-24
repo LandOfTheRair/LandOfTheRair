@@ -49,7 +49,7 @@
     "ngx-auto-unsubscribe": "3.0.1",
     "ngx-color-picker": "^10.1.0",
     "ngxs-reset-plugin": "^1.2.0",
-    "phaser": "3.20.1",
+    "phaser": "3.54.0",
     "queueing-subject": "^0.3.4",
     "rss-parser": "^3.9.0",
     "rxjs": "~6.6.3",

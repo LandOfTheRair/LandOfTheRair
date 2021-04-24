@@ -2,8 +2,6 @@
 import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
-
-import { OutlinePipeline } from 'client/src/app/pipelines/OutlinePipeline';
 import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
   ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
@@ -162,8 +160,8 @@ export class MapScene extends Phaser.Scene {
     if (!uuid) return;
     const target = this.allNPCSprites[uuid] as Sprite;
     if (!target) return;
-    target.setPipeline(OutlinePipeline.KEY);
-    target.pipeline.setFloat2(
+    target.setPipeline('OutlinePipeline');
+    target.pipeline.set2f(
       'uTextureSize',
       target.texture.getSourceImage().width,
       target.texture.getSourceImage().height
@@ -487,11 +485,11 @@ export class MapScene extends Phaser.Scene {
     map.addTilesetImage('Decor', 'Decor');
 
     // create the base 5 layers
-    map.createStaticLayer('Terrain', ['Decor', 'Terrain']);
-    map.createStaticLayer('Floors', ['Decor', 'Terrain']);
-    map.createStaticLayer('Fluids', ['Decor', 'Terrain']);
-    map.createStaticLayer('Foliage', 'Decor');
-    map.createStaticLayer('Walls', ['Walls', 'Decor']);
+    map.createLayer('Terrain', ['Decor', 'Terrain']);
+    map.createLayer('Floors', ['Decor', 'Terrain']);
+    map.createLayer('Fluids', ['Decor', 'Terrain']);
+    map.createLayer('Foliage', 'Decor');
+    map.createLayer('Walls', ['Walls', 'Decor']);
 
     // decor, densedecor, opaquedecor, interactables
     this.loadObjectLayer(map.objects[0], this.layers.decor);
