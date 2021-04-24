@@ -119,7 +119,7 @@ export class GameService {
     }
 
     // factor in the space because otherwise indexOf can do funky things.
-    const args = arr.length > argsIndex ? cmd.substring(cmd.indexOf(' ' + arr[argsIndex])).trim() : '';
+    const args = arr.length > argsIndex ? cmd.split(command)[1].trim() : '';
 
     return [command, args];
   }
