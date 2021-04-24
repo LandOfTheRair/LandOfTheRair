@@ -90,12 +90,12 @@ export class AssetService {
       });
   }
 
-  public getItem(itemName: string): IItemDefinition {
-    return this.items[itemName];
+  public getItem(itemName: string): IItemDefinition | undefined {
+    return this.items?.[itemName];
   }
 
-  public getNPC(npcId: string): INPCDefinition {
-    return this.npcs[npcId];
+  public getNPC(npcId: string): INPCDefinition | undefined {
+    return this.npcs?.[npcId];
   }
 
   private setItems(items: IItem[]) {
