@@ -34,7 +34,15 @@ export class BuildupChill extends Effect {
 
       if (effect.effectInfo.buildUpCurrent >= (effect.effectInfo.buildUpMax ?? 200)) {
         this.game.effectHelper.removeEffect(char, effect);
-        this.game.effectHelper.addEffect(char, '', 'Burning', { effect: { extra: { potency: effect.effectInfo.potency } } });
+
+        // try to freeze them solid
+        if (attacker && this.game.traitHelper.rollTraitValue(attacker, 'WintersEmbrace')) {
+          this.sendMessage(attacker, { message: `You froze ${char.name} solid!` });
+          this.game.effectHelper.addEffect(char, '', 'Frozen', { effect: { extra: { potency: effect.effectInfo.potency } } });
+
+        } else {
+          this.game.effectHelper.addEffect(char, '', 'Chilled', { effect: { extra: { potency: effect.effectInfo.potency } } });
+        }
       }
     }
 

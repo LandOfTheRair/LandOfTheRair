@@ -322,7 +322,9 @@ export class CombatHelper extends BaseService {
     const [buildup, burst, recently] = this.getElementalDebuff(damageClass);
     if (!buildup || !burst || !recently) return;
 
-    if (this.game.effectHelper.hasEffect(defender, burst) || this.game.effectHelper.hasEffect(defender, recently)) return;
+    if (this.game.effectHelper.hasEffect(defender, burst)
+    || this.game.effectHelper.hasEffect(defender, recently)
+    || (burst === 'Chilled' && this.game.effectHelper.hasEffect(defender, 'Frozen'))) return;
 
     const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
     if (!buildupEffect) {

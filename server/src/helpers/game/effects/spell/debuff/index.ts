@@ -8,6 +8,7 @@ export * from './ChainKunai';
 export * from './Chilled';
 export * from './Daze';
 export * from './Disease';
+export * from './Frozen';
 export * from './Debilitate';
 export * from './LoweredDefenses';
 export * from './Plague';

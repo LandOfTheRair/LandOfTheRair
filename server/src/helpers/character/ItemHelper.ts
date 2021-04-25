@@ -221,12 +221,12 @@ export class ItemHelper extends BaseService {
         return this.game.messageHelper.sendSimpleMessage(player, 'You already know that rune!');
       }
 
-      if (!trait.restrict?.includes(player.baseClass)) {
+      if (trait.restrict && !trait.restrict.includes(player.baseClass)) {
         return this.game.messageHelper.sendSimpleMessage(player, 'You cannot learn that rune!');
       }
 
       player.learnedRunes.push(item.name);
-      this.game.messageHelper.sendSimpleMessage(player, `You've learned the rune symbol to enhance ${trait?.name}!`);
+      this.game.messageHelper.sendSimpleMessage(player, `You've learned the rune symbol to enhance "${trait?.name}"!`);
     }
 
     const totalOunces = ounces ?? 0;

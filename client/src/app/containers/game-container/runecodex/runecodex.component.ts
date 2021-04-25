@@ -110,13 +110,13 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
 
   getTraitIcon(runescrollName: string): string {
     const item = this.assetService.getItem(runescrollName);
-    if (!AllTraits[item.trait.name]) return 'uncertainty';
+    if (!AllTraits[item?.trait?.name]) return 'uncertainty';
     return AllTraits[item.trait.name].icon;
   }
 
   getTraitLevel(runescrollName: string): string {
     const item = this.assetService.getItem(runescrollName);
-    const level = item.trait?.level ?? 0;
+    const level = item?.trait?.level ?? 0;
 
     const levelStrings = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
     return levelStrings[level] ?? '?';
@@ -124,7 +124,7 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
 
   getTraitName(runescrollName: string): string {
     const item = this.assetService.getItem(runescrollName);
-    if (!AllTraits[item.trait.name]) return 'Unknown Rune';
+    if (!AllTraits[item?.trait?.name]) return 'Unknown Rune';
 
     return AllTraits[item.trait.name].name + ' ' + this.getTraitLevel(runescrollName);
   }
