@@ -22,15 +22,15 @@
       <div class="bank-intro">
         <app-npc [sprite]="bankInfo.npcSprite"></app-npc>
 
-        Hello, adventurer! I'm {{ bankInfo.npcName }}, a bank teller with the {{ bankInfo.npcBank }} national bank, {{ bankInfo.npcBranch }} branch. According to my records, you have {{ player.bank.deposits.gold | number }} gold in the bank here, and {{ player.currency.gold | number }} gold in your sack.
+        Hello, adventurer! I'm {{ bankInfo.npcName }}, a bank teller with the {{ bankInfo.npcBank }} national bank, {{ bankInfo.npcBranch }} branch. According to my records, you have {{ (player.bank.deposits.gold || 0) | number }} gold in the bank here, and {{ (player.currency.gold || 0) | number }} gold in your sack.
       </div>
 
       <div class="bank-actions">
         <mat-form-field class="full-width m-t-20" appearance="outline">
           <mat-label>Amount to deposit/withdraw</mat-label>
-          <input matInput 
-            type="number" 
-            [placeholder]="'Deposit or withdraw gold...'" 
+          <input matInput
+            type="number"
+            [placeholder]="'Deposit or withdraw gold...'"
             min="0"
             autofocus
             autocomplete="off"
