@@ -149,7 +149,7 @@ export class EffectHelper extends BaseService {
     }
   }
 
-  public removeEffectManually(character: ICharacter, effectNameOrUUID: string): void {
+  public removeEffectManually(character: ICharacter, effectNameOrUUID: string, force = false): void {
 
     let effect!: IStatusEffect;
 
@@ -159,7 +159,7 @@ export class EffectHelper extends BaseService {
       effectContainer.forEach((checkEffect: IStatusEffect) => {
         if (effect) return;
         if (checkEffect.effectName !== effectNameOrUUID && checkEffect.uuid !== effectNameOrUUID) return;
-        if (checkEffect.endsAt === -1) return;
+        if (!force && checkEffect.endsAt === -1) return;
 
         effect = checkEffect;
       });

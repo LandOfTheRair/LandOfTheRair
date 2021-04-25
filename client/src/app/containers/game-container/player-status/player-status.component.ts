@@ -90,7 +90,13 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   unapply($event, effect: IStatusEffect): void {
     $event.stopPropagation();
     $event.preventDefault();
-    this.gameService.sendCommandString(`!removeeffect ${effect.uuid}`);
+
+    // songs are a bit complicated 🤦‍♀️
+    if (effect.effectInfo.unique === 'Song') {
+      this.gameService.sendCommandString(`!removesong ${effect.uuid}`);
+    } else {
+      this.gameService.sendCommandString(`!removeeffect ${effect.uuid}`);
+    }
   }
 
   showWindow(window: string): void {
