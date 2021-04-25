@@ -94,7 +94,6 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.playerSub = this.player$.subscribe(p => {
       this.player = p;
-
       this.sortRunes();
     });
   }
@@ -106,6 +105,7 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
     if (!this.player) return;
     this.orderedRunes = this.player.learnedRunes.slice();
     this.orderedRunes.sort();
+
   }
 
   getTraitIcon(runescrollName: string): string {

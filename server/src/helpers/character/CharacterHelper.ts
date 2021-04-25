@@ -388,6 +388,8 @@ export class CharacterHelper extends BaseService {
     // get benefits from inscribed rune scrolls
     if (this.isPlayer(character)) {
       (character as IPlayer).runes.forEach(rune => {
+        if (!rune) return;
+
         const item = this.game.itemHelper.getItemDefinition(rune);
         if (!item.trait) return;
 
