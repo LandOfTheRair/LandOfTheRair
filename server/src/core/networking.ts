@@ -92,6 +92,7 @@ export class WebsocketWorker {
         try {
           this.emit(socket, JSON.parse(msg as string));
         } catch (e) {
+          console.error(e);
           console.error('NET', 'Invalid message (cannot parse to JSON)', msg);
         }
       });
@@ -160,6 +161,23 @@ export class WebsocketWorker {
       socket.sends++;
     }
 
+    if (data.type === GameServerEvent.Login && data.username) {
+
+      // if we are already logged in somewhere else, we kick them
+      const oldSocket = this.sockets[data.username];
+      if (oldSocket) {
+        this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
+        this.sendToGame(oldSocket, { type: GameServerEvent.Logout });
+
+        oldSocket.username = null;
+        delete this.sockets[data.username];
+
+        oldSocket.close(1008, 'disconnected from another login location');
+      }
+
+      this.sockets[data.username] = socket;
+    }
+
     this.sendToGame(socket, data);
 
   }
@@ -215,20 +233,6 @@ export class WebsocketWorker {
       }
 
       socket.username = data.account.username;
-
-      // if we are already logged in somewhere else, we kick them
-      const oldSocket = this.sockets[socket.username];
-      if (oldSocket) {
-        this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
-        this.sendToGame(oldSocket, { type: GameServerEvent.Logout });
-
-        oldSocket.username = null;
-        delete this.sockets[socket.username];
-
-        oldSocket.close(1008, 'disconnected from another login location');
-      }
-
-      this.sockets[socket.username] = socket;
     }
 
     this.sendToSocket(socket, data);
