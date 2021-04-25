@@ -92,8 +92,8 @@ export class WebsocketWorker {
         try {
           this.emit(socket, JSON.parse(msg as string));
         } catch (e) {
-          console.error(e);
           console.error('NET', 'Invalid message (cannot parse to JSON)', msg);
+          console.error('NET', e);
         }
       });
 
