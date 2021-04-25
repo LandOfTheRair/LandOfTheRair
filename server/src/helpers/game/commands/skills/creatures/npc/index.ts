@@ -1,4 +1,6 @@
 
+export * from './specific';
+
 export * from './chillbitemedium';
 export * from './chillbitestrong';
 export * from './chillbiteweak';

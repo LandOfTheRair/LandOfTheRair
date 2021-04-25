@@ -9,7 +9,9 @@ export class ChillBiteMedium extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) === 0;
+    return this.game.directionHelper.distFrom(caster, target) === 0
+        && !this.game.effectHelper.hasEffect(target, 'Frosted')
+        && !this.game.effectHelper.hasEffect(target, 'RecentlyFrosted');
   }
 
   override use(executor: ICharacter, target: ICharacter) {

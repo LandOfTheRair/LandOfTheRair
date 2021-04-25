@@ -1,11 +1,11 @@
 
 
-import { DamageClass, ICharacter, Stat } from '../../../../../../interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
+import { DamageClass, ICharacter, Stat } from '../../../../../../../interfaces';
+import { SpellCommand } from '../../../../../../../models/macro';
 
-export class ChillBiteStrong extends SpellCommand {
+export class ChillBiteFrostDragon extends SpellCommand {
 
-  override aliases = ['chillbitestrong'];
+  override aliases = ['chillbitefrostdragon'];
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
@@ -17,7 +17,7 @@ export class ChillBiteStrong extends SpellCommand {
   override use(executor: ICharacter, target: ICharacter) {
     if (this.game.characterHelper.isPlayer(executor)) return;
 
-    const damage = this.game.diceRollerHelper.diceRoll(6, this.game.characterHelper.getStat(executor, Stat.STR));
+    const damage = this.game.diceRollerHelper.diceRoll(15, this.game.characterHelper.getStat(executor, Stat.STR));
 
     this.game.combatHelper.dealDamage(executor, target, {
       damage,
