@@ -165,6 +165,7 @@ export enum Stat {
   // uncommon
   Move = 'move',
   ActionSpeed = 'actionSpeed',
+  ThreatMultiplier = 'threatMultiplier',
   DamageFactor = 'damageFactor',
   XPBonusPercent = 'xpBonusPercent',
   SkillBonusPercent = 'skillBonusPercent',

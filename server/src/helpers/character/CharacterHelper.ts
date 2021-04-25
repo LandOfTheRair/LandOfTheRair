@@ -167,6 +167,10 @@ export class CharacterHelper extends BaseService {
     if ((char as INPC).owner && target === (char as INPC).owner) return;
     if ((target as INPC).owner && char === (target as INPC).owner) return;
 
+    // boost by both sides threat multiplier
+    const amountMult = 1 + this.getStat(char, Stat.ThreatMultiplier) + this.getStat(target, Stat.ThreatMultiplier);
+    amount *= amountMult;
+
     if (this.game.effectHelper.hasEffect(char, 'Invisibility')) {
       this.game.effectHelper.removeEffectByName(char, 'Invisibility');
     }
