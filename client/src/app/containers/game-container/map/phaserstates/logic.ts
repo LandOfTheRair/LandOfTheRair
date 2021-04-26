@@ -401,6 +401,19 @@ export class MapScene extends Phaser.Scene {
         }
       }
 
+      if (obj.type === 'Door' || obj.type === 'StairsUp' || obj.type === 'StairsDown') {
+        sprite.setInteractive();
+        sprite.setPipeline('OutlinePipeline');
+
+        sprite.on('pointerover', () => {
+          OutlinePipeline.setOutlineColor(sprite, [1.0, 1.0, 0.0, 0.5]);
+        });
+
+        sprite.on('pointerout', () => {
+          OutlinePipeline.setOutlineColor(sprite, undefined);
+        });
+      }
+
       layerGroup.add(sprite);
     });
   }
