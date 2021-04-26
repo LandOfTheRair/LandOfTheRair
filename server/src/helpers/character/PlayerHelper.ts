@@ -361,7 +361,10 @@ export class PlayerHelper extends BaseService {
 
   // try to gain skill based on the current map etc
   public tryGainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
-    if (!this.canGainSkillOnMap(player, skill)) return;
+    if (!this.canGainSkillOnMap(player, skill)) {
+      this.gainSkill(player, skill, 1);
+      return;
+    }
 
     this.gainSkill(player, skill, skillGained);
   }
