@@ -1,5 +1,5 @@
 
-console.log('Hashing spritesheet images...');
+console.info('Hashing spritesheet images...');
 
 const md5file = require('md5-file');
 const { gitDescribeSync } = require('git-describe');

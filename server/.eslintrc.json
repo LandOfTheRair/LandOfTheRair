@@ -172,6 +172,7 @@
             {
                 "allow": [
                     "log",
+                    "info",
                     "warn",
                     "dir",
                     "timeLog",

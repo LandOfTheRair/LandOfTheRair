@@ -25,14 +25,14 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     if (environment.production) {
-      console.log(
+      console.warn(
         '%cStop!',
         'color:red;font-family:system-ui;font-size:4rem;-webkit-text-stroke: 1px black;font-weight:bold'
       );
 
-      console.log('This is a browser feature intended for developers.');
-      console.log('Do not paste or run any code here unless you really know what you\'re doing!');
-      console.log('Doing so could give your account information to someone else, destroy your characters, or worse.');
+      console.warn('This is a browser feature intended for developers.');
+      console.warn('Do not paste or run any code here unless you really know what you\'re doing!');
+      console.warn('Doing so could give your account information to someone else, destroy your characters, or worse.');
     }
   }
 

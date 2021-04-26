@@ -7,8 +7,8 @@ const dl = require('download-github-repo');
 
 // if the content folder exists, we can symlink it
 if(fs.existsSync('../../Content')) {
-  
-  console.log('[Server] Found Content repo, creating a symlink to it.');
+
+  console.info('[Server] Found Content repo, creating a symlink to it.');
 
   symlinkDir('../../Content', 'content')
     .then(() => {
@@ -17,13 +17,13 @@ if(fs.existsSync('../../Content')) {
 
 // if not, we can download and install everything like normal
 } else {
-  
-  console.log('[Server] No Content repo, downloading a simple non-git copy of it.');
+
+  console.info('[Server] No Content repo, downloading a simple non-git copy of it.');
 
   dl('LandOfTheRair/Content', 'content', async () => {
     childProcess.exec('cd content && npm install --unsafe-perm');
-  
+
     dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
-  
+
   });
 }

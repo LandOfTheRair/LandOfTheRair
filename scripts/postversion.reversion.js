@@ -12,4 +12,4 @@ async function rewriteVersion() {
 
 rewriteVersion();
 
-console.log(`Rewrote version to be post-changelog commit instead of pre-changelog commit.`);
+console.info(`Rewrote version to be post-changelog commit instead of pre-changelog commit.`);

@@ -11,7 +11,7 @@ export class GameloopWorker {
   private wsCommands: WebsocketCommandHandler;
 
   async start() {
-    console.log('GAME', 'Starting game loop...');
+    console.info('GAME', 'Starting game loop...');
 
     parentPort?.on('message', message => {
       this.handleMessage(message);
@@ -25,11 +25,11 @@ export class GameloopWorker {
       console.error('GAME', 'Uncaught Exception', error);
     });
 
-    console.log('GAME', 'Creating WSCMD...');
+    console.info('GAME', 'Creating WSCMD...');
     this.wsCommands = new WebsocketCommandHandler();
     await this.wsCommands.init((id, data) => this.emit(id, data));
 
-    console.log('GAME', 'Sending ready signal...');
+    console.info('GAME', 'Sending ready signal...');
 
     parentPort?.postMessage({ target: 'networking', __ready: true });
   }

@@ -1,5 +1,5 @@
 
-console.log('Building Macicon font...');
+console.info('Building Macicon font...');
 
 const fs = require('fs');
 const webfont = require('webfont').default;

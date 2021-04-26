@@ -19,12 +19,12 @@ export class WebsocketWorker {
   private wsServer: WebSocket.Server;
 
   async start() {
-    console.log('NET', 'Starting network handler...');
+    console.info('NET', 'Starting network handler...');
 
     // set up IPC
     parentPort?.on('message', msg => {
       if (msg.__ready) {
-        console.log('NET', 'Starting API server...');
+        console.info('NET', 'Starting API server...');
         this.setup();
         return;
       }
@@ -62,7 +62,7 @@ export class WebsocketWorker {
     app.listen(process.env.PORT ? +process.env.PORT : 6975, process.env.BIND_ADDR || '127.0.0.1', (err: any) => {
       if (err) throw err;
 
-      console.log('NET', `Started HTTP server on port ${process.env.PORT || 6975}.`);
+      console.info('NET', `Started HTTP server on port ${process.env.PORT || 6975}.`);
     });
 
     // set up WS
@@ -107,7 +107,7 @@ export class WebsocketWorker {
 
         /* not sure if I care about any of these at all, really
         if (code !== 1001 && code !== 1000 && code !== 5000) {
-          console.log('[Socket DC]', code, reason);
+          console.info('[Socket DC]', code, reason);
         }
         */
       });

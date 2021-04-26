@@ -1,5 +1,5 @@
 
-console.log('Building Macicon icon list...');
+console.info('Building Macicon icon list...');
 
 const fs = require('fs');
 

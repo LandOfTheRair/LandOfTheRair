@@ -189,7 +189,7 @@ export class WorldMap {
     this.densityMap = densityMap;
 
     /* debug: prints density map
-    console.log(grid.nodes.map(arr => {
+    console.debug(grid.nodes.map(arr => {
       return arr.map(x => x.walkable ? 1 : 0);
     }));
     */
