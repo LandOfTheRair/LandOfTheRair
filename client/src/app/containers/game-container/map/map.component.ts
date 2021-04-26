@@ -190,6 +190,7 @@ export class MapComponent implements OnInit, OnDestroy {
         height: 9 * 64
       },
       banner: false,
+      pixelArt: true,
       pipeline: { OutlinePipeline,}
     };
 

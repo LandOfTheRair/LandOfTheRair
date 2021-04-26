@@ -2,11 +2,12 @@
 import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
-import { basePlayerSprite, basePlayerSwimmingSprite, FOVVisibility, ICharacter, IMapData, INPC,
+import { basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer,
-  ObjectType, spriteOffsetForDirection, Stat, swimmingSpriteOffsetForDirection, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+  ObjectType, spriteOffsetForDirection, Stat, TilesWithNoFOVUpdate } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
+import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
 import Sprite = Phaser.GameObjects.Sprite;
 
 
@@ -129,12 +130,16 @@ export class MapScene extends Phaser.Scene {
     let sprite = this.allNPCSprites[npc.uuid];
     if (!sprite) {
       sprite = this.add.sprite(0, 0, 'Creatures', newFrame);
+      sprite.setPipeline('OutlinePipeline');
       this.layers.npcSprites.add(sprite);
       this.allNPCSprites[npc.uuid] = sprite;
     } else {
       sprite.setFrame(newFrame);
     }
 
+    if (newFrame < 160 || newFrame > 180) {
+      this.updateSpriteSwimData(sprite, npc);
+    }
     this.updateSpritePositionalData(sprite, npc);
 
     this.stealthUpdate(sprite, npc);
@@ -145,27 +150,16 @@ export class MapScene extends Phaser.Scene {
     const oldUUID = this.targetUUID;
     const newUUID = character?.uuid;
     if (oldUUID === newUUID) return;
-    this.setOutline(newUUID);
-    this.clearShaders(oldUUID);
+    this.setOutline(oldUUID, undefined);
+    this.setOutline(newUUID, [1.0, 0.0, 0.0, 0.5]);
     this.targetUUID = newUUID;
   }
-  private clearShaders(uuid: string) {
-    if (!uuid) return;
-    const target = this.allNPCSprites[uuid] as Sprite;
-    if (!target) return;
-    target.resetPipeline();
-  }
 
-  private setOutline(uuid: string) {
+  private setOutline(uuid: string, color: Array<number>) {
     if (!uuid) return;
     const target = this.allNPCSprites[uuid] as Sprite;
     if (!target) return;
-    target.setPipeline('OutlinePipeline');
-    target.pipeline.set2f(
-      'uTextureSize',
-      target.texture.getSourceImage().width,
-      target.texture.getSourceImage().height
-    );
+    OutlinePipeline.setOutlineColor(target, color);
   }
 
   private removeNPCSprite(uuid: string) {
@@ -207,6 +201,7 @@ export class MapScene extends Phaser.Scene {
       this.convertPosition(player.x), this.convertPosition(player.y),
       'Creatures', spriteGenderBase + directionOffset
     );
+    sprite.setPipeline('OutlinePipeline');
 
     this.layers.characterSprites.add(sprite);
 
@@ -606,30 +601,12 @@ export class MapScene extends Phaser.Scene {
 
   // sprite updates
   private updatePlayerSpriteData(sprite, player: IPlayer) {
-    let newFrame = 0;
-    let newKey = '';
 
-    if (player.swimLevel && player.hp.current > 0) {
-      const baseSprite = basePlayerSwimmingSprite(player);
-      const dirSpriteDiff = swimmingSpriteOffsetForDirection(player.dir);
-      newFrame = baseSprite + dirSpriteDiff;
-      newKey = 'Swimming';
+    const playerFrame = basePlayerSprite(player) + spriteOffsetForDirection(player.dir);
+    sprite.setFrame(playerFrame);
 
-    } else {
-      const baseSprite = basePlayerSprite(player);
-      const dirSpriteDiff = spriteOffsetForDirection(player.dir);
-      newFrame = baseSprite + dirSpriteDiff;
-      newKey = 'Creatures';
-
-    }
-
+    this.updateSpriteSwimData(sprite, player);
     this.updateSpritePositionalData(sprite, player);
-
-    if (sprite.key !== newKey) {
-      sprite.setTexture(newKey);
-    }
-
-    sprite.setFrame(newFrame);
 
     sprite.alpha = player.hp.current <= 0 ? 0 : 1;
 
@@ -639,6 +616,13 @@ export class MapScene extends Phaser.Scene {
   private updateSpritePositionalData(sprite, char: ICharacter) {
     sprite.x = this.convertPosition(char.x, true);
     sprite.y = this.convertPosition(char.y, true);
+  }
+
+  private updateSpriteSwimData(sprite, char: ICharacter) {
+    const tileCheck = (char.y * this.allMapData.tiledJSON.width) + char.x;
+    const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
+    const isSwimming = !!fluid[tileCheck];
+    OutlinePipeline.setSwimming(sprite, isSwimming);
   }
 
   // truesight functions
