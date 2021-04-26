@@ -137,9 +137,10 @@ export class MapScene extends Phaser.Scene {
       sprite.setFrame(newFrame);
     }
 
-    if (newFrame < 160 || newFrame > 180) {
+    if (!npc.aquaticOnly) {
       this.updateSpriteSwimData(sprite, npc);
     }
+
     this.updateSpritePositionalData(sprite, npc);
 
     this.stealthUpdate(sprite, npc);
@@ -601,6 +602,9 @@ export class MapScene extends Phaser.Scene {
 
   // sprite updates
   private updatePlayerSpriteData(sprite, player: IPlayer) {
+
+    const playerFrame = basePlayerSprite(player) + spriteOffsetForDirection(player.dir);
+    sprite.setFrame(playerFrame);
 
     this.updateSpriteSwimData(sprite, player);
     this.updateSpritePositionalData(sprite, player);

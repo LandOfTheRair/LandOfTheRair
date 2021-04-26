@@ -23,7 +23,7 @@ const NPC_KEYS = [
   'dir', 'swimLevel', 'uuid', 'name', 'sprite',
   'affiliation', 'allegiance', 'alignment', 'baseClass',
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects',
-  'agro', 'allegianceReputation', 'hostility',
+  'agro', 'allegianceReputation', 'hostility', 'aquaticOnly',
   'items.equipment.leftHand', 'items.equipment.rightHand',
   'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
   'onlyVisibleTo', 'totalStats.stealth', 'totalStats.wil', 'totalStats.cha'
