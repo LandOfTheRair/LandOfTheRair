@@ -1,16 +1,18 @@
 
 
-import { ICharacter, SpellCastArgs } from '../../../../interfaces';
+import { ICharacter, IPlayer, SpellCastArgs } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Darkness extends Spell {
 
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
-    if (target) return;
 
-    const x = spellCastArgs.x ?? null;
-    const y = spellCastArgs.y ?? null;
-    const map = spellCastArgs.map ?? null;
+    // enemies need this bypass because of how their targetting works
+    if (target && caster && this.game.characterHelper.isPlayer(caster as IPlayer)) return;
+
+    const x = spellCastArgs.x ?? target?.x ?? null;
+    const y = spellCastArgs.y ?? target?.y ?? null;
+    const map = spellCastArgs.map ?? target?.map ?? null;
 
     if (!x || !y || !map) return;
 
