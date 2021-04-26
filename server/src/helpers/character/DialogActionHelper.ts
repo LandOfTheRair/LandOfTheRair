@@ -124,7 +124,7 @@ export class DialogActionHelper extends BaseService {
 
     const didSucceed = player.alignment === alignment;
 
-    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
+    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
       const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
@@ -191,7 +191,7 @@ export class DialogActionHelper extends BaseService {
       }
     }
 
-    const actions = didSucceed ? checkPassActions : checkFailActions;
+    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
       const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
