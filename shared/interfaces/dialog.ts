@@ -5,6 +5,7 @@ import { IItem } from './item';
 export enum DialogActionType {
   Chat = 'chat',
   CheckItem = 'checkItem',
+  CheckNoItem = 'checkNoItem',
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
   ModifyItem = 'modifyItem',
@@ -91,6 +92,13 @@ export interface IDialogCheckItemAction {
   fromSack?: boolean;
   slot: (ItemSlot | 'sack')[];
   item: IDialogItem;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogCheckNoItemAction {
+  fromHands?: boolean;
+  slot: ItemSlot[];
   checkPassActions: IDialogAction[];
   checkFailActions: IDialogAction[];
 }

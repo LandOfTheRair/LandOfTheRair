@@ -5,7 +5,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogAddItemUpgradeAction,
   IDialogChatAction, IDialogChatActionOption, IDialogCheckAlignmentAction,
   IDialogCheckItemAction, IDialogCheckDailyQuestAction,
-  IDialogCheckItemCanUpgradeAction,
+  IDialogCheckItemCanUpgradeAction, IDialogCheckNoItemAction,
   IDialogCheckLevelAction, IDialogGiveDailyQuestAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
@@ -43,6 +43,7 @@ export class DialogActionHelper extends BaseService {
     const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
       [DialogActionType.Chat]:                this.handleChatAction,
       [DialogActionType.CheckItem]:           this.handleCheckItemAction,
+      [DialogActionType.CheckNoItem]:         this.handleCheckNoItemAction,
       [DialogActionType.TakeItem]:            this.handleTakeItemAction,
       [DialogActionType.GiveItem]:            this.handleGiveItemAction,
       [DialogActionType.ModifyItem]:          this.handleModifyItemAction,
@@ -189,6 +190,36 @@ export class DialogActionHelper extends BaseService {
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }
+    }
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+  private handleCheckNoItemAction(action: IDialogCheckNoItemAction, npc: INPC, player: IPlayer): IActionResult {
+    const { slot, fromHands, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    let didSucceed = false;
+
+    // if we check hands
+    if (fromHands) {
+      (slot || []).forEach(checkSlot => {
+        if (didSucceed) return;
+
+        const slotItem = player.items.equipment[checkSlot];
+        if (slotItem) return;
+
+        didSucceed = true;
+      });
     }
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
