@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ data?.title || 'No Title' }}</h1>
 <div mat-dialog-content>
-  <app-npc *ngIf="data.extraData?.npcSprite" [sprite]="data.extraData.npcSprite"></app-npc>
+  <app-npc *ngIf="data.extraData?.npcSprite >= 0" [sprite]="data.extraData.npcSprite"></app-npc>
   <app-item *ngIf="data.extraData?.itemName" [item]="{ name: data.extraData.itemName, mods: {} }"></app-item>
   {{ data?.content || 'No Content' }}
 </div>
