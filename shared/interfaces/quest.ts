@@ -3,6 +3,7 @@ export enum QuestRewardType {
   XP = 'xp',
   Gold = 'gold',
   Silver = 'silver',
+  Reputation = 'reputation',
   Stat = 'stat',
   HolidayTokens = 'holidayTokens'
 }

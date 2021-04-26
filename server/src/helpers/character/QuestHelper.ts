@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
-import { Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementItem,
+import { Allegiance, Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementItem,
   IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -166,6 +166,11 @@ export class QuestHelper extends BaseService {
       if (reward.type === QuestRewardType.Silver) {
         this.game.subscriptionHelper.gainSilver(player, reward.value);
         this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} silver!`);
+      }
+
+      if (reward.type === QuestRewardType.Reputation) {
+        this.game.playerHelper.modifyReputationForAllegiance(player, reward.statName as Allegiance, reward.value);
+        this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} ${reward.statName} reputation!`);
       }
 
       if (reward.type === QuestRewardType.HolidayTokens) {
