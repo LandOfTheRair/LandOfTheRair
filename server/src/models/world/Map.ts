@@ -7,6 +7,8 @@ import { Game } from '../../helpers';
 
 import { IMapData, IMapProperties, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
 
+import * as settings from '../../../content/_output/settings.json';
+
 export class WorldMap {
 
   private densityMap: Pathfinder.Grid;
@@ -168,8 +170,8 @@ export class WorldMap {
   }
 
   private setMaxes() {
-    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel);
-    this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.maxSkill);
+    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(settings.game.maxLevel);
+    this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.min(settings.game.maxSkill, this.maxSkill));
   }
 
   private createPlanner() {
