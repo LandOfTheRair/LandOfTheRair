@@ -32,31 +32,31 @@ export class AssetService {
   }
 
   get terrainUrl(): string {
-    return this.spritesheetCustomHash.terrain || `${this.assetUrl}/spritesheets/terrain.png?c=${environment.assetHashes.terrain}`;
+    return this.spritesheetCustomHash.terrain || `${this.assetUrl}/spritesheets/terrain.webp?c=${environment.assetHashes.terrain}`;
   }
 
   get wallsUrl(): string {
-    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.png?c=${environment.assetHashes.walls}`;
+    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.webp?c=${environment.assetHashes.walls}`;
   }
 
   get decorUrl(): string {
-    return this.spritesheetCustomHash.decor || `${this.assetUrl}/spritesheets/decor.png?c=${environment.assetHashes.decor}`;
+    return this.spritesheetCustomHash.decor || `${this.assetUrl}/spritesheets/decor.webp?c=${environment.assetHashes.decor}`;
   }
 
   get swimmingUrl(): string {
-    return this.spritesheetCustomHash.swimming || `${this.assetUrl}/spritesheets/swimming.png?c=${environment.assetHashes.swimming}`;
+    return this.spritesheetCustomHash.swimming || `${this.assetUrl}/spritesheets/swimming.webp?c=${environment.assetHashes.swimming}`;
   }
 
   get creaturesUrl(): string {
-    return this.spritesheetCustomHash.creatures || `${this.assetUrl}/spritesheets/creatures.png?c=${environment.assetHashes.creatures}`;
+    return this.spritesheetCustomHash.creatures || `${this.assetUrl}/spritesheets/creatures.webp?c=${environment.assetHashes.creatures}`;
   }
 
   get itemsUrl(): string {
-    return this.spritesheetCustomHash.items || `${this.assetUrl}/spritesheets/items.png?c=${environment.assetHashes.items}`;
+    return this.spritesheetCustomHash.items || `${this.assetUrl}/spritesheets/items.webp?c=${environment.assetHashes.items}`;
   }
 
   get effectsUrl(): string {
-    return this.spritesheetCustomHash.effects || `${this.assetUrl}/spritesheets/effects.png?c=${environment.assetHashes.effects}`;
+    return this.spritesheetCustomHash.effects || `${this.assetUrl}/spritesheets/effects.webp?c=${environment.assetHashes.effects}`;
   }
 
   public get clientAssetHash(): string {
