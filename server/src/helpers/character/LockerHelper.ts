@@ -18,6 +18,11 @@ export class LockerHelper extends BaseService {
     const lockers: any[] = [];
 
     Object.keys(player.lockers?.lockers ?? {}).forEach(checkLockerId => {
+      if (checkLockerId.includes(' ')) {
+        delete player.lockers.lockers[checkLockerId];
+        return;
+      }
+
       lockers.push(checkLockerId);
     });
 
