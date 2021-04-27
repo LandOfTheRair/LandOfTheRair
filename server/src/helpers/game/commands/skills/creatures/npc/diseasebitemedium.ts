@@ -19,11 +19,11 @@ export class DiseaseBiteMedium extends SpellCommand {
 
     const damage = this.game.diceRollerHelper.diceRoll(3, this.game.characterHelper.getStat(executor, Stat.STR));
 
-    this.game.combatHelper.dealDamage(executor, target, {
+    this.game.combatHelper.magicalAttack(executor, target, {
       damage,
       damageClass: DamageClass.Physical,
-      attackerDamageMessage: 'You bit %0!',
-      defenderDamageMessage: '%0 bit you!'
+      atkMsg: 'You bit %0!',
+      defMsg: '%0 bit you!'
     });
 
     this.game.effectHelper.addEffect(target, executor, 'Disease', {

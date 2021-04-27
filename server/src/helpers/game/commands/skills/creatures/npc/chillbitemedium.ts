@@ -19,11 +19,11 @@ export class ChillBiteMedium extends SpellCommand {
 
     const damage = this.game.diceRollerHelper.diceRoll(4, this.game.characterHelper.getStat(executor, Stat.STR));
 
-    this.game.combatHelper.dealDamage(executor, target, {
+    this.game.combatHelper.magicalAttack(executor, target, {
       damage,
       damageClass: DamageClass.Ice,
-      attackerDamageMessage: 'You sunk cold fangs into %0!',
-      defenderDamageMessage: '%0 sunk cold fangs into you!'
+      atkMsg: 'You sunk cold fangs into %0!',
+      defMsg: '%0 sunk cold fangs into you!'
     });
   }
 }

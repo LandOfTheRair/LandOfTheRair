@@ -23,11 +23,11 @@ export class SkillSuckStrong extends SpellCommand {
       this.game.playerHelper.loseSkill(target as IPlayer, sample(Object.keys(target.skills)), random(50, 100));
     }
 
-    this.game.combatHelper.dealDamage(executor, target, {
+    this.game.combatHelper.magicalAttack(executor, target, {
       damage,
       damageClass: DamageClass.Physical,
-      attackerDamageMessage: 'You sucked knowledge from %0!',
-      defenderDamageMessage: '%0 sucked away your knowledge!'
+      atkMsg: 'You sucked knowledge from %0!',
+      defMsg: '%0 sucked away your knowledge!'
     });
   }
 }

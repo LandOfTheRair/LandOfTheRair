@@ -36,10 +36,10 @@ export class Disease extends Effect {
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? null;
     }
 
-    this.game.combatHelper.dealDamage(caster, char, {
+    this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Disease,
-      defenderDamageMessage: 'You are diseased!'
+      defMsg: 'You are diseased!'
     });
   }
 

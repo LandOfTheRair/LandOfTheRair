@@ -18,11 +18,11 @@ export class ShredTenPercent extends SpellCommand {
 
     const damage = Math.floor(target.hp.maximum / 10);
 
-    this.game.combatHelper.dealDamage(executor, target, {
+    this.game.combatHelper.magicalAttack(executor, target, {
       damage,
       damageClass: DamageClass.Sonic,
-      attackerDamageMessage: 'You shredded the flesh of %0!',
-      defenderDamageMessage: '%0 shreds your flesh!'
+      atkMsg: 'You shredded the flesh of %0!',
+      defMsg: '%0 shreds your flesh!'
     });
   }
 }

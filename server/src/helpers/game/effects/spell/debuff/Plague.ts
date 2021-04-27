@@ -27,10 +27,10 @@ export class Plague extends Effect {
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? null;
     }
 
-    this.game.combatHelper.dealDamage(caster, char, {
+    this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Disease,
-      defenderDamageMessage: 'You are plagued!'
+      defMsg: 'You are plagued!'
     });
 
     // spread the contagion

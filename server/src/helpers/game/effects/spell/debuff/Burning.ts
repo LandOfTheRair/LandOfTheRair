@@ -6,10 +6,10 @@ export class Burning extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    this.game.combatHelper.dealDamage(null, char, {
+    this.game.combatHelper.magicalAttack(null, char, {
       damage: effect.effectInfo.potency / 20,
       damageClass: DamageClass.Fire,
-      defenderDamageMessage: 'You are burning!'
+      defMsg: 'You are burning!'
     });
   }
 
