@@ -818,12 +818,11 @@ export class MapScene extends Phaser.Scene {
   }
 
   private goldSpriteForLocation(x: number, y: number) {
-    const hasGold = (checkX, checkY) => get(this.ground, [checkX, checkY, ItemClass.Coin], false);
+    const hasGold = (checkX: number, checkY: number) => get(this.ground, [checkX, checkY, ItemClass.Coin], []).length > 0;
 
     // check and abort early
     const goldHere = hasGold(x, y) && this.canCreateItemSpriteAt(x, y);
     if (!goldHere) return 0;
-
     const goldNW = hasGold(x - 1, y - 1) && this.canCreateItemSpriteAt(x - 1, y - 1);
     const goldN  = hasGold(x,     y - 1) && this.canCreateItemSpriteAt(x,     y - 1);
     const goldNE = hasGold(x + 1, y - 1) && this.canCreateItemSpriteAt(x + 1, y - 1);
