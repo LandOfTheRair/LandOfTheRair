@@ -3,10 +3,13 @@ import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
 import { merge } from 'lodash';
 
-import { GameAction, IDynamicEvent, Stat } from '../../../interfaces';
+import { GameAction, IDynamicEvent, IDynamicEventData, Stat } from '../../../interfaces';
 import { DynamicEvent } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
+
+import * as events from '../../../../content/_output/events.json';
+import * as settings from '../../../../content/_output/settings.json';
 
 @Injectable()
 export class DynamicEventHelper extends BaseService {
@@ -14,6 +17,7 @@ export class DynamicEventHelper extends BaseService {
   private activeEventNames: Record<string, boolean> = {};
   private activeEvents: IDynamicEvent[] = [];
   private statTotals: Partial<Record<Stat, number>> = {};
+  private eventCooldowns: Record<string, number> = {};
 
   public async init() {
     this.activeEvents = await this.game.eventsDB.loadEvents();
@@ -22,7 +26,7 @@ export class DynamicEventHelper extends BaseService {
 
   // check all events for expiration
   public tick(timer) {
-    timer.startTimer('dynamic event expiration');
+    timer.startTimer('dynamic event launch/expiration');
 
     this.activeEvents.forEach(event => {
       if (event.endsAt > Date.now()) return;
@@ -30,7 +34,9 @@ export class DynamicEventHelper extends BaseService {
       this.stopEvent(event);
     });
 
-    timer.stopTimer('dynamic event expiration');
+    this.checkOtherEvents();
+
+    timer.stopTimer('dynamic event launch/expiration');
   }
 
   // start a new event
@@ -54,7 +60,14 @@ export class DynamicEventHelper extends BaseService {
       event: this.game.db.prepareForTransmission(setEvent)
     });
 
-    this.game.messageHelper.broadcastSystemMessage(`A new event "${setEvent.name}" has started!`);
+    const eventRef = event.eventRef ?? '';
+    const ref = this.getEventRef(eventRef);
+    if (ref) {
+      this.game.messageHelper.broadcastSystemMessage(ref.startMessage);
+
+    } else {
+      this.game.messageHelper.broadcastSystemMessage(`A new event "${setEvent.name}" has started!`);
+    }
 
     this.recalculateStatTotals();
   }
@@ -68,6 +81,16 @@ export class DynamicEventHelper extends BaseService {
       action: GameAction.EventDelete,
       event: this.game.db.prepareForTransmission(event)
     });
+
+    const eventRef = event.eventRef ?? '';
+    const ref = this.getEventRef(eventRef);
+    if (ref) {
+      this.game.messageHelper.broadcastSystemMessage(ref.endMessage);
+      this.eventCooldowns[eventRef] = Date.now() + (1000 * (ref.cooldown ?? 0));
+
+    } else {
+      this.game.messageHelper.broadcastSystemMessage(`"${event.name}" has has ended.`);
+    }
 
     this.recalculateStatTotals();
   }
@@ -108,6 +131,21 @@ export class DynamicEventHelper extends BaseService {
     return this.activeEventNames[eventName];
   }
 
+  // start a dynamic event
+  public startDynamicEvent(event: IDynamicEventData): void {
+    this.startEvent({
+      description: event.description,
+      endsAt: Date.now() + (event.duration * 1000),
+      name: event.name,
+      eventRef: event.name
+    });
+  }
+
+  // get a dynamic event ref
+  public getEventRef(ref: string): IDynamicEventData | undefined {
+    return events[ref];
+  }
+
   // recalculate all the stat totals for the events
   private recalculateStatTotals(): void {
     this.activeEventNames = {};
@@ -119,6 +157,27 @@ export class DynamicEventHelper extends BaseService {
         this.statTotals[stat] = this.statTotals[stat] ?? 0;
         this.statTotals[stat] += event.statBoost?.[stat] ?? 0;
       });
+    });
+  }
+
+  // check for other events and start them possibly
+  private checkOtherEvents(): void {
+    const rarity = settings.event;
+
+    Object.keys(events).forEach(eventName => {
+      const event = this.getEventRef(eventName);
+      if (!event) return;
+
+      // if it can't trigger, bail
+      if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) return;
+
+      // if the map isn't active, bail
+      if (!this.game.worldManager.currentlyActiveMapHash[event.map]) return;
+
+      // if there's a conflicting event, bail
+      if (event.conflicts && event.conflicts.some(e => this.isEventActive(e))) return;
+
+      this.startDynamicEvent(event);
     });
   }
 

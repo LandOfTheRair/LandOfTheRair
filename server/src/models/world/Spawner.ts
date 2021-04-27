@@ -55,6 +55,8 @@ export class Spawner {
   private npcCreateCallback: (npc: INPC) => void;   // the callback for creating an npc - used for summons, generally
   private doInitialSpawnImmediately: boolean;       // whether or not the spawner should spawn creatures immediately or wait
 
+  private requireEvent: string;                     // the event required for this spawner to be active
+
   // spawner live properties
   private npcs: INPC[] = [];                        // the npcs currently in existence on this spawner
   private hasDoneInitialSpawn: boolean;             // whether or not the initial spawn has been done for this spawner
@@ -108,6 +110,7 @@ export class Spawner {
 
   private get canBeActive(): boolean {
     if (this.requireHoliday && !this.game.holidayHelper.isHoliday(this.requireHoliday)) return false;
+    if (this.requireEvent && !this.game.dynamicEventHelper.isEventActive(this.requireEvent)) return false;
     return true;
   }
 
