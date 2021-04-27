@@ -3,7 +3,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMExamineItem extends MacroCommand {
 
-  override aliases = ['@exitem'];
+  override aliases = ['@examineitem', '@exitem', '@exi'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

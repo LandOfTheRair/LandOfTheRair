@@ -3,7 +3,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMKill extends MacroCommand {
 
-  override aliases = ['@kill'];
+  override aliases = ['@kill', '@k'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

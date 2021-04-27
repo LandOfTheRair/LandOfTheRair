@@ -4,7 +4,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMTeleport extends MacroCommand {
 
-  override aliases = ['@teleport'];
+  override aliases = ['@teleport', '@t'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

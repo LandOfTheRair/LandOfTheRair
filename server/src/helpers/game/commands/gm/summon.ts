@@ -4,7 +4,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMSummon extends MacroCommand {
 
-  override aliases = ['@summon'];
+  override aliases = ['@summon', '@s'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
