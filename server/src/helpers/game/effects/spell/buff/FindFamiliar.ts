@@ -39,6 +39,10 @@ export class FindFamiliar extends Effect {
       npc.stats[Stat.INT] = (npc.stats[Stat.INT] ?? 5) + this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
       npc.stats[Stat.WIS] = (npc.stats[Stat.WIS] ?? 5) + this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
 
+      if (this.game.traitHelper.traitLevel(char, 'FamiliarFists')) {
+        npc.usableSkills.push({ result: 'Rapidpunch', chance: 1 } as any);
+      }
+
       // boost stats and skills for npcs
       const def = this.game.npcHelper.getNPCDefinition(npc.npcId);
 
