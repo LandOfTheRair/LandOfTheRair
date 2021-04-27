@@ -35,6 +35,9 @@ export class FindFamiliar extends Effect {
 
       // buff based on traits
       npc.stats[Stat.HP] = (npc.stats[Stat.HP] ?? 20000) * 1 + this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
+      npc.stats[Stat.STR] = (npc.stats[Stat.STR] ?? 5) + this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.INT] = (npc.stats[Stat.INT] ?? 5) + this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.WIS] = (npc.stats[Stat.WIS] ?? 5) + this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
 
       // boost stats and skills for npcs
       const def = this.game.npcHelper.getNPCDefinition(npc.npcId);
