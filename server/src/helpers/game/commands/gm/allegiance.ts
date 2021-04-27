@@ -3,7 +3,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMAllegiance extends MacroCommand {
 
-  override aliases = ['@allegiance'];
+  override aliases = ['@allegiance', '@a'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

@@ -3,7 +3,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateGold extends MacroCommand {
 
-  override aliases = ['@gold'];
+  override aliases = ['@creategold', '@gold', '@g'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

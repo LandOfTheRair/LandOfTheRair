@@ -74,15 +74,18 @@ export class GameService {
   }
 
   public sendCommandString(cmdString: string, target?: string) {
-    if (cmdString.startsWith('#')) cmdString = cmdString.substring(1);
-
+    cmdString = cmdString.replace(/\\;/g, '__SEMICOLON__');
     cmdString.split(';').forEach(cmd => {
       cmd = cmd.trim();
+      cmd = cmd.replace(/__SEMICOLON__/g, ';');
+      if (cmd === '') return;
+      const hadHash = cmd.startsWith('#');
+      if (hadHash) cmd = cmd.substring(1);
 
       let command = '';
       let args = '';
 
-      if (cmd.includes(',')) {
+      if (!hadHash && cmd.includes(',') && (/[a-zA-Z]/).test(cmd[0])) {
         command = '!privatesay';
         args = cmd;
       } else {

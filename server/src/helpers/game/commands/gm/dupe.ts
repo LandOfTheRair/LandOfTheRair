@@ -6,7 +6,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMDuplicateItem extends MacroCommand {
 
-  override aliases = ['@duplicate'];
+  override aliases = ['@duplicate', '@dupe', '@d'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
@@ -18,7 +18,6 @@ export class GMDuplicateItem extends MacroCommand {
 
     const leftHand = player.items.equipment[ItemSlot.LeftHand];
     if (leftHand) return this.sendMessage(player, 'You need to empty your left hand.');
-
     const item = cloneDeep(rightHand);
     this.game.itemCreator.resetUUID(item);
 
