@@ -111,6 +111,7 @@ export class CombatHelper extends BaseService {
     return Math.floor(damage);
   }
 
+  // this function directly deals damage without modifying it - the only place this should be called are the damage helpers
   public dealDamage(attacker: ICharacter | null, defender: ICharacter, args: DamageArgs): void {
     if (this.game.characterHelper.isDead(defender)) return;
 
