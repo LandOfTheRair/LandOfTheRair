@@ -1,6 +1,7 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import { BaseClass, GameAction, GameServerResponse, IAIBehavior,
+  IDialogChatAction,
   INPC, IPlayer, ItemClass, ItemSlot, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
 import { Player } from '../../../orm';
 
@@ -42,12 +43,25 @@ export class TrainerBehavior implements IAIBehavior {
         }
 
         if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) {
-          env?.callbacks.emit({
-            type: GameServerResponse.SendAlert,
-            title: 'Not Trainable',
-            content: `I cannot train you, ${player.name}.`,
-            extraData: { npcSprite: npc.sprite },
-          });
+
+          const options = [
+            { text: 'Leave', action: 'noop' },
+          ];
+
+          if (this.canRevive) {
+            options.unshift({ text: 'Can you recall me?', action: 'recall' });
+          }
+
+          const formattedChat: IDialogChatAction = {
+            message: `I cannot train you, ${player.name}.`,
+            displayTitle: npc.name,
+            displayNPCName: npc.name,
+            displayNPCSprite: npc.sprite,
+            displayNPCUUID: npc.uuid,
+            options
+          };
+
+          game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
           return `I cannot train you, ${player.name}.`;
         }
