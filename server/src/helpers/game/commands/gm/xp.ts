@@ -3,7 +3,7 @@ import { MacroCommand } from '../../../../models/macro';
 
 export class GMXP extends MacroCommand {
 
-  override aliases = ['@xp'];
+  override aliases = ['@gainexp', '@xp'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;

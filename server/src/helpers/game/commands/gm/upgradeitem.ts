@@ -1,10 +1,9 @@
-
 import { IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMUpgradeItem extends MacroCommand {
 
-  override aliases = ['@upgradeitem'];
+  override aliases = ['@upgradeitem', '@ui'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
