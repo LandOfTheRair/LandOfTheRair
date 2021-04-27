@@ -23,7 +23,10 @@ export class MemorizeCommand extends MacroCommand {
 
     this.sendMessage(player, 'You spend a moment taking in your surroundings...');
 
-    this.game.effectHelper.addEffect(player, '', 'Stun', { effect: { duration: 5 } });
+    this.game.effectHelper.addEffect(player, '', 'Stun', { effect: {
+      duration: 5,
+      extra: { disableMessages: true, disableRecently: true } }
+    });
   }
 
 }
