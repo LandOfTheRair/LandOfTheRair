@@ -4,6 +4,7 @@ export * from './crash';
 export * from './creategold';
 export * from './dupe';
 export * from './examineitem';
+export * from './excreature';
 export * from './gainskill';
 export * from './gg';
 export * from './item';
