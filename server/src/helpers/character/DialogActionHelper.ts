@@ -92,7 +92,7 @@ export class DialogActionHelper extends BaseService {
       displayNPCName: npc.name,
       displayNPCSprite: npc.sprite,
       displayNPCUUID: npc.uuid,
-      options: action.options
+      options: (action.options || [])
         .map(x => {
           if (x.requirement && !this.meetsRequirement(player, x.requirement)) return null;
           return {
