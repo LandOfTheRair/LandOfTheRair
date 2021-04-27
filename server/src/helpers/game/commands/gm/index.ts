@@ -3,6 +3,7 @@ export * from './allegiance';
 export * from './crash';
 export * from './creategold';
 export * from './dupe';
+export * from './eval';
 export * from './examinecreature';
 export * from './examineitem';
 export * from './gainskill';
