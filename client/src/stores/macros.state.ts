@@ -196,7 +196,7 @@ export class MacrosState {
   @Action(SetDefaultMacros)
   setDefaultMacros(ctx: StateContext<IMacroContainer>, { additionalMacros }: SetDefaultMacros) {
     const defaultMacroBar: IMacroBar = {
-      macros: ['Attack', 'Search', 'Drink', 'Stairs', 'Climb', 'Restore'],
+      macros: ['Attack', 'Charge', 'Search', 'Drink', 'Stairs', 'Climb', 'Restore'],
       name: 'default'
     };
 
@@ -206,7 +206,7 @@ export class MacrosState {
       .subscribe(() => {
         this.store.dispatch(new SetActiveMacroBars(['default']))
         .subscribe(() => {
-          this.store.dispatch(new SetActiveMacro('Attack'));
+          this.store.dispatch(new SetActiveMacro('Charge'));
         });
       });
   }
