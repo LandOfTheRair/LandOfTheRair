@@ -6,7 +6,6 @@ import { IDialogTree } from './dialog';
 import { IStatusEffectInfo } from './status-effect';
 
 export enum NPCTriggerType {
-  HP = 'hp',
   Spawn = 'spawn',
   Leash = 'leash',
   Combat = 'combat'

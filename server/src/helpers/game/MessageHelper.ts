@@ -100,7 +100,7 @@ export class MessageHelper extends BaseService {
   }
 
   public sendMessageToMap(map: string, msgInfo: MessageInfo): void {
-    this.game.worldManager.getCharactersInMap(map).forEach(char => {
+    this.game.worldManager.getPlayersInMap(map).forEach(char => {
       this.sendLogMessageToPlayer(char, msgInfo);
     });
   }

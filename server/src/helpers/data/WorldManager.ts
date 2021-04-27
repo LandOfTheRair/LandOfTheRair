@@ -185,7 +185,7 @@ export class WorldManager extends BaseService {
     }
   }
 
-  public getCharactersInMap(map: string): ICharacter[] {
+  public getPlayersInMap(map: string): ICharacter[] {
     return Object.keys(this.playersInMaps)
       .filter(x => this.playersInMaps[x] === map)
       .map(x => this.game.playerManager.getPlayerByUsername(x)) as ICharacter[];
