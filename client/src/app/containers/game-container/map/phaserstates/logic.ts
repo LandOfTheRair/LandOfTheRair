@@ -215,7 +215,16 @@ export class MapScene extends Phaser.Scene {
 
   private updateSelf(player: IPlayer) {
     if (!player) return;
-
+    const hasGrayEffect = this.cameras.main.hasPostPipeline;
+    if (player.hp.current <= 0) {
+      if (!hasGrayEffect) {
+        this.cameras.main.setPostPipeline('GrayPostFXPipeline');
+      }
+    } else {
+      if (hasGrayEffect) {
+        this.cameras.main.resetPostPipeline();
+      }
+    }
     this.updateFOV();
   }
 

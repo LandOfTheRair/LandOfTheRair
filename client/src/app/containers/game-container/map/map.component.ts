@@ -4,6 +4,7 @@ import { Select, Store } from '@ngxs/store';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import OutlinePipeline from '../../../pipelines/OutlinePipeline';
+import GrayPostFXPipeline from '../../../pipelines/GrayPostFXPipeline';
 import { GameServerEvent, GameServerResponse, ICharacter, IGround, INPC, IPlayer, VisualEffect } from '../../../../interfaces';
 import { GameState, SettingsState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
@@ -191,7 +192,7 @@ export class MapComponent implements OnInit, OnDestroy {
       },
       banner: false,
       pixelArt: true,
-      pipeline: { OutlinePipeline,}
+      pipeline: { OutlinePipeline, GrayPostFXPipeline}
     };
 
     this.game = new MapRenderGame(
