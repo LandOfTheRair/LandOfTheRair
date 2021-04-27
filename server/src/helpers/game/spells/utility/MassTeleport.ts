@@ -21,7 +21,7 @@ export class MassTeleport extends Spell {
 
     const location = spellCastArgs.originalArgs?.stringArgs;
     if (!location) {
-      this.game.teleportHelper.showTeleports(caster as IPlayer);
+      this.game.teleportHelper.showTeleports(caster as IPlayer, 'massteleport');
       return;
     }
 

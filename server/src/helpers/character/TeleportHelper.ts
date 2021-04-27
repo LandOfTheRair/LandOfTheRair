@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 
 import { truncate } from 'lodash';
 
-import { GameAction, ICharacter, IPlayer } from '../../interfaces';
+import { GameAction, GameServerResponse, ICharacter, IDialogChatAction, IPlayer } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
@@ -155,19 +155,32 @@ export class TeleportHelper extends BaseService {
     return false;
   }
 
-  public showTeleports(player: IPlayer) {
+  public showTeleports(player: IPlayer, spell = 'teleport') {
     const teleports = Object.keys(player.teleportLocations || {});
     if (teleports.length === 0) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You have not memorized any locations to teleport to.' });
       return;
     }
 
+    const options = [
+      { text: 'Nowhere', action: 'noop' }
+    ];
+
     let msg = `Your teleports (${teleports.length}/${this.maxLocations(player)}):`;
     teleports.forEach((tp, i) => {
       msg = `${msg}<br>${i + 1}: ${tp} - ${player.teleportLocations[tp].map}`;
+      options.push({ text: `${tp} - ${player.teleportLocations[tp].map}`, action: `cast ${spell} ${tp}` });
     });
 
     this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg });
+
+    const formattedChat: IDialogChatAction = {
+      message: 'Teleport to where?',
+      displayTitle: 'Teleport',
+      options
+    };
+
+    this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
   }
 
