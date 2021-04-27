@@ -20,6 +20,7 @@ export class DefaultAIBehavior implements IAI {
 
   // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
+  private messageCooldown = 0;
 
   private highestAgro: ICharacter | null;
   private currentTarget: ICharacter | null;
@@ -43,6 +44,8 @@ export class DefaultAIBehavior implements IAI {
     this.currentTick++;
 
     if (this.game.characterHelper.isDead(npc)) return;
+
+    this.trySendMessage();
 
     if (npc.owner) {
       Object.assign(npc.agro, npc.owner.agro ?? {});
@@ -80,6 +83,22 @@ export class DefaultAIBehavior implements IAI {
     // this.didNPCHaveRightHandAtSpawn = !!this.npc.items.equipment[ItemSlot.RightHand];
 
     this.sendSpawnMessage();
+  }
+
+  private trySendMessage() {
+    this.messageCooldown--;
+    if (this.messageCooldown > 0) return;
+
+    const npc = this.npc;
+    if (npc.triggers?.combat && npc.combatTicks > 0) {
+      const messages = npc.triggers[NPCTriggerType.Combat].messages;
+      if (messages.length > 0 && random(1, 5) === 1) {
+        const send = sample(messages);
+
+        this.game.messageHelper.sendLogMessageToRadius(npc, 4, { from: npc.name, message: send });
+        this.messageCooldown = 10;
+      }
+    }
   }
 
   private adjustTargetting() {
