@@ -26,7 +26,7 @@
       <div class="event-desc">
         {{ event.description }}
       </div>
-      <div class="stats">
+      <div class="stats" *ngIf="statString(event)">
         Stat Boosts: {{ statString(event) }}
       </div>
     </div>
