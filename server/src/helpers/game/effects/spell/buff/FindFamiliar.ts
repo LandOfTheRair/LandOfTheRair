@@ -1,4 +1,4 @@
-import { Hostility, ICharacter, INPC, IStatusEffect, ItemSlot, Skill } from '../../../../../interfaces';
+import { Hostility, ICharacter, INPC, IStatusEffect, ItemSlot, Skill, Stat } from '../../../../../interfaces';
 import { Effect, Spawner } from '../../../../../models';
 
 export class FindFamiliar extends Effect {
@@ -32,6 +32,9 @@ export class FindFamiliar extends Effect {
       Object.keys(npc.skills).forEach(skillName => {
         npc.skills[skillName] += skillBoost;
       });
+
+      // buff based on traits
+      npc.stats[Stat.HP] = (npc.stats[Stat.HP] ?? 20000) * 1 + this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
 
       // boost stats and skills for npcs
       const def = this.game.npcHelper.getNPCDefinition(npc.npcId);
