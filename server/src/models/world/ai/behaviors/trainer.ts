@@ -58,7 +58,8 @@ export class TrainerBehavior implements IAIBehavior {
           npcName: npc.name,
           npcSprite: npc.sprite,
           npcMaxLevel: maxLevelUpLevel,
-          npcMaxSkill: maxSkillTrain
+          npcMaxSkill: maxSkillTrain,
+          npcCanRevive: this.canRevive
         });
 
         return `Hello, ${env?.player.name}!`;

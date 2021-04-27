@@ -19,6 +19,7 @@ export interface IGame {
     npcSprite: number;
     npcMaxLevel: number;
     npcMaxSkill: number;
+    npcCanRevive: boolean;
   };
 
   vendorInfo: {

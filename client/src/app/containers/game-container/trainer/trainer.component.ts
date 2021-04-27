@@ -73,6 +73,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
     });
 
     this.trainerInfoSub = this.trainer$.subscribe(data => {
+      console.log(data);
       this.trainerInfo = cloneDeep(data || {});
     });
 
@@ -90,6 +91,10 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   train() {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, train`);
+  }
+
+  recall() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, recall`);
   }
 
   trainSkill() {
