@@ -16,10 +16,12 @@ export class FindFamiliar extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+    this.game.effectHelper.removeEffectByName(player, 'FindFamiliar');
     this.castSpellAt(player, player, args);
   }
 
   override use(char: ICharacter) {
+    this.game.effectHelper.removeEffectByName(char, 'FindFamiliar');
     this.castSpellAt(char, char);
   }
 
