@@ -15,7 +15,8 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToSack(player: ICharacter, item: ISimpleItem): boolean {
-    const isSackable = this.game.itemHelper.getItemProperty(item, 'isSackable');
+    const { isSackable, itemClass } = this.game.itemHelper.getItemProperties(item, ['isSackable', 'itemClass']);
+    if (itemClass === ItemClass.Coin) return true;
     if (!isSackable) return false;
 
     if (player.items.sack.items.length >= 25) return false;
