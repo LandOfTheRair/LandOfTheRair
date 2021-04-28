@@ -175,6 +175,7 @@ export class TeleportHelper extends BaseService {
 
     const options = [
       { text: 'Nowhere', action: 'noop' },
+      { text: 'Forget Location', action: 'forget' },
       { text: 'Memorize New', action: 'memorize' }
     ];
 
