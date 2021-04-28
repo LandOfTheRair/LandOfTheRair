@@ -45,7 +45,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   private curIndex = -1;
 
   private get isCmdActive() {
-    return this.commandInput.nativeElement === document.activeElement;
+    return this.commandInput?.nativeElement === document.activeElement;
   }
 
   constructor(
@@ -79,6 +79,10 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         return;
       }
 
+      if (ev.key === 'Enter' && !this.isCmdActive && this.optionsService.enterToggleCMD) {
+        this.store.dispatch(new ShowWindow('commandLine'));
+      }
+
       // allow enter to unfocus chat if there is no command
       if (ev.key === 'Enter' && this.isCmdActive && !this.currentCommand) {
 
@@ -94,9 +98,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
       // block text entry here if there is a different text input active
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
-
-      // if we're not hitting enter, we don't care about this
-      if (ev.key !== 'Enter') return;
 
       if (this.optionsService.enterToggleCMD) {
         this.store.dispatch(new ShowWindow('commandLine'));
@@ -155,6 +156,10 @@ export class CommandLineComponent implements OnInit, OnDestroy {
           reset();
 
           (document.activeElement as HTMLElement).blur();
+
+          if (this.optionsService.enterToggleCMD) {
+            this.store.dispatch(new HideWindow('commandLine'));
+          }
         };
 
         const shouldBypassOthers = currentCommand.startsWith('#');
