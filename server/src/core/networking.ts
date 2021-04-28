@@ -12,7 +12,7 @@ import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
 import * as HTTPRoutes from '../http';
-import { GameAction, GameServerEvent, GameServerResponse } from '../interfaces';
+import { GameAction, GameServerEvent } from '../interfaces';
 
 export class WebsocketWorker {
 
@@ -187,6 +187,8 @@ export class WebsocketWorker {
 
     if (data.type === GameServerEvent.Login && data.username) {
 
+      if (socket.username) return;
+
       // if we are already logged in somewhere else, we kick them
       const oldSocket = this.sockets[data.username];
       if (oldSocket) {
@@ -199,6 +201,7 @@ export class WebsocketWorker {
         oldSocket.close(1008, 'disconnected from another login location');
       }
 
+      socket.username = data.username;
       this.sockets[data.username] = socket;
     }
 
@@ -246,18 +249,6 @@ export class WebsocketWorker {
     // look up the socket by id or username
     const socket = this.sockets[socketId];
     if (!socket) return;
-
-    // the networking layer specifically watches for login events
-    if (data.type === GameServerResponse.Login) {
-
-      // if it already has a username, it's already logged in
-      if (socket.username) {
-        this.sendToSocket(socket, { type: GameServerResponse.Error, error: 'You are already logged in.' });
-        return;
-      }
-
-      socket.username = data.account.username;
-    }
 
     this.sendToSocket(socket, data);
   }
