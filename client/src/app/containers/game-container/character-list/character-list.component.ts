@@ -185,6 +185,9 @@ export class CharacterListComponent implements OnInit, OnDestroy {
         if ((char as INPC).hostility === Hostility.Never) {
           this.gameService.sendCommandString(`${char.uuid}, hello`);
 
+        } else if ((char as INPC).hostility === Hostility.OnHit && this.optionsService.dontAttackGreys) {
+          this.store.dispatch(new SetCurrentCommand(`${char.name}, `));
+
         } else if ((char as IPlayer).username && !cmd && this.gameService.hostilityLevelFor(this.player, char) !== 'hostile') {
           this.store.dispatch(new SetCurrentCommand(`#${(char as IPlayer).name}, `));
 

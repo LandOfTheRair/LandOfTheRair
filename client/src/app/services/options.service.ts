@@ -35,6 +35,10 @@ export class OptionsService {
     return this.opts[GameOption.AutoJoin];
   }
 
+  public get dontAttackGreys(): boolean {
+    return this.opts[GameOption.DontAttackGreys];
+  }
+
   public get hideLobbyInGame(): boolean {
     return this.opts[GameOption.HideLobbyWhilePlaying];
   }
