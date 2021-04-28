@@ -27,15 +27,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   public isRegistering: boolean;
   public newAccount: IAccountSettings | any = { };
   public agreedToTerms: boolean;
+  public isConnected = false;
 
   public errorMessage: string;
 
   public get canLogin() {
-    return this.newAccount.username && this.newAccount.password;
+    return this.isConnected && this.newAccount.username && this.newAccount.password;
   }
 
   public get canRegister() {
-    return this.newAccount.username && this.newAccount.password && this.newAccount.email && this.agreedToTerms;
+    return this.isConnected && this.newAccount.username && this.newAccount.password && this.newAccount.email && this.agreedToTerms;
   }
 
   constructor(
@@ -62,6 +63,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.tryAutoconnect();
 
     this.socketService.wsConnected$.subscribe((is) => {
+      console.log('connect', is);
+      this.isConnected = is;
       if (!is) return;
 
       this.tryAutoconnect();

@@ -21,24 +21,24 @@
   <div class="window-body p-10">
     <form>
       <mat-form-field class="full-width" *ngIf="isRegistering">
-        <input matInput 
-               type="email" 
-               placeholder="Email Address" 
+        <input matInput
+               type="email"
+               placeholder="Email Address"
                name="email"
                autocomplete="email"
                [(ngModel)]="newAccount.email"
                [disabled]="isActing"
                [ngModelOptions]="{ standalone: true }" />
       </mat-form-field>
-  
+
       <div class="full-width">
         <mat-form-field>
-          <input matInput 
-                 type="text" 
+          <input matInput
+                 type="text"
                  name="username"
                  autocomplete="text"
-                 placeholder="Username" 
-                 [(ngModel)]="newAccount.username" 
+                 placeholder="Username"
+                 [(ngModel)]="newAccount.username"
                  [disabled]="isActing"
                  [ngModelOptions]="{ standalone: true }" />
         </mat-form-field>
@@ -57,13 +57,13 @@
           </div>
         </mat-menu>
       </div>
-  
+
       <mat-form-field class="full-width">
-        <input matInput 
-               type="password" 
-               placeholder="Password" 
+        <input matInput
+               type="password"
+               placeholder="Password"
                autocomplete="password"
-               [(ngModel)]="newAccount.password" 
+               [(ngModel)]="newAccount.password"
                [disabled]="isActing"
                [ngModelOptions]="{ standalone: true }" />
       </mat-form-field>
@@ -79,9 +79,9 @@
       <button mat-flat-button color="primary" *ngIf="!isRegistering" [disabled]="isActing || !canLogin" (click)="login()">Login</button>
 
       <button mat-flat-button color="primary" *ngIf="isRegistering" [disabled]="isActing || !canRegister" (click)="register()">Register</button>
-      
+
       <button mat-stroked-button color="accent" class="m-l-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
-      
+
       <mat-checkbox class="m-l-10"
                     [(ngModel)]="newAccount.autologin"
                     [disabled]="isActing"
