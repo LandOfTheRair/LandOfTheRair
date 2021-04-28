@@ -19,7 +19,7 @@ export class AlchemistBehavior implements IAIBehavior {
 
         if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
 
-        const maxOz = game.subscriptionHelper.maxSmithRepair(player, alchOz);
+        const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
 
         const message = `Hello, ${player.name}!
         You can tell me COMBINE while holding a bottle in your right hand to
