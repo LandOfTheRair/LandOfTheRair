@@ -640,6 +640,7 @@ export class CharacterHelper extends BaseService {
       character.spellChannel.ticks--;
       if (character.spellChannel.ticks <= 0) {
         character.spellChannel.callback();
+        delete character.spellChannel;
       }
     }
 

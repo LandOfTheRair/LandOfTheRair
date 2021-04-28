@@ -32,6 +32,7 @@ export class CommandHandler extends BaseService {
       command.aliases.forEach(alias => {
         if (!alias) return;
         this.commands[alias.toLowerCase()] = command;
+        this.commands[alias.toLowerCase().split(' ').join('')] = command;
       });
     });
 

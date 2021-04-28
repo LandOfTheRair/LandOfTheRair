@@ -87,7 +87,7 @@ export class FindFamiliar extends Effect {
     } as Partial<Spawner>;
 
     // summon all creatures individually
-    effect.effectInfo.summonCreatures?.forEach(creatureId => {
+    (effect.effectInfo.summonCreatures ?? []).forEach(creatureId => {
       const spawner = new Spawner(this.game, mapData.map, mapData.state, {
         npcIds: [creatureId] ?? ['Mage Summon Deer'],
         ...spawnerOpts

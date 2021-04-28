@@ -291,16 +291,12 @@ export class SpellCommand extends SkillCommand {
 
       // if there's no target, we bail
       if (!targetsPosition && (!target || this.game.characterHelper.isDead(target))) {
-        if (caster) {
-          delete caster.spellChannel;
-        }
 
         return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
       }
 
       // if we have a caster, they are no longer channeling, and we need to take their mp
       if (caster) {
-        delete caster.spellChannel;
 
         if (caster !== target && target && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
           return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');

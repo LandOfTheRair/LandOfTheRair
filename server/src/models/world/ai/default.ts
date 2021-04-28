@@ -149,6 +149,7 @@ export class DefaultAIBehavior implements IAI {
 
     const rolledSkills = shuffle(uniq(this.game.lootHelper.chooseWithReplacement(npc.usableSkills, 3)));
 
+    // pick a skill out of the ones we rolled
     rolledSkills.forEach((skill: string) => {
       if (chosenSkill) return;
 
@@ -180,6 +181,7 @@ export class DefaultAIBehavior implements IAI {
       chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
     });
 
+    // cast a buff spell if we have one
     if (chosenSkill!?.targetsFriendly && this.currentTarget) {
       const skill: SkillCommand = chosenSkill;
       skill.use(npc, this.currentTarget);

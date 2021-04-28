@@ -5,6 +5,7 @@ export class FindFamiliar extends SpellCommand {
 
   override aliases = [''];
   override requiresLearn = true;
+  override targetsFriendly = true;
   override spellRef = 'FindFamiliar';
 
   override range(): number {
@@ -12,7 +13,7 @@ export class FindFamiliar extends SpellCommand {
   }
 
   override canUse(char: ICharacter): boolean {
-    return !this.game.effectHelper.hasEffect(char, 'FindFamiliar');
+    return !this.game.effectHelper.hasEffect(char, 'FindFamiliar') && !char.spellChannel;
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
@@ -21,7 +22,6 @@ export class FindFamiliar extends SpellCommand {
   }
 
   override use(char: ICharacter) {
-    this.game.effectHelper.removeEffectByName(char, 'FindFamiliar');
     this.castSpellAt(char, char);
   }
 
