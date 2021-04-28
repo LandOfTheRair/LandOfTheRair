@@ -4,7 +4,9 @@ import 'reflect-metadata';
 import { parentPort } from 'worker_threads';
 
 import fastify from 'fastify';
+import cors from 'fastify-cors';
 import rateLimit from 'fastify-rate-limit';
+import { MongoClient } from 'mongodb';
 
 import uuid from 'uuid/v4';
 
@@ -42,7 +44,17 @@ export class WebsocketWorker {
 
   }
 
-  public setup() {
+  public async setup() {
+
+    // set up DB
+    if (!process.env.DATABASE_URI) {
+      process.exit(0);
+    }
+
+    const client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
+    await client.connect();
+
+    const db = client.db('landoftherair2');
 
     // set up HTTP
     const app = fastify();
@@ -52,9 +64,18 @@ export class WebsocketWorker {
         max: 10,
         timeWindow: 15 * 1000
       });
+
+      app.register(cors, {
+        origin: [/\.rair\.land$/]
+      });
+
+    } else {
+      app.register(cors);
+
     }
 
     Object.values(HTTPRoutes).forEach((route) => route.setup(app, {
+      db,
       broadcast: (data) => this.broadcast(data),
       sendToGame: (data) => this.sendInternalToGame(data)
     }));

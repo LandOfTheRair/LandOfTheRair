@@ -7,7 +7,8 @@ export const environment = {
   production: true,
 
   server: {
-    ws: 'wss://game.server.rair.land/'
+    ws: 'wss://game.server.rair.land/',
+    http: 'https://game.server.rair.land'
   },
 
   client: {

@@ -73,7 +73,6 @@ export class TrainerComponent implements OnInit, OnDestroy {
     });
 
     this.trainerInfoSub = this.trainer$.subscribe(data => {
-      console.log(data);
       this.trainerInfo = cloneDeep(data || {});
     });
 

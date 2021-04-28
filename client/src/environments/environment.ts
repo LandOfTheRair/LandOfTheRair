@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   server: {
-    ws: 'ws://127.0.0.1:6975/'
+    ws: 'ws://127.0.0.1:6975/',
+    http: 'http://127.0.0.1:6975'
   },
   client: {
     domain: 'localhost',
