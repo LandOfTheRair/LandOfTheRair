@@ -59,16 +59,26 @@ export class LoginComponent implements OnInit, OnDestroy {
       (data) => this.setAccount(data)
     );
 
+    this.tryAutoconnect();
+
+    this.socketService.wsConnected$.subscribe((is) => {
+      if (!is) return;
+
+      this.tryAutoconnect();
+    });
+  }
+
+  ngOnDestroy() {
+    this.socketService.unregisterComponentCallbacks('Login');
+  }
+
+  private tryAutoconnect() {
     this.autologin$.pipe(take(1)).subscribe(acc => {
       if (!acc) return;
 
       this.newAccount = Object.assign({}, acc);
       this.login();
     });
-  }
-
-  ngOnDestroy() {
-    this.socketService.unregisterComponentCallbacks('Login');
   }
 
   public registerMode() {
@@ -79,6 +89,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.isActing) return;
     this.isActing = true;
     this.errorMessage = '';
+
+    console.log('login try');
 
     this.http.post(environment.server.http + '/auth/password-check', this.newAccount)
       .subscribe(() => {
