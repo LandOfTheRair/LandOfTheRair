@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { cloneDeep, get, size } from 'lodash';
+import { cloneDeep, get, size, setWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
 import { IGround, IGroundItem, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
@@ -76,30 +76,28 @@ export class GroundManager extends BaseService {
 
   // save a single ground area
   public async saveSingleGround(mapName: string) {
+    const save = this.getSaveGround(mapName);
+    return this.game.groundDB.saveSingleGround(save);
+  }
+
+  public saveAllGround(): Promise<any> {
+    const maps = Object.keys(this.groundEntities);
+    if (maps.length === 0) return Promise.resolve();
+    return this.saveGround(maps);
+  }
+
+  private saveGround(maps?: string[]): Promise<any> {
+    if (!maps || maps.length === 0) return Promise.resolve();
+    const allSaves = maps.map(map => this.getSaveGround(map));
+    return this.game.groundDB.saveAllGrounds(allSaves);
+  }
+
+  private getSaveGround(mapName: string): Ground {
     const entity = this.groundEntities[mapName];
     entity.map = mapName;
     entity.ground = this.saveableGround[mapName] || {};
     entity.spawners = this.collectSpawners(mapName) || [];
-    return this.game.groundDB.saveSingleGround(entity);
-  }
-
-  // save a lot of ground at once
-  public async saveGround(maps?: string[]) {
-    if (maps?.length === 0) return;
-
-    // if we don't pass any maps in, we get all of them saved by default
-    if (!maps) maps = Object.keys(this.groundEntities);
-
-    // map the entities to something we can save
-    const allSaves = maps.map(map => {
-      const entity = this.groundEntities[map];
-      entity.map = map;
-      entity.ground = this.saveableGround[map] || {};
-      entity.spawners = this.collectSpawners(map) || [];
-      return entity;
-    });
-
-    this.game.groundDB.saveAllGrounds(allSaves);
+    return entity;
   }
 
   tick(timer) {
@@ -134,7 +132,24 @@ export class GroundManager extends BaseService {
     return state.getSerializableSpawners() ?? [];
   }
 
-  public getGround(mapName: string): IGround {
+  public getGroundAround(mapName: string, x: number, y: number, radius = 4): IGround {
+    const baseGround = this.getGround(mapName);
+
+    const ground: IGround = {};
+
+    for (let xx = x - radius; xx <= x + radius; xx++) {
+      for (let yy = y - radius; yy <= y + radius; yy++) {
+        const atCoord = get(baseGround, [xx, yy], {});
+        if (Object.keys(atCoord).length !== 0) {
+          setWith(ground, [xx, yy], atCoord, Object);
+        }
+      }
+    }
+
+    return ground;
+  }
+
+  private getGround(mapName: string): IGround {
     return this.ground[mapName];
   }
 
@@ -275,55 +290,33 @@ export class GroundManager extends BaseService {
   }
 
   public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
-    // re-initialize the map as needed
-    const mapGround = this.ground[mapName] || {};
-    mapGround[x] = mapGround[x] || {};
-    mapGround[x][y] = mapGround[x][y] || {};
-    mapGround[x][y][itemClass] = mapGround[x][y][itemClass] || [];
+    this.removeItemFromSpecificGround(this.ground[mapName] || {}, x, y, itemClass, uuid, count);
+    this.removeItemFromSpecificGround(this.saveableGround[mapName] || {}, x, y, itemClass, uuid, count);
+  }
 
-    // re-initialize the save ground as needed
-    const saveGround = this.saveableGround[mapName] || {};
-    saveGround[x] = saveGround[x] || {};
-    saveGround[x][y] = saveGround[x][y] || {};
-    saveGround[x][y][itemClass] = saveGround[x][y][itemClass] || [];
+  private removeItemFromSpecificGround(ground: IGround, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
+    const groundItems = get(ground, [x, y, itemClass], []) as Array<IGroundItem>;
 
     // find a ground item with the specified uuid
-    const gItem = mapGround[x][y][itemClass].find(i => i.item.uuid === uuid);
-    if (!gItem) return;
+    const groundItem = groundItems.find(i => i.item.uuid === uuid);
+    if (!groundItem) return;
 
     // make sure we don't remove too much
-    const maxStackSize = Math.min(gItem.count, count);
-    gItem.count -= maxStackSize;
-
-    // if we have an sItem (saved item) we decrement count here, too, but I don't expect this will happen
-    const sItem = saveGround[x][y][itemClass].find(i => i.item.uuid === uuid);
-    if (sItem) {
-      sItem.count -= maxStackSize;
-    }
+    const maxStackSize = Math.min(groundItem.count, count);
+    groundItem.count -= maxStackSize;
 
     // if the ground item gets to a count of 0, to the axe with it
-    if (gItem.count <= 0) {
-      mapGround[x][y][itemClass] = mapGround[x][y][itemClass].filter(i => i.item.uuid !== uuid);
+    if (groundItem.count <= 0) {
+      groundItems.splice(groundItems.indexOf(groundItem), 1);
 
       // clean up the save object so we don't send every possible combination everywhere
-      if (mapGround[x][y][itemClass].length === 0) delete mapGround[x][y][itemClass];
-      if (size(mapGround[x][y]) === 0) delete mapGround[x][y];
-      if (size(mapGround[x]) === 0) delete mapGround[x];
+      if (groundItems.length === 0) delete ground[x][y][itemClass];
+      if (Object.keys(ground[x][y]).length === 0) delete ground[x][y];
+      if (Object.keys(ground[x]).length === 0) delete ground[x];
     }
 
-    // we also remove the sItem if possible
-    if (sItem && sItem.count <= 0) {
-      saveGround[x][y][itemClass] = saveGround[x][y][itemClass].filter(i => i.item.uuid !== uuid);
-
-      // clean up the save object so we don't save every possible combination everywhere
-      if (saveGround[x][y][itemClass].length === 0) delete saveGround[x][y][itemClass];
-      if (size(saveGround[x][y]) === 0) delete saveGround[x][y];
-      if (size(saveGround[x]) === 0) delete saveGround[x];
-    }
-
-    // corpses get a lil special treatment
     if (itemClass === ItemClass.Corpse) {
-      this.game.corpseManager.removeCorpse(gItem.item);
+      this.game.corpseManager.removeCorpse(groundItem.item);
     }
 
   }
@@ -344,5 +337,4 @@ export class GroundManager extends BaseService {
       });
     });
   }
-
 }

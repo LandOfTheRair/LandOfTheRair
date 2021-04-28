@@ -15,7 +15,7 @@ export class Vortex extends Spell {
       for (let y = caster.y - radius; y <= caster.y + radius; y++) {
         if (x === caster.x && y === caster.y) continue;
 
-        const groundHere = this.game.groundManager.getEntireGround(caster.map, x, y);
+        const groundHere = map.getEntireGround(x, y);
         const removeItems: IGroundItem[] = [];
 
         Object.keys(groundHere).forEach(itemClass => {

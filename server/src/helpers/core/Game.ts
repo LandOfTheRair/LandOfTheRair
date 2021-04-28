@@ -149,7 +149,7 @@ export class Game {
         this.logger.log(`Game:Exit:${sig}`, 'Beginning save of players and ground...');
         Promise.all([
           this.playerManager.saveAllPlayers(),
-          this.groundManager.saveGround()
+          this.groundManager.saveAllGround()
         ])
           .then(() => {
             this.logger.log('Game:Exit', 'Finished save of players and ground.');

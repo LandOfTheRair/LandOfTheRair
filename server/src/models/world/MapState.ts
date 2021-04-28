@@ -571,18 +571,7 @@ export class MapState {
 
   // GROUND FUNCTIONS
   public getGroundVision(x: number, y: number, radius = 4): IGround {
-    const baseGround = this.game.groundManager.getGround(this.map.name);
-
-    const ground: IGround = {};
-
-    for (let xx = x - radius; xx <= x + radius; xx++) {
-      for (let yy = y - radius; yy <= y + radius; yy++) {
-        const atCoord = get(baseGround, [xx, yy], {});
-        setWith(ground, [xx, yy], atCoord, Object);
-      }
-    }
-
-    return ground;
+    return this.game.groundManager.getGroundAround(this.map.name, x, y, radius);
   }
 
   // add multiple items to the ground across various x/y
