@@ -20,6 +20,10 @@ export class WorldDB extends BaseService {
     return this.settings.motd;
   }
 
+  public get running() {
+    return this.settings.running ?? false;
+  }
+
   public async init() {
     await this.loadSettings();
   }
@@ -30,12 +34,21 @@ export class WorldDB extends BaseService {
     if (!this.settings) {
       this.settings = new WorldSettings();
       this.settings.motd = 'Welcome to Land of the Rair!';
-
       this.saveSettings();
     }
   }
 
   private async saveSettings() {
+    await this.db.save(this.settings);
+  }
+
+  public async saveRunning() {
+    this.settings.running = true;
+    await this.db.save(this.settings);
+  }
+
+  public async saveStopped() {
+    this.settings.running = false;
     await this.db.save(this.settings);
   }
 
