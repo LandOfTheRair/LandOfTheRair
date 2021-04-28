@@ -289,6 +289,7 @@ export class MapScene extends Phaser.Scene {
         // tile effects
         if (fovState && this.canSeeThroughDarkAt(x, y)) {
           fovSprite.alpha = 0.5;
+          fovSprite2.alpha = 0.5;
           continue;
         }
 
