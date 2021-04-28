@@ -69,7 +69,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public activeMacroBars: string[] = [];
   public macroBars: IMacroBar[] = [];
   public readonly macroArray = Array(10).fill(null).map((x, i) => i);
-  public currentMacroPage = 1;
+  public currentMacroPage = 0;
   public currentMacrosInPage: IMacro[] = [];
   public activeMacroSlotGroup: number;
   public activeMacroSlotIndex: number;
@@ -104,12 +104,16 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       const learnedMacs = Object.values(currentMacs.learnedMacros) as IMacro[];
       const customMacros = Object.values(macs).filter(mac => mac.createdCharSlot === charSlot.slot);
 
+      const shouldReset = this.macros.length === 0;
+
       this.allMacros = Object.assign({}, allMacros, macs, currentMacs.learnedMacros);
       this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
 
       this.allPossibleForTargets = learnedMacs.map(x => x.for).filter(Boolean).sort();
 
-      this.setMacroGroupPage(0);
+      if (shouldReset) {
+        this.setMacroGroupPage(0);
+      }
     });
 
     this.macroBarSub = this.currentPlayerMacros$.subscribe(bars => {
