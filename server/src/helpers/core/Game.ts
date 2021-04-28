@@ -135,21 +135,31 @@ export class Game {
       await this[i].init();
     }
 
+    if (this.worldDB.running) {
+      this.logger.error('Game:Init', 'Warning, The last shutdown was unsafe. Data may have been lost.');
+    }
+    this.worldDB.saveRunning();
+
     this.setupEmergencyHandlers();
 
     this.loop();
   }
 
   private setupEmergencyHandlers() {
+    this.logger.log('Game:Failsafe', 'Emegency handler registered');
+    process.on('exit', (code) => {
+      this.logger.log('Game:Exit', 'I am dieing');
+      console.log(`About to exit with code: ${code}`);
+    });
     [
       'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTRAP', 'SIGABRT',
       'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
     ].forEach((sig) => {
-      process.on(sig as any, () => {
+      process.on(sig as any, async () => {
         this.logger.log(`Game:Exit:${sig}`, 'Beginning save of players and ground...');
-        Promise.all([
+        await Promise.all([
           this.playerManager.saveAllPlayers(),
-          this.groundManager.saveGround()
+          this.worldDB.saveStopped()
         ])
           .then(() => {
             this.logger.log('Game:Exit', 'Finished save of players and ground.');
