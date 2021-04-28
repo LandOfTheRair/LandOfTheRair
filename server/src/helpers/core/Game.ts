@@ -136,8 +136,9 @@ export class Game {
     }
 
     if (this.worldDB.running) {
-      this.logger.error('Game:Init', 'Warning, The last shutdown was unsafe. Data may have been lost.');
+      this.logger.error('Game:Init', 'Warning: the last shutdown was unsafe. Data may have been lost.');
     }
+    
     this.worldDB.saveRunning();
 
     this.setupEmergencyHandlers();
@@ -148,9 +149,10 @@ export class Game {
   private setupEmergencyHandlers() {
     this.logger.log('Game:Failsafe', 'Emegency handler registered');
     process.on('exit', (code) => {
-      this.logger.log('Game:Exit', 'I am dieing');
+      this.logger.log('Game:Exit', 'Game is dying');
       console.log(`About to exit with code: ${code}`);
     });
+    
     [
       'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTRAP', 'SIGABRT',
       'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
