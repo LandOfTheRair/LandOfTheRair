@@ -22,6 +22,7 @@ import { DraggableDirective } from './_shared/directives/dragdrop/draggable.dire
 import { DroppableDirective } from './_shared/directives/dragdrop/droppable.directive';
 import { DraggableDirective as DraggableWindowDirective } from './_shared/directives/draggable-window.directive';
 
+import { InputModalComponent } from './_shared/modals/input/input.component';
 import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
 import { DialogComponent } from './_shared/modals/dialog/dialog.component';
 
@@ -78,7 +79,7 @@ import { PartyComponent } from './containers/game-container/party/party.componen
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent, AboutComponent, AccountComponent,
+  DraggableDirective, DroppableDirective, ConfirmModalComponent, InputModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
   TextModalComponent, NewSpellsComponent
 ];

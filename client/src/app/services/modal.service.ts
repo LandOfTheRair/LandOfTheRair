@@ -12,6 +12,7 @@ import { AccountComponent } from '../_shared/modals/account/account.component';
 import { AlertComponent } from '../_shared/modals/alert/alert.component';
 import { AmountModalComponent } from '../_shared/modals/amount/amount.component';
 import { ConfirmModalComponent } from '../_shared/modals/confirm/confirm.component';
+import { InputModalComponent } from '../_shared/modals/input/input.component';
 import { CurrentEventsComponent } from '../_shared/modals/currentevents/currentevents.component';
 import { DialogComponent } from '../_shared/modals/dialog/dialog.component';
 import { MacroEditorComponent } from '../_shared/modals/macroeditor/macroeditor.component';
@@ -81,6 +82,19 @@ export class ModalService {
         });
       }
     );
+
+    this.socketService.registerComponentCallback(
+      'Modal', GameServerResponse.SendInput,
+      (data) => {
+        const input = this.input(data.title, data.content, data.extraData);
+        input.subscribe(value => {
+          if (!value) return;
+
+          const args = data.okAction?.args.split('$value').join(value);
+          this.socketService.emit(GameServerEvent.DoCommand, { command: 'memorize', args });
+        });
+      }
+    );
   }
 
   public notify(text: string) {
@@ -119,6 +133,16 @@ export class ModalService {
     });
 
     return confirm.afterClosed();
+  }
+
+  public input(title: string, content: string, extraData = {}) {
+    const input = this.dialog.open(InputModalComponent, {
+      width: '450px',
+      panelClass: 'fancy',
+      data: { title, content, extraData }
+    });
+
+    return input.afterClosed();
   }
 
   public amount(title: string, content: string, max: number) {

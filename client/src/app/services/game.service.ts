@@ -85,7 +85,7 @@ export class GameService {
       let command = '';
       let args = '';
 
-      if (!hadHash && cmd.includes(',') && (/[a-zA-Z]/).test(cmd[0])) {
+      if (!hadHash && cmd.includes(',') && (/[a-zA-Z0-9]/).test(cmd[0])) {
         command = '!privatesay';
         args = cmd;
       } else {

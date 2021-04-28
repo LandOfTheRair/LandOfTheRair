@@ -69,6 +69,9 @@ export class WebsocketWorker {
     const wsServer = new WebSocket.Server({
       server: app.server
     });
+    app.ready().then(() => {
+      console.info('NET', 'Server is ready for connections');
+    });
 
     this.wsServer = wsServer;
 

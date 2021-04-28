@@ -6,5 +6,6 @@ import { BaseEntity } from '../BaseEntity';
 export class WorldSettings extends BaseEntity {
 
   @Property() motd = '';
+  @Property() running = false;
 
 }

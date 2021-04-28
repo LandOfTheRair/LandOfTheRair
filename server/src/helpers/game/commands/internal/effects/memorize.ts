@@ -1,5 +1,5 @@
 
-import { IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
+import { GameServerResponse, IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class MemorizeCommand extends MacroCommand {
@@ -14,7 +14,17 @@ export class MemorizeCommand extends MacroCommand {
     }
 
     if (!args.stringArgs) {
-      this.sendMessage(player, 'You need to name this teleport location!');
+
+      args.callbacks.emit({
+        type: GameServerResponse.SendInput,
+        title: 'Memorize Location',
+        content: 'Please name this location for your memories.',
+        extraData: { okText: 'Yes, memorize!', cancelText: 'No, cancel' },
+        okAction: { command: 'memorize', args: '$value' }
+      });
+
+      this.sendMessage(player, 'You need to name this location!');
+
       return;
     }
 

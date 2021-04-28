@@ -1,0 +1,33 @@
+<h1 mat-dialog-title>
+  {{ data.title || 'What would you like?' }}
+</h1>
+
+<div mat-dialog-content>
+  <app-npc *ngIf="data.extraData?.npcSprite" [sprite]="data.extraData.npcSprite"></app-npc>
+  {{ data.content || 'What would you like?' }}
+
+  <br>
+
+  <mat-form-field class="full-width">
+    <input matInput
+           type="text"
+           autocomplete="off"
+           [placeholder]="data.content || 'What would you like?'"
+           [(ngModel)]="value"
+           [ngModelOptions]="{ standalone: true }" />
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button
+          [mat-dialog-close]="false"
+          cdkFocusInitial>
+          {{ data.extraData?.cancelText || 'Cancel' }}
+  </button>
+
+  <button mat-button
+          [mat-dialog-close]="value"
+          color="primary">
+          {{ data.extraData?.okText || 'OK' }}
+  </button>
+</div>

@@ -77,6 +77,7 @@ export enum GameServerResponse {
   SendImportantNotification = 'Game:Response:ImportantNotification',
   SendAlert = 'Game:Response:Alert',
   SendConfirm = 'Game:Response:Confirm',
+  SendInput = 'Game:Response:SendInput',
 
   DialogChat = 'Game:Response:NPCDialog',
   PlaySFX = 'Game:Response:PlaySFX',
