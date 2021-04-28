@@ -63,7 +63,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.tryAutoconnect();
 
     this.socketService.wsConnected$.subscribe((is) => {
-      console.log('connect', is);
       this.isConnected = is;
       if (!is) return;
 
