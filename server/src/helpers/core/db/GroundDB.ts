@@ -13,7 +13,10 @@ export class GroundDB extends BaseService {
     super();
   }
 
-  public async init() {}
+  public async init() {
+    const coll = this.db.getCollection(Ground);
+    coll.createIndex({ map: 1, partyName: 1 }, { unique: true });
+  }
 
   public async loadAllGrounds(): Promise<Ground[]> {
     return this.db.findMany<Ground>(Ground, {});

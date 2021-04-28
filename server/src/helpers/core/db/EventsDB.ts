@@ -14,7 +14,10 @@ export class EventsDB extends BaseService {
     super();
   }
 
-  public async init() {}
+  public async init() {
+    const coll = this.db.getCollection(DynamicEvent);
+    coll.createIndex({ name: 1 });
+  }
 
   public async loadEvents(): Promise<DynamicEvent[]> {
     return this.db.findMany<DynamicEvent>(DynamicEvent, {});

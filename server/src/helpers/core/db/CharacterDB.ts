@@ -22,7 +22,10 @@ export class CharacterDB extends BaseService {
     super();
   }
 
-  public async init() {}
+  public async init() {
+    const coll = this.db.getCollection(Player);
+    coll.createIndex({ name: 1 });
+  }
 
   public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
 

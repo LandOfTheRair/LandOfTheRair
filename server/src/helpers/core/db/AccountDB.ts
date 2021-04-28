@@ -18,7 +18,10 @@ export class AccountDB extends BaseService {
     super();
   }
 
-  public async init() {}
+  public async init() {
+    const coll = this.db.getCollection(Account);
+    coll.createIndex({ username: 1 }, { unique: true });
+  }
 
   public async doesAccountExist(username: string): Promise<Account | null> {
     return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1 } });
