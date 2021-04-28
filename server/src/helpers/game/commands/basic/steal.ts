@@ -21,7 +21,7 @@ export class Steal extends SkillCommand {
       if (twoHanded) return false;
     }
 
-    return this.game.directionHelper.distFrom(char, target) > 0
+    return this.game.directionHelper.distFrom(char, target) === 0
         && (this.game.currencyHelper.getCurrency(char) > 0 || target.items.sack.items.length > 0);
   }
 
