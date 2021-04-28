@@ -79,13 +79,14 @@ export class GameService {
       cmd = cmd.trim();
       cmd = cmd.replace(/__SEMICOLON__/g, ';');
       if (cmd === '') return;
+
       const hadHash = cmd.startsWith('#');
       if (hadHash) cmd = cmd.substring(1);
 
       let command = '';
       let args = '';
 
-      if (!hadHash && cmd.includes(',') && (/[a-zA-Z0-9]/).test(cmd[0])) {
+      if (cmd.includes(',') && (/[a-zA-Z0-9]/).test(cmd[0])) {
         command = '!privatesay';
         args = cmd;
       } else {
