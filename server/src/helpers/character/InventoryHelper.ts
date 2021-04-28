@@ -136,7 +136,7 @@ export class InventoryHelper extends BaseService {
 
   public canAddItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
-    if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse) return false;
+    if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse || item.name.includes('Conjured')) return false;
 
     if (locker.items.length >= 25) return false;
 
