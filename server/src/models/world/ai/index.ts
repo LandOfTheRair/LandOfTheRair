@@ -4,6 +4,7 @@ import { CrazedSedgwickAIBehavior } from './crazedsedgwick';
 import { CrazedTonwinAIBehavior } from './crazedtonwin';
 import { DedlaenEscortAI } from './dedlaenescort';
 import { DefaultAIBehavior } from './default';
+import { InsaneRanataAIBehavior } from './insaneranata';
 import { ResourceAI } from './resource';
 import { SteffenLostChildAI } from './steffenlostchild';
 import { TrainingDummyAI } from './trainingdummy';
@@ -16,5 +17,6 @@ export const AllAIBehaviors = {
   steffenlostchild: SteffenLostChildAI,
   crazedsaraxa: CrazedSaraxaAIBehavior,
   crazedsedgwick: CrazedSedgwickAIBehavior,
-  crazedtonwin: CrazedTonwinAIBehavior
+  crazedtonwin: CrazedTonwinAIBehavior,
+  insaneranata: InsaneRanataAIBehavior
 };

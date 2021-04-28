@@ -1,5 +1,5 @@
 
-import { clamp, maxBy, random, sample, size, uniq } from 'lodash';
+import { clamp, maxBy, random, sample, shuffle, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
 import { Direction, Hostility, IAI, ICharacter, INPC,
@@ -143,33 +143,14 @@ export class DefaultAIBehavior implements IAI {
       this.checkGroundForItems();
     }
 
-    let chosenSkill: SkillCommand | null = null;
+    let chosenSkill: SkillCommand | null;
 
     let isThrowing = false;
 
-    const rolledSkills = uniq(this.game.lootHelper.chooseWithReplacement(npc.usableSkills, 3));
-
-    /*
-    if(npc.$$owner) {
-      rolledSkills.unshift(...npc.getBonusUsableSkillsBasedOnOwner());
-      rolledSkills = shuffle(rolledSkills);
-    }
-    */
+    const rolledSkills = shuffle(uniq(this.game.lootHelper.chooseWithReplacement(npc.usableSkills, 3)));
 
     rolledSkills.forEach((skill: string) => {
       if (chosenSkill) return;
-
-      if (this.highestAgro
-      && this.game.npcHelper.getAttackDamage(npc, this.highestAgro, skill) === 0
-      && this.game.npcHelper.getZeroTimes(npc, this.highestAgro, skill) >= 5) {
-        skill = (npc.usableSkills as any[]).find(s => s === 'Charge' || s.result === 'Charge') ? 'Charge' : 'Attack';
-      }
-
-      const rightHand = npc.items.equipment[ItemSlot.RightHand];
-      if (this.highestAgro && skill === 'Attack' && rightHand && this.game.itemHelper.getItemProperty(rightHand, 'returnsOnThrow')) {
-        isThrowing = true;
-        skill = 'Throw';
-      }
 
       // if it's a buff, it works slightly differently
       const skillRef = this.game.commandHandler.getSkillRef(skill);
@@ -182,17 +163,36 @@ export class DefaultAIBehavior implements IAI {
         return;
       }
 
+      // try to do stuff
+      if (this.highestAgro
+      && this.game.npcHelper.getAttackDamage(npc, this.highestAgro, skill) === 0
+      && this.game.npcHelper.getZeroTimes(npc, this.highestAgro, skill) >= 5) {
+        skill = (npc.usableSkills as any[]).find(s => s === 'Charge' || s.result === 'Charge') ? 'Charge' : 'Attack';
+      }
+
+      const rightHand = npc.items.equipment[ItemSlot.RightHand];
+      if (this.highestAgro && skill === 'Attack' && rightHand && this.game.itemHelper.getItemProperty(rightHand, 'returnsOnThrow')) {
+        isThrowing = true;
+        skill = 'Throw';
+      }
+
       if (!this.currentTarget) return;
       chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
     });
 
+    if (chosenSkill!?.targetsFriendly && this.currentTarget) {
+      const skill: SkillCommand = chosenSkill;
+      skill.use(npc, this.currentTarget);
+      this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
+
     // move towards target w/ highest agro, or throw at them, or whatever
-    if (this.highestAgro) {
+    } else if (this.highestAgro) {
       if (this.path && !this.pathDisrupted) this.pathDisrupted = { x: npc.x, y: npc.y };
 
+      const skill: SkillCommand = chosenSkill!;
+
       // use a skill that can hit the target
-      if (chosenSkill) {
-        const skill: SkillCommand = chosenSkill;
+      if (skill) {
         const opts: PhysicalAttackArgs = {};
         if (isThrowing) opts.throwHand = ItemSlot.RightHand;
         skill.use(npc, this.highestAgro, opts);
@@ -253,12 +253,6 @@ export class DefaultAIBehavior implements IAI {
       this.game.movementHelper.takeSequenceOfSteps(npc, steps);
       diffX = npc.x - oldX;
       diffY = npc.y - oldY;
-    }
-
-    if (!this.highestAgro && chosenSkill && this.currentTarget) {
-      const skill: SkillCommand = chosenSkill;
-      skill.use(npc, this.currentTarget);
-      this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
     }
 
     if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
@@ -428,7 +422,7 @@ export class DefaultAIBehavior implements IAI {
       .flat();
   }
 
-  private resetAgro(full = false) {
+  protected resetAgro(full = false) {
     if (full) {
       this.npc.agro = {};
       return;

@@ -5,7 +5,7 @@ export class Blind extends Spell {
 
   override getDuration(caster: ICharacter | null) {
     if (!caster) return 15;
-    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS) * 2)
+    return Math.floor(this.game.characterHelper.getStat(caster, Stat.WIS))
          + this.game.traitHelper.traitLevelValue(caster, 'DazingOutlook');
   }
 

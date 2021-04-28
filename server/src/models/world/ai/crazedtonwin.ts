@@ -109,7 +109,7 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
 
       this.game.effectHelper.addEffect(brother, brother, effect);
       this.game.effectHelper.addEffect(npc, brother, effect);
-      this.game.effectHelper.addEffect(npc, brother, 'Invulnerable', { effect: { duration: -1 } });
+      this.game.effectHelper.addEffect(npc, brother, 'Invulnerable');
 
       const mapRef = this.game.worldManager.getMap(npc.map);
       mapRef?.state.openDoor(mapRef.map.findInteractableByName(`Tile Door ${spawnLoc + 1}`).id);

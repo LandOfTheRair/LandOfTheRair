@@ -523,7 +523,9 @@ export class MapScene extends Phaser.Scene {
 
     // watch for and update map bounds when the window moves
     this.windowUpdate$ = this.game.observables.windowChange.subscribe(() => {
-      this.scale.updateBounds();
+      try {
+        this.scale.updateBounds();
+      } catch {}
     });
 
     // watch for incoming vfx so we can render them

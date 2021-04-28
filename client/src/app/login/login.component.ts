@@ -90,8 +90,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = true;
     this.errorMessage = '';
 
-    console.log('login try');
-
     this.http.post(environment.server.http + '/auth/password-check', this.newAccount)
       .subscribe(() => {
 
