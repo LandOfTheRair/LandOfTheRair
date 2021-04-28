@@ -147,7 +147,7 @@ export class Game {
   }
 
   private setupEmergencyHandlers() {
-    this.logger.log('Game:Failsafe', 'Emegency handler registered');
+    this.logger.log('Game:Failsafe', 'Emergency handler registered');
     process.on('exit', (code) => {
       this.logger.log('Game:Exit', 'Game is dying');
       console.log(`About to exit with code: ${code}`);

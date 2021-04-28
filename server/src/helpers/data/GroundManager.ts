@@ -80,14 +80,16 @@ export class GroundManager extends BaseService {
     return this.game.groundDB.saveSingleGround(save);
   }
 
-  public saveAllGround(): Promise<any> {
+  public async saveAllGround(): Promise<any> {
     const maps = Object.keys(this.groundEntities);
-    if (maps.length === 0) return Promise.resolve();
+    if (maps.length === 0) return;
+
     return this.saveGround(maps);
   }
 
-  private saveGround(maps?: string[]): Promise<any> {
-    if (!maps || maps.length === 0) return Promise.resolve();
+  private async saveGround(maps?: string[]): Promise<any> {
+    if (!maps || maps.length === 0) return;
+
     const allSaves = maps.map(map => this.getSaveGround(map));
     return this.game.groundDB.saveAllGrounds(allSaves);
   }
