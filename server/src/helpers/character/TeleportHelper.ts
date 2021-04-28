@@ -159,11 +159,23 @@ export class TeleportHelper extends BaseService {
     const teleports = Object.keys(player.teleportLocations || {});
     if (teleports.length === 0) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You have not memorized any locations to teleport to.' });
+
+      const memorizeChat: IDialogChatAction = {
+        message: 'You need to memorize a new location first.',
+        displayTitle: 'No Teleports',
+        options: [
+          { text: 'Cancel', action: 'noop' },
+          { text: 'Memorize New', action: 'memorize' }
+        ]
+      };
+
+      this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, memorizeChat);
       return;
     }
 
     const options = [
-      { text: 'Nowhere', action: 'noop' }
+      { text: 'Nowhere', action: 'noop' },
+      { text: 'Memorize New', action: 'memorize' }
     ];
 
     let msg = `Your teleports (${teleports.length}/${this.maxLocations(player)}):`;
