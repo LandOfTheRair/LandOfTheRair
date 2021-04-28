@@ -25,6 +25,9 @@ export class CharacterDB extends BaseService {
   public async init() {
     const coll = this.db.getCollection(Player);
     coll.createIndex({ name: 1 });
+
+    const stats = this.db.getCollection(PlayerStatistics);
+    stats.createIndex({ name: 1 });
   }
 
   public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
