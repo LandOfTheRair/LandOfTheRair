@@ -184,8 +184,8 @@ export class Spawner {
     return this.npcAI[npcUUID];
   }
 
-  public forceSpawnNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}) {
-    this.createNPC(opts);
+  public forceSpawnNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}): INPC | null {
+    return this.createNPC(opts);
   }
 
   // triggers every second, for clearing buffs
@@ -212,14 +212,14 @@ export class Spawner {
     });
   }
 
-  private createNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}) {
-    if (!this.canBeActive) return;
+  private createNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}): INPC | null {
+    if (!this.canBeActive) return null;
 
     const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
       this.game.logger.error('Spawner', `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`);
       this.removeSelf();
-      return;
+      return null;
     }
 
     const { npcId, npcDef, createCallback } = opts;
@@ -240,7 +240,7 @@ export class Spawner {
 
     if (!chosenNPCDef) {
       this.game.logger.error('Spawner', `Could not get NPC definition for ${this.name}.`);
-      return;
+      return null;
     }
 
     const npc = this.game.npcCreator.createCharacterFromNPCDefinition(chosenNPCDef as INPCDefinition);
@@ -283,7 +283,7 @@ export class Spawner {
 
     if (!AllAIBehaviors[ai]) {
       this.game.logger.error('Spawner', `AI setting ${ai} does not exist.`);
-      return;
+      return null;
     }
 
     const aiInst = new AllAIBehaviors[ai](this.game, this.mapRef, this.mapState, this, npc);
@@ -309,6 +309,8 @@ export class Spawner {
     this.game.visibilityHelper.calculateFOV(npc);
 
     this.addNPC(npc, aiInst, npcDef);
+
+    return npc;
   }
 
   private addNPC(npc: INPC, ai: IAI, npcDef?: INPCDefinition): void {

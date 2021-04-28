@@ -6,6 +6,7 @@ export class VitalEssence extends Effect {
 
   public override create(char: ICharacter, effect: IStatusEffect) {
     const skill = this.game.characterHelper.getSkillLevel(char, Skill.Restoration) + 1;
+    effect.effectInfo.potency = effect.effectInfo.potency ?? 0;
 
     effect.effectInfo.statChanges = {
       [Stat.HP]: effect.effectInfo.potency,

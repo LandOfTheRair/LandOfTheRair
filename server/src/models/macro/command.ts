@@ -269,6 +269,8 @@ export class SpellCommand extends SkillCommand {
 
     // if they're hostile - no buffing
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    if (!spellData) return false;
+
     const { noHostileTarget } = spellData.spellMeta;
     if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) return false;
 
