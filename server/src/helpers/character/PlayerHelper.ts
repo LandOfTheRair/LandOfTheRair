@@ -344,7 +344,7 @@ export class PlayerHelper extends BaseService {
       xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
     }
 
-    player.exp = Math.max(Math.floor(player.exp + xpGained), 0);
+    player.exp = Math.max(Math.floor(player.exp + xpGained), 1);
     player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
 
   }

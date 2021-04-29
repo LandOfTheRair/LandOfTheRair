@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
 import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
-  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill } from '../../interfaces';
+  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 
@@ -65,4 +65,30 @@ export class CalculatorHelper extends BaseService {
 
     return day + this.getDailyOffset(player);
   }
+
+  // calculate the gold required for the stat doc
+  public calcRequiredGoldForNextHPMP(
+    player: IPlayer,
+    stat: Stat,
+    maxForTier: number,
+    normalizer: number,
+    costsAtTier: { min: number; max: number }
+  ) {
+
+    const normal = normalizer;
+
+    const curHp = this.game.characterHelper.getBaseStat(player, stat);
+    const cha = this.game.characterHelper.getStat(player, Stat.CHA);
+
+    // every cha past 7 is +1% discount
+    const discountPercent = Math.min(50, cha - 7);
+    const percentThere = Math.max(0.01, (curHp - normal) / (maxForTier - normal));
+
+    const { min, max } = costsAtTier;
+
+    const totalCost = min + ((max - min) * percentThere);
+    const totalDiscount = (totalCost * discountPercent / 100);
+
+    return this.game.subscriptionHelper.docReduction(player, Math.max(min, Math.round(totalCost - totalDiscount)));
+  };
 }

@@ -33,7 +33,6 @@ export class Break extends MacroCommand {
 
     // TODO: check if item has a destroy effect?
     this.game.characterHelper.setEquipmentSlot(player, itemSlot, undefined);
-    this.game.characterHelper.recalculateEverything(player);
 
     this.sendMessage(player, `You break the ${item.name} in your ${handChoice} hand!`, SoundEffect.CombatBlockArmor);
   }

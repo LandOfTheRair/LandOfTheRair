@@ -1,6 +1,12 @@
 
 export * from './ExactHeal';
 
+export * from './FillChilledWater';
+export * from './FillFateWater';
+export * from './FillLava';
+export * from './FillNormalWater';
+export * from './FillSpringWater';
+
 export * from './MinorHP';
 export * from './MinorMP';
 export * from './PermanentAGI';

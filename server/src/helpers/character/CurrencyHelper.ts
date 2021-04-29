@@ -21,7 +21,6 @@ export class CurrencyHelper extends BaseService {
   public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
     currencyGained = this.game.userInputHelper.cleanNumber(currencyGained, 0, { floor: true });
     char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
-
   }
 
   // lose currency for a player (either by taking it, or spending it)

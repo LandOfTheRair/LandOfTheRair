@@ -26,7 +26,7 @@ export class LootHelper extends BaseService {
   }
 
   // choose items to drop without replacing, aka, keep taking from the pool
-  private chooseWithoutReplacement(choices: Rollable[]|string[], number = 1, bonus = 0) {
+  public chooseWithoutReplacement(choices: Rollable[]|string[], number = 1, bonus = 0) {
     if (choices.length === 0) return [];
     const table = new LootTable(this.applyBonusToTable(choices, bonus));
     return table.chooseWithoutReplacement(number);

@@ -128,6 +128,8 @@ export class CharacterHelper extends BaseService {
 
       this.game.itemHelper.tryToBindItem(char, item);
     }
+
+    this.game.characterHelper.recalculateEverything(char);
   }
 
   // drop your hands on the ground
@@ -264,13 +266,16 @@ export class CharacterHelper extends BaseService {
   // lose a permanent stat (from any reason)
   public losePermanentStat(character: ICharacter, stat: Stat, value = 1): boolean {
 
-    const curStat = character.stats[stat] ?? 1;
+    const oneStats = [Stat.CHA, Stat.CON, Stat.DEX, Stat.INT, Stat.WIL, Stat.WIS, Stat.STR, Stat.AGI, Stat.LUK];
+    const minimum = (oneStats.includes(stat) ? 1 : 0);
+
+    const curStat = character.stats[stat] ?? minimum;
 
     // cannot cannot go lower than 1
-    if (curStat - value < 1) return false;
+    if (curStat - value < minimum) return false;
 
     // lose the stat if we can
-    character.stats[stat] = (character.stats[stat] ?? 1) - value;
+    character.stats[stat] = (character.stats[stat] ?? minimum) - value;
 
     return true;
 
@@ -676,12 +681,21 @@ export class CharacterHelper extends BaseService {
 
   // whether or not this particular character knows how to cast a spell/ability
   public hasLearned(character: ICharacter, spell: string): boolean {
-    return (character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned) !== LearnedSpell.Unlearned;
+    return this.learnedState(character, spell) !== LearnedSpell.Unlearned;
+  }
+
+  // get the specific learned state for a spell
+  public learnedState(character: ICharacter, spell: string): LearnedSpell {
+    return (character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned);
   }
 
   // whether or not this particular character knows how to cast a spell/ability
   public hasLearnedFromItem(character: ICharacter, spell: string): boolean {
     return character.learnedSpells[spell] === LearnedSpell.FromItem;
+  }
+
+  public forceSpellLearnStatus(character: ICharacter, spell: string, state: LearnedSpell): void {
+    character.learnedSpells[spell] = state;
   }
 
   // try to break items that have a limited number of uses

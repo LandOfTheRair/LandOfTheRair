@@ -219,6 +219,10 @@ export class SubscriptionHelper extends BaseService {
     return baseValue + ((account?.premium.silverPurchases?.[SilverPurchase.MorePotions] ?? 0) * 5);
   }
 
+  public docReduction(player: IPlayer, baseValue = 10): number {
+    return Math.max(1, Math.floor(baseValue - (baseValue * 0.05 * player.subscriptionTier)));
+  }
+
   public maxSuccorOz(player: IPlayer, baseValue = 1): number {
     return baseValue + Math.floor(player.subscriptionTier / 5);
   }

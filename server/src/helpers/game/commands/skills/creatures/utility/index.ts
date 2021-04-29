@@ -5,6 +5,7 @@ export * from './conjureshield';
 export * from './conjuresword';
 export * from './darkness';
 export * from './dispel';
+export * from './fate';
 export * from './identify';
 export * from './light';
 export * from './massteleport';
