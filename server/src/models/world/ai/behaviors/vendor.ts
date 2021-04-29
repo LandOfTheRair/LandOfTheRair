@@ -7,6 +7,7 @@ export class VendorBehavior implements IAIBehavior {
 
   private formattedVendorItems: ISimpleItem[] = [];
   private formattedVendorDailyItems: ISimpleItem[] = [];
+  private finalizedVendorCurrency: Currency;
 
   public get vendorItems() {
     return this.formattedVendorItems;
@@ -16,11 +17,17 @@ export class VendorBehavior implements IAIBehavior {
     return this.formattedVendorDailyItems;
   }
 
+  public get vendorCurrency() {
+    return this.finalizedVendorCurrency;
+  }
+
   init(game: Game, npc: INPC, parser: Parser, behavior: IVendorBehavior) {
 
     const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1)).filter(Boolean);
     const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx)).filter(Boolean);
     const npcVendorCurrency = behavior.vendorCurrency || Currency.Gold;
+
+    this.finalizedVendorCurrency = npcVendorCurrency;
 
     this.formattedVendorItems = npcVendorItems as ISimpleItem[];
     this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];

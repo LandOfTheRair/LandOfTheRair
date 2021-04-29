@@ -1221,6 +1221,8 @@ export class MoveItems extends MacroCommand {
       return;
     }
 
+    const currency = vendorBehavior.vendorCurrency;
+
     const vitems = subtype === 'v' ? vendorBehavior.vendorItems : vendorBehavior.vendorDailyItems;
     const item = vitems[+subslot];
     const cost = item.mods.value ?? 0;
@@ -1236,7 +1238,7 @@ export class MoveItems extends MacroCommand {
     switch (dest) {
     case 'R': { // MtR
 
-      if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
+      if (!this.game.currencyHelper.hasCurrency(player, cost, currency)) {
         this.sendMessage(player, 'You do not have enough to buy that!');
         return false;
       }
@@ -1255,13 +1257,13 @@ export class MoveItems extends MacroCommand {
         this.game.characterHelper.setRightHand(player, createdItem);
       }
 
-      this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+      this.game.currencyHelper.loseCurrency(player, cost, currency);
 
       break;
     }
 
     case 'L': { // MtL
-      if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)) {
+      if (!this.game.currencyHelper.hasCurrency(player, cost, currency)) {
         this.sendMessage(player, 'You do not have enough to buy that!');
         return;
       }
@@ -1280,39 +1282,39 @@ export class MoveItems extends MacroCommand {
         this.game.characterHelper.setLeftHand(player, createdItem);
       }
 
-      this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+      this.game.currencyHelper.loseCurrency(player, cost, currency);
 
       break;
     }
 
-    case 'B': { // MtL
+    case 'B': { // MtB
       const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.beltSpaceLeft(player), +destSlot);
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
-        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+        if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)) {
           return;
         }
 
-        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.currencyHelper.loseCurrency(player, cost, currency);
         this.game.inventoryHelper.addItemToBelt(player, createdItem);
       }
 
       break;
     }
 
-    case 'S': { // MtL
+    case 'S': { // MtS
       const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.sackSpaceLeft(player), +destSlot);
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
-        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+        if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToSack(player, createdItem)) {
           return;
         }
 
-        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.currencyHelper.loseCurrency(player, cost, currency);
         this.game.inventoryHelper.addItemToSack(player, createdItem);
       }
 
@@ -1324,12 +1326,12 @@ export class MoveItems extends MacroCommand {
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
 
-        if (!this.game.currencyHelper.hasCurrency(player, cost, Currency.Gold)
+        if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToPouch(player, createdItem)) {
           return;
         }
 
-        this.game.currencyHelper.loseCurrency(player, cost, Currency.Gold);
+        this.game.currencyHelper.loseCurrency(player, cost, currency);
         this.game.inventoryHelper.addItemToPouch(player, createdItem);
       }
 
