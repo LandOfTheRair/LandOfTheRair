@@ -67,8 +67,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
     this.globalListener = (ev) => {
 
-      console.log(ev);
-
       // allow tab to change modes
       if (ev.key === 'Tab' && this.isCmdActive) {
         this.store.selectOnce(state => state.settings.chatMode)
