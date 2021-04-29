@@ -190,7 +190,9 @@ export class InventoryHelper extends BaseService {
     // default sell percent is 25% of value if it doesn't have a set sellValue
     let sellPercent = sellValue ? 100 : 25;
 
-    if (check && !sellValue) {
+    // items that do not have a modded sellvalue (ie, rare gems) can get modified
+    if (check && !item.mods.sellValue) {
+
       // sliding scale % based on CHA
       const cha = this.game.characterHelper.getStat(check, Stat.CHA);
 
