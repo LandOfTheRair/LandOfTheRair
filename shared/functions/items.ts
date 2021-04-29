@@ -72,7 +72,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const starText = quality - 2 > 0 ? Array(quality - 2).fill('★').join('') : '';
 
   // whether the item has an implicit sell price or not
-  const isValuableText = getProp(item, itemDef, 'sellValue') ? 'It looks valuable. ' : '';
+  const isValuableText = itemDef.sellValue ? 'It looks valuable. ' : '';
 
   const trapSetText = itemClass === ItemClass.TrapSet ? `This trap is live. ` : '';
 

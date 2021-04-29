@@ -1244,6 +1244,8 @@ export class MoveItems extends MacroCommand {
       }
 
       const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+      createdItem.mods.sellValue = cost;
+
       const rightHand = player.items.equipment[ItemSlot.RightHand];
       const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
@@ -1269,6 +1271,8 @@ export class MoveItems extends MacroCommand {
       }
 
       const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+      createdItem.mods.sellValue = cost;
+
       const rightHand = player.items.equipment[ItemSlot.RightHand];
       const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
@@ -1291,6 +1295,7 @@ export class MoveItems extends MacroCommand {
       const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.beltSpaceLeft(player), +destSlot);
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+        createdItem.mods.sellValue = cost;
 
         if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)) {
@@ -1308,6 +1313,7 @@ export class MoveItems extends MacroCommand {
       const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.sackSpaceLeft(player), +destSlot);
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+        createdItem.mods.sellValue = cost;
 
         if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToSack(player, createdItem)) {
@@ -1325,6 +1331,7 @@ export class MoveItems extends MacroCommand {
       const maxItemsBuyable = isDaily ? 1 : Math.min(this.game.inventoryHelper.pouchSpaceLeft(player), +destSlot);
       for (let i = 0; i < maxItemsBuyable; i++) {
         const createdItem = this.game.itemCreator.getSimpleItem(item.name);
+        createdItem.mods.sellValue = cost;
 
         if (!this.game.currencyHelper.hasCurrency(player, cost, currency)
           || !this.game.inventoryHelper.canAddItemToPouch(player, createdItem)) {
