@@ -14,6 +14,12 @@ export class VolcanoStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (this.game.effectHelper.hasEffect(player, 'VolcanoStance')) {
+      this.game.effectHelper.removeEffectByName(player, 'VolcanoStance');
+      return;
+    }
+
     this.castSpellAt(player, player, args);
   }
 

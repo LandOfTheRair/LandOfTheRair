@@ -14,6 +14,12 @@ export class RageStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (this.game.effectHelper.hasEffect(player, 'RageStance')) {
+      this.game.effectHelper.removeEffectByName(player, 'RageStance');
+      return;
+    }
+
     if (!player.items.equipment[ItemSlot.RightHand]) return this.sendMessage(player, 'You need a weapon in your hands to take a stance!');
 
     this.castSpellAt(player, player, args);

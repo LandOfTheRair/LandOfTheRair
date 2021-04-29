@@ -14,6 +14,12 @@ export class GlacierStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (this.game.effectHelper.hasEffect(player, 'GlacierStance')) {
+      this.game.effectHelper.removeEffectByName(player, 'GlacierStance');
+      return;
+    }
+
     this.castSpellAt(player, player, args);
   }
 

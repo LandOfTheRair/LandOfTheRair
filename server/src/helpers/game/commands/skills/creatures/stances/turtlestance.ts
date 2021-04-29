@@ -14,6 +14,12 @@ export class TurtleStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+
+    if (this.game.effectHelper.hasEffect(player, 'TurtleStance')) {
+      this.game.effectHelper.removeEffectByName(player, 'TurtleStance');
+      return;
+    }
+
     if (player.items.equipment[ItemSlot.RightHand]) return this.sendMessage(player, 'You need an empty right hand to take a stance!');
 
     this.castSpellAt(player, player, args);
