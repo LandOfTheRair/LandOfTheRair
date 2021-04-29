@@ -92,6 +92,10 @@ export class Spawner {
     return this.currentTick;
   }
 
+  public get areCreaturesDangerous(): boolean {
+    return this.isDangerous;
+  }
+
   private get canRespawn(): boolean {
     return !this.mapRef.disableCreatureRespawn && (this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0);
   }
@@ -119,6 +123,11 @@ export class Spawner {
 
     if (this.mapRef.disableCreatureRespawn) this.currentTick = 0;
     if (this.doInitialSpawnImmediately && this.currentTick === 0) this.doInitialSpawn();
+  }
+
+  public setTick(tick: number): void {
+    this.currentTick = tick;
+    this.currentEliteTick = tick;
   }
 
   // triggers every second

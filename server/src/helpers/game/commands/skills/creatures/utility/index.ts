@@ -10,6 +10,7 @@ export * from './identify';
 export * from './light';
 export * from './massteleport';
 export * from './push';
+export * from './reincarnate';
 export * from './succor';
 export * from './teleport';
 export * from './transmute';

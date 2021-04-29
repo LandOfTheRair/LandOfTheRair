@@ -60,6 +60,10 @@ export class MapState {
     return Object.values(this.npcsByUUID);
   }
 
+  public get allSpawners(): Spawner[] {
+    return this.spawners;
+  }
+
   constructor(private game: Game, private map: WorldMap) {
     this.createSpawners();
   }
