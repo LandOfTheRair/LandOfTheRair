@@ -40,6 +40,7 @@
              (keydown.enter)="sendCommand($event)"
              (input)="updateCommand(commandInput.value)"
              [placeholder]="placeholderTexts[gameService.chatMode$ | async] || 'Enter text here...'"
+             maxlength="200"
              autocomplete="off"
              autocorrect="off"
              autocapitalize="off"

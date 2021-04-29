@@ -8,7 +8,7 @@ export class LobbySay extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const msg = this.game.profanityHelper.cleanMessage(args.stringArgs);
+    const msg = this.game.messageHelper.truncateMessage(this.game.profanityHelper.cleanMessage(args.stringArgs));
     this.game.messageHelper.broadcastChatMessage(player, msg);
   }
 

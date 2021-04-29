@@ -10,7 +10,7 @@ export class Say extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const state = this.game.worldManager.getMapStateForCharacter(player);
     const playersInView = state.getAllPlayersInRange(player, 4);
-    const msg = this.game.profanityHelper.cleanMessage(args.stringArgs);
+    const msg = this.game.messageHelper.truncateMessage(this.game.profanityHelper.cleanMessage(args.stringArgs));
 
     playersInView.forEach(p => {
       this.sendChatMessage(p, `**${player.name}**: ${msg}`);

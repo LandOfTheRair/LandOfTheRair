@@ -85,6 +85,10 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public truncateMessage(message: string): string {
+    return message.substring(0, 200);
+  }
+
   public sendSimpleMessage(character: ICharacter, message: string, sfx?: SoundEffect): void {
     this.sendLogMessageToPlayer(character, { message, sfx });
   }

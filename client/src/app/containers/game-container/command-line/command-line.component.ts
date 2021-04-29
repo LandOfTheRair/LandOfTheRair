@@ -67,6 +67,8 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
     this.globalListener = (ev) => {
 
+      console.log(ev);
+
       // allow tab to change modes
       if (ev.key === 'Tab' && this.isCmdActive) {
         this.store.selectOnce(state => state.settings.chatMode)
@@ -81,6 +83,8 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
       if (ev.key === 'Enter' && !this.isCmdActive && this.optionsService.enterToggleCMD) {
         this.store.dispatch(new ShowWindow('commandLine'));
+        this.store.dispatch(new SetActiveWindow('commandLine'));
+        this.focusInput();
       }
 
       // allow enter to unfocus chat if there is no command
@@ -99,12 +103,12 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       // block text entry here if there is a different text input active
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
-      if (this.optionsService.enterToggleCMD) {
+      if (ev.key === 'Enter' && this.optionsService.enterToggleCMD) {
         this.store.dispatch(new ShowWindow('commandLine'));
+        this.store.dispatch(new SetActiveWindow('commandLine'));
+        this.focusInput();
       }
 
-      this.store.dispatch(new SetActiveWindow('commandLine'));
-      this.focusInput();
     };
 
     this.sendListener = (ev) => {
@@ -226,7 +230,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   private focusInput() {
     setTimeout(() => {
-      this.commandInput.nativeElement.focus();
+      this.commandInput?.nativeElement.focus();
     }, 0);
   }
 

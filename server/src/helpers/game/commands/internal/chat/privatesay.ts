@@ -19,7 +19,7 @@ export class PrivateSay extends MacroCommand {
       return;
     }
 
-    const msg = this.game.profanityHelper.cleanMessage(aargs[1]);
+    const msg = this.game.messageHelper.truncateMessage(this.game.profanityHelper.cleanMessage(aargs[1]));
     this.game.messageHelper.sendPrivateMessage(player, target, msg);
 
   }
