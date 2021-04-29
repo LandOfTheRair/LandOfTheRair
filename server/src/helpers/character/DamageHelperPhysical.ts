@@ -926,7 +926,7 @@ export class DamageHelperPhysical extends BaseService {
     // eyy, if you get here, that means you're out of hell. I mean, it means you can hit the target for real damage. probably.
     let damage = Math.floor(attackerScope.damage);
 
-    damage += damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
+    damage += Math.floor(damage * this.game.characterHelper.getStat(attacker, Stat.PhysicalBoostPercent) / 100);
 
     if (isOffhand && args.offhandMultiplier) {
       damage = Math.floor(damage * (args.offhandMultiplier ?? 0.2));
