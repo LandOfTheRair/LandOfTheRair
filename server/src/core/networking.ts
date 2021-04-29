@@ -168,6 +168,10 @@ export class WebsocketWorker {
   // send to game loop
   private emit(socket, data) {
 
+    if (data.type === GameServerEvent.Register && socket.username) {
+      return;
+    }
+
     // do some rate limiting so people don't spam the server
     if (data.type === GameServerEvent.DoCommand) {
 
