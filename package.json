@@ -23,7 +23,9 @@
     "push": "git push && git push --tags",
     "bump:patch": "npm version patch -m \"chore(release): Patch %s\"",
     "bump:minor": "npm version minor -m \"chore(release): Minor %s\"",
-    "bump:major": "npm version major -m \"chore(release): Major %s\""
+    "bump:major": "npm version major -m \"chore(release): Major %s\"",
+    "content:watch": "cd server/content && npm run watch",
+    "content:build": "cd server/content && npm run build:all"
   },
   "private": true,
   "devDependencies": {
