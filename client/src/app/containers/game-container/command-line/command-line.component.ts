@@ -81,8 +81,6 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
       if (ev.key === 'Enter' && !this.isCmdActive && this.optionsService.enterToggleCMD) {
         this.store.dispatch(new ShowWindow('commandLine'));
-        this.store.dispatch(new SetActiveWindow('commandLine'));
-        this.focusInput();
       }
 
       // allow enter to unfocus chat if there is no command
@@ -101,8 +99,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       // block text entry here if there is a different text input active
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
-      if (ev.key === 'Enter' && this.optionsService.enterToggleCMD) {
-        this.store.dispatch(new ShowWindow('commandLine'));
+      if (ev.key === 'Enter') {
         this.store.dispatch(new SetActiveWindow('commandLine'));
         this.focusInput();
       }
