@@ -30,7 +30,7 @@ export class Database extends BaseService {
         console.info(`${source}:DB`, 'Database connection established...');
         break;
       } catch (e) {
-        console.error(`${source}:DB`, `Database connection failed ${e.message}, retrying in 3 seconds`);
+        console.error(`${source}:DB`, `Database connection failed ${e.message}, retrying in 3 seconds...`);
         await this.client.close();
         await new Promise((resolve) => {
           setTimeout(() => resolve(null), 3000);

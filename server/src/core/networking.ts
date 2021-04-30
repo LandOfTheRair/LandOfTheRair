@@ -84,7 +84,7 @@ export class WebsocketWorker {
       server: app.server
     });
     app.ready().then(() => {
-      console.info('NET', 'Server is ready for connections');
+      console.info('NET', 'Server is ready for connections.');
     });
 
     this.wsServer = wsServer;
@@ -167,7 +167,7 @@ export class WebsocketWorker {
 
     // do some rate limiting so people don't spam the server
     if (data.type === GameServerEvent.DoCommand) {
-      
+
       if (!socket.cooldown) socket.cooldown = Date.now() + 100;
       if (!socket.sends) socket.sends = 0;
 
