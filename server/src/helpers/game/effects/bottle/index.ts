@@ -19,6 +19,12 @@ export * from './PermanentSTR';
 export * from './PermanentWIL';
 export * from './PermanentWIS';
 
+export * from './PermanentExperience';
+export * from './PermanentSkill';
+
 export * from './Malnourished';
 export * from './Nourishment';
 export * from './Sated';
+
+export * from './ChristmasCarrot';
+export * from './ThanksgivingLUK';
