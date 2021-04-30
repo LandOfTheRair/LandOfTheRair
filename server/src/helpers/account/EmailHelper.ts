@@ -32,6 +32,7 @@ export class EmailHelper extends BaseService {
 
     const code = `${random(100000, 999999)}`;
     account.verificationCode = code;
+    account.verificationExpiration = Date.now() + (3600 * 1000);
 
     const mail = {
       from: 'help@rair.land',
@@ -41,6 +42,8 @@ export class EmailHelper extends BaseService {
       text: `Hello ${account.username}, you requested to verify your email.
 
       Your email verification code is: ${code}
+
+      This code will be valid for 1 hour.
 
       If you did not request this, please reach out to support@rair.land.
       `

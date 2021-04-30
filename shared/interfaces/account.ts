@@ -8,6 +8,8 @@ export interface IAccount {
 
   temporaryPassword?: string;
   verificationCode?: string;
+  verificationExpiration?: number;
+  verificationAttempts?: number;
   emailVerified: boolean;
 
   players: any;

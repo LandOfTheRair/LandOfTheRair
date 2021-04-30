@@ -14,6 +14,8 @@ export class Account extends BaseEntity implements IAccount {
   @Property(PROP_TEMPORARY()) inGame: boolean;
   @Property(PROP_TEMPORARY()) temporaryPassword: string;
   @Property(PROP_TEMPORARY()) verificationCode: string;
+  @Property(PROP_TEMPORARY()) verificationExpiration: number;
+  @Property(PROP_TEMPORARY()) verificationAttempts: number;
 
   @Property(PROP_UNSAVED_SHARED()) premium: IAccountPremium;
 
