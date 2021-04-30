@@ -67,11 +67,21 @@ export class AssetService {
 
   public init() {
     const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls'];
+    const spritesheetUrls = {
+      creatures: this.creaturesUrl,
+      decor: this.decorUrl,
+      effects: this.effectsUrl,
+      items: this.itemsUrl,
+      swimming: this.swimmingUrl,
+      terrain: this.terrainUrl,
+      walls: this.wallsUrl
+    };
+
     spritesheets.forEach((sheet, idx) => {
       sheet = sheet.toLowerCase();
 
       const img = new Image();
-      img.src = `assets/spritesheets/${sheet}.png?c=${environment.assetHashes[sheet]}`;
+      img.src = `${spritesheetUrls[sheet]}?c=${environment.assetHashes[sheet]}`;
       this.spritesheets[idx] = false;
       img.onload = () => this.spritesheets[idx] = true;
     });
