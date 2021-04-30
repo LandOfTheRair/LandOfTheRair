@@ -1,3 +1,4 @@
+import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Identify extends SpellCommand {
@@ -6,5 +7,9 @@ export class Identify extends SpellCommand {
   override requiresLearn = true;
   override spellRef = 'Identify';
   override canTargetSelf = true;
+
+  override canUse(char: ICharacter, target: ICharacter) {
+    return false;
+  }
 
 }
