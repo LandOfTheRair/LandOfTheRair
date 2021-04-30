@@ -23,11 +23,11 @@ export class Database extends BaseService {
   public async tryConnect(source: string) {
     while (true) {
       try {
-        console.info(`${source}:DB`, 'Connecting to database');
+        console.info(`${source}:DB`, 'Connecting to database...');
         this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
         await this.client.connect();
         await this.client.db('admin').command({ ping: 1 });
-        console.info(`${source}:DB`, 'Database connection established');
+        console.info(`${source}:DB`, 'Database connection established...');
         break;
       } catch (e) {
         console.error(`${source}:DB`, `Database connection failed ${e.message}, retrying in 3 seconds`);
