@@ -25,6 +25,12 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   @Select(SettingsState.currentCharView) charView$: Observable<string>;
   @Select(GameState.player) player$: Observable<IPlayer>;
 
+  public charViewSub;
+  public playerSub;
+
+  public charView: string;
+  public player: IPlayer;
+
   public readonly slots = [
     {
       template: 'coin',
@@ -184,6 +190,13 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.playerSub = this.player$.subscribe(p => {
+      this.player = p;
+    });
+
+    this.charViewSub = this.charView$.subscribe(c => {
+      this.charView = c;
+    });
   }
 
   ngOnDestroy() {

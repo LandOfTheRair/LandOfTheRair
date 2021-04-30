@@ -2,7 +2,7 @@
             [head]="headTemplate"
             [body]="bodyTemplate"
             [canHide]="true"
-            [canScroll]="(charView$ | async) === 'Skills'"
+            [canScroll]="charView === 'Skills'"
 
             defaultX="962"
             defaultY="4"
@@ -12,7 +12,7 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  <span class="window-has-more-buttons" *ngIf="charView$ | async as charView">
+  <span class="window-has-more-buttons" *ngIf="charView">
     <span>
       My {{ charView }}
     </span>
@@ -35,7 +35,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="charView$ | async as charView">
+  <ng-container *ngIf="charView">
 
     <ng-container *ngIf="charView === 'Equipment'">
       <ng-container *ngTemplateOutlet="viewEquipment"></ng-container>
@@ -57,7 +57,7 @@
 </ng-template>
 
 <ng-template #viewReputation>
-  <table class="display-table" *ngIf="player$ | async as player">
+  <table class="display-table" *ngIf="player">
     <tr *ngFor="let allegiance of allegiances">
       <td class="label">{{ allegiance }}</td>
       <td class="text-right">{{ hostilityForAllegiance(player.allegianceReputation[allegiance] || 0) }}</td>
@@ -66,7 +66,7 @@
 </ng-template>
 
 <ng-template #viewStats>
-  <table class="display-table" *ngIf="player$ | async as player">
+  <table class="display-table" *ngIf="player">
     <tr *ngFor="let stat of stats">
       <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall" round="true"></app-icon></td>
       <td class="label">{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
@@ -84,7 +84,7 @@
 </ng-template>
 
 <ng-template #viewSkills>
-  <table class="display-table" *ngIf="player$ | async as player">
+  <table class="display-table" *ngIf="player">
     <tr *ngFor="let skill of sortedSkills(player.skills)">
       <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true" [showTooltip]="false"></app-skill-icon></td>
       <td class="label">{{ skillText(skill.skill, player.skills[skill.skill]) }}</td>
@@ -102,7 +102,7 @@
 </ng-template>
 
 <ng-template #viewEquipment>
-  <div class="item-container" *ngIf="player$ | async as player">
+  <div class="item-container" *ngIf="player">
     <div class="item-slot" *ngFor="let slot of slots"
                            [class.item-background]="slot.template || slot.slot"
                            [class.selected]="uiService.selected.equipment[slot.slot]"
