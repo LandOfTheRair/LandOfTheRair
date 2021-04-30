@@ -66,8 +66,8 @@ export class DefaultAIBehavior implements IAI {
   }
 
   mechanicTick() {}
-  damageTaken() {}
-  death() {}
+  damageTaken({ damage, attacker }: { damage: number; attacker: ICharacter|undefined|null }) {}
+  death(killer: ICharacter|undefined|null) {}
 
   private init() {
     const { randomWalkRadius, leashRadius } = this.spawner.walkingAttributes;

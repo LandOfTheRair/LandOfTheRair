@@ -232,6 +232,12 @@ export class CombatHelper extends BaseService {
     // try to do some debuffing based on damage element
     this.doElementalDebuffing(defender, args.damageClass, args.damage);
 
+    // notify the ai if needed
+    if (!this.game.characterHelper.isPlayer(defender)) {
+      const ai = this.game.worldManager.getMap(defender.map)?.state.getNPCSpawner(defender.uuid)?.getNPCAI(defender.uuid);
+      ai?.damageTaken({ damage, attacker });
+    }
+
     // lets see if they died
     const wasFatal = this.game.characterHelper.isDead(defender);
     if (wasFatal) {
