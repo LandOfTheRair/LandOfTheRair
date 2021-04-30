@@ -9,12 +9,16 @@ export class Fate extends Spell {
     if (!caster) return;
     if (!this.game.characterHelper.isPlayer(caster)) return;
 
+    const player = caster as IPlayer;
+
+    if (player.exp < this.game.calculatorHelper.calculateXPRequiredForLevel(15) || player.level < 15) {
+      return this.sendMessage(player, { message: 'There was no effect.' });
+    }
+
     const res: any = this.game.lootHelper.chooseWithoutReplacement(fateData.event);
 
     let message = res[0].message || '';
     const { stats, effect, allegiance, sex, xp, megaXp, currency, statBoost, learnSpell, unlearnSpell } = res[0];
-
-    const player = caster as IPlayer;
 
     if (sex) {
       if (sex === caster.gender) message = 'There was no effect.';
