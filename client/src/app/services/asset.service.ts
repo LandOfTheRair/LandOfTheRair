@@ -32,11 +32,11 @@ export class AssetService {
   }
 
   get terrainUrl(): string {
-    return this.spritesheetCustomHash.terrain || `${this.assetUrl}/spritesheets/terrain.png?c=${environment.assetHashes.terrain}`;
+    return this.spritesheetCustomHash.terrain || `${this.assetUrl}/spritesheets/terrain.webp?c=${environment.assetHashes.terrain}`;
   }
 
   get wallsUrl(): string {
-    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.png?c=${environment.assetHashes.walls}`;
+    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.webp?c=${environment.assetHashes.walls}`;
   }
 
   get decorUrl(): string {
