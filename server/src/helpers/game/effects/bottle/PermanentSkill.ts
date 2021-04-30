@@ -7,7 +7,8 @@ import { Effect } from '../../../../models';
 export class PermanentSkill extends Effect {
 
   override apply(char: ICharacter, effect: IStatusEffect) {
-    this.game.playerHelper.gainSkill(char as IPlayer, sample(Object.keys(char.skills)), effect.effectInfo.potency ?? 1);
+    const randomSkill = sample(Object.keys(char.skills).filter(x => char.skills[x] > 0));
+    this.game.playerHelper.gainSkill(char as IPlayer, randomSkill, effect.effectInfo.potency ?? 1);
     this.sendMessage(char, { message: 'You feel more skilled!' });
   }
 
