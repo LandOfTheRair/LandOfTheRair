@@ -83,12 +83,12 @@ export class LootHelper extends BaseService {
 
     // get region drops
     if (!isNaturalResource && regionDroptables.length > 0) {
-      rolledResults.push(...this.tryEachItem(this.filterDropTable(regionDroptables)));
+      rolledResults.push(...this.tryEachItem(this.filterDropTable(regionDroptables.drops)));
     }
 
     // get map drops
     if (!isNaturalResource && mapDroptables.length > 0) {
-      rolledResults.push(...this.tryEachItem(this.filterDropTable(mapDroptables)));
+      rolledResults.push(...this.tryEachItem(this.filterDropTable(mapDroptables.drops)));
     }
 
     // get npc drops
