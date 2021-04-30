@@ -28,7 +28,7 @@ export class Identify extends Spell {
       caster.baseClass === BaseClass.Thief ? thiefTier : 0
     );
 
-    spellCastArgs.callbacks.emit({
+    spellCastArgs.callbacks?.emit({
       type: GameServerResponse.SendAlert,
       title: 'Identify',
       content: identMsg,
