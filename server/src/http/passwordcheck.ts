@@ -3,7 +3,7 @@ import { Database } from '../helpers';
 
 export class PasswordCheckRoute {
 
-  static setup(fastify: any, {database}: {database: Database}) {
+  static setup(fastify: any, { database }: { database: Database }) {
     fastify.post('/auth/password-check', async (req, res) => {
       if (!req.body) return res.code(400).send({ error: 'Need to specify username and password.' });
 
