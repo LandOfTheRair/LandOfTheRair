@@ -1458,16 +1458,10 @@ export class MoveItems extends MacroCommand {
       if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
       if (rightHand && !leftHand) {
-        const did = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
-        if (!did) return this.sendMessage(player, 'Could not take item from locker.');
-
         this.game.characterHelper.setLeftHand(player, rightHand);
         this.game.characterHelper.setRightHand(player, srcItem);
 
       } else if (!rightHand) {
-        const did = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
-        if (!did) return this.sendMessage(player, 'Could not take item from locker.');
-
         this.game.characterHelper.setRightHand(player, srcItem);
       }
 
@@ -1484,15 +1478,10 @@ export class MoveItems extends MacroCommand {
       if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
 
       if (leftHand && !rightHand) {
-        const did = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
-        if (!did) return this.sendMessage(player, 'Could not take item from locker.');
-
         this.game.characterHelper.setRightHand(player, leftHand);
         this.game.characterHelper.setLeftHand(player, srcItem);
 
       } else if (!leftHand) {
-        const did = this.game.inventoryHelper.removeItemFromLocker(player, +origLockerSlot, origLocker);
-        if (!did) return this.sendMessage(player, 'Could not take item from locker.');
 
         this.game.characterHelper.setLeftHand(player, srcItem);
       }
