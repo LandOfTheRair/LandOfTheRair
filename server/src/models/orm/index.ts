@@ -1,6 +1,7 @@
 
 export * from './Account';
 export * from './AccountBank';
+export * from './AccountDaily';
 export * from './AccountLockers';
 export * from './AccountPremium';
 export * from './DynamicEvent';

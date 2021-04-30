@@ -101,6 +101,7 @@ export class LobbyManager extends BaseService {
 
     await this.game.characterDB.reloadPlayerAccountInfo(player, account);
     this.game.playerHelper.migrate(player, account);
+    await this.game.characterDB.loadPlayerDailyInfo(player, account);
     this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
     this.playerManager.addPlayerToGame(player);
     this.worldManager.joinMap(player);

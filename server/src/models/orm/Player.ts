@@ -42,6 +42,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) bgmSetting = 'wilderness' as BGM;
   @Property(PROP_UNSAVED_SHARED()) spellCooldowns: Record<string, number>;
   @Property(PROP_UNSAVED_SHARED()) allTraits: Record<string, number>;
+  @Property(PROP_UNSAVED_SHARED()) dailyItems: Record<string, number>;
 
   // temporary props
   @Property(PROP_TEMPORARY()) swimElement = '';
@@ -98,7 +99,6 @@ export class Player extends BaseEntity implements IPlayer {
 
   @Property() respawnPoint: { x: number; y: number; map: string };
 
-  @Property() dailyItems: Record<string, number>;
   @Property() runes: string[];
   @Property() learnedRunes: string[];
 }

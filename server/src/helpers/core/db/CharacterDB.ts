@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { initializeCharacter, IPlayer } from '../../../interfaces';
-import { Account, AccountBank, AccountLockers, Player, PlayerQuests } from '../../../models';
+import { Account, AccountBank, AccountDaily, AccountLockers, Player, PlayerQuests } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerLockers } from '../../../models/orm/PlayerLockers';
@@ -52,6 +52,7 @@ export class CharacterDB extends BaseService {
     Object.keys(characterDetails.items).forEach(itemSlot => {
       player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
+
     player.charSlot = slot;
     player.name = name;
     player.allegiance = allegiance;
@@ -109,6 +110,20 @@ export class CharacterDB extends BaseService {
 
     player.bank = bank;
     player.accountLockers = acctLockers;
+  }
+
+  public async loadPlayerDailyInfo(player: Player, account: Account): Promise<void> {
+
+    const daily = await this.db.findSingle<AccountDaily>(AccountDaily, { _account: account._id });
+    if (!daily) {
+      const newDaily = new AccountDaily();
+      newDaily._id = new ObjectId();
+      newDaily._account = account._id;
+      this.db.save(newDaily);
+    }
+
+    player.dailyItems = daily?.daily?.[player.charSlot].items ?? {};
+    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot].quests ?? {};
   }
 
   public async populatePlayer(player: Player, account: Account): Promise<void> {
@@ -191,6 +206,7 @@ export class CharacterDB extends BaseService {
     const lockersColl = this.db.getCollection(PlayerLockers);
     const bankColl = this.db.getCollection(AccountBank);
     const acctLockerColl = this.db.getCollection(AccountLockers);
+    const acctDailyColl = this.db.getCollection(AccountDaily);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
@@ -200,6 +216,7 @@ export class CharacterDB extends BaseService {
     const lockersOp = lockersColl.initializeUnorderedBulkOp();
     const bankOp = bankColl.initializeUnorderedBulkOp();
     const acctLockerOp = acctLockerColl.initializeUnorderedBulkOp();
+    const acctDailyOp = acctDailyColl.initializeUnorderedBulkOp();
 
     players.forEach(player => {
       playerOp
@@ -241,6 +258,11 @@ export class CharacterDB extends BaseService {
         .find({ _account: player._account })
         .upsert()
         .replaceOne(this.db.getPersistObject(player.accountLockers as AccountLockers));
+
+      acctDailyOp
+        .find({ _account: player._account })
+        .upsert()
+        .updateOne({ $set: { [`daily.${player.charSlot}`]: { quest: player.quests.npcDailyQuests, items: player.dailyItems } } });
     });
 
     return Promise.all([
@@ -251,7 +273,8 @@ export class CharacterDB extends BaseService {
       statsOp.execute(),
       lockersOp.execute(),
       bankOp.execute(),
-      acctLockerOp.execute()
+      acctLockerOp.execute(),
+      acctDailyOp.execute()
     ]);
   }
 
@@ -266,6 +289,10 @@ export class CharacterDB extends BaseService {
       this.db.save(player.quests as PlayerQuests),
       this.db.save(player.statistics as PlayerStatistics),
       this.db.save(player.lockers as PlayerLockers),
+      this.db.getCollection(AccountDaily).updateOne(
+        { _account: player._account },
+        { $set: { [`daily.${player.charSlot}`]: { quest: player.quests.npcDailyQuests, items: player.dailyItems } } }
+      )
     ];
 
     if (player.bank)           saves.push(this.db.save(player.bank as AccountBank));
