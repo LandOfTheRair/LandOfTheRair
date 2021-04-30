@@ -1,21 +1,17 @@
-import { Directive, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Subject, merge, fromEvent } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { UpdateWindowPosition } from '../../../stores';
 import { OptionsService } from '../../services/options.service';
 
 @Directive({
   selector: '[appDraggableWindow]'
 })
-export class DraggableDirective implements OnInit {
-  private topStart = 0;
-  private leftStart = 0;
+export class DraggableDirective implements OnInit, OnDestroy {
   private isDragAllowed = true;
-  private md = false;
   private handle: HTMLElement = null;
-
-  private updates = new Subject();
+  private destroy$ = new Subject<void>();
 
   @Input('appDraggableWindow')
   set allowDrag(value: boolean) {
@@ -27,6 +23,7 @@ export class DraggableDirective implements OnInit {
     this.handle = handle;
 
     if (this.isDragAllowed) {
+      this.handle.style.position = 'relative';
       this.handle.className += ' cursor-draggable';
     } else {
       this.handle.className = this.handle.className.replace(' cursor-draggable', '');
@@ -39,94 +36,118 @@ export class DraggableDirective implements OnInit {
   @Input()
   public set windowLocation(data) {
     if (!data) return;
-
-    const { x, y } = data;
-    this.setElementCoords(y, x);
+    this.setNativeCoords(data);
   }
 
   constructor(
     private optionsService: OptionsService,
     public store: Store,
     public element: ElementRef
-  ) {}
+  ){}
 
-  ngOnInit() {
-    // css changes
-    if (this.isDragAllowed) {
-      this.handle.style.position = 'relative';
-      this.handle.className += ' cursor-draggable';
-    }
+  ngOnInit(): void {
+    const mouseToMoveData = (mouse: MouseEvent) => ({
+        event: mouse,
+        x: mouse.clientX,
+        y: mouse.clientY,
+        target: mouse.target,
+        button: mouse.button,
+      } as PositionEvent);
 
-    this.updates.pipe(debounceTime(500))
-      .subscribe(({ top, left }: any) => this.dispatchElementCoordinates(top, left));
+    const touchToMoveData = (touch: TouchEvent) => ({
+        event: touch,
+        x: touch.changedTouches[0].clientX,
+        y: touch.changedTouches[0].clientY,
+        target: touch.target,
+        button: 1
+      } as PositionEvent);
+
+    const nativeElement = this.element.nativeElement;
+
+    const mousedown$ = fromEvent<MouseEvent>(nativeElement, 'mousedown').pipe(map(mouseToMoveData));
+    const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove').pipe(map(mouseToMoveData));
+    const mouseup$ = fromEvent<MouseEvent>(document, 'mouseup').pipe(map(mouseToMoveData));
+    const mouseleave$ = fromEvent<MouseEvent>(document.body, 'mouseleave').pipe(map(mouseToMoveData));
+
+    const touchstart$ = fromEvent<TouchEvent>(nativeElement, 'touchstart').pipe(map(touchToMoveData));
+    const touchmove$ = fromEvent<TouchEvent>(document, 'touchmove').pipe(map(touchToMoveData));
+    const touchend$ = fromEvent<TouchEvent>(nativeElement, 'touchend').pipe(map(touchToMoveData));
+
+    const startmove$ = merge(mousedown$, touchstart$);
+    const movemove$ = merge(mousemove$, touchmove$);
+    const endmove$ = merge(mouseup$, touchend$, mouseleave$);
+
+    startmove$.pipe(takeUntil(this.destroy$)).subscribe(startMove => {
+      if (this.optionsService.lockWindows) return;
+      if (!this.isDragAllowed) return;
+      if (startMove.button === 2 || (this.handle !== undefined && startMove.target !== this.handle)) return;
+      startMove.event.preventDefault();
+      startMove.event.stopPropagation();
+
+      const windowCoords = this.getNativeCoords();
+      const startCoord = this.diff(windowCoords, startMove);
+      endmove$.pipe(takeUntil(this.destroy$)).subscribe(endmove => {
+          endmove.event.preventDefault();
+          endmove.event.stopPropagation();
+      });
+      const pospipe$ = movemove$.pipe(takeUntil(endmove$), takeUntil(this.destroy$),
+        map((moveMove) => {
+          moveMove.event.preventDefault();
+          moveMove.event.stopPropagation();
+          return this.clampWindow(this.diff(startCoord, moveMove));
+        })
+      );
+
+      pospipe$.subscribe(position => {
+        this.setNativeCoords(position);
+      });
+
+      pospipe$.pipe(debounceTime(500)).subscribe(position => {
+        this.store.dispatch(new UpdateWindowPosition(this.windowName, position, true));
+      });
+    });
   }
 
-  private dispatchElementCoordinates(top: number, left: number) {
-    this.store.dispatch(new UpdateWindowPosition(this.windowName, { x: left, y: top }, true));
+  private clampWindow(pos: Position) {
+    const native = this.element.nativeElement as any;
+    const maxWidth = window.innerWidth - native.offsetWidth;
+    const maxHeight = window.innerHeight -native.offsetHeight;
+    if (pos.x < 0) pos.x = 0;
+    if (pos.y < 0) pos.y = 0;
+    if (pos.x > maxWidth) pos.x = maxWidth;
+    if (pos.y > maxHeight) pos.y = maxHeight;
+    return pos;
   }
 
-  private saveCoordinates(top: number, left: number) {
-    if (!this.windowName) return;
-
-    this.updates.next({ top, left });
+  private diff(end: Position, start: Position) {
+    return {x: start.x - end.x, y: start.y - end.y};
   }
 
-  private setElementCoords(top: number, left: number) {
-    this.saveCoordinates(top, left);
-    this.element.nativeElement.style.top = `${top}px`;
-    this.element.nativeElement.style.left = `${left}px`;
+  private setNativeCoords(pos: Position): void {
+    this.element.nativeElement.style.left = `${pos.x}px`;
+    this.element.nativeElement.style.top = `${pos.y}px`;
   }
 
-  @HostListener('mousedown', ['$event'])
-  onMouseDown(event: MouseEvent) {
-    // prevents right click drag
-    if (event.button === 2 || (this.handle !== undefined && event.target !== this.handle)) return;
-
-    this.md = true;
-    this.topStart = event.clientY - this.element.nativeElement.style.top.replace('px', '');
-    this.leftStart = event.clientX - this.element.nativeElement.style.left.replace('px', '');
+  private getNativeCoords(): Position {
+    return {
+      x: this.element.nativeElement.style.left.replace('px', ''),
+      y: this.element.nativeElement.style.top.replace('px', ''),
+    };
   }
 
-  @HostListener('document:mouseup', ['$event'])
-  onMouseUp() {
-    this.md = false;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
+}
 
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent) {
-    if (this.optionsService.lockWindows) return;
+interface Position {
+  x: number;
+  y: number;
+}
 
-    if (this.md && this.isDragAllowed) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.setElementCoords(event.clientY - this.topStart, event.clientX - this.leftStart);
-    }
-  }
-
-  @HostListener('document:mouseleave', ['$event'])
-  onMouseLeave() {
-    this.md = false;
-  }
-
-  @HostListener('touchstart', ['$event'])
-  onTouchStart(event) {
-    this.md = true;
-    this.topStart = event.changedTouches[0].clientY - this.element.nativeElement.style.top.replace('px', '');
-    this.leftStart = event.changedTouches[0].clientX - this.element.nativeElement.style.left.replace('px', '');
-    event.stopPropagation();
-  }
-
-  @HostListener('document:touchend', ['$event'])
-  onTouchEnd() {
-    this.md = false;
-  }
-
-  @HostListener('document:touchmove', ['$event'])
-  onTouchMove(event) {
-    if (this.md && this.isDragAllowed) {
-      this.setElementCoords(event.changedTouches[0].clientY - this.topStart, event.changedTouches[0].clientX - this.leftStart);
-    }
-    event.stopPropagation();
-  }
-
+interface PositionEvent extends Position {
+  event: any;
+  target: EventTarget;
+  button: number;
 }
