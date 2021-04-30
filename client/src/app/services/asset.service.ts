@@ -36,7 +36,7 @@ export class AssetService {
   }
 
   get wallsUrl(): string {
-    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.webp?c=${environment.assetHashes.walls}`;
+    return this.spritesheetCustomHash.walls || `${this.assetUrl}/spritesheets/walls.png?c=${environment.assetHashes.walls}`;
   }
 
   get decorUrl(): string {
