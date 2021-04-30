@@ -30,6 +30,17 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
 
+        if (!behavior.joinClass && player.baseClass !== BaseClass.Traveller) {
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: 'Leave Me Alone',
+            content: `We have no business, ${player.name}.`,
+            extraData: { npcSprite: npc.sprite },
+          });
+
+          return `We have no business, ${player.name}.`;
+        }
+
         if (behavior.joinClass && player.baseClass === BaseClass.Traveller) {
           env?.callbacks.emit({
             type: GameServerResponse.SendConfirm,
