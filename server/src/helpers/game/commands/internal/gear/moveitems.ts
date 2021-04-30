@@ -1035,11 +1035,12 @@ export class MoveItems extends MacroCommand {
       const uuidRemoveCounts: Record<string, number> = {};
 
       items.forEach(item => {
+        const checkItemClass = this.game.itemHelper.getItemProperty(item.item, 'itemClass');
         if (!this.doPrelimChecks(player, item.item, 'G', origSlot, dest, destSlot)) return;
-        if (addItems.length >= spaceLeft) return;
+        if (checkItemClass !== ItemClass.Coin && addItems.length >= spaceLeft) return;
 
         for (let i = 0; i < item.count; i++) {
-          if (addItems.length >= spaceLeft) break;
+          if (checkItemClass !== ItemClass.Coin && addItems.length >= spaceLeft) break;
 
           uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
           uuidRemoveCounts[item.item.uuid]++;
