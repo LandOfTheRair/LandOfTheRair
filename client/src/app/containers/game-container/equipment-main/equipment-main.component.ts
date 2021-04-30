@@ -214,7 +214,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     return getStatDescription(stat, statValue);
   }
 
-  sortedSkills(playerSkills: Record<Skill, number>): Array<any> {
+  sortedSkills(playerSkills: Partial<Record<Skill, number>>): Array<any> {
     return sortBy(this.skills, s => -playerSkills[s.skill]);
   }
 
