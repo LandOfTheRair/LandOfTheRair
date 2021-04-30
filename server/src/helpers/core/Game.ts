@@ -105,6 +105,7 @@ export class Game {
   ) {}
 
   public async init(wsCmdHandler: IWebsocketCommandHandler) {
+    await this.db.tryConnect('GAME');
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 

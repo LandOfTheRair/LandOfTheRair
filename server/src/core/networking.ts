@@ -6,13 +6,13 @@ import { parentPort } from 'worker_threads';
 import fastify from 'fastify';
 import cors from 'fastify-cors';
 import rateLimit from 'fastify-rate-limit';
-import { MongoClient } from 'mongodb';
 
 import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
 import * as HTTPRoutes from '../http';
 import { GameAction, GameServerEvent } from '../interfaces';
+import { Database } from '../helpers';
 
 export class WebsocketWorker {
 
@@ -47,15 +47,8 @@ export class WebsocketWorker {
   public async setup() {
 
     // set up DB
-    if (!process.env.DATABASE_URI) {
-      process.exit(0);
-    }
-
-    const client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
-    await client.connect();
-
-    const db = client.db('landoftherair2');
-
+    const database = new Database();
+    await database.tryConnect('NET');
     // set up HTTP
     const app = fastify();
 
@@ -75,7 +68,7 @@ export class WebsocketWorker {
     }
 
     Object.values(HTTPRoutes).forEach((route) => route.setup(app, {
-      db,
+      database,
       broadcast: (data) => this.broadcast(data),
       sendToGame: (data) => this.sendInternalToGame(data)
     }));
@@ -182,9 +175,6 @@ export class WebsocketWorker {
         socket.sends = 0;
         socket.cooldown = Date.now() + 100;
       }
-
-      if (!socket.cooldown) socket.cooldown = Date.now() + 100;
-      if (!socket.sends) socket.sends = 0;
 
       socket.sends++;
     }

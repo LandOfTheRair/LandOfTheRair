@@ -4,6 +4,7 @@ import { Collection, Db, MongoClient } from 'mongodb';
 import { BaseService } from '../../models/BaseService';
 
 import { BaseEntity } from '../../models/BaseEntity';
+import { Account } from '../../models/orm/Account';
 import { MetadataStorage } from './db/base';
 
 @Injectable()
@@ -17,9 +18,25 @@ export class Database extends BaseService {
       this.game.logger.error('Database', 'You must specify a DATABASE_URI.');
       process.exit(0);
     }
+  }
 
-    this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
-    await this.client.connect();
+  public async tryConnect(source: string) {
+    while (true) {
+      try {
+        console.info(`${source}:DB`, 'Connecting to database');
+        this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
+        await this.client.connect();
+        await this.client.db('admin').command({ ping: 1 });
+        console.info(`${source}:DB`, 'Database connection established');
+        break;
+      } catch (e) {
+        console.error(`${source}:DB`, `Database connection failed ${e.message}, retrying in 3 seconds`);
+        await this.client.close();
+        await new Promise((resolve) => {
+          setTimeout(() => resolve(null), 3000);
+        } );
+      }
+    }
 
     this.db = this.client.db('landoftherair2');
   }
@@ -39,6 +56,11 @@ export class Database extends BaseService {
     });
 
     return newSingle;
+  }
+
+  public async findUser(username: string): Promise<Account | null> {
+    const coll = this.db.collection('account');
+    return await coll.findOne({ username });
   }
 
   public async findMany<T>(T, filter): Promise<T[]> {
