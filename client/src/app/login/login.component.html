@@ -58,15 +58,21 @@
         </mat-menu>
       </div>
 
-      <mat-form-field class="full-width">
-        <input matInput
-               type="password"
-               placeholder="Password"
-               autocomplete="password"
-               [(ngModel)]="newAccount.password"
-               [disabled]="isActing"
-               [ngModelOptions]="{ standalone: true }" />
-      </mat-form-field>
+      <div class="full-width">
+        <mat-form-field>
+          <input matInput
+                 type="password"
+                 placeholder="Password"
+                 autocomplete="password"
+                 [(ngModel)]="newAccount.password"
+                 [disabled]="isActing"
+                 [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+
+        <button mat-flat-button color="secondary" *ngIf="!isRegistering" type="button" (click)="forgotPW()">
+          I Forgot
+        </button>
+      </div>
 
       <div class="m-b-20">
         <mat-checkbox [(ngModel)]="agreedToTerms"

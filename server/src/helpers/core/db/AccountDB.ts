@@ -21,10 +21,15 @@ export class AccountDB extends BaseService {
   public async init() {
     const coll = this.db.getCollection(Account);
     coll.createIndex({ username: 1 }, { unique: true });
+    coll.createIndex({ email: 1 }, { unique: true });
   }
 
   public async doesAccountExist(username: string): Promise<Account | null> {
     return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1 } });
+  }
+
+  public async doesAccountExistEmail(email: string): Promise<Account | null> {
+    return this.db.getCollection(Account).findOne({ email }, { projection: { email: 1 } });
   }
 
   public async doesDiscordTagExist(discordTag: string): Promise<Account | null> {
@@ -34,7 +39,7 @@ export class AccountDB extends BaseService {
   // get an unpopulated account for login purposes
   // possibly this should take in a password and query the db instead of doing the checks later
   public async getAccountForLoggingIn(username: string): Promise<Account | null> {
-    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1, password: 1 } });
+    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1, password: 1, temporaryPassword: 1 } });
   }
 
   // get a fully populated account object post-signin validation
@@ -100,7 +105,8 @@ export class AccountDB extends BaseService {
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {
-    return this.checkPasswordString(account, accountInfo.password as string);
+    return this.checkPasswordString(account, accountInfo.password as string)
+        || !!(account.temporaryPassword && accountInfo.password === account.temporaryPassword);
   }
 
   public checkPasswordString(account: Account, passwordCheck: string): boolean {
@@ -173,6 +179,10 @@ export class AccountDB extends BaseService {
 
     account.discordTag = discordTag;
     await this.saveAccount(account);
+  }
+
+  public async setTemporaryPassword(email: string, password: string): Promise<any> {
+    return this.db.getCollection(Account).updateOne({ email }, { $set: { temporaryPassword: password } });
   }
 
 }

@@ -6,6 +6,7 @@ export interface IAccount {
   originalEmail: string;
   email: string;
 
+  temporaryPassword?: string;
   verificationCode?: string;
   emailVerified: boolean;
 

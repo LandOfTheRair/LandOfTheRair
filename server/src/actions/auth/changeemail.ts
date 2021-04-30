@@ -13,7 +13,15 @@ export class ChangeEmailAction extends ServerAction {
     if (!data.newEmail.includes('.')
     || !data.newEmail.includes('@'))                         return { message: 'Email must match basic format.' };
 
-    game.accountDB.changeEmail(data.account, data.newEmail);
+    const doesExistEmail = await game.accountDB.doesAccountExistEmail(data.newEmail);
+    if (doesExistEmail)                                   return { message: 'Email already registered.' };
+
+    try {
+      game.accountDB.changeEmail(data.account, data.newEmail);
+    } catch {
+      return { wasSuccess: false, message: 'Email already registered to a different account.' };
+    }
+
     game.lobbyManager.updateAccount(data.account);
 
     return { wasSuccess: true, message: `Your account email is now ${data.newEmail}!` };

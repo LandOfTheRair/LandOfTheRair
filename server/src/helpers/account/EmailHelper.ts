@@ -2,6 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 import nodemailer from 'nodemailer';
+import uuid from 'uuid/v4';
 import { Account } from '../../models';
 
 import { BaseService } from '../../models/BaseService';
@@ -49,6 +50,38 @@ export class EmailHelper extends BaseService {
       await this.transport.sendMail(mail);
     } catch (e) {
       this.game.logger.error('Email:RequestVerify', e);
+      throw e;
+    }
+  }
+
+  public async requestTemporaryPassword(email: string): Promise<void> {
+    if (!this.transport) throw new Error('SMTP not configured.');
+
+    const code = uuid().split('-').join('');
+
+    this.game.accountDB.setTemporaryPassword(email, code);
+
+    const mail = {
+      from: 'help@rair.land',
+      replyTo: 'support@rair.land',
+      to: email,
+      subject: 'Your Land of the Rair Temporary Password',
+      text: `Hello, you requested a temporary password.
+
+      Your temporary password is: ${code}
+
+      Please note, this password will be automatically erased on your next login, and it did NOT replace your existing password.
+
+      When you log in, reset your password immediately.
+
+      If you did not request this, please reach out to support@rair.land.
+      `
+    };
+
+    try {
+      await this.transport.sendMail(mail);
+    } catch (e) {
+      this.game.logger.error('Email:RequestTempPassword', e);
       throw e;
     }
   }

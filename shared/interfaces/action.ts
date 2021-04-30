@@ -32,6 +32,7 @@ export enum GameServerEvent {
   Logout = 'Auth:Emit:Logout',
   ChangePassword = 'Auth:Emit:ChangePassword',
   ChangeEmail = 'Auth:Emit:ChangeEmail',
+  ForgotPassword = 'Auth:Emit:ForgotPassword',
   RequestVerification = 'Auth:Emit:RequestVerification',
   SubmitVerification = 'Auth:Emit:SubmitVerification',
   ChangeDiscordTag = 'Auth:Emit:ChangeDiscordTag',

@@ -12,7 +12,10 @@ export class PasswordCheckRoute {
       if (!password) return res.code(400).send({ error: 'Need to specify password.' });
       const account = await database.findUser(username);
       if (!account) return res.code(400).send({ error: 'That account does not exist.' });
-      if (!bcrypt.compareSync(password, account.password)) return res.code(400).send({ error: 'Incorrect password.' });
+
+      const passwordMatches = bcrypt.compareSync(password, account.password)
+                           || (account.temporaryPassword && account.temporaryPassword === password);
+      if (!passwordMatches) return res.code(400).send({ error: 'Incorrect password.' });
 
       res.send({ success: true });
     });

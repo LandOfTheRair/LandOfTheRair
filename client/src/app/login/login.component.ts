@@ -10,6 +10,7 @@ import { AnnouncementService } from '../services/announcement.service';
 import { OptionsService } from '../services/options.service';
 import { GameService } from '../services/game.service';
 import { SocketService } from '../services/socket.service';
+import { ModalService } from '../services/modal.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -44,6 +45,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     public gameService: GameService,
     public socketService: SocketService,
     public optionsService: OptionsService,
+    private modalService: ModalService,
     private store: Store,
     private http: HttpClient
   ) { }
@@ -117,6 +119,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     this.socketService.emit(GameServerEvent.Register, this.newAccount);
+  }
+
+  public forgotPW() {
+    this.modalService.input(
+      'Forgot Password',
+      'Enter the email associated with your account and a temporary password will be mailed to it.'
+    )
+    .subscribe(d => {
+      if (!d) return;
+
+      this.socketService.emit(GameServerEvent.ForgotPassword, { email: d });
+    });
   }
 
   private setAccount(accountData: any) {
