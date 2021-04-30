@@ -14,6 +14,46 @@
 
       <fieldset>
         <legend>
+          Change/Verify Email
+        </legend>
+
+        <div class="split-button">
+          <mat-form-field class="full-width">
+            <input matInput
+                   type="text"
+                   placeholder="New Email"
+                   [(ngModel)]="newEmail"
+                   [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+
+          <div class="m-l-20 true-center">
+            <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!newEmail" (click)="changeEmail()">Update</button>
+          </div>
+        </div>
+
+        <div class="split-button" *ngIf="!account.emailVerified">
+          <mat-form-field class="full-width">
+            <input matInput
+                   type="text"
+                   placeholder="Verification Code"
+                   [(ngModel)]="verificationCode"
+                   [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+
+          <div class="m-l-20 true-center">
+            <button mat-raised-button color="secondary" class="form-inline-button m-r-10" [disabled]="!canRequestVerificationCode" (click)="requestVerify()">
+              {{ canRequestVerificationCode ? 'Request Verification Code' : 'Please Wait...' }}
+            </button>
+
+            <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!verificationCode" (click)="doVerify()">
+              Verify
+            </button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="m-t-20">
+        <legend>
           Change Password
         </legend>
 

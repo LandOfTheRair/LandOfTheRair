@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
-import { BankHelper, SubscriptionHelper } from '../account';
+import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
@@ -44,6 +44,7 @@ export class Game {
     public groundDB: GroundDB,
     public eventsDB: EventsDB,
 
+    public emailHelper: EmailHelper,
     public profanityHelper: ProfanityHelper,
 
     public effectManager: EffectManager,
@@ -114,7 +115,7 @@ export class Game {
       'transmissionHelper',
       'contentManager',
       'db', 'worldDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
-      'profanityHelper', 'effectManager', 'corpseManager',
+      'emailHelper', 'profanityHelper', 'effectManager', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller', 'currencyHelper',
       'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',

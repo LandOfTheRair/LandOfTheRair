@@ -8,8 +8,10 @@ import { Login, Logout, SetCharacterSlotInformation, SetAccount } from './action
 const defaultAccount: () => IAccount = () => ({
     username: '',
     email: '',
+    originalEmail: '',
     players: [],
 
+    emailVerified: false,
     isGameMaster: false,
     isTester: false,
 
@@ -63,6 +65,9 @@ export class AccountState {
     const maxPlayers = 4 + (account?.premium.silverPurchases?.[SilverPurchase.MoreCharacters] ?? 0);
 
     const state = { ...ctx.getState() };
+
+    state.email = account.email;
+    state.emailVerified = account.emailVerified;
 
     const players = [...state.players];
     if (players.length < maxPlayers) players.length = maxPlayers;

@@ -21,6 +21,10 @@ export class AccountComponent implements OnInit, OnDestroy {
   public account: IAccount;
   public currentPassword: string;
   public newPassword: string;
+  public newEmail: string;
+  public verificationCode: string;
+
+  public canRequestVerificationCode = true;
 
   public get canChangePassword() {
     return this.currentPassword && this.newPassword && this.newPassword.length > 10;
@@ -39,6 +43,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.accountSub = this.account$.subscribe(acc => {
+      console.log(acc);
       this.account = Object.assign({}, acc);
     });
   }
@@ -60,6 +65,25 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   public changePassword() {
     this.socketService.emit(GameServerEvent.ChangePassword, { oldPassword: this.currentPassword, newPassword: this.newPassword });
+  }
+
+  public changeEmail() {
+    this.socketService.emit(GameServerEvent.ChangeEmail, { newEmail: this.newEmail });
+    this.newEmail = '';
+  }
+
+  public requestVerify() {
+    this.canRequestVerificationCode = false;
+    setTimeout(() => {
+      this.canRequestVerificationCode = true;
+    }, 60000);
+
+    this.socketService.emit(GameServerEvent.RequestVerification);
+  }
+
+  public doVerify() {
+    this.socketService.emit(GameServerEvent.SubmitVerification, { verificationCode: this.verificationCode });
+    this.verificationCode = '';
   }
 
 }

@@ -45,6 +45,8 @@ export class AccountDB extends BaseService {
     const players = await this.game.characterDB.loadPlayers(account);
     account.players = players;
 
+    if (!account.originalEmail) account.originalEmail = account.email;
+
     let [premium] = await Promise.all([
       this.db.findSingle<AccountPremium>(AccountPremium, { _account: account._id })
     ]);
@@ -118,6 +120,17 @@ export class AccountDB extends BaseService {
 
   public async changePassword(account: Account, newPassword: string): Promise<void> {
     account.password = this.bcryptPassword(newPassword);
+    await this.saveAccount(account);
+  }
+
+  public async changeEmail(account: Account, newEmail: string): Promise<void> {
+    account.email = newEmail;
+    account.emailVerified = false;
+    await this.saveAccount(account);
+  }
+
+  public async verifyEmail(account: Account): Promise<void> {
+    account.emailVerified = true;
     await this.saveAccount(account);
   }
 
