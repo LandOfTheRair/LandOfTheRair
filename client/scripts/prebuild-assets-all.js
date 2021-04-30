@@ -16,7 +16,7 @@ const compressImages = async () => {
     destination: `./src/assets/spritesheets/`,
     plugins: [
       webp({
-        quality: 40
+        lossless:true
       })
     ]
   });
