@@ -792,6 +792,8 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   private handlePhysicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
+    if (this.game.characterHelper.isDead(defender)) return { isDead: true };
+
     const { isThrow, throwHand, isOffhand, isKick } = args;
     let { isPunch, isBackstab, damageMult } = args;
     let isAttackerVisible = this.game.visibilityHelper.canSeeThroughStealthOf(defender, attacker);

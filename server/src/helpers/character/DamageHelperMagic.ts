@@ -11,6 +11,8 @@ export class DamageHelperMagic extends BaseService {
   public init() {}
 
   magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs) {
+    if (this.game.characterHelper.isDead(defender)) return;
+
     if (attacker) this.game.characterHelper.engageInCombat(attacker);
     this.game.characterHelper.engageInCombat(defender);
 
