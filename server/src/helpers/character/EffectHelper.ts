@@ -46,6 +46,11 @@ export class EffectHelper extends BaseService {
     effectName: string,
     modifyEffectInfo: DeepPartial<IStatusEffectData> = {}
   ): void {
+    if (!effectName) {
+      this.game.logger.error('EffectHelper:AddEffect', new Error('Attempting to create an undefined effect'));
+      return;
+    }
+
     const rawEffectData = this.game.effectManager.getEffectData(effectName);
     if (!rawEffectData) {
       this.game.logger.error('EffectHelper:AddEffect', `Could not find an effect ${effectName}.`);
