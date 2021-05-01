@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import { Hostility, ICharacter, INPC, IStatusEffect, ItemSlot, Skill, Stat } from '../../../../../interfaces';
 import { Effect, Spawner } from '../../../../../models';
 
@@ -85,6 +86,11 @@ export class FindFamiliar extends Effect {
       doInitialSpawnImmediately: true,
       npcCreateCallback
     } as Partial<Spawner>;
+
+    // if we don't have an array, make one
+    if (!isArray(effect.effectInfo.summonCreatures)) {
+      effect.effectInfo.summonCreatures = [effect.effectInfo.summonCreatures as unknown as string];
+    }
 
     // summon all creatures individually
     (effect.effectInfo.summonCreatures ?? []).forEach(creatureId => {
