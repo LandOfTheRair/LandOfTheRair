@@ -1,6 +1,6 @@
 import { Parser } from 'muud';
 
-import { Game, ItemHelper } from '../../../../helpers';
+import { Game } from '../../../../helpers';
 import { GameServerResponse, IAIBehavior, IBinderBehavior, IDialogChatAction, INPC, ItemSlot } from '../../../../interfaces';
 
 export class BinderBehavior implements IAIBehavior {
@@ -34,7 +34,7 @@ export class BinderBehavior implements IAIBehavior {
         return 'Hello!';
       });
 
-      parser.addCommand('bind')
+    parser.addCommand('bind')
       .setSyntax(['bind'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -46,13 +46,13 @@ export class BinderBehavior implements IAIBehavior {
         const item = player.items.equipment[ItemSlot.RightHand];
         if (!item) return 'You must be holding an item in your right hand!';
         if (item.mods.owner === player.username) return 'You already own that item!';
-        if (item.mods.owner && item.mods.owner != player.username) return 'That item belongs to someone else!';
-        
-        //Check for unbindable item classes
+        if (item.mods.owner && item.mods.owner !== player.username) return 'That item belongs to someone else!';
+
+        // Check for unbindable item classes
         const itemClass = game.itemHelper.getItemProperty(item, 'itemClass');
 
-        if(itemClass === 'Corpse') return 'That is disrespectful.';
-        if(itemClass === 'Coin') return 'I can\'t engrave onto something so small.';
+        if (itemClass === 'Corpse') return 'That is disrespectful.';
+        if (itemClass === 'Coin') return 'I can\'t engrave onto something so small.';
 
         game.itemHelper.setItemProperty(item, 'owner', player.username);
         if (item.mods.owner === player.username) return 'Done! It is now yours.';
