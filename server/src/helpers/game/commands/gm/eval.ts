@@ -4,15 +4,20 @@ import { Game } from '../../../core/Game';
 
 export class GMEval extends MacroCommand {
 
-  override aliases = ['@eval', '@exec'];
+  override aliases = ['@eval', '@exec', '@evalj'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+
     try {
       const result = this.myEval.call({}, args.stringArgs, {game: this.game, player});
-      this.sendMessage(player, `Eval Result: ${result}`);
+      switch (args.calledAlias) {
+      case '@exec': this.sendMessage(player, 'Command Executed'); break;
+      case '@evalj': this.sendMessage(player, `Command Result<br>${JSON.stringify(result, null, 2).replace(/\n/g, '<br>')}`); break;
+      default: this.sendMessage(player, `Command Result<br>${result}`); break;
+      }
     } catch (error) {
       this.sendMessage(player, `Eval Error: ${error}`);
     }
@@ -20,6 +25,7 @@ export class GMEval extends MacroCommand {
 
   myEval(this: any, script: string, context: any){
     const me = context.player;
+    const game = context.game;
     const json = (obj: any) => JSON.stringify(obj, null, 2);
     const props = (obj: any) => Object.getOwnPropertyNames(obj);
     const players = () => ((context.game) as Game).playerManager.getAllPlayers();
