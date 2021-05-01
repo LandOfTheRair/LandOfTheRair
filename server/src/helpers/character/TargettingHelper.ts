@@ -87,7 +87,7 @@ export class TargettingHelper extends BaseService {
 
     // if the target is friendly and we care about that
     const targetHostility: Hostility = (target as INPC).hostility ?? Hostility.OnHit;
-    if (targetOpts.friendly && [Hostility.Never, Hostility.OnHit].includes(targetHostility)) return !targetOpts.def;
+    if (targetOpts.friendly && [Hostility.Never, Hostility.OnHit].includes(targetHostility)) return false;
 
     // if the target is disguised, and my wil is less than the targets cha, he is not hostile to me
     if (this.game.effectHelper.hasEffect(target, 'Disguise')
