@@ -882,7 +882,7 @@ export class DamageHelperPhysical extends BaseService {
     const attackerScope = this.getAttackerScope(attacker, attackerWeapon, args);
     const defenderScope = this.getDefenderScope(defender);
 
-    this.game.characterHelper.addAgro(defender, attacker, 1);
+    this.game.characterHelper.addAgro(attacker, defender, 1);
 
     const lostAtkCondition = 1;
     this.game.itemHelper.loseCondition(attackerWeapon, lostAtkCondition, attacker);

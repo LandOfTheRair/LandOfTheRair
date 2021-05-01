@@ -177,8 +177,8 @@ export class CharacterHelper extends BaseService {
       this.game.effectHelper.removeEffectByName(char, 'Invisibility');
     }
 
-    if (this.game.effectHelper.hasEffect(target, 'Shadowmeld')) {
-      this.game.effectHelper.removeEffectByName(target, 'Shadowmeld');
+    if (this.game.effectHelper.hasEffect(char, 'Shadowmeld')) {
+      this.game.effectHelper.removeEffectByName(char, 'Shadowmeld');
     }
 
     const modifyAgro = (agroChar: ICharacter, agroTarget: ICharacter, modAmount: number) => {

@@ -218,7 +218,7 @@ export class CombatHelper extends BaseService {
 
     // add agro = to damage
     if (attacker) {
-      this.game.characterHelper.addAgro(defender, attacker, args.damage ?? 1);
+      this.game.characterHelper.addAgro(attacker, defender, args.damage ?? 1);
     }
 
     // finally, absolutely finally, we can do some damage
