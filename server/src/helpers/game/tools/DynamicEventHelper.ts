@@ -101,6 +101,7 @@ export class DynamicEventHelper extends BaseService {
     if (!updEvent) return;
 
     merge(updEvent, event);
+
     this.game.eventsDB.createEvent(updEvent as DynamicEvent);
 
     this.game.wsCmdHandler.broadcast({
@@ -149,6 +150,7 @@ export class DynamicEventHelper extends BaseService {
   // recalculate all the stat totals for the events
   private recalculateStatTotals(): void {
     this.activeEventNames = {};
+    this.statTotals = {};
 
     this.getEvents().forEach(event => {
       this.activeEventNames[event.name] = true;
