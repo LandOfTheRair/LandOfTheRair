@@ -63,6 +63,10 @@ export class OptionsService {
     return this.opts[GameOption.PinLastTarget];
   }
 
+  public get dyingBorderPercent(): number {
+    return this.opts[GameOption.DyingBorderPercent];
+  }
+
   public get canShowDyingBorder(): boolean {
     return this.opts[GameOption.DyingBorderWidth] !== 0;
   }

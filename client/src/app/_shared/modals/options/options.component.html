@@ -60,6 +60,18 @@
             <div>{{ options.dyingBorderWidth }}px</div>
           </div>
 
+          <div class="slider-option-row">
+            <div class="slider-label">Dying Border Trigger %</div>
+            <mat-slider [min]="5"
+                        [max]="95"
+                        [step]="5"
+                        [(ngModel)]="options.dyingBorderPercent"
+                        [ngModelOptions]="{ standalone: true }"
+                        (change)="updateOption('dyingBorderPercent')"
+                        thumbLabel="true"></mat-slider>
+            <div>{{ options.dyingBorderPercent }}%</div>
+          </div>
+
         </fieldset>
 
         <fieldset>

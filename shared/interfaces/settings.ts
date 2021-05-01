@@ -23,6 +23,7 @@ export enum GameOption {
   NoNPCModals = 'noNPCModals',
   PinLastTarget = 'pinLastTarget',
   DyingBorderWidth = 'dyingBorderWidth',
+  DyingBorderPercent = 'dyingBorderPercent',
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',
   ShrinkCharacterBoxes = 'shrinkCharacterBoxes',

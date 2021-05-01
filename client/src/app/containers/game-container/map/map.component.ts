@@ -68,7 +68,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   public get canSeeLowHealthBorder(): boolean {
     return this.player
-        && this.player.hp.current <= this.player.hp.maximum * 0.25
+        && this.player.hp.current <= this.player.hp.maximum * ((this.optionsService.dyingBorderPercent ?? 25) / 100)
         && this.optionsService.canShowDyingBorder;
   }
 

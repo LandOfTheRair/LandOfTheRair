@@ -36,6 +36,7 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.EnterToggleCMD]: false,
       [GameOption.PinLastTarget]: false,
       [GameOption.DyingBorderWidth]: 20,
+      [GameOption.DyingBorderPercent]: 25,
       [GameOption.ShouldSortDistance]: null,
       [GameOption.ShouldSortFriendly]: null,
       [GameOption.ShrinkCharacterBoxes]: false,
