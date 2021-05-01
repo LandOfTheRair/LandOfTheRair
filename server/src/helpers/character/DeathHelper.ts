@@ -15,6 +15,9 @@ export class DeathHelper extends BaseService {
   // revive the player from their death
   public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number; y?: number; map?: string; shouldRot?: boolean } = {}): void {
 
+    // don't revive if they have more hp
+    if (player.hp.current > 0) return;
+
     // store old pos to look up corpse
     const oldX = player.x;
     const oldY = player.y;

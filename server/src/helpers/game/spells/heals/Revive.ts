@@ -15,11 +15,11 @@ export class Revive extends Spell {
       const player = this.game.playerManager.getPlayerByUsername(corpse.item.mods.corpseUsername);
       if (!player) return;
 
-      this.game.deathHelper.restore(player, { map: caster.map, x: caster.x, y: caster.y });
-      this.game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
-
       this.game.messageHelper.sendSimpleMessage(player, `${caster.name} revived you!`);
       this.game.messageHelper.sendSimpleMessage(caster, `You revived ${player.name}!`);
+
+      this.game.deathHelper.restore(player, { map: caster.map, x: caster.x, y: caster.y });
+      this.game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
 
       didRevive = true;
     });

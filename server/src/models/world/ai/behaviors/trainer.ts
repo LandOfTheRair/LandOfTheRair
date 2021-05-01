@@ -262,10 +262,10 @@ export class TrainerBehavior implements IAIBehavior {
       const player = game.playerManager.getPlayerByUsername(corpse.item.mods.corpseUsername);
       if (!player) return;
 
+      game.messageHelper.sendSimpleMessage(player, `${npc.name} revived you!`);
+
       game.deathHelper.restore(player, { map: npc.map, x: npc.x, y: npc.y });
       game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
-
-      game.messageHelper.sendSimpleMessage(player, `${npc.name} revived you!`);
     });
   }
 }
