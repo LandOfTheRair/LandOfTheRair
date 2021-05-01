@@ -13,14 +13,14 @@ export class Database extends BaseService {
   private client: MongoClient;
   private db: Db;
 
-  public async init() {
-    if (!process.env.DATABASE_URI) {
-      this.game.logger.error('Database', 'You must specify a DATABASE_URI.');
-      process.exit(0);
-    }
-  }
+  public async init() {}
 
   public async tryConnect(source: string) {
+    const fallbackUri = 'mongodb://127.0.0.1:27017';
+    if (!process.env.DATABASE_URI) {
+      console.warn(`${source}:DB`, `No DATABASE_URI was specified, falling back to ${fallbackUri}`);
+      process.env.DATABASE_URI = fallbackUri;
+    }
     while (true) {
       try {
         console.info(`${source}:DB`, 'Connecting to database...');
