@@ -1,4 +1,3 @@
-
 # Land of the Rair
 
 This is a monorepo. For a specific project setup/config, check those project subfolders (for example, the `server` needs a `.env` setup before it will run.).
