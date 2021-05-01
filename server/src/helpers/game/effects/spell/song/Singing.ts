@@ -1,4 +1,4 @@
-import { ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
+import { BaseClass, ICharacter, IPlayer, IStatusEffect, Skill, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Singing extends Effect {
@@ -10,6 +10,17 @@ export class Singing extends Effect {
       [Stat.MagicalResist]: this.game.traitHelper.traitLevelValue(char, 'ShieldingVoice'),
       [Stat.SpellReflectChance]: this.game.traitHelper.traitLevelValue(char, 'ReflectingVoice')
     };
+  }
+
+  override tick(char: ICharacter) {
+
+    // thieves have to use their stealth bar
+    if (char.baseClass === BaseClass.Thief) {
+
+      if (this.game.characterHelper.isPlayer(char)) {
+        this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
+      }
+    }
   }
 
 }
