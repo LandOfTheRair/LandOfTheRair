@@ -10,6 +10,7 @@ export class DeadlyDirgeSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'DeadlyDirgeSong')) {
       this.game.effectHelper.removeEffectByName(player, 'DeadlyDirgeSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

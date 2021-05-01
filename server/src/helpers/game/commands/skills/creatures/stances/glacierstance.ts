@@ -17,6 +17,7 @@ export class GlacierStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'GlacierStance')) {
       this.game.effectHelper.removeEffectByName(player, 'GlacierStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 

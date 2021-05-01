@@ -17,6 +17,7 @@ export class VolcanoStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'VolcanoStance')) {
       this.game.effectHelper.removeEffectByName(player, 'VolcanoStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 

@@ -10,6 +10,7 @@ export class AriaOfRefugeSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'AriaOfRefugeSong')) {
       this.game.effectHelper.removeEffectByName(player, 'AriaOfRefugeSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

@@ -17,6 +17,7 @@ export class TigerStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'TigerStance')) {
       this.game.effectHelper.removeEffectByName(player, 'TigerStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 

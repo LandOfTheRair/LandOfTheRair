@@ -17,6 +17,7 @@ export class TurtleStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'TurtleStance')) {
       this.game.effectHelper.removeEffectByName(player, 'TurtleStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 

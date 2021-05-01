@@ -10,6 +10,7 @@ export class NightmareSerenadeSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'NightmareSerenadeSong')) {
       this.game.effectHelper.removeEffectByName(player, 'NightmareSerenadeSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

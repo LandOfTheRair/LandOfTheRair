@@ -17,6 +17,7 @@ export class ParryStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'ParryStance')) {
       this.game.effectHelper.removeEffectByName(player, 'ParryStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 

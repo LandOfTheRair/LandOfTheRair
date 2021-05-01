@@ -10,6 +10,7 @@ export class TranquilTrillSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'TranquilTrillSong')) {
       this.game.effectHelper.removeEffectByName(player, 'TranquilTrillSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

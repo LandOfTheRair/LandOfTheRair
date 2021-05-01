@@ -10,6 +10,7 @@ export class WistfulFugueSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'WistfulFugueSong')) {
       this.game.effectHelper.removeEffectByName(player, 'WistfulFugueSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

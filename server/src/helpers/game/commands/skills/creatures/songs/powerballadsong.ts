@@ -10,6 +10,7 @@ export class PowerBalladSong extends Song {
 
     if (this.game.effectHelper.hasEffect(player, 'PowerBalladSong')) {
       this.game.effectHelper.removeEffectByName(player, 'PowerBalladSong');
+      this.sendMessage(player, 'You stop singing.');
       return;
     }
 

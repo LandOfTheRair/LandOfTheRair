@@ -17,6 +17,7 @@ export class RageStance extends SpellCommand {
 
     if (this.game.effectHelper.hasEffect(player, 'RageStance')) {
       this.game.effectHelper.removeEffectByName(player, 'RageStance');
+      this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 
