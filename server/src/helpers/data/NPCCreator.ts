@@ -381,7 +381,12 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Upgrader]: AllBehaviors.UpgraderBehavior,
       [BehaviorType.HallOfHeroes]: AllBehaviors.HallOfHeroesBehavior,
       [BehaviorType.HPDoc]: AllBehaviors.HPDocBehavior,
-      [BehaviorType.MPDoc]: AllBehaviors.MPDocBehavior
+      [BehaviorType.MPDoc]: AllBehaviors.MPDocBehavior,
+      [BehaviorType.Binder]: AllBehaviors.BinderBehavior,
+      [BehaviorType.ItemModder]: AllBehaviors.ItemModderBehavior,
+      [BehaviorType.Cosmetic]: AllBehaviors.CosmeticBehavior,
+      [BehaviorType.Buffer]: AllBehaviors.BufferBehavior,
+      [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

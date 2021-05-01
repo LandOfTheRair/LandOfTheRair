@@ -23,7 +23,12 @@ export enum BehaviorType {
   Upgrader = 'upgrader',
   HallOfHeroes = 'hallofheroes',
   HPDoc = 'hpdoc',
-  MPDoc = 'mpdoc'
+  MPDoc = 'mpdoc',
+  Binder = 'binder',
+  ItemModder = 'itemmodder',
+  Cosmetic = 'cosmetic',
+  Buffer = 'buffer',
+  Resetter = 'resetter'
 }
 
 export interface IVendorItem {
@@ -107,10 +112,31 @@ export interface IUpgraderBehavior {
 export interface ISteelroseBehavior {
 }
 
+export interface IBufferBehavior {
+
+}
+
+export interface IItemModderBehavior {
+
+}
+
+export interface IResetterBehavior {
+
+}
+
+export interface ICosmeticsBehavior {
+
+}
+
+export interface IBinderBehavior {
+
+}
+
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
                       & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
-                      & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior &
+                      & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
+                      & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior &
 {
   type: BehaviorType;
   props?: string[];
