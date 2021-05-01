@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IBinderBehavior, IDialogChatAction, INPC, ItemSlot } from '../../../../interfaces';
+import { GameServerResponse, IAIBehavior, IBinderBehavior, IDialogChatAction, INPC, ItemClass, ItemSlot } from '../../../../interfaces';
 
 export class BinderBehavior implements IAIBehavior {
 
@@ -51,8 +51,8 @@ export class BinderBehavior implements IAIBehavior {
         // Check for unbindable item classes
         const itemClass = game.itemHelper.getItemProperty(item, 'itemClass');
 
-        if (itemClass === 'Corpse') return 'That is disrespectful.';
-        if (itemClass === 'Coin') return 'I can\'t engrave onto something so small.';
+        if (itemClass === ItemClass.Corpse) return 'That is disrespectful.';
+        if (itemClass === ItemClass.Coin) return 'I can\'t engrave onto something so small.';
 
         game.itemHelper.setItemProperty(item, 'owner', player.username);
         if (item.mods.owner === player.username) return 'Done! It is now yours.';
