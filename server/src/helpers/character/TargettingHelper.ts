@@ -15,6 +15,7 @@ interface TargettingOpts {
   faction: boolean;
   allegiance: boolean;
   evil: boolean;
+  friendly: boolean;
   def: boolean;
 }
 
@@ -49,7 +50,17 @@ export class TargettingHelper extends BaseService {
   public checkTargetForHostility(
     me: ICharacter,
     target: ICharacter,
-    targetOpts: TargettingOpts = { agro: true, allegiance: true, evil: true, faction: true, party: true, pet: true, self: true, def: false }
+    targetOpts: TargettingOpts = {
+      agro: true,
+      allegiance: true,
+      evil: true,
+      faction: true,
+      party: true,
+      pet: true,
+      self: true,
+      friendly: true,
+      def: false
+    }
   ): boolean {
 
     // I can never be hostile to myself
@@ -74,6 +85,10 @@ export class TargettingHelper extends BaseService {
     // if either of us are agro'd to each other, there is hostility
     if (targetOpts.agro && (me.agro[target.uuid] || target.agro[me.uuid])) return !targetOpts.def;
 
+    // if the target is friendly and we care about that
+    const targetHostility: Hostility = (target as INPC).hostility ?? Hostility.OnHit;
+    if (targetOpts.friendly && [Hostility.Never, Hostility.OnHit].includes(targetHostility)) return !targetOpts.def;
+
     // if the target is disguised, and my wil is less than the targets cha, he is not hostile to me
     if (this.game.effectHelper.hasEffect(target, 'Disguise')
     && this.game.characterHelper.getStat(me, Stat.WIL) < this.game.characterHelper.getStat(target, Stat.CHA)) return false;
@@ -85,7 +100,7 @@ export class TargettingHelper extends BaseService {
        || isHostileTo(target, me.allegiance))) return !targetOpts.def;
 
     // if either of us is an npc and always hostile and not same monster group, yes
-    const isSomeoneHostileAlways = (me as INPC).hostility === Hostility.Always || (target as INPC).hostility === Hostility.Always;
+    const isSomeoneHostileAlways = (me as INPC).hostility === Hostility.Always || targetHostility === Hostility.Always;
     const areTargetsDifferentGroups = (me as INPC).monsterGroup !== (target as INPC).monsterGroup;
     if (isSomeoneHostileAlways && areTargetsDifferentGroups) return !targetOpts.def;
 
@@ -155,6 +170,7 @@ export class TargettingHelper extends BaseService {
         party: true,
         pet: true,
         self: true,
+        friendly: true,
         def: true
       })) return false;
 
