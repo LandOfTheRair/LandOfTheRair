@@ -122,8 +122,8 @@ export class CharacterDB extends BaseService {
       this.db.save(newDaily);
     }
 
-    player.dailyItems = daily?.daily?.[player.charSlot].items ?? {};
-    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot].quests ?? {};
+    player.dailyItems = daily?.daily?.[player.charSlot]?.items ?? {};
+    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot]?.quests ?? {};
   }
 
   public async populatePlayer(player: Player, account: Account): Promise<void> {
