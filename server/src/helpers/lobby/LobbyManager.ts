@@ -107,9 +107,13 @@ export class LobbyManager extends BaseService {
     this.worldManager.joinMap(player);
   }
 
+  public alwaysLeaveGameOperations(account: Account): void {
+    delete this.state.usersInGame[account.username];
+  }
+
   // leave the game
   public accountLeaveGame(account: Account): void {
-    delete this.state.usersInGame[account.username];
+    this.alwaysLeaveGameOperations(account);
     this.game.discordHelper.updateLobbyChannel();
 
     const player = this.playerManager.getPlayerInGame(account);
