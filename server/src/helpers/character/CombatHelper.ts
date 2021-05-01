@@ -92,7 +92,7 @@ export class CombatHelper extends BaseService {
 
     // boost healing
     } else if (attacker) {
-      damage -= damage * Math.floor(this.game.characterHelper.getStat(attacker, Stat.HealingBoostPercent) / 100);
+      damage -= Math.floor(damage * this.game.characterHelper.getStat(attacker, Stat.HealingBoostPercent) / 100);
 
     }
 
