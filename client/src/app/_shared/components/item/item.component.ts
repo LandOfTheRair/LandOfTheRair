@@ -280,6 +280,9 @@ export class ItemComponent implements OnDestroy {
   automaticallyTakeActionBasedOnOpenWindows(): void {
     if (!this.context || !this.item || !this.viewingPlayer) return;
 
+    // these items shouldn't be dropped accidentally
+    if (this.realItem.destroyOnDrop || this.item.mods?.destroyOnDrop) { return; }
+
     combineLatest([
       this.vendor$
     ])
