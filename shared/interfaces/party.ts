@@ -2,6 +2,9 @@
 export interface IParty {
   name: string;
   members: string[];
+  lowestLevel: number;
+  highestLevel: number;
+  levelDifference: number;
 }
 
 export interface IPartyMember {

@@ -15,14 +15,14 @@
   <span class="window-has-more-buttons">
     <span>
 
-      Party<ng-container *ngIf="party$ | async as partyInfo">
-        <span *ngIf="partyInfo.party">: {{ partyInfo.party.name }}</span>
+      Party<ng-container *ngIf="party as partyInfo">
+        <span *ngIf="partyInfo.party">: {{ partyInfo.party.name }} ({{ partyXPMult }}% XP Share)</span>
       </ng-container>
     </span>
 
     <span class="window-extra-buttons">
       <ng-container *ngIf="player$ | async as player">
-        <ng-container *ngIf="party$ | async as partyInfo">
+        <ng-container *ngIf="party as partyInfo">
 
           <button mat-icon-button color="warn" (click)="reset()" matTooltip="Reset Party Instances" *ngIf="player.username === partyInfo.party?.members[0]">
             <app-icon name="boss-key" size="xsmall"></app-icon>
@@ -44,8 +44,7 @@
 
 <ng-template #bodyTemplate>
   <ng-container *ngIf="player$ | async as player">
-    <ng-container *ngIf="party$ | async as partyInfo">
-
+    <ng-container *ngIf="party as partyInfo">
       <div class="party" *ngIf="partyInfo.party">
         <table>
           <tr>

@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPartyMember, IPlayer } from '../../../../interfaces';
+import { getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize, IParty, IPartyMember, IPlayer } from '../../../../interfaces';
 
 import { GameState } from '../../../../stores';
 
@@ -18,8 +18,13 @@ import { GameService } from '../../../services/game.service';
 })
 export class PartyComponent implements OnInit, OnDestroy {
 
-  @Select(GameState.party) party$: Observable<any>;
+  @Select(GameState.party) party$: Observable<{ party: IParty; partyMembers: IPartyMember[] }>;
   @Select(GameState.player) player$: Observable<any>;
+
+  public party: { party: IParty; partyMembers: IPartyMember[] };
+  public partySub;
+
+  public partyXPMult = 100;
 
   public createOrJoinParty = '';
 
@@ -28,6 +33,11 @@ export class PartyComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.partySub = this.party$.subscribe(p => {
+      this.party = p;
+      this.partyXPMult = this.multiplier(p.party);
+      console.log(p);
+    });
   }
 
   ngOnDestroy() {
@@ -59,6 +69,11 @@ export class PartyComponent implements OnInit, OnDestroy {
 
   reset() {
     this.gameService.sendCommandString(`party resetinstances`);
+  }
+
+  multiplier(party: IParty): number {
+    if (!party || !party.members) return 0;
+    return getMultiplierBasedOnLevelDifference(party.levelDifference) * getMultiplierBasedOnPartySize(party.members.length) * 100;
   }
 
   directionTo(me: IPlayer, them: IPartyMember): string {

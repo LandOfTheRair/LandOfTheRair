@@ -23,6 +23,7 @@ export class PartyManager extends BaseService {
       if (!party) return;
 
       this.updateParty(party);
+      this.game.partyHelper.recalculatePartyLevels(party);
     });
 
     timer.stopTimer('Party');

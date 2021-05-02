@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { IParty, IPartyMember, IPlayer } from '../../interfaces';
+import { getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize, IParty, IPartyMember, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -55,7 +55,10 @@ export class PartyHelper extends BaseService {
   public createParty(leader: IPlayer, partyName: string): void {
     const party: IParty = {
       name: partyName,
-      members: [leader.username]
+      members: [leader.username],
+      highestLevel: leader.level,
+      lowestLevel: leader.level,
+      levelDifference: 0
     };
 
     const leaderMember = this.reformatAsPartyMember(leader, partyName);
@@ -79,6 +82,7 @@ export class PartyHelper extends BaseService {
     this.partyMessage(party, `${joiner.name} has joined the party.`);
 
     this.clearAgroForAllPartyMembers(joiner);
+    this.recalculatePartyLevels(party);
   }
 
   public leaveParty(leaver: IPlayer, sendMessage = true): void {
@@ -100,6 +104,8 @@ export class PartyHelper extends BaseService {
     if (sendMessage) {
       this.partyMessage(party, `${leaver.name} left the party.`);
     }
+
+    this.recalculatePartyLevels(party);
   }
 
   public kickPartyMember(kicked: IPlayer): void {
@@ -115,6 +121,7 @@ export class PartyHelper extends BaseService {
     kicked.partyName = '';
 
     this.partyMessage(party, `${kicked.name} was kicked from the party.`);
+    this.recalculatePartyLevels(party);
   }
 
   public giveParty(newLeader: IPlayer): void {
@@ -172,13 +179,30 @@ export class PartyHelper extends BaseService {
       }) as IPlayer[];
   }
 
+  public getTotalXPMultiplier(player: IPlayer): number {
+    const partyMember = this.game.partyManager.getPartyMember(player.username);
+    if (!partyMember) return 1;
+
+    const party = this.game.partyManager.getParty(partyMember.partyName);
+    if (!party) return 1;
+
+    return this.getMultiplierBasedOnLevelDifference(party.levelDifference) * this.getMultiplierBasedOnPartySize(party.members.length);
+  }
+
   public getMultiplierBasedOnPartySize(partySize: number): number {
-    if (partySize <= 4)  return 1;
-    if (partySize <= 5)  return 0.85;
-    if (partySize <= 6)  return 0.6;
-    if (partySize <= 8)  return 0.4;
-    if (partySize <= 10) return 0.2;
-    return 0.05;
+    return getMultiplierBasedOnPartySize(partySize);
+  }
+
+  public getMultiplierBasedOnLevelDifference(level: number): number {
+    return getMultiplierBasedOnLevelDifference(level);
+  }
+
+  public recalculatePartyLevels(party: IParty): void {
+    const partyLevels = party.members.map(x => this.game.partyManager.getPartyMember(x)?.level ?? 1);
+
+    party.lowestLevel = Math.min(...partyLevels);
+    party.highestLevel = Math.max(...partyLevels);
+    party.levelDifference = party.highestLevel - party.lowestLevel;
   }
 
   private clearAgroForAllPartyMembers(newJoiner: IPlayer): void {

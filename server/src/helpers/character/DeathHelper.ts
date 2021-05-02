@@ -226,7 +226,7 @@ export class DeathHelper extends BaseService {
     gainKillRewards(killer);
 
     const partyMembers = this.game.partyHelper.getAllPartyMembersInRange(killer);
-    const partyMultiplier = this.game.partyHelper.getMultiplierBasedOnPartySize(partyMembers.length + 1);
+    const partyMultiplier = this.game.partyHelper.getTotalXPMultiplier(killer);
 
     partyMembers.forEach(otherPlayer => {
       gainKillRewards(otherPlayer, partyMultiplier);
