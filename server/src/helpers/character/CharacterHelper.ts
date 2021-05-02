@@ -112,7 +112,10 @@ export class CharacterHelper extends BaseService {
     if (oldItem) {
       const wearEffect = this.game.itemHelper.getItemProperty(oldItem, 'equipEffect');
       if (wearEffect) {
-        this.game.effectHelper.removeEffectByName(char, wearEffect.name);
+        const oldEffectCount = this.equipmentEffectCount(char, wearEffect.name);
+        if (oldEffectCount <= 1) {
+          this.game.effectHelper.removeEffectByName(char, wearEffect.name);
+        }
       }
     }
 
@@ -664,6 +667,19 @@ export class CharacterHelper extends BaseService {
          + this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat);
   }
 
+  // check if there exists an equipment effect on a character
+  public equipmentEffectCount(character: ICharacter, effect: string): number {
+    return Object.keys(character.items.equipment).filter(itemSlot => {
+      const item = character.items.equipment[itemSlot];
+      if (!item) return false;
+
+      const equipEffect = this.game.itemHelper.getItemProperty(item, 'equipEffect');
+      if (!equipEffect) return;
+
+      return equipEffect.name === effect;
+    }).length;
+  }
+
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
     Object.keys(character.items.equipment).forEach(itemSlot => {
@@ -674,6 +690,9 @@ export class CharacterHelper extends BaseService {
       if (!equipEffect) return;
 
       if (EquipHash[itemClass as ItemClass] && EquipHash[itemClass as ItemClass] !== itemSlot) return;
+
+      const existingEffect = this.game.effectHelper.getEffect(character, equipEffect.name);
+      if (existingEffect && existingEffect.endsAt === -1) return;
 
       this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
     });
