@@ -565,6 +565,7 @@ export class CharacterHelper extends BaseService {
   // get a specific stat value from a character
   public getStat(character: ICharacter, stat: Stat): number {
     const value = character.totalStats[stat] ?? 0;
+    if (value < 0 && stat === Stat.Mitigation) return 0;
     if (value === 0 && stat === Stat.DamageFactor) return 1;
     return value;
   }
