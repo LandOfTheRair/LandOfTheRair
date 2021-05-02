@@ -31,7 +31,7 @@ export class PlayAction extends ServerAction {
       return {};
     }
 
-    if (game.lobbyManager.isAccountInGame(data.account))  return { message: 'Already in game.' };
+    if (game.lobbyManager.hasJoinedGame(data.username))  return { message: 'Already in game.' };
 
     const charSlot = data.charSlot;
 
@@ -53,7 +53,7 @@ export class PlayAction extends ServerAction {
       player.y = 14;
     }
 
-    await game.lobbyManager.accountEnterGame(data.account, player);
+    await game.lobbyManager.joinGame(data.account, player);
 
     emit({
       action: GameAction.GamePlay

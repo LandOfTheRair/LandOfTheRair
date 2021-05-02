@@ -1,6 +1,5 @@
 import { Game } from '../../helpers';
-import { GameAction, GameServerEvent } from '../../interfaces';
-import { Account } from '../../models';
+import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BlockGameAndKickAllAction extends ServerAction {
@@ -10,25 +9,17 @@ export class BlockGameAndKickAllAction extends ServerAction {
 
   override async act(game: Game, {}, data) {
 
-    const account = game.lobbyManager.getAccount(data.username);
-    if ((!account || !account.isGameMaster) && data.username !== '★System') return { message: 'Not a GM.' };
+    if (!game.lobbyManager.isConnectedGm(data.username)) return { message: 'Not a GM.' };
 
     try {
       // block game entry
       game.lobbyManager.toggleBlock();
 
       // kick everyone
-      game.lobbyManager.getAllAccountsInGame().forEach(userAccount => {
-        game.lobbyManager.accountLeaveGame(userAccount as Account);
-
-        game.wsCmdHandler.broadcast({
-          action: GameAction.ChatUserLeaveGame,
-          username: userAccount.username
-        });
-
-        game.wsCmdHandler.sendToSocket(userAccount.username, {
-          action: GameAction.GameQuit
-        });
+      game.lobbyManager.onlineUsernames.forEach(username => {
+        if (game.lobbyManager.hasJoinedGame(username)) {
+          game.lobbyManager.forceLeaveGame(username);
+        }
       });
 
     } catch (e) {

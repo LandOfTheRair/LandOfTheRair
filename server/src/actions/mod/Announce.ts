@@ -9,8 +9,7 @@ export class AnnounceAction extends ServerAction {
 
   override async act(game: Game, {}, data) {
 
-    const account = game.lobbyManager.getAccount(data.username);
-    if ((!account || !account.isGameMaster) && data.username !== '★System') return { message: 'Not a GM.' };
+    if (!game.lobbyManager.isConnectedGm(data.username)) return { message: 'Not a GM.' };
 
     try {
       game.messageHelper.broadcastSystemMessage(data.message);

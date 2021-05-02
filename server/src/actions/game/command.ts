@@ -7,7 +7,7 @@ export class CommandAction extends ServerAction {
   override requiredKeys = ['command'];
 
   override async act(game: Game, callbacks, data) {
-    if (!game.lobbyManager.isAccountInGame(data.account)) return { message: '' };
+    if (!game.lobbyManager.hasJoinedGame(data.username)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);
     if (!player) return { message: 'Player ref is not available.' };
