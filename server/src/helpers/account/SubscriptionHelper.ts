@@ -30,6 +30,23 @@ export class SubscriptionHelper extends BaseService {
     return account.premium.subscriptionTier;
   }
 
+  public getSilverCosmetics(account: IAccount) {
+    return {
+      inversify: account.premium.silverPurchases[SilverPurchase.CosmeticInversify],
+      ancientify: account.premium.silverPurchases[SilverPurchase.CosmeticAncientify],
+      etherpulse: account.premium.silverPurchases[SilverPurchase.CosmeticEtherPulse],
+      ghostether: account.premium.silverPurchases[SilverPurchase.CosmeticGhostEther]
+    };
+  }
+
+  public takeCosmetic(account: IAccount, cosmetic: SilverPurchase) {
+    if (!account.premium.silverPurchases[cosmetic]) return;
+
+    const amount = account.premium.silverPurchases[cosmetic] ?? 1;
+    account.premium.silverPurchases[cosmetic] = amount - 1;
+    this.game.accountDB.saveAccount(account as Account);
+  }
+
   public async checkAccountForExpiration(account: IAccount) {
     if (Date.now() < account.premium.subscriptionEnds) return;
 

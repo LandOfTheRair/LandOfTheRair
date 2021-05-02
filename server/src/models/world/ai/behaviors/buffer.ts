@@ -33,7 +33,7 @@ export class BufferBehavior implements IAIBehavior {
 
         game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
-        return 'Hello!';
+        return message;
       });
 
     parser.addCommand('darkvision')
