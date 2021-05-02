@@ -190,7 +190,7 @@ export class WebsocketWorker {
       const oldSocket = this.sockets[data.username];
       if (oldSocket) {
         this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
-        this.sendToGame(oldSocket, { type: GameServerEvent.Logout });
+        this.sendToGame(oldSocket, { type: GameServerEvent.Logout, username: data.username });
 
         oldSocket.username = null;
         delete this.sockets[data.username];

@@ -17,9 +17,7 @@ export class LogoutAction extends ServerAction {
       unregister(data.username);
 
       game.lobbyManager.alwaysLeaveGameOperations(data.account);
-      if (game.lobbyManager.isAccountInGame(data.account)) {
-        game.lobbyManager.accountLeaveGame(data.account);
-      }
+      game.lobbyManager.accountLeaveGame(data.account);
 
       game.lobbyManager.removeAccount(data.username);
       game.logger.log('Auth:Logout', `${data.username} logged out.`);
