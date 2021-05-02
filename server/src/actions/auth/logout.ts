@@ -16,12 +16,15 @@ export class LogoutAction extends ServerAction {
 
       unregister(data.username);
 
-      game.lobbyManager.alwaysLeaveGameOperations(data.account);
-      game.lobbyManager.accountLeaveGame(data.account);
+      if (game.lobbyManager.hasJoinedGame(data.username)) {
+        game.lobbyManager.leaveGame(data.username);
+      }
 
-      game.lobbyManager.removeAccount(data.username);
+      if (game.lobbyManager.hasJoinedLobby(data.username)) {
+        game.lobbyManager.leaveLobby(data.username);
+      }
+
       game.logger.log('Auth:Logout', `${data.username} logged out.`);
-
     } catch (e) {
       game.logger.error('LogoutAction', e);
       throw new Error('Could not logout username?');

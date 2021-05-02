@@ -2,7 +2,6 @@
 import * as meta from '../../../content/_output/meta.json';
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent, GameServerResponse } from '../../interfaces';
-import { Account } from '../../models/orm';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LoginAction extends ServerAction {
@@ -35,8 +34,8 @@ export class LoginAction extends ServerAction {
 
       game.accountDB.registerIP(data.username, data.socketIp);
 
-      if (game.lobbyManager.isAccountInGame(realAccount)) {
-        game.lobbyManager.accountLeaveGame(realAccount);
+      if (game.lobbyManager.hasJoinedGame(data.username)) {
+        game.lobbyManager.leaveGame(data.username);
       }
 
       const simpleAccount = game.accountDB.simpleAccount(realAccount);
@@ -50,7 +49,7 @@ export class LoginAction extends ServerAction {
 
       game.subscriptionHelper.checkAccountForExpiration(realAccount);
 
-      game.lobbyManager.addAccount(realAccount);
+      game.lobbyManager.joinLobby(realAccount);
 
       game.logger.log('Auth:Login', `${data.username} logged in (${data.socketIp}).`);
 
@@ -63,7 +62,7 @@ export class LoginAction extends ServerAction {
         type: GameServerResponse.Login,
         account: { ...game.db.prepareForTransmission(realAccount), players: sortedPlayers },
         motd: game.worldDB.motd,
-        onlineUsers: game.lobbyManager.onlineUsers.map(a => game.accountDB.simpleAccount(a as Account)),
+        onlineUsers: game.lobbyManager.simpleOnlineAccounts,
         currentHoliday: game.holidayHelper.currentHoliday()
       });
 

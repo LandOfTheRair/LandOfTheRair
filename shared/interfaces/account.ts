@@ -16,6 +16,7 @@ export interface IAccount {
 
   isGameMaster: boolean;
   isTester: boolean;
+  inGame: boolean;
 
   isMuted: boolean;
   isBanned: boolean;

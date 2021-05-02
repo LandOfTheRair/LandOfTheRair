@@ -8,8 +8,7 @@ export class SetMOTDAction extends ServerAction {
 
   override async act(game: Game, { broadcast }, data) {
 
-    const account = game.lobbyManager.getAccount(data.username);
-    if (!account || !account.isGameMaster) return { message: 'Not a GM.' };
+    if (!game.lobbyManager.isConnectedGm(data.username)) return { message: 'Not a GM.' };
 
     try {
 

@@ -1,6 +1,5 @@
 
 import { GameAction, ILobbyCommand } from '../../../interfaces';
-import { Account } from '../../../models';
 
 import { Game } from '../../core';
 
@@ -13,28 +12,17 @@ export class KickCommand implements ILobbyCommand {
 
     if (!rest) return false;
 
-    const account = game.lobbyManager.getAccount(rest);
-    if (!account) return false;
+    if (!game.lobbyManager.hasJoinedGame(rest)) return false;
 
-    game.lobbyManager.accountLeaveGame(account as Account);
-
-    game.wsCmdHandler.broadcast({
-      action: GameAction.ChatUserLeaveGame,
-      username: account.username
-    });
-
-    game.wsCmdHandler.sendToSocket(account.username, {
-      action: GameAction.GameQuit
-    });
+    game.lobbyManager.forceLeaveGame(rest);
 
     emit({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
-      message: `${account.username} was kicked from game.`,
+      message: `${rest} was kicked from game.`,
       from: '★System'
     });
 
     return true;
-
   }
 }

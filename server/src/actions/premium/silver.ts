@@ -6,9 +6,9 @@ export class BuyPremiumWithSilverAction extends ServerAction {
   override type = GameServerEvent.PremiumSilverBuy;
   override requiredKeys = ['item'];
 
-  override async act(game: Game, { emit }, data) {
+  override async act(game: Game, {}, data) {
 
-    if (game.lobbyManager.isAccountInGame(data.account)) {
+    if (game.lobbyManager.hasJoinedGame(data.username)) {
       return { wasSuccess: false, message: 'You cannot buy silver perks while in game.' };
     }
 

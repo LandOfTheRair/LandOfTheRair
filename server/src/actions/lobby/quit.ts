@@ -8,11 +8,11 @@ export class QuitAction extends ServerAction {
 
   override async act(game: Game, { broadcast, emit }, data) {
 
-    if (!game.lobbyManager.isAccountInGame(data.account)) return { message: '' };
+    if (!game.lobbyManager.hasJoinedGame(data.username)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);
 
-    game.lobbyManager.accountLeaveGame(data.account);
+    game.lobbyManager.leaveGame(data.username);
 
     if (player) {
       emit({

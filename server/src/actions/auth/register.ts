@@ -49,13 +49,13 @@ export class RegisterAction extends ServerAction {
       });
 
       register(account.username);
-      game.lobbyManager.addAccount(account);
+      game.lobbyManager.joinLobby(account);
 
       emit({
         type: GameServerResponse.Login,
         account,
         motd: game.worldDB.motd,
-        onlineUsers: game.lobbyManager.onlineUsers
+        onlineUsers: game.lobbyManager.simpleOnlineAccounts
       });
 
       emit({

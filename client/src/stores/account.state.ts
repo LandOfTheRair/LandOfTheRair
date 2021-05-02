@@ -17,6 +17,7 @@ const defaultAccount: () => IAccount = () => ({
 
     isMuted: false,
     isBanned: false,
+    inGame: false,
 
     discordTag: '',
     alwaysOnline: false,
