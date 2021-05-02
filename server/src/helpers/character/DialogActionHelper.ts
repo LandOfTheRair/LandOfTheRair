@@ -302,7 +302,7 @@ export class DialogActionHelper extends BaseService {
       const slotItem = player.items.equipment[checkSlot];
       if (slotItem) return;
 
-      const simpleItem = this.game.itemCreator.getSimpleItem(item.name);
+      const simpleItem = this.game.itemCreator.getSimpleItem(template(item.name)(player));
       this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, simpleItem);
 
       didSucceed = true;
