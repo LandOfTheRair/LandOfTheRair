@@ -36,7 +36,6 @@ export class PartyComponent implements OnInit, OnDestroy {
     this.partySub = this.party$.subscribe(p => {
       this.party = p;
       this.partyXPMult = this.multiplier(p.party);
-      console.log(p);
     });
   }
 
