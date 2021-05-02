@@ -14,7 +14,7 @@ export class RegisterAction extends ServerAction {
     if (process.env.BLOCK_REGISTER)                       return { message: 'Registrations are not enabled on this server.' };
 
     if (!data.username)                                   return { message: 'Must specify username.' };
-    if (data.username.length < 1)                         return { message: 'Username must be >2 characters.' };
+    if (data.username.length < 2)                         return { message: 'Username must be >2 characters.' };
     if (data.username.length > 20)                        return { message: 'Username must be <20 characters.' };
 
     if (!data.password)                                   return { message: 'Must specify password.' };

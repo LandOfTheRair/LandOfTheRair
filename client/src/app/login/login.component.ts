@@ -118,7 +118,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = true;
     this.errorMessage = '';
 
-    this.socketService.emit(GameServerEvent.Register, this.newAccount);
+    this.http.post(environment.server.http + '/auth/register-check', this.newAccount)
+      .subscribe(() => {
+        this.socketService.emit(GameServerEvent.Register, this.newAccount);
+      }, (err) => {
+        this.errorMessage = err.error.error;
+        this.isActing = false;
+      });
+
   }
 
   public forgotPW() {

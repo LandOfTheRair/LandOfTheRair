@@ -63,6 +63,11 @@ export class Database extends BaseService {
     return await coll.findOne({ username });
   }
 
+  public async findUserByEmail(email: string): Promise<Account | null> {
+    const coll = this.db.collection('account');
+    return await coll.findOne({ email });
+  }
+
   public async findMany<T>(T, filter): Promise<T[]> {
     const foundMany = await this.getCollection(T).find(filter).toArray();
     return foundMany.map(foundSingle => {

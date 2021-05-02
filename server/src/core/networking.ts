@@ -182,6 +182,17 @@ export class WebsocketWorker {
       socket.sends++;
     }
 
+    if (data.type === GameServerEvent.Logout) {
+      this.sendToGame(socket, { type: GameServerEvent.Logout, username: socket.username });
+      delete this.sockets[socket.username];
+      delete socket.username;
+      return;
+    }
+
+    if (data.type === GameServerEvent.Register && data.username) {
+      socket.username = data.username;
+    }
+
     if (data.type === GameServerEvent.Login && data.username) {
 
       if (socket.username) return;
