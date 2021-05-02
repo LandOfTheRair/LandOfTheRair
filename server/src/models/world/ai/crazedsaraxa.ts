@@ -63,7 +63,7 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
 
     if (this.acolytes[spawnId] && !this.game.characterHelper.isDead(this.acolytes[spawnId])) return;
 
-    const msgObject = { from: npc.name, message: 'Come forth, my acolyte!', subClass: 'chatter' };
+    const msgObject = { from: npc.name, message: 'ACOLYTE, COME!', subClass: 'chatter' };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject);
 
     const npcSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnerByName(`Acolyte Spawner ${spawnId}`);
