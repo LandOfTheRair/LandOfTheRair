@@ -2,7 +2,8 @@ import { Parser } from 'muud';
 import { startCase } from 'lodash';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, ICosmeticsBehavior, IDialogChatAction, INPC, ItemClass, ItemSlot, SilverPurchase } from '../../../../interfaces';
+import { GameServerResponse, IAIBehavior, ICosmeticsBehavior,
+  IDialogChatAction, INPC, ItemClass, ItemSlot, SilverPurchase } from '../../../../interfaces';
 
 export class CosmeticBehavior implements IAIBehavior {
 
