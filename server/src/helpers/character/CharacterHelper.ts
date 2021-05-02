@@ -584,6 +584,13 @@ export class CharacterHelper extends BaseService {
   // thieves and warriors have different mpregen setups
   public getMPRegen(character: ICharacter): number {
 
+    let boost = 0;
+
+    // healers and mages get a boost because their primary function is spellcasting
+    if (character.baseClass === BaseClass.Mage || character.baseClass === BaseClass.Healer) {
+      boost = 10;
+    }
+
     // thieves not in combat regen faster
     if (character.baseClass === BaseClass.Thief) {
 
@@ -601,7 +608,7 @@ export class CharacterHelper extends BaseService {
       return 3;
     }
 
-    return this.getStat(character, Stat.MPRegen);
+    return this.getStat(character, Stat.MPRegen) + boost;
   }
 
   // get the stealth value for a character
