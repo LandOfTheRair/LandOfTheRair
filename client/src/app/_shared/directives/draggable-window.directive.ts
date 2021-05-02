@@ -111,7 +111,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
   private clampWindow(pos: Position) {
     const native = this.element.nativeElement as any;
     const maxWidth = window.innerWidth - native.offsetWidth;
-    const maxHeight = window.innerHeight -native.offsetHeight;
+    const maxHeight = window.innerHeight - native.offsetHeight;
     if (pos.x < 0) pos.x = 0;
     if (pos.y < 0) pos.y = 0;
     if (pos.x > maxWidth) pos.x = maxWidth;

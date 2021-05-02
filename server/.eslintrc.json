@@ -131,6 +131,7 @@
             "always"
         ],
         "object-curly-spacing": ["error", "always"],
+        "space-infix-ops": ["error"],
         "brace-style": [
             "error",
             "1tbs"

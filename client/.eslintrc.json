@@ -65,6 +65,7 @@
         "import/order": "error",
         "keyword-spacing": "error",
         "object-curly-spacing": ["error", "always"],
+        "space-infix-ops": ["error"],
         "max-len": [
           "error",
           {
