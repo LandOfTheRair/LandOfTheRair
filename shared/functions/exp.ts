@@ -11,10 +11,10 @@ export function calculateXPRequiredForLevel(level: number): number {
   }
 
   if (level <= 50) {
-    return pre20XP * (Math.max(1, level - FIRST_LEVEL_CONSTANT_CHANGER));
+    return (5_000_000 * (level - FIRST_LEVEL_CONSTANT_CHANGER)) + (pre20XP * (Math.max(1, level - FIRST_LEVEL_CONSTANT_CHANGER)));
   }
 
-  const level50XP = pre20XP * (Math.max(1, 50 - FIRST_LEVEL_CONSTANT_CHANGER));
+  const level50XP = (5_000_000 * (50 - FIRST_LEVEL_CONSTANT_CHANGER)) + (pre20XP * (Math.max(1, 50 - FIRST_LEVEL_CONSTANT_CHANGER)));
 
   if (level === 51) return Math.floor(level50XP * 1.5);
   if (level === 52) return Math.floor(level50XP * 3);
