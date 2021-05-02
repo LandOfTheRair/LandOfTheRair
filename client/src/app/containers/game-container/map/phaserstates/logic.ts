@@ -2,9 +2,11 @@
 import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
-import { basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
-  IPlayer, ISimpleItem, ItemClass, MapLayer,
-  ObjectType, spriteOffsetForDirection, Stat, TilesWithNoFOVUpdate } from '../../../../../interfaces';
+import {
+  basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
+  IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType,
+  spriteOffsetForDirection, Stat, TilesWithNoFOVUpdate, doesWallConnect,
+  getTerrainSetNumber, Direction } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
@@ -40,6 +42,7 @@ export class MapScene extends Phaser.Scene {
     eagleeye: false
   };
 
+  private tilemap: Phaser.Tilemaps.Tilemap;
   private allNPCSprites = {};
   private allPlayerSprites = {};
   private fovSprites = {};
@@ -369,6 +372,93 @@ export class MapScene extends Phaser.Scene {
     return lowPosition * 64 + (centerOn ? 32 : 0);
   }
 
+ /**
+  * Detects if floor below wall should be cut, and fixes it
+  */
+  private fixWallFloors(map: Phaser.Tilemaps.Tilemap): void {
+    const wallIndexOffset = map.getTileset('Walls').firstgid;
+    const floorIndexOffset = map.getTileset('Terrain').firstgid;
+    const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
+      getTerrainSetNumber(floor.index - floorIndexOffset);
+    const getFloorSetAt = (x: number, y: number) => {
+      const floorSet = getFloorSet(map.getTileAt(x, y, true, 'Floors'));
+      if (floorSet < 0) {
+        return getFloorSet(map.getTileAt(x, y, true, 'Terrain'));
+      }
+      return floorSet;
+    };
+    const getWallIndex = (wall: Phaser.Tilemaps.Tile) =>
+      wall.index - wallIndexOffset;
+    const getWallIndexAt = (x: number, y: number) =>
+      getFloorSet(map.getTileAt(x, y, true, 'Walls'));
+    const cutLeft = (floor: Phaser.Tilemaps.Tile) => {
+      floor.width = 32;
+      floor.pixelX += 32;
+    };
+    const cutRight = (floor: Phaser.Tilemaps.Tile) => {
+      floor.width = 50;
+    };
+    const walls = map.getTilesWithin(0, 0, map.width, map.height, { isNotEmpty: true }, 'Walls');
+    walls.forEach((wall)=>{
+      const wallIndex = getWallIndex(wall);
+      // If this wall extends all the way left, and right, no cut
+      if (doesWallConnect(wallIndex, Direction.East) && doesWallConnect(wallIndex, Direction.West)) return;
+      // If this wall does not connect up, or down, no cut
+      if (!(doesWallConnect(wallIndex, Direction.South) || doesWallConnect(wallIndex, Direction.North))) return;
+      const floor = map.getTileAt(wall.x, wall.y, false, 'Floors');
+      //If this wall has no floor we can cut...then... no cut
+      if (!floor) return;
+      const floorC = getFloorSet(floor);
+      const floorL = getFloorSetAt(wall.x - 1, wall.y);
+      const floorR = getFloorSetAt(wall.x + 1, wall.y);
+      //If we are between two identical floors, no cut
+      if (floorL === floorR) return;
+      //If this floor matches the floor to the right, cut it
+      if (floorC === floorR){
+        cutLeft(floor);
+        return;
+      }
+      //If this floor matches the floor to the left, cut it
+      if (floorC === floorL) {
+        cutRight(floor);
+        return;
+      }
+      const wallLeft = getWallIndexAt(wall.x - 1, wall.y);
+      //If the left wall is trying to connect to us, we can cut the right
+      if (doesWallConnect(wallLeft, Direction.West)) {
+        cutRight(floor);
+      }
+      const wallRight = getWallIndexAt(wall.x - 1, wall.y);
+      //If the right wall is trying to connect to us, we can cut the left
+      if (doesWallConnect(wallRight, Direction.West)) {
+        cutLeft(floor);
+      }
+    });
+  }
+
+  private fixDoorFloor(worldX: number, worldY: number) {
+    const floorIndexOffset = this.tilemap.getTileset('Terrain').firstgid;
+    const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
+      getTerrainSetNumber(floor.index - floorIndexOffset);
+    const getFloorSetAt = (x: number, y: number) =>
+      getFloorSet(this.tilemap.getTileAt(x, y, true, 'Floors'));
+    const doorFloor = this.tilemap.getTileAtWorldXY(worldX, worldY - 1, false, null, 'Floors');
+    if (doorFloor) {
+      const floorC = getFloorSet(doorFloor);
+      const floorL = getFloorSetAt(doorFloor.x - 1, doorFloor.y);
+      const floorR = getFloorSetAt(doorFloor.x + 1, doorFloor.y);;
+      if (floorL !== floorR) {
+        if (floorC === floorR){
+          doorFloor.width = 32;
+          doorFloor.pixelX += 32;
+        } else if (floorC === floorL) {
+          doorFloor.width = 50;
+        }
+      }
+    }
+  }
+
+
   private loadObjectLayer(layer, layerGroup) {
     const decorFirstGid = this.allMapData.tiledJSON.tilesets[2].firstgid;
     const wallFirstGid = this.allMapData.tiledJSON.tilesets[1].firstgid;
@@ -399,6 +489,7 @@ export class MapScene extends Phaser.Scene {
 
       // vertical doors have to store two sprites, and create a door top
       if (obj.type === 'Door') {
+        this.fixDoorFloor(obj.x, obj.y);
         sprite._closedFrame = sprite._baseFrame;
         sprite._openFrame = sprite._baseFrame + 1;
 
@@ -497,7 +588,7 @@ export class MapScene extends Phaser.Scene {
     this.cache.tilemap.add('map', { data: tiledJSON, format: Phaser.Tilemaps.Formats.TILED_JSON });
 
     const map = this.make.tilemap({ key: 'map' });
-
+    this.tilemap = map;
     // add tilesets for maps
     map.addTilesetImage('Terrain', 'Terrain');
     map.addTilesetImage('Walls', 'Walls');
@@ -509,6 +600,8 @@ export class MapScene extends Phaser.Scene {
     map.createLayer('Fluids', ['Decor', 'Terrain']);
     map.createLayer('Foliage', 'Decor');
     map.createLayer('Walls', ['Walls', 'Decor']);
+
+    this.fixWallFloors(map);
 
     // decor, densedecor, opaquedecor, interactables
     this.loadObjectLayer(map.objects[0], this.layers.decor);
