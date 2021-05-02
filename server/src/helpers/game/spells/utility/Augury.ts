@@ -18,7 +18,7 @@ export class Augury extends Spell {
 
     const foundNPC = matchingNPCs[0];
     if (!foundNPC) {
-      return this.sendMessage(caster, { message: 'The birds fly around, confused at your query. '});
+      return this.sendMessage(caster, { message: 'The birds fly around, confused at your query. ' });
     }
 
     const dist = this.game.directionHelper.distFrom(caster, foundNPC);

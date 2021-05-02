@@ -68,7 +68,7 @@ export class DirectionHelper extends BaseService {
 
   // Distance from character, and map object
   distFromMapObject(character: { x: number; y: number }, mapObject: { x: number; y: number }, vector?: { x: number; y: number }): number {
-    return distFrom(character, {x: Math.floor(mapObject.x / 64), y: Math.floor(mapObject.y / 64) - 1}, vector);
+    return distFrom(character, { x: Math.floor(mapObject.x / 64), y: Math.floor(mapObject.y / 64) - 1 }, vector);
   }
 
 }

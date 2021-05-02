@@ -64,6 +64,7 @@
         "no-underscore-dangle": "off",
         "import/order": "error",
         "keyword-spacing": "error",
+        "object-curly-spacing": ["error", "always"],
         "max-len": [
           "error",
           {

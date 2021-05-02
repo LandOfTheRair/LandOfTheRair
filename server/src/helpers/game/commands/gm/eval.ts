@@ -12,7 +12,7 @@ export class GMEval extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
 
     try {
-      const result = this.myEval.call({}, args.stringArgs, {game: this.game, player});
+      const result = this.myEval.call({}, args.stringArgs, { game: this.game, player });
       switch (args.calledAlias) {
       case '@exec': this.sendMessage(player, 'Command Executed'); break;
       case '@evalj': this.sendMessage(player, `Command Result<br>${JSON.stringify(result, null, 2).replace(/\n/g, '<br>')}`); break;

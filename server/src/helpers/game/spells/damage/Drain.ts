@@ -14,7 +14,7 @@ export class Drain extends Spell {
     }
 
     this.sendMessage(target, { message: 'You feel your life force slipping away!' });
-    this.sendMessage(caster, { message: `You drained ${totalDrain} HP from ${target.name}!`});
+    this.sendMessage(caster, { message: `You drained ${totalDrain} HP from ${target.name}!` });
 
     this.game.characterHelper.heal(caster, totalDrain);
     this.game.characterHelper.damage(target, totalDrain);

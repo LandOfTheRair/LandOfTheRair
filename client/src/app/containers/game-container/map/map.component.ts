@@ -192,7 +192,7 @@ export class MapComponent implements OnInit, OnDestroy {
       },
       banner: false,
       pixelArt: true,
-      pipeline: { OutlinePipeline, GrayPostFXPipeline}
+      pipeline: { OutlinePipeline, GrayPostFXPipeline }
     };
 
     this.game = new MapRenderGame(

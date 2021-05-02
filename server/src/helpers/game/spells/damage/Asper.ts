@@ -14,7 +14,7 @@ export class Asper extends Spell {
     }
 
     this.sendMessage(target, { message: 'You feel your mana slipping away!' });
-    this.sendMessage(caster, { message: `You drained ${totalDrain} MP from ${target.name}!`});
+    this.sendMessage(caster, { message: `You drained ${totalDrain} MP from ${target.name}!` });
 
     this.game.characterHelper.mana(caster, totalDrain);
     this.game.characterHelper.manaDamage(target, totalDrain);

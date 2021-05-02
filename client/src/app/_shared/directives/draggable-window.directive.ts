@@ -120,7 +120,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
   }
 
   private diff(end: Position, start: Position) {
-    return {x: start.x - end.x, y: start.y - end.y};
+    return { x: start.x - end.x, y: start.y - end.y };
   }
 
   private setNativeCoords(pos: Position): void {
