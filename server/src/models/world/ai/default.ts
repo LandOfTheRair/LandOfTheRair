@@ -16,7 +16,7 @@ export class DefaultAIBehavior implements IAI {
   private leashRadius: number;
   private pathDisrupted: { x: number; y: number } | null = null;
   private currentTick = 0;
-  private startLoc: { x: number; y: number };
+  protected startLoc: { x: number; y: number };
 
   // private didNPCHaveRightHandAtSpawn: boolean;
   private stanceCooldown = 0;
@@ -251,8 +251,9 @@ export class DefaultAIBehavior implements IAI {
     } else if (this.randomWalkRadius > 0 || this.randomWalkRadius === -1) {
       const oldX = npc.x;
       const oldY = npc.y;
-      const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
-      this.game.movementHelper.takeSequenceOfSteps(npc, steps);
+
+      this.moveRandomly(numSteps);
+
       diffX = npc.x - oldX;
       diffY = npc.y - oldY;
     }
@@ -431,6 +432,11 @@ export class DefaultAIBehavior implements IAI {
     }
 
     Object.keys(this.npc.agro).forEach(uuid => this.npc.agro[uuid] = 1);
+  }
+
+  protected moveRandomly(numSteps: number) {
+    const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
+    this.game.movementHelper.takeSequenceOfSteps(this.npc, steps);
   }
 
 }

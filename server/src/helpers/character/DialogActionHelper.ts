@@ -10,7 +10,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
-  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic } from '../../interfaces';
+  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic, IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -41,22 +41,23 @@ export class DialogActionHelper extends BaseService {
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
     const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
-      [DialogActionType.Chat]:                this.handleChatAction,
-      [DialogActionType.CheckItem]:           this.handleCheckItemAction,
-      [DialogActionType.CheckNoItem]:         this.handleCheckNoItemAction,
-      [DialogActionType.TakeItem]:            this.handleTakeItemAction,
-      [DialogActionType.GiveItem]:            this.handleGiveItemAction,
-      [DialogActionType.ModifyItem]:          this.handleModifyItemAction,
-      [DialogActionType.CheckItemCanUpgrade]: this.handleItemCanUpgradeAction,
-      [DialogActionType.AddUpgradeItem]:      this.handleAddItemUpgradeAction,
-      [DialogActionType.GiveEffect]:          this.handleGiveEffectAction,
-      [DialogActionType.CheckQuest]:          this.handleCheckQuestAction,
-      [DialogActionType.CheckDailyQuest]:     this.handleCheckDailyQuestAction,
-      [DialogActionType.GiveQuest]:           this.handleGiveQuestAction,
-      [DialogActionType.GiveDailyQuest]:      this.handleGiveDailyQuestAction,
-      [DialogActionType.CheckLevel]:          this.handleCheckLevelAction,
-      [DialogActionType.CheckAlignment]:      this.handleCheckAlignmentAction,
-      [DialogActionType.SetAlignment]:        this.handleSetAlignmentAction,
+      [DialogActionType.Chat]:                  this.handleChatAction,
+      [DialogActionType.CheckItem]:             this.handleCheckItemAction,
+      [DialogActionType.CheckNoItem]:           this.handleCheckNoItemAction,
+      [DialogActionType.TakeItem]:              this.handleTakeItemAction,
+      [DialogActionType.GiveItem]:              this.handleGiveItemAction,
+      [DialogActionType.ModifyItem]:            this.handleModifyItemAction,
+      [DialogActionType.CheckItemCanUpgrade]:   this.handleItemCanUpgradeAction,
+      [DialogActionType.AddUpgradeItem]:        this.handleAddItemUpgradeAction,
+      [DialogActionType.GiveEffect]:            this.handleGiveEffectAction,
+      [DialogActionType.CheckQuest]:            this.handleCheckQuestAction,
+      [DialogActionType.CheckDailyQuest]:       this.handleCheckDailyQuestAction,
+      [DialogActionType.GiveQuest]:             this.handleGiveQuestAction,
+      [DialogActionType.GiveDailyQuest]:        this.handleGiveDailyQuestAction,
+      [DialogActionType.CheckLevel]:            this.handleCheckLevelAction,
+      [DialogActionType.CheckAlignment]:        this.handleCheckAlignmentAction,
+      [DialogActionType.SetAlignment]:          this.handleSetAlignmentAction,
+      [DialogActionType.CheckNPCsAndDropItems]: this.handleCheckNPCAction,
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -160,6 +161,7 @@ export class DialogActionHelper extends BaseService {
   // CHECK the item(s) the player is holding
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
+    console.log(slot, item, fromHands);
 
     const retMessages: string[] = [];
 
@@ -187,6 +189,7 @@ export class DialogActionHelper extends BaseService {
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
       const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
+      console.log('check', item.name, matchingItems);
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }
@@ -203,6 +206,50 @@ export class DialogActionHelper extends BaseService {
 
     return { messages: retMessages, shouldContinue: true };
   }
+
+  // CHECK for nearby npcs and drop items
+  private handleCheckNPCAction(action: IDialogCheckNPCsAndDropItemsAction, npc: INPC, player: IPlayer): IActionResult {
+    const { npcs, item, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    let npcCount = 0;
+    const npcsInView = this.game.worldManager.getMapStateForCharacter(npc)?.getAllInRange(npc, 4, [], false);
+    npcsInView.forEach(npcRef => {
+      const npcId = (npcRef as INPC).npcId;
+      if (!npcs.includes(npcId)) return;
+
+      npcCount++;
+      npcRef.hp.current = -1;
+      npcRef.dir = Direction.Corpse;
+      this.game.deathHelper.npcDie(npcRef as INPC);
+    });
+
+    const didSucceed = npcCount > 0;
+
+    if (didSucceed) {
+      const items: ISimpleItem[] = [];
+      for (let i = 0; i < npcCount; i++) {
+        const itemRef = this.game.itemCreator.getSimpleItem(item);
+        items.push(itemRef);
+      }
+
+      this.game.worldManager.getMapStateForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
+    }
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
+  // CHECK for no item in player hand
   private handleCheckNoItemAction(action: IDialogCheckNoItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, fromHands, checkPassActions, checkFailActions } = action;
 

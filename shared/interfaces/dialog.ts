@@ -18,7 +18,8 @@ export enum DialogActionType {
   GiveDailyQuest = 'giveDailyQuest',
   CheckLevel = 'checkLevel',
   CheckAlignment = 'checkAlignment',
-  SetAlignment = 'setAlignment'
+  SetAlignment = 'setAlignment',
+  CheckNPCsAndDropItems = 'checkNearbyNPCsAndDropItems'
 }
 
 // dialog items, used for check/take/give
@@ -111,6 +112,13 @@ export interface IDialogCheckLevelAction {
 
 export interface IDialogCheckAlignmentAction {
   alignment: Alignment;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogCheckNPCsAndDropItemsAction {
+  npcs: string[];
+  item: string;
   checkPassActions: IDialogAction[];
   checkFailActions: IDialogAction[];
 }

@@ -129,7 +129,7 @@ export class DeathHelper extends BaseService {
 
   // dispatch ai death, calculate loot drops
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
-  private npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
+  public npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
 
     const ai = this.game.worldManager.getMap(dead.map)?.state.getNPCSpawner(dead.uuid)?.getNPCAI(dead.uuid);
     ai?.death(killer);
