@@ -262,7 +262,7 @@ export class CharacterDB extends BaseService {
       acctDailyOp
         .find({ _account: player._account })
         .upsert()
-        .updateOne({ $set: { [`daily.${player.charSlot}`]: { quest: player.quests.npcDailyQuests, items: player.dailyItems } } });
+        .updateOne({ $set: { [`daily.${player.charSlot}`]: { quests: player.quests.npcDailyQuests, items: player.dailyItems } } });
     });
 
     return Promise.all([
