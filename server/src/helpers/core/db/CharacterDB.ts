@@ -9,7 +9,6 @@ import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerLockers } from '../../../models/orm/PlayerLockers';
 import { PlayerStatistics } from '../../../models/orm/PlayerStatistics';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
-import { LockerHelper } from '../../character';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -34,10 +33,10 @@ export class CharacterDB extends BaseService {
   public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
 
     const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
-    
+
     let startingExp = 1000;
     let cachedLockers = new PlayerLockers();
-    
+
     if (oldPlayerSlot !== -1) {
       startingExp = Math.max(1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
       cachedLockers = account.players[oldPlayerSlot].lockers as PlayerLockers;
@@ -54,7 +53,7 @@ export class CharacterDB extends BaseService {
 
     player._account = account._id;
 
-    await this.game.characterDB.populatePlayer(player, account);
+    await this.game.characterDB.populatePlayer(player);
 
     Object.keys(characterDetails.items).forEach(itemSlot => {
       player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
@@ -87,7 +86,7 @@ export class CharacterDB extends BaseService {
     const players = await this.db.findMany<Player>(Player, { _account: account._id });
 
     for (const player of players) {
-      await this.populatePlayer(player, account);
+      await this.populatePlayer(player);
     }
 
     return players;
@@ -135,7 +134,7 @@ export class CharacterDB extends BaseService {
     player.quests.npcDailyQuests = daily?.daily?.[player.charSlot]?.quests ?? {};
   }
 
-  public async populatePlayer(player: Player, account: Account): Promise<void> {
+  public async populatePlayer(player: Player): Promise<void> {
     const results = await Promise.all([
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
