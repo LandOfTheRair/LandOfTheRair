@@ -617,7 +617,7 @@ export class CharacterHelper extends BaseService {
     if (char.baseClass === BaseClass.Thief) stealth *= 1.5;
     if (this.game.effectHelper.hasEffect(char, 'Encumbered')) stealth /= 2;
 
-    return stealth;
+    return Math.floor(stealth);
   }
 
   public getStealthPenalty(char: ICharacter): number {
