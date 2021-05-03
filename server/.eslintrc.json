@@ -132,6 +132,7 @@
         ],
         "object-curly-spacing": ["error", "always"],
         "space-infix-ops": ["error"],
+        "comma-spacing": ["error", { "before": false, "after": true }],
         "brace-style": [
             "error",
             "1tbs"

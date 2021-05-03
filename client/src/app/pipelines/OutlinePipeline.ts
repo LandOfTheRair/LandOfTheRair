@@ -19,7 +19,7 @@ export default class OutlinePipeline extends Phaser.Renderer.WebGL.Pipelines.Sin
       const spriteData = sprite.pipelineData as any;
       let outlineColor = spriteData.outlineColor as Array<number>;
       if (!outlineColor || outlineColor.length !== 4) {
-        outlineColor = [0.0, 0.0, 0.0 ,0.0];
+        outlineColor = [0.0, 0.0, 0.0, 0.0];
       }
 
       this.currentShader.set4fv('uOutlineColor', outlineColor);
@@ -83,7 +83,7 @@ void outline( out vec4 fragColor)
       fragColor = uOutlineColor;
     }
   }
-  
+
   if (uSwimming && spritePixelSmooth.y > (cos(uTime*2.5)*2.0)+32.0) {
     fragColor.a = 0.001;
   }

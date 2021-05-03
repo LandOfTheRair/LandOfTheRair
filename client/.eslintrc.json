@@ -66,6 +66,7 @@
         "keyword-spacing": "error",
         "object-curly-spacing": ["error", "always"],
         "space-infix-ops": ["error"],
+        "comma-spacing": ["error", { "before": false, "after": true }],
         "max-len": [
           "error",
           {
