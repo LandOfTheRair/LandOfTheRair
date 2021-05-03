@@ -673,4 +673,9 @@ export class MapState {
     this.getPlayerObjectsWithKnowledgeForXY(x, y).forEach(player => this.triggerGroundUpdateForPlayer(player));
   }
 
+  // handle a map event
+  public handleEvent(event: string, trigger: ICharacter): void {
+    this.game.worldManager.getMapScript(this.map.name)?.handleEvent(this.game, event, { trigger });
+  }
+
 }

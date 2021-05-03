@@ -20,4 +20,6 @@ export class YzaltBelowMadhouseScript implements IMapScript {
   events() {
 
   }
+
+  handleEvent() {}
 }

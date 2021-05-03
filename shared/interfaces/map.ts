@@ -1,3 +1,4 @@
+import { ICharacter } from './character';
 
 
 // tiles that show as clear and forcibly overwrite FOV when on a dense tile
@@ -116,4 +117,5 @@ export interface IMapScript {
 
   setup: (game, map, mapState) => void;
   events: (game, map, mapState) => void;
+  handleEvent: (game, event: string, { trigger }: { trigger: ICharacter }) => void;
 }

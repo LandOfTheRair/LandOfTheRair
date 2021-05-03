@@ -10,4 +10,6 @@ export class RisanMinesScript implements IMapScript {
   events() {
 
   }
+
+  handleEvent() {}
 }

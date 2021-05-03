@@ -92,6 +92,9 @@ export class MovementHelper extends BaseService {
       const nextX = character.x + step.x;
       const nextY = character.y + step.y;
 
+      const oldEventSource = map.getInteractableOfTypeAt(character.x, character.y, ObjectType.EventSource);
+      const newEventSource = map.getInteractableOfTypeAt(character.x + step.x, character.y + step.y, ObjectType.EventSource);
+
       // aquatic npcs can't leave the water
       if (!this.characterHelper.isPlayer(character)) {
         const nextTileFluid = map.getFluidAt(nextX, nextY);
@@ -129,6 +132,15 @@ export class MovementHelper extends BaseService {
 
       character.x = nextX;
       character.y = nextY;
+
+      // handle step events
+      if (oldEventSource && oldEventSource.properties.offEvent) {
+        this.game.worldManager.getMapStateForCharacter(character)?.handleEvent(oldEventSource.properties.offEvent, character);
+      }
+
+      if (newEventSource && newEventSource.properties.onEvent) {
+        this.game.worldManager.getMapStateForCharacter(character)?.handleEvent(newEventSource.properties.onEvent, character);
+      }
     });
 
     if (character.x < 0) character.x = 0;
@@ -136,7 +148,6 @@ export class MovementHelper extends BaseService {
     if (character.y < 0) character.y = 0;
     if (character.y > map.height) character.y = map.height;
 
-    // TODO: handle event sources
     this.directionHelper.setDirBasedOnXYDiff(character, character.x - oldX, character.y - oldY);
 
     const trap = this.game.trapHelper.getTrapAt(character.map, character.x, character.y);

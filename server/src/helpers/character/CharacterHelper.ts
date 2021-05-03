@@ -702,7 +702,9 @@ export class CharacterHelper extends BaseService {
       const existingEffect = this.game.effectHelper.getEffect(character, equipEffect.name);
       if (existingEffect && existingEffect.endsAt === -1) return;
 
-      this.game.effectHelper.addEffect(character, '', equipEffect.name, { effect: { duration: -1, extra: { persistThroughDeath: true } } });
+      this.game.effectHelper.addEffect(character, '', equipEffect.name, {
+        effect: { duration: -1, extra: { potency: equipEffect.potency ?? 1, persistThroughDeath: true } }
+      });
     });
   }
 

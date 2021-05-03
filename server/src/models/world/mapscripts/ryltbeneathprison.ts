@@ -21,4 +21,6 @@ export class RyltBeneathPrisonScript implements IMapScript {
   events() {
 
   }
+
+  handleEvent() {}
 }

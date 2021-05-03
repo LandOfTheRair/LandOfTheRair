@@ -10,7 +10,8 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
-  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic, IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction } from '../../interfaces';
+  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
+  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {

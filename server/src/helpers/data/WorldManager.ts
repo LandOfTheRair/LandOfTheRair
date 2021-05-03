@@ -107,7 +107,7 @@ export class WorldManager extends BaseService {
     if (!map.properties.script) return;
 
     this.mapScripts[map.properties.script].setup(this.game, map, mapState);
-    // TODO: events
+    this.mapScripts[map.properties.script].events(this.game, map, mapState);
   }
 
   public isAnyPlayerInPartyMap(partyName: string): boolean {
@@ -120,6 +120,10 @@ export class WorldManager extends BaseService {
     }
 
     return mapName;
+  }
+
+  public getMapScript(map: string): IMapScript | undefined {
+    return this.mapScripts[map];
   }
 
   public ensureMapExists(mapName: string, partyName: string, mapNameWithParty: string): void {

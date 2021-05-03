@@ -20,4 +20,6 @@ export class RyltCaveUpstairsScript implements IMapScript {
   events() {
 
   }
+
+  handleEvent() {}
 }

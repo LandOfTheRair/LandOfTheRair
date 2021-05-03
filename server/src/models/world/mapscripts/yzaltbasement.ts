@@ -36,4 +36,6 @@ export class YzaltBasementScript implements IMapScript {
   events() {
 
   }
+
+  handleEvent() {}
 }

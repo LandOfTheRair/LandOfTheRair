@@ -141,8 +141,6 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // whether it can be used in either hand
   const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
 
-  // TODO: expiration
-
   return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
     ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${trapSetText}
     ${conditionText}${ownedText}`;
