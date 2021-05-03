@@ -178,6 +178,7 @@ export class DefaultAIBehavior implements IAI {
       }
 
       if (!this.currentTarget) return;
+
       chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
     });
 
