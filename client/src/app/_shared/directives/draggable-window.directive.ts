@@ -43,7 +43,7 @@ export class DraggableDirective implements OnInit, OnDestroy {
     private optionsService: OptionsService,
     public store: Store,
     public element: ElementRef
-  ){}
+  ) {}
 
   ngOnInit(): void {
     const mouseToMoveData = (mouse: MouseEvent) => ({

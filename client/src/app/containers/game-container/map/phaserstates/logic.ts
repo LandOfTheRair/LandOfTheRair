@@ -399,7 +399,7 @@ export class MapScene extends Phaser.Scene {
       floor.width = 50;
     };
     const walls = map.getTilesWithin(0, 0, map.width, map.height, { isNotEmpty: true }, 'Walls');
-    walls.forEach((wall)=>{
+    walls.forEach((wall) => {
       const wallIndex = getWallIndex(wall);
       // If this wall extends all the way left, and right, no cut
       if (doesWallConnect(wallIndex, Direction.East) && doesWallConnect(wallIndex, Direction.West)) return;
@@ -414,7 +414,7 @@ export class MapScene extends Phaser.Scene {
       //If we are between two identical floors, no cut
       if (floorL === floorR) return;
       //If this floor matches the floor to the right, cut it
-      if (floorC === floorR){
+      if (floorC === floorR) {
         cutLeft(floor);
         return;
       }
@@ -448,7 +448,7 @@ export class MapScene extends Phaser.Scene {
       const floorL = getFloorSetAt(doorFloor.x - 1, doorFloor.y);
       const floorR = getFloorSetAt(doorFloor.x + 1, doorFloor.y);;
       if (floorL !== floorR) {
-        if (floorC === floorR){
+        if (floorC === floorR) {
           doorFloor.width = 32;
           doorFloor.pixelX += 32;
         } else if (floorC === floorL) {

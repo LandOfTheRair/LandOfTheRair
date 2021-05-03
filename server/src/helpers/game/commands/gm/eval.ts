@@ -23,7 +23,7 @@ export class GMEval extends MacroCommand {
     }
   }
 
-  myEval(this: any, script: string, context: any){
+  myEval(this: any, script: string, context: any) {
     const me = context.player;
     const game = context.game;
     const json = (obj: any) => JSON.stringify(obj, null, 2);
