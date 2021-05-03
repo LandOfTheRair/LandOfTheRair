@@ -18,6 +18,7 @@ export * from './ImbueEnergy';
 export * from './ImbueFlame';
 export * from './ImbueFrost';
 export * from './MagicMirror';
+export * from './NecroticAura';
 export * from './FindFamiliar';
 export * from './Protection';
 export * from './Regen';
