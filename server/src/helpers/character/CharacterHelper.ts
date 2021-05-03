@@ -223,8 +223,8 @@ export class CharacterHelper extends BaseService {
   }
 
   // begin engaging in combat
-  public engageInCombat(char: ICharacter) {
-    char.combatTicks = 5;
+  public engageInCombat(char: ICharacter, combatTicks = 5) {
+    char.combatTicks = combatTicks;
   }
 
   // check if a character is a player

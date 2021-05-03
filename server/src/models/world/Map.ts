@@ -377,6 +377,19 @@ export class WorldMap {
     return this.json.layers[MapLayer.Interactables].objects.find(x => x.id === id);
   }
 
+  // find all decor by a particular decor name
+  public findAllDecorByName(name: string): any[] {
+    const decor = this.json.layers[MapLayer.Decor].objects;
+    const denseDecor = this.json.layers[MapLayer.DenseDecor].objects;
+    const opaqueDecor = this.json.layers[MapLayer.OpaqueDecor].objects;
+
+    return [
+      ...decor,
+      ...denseDecor,
+      ...opaqueDecor
+    ].filter(x => x.name === name);
+  }
+
   // find an interactable by its name
   public findInteractableByName(name: string) {
     return this.json.layers[MapLayer.Interactables].objects.find(x => x.name === name);
