@@ -9,6 +9,7 @@ import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerLockers } from '../../../models/orm/PlayerLockers';
 import { PlayerStatistics } from '../../../models/orm/PlayerStatistics';
 import { PlayerTraits } from '../../../models/orm/PlayerTraits';
+import { LockerHelper } from '../../character';
 import { CharacterRoller } from '../../lobby';
 import { Database } from '../Database';
 
@@ -33,8 +34,14 @@ export class CharacterDB extends BaseService {
   public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
 
     const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
-
+    
+    let startingExp = 1000;
+    let cachedLockers = new PlayerLockers();
+    
     if (oldPlayerSlot !== -1) {
+      startingExp = Math.max(1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
+      cachedLockers = account.players[oldPlayerSlot].lockers as PlayerLockers;
+
       await this.deletePlayer(account.players[oldPlayerSlot] as Player);
       account.players.splice(oldPlayerSlot, 1);
     }
@@ -62,6 +69,8 @@ export class CharacterDB extends BaseService {
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
     player.traits.tp = 2;
+    player.exp = startingExp;
+    player.lockers = cachedLockers;
 
     this.game.playerHelper.becomeClass(player, player.baseClass);
     this.game.characterHelper.healToFull(player);
