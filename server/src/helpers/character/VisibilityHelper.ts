@@ -100,8 +100,9 @@ export class VisibilityHelper extends BaseService {
   public canContinueHidingAtSpot(char: ICharacter): boolean {
     const map = this.game.worldManager.getMap(char.map)?.map;
     if (!map) return false;
-    if (!map.checkIfCanHideAt(char.x, char.y)) return false;
+
     if (this.isDarkAt(char.map, char.x, char.y)) return true;
+    if (!map.checkIfCanHideAt(char.x, char.y)) return false;
 
     return true;
   }
