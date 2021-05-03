@@ -31,8 +31,8 @@ export abstract class MacroCommand implements IMacroCommand {
     }
   }
 
-  execute(executor: IPlayer, args: IMacroCommandArgs): void {}        // always used only by people who can execute commands (players)
-  use(executor: ICharacter, target: ICharacter, opts?: any): void {}  // used by anyone who has access to the command (players, npcs)
+  execute(executor: IPlayer, args: IMacroCommandArgs): void {}                                                                          // always used only by people who can execute commands (players)
+  use(executor: ICharacter, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }): void {}    // used by anyone who has access to the command (players, npcs)
 }
 
 export abstract class SkillCommand extends MacroCommand {
@@ -336,8 +336,8 @@ export class SpellCommand extends SkillCommand {
   }
 
   // default use, primarily used by npcs
-  override use(char: ICharacter, target: ICharacter) {
-    this.castSpellAt(char, target);
+  override use(char: ICharacter, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }) {
+    this.castSpellAt(char, target, args, targetsPosition);
   }
 
 }

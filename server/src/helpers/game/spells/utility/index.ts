@@ -9,6 +9,7 @@ export * from './Fate';
 export * from './Identify';
 export * from './Light';
 export * from './MassTeleport';
+export * from './Pull';
 export * from './Push';
 export * from './Reincarnate';
 export * from './Succor';
