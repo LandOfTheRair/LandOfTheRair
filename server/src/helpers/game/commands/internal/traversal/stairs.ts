@@ -21,10 +21,14 @@ export class Stairs extends MacroCommand {
       return;
     }
 
-    const { teleportMap, teleportX, teleportY, requireParty, subscriberOnly, requireHoliday } = interactable.properties;
+    const { teleportMap, teleportX, teleportY, requireParty, subscriberOnly, requireHoliday, requireClass } = interactable.properties;
 
     if (subscriberOnly && !this.game.subscriptionHelper.isPlayerSubscribed(player)) {
       return this.sendMessage(player, 'You found an easter egg! Sadly, it\'s spoiled.');
+    }
+
+    if (requireClass && player.baseClass !== requireClass) {
+      return this.sendMessage(player, 'You can\'t quite figure out how to navigate this.');
     }
 
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
