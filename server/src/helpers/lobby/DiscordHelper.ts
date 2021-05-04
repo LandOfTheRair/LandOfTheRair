@@ -153,8 +153,8 @@ export class DiscordHelper extends BaseService {
   public async updateLobbyChannel() {
     if (!this.discordChannel) return;
 
-    const online = this.game.lobbyManager.usersInLobby;
-    const inGame = this.game.lobbyManager.usersInGameCount;
+    const online = this.game.lobbyManager.usersInLobby();
+    const inGame = this.game.lobbyManager.usersInGameCount();
 
     await this.discordChannel.setTopic(`${online} user(s) connected, ${inGame} player(s) in game`);
   }
