@@ -37,6 +37,11 @@ export class QuestHelper extends BaseService {
   // check if the player has completed a particular requirement (item or kill)
   public isRequirementComplete(player: IPlayer, quest: string, requirement: IQuestRequirement): boolean {
 
+    // quests with no requirements are instantly completable
+    if (requirement.type === QuestRequirementType.None) {
+      return true;
+    }
+
     // items only require being held
     if (requirement.type === QuestRequirementType.Item) {
       const req = requirement as IQuestRequirementItem;

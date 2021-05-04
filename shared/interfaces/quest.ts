@@ -10,7 +10,8 @@ export enum QuestRewardType {
 
 export enum QuestRequirementType {
   Kill = 'kill',
-  Item = 'item'
+  Item = 'item',
+  None = 'none'
 }
 
 export interface IQuestReward {
