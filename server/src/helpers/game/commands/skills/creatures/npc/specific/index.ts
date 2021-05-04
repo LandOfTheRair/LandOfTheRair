@@ -1,4 +1,5 @@
 
+export * from './catacombslichsummon';
 export * from './chillbitefrostdragon';
 export * from './dedlaencryptthingpunch';
 export * from './dedlaendragonturtlefire';

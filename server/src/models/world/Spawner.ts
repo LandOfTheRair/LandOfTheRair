@@ -96,6 +96,10 @@ export class Spawner {
     return this.isDangerous;
   }
 
+  public get allNPCS(): INPC[] {
+    return this.npcs;
+  }
+
   private get canRespawn(): boolean {
     return !this.mapRef.disableCreatureRespawn && (this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0);
   }

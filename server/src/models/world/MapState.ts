@@ -573,6 +573,10 @@ export class MapState {
     return this.spawnersByName[name];
   }
 
+  public getNPCSpawnersByName(name: string): Spawner[] {
+    return this.spawners.filter(x => x.spawnerName === name);
+  }
+
   // GROUND FUNCTIONS
   public getGroundVision(x: number, y: number, radius = 4): IGround {
     return this.game.groundManager.getGroundAround(this.map.name, x, y, radius);
