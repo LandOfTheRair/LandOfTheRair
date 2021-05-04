@@ -123,13 +123,14 @@ export class LootHelper extends BaseService {
     // not everything is randomly dropped
     if (npc.dropPool) {
       const { items, choose, replace } = npc.dropPool;
-      const numChoices = random(choose.min, choose.max);
-      if (numChoices > 0 && items.length > 0) {
+      let numChoices = random(choose.min, choose.max);
+      while (numChoices > 0 && items.length > 0) {
 
         const filtered = this.filterDropTable(items);
         const results = replace ? this.chooseWithReplacement(filtered) : this.chooseWithoutReplacement(filtered);
 
         rolledResults.push(...results);
+        numChoices--;
       }
     }
 
