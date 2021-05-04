@@ -23,7 +23,8 @@ export class GroundDB extends BaseService {
   }
 
   public async saveSingleGround(ground: Ground): Promise<any> {
-    return this.db.save(ground);
+    if (!ground) return;
+    return this.saveAllGrounds([ground]);
   }
 
   public async removeAllGroundsByParty(partyName: string): Promise<any> {
