@@ -424,6 +424,10 @@ export class PlayerHelper extends BaseService {
 
   // modify rep for a faction
   public modifyReputationForAllegiance(player: IPlayer, allegiance: Allegiance, mod: number): void {
+
+    // event that can double rep gain
+    if (this.game.dynamicEventHelper.isEventActive('Friendship Festival')) mod *= 2;
+
     player.allegianceReputation[allegiance] = player.allegianceReputation[allegiance] ?? 0;
     player.allegianceReputation[allegiance]! += mod;
   }
