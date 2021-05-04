@@ -167,6 +167,11 @@ export class DialogActionHelper extends BaseService {
 
     let didSucceed = false;
 
+    const { name } = item;
+    const formattedName = template(name)(player);
+
+    const matches = (itemName: string) => itemName.includes(formattedName);
+
     // if we check hands
     if (fromHands) {
       (slot || []).forEach(checkSlot => {
@@ -175,8 +180,7 @@ export class DialogActionHelper extends BaseService {
         const slotItem = player.items.equipment[checkSlot];
         if (!slotItem) return;
 
-        const { name } = item;
-        if (slotItem.name !== template(name)(player)) return;
+        if (!matches(slotItem.name)) return;
         if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
           retMessages.push('Hey! You need to bring me an item owned by you.');
           return;
@@ -188,7 +192,7 @@ export class DialogActionHelper extends BaseService {
 
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
-      const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
+      const matchingItems = player.items.sack.items.filter(x => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x));
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }
