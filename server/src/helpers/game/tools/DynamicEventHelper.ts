@@ -89,7 +89,7 @@ export class DynamicEventHelper extends BaseService {
       this.eventCooldowns[eventRef] = Date.now() + (1000 * (ref.cooldown ?? 0));
 
     } else {
-      this.game.messageHelper.broadcastSystemMessage(`"${event.name}" has has ended.`);
+      this.game.messageHelper.broadcastSystemMessage(`"${event.name}" has ended.`);
     }
 
     this.recalculateStatTotals();

@@ -345,7 +345,17 @@ export class MapState {
 
       if (!this.game.visibilityHelper.canSeeThroughStealthOf(me, char)) return false;
 
-      if (this.game.targettingHelper.checkTargetForHostility(me, char)) return true;
+      if (this.game.targettingHelper.checkTargetForHostility(me, char, {
+        agro: true,
+        allegiance: true,
+        evil: true,
+        faction: true,
+        party: true,
+        pet: true,
+        self: true,
+        friendly: false,
+        def: false
+      })) return true;
 
       return false;
     });
