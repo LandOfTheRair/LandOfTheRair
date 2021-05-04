@@ -140,6 +140,10 @@ export class MapScene extends Phaser.Scene {
       sprite.setFrame(newFrame);
     }
 
+    if (npc.dir === Direction.Corpse) {
+      sprite.alpha = 0;
+    }
+
     if (!npc.aquaticOnly) {
       this.updateSpriteSwimData(sprite, npc);
     }
