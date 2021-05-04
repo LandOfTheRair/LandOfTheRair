@@ -57,7 +57,7 @@ export class Fate extends Spell {
     }
 
     if (xp) {
-      if (xp > 0 && (this.game.playerHelper.canGainExpOnMap(player) || player.gainingAXP)) {
+      if (xp > 0 && (!this.game.playerHelper.canGainExpOnMap(player) || player.gainingAXP)) {
         message = 'You feel like you could have learned something, but didn\'t.';
       } else {
         let xpChange = 0;
