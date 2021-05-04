@@ -42,6 +42,7 @@ export class MapScene extends Phaser.Scene {
     eagleeye: false
   };
 
+  private firstCreate = true;
   private tilemap: Phaser.Tilemaps.Tilemap;
   private allNPCSprites = {};
   private allPlayerSprites = {};
@@ -572,6 +573,11 @@ export class MapScene extends Phaser.Scene {
   }
 
   public create() {
+    if (!this.firstCreate) {
+      this.visibleItemSprites = {};
+      this.visibleItemUUIDHash = {};
+      this.goldSprites = {};
+    }
     const player = this.game.observables.player.getValue();
     this.player = player;
 
@@ -613,11 +619,38 @@ export class MapScene extends Phaser.Scene {
     this.loadObjectLayer(map.objects[2], this.layers.opaquedecor);
     this.loadObjectLayer(map.objects[3], this.layers.interactables);
 
+    if (this.firstCreate) {
+      this.registerEvents();
+
+      // update the loader as we load the map
+      let text = `Welcome to ${player.map}!`;
+      if (tiledJSON.properties.creator) {
+        text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
+      }
+
+      if (this.hideWelcome) text = '';
+
+      this.game.observables.loadPercent.next(text);
+      setTimeout(() => {
+        this.game.observables.loadPercent.next('');
+      }, 1000);
+    }
+    else {
+      this.createPlayerSprite(player);
+    }
+
     // start the camera at our x,y
     this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
 
-    this.createPlayerSprite(player);
+    this.game.observables.hideMap.next(false);
+    setTimeout(() => {
+      this.game.gameService.sendCommandString('!move 0 0');
+    }, 1000);
+    this.updateGroundSprites();
+    this.firstCreate = false;
+  }
 
+  private registerEvents() {
     // watch for and update map bounds when the window moves
     this.windowUpdate$ = this.game.observables.windowChange.subscribe(() => {
       try {
@@ -675,26 +708,6 @@ export class MapScene extends Phaser.Scene {
     });
 
     this.events.on('destroy', () => this.destroy());
-
-    // update the loader as we load the map
-    let text = `Welcome to ${player.map}!`;
-    if (tiledJSON.properties.creator) {
-      text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
-    }
-
-    if (this.hideWelcome) text = '';
-
-    this.game.observables.loadPercent.next(text);
-    this.game.observables.hideMap.next(false);
-
-    setTimeout(() => {
-      this.game.observables.loadPercent.next('');
-    }, 1000);
-
-    // force a move 0,0 to get default rendering info
-    setTimeout(() => {
-      this.game.gameService.sendCommandString('!move 0 0');
-    }, 1000);
   }
 
   public update() {
