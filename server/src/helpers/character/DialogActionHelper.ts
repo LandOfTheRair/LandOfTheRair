@@ -47,6 +47,7 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.CheckNoItem]:           this.handleCheckNoItemAction,
       [DialogActionType.TakeItem]:              this.handleTakeItemAction,
       [DialogActionType.GiveItem]:              this.handleGiveItemAction,
+      [DialogActionType.MergeAndGiveItem]:      this.handleMergeGiveItemAction,
       [DialogActionType.ModifyItem]:            this.handleModifyItemAction,
       [DialogActionType.CheckItemCanUpgrade]:   this.handleItemCanUpgradeAction,
       [DialogActionType.AddUpgradeItem]:        this.handleAddItemUpgradeAction,
@@ -354,6 +355,31 @@ export class DialogActionHelper extends BaseService {
 
       const simpleItem = this.game.itemCreator.getSimpleItem(template(item.name)(player));
       this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, simpleItem);
+
+      didSucceed = true;
+    });
+
+    return { messages: [], shouldContinue: didSucceed };
+  }
+
+  // GIVE an item to the player after merging the stats with their existing item
+  private handleMergeGiveItemAction(action: IDialogGiveItemAction, npc: INPC, player: IPlayer): IActionResult {
+    const { slot, item } = action;
+
+    let didSucceed = false;
+
+    (slot || []).forEach(checkSlot => {
+      if (didSucceed) return;
+
+      const slotItem = player.items.equipment[checkSlot];
+      if (!slotItem) return;
+
+      const simpleItem = this.game.itemCreator.getSimpleItem(template(item.name)(player));
+      this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, simpleItem);
+
+      const oldStats = this.game.itemHelper.getItemProperty(slotItem, 'stats');
+
+      simpleItem.mods.stats = oldStats;
 
       didSucceed = true;
     });

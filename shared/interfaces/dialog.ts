@@ -8,6 +8,7 @@ export enum DialogActionType {
   CheckNoItem = 'checkNoItem',
   TakeItem = 'takeItem',
   GiveItem = 'giveItem',
+  MergeAndGiveItem = 'mergeAndGiveItem',
   ModifyItem = 'modifyItem',
   CheckItemCanUpgrade = 'checkItemCanUpgrade',
   AddUpgradeItem = 'addItemUpgrade',
