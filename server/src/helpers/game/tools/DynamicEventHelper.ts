@@ -174,7 +174,7 @@ export class DynamicEventHelper extends BaseService {
       if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) return;
 
       // if the map isn't active, bail
-      if (!this.game.worldManager.currentlyActiveMapHash[event.map]) return;
+      if (event.map && !this.game.worldManager.currentlyActiveMapHash[event.map]) return;
 
       // if there's a conflicting event, bail
       if (event.conflicts && event.conflicts.some(e => this.isEventActive(e))) return;

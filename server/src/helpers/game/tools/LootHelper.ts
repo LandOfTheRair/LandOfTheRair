@@ -94,6 +94,13 @@ export class LootHelper extends BaseService {
     // get npc drops
     if ((npc.drops?.length ?? 0) > 0) {
       rolledResults.push(...this.tryEachItem(this.filterDropTable(npc.drops ?? [])));
+
+      // non-dungeon resources get a harvest moon bonus of a double roll
+      if (isNaturalResource
+      && this.game.dynamicEventHelper.isEventActive('Harvest Moon')
+      && !this.game.worldManager.isDungeon(npc.map)) {
+        rolledResults.push(...this.tryEachItem(this.filterDropTable(npc.drops ?? [])));
+      }
     }
 
     // check what they're guaranteed to drop
