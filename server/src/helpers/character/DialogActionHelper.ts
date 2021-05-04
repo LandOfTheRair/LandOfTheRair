@@ -390,7 +390,7 @@ export class DialogActionHelper extends BaseService {
     const checkItem = player.items.equipment[slot];
     if (!checkItem) return { messages: ['Nothing to upgrade?'], shouldContinue: false };
 
-    this.game.itemHelper.upgradeItem(checkItem, upgrade);
+    this.game.itemHelper.upgradeItem(checkItem, template(upgrade)(player));
 
     return { messages: [], shouldContinue: true };
   }
