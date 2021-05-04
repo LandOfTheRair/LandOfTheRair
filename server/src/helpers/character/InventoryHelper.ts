@@ -54,6 +54,10 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
+  public getItemsFromSackByName(player: ICharacter, filter: string): ISimpleItem[] {
+    return player.items.sack.items.filter(x => x.name.includes(filter));
+  }
+
   // belt functions
   public beltSpaceLeft(player: ICharacter): number {
     return 5 - player.items.belt.items.length;

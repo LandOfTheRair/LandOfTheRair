@@ -134,6 +134,12 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
   const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
 
+  const pages = getProp(item, itemDef, 'bookPages');
+  let pagesText = '';
+  if(itemClass === ItemClass.Book) {
+    pagesText = ` The book has ${pages?.length ?? 0} page(s) in it.`;
+  }
+
   const appraiseText = thiefTier > 0 ? `The item is worth ${value.toLocaleString()} gold. ` : '';
 
   const conditionText = `The item is in ${conditionString(item)} condition. `;
@@ -142,6 +148,6 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
 
   return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
-    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${trapSetText}
+    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${pagesText}${trapSetText}
     ${conditionText}${ownedText}`;
 }

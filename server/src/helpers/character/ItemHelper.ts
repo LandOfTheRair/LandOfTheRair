@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { cloneDeep, isUndefined } from 'lodash';
+import { cloneDeep, isNumber, isUndefined } from 'lodash';
 
 import { Allegiance, canUseItem, GameServerResponse, ICharacter, IDialogChatAction, IItem, IItemRequirements,
   IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
@@ -308,9 +308,46 @@ export class ItemHelper extends BaseService {
   }
 
   public useBook(player: IPlayer, book: ISimpleItem, source: ItemSlot): void {
-    const { bookCurrentPage, bookPages } = this.getItemProperties(book, ['bookCurrentPage', 'bookPages']);
+    const { bookCurrentPage, bookItemFilter } = this.getItemProperties(book, ['bookCurrentPage', 'bookItemFilter']);
 
     const page = bookCurrentPage ?? 0;
+
+    if (bookItemFilter) {
+      const pages = this.game.inventoryHelper.getItemsFromSackByName(player, bookItemFilter);
+      const removeItems: string[] = [];
+
+      book.mods.bookPages = book.mods.bookPages || [];
+
+      if (pages.length > 0) {
+        pages.forEach(item => {
+          if (!this.isOwnedBy(player, item)) return;
+
+          const { bookPage, extendedDesc } = this.game.itemHelper.getItemProperties(item, ['bookPage', 'extendedDesc']);
+
+          // if the item has a specific page and we don't have one, we set it
+          if (isNumber(bookPage)) {
+            const setPage: number = bookPage as number;
+
+            if (!book.mods.bookPages![setPage]) {
+              removeItems.push(item.uuid);
+              book.mods.bookPages![setPage] = { id: item.name, text: extendedDesc ?? 'no description' };
+            }
+
+          // push it because the book is limitless
+          } else {
+
+            if (!book.mods.bookPages!.find(x => x.id === item.name)) {
+              book.mods.bookPages!.push({ id: item.name, text: extendedDesc ?? 'no description' });
+            }
+          }
+
+        });
+      }
+
+      this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeItems);
+    }
+
+    const bookPages = this.game.itemHelper.getItemProperty(book, 'bookPages');
     const readPage = (bookPages || [])[page];
 
     if (!readPage) {

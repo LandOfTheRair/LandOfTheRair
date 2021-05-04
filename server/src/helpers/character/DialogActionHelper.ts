@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { sample, template } from 'lodash';
+import { get, sample, template } from 'lodash';
 
 import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogAddItemUpgradeAction,
@@ -162,7 +162,7 @@ export class DialogActionHelper extends BaseService {
 
   // CHECK the item(s) the player is holding
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
-    const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
+    const { slot, item, fromHands, checkProperty, checkValue, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
@@ -173,6 +173,17 @@ export class DialogActionHelper extends BaseService {
 
     const matches = (itemName: string) => itemName.includes(formattedName);
 
+    // check name, check property if set
+    const meetsCheck = (checkItem: ISimpleItem) => {
+      if (!matches(checkItem.name)) return false;
+      if (checkProperty) {
+        const value = get(checkItem, checkProperty);
+        if (value !== checkValue) return false;
+      }
+
+      return true;
+    };
+
     // if we check hands
     if (fromHands) {
       (slot || []).forEach(checkSlot => {
@@ -181,7 +192,7 @@ export class DialogActionHelper extends BaseService {
         const slotItem = player.items.equipment[checkSlot];
         if (!slotItem) return;
 
-        if (!matches(slotItem.name)) return;
+        if (!meetsCheck(slotItem)) return;
         if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
           retMessages.push('Hey! You need to bring me an item owned by you.');
           return;
@@ -193,7 +204,7 @@ export class DialogActionHelper extends BaseService {
 
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
-      const matchingItems = player.items.sack.items.filter(x => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x));
+      const matchingItems = player.items.sack.items.filter(x => meetsCheck(x) && this.game.itemHelper.isOwnedBy(player, x));
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }

@@ -199,7 +199,7 @@ export class PlayerHelper extends BaseService {
   public clearActionQueue(player: Player, target?: string) {
 
     // if we specify a target, we remove them from the queue as convenience
-    if (target) {
+    if (player && target) {
       player.actionQueue.fast = player.actionQueue.fast.filter(x => !(x as any).args.stringArgs.includes(target));
       player.actionQueue.slow = player.actionQueue.slow.filter(x => !(x as any).args.stringArgs.includes(target));
       return;

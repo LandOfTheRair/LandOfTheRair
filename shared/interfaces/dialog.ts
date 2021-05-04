@@ -92,6 +92,8 @@ export interface IDialogAddItemUpgradeAction {
 export interface IDialogCheckItemAction {
   fromHands?: boolean;
   fromSack?: boolean;
+  checkProperty?: string;
+  checkValue?: any;
   slot: (ItemSlot | 'sack')[];
   item: IDialogItem;
   checkPassActions: IDialogAction[];
