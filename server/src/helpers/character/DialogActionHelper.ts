@@ -162,7 +162,6 @@ export class DialogActionHelper extends BaseService {
   // CHECK the item(s) the player is holding
   private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item, fromHands, checkPassActions, checkFailActions } = action;
-    console.log(slot, item, fromHands);
 
     const retMessages: string[] = [];
 
@@ -190,7 +189,6 @@ export class DialogActionHelper extends BaseService {
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
       const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
-      console.log('check', item.name, matchingItems);
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }

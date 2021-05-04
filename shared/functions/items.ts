@@ -111,7 +111,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
   const upgrades = getProp(item, itemDef, 'upgrades');
 
-  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0) ? `It has ${maxUpgrades} carved slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
+  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0) ? `It has ${maxUpgrades} magical slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
 
   // various requirements for the item
   const requirements = getProp(item, itemDef, 'requirements');
