@@ -62,6 +62,8 @@ export class Spell implements BaseSpell {
       [BaseClass.Thief]: Skill.Thievery
     };
 
+    const isStatic = spellData.spellMeta?.staticPotency;
+
     let skillsToAverage = [skills[caster.baseClass]];
     if (!skills[caster.baseClass]) {
 
@@ -84,8 +86,14 @@ export class Spell implements BaseSpell {
 
     const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
 
-    const bonusRolls = random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
-    let retPotency = this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
+    const bonusRolls = isStatic
+      ? 0
+      : random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
+
+    let retPotency = isStatic
+      ? (baseSkillValue + bonusRolls) * statMult
+      : this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
+
     let maxMult = 1;
     (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
       if (baseSkillValue < baseSkill) return;
@@ -101,7 +109,7 @@ export class Spell implements BaseSpell {
     }
 
     if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
-       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Daze'))
+       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Dazed'))
     ) {
       retPotency /= 2;
       this.sendMessage(caster, { message: 'You struggle to concentrate!' });
