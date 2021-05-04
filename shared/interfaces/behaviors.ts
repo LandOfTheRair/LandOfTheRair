@@ -29,7 +29,8 @@ export enum BehaviorType {
   Cosmetic = 'cosmetic',
   Buffer = 'buffer',
   Resetter = 'resetter',
-  AXPSwapper = 'axpswapper'
+  AXPSwapper = 'axpswapper',
+  FurUpgrader = 'furupgrader'
 }
 
 export interface IVendorItem {

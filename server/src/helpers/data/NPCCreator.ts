@@ -387,7 +387,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Cosmetic]: AllBehaviors.CosmeticBehavior,
       [BehaviorType.Buffer]: AllBehaviors.BufferBehavior,
       [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior,
-      [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior
+      [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior,
+      [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

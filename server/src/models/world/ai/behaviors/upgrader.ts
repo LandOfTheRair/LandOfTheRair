@@ -23,7 +23,7 @@ export class UpgraderBehavior implements IAIBehavior {
           okAction: { command: '!privatesay', args: `${npc.uuid}, upgrade` }
         });
 
-        return 'Would you like to UPGRADE your items?';
+        return 'Would you like to UPGRADE your item?';
       });
 
     parser.addCommand('upgrade')
