@@ -28,7 +28,8 @@ export enum BehaviorType {
   ItemModder = 'itemmodder',
   Cosmetic = 'cosmetic',
   Buffer = 'buffer',
-  Resetter = 'resetter'
+  Resetter = 'resetter',
+  AXPSwapper = 'axpswapper'
 }
 
 export interface IVendorItem {
@@ -132,11 +133,16 @@ export interface IBinderBehavior {
 
 }
 
+export interface IAXPSwapper {
+
+}
+
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
                       & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
                       & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
                       & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
-                      & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior &
+                      & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
+                      & IAXPSwapper &
 {
   type: BehaviorType;
   props?: string[];

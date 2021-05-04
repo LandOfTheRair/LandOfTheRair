@@ -386,7 +386,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.ItemModder]: AllBehaviors.ItemModderBehavior,
       [BehaviorType.Cosmetic]: AllBehaviors.CosmeticBehavior,
       [BehaviorType.Buffer]: AllBehaviors.BufferBehavior,
-      [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior
+      [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior,
+      [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

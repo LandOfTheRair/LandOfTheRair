@@ -1,5 +1,6 @@
 
 export * from './alchemist';
+export * from './axpswapper';
 export * from './banker';
 export * from './binder';
 export * from './buffer';
