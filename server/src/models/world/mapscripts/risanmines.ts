@@ -1,7 +1,10 @@
-import { IMapScript } from '../../../interfaces';
+import { Game } from '../../../helpers';
+import { Direction, ICharacter, IMapScript, INPC, ItemSlot } from '../../../interfaces';
 
 export class RisanMinesScript implements IMapScript {
-  readonly name = 'Risan Mines';
+  readonly name = 'RisanMines';
+
+  private ventCooldowns: Record<string, number> = {};
 
   setup() {
 
@@ -11,5 +14,46 @@ export class RisanMinesScript implements IMapScript {
 
   }
 
-  handleEvent() {}
+  handleEvent(game: Game, event: string, { trigger }) {
+    if (event === 'on:crazedmist') {
+      if (this.ventCooldowns[trigger.x + ' ' + trigger.y] > Date.now()) return;
+
+      this.ventCooldowns[trigger.x + ' ' + trigger.y] = Date.now() + 5000;
+
+      game.messageHelper.sendSimpleMessage(trigger, 'You feel a rush of heat!');
+
+      game.commandHandler.getSkillRef('FireMist').use(trigger, trigger, {
+        overrideEffect: { range: 1, name: 'FireMist', potency: 350 }
+      }, { x: trigger.x, y: trigger.y, map: trigger.map });
+
+      game.worldManager.getMap('RisanMines')?.state.getAllInRange(trigger, 1, [], false).forEach(creature => {
+        this.applyDebuff(game, creature);
+
+        if ((creature as INPC).npcId === 'Risan Miner') {
+          this.transformMiner(game, creature as INPC);
+        }
+      });
+    }
+  }
+
+  private applyDebuff(game: Game, char: ICharacter) {
+    game.effectHelper.addEffect(char, '', 'MinerFever');
+  }
+
+  private transformMiner(game: Game, npc: INPC) {
+    npc.hp.current = -1;
+    npc.dir = Direction.Corpse;
+    npc.noItemDrop = true;
+    npc.noCorpseDrop = true;
+    game.deathHelper.npcDie(npc as INPC);
+    game.worldManager.getMap('RisanMines')?.state.getNPCSpawner(npc.uuid)?.forceSpawnNPC({
+      npcId: 'Risan Crazed Miner',
+      spawnLoc: { x: npc.x, y: npc.y },
+      createCallback: (spawned) => {
+        spawned.items.equipment[ItemSlot.LeftHand] = npc.items.equipment[ItemSlot.LeftHand];
+        spawned.items.equipment[ItemSlot.RightHand] = npc.items.equipment[ItemSlot.RightHand];
+      }
+    });
+
+  }
 }

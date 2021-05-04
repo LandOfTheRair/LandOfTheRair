@@ -193,7 +193,12 @@ export class Spawner {
     return this.npcAI[npcUUID];
   }
 
-  public forceSpawnNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}): INPC | null {
+  public forceSpawnNPC(opts: {
+    npcId?: string;
+    npcDef?: INPCDefinition;
+    spawnLoc?: { x: number; y: number };
+    createCallback?: (npc: INPC) => void;
+  } = {}): INPC | null {
     return this.createNPC(opts);
   }
 
@@ -221,7 +226,12 @@ export class Spawner {
     });
   }
 
-  private createNPC(opts: { npcId?: string; npcDef?: INPCDefinition; createCallback?: (npc: INPC) => void } = {}): INPC | null {
+  private createNPC(opts: {
+    npcId?: string;
+    npcDef?: INPCDefinition;
+    spawnLoc?: { x: number; y: number };
+    createCallback?: (npc: INPC) => void;
+  } = {}): INPC | null {
     if (!this.canBeActive) return null;
 
     const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
@@ -254,7 +264,7 @@ export class Spawner {
 
     const npc = this.game.npcCreator.createCharacterFromNPCDefinition(chosenNPCDef as INPCDefinition);
 
-    let foundCoordinates = { x: chosenNPCDef?.x ?? 0, y: chosenNPCDef?.y ?? 0 };
+    let foundCoordinates = { x: opts.spawnLoc?.x ?? chosenNPCDef?.x ?? 0, y: opts.spawnLoc?.y ?? chosenNPCDef?.y ?? 0 };
     let attempts = 0;
 
     while (!foundCoordinates.x || !foundCoordinates.y) {
