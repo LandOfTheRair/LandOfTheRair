@@ -1,7 +1,8 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, IAIBehavior, INPC, IPlayer, ISimpleItem, ISteelroseBehavior, itemListError, ItemSlot } from '../../../../interfaces';
+import { Currency, GameAction, IAIBehavior, INPC,
+  IPlayer, ISimpleItem, ISteelroseBehavior, itemListError, ItemSlot } from '../../../../interfaces';
 
 export class SteelroseBehavior implements IAIBehavior {
 
