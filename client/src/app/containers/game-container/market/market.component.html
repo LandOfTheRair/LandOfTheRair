@@ -1,0 +1,312 @@
+<app-window windowName="market"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="850"
+            defaultHeight="510"
+></app-window>
+
+<ng-template #headTemplate>
+  <span class="window-has-more-buttons">
+    <span>
+      Steelrose Market
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div *ngIf="player">
+    <mat-toolbar>
+      <span class="nav-item" [class.current]="currentTab === tab" *ngFor="let tab of tabs" (click)="switchTab(tab)">{{ tab }}</span>
+    </mat-toolbar>
+
+    <div class="content">
+      <ng-template [ngTemplateOutlet]="marketBuy" *ngIf="currentTab === 'Buy'"></ng-template>
+      <ng-template [ngTemplateOutlet]="marketSell" *ngIf="currentTab === 'Sell'"></ng-template>
+      <ng-template [ngTemplateOutlet]="marketListings" *ngIf="currentTab === 'My Listings'"></ng-template>
+      <ng-template [ngTemplateOutlet]="marketPickup" *ngIf="currentTab === 'Pick Up'"></ng-template>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #marketBuy>
+  <div class="buy">
+
+    <div class="left-side">
+      <div class="search-row p-5">
+        <form>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput
+                  type="text"
+                  autocomplete="off"
+                  (keyup)="debouncedSearch()"
+                  placeholder="Item Search"
+                  [(ngModel)]="searchQuery"
+                  [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+        </form>
+      </div>
+
+      <div class="sort-row">
+        <div class="buy-header">Sort Items</div>
+
+        <div class="p-5">
+          <div *ngFor="let sortType of sortOptions">
+            <button mat-button
+                    [ngClass]="currentSort === sortType.sort ? 'mat-flat-button' : 'mat-stroked-button'"
+                    class="sort-button"
+                    color="primary"
+                    (click)="changeSort(sortType.sort)">
+              {{ sortType.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="buy-header">Filter Items</div>
+
+        <div class="p-5">
+
+          <button mat-button
+                  class="m-r-5 m-b-5 filter-button"
+                  *ngFor="let filter of filterTags"
+                  [ngClass]="filter.isIncluded ? 'mat-flat-button' : 'mat-stroked-button'"
+                  color="primary"
+                  (click)="toggleFilter(filter)">
+            {{ filter.name }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-side listings">
+
+      <div *ngIf="isLoading" class="vertical-center spinning-loader">
+        <app-icon name="spinning-blades" bgColor="transparent" fgColor="#aaa"></app-icon> Loading...
+      </div>
+
+      <div class="background-text text-center content full-width full-height true-center big-text" *ngIf="!isLoading && buyableListings?.length === 0">
+        There are no items here, or none match your search criteria.
+      </div>
+
+      <div class="content scrollable" *ngIf="!isLoading && buyableListings?.length > 0">
+        <div class="spacing" *ngFor="let listing of buyableListings">
+
+          <div class="col">
+            <div class="item-slot item-background">
+              <app-item [item]="listing.itemInfo.itemOverride" [showDesc]="false" [showOunces]="true" [showCount]="true" [matTooltip]="requirementTooltipFor(listing)"></app-item>
+            </div>
+          </div>
+
+          <div class="col listing-info">
+            <div>
+              <strong>{{ listing.itemInfo.itemOverride.name }}</strong>
+              {{ starTextFor(listing.itemInfo) }}
+            </div>
+
+            <div class="thin-line">
+              <small>
+                {{ statStringFor(listing.itemInfo) || 'no stats' }} /
+                {{ traitStringFor(listing.itemInfo) || 'no trait' }} /
+                {{ effectStringFor(listing.itemInfo) || 'no effect' }}</small>
+            </div>
+
+            <div class="thin-line">
+              <small [class.text-danger]="listing.listingInfo.price > player.currency.gold"><em>{{ listing.listingInfo.price | number }} gold</em></small>
+            </div>
+          </div>
+
+          <div class="col vertical-center actions">
+            <button mat-flat-button color="primary" (click)="buy(listing)" [disabled]="player.username === listing.listingInfo.seller">Buy</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="page-actions">
+
+        <div>
+          <button mat-flat-button color="primary" (click)="changePage(-1)" [disabled]="!canGoBack">←</button>
+        </div>
+
+        <div>
+          Page {{ currentPage + 1 }}
+        </div>
+
+        <div>
+          <button mat-flat-button color="primary" (click)="changePage(1)" [disabled]="!canGoForward">→</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</ng-template>
+
+<ng-template #marketSell>
+
+  <div class="grid">
+    <div class="center">
+      <h3>Sell Item In Right Hand</h3>
+    </div>
+
+    <div class="center spacing">
+      <div class="col"></div>
+
+      <div class="col">
+        <div>
+          <div class="item-slot item-background">
+            <app-item [item]="player.items.equipment.rightHand"
+                      [showOunces]="true"
+                      *ngIf="player.items.equipment.rightHand"></app-item>
+          </div>
+        </div>
+      </div>
+
+      <div class="col text-danger text-center" *ngIf="sellError">
+        {{ sellError }}
+      </div>
+
+      <div class="col text-success text-center" *ngIf="!sellError">
+        Ready to sell!
+      </div>
+
+      <div class="col"></div>
+    </div>
+
+    <div class="sell spacing">
+      <div class="col"></div>
+
+      <div class="col text-center">
+        <h3 class="text-center">Sell Price</h3>
+        <br>
+        <mat-form-field appearance="outline">
+          <mat-label>Sell Price</mat-label>
+          <input matInput
+            type="number"
+            [placeholder]="'Sell for this much gold...'"
+            min="1"
+            max="1000000000000"
+            autofocus
+            autocomplete="off"
+            cdkFocusInitial
+            [(ngModel)]="sellValue"
+            [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+      </div>
+
+      <div class="col text-center" [class.text-danger]="listingFee > player.currency.gold">
+        <h3 class="text-center">Listing Fee ({{ listingFeePercent }}%)</h3>
+        <br>
+        {{ listingFee | number }} gold
+      </div>
+
+      <div class="col"></div>
+    </div>
+
+    <div>
+      <div class="text-center">
+        <button [disabled]="sellError !== ''" mat-raised-button color="primary" (click)="list()">List this item!</button>
+      </div>
+    </div>
+  </div>
+
+</ng-template>
+
+<ng-template #marketListings>
+  <div class="right-side listings">
+    <div class="background-text content" *ngIf="!myListings">
+
+      <div *ngIf="isLoading" class="vertical-center spinning-loader">
+        <app-icon name="spinning-blades" bgColor="transparent" fgColor="#aaa"></app-icon> Loading...
+      </div>
+
+    </div>
+
+    <div class="background-text text-center content full-width full-height true-center big-text" *ngIf="myListings?.length === 0">
+      You do not have any items listed on the market.
+    </div>
+
+    <div class="content scrollable" *ngIf="myListings?.length > 0">
+      <div class="spacing" *ngFor="let listing of myListings">
+
+        <div class="col">
+
+          <div class="item-slot item-background">
+            <app-item [item]="listing.itemInfo.itemOverride" [showOunces]="true" [showDesc]="false"></app-item>
+          </div>
+        </div>
+
+        <div class="col listing-info">
+          <div>
+            <strong>{{ listing.itemId }}</strong>
+            {{ starTextFor(listing.itemInfo) }}
+          </div>
+
+          <div>
+            <small><em>{{ listing.listingInfo.price | number }} gold</em></small>
+          </div>
+        </div>
+
+        <div class="col vertical-center actions">
+          <button mat-flat-button color="warn" (click)="cancel(listing)">Cancel</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #marketPickup>
+  <div class="right-side receive">
+    <div class="background-text content" *ngIf="!myPickups">
+
+      <div *ngIf="isLoading" class="vertical-center spinning-loader">
+        <app-icon name="spinning-blades" bgColor="transparent" fgColor="#aaa"></app-icon> Loading...
+      </div>
+
+    </div>
+
+    <div class="background-text text-center content full-width full-height true-center big-text" *ngIf="myPickups?.length === 0">
+      You do not have anything to pick up.
+    </div>
+
+    <div class="content scrollable" *ngIf="myPickups?.length > 0">
+      <div class="spacing" *ngFor="let pickup of myPickups">
+
+        <div class="col">
+
+          <div class="item-slot item-background">
+            <app-item [item]="pickup.itemInfo.itemOverride" [showDesc]="false" [showOunces]="true" *ngIf="pickup.itemInfo"></app-item>
+
+            <app-item showValue="true" [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: pickup.gold } }" *ngIf="!pickup.itemInfo"></app-item>
+          </div>
+        </div>
+
+        <div class="col listing-info">
+          <div *ngIf="pickup.itemInfo">
+            <strong>{{ pickup.itemInfo.itemOverride.name }}</strong>
+            {{ starTextFor(pickup.itemInfo) }}
+          </div>
+
+          <div *ngIf="!pickup.itemInfo">
+            <strong>{{ pickup.gold | number }} Gold</strong>
+          </div>
+        </div>
+
+        <div class="col vertical-center actions">
+          <button mat-flat-button color="primary" (click)="take(pickup)" [disabled]="pickup.itemInfo && player.items.equipment.rightHand">Take</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>
+

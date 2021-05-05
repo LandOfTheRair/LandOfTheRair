@@ -5,7 +5,7 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideLockerWindow, HideTrainerWindow, HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenTrainerWindow,
+import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTrainerWindow, HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, UpdateParty, ViewCharacterEquipment } from './actions';
 
@@ -40,6 +40,11 @@ const defaultGame: () => IGame = () => ({
       npcSprite: 0,
       npcBank: '',
       npcBranch: ''
+    },
+    marketInfo: {
+      npcUUID: '',
+      npcName: '',
+      npcSprite: 0,
     },
     mapInfo: {
       players: {},
@@ -145,6 +150,11 @@ export class GameState {
   @Selector()
   static currentBankWindow(state: IGame) {
     return state.bankInfo;
+  }
+
+  @Selector()
+  static currentMarketWindow(state: IGame) {
+    return state.marketInfo;
   }
 
   @Selector()
@@ -365,6 +375,26 @@ export class GameState {
   @Action(HideBankWindow)
   hideBankWindow(ctx: StateContext<IGame>) {
     ctx.patchState({ bankInfo: null });
+  }
+
+  @Action(OpenMarketWindow)
+  openMarketWindow(ctx: StateContext<IGame>, {
+    npcUUID, npcName, npcSprite
+  }: OpenMarketWindow) {
+    ctx.patchState({
+      marketInfo: {
+        npcName,
+        npcUUID,
+        npcSprite
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('market'));
+  }
+
+  @Action(HideMarketWindow)
+  hideMarketWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ marketInfo: null });
   }
 
   @Action(ViewCharacterEquipment)

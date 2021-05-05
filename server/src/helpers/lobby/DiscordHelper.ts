@@ -14,6 +14,7 @@ export class DiscordHelper extends BaseService {
   private discordGuild: Discord.Guild | undefined;
   private discordChannel: Discord.TextChannel | undefined;
   private discordBotCommandChannel: Discord.TextChannel | undefined;
+  private discordMarketplaceChannel: Discord.TextChannel | undefined;
 
   private discordCommands: Record<string, IDiscordCommand> = {};
 
@@ -51,6 +52,12 @@ export class DiscordHelper extends BaseService {
     this.discordBotCommandChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_BOT_CHANNEL_ID);
     if (!this.discordBotCommandChannel) {
       this.game.logger.error('Discord', `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`);
+      return;
+    }
+
+    this.discordMarketplaceChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_MARKET_CHANNEL_ID);
+    if (!this.discordMarketplaceChannel) {
+      this.game.logger.error('Discord', `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`);
       return;
     }
 
@@ -167,6 +174,11 @@ export class DiscordHelper extends BaseService {
   // send a chat message
   public async chatMessage(from: string, message: string) {
     this.discordChannel?.send(`<${from}> ${message}`);
+  }
+
+  // send a marketplace update
+  public sendMarketplaceMessage(message: string) {
+    this.discordMarketplaceChannel?.send(message);
   }
 
   // watch for incoming chat messages

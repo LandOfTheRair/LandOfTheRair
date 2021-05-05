@@ -75,13 +75,14 @@ import { ErrorComponent } from './_shared/modals/error/error.component';
 import { LockerComponent } from './containers/game-container/locker/locker.component';
 import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';
 import { PartyComponent } from './containers/game-container/party/party.component';
+import { MarketComponent } from './containers/game-container/market/market.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, InputModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
-  TextModalComponent, NewSpellsComponent
+  TextModalComponent, NewSpellsComponent, MarketComponent
 ];
 
 const gameComponents = [

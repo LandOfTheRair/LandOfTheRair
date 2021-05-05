@@ -1,0 +1,190 @@
+
+.nav-item {
+  user-select: none;
+  cursor: pointer;
+}
+
+.thin-line {
+  line-height: 1.2em;
+  min-height: 1.2em;
+}
+
+.mat-toolbar {
+  min-height: 42px;
+  max-height: 42px;
+  justify-content: space-around;
+
+  border-bottom: 1px solid #000;
+
+  span {
+    min-height: 42px;
+    max-height: 42px;
+    margin-top: 2px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 25%;
+    text-align: center;
+
+    &.current {
+      border-top: 1px solid #000;
+      background-color: #444;
+      font-weight: 500;
+    }
+  }
+}
+
+.spinning-loader {
+
+  height: 100%;
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  app-icon {
+    margin-right: 15px;
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+}
+
+.content {
+  height: calc(500px - 42px - 22px);
+  color: #fff;
+}
+
+.vertical-center span {
+  margin: 20%;
+  text-align: center;
+}
+
+.buy {
+  display: flex;
+  height: 100%;
+
+  .left-side {
+    width: 33.33% !important;
+    flex: 1;
+    border-right: 1px solid #000;
+
+    display: flex;
+    flex-direction: column;
+
+    .search-row {
+      flex: 1;
+    }
+
+    .sort-row {
+      flex: 4;
+    }
+
+    .filter-row {
+      flex: 4;
+    }
+
+    .buy-header {
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      background-color: darken(#343a40, 10%);
+      user-select: none;
+      padding-left: 5px;
+    }
+
+    .sort-button {
+      width: 100%;
+    }
+
+    .filter-button {
+      width: 30%;
+    }
+
+    mat-form-field {
+      margin-bottom: -1.25em;
+    }
+  }
+
+  .right-side {
+    flex: 2;
+
+    &.receive, &.listings {
+      overflow-y: auto;
+    }
+
+    .listing-info {
+      flex: 4;
+    }
+
+    .items {
+      height: calc(500px - 42px - 30px);
+
+      overflow: auto;
+    }
+
+    .background-text, .spinning-loader {
+      height: calc(500px - 42px - 30px - 33px);
+    }
+
+    .content {
+      height: calc(500px - 42px - 22px - 41px);
+    }
+
+    .page-actions {
+      height: 40px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
+      border-top: 1px solid #000;
+    }
+  }
+}
+
+.scrollable {
+  overflow-y: scroll;
+}
+
+.listing-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-slot {
+  margin: 5px;
+}
+
+.grid {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  height: 100%;
+
+  .center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.col {
+  flex: 1;
+}
+
+.sell {
+  display: flex;
+  flex-direction: row;
+}
+
+.spacing {
+  display: flex;
+  justify-content: space-around;
+}
+
+.actions {
+  padding-right: 10px;
+  align-items: flex-end;
+}

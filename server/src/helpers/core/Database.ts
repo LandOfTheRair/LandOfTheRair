@@ -42,7 +42,11 @@ export class Database extends BaseService {
   }
 
   public getCollection(entity): Collection {
-    return this.db.collection(MetadataStorage.getCollectionForEntity(entity));
+    return this.getCollectionByName(MetadataStorage.getCollectionForEntity(entity));
+  }
+
+  public getCollectionByName(name: string): Collection {
+    return this.db.collection(name);
   }
 
   public async findSingle<T>(T, filter): Promise<T | null> {
@@ -56,6 +60,10 @@ export class Database extends BaseService {
     });
 
     return newSingle;
+  }
+
+  public async removeSingle<T>(T, filter): Promise<any> {
+    return this.getCollection(T).deleteOne(filter);
   }
 
   public async findUser(username: string): Promise<Account | null> {

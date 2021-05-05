@@ -39,6 +39,12 @@ export interface IGame {
     npcBranch: string;
   };
 
+  marketInfo: {
+    npcUUID: string;
+    npcName: string;
+    npcSprite: number;
+  };
+
   mapInfo: {
     players: Record<string, Partial<IPlayer>>;
     npcs: Record<string, Partial<INPC>>;

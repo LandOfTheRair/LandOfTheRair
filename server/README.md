@@ -26,6 +26,7 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `DISCORD_GUILD_ID` - (optional) set this to the Discord Guild ID you want the bot to listen to
 * `DISCORD_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to bridge messages between
 * `DISCORD_BOT_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to handle commands in
+* `DISCORD_MARKET_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to post marketplace updates in
 * `STRIPE_TOKEN` - (optional) set this to the `sk_test` or `sk_live` key depending on which Stripe environment you want to test
 * `SMTP_SERVICE` - (optional) the SMTP service to use (default: `gmail`)
 * `SMTP_EMAIL` - (optional) the SMTP email to sign in as

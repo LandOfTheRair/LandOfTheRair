@@ -23,6 +23,7 @@ export * from './lobby';
 export * from './characterlockers';
 export * from './macro';
 export * from './map';
+export * from './market';
 export * from './messages';
 export * from './npc';
 export * from './party';

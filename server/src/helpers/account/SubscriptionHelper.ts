@@ -244,6 +244,10 @@ export class SubscriptionHelper extends BaseService {
     return baseValue + Math.floor(player.subscriptionTier / 5);
   }
 
+  public maxMarketListings(player: IPlayer, baseValue = 25): number {
+    return baseValue + player.subscriptionTier * 5;
+  }
+
   public maxMaterialStorageSpace(player: IPlayer, baseValue = 200): number {
     const account = this.game.lobbyManager.getAccount(player.username);
     return baseValue + ((account?.premium.silverPurchases?.[SilverPurchase.ExpandedMaterialStorage] ?? 0) * 200);
