@@ -8,8 +8,10 @@ import { DynamicEvent } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
 
-import * as events from '../../../../content/_output/events.json';
+import * as eventsJSON from '../../../../content/_output/events.json';
 import * as settings from '../../../../content/_output/settings.json';
+
+const events = (eventsJSON as any).default || eventsJSON;
 
 @Injectable()
 export class DynamicEventHelper extends BaseService {
