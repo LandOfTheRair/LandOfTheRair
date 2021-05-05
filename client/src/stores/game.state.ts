@@ -5,7 +5,8 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTrainerWindow, HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTrainerWindow,
+import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTrainerWindow,
+  HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, UpdateParty, ViewCharacterEquipment } from './actions';
 
