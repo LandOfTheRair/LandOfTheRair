@@ -134,6 +134,11 @@ export class DynamicEventHelper extends BaseService {
 
   // start a dynamic event
   public startDynamicEvent(event: IDynamicEventData): void {
+    if (!event.name) {
+      this.game.logger.error('DynamicEventHelper', new Error(`Event ${JSON.stringify(event)} does not have a name!`));
+      return;
+    }
+
     this.startEvent({
       description: event.description,
       endsAt: Date.now() + (event.duration * 1000),
