@@ -248,7 +248,7 @@ export class GameState {
     }
 
     if (patches) {
-      patches.forEach(patch => {
+      patches.forEach((patch, i) => {
         if (patch.path === '/hp/current') {
           const hpDiff = patch.value - copyState.player.hp.current;
           if (hpDiff === 0) return;
@@ -270,10 +270,12 @@ export class GameState {
 
         const blacklistedEffects = ['Swimming'];
         if (patch.op === 'add'
-        && patch.path.includes('/effect')
+        && patch.path.includes('/effects/_hash')
         && patch.value.effectName
         && !blacklistedEffects.includes(patch.value.effectName)) {
-          GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
+          setTimeout(() => {
+            GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
+          }, (i * 250));
         }
       });
 
