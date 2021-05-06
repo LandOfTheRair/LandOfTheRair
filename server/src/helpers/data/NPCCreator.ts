@@ -242,7 +242,7 @@ export class NPCCreator extends BaseService {
     }
 
     if (this.game.diceRollerHelper.XInOneHundred(1)) {
-      return sample(this.game.contentManager.npcNamesData);
+      return sample(this.game.contentManager.npcNamesData) as string;
     }
 
     return species.human();
@@ -250,7 +250,7 @@ export class NPCCreator extends BaseService {
 
   // attributes buff npcs in random ways
   public addAttribute(npc: INPC): void {
-    const { attribute, stats } = sample(this.game.contentManager.attributeStatsData);
+    const { attribute, stats } = sample(this.game.contentManager.attributeStatsData) as any;
     npc.name = `${attribute} ${npc.name}`;
 
     npc.level += 2;

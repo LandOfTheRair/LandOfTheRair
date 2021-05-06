@@ -28,7 +28,7 @@ export class ContentManager extends BaseService {
 
   private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
-  private charSelect: { baseStats: Record<Stat, number>; allegiances: any[]; classes: any[]; weapons: any[] };
+  private charSelect: { baseStats: Record<Stat | 'gold', number>; allegiances: any[]; classes: any[]; weapons: any[] };
   private events: Record<string, IDynamicEventData>;
   private fate: IFate;
   private hideReductions: Record<WeaponClass, number>;
