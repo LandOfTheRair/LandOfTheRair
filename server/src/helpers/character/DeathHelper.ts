@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { Allegiance, basePlayerSprite, Currency, Direction, ICharacter, INPC,
-  IPlayer, ISimpleItem, ItemClass, ItemSlot, Stat, TrackedStatistic } from '../../interfaces';
+  IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -253,7 +253,7 @@ export class DeathHelper extends BaseService {
 
       const lostXP = Math.floor((this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) / 40) * eatTier);
       const lostSkill = Math.floor(500 * eatTier);
-      const randomSkill = sample(Object.keys(dead.skills));
+      const randomSkill = sample(Object.keys(dead.skills)) as Skill;
 
       this.game.characterHelper.losePermanentStat(dead, Stat.HP, Math.floor(eatTier));
 

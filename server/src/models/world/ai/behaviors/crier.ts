@@ -25,7 +25,7 @@ export class CrierBehavior implements IAIBehavior {
     }
 
     this.ticksForNextMessage = random(5, 10);
-    const nextMessage = sample(this.messages.filter(x => x !== this.lastMessageShouted));
+    const nextMessage = sample(this.messages.filter(x => x !== this.lastMessageShouted)) as string;
     this.lastMessageShouted = nextMessage;
 
     game.messageHelper.sendLogMessageToRadius(npc, 8, { message: nextMessage, from: npc.name }, [MessageType.NPCChatter]);

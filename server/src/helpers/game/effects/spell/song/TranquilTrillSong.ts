@@ -19,7 +19,7 @@ export class TranquilTrillSong extends Song {
     const numHeals = 1 + this.game.traitHelper.traitLevelValue(char, 'SoothingTranquility');
 
     for (let i = 0; i < numHeals; i++) {
-      const target: ICharacter = sample(allies);
+      const target = sample(allies) as ICharacter;
       if (target.hp.current === target.hp.maximum) continue;
 
       this.game.combatHelper.magicalAttack(char, target, {

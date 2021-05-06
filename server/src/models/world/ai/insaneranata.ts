@@ -1,6 +1,6 @@
 
 import { sample } from 'lodash';
-import { INPC } from '../../../interfaces';
+import { ICharacter, INPC } from '../../../interfaces';
 
 import { DefaultAIBehavior } from './default';
 
@@ -62,7 +62,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
       return;
     }
 
-    const target = sample(hostiles);
+    const target = sample(hostiles) as ICharacter;
     this.game.characterHelper.addAgro(npc, target, 100000);
 
     this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: `Gwahahaha, ${target.name}, you are my next target!` });

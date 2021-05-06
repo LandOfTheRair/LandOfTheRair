@@ -541,7 +541,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // can't move more than one screen at a time
-    character.totalStats[Stat.Move] = clamp(character.totalStats[Stat.Move], 0, 4);
+    character.totalStats[Stat.Move] = clamp(character.totalStats[Stat.Move] ?? 0, 0, 4);
 
     // if we're a player and our perception changes, we do a full visual update
     const state = this.game.worldManager.getMap(character.map)?.state;

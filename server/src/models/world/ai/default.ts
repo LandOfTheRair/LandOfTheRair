@@ -22,8 +22,8 @@ export class DefaultAIBehavior implements IAI {
   private stanceCooldown = 0;
   private messageCooldown = 0;
 
-  private highestAgro: ICharacter | null;
-  private currentTarget: ICharacter | null;
+  private highestAgro: ICharacter | null | undefined;
+  private currentTarget: ICharacter | null | undefined;
 
   public get dialogParser() {
     return this.npc.dialogParser;

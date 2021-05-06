@@ -22,7 +22,7 @@ export class NewSpellsComponent implements OnInit {
   public macroBarsByName: Record<string, string> = {};
 
   public get macroBarsAddable(): IMacroBar[] {
-    return Object.values(this.data.macroBars || {}).filter(x => this.isMacroBarFree(x));
+    return Object.values(this.data.macroBars || []).filter(x => this.isMacroBarFree(x));
   }
 
   constructor(
@@ -32,7 +32,7 @@ export class NewSpellsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.data.macroBars = cloneDeep(this.data.macroBars || {});
+    this.data.macroBars = cloneDeep(this.data.macroBars || []);
   }
 
   addToBar(spell: IMacro) {

@@ -177,7 +177,7 @@ export class MacrosState {
         const learns = additionalMacros[curPlayer.baseClass] || [];
 
         const learnedSpells = learns.map(spell => {
-          const baseObj = cloneDeep(Object.values(macros).find(macro => macro.name === spell));
+          const baseObj: any = cloneDeep(Object.values(macros).find(macro => macro.name === spell));
           if (!baseObj || baseObj.isDefault) return null;
 
           baseObj.isDefault = true;

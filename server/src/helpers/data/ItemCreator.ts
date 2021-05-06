@@ -87,9 +87,10 @@ export class ItemCreator extends BaseService {
     const qualityValues: number[] = [];
 
     if (itemDef.randomTrait) {
-      item.mods.trait = { name: '', level: 0 };
-
-      item.mods.trait.name = sample(itemDef.randomTrait.name);
+      item.mods.trait = {
+        name: sample(itemDef.randomTrait.name) ?? 'unknown',
+        level: 0
+      };
 
       const { min, max } = itemDef.randomTrait.level;
       const rolled = random(min, max);

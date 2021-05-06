@@ -78,7 +78,7 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
   }
 
   private unsheatheOffhand() {
-    const itemChoice = sample(['Crazed Tonwin Shield', 'Crazed Tonwin Flail']);
+    const itemChoice = sample(['Crazed Tonwin Shield', 'Crazed Tonwin Flail']) as string;
     const item = this.game.itemCreator.getSimpleItem(itemChoice);
     this.game.characterHelper.setLeftHand(this.npc, item);
   }

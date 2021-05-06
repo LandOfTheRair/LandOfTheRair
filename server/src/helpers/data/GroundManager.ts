@@ -264,7 +264,7 @@ export class GroundManager extends BaseService {
   }
 
   public getEntireGround(mapName: string, x: number, y: number): Record<ItemClass, IGroundItem[]> {
-    return get(this.ground, [mapName, x, y], {});
+    return get(this.ground, [mapName, x, y], {} as any);
   }
 
   public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', count = 1): IGroundItem[] {

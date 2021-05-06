@@ -1,7 +1,7 @@
 
 import { random, sample } from 'lodash';
 
-import { DamageClass, distanceFrom, ICharacter, IPlayer, Stat } from '../../../../../../interfaces';
+import { DamageClass, distanceFrom, ICharacter, IPlayer, Skill, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class SkillSuckStrong extends SpellCommand {
@@ -20,7 +20,7 @@ export class SkillSuckStrong extends SpellCommand {
 
     if (this.game.characterHelper.isPlayer(target)) {
       this.game.playerHelper.loseExp(target as IPlayer, random(35000, 52500));
-      this.game.playerHelper.loseSkill(target as IPlayer, sample(Object.keys(target.skills)), random(50, 100));
+      this.game.playerHelper.loseSkill(target as IPlayer, sample(Object.keys(target.skills)) as Skill, random(50, 100));
     }
 
     this.game.combatHelper.magicalAttack(executor, target, {

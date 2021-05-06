@@ -13,19 +13,22 @@ export class DeadlyDirgeSong extends Song {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    const enemies = this.game.worldManager.getMapStateForCharacter(char).getAllHostilesWithoutVisibilityTo(char, 4);
+    let enemies = this.game.worldManager.getMapStateForCharacter(char).getAllHostilesWithoutVisibilityTo(char, 4);
     if (enemies.length === 0) return;
 
     const numAttacks = 1 + this.game.traitHelper.traitLevelValue(char, 'DirgeOfCerberus');
 
     for (let i = 0; i < numAttacks; i++) {
-      this.game.damageHelperMagic.magicalAttack(char, sample(enemies), {
+      this.game.damageHelperMagic.magicalAttack(char, sample(enemies) as ICharacter, {
         atkMsg: 'Your deadly dirge pierces %0!',
         defMsg: '%0 is singing a deadly dirge!',
         damage: effect.effectInfo.potency,
         damageClass: DamageClass.Sonic
       });
+
+      // Remove anybody who died after the last attack
+      enemies = enemies.filter(enemy => !this.game.characterHelper.isDead(enemy));
+      if (enemies.length === 0) return;
     }
   }
-
 }
