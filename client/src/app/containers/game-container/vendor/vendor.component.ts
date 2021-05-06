@@ -87,4 +87,8 @@ export class VendorComponent implements OnInit, OnDestroy {
     this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, assess`);
   }
 
+  sellall() {
+    this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, sellall`);
+  }
+
 }

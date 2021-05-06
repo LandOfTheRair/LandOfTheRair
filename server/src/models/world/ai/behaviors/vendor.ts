@@ -1,6 +1,9 @@
+
+import { uniq } from 'lodash';
+
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, GameServerResponse, IAIBehavior, INPC,
+import { Currency, GameAction, GameServerResponse, IAIBehavior, IDialogChatAction, INPC,
   IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
@@ -91,6 +94,51 @@ export class VendorBehavior implements IAIBehavior {
         });
 
         return `I would pay ${game.inventoryHelper.itemValue(player, rightHand).toLocaleString()} for that item.`;
+      });
+
+    parser.addCommand('sellall')
+      .setSyntax(['sellall <string:itemclass*>'])
+      .setLogic(async ({ env, args }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+
+        const itemClass = args['itemclass*'];
+
+        if (!itemClass) {
+
+          const message = 'What would you like to sell me all of (from your sack)?';
+
+          const options = uniq(player.items.sack.items.map(x => game.itemHelper.getItemProperty(x, 'itemClass')));
+
+          const formattedChat: IDialogChatAction = {
+            message,
+            displayTitle: npc.name,
+            displayNPCName: npc.name,
+            displayNPCSprite: npc.sprite,
+            displayNPCUUID: npc.uuid,
+            options: [
+              ...options.map(x => ({ text: x, action: `sellall ${x}` })),
+              { text: 'Nothing', action: 'noop' },
+            ]
+          };
+
+          game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+
+          return message;
+        }
+
+        const validSackItemsForSale = player.items.sack.items
+          .filter(x => game.itemHelper.getItemProperty(x, 'itemClass') === itemClass && game.inventoryHelper.canSellItem(player, x));
+
+        validSackItemsForSale.forEach(item => {
+          game.inventoryHelper.sellItem(player, item);
+        });
+
+        game.inventoryHelper.removeItemsFromSackByUUID(player, validSackItemsForSale.map(x => x.uuid));
+
+        return `Done! I've sold all of your ${itemClass}.`;
       });
   }
 
