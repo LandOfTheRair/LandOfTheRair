@@ -110,7 +110,7 @@ export class VendorBehavior implements IAIBehavior {
 
           const message = 'What would you like to sell me all of (from your sack)?';
 
-          const options = uniq(player.items.sack.items.map(x => game.itemHelper.getItemProperty(x, 'itemClass')));
+          const options = uniq(player.items.sack.items.map(x => game.itemHelper.getItemProperty(x, 'itemClass'))).sort();
 
           const formattedChat: IDialogChatAction = {
             message,
