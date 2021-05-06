@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, IAIBehavior, IBankerBehavior, INPC, IPlayer } from '../../../../interfaces';
+import { Currency, distanceFrom, GameAction, IAIBehavior, IBankerBehavior, INPC, IPlayer } from '../../../../interfaces';
 
 export class BankerBehavior implements IAIBehavior {
 
@@ -15,7 +15,7 @@ export class BankerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           action: GameAction.NPCActionShowBank,
@@ -35,7 +35,7 @@ export class BankerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, { floor: true });
         amount = Math.min(amount, game.currencyHelper.getCurrency(player, Currency.Gold));
@@ -52,7 +52,7 @@ export class BankerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, { floor: true });
         amount = Math.min(amount, player.bank.deposits[Currency.Gold] ?? 0);

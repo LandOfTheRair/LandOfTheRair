@@ -2,7 +2,7 @@ import { Parser } from 'muud';
 import { startCase } from 'lodash';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, ICosmeticsBehavior,
+import { distanceFrom, GameServerResponse, IAIBehavior, ICosmeticsBehavior,
   IDialogChatAction, INPC, ItemClass, ItemSlot, SilverPurchase } from '../../../../interfaces';
 
 export class CosmeticBehavior implements IAIBehavior {
@@ -15,7 +15,7 @@ export class CosmeticBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Hey, ${player.name}! I'm Cosmetica - I can make your items more f~a~s~h~i~o~n~a~b~l~e!
         You can hold a cosmetic scroll in your left and an item in your right, and say IMBUE to add the cosmetic.
@@ -48,7 +48,7 @@ export class CosmeticBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const item = player.items.equipment[ItemSlot.RightHand];
         const scroll = player.items.equipment[ItemSlot.LeftHand];
@@ -76,7 +76,7 @@ export class CosmeticBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const item = player.items.equipment[ItemSlot.RightHand];
         const left = player.items.equipment[ItemSlot.LeftHand];
@@ -102,7 +102,7 @@ export class CosmeticBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const account = game.lobbyManager.getAccount(player.username);
         const allAvailable = game.subscriptionHelper.getSilverCosmetics(account);
@@ -140,7 +140,7 @@ export class CosmeticBehavior implements IAIBehavior {
       .setLogic(async ({ env, args }) => {
         const player = env?.player;
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
 

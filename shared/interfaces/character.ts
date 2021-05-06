@@ -1,6 +1,7 @@
 
-import { Alignment, Allegiance, BaseClass, CharacterCurrency, Direction, FOVVisibility, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
+import { Alignment, Allegiance, BaseClass, CharacterCurrency, FOVVisibility, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
 import { ICharacterItems } from './characteritems';
+import { Direction } from './direction';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
 import { INPC } from './npc';

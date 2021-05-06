@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer, ItemSlot, PhysicalAttackArgs } from '../../../../../interfaces';
+import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, ItemSlot, PhysicalAttackArgs } from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
 export class ThrowCommand extends SkillCommand {
@@ -17,7 +17,7 @@ export class ThrowCommand extends SkillCommand {
 
     if (target === player) return;
 
-    if (this.game.directionHelper.distFrom(player, target) > this.range()) return this.sendMessage(player, 'That target is too far away!');
+    if (distanceFrom(player, target) > this.range()) return this.sendMessage(player, 'That target is too far away!');
 
     const itemSlot = hand === 'left' ? ItemSlot.LeftHand : ItemSlot.RightHand;
     if (!player.items.equipment[itemSlot]) return this.sendMessage(player, 'You do not have anything to throw in that hand!');

@@ -42,7 +42,7 @@ export class RisanMinesScript implements IMapScript {
 
   private transformMiner(game: Game, npc: INPC) {
     npc.hp.current = -1;
-    npc.dir = Direction.Corpse;
+    npc.dir = Direction.Center;
     npc.noItemDrop = true;
     npc.noCorpseDrop = true;
     game.deathHelper.npcDie(npc as INPC);

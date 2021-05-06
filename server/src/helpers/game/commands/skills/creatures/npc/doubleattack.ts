@@ -1,5 +1,5 @@
 
-import { ICharacter } from '../../../../../../interfaces';
+import { distanceFrom, ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class DoubleAttack extends SpellCommand {
@@ -8,7 +8,7 @@ export class DoubleAttack extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) <= this.range(caster);
+    return distanceFrom(caster, target) <= this.range(caster);
   }
 
   override use(executor: ICharacter, target: ICharacter) {

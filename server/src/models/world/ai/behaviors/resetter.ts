@@ -1,7 +1,9 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IDialogChatAction, INPC, IResetterBehavior, ItemSlot } from '../../../../interfaces';
+import {
+  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
+  INPC, IResetterBehavior, ItemSlot } from '../../../../interfaces';
 
 export class ResetterBehavior implements IAIBehavior {
 
@@ -13,7 +15,7 @@ export class ResetterBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Closer move.';
+        if (distanceFrom(player, npc) > 0) return 'Closer move.';
 
         const message = `Greetings, ${player.name}! Can RESET weapons! Back to brand new.
         Irreversible. All upgrades gone.`;
@@ -41,7 +43,7 @@ export class ResetterBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Closer move.';
+        if (distanceFrom(player, npc) > 0) return 'Closer move.';
 
         const message = 'Are you sure? YES?';
 
@@ -68,7 +70,7 @@ export class ResetterBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Closer move.';
+        if (distanceFrom(player, npc) > 0) return 'Closer move.';
 
         const item = player.items.equipment[ItemSlot.RightHand];
         if (!item) return 'Not holding anything!';

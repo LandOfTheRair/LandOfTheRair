@@ -1,4 +1,4 @@
-import { DamageArgs, DamageClass, ICharacter, IStatusEffect, ItemSlot, Stat } from '../../../../../interfaces';
+import { DamageArgs, DamageClass, distanceFrom, ICharacter, IStatusEffect, ItemSlot, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class RageStance extends Effect {
@@ -49,7 +49,7 @@ export class RageStance extends Effect {
 
     // if we're on someone and we can viciously assault, give it a try
     if (this.game.traitHelper.rollTraitValue(char, 'ViciousAssault')
-    && this.game.directionHelper.distFrom(char, target) === 0) {
+    && distanceFrom(char, target) === 0) {
       this.game.spellManager.castSpell('Cleave', char, target);
     }
   }

@@ -1,6 +1,6 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { BaseClass, GameAction, GameServerResponse, IAIBehavior,
+import { BaseClass, distanceFrom, GameAction, GameServerResponse, IAIBehavior,
   IDialogChatAction,
   INPC, IPlayer, ItemClass, ItemSlot, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
 import { Player } from '../../../orm';
@@ -28,7 +28,7 @@ export class TrainerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You seem strange.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         if (!behavior.joinClass && player.baseClass !== BaseClass.Traveller) {
           env?.callbacks.emit({
@@ -95,7 +95,7 @@ export class TrainerBehavior implements IAIBehavior {
       .setLogic(async ({ env }) => {
         const player = env?.player;
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         if (!behavior.joinClass) return `I have no brotherhood for you, ${player.name}.`;
         if (player.baseClass !== BaseClass.Traveller) return 'You seem to have made a choice already.';
@@ -201,7 +201,7 @@ export class TrainerBehavior implements IAIBehavior {
       .setLogic(async ({ env }) => {
         const player: Player = env?.player;
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
         if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
@@ -244,7 +244,7 @@ export class TrainerBehavior implements IAIBehavior {
       .setLogic(async ({ env }) => {
         const player: Player = env?.player;
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         game.traitHelper.resetTraits(player);
 

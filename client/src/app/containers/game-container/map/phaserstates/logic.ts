@@ -6,19 +6,19 @@ import {
   basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
   IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType,
   spriteOffsetForDirection, Stat, TilesWithNoFOVUpdate, doesWallConnect,
-  getTerrainSetNumber, Direction } from '../../../../../interfaces';
+  getTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
+  positionIsZero, positionDistanceFromZero } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
 import Sprite = Phaser.GameObjects.Sprite;
-
 
 export class MapScene extends Phaser.Scene {
 
   // the current map in JSON form
   private allMapData: IMapData;
   public game: MapRenderGame;
-  private layers = {
+  private layers: Record<string, Phaser.GameObjects.Container> = {
     decor: null,
     densedecor: null,
     opaquedecor: null,
@@ -78,15 +78,13 @@ export class MapScene extends Phaser.Scene {
 
   private createLayers() {
     Object.keys(this.layers).forEach((layer, index) => {
-      const thisadd = this.add as any;
-      this.layers[layer] = thisadd.container();
+      this.layers[layer] = this.add.container();
       this.layers[layer].depth = index + 1;
     });
   }
 
   // create the fov / subfov sprites
   private createFOV() {
-
     // if the fov was made before, remove and re-create (we're changing maps)
     if (this.textures.exists('black')) {
       this.textures.remove('black');
@@ -96,13 +94,6 @@ export class MapScene extends Phaser.Scene {
     blackBitmapData.context.fillStyle = '#000';
     blackBitmapData.context.fillRect(0, 0, 64, 64);
     blackBitmapData.refresh();
-    /*
-    const debugBitmapData = this.g.add.bitmapData(64, 64);
-    debugBitmapData.ctx.beginPath();
-    debugBitmapData.ctx.rect(0, 0, 64, 64);
-    debugBitmapData.ctx.fillStyle = '#0f0';
-    debugBitmapData.ctx.fill();
-    */
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
@@ -141,7 +132,7 @@ export class MapScene extends Phaser.Scene {
       sprite.setFrame(newFrame);
     }
 
-    if (npc.dir === Direction.Corpse) {
+    if (npc.dir === Direction.Center) {
       sprite.alpha = 0;
     }
 
@@ -279,14 +270,6 @@ export class MapScene extends Phaser.Scene {
         fovSprite2.setScale(1);
         fovSprite2.x = 32 + 64 * (x + 4);
         fovSprite2.y = 32 + 64 * (y + 4);
-
-        /*
-        if(this.colyseus.game.debugFOVHide) {
-          fovSprite.alpha = 0;
-          fovSprite2.alpha = 0;
-          continue;
-        }
-        */
 
         if (!isPlayerInGame) {
           fovSprite.alpha = 1;
@@ -528,42 +511,38 @@ export class MapScene extends Phaser.Scene {
   private setupMapInteractions() {
     this.input.mouse.disableContextMenu();
 
-    this.input.on('pointerup', (pointer) => {
-      if (this.input.activePointer.rightButtonDown() || pointer.event.button === 2 || pointer.event.which === 3 || !this.player) return;
+    this.input.on('pointerup', (pointer: Phaser.Input.Pointer) => {
+      if (!this.player || pointer.rightButtonReleased()) return;
 
-      const xCoord = Math.floor(pointer.worldX / 64);
-      const yCoord = Math.floor(pointer.worldY / 64);
+      const clickedTilePostion = positionWorldXYToTile(pointer);
+      const playerToClickedOffset = positionSubtract(clickedTilePostion, this.player);
 
-      // adjust X/Y so they're relative to the player
-      const xDiff = xCoord - this.player.x;
-      const yDiff = yCoord - this.player.y;
-
-      const doMove = () => {
-        this.game.socketService.sendAction({ command: `~move`, args: `${xDiff} ${yDiff}` });
+      const doCommand = (command: string) => {
+        this.game.socketService.sendAction({ command, args: positionText(playerToClickedOffset) });
       };
-
-      const possibleInteractable = get(this.allMapData.layerData, [MapLayer.Interactables, xCoord, yCoord]);
-      if (possibleInteractable) {
-
-        if (['Fall', 'Teleport'].includes(possibleInteractable.type)) return doMove();
-
-        // check for a stairs interactable
-        if (['StairsUp', 'StairsDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
-          this.game.gameService.sendCommandString('~up');
-
-        // check for a climbable interactable
-        } else if (['ClimbUp', 'ClimbDown'].includes(possibleInteractable.type) && Math.abs(xDiff) === 0 && Math.abs(yDiff) === 0) {
-          this.game.gameService.sendCommandString('~climbup');
-
-        // check if it's within "interact" range for generic interactables
-        } else if (Math.abs(xDiff) < 2 && Math.abs(yDiff) < 2) {
-          this.game.gameService.sendCommandString(`!interact ${xDiff} ${yDiff}`); // interact is instant because it runs other commands, but fast, so this avoids double queuing
+      const interactTile = this.allMapData.layerData[MapLayer.Interactables]?.[clickedTilePostion.x]?.[clickedTilePostion.y];
+      if (interactTile) {
+        switch (interactTile.type) {
+          case 'Fall':
+          case 'Teleport':
+            return doCommand('~move');
+          case 'StairsUp':
+          case 'StairsDown':
+            if (!positionIsZero(playerToClickedOffset)) break;
+            return doCommand('~up');
+          case 'ClimbUp':
+          case 'ClimbDown':
+            if (!positionIsZero(playerToClickedOffset)) break;
+            return doCommand('~climbup');
+        }
+        // Check if tile is next to, or under the player
+        if (positionDistanceFromZero(playerToClickedOffset) <= 1) {
+          doCommand('!interact');
         }
       }
 
-      if (xDiff === 0 && yDiff === 0) return;
-
-      doMove();
+      if (positionIsZero(playerToClickedOffset)) return;
+      return doCommand('~move');
     });
   }
 
@@ -729,32 +708,34 @@ export class MapScene extends Phaser.Scene {
   }
 
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
-  private stealthUpdate(sprite, character: ICharacter) {
+  private stealthUpdate(sprite: Sprite, character: ICharacter) {
     if (character.hp.current <= 0) return;
 
     sprite.alpha = (character.totalStats?.[Stat.Stealth] ?? 0) ? 0.7 : 1;
   }
 
   // sprite updates
-  private updatePlayerSpriteData(sprite, player: IPlayer) {
+  private updatePlayerSpriteData(sprite: Sprite, player: IPlayer) {
 
     const playerFrame = basePlayerSprite(player) + spriteOffsetForDirection(player.dir);
     sprite.setFrame(playerFrame);
 
     this.updateSpriteSwimData(sprite, player);
     this.updateSpritePositionalData(sprite, player);
-
-    sprite.alpha = player.hp.current <= 0 ? 0 : 1;
+    if (player.hp.current <= 0) {
+      console.log('d');
+    }
+    sprite.setAlpha(player.hp.current <= 0 ? 0 : 1);
 
     this.stealthUpdate(sprite, player);
   }
 
-  private updateSpritePositionalData(sprite, char: ICharacter) {
+  private updateSpritePositionalData(sprite: Sprite, char: ICharacter) {
     sprite.x = this.convertPosition(char.x, true);
     sprite.y = this.convertPosition(char.y, true);
   }
 
-  private updateSpriteSwimData(sprite, char: ICharacter) {
+  private updateSpriteSwimData(sprite: Sprite, char: ICharacter) {
     const tileCheck = (char.y * this.allMapData.tiledJSON.width) + char.x;
     const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
     const isSwimming = !!fluid[tileCheck];
@@ -777,7 +758,7 @@ export class MapScene extends Phaser.Scene {
   private handleTruesight(canSeeTruesight: boolean) {
     this.specialRenders.truesight = canSeeTruesight;
 
-    this.layers.opaquedecor.each(sprite => {
+    this.layers.opaquedecor.each((sprite: Sprite) => {
       if (canSeeTruesight && TrueSightMap[sprite.frame.name]) {
         sprite.setTexture('Decor', +TrueSightMap[sprite.frame.name]);
       } else if (!canSeeTruesight && TrueSightMapReversed[sprite.frame.name]) {
@@ -1008,3 +989,4 @@ export class MapScene extends Phaser.Scene {
     return 336;
   }
 }
+

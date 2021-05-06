@@ -1,13 +1,13 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { DamageClass, ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
+import { DamageClass, directionDiaganalToWestEast, directionFromOffset,
+  ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
 import { CharacterHelper } from './CharacterHelper';
 import { CombatHelper } from './CombatHelper';
-import { DirectionHelper } from './DirectionHelper';
 import { InteractionHelper } from './InteractionHelper';
 import { PlayerHelper } from './PlayerHelper';
 
@@ -17,7 +17,6 @@ export class MovementHelper extends BaseService {
   constructor(
     private worldManager: WorldManager,
     private playerHelper: PlayerHelper,
-    private directionHelper: DirectionHelper,
     private characterHelper: CharacterHelper,
     private interactionHelper: InteractionHelper,
     private combatHelper: CombatHelper
@@ -26,6 +25,14 @@ export class MovementHelper extends BaseService {
   }
 
   init() {}
+
+  faceTowards(source: ICharacter, target: { x: number; y: number }) {
+    const xDiff = target.x - source.x;
+    const yDiff = target.y - source.y;
+    if (xDiff === 0 && yDiff === 0) return;
+    const direction = directionFromOffset(xDiff, yDiff);
+    source.dir = directionDiaganalToWestEast(direction);
+  }
 
   moveTowards(source: ICharacter, target: { x: number; y: number }): boolean {
     const xDiff = target.x - source.x;
@@ -89,16 +96,24 @@ export class MovementHelper extends BaseService {
 
     steps.forEach(step => {
       if (!wasSuccessfulWithNoInterruptions) return;
-      const nextX = character.x + step.x;
-      const nextY = character.y + step.y;
+      const nextX = clamp(character.x + step.x, 0, map.width);
+      const nextY = clamp(character.y + step.y, 0, map.height);
+
+      if (character.x === nextX && character.y === nextY) {
+        wasSuccessfulWithNoInterruptions = false;
+        return;
+      }
 
       const oldEventSource = map.getInteractableOfTypeAt(character.x, character.y, ObjectType.EventSource);
-      const newEventSource = map.getInteractableOfTypeAt(character.x + step.x, character.y + step.y, ObjectType.EventSource);
+      const newEventSource = map.getInteractableOfTypeAt(nextX, nextY, ObjectType.EventSource);
 
       // aquatic npcs can't leave the water
       if (!this.characterHelper.isPlayer(character)) {
         const nextTileFluid = map.getFluidAt(nextX, nextY);
-        if ((character as INPC).aquaticOnly && !nextTileFluid) return;
+        if ((character as INPC).aquaticOnly && !nextTileFluid) {
+          wasSuccessfulWithNoInterruptions = false;
+          return;
+        }
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);
@@ -111,7 +126,6 @@ export class MovementHelper extends BaseService {
 
             // if we bump into a door and can't open it: cannot move anymore
             if (!this.interactionHelper.tryToOpenDoor(character, possibleDenseObj)) {
-
               wasSuccessfulWithNoInterruptions = false;
               return;
             }
@@ -120,7 +134,6 @@ export class MovementHelper extends BaseService {
           } else {
             wasSuccessfulWithNoInterruptions = false;
             return;
-
           }
         }
 
@@ -130,6 +143,7 @@ export class MovementHelper extends BaseService {
         return;
       }
 
+      this.faceTowards(character, { x: nextX, y: nextY });
       character.x = nextX;
       character.y = nextY;
 
@@ -142,13 +156,6 @@ export class MovementHelper extends BaseService {
         this.game.worldManager.getMapStateForCharacter(character)?.handleEvent(newEventSource.properties.onEvent, character);
       }
     });
-
-    if (character.x < 0) character.x = 0;
-    if (character.x > map.width) character.x = map.width;
-    if (character.y < 0) character.y = 0;
-    if (character.y > map.height) character.y = map.height;
-
-    this.directionHelper.setDirBasedOnXYDiff(character, character.x - oldX, character.y - oldY);
 
     const trap = this.game.trapHelper.getTrapAt(character.map, character.x, character.y);
     if (trap && !this.game.traitHelper.traitLevel(character, 'GentleStep')) {

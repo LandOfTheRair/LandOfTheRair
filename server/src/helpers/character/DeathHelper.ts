@@ -71,7 +71,7 @@ export class DeathHelper extends BaseService {
     delete dead.spellChannel;
 
     this.game.effectHelper.clearEffectsForDeath(dead);
-    dead.dir = Direction.Corpse;
+    dead.dir = Direction.Center;
     dead.combatTicks = 0;
 
     const corpse = this.createCorpse(dead, killer);
@@ -92,7 +92,7 @@ export class DeathHelper extends BaseService {
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
     this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
-    dead.dir = Direction.Corpse;
+    dead.dir = Direction.Center;
 
     if (corpse) {
       dead.corpseRef = corpse;

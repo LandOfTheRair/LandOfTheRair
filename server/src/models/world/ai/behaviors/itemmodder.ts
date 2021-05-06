@@ -1,7 +1,9 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IDialogChatAction, IItemModderBehavior, INPC, ItemSlot } from '../../../../interfaces';
+import {
+  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
+  IItemModderBehavior, INPC, ItemSlot } from '../../../../interfaces';
 
 export class ItemModderBehavior implements IAIBehavior {
 
@@ -13,7 +15,7 @@ export class ItemModderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Greetings, ${player.name}! I am he who can tweak your items.
         Just tell me one of these things and I can tell you more: PRONE.`;
@@ -41,7 +43,7 @@ export class ItemModderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         const leftHand = player.items.equipment[ItemSlot.LeftHand];

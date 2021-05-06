@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IAXPSwapper, IDialogChatAction, INPC, IPlayer } from '../../../../interfaces';
+import { distanceFrom, GameServerResponse, IAIBehavior, IAXPSwapper, IDialogChatAction, INPC, IPlayer } from '../../../../interfaces';
 
 export class AXPSwapperBehavior implements IAIBehavior {
 
@@ -13,7 +13,7 @@ export class AXPSwapperBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
         if (player.level < 50) return 'You might want to come back when you get a little bit stronger.';
 
         const message = `Greetings, ${player.name}!
@@ -43,7 +43,7 @@ export class AXPSwapperBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
         if (player.level < 50) return 'You might want to come back when you get a little bit stronger.';
 
         player.gainingAXP = !player.gainingAXP;

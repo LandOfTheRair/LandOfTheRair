@@ -1,7 +1,9 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IBinderBehavior, IDialogChatAction, INPC, ItemClass, ItemSlot } from '../../../../interfaces';
+import {
+  distanceFrom, GameServerResponse, IAIBehavior, IBinderBehavior,
+  IDialogChatAction, INPC, ItemClass, ItemSlot } from '../../../../interfaces';
 
 export class BinderBehavior implements IAIBehavior {
 
@@ -13,7 +15,7 @@ export class BinderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Greetings, ${player.name}! I am he who can BIND items to thee.`;
 
@@ -40,7 +42,7 @@ export class BinderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         // Bind the item
         const item = player.items.equipment[ItemSlot.RightHand];

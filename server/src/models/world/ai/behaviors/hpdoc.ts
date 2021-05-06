@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { BaseClass, GameServerResponse, IAIBehavior,
+import { BaseClass, distanceFrom, GameServerResponse, IAIBehavior,
   IDialogChatAction, IHPDocBehavior, INPC, IPlayer, ItemSlot, Stat } from '../../../../interfaces';
 
 export class HPDocBehavior implements IAIBehavior {
@@ -36,7 +36,7 @@ export class HPDocBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Closer move.';
+        if (distanceFrom(player, npc) > 2) return 'Closer move.';
 
         const message = `${player.name}, greet! Am exiled scientist of Rys descent.
         Taught forbidden arts of increase life force. Interest? Hold gold, ask TEACH.`;
@@ -64,7 +64,7 @@ export class HPDocBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Closer move.';
+        if (distanceFrom(player, npc) > 2) return 'Closer move.';
 
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';

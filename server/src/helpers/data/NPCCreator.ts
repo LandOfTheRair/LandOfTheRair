@@ -346,7 +346,7 @@ export class NPCCreator extends BaseService {
           if (!shouldContinue) return retMessages;
         }
 
-        this.game.directionHelper.setDirRelativeTo(npc, env.player);
+        this.game.movementHelper.faceTowards(npc, env.player);
         this.game.worldManager.getMap(npc.map)?.state.triggerNPCUpdateInRadius(npc.x, npc.y);
 
         return retMessages;

@@ -1,5 +1,5 @@
 
-import { DamageClass, ICharacter } from '../../../../../../interfaces';
+import { DamageClass, distanceFrom, ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ShredTenPercent extends SpellCommand {
@@ -8,7 +8,7 @@ export class ShredTenPercent extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) <= this.range(caster)
+    return distanceFrom(caster, target) <= this.range(caster)
         && target.hp.current > target.hp.maximum * 0.4
         && !this.game.effectHelper.hasEffect(target, 'Dangerous');
   }

@@ -1,6 +1,6 @@
 
 
-import { ICharacter, Stat } from '../../../../../../../interfaces';
+import { distanceFrom, ICharacter, Stat } from '../../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../../models/macro';
 
 export class DedlaenSpiderImmobilize extends SpellCommand {
@@ -9,7 +9,7 @@ export class DedlaenSpiderImmobilize extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) === 0
+    return distanceFrom(caster, target) === 0
         && this.game.characterHelper.getStat(target, Stat.STR) < 25
         && !this.game.effectHelper.hasEffect(target, 'Immobilized')
         && !this.game.effectHelper.hasEffect(target, 'RecentlyImmobilized');

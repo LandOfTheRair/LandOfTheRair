@@ -4,7 +4,7 @@ import { uniq } from 'lodash';
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import { Currency, GameAction, GameServerResponse, IAIBehavior, IDialogChatAction, INPC,
-  IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem } from '../../../../interfaces';
+  IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem, distanceFrom } from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
 
@@ -45,7 +45,7 @@ export class VendorBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           action: GameAction.NPCActionShowVendor,
@@ -66,7 +66,7 @@ export class VendorBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold something in your right hand!';
@@ -102,7 +102,7 @@ export class VendorBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const itemClass = args['itemclass*'];
 

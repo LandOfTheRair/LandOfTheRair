@@ -1,7 +1,7 @@
 
 import { random } from 'lodash';
 
-import { DamageClass, ICharacter, Stat } from '../../../../../../interfaces';
+import { DamageClass, distanceFrom, ICharacter, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class PoisonBiteStrong extends SpellCommand {
@@ -10,7 +10,7 @@ export class PoisonBiteStrong extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) === 0
+    return distanceFrom(caster, target) === 0
         && !this.game.effectHelper.hasEffect(target, 'Poison');
   }
 

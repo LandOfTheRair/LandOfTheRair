@@ -11,7 +11,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
-  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction } from '../../interfaces';
+  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -85,7 +85,7 @@ export class DialogActionHelper extends BaseService {
   private handleChatAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
-    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+    if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
@@ -236,7 +236,7 @@ export class DialogActionHelper extends BaseService {
 
       npcCount++;
       npcRef.hp.current = -1;
-      npcRef.dir = Direction.Corpse;
+      npcRef.dir = Direction.Center;
       this.game.deathHelper.npcDie(npcRef as INPC);
     });
 
@@ -448,7 +448,7 @@ export class DialogActionHelper extends BaseService {
   private handleCheckDailyQuestAction(action: IDialogCheckDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
-    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+    if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
@@ -497,7 +497,7 @@ export class DialogActionHelper extends BaseService {
   private handleCheckQuestAction(action: IDialogCheckQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
-    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+    if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
@@ -536,7 +536,7 @@ export class DialogActionHelper extends BaseService {
   private handleGiveDailyQuestAction(action: IDialogGiveDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
-    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+    if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
@@ -572,7 +572,7 @@ export class DialogActionHelper extends BaseService {
   private handleGiveQuestAction(action: IDialogGiveQuestAction, npc: INPC, player: IPlayer): IActionResult {
 
     const maxDistance = action.maxDistance ?? 3;
-    if (this.game.directionHelper.distFrom(player, npc) > maxDistance) {
+    if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 

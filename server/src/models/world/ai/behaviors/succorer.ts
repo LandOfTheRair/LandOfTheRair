@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, INPC, IPlayer, ISuccorerBehavior, ItemSlot } from '../../../../interfaces';
+import { distanceFrom, GameServerResponse, IAIBehavior, INPC, IPlayer, ISuccorerBehavior, ItemSlot } from '../../../../interfaces';
 
 export class SuccorerBehavior implements IAIBehavior {
 
@@ -16,7 +16,7 @@ export class SuccorerBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'You are too far away from the tree.';
+        if (distanceFrom(player, npc) > 0) return 'You are too far away from the tree.';
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
@@ -35,7 +35,7 @@ export class SuccorerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'You are too far away from the tree.';
+        if (distanceFrom(player, npc) > 0) return 'You are too far away from the tree.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (rightHand) return 'Your right hand cannot pick a fruit!';
