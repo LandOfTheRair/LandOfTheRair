@@ -196,6 +196,7 @@ export class MenuComponent implements OnInit {
 
   // show the warning or not, default yes, unsaved
   public showResolutionWarning = true;
+  public showMismatchWarning = true;
 
   // show the message or not, default no, unsaved
   public showDailyResetMessage: boolean;
@@ -254,6 +255,10 @@ export class MenuComponent implements OnInit {
 
   public hideResolution() {
     this.showResolutionWarning = false;
+  }
+
+  public hideMismatch() {
+    this.showMismatchWarning = false;
   }
 
 }
