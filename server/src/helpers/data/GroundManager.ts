@@ -63,7 +63,18 @@ export class GroundManager extends BaseService {
   // load the ground from the db and sort it out
   public async loadGround() {
     const grounds = await this.game.groundDB.loadAllGrounds();
+    const now = Date.now();
     grounds.forEach(groundEntity => {
+
+      if (groundEntity.savedAt) {
+        const tickIncrease = Math.floor((now - groundEntity.savedAt) / 1000);
+        groundEntity.spawners.forEach(spawner => {
+          if (!spawner.currentTick) return;
+
+          spawner.currentTick += tickIncrease;
+        });
+      }
+
       this.groundEntities[groundEntity.map] = new Ground();
       this.groundEntities[groundEntity.map]._id = groundEntity._id;
       this.groundEntities[groundEntity.map].partyName = groundEntity.partyName;

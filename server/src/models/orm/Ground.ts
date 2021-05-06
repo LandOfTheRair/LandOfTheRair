@@ -11,5 +11,6 @@ export class Ground extends BaseEntity {
   @Property() spawners: ISerializableSpawner[];
   @Property() partyName?: string;
   @Property() treasureChests: Record<string, boolean>;
+  @Property() savedAt: number;
 
 }

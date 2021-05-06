@@ -39,7 +39,10 @@ export class GroundDB extends BaseService {
 
     const massOp = groundColl.initializeUnorderedBulkOp();
     grounds.forEach(ground => {
-      massOp.find({ map: ground.map }).upsert().updateOne({ $set: { ground: ground.ground, spawners: ground.spawners } });
+      massOp
+        .find({ map: ground.map })
+        .upsert()
+        .updateOne({ $set: { ground: ground.ground, spawners: ground.spawners, savedAt: Date.now() } });
     });
 
     return massOp.execute();
