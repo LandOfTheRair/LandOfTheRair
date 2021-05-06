@@ -52,6 +52,7 @@ export interface PhysicalAttackArgs {
   backstabIgnoreRange?: boolean;
   attackerName?: string;
   damageClass?: DamageClass;
+  numAttacks?: number;
 }
 
 export interface PhysicalAttackReturn {

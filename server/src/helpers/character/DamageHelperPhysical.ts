@@ -1068,7 +1068,7 @@ export class DamageHelperPhysical extends BaseService {
     if (totalDamageDealt <= 0) return { noDamage: true };
 
     if (isAttackerPlayer && this.game.characterHelper.canGainSkillFromTarget(defender)) {
-      this.game.playerHelper.gainCurrentSkills(attacker as IPlayer, 1);
+      this.game.playerHelper.gainCurrentSkills(attacker as IPlayer, 1 / (args.numAttacks ?? 1));
     }
 
     return { hit: true, damage: totalDamageDealt, damageType: args.damageClass };
