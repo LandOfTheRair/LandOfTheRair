@@ -15,9 +15,6 @@ export class DeathHelper extends BaseService {
   // revive the player from their death
   public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number; y?: number; map?: string; shouldRot?: boolean } = {}): void {
 
-    // don't revive if they have more hp
-    if (player.hp.current > 0) return;
-
     // store old pos to look up corpse
     const oldX = player.x;
     const oldY = player.y;
@@ -25,12 +22,20 @@ export class DeathHelper extends BaseService {
 
     // remove our corpse if we have one
     if (player.corpseRef) {
-      const state = this.game.worldManager.getMap(oldMap)?.state;
-      state?.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
+      const oldMapState = this.game.worldManager.getMap(oldMap)?.state;
+      oldMapState?.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
 
+      if (x && y && map) {
+        const newMapState = this.game.worldManager.getMap(map)?.state;
+        newMapState?.removeItemFromGround(x, y, ItemClass.Corpse, player.corpseRef.uuid);
+      }
+
+      this.game.corpseManager.removeCorpse(player.corpseRef);
       this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
       delete player.corpseRef;
     }
+
+    if (!this.game.characterHelper.isDead(player)) return;
 
     player.hp.current = 1;
     player.dir = Direction.South;
