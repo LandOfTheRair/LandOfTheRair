@@ -6,7 +6,7 @@ import { DefaultAIBehavior } from './default';
 
 export class DedlaenEscortAI extends DefaultAIBehavior {
 
-  private following: IPlayer;
+  private following: IPlayer | undefined;
 
   override tick(): void {
     const npc = this.npc;
@@ -43,7 +43,7 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
     }
 
     if (this.game.diceRollerHelper.OneInX(30)) {
-      const message = sample(responses);
+      const message = sample(responses) as string;
       this.game.messageHelper.sendSimpleMessage(npc, message);
     }
 

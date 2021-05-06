@@ -223,7 +223,7 @@ export class NPCCreator extends BaseService {
     // if the npc has a static name
     if (npc.name) {
       if (this.game.diceRollerHelper.XInOneHundred(99)) return npc.name[0];
-      return sample(npc.name);
+      return sample(npc.name) ?? 'unknown';
     }
 
     switch (npc.monsterClass) {
@@ -322,7 +322,7 @@ export class NPCCreator extends BaseService {
   private chooseSpriteFrom(choices: number|number[]) {
     if (isNumber(choices)) return choices;
     if (!choices || !(choices as number[]).length) return 0;
-    return sample(choices);
+    return sample(choices) ?? 0;
   }
 
   private createNPCDialogParser(npc: INPC, npcDef: INPCDefinition): Parser {

@@ -361,7 +361,7 @@ export class Spawner {
 
   public getRandomPath(): string {
     if (!this.hasPaths) return '';
-    return sample(this.paths);
+    return sample(this.paths) ?? '';
   }
 
   private removeSelf() {

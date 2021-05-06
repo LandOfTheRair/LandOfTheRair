@@ -1,7 +1,7 @@
 
 import { sample } from 'lodash';
 
-import { ICharacter, SpellCastArgs } from '../../../../interfaces';
+import { ICharacter, IStatusEffect, SpellCastArgs } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Dispel extends Spell {
@@ -10,12 +10,14 @@ export class Dispel extends Spell {
     if (!target) return;
 
     const effects = this.game.effectHelper.dispellableEffects(target);
-    if (caster && effects.length === 0) {
-      this.sendMessage(caster, { message: `${target.name} has no dispellable effects.` });
+    if (effects.length === 0) {
+      if (caster) {
+        this.sendMessage(caster, { message: `${target.name} has no dispellable effects.` });
+      }
       return;
     }
 
-    const lostEffect = sample(effects);
+    const lostEffect = sample(effects) as IStatusEffect;
     this.game.effectHelper.removeEffect(target, lostEffect);
 
     if (caster) {

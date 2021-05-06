@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { BaseClass, ICharacter, IPlayer, Skill, Stat } from '../../interfaces';
+import { BaseClass, ICharacter, IPlayer, ISimpleItem, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -92,12 +92,13 @@ export class StealHelper extends BaseService {
       const handName = this.game.characterHelper.getEmptyHand(char);
       if (!handName) return;
 
-      const item = sample(target.items.sack.items);
-      this.game.inventoryHelper.removeItemFromSack(target, item);
+      const item = sample(target.items.sack.items) as ISimpleItem;
+      const itemDef = this.game.itemHelper.getItemDefinition(item.name);
+      this.game.inventoryHelper.removeItemsFromSackByUUID(target, [item.uuid]);
 
       this.game.characterHelper.setEquipmentSlot(char, handName, item);
 
-      this.sendMessage(char, target, `You stole a ${item.itemClass.toLowerCase()} from ${target.name}!`, true);
+      this.sendMessage(char, target, `You stole a ${itemDef.itemClass.toLowerCase()} from ${target.name}!`, true);
 
     }
 

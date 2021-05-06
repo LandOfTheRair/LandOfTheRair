@@ -66,6 +66,7 @@
     "@angular/cli": "~11.0.2",
     "@angular/compiler-cli": "~11.0.2",
     "@angular/language-service": "~11.0.2",
+    "@types/lodash": "^4.14.168",
     "@types/node": "~8.9.4",
     "@typescript-eslint/eslint-plugin": "4.3.0",
     "@typescript-eslint/parser": "4.3.0",

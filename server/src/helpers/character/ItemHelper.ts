@@ -313,7 +313,7 @@ export class ItemHelper extends BaseService {
       }
 
       const { potency, extra, duration } = useEffect;
-      const extraData = cloneDeep(extra || {});
+      const extraData = cloneDeep(extra || {}) as any;
       extraData.potency = potency;
 
       this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration, extra: extraData } });

@@ -89,7 +89,7 @@ export class Database extends BaseService {
     });
   }
 
-  public getPersistObject(entity: BaseEntity) {
+  public getPersistObject(entity: BaseEntity): any {
     return MetadataStorage.getPersistObject(entity);
   }
 
