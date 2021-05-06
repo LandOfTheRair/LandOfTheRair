@@ -5,7 +5,7 @@ import { IWebsocketCommandHandler } from '../../interfaces/internal';
 
 import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
-  DamageHelperPhysical, DeathHelper, DialogActionHelper, DirectionHelper, EffectHelper, InteractionHelper,
+  DamageHelperPhysical, DeathHelper, DialogActionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
   QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, TrapHelper, VisibilityHelper } from '../character';
@@ -71,7 +71,6 @@ export class Game {
     public holidayHelper: HolidayHelper,
     public movementHelper: MovementHelper,
     public visibilityHelper: VisibilityHelper,
-    public directionHelper: DirectionHelper,
     public staticTextHelper: StaticTextHelper,
     public interactionHelper: InteractionHelper,
     public calculatorHelper: CalculatorHelper,
@@ -122,7 +121,7 @@ export class Game {
       'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',
       'damageHelperOnesided', 'damageHelperMagic', 'damageHelperPhysical', 'combatHelper', 'questHelper',
       'diceRollerHelper', 'lootHelper', 'holidayHelper',
-      'movementHelper', 'visibilityHelper', 'directionHelper', 'staticTextHelper', 'interactionHelper',
+      'movementHelper', 'visibilityHelper', 'staticTextHelper', 'interactionHelper',
       'calculatorHelper',
       'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
       'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',

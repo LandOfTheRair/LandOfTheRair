@@ -1,5 +1,5 @@
 import { Game } from '../../helpers';
-import { BaseClass, Direction, ICharacter, IItemEffect,
+import { BaseClass, Direction, directionFromText, directionToOffset, distanceFrom, ICharacter, IItemEffect,
   IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect, Stat } from '../../interfaces';
 import { Player } from '../orm';
 
@@ -55,7 +55,7 @@ export abstract class SkillCommand extends MacroCommand {
   canUse(user: ICharacter, target: ICharacter): boolean {
     if (user.mp.current < this.mpCost(user)) return false;
     if (user.hp.current < this.hpCost(user)) return false;
-    if (this.game.directionHelper.distFrom(user, target) > this.range(user)) return false;
+    if (distanceFrom(user, target) > this.range(user)) return false;
     return true;
   }
 
@@ -110,16 +110,18 @@ export abstract class SkillCommand extends MacroCommand {
         // you can specify a max of 4 directions
         if (i >= 4) continue;
 
-        const { x, y } = this.game.directionHelper.getXYFromDir(splitArgs[i] as Direction);
+        const direction = directionFromText(splitArgs[i]) ?? Direction.Center;
+        if (direction === Direction.Center) break;
+        const offset = directionToOffset(direction);
 
         const map = this.game.worldManager.getMap(user.map)?.map;
         if (!map) continue;
 
         // if you specify a wall tile, your cast is halted
-        if (map.checkIfActualWallAt(curX + x, curY + y)) break;
+        if (map.checkIfActualWallAt(curX + offset.x, curY + offset.y)) break;
 
-        curX += x;
-        curY += y;
+        curX += offset.x;
+        curY += offset.y;
       }
 
       if (curX !== user.x || curY !== user.y) {
@@ -140,7 +142,7 @@ export abstract class SkillCommand extends MacroCommand {
       return null;
     }
 
-    if (this.game.directionHelper.distFrom(target, user) > range) {
+    if (distanceFrom(target, user) > range) {
       this.sendMessage(user, 'That target is too far away!');
       return null;
     }

@@ -1,6 +1,6 @@
 
 
-import { DamageClass, ICharacter, Stat } from '../../../../../../interfaces';
+import { DamageClass, distanceFrom, ICharacter, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ChillBiteWeak extends SpellCommand {
@@ -9,7 +9,7 @@ export class ChillBiteWeak extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) === 0
+    return distanceFrom(caster, target) === 0
         && !this.game.effectHelper.hasEffect(target, 'Frosted')
         && !this.game.effectHelper.hasEffect(target, 'RecentlyFrosted');
   }

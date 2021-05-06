@@ -1,7 +1,7 @@
 
 import { random, sample } from 'lodash';
 
-import { Hostility, IPlayer, Stat } from '../../../interfaces';
+import { distanceFrom, Hostility, IPlayer, Stat } from '../../../interfaces';
 import { DefaultAIBehavior } from './default';
 
 export class DedlaenEscortAI extends DefaultAIBehavior {
@@ -19,9 +19,6 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
     const target = sample(nearbyPlayers ?? []);
     this.following = target;
 
-    let diffX = 0;
-    let diffY = 0;
-
     const responses: string[] = [];
     const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
 
@@ -35,13 +32,8 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
       ]);
 
     } else {
-      const oldX = npc.x;
-      const oldY = npc.y;
 
       this.moveRandomly(random(0, moveRate));
-
-      diffX = npc.x - oldX;
-      diffY = npc.y - oldY;
 
       responses.push(...[
         'Someone! Help! We\'re under siege here!',
@@ -55,10 +47,8 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
       this.game.messageHelper.sendSimpleMessage(npc, message);
     }
 
-    if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
-
     const startPos = this.startLoc || this.spawner.pos;
-    const distFrom = this.game.directionHelper.distFrom(npc, startPos);
+    const distFrom = distanceFrom(npc, startPos);
     if (!this.following && distFrom > 5) {
       this.sendLeashMessage();
       npc.x = startPos.x;

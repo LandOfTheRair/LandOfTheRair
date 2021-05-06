@@ -1,6 +1,7 @@
 
 import { Injectable } from 'injection-js';
-import { getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize, IParty, IPartyMember, IPlayer } from '../../interfaces';
+import { distanceFrom, getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize,
+  IParty, IPartyMember, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -169,13 +170,13 @@ export class PartyHelper extends BaseService {
     if (!party) return [];
 
     return party.members
-      .map(x => this.game.playerManager.getPlayerByUsername(x))
-      .filter(x => {
-        if (!x) return false;
-        if (player.map !== x.map) return false;
-        if (player.username === x.username) return false;
+      .map(partyMemberUsername => this.game.playerManager.getPlayerByUsername(partyMemberUsername))
+      .filter(partyPlayer => {
+        if (!partyPlayer) return false;
+        if (player.map !== partyPlayer.map) return false;
+        if (player.username === partyPlayer.username) return false;
 
-        return this.game.directionHelper.distFrom(player, x) < 7;
+        return distanceFrom(player, partyPlayer) < 7;
       }) as IPlayer[];
   }
 

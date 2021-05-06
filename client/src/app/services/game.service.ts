@@ -3,7 +3,7 @@ import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { startCase } from 'lodash';
 
-import { Alignment, Allegiance, ChatMode, GameServerEvent, Hostility, IAccount, ICharacter,
+import { Alignment, Allegiance, ChatMode, directionFromOffset, directionToSymbol, GameServerEvent, Hostility, IAccount, ICharacter,
   ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo, Stat } from '../../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
 
@@ -140,19 +140,8 @@ export class GameService {
 
     const diffX = to.x - from.x;
     const diffY = to.y - from.y;
-
-    if (diffX < 0 && diffY > 0) return '↙';
-    if (diffX > 0 && diffY < 0) return '↗';
-    if (diffX > 0 && diffY > 0) return '↘';
-    if (diffX < 0 && diffY < 0) return '↖';
-
-    if (diffX > 0)              return '→';
-    if (diffY > 0)              return '↓';
-
-    if (diffX < 0)              return '←';
-    if (diffY < 0)              return '↑';
-
-    return '✧';
+    const dir = directionFromOffset(diffX, diffY);
+    return directionToSymbol(dir);
   }
 
   // check the hostility level between two characters

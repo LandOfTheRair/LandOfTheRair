@@ -1,4 +1,4 @@
-import { Direction, IMacroCommandArgs, IPlayer, Stat } from '../../../../interfaces';
+import { Direction, directionFromText, directionToOffset, IMacroCommandArgs, IPlayer, Stat } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class DirectionalMovement extends MacroCommand {
@@ -6,17 +6,22 @@ export class DirectionalMovement extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const totalMoves: Direction[] = [];
-    totalMoves.push(args.calledAlias as Direction);
-
+    const directionCommands = new Array<string>();
+    directionCommands.push(args.calledAlias);
     if (args.stringArgs) {
-      const additionalMoves = args.stringArgs.split(' ');
-      additionalMoves.forEach(element => totalMoves.push(element as Direction));
+      args.stringArgs.split(' ').forEach((command) => directionCommands.push(command));
     }
 
-    totalMoves.slice(0, this.game.characterHelper.getStat(player, Stat.Move)).forEach(element => {
-      const { x, y } = this.game.directionHelper.getXYFromDir( element as Direction);
-      this.game.movementHelper.moveWithPathfinding(player, { xDiff: x, yDiff: y });
+    const maxMoves = this.game.characterHelper.getStat(player, Stat.Move);
+
+    const directions = directionCommands
+      .map(dirText => directionFromText(dirText) ?? Direction.Center)
+      .filter(dir => dir !== Direction.Center)
+      .slice(0, maxMoves);
+
+    directions.forEach(dir => {
+      const offset = directionToOffset(dir);
+      this.game.movementHelper.moveWithPathfinding(player, { xDiff: offset.x, yDiff: offset.y });
     });
   }
 }

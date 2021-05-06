@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../../../interfaces';
+import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Mug extends SpellCommand {
@@ -21,7 +21,7 @@ export class Mug extends SpellCommand {
       if (twoHanded) return false;
     }
 
-    return this.game.directionHelper.distFrom(char, target) > 0
+    return distanceFrom(char, target) > 0
         && (this.game.currencyHelper.getCurrency(char) > 0 || target.items.sack.items.length > 0);
   }
 
@@ -42,7 +42,7 @@ export class Mug extends SpellCommand {
 
     this.game.movementHelper.moveTowards(player, target);
 
-    if (this.game.directionHelper.distFrom(player, target) > 0) return this.sendMessage(player, 'That target is too far away!');
+    if (distanceFrom(player, target) > 0) return this.sendMessage(player, 'That target is too far away!');
 
     this.use(player, target);
   }

@@ -1,4 +1,4 @@
-import { ICharacter, SpellCastArgs } from '../../../../interfaces';
+import { distanceFrom, ICharacter, SpellCastArgs } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Augury extends Spell {
@@ -21,7 +21,7 @@ export class Augury extends Spell {
       return this.sendMessage(caster, { message: 'The birds fly around, confused at your query. ' });
     }
 
-    const dist = this.game.directionHelper.distFrom(caster, foundNPC);
+    const dist = distanceFrom(caster, foundNPC);
 
     let baseString = `The birds have found a creature called ${foundNPC.name}.`;
     baseString = `${baseString} ${foundNPC.name} is ${this.distanceToMeasurement(dist)}.`;

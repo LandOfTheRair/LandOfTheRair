@@ -1,4 +1,4 @@
-import { ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
+import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
 export class KickCommand extends SkillCommand {
@@ -20,7 +20,7 @@ export class KickCommand extends SkillCommand {
 
     if (target === player) return;
 
-    if (this.game.directionHelper.distFrom(player, target) > range) return this.sendMessage(player, 'That target is too far away!');
+    if (distanceFrom(player, target) > range) return this.sendMessage(player, 'That target is too far away!');
 
     this.use(player, target);
   }

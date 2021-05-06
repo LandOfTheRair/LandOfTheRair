@@ -1,4 +1,4 @@
-import { DamageArgs, DamageClass, ICharacter, IStatusEffect, ItemSlot, Stat } from '../../../../../interfaces';
+import { DamageArgs, DamageClass, distanceFrom, ICharacter, IStatusEffect, ItemSlot, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class ParryStance extends Effect {
@@ -49,7 +49,7 @@ export class ParryStance extends Effect {
 
     // if we're on someone and we can riposte, give it a try
     if (this.game.diceRollerHelper.XInOneHundred(this.game.traitHelper.traitLevelValue(char, 'Riposte'))
-    && this.game.directionHelper.distFrom(char, attacker) === 0) {
+    && distanceFrom(char, attacker) === 0) {
       this.game.combatHelper.physicalAttack(char, attacker);
     }
 

@@ -1,7 +1,7 @@
 
 import { random, sample } from 'lodash';
 
-import { DamageClass, ICharacter, IPlayer, Stat } from '../../../../../../interfaces';
+import { DamageClass, distanceFrom, ICharacter, IPlayer, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class SkillSuckWeak extends SpellCommand {
@@ -10,7 +10,7 @@ export class SkillSuckWeak extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return this.game.directionHelper.distFrom(caster, target) === 0;
+    return distanceFrom(caster, target) === 0;
   }
 
   override use(executor: ICharacter, target: ICharacter) {

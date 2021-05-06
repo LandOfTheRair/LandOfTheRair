@@ -1,4 +1,4 @@
-import { Currency, EquipHash, IGroundItem, IMacroCommandArgs,
+import { Currency, distanceFrom, EquipHash, IGroundItem, IMacroCommandArgs,
   INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, ObjectType } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 import { VendorBehavior } from '../../../../../models/world/ai/behaviors';
@@ -144,7 +144,7 @@ export class MoveItems extends MacroCommand {
         return false;
       }
 
-      if (this.game.directionHelper.distFrom(player, npc) > 2) {
+      if (distanceFrom(player, npc) > 2) {
         this.sendMessage(player, 'You are too far away from that person!');
         return false;
       }
@@ -176,7 +176,7 @@ export class MoveItems extends MacroCommand {
         return false;
       }
 
-      if (this.game.directionHelper.distFrom(player, npc) > 2) {
+      if (distanceFrom(player, npc) > 2) {
         this.sendMessage(player, 'You are too far away from that person!');
         return false;
       }
@@ -1211,7 +1211,7 @@ export class MoveItems extends MacroCommand {
       return;
     }
 
-    if (this.game.directionHelper.distFrom(player, npc) > 2) {
+    if (distanceFrom(player, npc) > 2) {
       this.sendMessage(player, 'You are too far away from that person!');
       return;
     }

@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior,
+import { distanceFrom, EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior,
   INPC, IPlayer, ItemClass, ItemSlot, ShieldClasses, WeaponClasses } from '../../../../interfaces';
 
 export class EncrusterBehavior implements IAIBehavior {
@@ -19,7 +19,7 @@ export class EncrusterBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 1) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 1) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
@@ -101,7 +101,7 @@ export class EncrusterBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 1) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 1) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         const leftHand = player.items.equipment[ItemSlot.LeftHand];

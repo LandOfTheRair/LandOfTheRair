@@ -1,7 +1,7 @@
 
 import { sample } from 'lodash';
 
-import { ICharacter } from '../../../../../../../interfaces';
+import { distanceFrom, ICharacter } from '../../../../../../../interfaces';
 import { Player } from '../../../../../../../models';
 import { SpellCommand } from '../../../../../../../models/macro';
 
@@ -11,7 +11,7 @@ export class DedlaenCryptThingPunch extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(char: ICharacter, target: ICharacter) {
-    return this.game.directionHelper.distFrom(char, target) === 0;
+    return distanceFrom(char, target) === 0;
   }
 
   override use(executor: ICharacter, target: ICharacter) {

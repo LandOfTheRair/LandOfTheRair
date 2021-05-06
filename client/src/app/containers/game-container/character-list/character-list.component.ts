@@ -6,7 +6,7 @@ import { get, isBoolean, isNumber, isUndefined, maxBy, sortBy } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Direction, distFrom, FOVVisibility, GameServerResponse,
+import { Direction, distanceFrom, FOVVisibility, GameServerResponse,
   Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState, ViewCharacterEquipment } from '../../../../stores';
 
@@ -76,7 +76,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     let unsorted: any[] = allCharacters.map(testChar => {
       if ((testChar as IPlayer).username === this.player.username) return false;
-      if (testChar.dir === Direction.Corpse || testChar.hp.current === 0) return false;
+      if (testChar.dir === Direction.Center || testChar.hp.current === 0) return false;
 
       const diffX = testChar.x - this.player.x;
       const diffY = testChar.y - this.player.y;
@@ -144,7 +144,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     // sort them by distance
     if (isBoolean(shouldSortDistance)) {
-      unsorted = sortBy(unsorted, testChar => distFrom(this.player, testChar));
+      unsorted = sortBy(unsorted, testChar => distanceFrom(this.player, testChar));
 
       if (!shouldSortDistance) unsorted = unsorted.reverse();
     }

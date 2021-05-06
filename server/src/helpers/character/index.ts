@@ -9,7 +9,6 @@ export * from './DamageHelperOnesided';
 export * from './DamageHelperPhysical';
 export * from './DeathHelper';
 export * from './DialogActionHelper';
-export * from './DirectionHelper';
 export * from './EffectHelper';
 export * from './InventoryHelper';
 export * from './InteractionHelper';

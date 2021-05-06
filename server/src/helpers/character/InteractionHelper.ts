@@ -2,7 +2,9 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
-import { BaseClass, ICharacter, IPlayer, ItemClass, ItemSlot, Skill, SoundEffect } from '../../interfaces';
+import {
+  BaseClass, distanceFrom, ICharacter, IPlayer, ItemClass,
+  ItemSlot, positionWorldXYToTile, Skill, SoundEffect } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -17,7 +19,7 @@ export class InteractionHelper extends BaseService {
 
     if (requireEventToOpen) return false;
 
-    if (this.game.directionHelper.distFromMapObject(character, door) > 1) {
+    if (distanceFrom(character, positionWorldXYToTile(door)) > 1) {
       this.game.messageHelper.sendSimpleMessage(character, 'You can\'t reach the door!');
       return false;
     }

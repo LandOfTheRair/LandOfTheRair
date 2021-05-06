@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, INPC, IPlayer, ItemSlot, IUpgraderBehavior } from '../../../../interfaces';
+import { distanceFrom, GameServerResponse, IAIBehavior, INPC, IPlayer, ItemSlot, IUpgraderBehavior } from '../../../../interfaces';
 
 export class UpgraderBehavior implements IAIBehavior {
 
@@ -13,7 +13,7 @@ export class UpgraderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
@@ -32,7 +32,7 @@ export class UpgraderBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'Your must hold an item to upgrade in your right hand!';

@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
 import { Allegiance, ArmorClass, BaseClass, CombatEffect, DamageArgs,
-  DamageClass, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
+  DamageClass, distanceFrom, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
   Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -86,7 +86,7 @@ export class DamageHelperPhysical extends BaseService {
       this.handlePhysicalAttack(attacker, defender, args);
     }
 
-    this.game.directionHelper.setDirRelativeTo(attacker, defender);
+    this.game.movementHelper.faceTowards(attacker, defender);
 
     return res;
   }
@@ -426,7 +426,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     let attackDistance = attackRange ? attackRange : 0;
-    const distBetween = this.game.directionHelper.distFrom(attacker, defender);
+    const distBetween = distanceFrom(attacker, defender);
 
     if (isBackstab || isMug) {
       attackDistance = 0;

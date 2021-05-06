@@ -2,7 +2,9 @@ import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, GameServerResponse, IAIBehavior, INPC, IPeddlerBehavior, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
+import {
+  Currency, distanceFrom, GameServerResponse, IAIBehavior,
+  INPC, IPeddlerBehavior, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
 
 export class PeddlerBehavior implements IAIBehavior {
 
@@ -37,7 +39,7 @@ export class PeddlerBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
@@ -56,7 +58,7 @@ export class PeddlerBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         if (player.items.equipment[ItemSlot.RightHand]) return 'Empty your right hand first!';
         if (!game.currencyHelper.hasCurrency(player, peddleCost, peddleCurrency)) {

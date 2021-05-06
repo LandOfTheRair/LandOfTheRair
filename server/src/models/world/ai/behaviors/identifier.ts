@@ -2,7 +2,7 @@ import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, descTextFor, GameServerResponse, IAIBehavior,
+import { Currency, descTextFor, distanceFrom, GameServerResponse, IAIBehavior,
   IIdentifierBehavior, INPC, IPlayer, ItemSlot, MessageType } from '../../../../interfaces';
 
 export class IdentifierBehavior implements IAIBehavior {
@@ -32,7 +32,7 @@ export class IdentifierBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
@@ -52,7 +52,7 @@ export class IdentifierBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';

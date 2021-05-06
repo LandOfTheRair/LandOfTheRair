@@ -1,7 +1,9 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { GameServerResponse, IAIBehavior, IDialogChatAction, INPC, IPlayer, ItemClass, ItemSlot } from '../../../../interfaces';
+import {
+  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
+  INPC, IPlayer, ItemClass, ItemSlot } from '../../../../interfaces';
 
 export class FurUpgraderBehavior implements IAIBehavior {
 
@@ -13,7 +15,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Brrr! Sure is cold around here.
         Oh, don't mind me, I just look like a yeti because I took one of their furs and got a bit too much.
@@ -42,7 +44,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Shlep! Sure can do that.
         Only thing is, it counts towards your armor's enchantment limit.
@@ -72,7 +74,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'Your must hold armor in your right hand!';

@@ -2,7 +2,7 @@
 import { clamp, maxBy, random, sample, shuffle, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
-import { Direction, Hostility, IAI, ICharacter, INPC,
+import { Direction, directionFromText, directionToOffset, distanceFrom, Hostility, IAI, ICharacter, INPC,
   ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
 import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
@@ -129,9 +129,6 @@ export class DefaultAIBehavior implements IAI {
 
     const npc = this.npc;
 
-    let diffX = 0;
-    let diffY = 0;
-
     const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
     let numSteps = random(0, Math.min(moveRate, this.path ? this.path.length : moveRate));
 
@@ -203,9 +200,7 @@ export class DefaultAIBehavior implements IAI {
 
         // either move towards target
       } else {
-        const { xChange, yChange } = this.moveTowards(this.highestAgro, moveRate);
-        diffX = xChange;
-        diffY = yChange;
+        this.moveTowards(this.highestAgro, moveRate);
       }
 
     // move along path
@@ -234,8 +229,6 @@ export class DefaultAIBehavior implements IAI {
           const step = this.path.shift();
 
           if (step) {
-            diffX += step.x;
-            diffY += step.y;
 
             steps.push(step);
           }
@@ -247,33 +240,22 @@ export class DefaultAIBehavior implements IAI {
           this.pickNewPath();
         }
       }
-
-    // move randomly
     } else if (this.randomWalkRadius > 0 || this.randomWalkRadius === -1) {
-      const oldX = npc.x;
-      const oldY = npc.y;
-
       this.moveRandomly(numSteps);
-
-      diffX = npc.x - oldX;
-      diffY = npc.y - oldY;
     }
-
-    if (diffX || diffY) this.game.directionHelper.setDirBasedOnXYDiff(npc, diffX, diffY);
 
     // only leash to owner if it can move
     if (npc.owner && (npc.stats[Stat.Move] ?? 0) > 0) {
-      const distFrom = this.game.directionHelper.distFrom(npc, npc.owner);
+      const distFrom = distanceFrom(npc, npc.owner);
       if (distFrom > 5) {
         npc.x = npc.owner.x;
         npc.y = npc.owner.y;
       }
-
     } else {
 
       // check if should leash
       const startPos = this.startLoc || this.spawner.pos;
-      const distFrom = this.game.directionHelper.distFrom(npc, startPos);
+      const distFrom = distanceFrom(npc, startPos);
 
       // if we have no path AND no target and its out of the random walk radius, or we're past the leash radius, we leash
       const noLeash = !this.path;
@@ -358,7 +340,7 @@ export class DefaultAIBehavior implements IAI {
     const oldY = npc.y;
 
     // one space away = no pathfinding
-    if (this.game.directionHelper.distFrom(target, npc) <= 1) {
+    if (distanceFrom(target, npc) <= 1) {
 
       const steps: any[] = [];
 
@@ -415,8 +397,9 @@ export class DefaultAIBehavior implements IAI {
       .getRandomPath()
       .split(' ')
       .map(str => {
-        const [numSteps, dir] = str.split('-');
-        const coord = this.game.directionHelper.getXYFromDir(dir as Direction);
+        const [numSteps, directionText] = str.split('-');
+        const dir = directionFromText(directionText) ?? Direction.Center;
+        const coord = directionToOffset(dir);
         const ret: any[] = [];
         for (let i = 0; i < +numSteps; i++) {
           ret.push(coord);

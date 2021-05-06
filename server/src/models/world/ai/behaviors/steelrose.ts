@@ -1,7 +1,7 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, IAIBehavior, INPC,
+import { Currency, distanceFrom, GameAction, IAIBehavior, INPC,
   IPlayer, ISimpleItem, ISteelroseBehavior, itemListError, ItemSlot } from '../../../../interfaces';
 
 export class SteelroseBehavior implements IAIBehavior {
@@ -14,7 +14,7 @@ export class SteelroseBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         env?.callbacks.emit({
           action: GameAction.NPCActionShowMarket,
@@ -34,7 +34,7 @@ export class SteelroseBehavior implements IAIBehavior {
 
         const listing = args['listingid*'];
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const listingRef = await game.marketDB.getListingById(listing);
         if (!listingRef) return 'That listing is no longer valid!';
@@ -63,7 +63,7 @@ export class SteelroseBehavior implements IAIBehavior {
 
         const price = game.userInputHelper.cleanNumber(args['price*'], 0, { round: true, floor: true });
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         if (isNaN(price) || price <= 0) return 'That price does not work in this market!';
         if (price > 1_000_000_000_000) return 'That price is a bit too high!';
@@ -96,7 +96,7 @@ export class SteelroseBehavior implements IAIBehavior {
 
         const pickup = args['pickupid*'];
 
-        if (game.directionHelper.distFrom(player, npc) > 2) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const pickupRef = await game.marketDB.getPickupById(pickup);
         if (!pickupRef) return 'That pickup is no longer valid!';

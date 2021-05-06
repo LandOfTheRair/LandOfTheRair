@@ -37,7 +37,7 @@ export const spriteOffsetForDirection = (dir: Direction): number => {
     case Direction.West:   return 1;
     case Direction.East:   return 2;
     case Direction.North:  return 3;
-    case Direction.Corpse: return 4;
+    case Direction.Center: return 4;
     default:               return 0;
   }
 };
@@ -48,7 +48,7 @@ export const swimmingSpriteOffsetForDirection = (dir: Direction): number => {
     case Direction.West:   return 84;
     case Direction.East:   return 36;
     case Direction.North:  return 12;
-    case Direction.Corpse: return 60;
+    case Direction.Center: return 60;
     default:               return 60;
   }
 };
