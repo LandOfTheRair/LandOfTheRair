@@ -39,6 +39,7 @@ export class ContentManager extends BaseService {
   private settings: IGameSettings;
   private skillDescs: Record<Skill, string[]>;
   private statDamageMultipliers: Record<Stat, number[]>;
+  private staticText: { terrain: string[]; decor: Record<string, string> };
   private weaponTiers: Record<WeaponClass, IWeaponTier>;
 
   public get allegianceStatsData(): Record<Allegiance, Array<{ stat: Stat; value: number }>> {
@@ -87,6 +88,10 @@ export class ContentManager extends BaseService {
 
   public get skillDescsData(): Record<Skill, string[]> {
     return cloneDeep(this.skillDescs);
+  }
+
+  public get staticTextData(): { terrain: string[]; decor: Record<string, string> } {
+    return cloneDeep(this.staticText);
   }
 
   public get statDamageMultipliersData(): Record<Stat, number[]> {
@@ -184,6 +189,7 @@ export class ContentManager extends BaseService {
     this.settings = fs.readJsonSync('content/_output/settings.json');
     this.skillDescs = fs.readJsonSync('content/_output/skilldescs.json');
     this.statDamageMultipliers = fs.readJsonSync('content/_output/statdamagemultipliers.json');
+    this.staticText = fs.readJsonSync('content/_output/statictext.json');
     this.weaponTiers = fs.readJsonSync('content/_output/weapontiers.json');
   }
 

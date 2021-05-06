@@ -221,17 +221,24 @@ const GID_DECOR_START = 1329;
 @Injectable()
 export class StaticTextHelper extends BaseService {
 
-  public init() {}
+  private decorText = {};
+  private terrainText: string[] = [];
+
+  public init() {
+    const allText = this.game.contentManager.staticTextData;
+    this.decorText = allText.decor || {};
+    this.terrainText = allText.terrain || [];
+  }
 
   getGidDescription(gid: number) {
     if (!gid) return '';
 
     // terrain
-    if (gid <= GID_TERRAIN_END) return DESCS[Math.floor((gid - 1) / 48)];
+    if (gid <= GID_TERRAIN_END) return this.terrainText[Math.floor((gid - 1) / 48)];
 
     // decor
     if (gid > GID_DECOR_START) {
-      return DecorGids[gid - GID_DECOR_START];
+      return this.decorText[gid - GID_DECOR_START];
     }
 
     // whatever
