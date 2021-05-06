@@ -1,4 +1,4 @@
-import { IItem, IPlayer, ISimpleItem, ItemClass, Skill } from '../interfaces';
+import { IItem, IPlayer, ISimpleItem, ItemClass, Skill, Stat } from '../interfaces';
 
 function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
   return item.mods[prop] || itemDef[prop];
@@ -97,6 +97,8 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
 
   const stats = getProp(item, itemDef, 'stats');
   const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense) ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
+  const affectsAttributes = [Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP].some(x => stats[x]);
+  const statsText = identifyTier > 0 && affectsAttributes ? `This item affects physical attributes! ` : '';
 
   const useEffect = getProp(item, itemDef, 'useEffect');
   const strikeEffect = getProp(item, itemDef, 'strikeEffect');
@@ -137,8 +139,12 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const pages = getProp(item, itemDef, 'bookPages');
   let pagesText = '';
   if(itemClass === ItemClass.Book) {
-    pagesText = ` The book has ${pages?.length ?? 0} page(s) in it.`;
+    pagesText = `The book has ${pages?.length ?? 0} page(s) in it. `;
   }
+
+  const trait = getProp(item, itemDef, 'trait');
+  const levelStrings = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
+  const traitText = identifyTier > 0 && trait ? `This item is inscribed with the rune "${trait.name} ${levelStrings[trait.level]}". ` : '';
 
   const appraiseText = thiefTier > 0 ? `The item is worth ${value.toLocaleString()} gold. ` : '';
 
@@ -147,7 +153,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // whether it can be used in either hand
   const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
 
-  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}
-    ${dualWieldText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${pagesText}${trapSetText}
+  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}${statsText}
+    ${dualWieldText}${traitText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${pagesText}${trapSetText}
     ${conditionText}${ownedText}`;
 }
