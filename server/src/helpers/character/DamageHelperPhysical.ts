@@ -760,7 +760,7 @@ export class DamageHelperPhysical extends BaseService {
     // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa
     // then we multiply by the def CON to get our 1/x
     // this means there's always a chance of c-stun, but high con and having higher CON than your attackers will mitigate it effectively
-    let conMultiplier = 21;
+    let conMultiplier = this.game.contentManager.getGameSetting('combat', 'cstunConMultiplier') ?? 21;
     if (!attacker.items.equipment[ItemSlot.RightHand]) {
       conMultiplier -= this.game.traitHelper.traitLevelValue(attacker, 'StunningFist');
     }
@@ -821,7 +821,8 @@ export class DamageHelperPhysical extends BaseService {
 
     // this is a bit complicated, but how it works is offhands deal 20% damage by default
     if (isOffhand) {
-      args.offhandMultiplier = (args.offhandMultiplier - 0.8) + this.game.traitHelper.traitLevelValue(attacker, 'OffhandFinesse');
+      const reduction = this.game.contentManager.getGameSetting('character', 'offhandDamageReduction') ?? 0.8;
+      args.offhandMultiplier = (args.offhandMultiplier - reduction) + this.game.traitHelper.traitLevelValue(attacker, 'OffhandFinesse');
 
       if (args.offhandMultiplier < 0.1) args.offhandMultiplier = 0.1;
     }
@@ -1092,7 +1093,7 @@ export class DamageHelperPhysical extends BaseService {
       return;
     }
 
-    const conditionDamage = 50;
+    const conditionDamage = this.game.contentManager.getGameSetting('combat', 'resourceConditionDamage') ?? 50;
     let modifierMultiplier = 1;
 
     if (defender.name.includes('vein')) {

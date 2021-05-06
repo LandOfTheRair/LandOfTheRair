@@ -81,7 +81,8 @@ export class CalculatorHelper extends BaseService {
     const cha = this.game.characterHelper.getStat(player, Stat.CHA);
 
     // every cha past 7 is +1% discount
-    const discountPercent = Math.min(50, cha - 7);
+    const chaSlidingDiscount = this.game.contentManager.getGameSetting('character', 'chaSlidingDiscount') ?? 7;
+    const discountPercent = Math.min(50, cha - chaSlidingDiscount);
     const percentThere = Math.max(0.01, (curHp - normal) / (maxForTier - normal));
 
     const { min, max } = costsAtTier;

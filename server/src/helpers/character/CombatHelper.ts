@@ -33,11 +33,11 @@ export class CombatHelper extends BaseService {
 
     if (attacker.baseClass === BaseClass.Warrior) {
       if (res.block || res.dodge) {
-        this.game.characterHelper.mana(attacker, 5);
+        this.game.characterHelper.mana(attacker, this.game.contentManager.getGameSetting('character', 'warriorDodgeRegen') ?? 5);
       }
 
       if (res.hit) {
-        this.game.characterHelper.mana(attacker, 3);
+        this.game.characterHelper.mana(attacker, this.game.contentManager.getGameSetting('character', 'warriorHitRegen') ?? 3);
       }
     }
 
@@ -288,7 +288,7 @@ export class CombatHelper extends BaseService {
 
       // otherwise, we just let everyone know this person died. probably their own fault. probably.
       } else {
-        this.game.messageHelper.sendLogMessageToRadius(defender, 5, {
+        this.game.messageHelper.sendLogMessageToRadius(defender, 4, {
           message: `${defender.name} was killed!`,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
           except: [defender.uuid]
@@ -335,10 +335,11 @@ export class CombatHelper extends BaseService {
 
     const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
     if (!buildupEffect) {
+      const { buildUpDecay, buildUpCurrent, buildUpMax, buildUpScale } = this.game.contentManager.getGameSetting('combat');
       this.game.effectHelper.addEffect(defender, '', buildup, { effect: { extra: {
-        buildUpDecay: 3,
-        buildUpCurrent: 5,
-        buildUpMax: 200 + (defender.level * 10)
+        buildUpDecay: buildUpDecay ?? 3,
+        buildUpCurrent: buildUpCurrent ?? 5,
+        buildUpMax: (buildUpMax ?? 200) + (defender.level * (buildUpScale ?? 10))
       } } });
     }
   }

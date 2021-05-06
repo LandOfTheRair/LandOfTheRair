@@ -429,22 +429,26 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      this.tryGainSkill(player, primary, skillGained * 0.45);
-      this.tryGainSkill(player, secondary, skillGained * 0.25);
-      this.tryGainSkill(player, tertiary, skillGained * 0.15);
-      this.tryGainSkill(player, quaternary, skillGained * 0.15);
+      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'four') ?? [];
+      this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.45));
+      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
+      this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.15));
+      this.tryGainSkill(player, quaternary, skillGained * (skillgain[3] ?? 0.15));
 
     } else if (tertiary) {
-      this.tryGainSkill(player, primary, skillGained * 0.55);
-      this.tryGainSkill(player, secondary, skillGained * 0.25);
-      this.tryGainSkill(player, tertiary, skillGained * 0.20);
+      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'three') ?? [];
+      this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.55));
+      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
+      this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.20));
 
     } else if (secondary) {
-      this.tryGainSkill(player, primary, skillGained * 0.75);
-      this.tryGainSkill(player, secondary, skillGained * 0.25);
+      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'two') ?? [];
+      this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.75));
+      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
 
     } else {
-      this.tryGainSkill(player, primary, skillGained);
+      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'one') ?? [];
+      this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 1));
     }
   }
 

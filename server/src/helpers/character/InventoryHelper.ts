@@ -193,8 +193,10 @@ export class InventoryHelper extends BaseService {
     const { value, sellValue } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'itemClass']);
     const baseItemValue = sellValue || value || 1;
 
+    const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } = this.game.contentManager.getGameSetting('character');
+
     // default sell percent is 25% of value if it doesn't have a set sellValue
-    let sellPercent = sellValue ? 100 : 25;
+    let sellPercent = sellValue ? 100 : (sellValuePercent ?? 25);
 
     // items that do not have a modded sellvalue (ie, rare gems) can get modified
     if (check && !item.mods.sellValue) {
@@ -203,7 +205,7 @@ export class InventoryHelper extends BaseService {
       const cha = this.game.characterHelper.getStat(check, Stat.CHA);
 
       // at a base of 10, you get +0.2% value per CHA
-      const sellPercentMod = (cha - 10) / 5;
+      const sellPercentMod = (cha - (sellChaBaseBoost ?? 10)) / (sellChaBaseDivisor ?? 5);
       sellPercent += sellPercentMod;
     }
 

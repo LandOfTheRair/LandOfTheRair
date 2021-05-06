@@ -469,9 +469,11 @@ export class CharacterHelper extends BaseService {
       bonusStats = (character as IPlayer).quests.questStats;
     }
 
+    const defaultMove = this.game.contentManager.getGameSetting('character', 'defaultMove') ?? 3;
+
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
-    character.totalStats[Stat.Move] = character.totalStats[Stat.Move] ?? 3;
+    character.totalStats[Stat.Move] = character.totalStats[Stat.Move] ?? defaultMove;
 
     const addStat = (stat: Stat, bonus: number) => {
       character.totalStats[stat] = character.totalStats[stat] || 0;
@@ -577,7 +579,8 @@ export class CharacterHelper extends BaseService {
   // hp regen is a min of 1, affected by a con modifier past 21
   public getHPRegen(character: ICharacter): number {
     const baseHPRegen = 1 + this.getStat(character, Stat.HPRegen);
-    return Math.max(baseHPRegen, baseHPRegen + Math.max(0, this.getStat(character, Stat.CON) - 21));
+    const hpRegenSlidingCon = this.game.contentManager.getGameSetting('character', 'hpRegenSlidingCon') ?? 21;
+    return Math.max(baseHPRegen, baseHPRegen + Math.max(0, this.getStat(character, Stat.CON) - hpRegenSlidingCon));
   }
 
   // thieves and warriors have different mpregen setups
@@ -587,7 +590,7 @@ export class CharacterHelper extends BaseService {
 
     // healers and mages get a boost because their primary function is spellcasting
     if (character.baseClass === BaseClass.Mage || character.baseClass === BaseClass.Healer) {
-      boost = 10;
+      boost = this.game.contentManager.getGameSetting('character', 'defaultCasterMPRegen') ?? 10;
     }
 
     // thieves not in combat regen faster
@@ -597,14 +600,14 @@ export class CharacterHelper extends BaseService {
       if (this.game.effectHelper.hasEffect(character, 'Hidden') || this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
 
       // thieves in combat get less regen than out of
-      if (character.combatTicks <= 0) return 10;
-      return 1;
+      if (character.combatTicks <= 0) return this.game.contentManager.getGameSetting('character', 'thiefOOCRegen') ?? 10;
+      return                                 this.game.contentManager.getGameSetting('character', 'thiefICRegen') ?? 1;
     }
 
     // warriors are the inverse of thieves
     if (character.baseClass === BaseClass.Warrior) {
-      if (character.combatTicks <= 0) return -3;
-      return 3;
+      if (character.combatTicks <= 0) return this.game.contentManager.getGameSetting('character', 'warriorOOCRegen') ?? -3;
+      return                                 this.game.contentManager.getGameSetting('character', 'warriorICRegen') ?? 3;
     }
 
     return this.getStat(character, Stat.MPRegen) + boost;
@@ -613,8 +616,13 @@ export class CharacterHelper extends BaseService {
   // get the stealth value for a character
   public getStealth(char: ICharacter): number {
     let stealth = this.getSkillLevel(char, Skill.Thievery) + char.level + this.getStat(char, Stat.AGI);
-    if (char.baseClass === BaseClass.Thief) stealth *= 1.5;
-    if (this.game.effectHelper.hasEffect(char, 'Encumbered')) stealth /= 2;
+    if (char.baseClass === BaseClass.Thief) {
+      stealth *= this.game.contentManager.getGameSetting('character', 'thiefStealthMultiplier') ?? 1.5;
+    }
+
+    if (this.game.effectHelper.hasEffect(char, 'Encumbered')) {
+      stealth /= this.game.contentManager.getGameSetting('character', 'stealthEncumberDivisor') ?? 2;
+    }
 
     return Math.floor(stealth);
   }

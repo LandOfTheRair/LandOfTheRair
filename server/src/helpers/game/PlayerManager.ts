@@ -10,7 +10,7 @@ import { CharacterHelper } from '../character/CharacterHelper';
 export class PlayerManager extends BaseService {
 
   private currentSlowTick = 0;
-  private readonly SAVE_TICK_COUNT = 150;
+  private saveTicks = 150;
 
   constructor(
     private characterHelper: CharacterHelper
@@ -21,7 +21,9 @@ export class PlayerManager extends BaseService {
   private inGamePlayers: Record<string, Player> = {};
   private playerStates: Record<string, PlayerState> = {};
 
-  public init() {}
+  public init() {
+    this.saveTicks = this.game.contentManager.getGameSetting('players', 'saveTicks') ?? 150;
+  }
 
   // get all players. pretty sparingly used.
   public getAllPlayers(): Player[] {
@@ -116,7 +118,7 @@ export class PlayerManager extends BaseService {
     this.tick(timer, 'slow', tick);
 
     this.currentSlowTick++;
-    if ((this.currentSlowTick % this.SAVE_TICK_COUNT) === 0) {
+    if ((this.currentSlowTick % this.saveTicks) === 0) {
       this.saveAllPlayers();
     }
   }

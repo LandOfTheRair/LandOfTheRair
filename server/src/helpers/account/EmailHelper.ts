@@ -30,9 +30,11 @@ export class EmailHelper extends BaseService {
   public async requestVerificationCode(account: Account): Promise<void> {
     if (!this.transport) throw new Error('SMTP not configured.');
 
+    const hours = this.game.contentManager.getGameSetting('auth', 'verificationHourExpiration') ?? 1;
+
     const code = `${random(100000, 999999)}`;
     account.verificationCode = code;
-    account.verificationExpiration = Date.now() + (3600 * 1000);
+    account.verificationExpiration = Date.now() + (3600 * hours * 1000);
 
     const mail = {
       from: 'help@rair.land',
@@ -43,7 +45,7 @@ export class EmailHelper extends BaseService {
 
       Your email verification code is: ${code}
 
-      This code will be valid for 1 hour.
+      This code will be valid for ${hours} hour(s).
 
       If you did not request this, please reach out to support@rair.land.
       `

@@ -45,7 +45,7 @@ export class HolidayHelper extends BaseService {
   tryGrantHolidayTokens(player: IPlayer, amt: number): void {
     if (!this.isAnyHoliday()) return;
 
-    if (player.subscriptionTier > 0) amt *= 2;
+    const tokensGained = this.game.subscriptionHelper.holidayTokensGained(player, amt);
 
     this.game.currencyHelper.gainCurrency(player, amt, Currency[this.currentHoliday()]);
     this.game.messageHelper.sendSimpleMessage(player, `You also earned ${amt} ${Currency[this.currentHoliday()]}!`);

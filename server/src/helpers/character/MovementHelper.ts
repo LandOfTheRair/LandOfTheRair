@@ -224,6 +224,7 @@ export class MovementHelper extends BaseService {
     this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
 
     if (isFall) {
+      const fallDamagePercent = this.game.contentManager.getGameSetting('character', 'fallDamagePercent') ?? 15;
       let hpLost = Math.floor(player.hp.maximum * ((damagePercent || 15) / 100));
 
       // Fleet Of Foot reduces fall damage to 1

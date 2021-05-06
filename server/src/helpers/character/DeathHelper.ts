@@ -52,11 +52,15 @@ export class DeathHelper extends BaseService {
     if (shouldRot) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You feel a churning sensation...' });
 
-      if ((player.stats?.[Stat.STR] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(5)) {
+      const strLossChance = this.game.contentManager.getGameSetting('corpse', 'rotStrLossChance') ?? 5;
+
+      if ((player.stats?.[Stat.STR] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(strLossChance)) {
         this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
       }
 
-      if ((player.stats?.[Stat.AGI] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(5)) {
+      const agiLossChance = this.game.contentManager.getGameSetting('corpse', 'rotAgiLossChance') ?? 5;
+
+      if ((player.stats?.[Stat.AGI] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(agiLossChance)) {
         this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
       }
     }
@@ -91,7 +95,8 @@ export class DeathHelper extends BaseService {
     this.game.statisticsHelper.addStatistic(dead, TrackedStatistic.Deaths);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
-    this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: 500 } });
+    const deathTimer = this.game.contentManager.getGameSetting('corpse', 'playerExpire') ?? 500;
+    this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: deathTimer } });
     dead.dir = Direction.Center;
 
     if (corpse) {
@@ -251,8 +256,10 @@ export class DeathHelper extends BaseService {
     if (eatTier > 0) {
       this.game.messageHelper.sendLogMessageToPlayer(dead, { message: `${killer.name} makes a quick meal out of you!` });
 
-      const lostXP = Math.floor((this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) / 40) * eatTier);
-      const lostSkill = Math.floor(500 * eatTier);
+      const { eatXpLossMultiplier, eatSkillLossMultiplier } = this.game.contentManager.getGameSetting('corpse');
+
+      const lostXP = Math.floor((this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) * eatXpLossMultiplier) * eatTier);
+      const lostSkill = Math.floor(eatSkillLossMultiplier * eatTier);
       const randomSkill = sample(Object.keys(dead.skills)) as Skill;
 
       this.game.characterHelper.losePermanentStat(dead, Stat.HP, Math.floor(eatTier));

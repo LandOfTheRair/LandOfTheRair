@@ -277,6 +277,11 @@ export class SubscriptionHelper extends BaseService {
     return baseValue + (1 + player.subscriptionTier * mult);
   }
 
+  public holidayTokensGained(player: IPlayer, baseValue = 1): number {
+    const mult = this.game.contentManager.getGameSetting('subscriber', 'holidayTokenGain') ?? 2;
+    return baseValue * (player.subscriptionTier > 0 ? mult : 1);
+  }
+
   public hasPouch(player: IPlayer): boolean {
     const account = this.game.lobbyManager.getAccount(player.username);
     return (account?.premium.silverPurchases?.[SilverPurchase.MagicPouch] ?? 0) > 0;

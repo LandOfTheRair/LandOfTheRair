@@ -46,10 +46,78 @@ export interface IFate {
 }
 
 export interface IGameSettings {
+
+  auth: {
+    verificationHourExpiration: number;
+  };
+
   character: {
     maxLevel: number;
     maxSkill: number;
     maxStats: number;
+    chaSlidingDiscount: number;
+    defaultMove: number;
+    defaultCasterMPRegen: number;
+    thiefOOCRegen: number;
+    thiefICRegen: number;
+    warriorOOCRegen: number;
+    warriorICRegen: number;
+    warriorHitRegen: number;
+    warriorDodgeRegen: number;
+    thiefStealthMultiplier: number;
+    stealthEncumberDivisor: number;
+    thiefLockpickFuzz: number;
+    sellValuePercent: number;
+    sellChaBaseBoost: number;
+    sellChaBaseDivisor: number;
+    fallDamagePercent: number;
+  };
+
+  combat: {
+    buildUpDecay: number;
+    buildUpStart: number;
+    buildUpMax: number;
+    buildUpScale: number;
+    cstunConMultiplier: number;
+    offhandDamageReduction: number;
+    resourceConditionDamage: number;
+  };
+
+  corpse: {
+    playerExpire: number;
+    npcExpire: number;
+    rotStrLossChance: number;
+    rotAgiLossChance: number;
+    eatXpLossMultiplier: number;
+    eatSkillLossMultiplier: number;
+  };
+
+  event: Record<DynamicEventRarity, number>;
+
+  ground: {
+    saveTicks: number;
+    expireTicks: number;
+  };
+
+  npcgen: {
+    attrMult: number;
+    eliteMult: number;
+    levelFuzz: number;
+    eliteLootMult: number;
+    normalLootMult: number;
+  };
+
+  players: {
+    saveTicks: number;
+  };
+
+  potion: Record<string, number>;
+
+  skillgain: {
+    one: number[];
+    two: number[];
+    three: number[];
+    four: number[];
   };
 
   subscriber: {
@@ -64,26 +132,8 @@ export interface IGameSettings {
     axpGain: number;
     xpGain: number;
     skillGain: number;
+    holidayTokenGain: number;
   };
-
-  potion: Record<string, number>;
-
-  corpse: {
-    playerExpire: number;
-    npcExpire: number;
-  };
-
-  ground: {
-    saveTicks: number;
-    expireTicks: number;
-  };
-
-  npcgen: {
-    attrMult: number;
-    eliteMult: number;
-  };
-
-  event: Record<DynamicEventRarity, number>;
 }
 
 export interface IStripePurchase {
