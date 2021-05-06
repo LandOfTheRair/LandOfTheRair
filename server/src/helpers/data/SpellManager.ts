@@ -71,7 +71,7 @@ export class SpellManager extends BaseService {
     target: ICharacter|null = null,
     override: Partial<IItemEffect> = {},
     callbacks?: any,
-    originalArgs?: IMacroCommandArgs,
+    originalArgs?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string }
   ): void {
     if (!caster && !target) return;

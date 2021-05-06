@@ -31,8 +31,8 @@ export abstract class MacroCommand implements IMacroCommand {
     }
   }
 
-  execute(executor: IPlayer, args: IMacroCommandArgs): void {}                                                                          // always used only by people who can execute commands (players)
-  use(executor: ICharacter, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }): void {}    // used by anyone who has access to the command (players, npcs)
+  execute(executor: IPlayer, args: IMacroCommandArgs): void {}                                                                                 // always used only by people who can execute commands (players)
+  use(executor: ICharacter | null, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }): void {}    // used by anyone who has access to the command (players, npcs, environment)
 }
 
 export abstract class SkillCommand extends MacroCommand {
@@ -207,17 +207,17 @@ export class SpellCommand extends SkillCommand {
   }
 
   // called when a player casts a spell at something
-  protected castSpell(caster: ICharacter | null, args: IMacroCommandArgs) {
+  protected castSpell(caster: ICharacter | null, args: Partial<IMacroCommandArgs>) {
 
     // if the spell is party-based, target the whole party
     let targets: ICharacter[] = [];
-    let primaryTarget: { x: number; y: number; map: string } | ICharacter | null = null;
+    let primaryTarget: { x: number; y: number; map: string } | ICharacter | null = args.primaryTarget ?? null;
 
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
 
     // if we're not a party target spell, we look for a primary target (location or character)
     if (caster && !spellData.spellMeta.targetsParty) {
-      primaryTarget = this.getTarget(caster, args.stringArgs.trim(), this.canTargetSelf, spellData.spellMeta.allowDirectional);
+      primaryTarget = this.getTarget(caster, (args?.stringArgs ?? '').trim(), this.canTargetSelf, spellData.spellMeta.allowDirectional);
       if ((primaryTarget as ICharacter)?.name) {
         targets = [primaryTarget as ICharacter];
       }
@@ -243,7 +243,7 @@ export class SpellCommand extends SkillCommand {
 
     // hit each of the targets
     targets.forEach(target => {
-      if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args.stringArgs);
+      if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
 
       if (!this.canCastSpell(caster, target)) return;
 
@@ -281,7 +281,7 @@ export class SpellCommand extends SkillCommand {
   protected castSpellAt(
     caster: ICharacter | null,
     target: ICharacter | null,
-    args?: IMacroCommandArgs,
+    args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string }
   ) {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
@@ -336,7 +336,15 @@ export class SpellCommand extends SkillCommand {
   }
 
   // default use, primarily used by npcs
-  override use(char: ICharacter, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }) {
+  override use(char: ICharacter | null, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }) {
+
+    // aoe spells are handled differently
+    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+    if (spellData.spellMeta.aoe) {
+      this.castSpell(char, { primaryTarget: targetsPosition, ...(args || {}) });
+      return;
+    }
+
     this.castSpellAt(char, target, args, targetsPosition);
   }
 

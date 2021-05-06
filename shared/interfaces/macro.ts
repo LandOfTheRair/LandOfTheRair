@@ -9,6 +9,7 @@ export interface IMacroCommandArgs {
   overrideEffect?: IItemEffect;
   calledAlias: string;
   spell?: string;
+  primaryTarget?: { x: number, y: number, map: string };
   callbacks: {
     broadcast: (args) => void,
     emit: (args) => void
