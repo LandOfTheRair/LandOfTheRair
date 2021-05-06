@@ -46,6 +46,15 @@ export class UpgraderBehavior implements IAIBehavior {
         if (!game.itemHelper.canUseItemForUpgrade(leftHand)) return 'That item cannot be used as an upgrade!';
 
         game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
+
+        const leftRequirements = game.itemHelper.getItemProperty(leftHand, 'requirements');
+        const rightRequirements = game.itemHelper.getItemProperty(rightHand, 'requirements');
+
+        game.itemHelper.setItemProperty(rightHand, 'requirements',
+          game.itemHelper.mergeItemRequirements(leftRequirements, rightRequirements)
+        );
+        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
+
         game.characterHelper.setLeftHand(player, undefined);
 
         return 'Your item is upgraded!';
