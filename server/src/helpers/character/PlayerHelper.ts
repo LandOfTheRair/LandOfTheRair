@@ -56,6 +56,19 @@ export class PlayerHelper extends BaseService {
       this.game.traitHelper.resetTraits(player);
     }
 
+    if (player.learnedRunes.length > 0) {
+      const remove: string[] = [];
+
+      player.learnedRunes.forEach(rune => {
+        const runeItem = this.game.itemHelper.getItemDefinition(rune);
+        if (runeItem) return;
+
+        remove.push(rune);
+      });
+
+      player.learnedRunes = player.learnedRunes.filter(x => !remove.includes(x));
+    }
+
     player.agro = {};
 
     player.isGM = playerAccount.isGameMaster;
