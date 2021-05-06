@@ -32,8 +32,10 @@ export class Sweep extends SpellCommand {
 
     const damageMult = 1 + this.game.traitHelper.traitLevelValue(user, 'StrongSweep');
 
-    foundTargets.forEach(chosenTarget => {
-      this.game.combatHelper.physicalAttack(user, chosenTarget, { ...opts, isKick: true, damageMult, numAttacks: foundTargets.length });
+    foundTargets.forEach((chosenTarget, i) => {
+      this.game.combatHelper.physicalAttack(user, chosenTarget,
+        { ...opts, isKick: true, damageMult, numAttacks: foundTargets.length, attackNum: i }
+      );
     });
 
     const defensePenalty = 25;

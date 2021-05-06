@@ -53,6 +53,7 @@ export interface PhysicalAttackArgs {
   attackerName?: string;
   damageClass?: DamageClass;
   numAttacks?: number;
+  attackNum?: number;
 }
 
 export interface PhysicalAttackReturn {
@@ -93,4 +94,5 @@ export interface DamageArgs {
   isAttackerVisible?: boolean;
   customSfx?: SoundEffect;
   hasBeenReflected?: boolean;
+  attackNum?: number;
 }

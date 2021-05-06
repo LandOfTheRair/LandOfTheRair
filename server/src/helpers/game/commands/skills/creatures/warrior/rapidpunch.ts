@@ -34,7 +34,7 @@ export class Rapidpunch extends SpellCommand {
     const accuracyLoss = (accuracy / (10 + (improvedLevel * 2)));
 
     for (let i = 0; i < numAttacks; i++) {
-      this.game.combatHelper.physicalAttack(user, target, { ...opts, isPunch: true, damageMult, accuracyLoss, numAttacks });
+      this.game.combatHelper.physicalAttack(user, target, { ...opts, isPunch: true, damageMult, accuracyLoss, numAttacks, attackNum: i });
     }
 
     const defensePenalty = 25;

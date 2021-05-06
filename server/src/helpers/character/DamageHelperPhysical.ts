@@ -443,7 +443,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: 'You miss!',
-          sfx: SoundEffect.CombatMiss,
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatMiss,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'miss',
@@ -507,7 +507,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: 'You were blocked by armor!',
-          sfx: SoundEffect.CombatBlockArmor,
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockArmor,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-armor',
@@ -574,7 +574,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: `You were blocked by ${defender.name}'s ${defenderItemClass.toLowerCase()}!`,
-          sfx: SoundEffect.CombatBlockWeapon,
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockWeapon,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-weapon',
@@ -642,7 +642,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: `You were blocked by ${defender.name}'s shield!`,
-          sfx: SoundEffect.CombatBlockArmor,
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockArmor,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-shield',
@@ -711,7 +711,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: `You were blocked by ${defender.name}'s ${defenderItemClass.toLowerCase()}!`,
-          sfx: SoundEffect.CombatBlockWeapon,
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockWeapon,
           setTarget: this.determineIfTarget(attacker, defender),
           logInfo: {
             type: 'block-offhand',
@@ -1020,6 +1020,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     damageArgs.damage = totalDamageDealt;
+    damageArgs.attackNum = args.attackNum;
 
     this.attemptToStun(attacker, defender, attackerWeapon);
     this.attemptToShadowSwap(attacker);

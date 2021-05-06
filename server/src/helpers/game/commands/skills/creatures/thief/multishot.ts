@@ -42,7 +42,7 @@ export class Multishot extends SpellCommand {
     }
 
     for (let i = 0; i < attacks; i++) {
-      this.game.combatHelper.physicalAttack(char, target, { damageMult, attackRange: 4, numAttacks: attacks });
+      this.game.combatHelper.physicalAttack(char, target, { damageMult, attackRange: 4, numAttacks: attacks, attackNum: i });
     }
 
   }

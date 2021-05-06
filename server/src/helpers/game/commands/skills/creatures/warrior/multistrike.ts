@@ -39,8 +39,10 @@ export class Multistrike extends SpellCommand {
       return;
     }
 
-    foundTargets.forEach(chosenTarget => {
-      this.game.combatHelper.physicalAttack(user, chosenTarget, { ...opts, damageMult: 0.5, numAttacks: foundTargets.length });
+    foundTargets.forEach((chosenTarget, i) => {
+      this.game.combatHelper.physicalAttack(user, chosenTarget,
+        { ...opts, damageMult: 0.5, numAttacks: foundTargets.length, attackNum: i }
+      );
     });
 
     const defensePenalty = 50 - this.game.traitHelper.traitLevelValue(user, 'Multifocus');

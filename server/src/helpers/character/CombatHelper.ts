@@ -180,7 +180,7 @@ export class CombatHelper extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(attacker,
         {
           message: `${formattedAtkMessage} [${absDmg} ${dmgString}]`,
-          sfx: customSfx || this.determineSfx({ itemClass, isMelee, damage }),
+          sfx: (args?.attackNum ?? 0) > 0 ? undefined : customSfx || this.determineSfx({ itemClass, isMelee, damage }),
           logInfo: {
             type: 'damage',
             uuid: attacker ? attacker.uuid : '???',
