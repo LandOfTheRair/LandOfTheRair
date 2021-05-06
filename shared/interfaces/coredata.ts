@@ -66,6 +66,23 @@ export interface IGameSettings {
     skillGain: number;
   };
 
+  potion: Record<string, number>;
+
+  corpse: {
+    playerExpire: number;
+    npcExpire: number;
+  };
+
+  ground: {
+    saveTicks: number;
+    expireTicks: number;
+  };
+
+  npcgen: {
+    attrMult: number;
+    eliteMult: number;
+  };
+
   event: Record<DynamicEventRarity, number>;
 }
 

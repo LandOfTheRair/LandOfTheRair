@@ -253,10 +253,12 @@ export class NPCCreator extends BaseService {
     const { attribute, stats } = sample(this.game.contentManager.attributeStatsData) as any;
     npc.name = `${attribute} ${npc.name}`;
 
-    npc.level += 2;
-    npc.skillOnKill *= 2;
-    npc.giveXp.min *= 2;
-    npc.giveXp.max *= 2;
+    const attrMult = this.game.contentManager.getGameSetting('npcgen', 'attrMult') ?? 2;
+
+    npc.level += attrMult;
+    npc.skillOnKill *= attrMult;
+    npc.giveXp.min *= attrMult;
+    npc.giveXp.max *= attrMult;
 
     stats.forEach(({ stat, boost }) => {
       this.game.characterHelper.gainPermanentStat(npc, stat as Stat, boost);
@@ -279,18 +281,22 @@ export class NPCCreator extends BaseService {
       this.game.characterHelper.gainPermanentStat(npc, stat as Stat, Math.round(this.game.characterHelper.getBaseStat(npc, stat) / 3));
     });
 
+    const eliteMult = this.game.contentManager.getGameSetting('npcgen', 'eliteMult') ?? 4;
+
     npc.level += Math.min(1, Math.floor(npc.level / 10));
-    npc.skillOnKill *= 4;
-    npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * 3;
-    npc.giveXp.min *= 4;
-    npc.giveXp.max *= 4;
+    npc.skillOnKill *= eliteMult;
+    npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * eliteMult;
+    npc.giveXp.min *= eliteMult;
+    npc.giveXp.max *= eliteMult;
   }
 
   private setLevel(npc: INPC, npcDef: INPCDefinition): void {
     npc.level = npcDef.level || 1;
 
+    const levelFuzz = this.game.contentManager.getGameSetting('npcgen', 'levelFuzz') ?? 2;
+
     // npcs that are > lv 10 can have their level fuzzed a bit
-    if (npc.level > 10) npc.level += random(-2, 2);
+    if (npc.level > 10) npc.level += random(-levelFuzz, levelFuzz);
   }
 
   private shouldLoadContainerItem(itemName: string|any): boolean {

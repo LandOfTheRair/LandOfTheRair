@@ -37,7 +37,8 @@ export class CorpseManager extends BaseService {
     const uuid = corpse.uuid;
     const corpseUsername = corpse.mods.corpseUsername;
 
-    this.corpseExpiration[uuid] = Date.now() + (1000 * (corpseUsername ? 500 : 120));
+    const { playerExpire, npcExpire } = this.game.contentManager.getGameSetting('corpse');
+    this.corpseExpiration[uuid] = Date.now() + (1000 * (corpseUsername ? playerExpire ?? 500 : npcExpire ?? 120));
     this.corpsePositions[uuid] = { map, x, y };
     this.corpseRefs[uuid] = corpse;
 

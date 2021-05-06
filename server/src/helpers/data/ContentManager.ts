@@ -164,7 +164,9 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.events[name]);
   }
 
-  public getGameSetting(name: keyof IGameSettings, subKey: string): any {
+  public getGameSetting(name: keyof IGameSettings, subKey?: string): any {
+    if (!subKey) return this.settings[name];
+
     return get(this.settings[name], subKey);
   }
 

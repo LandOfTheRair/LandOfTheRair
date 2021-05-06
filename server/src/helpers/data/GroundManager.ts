@@ -10,8 +10,8 @@ import { Ground } from '../../models/orm/Ground';
 @Injectable()
 export class GroundManager extends BaseService {
 
-  private readonly SAVE_TICKS = 150;      // save the ground every 5 minutes
-  private readonly EXPIRE_TICKS = 1800;   // expire the ground every 30 minutes
+  private saveTicks = 150;      // save the ground every 5 minutes
+  private expireTicks = 1800;   // expire the ground every 30 minutes
   private currentTick = 0;
 
   private groundEntities: Record<string, Ground> = {};
@@ -23,6 +23,10 @@ export class GroundManager extends BaseService {
   // load ground
   public async init() {
     await this.loadGround();
+
+    const { saveTicks, expireTicks } = this.game.contentManager.getGameSetting('ground');
+    this.saveTicks = saveTicks ?? 150;
+    this.expireTicks = expireTicks ?? 1800;
   }
 
   // create new entities where necessary
@@ -117,14 +121,14 @@ export class GroundManager extends BaseService {
     timer.startTimer('Ground');
 
     this.currentTick++;
-    if ((this.currentTick % this.SAVE_TICKS) === 0) {
+    if ((this.currentTick % this.saveTicks) === 0) {
 
       // save only the maps that are running - others are saved when they're emptied
       this.saveGround(this.game.worldManager.currentlyActiveMaps);
     }
 
     // expire the ground every so often
-    if ((this.currentTick % this.EXPIRE_TICKS) === 0) {
+    if ((this.currentTick % this.expireTicks) === 0) {
       timer.startTimer('Ground Expire');
       this.checkGroundExpire(this.game.worldManager.currentlyActiveMaps);
       timer.stopTimer('Ground Expire');
