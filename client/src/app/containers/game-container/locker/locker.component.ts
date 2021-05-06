@@ -29,9 +29,9 @@ export class LockerComponent implements OnInit, OnDestroy {
   public player: IPlayer;
   public lockerInfo: any = {};
   public lockerNames = [];
-  public activeLockerSlot = -1;
   public amount = 0;
   public allLockers = {};
+  public currentLocker = '';
 
   lockerInfoSub: Subscription;
   posSub: Subscription;
@@ -79,7 +79,7 @@ export class LockerComponent implements OnInit, OnDestroy {
 
       if (player && this.lockerInfo.lockerName && this.lockerNames.length === 0) {
         this.lockerNames = this.lockerInfo.showLockers;
-        this.activeLockerSlot = this.lockerNames.findIndex(x => x === this.lockerInfo.lockerName);
+        this.currentLocker = this.lockerInfo.lockerName;
       }
     });
 
