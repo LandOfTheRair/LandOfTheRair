@@ -123,7 +123,7 @@ export class CharacterDB extends BaseService {
     }
 
     player.dailyItems = daily?.daily?.[player.charSlot]?.items ?? {};
-    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot]?.quest ?? {};
+    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot]?.quests ?? {};
   }
 
   public async populatePlayer(player: Player, account: Account): Promise<void> {
@@ -291,7 +291,7 @@ export class CharacterDB extends BaseService {
       this.db.save(player.lockers as PlayerLockers),
       this.db.getCollection(AccountDaily).updateOne(
         { _account: player._account },
-        { $set: { [`daily.${player.charSlot}`]: { quest: player.quests.npcDailyQuests, items: player.dailyItems } } }
+        { $set: { [`daily.${player.charSlot}`]: { quests: player.quests.npcDailyQuests, items: player.dailyItems } } }
       )
     ];
 
