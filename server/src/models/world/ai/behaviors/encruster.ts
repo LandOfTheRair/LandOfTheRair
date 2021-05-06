@@ -108,6 +108,8 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if (!rightHand) return 'You do not have anything in your right hand!';
         if (!leftHand) return 'You do not have anything in your left hand!';
+        if (rightHand.mods.owner && rightHand.mods.owner !== player.username) return 'That item belongs to someone else!';
+        if (leftHand.mods.owner && leftHand.mods.owner !== player.username) return 'That gem belongs to someone else!';
 
         const itemClass = game.itemHelper.getItemProperty(rightHand, 'itemClass');
 
@@ -116,6 +118,7 @@ export class EncrusterBehavior implements IAIBehavior {
           encrustGive: leftEncrustGive,
           requirements: leftRequirements
         } = game.itemHelper.getItemProperties(leftHand, ['itemClass', 'encrustGive', 'requirements']);
+        const rightRequirements = game.itemHelper.getItemProperty(rightHand, 'requirements');
 
         if (leftItemClass !== ItemClass.Gem) return 'You are not holding a gem in your left hand!';
 
@@ -129,6 +132,12 @@ export class EncrusterBehavior implements IAIBehavior {
         if (!shouldPass) return 'You cannot encrust that gem into that item.';
 
         rightHand.mods.encrustItem = leftHand.name;
+        
+        game.itemHelper.setItemProperty(rightHand, 'requirements', 
+          game.itemHelper.mergeItemRequirements(leftRequirements, rightRequirements)
+        );
+
+        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
         game.characterHelper.setLeftHand(player, undefined);
 
         return 'Enjoy your new encrusted item!';
