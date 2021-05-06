@@ -126,6 +126,7 @@ export class CommandHandler extends BaseService {
     callback.args = args;
 
     if (isInstant) {
+      if (!this.game.characterHelper.canAct(player)) return;
       callback();
 
     } else if (isFast) {

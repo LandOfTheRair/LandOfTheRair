@@ -776,7 +776,7 @@ export class DamageHelperPhysical extends BaseService {
 
       this.game.effectHelper.addEffect(defender, attacker, 'Stun', {
         effect: {
-          duration: 5,
+          duration: 3,
           extra: { disableMessages: true, disableRecently: true }
         }
       });
