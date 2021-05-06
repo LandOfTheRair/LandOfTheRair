@@ -132,8 +132,8 @@ export class EncrusterBehavior implements IAIBehavior {
         if (!shouldPass) return 'You cannot encrust that gem into that item.';
 
         rightHand.mods.encrustItem = leftHand.name;
-        
-        game.itemHelper.setItemProperty(rightHand, 'requirements', 
+
+        game.itemHelper.setItemProperty(rightHand, 'requirements',
           game.itemHelper.mergeItemRequirements(leftRequirements, rightRequirements)
         );
 

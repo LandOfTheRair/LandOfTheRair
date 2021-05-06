@@ -141,27 +141,25 @@ export class ItemHelper extends BaseService {
     return true;
   }
 
-  public mergeItemRequirements(firstItemRequirements: IItemRequirements | undefined, secondItemRequirements: IItemRequirements)
-  {
-    if (!secondItemRequirements){
+  public mergeItemRequirements(firstItemRequirements: IItemRequirements | undefined, secondItemRequirements: IItemRequirements) {
+    if (!secondItemRequirements) {
       return firstItemRequirements;
     }
     if (!firstItemRequirements) {
       return secondItemRequirements;
     }
 
-    let requirements = firstItemRequirements;
-    if (secondItemRequirements?.alignment && !firstItemRequirements?.alignment){
+    const requirements = firstItemRequirements;
+    if (secondItemRequirements?.alignment && !firstItemRequirements?.alignment) {
       requirements.alignment = secondItemRequirements.alignment;
     }
-    if (secondItemRequirements?.baseClass && !firstItemRequirements.baseClass){
+    if (secondItemRequirements?.baseClass && !firstItemRequirements.baseClass) {
       requirements.baseClass = secondItemRequirements.baseClass;
     }
     if ((secondItemRequirements?.level ?? 1) > (firstItemRequirements?.level ?? 1)) {
       requirements.level = secondItemRequirements.level;
     }
-    if (secondItemRequirements?.quest && !firstItemRequirements.quest)
-    {
+    if (secondItemRequirements?.quest && !firstItemRequirements.quest) {
       requirements.quest = secondItemRequirements.quest;
     }
 
