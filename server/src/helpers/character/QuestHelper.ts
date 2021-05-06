@@ -6,8 +6,6 @@ import { Allegiance, Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequire
   IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
-import * as AllQuests from '../../../content/_output/quests.json';
-
 @Injectable()
 export class QuestHelper extends BaseService {
 
@@ -15,7 +13,7 @@ export class QuestHelper extends BaseService {
 
   // get a full quest object
   public getQuest(quest: string): IQuest {
-    return AllQuests[quest];
+    return this.game.contentManager.getQuest(quest);
   }
 
   // check if the player has the specified quest
@@ -149,6 +147,7 @@ export class QuestHelper extends BaseService {
 
     this.giveQuestRewards(player, quest);
     this.recalculateQuestKillsAndStatRewards(player);
+    this.game.characterHelper.recalculateEverything(player);
   }
 
   // give the quest rewards to the player

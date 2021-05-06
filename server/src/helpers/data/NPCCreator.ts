@@ -14,8 +14,6 @@ import { DialogActionHelper } from '../character/DialogActionHelper';
 import { ItemHelper } from '../character/ItemHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
 
-import * as attributeStats from '../../../content/_output/attributestats.json';
-import * as npcNames from '../../../content/_output/npcnames.json';
 import { BaseService } from '../../models/BaseService';
 import { ItemCreator } from './ItemCreator';
 import { ContentManager } from './ContentManager';
@@ -244,7 +242,7 @@ export class NPCCreator extends BaseService {
     }
 
     if (this.game.diceRollerHelper.XInOneHundred(1)) {
-      return sample((npcNames as any).default || npcNames);
+      return sample(this.game.contentManager.npcNamesData);
     }
 
     return species.human();
@@ -252,7 +250,7 @@ export class NPCCreator extends BaseService {
 
   // attributes buff npcs in random ways
   public addAttribute(npc: INPC): void {
-    const { attribute, stats } = sample((attributeStats as any).default || attributeStats);
+    const { attribute, stats } = sample(this.game.contentManager.attributeStatsData);
     npc.name = `${attribute} ${npc.name}`;
 
     npc.level += 2;

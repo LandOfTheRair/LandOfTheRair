@@ -2,8 +2,6 @@ import { Injectable } from 'injection-js';
 import { Currency, ICharacter, IItemContainer, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
-import * as materialData from '../../../content/_output/materialstorage.json';
-
 @Injectable()
 export class InventoryHelper extends BaseService {
 
@@ -173,6 +171,7 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddMaterial(player: IPlayer, material: string): boolean {
+    const materialData = this.game.contentManager.materialStorageData;
     return !!materialData.slots[material];
   }
 

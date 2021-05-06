@@ -4,7 +4,6 @@ import { cloneDeep } from 'lodash';
 import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect,
   IMacroCommandArgs, ISpellData, IStatusEffectData, Skill, SoundEffect, Stat } from '../../interfaces';
 
-import * as allSpells from '../../../content/_output/spells.json';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import * as allSpellRefs from '../game/spells';
@@ -23,7 +22,7 @@ export class SpellManager extends BaseService {
 
   // get the raw YML spell data
   public getSpellData(key: string): ISpellData {
-    return allSpells[key];
+    return this.game.contentManager.getSpell(key);
   }
 
   // get the ref to the spell for casting

@@ -3,8 +3,6 @@ import { Injectable } from 'injection-js';
 
 import { BaseClass, ICharacter, IClassTraitTree, IPlayer, ITrait, ITraitTreeTrait } from '../../interfaces';
 
-import * as allTraitTrees from '../../../content/_output/trait-trees.json';
-import * as allTraits from '../../../content/_output/traits.json';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -14,12 +12,12 @@ export class TraitHelper extends BaseService {
 
   // get the trait data raw from the trait info hash
   public getTraitData(traitName: string): ITrait {
-    return allTraits[traitName];
+    return this.game.contentManager.getTrait(traitName);
   }
 
   // get the raw trait tree from the trait info hash
   public getTraitTree(baseClass: BaseClass): IClassTraitTree {
-    return allTraitTrees[baseClass];
+    return this.game.contentManager.getTraitTree(baseClass);
   }
 
   // get the specific trait in the tree

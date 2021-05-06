@@ -4,7 +4,6 @@ import { isString } from 'lodash';
 
 import { ICharacter, IStatusEffect, IStatusEffectData } from '../../interfaces';
 
-import * as allEffects from '../../../content/_output/effect-data.json';
 import { Effect } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import * as allEffectRefs from '../game/effects';
@@ -23,7 +22,7 @@ export class EffectManager extends BaseService {
 
   // get the metadata for an effect
   public getEffectData(effectName: string): IStatusEffectData {
-    return allEffects[effectName];
+    return this.game.contentManager.getEffect(effectName);
   }
 
   // get a ref to an effect

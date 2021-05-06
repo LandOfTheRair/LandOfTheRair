@@ -1,28 +1,104 @@
 import fs from 'fs-extra';
 import { Injectable } from 'injection-js';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 
-import { IItemDefinition, INPCDefinition } from '../../interfaces';
+import { Allegiance, BaseClass, Holiday, IClassTraitTree,
+  IDynamicEventData,
+  IFate,
+  IGameSettings,
+  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, ISpawnerData, ISpellData,
+  IStatusEffectData, ITrait, IWeaponTier, Rollable, Skill, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class ContentManager extends BaseService {
 
-  private charSelect: any;
-  public get charSelectData() {
-    return JSON.parse(JSON.stringify(this.charSelect));
-  }
-
-  private mapDroptables: any;
-  private regionDroptables: any;
+  private mapDroptables: Record<string, { drops: Rollable[] }>;
+  private regionDroptables: Record<string, { drops: Rollable[] }>;
   private items: Record<string, IItemDefinition>;
   private npcs: Record<string, INPCDefinition>;
-  private npcScripts: any;
-  private recipes: any; // { tradeskill: recipe[] }
-  private spawners: any;
+  private npcScripts: Record<string, INPCScript>;
+  private recipes: Record<string, IRecipe[]>;
+  private spawners: Record<string, ISpawnerData>;
+  private quests: Record<string, IQuest>;
+  private traits: Record<string, ITrait>;
+  private traitTrees: Record<string, IClassTraitTree>;
+  private effectData: Record<string, IStatusEffectData>;
+  private spells: Record<string, ISpellData>;
+
+  private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
+  private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
+  private charSelect: { baseStats: Record<Stat, number>; allegiances: any[]; classes: any[]; weapons: any[] };
+  private events: Record<string, IDynamicEventData>;
+  private fate: IFate;
+  private hideReductions: Record<WeaponClass, number>;
+  private holidayDescs: Record<Holiday, { name: string; text: string; duration: string }>;
+  private materialStorage: IMaterialSlotLayout;
+  private npcNames: string[];
+  private premium: IPremium;
+  private settings: IGameSettings;
+  private skillDescs: Record<Skill, string[]>;
+  private statDamageMultipliers: Record<Stat, number[]>;
+  private weaponTiers: Record<WeaponClass, IWeaponTier>;
+
+  public get allegianceStatsData(): Record<Allegiance, Array<{ stat: Stat; value: number }>> {
+    return cloneDeep(this.allegianceStats);
+  }
+
+  public get attributeStatsData(): Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }> {
+    return cloneDeep(this.attributeStats);
+  }
+
+  public get charSelectData() {
+    return cloneDeep(this.charSelect);
+  }
+
+  public get eventsData(): Record<string, IDynamicEventData> {
+    return cloneDeep(this.events);
+  }
+
+  public get fateData(): IFate {
+    return cloneDeep(this.fate);
+  }
+
+  public get hideReductionsData(): Record<WeaponClass, number> {
+    return cloneDeep(this.hideReductions);
+  }
+
+  public get holidayDescsData(): Record<Holiday, { name: string; text: string; duration: string }> {
+    return cloneDeep(this.holidayDescs);
+  }
+
+  public get materialStorageData(): IMaterialSlotLayout {
+    return cloneDeep(this.materialStorage);
+  }
+
+  public get npcNamesData(): string[] {
+    return cloneDeep(this.npcNames);
+  }
+
+  public get premiumData(): IPremium {
+    return cloneDeep(this.premium);
+  }
+
+  public get settingsData(): IGameSettings {
+    return cloneDeep(this.settings);
+  }
+
+  public get skillDescsData(): Record<Skill, string[]> {
+    return cloneDeep(this.skillDescs);
+  }
+
+  public get statDamageMultipliersData(): Record<Stat, number[]> {
+    return cloneDeep(this.statDamageMultipliers);
+  }
+
+  public get weaponTiersData(): Record<string, IWeaponTier> {
+    return cloneDeep(this.weaponTiers);
+  }
 
   public init() {
-    this.loadCharSelect();
+    this.loadCore();
     this.loadMapDroptables();
     this.loadRegionDroptables();
     this.loadItems();
@@ -30,13 +106,17 @@ export class ContentManager extends BaseService {
     this.loadNPCScripts();
     this.loadRecipes();
     this.loadSpawners();
+    this.loadQuests();
+    this.loadTraits();
+    this.loadEffects();
+    this.loadSpells();
   }
 
-  public getDropablesForRegion(region: string) {
+  public getDropablesForRegion(region: string): { drops: Rollable[] } {
     return cloneDeep(this.regionDroptables[region]);
   }
 
-  public getDroptablesForMap(mapName: string) {
+  public getDroptablesForMap(mapName: string): { drops: Rollable[] } {
     return cloneDeep(this.mapDroptables[mapName]);
   }
 
@@ -48,20 +128,84 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.npcs[npcId]);
   }
 
-  public getNPCScript(npcTag: string) {
+  public getNPCScript(npcTag: string): INPCScript {
     return cloneDeep(this.npcScripts[npcTag]);
   }
 
-  public getRecipesForTradeskill(tradeskill) {
+  public getRecipesForTradeskill(tradeskill): IRecipe[] {
     return cloneDeep(this.recipes[tradeskill] || []);
   }
 
-  public getSpawnerByTag(spawnerTag: string) {
+  public getSpawnerByTag(spawnerTag: string): ISpawnerData {
     return cloneDeep(this.spawners[spawnerTag]);
   }
 
-  private loadCharSelect() {
+  public getQuest(quest: string): IQuest {
+    return cloneDeep(this.quests[quest]);
+  }
+
+  public getTrait(trait: string): ITrait {
+    return cloneDeep(this.traits[trait]);
+  }
+
+  public getTraitTree(tree: BaseClass): IClassTraitTree {
+    return cloneDeep(this.traitTrees[tree]);
+  }
+
+  public getEffect(name: string): IStatusEffectData {
+    return cloneDeep(this.effectData[name]);
+  }
+
+  public getSpell(name: string): ISpellData {
+    return cloneDeep(this.spells[name]);
+  }
+
+  public getEvent(name: string): IDynamicEventData {
+    return cloneDeep(this.events[name]);
+  }
+
+  public getGameSetting(name: keyof IGameSettings, subKey: string): any {
+    return get(this.settings[name], subKey);
+  }
+
+  private loadCore() {
+    this.allegianceStats = fs.readJsonSync('content/_output/allegiancestats.json');
+    this.attributeStats = fs.readJsonSync('content/_output/attributestats.json');
     this.charSelect = fs.readJsonSync('content/_output/charselect.json');
+    this.events = fs.readJsonSync('content/_output/events.json');
+    this.fate = fs.readJsonSync('content/_output/fate.json');
+    this.hideReductions = fs.readJsonSync('content/_output/hidereductions.json');
+    this.holidayDescs = fs.readJsonSync('content/_output/holidaydescs.json');
+    this.materialStorage = fs.readJsonSync('content/_output/materialstorage.json');
+    this.npcNames = fs.readJsonSync('content/_output/npcnames.json');
+    this.premium = fs.readJsonSync('content/_output/premium.json');
+    this.settings = fs.readJsonSync('content/_output/settings.json');
+    this.skillDescs = fs.readJsonSync('content/_output/skilldescs.json');
+    this.statDamageMultipliers = fs.readJsonSync('content/_output/statdamagemultipliers.json');
+    this.weaponTiers = fs.readJsonSync('content/_output/weapontiers.json');
+  }
+
+  private loadSpells() {
+    const spells = fs.readJsonSync('content/_output/spells.json');
+    this.spells = spells;
+  }
+
+  private loadEffects() {
+    const effectData = fs.readJsonSync('content/_output/effect-data.json');
+    this.effectData = effectData;
+  }
+
+  private loadTraits() {
+    const traits = fs.readJsonSync('content/_output/traits.json');
+    this.traits = traits;
+
+    const traitTrees = fs.readJsonSync('content/_output/trait-trees.json');
+    this.traitTrees = traitTrees;
+  }
+
+  private loadQuests() {
+    const quests = fs.readJsonSync('content/_output/quests.json');
+    this.quests = quests;
   }
 
   private loadMapDroptables() {

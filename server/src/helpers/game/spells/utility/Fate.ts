@@ -1,8 +1,6 @@
 import { BaseClass, Currency, ICharacter, IPlayer, LearnedSpell, SpellCastArgs, Stat } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
-import * as fateData from '../../../../../content/_output/fate.json';
-
 export class Fate extends Spell {
 
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
@@ -15,6 +13,7 @@ export class Fate extends Spell {
       return this.sendMessage(player, { message: 'There was no effect.' });
     }
 
+    const fateData = this.game.contentManager.fateData;
     const res: any = this.game.lootHelper.chooseWithoutReplacement(fateData.event);
 
     let message = res[0].message || '';

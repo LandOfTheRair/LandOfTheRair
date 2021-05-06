@@ -8,9 +8,6 @@ import { Allegiance, ArmorClass, BaseClass, CombatEffect, DamageArgs,
   Skill, SoundEffect, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
-import * as allStatMultipliers from '../../../content/_output/statdamagemultipliers.json';
-import * as weaponTiers from '../../../content/_output/weapontiers.json';
-
 interface WeaponAttackStats {
   damage: number[];
   variance: { min: number; max: number };
@@ -104,6 +101,9 @@ export class DamageHelperPhysical extends BaseService {
     if (itemClass === ItemClass.Hands || itemClass === ItemClass.Gloves || itemClass === ItemClass.Claws) {
       totalTier += this.game.traitHelper.traitLevelValue(attacker, 'BrassKnuckles');
     }
+
+    const allStatMultipliers = this.game.contentManager.statDamageMultipliersData;
+    const weaponTiers = this.game.contentManager.weaponTiersData;
 
     const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
     const statMultipliers: number[] = allStatMultipliers[scaleStat];

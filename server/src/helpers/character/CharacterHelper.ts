@@ -6,8 +6,6 @@ import { BaseClass, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
-import * as AllegianceStats from '../../../content/_output/allegiancestats.json';
-import * as HideReduction from '../../../content/_output/hidereductions.json';
 import { Player } from '../../models';
 
 @Injectable()
@@ -487,7 +485,8 @@ export class CharacterHelper extends BaseService {
     });
 
     // add hidden allegiance bonuses
-    (AllegianceStats[character.allegiance] || []).forEach(({ stat, value }) => {
+    const allegianceStats = this.game.contentManager.allegianceStatsData;
+    (allegianceStats[character.allegiance] || []).forEach(({ stat, value }) => {
       addStat(stat, value);
     });
 
@@ -630,7 +629,8 @@ export class CharacterHelper extends BaseService {
       ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.RightHand], 'itemClass')
       : null;
 
-    const totalReduction = (HideReduction[leftHandClass]) || 0 + (HideReduction[rightHandClass] || 0);
+    const hideReductions = this.game.contentManager.hideReductionsData;
+    const totalReduction = (hideReductions[leftHandClass]) || 0 + (hideReductions[rightHandClass] || 0);
     const shadowSheathMultiplier = Math.max(0, 1 - this.game.traitHelper.traitLevelValue(char, 'ShadowSheath'));
 
     return Math.floor(totalReduction * shadowSheathMultiplier);

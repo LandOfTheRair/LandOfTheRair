@@ -8,10 +8,6 @@ import { DynamicEvent } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
 
-import * as eventsJSON from '../../../../content/_output/events.json';
-import * as settings from '../../../../content/_output/settings.json';
-
-const events = (eventsJSON as any).default || eventsJSON;
 
 @Injectable()
 export class DynamicEventHelper extends BaseService {
@@ -151,7 +147,7 @@ export class DynamicEventHelper extends BaseService {
 
   // get a dynamic event ref
   public getEventRef(ref: string): IDynamicEventData | undefined {
-    return events[ref];
+    return this.game.contentManager.getEvent(ref);
   }
 
   // recalculate all the stat totals for the events
@@ -171,6 +167,9 @@ export class DynamicEventHelper extends BaseService {
 
   // check for other events and start them possibly
   private checkOtherEvents(): void {
+    const events = this.game.contentManager.eventsData;
+    const settings = this.game.contentManager.settingsData;
+
     const rarity = settings.event;
 
     Object.keys(events).forEach(eventName => {

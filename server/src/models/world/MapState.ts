@@ -151,7 +151,7 @@ export class MapState {
 
       if (spawner.properties.resourceName) spawnerData.npcIds = [spawner.properties.resourceName];
 
-      const createdSpawner = new Spawner(this.game, this.map, this, spawnerData);
+      const createdSpawner = new Spawner(this.game, this.map, this, spawnerData as Partial<Spawner>);
       this.addSpawner(createdSpawner);
     });
   }

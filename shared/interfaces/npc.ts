@@ -1,7 +1,8 @@
 import { IAIBehavior, IBehavior } from './behaviors';
 import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot,
   MonsterClass, RandomNumber, Rollable, Skill, SkillBlock, Stat, StatBlock } from './building-blocks';
-import { ICharacter } from './character';
+import { BoundedNumber, ICharacter } from './character';
+import { ICharacterItems } from './characteritems';
 import { IDialogTree } from './dialog';
 import { IStatusEffectInfo } from './status-effect';
 
@@ -184,4 +185,23 @@ export interface INPC extends ICharacter {
   maxWanderRandomlyDistance: number;
 
   tansFor?: string;
+}
+
+export interface INPCScript {
+  tag: string;
+  name?: string;
+  affiliation?: string;
+  hostility?: Hostility;
+  level?: number;
+  hp?: BoundedNumber;
+  mp?: BoundedNumber;
+  usableSkills?: string[] | Rollable[];
+  items?: ICharacterItems;
+  dialog?: Record<string, any>;
+  allegiance?: Allegiance;
+  x?: number;
+  y?: number;
+  sprite?: number;
+  alignment?: Alignment;
+  extraProps?: string[];
 }
