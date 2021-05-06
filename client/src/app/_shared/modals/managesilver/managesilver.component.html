@@ -62,9 +62,15 @@
       <mat-tab label="Silver Perks">
         <div class="perks-container">
           <div class="perk" *ngFor="let perk of allPremium.silverPurchases">
+
             <app-icon [name]="perk.icon"
                       bgColor="transparent"
-                      [fgColor]="perk.fgColor"></app-icon>
+                      [fgColor]="perk.fgColor"
+                      size="large"
+                      *ngIf="!perk.name.includes('Cosmetic')"></app-icon>
+
+            <app-item *ngIf="perk.name.includes('Cosmetic')"
+                      [item]="{ name: 'Cosmetic Scroll - ' + perk.name.split(':')[1].trim(), mods: { } }"></app-item>
 
             <div class="perk-text">
               <div>
