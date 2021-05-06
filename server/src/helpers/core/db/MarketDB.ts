@@ -68,7 +68,7 @@ export class MarketDB extends BaseService {
       requirements: this.game.itemHelper.getItemProperty(item, 'requirements'),
       cosmetic: this.game.itemHelper.getItemProperty(item, 'cosmetic'),
       condition: this.game.itemHelper.getItemProperty(item, 'condition') ?? 20000,
-      itemOverride: Object.assign({}, itemDefinition, { mods: item.mods || {} })
+      itemOverride: Object.assign({}, itemDefinition, item.mods, { mods: item.mods || {} })
     };
 
     return this.db.save(listing);
