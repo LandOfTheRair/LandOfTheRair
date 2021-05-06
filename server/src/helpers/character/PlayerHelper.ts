@@ -56,6 +56,19 @@ export class PlayerHelper extends BaseService {
       this.game.traitHelper.resetTraits(player);
     }
 
+    if (player.learnedRunes.length > 0) {
+      const remove: string[] = [];
+
+      player.learnedRunes.forEach(rune => {
+        const runeItem = this.game.itemHelper.getItemDefinition(rune);
+        if (runeItem) return;
+
+        remove.push(rune);
+      });
+
+      player.learnedRunes = player.learnedRunes.filter(x => !remove.includes(x));
+    }
+
     player.agro = {};
 
     player.isGM = playerAccount.isGameMaster;
@@ -192,6 +205,19 @@ export class PlayerHelper extends BaseService {
     // if we're on a dense tile, "respawn"
     const map = this.worldManager.getMap(player.map)?.map;
     if (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y)) {
+      this.game.messageHelper.sendSimpleMessage(player,
+        `Whoops. Tell a GM "invalid loc" happened at ${player.x}, ${player.y} on ${player.map}.`
+      );
+
+      this.teleportHelper.teleportToRespawnPoint(player);
+    }
+
+    // bop players who aren't subscribers out of subscriber maps
+    if (map?.subscriberOnly && !player.subscriptionTier) {
+      this.game.messageHelper.sendSimpleMessage(player,
+        'This location is subscriber only, you\'ll have to come back later!'
+      );
+
       this.teleportHelper.teleportToRespawnPoint(player);
     }
   }

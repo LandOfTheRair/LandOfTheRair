@@ -54,11 +54,13 @@ export class ItemCreator extends BaseService {
   // create a succor item at this location
   public createSuccorItem(map: string, x: number, y: number, ounces: number = 1): ISimpleItem {
 
+    const region = this.game.worldManager.getMap(map)?.map.getRegionNameAt(x, y);
+
     const succorItem = this.game.itemCreator.getSimpleItem('Succor Blob');
     succorItem.mods.destroyOnDrop = true;
     succorItem.mods.ounces = ounces;
     succorItem.mods.succorInfo = { map, x, y };
-    succorItem.mods.desc = `a blob of spatial memories from ${map}`;
+    succorItem.mods.desc = `a blob of spatial memories from ${map} (${region})`;
 
     return succorItem;
   }

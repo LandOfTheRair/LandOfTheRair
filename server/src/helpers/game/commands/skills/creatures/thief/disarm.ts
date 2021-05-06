@@ -4,6 +4,7 @@ import { SkillCommand } from '../../../../../../models/macro';
 export class Disarm extends SkillCommand {
 
   override aliases = ['disarm'];
+  override requiresLearn = true;
 
   override range(char: ICharacter) {
     return 1;

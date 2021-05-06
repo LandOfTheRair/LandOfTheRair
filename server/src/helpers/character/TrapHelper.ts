@@ -40,7 +40,16 @@ export class TrapHelper extends BaseService {
 
     const caster = mapState.getCharacterByUUID(trap.item.mods.trapSetBy ?? '');
 
-    this.game.spellManager.castSpell(trapEffect.name, caster, target, trapEffect);
+    const isAOE = (trapEffect.range ?? 0) > 0;
+    if (isAOE) {
+      this.game.commandHandler.getSkillRef(trapEffect.name)
+        .use(caster, null,
+          { overrideEffect: { range: trapEffect.range, name: trapEffect.name } },
+          { x: target.x, y: target.y, map: target.map }
+        );
+    } else {
+      this.game.spellManager.castSpell(trapEffect.name, caster, target, trapEffect);
+    }
   }
 
   public placeTrap(x: number, y: number, placer: ICharacter, trap: ISimpleItem) {
@@ -52,8 +61,10 @@ export class TrapHelper extends BaseService {
 
     const trapEffect: IItemEffect = cloneDeep(this.game.itemHelper.getItemProperty(trap, 'trapEffect'));
     trapEffect.potency *= (1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps'));
-    trapEffect.range = (trapEffect.range ?? 1) + this.game.traitHelper.traitLevelValue(placer, 'WiderTraps');
+    trapEffect.range = (trapEffect.range ?? 0);
     trap.mods.trapEffect = trapEffect;
+
+    if (trapEffect.range > 0) trapEffect.range += this.game.traitHelper.traitLevelValue(placer, 'WiderTraps');
 
     this.setTrap(placer.map, x, y, trap);
   }

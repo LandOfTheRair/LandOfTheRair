@@ -399,7 +399,7 @@ export class CharacterHelper extends BaseService {
         if (!rune) return;
 
         const item = this.game.itemHelper.getItemDefinition(rune);
-        if (!item.trait) return;
+        if (!item?.trait) return;
 
         character.allTraits[item.trait.name] = character.allTraits[item.trait.name] || 0;
         character.allTraits[item.trait.name] += item.trait.level ?? 0;

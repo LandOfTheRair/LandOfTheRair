@@ -344,6 +344,12 @@ export class WorldMap {
     return obj?.properties?.desc || '';
   }
 
+  // get the region name for the particular tile
+  public getRegionNameAt(x: number, y: number): any {
+    const obj = this.getObjectAt(MapLayer.RegionDescriptions, x, y);
+    return obj?.name || 'Wilderness';
+  }
+
   // get the bgm for the particular tile
   public getBackgroundMusicAt(x: number, y: number): string {
     const obj = this.getObjectAt(MapLayer.BackgroundMusic, x, y);

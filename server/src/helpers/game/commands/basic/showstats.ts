@@ -11,6 +11,17 @@ export class ShowStats extends MacroCommand {
     let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.<br>`;
     message = `${message}Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
 
+    if (args.stringArgs === 'leader') {
+      message = `${message}<br>Your leaderboard statistics are as follows:<br>`;
+
+      Object.keys(player.statistics.statistics).forEach(key => {
+        message = `${message}<br>${key.toUpperCase()} ${player.statistics.statistics[key].toLocaleString()}`;
+      });
+
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
+      return;
+    }
+
     const showAll = !!args.stringArgs;
     const hash = showAll ? player.totalStats : player.stats;
 

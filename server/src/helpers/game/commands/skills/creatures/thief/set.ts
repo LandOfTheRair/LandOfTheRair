@@ -4,6 +4,7 @@ import { SkillCommand } from '../../../../../../models/macro';
 export class Set extends SkillCommand {
 
   override aliases = ['set'];
+  override requiresLearn = true;
 
   override range(char: ICharacter) {
     return 1 + this.game.traitHelper.traitLevelValue(char, 'ThrownTraps');

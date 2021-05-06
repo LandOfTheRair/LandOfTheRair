@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
-import { timer } from 'rxjs';
+import { of, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
@@ -55,20 +55,26 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Leaderboard',
-          icon: 'open_in_new',
+          icon: 'score',
           handler: () => window.open('https://global.rair.land', '_blank'),
           borderTop: true,
         },
         {
           name: 'Blog',
-          icon: 'open_in_new',
+          icon: 'rss_feed',
           visibleIf: this.announcementService.latestAnnouncement,
           handler: () => window.open(this.announcementService.latestAnnouncement.link, '_blank'),
         },
         {
           name: 'Help',
-          icon: 'open_in_new',
+          icon: 'help_outline',
           handler: () => window.open('https://rair.land/docs/home', '_blank'),
+        },
+        {
+          name: 'Download',
+          icon: 'download',
+          visibleIf: of(!navigator.userAgent.includes('Electron')),
+          handler: () => window.open('https://rair.land/download', '_blank')
         },
         {
           name: 'About',
@@ -196,6 +202,7 @@ export class MenuComponent implements OnInit {
 
   // show the warning or not, default yes, unsaved
   public showResolutionWarning = true;
+  public showMismatchWarning = true;
 
   // show the message or not, default no, unsaved
   public showDailyResetMessage: boolean;
@@ -254,6 +261,10 @@ export class MenuComponent implements OnInit {
 
   public hideResolution() {
     this.showResolutionWarning = false;
+  }
+
+  public hideMismatch() {
+    this.showMismatchWarning = false;
   }
 
 }

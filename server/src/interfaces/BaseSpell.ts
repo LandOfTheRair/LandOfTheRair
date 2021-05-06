@@ -15,7 +15,7 @@ export interface SpellCastArgs {
   range: number;
   spellData: ISpellData;
   callbacks?: { emit };
-  originalArgs?: IMacroCommandArgs;
+  originalArgs?: Partial<IMacroCommandArgs>;
   x?: number;
   y?: number;
   map?: string;

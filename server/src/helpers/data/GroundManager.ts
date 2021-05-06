@@ -156,7 +156,12 @@ export class GroundManager extends BaseService {
   }
 
   public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem, forceSave?: boolean): void {
-    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    const { itemClass: itemItemClass, sprite } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'sprite']);
+
+    const itemClass = itemItemClass ?? ItemClass.Box;
+
+    // bad items can't get put on the ground
+    if (sprite === -1) return;
 
     // corpses get a lil special treatment
     if (itemClass === ItemClass.Corpse) {
