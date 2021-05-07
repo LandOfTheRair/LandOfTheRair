@@ -215,7 +215,7 @@ export class GroundManager extends BaseService {
       container.push(groundItem);
       if (itemClass === ItemClass.Corpse) return;
       if (item.mods.owner || forceSave) {
-        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? []).push(groundItem), Object);
+        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [groundItem]), Object);
       }
     }
   }
