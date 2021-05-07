@@ -364,6 +364,7 @@ export class ItemComponent implements OnDestroy {
   updateWithDesc(): void {
     if (!this.item || !this.showDesc) return;
 
+    console.log(this.descText, this.item, this.realItem);
     this.store.dispatch(new SetCurrentItemTooltip(this.descText, this.item.mods?.upgrades ?? []));
     this.hasTooltip = true;
   }

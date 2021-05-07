@@ -97,7 +97,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
 
   const stats = getProp(item, itemDef, 'stats');
   const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense) ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
-  const affectsAttributes = [Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP].some(x => stats[x]);
+  const affectsAttributes = [Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP].some(x => stats?.[x]);
   const statsText = identifyTier > 0 && affectsAttributes ? `This item affects physical attributes! ` : '';
 
   const useEffect = getProp(item, itemDef, 'useEffect');
