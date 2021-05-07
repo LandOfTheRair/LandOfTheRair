@@ -1,6 +1,7 @@
 
 export * from './findfamiliarbear';
 export * from './findfamiliardistraction';
+export * from './findfamiliargolem';
 export * from './findfamiliarlight';
 export * from './findfamiliarnature';
 export * from './findfamiliarsalamander';

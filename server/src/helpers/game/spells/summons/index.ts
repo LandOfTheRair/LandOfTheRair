@@ -1,6 +1,7 @@
 
 export * from './FindFamiliarBear';
 export * from './FindFamiliarDistraction';
+export * from './FindFamiliarGolem';
 export * from './FindFamiliarLight';
 export * from './FindFamiliarNature';
 export * from './FindFamiliarSalamander';
