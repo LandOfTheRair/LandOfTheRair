@@ -26,6 +26,7 @@ export class AttackCommand extends SkillCommand {
   }
 
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
+    opts.attackRange = this.range(user);
     this.game.combatHelper.physicalAttack(user, target, opts);
   }
 
