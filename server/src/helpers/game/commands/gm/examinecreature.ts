@@ -1,3 +1,6 @@
+
+import { get } from 'lodash';
+
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -10,12 +13,19 @@ export class GMExamineCreature extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
 
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
-    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
+    const [creature, drill] = args.arrayArgs;
 
-    this.sendMessage(player, `Examine ${target.name}:`);
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, creature);
+    if (!target) return this.youDontSeeThatPerson(player, creature);
+
+    let displayValue = target;
+    if (drill) {
+      displayValue = get(target, drill, null);
+    }
+
+    this.sendMessage(player, `Examine ${target.name} (${drill || 'all'}):`);
     this.sendMessage(player, '===');
-    this.sendMessage(player, `\`${JSON.stringify(target, null, 2)}\``);
+    this.sendMessage(player, `\`${JSON.stringify(displayValue, null, 2)}\``);
     this.sendMessage(player, '===');
   }
 }

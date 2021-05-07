@@ -1,3 +1,6 @@
+
+import { get } from 'lodash';
+
 import { IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -12,9 +15,15 @@ export class GMExamineItem extends MacroCommand {
     const rightHand = player.items.equipment[ItemSlot.RightHand];
     if (!rightHand) return this.sendMessage(player, 'You need to hold something in your right hand.');
 
-    this.sendMessage(player, `Examine ${rightHand.name}:`);
+    let displayValue = rightHand;
+    if (args.stringArgs) {
+      displayValue = get(rightHand, args.stringArgs, null)
+                  || get(this.game.itemHelper.getItemDefinition((rightHand.name)), args.stringArgs, null);
+    }
+
+    this.sendMessage(player, `Examine ${rightHand.name} (${args.stringArgs || 'all'}):`);
     this.sendMessage(player, '===');
-    this.sendMessage(player, `\`${JSON.stringify(rightHand, null, 2)}\``);
+    this.sendMessage(player, `\`${JSON.stringify(displayValue, null, 2)}\``);
     this.sendMessage(player, '===');
   }
 }
