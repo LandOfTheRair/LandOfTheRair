@@ -362,6 +362,7 @@ export class ItemHelper extends BaseService {
           } else {
 
             if (!book.mods.bookPages!.find(x => x.id === item.name)) {
+              removeItems.push(item.uuid);
               book.mods.bookPages!.push({ id: item.name, text: extendedDesc ?? 'no description' });
             }
           }
