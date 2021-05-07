@@ -43,22 +43,31 @@ export class DiscordHelper extends BaseService {
 
     await this.discordGuild.fetch();
 
-    this.discordChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_CHANNEL_ID);
-    if (!this.discordChannel) {
-      this.game.logger.error('Discord', `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`);
-      return;
+    // try to load the bridge channel
+    if (process.env.DISCORD_CHANNEL_ID) {
+      this.discordChannel = (this.discordGuild.channels.cache as any).get();
+      if (!this.discordChannel) {
+        this.game.logger.error('Discord', `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`);
+        return;
+      }
     }
 
-    this.discordBotCommandChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_BOT_CHANNEL_ID);
-    if (!this.discordBotCommandChannel) {
-      this.game.logger.error('Discord', `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`);
-      return;
+    // try to load the bot command channel
+    if (process.env.DISCORD_BOT_CHANNEL_ID) {
+      this.discordBotCommandChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_BOT_CHANNEL_ID);
+      if (!this.discordBotCommandChannel) {
+        this.game.logger.error('Discord', `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`);
+        return;
+      }
     }
 
-    this.discordMarketplaceChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_MARKET_CHANNEL_ID);
-    if (!this.discordMarketplaceChannel) {
-      this.game.logger.error('Discord', `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`);
-      return;
+    // try to load the market channel
+    if (process.env.DISCORD_MARKET_CHANNEL_ID) {
+      this.discordMarketplaceChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_MARKET_CHANNEL_ID);
+      if (!this.discordMarketplaceChannel) {
+        this.game.logger.error('Discord', `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`);
+        return;
+      }
     }
 
     this.updateLobbyChannel();
