@@ -11,6 +11,7 @@ export * from './gg';
 export * from './item';
 export * from './kill';
 export * from './moditem';
+export * from './searchitems';
 export * from './startevent';
 export * from './summon';
 export * from './teleport';

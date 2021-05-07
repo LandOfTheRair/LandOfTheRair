@@ -438,4 +438,9 @@ export class ItemHelper extends BaseService {
     }
   }
 
+  // search all items for similar things
+  public searchItems(search: string): string[] {
+    return Object.keys(this.game.contentManager.allItems).filter(x => new RegExp(`.*${search}.*`, 'i').test(x));
+  }
+
 }

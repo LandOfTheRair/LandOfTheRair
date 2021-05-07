@@ -43,6 +43,10 @@ export class ContentManager extends BaseService {
   private staticText: { terrain: string[]; decor: Record<string, string> };
   private weaponTiers: Record<WeaponClass, IWeaponTier>;
 
+  public get allItems(): Record<string, IItemDefinition> {
+    return cloneDeep(this.items);
+  }
+
   public get allegianceStatsData(): Record<Allegiance, Array<{ stat: Stat; value: number }>> {
     return cloneDeep(this.allegianceStats);
   }
