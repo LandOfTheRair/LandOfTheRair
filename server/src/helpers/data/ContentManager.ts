@@ -47,6 +47,10 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.items);
   }
 
+  public get allNPCs(): Record<string, INPCDefinition> {
+    return cloneDeep(this.npcs);
+  }
+
   public get allegianceStatsData(): Record<Allegiance, Array<{ stat: Stat; value: number }>> {
     return cloneDeep(this.allegianceStats);
   }

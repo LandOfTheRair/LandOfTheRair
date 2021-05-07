@@ -59,4 +59,9 @@ export class NPCHelper extends BaseService {
     return get(npc, ['targetDamageDone', char.uuid, attack, 'zeroTimes'], 0);
   }
 
+  // search all npcs for similar things
+  public searchNPCs(search: string): string[] {
+    return Object.keys(this.game.contentManager.allNPCs).filter(x => new RegExp(`.*${search}.*`, 'i').test(x));
+  }
+
 }
