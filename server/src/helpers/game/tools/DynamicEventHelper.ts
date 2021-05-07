@@ -1,10 +1,10 @@
 
 import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
-import { merge } from 'lodash';
+import { merge, random, sample } from 'lodash';
 
 import { GameAction, IDynamicEvent, IDynamicEventData, Stat } from '../../../interfaces';
-import { DynamicEvent } from '../../../models';
+import { DynamicEvent, Spawner } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
 
@@ -137,12 +137,16 @@ export class DynamicEventHelper extends BaseService {
       return;
     }
 
+    if (!this.canDoEvent(event)) return;
+
     this.startEvent({
       description: event.description,
       endsAt: Date.now() + (event.duration * 1000),
       name: event.name,
       eventRef: event.name
     });
+
+    this.handleSpecialEvents(event);
   }
 
   // get a dynamic event ref
@@ -187,6 +191,112 @@ export class DynamicEventHelper extends BaseService {
 
       this.startDynamicEvent(event);
     });
+  }
+
+  private handleSpecialEvents(event: IDynamicEventData): void {
+    if (event.name === 'Avatar Spawn') return this.doRareSpawn();
+  }
+
+  private canDoEvent(event: IDynamicEventData): boolean {
+    if (event.name === 'Avatar Spawn') return this.canDoRareSpawn();
+    return true;
+  }
+
+  private canDoRareSpawn(): boolean {
+    const allSpawns = this.game.contentManager.rarespawnsData;
+    return Object.keys(allSpawns)
+      .some(map => allSpawns[map].spawns
+        .some(mon => !this.game.worldManager.getMap(map)?.state.getNPCSpawnerByName(`${mon} Spawner`)));
+  }
+
+  private doRareSpawn(): void {
+    const allSpawns = this.game.contentManager.rarespawnsData;
+
+    let spawnMap;
+    let spawnMonster;
+    let x;
+    let y;
+
+    do {
+      spawnMap = sample(Object.keys(allSpawns));
+      spawnMonster = sample(allSpawns[spawnMap as string].spawns);
+
+      const mapRef = this.game.worldManager.getMap(spawnMap);
+      if (mapRef) {
+
+        const { state: checkState } = mapRef;
+
+        const checkSpawner = checkState.getNPCSpawnerByName(`${spawnMonster} Spawner`);
+        if (checkSpawner) {
+          spawnMap = null;
+          spawnMonster = null;
+        }
+      }
+
+    } while (!spawnMap || !spawnMonster);
+
+    do {
+      const mapRef = this.game.worldManager.getMap(spawnMap);
+      if (mapRef) {
+        const { map: checkMap } = mapRef;
+
+        x = random(4, checkMap.width - 4);
+        y = random(4, checkMap.height - 4);
+
+        if (!checkMap.getWallAt(x, y) || checkMap.getDenseDecorAt(x, y)) {
+          let isValidSpawn = true;
+          for (let xx = x - 2; xx <= x + 2; xx++) {
+            for (let yy = y - 2; yy <= y + 2; yy++) {
+              if (checkMap.getWallAt(xx, yy) || checkMap.getDenseDecorAt(x, y)) {
+                isValidSpawn = false;
+              }
+            }
+          }
+
+          if (!isValidSpawn) {
+            x = null;
+            y = null;
+          }
+
+        } else {
+          x = null;
+          y = null;
+        }
+
+      }
+
+    } while (!x || !y);
+
+    const spawnerOpts = {
+      name: `${spawnMonster} Spawner`,
+      npcIds: [spawnMonster],
+      x,
+      y,
+      maxCreatures: 1,
+      respawnRate: 0,
+      initialSpawn: 1,
+      spawnRadius: 0,
+      randomWalkRadius: -1,
+      leashRadius: -1,
+      shouldStrip: false,
+      removeWhenNoNPCs: true,
+      removeDeadNPCs: true,
+      respectKnowledge: false,
+      doInitialSpawnImmediately: true
+    } as Partial<Spawner>;
+
+    const finalMapRef = this.game.worldManager.getMap(spawnMap);
+    if (!finalMapRef) return;
+
+    const { map, state } = finalMapRef;
+
+    const spawner = new Spawner(this.game, map, state, {
+      ...spawnerOpts
+    } as Partial<Spawner>);
+
+    state.addSpawner(spawner);
+
+    console.log(spawnMap, spawnMonster, x, y);
   }
 
 }

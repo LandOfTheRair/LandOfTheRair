@@ -36,6 +36,7 @@ export class ContentManager extends BaseService {
   private materialStorage: IMaterialSlotLayout;
   private npcNames: string[];
   private premium: IPremium;
+  private rarespawns: Record<string, { spawns: string[] }>;
   private settings: IGameSettings;
   private skillDescs: Record<Skill, string[]>;
   private statDamageMultipliers: Record<Stat, number[]>;
@@ -80,6 +81,10 @@ export class ContentManager extends BaseService {
 
   public get premiumData(): IPremium {
     return cloneDeep(this.premium);
+  }
+
+  public get rarespawnsData(): Record<string, { spawns: string[] }> {
+    return cloneDeep(this.rarespawns);
   }
 
   public get settingsData(): IGameSettings {
@@ -186,6 +191,7 @@ export class ContentManager extends BaseService {
     this.materialStorage = fs.readJsonSync('content/_output/materialstorage.json');
     this.npcNames = fs.readJsonSync('content/_output/npcnames.json');
     this.premium = fs.readJsonSync('content/_output/premium.json');
+    this.rarespawns = fs.readJsonSync('content/_output/rarespawns.json');
     this.settings = fs.readJsonSync('content/_output/settings.json');
     this.skillDescs = fs.readJsonSync('content/_output/skilldescs.json');
     this.statDamageMultipliers = fs.readJsonSync('content/_output/statdamagemultipliers.json');

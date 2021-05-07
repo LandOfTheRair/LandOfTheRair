@@ -71,6 +71,7 @@ export class FindFamiliar extends Effect {
 
     // create a fake spawner that allows infinite range walking that deletes itself
     const spawnerOpts = {
+      name: `FindFamiliar ${char.name}`,
       x: char.x,
       y: char.y,
       maxCreatures: 1,
