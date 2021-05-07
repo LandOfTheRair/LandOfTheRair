@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import * as Discord from 'discord.js';
 
 import { BaseService } from '../../models/BaseService';
-import { IAccount, IDiscordCommand } from '../../interfaces';
+import { IAccount, IDiscordCommand, IItem, INPCDefinition, IPlayer, ISimpleItem, Stat, WeaponClasses } from '../../interfaces';
 
 import * as commands from './discord-commands';
 
@@ -177,8 +177,75 @@ export class DiscordHelper extends BaseService {
   }
 
   // send a marketplace update
-  public sendMarketplaceMessage(message: string) {
-    this.discordMarketplaceChannel?.send(message);
+  public sendMarketplaceMessage(player: IPlayer, sellItem: ISimpleItem, price: number) {
+    this.discordMarketplaceChannel?.send({ embed: this.createMarketplaceEmbed(player, sellItem, price) });
+  }
+
+  public createMarketplaceEmbed(player: IPlayer, sellItem: ISimpleItem, price: number): Discord.MessageEmbed {
+    const fullItem = this.game.itemHelper.getItemDefinition(sellItem.name);
+
+    const embed = this.createItemEmbed(fullItem);
+    embed
+      .setAuthor(player.name)
+      .setTitle('View this seller on Rair Global')
+      .setURL(`https://global.rair.land/character/?username=${player.username}&charSlot=${player.charSlot}`)
+      .addField('Price', price.toLocaleString() + ' gold');
+
+    return embed;
+  }
+
+  // create an item embed for !item
+  public createItemEmbed(fullItem: IItem): Discord.MessageEmbed {
+    const embed = new Discord.MessageEmbed();
+    embed
+      .setAuthor(fullItem.name)
+      .setThumbnail(`https://play.rair.land/assets/spritesheets/items/${fullItem.sprite.toString().padStart(4, '0')}.png`)
+      .addField('Description', fullItem.desc)
+      .addField('Item Type', fullItem.itemClass, true);
+
+    if (WeaponClasses.includes(fullItem.itemClass as any)) {
+      embed.addField('Attack Skill', fullItem.type, true);
+    }
+
+    if (fullItem.requirements) {
+      const requirements: string[] = [];
+      if (fullItem.requirements.baseClass) requirements.push(`Class: ${fullItem.requirements.baseClass}`);
+      if (fullItem.requirements.level)     requirements.push(`Level: ${fullItem.requirements.level}`);
+
+      embed.addField('Requirements', requirements.join(', '), true);
+    }
+
+    return embed;
+  }
+
+  // create an npc embed for !npc
+  public createNPCEmbed(fullCreature: INPCDefinition): Discord.MessageEmbed {
+    const hp = fullCreature.hp.min === fullCreature.hp.max
+      ? fullCreature.hp.max.toLocaleString()
+      : `${fullCreature.hp.min.toLocaleString()}~${fullCreature.hp.max.toLocaleString()}`;
+
+    const embed = new Discord.MessageEmbed();
+    embed
+      .setAuthor(fullCreature.name)
+      .setThumbnail(`https://play.rair.land/assets/spritesheets/creatures/${fullCreature.sprite.toString().padStart(4, '0')}.png`);
+
+    embed
+      .addField('Level', fullCreature.level, true)
+      .addField('HP', hp, true)
+      .addField('Allegiance', fullCreature.allegiance, true);
+
+    if (fullCreature.tansFor) {
+      embed.addField('Tannable', 'Yes', true);
+    }
+
+    if (fullCreature.affiliation) {
+      embed.addField('Affiliation', fullCreature.affiliation, true);
+    }
+
+    const importantStats = [Stat.STR, Stat.DEX, Stat.AGI, Stat.INT, Stat.WIS, Stat.WIL, Stat.CON, Stat.CHA, Stat.LUK];
+    embed.addField('Stats', importantStats.map(x => `**${x.toUpperCase()}**: ${fullCreature.stats[x]}`).join(', '));
+
+    return embed;
   }
 
   // watch for incoming chat messages

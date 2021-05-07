@@ -83,7 +83,7 @@ export class SteelroseBehavior implements IAIBehavior {
 
         game.characterHelper.setRightHand(player, undefined);
 
-        game.discordHelper.sendMarketplaceMessage(`${player.name} has listed "${sellItem.name}" for ${price.toLocaleString()} gold.`);
+        game.discordHelper.sendMarketplaceMessage(player, sellItem, price);
 
         return 'I\'ve listed the item for sale!';
       });
