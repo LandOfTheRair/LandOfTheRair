@@ -58,6 +58,8 @@ export class DefaultAIBehavior implements IAI {
     if (this.game.characterHelper.canAct(npc)) {
       this.adjustTargetting();
       this.attemptMove();
+    } else {
+      this.game.characterHelper.tryDance(npc);
     }
 
     if (this.stanceCooldown > 0) this.stanceCooldown--;

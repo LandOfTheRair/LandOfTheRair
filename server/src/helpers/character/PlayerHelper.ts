@@ -161,8 +161,15 @@ export class PlayerHelper extends BaseService {
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
     }
 
+    const canAct = this.game.characterHelper.canAct(player);
+
+    if (!canAct && type === 'slow') {
+      this.game.characterHelper.tryDance(player);
+      return;
+    }
+
     // do actions if we have any
-    if (player.actionQueue && this.game.characterHelper.canAct(player)) {
+    if (player.actionQueue && canAct) {
       const queue = player.actionQueue[type] || [];
 
       const actions = type === 'fast' ? 5 : (this.getStat(player as IPlayer, Stat.ActionSpeed) || 1);

@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { clamp } from 'lodash';
+import { clamp, random } from 'lodash';
 
 import { BaseClass, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
@@ -131,6 +131,13 @@ export class CharacterHelper extends BaseService {
     }
 
     this.game.characterHelper.recalculateEverything(char);
+  }
+
+  public tryDance(char: ICharacter): void {
+    const danceLevel = this.game.traitHelper.traitLevelValue(char, 'DivineDancing');
+    if (danceLevel === 0) return;
+
+    this.game.movementHelper.moveWithPathfinding(char, { xDiff: random(-danceLevel, danceLevel), yDiff: random(-danceLevel, danceLevel) });
   }
 
   // drop your hands on the ground
