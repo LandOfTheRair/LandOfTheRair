@@ -285,15 +285,21 @@ export class DamageHelperPhysical extends BaseService {
       };
     }
 
-    const defenderBlocker = defender.items.equipment[ItemSlot.RightHand] || {
+    const rightHand = defender.items.equipment[ItemSlot.RightHand];
+
+    const defenderBlocker = rightHand && this.game.itemHelper.isOwnedBy(defender, rightHand) ? rightHand : {
       name: 'hands',
       uuid: 'hands',
       mods: { itemClass: ItemClass.Hands, type: Skill.Martial, tier: 1, condition: 20000 },
     };
 
     const leftHand = defender.items.equipment[ItemSlot.LeftHand];
-    const defenderShield = leftHand && this.isShield(leftHand) ? leftHand : undefined;
-    const defenderOffhand = leftHand && this.game.itemHelper.getItemProperty(leftHand, 'offhand') ? leftHand : undefined;
+    const defenderShield = leftHand && this.isShield(leftHand) && this.game.itemHelper.isOwnedBy(defender, leftHand) ? leftHand : undefined;
+    const defenderOffhand = leftHand
+                      && this.game.itemHelper.getItemProperty(leftHand, 'offhand')
+                      && this.game.itemHelper.isOwnedBy(defender, leftHand)
+      ? leftHand
+      : undefined;
 
     return {
       armor: defenderArmor,
