@@ -722,9 +722,6 @@ export class MapScene extends Phaser.Scene {
 
     this.updateSpriteSwimData(sprite, player);
     this.updateSpritePositionalData(sprite, player);
-    if (player.hp.current <= 0) {
-      console.log('d');
-    }
     sprite.setAlpha(player.hp.current <= 0 ? 0 : 1);
 
     this.stealthUpdate(sprite, player);

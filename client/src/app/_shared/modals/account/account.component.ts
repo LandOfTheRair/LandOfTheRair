@@ -43,7 +43,6 @@ export class AccountComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.accountSub = this.account$.subscribe(acc => {
-      console.log(acc);
       this.account = Object.assign({}, acc);
     });
   }

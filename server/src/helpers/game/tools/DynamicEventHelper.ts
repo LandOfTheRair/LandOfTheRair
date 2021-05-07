@@ -295,8 +295,6 @@ export class DynamicEventHelper extends BaseService {
     } as Partial<Spawner>);
 
     state.addSpawner(spawner);
-
-    console.log(spawnMap, spawnMonster, x, y);
   }
 
 }
