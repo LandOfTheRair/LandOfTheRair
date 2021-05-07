@@ -228,7 +228,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
 
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {
     if (!item) return false;
-    return this.assetService.getItem(item.name).itemClass === ItemClass.Coin;
+    return this.assetService.getItem(item.name)?.itemClass === ItemClass.Coin;
   }
 
   hostilityForAllegiance(repValue: number) {
