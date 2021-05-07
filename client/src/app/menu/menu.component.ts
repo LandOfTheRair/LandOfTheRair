@@ -71,6 +71,12 @@ export class MenuComponent implements OnInit {
           handler: () => window.open('https://rair.land/docs/home', '_blank'),
         },
         {
+          name: 'Reload UI',
+          icon: 'refresh',
+          visibleIf: of(navigator.userAgent.includes('Electron')),
+          handler: () => window.location.reload()
+        },
+        {
           name: 'Download',
           icon: 'download',
           visibleIf: of(!navigator.userAgent.includes('Electron')),
