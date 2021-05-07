@@ -11,6 +11,7 @@ import { GameService } from '../../../services/game.service';
 
 import { UIService } from '../../../services/ui.service';
 import * as materialLayout from '../../../../assets/content/_output/materialstorage.json';
+import { OptionsService } from '../../../services/options.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -32,6 +33,7 @@ export class LockerComponent implements OnInit, OnDestroy {
   public amount = 0;
   public allLockers = {};
   public currentLocker = '';
+  public activeLockerSlot = -1;
 
   lockerInfoSub: Subscription;
   posSub: Subscription;
@@ -44,6 +46,7 @@ export class LockerComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public uiService: UIService,
+    public optionsService: OptionsService,
     public gameService: GameService
   ) { }
 
@@ -80,6 +83,7 @@ export class LockerComponent implements OnInit, OnDestroy {
       if (player && this.lockerInfo.lockerName && this.lockerNames.length === 0) {
         this.lockerNames = this.lockerInfo.showLockers;
         this.currentLocker = this.lockerInfo.lockerName;
+        this.activeLockerSlot = this.lockerNames.findIndex(x => x === this.lockerInfo.lockerName);
       }
     });
 
@@ -102,6 +106,7 @@ export class LockerComponent implements OnInit, OnDestroy {
     if (curIdx === this.lockerNames.length - 1 && delta === 1) return;
 
     this.currentLocker = this.lockerNames[curIdx + delta];
+    this.activeLockerSlot = curIdx + delta;
   }
 
 

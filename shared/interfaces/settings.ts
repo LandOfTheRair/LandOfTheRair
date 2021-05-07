@@ -27,6 +27,7 @@ export enum GameOption {
   ShouldSortFriendly = 'shouldSortFriendly',
   ShouldSortDistance = 'shouldSortDistance',
   ShrinkCharacterBoxes = 'shrinkCharacterBoxes',
+  LockerTabs = 'lockerTabs',
   DebugUI = 'debugUI',
 
   // sound options

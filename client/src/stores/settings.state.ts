@@ -40,6 +40,7 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.ShouldSortDistance]: null,
       [GameOption.ShouldSortFriendly]: null,
       [GameOption.ShrinkCharacterBoxes]: false,
+      [GameOption.LockerTabs]: false,
       [GameOption.DebugUI]: false,
 
       [GameOption.SoundBGM]: true,

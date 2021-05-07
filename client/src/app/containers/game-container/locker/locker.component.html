@@ -18,20 +18,44 @@
 <ng-template #bodyTemplate>
   <div *ngIf="player && lockerNames.length > 0">
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-select [(ngModel)]="currentLocker" (wheel)="changeLocker($event)">
-        <mat-option *ngFor="let lockerName of lockerNames" [value]="lockerName">{{ lockerName }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <ng-container *ngIf="!optionsService.lockerTabs">
 
-    <ng-container *ngIf="currentLocker === 'Materials'">
-      <ng-container *ngTemplateOutlet="materialStorage; context: { player: player }"></ng-container>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-select [(ngModel)]="currentLocker" (wheel)="changeLocker($event)">
+          <mat-option *ngFor="let lockerName of lockerNames" [value]="lockerName">{{ lockerName }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <ng-container *ngIf="currentLocker === 'Materials'">
+        <ng-container *ngTemplateOutlet="materialStorage; context: { player: player }"></ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="currentLocker !== 'Materials'">
+        <ng-container *ngTemplateOutlet="lockerStorage; context: { player: player, lockerName: currentLocker }"></ng-container>
+      </ng-container>
     </ng-container>
 
-    <ng-container *ngIf="currentLocker !== 'Materials'">
-      <ng-container *ngTemplateOutlet="lockerStorage; context: { player: player, lockerName: currentLocker }"></ng-container>
+    <ng-container *ngIf="optionsService.lockerTabs">
+
+      <mat-tab-group mat-align-tabs="center" [selectedIndex]="activeLockerSlot" (wheel)="changeLocker($event)">
+
+        <mat-tab *ngFor="let lockerName of lockerNames" [label]="lockerName">
+
+          <ng-container *ngIf="lockerName === 'Materials'">
+            <ng-container *ngTemplateOutlet="materialStorage; context: { player: player }"></ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="lockerName !== 'Materials'">
+            <ng-container *ngTemplateOutlet="lockerStorage; context: { player: player, lockerName: lockerName }"></ng-container>
+          </ng-container>
+
+        </mat-tab>
+
+      </mat-tab-group>
+
     </ng-container>
   </div>
+
 </ng-template>
 
 <ng-template #materialStorage let-player="player">

@@ -87,6 +87,10 @@ export class OptionsService {
     return this.opts[GameOption.ShrinkCharacterBoxes];
   }
 
+  public get lockerTabs(): boolean {
+    return this.opts[GameOption.LockerTabs];
+  }
+
   public get debugUI(): boolean {
     return this.opts[GameOption.DebugUI];
   }
