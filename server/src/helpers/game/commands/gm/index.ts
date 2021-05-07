@@ -14,5 +14,6 @@ export * from './moditem';
 export * from './startevent';
 export * from './summon';
 export * from './teleport';
+export * from './teleportto';
 export * from './upgradeitem';
 export * from './xp';
