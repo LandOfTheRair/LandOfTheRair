@@ -9,9 +9,12 @@ export class Augury extends Spell {
     const targetName = spellCastArgs.originalArgs?.stringArgs;
     if (!targetName) return this.sendMessage(caster, { message: 'The birds fly around, confused at your query.' });
 
-    const mapState = this.game.worldManager.getMapStateForCharacter(caster);
+    const mapState = this.game.worldManager.getMap(caster.map);
+    if (!mapState) return;
 
-    const matchingNPCs = mapState.allNPCS.filter(x => x.name.toLowerCase().includes(targetName.toLowerCase()));
+    const { state, map } = mapState;
+
+    const matchingNPCs = state.allNPCS.filter(x => x.name.toLowerCase().includes(targetName.toLowerCase()));
     if (matchingNPCs.length > 1) {
       return this.sendMessage(caster, { message: 'The birds point in multiple directions simultaneously.' });
     }
@@ -23,8 +26,15 @@ export class Augury extends Spell {
 
     const dist = distanceFrom(caster, foundNPC);
 
+    const toZ = map.getZLevelAt(caster.x, caster.y);
+    const fromZ = map.getZLevelAt(foundNPC.x, foundNPC.y);
+
+    let distance = `${this.distanceToMeasurement(dist)} tiles from you`;
+    if (toZ < fromZ) distance = 'above you';
+    if (toZ > fromZ) distance = 'below you';
+
     let baseString = `The birds have found a creature called ${foundNPC.name}.`;
-    baseString = `${baseString} ${foundNPC.name} is ${this.distanceToMeasurement(dist)}.`;
+    baseString = `${baseString} ${foundNPC.name} is ${distance}.`;
     baseString = `${baseString} ${foundNPC.name} ${this.healthToMeasurement(target)}.`;
 
     this.sendMessage(caster, { message: baseString });
