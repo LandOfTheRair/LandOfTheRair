@@ -19,7 +19,7 @@
   <div *ngIf="player && lockerNames.length > 0">
 
     <mat-form-field appearance="fill" class="full-width">
-      <mat-select [(ngModel)]="currentLocker">
+      <mat-select [(ngModel)]="currentLocker" (wheel)="changeLocker($event)">
         <mat-option *ngFor="let lockerName of lockerNames" [value]="lockerName">{{ lockerName }}</mat-option>
       </mat-select>
     </mat-form-field>

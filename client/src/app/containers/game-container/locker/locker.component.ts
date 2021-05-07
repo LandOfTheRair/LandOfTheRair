@@ -92,5 +92,17 @@ export class LockerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {}
 
+  public changeLocker(event) {
+
+    const delta = event.deltaY > 0 ? 1 : -1;
+    const curLocker = this.currentLocker;
+    const curIdx = this.lockerNames.indexOf(curLocker);
+
+    if (curIdx === 0 && delta === -1) return;
+    if (curIdx === this.lockerNames.length - 1 && delta === 1) return;
+
+    this.currentLocker = this.lockerNames[curIdx + delta];
+  }
+
 
 }
