@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { cloneDeep, get, size, setWith } from 'lodash';
+import { cloneDeep, get, setWith, isEqual, updateWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
 import { IGround, IGroundItem, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
@@ -183,86 +183,39 @@ export class GroundManager extends BaseService {
       this.game.corpseManager.addCorpse(mapName, item, x, y);
     }
 
-    // init the ground here
-    this.ground[mapName] = this.ground[mapName] || {};
-    const mapGround = this.ground[mapName];
-
-    mapGround[x] = mapGround[x] || {};
-    mapGround[x][y] = mapGround[x][y] || {};
-    mapGround[x][y][itemClass] = mapGround[x][y][itemClass] || [];
-
-    // init the saveable ground here
-    this.saveableGround[mapName] = this.saveableGround[mapName] || {};
-    const saveableGround = this.saveableGround[mapName] || {};
-
-    const addToSaveableGround = (sx, sy, sitemClass, sitem) => {
-
-      // corpses cannot be saved
-      if (sitemClass === ItemClass.Corpse) return;
-
-      saveableGround[sx] = saveableGround[sx] || {};
-      saveableGround[sx][sy] = saveableGround[sx][sy] || {};
-      saveableGround[sx][sy][sitemClass] = saveableGround[sx][sy][sitemClass] || [];
-      saveableGround[sx][sy][sitemClass].push(sitem);
-    };
-
-    const isModified = size(item.mods) > 0;
+    updateWith(this.ground, [mapName, x, y, itemClass], (old) => old ?? [], Object);
+    const container = this.ground[mapName][x][y][itemClass];
 
     // if the item has an owner, it expires in 24h. else, 3h.
     const expiresAt = Date.now() + (1000 * ((item.mods.owner || forceSave) ? 86400 : 10800));
 
-    const groundItem: IGroundItem = {
-      item,
-      count: 1,
-      expiresAt
-    };
+    const matchingItem = container.find((gItem: IGroundItem) => {
+      if (gItem.item.name !== item.name) return false;
+      if (itemClass !== ItemClass.Coin && !isEqual(item.mods, gItem.item.mods)) return false;
+      return true;
+    });
 
-    // if this item has no modifications or we have a coin
-    if (!isModified || itemClass === ItemClass.Coin) {
-      let foundItem!: IGroundItem;
-
-      // we look for a similar item
-      mapGround[x][y][itemClass].forEach((gItem: IGroundItem) => {
-        if (gItem.item.name !== item.name) return;
-
-        const isGItemModified = size(gItem.item.mods) > 0;
-        if (isGItemModified && itemClass !== ItemClass.Coin) return;
-
-        foundItem = gItem;
-      });
-
-      // if we have an item, lets stack it
-      if (foundItem) {
-
-        // if we have a coin, we add values
-        if (itemClass === ItemClass.Coin) {
-          foundItem.item.mods.value = (foundItem.item.mods.value || 0) + (item.mods.value || 0);
-
-        // if we have an unmodified, vanilla item we bump the count instead
-        } else {
-          foundItem.count++;
-
-          // reset expiresAt so a stack doesn't just go poof
-          foundItem.expiresAt = expiresAt;
-        }
-
-        // we don't push to saveable ground here because saveable items always are modified
-
-      // no stack, we push
+    if (matchingItem) {
+      // if we have a coin, we add to the value, instead of count
+      if (itemClass === ItemClass.Coin) {
+        matchingItem.item.mods.value = (matchingItem.item.mods.value || 0) + (item.mods.value || 0);
       } else {
-        mapGround[x][y][itemClass].push(groundItem);
+        matchingItem.count++;
 
-        if (item.mods.owner || forceSave) {
-          addToSaveableGround(x, y, itemClass, groundItem);
-        }
+        // reset expiresAt so a stack doesn't just go poof
+        matchingItem.expiresAt = expiresAt;
       }
-
-    // item is modified
     } else {
-      mapGround[x][y][itemClass].push(groundItem);
+      const groundItem: IGroundItem = {
+        item,
+        count: 1,
+        expiresAt
+      };
 
+      container.push(groundItem);
+      if (itemClass === ItemClass.Corpse) return;
       if (item.mods.owner || forceSave) {
-        addToSaveableGround(x, y, itemClass, groundItem);
+        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? []).push(groundItem), Object);
       }
     }
   }
