@@ -49,9 +49,13 @@
               "src/assets/fonts",
               "src/assets/generated",
               "src/assets/sfx",
-              "src/assets/spritesheets",
               "src/assets/content/_output",
-              "src/_headers"
+              "src/_headers",
+              {
+                "glob": "*.webp",
+                "input": "src/assets/spritesheets",
+                "output": "assets/spritesheets"
+              }
             ],
             "styles": [
               "src/styles/styles.scss"
