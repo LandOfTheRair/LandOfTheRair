@@ -60,7 +60,7 @@ export class GameService {
     });
   }
 
-  private handleAutoExec() {
+private handleAutoExec() {
     if (!this.optionsService.autoExec) return;
 
     const commands = this.optionsService.autoExec.split('\n');
@@ -70,7 +70,11 @@ export class GameService {
   }
 
   public reformatMapName(mapName: string): string {
-    return startCase(mapName.split('-Dungeon')[0]);
+    return this.reformatName(mapName.split('-Dungeon')[0]);
+  }
+
+  public reformatName(name: string): string {
+    return startCase(name);
   }
 
   public sendCommandString(cmdString: string, target?: string) {

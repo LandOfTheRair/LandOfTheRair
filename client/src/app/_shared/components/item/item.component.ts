@@ -158,7 +158,7 @@ export class ItemComponent implements OnDestroy {
     private assetService: AssetService,
     private optionsService: OptionsService,
     private uiService: UIService,
-    private gameService: GameService
+    public gameService: GameService
   ) {}
 
   ngOnDestroy(): void {
