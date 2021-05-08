@@ -1,5 +1,6 @@
 
 import { IMacroCommandArgs, IPlayer, ItemClass, ObjectType } from '../../../../../interfaces';
+import { Player } from '../../../../../models';
 import { LookCommand } from './look';
 
 export class SearchCommand extends LookCommand {
@@ -25,6 +26,12 @@ export class SearchCommand extends LookCommand {
     }
 
     super.execute(player, args);
+
+    const gold = mapData.state.getItemsFromGround(player.x, player.y, ItemClass.Coin) || [];
+    if (gold.length > 0) {
+      this.game.commandHandler.doCommand(player as Player, { command: '~GtS', args: 'Coin' }, args.callbacks);
+      this.sendChatMessage(player, `You looted ${(gold[0].item.mods.value ?? 0).toLocaleString()} gold.`);
+    }
 
   }
 
