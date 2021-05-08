@@ -1446,6 +1446,7 @@ export class MoveItems extends MacroCommand {
     const origLocker = this.game.lockerHelper.getLockerFromString(player, origSlot);
     const [w, locker, origLockerSlot] = origSlot.split(':');
     const srcItem = origLocker.items[+origLockerSlot];
+    if (!this.doPrelimChecks(player, srcItem, 'W', origSlot, dest, destSlot)) return;
 
     switch (dest) {
     case 'R': { // WtR
