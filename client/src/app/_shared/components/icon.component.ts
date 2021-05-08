@@ -51,6 +51,17 @@ import { environment } from '../../../environments/environment';
       font-size: 200%;
     }
 
+    .mac-container.esmall {
+      min-width: 28px;
+      max-width: 28px;
+      min-height: 28px;
+      max-height: 28px;
+    }
+
+    .mac-container.esmall .macicons {
+      font-size: 175%;
+    }
+
     .mac-container.xsmall {
       min-width: 24px;
       max-width: 24px;

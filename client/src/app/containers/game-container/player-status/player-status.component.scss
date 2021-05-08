@@ -10,13 +10,13 @@
   height: 100%;
 
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
 
   app-effect-icon {
     font-size: 80%;
-    padding: 2px;
+    padding: 1px;
   }
 }
 
