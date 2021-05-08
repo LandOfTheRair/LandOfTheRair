@@ -27,8 +27,8 @@ import { IStatusEffect } from '../../../interfaces';
       display: flex;
       text-align: center;
 
-      max-width: 32px;
-      max-height: 32px;
+      max-width: 28px;
+      max-height: 28px;
     }
 
     .status-remaining {
