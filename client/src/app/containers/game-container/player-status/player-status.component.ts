@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
+import { clamp } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
@@ -84,7 +85,7 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     const curPlayerLevelXP = calculateXPRequiredForLevel(player.level);
     const nextPlayerLevelXP = calculateXPRequiredForLevel(player.level + 1);
 
-    return (playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100;
+    return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100);
   }
 
   unapply($event, effect: IStatusEffect): void {
