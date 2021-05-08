@@ -41,7 +41,7 @@
       <div class="right-side">
         <div class="vertical-center full-width full-height background-text text-center" *ngIf="player.learnedRunes.length === 0">You don't currently know any ancient runes.</div>
 
-        <div class="select-rune" *ngFor="let rune of orderedRunes" [class.selected]="activeRune === rune" (click)="selectRune(rune)">
+        <div class="select-rune" *ngFor="let rune of orderedRunes" [class.selected]="activeRune === rune" [class.text-success]="player.runes.includes(rune)" (click)="selectRune(rune)">
           <app-icon size="xsmall" [name]="getTraitIcon(rune)" bgColor="transparent" fgColor="#fff"></app-icon> {{ getTraitName(rune) }}
         </div>
       </div>
