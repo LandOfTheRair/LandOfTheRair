@@ -17,8 +17,8 @@ const skillData = {
   [Skill.Throwing]    : { icon: 'thrown-spear',   tooltip: 'Proficiency with thrown attacks' },
   [Skill.Thievery]    : { icon: 'two-shadows',    tooltip: 'Proficiency with thievery' },
   [Skill.Wand]        : { icon: 'orb-wand',       tooltip: 'Proficiency with wands & totems' },
-  [Skill.Conjuration] : { icon: 'ankh',           tooltip: 'Proficiency with conjuration magic' },
-  [Skill.Restoration] : { icon: 'enlightenment',  tooltip: 'Proficiency with restoration magic' },
+  [Skill.Conjuration] : { icon: 'enlightenment',  tooltip: 'Proficiency with conjuration magic' },
+  [Skill.Restoration] : { icon: 'ankh',           tooltip: 'Proficiency with restoration magic' },
 };
 
 @Component({
