@@ -90,6 +90,14 @@ export class FurUpgraderBehavior implements IAIBehavior {
         if (itemClass !== ItemClass.Fur) return 'That item is not a fur!';
         if ((requirements?.level ?? 0) > player.level) return 'You are not strong enough to use that fur!';
 
+        const leftRequirements = game.itemHelper.getItemProperty(leftHand, 'requirements');
+        const rightRequirements = game.itemHelper.getItemProperty(rightHand, 'requirements');
+
+        game.itemHelper.setItemProperty(rightHand, 'requirements',
+          game.itemHelper.mergeItemRequirements(leftRequirements, rightRequirements)
+        );
+        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
+
         game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
         game.characterHelper.setLeftHand(player, undefined);
 
