@@ -29,7 +29,7 @@ export class Mood extends Effect {
 
     // reset when out of combat
     if (char.combatTicks <= 0) {
-      this.game.characterHelper.healToFull(char);
+      this.game.characterHelper.heal(char, Math.floor(char.hp.maximum * 0.003));
       this.changeMood(char, effect, MoodStatus.Calm);
       effect.effectInfo.startTimer = 0;
     }
