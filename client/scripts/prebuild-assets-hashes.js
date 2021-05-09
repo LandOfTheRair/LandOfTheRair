@@ -5,13 +5,13 @@ const md5file = require('md5-file');
 const { gitDescribeSync } = require('git-describe');
 const fs = require('fs');
 
-const files = ['creatures', 'decor', 'effects', 'items', 'swimming', 'terrain', 'walls'];
+const files = ['creatures', 'decor', 'effects', 'items', 'swimming', 'terrain', 'walls', 'items-animations'];
 
 const md5hash = {};
 
 files.forEach(file => {
   const md5 = md5file.sync(`${__dirname}/../src/assets/spritesheets/${file}.png`);
-  md5hash[file] = md5;
+  md5hash[file.split('-').join('')] = md5;
 });
 
 let gitRev = 'UNCOMMITTED';

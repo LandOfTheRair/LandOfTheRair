@@ -57,7 +57,7 @@ export class AssetService {
 
   get itemsAnimationsUrl(): string {
     return this.spritesheetCustomHash.itemsAnimations
-        || `${this.assetUrl}/spritesheets/items-animations.webp?c=${environment.assetHashes.itemsAnimations}`;
+        || `${this.assetUrl}/spritesheets/items-animations.webp?c=${environment.assetHashes.itemsanimations}`;
   }
 
   get effectsUrl(): string {
