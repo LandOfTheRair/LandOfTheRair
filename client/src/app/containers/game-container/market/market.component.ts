@@ -108,7 +108,7 @@ export class MarketComponent implements OnInit, OnDestroy {
   }
 
   public get canGoForward() {
-    return this.buyableListings.length > 0;
+    return this.buyableListings?.length > 0;
   }
 
   constructor(
@@ -130,6 +130,7 @@ export class MarketComponent implements OnInit, OnDestroy {
       if (this.marketInfo.npcUUID) {
         this.store.dispatch(new HideMarketWindow());
         this.store.dispatch(new HideWindow('market'));
+        this.reset();
       }
     });
 
@@ -140,6 +141,7 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.gameStatusSub = this.inGame$.subscribe(() => {
       this.store.dispatch(new HideMarketWindow());
       this.store.dispatch(new HideWindow('market'));
+      this.reset();
     });
 
     this.playerSub = this.player$.subscribe(p => {
@@ -153,6 +155,18 @@ export class MarketComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {}
+
+  private reset() {
+    this.currentPage = 0;
+    this.changeSort(this.sortOptions[0].sort);
+    this.myListings = null;
+    this.myPickups = null;
+    this.buyableListings = null;
+    this.sellValue = 1;
+    this.searchQuery = '';
+    this.filterTags.forEach(t => t.isIncluded = false);
+    this.currentTab = null;
+  }
 
   switchTab(newTab: string) {
     if (this.currentTab === newTab) return;
