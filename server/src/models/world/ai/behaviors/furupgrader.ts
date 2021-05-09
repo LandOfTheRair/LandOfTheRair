@@ -2,6 +2,7 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
+  ArmorClasses,
   distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
   INPC, IPlayer, ItemClass, ItemSlot } from '../../../../interfaces';
 
@@ -47,7 +48,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const message = `Shlep! Sure can do that.
-        Only thing is, it counts towards your armor's enchantment limit.
+        Only thing is, it counts towards your item's enchantment limit.
         You should know what that means, 'cause I sure don't. Want to DO IT?
         Hold your fur in your left hand and your armor in your right.`;
 
@@ -82,12 +83,17 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
         if (!leftHand) return 'Your left hand must have a fur!';
 
+        const rightItemClass = game.itemHelper.getItemProperty(rightHand, 'itemClass');
+
         const { requirements, itemClass } = game.itemHelper.getItemProperties(leftHand, ['itemClass', 'requirements']);
 
         if (!game.itemHelper.isOwnedBy(player, rightHand)) return 'You do not own that item!';
         if (!game.itemHelper.isOwnedBy(player, leftHand)) return 'You do not own that material!';
+        if (!game.itemHelper.canGetBenefitsFromItem(player, rightHand)) return 'You cannot use that item!';
+        if (!game.itemHelper.canGetBenefitsFromItem(player, leftHand)) return 'You cannot use that material!';
         if (!game.itemHelper.canUpgradeItem(rightHand)) return 'I cannot upgrade that item for you!';
-        if (itemClass !== ItemClass.Fur) return 'That item is not a fur!';
+        if (itemClass !== ItemClass.Fur) return 'That material is not a fur!';
+        if (!ArmorClasses.includes(rightItemClass)) return 'That item is not armor!';
         if ((requirements?.level ?? 0) > player.level) return 'You are not strong enough to use that fur!';
 
         const leftRequirements = game.itemHelper.getItemProperty(leftHand, 'requirements');
