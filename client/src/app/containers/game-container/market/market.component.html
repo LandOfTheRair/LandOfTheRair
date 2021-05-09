@@ -123,7 +123,7 @@
           </div>
 
           <div class="col vertical-center actions">
-            <button mat-flat-button color="primary" (click)="buy(listing)" [disabled]="player.username === listing.listingInfo.seller">Buy</button>
+            <button mat-flat-button color="primary" (click)="buy(listing)" [disabled]="player.username === listing.listingInfo.seller || player.currency.gold < listing.listingInfo.price">Buy</button>
           </div>
 
         </div>
