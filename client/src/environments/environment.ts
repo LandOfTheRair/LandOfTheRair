@@ -20,7 +20,8 @@ export const environment = {
     items: 0,
     swimming: 0,
     terrain: 0,
-    walls: 0
+    walls: 0,
+    itemsAnimations: 0
   },
   stripe: {
     key: 'pk_test_TNxhxgcsao9B4ouQwRXeUnmm'

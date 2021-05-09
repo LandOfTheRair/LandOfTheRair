@@ -12,13 +12,25 @@
     (mouseenter)="determineScopes()"
     (mouseout)="removeDesc()"
     (mouseleave)="removeDesc()">
+
   <img [src]="imgUrl"
+      *ngIf="!shouldSpriteAnimate"
       [style.object-position]="spriteLocation"
       [class.hidden]="!item"
       [class.animate]="shouldAnimate"
       [class.transparent]="transparent"
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
+
+  <img [src]="animUrl"
+      *ngIf="shouldSpriteAnimate"
+      class="item-animation"
+      [class.hidden]="!item"
+      [class.animate]="shouldAnimate"
+      [class.transparent]="transparent"
+      [ngClass]="['cosmetic-item-' + cosmeticName]" />
+
   <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.mods.encrustItem" />
+
   <div class="item-background" *ngIf="item && showBackground"></div>
   <div class="glow-container" [ngClass]="[glowColor]" *ngIf="item && showDesc"></div>
   <div class="animation-container"

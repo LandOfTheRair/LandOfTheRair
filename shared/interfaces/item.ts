@@ -201,6 +201,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
   // the sprite representing this item
   sprite: number;
 
+  // the animation for this item
+  animation?: number;
+
   // the value of the item (not necessarily how much it will sell for - adjusted with CHA)
   value: number;
 

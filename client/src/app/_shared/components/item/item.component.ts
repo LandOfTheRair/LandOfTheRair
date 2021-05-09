@@ -1,7 +1,8 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { isNumber } from 'lodash';
 
 import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
   IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot, WeaponClass } from '../../../../interfaces';
@@ -106,6 +107,11 @@ export class ItemComponent implements OnDestroy {
     return this.assetService.itemsUrl;
   }
 
+  get animUrl() {
+    if (!this.item || !this.realItem) return this.assetService.itemsAnimationsUrl;
+    return this.assetService.itemsAnimationsUrl;
+  }
+
   get cosmeticName(): string {
     if (!this.item || !this.realItem) return '';
     if (this.item.mods.searchItems) return 'UnsearchedCorpse';
@@ -151,6 +157,19 @@ export class ItemComponent implements OnDestroy {
   get isStackableMaterial(): boolean {
     if (!this.item) return false;
     return this.withdrawInStacks;
+  }
+
+  @HostBinding('style.--animation-index')
+  get spriteAnimation(): number {
+    return (this.item?.mods?.animation ?? this.realItem?.animation);
+  }
+
+  get hasSpriteAnimation(): boolean {
+    return isNumber(this.spriteAnimation);
+  }
+
+  get shouldSpriteAnimate(): boolean {
+    return this.hasSpriteAnimation && true;
   }
 
   constructor(

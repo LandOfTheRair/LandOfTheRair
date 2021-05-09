@@ -129,3 +129,21 @@ img {
 .transparent {
   opacity: 0.3;
 }
+
+.item-animation {
+  object-position: 0px calc(var(--animation-index) * -64px);
+}
+
+.item-animation.animate {
+  animation: item-animation 400ms steps(4, end) infinite;
+}
+
+@keyframes item-animation {
+  from {
+    object-position: 0px calc(var(--animation-index) * -64px);
+  }
+
+  to {
+    object-position: -256px calc(var(--animation-index) * -64px);
+  }
+}
