@@ -21,6 +21,7 @@ export class WorldManager extends BaseService {
   private instanceNameToInstancePrototype: Record<string, string> = {};
 
   // not live maps
+  private mapsInactiveSince: Record<string, number> = {};
   private instancedMapPrototypes: Record<string, any> = {};
 
   // a list of map names for easy iteration
@@ -204,7 +205,11 @@ export class WorldManager extends BaseService {
     this.mapPlayerCounts[mapName] = this.mapPlayerCounts[mapName] || 0;
     this.mapPlayerCounts[mapName]++;
 
-    this.activeMaps.add(mapName);
+    if (!this.activeMaps.has(mapName)) {
+      this.activeMaps.add(mapName);
+      this.game.groundManager.boostSpawnersInMapBasedOnTimestamp(mapName, this.mapsInactiveSince[mapName] ?? Date.now());
+      delete this.mapsInactiveSince[mapName];
+    }
 
     this.addCharacter(player);
     this.mapStates[mapName].addPlayer(player);
@@ -248,6 +253,7 @@ export class WorldManager extends BaseService {
     this.mapPlayerCounts[oldMap] = Math.max(this.mapPlayerCounts[oldMap] - 1, 0);
     if (this.mapPlayerCounts[oldMap] <= 0) {
       this.activeMaps.delete(oldMap);
+      this.mapsInactiveSince[oldMap] = Date.now();
     }
 
     this.removeCharacter(player);
