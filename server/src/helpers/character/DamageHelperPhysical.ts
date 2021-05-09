@@ -754,6 +754,8 @@ export class DamageHelperPhysical extends BaseService {
   // try to combat-stun from a melee hit
   private attemptToStun(attacker: ICharacter, defender: ICharacter, attackerWeapon: ISimpleItem): void {
 
+    if (this.game.effectHelper.hasEffect(defender, 'Stun') || this.game.effectHelper.hasEffect(defender, 'RecentlyStunned')) return;
+
     const hasFleetOfFoot = this.game.effectHelper.hasEffect(defender, 'FleetOfFoot');
     const proneChance = this.game.itemHelper.getItemProperty(attackerWeapon, 'proneChance');
 
