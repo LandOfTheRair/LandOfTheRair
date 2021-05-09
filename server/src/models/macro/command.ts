@@ -313,6 +313,7 @@ export class SpellCommand extends SkillCommand {
       if (caster
       && target
       && target !== caster
+      && this.game.characterHelper.isPlayer(target)
       && !spellData.spellMeta.noReflect
       && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(target, Stat.SpellReflectChance))) {
         hitTarget = caster;
