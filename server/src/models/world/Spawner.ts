@@ -321,9 +321,6 @@ export class Spawner {
       this.game.effectHelper.addEffect(npc, '', 'Dangerous');
     }
 
-    if (this.npcCreateCallback) this.npcCreateCallback(npc);
-    if (createCallback) createCallback(npc);
-
     this.game.characterHelper.tryToCastEquipmentEffects(npc);
     this.game.characterHelper.calculateStatTotals(npc);
 
@@ -332,6 +329,9 @@ export class Spawner {
     this.game.visibilityHelper.calculateFOV(npc);
 
     this.addNPC(npc, aiInst, npcDef);
+
+    if (this.npcCreateCallback) this.npcCreateCallback(npc);
+    if (createCallback) createCallback(npc);
 
     return npc;
   }

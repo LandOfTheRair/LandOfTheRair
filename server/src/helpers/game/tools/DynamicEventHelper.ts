@@ -282,7 +282,20 @@ export class DynamicEventHelper extends BaseService {
       removeWhenNoNPCs: true,
       removeDeadNPCs: true,
       respectKnowledge: false,
-      doInitialSpawnImmediately: true
+      doInitialSpawnImmediately: true,
+      npcCreateCallback: (npc) => {
+        const ai = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid)?.getNPCAI(npc.uuid);
+        if (ai) {
+          ai.death = (killer) => {
+            let message = `${npc.name} has been slain by otherworldly forces!`;
+            if (killer) {
+              message = `${npc.name} has been slain by ${killer.name}!`;
+            }
+
+            this.game.messageHelper.broadcastSystemMessage(message);
+          };
+        }
+      }
     } as Partial<Spawner>;
 
     const finalMapRef = this.game.worldManager.getMap(spawnMap);
