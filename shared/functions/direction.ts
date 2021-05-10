@@ -89,13 +89,13 @@ export function directionToSymbol(direction: Direction, seperator:(string | null
  * @example directionSplit(Direction.North | Direction.South) is [Direction.North, Direction.South]
  */
 export function directionSplit(direction: Direction): Array<Direction> {
-  const directions = new Array<Direction>();
-  while (direction > 0) {
-    const dir = 1 << Math.clz32(direction);
-    directions.push(dir);
-    direction -= dir;
-  }
-  return directions;
+  const values: Direction[] = [];
+    while (direction) {
+      const bit = direction & (~direction+1);
+      values.push(bit);
+      direction ^= bit;
+    }
+    return values;
 }
 
 /**
@@ -128,6 +128,15 @@ export function directionFromText(directionText: string, seperator:(string | nul
   case 'SOUTHWEST': return Direction.Southwest;
   case 'SOUTH':     return Direction.South;
   case 'SOUTHEAST': return Direction.Southeast;
+  case '✧':         return Direction.Center;
+  case '↖':         return Direction.Northwest;
+  case '↑':         return Direction.North;
+  case '↗':         return Direction.Northeast;
+  case '←':         return Direction.West;
+  case '→':         return Direction.East;
+  case '↙':         return Direction.Southwest;
+  case '↓':         return Direction.South;
+  case '↘':         return Direction.Southeast;
   default:
     if (!seperator) return null;
     return directionText
@@ -193,4 +202,15 @@ export function directionDiaganalToWestEast(direction: Direction): Direction {
     case Direction.Southeast: return Direction.East;
     default: return direction;
   }
+}
+
+/**
+ * Returns an array of each direction, skips center
+ */
+export function directionList() {
+  return [
+    Direction.Northwest, Direction.North, Direction.Northeast,
+    Direction.West,                       Direction.East,
+    Direction.Southwest, Direction.South, Direction.Southeast
+  ]
 }
