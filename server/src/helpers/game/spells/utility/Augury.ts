@@ -1,4 +1,4 @@
-import { distanceFrom, ICharacter, SpellCastArgs } from '../../../../interfaces';
+import { distanceFrom, ICharacter, INPC, SpellCastArgs } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Augury extends Spell {
@@ -12,17 +12,33 @@ export class Augury extends Spell {
     const mapState = this.game.worldManager.getMap(caster.map);
     if (!mapState) return;
 
-    const { state, map } = mapState;
+    const targets: INPC[] = [];
+    this.game.worldManager.allMapNames.forEach(map => {
+      const mapData = this.game.worldManager.getMap(map);
+      if (!mapData) return;
 
-    const matchingNPCs = state.allNPCS.filter(x => x.name.toLowerCase().includes(targetName.toLowerCase()));
-    if (matchingNPCs.length > 1) {
+      mapData.state.allNPCS.forEach(npc => {
+        if (!this.game.targettingHelper.doesTargetMatchSearch(npc, targetName)) return;
+
+        targets.push(npc);
+      });
+    });
+
+    if (targets.length > 1) {
       return this.sendMessage(caster, { message: 'The birds point in multiple directions simultaneously.' });
     }
 
-    const foundNPC = matchingNPCs[0];
+    const foundNPC = targets[0];
     if (!foundNPC) {
-      return this.sendMessage(caster, { message: 'The birds fly around, confused at your query. ' });
+      return this.sendMessage(caster, { message: 'The birds fly around, confused at your query.' });
     }
+
+    if (foundNPC.map !== caster.map) {
+      return this.sendMessage(caster, { message: 'The birds fly off to distant lands.' });
+    }
+
+    const map = this.game.worldManager.getMap(caster.map)?.map;
+    if (!map) return;
 
     const dist = distanceFrom(caster, foundNPC);
 
