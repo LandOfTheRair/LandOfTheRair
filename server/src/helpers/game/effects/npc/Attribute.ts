@@ -40,6 +40,8 @@ export class Attribute extends Effect {
 
     const damageType: AttributeType = effInfo.damageType ?? 'physical' as AttributeType;
 
+    effInfo.potency = effInfo.potency ?? 1;
+
     const message = `${capitalize(damageType)} damage is ${Math.floor(effInfo.potency * 100)}% effective.`;
     effInfo.effectIcon = effInfo.potency < 1 ? 'edged-shield' : 'gooey-impact';
     effInfo.tooltip = message;
