@@ -45,7 +45,7 @@ export class DiscordHelper extends BaseService {
 
     // try to load the bridge channel
     if (process.env.DISCORD_CHANNEL_ID) {
-      this.discordChannel = (this.discordGuild.channels.cache as any).get();
+      this.discordChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_CHANNEL_ID);
       if (!this.discordChannel) {
         this.game.logger.error('Discord', `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`);
         return;
