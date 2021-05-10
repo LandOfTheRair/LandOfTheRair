@@ -174,8 +174,9 @@ export class MapState {
   public getSerializableSpawners(): ISerializableSpawner[] {
     return this.spawners.filter(x => x.canBeSaved).map(s => ({
       ...s.pos,
+      name: s.spawnerName,
       currentTick: s.currentTickForSave
-    }));
+    })).filter(s => s.currentTick > 0);
   }
 
   // check if door is open

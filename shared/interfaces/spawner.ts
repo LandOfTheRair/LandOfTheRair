@@ -3,6 +3,7 @@ import { Rollable } from './building-blocks';
 export interface ISerializableSpawner {
   x: number;
   y: number;
+  name: string;
   currentTick: number;
 }
 
