@@ -12,6 +12,7 @@
     "start:client": "cd client && npm run start:dev",
     "start:server": "cd server && npm run start:dev",
     "lint": "lerna exec --parallel -- npm run lint",
+    "test": "cd shared && npm run test",
     "build": "lerna exec --parallel -- npm run build",
     "build:netlify": "cd client && npm run build:netlify",
     "changelog:generate": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
