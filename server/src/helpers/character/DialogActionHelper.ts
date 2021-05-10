@@ -192,7 +192,7 @@ export class DialogActionHelper extends BaseService {
     const { name } = item;
     const formattedName = template(name)(player);
 
-    const matches = (itemName: string) => itemName.includes(formattedName);
+    const matches = (itemName: string) => item.exact ? itemName === formattedName : itemName.includes(formattedName);
 
     // check name, check property if set
     const meetsCheck = (checkItem: ISimpleItem) => {
@@ -321,7 +321,12 @@ export class DialogActionHelper extends BaseService {
   private handleTakeItemAction(action: IDialogTakeItemAction, npc: INPC, player: IPlayer): IActionResult {
     const { slot, item } = action;
 
+    const messages: string[] = [];
+
     let didSucceed = false;
+    const formattedName = template(item.name)(player);
+
+    const matches = (itemName: string) => item.exact ? itemName === formattedName : itemName.includes(formattedName);
 
     (slot || []).forEach(checkSlot => {
       if (didSucceed) return;
@@ -338,17 +343,16 @@ export class DialogActionHelper extends BaseService {
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
 
-      const { name } = item;
-      if (slotItem.name !== template(name)(player)) return;
-      if (!this.game.itemHelper.isOwnedBy(player, slotItem)) return;
+      if (!matches(item.name)) return;
+      if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
+        messages.push('Hey! You need to bring me an item owned by you.');
+        return;
+      }
 
       this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, undefined);
 
       didSucceed = true;
     });
-
-    const messages: string[] = [];
-    if (!didSucceed) messages.push('Hey! You need to bring me an item owned by you.');
 
     return { messages, shouldContinue: didSucceed };
   }

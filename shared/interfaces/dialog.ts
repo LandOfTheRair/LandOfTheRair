@@ -28,6 +28,7 @@ export enum DialogActionType {
 export interface IDialogItem {
   name: string;
   amount: number; // defaults to 1
+  exact?: boolean; // whether or not the item should be matched exactly
 }
 
 // requirements for some dialog options
