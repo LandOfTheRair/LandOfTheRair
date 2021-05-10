@@ -264,9 +264,9 @@ export enum Currency {
 }
 
 export enum Holiday {
-  Halloween = 'October',
-  Thanksgiving = 'November',
-  Christmas = 'December'
+  Halloween = 'Halloween',
+  Thanksgiving = 'Thanksgiving',
+  Christmas = 'Christmas'
 }
 
 export enum MonsterClass {

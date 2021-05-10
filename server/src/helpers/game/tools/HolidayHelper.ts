@@ -11,8 +11,6 @@ export class HolidayHelper extends BaseService {
 
   public init() {
     this.holidayHash = this.game.contentManager.holidayDescsData;
-    console.log(Currency, this.currentHoliday());
-    console.log(Currency[this.currentHoliday()]);
   }
 
   isHoliday(hol: Holiday): boolean {

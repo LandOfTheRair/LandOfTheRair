@@ -15,6 +15,7 @@ import { ItemHelper } from '../character/ItemHelper';
 import { DiceRollerHelper, LootHelper } from '../game/tools';
 
 import { BaseService } from '../../models/BaseService';
+import { trickOrTreat } from '../../models/world/ai/ai-commands';
 import { ItemCreator } from './ItemCreator';
 import { ContentManager } from './ContentManager';
 
@@ -335,6 +336,9 @@ export class NPCCreator extends BaseService {
 
   private createNPCDialogParser(npc: INPC, npcDef: INPCDefinition): Parser {
     const parser = new Parser();
+
+    trickOrTreat(this.game, npc, parser);
+
     if (!npcDef.dialog) return parser;
 
     Object.keys(npcDef.dialog.keyword || {}).forEach(keyword => {
