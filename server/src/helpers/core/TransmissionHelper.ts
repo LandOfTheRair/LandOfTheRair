@@ -70,6 +70,7 @@ export class TransmissionHelper extends BaseService {
 
   // generate and queue player object patches
   public generateAndQueuePlayerPatches(player: Player) {
+    if (!this.playerPatchWatchers[player.username]) return;
 
     // we twiddle the fov here because it creates a bunch of unnecessary patches
     // hell yeah micro optimizations
