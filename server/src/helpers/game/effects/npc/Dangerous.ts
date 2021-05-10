@@ -11,6 +11,8 @@ export class Dangerous extends Effect {
   }
 
   override destroy(char: ICharacter) {
+    if (this.game.worldManager.isDungeon(char.map)) return;
+
     const anticipatedRespawn = new Date();
     const respawnSeconds = this.game.worldManager.getMap(char.map)?.state.getNPCSpawner(char.uuid)?.respawnTimeSeconds ?? 3600;
     anticipatedRespawn.setSeconds(anticipatedRespawn.getSeconds() + respawnSeconds);
