@@ -137,6 +137,16 @@ export class DeathHelper extends BaseService {
     this.game.characterHelper.calculateStatTotals(dead);
   }
 
+  // fake kill an NPC - good for removing them with dropping no loot
+  public fakeNPCDie(dead: INPC): void {
+    this.game.effectHelper.clearEffectsForDeath(dead);
+    dead.hp.current = -1;
+    dead.dir = Direction.Center;
+    dead.noItemDrop = true;
+    dead.noCorpseDrop = true;
+    this.npcDie(dead);
+  }
+
   // dispatch ai death, calculate loot drops
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
   public npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {

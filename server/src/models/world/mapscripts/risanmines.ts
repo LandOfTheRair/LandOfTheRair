@@ -1,5 +1,5 @@
 import { Game } from '../../../helpers';
-import { Direction, ICharacter, IMapScript, INPC, ItemSlot } from '../../../interfaces';
+import { ICharacter, IMapScript, INPC, ItemSlot } from '../../../interfaces';
 
 export class RisanMinesScript implements IMapScript {
   readonly name = 'RisanMines';
@@ -41,11 +41,7 @@ export class RisanMinesScript implements IMapScript {
   }
 
   private transformMiner(game: Game, npc: INPC) {
-    npc.hp.current = -1;
-    npc.dir = Direction.Center;
-    npc.noItemDrop = true;
-    npc.noCorpseDrop = true;
-    game.deathHelper.npcDie(npc as INPC);
+    game.deathHelper.fakeNPCDie(npc);
     game.worldManager.getMap('RisanMines')?.state.getNPCSpawner(npc.uuid)?.forceSpawnNPC({
       npcId: 'Risan Crazed Miner',
       spawnLoc: { x: npc.x, y: npc.y },

@@ -3,7 +3,7 @@ import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
 import { merge, random, sample } from 'lodash';
 
-import { GameAction, IDynamicEvent, IDynamicEventData, Stat } from '../../../interfaces';
+import { GameAction, IDynamicEvent, IDynamicEventData, INPC, Stat } from '../../../interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
@@ -19,6 +19,7 @@ export class DynamicEventHelper extends BaseService {
 
   public async init() {
     this.activeEvents = await this.game.eventsDB.loadEvents();
+    this.cleanStaleEvents();
     this.recalculateStatTotals();
   }
 
@@ -61,7 +62,7 @@ export class DynamicEventHelper extends BaseService {
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
     if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(ref.startMessage);
+      this.game.messageHelper.broadcastSystemMessage(event.eventData?.startMessage ?? ref.startMessage);
 
     } else {
       this.game.messageHelper.broadcastSystemMessage(`A new event "${setEvent.name}" has started!`);
@@ -83,13 +84,14 @@ export class DynamicEventHelper extends BaseService {
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
     if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(ref.endMessage);
+      this.game.messageHelper.broadcastSystemMessage(event.eventData?.endMessage ?? ref.endMessage);
       this.eventCooldowns[eventRef] = Date.now() + (1000 * (ref.cooldown ?? 0));
 
     } else {
       this.game.messageHelper.broadcastSystemMessage(`"${event.name}" has ended.`);
     }
 
+    this.handleSpecialEventsEnd(event);
     this.recalculateStatTotals();
   }
 
@@ -130,6 +132,11 @@ export class DynamicEventHelper extends BaseService {
     return this.activeEventNames[eventName];
   }
 
+  // used to check if there exists an event with this name
+  public getActiveEvent(eventName: string): IDynamicEvent | undefined {
+    return this.activeEvents.find(x => x.name === eventName);
+  }
+
   // start a dynamic event
   public startDynamicEvent(event: IDynamicEventData): void {
     if (!event.name) {
@@ -139,14 +146,16 @@ export class DynamicEventHelper extends BaseService {
 
     if (!this.canDoEvent(event)) return;
 
+    this.handleSpecialEventsStart(event);
+
     this.startEvent({
       description: event.description,
       endsAt: Date.now() + (event.duration * 1000),
       name: event.name,
-      eventRef: event.name
+      eventRef: event.name,
+      eventData: event,
+      extraData: event.extraData
     });
-
-    this.handleSpecialEvents(event);
   }
 
   // get a dynamic event ref
@@ -167,6 +176,10 @@ export class DynamicEventHelper extends BaseService {
         this.statTotals[stat] += event.statBoost?.[stat] ?? 0;
       });
     });
+  }
+
+  private cleanStaleEvents(): void {
+    this.activeEvents = this.activeEvents.filter(x => x.name !== 'Double Trouble');
   }
 
   // check for other events and start them possibly
@@ -193,13 +206,96 @@ export class DynamicEventHelper extends BaseService {
     });
   }
 
-  private handleSpecialEvents(event: IDynamicEventData): void {
+  private handleSpecialEventsStart(event: IDynamicEventData): void {
     if (event.name === 'Avatar Spawn') return this.doRareSpawn();
+    if (event.name === 'Double Trouble') return this.doDoubleTrouble(event);
+  }
+
+  private handleSpecialEventsEnd(event: IDynamicEvent): void {
+    if (event.name === 'Double Trouble') return this.undoDoubleTrouble(event);
   }
 
   private canDoEvent(event: IDynamicEventData): boolean {
     if (event.name === 'Avatar Spawn') return this.canDoRareSpawn();
+    if (event.name === 'Double Trouble') return this.canDoDoubleTrouble();
     return true;
+  }
+
+  private canDoDoubleTrouble(): boolean {
+
+    let hasTarget = false;
+
+    this.game.worldManager.allMapNames.forEach(map => {
+      if (hasTarget) return;
+
+      const mapData = this.game.worldManager.getMap(map);
+      if (!mapData) return;
+
+      mapData.state.allNPCS.forEach(npc => {
+        if (hasTarget) return;
+
+        if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
+        if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
+        const checkSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid);
+        if (!checkSpawner) return;
+
+        const checkSpawners = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        if ((checkSpawners?.length ?? 0) > 1) return;
+
+
+        hasTarget = true;
+      });
+    });
+
+    return hasTarget;
+  }
+
+  private doDoubleTrouble(event: IDynamicEventData): void {
+
+    const targets: INPC[] = [];
+
+    this.game.worldManager.allMapNames.forEach(map => {
+      const mapData = this.game.worldManager.getMap(map);
+      if (!mapData) return;
+
+      mapData.state.allNPCS.forEach(npc => {
+        if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
+        if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
+        const checkSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid);
+        if (!checkSpawner) return;
+
+        const checkSpawners = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        if ((checkSpawners?.length ?? 0) > 1) return;
+
+        targets.push(npc);
+      });
+    });
+
+    const target = sample(targets);
+    if (!target) return;
+
+    const spawner = this.game.worldManager.getMap(target.map)?.state.getNPCSpawner(target.uuid);
+    if (!spawner) return;
+
+    const npcDef = this.game.npcHelper.getNPCDefinition(target.npcId);
+    event.startMessage = `The ether is blurring around "${npcDef.name}", temporarily bringing a clone into the world!`;
+    event.description = `There are two "${npcDef.name}" in the world!`;
+
+    event.extraData = { map: target.map, spawner: spawner.spawnerName, name: target.name };
+
+    spawner.forceSpawnNPC();
+  }
+
+  private undoDoubleTrouble(event: IDynamicEvent): void {
+    if (!event.extraData) return;
+
+    const { map, spawner } = event.extraData;
+    const spawnerRef = this.game.worldManager.getMap(map)?.state.getNPCSpawnerByName(spawner);
+    if (!spawnerRef) return;
+
+    if (spawnerRef.allNPCS.length <= 1) return;
+
+    this.game.deathHelper.fakeNPCDie(spawnerRef.allNPCS[1]);
   }
 
   private canDoRareSpawn(): boolean {

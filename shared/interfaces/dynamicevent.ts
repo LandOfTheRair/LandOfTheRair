@@ -11,6 +11,7 @@ export interface IDynamicEvent {
   name: string;
   description: string;
   endsAt: number;
+  eventData?: IDynamicEventData;
   eventRef?: string;
   statBoost?: Partial<Record<Stat, number>>;
   extraData?: any;
@@ -26,4 +27,5 @@ export interface IDynamicEventData {
   startMessage: string;
   endMessage: string;
   map: string;
+  extraData?: any;
 }
