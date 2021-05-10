@@ -112,6 +112,8 @@ export class GroundManager extends BaseService {
   }
 
   public boostSpawnersInMapBasedOnTimestamp(map: string, inactiveSince: number, groundEntity?: Ground): void {
+    if (!inactiveSince) return;
+
     const now = Date.now();
     groundEntity = groundEntity || this.groundEntities[map];
     if (!groundEntity) return;

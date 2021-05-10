@@ -76,6 +76,7 @@ export class WorldManager extends BaseService {
         return;
       }
 
+      this.mapsInactiveSince[name] = Date.now();
       this.createMap(name, map);
       this.mapNames.push(name);
 
@@ -207,7 +208,7 @@ export class WorldManager extends BaseService {
 
     if (!this.activeMaps.has(mapName)) {
       this.activeMaps.add(mapName);
-      this.game.groundManager.boostSpawnersInMapBasedOnTimestamp(mapName, this.mapsInactiveSince[mapName] ?? Date.now());
+      this.game.groundManager.boostSpawnersInMapBasedOnTimestamp(mapName, this.mapsInactiveSince[mapName] ?? 0);
       delete this.mapsInactiveSince[mapName];
     }
 
