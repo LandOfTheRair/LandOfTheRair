@@ -45,7 +45,7 @@ export class Augury extends Spell {
     const toZ = map.getZLevelAt(caster.x, caster.y);
     const fromZ = map.getZLevelAt(foundNPC.x, foundNPC.y);
 
-    let distance = `${this.distanceToMeasurement(dist)} tiles from you`;
+    let distance = `${this.distanceToMeasurement(dist)}`;
     if (toZ < fromZ) distance = 'above you';
     if (toZ > fromZ) distance = 'below you';
 
