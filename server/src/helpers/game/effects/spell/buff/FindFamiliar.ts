@@ -17,6 +17,10 @@ export class FindFamiliar extends Effect {
       npc.alignment = char.alignment;
       npc.level = char.level;
 
+      if ((char as INPC).monsterGroup) {
+        npc.monsterGroup = (char as INPC).monsterGroup;
+      }
+
       // match the player
       if (this.game.characterHelper.isPlayer(char)) {
         npc.allegianceReputation.Enemy = -100000;
