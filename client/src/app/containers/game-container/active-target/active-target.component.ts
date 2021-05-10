@@ -54,7 +54,7 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   public get direction() {
-    return this.gameService.directionTo(this.player, this.target);
+    return this.gameService.directionTo(this.player, this.target, false);
   }
 
   public get effects() {
