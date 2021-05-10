@@ -84,6 +84,8 @@ export class TeleportHelper extends BaseService {
 
       if (!player.isBeingForciblyRespawned) {
         this.game.worldManager.leaveMap(player);
+      } else {
+        this.game.worldManager.getMapStateForCharacter(player)?.removePlayer(player);
       }
 
       // order of operations here is REALLY important
