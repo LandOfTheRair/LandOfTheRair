@@ -63,7 +63,9 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   return false;
 }
 
-export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0, thiefTier = 0): string {
+export function descTextFor(
+  player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0, thiefTier = 0
+): string {
 
   const itemClass = getProp(item, itemDef, 'itemClass');
 
@@ -74,7 +76,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   // whether the item has an implicit sell price or not
   const isValuableText = itemDef.sellValue ? 'It looks valuable. ' : '';
 
-  const trapSetText = itemClass === ItemClass.TrapSet ? `This trap is live. ` : '';
+  const trapSetText = itemClass === ItemClass.TrapSet ? 'This trap is live. ' : '';
 
   // the owner text
   let ownedText = '';
@@ -96,24 +98,32 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   const sense1Text = identifyTier > 0 && extendedDesc ? `This item is ${extendedDesc}. ` : '';
 
   const stats = getProp(item, itemDef, 'stats');
-  const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense) ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
-  const affectsAttributes = [Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP].some(x => stats?.[x]);
-  const statsText = identifyTier > 0 && affectsAttributes ? `This item affects physical attributes! ` : '';
+  const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense)
+    ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
+
+  const affectsAttributes = [
+    Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP
+  ].some(x => stats?.[x]);
+
+  const statsText = identifyTier > 0 && affectsAttributes
+    ? 'This item affects physical attributes! ' : '';
 
   const useEffect = getProp(item, itemDef, 'useEffect');
   const strikeEffect = getProp(item, itemDef, 'strikeEffect');
 
   let sense2Text = '';
-  if(identifyTier > 1 && itemClass !== ItemClass.Bottle && (useEffect || strikeEffect)) {
-    sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${(useEffect || strikeEffect).name}.`
-    sense2Text = (useEffect || strikeEffect).potency ? `${sense2Text} with a potency of ${(useEffect || strikeEffect).potency}. ` : `${sense2Text}. `;
+  if (identifyTier > 1 && itemClass !== ItemClass.Bottle && (useEffect || strikeEffect)) {
+    sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${(useEffect || strikeEffect).name}.`;
+    sense2Text = (useEffect || strikeEffect).potency
+      ? `${sense2Text} with a potency of ${(useEffect || strikeEffect).potency}. ` : `${sense2Text}. `;
   }
 
   // display the number of upgrades an item has/available
   const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
   const upgrades = getProp(item, itemDef, 'upgrades');
 
-  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0) ? `It has ${maxUpgrades} magical slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
+  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0)
+    ? `It has ${maxUpgrades} magical slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
 
   // various requirements for the item
   const requirements = getProp(item, itemDef, 'requirements');
@@ -129,7 +139,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
   let desc = getProp(item, itemDef, 'desc');
 
   const value = getProp(item, itemDef, 'value');
-  if(itemClass === ItemClass.Coin) {
+  if (itemClass === ItemClass.Coin) {
     desc = `${value.toLocaleString()} ${desc}`;
   }
 
@@ -138,7 +148,7 @@ export function descTextFor(player: IPlayer, item: ISimpleItem, itemDef: IItem, 
 
   const pages = getProp(item, itemDef, 'bookPages');
   let pagesText = '';
-  if(itemClass === ItemClass.Book) {
+  if (itemClass === ItemClass.Book) {
     pagesText = `The book has ${pages?.length ?? 0} page(s) in it. `;
   }
 

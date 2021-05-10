@@ -1,5 +1,8 @@
-import * as DirFuncs from '../direction';
+
+/* eslint-disable no-bitwise */
+
 import * as _ from 'lodash';
+import * as DirFuncs from '../direction';
 import { Direction } from '../../interfaces';
 
 test('check all directions can be converted to name, and back', () => {
@@ -22,26 +25,26 @@ test('check all directions can be converted to symbol, and back', () => {
 
 test('check all directions can be offset, and back', () => {
   DirFuncs.directionList().forEach(dir => {
-    expect(_.flow(DirFuncs.directionToOffset, (offset) => DirFuncs.directionFromOffset(offset.x,offset.y))(dir)).toBe(dir);
+    expect(_.flow(DirFuncs.directionToOffset, (offset) => DirFuncs.directionFromOffset(offset.x, offset.y))(dir)).toBe(dir);
   });
 });
 
 test('join all the directions, and split them again', () => {
   const dirs = DirFuncs.directionList();
-  const combined = dirs.reduce((prev,curr) => prev|curr, Direction.Center);
+  const combined = dirs.reduce((prev, curr) => prev | curr, Direction.Center);
   const split = DirFuncs.directionSplit(combined);
   expect(split.sort()).toStrictEqual(dirs.sort());
 });
 
 test('join all the directions, and split them again', () => {
   const dirs = DirFuncs.directionList();
-  const combined = dirs.reduce((prev,curr) => prev|curr, Direction.Center);
+  const combined = dirs.reduce((prev, curr) => prev | curr, Direction.Center);
   const split = DirFuncs.directionSplit(combined);
   expect(split.sort()).toStrictEqual(dirs.sort());
 });
 
 test('convert diaganols to east, or west', () => {
   const dirs = [Direction.Northeast, Direction.Southeast, Direction.Northwest, Direction.Southwest];
-  const converted = dirs.map((dir)=>DirFuncs.directionDiaganalToWestEast(dir));
+  const converted = dirs.map((dir) => DirFuncs.directionDiaganalToWestEast(dir));
   expect(converted).toStrictEqual([Direction.East, Direction.East, Direction.West, Direction.West]);
 });

@@ -52,7 +52,7 @@ export enum GameOption {
 
 export interface ISettings {
   accounts: IAccountSettings[];
-  windows: Record<string, { x: number, y: number, width: number, height: number, hidden?: boolean }>;
+  windows: Record<string, { x: number; y: number; width: number; height: number; hidden?: boolean }>;
   activeWindow: string;
   charSlot: number;
   lastCharSlot: number;

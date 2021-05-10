@@ -2,13 +2,13 @@ import { ItemSlot } from './building-blocks';
 
 export type DamageType =
   'physical'
-| 'necrotic'
-| 'fire'
-| 'ice'
-| 'water'
-| 'energy'
-| 'poison'
-| 'disease';
+  | 'necrotic'
+  | 'fire'
+  | 'ice'
+  | 'water'
+  | 'energy'
+  | 'poison'
+  | 'disease';
 
 export const MagicClasses: Record<DamageType, boolean> = {
   physical: false,

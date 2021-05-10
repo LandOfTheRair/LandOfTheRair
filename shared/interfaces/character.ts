@@ -62,7 +62,7 @@ export interface ICharacter {
   allTraits: Record<string, number>;
   learnedSpells: Record<string, LearnedSpell>;
   spellCooldowns: Record<string, number>;
-  spellChannel?: { ticks: number, callback: () => void };
+  spellChannel?: { ticks: number; callback: () => void };
 
   pets?: INPC[];
 }

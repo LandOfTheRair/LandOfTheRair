@@ -1,4 +1,6 @@
 
+/* eslint-disable @typescript-eslint/no-empty-interface */
+
 import { BaseClass, Currency } from './building-blocks';
 import { INPC } from './npc';
 
@@ -139,11 +141,11 @@ export interface IAXPSwapper {
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
-                      & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
-                      & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
-                      & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
-                      & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
-                      & IAXPSwapper &
+& IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
+& IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
+& IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
+& IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
+& IAXPSwapper &
 {
   type: BehaviorType;
   props?: string[];

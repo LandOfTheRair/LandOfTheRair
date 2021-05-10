@@ -11,8 +11,8 @@ export enum ItemQuality {
 }
 
 export type IItemEncrust = { strikeEffect: IItemEffect }
-                         & { stats: StatBlock }
-                         & { slots: Array<ItemSlot | 'weapon' | 'shield'> };
+& { stats: StatBlock }
+& { slots: Array<ItemSlot | 'weapon' | 'shield'> };
 
 export interface IItemRequirements {
   alignment?: Alignment;
@@ -122,7 +122,7 @@ export interface IBook {
   bookCurrentPage?: number;
 
   // the number of pages in this book
-  bookPages?: Array<{ id: string, text: string }>;
+  bookPages?: Array<{ id: string; text: string }>;
 }
 
 export interface IBox {
@@ -189,8 +189,8 @@ export interface ICorpse {
 }
 
 export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
-                  & IGem & ISuccorable & ICoin & ICorpse & IUsable
-                  & IUpgradeable & IUpgradeMaterial &
+& IGem & ISuccorable & ICoin & ICorpse & IUsable
+& IUpgradeable & IUpgradeMaterial &
 {
   // the name of the item
   name: string;
@@ -218,7 +218,7 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
 
   // the cosmetic data for the item
   cosmetic?: {
-    isPermanent?: boolean,
+    isPermanent?: boolean;
     name: string;
   };
 

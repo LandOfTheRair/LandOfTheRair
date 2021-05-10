@@ -2,9 +2,9 @@ import { IAccount } from './account';
 import { IDynamicEvent } from './dynamicevent';
 
 export interface ICharacterCreateInfo {
-  allegiances: Array<{ description: string, name: string, statMods: Array<{ name: string, value: number }> }>;
-  baseStats: Array<{ name: string, value: number }>;
-  classes: Array<{ description: string, name: string, statMods: Array<{ name: string, value: number }> }>;
+  allegiances: Array<{ description: string; name: string; statMods: Array<{ name: string; value: number }> }>;
+  baseStats: Array<{ name: string; value: number }>;
+  classes: Array<{ description: string; name: string; statMods: Array<{ name: string; value: number }> }>;
 }
 
 export interface IChatMessage {

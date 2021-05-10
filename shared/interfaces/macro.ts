@@ -9,11 +9,11 @@ export interface IMacroCommandArgs {
   overrideEffect?: IItemEffect;
   calledAlias: string;
   spell?: string;
-  primaryTarget?: { x: number, y: number, map: string };
+  primaryTarget?: { x: number; y: number; map: string };
   targetNumber?: number;
   callbacks: {
-    broadcast: (args) => void,
-    emit: (args) => void
+    broadcast: (args) => void;
+    emit: (args) => void;
   };
 }
 
@@ -56,7 +56,7 @@ export interface IMacroBar {
 
 export interface IMacro {
   key?: string;
-  modifiers?: { shift: boolean, alt: boolean, ctrl: boolean };
+  modifiers?: { shift: boolean; alt: boolean; ctrl: boolean };
 
   mode: string; // 'autoActivate' | 'lockActivation' | 'clickToTarget' | 'autoTarget';
 

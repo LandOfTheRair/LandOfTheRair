@@ -11,7 +11,7 @@ export function positionText(position: IPosition) {
  * Number of tiles from `0 0`
  */
 export function positionDistanceFromZero(position: IPosition): number {
-    return Math.max(Math.abs(position.x), Math.abs(position.y));
+  return Math.max(Math.abs(position.x), Math.abs(position.y));
 }
 
 /**
@@ -19,8 +19,8 @@ export function positionDistanceFromZero(position: IPosition): number {
  *
  * @returns position1 - position2
  */
-export function positionSubtract (position1: IPosition, position2: IPosition): IPosition {
-  return {x: position1.x - position2.x, y: position1.y - position2.y};
+export function positionSubtract(position1: IPosition, position2: IPosition): IPosition {
+  return { x: position1.x - position2.x, y: position1.y - position2.y };
 }
 
 /**
@@ -34,9 +34,9 @@ export function positionIsZero(position: IPosition): boolean {
  * Converts a world position into a new tile position
  */
 export function positionWorldToTile(position: IPosition): IPosition {
-  return {x: Math.floor(position.x / 64), y: Math.floor(position.y / 64)};
+  return { x: Math.floor(position.x / 64), y: Math.floor(position.y / 64) };
 }
 
-export function positionWorldXYToTile({worldX, worldY}: {worldX:number; worldY:number}) {
-  return positionWorldToTile({x: worldX, y: worldY});
+export function positionWorldXYToTile({ worldX, worldY }: {worldX: number; worldY: number}) {
+  return positionWorldToTile({ x: worldX, y: worldY });
 }

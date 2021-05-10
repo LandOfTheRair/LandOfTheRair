@@ -21,7 +21,7 @@ export interface IServerAction {
   canBeUnattended: boolean;
 
   validate(args?): boolean;
-  act(game, { broadcast, emit, register, unregister }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean, message?: string }>;
+  act(game, { broadcast, emit, register, unregister }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean; message?: string }>;
 }
 
 export enum GameServerEvent {

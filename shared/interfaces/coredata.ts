@@ -4,7 +4,7 @@ import { DynamicEventRarity } from './dynamicevent';
 
 export interface IWeaponTier {
   damage: number[];
-  variance: { min: number, max: number };
+  variance: { min: number; max: number };
   scaling: number[];
   bonus: number[];
   weakPercent: number;
@@ -12,8 +12,8 @@ export interface IWeaponTier {
 }
 
 export interface IMaterialSlotLayout {
-  slots: Record<string, { items: string[], sprite: number, withdrawInOunces?: boolean; }>;
-  layouts: Array<{ category: string, items: Array<string|null> }>;
+  slots: Record<string, { items: string[]; sprite: number; withdrawInOunces?: boolean }>;
+  layouts: Array<{ category: string; items: Array<string|null> }>;
 }
 
 export interface IFate {
@@ -24,7 +24,7 @@ export interface IFate {
       divisor: number;
       goodmessage: string;
       antimessage: string;
-    }
+    };
   }>;
 
   event: Array<{
@@ -32,7 +32,7 @@ export interface IFate {
     result: {
       message: string;
       stats?: Partial<Record<Stat, number>>;
-      effect?: { name: string, duration: number, potency: number };
+      effect?: { name: string; duration: number; potency: number };
       allegiance?: Allegiance;
       sex?: 'male' | 'female';
       currency?: Partial<Record<Currency, number>>;
@@ -41,8 +41,8 @@ export interface IFate {
       statBoost?: number;
       unlearnSpell?: string;
       learnSpell?: string;
-    }
-  }>
+    };
+  }>;
 }
 
 export interface IGameSettings {

@@ -43,7 +43,7 @@ export interface INPCDefinition {
   baseClass?: BaseClass;
 
   // the base effects given to the creature (usually attributes/truesight/etc)
-  baseEffects?: Array<{ name: string, endsAt: number, extra: IStatusEffectInfo }>;
+  baseEffects?: Array<{ name: string; endsAt: number; extra: IStatusEffectInfo }>;
 
   // the behaviors for the npc
   behaviors?: IBehavior[];
@@ -56,8 +56,8 @@ export interface INPCDefinition {
 
   // the drop pool for lairs that can drop X of Y items
   dropPool?: {
-    min: number,
-    max: number,
+    min: number;
+    max: number;
     items: Rollable[];
   };
 
@@ -108,7 +108,7 @@ export interface INPCDefinition {
   noItemDrop?: boolean;
 
   // the reputation modifications for the killer when this npc is killed
-  repMod: Array<{ allegiance: Allegiance, delta: number }>;
+  repMod: Array<{ allegiance: Allegiance; delta: number }>;
 
   // the amount of skill gained by the party when this creature is killed
   skillOnKill: number;
@@ -159,7 +159,7 @@ export interface INPC extends ICharacter {
   monsterGroup?: string;
 
   skillOnKill: number;
-  giveXp: { min: number, max: number };
+  giveXp: { min: number; max: number };
 
   behaviors?: IAIBehavior[];
   onlyVisibleTo?: string;
@@ -178,7 +178,7 @@ export interface INPC extends ICharacter {
   copyDrops?: any[];
   dropPool?: any;
 
-  allegianceMods: Array<{ delta: number, allegiance: Allegiance }>;
+  allegianceMods: Array<{ delta: number; allegiance: Allegiance }>;
   traitLevels?: Record<string, number>;
 
   triggers?: Partial<Record<NPCTriggerType, any>>;

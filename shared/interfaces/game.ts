@@ -8,7 +8,7 @@ import { IPlayer } from './player';
 export interface IGame {
   inGame: boolean;
   currentTarget: string;
-  itemTooltip: { tooltip: string, upgrades: string[] };
+  itemTooltip: { tooltip: string; upgrades: string[] };
   player: IPlayer;
   map: any;
   currentHoliday: Holiday | null;
@@ -62,7 +62,7 @@ export interface IGame {
   partyInfo: {
     party: IParty;
     partyMembers: Record<string, IPartyMember>;
-  }
+  };
 
   inspectingCharacter: ICharacter | null;
 }

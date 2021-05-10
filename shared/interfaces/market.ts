@@ -20,7 +20,7 @@ export interface IMarketListing {
     listedAt: number;
     seller: string;
     price: number;
-  }
+  };
 }
 
 export interface IMarketPickup {

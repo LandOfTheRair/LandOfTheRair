@@ -30,7 +30,7 @@ export interface ISilverPerk {
   maxPurchases: number;
   key: string | SilverPurchase;
   cost: number;
-  festival?: { name: string, stats: Partial<Record<Stat, number>> };
+  festival?: { name: string; stats: Partial<Record<Stat, number>> };
 }
 
 export interface IAccountPremium {

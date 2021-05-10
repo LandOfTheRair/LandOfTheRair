@@ -25,6 +25,6 @@ jobs:
 
     - run: npm run setup:full
 
-    - run: npm run lint
+    - run: npm run test
 
     - run: npm run build

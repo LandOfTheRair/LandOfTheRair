@@ -9,7 +9,7 @@ export function calculateListingFee(item: IItem, sellPrice: number): number {
 }
 
 export function itemListError(player: IPlayer, item: ISimpleItem, realItem: IItem, price: number): string {
-  if(!player) return '';
+  if (!player) return '';
 
   if ([ItemClass.Corpse, ItemClass.Coin].includes(realItem.itemClass as any)) return 'That cannot be sold on the market.';
 
@@ -21,7 +21,8 @@ export function itemListError(player: IPlayer, item: ISimpleItem, realItem: IIte
 
   if (item.mods.useEffect) return 'That item is too unique to sell.';
 
-  if ((player.currency[Currency.Gold] ?? 0) < calculateListingFee(realItem, price)) return 'You do not have enough money to list that item.';
+  const gold = player.currency[Currency.Gold] ?? 0;
+  if (gold < calculateListingFee(realItem, price)) return 'You do not have enough money to list that item.';
 
   return '';
 }

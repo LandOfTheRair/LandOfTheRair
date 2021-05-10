@@ -148,10 +148,10 @@ export interface IDialogChatAction {
 }
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
-                          & IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
-                          & IDialogCheckLevelAction & IDialogCheckAlignmentAction & IDialogSetAlignmentAction
-                          & IDialogCheckItemCanUpgradeAction & IDialogAddItemUpgradeAction
-                          & { type: DialogActionType, maxDistance?: number };
+& IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
+& IDialogCheckLevelAction & IDialogCheckAlignmentAction & IDialogSetAlignmentAction
+& IDialogCheckItemCanUpgradeAction & IDialogAddItemUpgradeAction
+& { type: DialogActionType; maxDistance?: number };
 
 export interface IDialogTree {
   keyword: Record<string, { actions: IDialogAction[] }>;

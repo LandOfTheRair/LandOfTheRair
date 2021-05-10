@@ -9,6 +9,7 @@
     "start": "node dist/server/src/core/index",
     "start:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/server/src/core/index.js\"",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
+    "test": "npm run lint",
     "build": "tsc",
     "postbuild": "madge --circular --warning dist/server/src/core/index.js"
   },

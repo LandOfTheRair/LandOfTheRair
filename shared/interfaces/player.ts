@@ -50,13 +50,13 @@ export interface IPlayer extends ICharacter {
   hungerTicks: number;
 
   partyName: string;
-  respawnPoint: { x: number, y: number, map: string };
-  lastDeathLocation?: { map: string, x: number, y: number };
+  respawnPoint: { x: number; y: number; map: string };
+  lastDeathLocation?: { map: string; x: number; y: number };
 
   dailyItems: Record<string, number>;
 
   runes: string[];
   learnedRunes: string[];
 
-  teleportLocations: Record<string, { x: number, y: number, map: string }>;
+  teleportLocations: Record<string, { x: number; y: number; map: string }>;
 }
