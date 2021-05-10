@@ -158,6 +158,8 @@ export interface INPC extends ICharacter {
   monsterClass?: MonsterClass;
   monsterGroup?: string;
 
+  noLeash?: boolean;
+
   skillOnKill: number;
   giveXp: { min: number; max: number };
 

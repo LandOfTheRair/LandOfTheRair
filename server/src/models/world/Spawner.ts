@@ -332,10 +332,10 @@ export class Spawner {
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
-    this.addNPC(npc, aiInst, npcDef);
-
     if (this.npcCreateCallback) this.npcCreateCallback(npc);
     if (createCallback) createCallback(npc);
+
+    this.addNPC(npc, aiInst, npcDef);
 
     return npc;
   }

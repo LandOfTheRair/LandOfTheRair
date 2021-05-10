@@ -17,28 +17,28 @@ export class TeleportHelper extends BaseService {
 
   public init() {}
 
-  public setCharXY(player: ICharacter, x: number, y: number) {
+  public setCharXY(char: ICharacter, x: number, y: number) {
 
-    const oldPos = { oldX: player.x, oldY: player.y };
+    const oldPos = { oldX: char.x, oldY: char.y };
 
-    player.x = x;
-    player.y = y;
+    char.x = x;
+    char.y = y;
 
-    const mapData = this.game.worldManager.getMap(player.map);
+    const mapData = this.game.worldManager.getMap(char.map);
     if (!mapData) return;
 
     const { map, state } = mapData;
 
-    if (player.x > map.width - 4 || player.x < 4 || player.y > map.height - 4 || player.y < 4) {
-      player.x = map.respawnPoint.x;
-      player.y = map.respawnPoint.y;
-      this.game.messageHelper.sendSimpleMessage(player, `This teleport has gone out of bounds to ${x}, ${y} - please report this to a GM.`);
+    if (char.x > map.width - 4 || char.x < 4 || char.y > map.height - 4 || char.y < 4) {
+      char.x = map.respawnPoint.x;
+      char.y = map.respawnPoint.y;
+      this.game.messageHelper.sendSimpleMessage(char, `This teleport has gone out of bounds to ${x}, ${y} - please report this to a GM.`);
     }
 
-    state.moveNPCOrPlayer(player, oldPos);
+    state.moveNPCOrPlayer(char, oldPos);
 
-    if (this.game.characterHelper.isPlayer(player)) {
-      this.game.visibilityHelper.calculatePlayerFOV(player as Player);
+    if (this.game.characterHelper.isPlayer(char)) {
+      this.game.visibilityHelper.calculatePlayerFOV(char as Player);
     }
   }
 

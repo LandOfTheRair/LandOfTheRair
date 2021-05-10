@@ -249,7 +249,7 @@ export class DefaultAIBehavior implements IAI {
     // only leash to owner if it can move
     if (npc.owner && (npc.stats[Stat.Move] ?? 0) > 0) {
       const distFrom = distanceFrom(npc, npc.owner);
-      if (distFrom > 5) {
+      if (distFrom > 4) {
         npc.x = npc.owner.x;
         npc.y = npc.owner.y;
       }
@@ -260,12 +260,14 @@ export class DefaultAIBehavior implements IAI {
       const distFrom = distanceFrom(npc, startPos);
 
       // if we have no path AND no target and its out of the random walk radius, or we're past the leash radius, we leash
-      const noLeash = !this.path;
+      const noLeash = !this.path || npc.noLeash;
 
       if (noLeash
         && ((!this.currentTarget && this.randomWalkRadius >= 0 && distFrom > this.randomWalkRadius)
         || (this.leashRadius >= 0 && distFrom > this.leashRadius))
       ) {
+
+        if (npc.name === 'Koda') return;
 
         this.sendLeashMessage();
 

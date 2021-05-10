@@ -1,5 +1,8 @@
 
 export * from './holiday/halloween-candy';
+export * from './holiday/thanksgiving-food';
+export * from './holiday/thanksgiving-guns';
+export * from './holiday/thanksgiving-turkey';
 
 export * from './alchemist';
 export * from './axpswapper';

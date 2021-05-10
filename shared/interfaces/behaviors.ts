@@ -33,7 +33,10 @@ export enum BehaviorType {
   Resetter = 'resetter',
   AXPSwapper = 'axpswapper',
   FurUpgrader = 'furupgrader',
-  HalloweenCandy = 'halloweencandy'
+  HalloweenCandy = 'halloweencandy',
+  ThanksgivingFood = 'thanksgivingfood',
+  ThanksgivingGuns = 'thanksgivingguns',
+  ThanksgivingTurkey = 'thanksgivingturkey'
 }
 
 export interface IVendorItem {
