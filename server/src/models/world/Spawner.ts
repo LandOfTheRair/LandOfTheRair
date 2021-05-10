@@ -100,6 +100,10 @@ export class Spawner {
     return this.npcs;
   }
 
+  public get respawnTimeSeconds(): number {
+    return this.respawnRate;
+  }
+
   private get canRespawn(): boolean {
     return !this.mapRef.disableCreatureRespawn && (this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0);
   }

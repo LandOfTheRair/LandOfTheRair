@@ -4,4 +4,5 @@ export * from './CharacterDB';
 export * from './EventsDB';
 export * from './MarketDB';
 export * from './GroundDB';
+export * from './LogsDB';
 export * from './WorldDB';

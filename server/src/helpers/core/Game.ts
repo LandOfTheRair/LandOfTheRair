@@ -18,7 +18,7 @@ import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { Database } from './Database';
-import { AccountDB, CharacterDB, EventsDB, GroundDB, MarketDB, WorldDB } from './db';
+import { AccountDB, CharacterDB, EventsDB, GroundDB, LogsDB, MarketDB, WorldDB } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
 import { UserInputHelper } from './UserInputHelper';
@@ -38,6 +38,7 @@ export class Game {
 
     public db: Database,
 
+    public logsDB: LogsDB,
     public accountDB: AccountDB,
     public characterDB: CharacterDB,
     public worldDB: WorldDB,
@@ -114,7 +115,7 @@ export class Game {
       'logger',
       'transmissionHelper',
       'contentManager',
-      'db', 'worldDB', 'marketDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
+      'db', 'logsDB', 'worldDB', 'marketDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
       'emailHelper', 'profanityHelper', 'effectManager', 'corpseManager',
       'lobbyManager', 'subscriptionHelper',
       'characterRoller', 'currencyHelper',
