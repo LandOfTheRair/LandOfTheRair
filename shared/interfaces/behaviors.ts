@@ -32,7 +32,8 @@ export enum BehaviorType {
   Buffer = 'buffer',
   Resetter = 'resetter',
   AXPSwapper = 'axpswapper',
-  FurUpgrader = 'furupgrader'
+  FurUpgrader = 'furupgrader',
+  HalloweenCandy = 'halloweencandy'
 }
 
 export interface IVendorItem {

@@ -32,7 +32,7 @@ export class ContentManager extends BaseService {
   private events: Record<string, IDynamicEventData>;
   private fate: IFate;
   private hideReductions: Record<WeaponClass, number>;
-  private holidayDescs: Record<Holiday, { name: string; text: string; duration: string }>;
+  private holidayDescs: Record<Holiday, { name: string; text: string; duration: string; month: number }>;
   private materialStorage: IMaterialSlotLayout;
   private npcNames: string[];
   private premium: IPremium;

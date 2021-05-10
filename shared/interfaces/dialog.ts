@@ -1,5 +1,5 @@
 
-import { Alignment, ItemSlot } from './building-blocks';
+import { Alignment, Holiday, ItemSlot } from './building-blocks';
 import { IItem } from './item';
 
 export enum DialogActionType {
@@ -14,6 +14,7 @@ export enum DialogActionType {
   AddUpgradeItem = 'addItemUpgrade',
   GiveEffect = 'giveEffect',
   CheckQuest = 'checkQuest',
+  CheckHoliday = 'checkHoliday',
   CheckDailyQuest = 'checkDailyQuest',
   GiveQuest = 'giveQuest',
   GiveDailyQuest = 'giveDailyQuest',
@@ -33,6 +34,7 @@ export interface IDialogItem {
 export interface IDialogRequirement {
   stat?: string;
   statValue?: number;
+  holiday?: Holiday;
 }
 
 // different types of dialog actions
@@ -109,6 +111,12 @@ export interface IDialogCheckNoItemAction {
 
 export interface IDialogCheckLevelAction {
   level: number;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogCheckHolidayAction {
+  holiday: Holiday;
   checkPassActions: IDialogAction[];
   checkFailActions: IDialogAction[];
 }

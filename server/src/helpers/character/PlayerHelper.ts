@@ -3,6 +3,7 @@ import { isArray, random, size } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BGM, Direction,
+  Holiday,
   initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -223,6 +224,14 @@ export class PlayerHelper extends BaseService {
     if (map?.subscriberOnly && !player.subscriptionTier) {
       this.game.messageHelper.sendSimpleMessage(player,
         'This location is subscriber only, you\'ll have to come back later!'
+      );
+
+      this.teleportHelper.teleportToRespawnPoint(player);
+    }
+
+    if (map?.holiday && !this.game.holidayHelper.isHoliday(map.holiday as Holiday)) {
+      this.game.messageHelper.sendSimpleMessage(player,
+        'This location is not active during this time of year!'
       );
 
       this.teleportHelper.teleportToRespawnPoint(player);

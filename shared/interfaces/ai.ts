@@ -5,6 +5,7 @@ export interface IAI {
   mechanicTick(): void;
   damageTaken({ damage, attacker }: { damage: number; attacker: ICharacter|undefined|null }): void;
   death(killer: ICharacter|undefined|null): void;
+  resetAgro(full: boolean): void;
 
   sendLeashMessage(): void;
 }

@@ -16,7 +16,6 @@ export class GMStartEvent extends MacroCommand {
 
     if (this.game.dynamicEventHelper.isEventActive(eventRef.name)) {
       const event = this.game.dynamicEventHelper.getActiveEvent(eventRef.name);
-      console.log('cancel', event);
       if (!event) return;
 
       this.game.dynamicEventHelper.stopEvent(event);

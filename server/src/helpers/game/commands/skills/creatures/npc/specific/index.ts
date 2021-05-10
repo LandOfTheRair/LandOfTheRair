@@ -1,4 +1,6 @@
 
+export * from './holiday/halloweenzombiescratch';
+
 export * from './catacombslichsummon';
 export * from './chillbitefrostdragon';
 export * from './dedlaencryptthingpunch';

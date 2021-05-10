@@ -11,7 +11,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
-  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom } from '../../interfaces';
+  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom, IDialogCheckHolidayAction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -53,6 +53,7 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.AddUpgradeItem]:        this.handleAddItemUpgradeAction,
       [DialogActionType.GiveEffect]:            this.handleGiveEffectAction,
       [DialogActionType.CheckQuest]:            this.handleCheckQuestAction,
+      [DialogActionType.CheckHoliday]:          this.handleCheckHolidayAction,
       [DialogActionType.CheckDailyQuest]:       this.handleCheckDailyQuestAction,
       [DialogActionType.GiveQuest]:             this.handleGiveQuestAction,
       [DialogActionType.GiveDailyQuest]:        this.handleGiveDailyQuestAction,
@@ -129,6 +130,26 @@ export class DialogActionHelper extends BaseService {
     const didSucceed = player.alignment === alignment;
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
+  // CHECK the current holiday
+  private handleCheckHolidayAction(action: IDialogCheckHolidayAction, npc: INPC, player: IPlayer): IActionResult {
+    const { holiday, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = this.game.holidayHelper.isHoliday(holiday);
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
     for (const subAction of actions) {
       const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
@@ -606,6 +627,10 @@ export class DialogActionHelper extends BaseService {
     if (requirement.stat && requirement.statValue) {
       const stat = this.game.characterHelper.getStat(player, requirement.stat as Stat);
       if (stat < requirement.statValue) return false;
+    }
+
+    if (requirement.holiday) {
+      return this.game.holidayHelper.isHoliday(requirement.holiday);
     }
 
     return true;

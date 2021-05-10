@@ -15,8 +15,8 @@
   </div>
 
   <div class="event-container" *ngIf="events$ | async as events">
-    <div class="event" *ngIf="events.length === 0">
-      Nothing is currently happening.
+    <div class="event" *ngIf="events.length === 0 && !(holiday$ | async)">
+      No events are currently happening.
     </div>
 
     <div class="event" *ngFor="let event of events">

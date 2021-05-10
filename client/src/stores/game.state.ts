@@ -197,6 +197,9 @@ export class GameState {
     const baseState = defaultGame();
     baseState.inGame = true;
 
+    const state = ctx.getState();
+    baseState.currentHoliday = state.currentHoliday;
+
     ctx.patchState(baseState);
   }
 

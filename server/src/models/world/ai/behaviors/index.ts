@@ -1,4 +1,6 @@
 
+export * from './holiday/halloween-candy';
+
 export * from './alchemist';
 export * from './axpswapper';
 export * from './banker';

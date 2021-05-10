@@ -18,7 +18,7 @@ Characters In View
     <div class="p-bottom-20 p-left-5 p-right-25 char-container">
       <div class="vertical-center full-width full-height background-text" *ngIf="visibleCharacterList.length === 0">You don't see anyone nearby</div>
       <div class="char-card-container" *ngFor="let character of visibleCharacterList; let i = index">
-        <app-character-card [origin]="player" [disabled]="disableInteractions" [char]="character" *ngIf="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(character, $event)"></app-character-card>
+        <app-character-card [origin]="player" [disabled]="disableInteractions" [char]="character" *ngIf="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(player, character, $event)"></app-character-card>
       </div>
       <div class="char-spacer" *ngIf="visibleCharacterList.length % 2 === 1"></div>
     </div>

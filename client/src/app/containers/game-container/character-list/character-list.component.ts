@@ -7,7 +7,7 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Direction, distanceFrom, FOVVisibility, GameServerResponse,
-  Hostility, ICharacter, IMacro, INPC, IPlayer } from '../../../../interfaces';
+  Hostility, ICharacter, IMacro, INPC, IPlayer, ItemSlot } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState, ViewCharacterEquipment } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -202,7 +202,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
       });
   }
 
-  public doAltAction(char: ICharacter, $event?: any) {
+  public doAltAction(player: ICharacter, char: ICharacter, $event?: any) {
 
     $event?.preventDefault();
     $event?.stopPropagation();
@@ -210,6 +210,11 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     // we can view characters loadouts
     if ((char as IPlayer).username) {
       this.store.dispatch(new ViewCharacterEquipment(char));
+      return;
+    }
+
+    if (player.items.equipment[ItemSlot.RightHand]?.name === 'Halloween Basket' && (char as INPC).hostility === Hostility.Never) {
+      this.gameService.sendCommandString(`${char.uuid}, trick or treat`);
       return;
     }
 

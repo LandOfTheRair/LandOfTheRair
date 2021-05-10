@@ -54,7 +54,7 @@ export interface IMapProperties {
   region: string;
 
   // the holiday this map requires - for holiday maps like thanksgiving
-  holiday: string;
+  holiday?: string;
 
   // the max skill level you can get in this map
   maxSkill: number;

@@ -154,6 +154,8 @@ export class NPCCreator extends BaseService {
       Object.values(Skill).forEach(skill => {
         baseChar.skills[skill] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(statSet);
       });
+
+      baseChar.monsterClass ??= MonsterClass.Humanoid;
     }
 
     if (baseChar.skills[Skill.Thievery] === 0) {
@@ -392,7 +394,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Buffer]: AllBehaviors.BufferBehavior,
       [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior,
       [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior,
-      [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior
+      [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior,
+      [BehaviorType.HalloweenCandy]: AllBehaviors.HalloweenCandyBehavior
     };
 
     npcDef.behaviors.forEach(behavior => {

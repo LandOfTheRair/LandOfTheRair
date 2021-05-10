@@ -19,6 +19,8 @@ export class CurrencyHelper extends BaseService {
 
   // gain currency for a player
   public gainCurrency(char: ICharacter, currencyGained: number, currency: Currency = Currency.Gold): void {
+    if (!currency) return;
+
     currencyGained = this.game.userInputHelper.cleanNumber(currencyGained, 0, { floor: true });
     char.currency[currency] = Math.max(Math.floor((char.currency[currency] ?? 0) + currencyGained), 0);
   }

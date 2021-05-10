@@ -411,7 +411,7 @@ export class DefaultAIBehavior implements IAI {
       .flat();
   }
 
-  protected resetAgro(full = false) {
+  public resetAgro(full = false) {
     if (full) {
       this.npc.agro = {};
       return;

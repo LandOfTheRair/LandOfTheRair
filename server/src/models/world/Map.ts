@@ -86,7 +86,6 @@ export class WorldMap {
   public get subscriberOnly() {
     return this.properties.subscriberOnly;
   }
-
   public get respawnPoint() {
     return {
       map: this.properties.respawnMap || this.mapName,
