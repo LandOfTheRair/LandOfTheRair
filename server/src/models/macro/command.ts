@@ -244,10 +244,12 @@ export class SpellCommand extends SkillCommand {
     }
 
     // hit each of the targets
-    targets.forEach(target => {
+    targets.forEach((target, idx) => {
       if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
 
       if (!this.canCastSpell(caster, target)) return;
+
+      args.targetNumber = idx;
 
       this.castSpellAt(caster, target, args);
     });
@@ -305,7 +307,7 @@ export class SpellCommand extends SkillCommand {
         }
 
         const castTargets = target ? [target] : [];
-        if (!this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
+        if (!args?.targetNumber && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
       }
 
       // try to reflect the spell if possible
