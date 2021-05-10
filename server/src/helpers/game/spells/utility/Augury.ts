@@ -13,8 +13,8 @@ export class Augury extends Spell {
     if (!mapState) return;
 
     const targets: INPC[] = [];
-    this.game.worldManager.allMapNames.forEach(map => {
-      const mapData = this.game.worldManager.getMap(map);
+    this.game.worldManager.allMapNames.forEach(checkMap => {
+      const mapData = this.game.worldManager.getMap(checkMap);
       if (!mapData) return;
 
       mapData.state.allNPCS.forEach(npc => {
