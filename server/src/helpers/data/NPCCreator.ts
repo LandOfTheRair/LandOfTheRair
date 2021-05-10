@@ -406,6 +406,9 @@ export class NPCCreator extends BaseService {
       behavior = cloneDeep(behavior);
 
       const initBehavior = behaviorTypes[behavior.type];
+      if (!initBehavior) {
+        throw new Error(`Could not find npc behavior type ${behavior.type}`);
+      }
       const behaviorInst: IAIBehavior = new initBehavior();
 
       if (behavior.props) {
