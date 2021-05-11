@@ -128,7 +128,7 @@ export class MapState {
       if (!tag) throw new Error(`Spawner ${this.map.name} - ${spawnerX},${spawnerY} has no tag!`);
 
       const spawnerData = this.game.contentManager.getSpawnerByTag(tag);
-      if (!spawnerData) throw new Error(`Tagged spawner ${tag} does not exist.`);
+      if (!spawnerData) throw new Error(`Tagged spawner ${tag} does not exist (if this is an NPC, it's on the wrong layer).`);
 
       spawnerData.name = spawner.name;
       spawnerData.x = spawnerX;
