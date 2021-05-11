@@ -8,7 +8,7 @@ export class ShredTwentyPercent extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return distanceFrom(caster, target) <= this.range(caster)
+    return distanceFrom(caster, target) <= 0
         && target.hp.current > target.hp.maximum * 0.6
         && !this.game.effectHelper.hasEffect(target, 'Dangerous');
   }
