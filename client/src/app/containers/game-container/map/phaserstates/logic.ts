@@ -603,7 +603,7 @@ export class MapScene extends Phaser.Scene {
       this.registerEvents();
 
       // update the loader as we load the map
-      let text = `Welcome to ${player.map}!`;
+      let text = `Welcome to ${this.game.gameService.reformatMapName(player.map)}!`;
       if (tiledJSON.properties.creator) {
         text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
       }
