@@ -229,7 +229,7 @@ export class PlayerHelper extends BaseService {
       this.teleportHelper.teleportToRespawnPoint(player);
     }
 
-    if (map?.holiday && !this.game.holidayHelper.isHoliday(map.holiday as Holiday)) {
+    if (map?.holiday && !this.game.holidayHelper.isHoliday(map.holiday as Holiday) && !player.isGM) {
       this.game.messageHelper.sendSimpleMessage(player,
         'This location is not active during this time of year!'
       );
