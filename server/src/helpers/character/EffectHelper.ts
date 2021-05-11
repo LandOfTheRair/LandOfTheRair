@@ -149,7 +149,7 @@ export class EffectHelper extends BaseService {
     this.game.effectManager.effectDestroy(effect.effectName, character, effect);
 
     // if this spell has a recently associated with it, we apply it now
-    if (recentlyRef && !effect.effectInfo.disableRecently) {
+    if (recentlyRef && !effect.effectInfo.disableRecently && effect.endsAt !== -1) {
       this.addEffect(character, '', recentlyRef);
     }
   }
