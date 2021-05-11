@@ -181,7 +181,7 @@ export class SpellCommand extends SkillCommand {
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
     if (!spellData) return 0;
 
-    let cost = targets.length * (spellData.mpCost ?? 0);
+    let cost = Math.max(targets.length, 1) * (spellData.mpCost ?? 0);
 
     // try to do wand/totem specialty
     if (caster) {
@@ -221,7 +221,7 @@ export class SpellCommand extends SkillCommand {
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
 
     // if we're not a party target spell, we look for a primary target (location or character)
-    if (caster && !spellData.spellMeta.targetsParty) {
+    if (caster && !spellData.spellMeta.targetsParty && args?.stringArgs) {
       primaryTarget = this.getTarget(caster, (args?.stringArgs ?? '').trim(), this.canTargetSelf, spellData.spellMeta.allowDirectional);
       if ((primaryTarget as ICharacter)?.name) {
         targets = [primaryTarget as ICharacter];
@@ -312,6 +312,7 @@ export class SpellCommand extends SkillCommand {
         }
 
         const castTargets = target ? [target] : [];
+
         if (!args?.targetNumber && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
       }
 
@@ -351,7 +352,7 @@ export class SpellCommand extends SkillCommand {
     // aoe spells are handled differently
     const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
     if (spellData.spellMeta.aoe) {
-      this.castSpell(char, { primaryTarget: targetsPosition, ...(args || {}) });
+      this.castSpell(char, { primaryTarget: target ?? targetsPosition, ...(args || {}) });
       return;
     }
 
