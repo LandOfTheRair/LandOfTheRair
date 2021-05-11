@@ -88,16 +88,15 @@ export function positionSurrounding(): readonly (IPosition & {direction: Directi
 }
 
 /**
- * Calls a method for each tile around a given center within range
+ * Calls a method for each position in range of a given center
  *
- * @param center The center tile
- * @param range The range around the tile
- * @param method The method to call for each surrounding tile
+ * @param center The center position
+ * @param range The range around the position
+ * @param method The method to call for each position in range
  */
-export function positionInRangeAround(center: IPosition, range: number, method: (position: IPosition) => void) {
+export function positionInRange(center: IPosition, range: number, method: (position: IPosition) => void) {
   for (let i = center.x - range; i <= center.x + range; i++) {
     for (let j = center.y - range; j <= center.y + range; j++) {
-      if (i === center.x && j === center.y) continue;
       method({ x: i, y: j });
     }
   }
