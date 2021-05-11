@@ -55,7 +55,7 @@
             <br>
             Level {{ player.level }} {{ player.baseClass }}
             <br>
-            In {{ player.map }}
+            In {{ gameService.reformatMapName(player.map) }}
             <br>
             <br>
             <a target="_blank" href="https://global.rair.land/character?username={{ account.username }}&charSlot={{ player.charSlot }}">Global Viewer</a>
