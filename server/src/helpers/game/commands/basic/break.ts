@@ -39,7 +39,7 @@ export class Break extends MacroCommand {
     if (effect) {
       this.sendMessage(player, 'You unleash a powerful magical force!');
 
-      this.game.commandHandler.getSkillRef(effect.name).use(null, null, { overrideEffect: { potency: effect.potency } }, player);
+      this.game.commandHandler.getSkillRef(effect.name).use(null, null, { overrideEffect: effect }, player);
     }
   }
 }
