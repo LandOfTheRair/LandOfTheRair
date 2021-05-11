@@ -1,5 +1,5 @@
 
-import { Alignment, Holiday, ItemSlot } from './building-blocks';
+import { Alignment, Currency, Holiday, ItemSlot } from './building-blocks';
 import { IItem } from './item';
 
 export enum DialogActionType {
@@ -13,6 +13,7 @@ export enum DialogActionType {
   CheckItemCanUpgrade = 'checkItemCanUpgrade',
   AddUpgradeItem = 'addItemUpgrade',
   GiveEffect = 'giveEffect',
+  GiveCurrency = 'giveCurrency',
   CheckQuest = 'checkQuest',
   CheckHoliday = 'checkHoliday',
   CheckDailyQuest = 'checkDailyQuest',
@@ -63,6 +64,11 @@ export interface IDialogGiveDailyQuestAction {
 export interface IDialogGiveEffectAction {
   effect: string;
   duration: number;
+}
+
+export interface IDialogGiveCurrencyAction {
+  currency: Currency;
+  amount: number;
 }
 
 export interface IDialogGiveItemAction {

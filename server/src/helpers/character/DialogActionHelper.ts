@@ -11,7 +11,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
-  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom, IDialogCheckHolidayAction } from '../../interfaces';
+  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom, IDialogCheckHolidayAction, IDialogGiveCurrencyAction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -52,6 +52,7 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.CheckItemCanUpgrade]:   this.handleItemCanUpgradeAction,
       [DialogActionType.AddUpgradeItem]:        this.handleAddItemUpgradeAction,
       [DialogActionType.GiveEffect]:            this.handleGiveEffectAction,
+      [DialogActionType.GiveCurrency]:          this.handleGiveCurrencyAction,
       [DialogActionType.CheckQuest]:            this.handleCheckQuestAction,
       [DialogActionType.CheckHoliday]:          this.handleCheckHolidayAction,
       [DialogActionType.CheckDailyQuest]:       this.handleCheckDailyQuestAction,
@@ -465,6 +466,18 @@ export class DialogActionHelper extends BaseService {
     const { effect, duration } = action;
 
     this.game.effectHelper.addEffect(player, npc, effect, { effect: { duration } });
+
+    return { messages: [], shouldContinue: true };
+  }
+
+  // GIVE currency to the player
+  private handleGiveCurrencyAction(action: IDialogGiveCurrencyAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const { currency, amount } = action;
+
+    this.game.currencyHelper.gainCurrency(player, amount, currency);
+
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: `${npc.name} hands you ${amount} ${currency}!` });
 
     return { messages: [], shouldContinue: true };
   }
