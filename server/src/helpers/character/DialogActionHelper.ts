@@ -11,7 +11,8 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
-  IDialogCheckNPCsAndDropItemsAction, ISimpleItem, Direction, distanceFrom, IDialogCheckHolidayAction, IDialogGiveCurrencyAction } from '../../interfaces';
+  IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
+  Direction, distanceFrom, IDialogCheckHolidayAction, IDialogGiveCurrencyAction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
