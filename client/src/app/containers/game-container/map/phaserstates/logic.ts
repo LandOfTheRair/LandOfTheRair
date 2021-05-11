@@ -10,7 +10,7 @@ import {
   spriteTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
   positionIsZero, positionDistanceFromZero, spriteDirectionForWall, spriteForCreatureDirection,
   spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll,
-  positionInRangeAround } from '../../../../../interfaces';
+  positionInRange } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
@@ -247,7 +247,7 @@ export class MapScene extends Phaser.Scene {
   private updateFOV() {
 
     const isPlayerInGame = this.allPlayerSprites[this.player.uuid];
-    positionInRangeAround({ x:0, y: 0 }, 4, position => {
+    positionInRange({ x:0, y: 0 }, 4, position => {
       const fovSprite = this.fovSprites[position.x][position.y] as Sprite;
       fovSprite.setDisplayOrigin(32, 32);
       fovSprite.setDisplaySize(64, 64);
