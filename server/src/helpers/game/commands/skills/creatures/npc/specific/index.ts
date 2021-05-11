@@ -1,4 +1,5 @@
 
+export * from './holiday/christmaselfdroppresent';
 export * from './holiday/halloweenzombiescratch';
 
 export * from './catacombslichsummon';
