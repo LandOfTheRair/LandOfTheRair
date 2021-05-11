@@ -630,8 +630,6 @@ export class DialogActionHelper extends BaseService {
       questData.items = uniq(questData.items);
     }
 
-    console.log(this.game.questHelper.getQuestProgress(player, quest));
-
     return { messages: [], shouldContinue: true };
   }
 

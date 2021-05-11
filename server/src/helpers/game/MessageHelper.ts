@@ -150,7 +150,7 @@ export class MessageHelper extends BaseService {
     if (!formatArgs.length) return message;
 
     return [...formatArgs].reduce((str, c: ICharacter, idx) => {
-      if (!c) return str;
+      if (!c) return str.replace(new RegExp(`%${idx}`), 'somebody');
 
       let name = c.name;
 

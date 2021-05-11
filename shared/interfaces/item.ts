@@ -263,6 +263,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
 
   // the upgrades associated with this item
   upgrades?: string[];
+
+  // the effect the item will cast on break
+  breakEffect?: IItemEffect;
 };
 
 export interface ISimpleItem {

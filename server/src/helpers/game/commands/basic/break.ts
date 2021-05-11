@@ -31,9 +31,15 @@ export class Break extends MacroCommand {
     if (!item) return this.sendMessage(player, 'You are not even holding an item there!');
     if (!this.game.itemHelper.isOwnedBy(player, item)) return this.sendMessage(player, 'That item is not yours to break!');
 
-    // TODO: check if item has a destroy effect?
     this.game.characterHelper.setEquipmentSlot(player, itemSlot, undefined);
 
     this.sendMessage(player, `You break the ${item.name} in your ${handChoice} hand!`, SoundEffect.CombatBlockArmor);
+
+    const effect = this.game.itemHelper.getItemProperty(item, 'breakEffect');
+    if (effect) {
+      this.sendMessage(player, 'You unleash a powerful magical force!');
+
+      this.game.commandHandler.getSkillRef(effect.name).use(null, null, { overrideEffect: { potency: effect.potency } }, player);
+    }
   }
 }
