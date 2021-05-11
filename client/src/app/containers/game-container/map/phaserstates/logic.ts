@@ -9,7 +9,8 @@ import {
   IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType, Stat, TilesWithNoFOVUpdate,
   spriteTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
   positionIsZero, positionDistanceFromZero, spriteDirectionForWall, spriteForCreatureDirection,
-  spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll } from '../../../../../interfaces';
+  spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll,
+  positionInRangeAround } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
@@ -49,7 +50,6 @@ export class MapScene extends Phaser.Scene {
   private allNPCSprites = {};
   private allPlayerSprites = {};
   private fovSprites = {};
-  private fovDetailSprites = {};
   private visibleItemSprites = {};
   private visibleItemUUIDHash = {};
   private goldSprites = {};
@@ -99,20 +99,13 @@ export class MapScene extends Phaser.Scene {
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
-        const dark = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData as any);
+        const dark = this.add.sprite(64 * (x + 4) + 32, 64 * (y + 4) + 32, blackBitmapData as any);
         dark.alpha = 0;
         dark.setScrollFactor(0);
 
         setWith(this.fovSprites, [x, y], dark, Object);
         this.fovSprites[x][y] = dark;
         this.layers.fov.add(dark);
-
-        const dark2 = this.add.sprite(64 * (x + 4), 64 * (y + 4), blackBitmapData as any);
-        dark2.alpha = 0;
-        dark2.setScrollFactor(0);
-
-        setWith(this.fovDetailSprites, [x, y], dark2, Object);
-        this.layers.fov.add(dark2);
       }
     }
   }
@@ -227,15 +220,7 @@ export class MapScene extends Phaser.Scene {
     this.updateFOV();
   }
 
-  // whether we see fov at an x,y
-  private shouldRenderXY(x: number, y: number): boolean {
-    if (!this.player) return false;
-
-    return get(this.player.fov, [x, y]) >= FOVVisibility.CanSee;
-  }
-
-  // check if there's a wall at a location (used to render fov for hidden areas)
-  private isThereAWallAt(x: number, y: number): boolean {
+  private isFovBlocker(x: number, y: number): boolean {
     if (!this.player) return false;
 
     const map = this.allMapData.tiledJSON;
@@ -244,6 +229,12 @@ export class MapScene extends Phaser.Scene {
     const totalX = x + this.player.x;
     const totalY = y + this.player.y;
 
+    const potentialDoor = get(this.allMapData.layerData[MapLayer.Interactables], [totalX, totalY]);
+    if (potentialDoor?.type === ObjectType.Door) {
+      if (!this.openDoors[potentialDoor.id]) {
+        return true;
+      }
+    }
     const potentialSecretWall = get(this.allMapData.layerData[MapLayer.OpaqueDecor], [totalX, totalY]);
     const wallList = layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
     const wallLayerTile = wallList[(width * totalY) + totalX];
@@ -256,85 +247,97 @@ export class MapScene extends Phaser.Scene {
   private updateFOV() {
 
     const isPlayerInGame = this.allPlayerSprites[this.player.uuid];
-
-    for (let x = -4; x <= 4; x++) {
-      for (let y = -4; y <= 4; y++) {
-        const fovState = this.shouldRenderXY(x, y);
-        const fovSprite = this.fovSprites[x][y];
-        const fovSprite2 = this.fovDetailSprites[x][y];
-
-        fovSprite.setScale(1);
-        fovSprite.x = 32 + 64 * (x + 4);
-        fovSprite.y = 32 + 64 * (y + 4);
-
-        fovSprite2.setScale(1);
-        fovSprite2.x = 32 + 64 * (x + 4);
-        fovSprite2.y = 32 + 64 * (y + 4);
-
-        if (!isPlayerInGame) {
-          fovSprite.alpha = 1;
-          fovSprite2.alpha = 1;
-          continue;
-        }
-
-        // tile effects
-        if (fovState && this.canSeeThroughDarkAt(x, y)) {
-          fovSprite.alpha = 0.5;
-          fovSprite2.alpha = 0.5;
-          continue;
-        }
-
-        fovSprite.alpha = fovState ? 0 : 1;
-        fovSprite2.alpha = fovState ? 0 : 1;
-
-        // cut tiles
-        if (fovState) {
-          const isWallHere = this.isThereAWallAt(x, y);
-          if (!isWallHere) continue;
-
-          // FOV SPRITE 2 IS USED HERE SO IT CAN LAYER ON TOP OF THE OTHER ONES
-          if (y === 4                                           // cut down IIF the wall *is* the edge tile (scale down to y0.5, y + ~32)
-          || (y + 1 <= 4 && !this.shouldRenderXY(x, y + 1))) {  // cut down (scale down to y0.5, y + ~32)
-
-            fovSprite2.alpha = 1;
-            fovSprite2.setScale(1, 0.7);
-            fovSprite2.y += 20;
-          }
-
-          if (x === -4                                          // cut left IIF the wall *is* the edge tile (scale down to x0.5, no offset)
-          || (x - 1 >= -4 && !this.shouldRenderXY(x - 1, y))) { // cut left (scale down to x0.5, no offset)
-
-            // if the tile is black on both sides, it should be black regardless
-            if (!this.shouldRenderXY(x + 1, y)) {
-              fovSprite.alpha = 1;
-              continue;
-            }
-
-            fovSprite.alpha = 1;
-            fovSprite.setScale(0.35, 1);
-            fovSprite.x -= 22;
-            continue;
-          }
-
-
-          if (x === 4                                           // cut right IIF the wall *is* the edge tile (scale down to x0.5, x + ~32)
-          || (x + 1 <= 4 && !this.shouldRenderXY(x + 1, y))) {  // cut right (scale down to x0.5, x + ~32)
-
-            // if the tile is black on both sides, it should be black regardless
-            if (!this.shouldRenderXY(x - 1, y)) {
-              fovSprite.alpha = 1;
-              continue;
-            }
-
-            fovSprite.alpha = 1;
-            fovSprite.setScale(0.35, 1);
-            fovSprite.x += 42;
-
-          }
-        }
-
+    positionInRangeAround({ x:0, y: 0 }, 4, position => {
+      const fovSprite = this.fovSprites[position.x][position.y] as Sprite;
+      fovSprite.setDisplayOrigin(32, 32);
+      fovSprite.setDisplaySize(64, 64);
+      fovSprite.alpha = 1;
+      if (!isPlayerInGame) return;
+      const tileFov = get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
+      switch (tileFov) {
+      case FOVVisibility.CantSee: return;
+      case FOVVisibility.CanSeeButDark:
+        if (!this.canSeeThroughDarkAt(position.x, position.y)) return;
+        fovSprite.alpha = 0.5;
+        break;
+      case FOVVisibility.CanSee:
+        fovSprite.alpha = 0;
+        break;
       }
-    }
+
+      const isWallHere = this.isFovBlocker(position.x, position.y);
+      if (!isWallHere) return;
+      const fovDirections = positionSurrounding().reduce((combinedDirections, tileOffset) =>
+        !(get(this.player.fov, [position.x + tileOffset.x, position.y + tileOffset.y]) ?? FOVVisibility.CantSee) ?
+        (combinedDirections | tileOffset.direction) : combinedDirections
+    , Direction.Center);
+      if (fovDirections === Direction.Center) {
+        return;
+      }
+      fovSprite.alpha = 1;
+
+      const cutDownRight = () => {
+        fovSprite.setDisplayOrigin(-11, 21);
+        fovSprite.setDisplaySize(46, 51);
+      };
+      const cutRight = () => {
+        fovSprite.setDisplayOrigin(-15, 32);
+        fovSprite.setDisplaySize(32, 64);
+      };
+      const cutLeft = () => {
+        fovSprite.setDisplayOrigin(80, 32);
+        fovSprite.setDisplaySize(32, 64);
+      };
+      if (directionHasAll(fovDirections, Direction.WestAndEast)) return;
+      switch (fovDirections as number) {
+        case 0b011_0_1_000:
+        case 0b111_0_1_000:
+        case 0b111_0_1_001:
+        case 0b011_0_1_001:
+          cutRight();
+          return;
+        case 0b110_1_0_000:
+        case 0b111_1_0_000:
+        case 0b111_1_0_100:
+        case 0b110_1_0_100:
+          cutLeft();
+          return;
+        case 0b100_1_0_110:
+        case 0b001_0_1_011:
+        case 0b100_1_0_111:
+        case 0b001_0_1_111:
+        case 0b000_0_1_111:
+        case 0b000_1_0_111:
+          return;
+        case Direction.South:
+        case Direction.Northwest:
+        case Direction.Northeast:
+          fovSprite.alpha = 0; return;
+        case Direction.Southeast: cutDownRight(); return;
+        case Direction.Southwest: fovSprite.setOrigin(1.12, 0.27); return;
+        default:
+          if (directionHasAny(fovDirections, Direction.North)) {
+            if (directionHasAny(fovDirections, Direction.South)) return;
+            fovSprite.alpha = 0;
+            return;
+          }
+          if (directionHasAny(fovDirections, Direction.South)) {
+            if (directionHasAny(fovDirections, Direction.North)) return;
+            fovSprite.setOrigin(0.5, 0.27);
+            return;
+          }
+          if (directionHasAny(fovDirections, Direction.East)) {
+            if (directionHasAny(fovDirections, Direction.West)) return;
+            cutRight();
+            return;
+          }
+          if (directionHasAny(fovDirections, Direction.West)) {
+            if (directionHasAny(fovDirections, Direction.East)) return;
+            cutLeft();
+            return;
+          }
+      }
+    });
   }
 
   private canSeeThroughDarkAt(x: number, y: number): boolean {
@@ -523,7 +526,7 @@ export class MapScene extends Phaser.Scene {
       };
       const interactTile = this.allMapData.layerData[MapLayer.Interactables]?.[clickedTilePostion.x]?.[clickedTilePostion.y];
       if (interactTile) {
-        switch (interactTile.type) {
+        switch (interactTile.type as ObjectType) {
           case 'Fall':
           case 'Teleport':
             return doCommand('~move');

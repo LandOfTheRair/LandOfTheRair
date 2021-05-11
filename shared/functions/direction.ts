@@ -119,7 +119,7 @@ export function directionToSymbol(direction: Direction, seperator: (string | nul
   case Direction.South:     return '↓';
   case Direction.Southeast: return '↘';
   default:
-    if (!seperator) throw new Error(`Failed to convert ${direction} to direction symbol`);
+    if (seperator === null) throw new Error(`Failed to convert ${direction} to direction symbol`);
     return directionSplit(direction).map((dir) => directionToSymbol(dir, null)).join(seperator);
   }
 }
