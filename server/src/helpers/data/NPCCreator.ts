@@ -402,7 +402,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.HalloweenCandy]: AllBehaviors.HalloweenCandyBehavior,
       [BehaviorType.ThanksgivingFood]: AllBehaviors.ThanksgivingFoodBehavior,
       [BehaviorType.ThanksgivingGuns]: AllBehaviors.ThanksgivingGunsBehavior,
-      [BehaviorType.ThanksgivingTurkey]: AllBehaviors.ThanksgivingTurkeyBehavior
+      [BehaviorType.ThanksgivingTurkey]: AllBehaviors.ThanksgivingTurkeyBehavior,
+      [BehaviorType.ChristmasSanta]: AllBehaviors.ChristmasSantaBehavior,
     };
 
     npcDef.behaviors.forEach(behavior => {

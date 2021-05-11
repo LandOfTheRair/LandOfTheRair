@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { get, sample, template } from 'lodash';
+import { get, sample, template, uniq } from 'lodash';
 
 import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogAddItemUpgradeAction,
@@ -12,7 +12,8 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
   IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
-  Direction, distanceFrom, IDialogCheckHolidayAction, IDialogGiveCurrencyAction } from '../../interfaces';
+  Direction, distanceFrom, IDialogCheckHolidayAction,
+  IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -55,6 +56,8 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.GiveEffect]:            this.handleGiveEffectAction,
       [DialogActionType.GiveCurrency]:          this.handleGiveCurrencyAction,
       [DialogActionType.CheckQuest]:            this.handleCheckQuestAction,
+      [DialogActionType.HasQuest]:              this.handleHasQuestAction,
+      [DialogActionType.UpdateQuest]:           this.handleUpdateQuestAction,
       [DialogActionType.CheckHoliday]:          this.handleCheckHolidayAction,
       [DialogActionType.CheckDailyQuest]:       this.handleCheckDailyQuestAction,
       [DialogActionType.GiveQuest]:             this.handleGiveQuestAction,
@@ -449,6 +452,26 @@ export class DialogActionHelper extends BaseService {
     return { messages: retMessages, shouldContinue: true };
   }
 
+  // CHECK if a player has a quest
+  private handleHasQuestAction(action: IDialogHasQuestAction, npc: INPC, player: IPlayer): IActionResult {
+    const { quest, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = this.game.questHelper.hasQuest(player, quest);
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
   // GIVE an upgrade to a particular item
   private handleAddItemUpgradeAction(action: IDialogAddItemUpgradeAction, npc: INPC, player: IPlayer): IActionResult {
 
@@ -540,7 +563,7 @@ export class DialogActionHelper extends BaseService {
       return { messages: ['Please come closer.'], shouldContinue: false };
     }
 
-    const { quest } = action;
+    const { quest, questCompleteActions } = action;
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
@@ -558,6 +581,15 @@ export class DialogActionHelper extends BaseService {
       );
       this.game.questHelper.completeQuest(player, quest);
 
+      const retMessages: string[] = [];
+      const actions = questCompleteActions ?? [];
+      for (const subAction of actions) {
+        const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+        retMessages.push(...messages);
+
+        if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      }
+
       return { messages: [compMsg], shouldContinue: false };
     }
 
@@ -569,6 +601,38 @@ export class DialogActionHelper extends BaseService {
     return { messages: [
       this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
     ], shouldContinue: false };
+  }
+
+  // UPDATE the quest for the player
+  private handleUpdateQuestAction(action: IDialogUpdateQuestAction, npc: INPC, player: IPlayer): IActionResult {
+
+    const maxDistance = action.maxDistance ?? 3;
+    if (distanceFrom(player, npc) > maxDistance) {
+      return { messages: ['Please come closer.'], shouldContinue: false };
+    }
+
+    const { quest, arrayItem } = action;
+    const questRef = this.game.questHelper.getQuest(quest);
+
+    if (!questRef) {
+      this.game.logger.error('DialogActionHelper:CheckQuest', `Quest ${quest} does not exist.`);
+      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+    }
+
+    // if we don't have the quest, we skip - dialog continues
+    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+
+    if (arrayItem) {
+      const questData = this.game.questHelper.getQuestProgress(player, quest);
+      questData.items ??= [];
+
+      questData.items.push(arrayItem);
+      questData.items = uniq(questData.items);
+    }
+
+    console.log(this.game.questHelper.getQuestProgress(player, quest));
+
+    return { messages: [], shouldContinue: true };
   }
 
   // GIVE the player a daily quest

@@ -83,7 +83,7 @@ export class HalloweenCandyBehavior implements IAIBehavior {
 
         game.currencyHelper.gainCurrency(player, tokensGained, Currency.Halloween);
 
-        return `Woah dude, thanks! Here's ${tokensGained.toLocaleString()} tokens for your trouble.`;
+        return `Woah dude, thanks! Here's ${tokensGained.toLocaleString()} pumpkin coins for your trouble.`;
       });
   }
 

@@ -36,7 +36,8 @@ export enum BehaviorType {
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',
-  ThanksgivingTurkey = 'thanksgivingturkey'
+  ThanksgivingTurkey = 'thanksgivingturkey',
+  ChristmasSanta = 'christmassanta'
 }
 
 export interface IVendorItem {

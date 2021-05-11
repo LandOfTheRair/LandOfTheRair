@@ -15,9 +15,11 @@ export enum DialogActionType {
   GiveEffect = 'giveEffect',
   GiveCurrency = 'giveCurrency',
   CheckQuest = 'checkQuest',
+  UpdateQuest = 'updateQuest',
   CheckHoliday = 'checkHoliday',
   CheckDailyQuest = 'checkDailyQuest',
   GiveQuest = 'giveQuest',
+  HasQuest = 'hasQuest',
   GiveDailyQuest = 'giveDailyQuest',
   CheckLevel = 'checkLevel',
   CheckAlignment = 'checkAlignment',
@@ -43,6 +45,20 @@ export interface IDialogRequirement {
 export interface IDialogCheckQuestAction {
   quest: string;
   maxDistance?: number;
+  questCompleteActions: IDialogAction[];
+}
+
+export interface IDialogHasQuestAction {
+  quest: string;
+  maxDistance?: number;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
+export interface IDialogUpdateQuestAction {
+  quest: string;
+  maxDistance?: number;
+  arrayItem?: string;
 }
 
 export interface IDialogCheckDailyQuestAction {

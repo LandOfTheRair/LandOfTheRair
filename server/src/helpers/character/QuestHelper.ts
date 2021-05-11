@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
-import { Allegiance, Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementItem,
+import { Allegiance, Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementArray, IQuestRequirementCount, IQuestRequirementItem,
   IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat, TrackedStatistic } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -54,6 +54,26 @@ export class QuestHelper extends BaseService {
       const data = player.quests.activeQuestProgress[quest];
       if (!data) return false;
       if ((data.kills ?? 0) < req.killsRequired) return false;
+
+      return true;
+    }
+
+    // count requires a data.count to be set, and for it to be at least the maximum to complete
+    if (requirement.type === QuestRequirementType.Count) {
+      const req = requirement as IQuestRequirementCount;
+      const data = player.quests.activeQuestProgress[quest];
+      if (!data) return false;
+      if ((data.count ?? 0) < req.countRequired) return false;
+
+      return true;
+    }
+
+    // count requires a data.count to be set, and for it to be at least the maximum to complete
+    if (requirement.type === QuestRequirementType.Array) {
+      const req = requirement as IQuestRequirementArray;
+      const data = player.quests.activeQuestProgress[quest];
+      if (!data) return false;
+      if ((data.items ?? []).length < req.itemsRequired) return false;
 
       return true;
     }

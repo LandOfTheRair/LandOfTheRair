@@ -11,7 +11,9 @@ export enum QuestRewardType {
 export enum QuestRequirementType {
   Kill = 'kill',
   Item = 'item',
-  None = 'none'
+  None = 'none',
+  Count = 'count',
+  Array = 'array'
 }
 
 export interface IQuestReward {
@@ -31,7 +33,16 @@ export interface IQuestRequirementKill {
   killsRequired: number;
 }
 
-export type IQuestRequirement = IQuestRequirementKill & IQuestRequirementItem & { type: QuestRequirementType };
+export interface IQuestRequirementCount {
+  countRequired: number;
+}
+
+export interface IQuestRequirementArray {
+  itemsRequired: number;
+}
+
+export type IQuestRequirement = IQuestRequirementKill & IQuestRequirementItem & IQuestRequirementCount & IQuestRequirementArray
+& { type: QuestRequirementType };
 
 export interface IQuest {
   name: string;

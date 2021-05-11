@@ -1,4 +1,5 @@
 
+export * from './holiday/christmas-santa';
 export * from './holiday/halloween-candy';
 export * from './holiday/thanksgiving-food';
 export * from './holiday/thanksgiving-guns';
