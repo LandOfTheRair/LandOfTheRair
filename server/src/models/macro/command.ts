@@ -1,3 +1,6 @@
+
+import { isNumber } from 'lodash';
+
 import { Game } from '../../helpers';
 import { BaseClass, Direction, directionFromText, directionToOffset, distanceFrom, ICharacter, IItemEffect,
   IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect, Stat } from '../../interfaces';
@@ -301,8 +304,10 @@ export class SpellCommand extends SkillCommand {
 
       // if we have a caster, they are no longer channeling, and we need to take their mp
       if (caster) {
-
-        if (caster !== target && target && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
+        if (caster !== target
+        && target
+        && !isNumber(args?.targetNumber)
+        && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
           return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
         }
 

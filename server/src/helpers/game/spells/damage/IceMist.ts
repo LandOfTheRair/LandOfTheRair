@@ -4,6 +4,8 @@ import { Spell } from '../../../../models/world/Spell';
 export class IceMist extends Spell {
 
   override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
+    if (target) return;
+
     const center = target ? target : { x: spellCastArgs.x ?? 0, y: spellCastArgs.y ?? 0, map: spellCastArgs.map ?? '' };
 
     const radius = spellCastArgs.range + (caster ? this.game.traitHelper.traitLevelValue(caster, 'IceMistWiden') : 0);
