@@ -47,8 +47,26 @@ export function positionWorldToTile(position: IPosition): IPosition {
   return { x: Math.floor(position.x / 64), y: Math.floor(position.y / 64) };
 }
 
+/**
+ * Converts a tile position into a new world position
+ */
+export function positionTileToWorld(position: IPosition): IPosition {
+  return { x: position.x * 64 + 32, y: position.y * 64 + 32 };
+}
+
+/**
+ * Converts a world position into a new tile position
+ */
 export function positionWorldXYToTile({ worldX, worldY }: {worldX: number; worldY: number}) {
   return positionWorldToTile({ x: worldX, y: worldY });
+}
+
+/**
+ * Sets the receivers x, and y to position x, and y
+ */
+export function positionSetXY(receiver: IPosition, position: IPosition) {
+  receiver.x = position.x;
+  receiver.y = position.y;
 }
 
 const surrounding: readonly (IPosition & {direction: Direction})[] = [
@@ -67,4 +85,20 @@ const surrounding: readonly (IPosition & {direction: Direction})[] = [
  */
 export function positionSurrounding(): readonly (IPosition & {direction: Direction})[] {
   return surrounding;
+}
+
+/**
+ * Calls a method for each tile around a given center within range
+ *
+ * @param center The center tile
+ * @param range The range around the tile
+ * @param method The method to call for each surrounding tile
+ */
+export function positionInRangeAround(center: IPosition, range: number, method: (position: IPosition) => void) {
+  for (let i = center.x - range; i <= center.x + range; i++) {
+    for (let j = center.y - range; j <= center.y + range; j++) {
+      if (i === center.x && j === center.y) continue;
+      method({ x: i, y: j });
+    }
+  }
 }
