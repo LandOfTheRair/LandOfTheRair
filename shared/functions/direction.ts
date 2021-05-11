@@ -5,7 +5,7 @@ import { Direction } from '../interfaces/direction';
 
 
 /**
- * Splits a direction into an array of single directions
+ * Splits a multi direction into an array of single directions
  *
  * @param direction An enum used to represent the directions
  * @returns An array with each direction
@@ -73,6 +73,28 @@ export function directionToInitial(direction: Direction, seperator: (string | nu
     if (!seperator) throw new Error(`Failed to convert ${direction} to direction initial`);
     return directionSplit(direction).map((dir) => directionToInitial(dir, null)).join(seperator);
   }
+}
+
+/**
+ * Checks if direction contains all mutli directions in contains
+ *
+ * @param direction The direction to check
+ * @param contains The direction that must be in direction
+ * @returns True if all directions in contains are in direction
+ */
+export function directionHasAll(direction: Direction, contains: Direction) {
+  return (direction & contains) === contains;
+}
+
+/**
+ * Checks if direction contains any direcion in contains
+ *
+ * @param direction The direction to check
+ * @param contains The direction that must overlap with direction
+ * @returns True if any directions in contains are in direction
+ */
+export function directionHasAny(direction: Direction, contains: Direction) {
+  return (direction & contains) > 0;
 }
 
 /**

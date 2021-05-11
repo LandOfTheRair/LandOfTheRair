@@ -36,14 +36,7 @@ test('join all the directions, and split them again', () => {
   expect(split.sort()).toStrictEqual(dirs.sort());
 });
 
-test('join all the directions, and split them again', () => {
-  const dirs = DirFuncs.directionList();
-  const combined = dirs.reduce((prev, curr) => prev | curr, Direction.Center);
-  const split = DirFuncs.directionSplit(combined);
-  expect(split.sort()).toStrictEqual(dirs.sort());
-});
-
-test('convert diaganols to east, or west', () => {
+test('convert diaganals to east, or west', () => {
   const dirs = [Direction.Northeast, Direction.Southeast, Direction.Northwest, Direction.Southwest];
   const converted = dirs.map((dir) => DirFuncs.directionDiaganalToWestEast(dir));
   expect(converted).toStrictEqual([Direction.East, Direction.East, Direction.West, Direction.West]);

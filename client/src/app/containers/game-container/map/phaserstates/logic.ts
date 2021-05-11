@@ -1,13 +1,15 @@
+/* eslint-disable no-bitwise */
 /* eslint-disable no-underscore-dangle */
+
 import { cloneDeep, difference, get, setWith } from 'lodash';
 import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
 import {
   basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
-  IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType,
-  spriteOffsetForDirection, Stat, TilesWithNoFOVUpdate, doesWallConnect,
-  getTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
-  positionIsZero, positionDistanceFromZero } from '../../../../../interfaces';
+  IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType, Stat, TilesWithNoFOVUpdate,
+  spriteTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
+  positionIsZero, positionDistanceFromZero, spriteDirectionForWall, spriteForCreatureDirection,
+  spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
@@ -119,8 +121,7 @@ export class MapScene extends Phaser.Scene {
   private updateNPCSprite(npc: INPC) {
     if (!this.isReady) return;
 
-    const directionOffset = spriteOffsetForDirection(npc.dir);
-    const newFrame = npc.sprite + directionOffset;
+    const newFrame = spriteForCreatureDirection(npc.sprite, npc.dir);
 
     let sprite = this.allNPCSprites[npc.uuid];
     if (!sprite) {
@@ -195,11 +196,10 @@ export class MapScene extends Phaser.Scene {
     if (!this.isReady) return null;
 
     const spriteGenderBase = basePlayerSprite(player);
-    const directionOffset = spriteOffsetForDirection(player.dir);
 
     const sprite = this.add.sprite(
       this.convertPosition(player.x), this.convertPosition(player.y),
-      'Creatures', spriteGenderBase + directionOffset
+      'Creatures', spriteForCreatureDirection(spriteGenderBase, player.dir)
     );
     sprite.setPipeline('OutlinePipeline');
 
@@ -367,7 +367,7 @@ export class MapScene extends Phaser.Scene {
     const wallIndexOffset = map.getTileset('Walls').firstgid;
     const floorIndexOffset = map.getTileset('Terrain').firstgid;
     const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
-      getTerrainSetNumber(floor.index - floorIndexOffset);
+      spriteTerrainSetNumber(floor.index - floorIndexOffset);
     const getFloorSetAt = (x: number, y: number) => {
       const floorSet = getFloorSet(map.getTileAt(x, y, true, 'Floors'));
       if (floorSet < 0) {
@@ -389,10 +389,11 @@ export class MapScene extends Phaser.Scene {
     const walls = map.getTilesWithin(0, 0, map.width, map.height, { isNotEmpty: true }, 'Walls');
     walls.forEach((wall) => {
       const wallIndex = getWallIndex(wall);
+      const wallDir = spriteDirectionForWall(wallIndex);
       // If this wall extends all the way left, and right, no cut
-      if (doesWallConnect(wallIndex, Direction.East) && doesWallConnect(wallIndex, Direction.West)) return;
+      if (directionHasAll(wallDir, Direction.WestAndEast)) return;
       // If this wall does not connect up, or down, no cut
-      if (!(doesWallConnect(wallIndex, Direction.South) || doesWallConnect(wallIndex, Direction.North))) return;
+      if (!directionHasAny(wallDir, Direction.NorthAndSouth)) return;
       const floor = map.getTileAt(wall.x, wall.y, false, 'Floors');
       //If this wall has no floor we can cut...then... no cut
       if (!floor) return;
@@ -413,12 +414,12 @@ export class MapScene extends Phaser.Scene {
       }
       const wallLeft = getWallIndexAt(wall.x - 1, wall.y);
       //If the left wall is trying to connect to us, we can cut the right
-      if (doesWallConnect(wallLeft, Direction.West)) {
+      if (directionHasAny(spriteDirectionForWall(wallLeft), Direction.East)) {
         cutRight(floor);
       }
       const wallRight = getWallIndexAt(wall.x - 1, wall.y);
       //If the right wall is trying to connect to us, we can cut the left
-      if (doesWallConnect(wallRight, Direction.West)) {
+      if (directionHasAny(spriteDirectionForWall(wallRight), Direction.West)) {
         cutLeft(floor);
       }
     });
@@ -427,7 +428,7 @@ export class MapScene extends Phaser.Scene {
   private fixDoorFloor(worldX: number, worldY: number) {
     const floorIndexOffset = this.tilemap.getTileset('Terrain').firstgid;
     const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
-      getTerrainSetNumber(floor.index - floorIndexOffset);
+      spriteTerrainSetNumber(floor.index - floorIndexOffset);
     const getFloorSetAt = (x: number, y: number) =>
       getFloorSet(this.tilemap.getTileAt(x, y, true, 'Floors'));
     const doorFloor = this.tilemap.getTileAtWorldXY(worldX, worldY - 1, false, null, 'Floors');
@@ -717,7 +718,7 @@ export class MapScene extends Phaser.Scene {
   // sprite updates
   private updatePlayerSpriteData(sprite: Sprite, player: IPlayer) {
 
-    const playerFrame = basePlayerSprite(player) + spriteOffsetForDirection(player.dir);
+    const playerFrame = spriteForCreatureDirection(basePlayerSprite(player), player.dir);
     sprite.setFrame(playerFrame);
 
     this.updateSpriteSwimData(sprite, player);
@@ -909,81 +910,16 @@ export class MapScene extends Phaser.Scene {
   }
 
   private goldSpriteForLocation(x: number, y: number) {
-    const hasGold = (checkX: number, checkY: number) => get(this.ground, [checkX, checkY, ItemClass.Coin], []).length > 0;
+    const checkTile = (checkX: number, checkY: number) =>
+       get(this.ground, [checkX, checkY, ItemClass.Coin], []).length > 0 &&
+       this.canCreateItemSpriteAt(checkX, checkY);
 
-    // check and abort early
-    const goldHere = hasGold(x, y) && this.canCreateItemSpriteAt(x, y);
-    if (!goldHere) return 0;
-    const goldNW = hasGold(x - 1, y - 1) && this.canCreateItemSpriteAt(x - 1, y - 1);
-    const goldN  = hasGold(x,     y - 1) && this.canCreateItemSpriteAt(x,     y - 1);
-    const goldNE = hasGold(x + 1, y - 1) && this.canCreateItemSpriteAt(x + 1, y - 1);
-    const goldE =  hasGold(x + 1, y)     && this.canCreateItemSpriteAt(x + 1, y);
-    const goldSE = hasGold(x + 1, y + 1) && this.canCreateItemSpriteAt(x + 1, y + 1);
-    const goldS  = hasGold(x,     y + 1) && this.canCreateItemSpriteAt(x,     y + 1);
-    const goldSW = hasGold(x - 1, y + 1) && this.canCreateItemSpriteAt(x - 1, y + 1);
-    const goldW  = hasGold(x - 1, y)     && this.canCreateItemSpriteAt(x - 1, y);
+    if (!checkTile(x, y)) return 0;
 
-    if (!goldNW && goldN && goldNE && goldE && goldSE && goldS && goldSW && goldW) return 337; // NW corner missing
-    if (goldNW && goldN && !goldNE && goldE && goldSE && goldS && goldSW && goldW) return 338; // NE corner missing
-    if (goldNW && goldN && goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 339; // SE corner missing
-    if (goldNW && goldN && goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 340; // SW corner missing
+    const goldDirections = positionSurrounding().reduce((combinedDirections, tileOffset) =>
+      checkTile(x + tileOffset.x, y + tileOffset.y) ? (combinedDirections | tileOffset.direction) : combinedDirections
+    , Direction.Center);
 
-    if (!goldNW && goldN && !goldNE && goldE && goldSE && goldS && goldSW && goldW) return 341;  // NE,NW corner missing
-    if (goldNW && goldN && !goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 342;  // NE,SE corner missing
-    if (goldNW && goldN && goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 343;  // SE,SW corner missing
-    if (!goldNW && goldN && goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 344;  // SW,NW corner missing
-
-    if (!goldNW && goldN && !goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 345; // NW,NE,SW corner missing
-    if (!goldNW && goldN && !goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 346; // NW,NE,SE corner missing
-    if (goldNW && goldN && !goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 347; // NE,SE,SW corner missing
-    if (!goldNW && goldN && goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 348; // NW,SE,SW corner missing
-
-    if (!goldNW && goldN && !goldNE && goldE && !goldSE && goldS && !goldSW && goldW) return 349;  // ALL corner missing
-
-    if (!goldN && goldE && goldSE && goldS && goldSW && goldW) return 350; // N missing NE,NW unchecked
-    if (goldNW && goldN && !goldE && goldS && goldSW && goldW) return 351; // E missing NE,SE unchecked
-    if (goldNW && goldN && goldNE && goldE && !goldS && goldW) return 352; // S missing SE,SW unchecked
-    if (goldN && goldNE && goldE && goldSE && goldS && !goldW) return 353; // W missing SW,NW unchecked
-
-    if (!goldNW && goldN && goldNE && goldE && !goldS && goldW) return 354;  // NW,S missing SE,SW unchecked
-    if (goldNW && goldN && !goldNE && goldE && !goldS && goldW) return 355;  // NE,S missing SE,SW unchecked
-    if (!goldN && goldE && !goldSE && goldS && goldSW && goldW) return 356;  // SE,N missing NE,NW unchecked
-    if (!goldN && goldE && goldSE && goldS && !goldSW && goldW) return 357;  // SW,N missing NE,NW unchecked
-
-    if (!goldNW && goldN && !goldE && goldS && goldSW && goldW) return 358;  // NW,E missing NE,SE unchecked
-    if (goldN && !goldNE && goldE && goldSE && goldS && !goldW) return 359;  // NE,W missing NW,SW unchecked
-    if (goldN && goldNE && goldE && !goldSE && goldS && !goldW) return 360;  // SE,W missing NW,SW unchecked
-    if (goldNW && goldN && !goldE && goldS && !goldSW && goldW) return 361;  // SW,E missing NE,SE unchecked
-
-    if (!goldN && goldE && !goldSE && goldS && !goldSW && goldW) return 362; // SE,SW,N missing NW,NE unchecked
-    if (!goldNW && goldN && !goldE && goldS && !goldSW && goldW) return 363; // NW,SW,E missing SE,NE unchecked
-    if (!goldNW && goldN && !goldNE && goldE && !goldS && goldW) return 364; // NE,NW,S missing SE,SW unchecked
-    if (goldN && !goldNE && goldE && !goldSE && goldS && !goldW) return 365; // NE,SE,W missing NW,SW unchecked
-
-    if (!goldN && goldE && goldSE && goldS && !goldW) return 366; // E,SE,S present, NE,SW,NW unchecked
-    if (!goldN && !goldE && goldS && goldSW && goldW) return 367; // W,SW,S present, NW,SE,NE unchecked
-    if (goldNW && goldN && !goldE && !goldS && goldW) return 368; // W,NW,N present, NE,SE,SW unchecked
-    if (goldN && goldNE && goldE && !goldS && !goldW) return 369; // E,NE,N present, NW,SE,SW unchecked
-
-    if (!goldN && goldE && goldS && !goldW) return 370;  // E,S present, CORNERS unchecked
-    if (!goldN && !goldE && goldS && goldW) return 371;  // W,S present, CORNERS unchecked
-    if (goldN && !goldE && !goldS && goldW) return 372;  // W,N present, CORNERS unchecked
-    if (goldN && goldE && !goldS && !goldW) return 373;  // E,N present, CORNERS unchecked
-
-    if (!goldN && !goldE && goldS && !goldW) return 374; // S present, CORNERS unchecked
-    if (!goldN && !goldE && !goldS && goldW) return 375; // W present, CORNERS unchecked
-    if (goldN && !goldE && !goldS && !goldW) return 376; // N present, CORNERS unchecked
-    if (!goldN && goldE && !goldS && !goldW) return 377; // E present, CORNERS unchecked
-
-    if (goldN && !goldE && goldS && !goldW) return 378;  // N,S present, CORNERS unchecked
-    if (!goldN && goldE && !goldS && goldW) return 379;  // E,W present, CORNERS unchecked
-
-    if (!goldNW && goldN && goldNE && goldE && !goldSE && goldS && goldSW && goldW) return 380;  // NW,SE missing
-    if (goldNW && goldN && !goldNE && goldE && goldSE && goldS && !goldSW && goldW) return 381;  // NE,SW missing
-
-    if (goldNW && goldN && goldNE && goldE && goldSE && goldS && goldSW && goldW) return 382;  // ALL present
-
-    return 336;
+    return spriteTerrainForDirection(336, goldDirections);
   }
 }
-
