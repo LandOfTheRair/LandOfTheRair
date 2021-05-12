@@ -317,7 +317,7 @@ export class MapState {
   }
 
   // get ONLY HOSTILES in range
-  public getAllHostilesInRange(ref: ICharacter, radius): ICharacter[] {
+  public getAllHostilesInRange(ref: ICharacter, radius: number): ICharacter[] {
     const targets = this.getAllInRange(ref, radius);
     return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
   }
@@ -329,7 +329,7 @@ export class MapState {
   }
 
   // get ONLY ALLIES in range
-  public getAllAlliesInRange(ref: ICharacter, radius): ICharacter[] {
+  public getAllAlliesInRange(ref: ICharacter, radius: number): ICharacter[] {
     const targets = this.getAllInRange(ref, radius);
     return targets.filter((target: ICharacter) => !this.game.targettingHelper.checkTargetForHostility(ref, target));
   }

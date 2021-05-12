@@ -13,7 +13,8 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
   IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
   Direction, distanceFrom, IDialogCheckHolidayAction,
-  IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction } from '../../interfaces';
+  IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction,
+  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -44,28 +45,31 @@ export class DialogActionHelper extends BaseService {
   public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
 
     const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
-      [DialogActionType.Chat]:                  this.handleChatAction,
-      [DialogActionType.CheckItem]:             this.handleCheckItemAction,
-      [DialogActionType.CheckNoItem]:           this.handleCheckNoItemAction,
-      [DialogActionType.TakeItem]:              this.handleTakeItemAction,
-      [DialogActionType.GiveItem]:              this.handleGiveItemAction,
-      [DialogActionType.MergeAndGiveItem]:      this.handleMergeGiveItemAction,
-      [DialogActionType.ModifyItem]:            this.handleModifyItemAction,
-      [DialogActionType.CheckItemCanUpgrade]:   this.handleItemCanUpgradeAction,
-      [DialogActionType.AddUpgradeItem]:        this.handleAddItemUpgradeAction,
-      [DialogActionType.GiveEffect]:            this.handleGiveEffectAction,
-      [DialogActionType.GiveCurrency]:          this.handleGiveCurrencyAction,
-      [DialogActionType.CheckQuest]:            this.handleCheckQuestAction,
-      [DialogActionType.HasQuest]:              this.handleHasQuestAction,
-      [DialogActionType.UpdateQuest]:           this.handleUpdateQuestAction,
-      [DialogActionType.CheckHoliday]:          this.handleCheckHolidayAction,
-      [DialogActionType.CheckDailyQuest]:       this.handleCheckDailyQuestAction,
-      [DialogActionType.GiveQuest]:             this.handleGiveQuestAction,
-      [DialogActionType.GiveDailyQuest]:        this.handleGiveDailyQuestAction,
-      [DialogActionType.CheckLevel]:            this.handleCheckLevelAction,
-      [DialogActionType.CheckAlignment]:        this.handleCheckAlignmentAction,
-      [DialogActionType.SetAlignment]:          this.handleSetAlignmentAction,
-      [DialogActionType.CheckNPCsAndDropItems]: this.handleCheckNPCAction,
+      [DialogActionType.Chat]:                    this.handleChatAction,
+      [DialogActionType.CheckItem]:               this.handleCheckItemAction,
+      [DialogActionType.CheckNoItem]:             this.handleCheckNoItemAction,
+      [DialogActionType.TakeItem]:                this.handleTakeItemAction,
+      [DialogActionType.GiveItem]:                this.handleGiveItemAction,
+      [DialogActionType.MergeAndGiveItem]:        this.handleMergeGiveItemAction,
+      [DialogActionType.ModifyItem]:              this.handleModifyItemAction,
+      [DialogActionType.CheckItemCanUpgrade]:     this.handleItemCanUpgradeAction,
+      [DialogActionType.AddUpgradeItem]:          this.handleAddItemUpgradeAction,
+      [DialogActionType.GiveEffect]:              this.handleGiveEffectAction,
+      [DialogActionType.GiveCurrency]:            this.handleGiveCurrencyAction,
+      [DialogActionType.CheckQuest]:              this.handleCheckQuestAction,
+      [DialogActionType.HasQuest]:                this.handleHasQuestAction,
+      [DialogActionType.UpdateQuest]:             this.handleUpdateQuestAction,
+      [DialogActionType.CheckHoliday]:            this.handleCheckHolidayAction,
+      [DialogActionType.CheckDailyQuest]:         this.handleCheckDailyQuestAction,
+      [DialogActionType.GiveQuest]:               this.handleGiveQuestAction,
+      [DialogActionType.GiveDailyQuest]:          this.handleGiveDailyQuestAction,
+      [DialogActionType.CheckLevel]:              this.handleCheckLevelAction,
+      [DialogActionType.CheckAlignment]:          this.handleCheckAlignmentAction,
+      [DialogActionType.SetAlignment]:            this.handleSetAlignmentAction,
+      [DialogActionType.CheckNPCsAndDropItems]:   this.handleCheckNPCAction,
+      [DialogActionType.CheckAnyHostilesNearby]:  this.handleCheckAnyHostilesNearbyAction,
+      [DialogActionType.KillSelfSilently]:        this.handleKillSelfSilentlyAction,
+      [DialogActionType.DropItems]:               this.handleDropItemsAction
     };
 
     return actions[action.type].bind(this)(action, npc, player);
@@ -133,6 +137,26 @@ export class DialogActionHelper extends BaseService {
     const retMessages: string[] = [];
 
     const didSucceed = player.alignment === alignment;
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      retMessages.push(...messages);
+
+      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
+  // CHECK if any hostiles are nearby
+  private handleCheckAnyHostilesNearbyAction(action: IDialogCheckNearbyHostilesAction, npc: INPC, player: IPlayer): IActionResult {
+    const { range, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = this.game.worldManager.getMapStateForCharacter(npc)?.getAllHostilesInRange(npc, range ?? 4).length === 0;
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
@@ -401,6 +425,32 @@ export class DialogActionHelper extends BaseService {
     });
 
     return { messages: [], shouldContinue: didSucceed };
+  }
+
+  // DROP an item on the ground
+  private handleDropItemsAction(action: IDropItemsAction, npc: INPC, player: IPlayer): IActionResult {
+    const { item, amount } = action;
+
+    const items = Array(amount ?? 1).fill(null).map(x => this.game.itemCreator.getSimpleItem(item));
+    this.game.worldManager.getMapStateForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
+
+    return { messages: [], shouldContinue: true };
+  }
+
+  // KILL self, silently, as if moving to another location
+  private handleKillSelfSilentlyAction(action: IKillSelfSilentlyAction, npc: INPC, player: IPlayer): IActionResult {
+
+    let returnMessage = 'Bye!';
+
+    const { leaveMessage } = action;
+    if (leaveMessage) {
+      returnMessage = template(leaveMessage)(player);
+      this.game.messageHelper.sendLogMessageToRadius(npc, 4, { from: npc.name, message: returnMessage, except: [player.uuid] });
+    }
+
+    this.game.deathHelper.fakeNPCDie(npc);
+
+    return { messages: [returnMessage], shouldContinue: true };
   }
 
   // GIVE an item to the player after merging the stats with their existing item

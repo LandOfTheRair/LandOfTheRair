@@ -24,7 +24,10 @@ export enum DialogActionType {
   CheckLevel = 'checkLevel',
   CheckAlignment = 'checkAlignment',
   SetAlignment = 'setAlignment',
-  CheckNPCsAndDropItems = 'checkNearbyNPCsAndDropItems'
+  CheckNPCsAndDropItems = 'checkNearbyNPCsAndDropItems',
+  CheckAnyHostilesNearby = 'checkAnyHostilesNearby',
+  DropItems = 'dropItems',
+  KillSelfSilently = 'killSelfSilently'
 }
 
 // dialog items, used for check/take/give
@@ -150,6 +153,12 @@ export interface IDialogCheckAlignmentAction {
   checkFailActions: IDialogAction[];
 }
 
+export interface IDialogCheckNearbyHostilesAction {
+  range: number;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
+}
+
 export interface IDialogCheckNPCsAndDropItemsAction {
   npcs: string[];
   item: string;
@@ -176,6 +185,15 @@ export interface IDialogChatAction {
   maxDistance?: number;
   message: string;
   options: IDialogChatActionOption[];
+}
+
+export interface IDropItemsAction {
+  item: string;
+  amount: number;
+}
+
+export interface IKillSelfSilentlyAction {
+  leaveMessage?: string;
 }
 
 export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
