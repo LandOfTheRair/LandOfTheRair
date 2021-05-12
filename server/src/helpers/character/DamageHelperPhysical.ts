@@ -209,9 +209,9 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   // check if the person you're attacking is the target (used for CFX)
-  private determineIfTarget(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): string {
+  private determineIfTarget(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): string | undefined {
     if (!defender) return '';
-    if (isNumber(args.attackNum)) return '';
+    if (isNumber(args.attackNum)) return undefined;
     if (defender.agro[attacker.uuid]) return defender.uuid;
     return '';
   }
