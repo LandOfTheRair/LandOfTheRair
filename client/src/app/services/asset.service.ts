@@ -60,6 +60,11 @@ export class AssetService {
         || `${this.assetUrl}/spritesheets/items-animations.webp?c=${environment.assetHashes.itemsanimations}`;
   }
 
+  get decorAnimationsUrl(): string {
+    return this.spritesheetCustomHash.decorAnimations
+        || `${this.assetUrl}/spritesheets/decor-animations.webp?c=${environment.assetHashes.decoranimations}`;
+  }
+
   get effectsUrl(): string {
     return this.spritesheetCustomHash.effects || `${this.assetUrl}/spritesheets/effects.webp?c=${environment.assetHashes.effects}`;
   }
@@ -71,7 +76,7 @@ export class AssetService {
   constructor(private http: HttpClient) { }
 
   public init() {
-    const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls', 'ItemsAnimations'];
+    const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls', 'ItemsAnimations', 'DecorAnimations'];
     const spritesheetUrls = {
       creatures: this.creaturesUrl,
       decor: this.decorUrl,
@@ -80,7 +85,8 @@ export class AssetService {
       swimming: this.swimmingUrl,
       terrain: this.terrainUrl,
       walls: this.wallsUrl,
-      itemsanimations: this.itemsAnimationsUrl
+      itemsanimations: this.itemsAnimationsUrl,
+      decoranimations: this.decorAnimationsUrl
     };
 
     spritesheets.forEach((sheet, idx) => {
