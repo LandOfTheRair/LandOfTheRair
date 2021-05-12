@@ -12,3 +12,4 @@ export * from './IceMist';
 export * from './MagicBolt';
 export * from './MagicMissile';
 export * from './RiftSlash';
+export * from './Shred';
