@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { clamp, random } from 'lodash';
+import { clamp, isNumber, random } from 'lodash';
 
 import { Allegiance, ArmorClass, BaseClass, CombatEffect, DamageArgs,
   DamageClass, distanceFrom, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
@@ -209,8 +209,9 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   // check if the person you're attacking is the target (used for CFX)
-  private determineIfTarget(attacker: ICharacter, defender: ICharacter): string {
+  private determineIfTarget(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): string {
     if (!defender) return '';
+    if (isNumber(args.attackNum)) return '';
     if (defender.agro[attacker.uuid]) return defender.uuid;
     return '';
   }
@@ -450,7 +451,7 @@ export class DamageHelperPhysical extends BaseService {
         {
           message: 'You miss!',
           sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatMiss,
-          setTarget: this.determineIfTarget(attacker, defender),
+          setTarget: this.determineIfTarget(attacker, defender, args),
           logInfo: {
             type: 'miss',
             uuid: attacker.uuid,
@@ -514,7 +515,7 @@ export class DamageHelperPhysical extends BaseService {
         {
           message: 'You were blocked by armor!',
           sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockArmor,
-          setTarget: this.determineIfTarget(attacker, defender),
+          setTarget: this.determineIfTarget(attacker, defender, args),
           logInfo: {
             type: 'block-armor',
             uuid: attacker.uuid,
@@ -581,7 +582,7 @@ export class DamageHelperPhysical extends BaseService {
         {
           message: `You were blocked by ${defender.name}'s ${defenderItemClass.toLowerCase()}!`,
           sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockWeapon,
-          setTarget: this.determineIfTarget(attacker, defender),
+          setTarget: this.determineIfTarget(attacker, defender, args),
           logInfo: {
             type: 'block-weapon',
             uuid: attacker.uuid,
@@ -649,7 +650,7 @@ export class DamageHelperPhysical extends BaseService {
         {
           message: `You were blocked by ${defender.name}'s shield!`,
           sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockArmor,
-          setTarget: this.determineIfTarget(attacker, defender),
+          setTarget: this.determineIfTarget(attacker, defender, args),
           logInfo: {
             type: 'block-shield',
             uuid: attacker.uuid,
@@ -718,7 +719,7 @@ export class DamageHelperPhysical extends BaseService {
         {
           message: `You were blocked by ${defender.name}'s ${defenderItemClass.toLowerCase()}!`,
           sfx: (args?.attackNum ?? 0) > 0 ? undefined : SoundEffect.CombatBlockWeapon,
-          setTarget: this.determineIfTarget(attacker, defender),
+          setTarget: this.determineIfTarget(attacker, defender, args),
           logInfo: {
             type: 'block-offhand',
             uuid: attacker.uuid,

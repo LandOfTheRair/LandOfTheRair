@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { isNumber } from 'lodash';
 
 import { Allegiance, BaseClass, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
@@ -263,11 +264,13 @@ export class CombatHelper extends BaseService {
           this.game.characterHelper.isPlayer(defender) ? MessageType.Player : MessageType.NPC
         ], [defender, attacker]);
 
+        const setTargetArgs = isNumber(args.attackNum) ? {} : { setTarget: null };
+
         const killMsg = this.game.messageHelper.formatMessage(attacker, `You ${verb} %0!`, [defender]);
         this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
           sfx: this.game.characterHelper.isPlayer(defender) ? SoundEffect.CombatDie : SoundEffect.CombatKill,
-          setTarget: null
+          ...setTargetArgs
         });
 
         // let the target know they died

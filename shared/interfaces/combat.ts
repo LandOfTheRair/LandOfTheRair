@@ -77,6 +77,7 @@ export interface MagicalAttackArgs {
   isOverTime?: boolean;
   isAoE?: boolean;
   sfx?: SoundEffect;
+  attackNum?: number;
 }
 
 export interface DamageArgs {

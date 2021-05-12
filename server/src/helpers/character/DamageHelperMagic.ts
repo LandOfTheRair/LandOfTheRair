@@ -47,7 +47,8 @@ export class DamageHelperMagic extends BaseService {
       isHeal: damage < 0,
       isOverTime: args.isOverTime,
       attackerDamageMessage: args.atkMsg,
-      defenderDamageMessage: args.defMsg
+      defenderDamageMessage: args.defMsg,
+      attackNum: args.attackNum
     });
 
     // send combat effects for heals and stuff

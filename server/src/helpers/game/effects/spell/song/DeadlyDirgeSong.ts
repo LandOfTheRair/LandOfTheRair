@@ -23,7 +23,8 @@ export class DeadlyDirgeSong extends Song {
         atkMsg: 'Your deadly dirge pierces %0!',
         defMsg: '%0 is singing a deadly dirge!',
         damage: effect.effectInfo.potency,
-        damageClass: DamageClass.Sonic
+        damageClass: DamageClass.Sonic,
+        attackNum: i
       });
 
       // Remove anybody who died after the last attack
