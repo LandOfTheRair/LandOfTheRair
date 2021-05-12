@@ -1,13 +1,13 @@
 import { ICharacter, IMacroCommandArgs, IPlayer } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class Revive extends SpellCommand {
+export class Resurrect extends SpellCommand {
 
-  override aliases = ['revive', 'cast revive'];
+  override aliases = ['resurrect', 'cast resurrect'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;
-  override spellRef = 'Revive';
+  override spellRef = 'Resurrect';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return false;
