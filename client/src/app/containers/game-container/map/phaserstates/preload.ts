@@ -21,6 +21,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.spritesheet('Terrain', this.game.assetService.terrainUrl, frameSize);
     this.load.spritesheet('Walls', this.game.assetService.wallsUrl, frameSize);
     this.load.spritesheet('Decor', this.game.assetService.decorUrl, frameSize);
+    this.load.spritesheet('DecorAnimations', this.game.assetService.decorAnimationsUrl, frameSize);
     this.load.spritesheet('Swimming', this.game.assetService.swimmingUrl, frameSize);
     this.load.spritesheet('Creatures', this.game.assetService.creaturesUrl, frameSize);
     this.load.spritesheet('Items', this.game.assetService.itemsUrl, frameSize);

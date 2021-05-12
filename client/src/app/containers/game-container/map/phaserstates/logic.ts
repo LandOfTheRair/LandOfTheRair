@@ -12,6 +12,8 @@ import {
   spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll,
   positionInRange } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
+
+import decorAnimations from '../../../../../assets/content/_output/decoranims.json';
 import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
 import Sprite = Phaser.GameObjects.Sprite;
@@ -450,6 +452,22 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
+  private loadAnimations() {
+    Object.values(decorAnimations).forEach(animData => {
+
+      const animOffset = animData.frame;
+      const animSpeed = (animData as any).speed ?? 7;
+
+      console.log(animOffset, animSpeed);
+
+      this.anims.create({
+        key: animOffset.toString(),
+        frameRate: animSpeed,
+        frames: this.anims.generateFrameNumbers('DecorAnimations', { start: (animOffset * 4) + 1, end: (animOffset * 4) + 3 }),
+        repeat: -1
+      });
+    });
+  }
 
   private loadObjectLayer(layer, layerGroup) {
     const decorFirstGid = this.allMapData.tiledJSON.tilesets[2].firstgid;
@@ -466,6 +484,11 @@ export class MapScene extends Phaser.Scene {
       sprite._baseFrame = sprite.frame.name;
       sprite._type = obj.type;
       sprite._id = obj.id;
+
+      const anim = decorAnimations[obj.gid - firstGid];
+      if (anim) {
+        sprite.play(anim.frame.toString());
+      }
 
       // if you're not subscribed, some objects are not visible
       if (obj.properties?.subscriberOnly) {
@@ -595,6 +618,8 @@ export class MapScene extends Phaser.Scene {
     map.createLayer('Walls', ['Walls', 'Decor']);
 
     this.fixWallFloors(map);
+
+    this.loadAnimations();
 
     // decor, densedecor, opaquedecor, interactables
     this.loadObjectLayer(map.objects[0], this.layers.decor);
