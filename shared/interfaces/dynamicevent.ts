@@ -26,6 +26,7 @@ export interface IDynamicEventData {
   description: string;
   startMessage: string;
   endMessage: string;
-  map: string;
+  map?: string;
+  npc?: string;
   extraData?: any;
 }

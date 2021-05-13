@@ -199,6 +199,23 @@ export class DynamicEventHelper extends BaseService {
       // if the map isn't active, bail
       if (event.map && !this.game.worldManager.currentlyActiveMapHash[event.map]) return;
 
+      if (event.npc) {
+        let isAlive = false;
+
+        this.game.worldManager.allMapNames.forEach(map => {
+          const mapData = this.game.worldManager.getMap(map);
+          if (!mapData) return;
+
+          mapData.state.allNPCS.forEach(npc => {
+            if (npc.npcId !== event.npc) return;
+
+            isAlive = true;
+          });
+        });
+
+        if (!isAlive) return;
+      }
+
       // if there's a conflicting event, bail
       if (event.conflicts && event.conflicts.some(e => this.isEventActive(e))) return;
 
