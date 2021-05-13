@@ -120,6 +120,10 @@ export class Spawner {
     return this.canRespawn && this.isUnderNPCCap && this.isAbleToSpawn;
   }
 
+  public get respectsKnowledge(): boolean {
+    return this.respectKnowledge;
+  }
+
   private get canBeActive(): boolean {
     if (this.requireHoliday && !this.game.holidayHelper.isHoliday(this.requireHoliday)) return false;
     if (this.requireEvent && !this.game.dynamicEventHelper.isEventActive(this.requireEvent)) return false;
