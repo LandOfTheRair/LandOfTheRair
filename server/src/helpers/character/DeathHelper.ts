@@ -230,8 +230,6 @@ export class DeathHelper extends BaseService {
       const mult = this.game.playerHelper.expMultiplierForMap(rewarded);
       this.game.playerHelper.gainExp(rewarded, earnedExp * multiplier * mult);
 
-      console.log(earnedExp, mult, multiplier);
-
       rewarded.flaggedSkills = rewarded.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(rewarded, x));
       this.game.playerHelper.gainCurrentSkills(rewarded, npc.skillOnKill * multiplier);
 

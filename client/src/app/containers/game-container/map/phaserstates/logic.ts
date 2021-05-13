@@ -458,8 +458,6 @@ export class MapScene extends Phaser.Scene {
       const animOffset = animData.frame;
       const animSpeed = (animData as any).speed ?? 7;
 
-      console.log(animOffset, animSpeed);
-
       this.anims.create({
         key: animOffset.toString(),
         frameRate: animSpeed,

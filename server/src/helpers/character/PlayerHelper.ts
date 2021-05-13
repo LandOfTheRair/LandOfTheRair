@@ -373,8 +373,6 @@ export class PlayerHelper extends BaseService {
     const map = this.worldManager.getMap(player.map)?.map;
     if (!map) return 0.1;
 
-    console.log(player.exp, map.firstCutExp, map.secondCutExp, map.maxLevelExp);
-
     if (player.exp < map.firstCutExp) return 1;
     if (player.exp < map.secondCutExp) return 0.9;
     if (player.exp < map.maxLevelExp) return 0.75;
