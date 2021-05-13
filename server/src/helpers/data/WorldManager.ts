@@ -291,7 +291,7 @@ export class WorldManager extends BaseService {
       }
 
       timer.startTimer(`map-${activeMap}`);
-      state.steadyTick();
+      state.steadyTick(timer);
       timer.stopTimer(`map-${activeMap}`);
     });
   }

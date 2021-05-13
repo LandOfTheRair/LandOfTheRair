@@ -205,8 +205,12 @@ export class MapState {
   }
 
   // tick spawners (respawn, buffs, etc)
-  public steadyTick() {
-    this.spawners.forEach(s => s.steadyTick());
+  public steadyTick(timer) {
+    this.spawners.forEach((s, i) => {
+      timer.startTimer(`spawner-${i}-${s.spawnerName}`);
+      s.steadyTick();
+      timer.stopTimer(`spawner-${i}-${s.spawnerName}`);
+    });
   }
 
   // tick spawner npcs
