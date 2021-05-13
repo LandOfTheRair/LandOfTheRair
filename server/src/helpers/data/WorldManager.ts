@@ -254,7 +254,10 @@ export class WorldManager extends BaseService {
     this.mapPlayerCounts[oldMap] = Math.max(this.mapPlayerCounts[oldMap] - 1, 0);
     if (this.mapPlayerCounts[oldMap] <= 0) {
       this.activeMaps.delete(oldMap);
-      this.mapsInactiveSince[oldMap] = Date.now();
+
+      if (!this.isDungeon(oldMap)) {
+        this.mapsInactiveSince[oldMap] = Date.now();
+      }
     }
 
     this.removeCharacter(player);
