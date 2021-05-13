@@ -14,6 +14,8 @@ export class WorldMap {
   private fov: Mrpas;
   private formattedJson: any;
 
+  private firstCutExpValue: number;
+  private secondCutExpValue: number;
   private maxLevelExpPossible: number;
   private maxSkillExpPossible: number;
 
@@ -53,6 +55,14 @@ export class WorldMap {
 
   public get maxLevel() {
     return this.properties.maxLevel || 1;
+  }
+
+  public get firstCutExp() {
+    return this.firstCutExpValue;
+  }
+
+  public get secondCutExp() {
+    return this.secondCutExpValue;
   }
 
   public get maxLevelExp() {
@@ -168,8 +178,10 @@ export class WorldMap {
 
   private setMaxes() {
     const settings = this.game.contentManager.settingsData;
-    const { maxLevel, maxSkill } = settings.character;
-    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(maxLevel);
+    const { maxSkill } = settings.character;
+    this.firstCutExpValue = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 2);
+    this.secondCutExpValue = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 5);
+    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 6);
     this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.min(maxSkill, this.maxSkill));
   }
 

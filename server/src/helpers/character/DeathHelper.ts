@@ -227,13 +227,10 @@ export class DeathHelper extends BaseService {
 
       this.game.questHelper.tryUpdateQuestProgressForKill(rewarded, npc.npcId);
 
-      if (this.game.playerHelper.canGainExpOnMap(rewarded)) {
-        this.game.playerHelper.gainExp(rewarded, earnedExp * multiplier);
+      const mult = this.game.playerHelper.expMultiplierForMap(rewarded);
+      this.game.playerHelper.gainExp(rewarded, earnedExp * multiplier * mult);
 
-      // gain only 1 xp if you outpaced the map
-      } else {
-        this.game.playerHelper.gainExp(rewarded, 1);
-      }
+      console.log(earnedExp, mult, multiplier);
 
       rewarded.flaggedSkills = rewarded.flaggedSkills.filter(x => this.game.playerHelper.canGainSkillOnMap(rewarded, x));
       this.game.playerHelper.gainCurrentSkills(rewarded, npc.skillOnKill * multiplier);
