@@ -22,7 +22,8 @@ export const environment = {
     terrain: 0,
     walls: 0,
     itemsanimations: 0,
-    decoranimations: 0
+    decoranimations: 0,
+    terrainanimations: 0
   },
   stripe: {
     key: 'pk_test_TNxhxgcsao9B4ouQwRXeUnmm'

@@ -65,6 +65,11 @@ export class AssetService {
         || `${this.assetUrl}/spritesheets/decor-animations.webp?c=${environment.assetHashes.decoranimations}`;
   }
 
+  get terrainAnimationsUrl(): string {
+    return this.spritesheetCustomHash.terrainAnimations
+        || `${this.assetUrl}/spritesheets/terrain-animations.webp?c=${environment.assetHashes.terrainanimations}`;
+  }
+
   get effectsUrl(): string {
     return this.spritesheetCustomHash.effects || `${this.assetUrl}/spritesheets/effects.webp?c=${environment.assetHashes.effects}`;
   }
@@ -86,7 +91,8 @@ export class AssetService {
       terrain: this.terrainUrl,
       walls: this.wallsUrl,
       itemsanimations: this.itemsAnimationsUrl,
-      decoranimations: this.decorAnimationsUrl
+      decoranimations: this.decorAnimationsUrl,
+      terrainanimations: this.terrainAnimationsUrl
     };
 
     spritesheets.forEach((sheet, idx) => {

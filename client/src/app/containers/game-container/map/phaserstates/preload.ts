@@ -19,6 +19,7 @@ export class PreloadScene extends Phaser.Scene {
     const frameSize = { frameHeight: 64, frameWidth: 64 };
 
     this.load.spritesheet('Terrain', this.game.assetService.terrainUrl, frameSize);
+    this.load.spritesheet('TerrainAnimations', this.game.assetService.terrainAnimationsUrl, frameSize);
     this.load.spritesheet('Walls', this.game.assetService.wallsUrl, frameSize);
     this.load.spritesheet('Decor', this.game.assetService.decorUrl, frameSize);
     this.load.spritesheet('DecorAnimations', this.game.assetService.decorAnimationsUrl, frameSize);

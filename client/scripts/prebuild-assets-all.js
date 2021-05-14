@@ -36,7 +36,8 @@ const createSpritesheets = async () => {
     terrain: 24,
     walls: 16,
     'items-animations': 4,
-    'decor-animations': 4
+    'decor-animations': 4,
+    'terrain-animations': 4
   };
 
   await Promise.all(Object.keys(widths).map(async spritegroup => {

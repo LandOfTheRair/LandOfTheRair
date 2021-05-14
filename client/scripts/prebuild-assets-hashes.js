@@ -5,7 +5,7 @@ const md5file = require('md5-file');
 const { gitDescribeSync } = require('git-describe');
 const fs = require('fs');
 
-const files = ['creatures', 'decor', 'effects', 'items', 'swimming', 'terrain', 'walls', 'items-animations', 'decor-animations'];
+const files = ['creatures', 'decor', 'effects', 'items', 'swimming', 'terrain', 'walls', 'items-animations', 'decor-animations', 'terrain-animations'];
 
 const md5hash = {};
 
