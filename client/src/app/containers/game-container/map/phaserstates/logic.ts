@@ -10,11 +10,12 @@ import {
   spriteTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
   positionIsZero, positionDistanceFromZero, spriteDirectionForWall, spriteForCreatureDirection,
   spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll,
-  positionInRange } from '../../../../../interfaces';
+  positionInRange, positionWorldToTile, positionAdd, positionTileToWorld } from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 
 import decorAnimations from '../../../../../assets/content/_output/decoranims.json';
-import { TrueSightMap, TrueSightMapReversed, VerticalDoorGids } from '../tileconversionmaps';
+import spriteData from '../../../../../assets/content/_output/sprite-data.json';
+import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
 import Sprite = Phaser.GameObjects.Sprite;
 
@@ -38,8 +39,6 @@ export class MapScene extends Phaser.Scene {
     npcs: null,
     npcSprites: null,
     characterSprites: null,
-
-    fov: null
   };
 
   private specialRenders = {
@@ -55,6 +54,8 @@ export class MapScene extends Phaser.Scene {
   private visibleItemSprites = {};
   private visibleItemUUIDHash = {};
   private goldSprites = {};
+  private doorStateData = {};
+  private doors = [];
 
   private playerUpdate$: Subscription;
   private currentTarget$: Subscription;
@@ -104,10 +105,10 @@ export class MapScene extends Phaser.Scene {
         const dark = this.add.sprite(64 * (x + 4) + 32, 64 * (y + 4) + 32, blackBitmapData as any);
         dark.alpha = 0;
         dark.setScrollFactor(0);
+        dark.setDepth(9999);
 
         setWith(this.fovSprites, [x, y], dark, Object);
         this.fovSprites[x][y] = dark;
-        this.layers.fov.add(dark);
       }
     }
   }
@@ -351,13 +352,45 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updateDoors() {
-    this.layers.interactables.each(i => {
-      if (i._type !== 'Door') return;
-      i.setFrame(this.openDoors[i._id] ? i._openFrame : i._closedFrame);
-
-      if (i._doorTopSprite) {
-        i._doorTopSprite.visible = !!this.openDoors[i._id];
+    this.doors.forEach(door => {
+      const doorData = this.doorStateData[door.frame];
+      let state = 'default';
+      if (this.openDoors[door.id])
+      {
+        state = 'opened';
       }
+      if (door.lastState === state) return;
+      door.sprites.forEach(s => { s.destroy(); });
+      door.sprites = [];
+      door.lastState = state;
+      const stateData = doorData.states[state];
+      stateData.forEach(spriteD => {
+        const spriteTilePos = positionAdd(door.tilePos, spriteD);
+        const spriteWorldPos = positionTileToWorld(spriteTilePos);
+        const sprite = this.add.sprite(spriteWorldPos.x, spriteWorldPos.y, spriteD.spritesheetName, spriteD.spritesheetId);
+        door.sprites.push(sprite);
+
+        sprite.setInteractive();
+        if (door.sprites.length > 1) {
+          sprite.setDepth(99);
+        }
+        sprite.setPipeline('OutlinePipeline');
+        if (stateData.length > 1) {
+          OutlinePipeline.setNoEdge(sprite, true);
+        }
+
+        sprite.on('pointerover', () => {
+          door.sprites.forEach(related => {
+            OutlinePipeline.setOutlineColor(related, [1.0, 1.0, 0.0, 0.5]);
+          });
+        });
+
+        sprite.on('pointerout', () => {
+          door.sprites.forEach(related => {
+            OutlinePipeline.setOutlineColor(related, undefined);
+          });
+        });
+      });
     });
   }
 
@@ -477,12 +510,19 @@ export class MapScene extends Phaser.Scene {
       const isWall = obj.gid < decorFirstGid;
       const firstGid = isWall ? wallFirstGid : decorFirstGid;
       const tileSet = isWall ? 'Walls' : 'Decor';
+      const frame = obj.gid - firstGid;
+      const tilePos = positionWorldToTile(obj);
+      tilePos.y -= 1;
+      if (obj.type === 'Door') {
+        const doorData = this.doorStateData[frame];
+        if (doorData) {
+          this.fixDoorFloor(obj.x, obj.y);
+          this.doors.push({ id: obj.id, tilePos, frame, sprites: [], lastState:'none' });
+          return;
+        }
+      }
 
-      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, obj.gid - firstGid) as any;
-      sprite._baseFrame = sprite.frame.name;
-      sprite._type = obj.type;
-      sprite._id = obj.id;
-
+      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, frame);
       const anim = decorAnimations[obj.gid - firstGid];
       if (anim) {
         sprite.play(anim.frame.toString());
@@ -497,35 +537,11 @@ export class MapScene extends Phaser.Scene {
       if (obj.type === 'StairsUp' || obj.type === 'StairsDown'
        || obj.type === 'ClimbUp' || obj.type === 'ClimbDown'
        || obj.type === 'Door') {
-        sprite.inputEnabled = true;
-      }
-
-      // vertical doors have to store two sprites, and create a door top
-      if (obj.type === 'Door') {
-        this.fixDoorFloor(obj.x, obj.y);
-        sprite._closedFrame = sprite._baseFrame;
-        sprite._openFrame = sprite._baseFrame + 1;
-
-        if (VerticalDoorGids[sprite._baseFrame]) {
-          const doorTopSprite = this.add.sprite(obj.x + 32, obj.y - 96, tileSet, obj.gid - firstGid + 2);
-          doorTopSprite.visible = false;
-          sprite._doorTopSprite = doorTopSprite;
-
-          layerGroup.add(doorTopSprite);
-        }
-      }
-
-      if (obj.type === 'Door' || obj.type === 'StairsUp' || obj.type === 'StairsDown') {
         sprite.setInteractive();
+      }
+
+      if (obj.type === 'StairsUp' || obj.type === 'StairsDown') {
         sprite.setPipeline('OutlinePipeline');
-
-        sprite.on('pointerover', () => {
-          OutlinePipeline.setOutlineColor(sprite, [1.0, 1.0, 0.0, 0.5]);
-        });
-
-        sprite.on('pointerout', () => {
-          OutlinePipeline.setOutlineColor(sprite, undefined);
-        });
       }
 
       layerGroup.add(sprite);
@@ -598,6 +614,10 @@ export class MapScene extends Phaser.Scene {
     this.createLayers();
     this.createFOV();
     this.setupMapInteractions();
+
+    spriteData.doorStates.forEach(doorState => {
+      this.doorStateData[doorState.tiledId] = doorState;
+    });
 
     this.cache.tilemap.add('map', { data: tiledJSON, format: Phaser.Tilemaps.Formats.TILED_JSON });
 
