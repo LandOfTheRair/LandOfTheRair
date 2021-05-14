@@ -343,6 +343,7 @@ export class SpellCommand extends SkillCommand {
 
   // default execute, primarily used by players
   override execute(player: IPlayer, args: IMacroCommandArgs) {
+    if (!args.stringArgs && this.canTargetSelf) args.stringArgs = player.uuid;
     this.castSpell(player, args);
   }
 
