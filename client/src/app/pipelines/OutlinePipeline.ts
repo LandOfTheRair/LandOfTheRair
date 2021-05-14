@@ -21,13 +21,17 @@ export default class OutlinePipeline extends Phaser.Renderer.WebGL.Pipelines.Sin
       if (!outlineColor || outlineColor.length !== 4) {
         outlineColor = [0.0, 0.0, 0.0, 0.0];
       }
-
+      let outlineNoEdge = spriteData.outlineNoEdge as number;
+      if (!outlineNoEdge) {
+        outlineNoEdge = 0;
+      }
       this.currentShader.set4fv('uOutlineColor', outlineColor);
       if (spriteData.swimming || false) {
         this.currentShader.set1f('uSwimming', 1.0);
       } else {
         this.currentShader.set1f('uSwimming', 0.0);
       }
+      this.set1f('uNoEdge', outlineNoEdge);
       this.set1f('uTime', this.game.loop.getDuration());
     }
 
@@ -39,6 +43,11 @@ export default class OutlinePipeline extends Phaser.Renderer.WebGL.Pipelines.Sin
     // Color is an array containing [red, green, blue, alpha], each number is a float between 0 to 1
     public static setOutlineColor(sprite: Phaser.GameObjects.Sprite, color: Array<number>) {
       sprite.setPipelineData('outlineColor', color);
+    }
+
+    // Turns off outlines at the edge of sprites
+    public static setNoEdge(sprite: Phaser.GameObjects.Sprite, outlineNoEdge: boolean) {
+      sprite.setPipelineData('outlineNoEdge', outlineNoEdge ? 1 : 0);
     }
 
     // Color is an array containing [red, green, blue, alpha], each number is a float between 0 to 1
@@ -57,6 +66,7 @@ uniform vec4 uOutlineColor;
 uniform vec2 uTextureSpriteSize;
 uniform bool uSwimming;
 uniform float uTime;
+uniform float uNoEdge;
 
 void outline( out vec4 fragColor)
 {
@@ -70,6 +80,8 @@ void outline( out vec4 fragColor)
   bool edgeU = spritePixel.y == 0.0;
   bool edgeD = spritePixel.y == uTextureSpriteSize.y - 1.0;
   if (uOutlineColor.a != 0.0) {
+    bool edge = edgeL || edgeR || edgeU || edgeD;
+    if (edge && uNoEdge > 0.0) return;
     if (color.a == 0.0) {
       bool colorU = texture2D(uMainSampler, outTexCoord - vec2(0, pixelSize.y)).a == 1.0 && !edgeU;
       bool colorD = texture2D(uMainSampler, outTexCoord + vec2(0, pixelSize.y)).a == 1.0 && !edgeD;
@@ -79,7 +91,7 @@ void outline( out vec4 fragColor)
       {
         fragColor = uOutlineColor;
       }
-    } else if (color.a == 1.0 && (edgeL || edgeR || edgeU || edgeD)) {
+    } else if (color.a == 1.0 && edge) {
       fragColor = uOutlineColor;
     }
   }
