@@ -47,14 +47,13 @@ export class NPCCreator extends BaseService {
   // actually make a character from an npc id
   public createCharacterFromNPC(npcId: string): INPC & { dialogParser?: Parser } {
     const npc = this.getNPCDefinition(npcId);
+    if (!npc) throw new Error(`NPC ${npcId} does not exist and cannot be created.`);
 
     return this.createCharacterFromNPCDefinition(npc);
   }
 
   // create character from npc def - also useful for greens
   public createCharacterFromNPCDefinition(npcDef: INPCDefinition): INPC & { dialogParser?: Parser } {
-    npcDef = cloneDeep(npcDef);
-
     const baseChar: INPC & { dialogParser?: Parser } = initializeNPC({});
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
@@ -76,7 +75,9 @@ export class NPCCreator extends BaseService {
 
     this.setLevel(baseChar, npcDef);
 
-    const rightHandItemChoice = this.chooseItem(npcDef.items?.equipment?.rightHand);
+    const items = cloneDeep(npcDef.items || {});
+
+    const rightHandItemChoice = this.chooseItem(items?.equipment?.rightHand);
 
     const rightHandItem = rightHandItemChoice ? this.itemHelper.getItemDefinition(rightHandItemChoice) : null;
 
@@ -87,7 +88,7 @@ export class NPCCreator extends BaseService {
 
     // if we didnt load a right hand, or it's not two handed, or it can shoot
     if (!rightHandItem || rightHandItem && (!rightHandItem.twoHanded || rightHandItem.canShoot)) {
-      const potentialLeftHand = this.chooseItem(npcDef.items?.equipment?.leftHand);
+      const potentialLeftHand = this.chooseItem(items?.equipment?.leftHand);
 
       if (potentialLeftHand) {
         const leftHandItem = this.itemHelper.getItemDefinition(potentialLeftHand);
@@ -103,8 +104,8 @@ export class NPCCreator extends BaseService {
       }
     }
 
-    if (npcDef.items?.equipment) {
-      const equipment = npcDef.items?.equipment ?? {};
+    if (items?.equipment) {
+      const equipment = items?.equipment ?? {};
 
       Object.keys(equipment).forEach((slot: string) => {
         if (slot === ItemSlot.LeftHand || slot === ItemSlot.RightHand) return;
@@ -116,27 +117,27 @@ export class NPCCreator extends BaseService {
       });
     }
 
-    if (npcDef.items?.sack) {
-      baseChar.items.sack.items = (npcDef.items?.sack ?? [])
+    if (items?.sack) {
+      baseChar.items.sack.items = (items?.sack ?? [])
         .filter(i => this.shouldLoadContainerItem(i))
         .map(i => this.loadItem(i.result))
         .filter(Boolean);
     }
 
-    if (npcDef.items?.belt) {
-      baseChar.items.belt.items = (npcDef.items?.belt ?? [])
+    if (items?.belt) {
+      baseChar.items.belt.items = (items?.belt ?? [])
         .filter(i => this.shouldLoadContainerItem(i))
         .map(i => this.loadItem(i.result))
         .filter(Boolean);
     }
 
     baseChar.allegianceReputation = npcDef.allegianceReputation as Record<Allegiance, number>;
-    baseChar.stats = npcDef.stats || {};
-    baseChar.skills = npcDef.skills || {};
-    baseChar.allegianceMods = npcDef.repMod || [];
+    baseChar.stats = { ...npcDef.stats || {} };
+    baseChar.skills = { ...npcDef.skills || {} };
+    baseChar.allegianceMods = [...npcDef.repMod || []];
     baseChar.monsterClass = npcDef.monsterClass;
     baseChar.monsterGroup = npcDef.monsterGroup;
-    baseChar.giveXp = cloneDeep(npcDef.giveXp) || { min: 1, max: 100 };
+    baseChar.giveXp = { ...npcDef.giveXp || { min: 1, max: 100 } };
     baseChar.skillOnKill = npcDef.skillOnKill;
 
     if (baseChar.hostility === Hostility.Never) {
@@ -177,7 +178,7 @@ export class NPCCreator extends BaseService {
       baseChar.stats[Stat.MP] = baseChar.mp.maximum;
     }
 
-    baseChar.usableSkills = npcDef.usableSkills || [];
+    baseChar.usableSkills = cloneDeep(npcDef.usableSkills || []);
     if (!baseChar.usableSkills.find(s => (s as unknown as string) === 'Charge' || s.result === 'Charge')) {
       baseChar.usableSkills.push({ result: 'Attack', chance: 1 });
     }

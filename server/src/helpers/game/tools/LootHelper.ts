@@ -45,13 +45,15 @@ export class LootHelper extends BaseService {
 
       if (dt.noLuckBonus) return dt;
 
-      if (dt.maxChance) {
-        dt.chance = Math.min(dt.maxChance, dt.chance + bonus);
+      const ref = { ...dt };
+
+      if (ref.maxChance) {
+        ref.chance = Math.min(dt.maxChance, dt.chance + bonus);
       } else {
-        dt.chance += bonus;
+        ref.chance += bonus;
       }
 
-      return dt;
+      return ref;
     });
   }
 

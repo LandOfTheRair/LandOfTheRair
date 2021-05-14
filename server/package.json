@@ -30,6 +30,7 @@
     "bcrypt": "5.0.0",
     "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
+    "deep-freeze": "0.0.1",
     "didyoumean2": "3.1.2",
     "discord.js": "^12.5.1",
     "dotenv": "8.1.0",

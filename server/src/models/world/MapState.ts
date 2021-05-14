@@ -1,7 +1,7 @@
 
 import RBush from 'rbush';
 
-import { extend, get, keyBy, pick, setWith, unset } from 'lodash';
+import { extend, get, keyBy, pick, setWith, unset, cloneDeep } from 'lodash';
 
 import { Game } from '../../helpers';
 
@@ -78,8 +78,10 @@ export class MapState {
     const npcDefs = this.map.allDefaultNPCs.map(npc => {
       if (!npc.properties || !npc.properties.tag) throw new Error(`NPC on ${this.map.name} ${npc.x / 64},${(npc.y / 64) - 1} has no tag!`);
 
-      const npcDef = this.game.contentManager.getNPCScript(npc.properties.tag);
-      if (!npcDef) throw new Error(`Script ${npc.properties.tag} does not exist for NPC ${npc.name}`);
+      const npcDefF = this.game.contentManager.getNPCScript(npc.properties.tag);
+      if (!npcDefF) throw new Error(`Script ${npc.properties.tag} does not exist for NPC ${npc.name}`);
+
+      const npcDef = cloneDeep(npcDefF);
 
       npcDef.x = npc.x / 64;
       npcDef.y = (npc.y / 64) - 1;
@@ -127,8 +129,10 @@ export class MapState {
       const tag = spawner.properties.tag;
       if (!tag) throw new Error(`Spawner ${this.map.name} - ${spawnerX},${spawnerY} has no tag!`);
 
-      const spawnerData = this.game.contentManager.getSpawnerByTag(tag);
-      if (!spawnerData) throw new Error(`Tagged spawner ${tag} does not exist (if this is an NPC, it's on the wrong layer).`);
+      const spawnerDataF = this.game.contentManager.getSpawnerByTag(tag);
+      if (!spawnerDataF) throw new Error(`Tagged spawner ${tag} does not exist (if this is an NPC, it's on the wrong layer).`);
+
+      const spawnerData = cloneDeep(spawnerDataF);
 
       spawnerData.name = spawner.name;
       spawnerData.x = spawnerX;

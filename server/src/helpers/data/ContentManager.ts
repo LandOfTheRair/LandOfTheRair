@@ -1,4 +1,5 @@
 import fs from 'fs-extra';
+import deepfreeze from 'deep-freeze';
 import { Injectable } from 'injection-js';
 import { cloneDeep, get } from 'lodash';
 
@@ -131,55 +132,55 @@ export class ContentManager extends BaseService {
   }
 
   public getDropablesForRegion(region: string): { drops: Rollable[] } {
-    return cloneDeep(this.regionDroptables[region]);
+    return this.regionDroptables[region];
   }
 
   public getDroptablesForMap(mapName: string): { drops: Rollable[] } {
-    return cloneDeep(this.mapDroptables[mapName]);
+    return this.mapDroptables[mapName];
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
-    return cloneDeep(this.items[itemName]);
+    return this.items[itemName];
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return cloneDeep(this.npcs[npcId]);
+    return this.npcs[npcId];
   }
 
   public getNPCScript(npcTag: string): INPCScript {
-    return cloneDeep(this.npcScripts[npcTag]);
+    return this.npcScripts[npcTag];
   }
 
   public getRecipesForTradeskill(tradeskill): IRecipe[] {
-    return cloneDeep(this.recipes[tradeskill] || []);
+    return this.recipes[tradeskill] || [];
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
-    return cloneDeep(this.spawners[spawnerTag]);
+    return this.spawners[spawnerTag];
   }
 
   public getQuest(quest: string): IQuest {
-    return cloneDeep(this.quests[quest]);
+    return this.quests[quest];
   }
 
   public getTrait(trait: string): ITrait {
-    return cloneDeep(this.traits[trait]);
+    return this.traits[trait];
   }
 
   public getTraitTree(tree: BaseClass): IClassTraitTree {
-    return cloneDeep(this.traitTrees[tree]);
+    return this.traitTrees[tree];
   }
 
   public getEffect(name: string): IStatusEffectData {
-    return cloneDeep(this.effectData[name]);
+    return this.effectData[name];
   }
 
   public getSpell(name: string): ISpellData {
-    return cloneDeep(this.spells[name]);
+    return this.spells[name];
   }
 
   public getEvent(name: string): IDynamicEventData {
-    return cloneDeep(this.events[name]);
+    return this.events[name];
   }
 
   public getGameSetting(name: keyof IGameSettings, subKey?: string): any {
@@ -210,24 +211,34 @@ export class ContentManager extends BaseService {
   private loadSpells() {
     const spells = fs.readJsonSync('content/_output/spells.json');
     this.spells = spells;
+
+    deepfreeze(this.spells);
   }
 
   private loadEffects() {
     const effectData = fs.readJsonSync('content/_output/effect-data.json');
     this.effectData = effectData;
+
+    deepfreeze(this.effectData);
   }
 
   private loadTraits() {
     const traits = fs.readJsonSync('content/_output/traits.json');
     this.traits = traits;
 
+    deepfreeze(this.traits);
+
     const traitTrees = fs.readJsonSync('content/_output/trait-trees.json');
     this.traitTrees = traitTrees;
+
+    deepfreeze(this.traitTrees);
   }
 
   private loadQuests() {
     const quests = fs.readJsonSync('content/_output/quests.json');
     this.quests = quests;
+
+    deepfreeze(this.quests);
   }
 
   private loadMapDroptables() {
@@ -236,6 +247,8 @@ export class ContentManager extends BaseService {
       prev[cur.mapName] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.mapDroptables);
   }
 
   private loadRegionDroptables() {
@@ -244,6 +257,8 @@ export class ContentManager extends BaseService {
       prev[cur.regionName] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.regionDroptables);
   }
 
   private loadItems() {
@@ -252,6 +267,8 @@ export class ContentManager extends BaseService {
       prev[cur.name] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.items);
   }
 
   private loadNPCs() {
@@ -260,6 +277,8 @@ export class ContentManager extends BaseService {
       prev[cur.npcId] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.npcs);
   }
 
   private loadNPCScripts() {
@@ -268,6 +287,8 @@ export class ContentManager extends BaseService {
       prev[cur.tag] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.npcScripts);
   }
 
   private loadRecipes() {
@@ -278,6 +299,8 @@ export class ContentManager extends BaseService {
       this.recipes[recipe.recipeType] = this.recipes[recipe.recipeType] || [];
       this.recipes[recipe.recipeType].push(recipe);
     });
+
+    deepfreeze(this.recipes);
   }
 
   private loadSpawners() {
@@ -286,6 +309,8 @@ export class ContentManager extends BaseService {
       prev[cur.tag] = cur;
       return prev;
     }, {});
+
+    deepfreeze(this.spawners);
   }
 
 }
