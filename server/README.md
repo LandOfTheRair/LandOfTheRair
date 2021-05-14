@@ -13,6 +13,14 @@ This is the backend for Land of the Rair.
 * `npm run setup`
 * `npm start`
 
+## Debugging
+
+A good way of debugging the server is compiling it, then running ndb on the output. A way to get set up is as follows:
+
+- `npm i -g ndb`
+- `npx tsc`
+- `ndb npm start` (this will run the server in prod mode)
+
 ## Environment Variables
 
 Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) file.
