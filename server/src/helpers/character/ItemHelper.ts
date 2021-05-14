@@ -288,7 +288,7 @@ export class ItemHelper extends BaseService {
 
       // uses === -1 = permanent use
       if (useEffect.uses > 0) {
-        item.mods.useEffect = useEffect;
+        item.mods.useEffect = cloneDeep(useEffect);
         item.mods.useEffect.uses = useEffect.uses - 1;
 
         // it broke, rip
