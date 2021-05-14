@@ -190,22 +190,22 @@ export class ContentManager extends BaseService {
   }
 
   private loadCore() {
-    this.allegianceStats = fs.readJsonSync('content/_output/allegiancestats.json');
-    this.attributeStats = fs.readJsonSync('content/_output/attributestats.json');
-    this.charSelect = fs.readJsonSync('content/_output/charselect.json');
-    this.events = fs.readJsonSync('content/_output/events.json');
-    this.fate = fs.readJsonSync('content/_output/fate.json');
-    this.hideReductions = fs.readJsonSync('content/_output/hidereductions.json');
-    this.holidayDescs = fs.readJsonSync('content/_output/holidaydescs.json');
-    this.materialStorage = fs.readJsonSync('content/_output/materialstorage.json');
-    this.npcNames = fs.readJsonSync('content/_output/npcnames.json');
-    this.premium = fs.readJsonSync('content/_output/premium.json');
-    this.rarespawns = fs.readJsonSync('content/_output/rarespawns.json');
-    this.settings = fs.readJsonSync('content/_output/settings.json');
-    this.skillDescs = fs.readJsonSync('content/_output/skilldescs.json');
-    this.statDamageMultipliers = fs.readJsonSync('content/_output/statdamagemultipliers.json');
-    this.staticText = fs.readJsonSync('content/_output/statictext.json');
-    this.weaponTiers = fs.readJsonSync('content/_output/weapontiers.json');
+    this.allegianceStats = deepfreeze(fs.readJsonSync('content/_output/allegiancestats.json'));
+    this.attributeStats = deepfreeze(fs.readJsonSync('content/_output/attributestats.json'));
+    this.charSelect = deepfreeze(fs.readJsonSync('content/_output/charselect.json'));
+    this.events = deepfreeze(fs.readJsonSync('content/_output/events.json'));
+    this.fate = deepfreeze(fs.readJsonSync('content/_output/fate.json'));
+    this.hideReductions = deepfreeze(fs.readJsonSync('content/_output/hidereductions.json'));
+    this.holidayDescs = deepfreeze(fs.readJsonSync('content/_output/holidaydescs.json'));
+    this.materialStorage = deepfreeze(fs.readJsonSync('content/_output/materialstorage.json'));
+    this.npcNames = deepfreeze(fs.readJsonSync('content/_output/npcnames.json'));
+    this.premium = deepfreeze(fs.readJsonSync('content/_output/premium.json'));
+    this.rarespawns = deepfreeze(fs.readJsonSync('content/_output/rarespawns.json'));
+    this.settings = deepfreeze(fs.readJsonSync('content/_output/settings.json'));
+    this.skillDescs = deepfreeze(fs.readJsonSync('content/_output/skilldescs.json'));
+    this.statDamageMultipliers = deepfreeze(fs.readJsonSync('content/_output/statdamagemultipliers.json'));
+    this.staticText = deepfreeze(fs.readJsonSync('content/_output/statictext.json'));
+    this.weaponTiers = deepfreeze(fs.readJsonSync('content/_output/weapontiers.json'));
   }
 
   private loadSpells() {
