@@ -330,7 +330,6 @@ export class Spawner {
     }
 
     this.game.characterHelper.tryToCastEquipmentEffects(npc);
-    this.game.characterHelper.calculateStatTotals(npc);
 
     this.tryAttribute(npc);
     this.tryElitify(npc);
@@ -338,6 +337,8 @@ export class Spawner {
 
     if (this.npcCreateCallback) this.npcCreateCallback(npc);
     if (createCallback) createCallback(npc);
+
+    this.game.characterHelper.calculateStatTotals(npc);
 
     this.addNPC(npc, aiInst, npcDef);
 
