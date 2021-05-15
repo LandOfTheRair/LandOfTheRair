@@ -149,7 +149,7 @@ export class ItemHelper extends BaseService {
       return secondItemRequirements;
     }
 
-    const requirements = firstItemRequirements;
+    const requirements = cloneDeep(firstItemRequirements);
     if (secondItemRequirements?.alignment && !firstItemRequirements?.alignment) {
       requirements.alignment = secondItemRequirements.alignment;
     }
