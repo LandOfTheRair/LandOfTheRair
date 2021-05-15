@@ -1,7 +1,7 @@
 
 import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
-import { merge, random, sample } from 'lodash';
+import { cloneDeep, merge, random, sample } from 'lodash';
 
 import { GameAction, IDynamicEvent, IDynamicEventData, INPC, Stat } from '../../../interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
@@ -60,7 +60,7 @@ export class DynamicEventHelper extends BaseService {
     });
 
     const eventRef = event.eventRef ?? '';
-    const ref = this.getEventRef(eventRef);
+    const ref = cloneDeep(this.getEventRef(eventRef));
     if (ref) {
       this.game.messageHelper.broadcastSystemMessage(event.eventData?.startMessage ?? ref.startMessage);
 
