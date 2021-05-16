@@ -606,6 +606,7 @@ export class MapScene extends Phaser.Scene {
       this.visibleItemSprites = {};
       this.visibleItemUUIDHash = {};
       this.goldSprites = {};
+      this.doors = [];
     }
     const player = this.game.observables.player.getValue();
     this.player = player;
