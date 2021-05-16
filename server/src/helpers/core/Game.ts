@@ -179,54 +179,57 @@ export class Game {
     const trueTick = this.ticksElapsed / 10;
 
     const timer = new LoggerTimer({ isActive: !process.env.DISABLE_TIMERS, dumpThreshold: 250 });
-    timer.startTimer('gameloop');
+
+    const now = Date.now();
+
+    timer.startTimer(`gameloop-${now}`);
 
     // fast tick actions
     if (this.ticksElapsed % 2 === 0) {
-      timer.startTimer('fastTick');
+      timer.startTimer(`fastTick-${now}`);
       this.playerManager.fastTick(timer, trueTick);
-      timer.stopTimer('fastTick');
+      timer.stopTimer(`fastTick-${now}`);
     }
 
     // slow tick actions
     if (this.ticksElapsed % 10 === 0) {
-      timer.startTimer('slowTick');
+      timer.startTimer(`slowTick-${now}`);
       this.playerManager.slowTick(timer, trueTick);
       this.groundManager.tick(timer);
       this.partyManager.tick(timer);
-      timer.stopTimer('slowTick');
+      timer.stopTimer(`slowTick-${now}`);
     }
 
     // world steady tick actions
     if (this.ticksElapsed % 10 === 0) {
-      timer.startTimer('steadyTick');
+      timer.startTimer(`steadyTick-${now}`);
       this.worldManager.steadyTick(timer);
-      timer.stopTimer('steadyTick');
+      timer.stopTimer(`steadyTick-${now}`);
     }
 
     // map ticks (npcs)
     if (this.ticksElapsed % 20 === 0) {
-      timer.startTimer('npcTick');
+      timer.startTimer(`npcTick-${now}`);
       this.worldManager.npcTick(timer);
-      timer.stopTimer('npcTick');
+      timer.stopTimer(`npcTick-${now}`);
     }
 
     // map ticks (corpses) & event tick
     if (this.ticksElapsed % 50 === 0) {
-      timer.startTimer('corpseTick');
+      timer.startTimer(`corpseTick-${now}`);
       this.corpseManager.tick(timer);
       timer.stopTimer('corpseTick');
 
-      timer.startTimer('darknessTick');
+      timer.startTimer(`darknessTick-${now}`);
       this.darknessHelper.tick(timer);
-      timer.stopTimer('darknessTick');
+      timer.stopTimer(`darknessTick-${now}`);
 
-      timer.startTimer('dynamicEventTick');
+      timer.startTimer(`dynamicEventTick-${now}`);
       this.dynamicEventHelper.tick(timer);
-      timer.stopTimer('dynamicEventTick');
+      timer.stopTimer(`dynamicEventTick-${now}`);
     }
 
-    timer.stopTimer('gameloop');
+    timer.stopTimer(`gameloop-${now}`);
     timer.dumpTimers();
 
     this.ticksElapsed++;

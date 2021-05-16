@@ -18,7 +18,7 @@ export class CorpseManager extends BaseService {
 
     const activeMaps = this.game.worldManager.currentlyActiveMapHash;
 
-    timer.startTimer('corpse expiration');
+    timer.startTimer(`corpseexpiration-${now}`);
 
     Object.keys(this.corpseExpiration).forEach(corpseUUID => {
       const expTime = this.corpseExpiration[corpseUUID];
@@ -29,7 +29,7 @@ export class CorpseManager extends BaseService {
       this.game.worldManager.getMap(corpsePos.map)?.state.removeItemFromGround(corpsePos.x, corpsePos.y, ItemClass.Corpse, corpseUUID);
     });
 
-    timer.stopTimer('corpse expiration');
+    timer.stopTimer(`corpseexpiration-${now}`);
   }
 
   // add a corpse to special management

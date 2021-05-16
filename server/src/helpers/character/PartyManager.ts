@@ -12,7 +12,9 @@ export class PartyManager extends BaseService {
   public init() {}
 
   public tick(timer) {
-    timer.startTimer('Party');
+    const now = Date.now();
+
+    timer.startTimer(`party-${now}`);
 
     Object.keys(this.allPartyMembers).forEach(memberUsername => {
       this.updatePartyMember(memberUsername);
@@ -26,7 +28,7 @@ export class PartyManager extends BaseService {
       this.game.partyHelper.recalculatePartyLevels(party);
     });
 
-    timer.stopTimer('Party');
+    timer.stopTimer(`party-${now}`);
   }
 
   // send a party update to the whole party

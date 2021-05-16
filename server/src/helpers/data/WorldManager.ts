@@ -283,6 +283,8 @@ export class WorldManager extends BaseService {
   }
 
   public steadyTick(timer) {
+    const now = Date.now();
+
     this.activeMaps.forEach(activeMap => {
       const state = this.mapStates[activeMap];
       if (!state) {
@@ -290,9 +292,9 @@ export class WorldManager extends BaseService {
         return;
       }
 
-      timer.startTimer(`map-${activeMap}`);
+      timer.startTimer(`map-${activeMap}-${now}`);
       state.steadyTick(timer);
-      timer.stopTimer(`map-${activeMap}`);
+      timer.stopTimer(`map-${activeMap}-${now}`);
     });
   }
 

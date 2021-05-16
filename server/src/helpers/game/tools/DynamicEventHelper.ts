@@ -25,7 +25,9 @@ export class DynamicEventHelper extends BaseService {
 
   // check all events for expiration
   public tick(timer) {
-    timer.startTimer('dynamic event launch/expiration');
+    const now = Date.now();
+
+    timer.startTimer(`dynamicevent-${now}`);
 
     this.activeEvents.forEach(event => {
       if (event.endsAt > Date.now()) return;
@@ -35,7 +37,7 @@ export class DynamicEventHelper extends BaseService {
 
     this.checkOtherEvents();
 
-    timer.stopTimer('dynamic event launch/expiration');
+    timer.stopTimer(`dynamicevent-${now}`);
   }
 
   // start a new event

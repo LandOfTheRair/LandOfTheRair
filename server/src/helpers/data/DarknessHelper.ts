@@ -19,9 +19,11 @@ export class DarknessHelper extends BaseService {
   public init() {}
 
   public tick(timer) {
-    timer.startTimer('Darkness');
+    const now = Date.now();
+
+    timer.startTimer(`darkness-${now}`);
     this.checkAllDarkness();
-    timer.stopTimer('Darkness');
+    timer.stopTimer(`darkness-${now}`);
   }
 
   public checkAllDarkness() {

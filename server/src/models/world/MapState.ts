@@ -211,9 +211,10 @@ export class MapState {
   // tick spawners (respawn, buffs, etc)
   public steadyTick(timer) {
     this.spawners.forEach((s, i) => {
-      timer.startTimer(`spawner-${i}-${s.spawnerName}`);
+      const now = Date.now();
+      timer.startTimer(`spawner-${i}-${s.spawnerName}-${now}`);
       s.steadyTick();
-      timer.stopTimer(`spawner-${i}-${s.spawnerName}`);
+      timer.stopTimer(`spawner-${i}-${s.spawnerName}-${now}`);
     });
   }
 
