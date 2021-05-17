@@ -62,7 +62,7 @@ export class DynamicEventHelper extends BaseService {
     });
 
     const eventRef = event.eventRef ?? '';
-    const ref = cloneDeep(this.getEventRef(eventRef));
+    const ref = this.getEventRef(eventRef);
     if (ref) {
       this.game.messageHelper.broadcastSystemMessage(event.eventData?.startMessage ?? ref.startMessage);
 
@@ -148,15 +148,16 @@ export class DynamicEventHelper extends BaseService {
 
     if (!this.canDoEvent(event)) return;
 
-    this.handleSpecialEventsStart(event);
+    const newEvent = cloneDeep(event);
+    this.handleSpecialEventsStart(newEvent);
 
     this.startEvent({
-      description: event.description,
-      endsAt: Date.now() + (event.duration * 1000),
-      name: event.name,
-      eventRef: event.name,
+      description: newEvent.description,
+      endsAt: Date.now() + (newEvent.duration * 1000),
+      name: newEvent.name,
+      eventRef: newEvent.name,
       eventData: event,
-      extraData: event.extraData
+      extraData: newEvent.extraData
     });
   }
 
