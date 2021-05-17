@@ -230,7 +230,9 @@ export class Game {
     }
 
     timer.stopTimer(`gameloop-${now}`);
-    timer.dumpTimers();
+    timer.dumpTimers((str) => {
+      this.logsDB.addLogEntry(str);
+    });
 
     this.ticksElapsed++;
     setTimeout(() => {
