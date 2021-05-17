@@ -14,6 +14,7 @@ import {
 import { MapRenderGame } from '../phasergame';
 
 import decorAnimations from '../../../../../assets/content/_output/decoranims.json';
+import terrainAnimations from '../../../../../assets/content/_output/terrainanims.json';
 import spriteData from '../../../../../assets/content/_output/sprite-data.json';
 import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
@@ -25,6 +26,7 @@ export class MapScene extends Phaser.Scene {
   private allMapData: IMapData;
   public game: MapRenderGame;
   private layers: Record<string, Phaser.GameObjects.Container> = {
+    fluids: null,
     decor: null,
     densedecor: null,
     opaquedecor: null,
@@ -492,11 +494,45 @@ export class MapScene extends Phaser.Scene {
       const animSpeed = (animData as any).speed ?? 7;
 
       this.anims.create({
-        key: animOffset.toString(),
+        key: 'decor-' + animOffset.toString(),
         frameRate: animSpeed,
         frames: this.anims.generateFrameNumbers('DecorAnimations', { start: (animOffset * 4) + 1, end: (animOffset * 4) + 3 }),
         repeat: -1
       });
+    });
+
+    Object.values(terrainAnimations).forEach(animData => {
+
+      const animOffset = animData.frame;
+      const animSpeed = (animData as any).speed ?? 2;
+
+      this.anims.create({
+        key: 'terrain-' + animOffset.toString(),
+        frameRate: animSpeed,
+        frames: this.anims.generateFrameNumbers('TerrainAnimations', { start: (animOffset * 4) + 1, end: (animOffset * 4) + 3 }),
+        repeat: -1,
+        yoyo: true
+      });
+
+    });
+  }
+
+  private loadTerrainAnimations(layer) {
+    console.log(layer);
+
+    layer.data.forEach((tile, i) => {
+      if (!terrainAnimations[tile]) return;
+
+      const x = Math.floor(i % layer.width);
+      const y = Math.floor((i - x) / layer.width);
+
+      const sprite = this.add.sprite(
+        this.convertPosition(x, true), this.convertPosition(y, true), 'TerrainAnimations', terrainAnimations[tile].frame
+      );
+
+      sprite.play('terrain-' + terrainAnimations[tile].frame.toString());
+
+      this.layers.fluids.add(sprite);
     });
   }
 
@@ -525,7 +561,7 @@ export class MapScene extends Phaser.Scene {
       const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, frame);
       const anim = decorAnimations[obj.gid - firstGid];
       if (anim) {
-        sprite.play(anim.frame.toString());
+        sprite.play('decor-' + anim.frame.toString());
       }
 
       // if you're not subscribed, some objects are not visible
@@ -648,6 +684,9 @@ export class MapScene extends Phaser.Scene {
     this.fixWallFloors(map);
 
     this.loadAnimations();
+
+    // load terrain animations before everything else
+    this.loadTerrainAnimations(tiledJSON.layers[MapLayer.Fluids]);
 
     // decor, densedecor, opaquedecor, interactables
     this.loadObjectLayer(map.objects[0], this.layers.decor);
