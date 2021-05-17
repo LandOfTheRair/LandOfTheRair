@@ -156,7 +156,7 @@ export class DynamicEventHelper extends BaseService {
       endsAt: Date.now() + (newEvent.duration * 1000),
       name: newEvent.name,
       eventRef: newEvent.name,
-      eventData: event,
+      eventData: newEvent,
       extraData: newEvent.extraData
     });
   }
