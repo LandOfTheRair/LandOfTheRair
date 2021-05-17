@@ -218,7 +218,7 @@ export class Game {
     if (this.ticksElapsed % 50 === 0) {
       timer.startTimer(`corpseTick-${now}`);
       this.corpseManager.tick(timer);
-      timer.stopTimer('corpseTick');
+      timer.stopTimer(`corpseTick-${now}`);
 
       timer.startTimer(`darknessTick-${now}`);
       this.darknessHelper.tick(timer);
