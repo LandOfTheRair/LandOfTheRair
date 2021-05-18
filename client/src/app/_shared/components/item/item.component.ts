@@ -1,9 +1,10 @@
-import { Component, HostBinding, Input, OnDestroy } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { isNumber } from 'lodash';
 
+import { MatMenuTrigger } from '@angular/material/menu';
 import { ArmorClass, canUseItem, descTextFor, EquipHash, EquippableItemClasses,
   IItem, IPlayer, ISimpleItem, ItemClass, ItemSlot, WeaponClass } from '../../../../interfaces';
 import { GameState, SetCurrentItemTooltip } from '../../../../stores';
@@ -30,6 +31,7 @@ export type MenuContext = 'Sack' | 'Belt' | 'Ground' | 'DemiMagicPouch'
 export class ItemComponent implements OnDestroy {
 
   @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
+  @ViewChild(MatMenuTrigger) menu: MatMenuTrigger;
 
   private simpleItem: ISimpleItem;
   private hasTooltip: boolean;
@@ -296,17 +298,25 @@ export class ItemComponent implements OnDestroy {
     this.gameService.sendCommandString(`!use ${this.context.toLowerCase()}`);
   }
 
-  automaticallyTakeActionBasedOnOpenWindows(): void {
+  automaticallyTakeActionBasedOnOpenWindows(event): void {
     if (!this.context || !this.item || !this.viewingPlayer) return;
 
     // these items shouldn't be dropped accidentally
     if (this.realItem.destroyOnDrop || this.item.mods?.destroyOnDrop) { return; }
+
+    event.preventDefault();
+    event.stopPropagation();
 
     combineLatest([
       this.vendor$
     ])
     .pipe(first())
     .subscribe(([vendor]) => {
+
+      if (!!true) {
+        this.menu.toggleMenu();
+        return;
+      }
 
       // if we have a vendor open, we auto-sell stuff
       if (vendor) {

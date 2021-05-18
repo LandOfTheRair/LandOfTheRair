@@ -7,7 +7,7 @@
     [dragEnabled]="item && !displayOnly"
     [dragData]="getDragData()"
     (click)="attemptToMultiselect($event)"
-    (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
+    (contextmenu)="automaticallyTakeActionBasedOnOpenWindows($event)"
     (mouseover)="updateWithDesc()"
     (mouseenter)="determineScopes()"
     (mouseout)="removeDesc()"
@@ -43,3 +43,13 @@
   <span class="value succor" *ngIf="item && showOunces && realSuccorInfo">{{ gameService.reformatName(realSuccorInfo.map) }}</span>
   <span class="ounces" *ngIf="item && showDesc && realItem?.trapEffect && realItem?.itemClass === 'Trap' && item.mods.itemClass !== 'TrapSet'">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
 </div>
+
+<div [matMenuTriggerFor]="menu"></div>
+
+<mat-menu #menu="matMenu" hasBackdrop="false">
+  <ng-container *ngFor="let menuItem of ['test']; let i = index">
+    <button mat-menu-item>
+      Test
+    </button>
+  </ng-container>
+</mat-menu>
