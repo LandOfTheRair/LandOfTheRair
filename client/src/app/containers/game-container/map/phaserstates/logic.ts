@@ -518,8 +518,6 @@ export class MapScene extends Phaser.Scene {
   }
 
   private loadTerrainAnimations(layer) {
-    console.log(layer);
-
     layer.data.forEach((tile, i) => {
       if (!terrainAnimations[tile]) return;
 
