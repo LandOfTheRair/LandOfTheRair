@@ -62,6 +62,7 @@ export class CharacterDB extends BaseService {
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
     player.traits.tp = 2;
+    player.allegianceReputation[player.allegiance] = 500;
 
     this.game.playerHelper.becomeClass(player, player.baseClass);
     this.game.characterHelper.healToFull(player);
