@@ -267,7 +267,7 @@ export class GameState {
         if (patch.path === '/axp') {
           const xpDiff = patch.value - copyState.player.axp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'left', color: 'yellow', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP` });
+          GameState.box.next({ side: 'left', color: '#aa5c39', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP` });
         }
 
 

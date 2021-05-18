@@ -554,6 +554,16 @@ export class PlayerHelper extends BaseService {
     } while (player.level < maxLevel);
   }
 
+  public tryAncientLevelUp(player: IPlayer): void {
+    const maxPerLevel = this.game.contentManager.getGameSetting('character', 'axpPerLevel') ?? 500;
+
+    while (player.axp > maxPerLevel) {
+      player.axp -= maxPerLevel;
+      player.ancientLevel += 1;
+      player.traits.ap += 1;
+    }
+  }
+
   // teleport the player to the succor location
   public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
     if (this.game.characterHelper.isDead(player)) return;

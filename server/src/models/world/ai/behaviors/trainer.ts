@@ -220,6 +220,30 @@ export class TrainerBehavior implements IAIBehavior {
         return `You've gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
       });
 
+    parser.addCommand('ancient')
+      .setSyntax(['ancient'])
+      .setLogic(async ({ env }) => {
+        const player: Player = env?.player;
+
+        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
+        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
+        if (!player.gainingAXP) return 'You do not seem to be training with the ancient arts at present.';
+
+        if (!game.currencyHelper.hasCurrency(player, 50000)) return 'You do need to pay for this, you know. 50,000 gold is not a lot!';
+
+        if (player.level < 50) return 'You are not ready for my teachings.';
+
+        const oldLevel = player.traits.ap;
+        game.playerHelper.tryAncientLevelUp(player);
+        const newLevel = player.traits.ap;
+
+        if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
+
+        game.currencyHelper.loseCurrency(player, 50000);
+
+        return `You've gained ${newLevel - oldLevel} ancient level(s).`;
+      });
+
     if (this.canRevive) {
       parser.addCommand('recall')
         .setSyntax(['recall'])

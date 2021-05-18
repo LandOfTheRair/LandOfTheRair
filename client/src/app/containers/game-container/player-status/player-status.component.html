@@ -66,9 +66,14 @@
       </div>
 
       <div class="bottom-bars">
-        <div class="bar-container exp">
+        <div class="bar-container exp" *ngIf="!player.gainingAXP">
           <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
           <span class="bar-text">{{ player.exp | number }} ({{ xpPercent(player) | number:'0.0-0' }}%)</span>
+        </div>
+
+        <div class="bar-container axp" *ngIf="player.gainingAXP">
+          <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
+          <span class="bar-text">{{ player.axp | number }} ({{ axpPercent(player) | number:'0.0-0' }}%)</span>
         </div>
       </div>
     </div>

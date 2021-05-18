@@ -5,7 +5,7 @@ import { cloneDeep } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
-import { Skill } from '../../../../interfaces';
+import { IPlayer, Skill } from '../../../../interfaces';
 import { GameState, HideTrainerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -21,6 +21,7 @@ import { UIService } from '../../../services/ui.service';
 })
 export class TrainerComponent implements OnInit, OnDestroy {
 
+  @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
   @Select(GameState.currentTrainerWindow) trainer$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
@@ -90,6 +91,10 @@ export class TrainerComponent implements OnInit, OnDestroy {
 
   train() {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, train`);
+  }
+
+  ancient() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, ancient`);
   }
 
   recall() {

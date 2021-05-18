@@ -46,6 +46,7 @@ export class TraitHelper extends BaseService {
   // whether or not the player can learn the trait
   public canLearnTrait(player: IPlayer, trait: string): boolean {
     const traitRef = this.getTraitInTree(player.baseClass, trait);
+    if (!traitRef) return false;
 
     return (traitRef.isAncient ? player.traits.ap > 0 : player.traits.tp > 0)
         && (player.traits.traitsLearned[trait] ?? 0) < traitRef.maxLevel
@@ -67,6 +68,7 @@ export class TraitHelper extends BaseService {
     if (!this.canLearnTrait(player, trait)) return;
 
     const traitRef = this.getTraitData(trait);
+    if (!traitRef) return;
 
     if (traitRef.isAncient) {
       player.traits.ap--;

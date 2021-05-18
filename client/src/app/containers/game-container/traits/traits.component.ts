@@ -90,9 +90,11 @@ export class TraitsComponent implements OnInit, OnDestroy {
   public canBuyTrait(trait: string): boolean {
     const traitRef = this.getTraitInTree(trait);
 
+    const reqLevel = traitRef.isAncient ? 0 : traitRef.requiredLevel;
+
     return (traitRef.isAncient ? this.player.traits.ap > 0 : this.player.traits.tp > 0)
         && this.getTraitBoughtLevel(trait) < traitRef.maxLevel
-        && this.player.level >= traitRef.requiredLevel
+        && this.player.level >= reqLevel
         && (
           traitRef.requires
             ? this.getTraitBoughtLevel(traitRef.requires) >= this.getTraitInTree(traitRef.requires).maxLevel

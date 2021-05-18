@@ -225,6 +225,10 @@ export class DeathHelper extends BaseService {
 
     const gainKillRewards = (rewarded: IPlayer, multiplier = 1) => {
 
+      if (rewarded.level - npc.level <= 5) {
+        this.game.playerHelper.gainAxp(rewarded, this.game.calculatorHelper.calcAXPRewardFor(npc));
+      }
+
       this.game.questHelper.tryUpdateQuestProgressForKill(rewarded, npc.npcId);
 
       const mult = this.game.playerHelper.expMultiplierForMap(rewarded);

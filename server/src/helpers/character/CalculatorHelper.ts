@@ -92,4 +92,11 @@ export class CalculatorHelper extends BaseService {
 
     return this.game.subscriptionHelper.docReduction(player, Math.max(min, Math.round(totalCost - totalDiscount)));
   };
+
+  // calculate axp reward for a creature
+  public calcAXPRewardFor(char: ICharacter): number {
+    if (this.game.effectHelper.hasEffect(char, 'Dangerous')) return 10;
+    if (char.name.includes('elite ')) return 5;
+    return 1;
+  }
 }

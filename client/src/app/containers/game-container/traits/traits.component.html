@@ -13,7 +13,7 @@
 
 <ng-template #headTemplate>
   <ng-container *ngIf="player">
-    Traits ({{ player.traits.tp || 0 }} TP<span *ngIf="player.ancientLevel > 0"> / {{ player.traits.ap || 0 }} AP</span>)
+    Traits ({{ player.traits.tp || 0 }} TP<span *ngIf="player.level >= 50"> / {{ player.traits.ap || 0 }} AP</span>)
   </ng-container>
 </ng-template>
 
@@ -26,44 +26,45 @@
   <div class="container" *ngIf="player && traitTree">
 
     <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
+      <ng-container *ngFor="let tree of traitTree.treeOrder">
+        <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'" *ngIf="tree !== 'Ancient' || player.level >= 50">
 
-      <mat-tab *ngFor="let tree of traitTree.treeOrder" [label]="tree + ' (' + traitsSpent(tree) + ')'">
+          <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
 
-        <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
-
-          <div class="trait-req-container">
-            <div class="trait-req">
-              Level {{ traitRow.requiredLevel }}
+            <div class="trait-req-container">
+              <div class="trait-req" *ngIf="tree !== 'Ancient'">
+                Level {{ traitRow.requiredLevel }}
+              </div>
             </div>
-          </div>
 
-          <div class="trait-col" *ngFor="let trait of traitRow.traits">
+            <div class="trait-col" *ngFor="let trait of traitRow.traits">
 
-            <div class="trait"
-                 [class.has-trait]="getTraitLevel(trait.name) > 0"
-                 [class.can-buy]="canBuyTrait(trait.name)"
-                 [class.no-buy]="!canBuyTrait(trait.name)"
-                 *ngIf="getTrait(trait.name) as traitData"
-                 (click)="tryToBuyTrait(trait)"
-                 [matTooltip]="formatTooltip(trait, traitData)">
+              <div class="trait"
+                  [class.has-trait]="getTraitLevel(trait.name) > 0"
+                  [class.can-buy]="canBuyTrait(trait.name)"
+                  [class.no-buy]="!canBuyTrait(trait.name)"
+                  *ngIf="getTrait(trait.name) as traitData"
+                  (click)="tryToBuyTrait(trait)"
+                  [matTooltip]="formatTooltip(trait, traitData)">
 
-              <div class="trait-icon"
-                   [style.border-color]="traitData.borderColor">
-                <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+                <div class="trait-icon"
+                    [style.border-color]="traitData.borderColor">
+                  <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
 
-                <div class="trait-level">
-                  <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+                  <div class="trait-level">
+                    <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+                  </div>
                 </div>
+
+                <div class="trait-name">{{ traitData.name }}</div>
               </div>
 
-              <div class="trait-name">{{ traitData.name }}</div>
             </div>
 
           </div>
 
-        </div>
-
-      </mat-tab>
+        </mat-tab>
+      </ng-container>
 
     </mat-tab-group>
 

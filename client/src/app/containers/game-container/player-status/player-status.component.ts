@@ -88,6 +88,12 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100);
   }
 
+  axpPercent(player: IPlayer) {
+    const playerXP = player.axp;
+
+    return Math.min(100, (playerXP / 500) * 100);
+  }
+
   unapply($event, effect: IStatusEffect): void {
     $event.stopPropagation();
     $event.preventDefault();
