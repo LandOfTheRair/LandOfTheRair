@@ -541,6 +541,9 @@ export class MapScene extends Phaser.Scene {
     const isSubscribed = this.player.subscriptionTier > 0;
 
     layer.objects.forEach(obj => {
+      // hide fillables, since they have the correct thing beneath
+      if (obj.type === 'Fillable') return;
+
       const isWall = obj.gid < decorFirstGid;
       const firstGid = isWall ? wallFirstGid : decorFirstGid;
       const tileSet = isWall ? 'Walls' : 'Decor';
