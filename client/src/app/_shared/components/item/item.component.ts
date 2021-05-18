@@ -151,7 +151,7 @@ export class ItemComponent implements OnDestroy {
 
   get descText() {
     if (!this.item) return '';
-    return descTextFor(this.viewingPlayer, this.item, this.realItem, null, 0, this.viewingPlayer.traits?.traitsLearned?.Appraise ? 1 : 0);
+    return descTextFor(this.viewingPlayer, this.item, this.realItem, null, 0, this.viewingPlayer?.traits?.traitsLearned?.Appraise ? 1 : 0);
   }
 
   get isStackableMaterial(): boolean {
