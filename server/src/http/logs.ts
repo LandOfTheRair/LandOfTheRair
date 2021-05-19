@@ -10,7 +10,7 @@ export class LogsRoute {
 
       const args = req.query.search ? { message: { $regex: req.query.search, $options: 'si' } } : {};
       const search = await entries.find(args).toArray();
-      res.send(search);
+      res.send(search.reverse());
     });
   }
 
