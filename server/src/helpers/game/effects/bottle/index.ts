@@ -1,5 +1,6 @@
 
 export * from './ExactHeal';
+export * from './ExactHealRegen';
 
 export * from './FillChilledWater';
 export * from './FillFateWater';

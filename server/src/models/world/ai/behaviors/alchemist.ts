@@ -3,7 +3,7 @@ import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import {
   distanceFrom, GameServerResponse, IAIBehavior, IAlchemistBehavior,
-  IDialogChatAction, INPC, IPlayer, ItemSlot } from '../../../../interfaces';
+  IDialogChatAction, INPC, IPlayer, ItemSlot, LearnedSpell } from '../../../../interfaces';
 
 export class AlchemistBehavior implements IAIBehavior {
 
@@ -28,23 +28,28 @@ export class AlchemistBehavior implements IAIBehavior {
         mix together that with other bottles of the same type in your sack.
         I can combine up to ${maxOz} oz into one bottle. It will cost ${alchCost} gold per ounce to do this.`;
 
+        const options = [
+          { text: 'Combine Potions', action: 'combine' },
+          { text: 'Leave', action: 'noop' },
+        ];
+
+        if (!game.characterHelper.hasLearned(player, 'Alchemy')) {
+          options.unshift({ text: 'Teach me about Alchemy', action: 'teach' });
+        }
+
         const formattedChat: IDialogChatAction = {
           message,
           displayTitle: npc.name,
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,
-          options: [
-            { text: 'Combine Potions', action: 'combine' },
-            { text: 'Leave', action: 'noop' },
-          ]
+          options
         };
 
         game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
         return message;
       });
-
 
     parser.addCommand('combine')
       .setSyntax(['combine'])
@@ -96,6 +101,21 @@ export class AlchemistBehavior implements IAIBehavior {
         game.itemHelper.setOwner(player, rightHand);
 
         return `I've combined ${itemsRemoved} bottles from your sack and combined them with the one in your hand, enjoy!`;
+      });
+
+    parser.addCommand('teach')
+      .setSyntax(['teach'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Alchemy', LearnedSpell.FromFate);
+
+        if (game.characterHelper.hasLearned(player, 'Alchemy')) return 'You already know Alchemy!';
+
+        return 'Go forth and make potions!';
       });
   }
 

@@ -20,6 +20,7 @@ export class ContentManager extends BaseService {
   private npcs: Record<string, INPCDefinition>;
   private npcScripts: Record<string, INPCScript>;
   private recipes: Record<string, IRecipe[]>;
+  private allRecipes: Record<string, IRecipe>;
   private spawners: Record<string, ISpawnerData>;
   private quests: Record<string, IQuest>;
   private traits: Record<string, ITrait>;
@@ -153,6 +154,10 @@ export class ContentManager extends BaseService {
 
   public getRecipesForTradeskill(tradeskill): IRecipe[] {
     return this.recipes[tradeskill] || [];
+  }
+
+  public getRecipe(name: string): IRecipe | undefined {
+    return this.allRecipes[name];
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
@@ -294,13 +299,17 @@ export class ContentManager extends BaseService {
   private loadRecipes() {
     const recipes = fs.readJsonSync('content/_output/recipes.json');
     this.recipes = {};
+    this.allRecipes = {};
 
     recipes.forEach(recipe => {
       this.recipes[recipe.recipeType] = this.recipes[recipe.recipeType] || [];
       this.recipes[recipe.recipeType].push(recipe);
+
+      this.allRecipes[recipe.name] = recipe;
     });
 
     deepfreeze(this.recipes);
+    deepfreeze(this.allRecipes);
   }
 
   private loadSpawners() {

@@ -8,6 +8,7 @@ export * from './eval';
 export * from './examinecreature';
 export * from './examineitem';
 export * from './gainskill';
+export * from './gaintradeskill';
 export * from './gg';
 export * from './item';
 export * from './kill';

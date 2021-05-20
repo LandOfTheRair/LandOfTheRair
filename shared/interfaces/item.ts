@@ -188,9 +188,15 @@ export interface ICorpse {
   playersHeardDeath?: string[];
 }
 
+export interface IRecipeScroll {
+
+  // the recipe learned from the scroll
+  recipe?: string;
+}
+
 export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
 & IGem & ISuccorable & ICoin & ICorpse & IUsable
-& IUpgradeable & IUpgradeMaterial &
+& IUpgradeable & IUpgradeMaterial & IRecipeScroll &
 {
   // the name of the item
   name: string;
@@ -209,6 +215,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
 
   // whether or not the item binds on pickup
   binds?: boolean;
+
+  // the crafter of the item (if applicable)
+  craftedBy?: string;
 
   // if binds and this, will announce the pickup to nearby
   tellsBind?: boolean;

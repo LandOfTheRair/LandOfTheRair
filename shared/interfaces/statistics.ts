@@ -8,7 +8,10 @@ export enum TrackedStatistic {
   Steps = 'steps',
   NPCsGreeted = 'npcsgreeted',
   RepeatableQuests = 'repeatablequests',
-  DailyQuests = 'dailyquests'
+  DailyQuests = 'dailyquests',
+  AlchemyCrafts = 'alchemycrafts',
+  MetalworkingCrafts = 'metalworkingcrafts',
+  SpellforgingCrafts = 'spellforgingcrafts'
 }
 
 export interface ICharacterStatistics {

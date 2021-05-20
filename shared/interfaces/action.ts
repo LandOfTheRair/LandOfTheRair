@@ -162,6 +162,9 @@ export enum GameAction {
   NPCActionShowMarket = '[NPC] Show Market',
   NPCActionHideMarket = '[NPC] Hide Market',
 
+  ShowTradeskill = '[Window] Show Tradeskill',
+  HideTradeskill = '[Window] hide Tradeskill',
+
   LockerActionShow = '[Locker] Show Locker',
   LockerActionHide = '[Locker] Hide Locker',
 

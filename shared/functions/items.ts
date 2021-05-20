@@ -52,7 +52,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   if (itemClass === ItemClass.Trap) return false;
   if (!isOwnedBy(player, item)) return false;
 
-  if (item.name.includes('Rune Scroll')) return true;
+  if (item.name.includes('Rune Scroll') || item.name.includes('Recipe Book')) return true;
 
   if (itemClass === ItemClass.Box) return true;
   if (itemClass === ItemClass.Book) return true;
@@ -84,6 +84,9 @@ export function descTextFor(
     if (item.mods.owner === player.username) ownedText = 'This item belongs to you. ';
     else                                     ownedText = 'This item does NOT belong to you. ';
   }
+
+  // the crafter
+  const craftedText = item.mods.craftedBy ? `This item was made by ${item.mods.craftedBy}. ` : '';
 
   // how full it is, if at all
   const ounces = item.mods.ounces ?? itemDef.ounces ?? 0;
@@ -165,5 +168,5 @@ export function descTextFor(
 
   return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}${statsText}
     ${dualWieldText}${traitText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${pagesText}${trapSetText}
-    ${conditionText}${ownedText}`;
+    ${craftedText}${conditionText}${ownedText}`;
 }

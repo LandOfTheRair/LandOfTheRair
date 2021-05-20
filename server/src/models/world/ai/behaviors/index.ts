@@ -17,6 +17,7 @@ export * from './furupgrader';
 export * from './hallofheroes';
 export * from './hpdoc';
 export * from './identifier';
+export * from './magician';
 export * from './itemmodder';
 export * from './mpdoc';
 export * from './peddler';

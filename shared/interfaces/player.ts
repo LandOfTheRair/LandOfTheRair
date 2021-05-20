@@ -1,6 +1,6 @@
 import { IAccountBank } from './accountbank';
 import { SubscriptionTier } from './accountpremium';
-import { DamageClass, Skill, SkillBlock } from './building-blocks';
+import { DamageClass, Skill, SkillBlock, TradeskillBlock } from './building-blocks';
 import { ICharacter } from './character';
 import { ICharacterItems } from './characteritems';
 import { ICharacterLockers, ICharacterPouch, IMaterialStorage } from './characterlockers';
@@ -57,6 +57,9 @@ export interface IPlayer extends ICharacter {
 
   runes: string[];
   learnedRunes: string[];
+
+  tradeskills: TradeskillBlock;
+  learnedRecipes: string[];
 
   teleportLocations: Record<string, { x: number; y: number; map: string }>;
 }

@@ -3,7 +3,9 @@ import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
 import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
-  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill, Stat } from '../../interfaces';
+  calculateTradeskillLevelFromXP,
+  calculateTradeskillXPRequiredForLevel,
+  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill, Stat, Tradeskill } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 
@@ -22,6 +24,11 @@ export class CalculatorHelper extends BaseService {
     return calculateSkillXPRequiredForLevel(level);
   }
 
+  // tradeskill XP needed for a particular skill level
+  public calculateTradeskillXPRequiredForLevel(level: number): number {
+    return calculateTradeskillXPRequiredForLevel(level);
+  }
+
   // skill level for a certain skill for a character
   public calcSkillLevelForCharacter(character: ICharacter, skill: Skill): number {
     if (!skill) {
@@ -31,6 +38,17 @@ export class CalculatorHelper extends BaseService {
 
     const skillValue = character.skills[skill.toLowerCase()] ?? 0;
     return calculateSkillLevelFromXP(skillValue);
+  }
+
+  // tradeskill level for a certain skill for a character
+  public calcTradeskillLevelForCharacter(character: IPlayer, skill: Tradeskill): number {
+    if (!skill) {
+      this.game.logger.error('SkillCalc', new Error('Trying to calculate skill of undefined'));
+      return 0;
+    }
+
+    const skillValue = character.tradeskills[skill.toLowerCase()] ?? 0;
+    return calculateTradeskillLevelFromXP(skillValue);
   }
 
   // get the % of current skill to next skill

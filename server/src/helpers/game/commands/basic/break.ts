@@ -33,7 +33,7 @@ export class Break extends MacroCommand {
 
     this.game.characterHelper.setEquipmentSlot(player, itemSlot, undefined);
 
-    this.sendMessage(player, `You break the ${item.name} in your ${handChoice} hand!`, SoundEffect.CombatBlockArmor);
+    this.sendMessage(player, `You break the item in your ${handChoice} hand!`, SoundEffect.CombatBlockArmor);
 
     const effect = this.game.itemHelper.getItemProperty(item, 'breakEffect');
     if (effect) {

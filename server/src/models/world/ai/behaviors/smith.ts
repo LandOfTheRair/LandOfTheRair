@@ -3,7 +3,7 @@ import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import {
   distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
-  INPC, IPlayer, ISmithBehavior, ItemSlot } from '../../../../interfaces';
+  INPC, IPlayer, ISmithBehavior, ItemSlot, LearnedSpell } from '../../../../interfaces';
 
 export class SmithBehavior implements IAIBehavior {
 
@@ -26,17 +26,23 @@ export class SmithBehavior implements IAIBehavior {
         Or, you can tell me REPAIRALL and I'll repair everything you're wearing and holding.
         `;
 
+        const options = [
+          { text: 'Repair Right Hand', action: 'repair' },
+          { text: 'Repair All', action: 'repairall' },
+          { text: 'Leave', action: 'noop' },
+        ];
+
+        if (!game.characterHelper.hasLearned(player, 'Metalworking')) {
+          options.unshift({ text: 'Teach me about Metalworking', action: 'teach' });
+        }
+
         const formattedChat: IDialogChatAction = {
           message: text,
           displayTitle: npc.name,
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,
-          options: [
-            { text: 'Repair Right Hand', action: 'repair' },
-            { text: 'Repair All', action: 'repairall' },
-            { text: 'Leave', action: 'noop' },
-          ]
+          options
         };
 
         game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
@@ -105,6 +111,21 @@ export class SmithBehavior implements IAIBehavior {
         if (totalSpend === 0) return 'You aren\'t wearing anythin\' I can fix.';
 
         return 'Did what I could.';
+      });
+
+    parser.addCommand('teach')
+      .setSyntax(['teach'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Metalworking', LearnedSpell.FromFate);
+
+        if (game.characterHelper.hasLearned(player, 'Metalworking')) return 'You already know Metalworking!';
+
+        return 'Go forth and craft gear!';
       });
   }
 

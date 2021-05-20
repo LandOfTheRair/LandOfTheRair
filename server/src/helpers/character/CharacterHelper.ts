@@ -740,7 +740,7 @@ export class CharacterHelper extends BaseService {
   }
 
   public forceSpellLearnStatus(character: ICharacter, spell: string, state: LearnedSpell): void {
-    character.learnedSpells[spell] = state;
+    character.learnedSpells[spell.toLowerCase()] = state;
   }
 
   // try to break items that have a limited number of uses

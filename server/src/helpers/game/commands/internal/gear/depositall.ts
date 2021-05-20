@@ -16,7 +16,8 @@ export class DepositAllCommand extends MacroCommand {
       const materialRef = this.game.lockerHelper.getMaterialRef(item.name);
       if (!materialRef) return;
 
-      const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      let materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      if (materialSpaceLeft < 0) materialSpaceLeft = 0;
 
       const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {

@@ -1,5 +1,7 @@
 export * from './break';
 export * from './chase';
+export * from './craft';
+export * from './disenchant';
 export * from './empty';
 export * from './fill';
 export * from './hide';
@@ -14,5 +16,6 @@ export * from './showskills';
 export * from './showstats';
 export * from './steal';
 export * from './take';
+export * from './tradeskill';
 export * from './wield';
 export * from './write';

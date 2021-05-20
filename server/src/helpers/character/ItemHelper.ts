@@ -228,7 +228,10 @@ export class ItemHelper extends BaseService {
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (!map) return;
 
-    const { succorInfo, ounces, itemClass, trait } = this.getItemProperties(item, ['succorInfo', 'ounces', 'itemClass', 'trait']);
+    const { succorInfo, ounces, itemClass, trait, recipe } = this.getItemProperties(item,
+      ['succorInfo', 'ounces', 'itemClass', 'trait', 'recipe']
+    );
+
     if (succorInfo && !map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(player, 'You stop, unable to envision the place in your memory!');
       return;
@@ -254,8 +257,25 @@ export class ItemHelper extends BaseService {
       this.game.messageHelper.sendSimpleMessage(player, `You've learned the rune symbol to enhance "${trait?.name}"!`);
     }
 
+    const isUsableRecipe = item.name.includes('Recipe Book') && itemClass === ItemClass.Scroll;
+    if (recipe && isUsableRecipe) {
+      if (player.learnedRecipes.includes(recipe)) {
+        return this.game.messageHelper.sendSimpleMessage(player, 'You already know that recipe!');
+      }
+
+      const recipeRef = this.game.contentManager.getRecipe(recipe);
+      if (!recipeRef) return this.game.messageHelper.sendSimpleMessage(player, 'That recipe does not exist!');
+
+      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, recipeRef.recipeType);
+      if (skill < recipeRef.requireSkill) return this.game.messageHelper.sendSimpleMessage(player, 'You are not skilled enough for that!');
+
+      player.learnedRecipes.push(recipe);
+      this.game.messageHelper.sendSimpleMessage(player, `You've learned the recipe for "${recipe}"!`);
+    }
+
     const totalOunces = ounces ?? 0;
-    let shouldRemove = totalOunces <= 0 && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food || isUsableScroll);
+    let shouldRemove = totalOunces <= 0
+                    && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food || isUsableScroll || isUsableRecipe);
 
     // if it's an empty bottle currently, we just remove it
     if (itemClass === ItemClass.Bottle && totalOunces === 0) {
