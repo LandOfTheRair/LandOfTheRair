@@ -4,7 +4,8 @@ import { Entity, Property } from '../../helpers/core/db/decorators';
 import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
   Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
   IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
-  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage, SubscriptionTier, ICharacterPouch, INPC, TradeskillBlock } from '../../interfaces';
+  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage,
+  SubscriptionTier, ICharacterPouch, INPC, TradeskillBlock } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
