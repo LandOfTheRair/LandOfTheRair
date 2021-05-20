@@ -1,4 +1,4 @@
-import { IMacroCommandArgs, IPlayer, ItemSlot, SoundEffect } from '../../../../interfaces';
+import { IMacroCommandArgs, IPlayer, ItemSlot, SoundEffect, Tradeskill } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Disenchant extends MacroCommand {
@@ -19,6 +19,7 @@ export class Disenchant extends MacroCommand {
     enosDust.mods.ounces = quality;
 
     this.game.characterHelper.setEquipmentSlot(player, ItemSlot.RightHand, enosDust);
+    this.game.playerHelper.gainTradeskill(player, Tradeskill.Spellforging, quality);
 
     this.sendMessage(player, `You disenchant the item in your right hand and get ${quality} dust!`, SoundEffect.CombatBlockArmor);
   }
