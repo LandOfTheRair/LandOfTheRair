@@ -14,5 +14,6 @@ export * from './showskills';
 export * from './showstats';
 export * from './steal';
 export * from './take';
+export * from './tradeskill';
 export * from './wield';
 export * from './write';

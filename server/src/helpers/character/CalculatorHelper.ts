@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
 import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
+  calculateTradeskillXPRequiredForLevel,
   calculateXPRequiredForLevel, ICharacter, IPlayer, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -20,6 +21,11 @@ export class CalculatorHelper extends BaseService {
   // skill XP needed for a particular skill level
   public calculateSkillXPRequiredForLevel(level: number): number {
     return calculateSkillXPRequiredForLevel(level);
+  }
+
+  // tradeskill XP needed for a particular skill level
+  public calculateTradeskillXPRequiredForLevel(level: number): number {
+    return calculateTradeskillXPRequiredForLevel(level);
   }
 
   // skill level for a certain skill for a character

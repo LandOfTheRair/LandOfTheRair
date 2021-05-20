@@ -1,0 +1,44 @@
+<app-window windowName="tradeskill"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+            [canHide]="true"
+            [initialHide]="true"
+            [alwaysOnTop]="true"
+
+            defaultX="450"
+            defaultY="100"
+            defaultWidth="450"
+            defaultHeight="580"
+></app-window>
+
+<ng-template #headTemplate>
+  {{ tradeskillInfo.tradeskill || 'Tradeskill' }}
+</ng-template>
+
+<ng-template #bodyTemplate>
+  <div class="top-area">
+    <div class="skillname">
+      {{ skillName }}
+    </div>
+
+    <div class="progress">
+      <div class="skill">{{ skill }}</div>
+      <div class="bar-container">
+        <span class="bar" [style.width]="skillPercent + '%'"></span>
+        <span class="bar-text">{{ skillPercent.toFixed(0) }}%</span>
+      </div>
+      <div class="skill">{{ skill + 1 }}</div>
+    </div>
+  </div>
+
+  <div class="bottom-area">
+    <div class="category" *ngFor="let recipecat of knownRecipes | keyvalue">
+      <div class="category-header">{{ recipecat.key }}</div>
+      <div class="category-recipes">
+        <div class="recipe" *ngFor="let recipe of recipecat.value">
+          {{ recipe.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

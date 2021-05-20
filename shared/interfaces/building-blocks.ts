@@ -186,13 +186,13 @@ export enum Skill {
   TwoHanded = 'twohanded',
   Thievery = 'thievery',
   Conjuration = 'conjuration',
-  Restoration = 'restoration',
+  Restoration = 'restoration'
+}
 
+export enum Tradeskill {
   Alchemy = 'alchemy',
   Spellforging = 'spellforging',
-  Runewriting = 'runewriting',
-  Metalworking = 'metalworking',
-  Survival = 'survival'
+  Metalworking = 'metalworking'
 }
 
 export enum SkillDisplayName {
@@ -277,6 +277,8 @@ export enum MonsterClass {
 }
 
 export type SkillBlock = Partial<Record<Skill, number>>;
+
+export type TradeskillBlock = Partial<Record<Tradeskill, number>>;
 
 export type StatBlock = Partial<Record<Stat, number>>;
 

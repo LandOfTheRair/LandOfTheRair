@@ -5,8 +5,8 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTrainerWindow,
-  HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTrainerWindow,
+import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTradeskillWindow, HideTrainerWindow,
+  HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTradeskillWindow, OpenTrainerWindow,
   OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
   QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, UpdateParty, ViewCharacterEquipment } from './actions';
 
@@ -62,6 +62,9 @@ const defaultGame: () => IGame = () => ({
     partyInfo: {
       party: null,
       partyMembers: null
+    },
+    tradeskillInfo: {
+      tradeskill: null
     },
     inspectingCharacter: null
   });
@@ -161,6 +164,11 @@ export class GameState {
   @Selector()
   static currentLockerWindow(state: IGame) {
     return state.lockerInfo;
+  }
+
+  @Selector()
+  static currentTradeskillWindow(state: IGame) {
+    return state.tradeskillInfo;
   }
 
   @Selector()
@@ -427,6 +435,22 @@ export class GameState {
   @Action(HideLockerWindow)
   hideLockerWindow(ctx: StateContext<IGame>) {
     ctx.patchState({ lockerInfo: null });
+  }
+
+  @Action(OpenTradeskillWindow)
+  openTradeskillWindow(ctx: StateContext<IGame>, { tradeskill }: OpenTradeskillWindow) {
+    ctx.patchState({
+      tradeskillInfo: {
+        tradeskill
+      }
+    });
+
+    this.store.dispatch(new ShowWindow('tradeskill'));
+  }
+
+  @Action(HideTradeskillWindow)
+  hideTradeskillWindow(ctx: StateContext<IGame>) {
+    ctx.patchState({ tradeskillInfo: null });
   }
 
   @Action(UpdateParty)

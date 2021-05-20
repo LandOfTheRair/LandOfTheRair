@@ -23,6 +23,7 @@ export enum BehaviorType {
   Steelrose = 'steelrose',
   Succorer = 'succorer',
   Upgrader = 'upgrader',
+  Magician = 'magician',
   HallOfHeroes = 'hallofheroes',
   HPDoc = 'hpdoc',
   MPDoc = 'mpdoc',
@@ -115,6 +116,10 @@ export interface IMPDocBehavior {
   mpTier?: number;
 }
 
+export interface IMagicianBehavior {
+
+}
+
 export interface IUpgraderBehavior {
 }
 
@@ -150,7 +155,7 @@ export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
 & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
 & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
 & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
-& IAXPSwapper &
+& IAXPSwapper & IMagicianBehavior &
 {
   type: BehaviorType;
   props?: string[];

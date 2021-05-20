@@ -64,5 +64,9 @@ export interface IGame {
     partyMembers: Record<string, IPartyMember>;
   };
 
+  tradeskillInfo: {
+    tradeskill: string;
+  };
+
   inspectingCharacter: ICharacter | null;
 }

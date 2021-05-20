@@ -134,6 +134,10 @@ export interface IGameSettings {
     skillGain: number;
     holidayTokenGain: number;
   };
+
+  tradeskill: {
+    validTradeskills: string[];
+  };
 }
 
 export interface IStripePurchase {

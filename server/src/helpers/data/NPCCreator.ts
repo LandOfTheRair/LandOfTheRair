@@ -387,6 +387,7 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Banker]: AllBehaviors.BankerBehavior,
       [BehaviorType.Encruster]: AllBehaviors.EncrusterBehavior,
       [BehaviorType.Smith]: AllBehaviors.SmithBehavior,
+      [BehaviorType.Magician]: AllBehaviors.MagicianBehavior,
       [BehaviorType.Steelrose]: AllBehaviors.SteelroseBehavior,
       [BehaviorType.Succorer]: AllBehaviors.SuccorerBehavior,
       [BehaviorType.Upgrader]: AllBehaviors.UpgraderBehavior,

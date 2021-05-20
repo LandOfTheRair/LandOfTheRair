@@ -2,6 +2,7 @@ import { IPlayer, Skill } from '../interfaces';
 
 const FIRST_LEVEL_CONSTANT_CHANGER = 19;
 const SKILL_COEFFICIENT = 1.55;
+const TRADESKILL_COEFFICIENT = 1.35;
 
 export function calculateXPRequiredForLevel(level: number): number {
   const pre20XP = Math.pow(2, Math.min(FIRST_LEVEL_CONSTANT_CHANGER, level - 1)) * 1000;
@@ -25,6 +26,7 @@ export function calculateXPRequiredForLevel(level: number): number {
   return 99999999999999999999999 * level;
 }
 
+// skill functions
 export function calculateSkillLevelFromXP(skillXP: number): number {
   const skillValue = skillXP ?? 0;
   if (skillValue < 100) return 0;
@@ -37,6 +39,21 @@ export function calculateSkillXPRequiredForLevel(level: number): number {
   if (level === 0) return 100;
 
   return Math.floor(Math.pow(SKILL_COEFFICIENT, level) * 100);
+}
+
+// tradeskill functions
+export function calculateTradeskillLevelFromXP(skillXP: number): number {
+  const skillValue = skillXP ?? 0;
+  if (skillValue < 5) return 0;
+
+  const value = Math.log(skillValue / 5) / Math.log(TRADESKILL_COEFFICIENT);
+  return Math.floor(value);
+}
+
+export function calculateTradeskillXPRequiredForLevel(level: number): number {
+  if (level === 0) return 5;
+
+  return Math.floor(Math.pow(TRADESKILL_COEFFICIENT, level) * 5);
 }
 
 export function percentCompleteSkill(player: IPlayer, skill: Skill): string {

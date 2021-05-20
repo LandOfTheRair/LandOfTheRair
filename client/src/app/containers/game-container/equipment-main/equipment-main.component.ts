@@ -238,7 +238,7 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
   }
 
   private getSkillDescription(skill: Skill, skillLevel: number): string {
-    return skillDescs[skill][Math.min(skillDescs[skill].length - 1, skillLevel)];
+    return skillDescs[skill][Math.min(skillDescs[skill].length - 1, skillLevel ?? 0)];
   }
 
 }

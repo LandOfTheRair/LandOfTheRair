@@ -164,3 +164,16 @@ export class UpdateParty {
     public partyMembers: Record<string, IPartyMember>
   ) {}
 }
+
+// dispatched when opening a locker
+export class OpenTradeskillWindow {
+  static type = GameAction.ShowTradeskill;
+  constructor(
+    public tradeskill: string
+  ) {}
+}
+
+// dispatched when closing the game
+export class HideTradeskillWindow {
+  static type = GameAction.HideTradeskill;
+}
