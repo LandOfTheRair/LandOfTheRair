@@ -9,7 +9,7 @@ export class Disenchant extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const item = player.items.equipment[ItemSlot.RightHand];
-    if (!item) return this.sendMessage(player, 'You are not holding an item there!');
+    if (!item) return this.sendMessage(player, 'You are not holding an item in your right hand!');
     if (!this.game.itemHelper.isOwnedBy(player, item)) return this.sendMessage(player, 'That item is not yours to disenchant!');
 
     const quality = this.game.itemHelper.getItemProperty(item, 'quality') ?? 0;
