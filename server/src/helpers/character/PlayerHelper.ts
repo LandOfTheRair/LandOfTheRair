@@ -4,7 +4,7 @@ import uuid from 'uuid/v4';
 
 import { Allegiance, BaseClass, BGM, Direction,
   Holiday,
-  initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat } from '../../interfaces';
+  initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat, Tradeskill } from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -42,8 +42,11 @@ export class PlayerHelper extends BaseService {
     if (!player.effects.buff) player.effects.buff = [];
     if (!player.effects.outgoing) player.effects.outgoing = [];
     if (!player.effects.incoming) player.effects.incoming = [];
+    if (!player.learnedRecipes) player.learnedRecipes = [];
+    if (!player.tradeskills) player.tradeskills = {};
     if (!player.stats.mp) player.stats.mp = 100;
     if (!player.stats.mpregen) player.stats.mpregen = 1;
+
     if ((player.mp as any).__current) {
       player.mp.current = (player.mp as any).__current;
       delete (player.mp as any).__current;
@@ -241,7 +244,7 @@ export class PlayerHelper extends BaseService {
   public clearActionQueue(player: Player, target?: string) {
 
     // if we specify a target, we remove them from the queue as convenience
-    if (player && target) {
+    if (player && player.actionQueue && target) {
       player.actionQueue.fast = player.actionQueue.fast.filter(x => !(x as any).args.stringArgs.includes(target));
       player.actionQueue.slow = player.actionQueue.slow.filter(x => !(x as any).args.stringArgs.includes(target));
       return;
@@ -447,6 +450,15 @@ export class PlayerHelper extends BaseService {
 
     player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);
     player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
+  }
+
+  // gain tradeskill skill for a character
+  public gainTradeskill(player: IPlayer, skill: Tradeskill, skillGained: number): void {
+    if (!skill) return;
+
+    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
+
+    player.tradeskills[skill.toLowerCase()] = Math.max((player.tradeskills[skill.toLowerCase()] ?? 0) + skillGained, 0);
   }
 
   // gain all currently flagged skills
