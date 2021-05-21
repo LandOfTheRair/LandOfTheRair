@@ -16,9 +16,9 @@
     </div>
   </div>
 
-  <mde-popover #macroTooltipTemplate="mdePopover" 
-               mdePopoverPositionY="above" 
-               [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'" 
+  <mde-popover #macroTooltipTemplate="mdePopover"
+               mdePopoverPositionY="above"
+               [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'"
                [mdePopoverOverlapTrigger]="false"
                mdePopoverEnterDelay="1000">
     <mat-card class="tooltip-card">
@@ -26,7 +26,9 @@
         <strong>{{ macroName || 'Empty' }}</strong>
       </mat-card-title>
       <mat-card-content>
-        {{ macroTooltip }}
+        <div *ngIf="player$ | async as player">
+          {{ reformatTooltipTextForPlayer(player, macroTooltip) }}
+        </div>
       </mat-card-content>
     </mat-card>
   </mde-popover>

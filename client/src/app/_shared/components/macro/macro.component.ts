@@ -1,8 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
-import { BehaviorSubject, interval, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { IMacro } from '../../../../interfaces';
+import { BaseClass, IMacro, IPlayer } from '../../../../interfaces';
+import { GameState } from '../../../../stores';
 import { MacrosService } from '../../../services/macros.service';
 
 @AutoUnsubscribe()
@@ -12,6 +14,8 @@ import { MacrosService } from '../../../services/macros.service';
   styleUrls: ['./macro.component.scss']
 })
 export class MacroComponent implements OnInit, OnDestroy {
+
+  @Select(GameState.player) player$: Observable<IPlayer>;
 
   private cooldownDisplayValue = new BehaviorSubject<number>(0);
   public cooldownDisplay: string;
@@ -75,4 +79,10 @@ export class MacroComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {}
+
+  reformatTooltipTextForPlayer(player: IPlayer, text: string): string {
+    if (player.baseClass === BaseClass.Thief) return text.split('MP').join('HP');
+
+    return text;
+  }
 }
