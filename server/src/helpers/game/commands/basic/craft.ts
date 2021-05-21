@@ -24,6 +24,7 @@ export class Craft extends MacroCommand {
     if (requireLearn && !player.learnedRecipes.includes(recipe.name)) return this.sendMessage(player, 'You do not know that recipe!');
 
     const itemUUIDs = {};
+
     let newOwner = '';
 
     const canUseItemForRecipe = (recipeItem) => {
@@ -53,8 +54,6 @@ export class Craft extends MacroCommand {
 
           if (checkItem.name.includes(ing.filter)) {
             ouncesFound[ing.filter] += checkItem.mods.ounces ?? 0;
-
-            itemUUIDs[checkItem.uuid] = checkItem.mods.ounces ?? 0;
           }
         });
 
@@ -70,6 +69,7 @@ export class Craft extends MacroCommand {
 
     // check for ingredients
     if (ingredients) {
+
       ingredients.forEach(ing => {
 
         // check left hand first
@@ -94,7 +94,7 @@ export class Craft extends MacroCommand {
         });
       });
 
-      if (Object.keys(itemUUIDs).length !== ingredients.length) return this.sendMessage(player, 'You do not have all the ingredients!');
+      if (Object.keys(itemUUIDs).length !== ingredients.length) return this.sendMessage(player, 'You do not have all of the ingredients!');
     }
 
     const pointChance = 25 * clamp((recipe.maxSkillForGains - skill), 0, 4);
