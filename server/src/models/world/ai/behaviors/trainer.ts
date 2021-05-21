@@ -183,6 +183,8 @@ export class TrainerBehavior implements IAIBehavior {
         if (game.playerHelper.canGainExpOnMap(player)) {
           expGained = Math.floor(coinsTaken / 10);
           if (expGained < 1) expGained = 1;
+
+          if (isNaN(expGained)) expGained = 1;
         }
 
         game.playerHelper.gainExp(player, expGained);

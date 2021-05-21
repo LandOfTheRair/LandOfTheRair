@@ -353,7 +353,11 @@ export class PlayerHelper extends BaseService {
   // flag a certain skill for a player
   public trainSkill(player: IPlayer, skill: Skill, amt: number): void {
     player.paidSkills[skill] ??= 0;
-    player.paidSkills[skill]! += amt;
+
+    const baseVal = player.paidSkills[skill] ?? 0;
+    player.paidSkills[skill] = baseVal + amt;
+
+    if (isNaN(baseVal + amt)) player.paidSkills[skill] = amt;
   }
 
   // whether or not the player can get skill on the current map
