@@ -105,10 +105,15 @@ export class TraitHelper extends BaseService {
   // reset all traits. since everything costs 1 tp, we can sum up all of our learned traits and get the right number.
   public resetTraits(player: IPlayer): void {
 
-    // unlearn them all and recalculate the max tp
-    player.traits.traitsLearned = {};
+    // unlearn them all (unless ancient) and recalculate the max tp
+    Object.keys(player.traits.traitsLearned).forEach(trait => {
+      const traitRef = this.getTraitData(trait);
+      if (traitRef.isAncient) return;
+
+      delete player.traits.traitsLearned[trait];
+    });
+
     player.traits.tp = (player.level || 1) + 1;
-    player.traits.ap = player.ancientLevel || 0;
 
     // last, recalculate stats because lots of traits affect stats
     this.game.effectHelper.removeSimilarEffects(player, 'Stance', '');
