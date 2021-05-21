@@ -317,6 +317,9 @@ export class DeathHelper extends BaseService {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
+      // potions don't strip
+      if (itemSlot === ItemSlot.Potion) return;
+
       allItemDrops.push({ ...pickSlot(), item });
       this.game.characterHelper.setEquipmentSlot(character, itemSlot as ItemSlot, undefined);
     });
