@@ -774,7 +774,9 @@ export class DamageHelperPhysical extends BaseService {
       conMultiplier -= this.game.traitHelper.traitLevelValue(attacker, 'StunningFist');
     }
 
-    const defCon = this.game.characterHelper.getStat(defender, Stat.CON);
+    const defCon = this.game.characterHelper.getStat(defender, Stat.CON)
+                 * this.game.traitHelper.traitLevelValue(defender, 'CombatFortitude');
+
     const atkStr = this.game.characterHelper.getStat(attacker, Stat.STR);
 
     const diff = atkStr - defCon;
