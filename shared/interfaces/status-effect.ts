@@ -74,6 +74,7 @@ export interface IStatusEffectData {
     castSfx?: SoundEffect;        // the sound effect sent to the caster when the effect starts
     applySfx?: SoundEffect;       // the sound effect sent to the creature when the effect starts
 
+    canStack?: boolean;           // whether or not the effect can stack itself repeatedly
     castMessage?: string;         // the message sent to the caster when the effect starts
     applyMessage?: string;        // the message sent to the creature when the effect starts
     unapplyMessage?: string;      // the message sent to the creature when the effect ends
