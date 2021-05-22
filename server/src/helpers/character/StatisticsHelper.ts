@@ -9,6 +9,7 @@ export class StatisticsHelper extends BaseService {
   public init() {}
 
   public addStatistic(player: IPlayer, statistic: TrackedStatistic, number = 1): void {
+    if (!player || !player.statistics) return;
     player.statistics.statistics[statistic] = player.statistics.statistics[statistic] || 0;
     player.statistics.statistics[statistic]! += number ?? 0;
   }
