@@ -965,7 +965,7 @@ export class MoveItems extends MacroCommand {
 
   // handle G as an origin
   handleG(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.G.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.G.includes(dest) || !origSlot) return this.sendMessage(player, 'Invalid item move destination.');
 
     const [itemClass, uuid] = origSlot.split(':');
 
@@ -1201,7 +1201,7 @@ export class MoveItems extends MacroCommand {
 
   // handle M as an origin
   handleM(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.M.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.M.includes(dest) || !origSlot) return this.sendMessage(player, 'Invalid item move destination.');
 
     const [npcUUID, subtype, subslot] = origSlot.split(':');
     const npc: INPC = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, npcUUID) as INPC;
@@ -1359,7 +1359,7 @@ export class MoveItems extends MacroCommand {
 
   // handle O as an origin
   handleO(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.O.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.O.includes(dest) || !origSlot) return this.sendMessage(player, 'Invalid item move destination.');
 
     const itemSlot = +origSlot.split(':')[1];
     const srcItem = player.items.buyback[itemSlot];
@@ -1441,7 +1441,7 @@ export class MoveItems extends MacroCommand {
 
   // handle W as an origin
   handleW(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.W.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.W.includes(dest) || !origSlot) return this.sendMessage(player, 'Invalid item move destination.');
 
     const origLocker = this.game.lockerHelper.getLockerFromString(player, origSlot);
     const [w, locker, origLockerSlot] = origSlot.split(':');
@@ -1557,7 +1557,7 @@ export class MoveItems extends MacroCommand {
 
   // handle K as an origin
   handleK(player: IPlayer, dest: string, origSlot: string, destSlot: string) {
-    if (!validDestinations.K.includes(dest)) return this.sendMessage(player, 'Invalid item move destination.');
+    if (!validDestinations.K.includes(dest) || !origSlot) return this.sendMessage(player, 'Invalid item move destination.');
 
     const [k, source] = origSlot.split(':');
     const { items, withdrawInOunces } = this.game.lockerHelper.getMaterialData(source);
