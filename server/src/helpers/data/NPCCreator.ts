@@ -65,7 +65,7 @@ export class NPCCreator extends BaseService {
     baseChar.hostility = npcDef.hostility ?? Hostility.OnHit;
     baseChar.noCorpseDrop = npcDef.noCorpseDrop ?? false;
     baseChar.noItemDrop = npcDef.noItemDrop ?? false;
-    baseChar.drops = npcDef.drops ?? [];
+    baseChar.drops = cloneDeep(npcDef.drops) ?? [];
     baseChar.copyDrops = npcDef.copyDrops ?? [];
     baseChar.dropPool = npcDef.dropPool ?? null;
     baseChar.triggers = npcDef.triggers ?? {};

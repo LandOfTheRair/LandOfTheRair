@@ -105,6 +105,8 @@ export interface IGameSettings {
     levelFuzz: number;
     eliteLootMult: number;
     normalLootMult: number;
+
+    potionDrops: Record<string, Record<string, number>>;
   };
 
   players: {
