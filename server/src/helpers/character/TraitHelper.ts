@@ -90,6 +90,7 @@ export class TraitHelper extends BaseService {
     if (!this.traitLevel(player, trait)) return;
 
     const traitRef = this.getTraitData(trait);
+    if (!traitRef) return;
 
     if (traitRef.isAncient) {
       player.traits.ap++;
@@ -108,6 +109,7 @@ export class TraitHelper extends BaseService {
     // unlearn them all (unless ancient) and recalculate the max tp
     Object.keys(player.traits.traitsLearned).forEach(trait => {
       const traitRef = this.getTraitData(trait);
+      if (!traitRef) return;
       if (traitRef.isAncient) return;
 
       delete player.traits.traitsLearned[trait];
