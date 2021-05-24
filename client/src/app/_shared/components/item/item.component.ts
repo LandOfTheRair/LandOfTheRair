@@ -114,7 +114,7 @@ export class ItemComponent implements OnDestroy {
 
   get cosmeticName(): string {
     if (!this.item || !this.realItem) return '';
-    if (this.item.mods.searchItems) return 'UnsearchedCorpse';
+    if (this.item.mods.searchItems && this.item.mods.searchItems.length > 0) return 'UnsearchedCorpse';
 
     const cosmetic = this.item.mods?.cosmetic || this.realItem.cosmetic;
 
