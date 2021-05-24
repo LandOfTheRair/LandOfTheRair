@@ -906,32 +906,34 @@ export class DamageHelperPhysical extends BaseService {
       this.resolveThrow(attacker, defender, throwHand, attackerScope.weapon);
     };
 
+    const canDefend = defender.allegiance !== Allegiance.NaturalResource;
+
     // spend forever attempting to hit the target
-    const didDodge = this.tryDodge(attacker, defender, attackerScope, defenderScope, args);
+    const didDodge = canDefend ? this.tryDodge(attacker, defender, attackerScope, defenderScope, args) : false;
     if (didDodge) {
       resolveThrow();
       return { dodge: true };
     }
 
-    const didArmorBlock = this.tryArmorBlock(attacker, defender, attackerScope, defenderScope, args);
+    const didArmorBlock = canDefend ? this.tryArmorBlock(attacker, defender, attackerScope, defenderScope, args) : false;
     if (didArmorBlock) {
       resolveThrow();
       return { block: true, blockedBy: 'armor' };
     }
 
-    const didWeaponBlock = this.tryWeaponBlock(attacker, defender, attackerScope, defenderScope, args);
+    const didWeaponBlock = canDefend ? this.tryWeaponBlock(attacker, defender, attackerScope, defenderScope, args) : false;
     if (didWeaponBlock) {
       resolveThrow();
       return { block: true, blockedBy: 'weapon' };
     }
 
-    const didShieldBlock = this.tryShieldBlock(attacker, defender, attackerScope, defenderScope, args);
+    const didShieldBlock = canDefend ? this.tryShieldBlock(attacker, defender, attackerScope, defenderScope, args) : false;
     if (didShieldBlock) {
       resolveThrow();
       return { block: true, blockedBy: 'shield' };
     }
 
-    const didOffhandBlock = this.tryOffhandBlock(attacker, defender, attackerScope, defenderScope, args);
+    const didOffhandBlock = canDefend ? this.tryOffhandBlock(attacker, defender, attackerScope, defenderScope, args) : false;
     if (didOffhandBlock) {
       resolveThrow();
       return { block: true, blockedBy: 'offhand' };
