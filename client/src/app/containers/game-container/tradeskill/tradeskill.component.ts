@@ -14,6 +14,7 @@ import { UIService } from '../../../services/ui.service';
 
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 import * as allRecipes from '../../../../assets/content/_output/recipes.json';
+import { AssetService } from '../../../services/asset.service';
 const recipes = (allRecipes as any).default || allRecipes;
 
 @AutoUnsubscribe()
@@ -42,6 +43,7 @@ export class TradeskillComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private assetService: AssetService,
     public uiService: UIService,
     public gameService: GameService
   ) { }
@@ -72,6 +74,11 @@ export class TradeskillComponent implements OnInit, OnDestroy {
 
   craft(name: string) {
     this.gameService.sendCommandString(`craft ${name}`);
+  }
+
+  itemDesc(item: string): string {
+    const realItem = this.assetService.getItem(item);
+    return realItem.desc;
   }
 
   private setPlayer(player: IPlayer) {
