@@ -107,6 +107,10 @@ export class TeleportHelper extends BaseService {
       // then we update their status based on the new map, and send them the new movement patch with their real FOV
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
       this.game.transmissionHelper.sendMovementPatch(player);
+
+      if (this.game.worldManager.isDungeon(player.map)) {
+        this.game.effectHelper.addEffect(player, '', 'EtherManipulation');
+      }
     }
   }
 
