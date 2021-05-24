@@ -58,7 +58,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   if (itemClass === ItemClass.Book) return true;
   if (useEffect && useEffect.uses) return true;
   if (succorInfo) return true;
-  if (ounces > 0) return true;
+  if (ounces > 0 && itemClass !== ItemClass.Rock) return true;
 
   return false;
 }
