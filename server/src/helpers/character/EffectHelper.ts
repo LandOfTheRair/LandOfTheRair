@@ -59,10 +59,10 @@ export class EffectHelper extends BaseService {
 
     const effectData: IStatusEffectData = merge({}, rawEffectData, modifyEffectInfo);
     const { type, extra, duration } = effectData.effect;
-    const { recentlyRef, canStack } = effectData.effectMeta;
+    const { recentlyRef, noStack } = effectData.effectMeta;
 
     // if the effect can't stack we won't let it (prevents things like chain stun)
-    if (!canStack && this.hasEffect(character, effectName)) {
+    if (noStack && this.hasEffect(character, effectName)) {
       return;
     }
 
