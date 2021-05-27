@@ -7,7 +7,7 @@ export class PartyResetInstances extends MacroCommand {
   override canBeInstant = true;
   override canBeFast = true;
 
-  async override execute(player: IPlayer, args: IMacroCommandArgs) {
+  override async execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) return this.sendMessage(player, 'You are not in a party!');
     if (!this.game.partyHelper.isLeader(player)) return this.sendMessage(player, 'You are not the party leader!');
 
