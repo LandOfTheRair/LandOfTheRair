@@ -48,8 +48,9 @@ export class SpellManager extends BaseService {
       ? [skillGain, Skill.Thievery]
       : [skillGain];
 
+    const skillGained = spellData.spellMeta.aoe ? 0.01 : 1;
     this.game.playerHelper.flagSkill(caster as Player, skillsFlagged);
-    this.game.playerHelper.gainCurrentSkills(caster as Player, 1);
+    this.game.playerHelper.gainCurrentSkills(caster as Player, skillGained);
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {
