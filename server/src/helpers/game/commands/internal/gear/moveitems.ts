@@ -242,7 +242,7 @@ export class MoveItems extends MacroCommand {
     if (dest === 'D') {
       if (!this.game.subscriptionHelper.hasPouch(player)) return false;
 
-      if (srcItem.name.includes('Conjured') || srcItem.name.includes('Succor')) {
+      if (srcItem.name.includes('Conjured') || succorInfo) {
         this.sendMessage(player, 'That item cannot fit in your pouch!');
         return false;
       }
