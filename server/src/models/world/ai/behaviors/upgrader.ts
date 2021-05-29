@@ -15,6 +15,42 @@ export class UpgraderBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+
+        const {
+          canUpgradeWith,
+          stats,
+          requirements: rightRequirements
+        } = game.itemHelper.getItemProperties(rightHand, ['stats', 'canUpgradeWith', 'requirements']);
+
+        if (canUpgradeWith) {
+
+          let message = '';
+
+          if (!stats) message = 'This upgrade doe not seem to do anything.';
+
+          if (stats) {
+            message = `This upgrade increases the following stats: ${Object.keys(stats).map(x => x.toUpperCase()).join(', ')}`;
+          }
+
+          if (rightRequirements?.level) {
+            message = `${message} You'll need to be level ${rightRequirements.level} to encrust this gem.`;
+
+            if (rightRequirements.level > player.level) {
+              message = `${message} You aren't strong enough to use this gem yet!`;
+            }
+          }
+
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: 'Upgrade Appraisal',
+            content: message,
+            extraData: { npcSprite: npc.sprite },
+          });
+
+          return message;
+        }
+
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
           title: 'Upgrade Item?',
