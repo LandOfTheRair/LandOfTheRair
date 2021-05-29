@@ -50,6 +50,10 @@ export class UpgraderBehavior implements IAIBehavior {
         const leftRequirements = game.itemHelper.getItemProperty(leftHand, 'requirements');
         const rightRequirements = game.itemHelper.getItemProperty(rightHand, 'requirements');
 
+        if (leftRequirements?.baseClass && rightRequirements?.baseClass && leftRequirements.baseClass !== rightRequirements.baseClass) {
+          return 'These items are not compatible!';
+        }
+
         game.itemHelper.setItemProperty(rightHand, 'requirements',
           game.itemHelper.mergeItemRequirements(leftRequirements, rightRequirements)
         );

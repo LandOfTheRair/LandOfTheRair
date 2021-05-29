@@ -124,6 +124,10 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if ((leftRequirements?.level ?? 0) > player.level) return 'You aren\'t strong enough to use this gem yet!';
 
+        if (leftRequirements?.baseClass && rightRequirements?.baseClass && leftRequirements.baseClass !== rightRequirements.baseClass) {
+          return 'These items are not compatible!';
+        }
+
         const slots = leftEncrustGive?.slots ?? [];
         const shouldPass = (slots.includes('weapon') && WeaponClasses.includes(itemClass))
                         || (slots.includes('shield') && ShieldClasses.includes(itemClass))
