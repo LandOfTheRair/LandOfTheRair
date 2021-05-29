@@ -212,8 +212,10 @@ export class NPCCreator extends BaseService {
     this.characterHelper.healToFull(baseChar);
     this.characterHelper.manaToFull(baseChar);
 
-    const parser = this.createNPCDialogParser(baseChar, npcDef);
-    baseChar.dialogParser = parser;
+    if (baseChar.allegiance !== Allegiance.NaturalResource) {
+      const parser = this.createNPCDialogParser(baseChar, npcDef);
+      baseChar.dialogParser = parser;
+    }
 
     this.assignNPCBehavior(baseChar, npcDef);
 
