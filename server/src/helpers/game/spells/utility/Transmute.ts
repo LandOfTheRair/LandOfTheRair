@@ -25,6 +25,9 @@ export class Transmute extends Spell {
       items[itemClass].forEach((groundItem: IGroundItem) => {
         if (groundItem.item.mods.owner) return;
 
+        const quality = this.game.itemHelper.getItemProperty(groundItem.item, 'quality');
+        if (quality > 0) return;
+
         removeItems.push(groundItem);
 
         const value = this.game.inventoryHelper.itemValue(caster, groundItem.item);
