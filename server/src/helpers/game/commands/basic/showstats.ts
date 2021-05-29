@@ -29,7 +29,9 @@ export class ShowStats extends MacroCommand {
       const value = this.game.characterHelper.getStat(player, key as Stat);
       if (value === 0) return;
 
-      message = `${message}<br>Your ${key.toUpperCase()} is ${this.game.characterHelper.getStat(player, key as Stat)}.`;
+      const statVal = this.game.characterHelper.getStat(player, key as Stat);
+      const showBase = player.stats[key as Stat] && player.stats[key as Stat] !== statVal;
+      message = `${message}<br>Your ${key.toUpperCase()} is ${statVal}${showBase ? ' (base: ' + player.stats[key] + ')' : ''}.`;
     });
 
     this.game.messageHelper.sendLogMessageToPlayer(player, { message, sfx: undefined }, [MessageType.Description]);
