@@ -47,9 +47,11 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public macroSub: Subscription;
   public fgSub: Subscription;
   public bgSub: Subscription;
+  public playerSub: Subscription;
 
   // macro stuff
   public allMacros: Record<string, IMacro> = {};
+  public allCustomMacros: Record<string, IMacro> = {};
   public macros: IMacro[] = [];
   public showEdit: Record<string, boolean> = {};
 
@@ -73,6 +75,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public currentMacrosInPage: IMacro[] = [];
   public activeMacroSlotGroup: number;
   public activeMacroSlotIndex: number;
+
+  private player: IPlayer;
 
   @Selector([GameState, MacrosState])
   static currentPlayerMacros(
@@ -108,6 +112,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
       this.allMacros = Object.assign({}, allMacros, macs, currentMacs.learnedMacros);
       this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
+      this.allCustomMacros = macs;
 
       this.allPossibleForTargets = learnedMacs.map(x => x.for).filter(Boolean).sort();
 
@@ -122,6 +127,8 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
       this.activeMacroBars = cloneDeep(bars.activeMacroBars);
       this.macroBars = cloneDeep(Object.values(bars.macroBars));
     });
+
+    this.playerSub = this.currentPlayer$.subscribe(player => this.player = player);
 
     this.setMacroGroupPage(0);
   }
@@ -168,14 +175,16 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   copy(macro: IMacro) {
+    const copyText = this.player ? `(copy ${this.player.name})` : '(copy)';
     this.currentlyEditingMacro = cloneDeep(macro);
     this.currentlyEditingMacro.isDefault = false;
-    this.currentlyEditingMacro.name = `${this.currentlyEditingMacro.name} (copy)`;
+    this.currentlyEditingMacro.name = `${this.currentlyEditingMacro.name} ${copyText}`;
     this.currentlyEditingMacro.color = this.currentlyEditingMacro.color || '#000';
     this.currentlyEditingMacro.bgColor = this.currentlyEditingMacro.bgColor || '#ccc';
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = false;
+    console.log(this.allCustomMacros);
   }
 
   remove(macro: IMacro) {
@@ -221,7 +230,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
 
   alreadyAssignedMacroName(): boolean {
     if (this.isEditing) return false;
-
+    if (this.allCustomMacros[this.currentlyEditingMacro.name]) return true;
     return !!this.macros.find(x => x.name === this.currentlyEditingMacro.name);
   }
 
