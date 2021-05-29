@@ -7,6 +7,7 @@ import { DefaultAIBehavior } from './default';
 export class DedlaenEscortAI extends DefaultAIBehavior {
 
   private following: IPlayer | undefined;
+  private notFollowingTicks = 0;
 
   override tick(): void {
     const npc = this.npc;
@@ -23,6 +24,8 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
     const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
 
     if (this.following) {
+      this.notFollowingTicks = 0;
+
       this.game.movementHelper.moveTowards(npc, this.following);
 
       responses.push(...[
@@ -32,6 +35,8 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
       ]);
 
     } else {
+
+      this.notFollowingTicks++;
 
       this.moveRandomly(random(0, moveRate));
 
@@ -49,7 +54,7 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
 
     const startPos = this.startLoc || this.spawner.pos;
     const distFrom = distanceFrom(npc, startPos);
-    if (!this.following && distFrom > 5) {
+    if (!this.following && distFrom > 5 && this.notFollowingTicks > 10) {
       this.sendLeashMessage();
       npc.x = startPos.x;
       npc.y = startPos.y;
