@@ -136,7 +136,7 @@ export abstract class SkillCommand extends MacroCommand {
       target = user;
     }
 
-    if (args) {
+    if (args && target !== user) {
       target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(user, args);
     }
 
