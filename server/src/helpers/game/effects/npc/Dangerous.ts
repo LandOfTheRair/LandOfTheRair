@@ -14,7 +14,7 @@ export class Dangerous extends Effect {
 
     const potionDrops = this.game.contentManager.getGameSetting('npcgen', `potionDrops.${mapData.map.region}`) ?? {};
     Object.keys(potionDrops).forEach(potion => {
-      (char as INPC).drops?.push({ result: potion, chance: 1, maxChance: potionDrops[potion] });
+      (char as INPC).drops?.push({ result: potion, chance: 1, maxChance: potionDrops[potion], noLuckBonus: true });
     });
   }
 
