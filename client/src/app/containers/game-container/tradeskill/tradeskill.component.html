@@ -41,6 +41,16 @@
           <div class="recipe-name-ing">
             <div class="recipe-name">
               {{ recipe.name }}
+
+              <span *ngIf="itemTies(recipe.item)">
+                <span *ngIf="recipe.transferOwnerFrom">
+                  (Binds; Transfers)
+                </span>
+                <span *ngIf="!recipe.transferOwnerFrom">
+                  (Binds)
+                </span>
+              </span>
+
               <span class="skill-gain-percent"
                     [class.perc-0]="recipe._pointChance < 25"
                     [class.perc-25]="recipe._pointChance >= 25 && recipe._pointChance < 50"

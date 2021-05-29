@@ -81,6 +81,11 @@ export class TradeskillComponent implements OnInit, OnDestroy {
     return realItem.desc;
   }
 
+  itemTies(item: string): boolean {
+    const realItem = this.assetService.getItem(item);
+    return realItem.binds;
+  }
+
   private setPlayer(player: IPlayer) {
     this.player = player;
   }
