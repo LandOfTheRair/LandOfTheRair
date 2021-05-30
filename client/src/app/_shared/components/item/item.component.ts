@@ -346,6 +346,16 @@ export class ItemComponent implements OnDestroy {
         return;
 
       } else if (this.context !== 'Ground' && this.context !== 'GroundGroup') {
+        if (this.context === 'Equipment' && this.realItem.isSackable) {
+          this.doMoveAction('S');
+          return;
+        }
+
+        if (this.context === 'Equipment' && this.realItem.isBeltable) {
+          this.doMoveAction('B');
+          return;
+        }
+
         if (this.context === 'Right' || this.context === 'Left') {
           this.doMoveAction('B');
           return;
@@ -353,6 +363,11 @@ export class ItemComponent implements OnDestroy {
 
         if (this.context === 'Belt') {
           this.doMoveAction('R');
+          return;
+        }
+
+        if (this.context === 'Sack' && this.isEquippable) {
+          this.doMoveAction('E');
           return;
         }
 
