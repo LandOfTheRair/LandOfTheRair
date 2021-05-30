@@ -64,6 +64,8 @@ export class TradeskillComponent implements OnInit, OnDestroy {
       this.store.dispatch(new HideTradeskillWindow());
       this.store.dispatch(new HideWindow('tradeskill'));
       this.chosenCraft = '';
+      this.knownRecipes = {};
+      this.knownRecipesArray = [];
     });
   }
 
@@ -91,16 +93,22 @@ export class TradeskillComponent implements OnInit, OnDestroy {
     this.player = player;
   }
 
+  private getPlayerSkillXP(): number {
+    return (this.player.tradeskills || {})[this.tradeskillInfo.tradeskill.toLowerCase()] ?? 0;
+  }
+
   private getPlayerSkill(): number {
     if (!this.player) return 0;
 
-    const curXP = (this.player.tradeskills || {})[this.tradeskillInfo.tradeskill.toLowerCase()] ?? 0;
+    const curXP = this.getPlayerSkillXP();
     const skill = calculateTradeskillLevelFromXP(curXP);
     return skill;
   }
 
   private updateRecipes() {
     if (!this.tradeskillInfo || !this.tradeskillInfo.tradeskill || !this.player) return;
+
+    if (this.getPlayerSkillXP() === this.skillPercent) return;
 
     const skill = this.getPlayerSkill();
 
