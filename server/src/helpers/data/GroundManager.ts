@@ -136,6 +136,8 @@ export class GroundManager extends BaseService {
       const mapData = this.game.worldManager.getMap(map);
       if (mapData?.state) {
         mapData.state.allSpawners.forEach(spawner => {
+          if (spawner.areAnyNPCsAlive) return;
+
           spawner.increaseTick(tickIncrease);
         });
       }
