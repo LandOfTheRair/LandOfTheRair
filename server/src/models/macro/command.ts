@@ -132,12 +132,12 @@ export abstract class SkillCommand extends MacroCommand {
       }
     }
 
-    if (allowSelf) {
-      target = user;
-    }
-
     if (args && target !== user) {
       target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(user, args);
+    }
+
+    if (allowSelf && !target) {
+      target = user;
     }
 
     if (!target) {
