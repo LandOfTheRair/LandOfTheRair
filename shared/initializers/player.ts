@@ -31,7 +31,9 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {} },
     ancientLevel: char.ancientLevel ?? 0,
     items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, buyback: [] },
-    statistics: char.statistics ?? { statistics: {}, baseClass: BaseClass.Traveller, name: 'Unknown', level: 0, xp: 0 },
+    statistics: char.statistics ?? {
+      statistics: {}, baseClass: BaseClass.Traveller, name: 'Unknown', level: 0, xp: 0, charSlot: 0, username: ''
+    },
     lockers: char.lockers ?? { lockers: {} },
     bank: char.bank ?? { deposits: {} },
     accountLockers: char.accountLockers ?? { lockers: {}, materials: {}, pouch: { items: [] } },

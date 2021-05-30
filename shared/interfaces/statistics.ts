@@ -20,4 +20,6 @@ export interface ICharacterStatistics {
   name: string;
   level: number;
   xp: number;
+  charSlot: number;
+  username: string;
 }

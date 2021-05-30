@@ -19,6 +19,8 @@ export class StatisticsHelper extends BaseService {
     player.statistics.xp = player.exp;
     player.statistics.name = player.name;
     player.statistics.level = player.level;
+    player.statistics.username = player.username;
+    player.statistics.charSlot = player.charSlot;
   }
 
 }

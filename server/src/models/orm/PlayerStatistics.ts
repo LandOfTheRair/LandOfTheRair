@@ -14,5 +14,7 @@ export class PlayerStatistics extends BaseEntity implements ICharacterStatistics
   @Property() name: string;
   @Property() level: number;
   @Property() xp: number;
+  @Property() charSlot: number;
+  @Property() username: string;
 
 }
