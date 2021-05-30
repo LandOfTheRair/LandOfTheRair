@@ -8,6 +8,9 @@ export interface IRecipe {
   requireSkill: number;
   requireLearn?: boolean;
   requireClass?: BaseClass[];
+  requireSpell?: string;
+  copySkillToPotency?: boolean;
+  potencyScalar?: number;
   skillGained: number;
   maxSkillForGains: number;
   xpGained: number;

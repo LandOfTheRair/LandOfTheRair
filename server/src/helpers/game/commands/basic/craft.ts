@@ -16,12 +16,16 @@ export class Craft extends MacroCommand {
 
     const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, recipe.recipeType);
 
-    const { requireSkill, requireClass, requireLearn, ingredients, ozIngredients, transferOwnerFrom } = recipe;
+    const { requireSkill, requireClass, requireLearn, requireSpell, ingredients, ozIngredients, transferOwnerFrom } = recipe;
 
     if (player.items.equipment[ItemSlot.RightHand]) return this.sendMessage(player, 'Empty your right hand first!');
     if (skill < requireSkill) return this.sendMessage(player, 'You do not know that recipe!');
     if (requireClass && !requireClass.includes(player.baseClass)) return this.sendMessage(player, 'You do not know that recipe!');
     if (requireLearn && !player.learnedRecipes.includes(recipe.name)) return this.sendMessage(player, 'You do not know that recipe!');
+
+    if (requireSpell && !this.game.characterHelper.hasLearned(player, requireSpell)) {
+      return this.sendMessage(player, 'You do not know that spell!');
+    }
 
     const itemUUIDs = {};
 
@@ -157,6 +161,13 @@ export class Craft extends MacroCommand {
 
     if (newOwner) {
       item.mods.owner = newOwner;
+    }
+
+    if (recipe.copySkillToPotency) {
+      const effect = this.game.itemHelper.getItemProperty(item, 'useEffect');
+      if (!effect) return;
+
+      item.mods.useEffect = { ...effect, uses: skill, potency: (recipe.potencyScalar ?? 1) * skill };
     }
 
     this.game.characterHelper.setRightHand(player, item);
