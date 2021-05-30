@@ -69,6 +69,12 @@ export class GroundManager extends BaseService {
     const grounds = await this.game.groundDB.loadAllGrounds();
     grounds.forEach(groundEntity => {
 
+      // instances older than 24h will not be loaded on next reboot
+      if (this.game.worldManager.isDungeon(groundEntity.map) && Date.now() + (3600 * 1000 * 24) > groundEntity.savedAt) {
+        return;
+      }
+
+      // if it has a time it was saved, boost it on next reboot
       if (groundEntity.savedAt) {
         this.boostSpawnersInMapBasedOnTimestamp(groundEntity.map, groundEntity.savedAt, groundEntity);
       }
@@ -120,8 +126,7 @@ export class GroundManager extends BaseService {
 
     const tickIncrease = Math.floor((now - inactiveSince) / 1000);
     groundEntity.spawners?.forEach(spawner => {
-      if (!spawner.currentTick) return;
-
+      spawner.currentTick = spawner.currentTick ?? 0;
       spawner.currentTick += tickIncrease;
     });
   }
