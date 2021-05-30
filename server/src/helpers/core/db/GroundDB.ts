@@ -39,6 +39,8 @@ export class GroundDB extends BaseService {
 
     const massOp = groundColl.initializeUnorderedBulkOp();
     grounds.forEach(ground => {
+      if (this.game.worldManager.isDungeon(ground.map) && !ground.partyName) return;
+
       massOp
         .find({ map: ground.map })
         .upsert()
