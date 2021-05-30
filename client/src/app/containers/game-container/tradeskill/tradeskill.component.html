@@ -35,7 +35,7 @@
     <div class="category" *ngFor="let recipecat of knownRecipesArray">
       <div class="category-header">{{ recipecat.category }}</div>
       <div class="category-recipes">
-        <div class="recipe" *ngFor="let recipe of recipecat.recipes" (click)="chooseRecipe(recipe.name)">
+        <div class="recipe" *ngFor="let recipe of recipecat.recipes; trackBy: recipeTrackBy" (click)="chooseRecipe(recipe.name)">
           <app-item class="recipe-result" size="normal" [showDesc]="false" [showEncrust]="false" [showCount]="false" [showOunces]="true" [item]="{ name: recipe.item, mods: {} }"></app-item>
 
           <div class="recipe-name-ing">
@@ -62,18 +62,20 @@
             </div>
 
             <div class="recipe-ingredients">
-              <app-item class="recipe-ingredient"
-                        *ngFor="let item of recipe.ingredients"
-                        size="xsmall"
-                        [showDesc]="false"
-                        [showEncrust]="false"
-                        [showCount]="false"
-                        [matTooltip]="itemDesc(item)"
-                        [item]="{ name: item, mods: {} }"></app-item>
+              <div class="recipe-ingredients-container" *ngIf="recipe.name === chosenCraft">
+                <app-item class="recipe-ingredient"
+                          *ngFor="let item of recipe.ingredients; trackBy: ingTrackBy"
+                          size="xsmall"
+                          [showDesc]="false"
+                          [showEncrust]="false"
+                          [showCount]="false"
+                          [matTooltip]="itemDesc(item)"
+                          [item]="{ name: item, mods: {} }"></app-item>
 
-              <span class="recipe-ingredient" *ngFor="let item of recipe.ozIngredients">
-                <app-item size="xsmall" [showDesc]="false" [showEncrust]="false" [showCount]="false" [item]="{ name: item.display, mods: {} }"></app-item> x {{ item.ounces }}
-              </span>
+                <span class="recipe-ingredient" *ngFor="let item of recipe.ozIngredients; trackBy: ingTrackBy">
+                  <app-item size="xsmall" [showDesc]="false" [showEncrust]="false" [showCount]="false" [item]="{ name: item.display, mods: {} }"></app-item> x {{ item.ounces }}
+                </span>
+              </div>
             </div>
           </div>
 

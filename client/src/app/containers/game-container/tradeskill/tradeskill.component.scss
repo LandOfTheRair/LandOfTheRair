@@ -103,6 +103,7 @@
       .recipe-ingredients {
         display: flex;
         justify-content: flex-start;
+        min-height: 37px;
 
         .recipe-ingredient {
           display: inline-flex;

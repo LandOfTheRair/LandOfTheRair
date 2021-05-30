@@ -89,6 +89,14 @@ export class TradeskillComponent implements OnInit, OnDestroy {
     return realItem.binds;
   }
 
+  recipeTrackBy(index, recipe: IRecipe) {
+    return recipe.name;
+  }
+
+  ingTrackBy(index) {
+    return index;
+  }
+
   private setPlayer(player: IPlayer) {
     this.player = player;
   }
