@@ -6,7 +6,7 @@ import { get, isBoolean, isNumber, isUndefined, maxBy, sortBy } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription, timer } from 'rxjs';
 import { first } from 'rxjs/operators';
-import { Direction, distanceFrom, FOVVisibility, GameServerResponse,
+import { Allegiance, Direction, distanceFrom, FOVVisibility, GameServerResponse,
   Hostility, ICharacter, IMacro, INPC, IPlayer, ItemSlot } from '../../../../interfaces';
 import { GameState, SetCurrentCommand, SetCurrentTarget, SettingsState, ViewCharacterEquipment } from '../../../../stores';
 
@@ -185,7 +185,9 @@ export class CharacterListComponent implements OnInit, OnDestroy {
         if ((char as INPC).hostility === Hostility.Never) {
           this.gameService.sendCommandString(`${char.uuid}, hello`);
 
-        } else if ((char as INPC).hostility === Hostility.OnHit && this.optionsService.dontAttackGreys) {
+        } else if ((char as INPC).hostility === Hostility.OnHit
+               && (char as INPC).allegiance !== Allegiance.NaturalResource
+               && this.optionsService.dontAttackGreys) {
           this.store.dispatch(new SetCurrentCommand(`${char.name}, `));
 
         } else if ((char as IPlayer).username && !cmd && this.gameService.hostilityLevelFor(this.player, char) !== 'hostile') {
