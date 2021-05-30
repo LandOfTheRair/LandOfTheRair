@@ -376,17 +376,22 @@ export class ItemComponent implements OnDestroy {
 
       } else if (this.context === 'Ground' || this.context === 'GroundGroup') {
 
-        if (this.isEquippable) {
-          this.doMoveAction('E');
-          return;
-        }
-
         if (this.realItem.isBeltable) {
           this.doMoveAction('B');
           return;
 
         } else if (this.realItem.isSackable) {
           this.doMoveAction('S');
+          return;
+        }
+
+        if (!this.viewingPlayer.items.equipment[ItemSlot.RightHand]) {
+          this.doMoveAction('R');
+          return;
+        }
+
+        if (!this.viewingPlayer.items.equipment[ItemSlot.LeftHand]) {
+          this.doMoveAction('L');
           return;
         }
 
