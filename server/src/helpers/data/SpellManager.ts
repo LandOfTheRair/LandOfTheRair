@@ -148,7 +148,7 @@ export class SpellManager extends BaseService {
     // try to add a buff effect if needed
     if (doesOvertime && target) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
-      if (caster && noHostileTarget && spellEffInfo.effect?.duration) {
+      if (caster && noHostileTarget && spellEffInfo.effect?.duration && spellEffInfo.effect.duration !== -1) {
         spellEffInfo.effect.duration = Math.floor(
           spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
         );
