@@ -30,6 +30,11 @@ export class Quaff extends MacroCommand {
       effect = fillable.properties.fillEffect;
     }
 
+    if (!effect) {
+      this.sendMessage(player, 'There isn\'t anything interesting to drink here.');
+      return;
+    }
+
     this.game.effectHelper.addEffect(player, player, effect);
   }
 }
