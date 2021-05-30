@@ -35,6 +35,7 @@ export class TradeskillComponent implements OnInit, OnDestroy {
   public tradeskillInfo: any = {};
   public player: IPlayer;
   public knownRecipes: Record<string, IRecipe[]> = {};
+  public knownRecipesArray: Array<{ category: string; recipes: IRecipe[] }> = [];
   public skill = 0;
   public skillPercent = 0;
   public skillName: string;
@@ -116,6 +117,11 @@ export class TradeskillComponent implements OnInit, OnDestroy {
       knownRecipes,
       (recipe) => recipe.category
     );
+
+    this.knownRecipesArray = [];
+    Object.keys(this.knownRecipes).forEach(category => {
+      this.knownRecipesArray.push({ category, recipes: this.knownRecipes[category] });
+    });
   }
 
   private updateSkill() {

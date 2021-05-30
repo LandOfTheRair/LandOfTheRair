@@ -32,10 +32,10 @@
   </div>
 
   <div class="bottom-area">
-    <div class="category" *ngFor="let recipecat of knownRecipes | keyvalue">
-      <div class="category-header">{{ recipecat.key }}</div>
+    <div class="category" *ngFor="let recipecat of knownRecipesArray">
+      <div class="category-header">{{ recipecat.category }}</div>
       <div class="category-recipes">
-        <div class="recipe" *ngFor="let recipe of recipecat.value" (click)="chooseRecipe(recipe.name)">
+        <div class="recipe" *ngFor="let recipe of recipecat.recipes" (click)="chooseRecipe(recipe.name)">
           <app-item class="recipe-result" size="normal" [showDesc]="false" [showEncrust]="false" [showCount]="false" [showOunces]="true" [item]="{ name: recipe.item, mods: {} }"></app-item>
 
           <div class="recipe-name-ing">
