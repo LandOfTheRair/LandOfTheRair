@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 
-import { uniqBy } from 'lodash';
+import { sortBy, uniqBy } from 'lodash';
 
 import { IChatUser, ILobbyContainer, SubscriptionTier } from '../interfaces';
 import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser,
@@ -54,15 +54,10 @@ export class LobbyState {
   }
 
   private sortUsers(users: IChatUser[]): IChatUser[] {
-    return users.sort((user1, user2) => {
-      if (user1?.tier > user2?.tier) return -1;
-      if (user1?.tier < user2?.tier) return 1;
-
-      if (user1.username.toLowerCase() > user2.username.toLowerCase()) return 1;
-      if (user1.username.toLowerCase() < user2.username.toLowerCase()) return -1;
-
-      return 0;
-    });
+    return sortBy(users, [
+      u => -u.tier,
+      u => u.username.toLowerCase(),
+    ]);
   }
 
   private formatUser(user: IChatUser): IChatUser {
