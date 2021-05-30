@@ -170,7 +170,12 @@ export class Craft extends MacroCommand {
       item.mods.useEffect = { ...effect, uses: skill, potency: (recipe.potencyScalar ?? 1) * skill };
     }
 
-    this.game.characterHelper.setRightHand(player, item);
+    const isSackable = this.game.itemHelper.getItemProperty(item, 'isSackable');
+    if (isSackable && this.game.inventoryHelper.sackSpaceLeft(player) > 0) {
+      this.game.inventoryHelper.addItemToSack(player, item);
+    } else {
+      this.game.characterHelper.setRightHand(player, item);
+    }
 
     this.game.statisticsHelper.addStatistic(player, `${recipe.recipeType}crafts` as TrackedStatistic, 1);
   }
