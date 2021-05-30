@@ -399,7 +399,7 @@ export class Spawner {
     this.game.npcCreator.addAttribute(npc);
   }
 
-  private increaseTick() {
-    this.currentTick++;
+  public increaseTick(by = 1) {
+    this.currentTick += by;
   }
 }

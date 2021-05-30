@@ -121,14 +121,25 @@ export class GroundManager extends BaseService {
     if (!inactiveSince) return;
 
     const now = Date.now();
-    groundEntity = groundEntity || this.groundEntities[map];
-    if (!groundEntity) return;
-
     const tickIncrease = Math.floor((now - inactiveSince) / 1000);
-    groundEntity.spawners?.forEach(spawner => {
-      spawner.currentTick = spawner.currentTick ?? 0;
-      spawner.currentTick += tickIncrease;
-    });
+
+    // if we pass an entity, it has not been loaded yet
+    if (groundEntity) {
+      groundEntity.spawners?.forEach(spawner => {
+        spawner.currentTick = spawner.currentTick ?? 0;
+        spawner.currentTick += tickIncrease;
+      });
+    }
+
+    // if we do not pass an entity, it has been loaded
+    if (!groundEntity) {
+      const mapData = this.game.worldManager.getMap(map);
+      if (mapData?.state) {
+        mapData.state.allSpawners.forEach(spawner => {
+          spawner.increaseTick(tickIncrease);
+        });
+      }
+    }
   }
 
   tick(timer) {
