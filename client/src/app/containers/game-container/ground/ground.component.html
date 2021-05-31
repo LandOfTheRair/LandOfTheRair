@@ -45,7 +45,7 @@
       <div class="item-sub">
         <div class="true-center background-text full-height full-width" *ngIf="!currentItemClass">Select an item category</div>
 
-        <app-item *ngFor="let item of (currentGround[currentItemClass] || [])"
+        <app-item *ngFor="let item of (currentGround[currentItemClass] || []); trackBy: groundItemTrackBy"
                   [size]="'lg'"
                   context="Ground"
                   [contextSlot]="item.item.uuid"

@@ -5,7 +5,7 @@ import { sumBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { IGround, IGroundItem, IPlayer, ItemClass } from '../../../../interfaces';
+import { IGround, IGroundItem, IPlayer, ISimpleItem, ItemClass } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -75,6 +75,10 @@ export class GroundComponent implements OnInit, OnDestroy {
 
   changeItemClass(iClass: ItemClass) {
     this.currentItemClass = iClass;
+  }
+
+  groundItemTrackBy(item: ISimpleItem): string {
+    return item.uuid;
   }
 
 }
