@@ -116,7 +116,7 @@ export class TradeskillComponent implements OnInit, OnDestroy {
   private updateRecipes() {
     if (!this.tradeskillInfo || !this.tradeskillInfo.tradeskill || !this.player) return;
 
-    if (this.getPlayerSkillXP() === this.skillPercent) return;
+    if (this.getPlayerSkillXP() === this.skillPercent && this.skillPercent > 0) return;
 
     const skill = this.getPlayerSkill();
 
