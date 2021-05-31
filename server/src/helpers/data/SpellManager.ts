@@ -125,8 +125,7 @@ export class SpellManager extends BaseService {
       const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster))
                        + (resistLowerTrait ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait) : 0);
       const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL)
-                       + this.game.traitHelper.traitLevelValue(target, 'InternalFortitude')
-                       + this.game.traitHelper.traitLevelValue(target, 'AncientFortitude');
+                       + this.game.characterHelper.getStat(target, Stat.SavingThrow);
 
       if (targetRoll > casterRoll) {
         this.game.messageHelper.sendSimpleMessage(caster, `${target.name} resisted your spell!`);

@@ -152,6 +152,7 @@ export enum Stat {
   XPBonusPercent = 'xpBonusPercent',
   SkillBonusPercent = 'skillBonusPercent',
   SpellCriticalPercent = 'spellCriticalPercent',
+  SavingThrow = 'savingThrow',
 
   // skill bonuses
   MaceBonus = 'maceBonus',
