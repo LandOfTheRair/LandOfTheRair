@@ -1,7 +1,10 @@
+import childProcess from 'child_process';
 import fs from 'fs-extra';
 import deepfreeze from 'deep-freeze';
 import { Injectable } from 'injection-js';
 import { cloneDeep, get } from 'lodash';
+
+import dl from 'download-github-repo';
 
 import { Allegiance, BaseClass, Holiday, IClassTraitTree,
   IDynamicEventData,
@@ -115,6 +118,17 @@ export class ContentManager extends BaseService {
 
   public get weaponTiersData(): Record<string, IWeaponTier> {
     return cloneDeep(this.weaponTiers);
+  }
+
+  public async reload() {
+    return new Promise(resolve => {
+      dl('LandOfTheRair/Content', 'content', async () => {
+        childProcess.exec('cd content && npm install --unsafe-perm');
+        this.init();
+
+        resolve(null);
+      });
+    });
   }
 
   public init() {
