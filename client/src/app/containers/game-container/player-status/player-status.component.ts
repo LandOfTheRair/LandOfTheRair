@@ -80,10 +80,18 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     return base;
   }
 
+  xpString(player: IPlayer): string {
+    return `${player.exp.toLocaleString()} / ${this.levelXP(player.level + 1).toLocaleString()}`;
+  }
+
+  levelXP(level: number): number {
+    return calculateXPRequiredForLevel(level);
+  }
+
   xpPercent(player: IPlayer) {
     const playerXP = player.exp;
-    const curPlayerLevelXP = calculateXPRequiredForLevel(player.level);
-    const nextPlayerLevelXP = calculateXPRequiredForLevel(player.level + 1);
+    const curPlayerLevelXP = this.levelXP(player.level);
+    const nextPlayerLevelXP = this.levelXP(player.level + 1);
 
     return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100);
   }
