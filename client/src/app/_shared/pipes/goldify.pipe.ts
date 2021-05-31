@@ -14,6 +14,8 @@ export class GoldifyPipe implements PipeTransform {
       return (num / 1_000_000_000).toFixed(3) + ' b';
     } else if (num < 1_000_000_000_000_000) {
       return (num / 1_000_000_000_000).toFixed(3) + ' t';
+    } else if (num < 1_000_000_000_000_000_000) {
+      return (num / 1_000_000_000_000_000).toFixed(3) + ' q';
     }
 
     return formatNumber(num, 'en');
