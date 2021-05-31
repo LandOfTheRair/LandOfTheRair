@@ -70,7 +70,7 @@ export class GroundManager extends BaseService {
     grounds.forEach(groundEntity => {
 
       // instances older than 24h will not be loaded on next reboot
-      if (this.game.worldManager.isDungeon(groundEntity.map) && Date.now() + (3600 * 1000 * 24) > groundEntity.savedAt) {
+      if (this.game.worldManager.isDungeon(groundEntity.map) && Date.now() > groundEntity.savedAt + (3600 * 1000 * 24)) {
         return;
       }
 
