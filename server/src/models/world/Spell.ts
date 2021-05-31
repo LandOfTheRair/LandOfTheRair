@@ -24,14 +24,14 @@ export class Spell implements BaseSpell {
   public cast(caster: ICharacter | null, target: ICharacter | null, override: Partial<IItemEffect>): void {}
 
   public getOverrideEffectInfo(
-    caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData
+    caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData, override: Partial<IItemEffect> = {}
   ): DeepPartial<IStatusEffectData> {
     return {
       effect: {
-        duration: this.getDuration(caster, target, spellData),
+        duration: override.duration ?? this.getDuration(caster, target, spellData),
         extra: {
-          charges: this.getCharges(caster, target, spellData),
-          potency: this.getPotency(caster, target, spellData)
+          charges: override.charges ?? this.getCharges(caster, target, spellData),
+          potency: override.potency ?? this.getPotency(caster, target, spellData)
         }
       },
       tooltip: {

@@ -146,7 +146,7 @@ export class SpellManager extends BaseService {
 
     // try to add a buff effect if needed
     if (doesOvertime && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData);
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData, override);
       if (caster && noHostileTarget && spellEffInfo.effect?.duration && spellEffInfo.effect.duration !== -1) {
         spellEffInfo.effect.duration = Math.floor(
           spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
@@ -158,7 +158,7 @@ export class SpellManager extends BaseService {
 
     // try to summon creatures if possible
     if (creatureSummoned && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData);
+      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData, override);
       const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
       ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
       ffEffectData.effect.extra.potency = spellEffInfo.effect?.extra?.potency ?? 10;

@@ -51,6 +51,9 @@ export interface IItemEffect {
   // if exists, the % chance the effect will be applied
   chance?: number;
 
+  // if exists, the number of charges the spell will have
+  charges?: number;
+
   // the number of seconds the ability lasts
   duration?: number;
 
