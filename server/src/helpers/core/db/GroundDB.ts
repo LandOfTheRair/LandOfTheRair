@@ -33,13 +33,13 @@ export class GroundDB extends BaseService {
   }
 
   public async saveAllGrounds(grounds: Ground[]): Promise<any> {
+    grounds = grounds.filter(x => !(this.game.worldManager.isDungeon(x.map) && !x.partyName));
     if (grounds.length === 0) return;
 
     const groundColl = this.db.getCollection(Ground);
 
     const massOp = groundColl.initializeUnorderedBulkOp();
     grounds.forEach(ground => {
-      if (this.game.worldManager.isDungeon(ground.map) && !ground.partyName) return;
 
       massOp
         .find({ map: ground.map })
