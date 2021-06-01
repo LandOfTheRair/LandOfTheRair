@@ -10,7 +10,8 @@ export class Autoheal extends SpellCommand {
   override spellRef = 'Autoheal';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target)
+    return caster === target
+        && super.canUse(caster, target)
         && !this.game.effectHelper.hasEffect(target, 'Autoheal');
   }
 
