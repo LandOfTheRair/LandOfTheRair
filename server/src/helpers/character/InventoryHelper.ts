@@ -185,6 +185,8 @@ export class InventoryHelper extends BaseService {
 
     player.accountLockers.materials[material] ??= 0;
     player.accountLockers.materials[material] += number;
+
+    if (player.accountLockers.materials[material] <= 0) player.accountLockers.materials[material] = 0;
   }
 
   public removeMaterial(player: IPlayer, material: string, number = 1): void {

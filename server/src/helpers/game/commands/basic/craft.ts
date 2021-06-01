@@ -24,8 +24,10 @@ export class Craft extends MacroCommand {
     if (requireLearn && !player.learnedRecipes.includes(recipe.name)) return this.sendMessage(player, 'You do not know that recipe!');
 
     if (requireSpell && !this.game.characterHelper.hasLearned(player, requireSpell)) {
-      return this.sendMessage(player, 'You do not know that spell!');
+      return this.sendMessage(player, `You don't know ${requireSpell}, so you can't craft this!`);
     }
+
+    const materialStorageSlots = this.game.contentManager.materialStorageData.slots;
 
     const itemUUIDs = {};
 
@@ -53,6 +55,7 @@ export class Craft extends MacroCommand {
       ozIngredients.forEach(ing => {
         ouncesFound[ing.filter] = ouncesFound[ing.filter] ?? 0;
 
+        // check sack for materials
         player.items.sack.items.forEach(checkItem => {
           if (!canUseItemForRecipe(checkItem)) return;
 
@@ -61,6 +64,16 @@ export class Craft extends MacroCommand {
           }
         });
 
+        // last, check material storage for materials
+        Object.keys(materialStorageSlots).forEach(slot => {
+          const slotData = materialStorageSlots[slot];
+          if (!slotData.items.some(x => x.includes(ing.filter))) return;
+
+          const totalOz = (player.accountLockers.materials || {})[slot] ?? 0;
+          ouncesFound[ing.filter] += totalOz;
+        });
+
+        // if we don't have enough, bail
         if (ouncesFound[ing.filter] < ing.ounces) {
           enoughOz = false;
         }
@@ -74,7 +87,7 @@ export class Craft extends MacroCommand {
     // check for ingredients
     if (ingredients) {
 
-      ingredients.forEach(ing => {
+      ingredients.forEach((ing, i) => {
 
         // check left hand first
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
@@ -95,6 +108,19 @@ export class Craft extends MacroCommand {
             found = true;
             itemUUIDs[checkItem.uuid] = 'sack';
           }
+        });
+
+        // check material storage last
+        Object.keys(materialStorageSlots).forEach(slot => {
+          const slotData = materialStorageSlots[slot];
+          if (!slotData.items.some(x => x === ing)) return;
+
+          const totalContained = (player.accountLockers.materials || {})[slot] ?? 0;
+          const totalNeeded = ingredients.filter(x => x === ing).length;
+
+          if (totalNeeded > totalContained) return;
+
+          itemUUIDs[slot + '_' + i] = 'material';
         });
       });
 
@@ -117,6 +143,8 @@ export class Craft extends MacroCommand {
 
       ozIngredients.forEach(ing => {
         ouncesTaken[ing.filter] = ouncesTaken[ing.filter] ?? 0;
+
+        // take from sack first
         player.items.sack.items.forEach(checkItem => {
           if (!canUseItemForRecipe(checkItem)) return;
 
@@ -135,6 +163,22 @@ export class Craft extends MacroCommand {
             }
           }
         });
+
+        // then take the rest from material storage
+        Object.keys(materialStorageSlots).forEach(slot => {
+          const slotData = materialStorageSlots[slot];
+          if (!slotData.items.some(x => x.includes(ing.filter))) return;
+
+          const ozRemaining = ing.ounces - (ouncesTaken[ing.filter] ?? 0);
+          if (ozRemaining <= 0) return;
+
+          const itemOz = (player.accountLockers.materials || {})[slot] ?? 0;
+          const lostOz = Math.min(ozRemaining, itemOz);
+
+          this.game.inventoryHelper.removeMaterial(player, slot, lostOz);
+
+          ouncesTaken[ing.filter] += lostOz;
+        });
       });
 
       this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeItems);
@@ -147,6 +191,12 @@ export class Craft extends MacroCommand {
       Object.keys(itemUUIDs).forEach(uuid => {
         if (itemUUIDs[uuid] === 'left') {
           this.game.characterHelper.setLeftHand(player, undefined);
+          return;
+        }
+
+        if (itemUUIDs[uuid] === 'material') {
+          const slot = uuid.split('_')[0];
+          this.game.inventoryHelper.removeMaterial(player, slot, 1);
           return;
         }
 
