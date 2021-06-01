@@ -15,7 +15,7 @@ export class InscribeCommand extends MacroCommand {
 
     const [slot, ...scroll] = args.arrayArgs;
 
-    const slotNum = +slot;
+    const slotNum = this.game.userInputHelper.cleanNumber(+slot);
     const scrollName = scroll.join(' ');
 
     const levelReq = 5 + (5 * slotNum);
@@ -30,6 +30,9 @@ export class InscribeCommand extends MacroCommand {
     }
 
     player.runes[slotNum] = scrollName;
+    for (let i = 0; i < player.runes.length; i++) {
+      player.runes[i] = player.runes[i] ?? null;
+    }
 
     this.game.characterHelper.recalculateEverything(player);
   }
