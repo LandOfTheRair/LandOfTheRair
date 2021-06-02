@@ -20,7 +20,7 @@ export class Transmute extends Spell {
     let totalGold = 0;
 
     Object.keys(items).forEach(itemClass => {
-      if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse) return;
+      if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse || itemClass === ItemClass.Bottle) return;
 
       items[itemClass].forEach((groundItem: IGroundItem) => {
         if (groundItem.item.mods.owner) return;
