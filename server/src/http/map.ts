@@ -3,11 +3,10 @@ import path from 'path';
 import fs from 'fs-extra';
 import readdir from 'recursive-readdir';
 
-import { Database } from '../helpers';
 
 export class MapRoute {
 
-  static setup(fastify: any, { database }: { database: Database }) {
+  static setup(fastify: any) {
 
     fastify.all('/editor/map', async (req, res) => {
 
