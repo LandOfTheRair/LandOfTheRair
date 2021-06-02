@@ -19,6 +19,7 @@ type AttributeType =
   | 'energy'
   | 'poison'
   | 'disease'
+  | 'sonic'
 
   // special types
   | 'turkey';
