@@ -69,8 +69,8 @@ export enum ArmorClass {
   Robe = 'Robe',
   Ring = 'Ring',
   Sash = 'Sash',
-  Skull = 'Skull',
   Scaleplate = 'Scaleplate',
+  Skull = 'Skull',
   Tunic = 'Tunic',
 }
 
@@ -86,6 +86,7 @@ export enum MiscClass {
   Hands = 'Hands',      // this is unique, because it's literally only created for combat
   Key = 'Key',
   Rock = 'Rock',
+  Scale = 'Scale',
   Scroll = 'Scroll',
   Trap = 'Trap',
   TrapSet = 'TrapSet',
