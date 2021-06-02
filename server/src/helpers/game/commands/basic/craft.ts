@@ -107,6 +107,7 @@ export class Craft extends MacroCommand {
           if (checkItem.name === ing && !itemUUIDs[checkItem.uuid]) {
             found = true;
             itemUUIDs[checkItem.uuid] = 'sack';
+            return;
           }
         });
 
