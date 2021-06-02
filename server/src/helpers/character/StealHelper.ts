@@ -100,6 +100,12 @@ export class StealHelper extends BaseService {
 
       this.sendMessage(char, target, `You stole a ${itemDef.itemClass.toLowerCase()} from ${target.name}!`, true);
 
+      if (!this.game.characterHelper.isPlayer(char)) {
+        this.game.messageHelper.sendLogMessageToRadius(char, 4, {
+          message: `Thanks for the ${itemDef.itemClass.toLowerCase()}, ${target.name}!` }
+        );
+      }
+
     }
 
     if (char.level < target.level + 3) {
