@@ -1130,6 +1130,7 @@ export class MoveItems extends MacroCommand {
 
       const destLocker = this.game.lockerHelper.getLockerFromString(player, destSlot);
       const spaceLeft = this.game.inventoryHelper.lockerSpaceLeft(player, destLocker);
+
       const addItems: ISimpleItem[] = [];
       const uuidRemoveCounts: Record<string, number> = {};
 
@@ -1167,6 +1168,7 @@ export class MoveItems extends MacroCommand {
         if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
         const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+        if (materialSpaceLeft < 0) return this.sendMessage(player, 'You have no space for that material!');
 
         const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
