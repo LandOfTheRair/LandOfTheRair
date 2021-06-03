@@ -38,10 +38,20 @@ export class BuildupChill extends Effect {
         // try to freeze them solid
         if (attacker && this.game.traitHelper.rollTraitValue(attacker, 'WintersEmbrace')) {
           this.sendMessage(attacker, { message: `You froze ${char.name} solid!` });
-          this.game.effectHelper.addEffect(char, '', 'Frozen', { effect: { extra: { potency: effect.effectInfo.potency } } });
+          this.game.effectHelper.addEffect(
+            char,
+            { name: effect.sourceName, uuid: effect.sourceUUID ?? '' },
+            'Frozen',
+            { effect: { extra: { potency: effect.effectInfo.potency } } }
+          );
 
         } else {
-          this.game.effectHelper.addEffect(char, '', 'Chilled', { effect: { extra: { potency: effect.effectInfo.potency } } });
+          this.game.effectHelper.addEffect(
+            char,
+            { name: effect.sourceName, uuid: effect.sourceUUID ?? '' },
+            'Chilled',
+            { effect: { extra: { potency: effect.effectInfo.potency } } }
+          );
         }
       }
     }

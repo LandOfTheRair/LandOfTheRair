@@ -42,7 +42,7 @@ export class EffectHelper extends BaseService {
   // add a new effect
   public addEffect(
     character: ICharacter,
-    source: string|ICharacter,
+    source: string | { name: string; uuid: string },
     effectName: string,
     modifyEffectInfo: DeepPartial<IStatusEffectData> = {}
   ): void {

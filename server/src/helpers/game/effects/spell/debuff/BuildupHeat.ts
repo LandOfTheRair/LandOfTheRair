@@ -37,7 +37,12 @@ export class BuildupHeat extends Effect {
         this.game.effectHelper.removeEffect(char, effect);
 
         const burnTotal = effect.effectInfo.potency * forgedFireLevel;
-        this.game.effectHelper.addEffect(char, '', 'Burning', { effect: { extra: { potency: burnTotal } } });
+        this.game.effectHelper.addEffect(
+          char,
+          { name: effect.sourceName, uuid: effect.sourceUUID ?? '' },
+          'Burning',
+          { effect: { extra: { potency: burnTotal } } }
+        );
       }
     }
 

@@ -231,7 +231,7 @@ export class CombatHelper extends BaseService {
     }
 
     // try to do some debuffing based on damage element
-    this.doElementalDebuffing(defender, args.damageClass, args.damage);
+    this.doElementalDebuffing(defender, args.damageClass, args.damage, attacker);
 
     // notify the ai if needed
     if (!this.game.characterHelper.isPlayer(defender)) {
@@ -326,7 +326,7 @@ export class CombatHelper extends BaseService {
     return ['', '', ''];
   }
 
-  private doElementalDebuffing(defender: ICharacter, damageClass: DamageClass, damage: number): void {
+  private doElementalDebuffing(defender: ICharacter, damageClass: DamageClass, damage: number, source?: ICharacter | null): void {
     if (damage === 0) return;
 
     const [buildup, burst, recently] = this.getElementalDebuff(damageClass);
@@ -339,7 +339,7 @@ export class CombatHelper extends BaseService {
     const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
     if (!buildupEffect) {
       const { buildUpDecay, buildUpCurrent, buildUpMax, buildUpScale } = this.game.contentManager.getGameSetting('combat');
-      this.game.effectHelper.addEffect(defender, '', buildup, { effect: { extra: {
+      this.game.effectHelper.addEffect(defender, source ?? '', buildup, { effect: { extra: {
         buildUpDecay: buildUpDecay ?? 3,
         buildUpCurrent: buildUpCurrent ?? 5,
         buildUpMax: (buildUpMax ?? 200) + (defender.level * (buildUpScale ?? 10))
