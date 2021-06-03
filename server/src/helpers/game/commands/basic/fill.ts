@@ -57,7 +57,7 @@ export class Fill extends MacroCommand {
       name: effect
     };
 
-    item.mods.extendedDesc = desc;
+    item.mods.desc = desc;
 
     this.sendMessage(player, `The bottle in your ${args.stringArgs} hand is now ${desc}.`);
   }
