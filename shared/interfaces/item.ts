@@ -40,9 +40,6 @@ export interface IGear {
   // the effect the item gives on equip
   equipEffect?: IItemEffect;
 
-  // the max enchant level for an item (defaults to 5) - used for progressive item enhancement
-  maxEnchantLevel?: number;
-
   // the item quality (0-5)
   quality?: ItemQuality;
 
