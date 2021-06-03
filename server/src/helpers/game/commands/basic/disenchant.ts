@@ -60,7 +60,11 @@ export class Disenchant extends MacroCommand {
         items.forEach(cItem => enosDust.mods.ounces += (this.game.itemHelper.getItemProperty(cItem, 'quality') ?? 0));
 
         this.game.characterHelper.setEquipmentSlot(player, ItemSlot.RightHand, enosDust);
-        this.game.playerHelper.gainTradeskill(player, Tradeskill.Spellforging, enosDust.mods.ounces);
+
+        const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, Tradeskill.Spellforging);
+        if (skill < 10) {
+          this.game.playerHelper.gainTradeskill(player, Tradeskill.Spellforging, enosDust.mods.ounces);
+        }
 
         this.game.inventoryHelper.removeItemsFromSackByUUID(player, uuids);
 
