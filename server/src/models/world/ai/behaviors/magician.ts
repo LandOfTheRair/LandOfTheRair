@@ -50,10 +50,10 @@ export class MagicianBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
+        if (game.characterHelper.hasLearned(player, 'Spellforging')) return 'You already know Spellforging!';
+
         game.characterHelper.forceSpellLearnStatus(player, 'Spellforging', LearnedSpell.FromFate);
         game.characterHelper.forceSpellLearnStatus(player, 'Disenchant', LearnedSpell.FromFate);
-
-        if (game.characterHelper.hasLearned(player, 'Spellforging')) return 'You already know Spellforging!';
 
         return 'Go forth and weave magic!';
       });

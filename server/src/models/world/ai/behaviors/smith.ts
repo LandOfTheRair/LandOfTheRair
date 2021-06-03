@@ -121,9 +121,9 @@ export class SmithBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        game.characterHelper.forceSpellLearnStatus(player, 'Metalworking', LearnedSpell.FromFate);
-
         if (game.characterHelper.hasLearned(player, 'Metalworking')) return 'You already know Metalworking!';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Metalworking', LearnedSpell.FromFate);
 
         return 'Go forth and craft gear!';
       });

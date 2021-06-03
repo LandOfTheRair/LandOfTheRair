@@ -111,9 +111,9 @@ export class AlchemistBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        game.characterHelper.forceSpellLearnStatus(player, 'Alchemy', LearnedSpell.FromFate);
-
         if (game.characterHelper.hasLearned(player, 'Alchemy')) return 'You already know Alchemy!';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Alchemy', LearnedSpell.FromFate);
 
         return 'Go forth and make potions!';
       });
