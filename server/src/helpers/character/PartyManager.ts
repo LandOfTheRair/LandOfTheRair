@@ -71,6 +71,7 @@ export class PartyManager extends BaseService {
 
   public removeParty(party: IParty): void {
     delete this.allParties[party.name];
+    this.game.groundManager.removeGroundsForParties(party.name);
   }
 
   public addPartyMember(member: IPartyMember): void {
