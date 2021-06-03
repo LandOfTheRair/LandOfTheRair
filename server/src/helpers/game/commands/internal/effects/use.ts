@@ -54,18 +54,26 @@ export class UseCommand extends MacroCommand {
       const items = state.getItemsFromGround(player.x, player.y, itemType as ItemClass, uuid);
       const groundItem = items[0];
       if (groundItem) {
-        const item = groundItem.item;
+        const oldUUID = groundItem.item.uuid;
+
+        const item = this.game.itemCreator.rerollItem(groundItem.item);
+
         const itemDefType = this.game.itemHelper.getItemProperty(item, 'itemClass');
         this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
-        state.removeItemFromGround(player.x, player.y, itemDefType, item.uuid);
+        state.removeItemFromGround(player.x, player.y, itemDefType, oldUUID);
+
         useItemInHand(emptyHand);
+
       } else {
+
         if (uuid) {
           return this.sendMessage(player, 'You reach down to pick up the item, but it isn\'t there anymore.');
         }
+
         if (itemType) {
           return this.sendMessage(player, `You reach down to pick up a type of ${itemType}, but you couldn\'t find one.`);
         }
+
         return this.sendMessage(player, 'You reach down to pick up an item, but you couldn\'t find one.');
       }
     }

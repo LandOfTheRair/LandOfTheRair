@@ -222,6 +222,8 @@ export class ItemHelper extends BaseService {
 
   // try to use the item in the equipment slot for the player
   public useItemInSlot(player: IPlayer, source: ItemSlot, tryEffect = true) {
+
+    console.log('use', source, new Error().stack);
     const item = player.items.equipment[source];
     if (!item) return;
 

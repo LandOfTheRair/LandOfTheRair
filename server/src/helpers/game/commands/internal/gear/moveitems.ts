@@ -102,6 +102,7 @@ export class MoveItems extends MacroCommand {
       } else if (src === 'D') {
         this.game.inventoryHelper.removeItemsFromPouchByUUID(player, [srcItem.uuid]);
       }
+
       this.game.characterHelper.setEquipmentSlot(player, itemSlot, srcItem);
       this.game.itemHelper.useItemInSlot(player, itemSlot);
       return retVal;
