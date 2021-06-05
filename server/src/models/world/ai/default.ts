@@ -2,7 +2,7 @@
 import { clamp, maxBy, random, sample, shuffle, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
-import { Direction, directionFromText, directionToOffset, distanceFrom, Hostility, IAI, ICharacter, INPC,
+import { Allegiance, Direction, directionFromText, directionToOffset, distanceFrom, Hostility, IAI, ICharacter, INPC,
   ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
 import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
@@ -389,6 +389,8 @@ export class DefaultAIBehavior implements IAI {
   }
 
   private checkIfCanUseSkillAndUseIt(npc: INPC, skillName: string, target: ICharacter) {
+    if ((target as INPC).allegiance === Allegiance.NaturalResource) return null;
+
     const skillRef = this.game.commandHandler.getSkillRef(skillName);
     if (!skillRef) return null;
     if (!skillRef.canUse(npc, target)) return null;
