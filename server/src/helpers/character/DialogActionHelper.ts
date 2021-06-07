@@ -362,7 +362,7 @@ export class DialogActionHelper extends BaseService {
 
       // we do something different to take from sack
       if (checkSlot === 'sack') {
-        const matchingItems = player.items.sack.items.filter(x => x.name === item.name && this.game.itemHelper.isOwnedBy(player, x));
+        const matchingItems = player.items.sack.items.filter(x => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x));
         const itemUUIDS = matchingItems.slice(0, item.amount ?? 1).map(x => x.uuid);
         this.game.inventoryHelper.removeItemsFromSackByUUID(player, itemUUIDS);
         didSucceed = true;
@@ -372,7 +372,7 @@ export class DialogActionHelper extends BaseService {
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
 
-      if (!matches(item.name)) return;
+      if (!matches(slotItem.name)) return;
       if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
         messages.push('Hey! You need to bring me an item owned by you.');
         return;
