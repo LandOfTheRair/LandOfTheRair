@@ -42,9 +42,6 @@ export interface IItemEffect {
   name: string;
   potency: number;
 
-  // if true, will cast when equipped (will not cast when used - rename this)
-  autocast?: boolean;
-
   // if true, effect can be applied to a weapon via Apply
   canApply?: boolean;
 
