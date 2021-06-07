@@ -5,7 +5,7 @@ import { extend, get, keyBy, pick, setWith, unset, cloneDeep } from 'lodash';
 
 import { Game } from '../../helpers';
 
-import { Alignment, Allegiance, Hostility, ICharacter, IGround,
+import { Alignment, Allegiance, FOVVisibility, Hostility, ICharacter, IGround,
   IGroundItem, INPC, IPlayer, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
 import { Player } from '../orm';
 import { WorldMap } from './Map';
@@ -335,6 +335,16 @@ export class MapState {
   public getAllHostilesWithoutVisibilityTo(ref: ICharacter, radius: number): ICharacter[] {
     const targets = this.getAllInRangeWithoutVisibilityTo(ref, radius);
     return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
+  }
+
+  // get ONLY HOSTILES that CAN SEE YOU in FOV
+  public getAllHostilesWithoutVisibilityToInFOV(ref: ICharacter, radius: number): ICharacter[] {
+    const targets = this.getAllInRangeWithoutVisibilityTo(ref, radius);
+
+    return targets.filter((target: ICharacter) => {
+      const inFOV = get(ref.fov, [target.x - ref.x, target.y - ref.y]) === FOVVisibility.CanSee;
+      return inFOV && this.game.targettingHelper.checkTargetForHostility(ref, target);
+    });
   }
 
   // get ONLY ALLIES in range

@@ -30,7 +30,7 @@ export class Hidden extends Effect {
 
       // tick operates on mp5
       if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
-        const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
+        const numHostile = state.getAllHostilesWithoutVisibilityToInFOV(char, 4);
         if (numHostile.length === 0) {
           this.game.characterHelper.mana(char, 1);
           return;
