@@ -15,10 +15,15 @@ export class Write extends MacroCommand {
     const rightDesc = this.game.itemHelper.getItemProperty(right, 'desc');
     const leftName = this.game.itemHelper.getItemProperty(left, 'name');
 
-    if (!right || rightDesc !== 'an empty scroll') return this.sendMessage(player, 'You need an empty scroll in your right hand!');
-    if (!left || leftName !== 'Ink Vial') return this.sendMessage(player, 'You need an ink pot in your left hand!');
+    if (!right) return this.sendMessage(player, 'You need an item in your right hand!');
+    if (rightDesc.includes('written in ink')) return this.sendMessage(player, 'You cannot write on that item again!');
+    if (!left || !leftName.includes('Ink Vial')) return this.sendMessage(player, 'You need an ink pot in your left hand!');
 
-    right.mods.desc = `a scroll inscribed with text written in ink: "${args.stringArgs}"`;
+    if (rightDesc === 'an empty scroll') {
+      right.mods.desc = `a scroll inscribed with text written in ink: "${args.stringArgs}"`;
+    } else {
+      right.mods.desc = `${rightDesc} with "${args.stringArgs}" written in ink`;
+    }
 
     this.game.itemHelper.useItemInSlot(player, ItemSlot.LeftHand, false);
 
