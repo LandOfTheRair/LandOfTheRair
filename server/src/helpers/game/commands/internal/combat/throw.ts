@@ -1,3 +1,6 @@
+
+import { sample } from 'lodash';
+
 import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, ItemSlot, PhysicalAttackArgs } from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
@@ -33,6 +36,19 @@ export class ThrowCommand extends SkillCommand {
     const numThrows = 1 + this.game.traitHelper.traitLevelValue(user, 'Multithrow');
     for (let i = 0; i < numThrows; i++) {
       this.game.combatHelper.physicalAttack(user, target, opts);
+
+      if (user && target && this.game.traitHelper.rollTraitValue(user, 'BouncingThrows')) {
+        const state = this.game.worldManager.getMapStateForCharacter(user);
+        if (!state) return;
+
+        const nearby = state.getAllHostilesInRange(user, 4).filter(x => x !== target);
+
+        const bounceTo = sample(nearby);
+        if (bounceTo) {
+          this.game.combatHelper.physicalAttack(user, bounceTo, opts);
+        }
+
+      }
     }
   }
 
