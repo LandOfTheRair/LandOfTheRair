@@ -51,8 +51,8 @@ interface DefenderScope {
   dodgeBonus: number;
   armor: ISimpleItem;
   blocker: ISimpleItem;
-  shield?: ISimpleItem;
-  offhand?: ISimpleItem;
+  shield?: ISimpleItem | undefined;
+  offhand?: ISimpleItem | undefined;
 }
 
 @Injectable()
@@ -74,7 +74,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const shouldOffhandAttackAsWell = (!args.isThrow && !args.isKick && !args.isPunch)
-                                   || (args.isThrow && returnsOnThrow);
+                                   || (args.isThrow && (returnsOnThrow || this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')));
 
     if (shouldOffhandAttackAsWell && offhand && attacker.items.equipment[ItemSlot.RightHand]) {
       args ??= {};
@@ -181,7 +181,7 @@ export class DamageHelperPhysical extends BaseService {
   private resolveThrow(attacker: ICharacter, defender: ICharacter, hand: ItemSlot, item: ISimpleItem) {
     const { shots, itemClass, returnsOnThrow } = this.game.itemHelper.getItemProperties(item, ['shots', 'itemClass', 'returnsOnThrow']);
 
-    if (returnsOnThrow) return;
+    if (returnsOnThrow || this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')) return;
 
     const breakTypes = {
       Bottle: 'You hear the sound of glass shattering!',
@@ -1034,7 +1034,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     damageArgs.damage = totalDamageDealt;
-    damageArgs.attackNum = args.attackNum;
+    damageArgs.attackNum = args.attackNum ?? 0;
 
     this.attemptToStun(attacker, defender, attackerWeapon);
     this.attemptToShadowSwap(attacker);
@@ -1048,7 +1048,7 @@ export class DamageHelperPhysical extends BaseService {
       if (ammoStrikeEffect) {
         this.game.spellManager.castSpell(
           ammoStrikeEffect.name, attacker, defender,
-          { potency: ammoStrikeEffect.potency, chance: ammoStrikeEffect.chance }
+          { potency: ammoStrikeEffect.potency, chance: ammoStrikeEffect.chance ?? 100 }
         );
       }
     }
@@ -1065,7 +1065,7 @@ export class DamageHelperPhysical extends BaseService {
       if (encrustGive.strikeEffect) {
         this.game.spellManager.castSpell(
           encrustGive.strikeEffect.name, attacker, defender,
-          { potency: encrustGive.strikeEffect.potency, chance: encrustGive.strikeEffect.chance }
+          { potency: encrustGive.strikeEffect.potency, chance: encrustGive.strikeEffect.chance ?? 100 }
         );
       }
     }
@@ -1074,7 +1074,7 @@ export class DamageHelperPhysical extends BaseService {
     if (weaponStrikeEffect) {
       this.game.spellManager.castSpell(
         weaponStrikeEffect.name, attacker, defender,
-        { potency: weaponStrikeEffect.potency, chance: weaponStrikeEffect.chance }
+        { potency: weaponStrikeEffect.potency, chance: weaponStrikeEffect.chance ?? 100 }
       );
     }
 

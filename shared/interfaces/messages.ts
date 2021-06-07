@@ -38,14 +38,14 @@ export enum MessageType {
 export interface MessageInfo {
   message: string;
   fromDiscord?: string;
-  sfx?: SoundEffect;
+  sfx?: SoundEffect | undefined;
   vfx?: VisualEffect;
   vfxRadius?: number;
   vfxTimeout?: number;
   vfxX?: number;
   vfxY?: number;
   from?: string;
-  setTarget?: string|null;
+  setTarget?: string | null | undefined;
   logInfo?: any;
   useSight?: boolean;
   except?: string[];
