@@ -174,9 +174,9 @@ export class SpellManager extends BaseService {
 
     for (let i = 0; i < numCasts; i++) {
 
-      const potency = override.potency ?? spellRef.getPotency(caster, target, spellData);
+      const potency = override.potency || spellRef.getPotency(caster, target, spellData);
       const spellRange = override.range ?? range ?? 0;
-      const duration = override.duration ?? 0;
+      const duration = override.duration || 0;
 
       if (target && doesAttack) {
         this.game.combatHelper.magicalAttack(caster, target, {
