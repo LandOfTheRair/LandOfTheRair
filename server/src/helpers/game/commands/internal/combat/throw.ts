@@ -29,7 +29,11 @@ export class ThrowCommand extends SkillCommand {
     opts.isThrow = true;
     opts.throwHand = opts.throwHand || ItemSlot.RightHand;
     opts.attackRange = this.range();
-    this.game.combatHelper.physicalAttack(user, target, opts);
+
+    const numThrows = 1 + this.game.traitHelper.traitLevelValue(user, 'Multithrow');
+    for (let i = 0; i < numThrows; i++) {
+      this.game.combatHelper.physicalAttack(user, target, opts);
+    }
   }
 
 }
