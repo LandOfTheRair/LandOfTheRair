@@ -3,7 +3,7 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class FirethornsAura extends SpellCommand {
 
-  override aliases = ['firethorns', 'cast firethorns'];
+  override aliases = ['firethornsaura', 'cast firethornsaura'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;

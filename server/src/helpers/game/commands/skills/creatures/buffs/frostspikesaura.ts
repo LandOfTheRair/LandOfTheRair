@@ -3,7 +3,7 @@ import { SpellCommand } from '../../../../../../models/macro';
 
 export class FrostspikesAura extends SpellCommand {
 
-  override aliases = ['frostspikes', 'cast frostspikes'];
+  override aliases = ['frostspikesaura', 'cast frostspikesaura'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;
