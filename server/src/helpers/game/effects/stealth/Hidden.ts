@@ -20,30 +20,34 @@ export class Hidden extends Effect {
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }
 
-  override tick(char: ICharacter) {
+  override tick(char: ICharacter, effect: IStatusEffect) {
+    super.tick(char, effect);
 
     // thieves have to use their stealth bar
     if (char.baseClass === BaseClass.Thief) {
       const state = this.game.worldManager.getMap(char.map)?.state;
       if (!state) return;
 
-      const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
-      if (numHostile.length === 0) {
-        this.game.characterHelper.mana(char, 1);
-        return;
-      }
+      // tick operates on mp5
+      if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
+        const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
+        if (numHostile.length === 0) {
+          this.game.characterHelper.mana(char, 1);
+          return;
+        }
 
-      const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
-      const totalReduction = Math.max(1, numHostile.length - hostileReduction);
+        const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
+        const totalReduction = Math.max(1, numHostile.length - hostileReduction);
 
-      if (this.game.characterHelper.isPlayer(char)) {
-        this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
-      }
+        if (this.game.characterHelper.isPlayer(char)) {
+          this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
+        }
 
-      this.game.characterHelper.manaDamage(char, totalReduction);
+        this.game.characterHelper.manaDamage(char, totalReduction);
 
-      if (char.mp.current <= 0) {
-        this.breakHide(char);
+        if (char.mp.current <= 0) {
+          this.breakHide(char);
+        }
       }
     }
 
