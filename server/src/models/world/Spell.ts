@@ -81,7 +81,7 @@ export class Spell implements BaseSpell {
     skillsToAverage = skillsToAverage.filter(Boolean);
 
     const baseSkillValue = Math.floor(sum(
-      skillsToAverage.map(skill => this.game.calculatorHelper.calcSkillLevelForCharacter(caster, skill) + 1)
+      skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
     ) / skillsToAverage.length);
 
     const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;

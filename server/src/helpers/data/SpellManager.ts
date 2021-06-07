@@ -180,8 +180,8 @@ export class SpellManager extends BaseService {
 
       if (target && doesAttack) {
         this.game.combatHelper.magicalAttack(caster, target, {
-          atkMsg: spellData.spellMeta.casterAttackMessage,
-          defMsg: spellData.spellMeta.targetAttackMessage,
+          atkMsg: spellData.spellMeta.casterAttackMessage || '',
+          defMsg: spellData.spellMeta.targetAttackMessage || '',
           sfx: SoundEffect.CombatHitSpell,
           damage: potency,
           damageClass: spellData.damageClass || DamageClass.Energy,
@@ -191,8 +191,8 @@ export class SpellManager extends BaseService {
 
       if (target && doesHeal) {
         this.game.combatHelper.magicalAttack(caster, target, {
-          atkMsg: spellData.spellMeta.casterAttackMessage,
-          defMsg: spellData.spellMeta.targetAttackMessage,
+          atkMsg: spellData.spellMeta.casterAttackMessage || '',
+          defMsg: spellData.spellMeta.targetAttackMessage || '',
           sfx: SoundEffect.SpellHeal,
           damage: -potency,
           damageClass: spellData.damageClass || DamageClass.Heal,
