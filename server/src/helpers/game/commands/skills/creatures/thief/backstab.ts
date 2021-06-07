@@ -38,8 +38,6 @@ export class Backstab extends SkillCommand {
 
     if (target === player) return;
 
-    if (hidden) this.game.effectHelper.removeEffectByName(player, 'Hidden');
-    if (shadowMeld) this.game.effectHelper.removeEffectByName(player, 'Shadowmeld');
     this.use(player, target, { attackRange: range });
   }
 
