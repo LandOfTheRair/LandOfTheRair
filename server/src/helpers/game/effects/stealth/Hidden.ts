@@ -28,7 +28,10 @@ export class Hidden extends Effect {
       if (!state) return;
 
       const numHostile = state.getAllHostilesWithoutVisibilityTo(char, 4);
-      if (numHostile.length === 0) return;
+      if (numHostile.length === 0) {
+        this.game.characterHelper.mana(char, 1);
+        return;
+      }
 
       const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
       const totalReduction = Math.max(1, numHostile.length - hostileReduction);
