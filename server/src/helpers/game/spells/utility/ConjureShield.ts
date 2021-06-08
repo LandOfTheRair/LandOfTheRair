@@ -16,7 +16,7 @@ export class ConjureShield extends Spell {
 
     const item = this.game.itemCreator.getSimpleItem('Conjured Shield');
 
-    const skill = spellCastArgs.potency ?? this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1;
+    const skill = Math.max(spellCastArgs.potency, this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1);
 
     item.mods.destroyOnDrop = true;
     item.mods.tier = Math.floor(skill / 4);
