@@ -18,7 +18,7 @@ export class ConjureSword extends Spell {
 
     const item = this.game.itemCreator.getSimpleItem('Conjured Longsword');
 
-    const skill = this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1;
+    const skill = spellCastArgs.potency ?? this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1;
 
     item.mods.destroyOnDrop = true;
     item.mods.offhand = true;
