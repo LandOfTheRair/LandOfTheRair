@@ -302,8 +302,10 @@ export class DefaultAIBehavior implements IAI {
 
     const { messages, sfx, radius } = spawnTrigger;
 
+    if (!messages || !messages.length) return;
+
     let chosenSfx!: SoundEffect;
-    if (sfx) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance || 1) ? sfx.name : undefined;
+    if (sfx && sfx.maxChance) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance ?? 1) ? sfx.name : undefined;
 
     this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
       message: `You hear ${sample(messages)}.`,
@@ -317,8 +319,10 @@ export class DefaultAIBehavior implements IAI {
 
     const { messages, sfx, radius } = leashTrigger;
 
+    if (!messages || !messages.length) return;
+
     let chosenSfx!: SoundEffect;
-    if (sfx) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance || 1) ? sfx.name : undefined;
+    if (sfx && sfx.maxChance) chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance ?? 1) ? sfx.name : undefined;
 
     this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
       message: `You hear ${sample(messages)}.`,
