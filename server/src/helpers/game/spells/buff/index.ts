@@ -23,6 +23,7 @@ export * from './ImbueFlame';
 export * from './ImbueFrost';
 export * from './Invisibility';
 export * from './Lifepool';
+export * from './Lightbath';
 export * from './MagicMirror';
 export * from './Manapool';
 export * from './NecroticAura';
