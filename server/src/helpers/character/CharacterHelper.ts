@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { BaseClass, EquipHash, GivesBonusInHandItemClasses, Hostility,
+import { Allegiance, BaseClass, EquipHash, GivesBonusInHandItemClasses, Hostility,
   ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -43,6 +43,9 @@ export class CharacterHelper extends BaseService {
 
   public heal(char: ICharacter, hp: number): void {
     if (hp === 0) return;
+
+    // natural resources cannot heal
+    if (hp > 0 && char.allegiance === Allegiance.NaturalResource) return;
 
     char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
     char.hp.current = this.game.userInputHelper.cleanNumber(char.hp.current, 1, { floor: true });
