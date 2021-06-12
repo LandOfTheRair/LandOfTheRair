@@ -24,8 +24,8 @@ export class ConjureShield extends Spell {
     item.mods.stats = {};
     item.mods.stats[Stat.ArmorClass] = skill;
     item.mods.stats[Stat.Defense] = Math.floor(skill / 2);
-    item.mods.stats[Stat.MagicalResist] = spellCastArgs.potency;
-    item.mods.stats[Stat.PhysicalResist] = spellCastArgs.potency;
+    item.mods.stats[Stat.MagicalResist] = skill * 2;
+    item.mods.stats[Stat.PhysicalResist] = skill * 2;
 
     this.game.itemHelper.setOwner(caster as IPlayer, item);
 
