@@ -14,20 +14,22 @@ export class CrazedSedgwickAIBehavior extends DefaultAIBehavior {
     const msgObject = { from: npc.name, message: 'HIYAAAAAAAAAH! Take THIS!', subClass: 'chatter' };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject);
 
-    const players = this.game.worldManager.getPlayersInMap(npc.map);
-    players.forEach(p => {
-      if (p.x === 21 && p.y === 6) {
-        this.game.messageHelper.sendSimpleMessage(p, '_A magical barrier protects you from Sedgwick\'s magic!_');
-        return;
-      }
+    setTimeout(() => {
+      const players = this.game.worldManager.getPlayersInMap(npc.map);
+      players.forEach(p => {
+        if (p.x === 21 && p.y === 6) {
+          this.game.messageHelper.sendSimpleMessage(p, '_A magical barrier protects you from Sedgwick\'s magic!_');
+          return;
+        }
 
-      this.game.combatHelper.magicalAttack(npc, p, {
-        damage: 1500,
-        damageClass: DamageClass.Energy,
-        atkMsg: 'You blast %0 with energy!',
-        defMsg: '%0 blasted you with a wave of energy!'
+        this.game.combatHelper.magicalAttack(npc, p, {
+          damage: 1500,
+          damageClass: DamageClass.Energy,
+          atkMsg: 'You blast %0 with energy!',
+          defMsg: '%0 blasted you with a wave of energy!'
+        });
       });
-    });
+    }, 5000);
 
   }
 
