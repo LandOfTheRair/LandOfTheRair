@@ -10,7 +10,7 @@ export class Vortex extends Spell {
 
     const addItems: ISimpleItem[] = [];
 
-    const radius = 1;
+    const radius = 1 + this.game.traitHelper.traitLevelValue(caster, 'VortexWiden');
     for (let x = caster.x - radius; x <= caster.x + radius; x++) {
       for (let y = caster.y - radius; y <= caster.y + radius; y++) {
         if (x === caster.x && y === caster.y) continue;
