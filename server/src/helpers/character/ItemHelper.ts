@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, isNumber, isUndefined } from 'lodash';
 
-import { Allegiance, canUseItem, GameServerResponse, ICharacter, IDialogChatAction, IItem, IItemRequirements,
+import { Allegiance, canUseItem, GameServerResponse, ICharacter, IDialogChatAction, IItem, IItemDefinition, IItemRequirements,
   IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
@@ -22,7 +22,7 @@ export class ItemHelper extends BaseService {
   public init() {}
 
   // get the real item for base information lookup
-  public getItemDefinition(itemName: string): IItem {
+  public getItemDefinition(itemName: string): IItemDefinition {
     return this.content.getItemDefinition(itemName);
   }
 
@@ -96,6 +96,7 @@ export class ItemHelper extends BaseService {
         if (!upgradeItem) return;
 
         upgradeStat += upgradeItem.stats?.[stat] ?? 0;
+        upgradeStat += upgradeItem.randomStats?.[stat]?.min ?? 0;
       });
     }
 
@@ -157,7 +158,7 @@ export class ItemHelper extends BaseService {
       requirements.baseClass = secondItemRequirements.baseClass;
     }
     if ((secondItemRequirements?.level ?? 1) > (firstItemRequirements?.level ?? 1)) {
-      requirements.level = secondItemRequirements.level;
+      requirements.level = secondItemRequirements.level ?? 0;
     }
     if (secondItemRequirements?.quest && !firstItemRequirements.quest) {
       requirements.quest = secondItemRequirements.quest;
@@ -337,7 +338,7 @@ export class ItemHelper extends BaseService {
       const extraData = cloneDeep(extra || {}) as any;
       extraData.potency = potency;
 
-      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration, extra: extraData } });
+      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration: duration ?? 10, extra: extraData } });
     }
 
     this.tryToBreakItem(player, item, source);
