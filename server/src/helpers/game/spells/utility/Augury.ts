@@ -18,7 +18,7 @@ export class Augury extends Spell {
       if (!mapData) return;
 
       mapData.state.allNPCS.forEach(npc => {
-        if (!this.game.targettingHelper.doesTargetMatchSearch(npc, targetName)) return;
+        if (!this.game.targettingHelper.doesTargetMatchSearch(npc, targetName, true)) return;
 
         targets.push(npc);
       });

@@ -20,7 +20,7 @@ export class GMTeleportTo extends MacroCommand {
       if (!mapData) return;
 
       mapData.state.allNPCS.forEach(npc => {
-        if (!this.game.targettingHelper.doesTargetMatchSearch(npc, search)) return;
+        if (!this.game.targettingHelper.doesTargetMatchSearch(npc, search, true)) return;
 
         target = npc;
       });

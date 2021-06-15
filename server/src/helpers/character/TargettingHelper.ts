@@ -180,8 +180,10 @@ export class TargettingHelper extends BaseService {
     return possTargets;
   }
 
-  public doesTargetMatchSearch(target: ICharacter, findStr: string): boolean {
-    return target.uuid === findStr || target.name.toLowerCase().startsWith((findStr || '').toLowerCase());
+  public doesTargetMatchSearch(target: ICharacter, findStr: string, includes = false): boolean {
+    return target.uuid === findStr
+        || target.name.toLowerCase().startsWith((findStr || '').toLowerCase())
+        || (includes && target.name.toLowerCase().includes((findStr || '').toLowerCase()));
   }
 
 }
