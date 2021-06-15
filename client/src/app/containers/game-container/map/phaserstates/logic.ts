@@ -921,7 +921,7 @@ export class MapScene extends Phaser.Scene {
 
     const isCorpse = realItem.itemClass === ItemClass.Corpse;
     const spritesheet = isCorpse ? 'Creatures' : 'Items';
-    const itemSpriteNumber = isCorpse ? item.mods.sprite : realItem.sprite;
+    const itemSpriteNumber = isCorpse ? item.mods.sprite : (item.mods.sprite ?? realItem.sprite);
     const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), spritesheet, itemSpriteNumber) as any;
     this.visibleItemSprites[x][y][realItem.itemClass] = sprite;
     this.visibleItemUUIDHash[sprite.uuid] = sprite;

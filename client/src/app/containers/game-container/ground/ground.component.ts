@@ -59,7 +59,9 @@ export class GroundComponent implements OnInit, OnDestroy {
       .map(groundGroup => ({
           itemClass: groundGroup as ItemClass,
           name: ground[groundGroup][0].item.name,
-          sprite: groundGroup === ItemClass.Corpse ? ground[groundGroup][0].item.mods.sprite : null,
+          sprite: groundGroup === ItemClass.Corpse
+                ? ground[groundGroup][0].item.mods.sprite
+                : (ground[groundGroup][0].item.mods.sprite ?? null),
           count: sumBy(ground[groundGroup], 'count')
         }));
 
