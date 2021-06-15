@@ -2,9 +2,9 @@ import { IMacroCommandArgs, IPlayer } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 
-export class RemoveEffectCommand extends MacroCommand {
+export class RemoveSongCommand extends MacroCommand {
 
-  override aliases = ['removeeffect'];
+  override aliases = ['removesong'];
   override canBeInstant = true;
   override canBeFast = true;
 
