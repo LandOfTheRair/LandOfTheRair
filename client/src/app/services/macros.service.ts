@@ -207,7 +207,7 @@ export class MacrosService {
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map(spell => {
-            const baseObj = cloneDeep(Object.values(this.allMacrosHash).find(macro => macro.name.toLowerCase() === spell));
+            const baseObj = cloneDeep(Object.values(this.allMacrosHash).find(macro => (macro.for || macro.name).toLowerCase() === spell));
             if (!baseObj) return null;
 
             baseObj.isDefault = true;
