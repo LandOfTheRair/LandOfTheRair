@@ -18,7 +18,7 @@ export class Steal extends SkillCommand {
 
     if (rightHand) {
       const twoHanded = this.game.itemHelper.getItemProperty(rightHand, 'twoHanded');
-      if (twoHanded) return false;
+      if (twoHanded && !this.game.traitHelper.traitLevel(char, 'TitanGrip')) return false;
     }
 
     return distanceFrom(char, target) === 0

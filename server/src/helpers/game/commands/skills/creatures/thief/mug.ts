@@ -18,7 +18,7 @@ export class Mug extends SpellCommand {
 
     if (rightHand) {
       const twoHanded = this.game.itemHelper.getItemProperty(rightHand, 'twoHanded');
-      if (twoHanded) return false;
+      if (twoHanded && !this.game.traitHelper.traitLevel(char, 'TitanGrip')) return false;
     }
 
     return distanceFrom(char, target) > 0
@@ -37,7 +37,9 @@ export class Mug extends SpellCommand {
 
     if (rightHand) {
       const twoHanded = this.game.itemHelper.getItemProperty(rightHand, 'twoHanded');
-      if (twoHanded) return this.sendMessage(player, 'That weapon is too heavy to mug with!');
+      if (twoHanded && !this.game.traitHelper.traitLevel(player, 'TitanGrip')) {
+        return this.sendMessage(player, 'That weapon is too heavy to mug with!');
+      }
     }
 
     this.game.movementHelper.moveTowards(player, target);

@@ -162,7 +162,7 @@ export abstract class SkillCommand extends MacroCommand {
     const { attackRange, twoHanded } = this.game.itemHelper.getItemProperties(rightHand, ['twoHanded', 'attackRange']);
 
     // if you have a twohanded item and a lefthand, you can't use it
-    if (twoHanded && leftHand) return -1;
+    if (twoHanded && leftHand && !this.game.traitHelper.traitLevel(attacker, 'TitanGrip')) return -1;
 
     return attackRange || defaultRange;
   }
