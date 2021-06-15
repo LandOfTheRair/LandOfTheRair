@@ -1,19 +1,21 @@
 
-import { ICharacter, IStatusEffect, Stat, Skill, DamageArgs } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, Stat, DamageArgs } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class VitalEssence extends Effect {
 
   public override create(char: ICharacter, effect: IStatusEffect) {
-    const skill = this.game.characterHelper.getSkillLevel(char, Skill.Restoration) + 1;
     effect.effectInfo.potency = effect.effectInfo.potency ?? 0;
 
+    const hpBoost = effect.effectInfo.potency * 25;
+    const acBoost = effect.effectInfo.potency;
+
     effect.effectInfo.statChanges = {
-      [Stat.HP]: effect.effectInfo.potency,
-      [Stat.ArmorClass]: skill
+      [Stat.HP]: hpBoost,
+      [Stat.ArmorClass]: acBoost
     };
 
-    effect.effectInfo.tooltip = `Increase HP by ${effect.effectInfo.potency} and AC by ${skill}.`;
+    effect.effectInfo.tooltip = `Increase HP by ${hpBoost} and AC by ${acBoost}.`;
   }
 
   public override incoming(
