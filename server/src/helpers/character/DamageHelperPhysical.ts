@@ -73,10 +73,12 @@ export class DamageHelperPhysical extends BaseService {
       ['returnsOnThrow', 'offhand']
     );
 
+    const canOffhand = offhand || this.game.traitHelper.traitLevel(attacker, 'BalancedGrip');
+
     const shouldOffhandAttackAsWell = (!args.isThrow && !args.isKick && !args.isPunch)
                                    || (args.isThrow && (returnsOnThrow || this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')));
 
-    if (shouldOffhandAttackAsWell && offhand && attacker.items.equipment[ItemSlot.RightHand]) {
+    if (shouldOffhandAttackAsWell && canOffhand && attacker.items.equipment[ItemSlot.RightHand]) {
       args ??= {};
       args.isOffhand = true;
       args.throwHand = ItemSlot.LeftHand;
@@ -297,7 +299,10 @@ export class DamageHelperPhysical extends BaseService {
     const leftHand = defender.items.equipment[ItemSlot.LeftHand];
     const defenderShield = leftHand && this.isShield(leftHand) && this.game.itemHelper.isOwnedBy(defender, leftHand) ? leftHand : undefined;
     const defenderOffhand = leftHand
-                      && this.game.itemHelper.getItemProperty(leftHand, 'offhand')
+                      && (
+                        this.game.itemHelper.getItemProperty(leftHand, 'offhand')
+                        || this.game.traitHelper.traitLevel(defender, 'BalancedGrip')
+                      )
                       && this.game.itemHelper.isOwnedBy(defender, leftHand)
       ? leftHand
       : undefined;
