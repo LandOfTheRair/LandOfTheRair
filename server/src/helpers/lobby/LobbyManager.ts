@@ -90,12 +90,17 @@ export class LobbyManager extends BaseService {
   public leaveGame(username: string): void {
     const player = this.playerManager.getPlayerByUsername(username);
     if (!player) throw new Error(`Lobby leave game could not get player for username ${username}`);
+
     this.game.partyHelper.leaveParty(player);
     this.worldManager.leaveMap(player, true);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGame(player);
+
     const user = this.state.userHash[username];
-    user.inGame = false;
+    if (user) {
+      user.inGame = false;
+    }
+
     this.state.gamePlayerCount -= 1;
     this.game.discordHelper.updateLobbyChannel();
   }
