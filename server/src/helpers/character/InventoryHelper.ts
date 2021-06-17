@@ -194,13 +194,14 @@ export class InventoryHelper extends BaseService {
   }
 
   public itemValue(check: ICharacter | null, item: ISimpleItem): number {
-    const { value, sellValue } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'itemClass']);
+    const { ounces: baseOunces, sellValue: baseSellValue } = this.game.itemHelper.getItemDefinition(item.name);
+    const { value, sellValue, ounces } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'ounces']);
     const baseItemValue = sellValue || value || 1;
 
     const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } = this.game.contentManager.getGameSetting('character');
 
     // default sell percent is 25% of value if it doesn't have a set sellValue
-    let sellPercent = sellValue ? 100 : (sellValuePercent ?? 25);
+    let sellPercent = baseSellValue ? 100 : (sellValuePercent ?? 25);
 
     // items that do not have a modded sellvalue (ie, rare gems) can get modified
     if (check && !item.mods.sellValue) {
@@ -214,7 +215,13 @@ export class InventoryHelper extends BaseService {
     }
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
-    const totalSellValue = Math.max(1, Math.floor(baseItemValue * (sellPercent / 100)));
+    let totalSellValue = Math.max(1, Math.floor(baseItemValue * (sellPercent / 100)));
+
+    const baseOz = baseOunces ?? 0;
+    const checkOz = ounces ?? 0;
+    if (baseOz > 0 && checkOz > 0) {
+      totalSellValue = Math.round(totalSellValue * checkOz / baseOz);
+    }
 
     return totalSellValue;
   }
