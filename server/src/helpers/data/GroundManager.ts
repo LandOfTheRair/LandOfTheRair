@@ -83,7 +83,7 @@ export class GroundManager extends BaseService {
 
       this.groundEntities[groundEntity.map] = new Ground();
       this.groundEntities[groundEntity.map]._id = groundEntity._id;
-      this.groundEntities[groundEntity.map].partyName = groundEntity.partyName;
+      this.groundEntities[groundEntity.map].partyName = groundEntity.partyName || '';
       this.groundEntities[groundEntity.map].treasureChests = groundEntity.treasureChests || {};
       this.saveableGround[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.ground[groundEntity.map] = cloneDeep(groundEntity.ground);
@@ -169,7 +169,7 @@ export class GroundManager extends BaseService {
   }
 
   public getMapSpawners(mapName: string): ISerializableSpawner[] {
-    return this.loadedSpawners[mapName] || [];
+    return this.loadedSpawners[mapName] || this.groundEntities[mapName]?.spawners || [];
   }
 
   // get all serializable spawners for a map for their current state

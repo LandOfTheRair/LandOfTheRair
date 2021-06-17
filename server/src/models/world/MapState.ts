@@ -143,6 +143,10 @@ export class MapState {
         const checkSpawner = spawnerSavedData.find(s => s.x === spawnerX && s.y === spawnerY);
         if (checkSpawner) {
           spawnerData.currentTick = checkSpawner.currentTick;
+
+          if (spawnerData.currentTick > 0) {
+            spawnerData.doInitialSpawnImmediately = false;
+          }
         }
       }
 
