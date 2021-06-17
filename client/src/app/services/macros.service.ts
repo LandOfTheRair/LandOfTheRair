@@ -190,6 +190,7 @@ export class MacrosService {
           || !macro
           || !target
           || !this.optionsService.autoAttack
+          || !target.agro[player.uuid]
           || macro.ignoreAutoAttack
           || player.spellChannel
           || this.gameService.hostilityLevelFor(player, target) !== 'hostile'
