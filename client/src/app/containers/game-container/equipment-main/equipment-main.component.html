@@ -85,7 +85,7 @@
 
 <ng-template #viewSkills>
   <table class="display-table" *ngIf="player">
-    <tr *ngFor="let skill of sortedSkills(player.skills)">
+    <tr *ngFor="let skill of sortedSkills()">
       <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true" [showTooltip]="false"></app-skill-icon></td>
       <td class="label">{{ skillText(skill.skill, player.skills[skill.skill], player.totalStats[skill.skill + 'Bonus']) }}</td>
       <td class="number">
