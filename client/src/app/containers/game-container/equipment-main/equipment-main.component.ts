@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { sortBy } from 'lodash';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
@@ -214,16 +213,16 @@ export class EquipmentMainComponent implements OnInit, OnDestroy {
     return getStatDescription(stat, statValue);
   }
 
-  sortedSkills(playerSkills: Partial<Record<Skill, number>>): Array<any> {
-    return sortBy(this.skills, s => -playerSkills[s.skill]);
+  sortedSkills(): Array<any> {
+    return this.skills;
   }
 
-  skillLevel(skillValue: number): number {
-    return calculateSkillLevelFromXP(skillValue);
+  skillLevel(skillValue: number, skillBonus = 0): number {
+    return calculateSkillLevelFromXP(skillValue) + skillBonus;
   }
 
-  skillText(skill: Skill, skillValue: number): string {
-    return this.getSkillDescription(skill, this.skillLevel(skillValue));
+  skillText(skill: Skill, skillValue: number, skillBonus = 0): string {
+    return this.getSkillDescription(skill, this.skillLevel(skillValue, skillBonus));
   }
 
   canShowValue(slot: ItemSlot, item: ISimpleItem): boolean {

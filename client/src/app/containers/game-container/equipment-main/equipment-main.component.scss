@@ -25,7 +25,8 @@
   }
 
   td.number {
-    padding-right: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
     font-size: 1.3rem;
 
     .number-container {
@@ -37,5 +38,10 @@
         top: 0;
       }
     }
+  }
+
+  td.icon {
+    width: 24px;
+    padding-right: 10px;
   }
 }
