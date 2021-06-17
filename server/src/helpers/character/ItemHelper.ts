@@ -338,7 +338,14 @@ export class ItemHelper extends BaseService {
       const extraData = cloneDeep(extra || {}) as any;
       extraData.potency = potency;
 
-      this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration: duration ?? 10, extra: extraData } });
+      // an item with uses (ring, scroll) will cast instead of apply directly
+      if (useEffect.uses) {
+        this.game.spellManager.castSpell(useEffect.name, player, player, { duration: duration ?? 10, potency, extra: extraData });
+
+      // an item without uses (and has ounces, such as bottles) will apply the effect directly
+      } else {
+        this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration: duration ?? 10, extra: extraData } });
+      }
     }
 
     this.tryToBreakItem(player, item, source);
