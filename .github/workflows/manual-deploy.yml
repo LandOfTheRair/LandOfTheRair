@@ -22,7 +22,7 @@ jobs:
         method: 'POST'
         data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
         preventFailureOnNoResponse: 'true'
-        ignoreStatusCodes: '404'
+        ignoreStatusCodes: '404,502'
 
     - uses: actions/checkout@v2
 
@@ -46,7 +46,7 @@ jobs:
         method: 'POST'
         data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
         preventFailureOnNoResponse: 'true'
-        ignoreStatusCodes: '404'
+        ignoreStatusCodes: '404,502'
 
     - name: Wait 30 seconds
       uses: jakejarvis/wait-action@master
