@@ -521,6 +521,8 @@ export class MapScene extends Phaser.Scene {
     layer.data.forEach((tile, i) => {
       if (!terrainAnimations[tile]) return;
 
+      if (this.allMapData.tiledJSON.layers[MapLayer.Walls].data[i]) return;
+
       const x = Math.floor(i % layer.width);
       const y = Math.floor((i - x) / layer.width);
 
