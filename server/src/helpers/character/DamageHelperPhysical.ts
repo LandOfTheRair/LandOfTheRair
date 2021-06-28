@@ -1046,6 +1046,12 @@ export class DamageHelperPhysical extends BaseService {
 
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
+    // if we're singing, try to do offensive encore
+    if (this.game.effectHelper.hasEffect(attacker, 'Singing')) {
+      const encoreBoost = this.game.traitHelper.traitLevelValue(attacker, 'OffensiveEncore');
+      this.game.characterHelper.mana(attacker, encoreBoost);
+    }
+
     // if our ammo was shot and can apply an effect, we give it a spin
     if (canShoot && ammo) {
       const ammoStrikeEffect: IItemEffect = this.game.itemHelper.getItemProperty(ammo, 'strikeEffect');

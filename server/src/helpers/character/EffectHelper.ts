@@ -17,8 +17,8 @@ export class EffectHelper extends BaseService {
 
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
-    const { effectMeta: meta } = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
-    if (!meta.effectRef) return;
+    const effectData = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
+    if (!effectData || !effectData.effectMeta.effectRef) return;
 
     this.game.effectManager.effectTick(effect.effectName, character, effect);
   }

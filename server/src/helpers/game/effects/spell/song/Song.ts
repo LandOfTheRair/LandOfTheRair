@@ -1,4 +1,4 @@
-import { DamageArgs, DamageClass, ICharacter, IStatusEffect } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Song extends Effect {
@@ -26,20 +26,6 @@ export class Song extends Effect {
       this.sendMessage(char, { message: 'Your singing gives your position away!' });
       this.game.effectHelper.removeEffectByName(char, 'Hidden');
     }
-  }
-
-  public override outgoing(
-    effect: IStatusEffect,
-    char: ICharacter,
-    target: ICharacter,
-    damageArgs: DamageArgs
-  ): void {
-    if (damageArgs.damageClass !== DamageClass.Physical) return;
-
-    const encoreBoost = this.game.traitHelper.traitLevelValue(char, 'OffensiveEncore');
-
-    if (!encoreBoost) return;
-    this.game.characterHelper.mana(char, encoreBoost);
   }
 
 }
