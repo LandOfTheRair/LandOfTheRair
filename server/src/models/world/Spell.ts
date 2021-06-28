@@ -84,6 +84,8 @@ export class Spell implements BaseSpell {
       skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
     ) / skillsToAverage.length);
 
+    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * (spellData.potencyMultiplier || 1);
+
     const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
 
     const bonusRolls = isStatic

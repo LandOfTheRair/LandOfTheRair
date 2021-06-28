@@ -39,6 +39,7 @@ export interface ISpellData {
     range?: number;                     // if the spell is an aoe, this is the default range from the center it targets (default 0)
     resistLowerTrait?: string;          // if the spell canBeResisted, this trait will improve the chance of the spell cast going through
     spellRef: string;                   // the reference to the spell for casting purposes
+    useSkillAsPotency?: boolean;        // if true, the spell will use only the casters skill as the potency (unless there is already a potency set)
   };
 
 }
