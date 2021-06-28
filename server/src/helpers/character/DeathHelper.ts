@@ -180,9 +180,11 @@ export class DeathHelper extends BaseService {
 
       // attach items to corpse and put that on the ground
       if (corpse) {
+        const baseNPC = this.game.npcCreator.getNPCDefinition(dead.npcId);
+
         corpse.mods.searchItems = allItems;
-        corpse.mods.tansFor = dead.tansFor;
-        corpse.mods.corpseLevel = dead.level;
+        corpse.mods.tansFor = dead.tansFor || '';
+        corpse.mods.corpseLevel = baseNPC?.level ?? dead.level;
         corpse.mods.playersHeardDeath = state.getAllPlayersInRange(dead, 4).map(x => x.uuid);
         state.addItemToGround(dead.x, dead.y, corpse);
 

@@ -40,7 +40,7 @@ export class NPCCreator extends BaseService {
   public init() {}
 
   // get the real item for base information lookup
-  private getNPCDefinition(npcId: string): INPCDefinition {
+  public getNPCDefinition(npcId: string): INPCDefinition {
     return this.content.getNPCDefinition(npcId);
   }
 
