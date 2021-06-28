@@ -128,6 +128,11 @@ export class EffectHelper extends BaseService {
   // remove a stale or removed effect
   public removeEffectByName(character: ICharacter, effectName: string): void {
     const effectData = this.game.effectManager.getEffectData(effectName);
+    if (!effectData) {
+      this.game.logger.error('EffectHelper', new Error(`Effect ${effectName} cannot be removed as no data could be found.`));
+      return;
+    }
+
     const { type } = effectData.effect;
 
     const foundEffect = character.effects[type].find(x => x.effectName === effectName);
@@ -139,6 +144,11 @@ export class EffectHelper extends BaseService {
   // remove a stale or removed effect
   public removeEffect(character: ICharacter, effect: IStatusEffect): void {
     const effectData = this.game.effectManager.getEffectData(effect.effectRef ?? effect.effectName);
+    if (!effectData) {
+      this.game.logger.error('EffectHelper', new Error(`Effect ${JSON.stringify(effect)} cannot be removed as no data could be found.`));
+      return;
+    }
+
     const { type } = effectData.effect;
     const { recentlyRef } = effectData.effectMeta;
 
