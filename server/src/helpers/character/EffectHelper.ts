@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { BuffType, DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
+import { Allegiance, BuffType, DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -46,6 +46,8 @@ export class EffectHelper extends BaseService {
     effectName: string,
     modifyEffectInfo: DeepPartial<IStatusEffectData> = {}
   ): void {
+    if (character.allegiance === Allegiance.NaturalResource && effectName !== 'Attribute') return;
+
     if (!effectName) {
       this.game.logger.error('EffectHelper:AddEffect', new Error('Attempting to create an undefined effect'));
       return;
@@ -77,7 +79,7 @@ export class EffectHelper extends BaseService {
       effectName,
       endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
       effectInfo: extra || {},
-      effectRef: effectData.effectMeta.effectRef,
+      effectRef: effectData.effectMeta.effectRef || '',
       sourceName: ''
     };
 
