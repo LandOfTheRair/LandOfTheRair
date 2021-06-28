@@ -65,12 +65,12 @@ export class ItemCreator extends BaseService {
     return succorItem;
   }
 
-  public rerollItem(item: ISimpleItem): ISimpleItem {
+  public rerollItem(item: ISimpleItem, rerollStats = true): ISimpleItem {
     const newItem = cloneDeep(item);
     this.resetUUID(newItem);
 
     const itemDefinition = this.content.getItemDefinition(item.name);
-    if (itemDefinition) {
+    if (rerollStats && itemDefinition) {
       this.rollStats(item, itemDefinition);
     }
 

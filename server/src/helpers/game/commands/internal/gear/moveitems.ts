@@ -1046,7 +1046,7 @@ export class MoveItems extends MacroCommand {
           uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
           uuidRemoveCounts[item.item.uuid]++;
 
-          addItems.push(this.game.itemCreator.rerollItem(item.item));
+          addItems.push(this.game.itemCreator.rerollItem(item.item, false));
         }
       });
 
@@ -1078,7 +1078,7 @@ export class MoveItems extends MacroCommand {
           uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
           uuidRemoveCounts[item.item.uuid]++;
 
-          addItems.push(this.game.itemCreator.rerollItem(item.item));
+          addItems.push(this.game.itemCreator.rerollItem(item.item, false));
         }
       });
 
@@ -1110,7 +1110,7 @@ export class MoveItems extends MacroCommand {
           uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
           uuidRemoveCounts[item.item.uuid]++;
 
-          addItems.push(this.game.itemCreator.rerollItem(item.item));
+          addItems.push(this.game.itemCreator.rerollItem(item.item, false));
         }
       });
 
@@ -1144,7 +1144,7 @@ export class MoveItems extends MacroCommand {
           uuidRemoveCounts[item.item.uuid] = uuidRemoveCounts[item.item.uuid] || 0;
           uuidRemoveCounts[item.item.uuid]++;
 
-          addItems.push(this.game.itemCreator.rerollItem(item.item));
+          addItems.push(this.game.itemCreator.rerollItem(item.item, false));
         }
       });
 

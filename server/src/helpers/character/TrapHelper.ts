@@ -53,7 +53,7 @@ export class TrapHelper extends BaseService {
   }
 
   public placeTrap(x: number, y: number, placer: ICharacter, trap: ISimpleItem) {
-    trap = this.game.itemCreator.rerollItem(trap);
+    trap = this.game.itemCreator.rerollItem(trap, false);
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
     trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(placer, Skill.Thievery);

@@ -130,7 +130,7 @@ export class FindFamiliar extends Effect {
 
         // try to copy the item
         if (itemRef && this.game.itemHelper.canGetBenefitsFromItem(char, itemRef)) {
-          const copyItem = this.game.itemCreator.rerollItem(itemRef);
+          const copyItem = this.game.itemCreator.rerollItem(itemRef, false);
           copyItem.mods.destroyOnDrop = true;
           copyItem.mods.owner = '';
           copyItem.mods.requirements = {};

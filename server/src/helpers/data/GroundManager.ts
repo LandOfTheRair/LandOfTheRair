@@ -292,7 +292,7 @@ export class GroundManager extends BaseService {
   }
 
   public convertItemStackToList(item: IGroundItem, count = 1): ISimpleItem[] {
-    return Array(count).fill(null).map(() => this.game.itemCreator.rerollItem(item.item));
+    return Array(count).fill(null).map(() => this.game.itemCreator.rerollItem(item.item, false));
   }
 
   public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
