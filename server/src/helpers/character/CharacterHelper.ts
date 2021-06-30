@@ -182,7 +182,9 @@ export class CharacterHelper extends BaseService {
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
     if ((char as INPC).owner && target === (char as INPC).owner) return;
     if ((target as INPC).owner && char === (target as INPC).owner) return;
-    if ((target as INPC).monsterGroup && (target as INPC).monsterGroup === (target as INPC).monsterGroup) return;
+    if ((char as INPC).monsterGroup
+    && (target as INPC).monsterGroup
+    && (char as INPC).monsterGroup === (target as INPC).monsterGroup) return;
 
     // boost by both sides threat multiplier
     const amountMult = 1 + this.getStat(char, Stat.ThreatMultiplier) + this.getStat(target, Stat.ThreatMultiplier);
