@@ -584,6 +584,7 @@ export class CharacterHelper extends BaseService {
     const value = character.totalStats[stat] ?? 0;
     if (value < 0 && stat === Stat.Mitigation) return 0;
     if (value === 0 && stat === Stat.DamageFactor) return 1;
+    if (value !== 0 && stat === Stat.DamageFactor && this.isPlayer(character)) return 1 + value;
     return value;
   }
 
