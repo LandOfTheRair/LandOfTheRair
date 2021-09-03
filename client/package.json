@@ -42,7 +42,7 @@
     "@ngxs/store": "^3.7.0",
     "fast-json-patch": "3.0.0-1",
     "howler": "^2.2.1",
-    "immer": "^8.0.1",
+    "immer": "^9.0.6",
     "linkifyjs": "^2.1.8",
     "luxon": "^1.25.0",
     "marked": "^1.2.5",
