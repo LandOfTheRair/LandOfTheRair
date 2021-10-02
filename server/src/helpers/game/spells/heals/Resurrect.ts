@@ -19,6 +19,7 @@ export class Resurrect extends Spell {
       this.game.messageHelper.sendSimpleMessage(caster, 'You resurrected a corpse!');
 
       this.spawnZombie(caster, corpse.item.mods.corpseLevel ?? 1);
+      this.game.corpseManager.removeCorpse(corpse.item);
 
       didRevive = true;
     });
