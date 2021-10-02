@@ -13,7 +13,7 @@ export class HalloweenCandyBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
 
@@ -65,7 +65,7 @@ export class HalloweenCandyBehavior implements IAIBehavior {
         const player = env?.player;
         if (!player) return 'You do not exist.';
 
-        if (distanceFrom(player, npc) > 0) return 'Please come closer.';
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const brainIndexes = player.items.sack.items.filter(x => x.name === 'Halloween Zombie Brain');
         const pileIndexes = player.items.sack.items.filter(x => x.name === 'Halloween Candy Pile');
