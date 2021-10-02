@@ -9,7 +9,7 @@ export class ShredOnePercent extends SpellCommand {
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return distanceFrom(caster, target) <= 0
-        && target.hp.current > target.hp.maximum * 0.4
+        && target.hp.current > target.hp.maximum * 0.2
         && !this.game.effectHelper.hasEffect(target, 'Dangerous');
   }
 
