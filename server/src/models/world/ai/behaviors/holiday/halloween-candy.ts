@@ -11,7 +11,7 @@ export class HalloweenCandyBehavior implements IAIBehavior {
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
-        if (!player) return 'You do not exist.';
+        if (!player) return 'You do nt exist.';
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 

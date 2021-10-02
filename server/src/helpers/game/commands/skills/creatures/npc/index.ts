@@ -14,6 +14,8 @@ export * from './poisonbitestrong';
 export * from './poisonbiteweak';
 export * from './pullone';
 export * from './settrap';
+export * from './shredfivepercent';
+export * from './shredonepercent';
 export * from './shredtenpercent';
 export * from './shredtwentypercent';
 export * from './skillsuckmedium';
