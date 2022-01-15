@@ -45,7 +45,7 @@
     "immer": "^9.0.6",
     "linkifyjs": "^2.1.8",
     "luxon": "^1.25.0",
-    "marked": "^1.2.5",
+    "marked": "^4.0.10",
     "ngx-auto-unsubscribe": "3.0.1",
     "ngx-color-picker": "^10.1.0",
     "ngxs-reset-plugin": "^1.2.0",
