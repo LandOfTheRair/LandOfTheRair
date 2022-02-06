@@ -9,7 +9,11 @@ export class NecroticAura extends Effect {
 
     if (effect.effectInfo.potency <= 0) return;
 
-    this.game.targettingHelper.getPossibleAOETargets(char, char, 1).forEach(target => {
+    const state = this.game.worldManager.getMapStateForCharacter(char);
+    if (!state) return;
+
+    const nearby = state.getAllHostilesInRange(char, 1);
+    nearby.forEach(target => {
 
       this.game.damageHelperMagic.magicalAttack(char, target, {
         atkMsg: 'Your aura of death damages %0!',
