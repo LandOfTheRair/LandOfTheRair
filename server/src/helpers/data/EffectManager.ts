@@ -40,7 +40,7 @@ export class EffectManager extends BaseService {
   public effectCreate(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
-      if (isString(effect.effectInfo.unique)) {
+      if (isString(effect.effectInfo.unique) && effect.endsAt !== -1) {
         this.game.effectHelper.removeSimilarEffects(character, effect.effectInfo.unique as string, effectName);
       }
 
