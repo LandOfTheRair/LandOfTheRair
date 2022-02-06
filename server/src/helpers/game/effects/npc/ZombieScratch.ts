@@ -53,6 +53,8 @@ export class ZombieScratch extends Effect {
       { result: 'Halloween Pumpkin Shield', chance: 1, maxChance: 15000 },
       { result: 'Halloween Moon Boots', chance: 1, maxChance: 75000 }
     );
+
+    this.game.effectHelper.addEffect(npc, '', 'DecayingCorpse');
   }
 
 }
