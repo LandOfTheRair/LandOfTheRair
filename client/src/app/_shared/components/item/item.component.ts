@@ -12,8 +12,6 @@ import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
 
-// const POSSIBLE_TRADESKILL_SCOPES = ['Alchemy', 'Spellforging', 'Metalworking'];
-
 export type MenuContext = 'Sack' | 'Belt' | 'Ground' | 'DemiMagicPouch'
                         | 'GroundGroup' | 'Equipment' | 'Left'
                         | 'Right' | 'Coin' | 'Merchant' | 'Potion'
