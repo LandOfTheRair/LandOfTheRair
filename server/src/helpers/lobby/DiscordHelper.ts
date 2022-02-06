@@ -79,7 +79,8 @@ export class DiscordHelper extends BaseService {
   // get the discord user by the tag for use in this service
   public async getDiscordUserByTag(tag: string): Promise<Discord.GuildMember | undefined> {
     try {
-      return this.discordGuild?.members.fetch(tag);
+      const member = await this.discordGuild?.members.fetch(tag);
+      return member;
     } catch {
       return undefined;
     }
