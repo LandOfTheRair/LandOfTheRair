@@ -106,7 +106,7 @@ export class EffectHelper extends BaseService {
                                                          && (effect.effectInfo.unique ? true : e.sourceUUID === effect.sourceUUID));
 
       // if the effect is permanent, we do _not_ overwrite, at all
-      if (priorEffect && priorEffect.endsAt === -1) {
+      if (priorEffect && priorEffect.endsAt === -1 && !priorEffect.effectInfo.charges) {
         return;
       }
 
