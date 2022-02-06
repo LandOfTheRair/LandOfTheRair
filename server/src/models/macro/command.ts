@@ -313,7 +313,9 @@ export class SpellCommand extends SkillCommand {
 
         const castTargets = target ? [target] : [];
 
-        if (target?.name && !args?.targetNumber && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
+        if ((spellData.spellMeta.aoe || target?.name)
+          && !args?.targetNumber
+          && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
       }
 
       // try to reflect the spell if possible
