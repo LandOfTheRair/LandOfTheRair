@@ -81,6 +81,11 @@ export class LoginAction extends ServerAction {
         events: game.dynamicEventHelper.getEventsForPlayer()
       });
 
+      // if they manage to log in with a temporary password, change their password to their temporary one so it can be reset
+      if (account.temporaryPassword) {
+        game.accountDB.changePassword(realAccount, account.temporaryPassword);
+      }
+
     } catch (e) {
       game.logger.error('LoginAction', e);
       throw new Error('Could not login username?');
