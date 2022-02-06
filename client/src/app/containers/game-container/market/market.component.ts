@@ -45,7 +45,7 @@ export class MarketComponent implements OnInit, OnDestroy {
 
   public currentPage = 0;
   public currentSort: any;
-  public currentTab: string;
+  public currentTab = 'Buy';
   public debouncedSearch = debounce(() => this.changeSearchText(), 200);
 
   public buyableListings: IMarketListing[];
@@ -136,6 +136,11 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     this.marketInfoSub = this.market$.subscribe(data => {
       this.marketInfo = cloneDeep(data || {});
+      this.currentTab = '';
+
+      setTimeout(() => {
+        this.switchTab('Buy');
+      }, 0);
     });
 
     this.gameStatusSub = this.inGame$.subscribe(() => {
@@ -147,9 +152,6 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.playerSub = this.player$.subscribe(p => {
       if (!p) return;
       this.player = p;
-
-      if (this.currentTab) return;
-      this.switchTab('Buy');
     });
 
   }
