@@ -21,12 +21,13 @@ export class Resurrect extends Spell {
       this.spawnZombie(caster, corpse.item.mods.corpseLevel ?? 1);
       this.game.corpseManager.searchCorpses([corpse.item.uuid]);
       this.game.corpseManager.removeCorpse(corpse.item);
+      this.game.groundManager.removeItemFromGround(caster.map, caster.x, caster.y, ItemClass.Corpse, corpse.item.uuid);
 
       didRevive = true;
     });
 
     if (!didRevive) {
-      this.game.messageHelper.sendSimpleMessage(caster, 'There are no corpses here to revive.');
+      this.game.messageHelper.sendSimpleMessage(caster, 'There are no corpses here that you can resurrect.');
     }
   }
 
