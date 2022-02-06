@@ -104,12 +104,17 @@ export function descTextFor(
   const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense)
     ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
 
-  const affectsAttributes = [
+  const allStats = [
     Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP
-  ].some(x => stats?.[x]);
+  ];
+  const affectsAttributes = allStats.some(x => stats?.[x]);
 
   const statsText = identifyTier > 0 && affectsAttributes
     ? 'This item affects physical attributes! ' : '';
+
+  const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
+  const statSpecificText = identifyTier > 2 && affectedStats.length > 0
+    ? `This item affects your stats! ${affectedStats.map(x => `+${stats[x]} ${x.toUpperCase()}`).join(', ')}. ` : '';
 
   const useEffect = getProp(item, itemDef, 'useEffect');
   const strikeEffect = getProp(item, itemDef, 'strikeEffect');
@@ -166,7 +171,7 @@ export function descTextFor(
   // whether it can be used in either hand
   const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
 
-  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}${statsText}
+  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}${statsText}${statSpecificText}
     ${dualWieldText}${traitText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}${pagesText}${trapSetText}
     ${craftedText}${conditionText}${ownedText}`;
 }
