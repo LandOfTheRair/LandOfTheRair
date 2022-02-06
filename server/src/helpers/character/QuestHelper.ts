@@ -123,6 +123,8 @@ export class QuestHelper extends BaseService {
 
   // try to update quest based on an npc id that was just killed
   public tryUpdateQuestProgressForKill(player: IPlayer, npcId: string): void {
+    if (!player.quests.questKillWatches) return;
+
     const updateQuests = player.quests.questKillWatches[npcId];
     if (!updateQuests || updateQuests.length === 0) return;
 
