@@ -62,7 +62,7 @@ export class CalculatorHelper extends BaseService {
     const normalizedCurrent = skillValue - prevLevel;
     const normalizedMax = nextLevel - prevLevel;
 
-    const percentWay = Math.max(0, (normalizedCurrent / normalizedMax * 100)).toFixed(3);
+    const percentWay = Math.min(99.999, Math.max(0, (normalizedCurrent / normalizedMax * 100))).toFixed(3);
 
     return percentWay;
   }
