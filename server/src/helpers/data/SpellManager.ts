@@ -95,7 +95,11 @@ export class SpellManager extends BaseService {
       doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
 
     // buff spells can't be cast on hostiles
-    if (caster && target && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) {
+    if (caster
+    && target
+    && noHostileTarget
+    && this.game.targettingHelper.checkTargetForHostility(caster, target)
+    && !this.game.characterHelper.isPlayer(target)) {
       this.game.messageHelper.sendSimpleMessage(caster, 'You cannot target that creature with this spell!');
       return;
     }

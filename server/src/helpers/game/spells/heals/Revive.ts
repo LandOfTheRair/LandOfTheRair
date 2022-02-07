@@ -24,6 +24,10 @@ export class Revive extends Spell {
       didRevive = true;
 
       this.game.effectHelper.addEffect(player, '', 'EtherSickness');
+
+      if (this.game.traitHelper.traitLevel(caster, 'SnapHeal') && this.game.traitHelper.traitLevel(caster, 'Cure')) {
+        this.game.commandHandler.getSkillRef('Cure').use(caster, player);
+      }
     });
 
     if (!didRevive) {
