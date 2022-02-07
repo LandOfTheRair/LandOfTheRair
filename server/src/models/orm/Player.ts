@@ -52,6 +52,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) partyName = '';
+  @Property(PROP_TEMPORARY()) skillTicks = 0;
   @Property(PROP_TEMPORARY()) lastDeathLocation;
   @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
   @Property(PROP_TEMPORARY()) spellChannel: { ticks: number; callback: () => void };

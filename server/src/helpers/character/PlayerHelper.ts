@@ -163,6 +163,13 @@ export class PlayerHelper extends BaseService {
     if (type === 'slow') {
       this.characterHelper.tick(player, tick);
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
+
+      if (player.skillTicks > 0) {
+        player.skillTicks--;
+        if (player.skillTicks <= 0 && player.flaggedSkills.length > 0) {
+          this.game.playerHelper.flagSkill(player, []);
+        }
+      }
     }
 
     const canAct = this.game.characterHelper.canAct(player);
@@ -348,6 +355,10 @@ export class PlayerHelper extends BaseService {
   // flag a certain skill for a player
   public flagSkill(player: IPlayer, skill: Skill|Skill[]): void {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
+
+    if (skill.length !== 0) {
+      player.skillTicks = 30;
+    }
   }
 
   // flag a certain skill for a player

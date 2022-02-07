@@ -39,6 +39,7 @@ export interface IPlayer extends ICharacter {
   swimElement: DamageClass | string;
 
   flaggedSkills: Skill[];
+  skillTicks: number;
   paidSkills: SkillBlock;
 
   corpseRef?: ISimpleItem;
