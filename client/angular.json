@@ -51,7 +51,8 @@
               "src/assets/sfx",
               "src/assets/spritesheets",
               "src/assets/content/_output",
-              "src/_headers"
+              "src/_headers",
+              "src/_redirects"
             ],
             "styles": [
               "src/styles/styles.scss"
