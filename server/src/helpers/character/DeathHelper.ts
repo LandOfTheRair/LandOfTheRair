@@ -37,7 +37,12 @@ export class DeathHelper extends BaseService {
 
     if (!this.game.characterHelper.isDead(player)) return;
 
-    player.hp.current = 1;
+    const bonusHP = Math.min(
+      player.hp.maximum,
+      Math.floor(player.hp.maximum * this.game.traitHelper.traitLevelValue(player, 'EtherRecombobulation'))
+    );
+
+    player.hp.current = 1 + bonusHP;
     player.dir = Direction.South;
 
     // we're being revived
