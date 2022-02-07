@@ -34,13 +34,15 @@ export class CharacterDB extends BaseService {
 
     const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
 
-    let startingXP = 1000;
+    const { baseXP, baseRep } = this.game.contentManager.getGameSetting('character');
+
+    let startingXP = baseXP ?? 1000;
     let lockers = new PlayerLockers();
     let startingSkills = {};
 
     if (oldPlayerSlot !== -1) {
       const oldPlayer = account.players[oldPlayerSlot];
-      startingXP = Math.max(1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
+      startingXP = Math.max(baseXP ?? 1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
       lockers = oldPlayer.lockers as PlayerLockers;
       startingSkills = oldPlayer.skills;
 
@@ -73,7 +75,7 @@ export class CharacterDB extends BaseService {
     player.stats = characterDetails.stats;
     player.skills = characterDetails.skills;
     player.traits.tp = 2;
-    player.allegianceReputation[player.allegiance] = 500;
+    player.allegianceReputation[player.allegiance] = baseRep ?? 500;
 
     // load old player data
     player.exp = startingXP;
