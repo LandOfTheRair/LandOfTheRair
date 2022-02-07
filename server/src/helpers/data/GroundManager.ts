@@ -243,10 +243,10 @@ export class GroundManager extends BaseService {
         expiresAt
       };
 
-      container.push(groundItem);
+      container.push(cloneDeep(groundItem));
       if (itemClass === ItemClass.Corpse) return;
       if (item.mods.owner || forceSave) {
-        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [groundItem]), Object);
+        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [cloneDeep(groundItem)]), Object);
       }
     }
   }
