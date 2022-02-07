@@ -19,7 +19,8 @@ export class TrapHelper extends BaseService {
   }
 
   public triggerTrap(target: ICharacter, trap: IGroundItem) {
-    if (trap.item.mods.trapSetBy === target.uuid) return;
+    const trapEffect = this.game.itemHelper.getItemProperty(trap.item, 'trapEffect');
+    if (trap.item.mods.trapSetBy === target.uuid && !trapEffect.extra?.isPositive) return;
 
     this.game.messageHelper.sendLogMessageToPlayer(target, { message: 'You triggered a trap!' });
     this.castEffectFromTrap(target, trap);
