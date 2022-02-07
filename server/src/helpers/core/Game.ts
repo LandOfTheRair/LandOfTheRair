@@ -208,7 +208,7 @@ export class Game {
     }
 
     // map ticks (npcs)
-    if (this.ticksElapsed % 20 === 0) {
+    if (this.ticksElapsed % 20 === 0 && this.configManager.isAIActive) {
       timer.startTimer(`npcTick-${now}`);
       this.worldManager.npcTick(timer);
       timer.stopTimer(`npcTick-${now}`);

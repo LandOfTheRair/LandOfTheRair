@@ -9,6 +9,10 @@ export class ConfigManager extends BaseService {
   private maxStats = 25;
   private potionStats = {};
 
+  private gameOptions = {
+    frozenAI: false
+  };
+
   private maxExp = 0;
   private maxSkillExp = 0;
 
@@ -36,6 +40,10 @@ export class ConfigManager extends BaseService {
     return this.potionStats;
   }
 
+  public get isAIActive() {
+    return !this.gameOptions.frozenAI;
+  }
+
   async init() {
     this.maxLevel = this.game.contentManager.getGameSetting('character', 'maxLevel');
     this.maxSkill = this.game.contentManager.getGameSetting('character', 'maxSkill');
@@ -44,5 +52,9 @@ export class ConfigManager extends BaseService {
 
     this.maxExp = this.game.calculatorHelper.calculateXPRequiredForLevel(this.MAX_LEVEL);
     this.maxSkillExp = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);
+  }
+
+  public toggleAIFreeze() {
+    this.gameOptions.frozenAI = !this.gameOptions.frozenAI;
   }
 }
