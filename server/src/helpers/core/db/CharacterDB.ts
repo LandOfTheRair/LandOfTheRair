@@ -34,9 +34,20 @@ export class CharacterDB extends BaseService {
 
     const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
 
+    let startingXP = 1000;
+    let lockers = new PlayerLockers();
+    let startingSkills = {};
+
     if (oldPlayerSlot !== -1) {
+      const oldPlayer = account.players[oldPlayerSlot];
+      startingXP = Math.max(1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
+      lockers = oldPlayer.lockers as PlayerLockers;
+      startingSkills = oldPlayer.skills;
+
       await this.deletePlayer(account.players[oldPlayerSlot] as Player);
       account.players.splice(oldPlayerSlot, 1);
+
+      console.log(account.players[oldPlayerSlot]);
     }
 
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass, weapons });
@@ -63,6 +74,11 @@ export class CharacterDB extends BaseService {
     player.skills = characterDetails.skills;
     player.traits.tp = 2;
     player.allegianceReputation[player.allegiance] = 500;
+
+    // load old player data
+    player.exp = startingXP;
+    player.lockers = lockers;
+    player.paidSkills = startingSkills;
 
     this.game.playerHelper.becomeClass(player, player.baseClass);
     this.game.characterHelper.healToFull(player);
