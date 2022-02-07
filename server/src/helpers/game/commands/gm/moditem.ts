@@ -23,5 +23,7 @@ export class GMModItem extends MacroCommand {
 
     const formattedArgs = this.game.messageHelper.getMergeObjectFromArgs(args.stringArgs);
     merge(rightHand.mods, formattedArgs);
+
+    this.game.characterHelper.recalculateEverything(player);
   }
 }
