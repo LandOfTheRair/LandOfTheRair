@@ -22,6 +22,8 @@ export class Revive extends Spell {
       this.game.characterHelper.gainPermanentStat(player, Stat.CON, 1);
 
       didRevive = true;
+
+      this.game.effectHelper.addEffect(player, '', 'EtherSickness');
     });
 
     if (!didRevive) {
