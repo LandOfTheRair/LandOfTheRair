@@ -58,6 +58,8 @@ export class DeathHelper extends BaseService {
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
+    this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', { effect: { duration: 3 } });
+
     // if we rotted... deal with that
     if (shouldRot) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You feel a churning sensation...' });
