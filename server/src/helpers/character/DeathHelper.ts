@@ -58,7 +58,8 @@ export class DeathHelper extends BaseService {
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
-    this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', { effect: { duration: 3 } });
+    const invulnDuration = 3 + this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
+    this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', { effect: { duration: invulnDuration } });
 
     // if we rotted... deal with that
     if (shouldRot) {
