@@ -19,6 +19,12 @@
     </mat-chip>
   </mat-chip-list>
 
+  <mat-chip-list *ngIf="serverMismatchWarning">
+    <mat-chip color="accent" selected>
+      <mat-icon class="m-r-10">info</mat-icon> You are connected to a different, unofficial server.
+    </mat-chip>
+  </mat-chip-list>
+
   <mat-chip-list *ngIf="assetMismatchWarning && showMismatchWarning">
     <mat-chip color="warn" selected (click)="hideMismatch()">
       <mat-icon class="m-r-10">warning</mat-icon> Asset mismatch error - Items/NPCs may not render correctly. Reload to fix.

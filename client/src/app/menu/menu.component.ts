@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { GameServerEvent } from '../../interfaces';
 import { Logout, ResetWindowPositions, ShowWindow } from '../../stores';
 import { AnnouncementService } from '../services/announcement.service';
+import { APIService } from '../services/api.service';
 
 import { AssetService } from '../services/asset.service';
 import { GameService } from '../services/game.service';
@@ -22,7 +23,12 @@ export class MenuComponent implements OnInit {
 
   private serverAssetHash: string;
 
+  public get serverMismatchWarning(): boolean {
+    return !!this.api.overrideAPIURL;
+  }
+
   public get assetMismatchWarning(): boolean {
+    if (this.api.overrideAPIURL) return false;
     if (!this.serverAssetHash) return false;
     return this.serverAssetHash !== this.assetService.clientAssetHash;
   }
@@ -222,6 +228,7 @@ export class MenuComponent implements OnInit {
     private store: Store,
     private announcementService: AnnouncementService,
     private modalService: ModalService,
+    private api: APIService,
     public socketService: SocketService,
     public gameService: GameService,
     public assetService: AssetService
