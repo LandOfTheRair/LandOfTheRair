@@ -11,7 +11,7 @@ import { OptionsService } from '../services/options.service';
 import { GameService } from '../services/game.service';
 import { SocketService } from '../services/socket.service';
 import { ModalService } from '../services/modal.service';
-import { environment } from '../../environments/environment';
+import { APIService } from '../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     public socketService: SocketService,
     public optionsService: OptionsService,
     private modalService: ModalService,
+    private api: APIService,
     private store: Store,
     private http: HttpClient
   ) { }
@@ -94,7 +95,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = true;
     this.errorMessage = '';
 
-    this.http.post(environment.server.http + '/auth/password-check', this.newAccount)
+    this.http.post(this.api.finalHTTPURL + '/auth/password-check', this.newAccount)
       .subscribe(() => {
 
         this.socketService.emit(GameServerEvent.Login, this.newAccount);
@@ -118,7 +119,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = true;
     this.errorMessage = '';
 
-    this.http.post(environment.server.http + '/auth/register-check', this.newAccount)
+    this.http.post(this.api.finalHTTPURL + '/auth/register-check', this.newAccount)
       .subscribe(() => {
         this.socketService.emit(GameServerEvent.Register, this.newAccount);
       }, (err) => {

@@ -11,10 +11,10 @@ import { Store } from '@ngxs/store';
 import { StateReset } from 'ngxs-reset-plugin';
 import { BehaviorSubject, interval, Observable, Subject, Subscription } from 'rxjs';
 import { delay, map, retryWhen, share, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
 import { GameServerEvent, GameServerResponse } from '../../interfaces';
 import { AccountState, GameState, Logout } from '../../stores';
 import { LoggerService } from './logger.service';
+import { APIService } from './api.service';
 
 interface WebsocketMessage {
   type: GameServerEvent;
@@ -53,7 +53,8 @@ export class SocketService {
 
   constructor(
     private store: Store,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private api: APIService
   ) { }
 
   private makeJsonWebSocketObservable(url: string): Observable<unknown> {
@@ -91,7 +92,7 @@ export class SocketService {
 
     this.tryDisconnect();
 
-    this.socket$ = this.makeJsonWebSocketObservable(environment.server.ws);
+    this.socket$ = this.makeJsonWebSocketObservable(this.api.finalWSURL);
 
     const messages$ = this.socket$.pipe(
       switchMap((getResponses: any) => {

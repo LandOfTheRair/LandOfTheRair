@@ -5,11 +5,11 @@ import { Select, Store } from '@ngxs/store';
 import { cloneDeep, debounce, get, startCase } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 
 import { calculateListingFee, EquippableItemClasses, IMarketItemInfo, IMarketListing, IMarketPickup, IPlayer,
   ItemClass, itemListError, ItemSlot, listingFeePercent, WeaponClasses } from '../../../../interfaces';
 import { GameState, HideMarketWindow, HideWindow } from '../../../../stores';
+import { APIService } from '../../../services/api.service';
 import { AssetService } from '../../../services/asset.service';
 
 import { GameService } from '../../../services/game.service';
@@ -116,6 +116,7 @@ export class MarketComponent implements OnInit, OnDestroy {
     private store: Store,
     private assetService: AssetService,
     private modalService: ModalService,
+    private api: APIService,
     public uiService: UIService,
     public gameService: GameService
   ) { }
@@ -208,7 +209,7 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    this.http.get(environment.server.http + `/market/listings/all`, {
+    this.http.get(this.api.finalHTTPURL + `/market/listings/all`, {
       params: {
         search: this.searchQuery,
         page: this.currentPage.toString(),
@@ -227,7 +228,7 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    this.http.get(environment.server.http + `/market/listings/mine?username=${this.player.username}`)
+    this.http.get(this.api.finalHTTPURL + `/market/listings/mine?username=${this.player.username}`)
       .subscribe(d => {
         this.myListings = (d as IMarketListing[]) || [];
         this.isLoading = false;
@@ -237,7 +238,7 @@ export class MarketComponent implements OnInit, OnDestroy {
   loadMyPickups() {
     if (!this.player) return;
 
-    this.http.get(environment.server.http + `/market/pickups/mine?username=${this.player.username}`)
+    this.http.get(this.api.finalHTTPURL + `/market/pickups/mine?username=${this.player.username}`)
       .subscribe(d => {
         this.myPickups = (d as IMarketPickup[]) || [];
         this.isLoading = false;
