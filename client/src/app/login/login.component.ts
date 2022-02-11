@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       (data) => this.setAccount(data)
     );
 
+    this.loadURLAccount();
     this.tryAutoconnect();
 
     this.socketService.wsConnected$.subscribe((is) => {
@@ -75,6 +76,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.socketService.unregisterComponentCallbacks('Login');
+  }
+
+  private loadURLAccount() {
+    if (!this.api.overrideAPIURL) return;
+    const user = this.api.overrideAPIUser;
+
+    this.store.dispatch(new AddAccount(user.username, user.password, true));
   }
 
   private tryAutoconnect() {

@@ -11,6 +11,11 @@ export class APIService {
     return params.get('apiUrl');
   }
 
+  public get overrideAPIUser() {
+    const params = new URLSearchParams(window.location.search);
+    return { username: params.get('username'), password: params.get('password') };
+  }
+
   public get finalWSURL(): string {
     if (this.overrideAPIURL) {
       return `ws://${this.overrideAPIURL}`;
