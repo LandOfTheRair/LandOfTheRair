@@ -1,6 +1,7 @@
 
 import { Injectable } from 'injection-js';
 import { Collection, Db, MongoClient } from 'mongodb';
+import { MongoPortable } from 'mongo-portable';
 import { BaseService } from '../../models/BaseService';
 
 import { BaseEntity } from '../../models/BaseEntity';
@@ -11,16 +12,25 @@ import { MetadataStorage } from './db/base';
 export class Database extends BaseService {
 
   private client: MongoClient;
+  private pkgClient: MongoPortable;
   private db: Db;
 
   public async init() {}
 
   public async tryConnect(source: string) {
+    if (process.env.pkg) {
+      console.warn(`${source}:DB`, 'Package environment detected; using portable database.');
+      this.pkgClient = new MongoPortable('landoftherair2', {});
+      return;
+    }
+
     const fallbackUri = 'mongodb://127.0.0.1:27017';
+
     if (!process.env.DATABASE_URI) {
       console.warn(`${source}:DB`, `No DATABASE_URI was specified, falling back to ${fallbackUri}`);
       process.env.DATABASE_URI = fallbackUri;
     }
+
     while (true) {
       try {
         console.info(`${source}:DB`, 'Connecting to database...');
@@ -67,12 +77,12 @@ export class Database extends BaseService {
   }
 
   public async findUser(username: string): Promise<Account | null> {
-    const coll = this.db.collection('account');
+    const coll = this.getCollectionByName('account');
     return await coll.findOne({ username });
   }
 
   public async findUserByEmail(email: string): Promise<Account | null> {
-    const coll = this.db.collection('account');
+    const coll = this.getCollectionByName('account');
     return await coll.findOne({ email });
   }
 
