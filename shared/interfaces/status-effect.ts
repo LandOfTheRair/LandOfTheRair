@@ -57,11 +57,11 @@ export interface IStatusEffect {
 
 export interface IStatusEffectData {
   tooltip: {
-    name: string;                 // the tooltip effect name
-    color: string;                // the foreground color for the icon
-    bgColor: string;              // the background color for the icon
-    desc: string;                 // the description for the tooltip
-    icon: string;                 // the icon for the tooltip
+    name?: string;                // the tooltip effect name
+    color?: string;               // the foreground color for the icon
+    bgColor?: string;             // the background color for the icon
+    desc?: string;                // the description for the tooltip
+    icon?: string;                // the icon for the tooltip
   };
 
   effect: {

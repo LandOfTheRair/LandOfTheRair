@@ -1,10 +1,39 @@
 import childProcess from 'child_process';
-import fs from 'fs-extra';
 import deepfreeze from 'deep-freeze';
 import { Injectable } from 'injection-js';
 import { cloneDeep, get } from 'lodash';
 
 import dl from 'download-github-repo';
+
+import * as allegiancestats from '../../../content/_output/allegiancestats.json';
+import * as attributestats from '../../../content/_output/attributestats.json';
+import * as charselect from '../../../content/_output/charselect.json';
+import * as events from '../../../content/_output/events.json';
+import * as fate from '../../../content/_output/fate.json';
+import * as hidereductions from '../../../content/_output/hidereductions.json';
+import * as holidaydescs from '../../../content/_output/holidaydescs.json';
+import * as materialstorage from '../../../content/_output/materialstorage.json';
+import * as npcnames from '../../../content/_output/npcnames.json';
+import * as premium from '../../../content/_output/premium.json';
+import * as rarespawns from '../../../content/_output/rarespawns.json';
+import * as settings from '../../../content/_output/settings.json';
+import * as skilldescs from '../../../content/_output/skilldescs.json';
+import * as statdamagemultipliers from '../../../content/_output/statdamagemultipliers.json';
+import * as statictext from '../../../content/_output/statictext.json';
+import * as weapontiers from '../../../content/_output/weapontiers.json';
+
+import * as spells from '../../../content/_output/spells.json';
+import * as effectData from '../../../content/_output/effect-data.json';
+import * as traits from '../../../content/_output/traits.json';
+import * as traitTrees from '../../../content/_output/trait-trees.json';
+import * as quests from '../../../content/_output/quests.json';
+import * as droptablesMaps from '../../../content/_output/droptable-maps.json';
+import * as droptablesRegions from '../../../content/_output/droptable-regions.json';
+import * as items from '../../../content/_output/items.json';
+import * as npcs from '../../../content/_output/npcs.json';
+import * as npcScripts from '../../../content/_output/npc-scripts.json';
+import * as recipes from '../../../content/_output/recipes.json';
+import * as spawners from '../../../content/_output/spawners.json';
 
 import { Allegiance, BaseClass, Holiday, IClassTraitTree,
   IDynamicEventData,
@@ -13,6 +42,8 @@ import { Allegiance, BaseClass, Holiday, IClassTraitTree,
   IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, ISpawnerData, ISpellData,
   IStatusEffectData, ITrait, IWeaponTier, Rollable, Skill, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
+
+const realJSON = (json) => json.default || json;
 
 @Injectable()
 export class ContentManager extends BaseService {
@@ -209,60 +240,54 @@ export class ContentManager extends BaseService {
   }
 
   private loadCore() {
-    this.allegianceStats = deepfreeze(fs.readJsonSync('content/_output/allegiancestats.json'));
-    this.attributeStats = deepfreeze(fs.readJsonSync('content/_output/attributestats.json'));
-    this.charSelect = deepfreeze(fs.readJsonSync('content/_output/charselect.json'));
-    this.events = deepfreeze(fs.readJsonSync('content/_output/events.json'));
-    this.fate = deepfreeze(fs.readJsonSync('content/_output/fate.json'));
-    this.hideReductions = deepfreeze(fs.readJsonSync('content/_output/hidereductions.json'));
-    this.holidayDescs = deepfreeze(fs.readJsonSync('content/_output/holidaydescs.json'));
-    this.materialStorage = deepfreeze(fs.readJsonSync('content/_output/materialstorage.json'));
-    this.npcNames = deepfreeze(fs.readJsonSync('content/_output/npcnames.json'));
-    this.premium = deepfreeze(fs.readJsonSync('content/_output/premium.json'));
-    this.rarespawns = deepfreeze(fs.readJsonSync('content/_output/rarespawns.json'));
-    this.settings = deepfreeze(fs.readJsonSync('content/_output/settings.json'));
-    this.skillDescs = deepfreeze(fs.readJsonSync('content/_output/skilldescs.json'));
-    this.statDamageMultipliers = deepfreeze(fs.readJsonSync('content/_output/statdamagemultipliers.json'));
-    this.staticText = deepfreeze(fs.readJsonSync('content/_output/statictext.json'));
-    this.weaponTiers = deepfreeze(fs.readJsonSync('content/_output/weapontiers.json'));
+    this.allegianceStats = deepfreeze(realJSON(allegiancestats));
+    this.attributeStats = deepfreeze(realJSON(attributestats));
+    this.charSelect = deepfreeze(realJSON(charselect));
+    this.events = deepfreeze(realJSON(events));
+    this.fate = deepfreeze(realJSON(fate));
+    this.hideReductions = deepfreeze(realJSON(hidereductions));
+    this.holidayDescs = deepfreeze(realJSON(holidaydescs));
+    this.materialStorage = deepfreeze(realJSON(materialstorage));
+    this.npcNames = deepfreeze(realJSON(npcnames));
+    this.premium = deepfreeze(realJSON(premium));
+    this.rarespawns = deepfreeze(realJSON(rarespawns));
+    this.settings = deepfreeze(realJSON(settings));
+    this.skillDescs = deepfreeze(realJSON(skilldescs));
+    this.statDamageMultipliers = deepfreeze(realJSON(statdamagemultipliers));
+    this.staticText = deepfreeze(realJSON(statictext));
+    this.weaponTiers = deepfreeze(realJSON(weapontiers));
   }
 
   private loadSpells() {
-    const spells = fs.readJsonSync('content/_output/spells.json');
-    this.spells = spells;
+    this.spells = realJSON(spells) as any as Record<string, ISpellData>;
 
     deepfreeze(this.spells);
   }
 
   private loadEffects() {
-    const effectData = fs.readJsonSync('content/_output/effect-data.json');
-    this.effectData = effectData;
+    this.effectData = realJSON(effectData) as any as Record<string, IStatusEffectData>;
 
     deepfreeze(this.effectData);
   }
 
   private loadTraits() {
-    const traits = fs.readJsonSync('content/_output/traits.json');
-    this.traits = traits;
+    this.traits = realJSON(traits) as any as Record<string, ITrait>;
 
     deepfreeze(this.traits);
 
-    const traitTrees = fs.readJsonSync('content/_output/trait-trees.json');
-    this.traitTrees = traitTrees;
+    this.traitTrees = realJSON(traitTrees) as any as Record<string, IClassTraitTree>;
 
     deepfreeze(this.traitTrees);
   }
 
   private loadQuests() {
-    const quests = fs.readJsonSync('content/_output/quests.json');
-    this.quests = quests;
+    this.quests = realJSON(quests) as any as Record<string, IQuest>;
 
     deepfreeze(this.quests);
   }
 
   private loadMapDroptables() {
-    const droptables = fs.readJsonSync('content/_output/droptable-maps.json');
-    this.mapDroptables = droptables.reduce((prev, cur) => {
+    this.mapDroptables = realJSON(droptablesMaps).reduce((prev, cur) => {
       prev[cur.mapName] = cur;
       return prev;
     }, {});
@@ -271,8 +296,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadRegionDroptables() {
-    const droptables = fs.readJsonSync('content/_output/droptable-regions.json');
-    this.regionDroptables = droptables.reduce((prev, cur) => {
+    this.regionDroptables = realJSON(droptablesRegions).reduce((prev, cur) => {
       prev[cur.regionName] = cur;
       return prev;
     }, {});
@@ -281,8 +305,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadItems() {
-    const items = fs.readJsonSync('content/_output/items.json');
-    this.items = items.reduce((prev, cur) => {
+    this.items = realJSON(items).reduce((prev, cur) => {
       prev[cur.name] = cur;
       return prev;
     }, {});
@@ -291,8 +314,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadNPCs() {
-    const npcs = fs.readJsonSync('content/_output/npcs.json');
-    this.npcs = npcs.reduce((prev, cur) => {
+    this.npcs = realJSON(npcs).reduce((prev, cur) => {
       prev[cur.npcId] = cur;
       return prev;
     }, {});
@@ -301,8 +323,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadNPCScripts() {
-    const npcScripts = fs.readJsonSync('content/_output/npc-scripts.json');
-    this.npcScripts = npcScripts.reduce((prev, cur) => {
+    this.npcScripts = realJSON(npcScripts).reduce((prev, cur) => {
       prev[cur.tag] = cur;
       return prev;
     }, {});
@@ -311,15 +332,14 @@ export class ContentManager extends BaseService {
   }
 
   private loadRecipes() {
-    const recipes = fs.readJsonSync('content/_output/recipes.json');
     this.recipes = {};
     this.allRecipes = {};
 
-    recipes.forEach(recipe => {
+    realJSON(recipes).forEach(recipe => {
       this.recipes[recipe.recipeType] = this.recipes[recipe.recipeType] || [];
-      this.recipes[recipe.recipeType].push(recipe);
+      this.recipes[recipe.recipeType].push(recipe as IRecipe);
 
-      this.allRecipes[recipe.name] = recipe;
+      this.allRecipes[recipe.name] = recipe as IRecipe;
     });
 
     deepfreeze(this.recipes);
@@ -327,8 +347,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadSpawners() {
-    const spawners = fs.readJsonSync('content/_output/spawners.json');
-    this.spawners = spawners.reduce((prev, cur) => {
+    this.spawners = realJSON(spawners).reduce((prev, cur) => {
       prev[cur.tag] = cur;
       return prev;
     }, {});

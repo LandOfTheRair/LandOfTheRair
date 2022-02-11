@@ -75,7 +75,7 @@ export class EffectHelper extends BaseService {
 
     const effect: IStatusEffect = {
       uuid: uuid(),
-      tooltip: this.formatEffectMessage(effectData.tooltip.desc, effectData),
+      tooltip: this.formatEffectMessage(effectData.tooltip.desc ?? 'No info.', effectData),
       effectName,
       endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
       effectInfo: extra || {},

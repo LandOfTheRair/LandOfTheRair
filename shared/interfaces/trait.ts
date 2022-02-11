@@ -4,7 +4,7 @@ export interface ITrait {
   name: string;                                 // the name of the trait
   desc: string;                                 // the trait tree desciption for the trait
   icon: string;                                 // the specific icon for the trait
-  iconColor: string;                            // the icon color for the trait
+  iconColor?: string;                           // the icon color for the trait
   iconBgColor?: string;                         // the background color for the trait icon
   borderColor?: string;                         // the border color for the trait (used for skills to specify their type, usually)
 

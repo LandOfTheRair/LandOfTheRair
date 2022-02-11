@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Backend of Land of the Rair",
   "main": "index.js",
+  "bin": "dist/server/src/core/index.js",
   "scripts": {
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
@@ -10,7 +11,8 @@
     "start:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/server/src/core/index.js\"",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
     "test": "npm run lint",
-    "build": "tsc"
+    "build": "tsc",
+    "build:package": "pkg . --public --out-path=build"
   },
   "engines": {
     "node": "14.0.0",
@@ -76,11 +78,20 @@
     "eslint-plugin-jsdoc": "^31.3.3",
     "eslint-plugin-prefer-arrow": "^1.2.2",
     "eslint-plugin-unused-imports": "^1.1.1",
+    "pkg": "^5.5.2",
     "source-map-support": "^0.5.19",
     "symlink-dir": "4.1.0",
     "ts-node": "9.1.0",
     "tsc-watch": "^4.2.9",
     "tslint": "5.20.0",
     "typescript": "^4.3.2"
+  },
+  "pkg": {
+    "targets": ["node14-win"],
+    "assets": [
+      "dist/**/*.js",
+      "dist/server/content/**/*.json",
+      "node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node"
+    ]
   }
 }
