@@ -33,6 +33,8 @@ jobs:
 
     - run: npm run build
 
+    - run: cd server && npm run build:package
+
     - uses: little-core-labs/get-git-tag@v3.0.1
       id: loadTagName
 
@@ -42,7 +44,7 @@ jobs:
         path: CHANGELOG-current.md
 
     - name: Create Release
-      id: create_release
+      id: createRelease
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
@@ -52,6 +54,17 @@ jobs:
         body: ${{ steps.loadChangelog.outputs.text }}
         draft: false
         prerelease: false
+
+    - name: Upload Server Binary
+      id: uploadReleaseAsset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.createRelease.outputs.upload_url }}
+        asset_path: ./server/build/lotr-server.exe
+        asset_name: lotr-server.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
 
     #- name: Deploy Server
     #  uses: AlexxNB/caprover-action@v1
