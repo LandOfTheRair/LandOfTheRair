@@ -1,3 +1,6 @@
+
+import { merge } from 'lodash';
+
 import { Game } from '../../helpers';
 import { GameAction, GameServerEvent } from '../../interfaces';
 import { Player, WorldMap } from '../../models';
@@ -42,6 +45,10 @@ export class PlayAction extends ServerAction {
     }
 
     if (!player)                                          return { message: `No character in slot ${charSlot}.` };
+
+    const autoApplyUserData = game.testHelper.autoApplyUserData;
+    merge(player, autoApplyUserData);
+
     const mapName = player.map;
 
     let map: WorldMap | undefined = game.worldManager.getMap(mapName)?.map;

@@ -14,6 +14,7 @@ import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, DarknessHelper, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
+import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
@@ -102,7 +103,9 @@ export class Game {
     public worldManager: WorldManager,
     public configManager: ConfigManager,
     public userInputHelper: UserInputHelper,
-    public discordHelper: DiscordHelper
+    public discordHelper: DiscordHelper,
+
+    public testHelper: TestHelper
 
   ) {}
 
@@ -129,7 +132,8 @@ export class Game {
       'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper', 'trapHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
-      'discordHelper'
+      'discordHelper',
+      'testHelper'
     ];
 
     for (const i of initOrder) {

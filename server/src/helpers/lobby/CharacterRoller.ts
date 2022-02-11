@@ -30,23 +30,23 @@ export class CharacterRoller extends BaseService {
     const foundClass = charSelectData.classes.find(x => x.name === baseclass);
     const foundWeapons = charSelectData.weapons.find(x => x.name === weapons);
 
-    Object.keys(foundAllegiance.statMods).forEach(stat => {
+    Object.keys(foundAllegiance?.statMods || {}).forEach(stat => {
       coreStats[stat] = coreStats[stat] || 0;
       coreStats[stat] += foundAllegiance.statMods[stat];
     });
 
-    Object.keys(foundClass.statMods).forEach(stat => {
+    Object.keys(foundClass?.statMods || {}).forEach(stat => {
       coreStats[stat] = coreStats[stat] || 0;
       coreStats[stat] += foundClass.statMods[stat];
     });
 
     const skills = {};
-    Object.keys(foundWeapons.baseSkills).forEach(skill => {
+    Object.keys(foundWeapons?.baseSkills || {}).forEach(skill => {
       skills[skill] = this.calculatorHelper.calculateSkillXPRequiredForLevel(foundWeapons.baseSkills[skill]);
     });
 
     const items = {};
-    Object.keys(foundWeapons.baseItems).forEach(slot => {
+    Object.keys(foundWeapons?.baseItems || {}).forEach(slot => {
       items[slot] = this.itemCreator.getSimpleItem(foundWeapons.baseItems[slot]);
     });
 

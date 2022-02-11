@@ -48,8 +48,6 @@ export class CharacterDB extends BaseService {
 
       await this.deletePlayer(account.players[oldPlayerSlot] as Player);
       account.players.splice(oldPlayerSlot, 1);
-
-      console.log(account.players[oldPlayerSlot]);
     }
 
     const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass, weapons });
