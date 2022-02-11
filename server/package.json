@@ -12,7 +12,8 @@
     "lint": "eslint -c .eslintrc.json --ext .ts src",
     "test": "npm run lint",
     "build": "tsc",
-    "build:package": "pkg . --public --out-path=build"
+    "build:package": "pkg . --public --out-path=build",
+    "build:package:all": "npm run build && npm run build:package"
   },
   "engines": {
     "node": "14.0.0",
