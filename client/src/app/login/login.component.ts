@@ -82,6 +82,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (!this.api.overrideAPIURL) return;
     const user = this.api.overrideAPIUser;
 
+    if (!user.username || !user.password) return;
+
     this.store.dispatch(new AddAccount(user.username, user.password, true));
   }
 
