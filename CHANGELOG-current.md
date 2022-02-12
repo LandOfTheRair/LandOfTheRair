@@ -1,10 +1,9 @@
-## [2.1.3](https://github.com/landoftherair/lotr2/compare/v2.1.2...v2.1.3) (2022-02-11)
+## [2.1.4](https://github.com/landoftherair/lotr2/compare/v2.1.3...v2.1.4) (2022-02-12)
 
 
-### Features
+### Bug Fixes
 
-* **core:** allow for test users, test mode, test prop override on join, update docs ([9f9de0a](https://github.com/landoftherair/lotr2/commit/9f9de0a01c7754fc9dbb19d3f4bd2e806f88d501))
-* **ui:** allow for auto login in test mode with query params ([e8d0bcc](https://github.com/landoftherair/lotr2/commit/e8d0bccb5b6b924020690e86fd1e4bf73fed8e2c))
+* **core:** build action should run on windows to create exe for server on windows ([de1f360](https://github.com/landoftherair/lotr2/commit/de1f3604c1845500c7799a89161fda8c24ada6be))
 
 
 
