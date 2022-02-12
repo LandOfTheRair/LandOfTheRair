@@ -216,9 +216,6 @@ export class MenuComponent implements OnInit {
   public showResolutionWarning = true;
   public showMismatchWarning = true;
 
-  // show the message or not, default no, unsaved
-  public showDailyResetMessage: boolean;
-
   // so many props, only one output
   public resetTimestamp: number;
   public nowTimestamp: number;
