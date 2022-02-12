@@ -102,7 +102,7 @@ export class SocketService {
       }),
       retryWhen(errors => errors.pipe(
         tap(() => this.connectStatus(false)),
-        delay(5000)
+        delay(this.api.overrideAPIURL ? 500 : 5000)
       )),
       share()
     );
