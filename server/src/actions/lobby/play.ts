@@ -60,6 +60,12 @@ export class PlayAction extends ServerAction {
       player.y = 14;
     }
 
+    // if they're out of bounds, drop them on the respawn point
+    if (map && (player.x > map.width - 4 || player.y > map.height - 4 || player.x <= 4 || player.y <= 4)) {
+      player.x = map.respawnPoint.x;
+      player.y = map.respawnPoint.y;
+    }
+
     await game.lobbyManager.joinGame(data.account, player);
 
     emit({
