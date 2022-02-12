@@ -19,7 +19,7 @@
     </mat-chip>
   </mat-chip-list>
 
-  <mat-chip-list *ngIf="serverMismatchWarning">
+  <mat-chip-list *ngIf="socketService.isConnected && serverMismatchWarning">
     <mat-chip color="accent" selected>
       <mat-icon class="m-r-10">info</mat-icon> You are connected to a different, unofficial server.
     </mat-chip>
