@@ -5,3 +5,4 @@ export * from '../../../shared/initializers';
 
 export * from './BaseSpell';
 export * from './InternalCommand';
+export * from './ModKit';

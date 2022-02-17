@@ -283,50 +283,129 @@ export class ContentManager extends BaseService {
   private loadQuests() {
     this.quests = realJSON(quests) as any as Record<string, IQuest>;
 
+    this.game.modkitManager.modQuests.forEach(quest => {
+      if (this.quests[quest.name]) {
+        this.game.logger.warn('ContentManager:LoadQuestsMod', `Duplicate quest name (mod) ${quest.name}, skipping...`);
+        return;
+      }
+
+      this.quests[quest.name] = quest;
+    });
+
     deepfreeze(this.quests);
   }
 
   private loadMapDroptables() {
     this.mapDroptables = realJSON(droptablesMaps).reduce((prev, cur) => {
+      if (prev[cur.mapName]) {
+        this.game.logger.warn('ContentManager:LoadMapDroptables', `Duplicate map droptable for ${cur.mapName}, skipping...`);
+        return;
+      }
+
       prev[cur.mapName] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modMapDrops.forEach(dt => {
+      if (this.mapDroptables[dt.mapName]) {
+        this.game.logger.warn('ContentManager:LoadMapDroptablesMod', `Duplicate map droptable (mod) ${dt.mapName}, skipping...`);
+        return;
+      }
+
+      this.mapDroptables[dt.mapName] = dt;
+    });
 
     deepfreeze(this.mapDroptables);
   }
 
   private loadRegionDroptables() {
     this.regionDroptables = realJSON(droptablesRegions).reduce((prev, cur) => {
+      if (prev[cur.regionName]) {
+        this.game.logger.warn('ContentManager:LoadRegionDroptables', `Duplicate region droptable for ${cur.regionName}, skipping...`);
+        return;
+      }
+
       prev[cur.regionName] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modRegionDrops.forEach(dt => {
+      if (this.regionDroptables[dt.regionName]) {
+        this.game.logger.warn('ContentManager:LoadRegionDroptablesMod', `Duplicate region droptable (mod) ${dt.regionName}, skipping...`);
+        return;
+      }
+
+      this.mapDroptables[dt.regionName] = dt;
+    });
 
     deepfreeze(this.regionDroptables);
   }
 
   private loadItems() {
     this.items = realJSON(items).reduce((prev, cur) => {
+      if (prev[cur.name]) {
+        this.game.logger.warn('ContentManager:LoadItems', `Duplicate item ${cur.name}, skipping...`);
+        return;
+      }
+
       prev[cur.name] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modItems.forEach(item => {
+      if (this.items[item.name]) {
+        this.game.logger.warn('ContentManager:LoadItemsMod', `Duplicate item (mod) ${item.name}, skipping...`);
+        return;
+      }
+
+      this.items[item.name] = item;
+    });
 
     deepfreeze(this.items);
   }
 
   private loadNPCs() {
     this.npcs = realJSON(npcs).reduce((prev, cur) => {
+      if (prev[cur.npcId]) {
+        this.game.logger.warn('ContentManager:LoadNPCs', `Duplicate NPC ${cur.npcId}, skipping...`);
+        return;
+      }
+
       prev[cur.npcId] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modNPCs.forEach(npc => {
+      if (this.npcs[npc.npcId]) {
+        this.game.logger.warn('ContentManager:LoadNPCsMod', `Duplicate NPC (mod) ${npc.npcId}, skipping...`);
+        return;
+      }
+
+      this.npcs[npc.npcId] = npc;
+    });
 
     deepfreeze(this.npcs);
   }
 
   private loadNPCScripts() {
     this.npcScripts = realJSON(npcScripts).reduce((prev, cur) => {
+      if (prev[cur.tag]) {
+        this.game.logger.warn('ContentManager:LoadNPCScripts', `Duplicate NPC Script ${cur.tag}, skipping...`);
+        return;
+      }
+
       prev[cur.tag] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modNPCScripts.forEach(script => {
+      if (this.npcScripts[script.tag]) {
+        this.game.logger.warn('ContentManager:LoadNPCScriptsMod', `Duplicate NPC Script (mod) ${script.tag}, skipping...`);
+        return;
+      }
+
+      this.npcScripts[script.tag] = script;
+    });
 
     deepfreeze(this.npcScripts);
   }
@@ -336,6 +415,23 @@ export class ContentManager extends BaseService {
     this.allRecipes = {};
 
     realJSON(recipes).forEach(recipe => {
+      if (this.allRecipes[recipe.name]) {
+        this.game.logger.warn('ContentManager:LoadRecipes', `Duplicate recipe ${recipe.name}, skipping...`);
+        return;
+      }
+
+      this.recipes[recipe.recipeType] = this.recipes[recipe.recipeType] || [];
+      this.recipes[recipe.recipeType].push(recipe as IRecipe);
+
+      this.allRecipes[recipe.name] = recipe as IRecipe;
+    });
+
+    this.game.modkitManager.modRecipes.forEach(recipe => {
+      if (this.allRecipes[recipe.name]) {
+        this.game.logger.warn('ContentManager:LoadRecipesMod', `Duplicate recipe (mod) ${recipe.name}, skipping...`);
+        return;
+      }
+
       this.recipes[recipe.recipeType] = this.recipes[recipe.recipeType] || [];
       this.recipes[recipe.recipeType].push(recipe as IRecipe);
 
@@ -348,9 +444,23 @@ export class ContentManager extends BaseService {
 
   private loadSpawners() {
     this.spawners = realJSON(spawners).reduce((prev, cur) => {
+      if (prev[cur.tag]) {
+        this.game.logger.warn('ContentManager:LoadSpawners', `Duplicate spawner ${cur.tag}, skipping...`);
+        return;
+      }
+
       prev[cur.tag] = cur;
       return prev;
     }, {});
+
+    this.game.modkitManager.modSpawners.forEach(spawner => {
+      if (this.spawners[spawner.tag]) {
+        this.game.logger.warn('ContentManager:LoadSpawnersMod', `Duplicate spawner (mod) ${spawner.tag}, skipping...`);
+        return;
+      }
+
+      this.spawners[spawner.tag] = spawner;
+    });
 
     deepfreeze(this.spawners);
   }

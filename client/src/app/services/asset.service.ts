@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { first } from 'rxjs/operators';
 import * as meta from '../../assets/content/_output/meta.json';
 import { environment } from '../../environments/environment';
-import { IItem, IItemDefinition, INPCDefinition } from '../../interfaces';
+import { IItemDefinition, INPCDefinition } from '../../interfaces';
 import { SettingsState } from '../../stores/index.js';
+import { APIService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -78,7 +79,7 @@ export class AssetService {
     return meta.hash;
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private api: APIService) { }
 
   public init() {
     const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls', 'ItemsAnimations', 'DecorAnimations'];
@@ -104,11 +105,17 @@ export class AssetService {
       img.onload = () => this.spritesheets[idx] = true;
     });
 
-    this.http.get('assets/content/_output/items.json')
-      .subscribe(items => this.setItems(items as IItem[]));
+    forkJoin({
+      items: this.http.get('assets/content/_output/items.json'),
+      npcs: this.http.get('assets/content/_output/npcs.json'),
+      mods: this.http.get(`${this.api.finalHTTPURL}/mod/all`)
+    }).subscribe(({ items, npcs, mods }) => {
+      const modItems = (mods as any).items as IItemDefinition[];
+      const modNPCs = (mods as any).npcs as INPCDefinition[];
 
-    this.http.get('assets/content/_output/npcs.json')
-      .subscribe(npcs => this.setNPCs(npcs as INPCDefinition[]));
+      this.setItems((items as IItemDefinition[]).concat(modItems));
+      this.setNPCs((npcs as INPCDefinition[]).concat(modNPCs));
+    });
 
     this.options$.pipe(first())
       .subscribe(opts => {
@@ -126,7 +133,7 @@ export class AssetService {
     return this.npcs?.[npcId];
   }
 
-  private setItems(items: IItem[]) {
+  private setItems(items: IItemDefinition[]) {
     this.items = items.reduce((prev, cur) => {
       prev[cur.name] = cur;
       return prev;

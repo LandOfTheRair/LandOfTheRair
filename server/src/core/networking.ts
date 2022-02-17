@@ -67,11 +67,13 @@ export class WebsocketWorker {
 
     }
 
-    Object.values(HTTPRoutes).forEach((route) => route.setup(app, {
+    const promises = Object.values(HTTPRoutes).map(async (route) => await route.setup(app, {
       database,
       broadcast: (data) => this.broadcast(data),
       sendToGame: (data) => this.sendInternalToGame(data)
     }));
+
+    await Promise.all(promises);
 
     app.listen(process.env.PORT ? +process.env.PORT : 6975, process.env.BIND_ADDR || '127.0.0.1', (err: any) => {
       if (err) throw err;

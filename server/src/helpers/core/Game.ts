@@ -14,6 +14,7 @@ import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, DarknessHelper, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
+import { ModKitManager } from '../data/ModKitManager';
 import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
@@ -35,6 +36,8 @@ export class Game {
 
     public logger: Logger,
     public transmissionHelper: TransmissionHelper,
+
+    public modkitManager: ModKitManager,
     public contentManager: ContentManager,
 
     public db: Database,
@@ -117,6 +120,7 @@ export class Game {
     const initOrder = [
       'logger',
       'transmissionHelper',
+      'modkitManager',
       'contentManager',
       'db', 'logsDB', 'worldDB', 'marketDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
       'emailHelper', 'profanityHelper', 'effectManager', 'corpseManager',

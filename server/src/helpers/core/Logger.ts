@@ -18,13 +18,17 @@ export class Logger extends BaseService {
     }
   }
 
-  private _logWithTs(type: 'log'|'error', tag, ...args) {
+  private _logWithTs(type: 'log'|'warn'|'error', tag, ...args) {
     // eslint-disable-next-line no-console
     console[type](new Date().toISOString(), `[${tag}]`, ...args);
   }
 
   public log(tag: string, args) {
     this._logWithTs('log', tag, args);
+  }
+
+  public warn(tag: string, args) {
+    this._logWithTs('warn', tag, args);
   }
 
   public error(tag: string, args) {
