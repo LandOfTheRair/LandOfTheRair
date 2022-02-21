@@ -60,6 +60,7 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `SMTP_PASSWORD` - (optional) the SMTP email password to use
 
 ### Test Mode Variables
+
 * `TEST_MODE` - (optional) set this to any value to enable test mode
 * `TEST_USER_NAME` - (optional) the username to use for mod testing
 * `TEST_USER_PASSWORD` - (optional) the password to use for mod testing
@@ -69,10 +70,10 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 
 To set up Discord, you'll need the above environment variables (`DISCORD_*`) and the following roles set by name in your server:
 
-- `Verified` - users who link their account with Discord
-- `Online In Lobby` - users who want to appear always online in the lobby
-- `Subscriber` - users who subscribe to the game
-- `Event Watcher` - users who want to get notifications about in-game events
+* `Verified` - users who link their account with Discord
+* `Online In Lobby` - users who want to appear always online in the lobby
+* `Subscriber` - users who subscribe to the game
+* `Event Watcher` - users who want to get notifications about in-game events
 
 ## Testing While Using the Prod Client
 
