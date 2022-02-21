@@ -279,7 +279,8 @@ export class SpellCommand extends SkillCommand {
     if (!spellData) return false;
 
     const { noHostileTarget } = spellData.spellMeta;
-    if (caster && noHostileTarget && this.game.targettingHelper.checkTargetForHostility(caster, target)) return false;
+    const areBothPlayers = caster && this.game.characterHelper.isPlayer(caster) && this.game.characterHelper.isPlayer(target);
+    if (caster && noHostileTarget && !areBothPlayers && this.game.targettingHelper.checkTargetForHostility(caster, target)) return false;
 
     return true;
   }
