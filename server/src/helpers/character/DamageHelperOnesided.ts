@@ -23,6 +23,11 @@ export class DamageHelperOnesided extends BaseService {
   ): void {
     if (!defender || this.game.characterHelper.isDead(defender)) return;
 
+    // it _could_ be a heal...
+    if (damage > 0) {
+      this.game.characterHelper.engageInCombat(defender);
+    }
+
     const modifiedDamage = this.game.combatHelper.modifyDamage(null, defender, {
       damage,
       damageClass

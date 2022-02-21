@@ -13,10 +13,13 @@ export class DamageHelperMagic extends BaseService {
   magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs) {
     if (this.game.characterHelper.isDead(defender)) return;
 
-    if (attacker) this.game.characterHelper.engageInCombat(attacker);
-    this.game.characterHelper.engageInCombat(defender);
-
     let startDamage = args.damage ?? 0;
+
+    // only engage in combat if damage > 0
+    if (startDamage > 0) {
+      if (attacker) this.game.characterHelper.engageInCombat(attacker);
+      this.game.characterHelper.engageInCombat(defender);
+    }
 
     // try to do critical damage if possible
     if (attacker && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent))) {
