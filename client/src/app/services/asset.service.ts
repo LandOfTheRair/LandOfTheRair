@@ -4,10 +4,10 @@ import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, forkJoin } from 'rxjs';
 import { first } from 'rxjs/operators';
-import * as meta from '../../assets/content/_output/meta.json';
+import meta from '../../assets/content/_output/meta.json';
 import { environment } from '../../environments/environment';
 import { IItemDefinition, INPCDefinition } from '../../interfaces';
-import { SettingsState } from '../../stores/index.js';
+import { SettingsState } from '../../stores';
 import { APIService } from './api.service';
 
 @Injectable({

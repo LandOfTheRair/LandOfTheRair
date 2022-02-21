@@ -6,8 +6,8 @@ import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import * as allMacros from '../../../../assets/content/_output/macros.json';
-import { macroNames } from '../../../../assets/generated/macicons.json';
+import allMacros from '../../../../assets/content/_output/macros.json';
+import macicons from '../../../../assets/generated/macicons.json';
 import { IAccount, IGame, IMacro, IMacroBar, IMacroContainer, IPlayer } from '../../../../interfaces';
 import { AccountState, CreateCustomMacro, DeleteCustomMacro, GameState,
   ImportMacros,
@@ -62,7 +62,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public allPossibleForTargets: string[] = [];
 
   public get allMacroNameIcons(): string[] {
-    return macroNames;
+    return macicons.macroNames;
   }
 
   public currentlyEditingMacro: IMacro = defaultMacro();
