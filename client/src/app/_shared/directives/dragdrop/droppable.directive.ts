@@ -128,7 +128,7 @@ export class DroppableDirective implements OnInit, OnDestroy {
           e.preventDefault();
           e.stopPropagation();
 
-          this.ng2DragDropService.onDragEnd.next();
+          this.ng2DragDropService.onDragEnd.next(null);
           this.onDrop.emit(new DropEvent(e, this.ng2DragDropService.dragData));
           this.ng2DragDropService.dragData = null;
           this.ng2DragDropService.scope = null;

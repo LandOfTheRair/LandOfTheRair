@@ -131,7 +131,7 @@ export class WindowComponent implements OnInit {
   }
 
   hideWindow() {
-    this.hide.next();
+    this.hide.next(null);
     this.store.dispatch(new HideWindow(this.windowName));
   }
 
