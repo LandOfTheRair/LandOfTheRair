@@ -1,7 +1,6 @@
 
 import { Injectable } from 'injection-js';
 import fs from 'fs-extra';
-import readdir from 'recursive-readdir';
 
 import { BaseService } from '../../models/BaseService';
 import { IItemDefinition, IModKit, INPCDefinition, INPCScript, IQuest, IRecipe, ISpawnerData, Rollable } from '../../interfaces';
@@ -52,22 +51,50 @@ export class ModKitManager extends BaseService {
     return this.recipes;
   }
 
+  public get loadMods(): string[] {
+    return process.env.MODS_TO_LOAD ? (process.env.MODS_TO_LOAD || '').split(',').map(x => x.trim()) : [];
+  }
+
   public async init() {
     await fs.ensureDir('content/mods');
     await fs.ensureDir('content/maps');
 
+    this.copyModsFromList();
+
     if (fs.existsSync('content/maps/custom')) {
-      fs.rmdirSync('content/maps/custom', { recursive: true });
+      fs.rmSync('content/maps/custom', { recursive: true });
     }
 
     await fs.ensureDir('content/maps/custom');
 
-    const mods = await readdir('content/mods');
+    this.loadModsFromList();
+  }
+
+  private copyModsFromList() {
+    const mods = this.loadMods;
+
+    mods.forEach(mod => {
+      if (!fs.existsSync(`CommunityMods/mods/${mod}.rairmod`)) {
+        this.game.logger.error('ModKit:CopyModsFromList', `Mod "${mod}" does not exist, skipping copy step from CommunityMods...`);
+        return;
+      }
+
+      fs.copySync(`CommunityMods/mods/${mod}.rairmod`, `content/mods/${mod}.rairmod`);
+    });
+  }
+
+  private loadModsFromList() {
+    const mods = this.loadMods;
 
     this.game.logger.log('ModKit:Init', `Loading ${mods.length} mods...`);
 
-    mods.forEach(modPath => {
-      const actualMod = fs.readJSONSync(modPath);
+    mods.forEach(mod => {
+      if (!fs.existsSync(`content/mods/${mod}.rairmod`)) {
+        this.game.logger.error('ModKit:LoadModsFromList', `Mod "${mod}" does not exist, skipping load step from content...`);
+        return;
+      }
+
+      const actualMod = fs.readJSONSync(`content/mods/${mod}.rairmod`);
       this.loadMod(actualMod);
     });
   }

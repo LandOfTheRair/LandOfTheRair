@@ -66,6 +66,10 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 * `TEST_USER_PASSWORD` - (optional) the password to use for mod testing
 * `TEST_USER_PROPS` - (optional) a JSON blob of properties to set on the character for mod testing
 
+### Mod Support
+
+* `MODS_TO_LOAD` - (optional) a comma separated list of mods to load (by file name)
+
 ## Discord Setup
 
 To set up Discord, you'll need the above environment variables (`DISCORD_*`) and the following roles set by name in your server:

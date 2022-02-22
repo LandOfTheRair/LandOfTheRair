@@ -5,6 +5,18 @@ const symlinkDir = require('symlink-dir');
 
 const dl = require('download-github-repo');
 
+const dlMods = () => {
+
+  if(fs.existsSync('CommunityMods')) {
+    console.info('[Server] Found CommunityMods repo, cleaning out old mods.');
+    fs.rmSync('CommunityMods', { recursive: true });
+  }
+
+  console.info('[Server] Downloading a non-git copy of CommunityMods.');
+
+  dl('LandOfTheRair/CommunityMods', 'CommunityMods', async () => {});
+};
+
 // if the content folder exists, we can symlink it
 if(fs.existsSync('../../Content')) {
 
@@ -12,7 +24,10 @@ if(fs.existsSync('../../Content')) {
 
   symlinkDir('../../Content', 'content')
     .then(() => {
-      dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
+      dl('LandOfTheRair/Assets', 'content/__assets', async () => {
+        dlMods();
+      });
+
     });
 
 // if not, we can download and install everything like normal
@@ -23,7 +38,9 @@ if(fs.existsSync('../../Content')) {
   dl('LandOfTheRair/Content', 'content', async () => {
     childProcess.exec('cd content && npm install --unsafe-perm');
 
-    dl('LandOfTheRair/Assets', 'content/__assets', async () => {});
+    dl('LandOfTheRair/Assets', 'content/__assets', async () => {
+      dlMods();
+    });
 
   });
 }
