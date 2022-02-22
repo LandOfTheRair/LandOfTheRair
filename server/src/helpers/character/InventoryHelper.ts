@@ -167,6 +167,13 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
+  public removeItemsFromLockerByUUID(player: IPlayer, uuids: string[], locker: IItemContainer): boolean {
+    locker.items = locker.items.filter(x => !uuids.includes(x.uuid));
+    locker.items = locker.items.filter(Boolean);
+
+    return true;
+  }
+
   // material functions
   public materialSpaceLeft(player: IPlayer, material: string): number {
     return this.game.subscriptionHelper.maxMaterialStorageSpace(player, 200) - (player.accountLockers.materials[material] ?? 0);

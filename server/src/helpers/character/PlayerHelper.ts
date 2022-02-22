@@ -87,9 +87,64 @@ export class PlayerHelper extends BaseService {
     if (!player.accountLockers.pouch) player.accountLockers.pouch = { items: [] };
     if (!player.accountLockers.materials) player.accountLockers.materials = {};
 
+    this.cleanUpInvalidItems(player);
+
     this.reformatPlayerAfterLoad(player);
 
     this.game.questHelper.recalculateQuestKillsAndStatRewards(player);
+  }
+
+  private cleanUpInvalidItems(player: IPlayer): void {
+
+    const isValidItem = (itemName) => this.game.contentManager.getItemDefinition(itemName);
+
+    // clean invalid equipment
+    Object.keys(player.items.equipment).forEach(slot => {
+      const item = player.items.equipment[slot];
+
+      if (!item) return;
+      if (isValidItem(item.name)) return;
+
+      player.items.equipment[slot] = undefined;
+    });
+
+    // clean invalid inventory
+    const removeBeltUUIDs: string[] = [];
+    player.items.belt.items.forEach(item => {
+      if (isValidItem(item.name)) return;
+      removeBeltUUIDs.push(item.uuid);
+    });
+
+    this.game.inventoryHelper.removeItemsFromBeltByUUID(player, removeBeltUUIDs);
+
+    const removeSackUUIDS: string[] = [];
+    player.items.sack.items.forEach(item => {
+      if (isValidItem(item.name)) return;
+      removeSackUUIDS.push(item.uuid);
+    });
+
+    this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeSackUUIDS);
+
+    const removePouchUUIDs: string[] = [];
+    player.accountLockers.pouch.items.forEach(item => {
+      if (isValidItem(item.name)) return;
+      removePouchUUIDs.push(item.uuid);
+    });
+
+    this.game.inventoryHelper.removeItemsFromPouchByUUID(player, removePouchUUIDs);
+
+    // lockers
+    Object.values(player.accountLockers.lockers).concat(Object.values(player.lockers.lockers))
+      .forEach(locker => {
+        const removeUUIDs: string[] = [];
+        locker.items.forEach(item => {
+          if (isValidItem(item.name)) return;
+          removeUUIDs.push(item.uuid);
+        });
+
+        this.game.inventoryHelper.removeItemsFromLockerByUUID(player, removeUUIDs, locker);
+      });
+
   }
 
   public becomeClass(player: IPlayer, baseClass: BaseClass, recalculateAfterTrait = true) {
