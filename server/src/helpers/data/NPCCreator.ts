@@ -256,7 +256,7 @@ export class NPCCreator extends BaseService {
 
   // attributes buff npcs in random ways
   public addAttribute(npc: INPC): void {
-    const { attribute, stats } = sample(this.game.contentManager.attributeStatsData) as any;
+    const { attribute, stats, effects } = sample(this.game.contentManager.attributeStatsData) as any;
     npc.name = `${attribute} ${npc.name}`;
 
     const attrMult = this.game.contentManager.getGameSetting('npcgen', 'attrMult') ?? 2;
@@ -268,6 +268,15 @@ export class NPCCreator extends BaseService {
 
     stats.forEach(({ stat, boost }) => {
       this.game.characterHelper.gainPermanentStat(npc, stat as Stat, boost);
+    });
+
+    effects.forEach(effect => {
+      const effectData = {
+        extra: effect.extra || {},
+        duration: -1
+      };
+
+      this.game.effectHelper.addEffect(npc, '', effect.name, { effect: effectData });
     });
   }
 
