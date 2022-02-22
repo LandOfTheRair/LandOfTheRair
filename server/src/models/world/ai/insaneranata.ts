@@ -66,6 +66,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
     this.game.characterHelper.addAgro(npc, target, 100000);
 
     this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: `Gwahahaha, ${target.name}, you are my next target!` });
+    this.game.messageHelper.sendBannerMessageToPlayer(target, { message: 'You\'re Ranata\'s next target!' });
   }
 
   private spawnInsanes() {
@@ -73,6 +74,8 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
 
     this.game.effectHelper.addEffect(npc, npc, 'Invulnerable');
     this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: 'Gwahahaha, come forth, my experiments!' });
+
+    this.game.messageHelper.sendBannerMessageToMap(npc.map, { message: 'Kill the experiments to make Ranata vulnerable!' });
 
     const spawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnerByName('Insane Spawner');
     for (let i = 0; i < 5; i++) {

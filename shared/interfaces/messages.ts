@@ -2,6 +2,7 @@ import { VisualEffect } from './combat';
 import { SoundEffect } from './sfx';
 
 export enum MessageType {
+  Banner = 'banner',
   Environment = 'environment',
   Miscellaneous = 'misc',
   Private = 'private',

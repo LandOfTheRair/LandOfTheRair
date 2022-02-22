@@ -60,6 +60,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
   public loadString: string;
+  public bannerString: string;
   public fadeOut: boolean;
 
   private game: MapRenderGame;
@@ -148,6 +149,25 @@ export class MapComponent implements OnInit, OnDestroy {
         // if we do have something, we just set it
         this.loadString = d;
         this.fadeOut = false;
+      });
+    });
+
+    // have to do it this way so zone doesn't lose it's mind
+    this.gameService.bannerMessage$.subscribe(d => {
+      this.zone.run(() => {
+
+        // if we do have something, we just set it
+        this.bannerString = d;
+        this.fadeOut = false;
+
+        setTimeout(() => {
+          this.fadeOut = true;
+
+          setTimeout(() => {
+            this.fadeOut = false;
+            this.bannerString = '';
+          }, 2000);
+        }, 1000);
       });
     });
 

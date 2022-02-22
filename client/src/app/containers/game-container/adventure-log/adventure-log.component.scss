@@ -26,6 +26,11 @@
     position: relative;
     word-break: break-all;
 
+    &.banner {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
     &.font-size-xlarge {
       font-size: 1.3rem;
     }

@@ -42,6 +42,7 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.ShrinkCharacterBoxes]: false,
       [GameOption.LockerTabs]: false,
       [GameOption.DebugUI]: false,
+      [GameOption.SendBannerMessagesToChat]: false,
 
       [GameOption.SoundBGM]: true,
       [GameOption.SoundSFX]: true,

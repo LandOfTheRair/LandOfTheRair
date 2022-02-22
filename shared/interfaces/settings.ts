@@ -29,6 +29,7 @@ export enum GameOption {
   ShrinkCharacterBoxes = 'shrinkCharacterBoxes',
   LockerTabs = 'lockerTabs',
   DebugUI = 'debugUI',
+  SendBannerMessagesToChat = 'sendBannerMessagesToChat',
 
   // sound options
   SoundBGM = 'playBGM',

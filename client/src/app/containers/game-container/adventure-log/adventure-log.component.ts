@@ -136,7 +136,13 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (message.source) message.display = `[${message.source}] ${message.display}`;
 
-    this.messages.push(message);
+    if (message.typeHash[MessageType.Banner]) {
+      this.gameService.sendUIBannerMessage(message.display);
+    }
+
+    if (!message.typeHash[MessageType.Banner] || (message.typeHash[MessageType.Banner] && this.optionsService.sendBannerMessagesToChat)) {
+      this.messages.push(message);
+    }
 
     if (this.messages.length > 500) this.messages.shift();
   }

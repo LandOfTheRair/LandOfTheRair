@@ -16,6 +16,11 @@ import { SocketService } from './socket.service';
 })
 export class GameService {
 
+  private bannerMessage: Subject<string> = new Subject();
+  public get bannerMessage$() {
+    return this.bannerMessage.asObservable();
+  }
+
   private playGame: Subject<boolean> = new Subject();
   public get playGame$() {
     return this.playGame.asObservable();
@@ -193,5 +198,9 @@ private handleAutoExec() {
       const cmd = npcQuery ? `${npcQuery}, ${result}` : result;
       this.sendCommandString(`#${cmd}`);
     });
+  }
+
+  public sendUIBannerMessage(message: string) {
+    this.bannerMessage.next(message);
   }
 }

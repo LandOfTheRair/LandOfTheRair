@@ -14,6 +14,8 @@ export class CrazedSedgwickAIBehavior extends DefaultAIBehavior {
     const msgObject = { from: npc.name, message: 'HIYAAAAAAAAAH! Take THIS!', subClass: 'chatter' };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject);
 
+    this.game.messageHelper.sendBannerMessageToMap(npc.map, { message: 'Stand on the shield plate!' });
+
     setTimeout(() => {
       if (this.game.characterHelper.isDead(npc)) return;
 

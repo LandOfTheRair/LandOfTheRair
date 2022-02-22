@@ -79,6 +79,8 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
     const msgObject2 = { message: 'The acolyte begins channeling energy back to Saraxa!', subClass: 'environment' };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject2);
 
+    this.game.messageHelper.sendBannerMessageToMap(npc.map, { message: 'Kill the acolyte before it heals Saraxa!' });
+
     if (!this.game.effectHelper.hasEffect(npc, 'AcolyteOverseer')) {
       this.game.effectHelper.addEffect(npc, npc, 'AcolyteOverseer');
     }

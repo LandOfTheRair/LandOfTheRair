@@ -109,6 +109,16 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public sendBannerMessageToPlayer(player: ICharacter, msgInfo: MessageInfo): void {
+    this.sendLogMessageToPlayer(player, msgInfo, [MessageType.Banner]);
+  }
+
+  public sendBannerMessageToMap(map: string, msgInfo: MessageInfo): void {
+    this.game.worldManager.getPlayersInMap(map).forEach(char => {
+      this.sendBannerMessageToPlayer(char, msgInfo);
+    });
+  }
+
   public broadcastChatMessage(player: ICharacter, message: string): void {
 
     const account = this.game.lobbyManager.getAccount((player as Player).username);

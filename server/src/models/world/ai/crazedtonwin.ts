@@ -116,6 +116,8 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
 
       const msgObject2 = { from: brother.name, message, subClass: 'chatter' };
       this.game.messageHelper.sendMessageToMap(npc.map, msgObject2);
+
+      this.game.messageHelper.sendBannerMessageToMap(npc.map, { message: `Kill ${id.split(' ')[1]} to make Tonwin vulnerable!` });
     }
   }
 

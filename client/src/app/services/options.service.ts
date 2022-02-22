@@ -95,6 +95,10 @@ export class OptionsService {
     return this.opts[GameOption.DebugUI];
   }
 
+  public get sendBannerMessagesToChat(): boolean {
+    return this.opts[GameOption.SendBannerMessagesToChat];
+  }
+
   // sound options
   public get musicVolume(): number {
     return (this.opts[GameOption.SoundMusicVolume] || 0) / 100;
