@@ -1,6 +1,6 @@
 
 import { Injectable } from 'injection-js';
-import { isNumber } from 'lodash';
+import { isNumber, sample } from 'lodash';
 
 import { Allegiance, BaseClass, CombatEffect, DamageArgs, DamageClass, GameServerResponse, ICharacter, IPlayer, ItemClass,
   MagicalAttackArgs,
@@ -344,6 +344,21 @@ export class CombatHelper extends BaseService {
         buildUpCurrent: buildUpCurrent ?? 5,
         buildUpMax: (buildUpMax ?? 200) + (defender.level * (buildUpScale ?? 10))
       } } });
+    }
+  }
+
+  public attemptArrowBounce(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs = {}) {
+    if (!this.game.traitHelper.rollTraitValue(attacker, 'BouncingArrows')) return;
+
+    // bouncing arrows
+    const state = this.game.worldManager.getMapStateForCharacter(attacker);
+    if (!state) return;
+
+    const nearby = state.getAllHostilesInRange(attacker, 4).filter(x => x !== defender);
+
+    const bounceTo = sample(nearby);
+    if (bounceTo) {
+      this.game.combatHelper.physicalAttack(attacker, bounceTo, args);
     }
   }
 

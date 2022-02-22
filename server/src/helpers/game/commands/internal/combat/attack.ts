@@ -1,3 +1,5 @@
+
+
 import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
@@ -28,6 +30,11 @@ export class AttackCommand extends SkillCommand {
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
     opts.attackRange = this.range(user);
     this.game.combatHelper.physicalAttack(user, target, opts);
+
+    // bouncing arrows
+    if (opts.attackRange > 1 && user && target) {
+      this.game.combatHelper.attemptArrowBounce(user, target, opts);
+    }
   }
 
 }

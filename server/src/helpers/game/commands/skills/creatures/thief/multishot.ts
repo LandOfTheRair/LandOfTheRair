@@ -1,3 +1,5 @@
+
+
 import { ICharacter, IMacroCommandArgs, IPlayer, ItemSlot } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -42,7 +44,13 @@ export class Multishot extends SpellCommand {
     }
 
     for (let i = 0; i < attacks; i++) {
-      this.game.combatHelper.physicalAttack(char, target, { damageMult, attackRange: 4, numAttacks: attacks, attackNum: i });
+      const args = { damageMult, attackRange: 4, numAttacks: attacks, attackNum: i };
+      this.game.combatHelper.physicalAttack(char, target, args);
+
+      // bouncing arrows
+      if (char && target) {
+        this.game.combatHelper.attemptArrowBounce(char, target, args);
+      }
     }
 
   }
