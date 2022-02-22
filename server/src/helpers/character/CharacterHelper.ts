@@ -459,11 +459,14 @@ export class CharacterHelper extends BaseService {
     if (savantBoost > 0) {
       stats[Stat.Mitigation] = stats[Stat.Mitigation] ?? 0;
 
+      // if you have a main hand item, your bonus is cut in half
+      const mainHandItemMultiplier = character.items.equipment[ItemSlot.RightHand] ? 0.5 : 1;
+
       const item = character.items.equipment[ItemSlot.Armor];
       const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
 
       if (!item || [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)) {
-        stats[Stat.Mitigation] += savantBoost;
+        stats[Stat.Mitigation] += (savantBoost * mainHandItemMultiplier);
 
         // adjust for fur being a base 10 already
         if (itemClass === ItemClass.Fur) stats[Stat.Mitigation] -= 10;
