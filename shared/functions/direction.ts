@@ -221,7 +221,7 @@ export function directionFromOffset(offsetX: number, offsetY: number): Direction
  *
  * @param direction A single direction to convert to a cardinal single direction
  */
-export function directionDiaganalToWestEast(direction: Direction): Direction {
+export function directionDiagonalToWestEast(direction: Direction): Direction {
   switch (direction) {
   case Direction.Northwest: return Direction.West;
   case Direction.Northeast: return Direction.East;

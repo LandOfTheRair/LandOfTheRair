@@ -38,6 +38,6 @@ test('join all the directions, and split them again', () => {
 
 test('convert diaganals to east, or west', () => {
   const dirs = [Direction.Northeast, Direction.Southeast, Direction.Northwest, Direction.Southwest];
-  const converted = dirs.map((dir) => DirFuncs.directionDiaganalToWestEast(dir));
+  const converted = dirs.map((dir) => DirFuncs.directionDiagonalToWestEast(dir));
   expect(converted).toStrictEqual([Direction.East, Direction.East, Direction.West, Direction.West]);
 });

@@ -3,6 +3,7 @@ export * from './chase';
 export * from './craft';
 export * from './disenchant';
 export * from './empty';
+export * from './face';
 export * from './fill';
 export * from './hide';
 export * from './lookat';

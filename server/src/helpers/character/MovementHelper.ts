@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined } from 'lodash';
 
-import { DamageClass, directionDiaganalToWestEast, directionFromOffset,
+import { DamageClass, directionDiagonalToWestEast, directionFromOffset,
   ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -31,7 +31,7 @@ export class MovementHelper extends BaseService {
     const yDiff = target.y - source.y;
     if (xDiff === 0 && yDiff === 0) return;
     const direction = directionFromOffset(xDiff, yDiff);
-    source.dir = directionDiaganalToWestEast(direction);
+    source.dir = directionDiagonalToWestEast(direction);
   }
 
   moveTowards(source: ICharacter, target: { x: number; y: number }): boolean {
