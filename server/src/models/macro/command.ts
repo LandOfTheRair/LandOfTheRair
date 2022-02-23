@@ -293,7 +293,15 @@ export class SpellCommand extends SkillCommand {
     targetsPosition?: { x: number; y: number; map: string }
   ) {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
-    if (!spellData) return;
+    if (!spellData) {
+      this.game.logger.warn('SpellCommand', `No spellData found for ${this.spellRef}.`);
+
+      if (caster) {
+        this.game.messageHelper.sendSimpleMessage(caster, `Could not cast ${this.spellRef} - no data was found.`);
+      }
+
+      return;
+    }
 
     const doSpellCast = () => {
 
