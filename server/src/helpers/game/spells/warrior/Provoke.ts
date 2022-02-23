@@ -8,7 +8,7 @@ export class Provoke extends Spell {
 
     this.game.messageHelper.sendSimpleMessage(caster, `You provoked ${target.name}!`);
     this.game.messageHelper.sendSimpleMessage(target, `${caster.name} provoked you!`);
-    this.game.characterHelper.addAgro(caster, target, this.getPotency(caster, target, spellCastArgs.spellData));
+    this.game.characterHelper.addAgro(caster, target, this.game.spellManager.getPotency(caster, target, spellCastArgs.spellData));
   }
 
 }

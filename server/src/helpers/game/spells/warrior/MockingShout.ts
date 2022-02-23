@@ -11,7 +11,7 @@ export class MockingShout extends Spell {
     const state = this.game.worldManager.getMapStateForCharacter(caster);
     state.getAllHostilesWithoutVisibilityTo(caster, 4).forEach(foundTarget => {
       this.game.messageHelper.sendSimpleMessage(foundTarget, `${caster.name} is mocking you!`);
-      this.game.characterHelper.addAgro(caster, foundTarget, this.getPotency(caster, target, spellCastArgs.spellData));
+      this.game.characterHelper.addAgro(caster, foundTarget, this.game.spellManager.getPotency(caster, target, spellCastArgs.spellData));
     });
   }
 

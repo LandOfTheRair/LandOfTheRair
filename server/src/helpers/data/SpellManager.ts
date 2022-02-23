@@ -1,8 +1,8 @@
 import { Injectable } from 'injection-js';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, random, sum } from 'lodash';
 
 import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect,
-  IMacroCommandArgs, ISpellData, IStatusEffectData, Skill, SoundEffect, Stat } from '../../interfaces';
+  IMacroCommandArgs, ISpellData, IStatusEffectData, ItemSlot, MessageType, Skill, SoundEffect, Stat } from '../../interfaces';
 
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -28,6 +28,74 @@ export class SpellManager extends BaseService {
   // get the ref to the spell for casting
   public getSpell(key: string): BaseSpell {
     return this.spells[key];
+  }
+
+  public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
+
+    if (!caster) return 1;
+
+    const skills = {
+      [BaseClass.Healer]: Skill.Restoration,
+      [BaseClass.Mage]: Skill.Conjuration,
+      [BaseClass.Thief]: Skill.Thievery
+    };
+
+    const isStatic = spellData.spellMeta?.staticPotency;
+
+    let skillsToAverage = [skills[caster.baseClass]];
+    if (!skills[caster.baseClass]) {
+
+      if (caster.items.equipment[ItemSlot.RightHand]) {
+        const { type, secondaryType } = this.game.itemHelper.getItemProperties(
+          caster.items.equipment[ItemSlot.RightHand], ['type', 'secondaryType']
+        );
+        skillsToAverage = [type, secondaryType];
+      } else {
+        skillsToAverage = [Skill.Martial];
+      }
+
+    }
+
+    skillsToAverage = skillsToAverage.filter(Boolean);
+
+    const baseSkillValue = Math.floor(sum(
+      skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
+    ) / skillsToAverage.length);
+
+    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * (spellData.potencyMultiplier || 1);
+
+    const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
+
+    const bonusRolls = isStatic
+      ? 0
+      : random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
+
+    let retPotency = isStatic
+      ? (baseSkillValue + bonusRolls) * statMult
+      : this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
+
+    let maxMult = 1;
+    (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
+      if (baseSkillValue < baseSkill) return;
+      maxMult = mult;
+    });
+
+    retPotency *= maxMult;
+    retPotency *= (spellData.potencyMultiplier || 1);
+
+    // encumberance cuts potency exactly in half
+    if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
+      retPotency /= 2;
+    }
+
+    if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
+       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Dazed'))
+    ) {
+      retPotency /= 2;
+      this.game.messageHelper.sendLogMessageToPlayer(caster, { message: 'You struggle to concentrate!' }, [MessageType.Miscellaneous]);
+    }
+
+    return Math.max(1, Math.floor(retPotency));
   }
 
   // gain skill for casting a spell
@@ -178,7 +246,7 @@ export class SpellManager extends BaseService {
 
     for (let i = 0; i < numCasts; i++) {
 
-      const potency = override.potency || spellRef.getPotency(caster, target, spellData);
+      const potency = override.potency || this.game.spellManager.getPotency(caster, target, spellData);
       const spellRange = override.range ?? range ?? 0;
       const duration = override.duration || 0;
 

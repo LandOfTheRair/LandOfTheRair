@@ -1,8 +1,7 @@
 
-import { random, sum } from 'lodash';
 
-import { BaseClass, DeepPartial, ICharacter, IItemEffect, ISpellData,
-  IStatusEffectData, ItemSlot, MessageInfo, MessageType, Skill } from '../../interfaces';
+import { DeepPartial, ICharacter, IItemEffect, ISpellData,
+  IStatusEffectData, MessageInfo, MessageType } from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseSpell } from '../../interfaces/BaseSpell';
@@ -11,6 +10,9 @@ export class Spell implements BaseSpell {
 
   constructor(protected game: Game) {}
 
+  getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
+    throw new Error('Method not implemented.');
+  }
   public sendMessage(character: ICharacter|string, message: MessageInfo, messageTypes: MessageType[] = [MessageType.Miscellaneous]): void {
     this.game.messageHelper.sendLogMessageToPlayer(character, message, messageTypes);
   }
@@ -31,7 +33,7 @@ export class Spell implements BaseSpell {
         duration: override.duration ?? this.getDuration(caster, target, spellData),
         extra: {
           charges: override.charges ?? this.getCharges(caster, target, spellData),
-          potency: override.potency ?? this.getPotency(caster, target, spellData)
+          potency: override.potency ?? this.game.spellManager.getPotency(caster, target, spellData)
         }
       },
       tooltip: {
@@ -50,74 +52,6 @@ export class Spell implements BaseSpell {
 
   public getCharges(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
     return 0;
-  }
-
-  public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
-
-    if (!caster) return 1;
-
-    const skills = {
-      [BaseClass.Healer]: Skill.Restoration,
-      [BaseClass.Mage]: Skill.Conjuration,
-      [BaseClass.Thief]: Skill.Thievery
-    };
-
-    const isStatic = spellData.spellMeta?.staticPotency;
-
-    let skillsToAverage = [skills[caster.baseClass]];
-    if (!skills[caster.baseClass]) {
-
-      if (caster.items.equipment[ItemSlot.RightHand]) {
-        const { type, secondaryType } = this.game.itemHelper.getItemProperties(
-          caster.items.equipment[ItemSlot.RightHand], ['type', 'secondaryType']
-        );
-        skillsToAverage = [type, secondaryType];
-      } else {
-        skillsToAverage = [Skill.Martial];
-      }
-
-    }
-
-    skillsToAverage = skillsToAverage.filter(Boolean);
-
-    const baseSkillValue = Math.floor(sum(
-      skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
-    ) / skillsToAverage.length);
-
-    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * (spellData.potencyMultiplier || 1);
-
-    const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
-
-    const bonusRolls = isStatic
-      ? 0
-      : random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
-
-    let retPotency = isStatic
-      ? (baseSkillValue + bonusRolls) * statMult
-      : this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
-
-    let maxMult = 1;
-    (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
-      if (baseSkillValue < baseSkill) return;
-      maxMult = mult;
-    });
-
-    retPotency *= maxMult;
-    retPotency *= (spellData.potencyMultiplier || 1);
-
-    // encumberance cuts potency exactly in half
-    if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
-      retPotency /= 2;
-    }
-
-    if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
-       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Dazed'))
-    ) {
-      retPotency /= 2;
-      this.sendMessage(caster, { message: 'You struggle to concentrate!' });
-    }
-
-    return Math.max(1, Math.floor(retPotency));
   }
 
 }
