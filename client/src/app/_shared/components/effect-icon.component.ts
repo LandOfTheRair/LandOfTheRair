@@ -83,10 +83,14 @@ export class EffectIconComponent implements OnInit, OnDestroy {
   }
 
   public get tooltip() {
-    let baseTooltip = this.effect.effectInfo.tooltip || this.effect.tooltip || this.iconData?.desc || '';
-    if (this.effect.sourceName) {
-      baseTooltip = `${this.effect.effectInfo.tooltipName || this.effect.effectName}: ${baseTooltip} [${this.effect.sourceName}]`;
-    }
+    const effName = this.effect.effectInfo.tooltipName || this.effect.effectName;
+    const effDesc = this.effect.effectInfo.tooltip || this.effect.tooltip || this.iconData?.desc || '???';
+    const sourceName = this.effect.sourceName;
+
+    let baseTooltip = effDesc;
+
+    if (effName) baseTooltip = `${effName}: ${baseTooltip}`;
+    if (sourceName) baseTooltip = `${baseTooltip} [${sourceName}]`;
 
     return baseTooltip;
   }
