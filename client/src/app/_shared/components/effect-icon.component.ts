@@ -10,7 +10,7 @@ import { IStatusEffect } from '../../../interfaces';
 @Component({
   selector: 'app-effect-icon',
   template: `
-    <div class="status-effect" [class.fading]="currentTicksLeft > 0 && currentTicksLeft <= 15">
+    <div class="status-effect" [class.fading]="currentTicksLeft > 0 && currentTicksLeft <= 15" [ngClass]="['effect-' + effect.effectName]">
       <app-icon size="esmall" [name]="iconName" [fgColor]="color" [bgColor]="bgColor" [matTooltip]="tooltip"></app-icon>
       <div class="status-remaining" *ngIf="charges > 0">{{ charges }}</div>
       <div class="status-remaining" *ngIf="buildUpPercent > 0">{{ buildUpPercent }}%</div>
