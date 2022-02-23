@@ -31,7 +31,7 @@ export class GhostWail extends SpellCommand {
         return;
       }
 
-      this.game.effectHelper.addEffect(char, executor, 'Stun', { effect: {
+      this.game.effectHelper.addEffect(char, executor, 'Fear', { effect: {
         duration: 5,
         extra: { disableMessages: true, disableRecently: true } }
       });

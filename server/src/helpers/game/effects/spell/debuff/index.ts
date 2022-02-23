@@ -10,6 +10,7 @@ export * from './Chilled';
 export * from './Daze';
 export * from './Debilitate';
 export * from './Disease';
+export * from './Fear';
 export * from './Frozen';
 export * from './Immobilized';
 export * from './LoweredDefenses';

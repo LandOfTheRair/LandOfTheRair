@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { clamp, isUndefined } from 'lodash';
+import { clamp, isUndefined, random } from 'lodash';
 
 import { DamageClass, directionDiagonalToWestEast, directionFromOffset,
   ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
@@ -76,6 +76,13 @@ export class MovementHelper extends BaseService {
     }
 
     return didFinish;
+  }
+
+  moveRandomly(character: ICharacter, numSteps: number): void {
+    const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
+    if (steps.length === 0) return;
+
+    this.takeSequenceOfSteps(character, steps);
   }
 
   // returns true or false based on if the steps were all taken or not

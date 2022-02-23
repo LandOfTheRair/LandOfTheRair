@@ -429,8 +429,7 @@ export class DefaultAIBehavior implements IAI {
   }
 
   protected moveRandomly(numSteps: number) {
-    const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
-    this.game.movementHelper.takeSequenceOfSteps(this.npc, steps);
+    this.game.movementHelper.moveRandomly(this.npc, numSteps);
   }
 
 }
