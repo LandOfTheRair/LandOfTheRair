@@ -2,6 +2,7 @@
 export * from './Blind';
 export * from './BlurredVision';
 export * from './BuildupChill';
+export * from './BuildupEnergy';
 export * from './BuildupHeat';
 export * from './Burning';
 export * from './ChainKunai';
@@ -12,6 +13,7 @@ export * from './Disease';
 export * from './Frozen';
 export * from './Immobilized';
 export * from './LoweredDefenses';
+export * from './Overcharged';
 export * from './Plague';
 export * from './Poison';
 export * from './Snare';

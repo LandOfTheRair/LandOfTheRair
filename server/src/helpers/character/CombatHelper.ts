@@ -319,8 +319,9 @@ export class CombatHelper extends BaseService {
 
   private getElementalDebuff(damageClass: DamageClass): [string, string, string] {
     switch (damageClass) {
-    case DamageClass.Fire: return ['BuildupHeat', 'Burning', 'RecentlyBurned'];
-    case DamageClass.Ice:  return ['BuildupChill', 'Chilled', 'RecentlyChilled'];
+    case DamageClass.Energy:  return ['BuildupEnergy', 'Overcharged', 'RecentlyOvercharged'];
+    case DamageClass.Fire:    return ['BuildupHeat', 'Burning', 'RecentlyBurned'];
+    case DamageClass.Ice:     return ['BuildupChill', 'Chilled', 'RecentlyChilled'];
     }
 
     return ['', '', ''];
