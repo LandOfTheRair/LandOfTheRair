@@ -10,7 +10,9 @@ export class Protection extends SpellCommand {
   override spellRef = 'Protection';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'Protection');
+    return super.canUse(caster, target)
+        && !this.game.effectHelper.hasEffect(target, 'Protection')
+        && !this.game.effectHelper.hasEffect(target, 'WizardStance');
   }
 
 }

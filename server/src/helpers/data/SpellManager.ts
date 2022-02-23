@@ -160,7 +160,17 @@ export class SpellManager extends BaseService {
 
     // send messages to caster/target where applicable
     const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait, creatureSummoned, extraAttackTrait,
-      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range } = spellData.spellMeta;
+      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range, fizzledBy } = spellData.spellMeta;
+
+    if (target && fizzledBy && fizzledBy.length > 0) {
+      if (fizzledBy.some(effectToFizzleOn => this.game.effectHelper.hasEffect(target, effectToFizzleOn))) {
+        if (caster) {
+          this.game.messageHelper.sendSimpleMessage(caster, `Your ${spell} spell fizzles on that creature!`);
+        }
+
+        return;
+      }
+    }
 
     // buff spells can't be cast on hostiles
     if (caster

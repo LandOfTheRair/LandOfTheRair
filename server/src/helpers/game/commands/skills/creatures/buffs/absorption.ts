@@ -10,7 +10,8 @@ export class Absorption extends SpellCommand {
   override spellRef = 'Absorption';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !this.game.effectHelper.hasEffect(target, 'Absorption');
+    return super.canUse(caster, target)
+        && !this.game.effectHelper.hasEffect(target, 'Absorption')
+        && !this.game.effectHelper.hasEffect(target, 'WizardStance');
   }
-
 }

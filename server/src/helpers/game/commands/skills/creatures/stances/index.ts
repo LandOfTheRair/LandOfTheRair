@@ -5,3 +5,4 @@ export * from './ragestance';
 export * from './tigerstance';
 export * from './turtlestance';
 export * from './volcanostance';
+export * from './wizardstance';

@@ -40,6 +40,7 @@ export interface ISpellData {
     resistLowerTrait?: string;          // if the spell canBeResisted, this trait will improve the chance of the spell cast going through
     spellRef: string;                   // the reference to the spell for casting purposes
     useSkillAsPotency?: boolean;        // if true, the spell will use only the casters skill as the potency (unless there is already a potency set)
+    fizzledBy?: string[];               // if set, the spell will not take hold on any target if they contain an effect listed in this array
   };
 
 }
