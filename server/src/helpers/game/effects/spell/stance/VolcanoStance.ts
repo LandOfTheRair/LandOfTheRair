@@ -26,12 +26,18 @@ export class VolcanoStance extends Effect {
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
-    this.game.damageHelperMagic.magicalAttack(char, target, {
-      atkMsg: 'You unleash volcanic fury on %0!',
-      defMsg: '%0 hit you with a burst of volcanic heat!',
-      damage: effect.effectInfo.potency,
-      damageClass: DamageClass.Fire
-    });
+    if (this.game.effectHelper.hasEffect(char, 'ImbueFlame') && this.game.characterHelper.hasLearned(char, 'Combust')) {
+      this.game.commandHandler.getSkillRef('Combust').use(char, target);
+
+    } else {
+      this.game.damageHelperMagic.magicalAttack(char, target, {
+        atkMsg: 'You unleash volcanic fury on %0!',
+        defMsg: '%0 hit you with a burst of volcanic heat!',
+        damage: effect.effectInfo.potency,
+        damageClass: DamageClass.Fire
+      });
+
+    }
   }
 
 }

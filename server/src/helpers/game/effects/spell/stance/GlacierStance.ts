@@ -27,12 +27,17 @@ export class GlacierStance extends Effect {
   ): number {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) return currentDamage;
 
-    this.game.damageHelperMagic.magicalAttack(char, attacker, {
-      atkMsg: 'You unleash glacial fury on %0!',
-      defMsg: '%0 hit you with a burst of glacial frost!',
-      damage: effect.effectInfo.potency,
-      damageClass: DamageClass.Ice
-    });
+    if (this.game.effectHelper.hasEffect(char, 'ImbueFrost') && this.game.characterHelper.hasLearned(char, 'Hail')) {
+      this.game.commandHandler.getSkillRef('Hail').use(char, attacker);
+
+    } else {
+      this.game.damageHelperMagic.magicalAttack(char, attacker, {
+        atkMsg: 'You unleash glacial fury on %0!',
+        defMsg: '%0 hit you with a burst of glacial frost!',
+        damage: effect.effectInfo.potency,
+        damageClass: DamageClass.Ice
+      });
+    }
 
     return currentDamage;
   }

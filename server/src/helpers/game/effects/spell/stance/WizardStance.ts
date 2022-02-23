@@ -34,12 +34,17 @@ export class WizardStance extends Effect {
   ): number {
     if (!attacker || damageArgs.damageClass === DamageClass.Physical) return currentDamage;
 
-    this.game.damageHelperMagic.magicalAttack(char, attacker, {
-      atkMsg: 'You unleash energetic fury on %0!',
-      defMsg: '%0 hit you with a burst of energetic power!',
-      damage: effect.effectInfo.potency,
-      damageClass: DamageClass.Energy
-    });
+    if (this.game.effectHelper.hasEffect(char, 'ImbueEnergy') && this.game.characterHelper.hasLearned(char, 'MagicMissile')) {
+      this.game.commandHandler.getSkillRef('MagicMissile').use(char, attacker);
+
+    } else {
+      this.game.damageHelperMagic.magicalAttack(char, attacker, {
+        atkMsg: 'You unleash energetic fury on %0!',
+        defMsg: '%0 hit you with a burst of energetic power!',
+        damage: effect.effectInfo.potency,
+        damageClass: DamageClass.Energy
+      });
+    }
 
     return currentDamage;
   }
