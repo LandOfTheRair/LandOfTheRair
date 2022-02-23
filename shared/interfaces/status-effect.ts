@@ -20,6 +20,7 @@ export interface IStatusEffectInfo {
   persistThroughDeath?: boolean;                // whether the effect should persist through death or not
   hidden?: boolean;                             // whether or not the effect should be hidden on the client side
   unique?: boolean|string;                      // whether or not this effect is unique (ie, can have duplicates of) - if string, similar effects will be removed (imbue, stance)
+  canOverlapUniqueIfEquipped?: boolean;         // whether or not this effect can overlap with other unique effects of the same type in certain circumstances, such as being attached to a piece of equipment
   disableMessages?: boolean;                    // whether or not to disable apply/unapply messages
   disableRecently?: boolean;                    // whether or not to disable recently effects
   hideTicks?: boolean;                          // whether or not the effect should hide ticks (used for aura-related effects generally)

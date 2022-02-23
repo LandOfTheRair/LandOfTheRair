@@ -281,11 +281,11 @@ export class EffectHelper extends BaseService {
   }
 
   // remove similar effects based on a query (such as for stances and imbues)
-  public removeSimilarEffects(char: ICharacter, query: string, except: string): void {
+  public removeSimilarEffects(char: ICharacter, query: string, except: string, cancelPerms = false, force = false): void {
     Object.keys(char.effects._hash).forEach(effectName => {
       if (effectName === except
       || !effectName.includes(query)
-      || char.effects._hash[effectName].endsAt === -1) return;
+      || ((!cancelPerms && char.effects._hash[effectName].endsAt === -1) || force)) return;
 
       this.removeEffect(char, char.effects._hash[effectName]);
     });
