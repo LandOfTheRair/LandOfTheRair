@@ -7,19 +7,19 @@ export class Antipode extends Spell {
     if (!caster || !target) return;
 
     this.game.combatHelper.magicalAttack(caster, target, {
-      atkMsg: 'You strike %0 with antipodes!',
-      defMsg: '%0 struck you with antipodes!',
+      atkMsg: 'You strike %0 with antipodal fire!',
+      defMsg: '%0 struck you with antipodal fire!',
       sfx: SoundEffect.CombatHitSpell,
-      damage: this.getPotency(caster, target, spellCastArgs.spellData),
+      damage: this.game.spellManager.getPotency(caster, target, spellCastArgs.spellData),
       damageClass: DamageClass.Fire,
       spellData: spellCastArgs.spellData
     });
 
     this.game.combatHelper.magicalAttack(caster, target, {
-      atkMsg: 'You strike %0 with antipodes!',
-      defMsg: '%0 struck you with antipodes!',
+      atkMsg: 'You strike %0 with antipodal frost!',
+      defMsg: '%0 struck you with antipodal frost!',
       sfx: SoundEffect.CombatHitSpell,
-      damage: this.getPotency(caster, target, spellCastArgs.spellData),
+      damage: this.game.spellManager.getPotency(caster, target, spellCastArgs.spellData),
       damageClass: DamageClass.Ice,
       spellData: spellCastArgs.spellData
     });
