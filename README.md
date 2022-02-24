@@ -24,6 +24,10 @@ You will want to be using Node 16.12 (at least) to run this project.
 * `npm install` - set up the monorepo
 * `npm run setup:full` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
 
+#### Developing Code-related Content
+
+Check [this wiki page](https://github.com/LandOfTheRair/LandOfTheRair/wiki/Adding-New-Codestuffs).
+
 #### Developing Content
 
 One option you have to run Land of the Rair and actively work on the content, is to clone [the Content repo](https://github.com/LandOfTheRair/Content) right alongside Land of the Rair (meaning you'll have `folder/LandOfTheRair` and `folder/Content`). If you have the Content repo available and run `npm run setup`, it will symlink the Content repo so you can develop it concurrently without having to commit, push, pull, and update. Or copying, or whatever.
