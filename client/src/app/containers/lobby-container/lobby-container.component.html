@@ -2,4 +2,5 @@
 <div class="lobby">
   <app-lobby class="window-container" [class.hidden]="optionsService.hideLobbyInGame && gameService.inGame$ | async"></app-lobby>
   <app-char-select class="window-container" [class.hidden]="gameService.inGame$ | async"></app-char-select>
+  <app-session-stats class="window-container" [class.hidden]="(gameService.inGame$ | async) || (stats$ | async) === null"></app-session-stats>
 </div>

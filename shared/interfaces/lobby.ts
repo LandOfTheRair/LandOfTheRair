@@ -1,5 +1,6 @@
 import { IAccount } from './account';
 import { IDynamicEvent } from './dynamicevent';
+import { ISessionStatistics } from './statistics';
 
 export interface ICharacterCreateInfo {
   allegiances: Array<{ description: string; name: string; statMods: Array<{ name: string; value: number }> }>;
@@ -25,4 +26,5 @@ export interface ILobbyContainer {
   events: IDynamicEvent[];
   motd: string;
   charCreate: ICharacterCreateInfo;
+  lastStats: ISessionStatistics;
 }

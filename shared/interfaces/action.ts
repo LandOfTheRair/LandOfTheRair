@@ -168,5 +168,7 @@ export enum GameAction {
   LockerActionShow = '[Locker] Show Locker',
   LockerActionHide = '[Locker] Hide Locker',
 
-  PartyUpdate = '[Party] Update Party'
+  PartyUpdate = '[Party] Update Party',
+
+  SetSessionStatistics = '[Session] Set Statistics',
 }

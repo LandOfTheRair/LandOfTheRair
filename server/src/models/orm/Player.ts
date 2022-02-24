@@ -5,7 +5,7 @@ import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency
   Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
   IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
   SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage,
-  SubscriptionTier, ICharacterPouch, INPC, TradeskillBlock } from '../../interfaces';
+  SubscriptionTier, ICharacterPouch, INPC, TradeskillBlock, ISessionStatistics } from '../../interfaces';
 import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
@@ -57,6 +57,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
   @Property(PROP_TEMPORARY()) spellChannel: { ticks: number; callback: () => void };
   @Property(PROP_TEMPORARY()) pets: INPC[];
+  @Property(PROP_TEMPORARY()) sessionStatistics: ISessionStatistics;
 
   // other server props
   @Property(PROP_SERVER_ONLY()) teleportLocations: Record<string, { x: number; y: number; map: string }>;

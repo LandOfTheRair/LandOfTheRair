@@ -12,6 +12,9 @@ export class StatisticsHelper extends BaseService {
     if (!player || !player.statistics) return;
     player.statistics.statistics[statistic] = player.statistics.statistics[statistic] || 0;
     player.statistics.statistics[statistic]! += number ?? 0;
+
+    player.sessionStatistics.statistics[statistic] = player.sessionStatistics.statistics[statistic] || 0;
+    player.sessionStatistics.statistics[statistic]! += number ?? 0;
   }
 
   public syncBaseStatistics(player: IPlayer): void {
@@ -21,6 +24,13 @@ export class StatisticsHelper extends BaseService {
     player.statistics.level = player.level;
     player.statistics.username = player.username;
     player.statistics.charSlot = player.charSlot;
+  }
+
+  public syncSessionStatistics(player: IPlayer): void {
+    player.sessionStatistics.end = Date.now();
+    player.sessionStatistics.baseClass = player.baseClass;
+    player.sessionStatistics.name = player.name;
+    player.sessionStatistics.level = player.level;
   }
 
 }

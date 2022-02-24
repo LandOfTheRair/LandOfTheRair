@@ -23,3 +23,12 @@ export interface ICharacterStatistics {
   charSlot: number;
   username: string;
 }
+
+export interface ISessionStatistics {
+  start: number;
+  end: number;
+  baseClass: string;
+  name: string;
+  level: number;
+  statistics: Partial<Record<TrackedStatistic, number>>;
+}

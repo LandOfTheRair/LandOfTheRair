@@ -1,0 +1,41 @@
+
+
+<app-window windowName="sessionstats"
+            [head]="headTemplate"
+            [body]="bodyTemplate"
+
+            defaultX="356"
+            defaultY="582"
+            defaultWidth="450"
+            defaultHeight="300"
+></app-window>
+
+<ng-template #headTemplate>
+  Last Session Stats
+</ng-template>
+
+<ng-template #bodyTemplate>
+
+  <ng-container *ngIf="stats$ | async as stats">
+    <div class="char-container">
+      {{ stats.name }} the level {{ stats.level }} {{ stats.baseClass }}
+    </div>
+
+    <div class="duration-container">
+      Duration: {{ duration(stats.start, stats.end) }}
+    </div>
+
+    <div class="stats-container">
+  
+      <mat-chip-list>
+
+        <mat-chip color="primary" selected *ngFor="let stat of keysForStats(stats)">
+          {{ stat }} ({{ stats.statistics[stat] | number }})
+        </mat-chip>
+
+      </mat-chip-list>
+
+    </div>
+  </ng-container>
+
+</ng-template>

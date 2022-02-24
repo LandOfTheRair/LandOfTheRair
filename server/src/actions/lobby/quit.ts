@@ -15,10 +15,17 @@ export class QuitAction extends ServerAction {
     game.lobbyManager.leaveGame(data.username);
 
     if (player) {
+      game.statisticsHelper.syncSessionStatistics(player);
+
       emit({
         action: GameAction.SetCharacterSlotInformation,
         slot: player.charSlot,
         characterInfo: game.db.prepareForTransmission(player)
+      });
+
+      emit({
+        action: GameAction.SetSessionStatistics,
+        statistics: player.sessionStatistics
       });
     }
 

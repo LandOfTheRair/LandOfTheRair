@@ -45,6 +45,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     learnedRunes: char.learnedRunes ?? [],
     tradeskills: char.tradeskills ?? {},
     learnedRecipes: char.learnedRecipes ?? [],
-    teleportLocations: char.teleportLocations ?? {}
+    teleportLocations: char.teleportLocations ?? {},
+    sessionStatistics: char.sessionStatistics ?? { statistics: {}, start: Date.now(), end: 0, baseClass: '', name: '', level: 0 }
   };
 };

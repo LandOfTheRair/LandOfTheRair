@@ -9,7 +9,7 @@ import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser,
   CreateEvent,
   DeleteEvent,
   Login, RemoveUser, SetCharacterCreateInformation,
-  SetEvents, SetMOTD, SetUsers } from './actions';
+  SetEvents, SetMOTD, SetSessionStatistics, SetUsers } from './actions';
 
 @State<ILobbyContainer>({
   name: 'chat',
@@ -22,11 +22,17 @@ import { AccountEnterGame, AccountLeaveGame, AddMessage, AddUser,
       allegiances: [],
       baseStats: [],
       classes: []
-    }
+    },
+    lastStats: null
   }
 })
 @Injectable()
 export class LobbyState {
+
+  @Selector()
+  static lastSessionStats(state: ILobbyContainer) {
+    return state.lastStats;
+  }
 
   @Selector()
   static charCreateData(state: ILobbyContainer) {
@@ -162,6 +168,11 @@ export class LobbyState {
     users[userIndex] = user;
 
     ctx.patchState({ users });
+  }
+
+  @Action(SetSessionStatistics)
+  setStatistics(ctx: StateContext<ILobbyContainer>, { statistics }: SetSessionStatistics) {
+    ctx.patchState({ lastStats: statistics });
   }
 
 }

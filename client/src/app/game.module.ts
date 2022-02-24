@@ -67,6 +67,7 @@ import { VendorComponent } from './containers/game-container/vendor/vendor.compo
 
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
+import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 
@@ -83,7 +84,7 @@ const declarations = [
   WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, InputModalComponent, AboutComponent, AccountComponent,
   ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
-  TextModalComponent, NewSpellsComponent, MarketComponent, TradeskillComponent
+  TextModalComponent, NewSpellsComponent, MarketComponent, TradeskillComponent, SessionStatsComponent
 ];
 
 const gameComponents = [

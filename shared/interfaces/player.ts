@@ -7,7 +7,7 @@ import { ICharacterLockers, ICharacterPouch, IMaterialStorage } from './characte
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
 import { ISimpleItem } from './item';
-import { ICharacterStatistics } from './statistics';
+import { ICharacterStatistics, ISessionStatistics } from './statistics';
 
 export type BGM = 'town' | 'dungeon' | 'wilderness';
 
@@ -63,4 +63,6 @@ export interface IPlayer extends ICharacter {
   learnedRecipes: string[];
 
   teleportLocations: Record<string, { x: number; y: number; map: string }>;
+
+  sessionStatistics: ISessionStatistics;
 }

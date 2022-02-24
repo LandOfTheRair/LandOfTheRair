@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { LobbyState } from '../../../stores';
 import { GameService } from '../../services/game.service';
 import { OptionsService } from '../../services/options.service';
 
@@ -8,6 +11,8 @@ import { OptionsService } from '../../services/options.service';
   styleUrls: ['./lobby-container.component.scss']
 })
 export class LobbyContainerComponent implements OnInit {
+
+  @Select(LobbyState.lastSessionStats) stats$: Observable<any>;
 
   constructor(public optionsService: OptionsService, public gameService: GameService) { }
 
