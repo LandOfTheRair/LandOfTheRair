@@ -78,7 +78,10 @@ export class DamageHelperPhysical extends BaseService {
     const shouldOffhandAttackAsWell = (!args.isThrow && !args.isKick && !args.isPunch)
                                    || (args.isThrow && (returnsOnThrow || this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')));
 
-    if (shouldOffhandAttackAsWell && canOffhand && attacker.items.equipment[ItemSlot.RightHand]) {
+    if (shouldOffhandAttackAsWell
+    && canOffhand
+    && attacker.items.equipment[ItemSlot.RightHand]
+    && attacker.items.equipment[ItemSlot.LeftHand]) {
       args ??= {};
       args.isOffhand = true;
       args.throwHand = ItemSlot.LeftHand;
