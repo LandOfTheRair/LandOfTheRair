@@ -315,8 +315,11 @@ export class CharacterHelper extends BaseService {
     // warrior, healer, traveller can wear heavy armor
     if ([BaseClass.Warrior, BaseClass.Healer, BaseClass.Traveller].includes(character.baseClass)) return;
 
-    // lightenarmor trait means no encumber as well
-    if (this.game.traitHelper.traitLevelValue(character, 'LightenArmor')) return;
+    // lightenarmor trait means no encumber as well, also clear encumber in rare cases that it matters
+    if (this.game.traitHelper.traitLevelValue(character, 'LightenArmor')) {
+      this.game.effectHelper.removeEffectByName(character, 'Encumbered');
+      return;
+    }
 
     let castEncumber = false;
     Object.values(character.items.equipment).forEach(item => {
