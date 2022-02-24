@@ -63,7 +63,6 @@
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
-            "extractCss": true,
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true
@@ -82,7 +81,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "extractCss": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
