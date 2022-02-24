@@ -59,6 +59,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   public isEditing = false;
   public currentIconPage = 0;
   public currentIconsInPage: string[] = [];
+  public defaultForTargets: string[] = ['Attack', 'Charge', 'Kick', 'Throw'];
   public allPossibleForTargets: string[] = [];
 
   public get allMacroNameIcons(): string[] {
