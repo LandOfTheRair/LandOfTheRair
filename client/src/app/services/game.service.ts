@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { startCase } from 'lodash';
+import { startCase, sample, get, isNumber, isBoolean, maxBy, sortBy } from 'lodash';
 
-import { Alignment, Allegiance, ChatMode, directionFromOffset, directionToSymbol, GameServerEvent, Hostility, IAccount, ICharacter,
+import { Alignment, Allegiance, ChatMode, Direction, directionFromOffset,
+  directionToSymbol, distanceFrom, FOVVisibility, GameServerEvent, Hostility, IAccount, ICharacter,
   ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo, Stat } from '../../interfaces';
 import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
 
@@ -34,6 +35,7 @@ export class GameService {
   @Select(GameState.inGame) inGame$: Observable<boolean>;
   @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
   @Select(GameState.map) currentMap$: Observable<IMapData>;
+  @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
 
   @Select(AccountState.loggedIn) loggedIn$: Observable<boolean>;
   @Select(AccountState.account) account$: Observable<IAccount>;
@@ -45,6 +47,16 @@ export class GameService {
   @Select(SettingsState.chatMode) chatMode$: Observable<ChatMode>;
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
   @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
+
+  // character list stuff
+  private currentCharacter: ICharacter = null;
+  private allCharacters: ICharacter[] = [];
+  private previousPlacements: Record<string, number> = {};
+
+  private visibleCharacterList: ICharacter[] = [];
+  public get allVisibleCharacters(): ICharacter[] {
+    return this.visibleCharacterList;
+  }
 
   constructor(
     private socketService: SocketService,
@@ -63,9 +75,109 @@ export class GameService {
       this.playGame.next(false);
       this.quitGame.next();
     });
+
+    this.watchCharacters();
   }
 
-private handleAutoExec() {
+  private watchCharacters() {
+    this.characters$.subscribe(c => this.allCharacters = c);
+  }
+
+  public updateCharacterList(player: IPlayer) {
+    this.currentCharacter = player;
+    this.visibleCharacterList = this.visibleCharacters(player);
+  }
+
+  private visibleCharacters(player: IPlayer): ICharacter[] {
+    if (!player || this.allCharacters.length === 0) return [];
+    const fov = player.fov;
+    const allCharacters = this.allCharacters;
+
+    let unsorted: any[] = allCharacters.map(testChar => {
+      if ((testChar as IPlayer).username === player.username) return false;
+      if (testChar.dir === Direction.Center || testChar.hp.current === 0) return false;
+
+      const diffX = testChar.x - player.x;
+      const diffY = testChar.y - player.y;
+
+      const canSee = get(fov, [diffX, diffY]) >= FOVVisibility.CanSee;
+      if (!canSee) return false;
+
+      return testChar;
+    }).filter(Boolean);
+
+    if (unsorted.length === 0) return [];
+
+    const shouldSortDistance = this.optionsService.sortByDistance;
+    const shouldSortFriendly = this.optionsService.sortFriendlies;
+
+    // iterate over unsorted, find their place, or find them a new place (only if we are doing no sorting)
+    if (!isBoolean(shouldSortDistance) && !isBoolean(shouldSortFriendly)) {
+      const highestOldSpace = this.previousPlacements[maxBy(Object.keys(this.previousPlacements), key => this.previousPlacements[key])];
+      const oldPositionSorting = Array(highestOldSpace).fill(null);
+      const newPositionHash = {};
+
+      const unfilledSpaces = oldPositionSorting.reduce((prev, cur, idx) => {
+        prev[idx] = null;
+        return prev;
+      }, {});
+
+      const needFill = [];
+
+      // sort old creatures into the array, and if they weren't there before, we mark them as filler
+      for (let i = 0; i < unsorted.length; i++) {
+        const creature = unsorted[i];
+
+        const oldPos = this.previousPlacements[creature.uuid];
+        if (isNumber(oldPos)) {
+          oldPositionSorting[oldPos] = creature;
+          delete unfilledSpaces[oldPos];
+        } else {
+          needFill.push(creature);
+        }
+      }
+
+      // get all the filler spaces, and put the unsorted creatures into them
+      const fillKeys = Object.keys(unfilledSpaces);
+
+      for (let i = 0; i < needFill.length; i++) {
+        const fillSpot = fillKeys.shift();
+        if (fillSpot) {
+          oldPositionSorting[+fillSpot] = needFill[i];
+        } else {
+          oldPositionSorting.push(needFill[i]);
+        }
+      }
+
+      // create a new position hash
+      for (let i = 0; i < oldPositionSorting.length; i++) {
+        const creature = oldPositionSorting[i];
+        if (!creature) continue;
+
+        newPositionHash[creature.uuid] = i;
+      }
+
+      this.previousPlacements = newPositionHash;
+      unsorted = oldPositionSorting;
+    }
+
+    // sort them by distance
+    if (isBoolean(shouldSortDistance)) {
+      unsorted = sortBy(unsorted, testChar => distanceFrom(player, testChar));
+
+      if (!shouldSortDistance) unsorted = unsorted.reverse();
+    }
+
+    // sort them by friendly
+    if (isBoolean(shouldSortFriendly)) {
+      const sortOrder = shouldSortFriendly ? { friendly: 0, neutral: 1, hostile: 2 } : { hostile: 0, neutral: 1, friendly: 2 };
+      unsorted = sortBy(unsorted, testChar => sortOrder[this.hostilityLevelFor(player, testChar)]);
+    }
+
+    return unsorted;
+  }
+
+  private handleAutoExec() {
     if (!this.optionsService.autoExec) return;
 
     const commands = this.optionsService.autoExec.split('\n');
@@ -106,8 +218,59 @@ private handleAutoExec() {
         args = `${args} ${target}`.trim();
       }
 
-      this.sendAction(GameServerEvent.DoCommand, { command, args });
+      this.checkCommandForSpecialReplacementsAndSend(command, args);
     });
+  }
+
+  private checkCommandForSpecialReplacementsAndSend(command: string, args: string) {
+
+    // if there are no special replacements, just send the command
+    if (!args.includes('$')) {
+      this.sendAction(GameServerEvent.DoCommand, { command, args });
+      return;
+    }
+
+    const allChars = this.allVisibleCharacters;
+
+    console.log(allChars, command, args);
+
+    const allNPCs = () => allChars.filter(c => !(c as any).username);
+    const allPlayers = () => allChars.filter(c => (c as any).username);
+
+    const weakest = (list: ICharacter[]) => sortBy(list, c => c.hp.current)[0];
+    const strongest = (list: ICharacter[]) => sortBy(list, c => -c.hp.current)[0];
+
+    const closest = (list: ICharacter[]) => sortBy(list, c => distanceFrom(this.currentCharacter, c))[0];
+    const farthest = (list: ICharacter[]) => sortBy(list, c => -distanceFrom(this.currentCharacter, c))[0];
+
+    let newArgs = args;
+
+    if (args.includes('$firstnpc'))        newArgs = newArgs.replace('$firstnpc',     allChars.find(c => !(c as any).username)?.uuid ?? '');
+    if (args.includes('$firstplayer'))     newArgs = newArgs.replace('$firstplayer',  allChars.find(c => (c as any).username)?.uuid ?? '');
+    if (args.includes('$first'))           newArgs = newArgs.replace('$first',        allChars[0]?.uuid ?? '');
+
+    if (args.includes('$randomnpc'))       newArgs = newArgs.replace('$randomnpc',    sample(allNPCs())?.uuid ?? '');
+    if (args.includes('$randomplayer'))    newArgs = newArgs.replace('$randomplayer', sample(allPlayers())?.uuid ?? '');
+    if (args.includes('$random'))          newArgs = newArgs.replace('$random',       sample(allChars)?.uuid ?? '');
+
+    if (args.includes('$strongestnpc'))    newArgs = newArgs.replace('$strongestnpc',    strongest(allNPCs())?.uuid ?? '');
+    if (args.includes('$strongestplayer')) newArgs = newArgs.replace('$strongestplayer', strongest(allPlayers())?.uuid ?? '');
+    if (args.includes('$strongest'))       newArgs = newArgs.replace('$strongest',       strongest(allChars)?.uuid ?? '');
+
+    if (args.includes('$weakestnpc'))      newArgs = newArgs.replace('$weakestnpc',    weakest(allNPCs())?.uuid ?? '');
+    if (args.includes('$weakestplayer'))   newArgs = newArgs.replace('$weakestplayer', weakest(allPlayers())?.uuid ?? '');
+    if (args.includes('$weakest'))         newArgs = newArgs.replace('$weakest',       weakest(allChars)?.uuid ?? '');
+
+    if (args.includes('$farthestnpc'))     newArgs = newArgs.replace('$farthestnpc',    farthest(allNPCs())?.uuid ?? '');
+    if (args.includes('$farthestplayer'))  newArgs = newArgs.replace('$farthestplayer', farthest(allPlayers())?.uuid ?? '');
+    if (args.includes('$farthest'))        newArgs = newArgs.replace('$farthest',       farthest(allChars)?.uuid ?? '');
+
+    if (args.includes('$closestnpc'))      newArgs = newArgs.replace('$closestnpc',    closest(allNPCs())?.uuid ?? '');
+    if (args.includes('$closestplayer'))   newArgs = newArgs.replace('$closestplayer', closest(allPlayers())?.uuid ?? '');
+    if (args.includes('$closest'))         newArgs = newArgs.replace('$closest',       closest(allChars)?.uuid ?? '');
+
+    this.sendAction(GameServerEvent.DoCommand, { command, args: newArgs });
+
   }
 
   public sendAction(action: GameServerEvent, args: any) {
