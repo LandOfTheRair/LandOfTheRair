@@ -232,8 +232,6 @@ export class GameService {
 
     const allChars = this.allVisibleCharacters;
 
-    console.log(allChars, command, args);
-
     const allNPCs = () => allChars.filter(c => !(c as any).username);
     const allPlayers = () => allChars.filter(c => (c as any).username);
 
