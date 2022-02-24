@@ -4,6 +4,9 @@ import { Select, Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
+
+import allMacros from '../../../../assets/content/_output/macros.json';
+
 import { ICharacter, IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
 import { GameState, MacrosState, SetActiveMacro, SetActiveMacroBars, SetCurrentCommand } from '../../../../stores';
 
@@ -86,6 +89,7 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
   public isMacroDisabled(player: IPlayer, macro: IMacro): boolean {
     if (!macro?.for) return false;
+    if (allMacros[macro.for]) return false;
     return !player.learnedSpells[macro.for.toLowerCase()] || player.spellCooldowns?.[macro.for] > Date.now();
   }
 
