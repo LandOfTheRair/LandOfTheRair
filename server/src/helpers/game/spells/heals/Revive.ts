@@ -28,6 +28,8 @@ export class Revive extends Spell {
       if (this.game.traitHelper.traitLevel(caster, 'SnapHeal') && this.game.traitHelper.traitLevel(caster, 'Cure')) {
         this.game.commandHandler.getSkillRef('Cure').use(caster, player);
       }
+
+      this.game.playerHelper.refreshPlayerMapState(player);
     });
 
     if (!didRevive) {

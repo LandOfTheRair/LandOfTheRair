@@ -20,9 +20,6 @@ export class GMTeleport extends MacroCommand {
     this.sendMessage(player, 'Woosh.');
     this.game.teleportHelper.teleport(player as Player, { x: +x, y: +y, map });
 
-    const state = this.game.worldManager.getMap(player.map)?.state;
-    if (!state) return;
-
-    state.triggerFullUpdateForPlayer(player as Player);
+    this.game.playerHelper.refreshPlayerMapState(player as Player);
   }
 }

@@ -669,4 +669,12 @@ export class PlayerHelper extends BaseService {
     this.game.transmissionHelper.sendMovementPatch(player as Player);
   }
 
+  // refresh the players state based on their map, shortcut
+  public refreshPlayerMapState(player: Player): void {
+    const state = this.game.worldManager.getMap(player.map)?.state;
+    if (!state) return;
+
+    state.triggerFullUpdateForPlayer(player as Player);
+  }
+
 }

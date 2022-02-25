@@ -87,7 +87,7 @@ export class PlayAction extends ServerAction {
       username: data.username
     });
 
-    game.worldManager.getMapStateForCharacter(player).triggerFullUpdateForPlayer(player);
+    game.playerHelper.refreshPlayerMapState(player);
 
     return {};
   }
