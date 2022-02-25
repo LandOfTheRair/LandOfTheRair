@@ -137,6 +137,8 @@ export class LobbyState {
   login(ctx: StateContext<ILobbyContainer>, { info }: Login) {
     this.setUsers(ctx, { users: info.onlineUsers });
     this.setMOTD(ctx, { motd: info.motd });
+
+    localStorage.setItem('currentAccount', info.account.username);
   }
 
   @Action(SetCharacterCreateInformation)

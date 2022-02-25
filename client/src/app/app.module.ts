@@ -6,7 +6,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
-import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
+import { NgxsStoragePluginModule, StorageEngine } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 
@@ -30,6 +30,32 @@ import { SoundService } from './services/sound.service';
 
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
+
+export class AccountStorageEngine implements StorageEngine {
+  get length(): number {
+    return localStorage.length;
+  }
+
+  getItem(key: string): string | null {
+    return localStorage.getItem(key);
+  }
+
+  setItem(key: string, value: string): void {
+    localStorage.setItem(key, value);
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(key);
+  }
+
+  clear(): void {
+    localStorage.clear();
+  }
+
+  key(val: number): string {
+    return localStorage.key(val);
+  }
+}
 
 @NgModule({
   declarations: [

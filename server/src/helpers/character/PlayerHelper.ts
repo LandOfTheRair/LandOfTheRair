@@ -134,7 +134,7 @@ export class PlayerHelper extends BaseService {
     this.game.inventoryHelper.removeItemsFromPouchByUUID(player, removePouchUUIDs);
 
     // lockers
-    Object.values(player.accountLockers.lockers).concat(Object.values(player.lockers.lockers))
+    Object.values(player.accountLockers.lockers || {}).concat(Object.values(player.lockers.lockers || {}))
       .forEach(locker => {
         const removeUUIDs: string[] = [];
         locker.items.forEach(item => {
