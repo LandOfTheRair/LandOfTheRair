@@ -219,7 +219,25 @@ export class NPCCreator extends BaseService {
 
     this.assignNPCBehavior(baseChar, npcDef);
 
+    this.attemptCreatingPotions(baseChar);
+
     return baseChar;
+  }
+
+  // attempt to give the NPC potions to heal themselves with
+  private attemptCreatingPotions(npc: INPC) {
+    if (npc.monsterClass !== MonsterClass.Humanoid) return;
+
+    let potentialMaxPotions = 0;
+    if (npc.level > 25) potentialMaxPotions++;
+    if (npc.level > 40) potentialMaxPotions++;
+
+    const numPotions = random(0, potentialMaxPotions);
+
+    for (let i = 0; i < numPotions; i++) {
+      const potion = this.game.itemCreator.getSimpleItem('Instant Heal Bottle');
+      this.game.inventoryHelper.addItemToSack(npc, potion);
+    }
   }
 
   public getNPCName(npc: INPCDefinition): string {

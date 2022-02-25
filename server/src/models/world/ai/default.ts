@@ -3,6 +3,7 @@ import { clamp, maxBy, random, sample, shuffle, size, uniq } from 'lodash';
 
 import { Game } from '../../../helpers';
 import { Allegiance, Direction, directionFromText, directionToOffset, distanceFrom, Hostility, IAI, ICharacter, INPC,
+  ItemClass,
   ItemSlot, NPCTriggerType, PhysicalAttackArgs, SoundEffect, Stat } from '../../../interfaces';
 import { SkillCommand } from '../../macro';
 import { WorldMap } from '../Map';
@@ -68,7 +69,11 @@ export class DefaultAIBehavior implements IAI {
   }
 
   mechanicTick() {}
-  damageTaken({ damage, attacker }: { damage: number; attacker: ICharacter|undefined|null }) {}
+
+  damageTaken({ damage, attacker }: { damage: number; attacker: ICharacter|undefined|null }) {
+    this.attemptUsePotion();
+  }
+
   death(killer: ICharacter|undefined|null) {}
 
   private init() {
@@ -125,6 +130,32 @@ export class DefaultAIBehavior implements IAI {
         this.game.characterHelper.addAgro(this.npc, this.currentTarget, 1);
       }
     }
+  }
+
+  private attemptUsePotion() {
+
+    // 20% chance they'll use a potion
+    if (this.game.diceRollerHelper.XInOneHundred(80)) return;
+
+    // npcs will not use a potion if they have > 30% hp
+    if (this.npc.hp.current > this.npc.hp.maximum * 0.3) return;
+
+    // no items = no healing
+    if (this.npc.items.sack.items.length === 0) return;
+
+    // find a random potion in their sack
+    const potion = this.npc.items.sack.items.find(x => this.game.itemHelper.getItemProperty(x, 'itemClass') === ItemClass.Bottle);
+    if (!potion) return;
+
+    // toss it on the ground
+    potion.mods.ounces = 0;
+    this.game.inventoryHelper.removeItemsFromSackByUUID(this.npc, [potion.uuid]);
+    this.game.groundManager.addItemToGround(this.npc.map, this.npc.x, this.npc.y, potion);
+
+    this.game.messageHelper.sendLogMessageToRadius(this.npc, 4, { message: `${this.npc.name} gulped a potion!` });
+
+    // heal the npc
+    this.game.characterHelper.heal(this.npc, this.npc.hp.maximum * 0.3);
   }
 
   private attemptMove() {
