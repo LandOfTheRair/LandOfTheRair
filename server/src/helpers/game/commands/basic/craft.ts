@@ -29,8 +29,6 @@ export class Craft extends MacroCommand {
 
     const materialStorageSlots = this.game.contentManager.materialStorageData.slots;
 
-    const itemUUIDs = {};
-
     let newOwner = '';
 
     const canUseItemForRecipe = (recipeItem) => {
@@ -84,48 +82,53 @@ export class Craft extends MacroCommand {
       }
     }
 
+    const foundIngredients: Array<{ name: string; uuid: string; source: 'left'|'sack'|'material' }> = [];
+
     // check for ingredients
     if (ingredients) {
 
-      ingredients.forEach((ing, i) => {
+      ingredients.forEach(ing => {
 
         // check left hand first
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
-        if (leftHand) {
+        if (leftHand && !foundIngredients.some(x => x.source === 'left')) {
           if (ing === leftHand.name && canUseItemForRecipe(leftHand)) {
-            itemUUIDs[leftHand.uuid] = 'left';
+            foundIngredients.push({ name: ing, uuid: leftHand.uuid, source: 'left' });
             return;
           }
         }
 
         // check sack next
-        let found = false;
+        let foundInSack = false;
         player.items.sack.items.forEach(checkItem => {
-          if (found) return;
+          if (foundInSack) return;
           if (!canUseItemForRecipe(checkItem)) return;
+          if (checkItem.name !== ing) return;
+          if (foundIngredients.map(x => x.uuid).includes(checkItem.uuid)) return;
 
-          if (checkItem.name === ing && !itemUUIDs[checkItem.uuid]) {
-            found = true;
-            itemUUIDs[checkItem.uuid] = 'sack';
-            return;
-          }
+          foundInSack = true;
+          foundIngredients.push({ name: ing, uuid: checkItem.uuid, source: 'sack' });
         });
 
         // check material storage last
-        Object.keys(materialStorageSlots).forEach(slot => {
-          const slotData = materialStorageSlots[slot];
-          if (!slotData.items.some(x => x === ing)) return;
+        if (!foundInSack) {
+          Object.keys(materialStorageSlots).forEach(slot => {
+            const slotData = materialStorageSlots[slot];
+            if (!slotData.items.some(x => x === ing)) return;
 
-          const totalContained = (player.accountLockers.materials || {})[slot] ?? 0;
-          const totalNeeded = ingredients.filter(x => x === ing).length;
+            const totalContained = (player.accountLockers.materials || {})[slot] ?? 0;
+            const totalConsuming = foundIngredients.filter(x => x.source === 'material' && x.name === ing).length;
 
-          if (totalNeeded > totalContained) return;
+            // +1 because we count the current one ahead of time
+            if (totalConsuming + 1 > totalContained) return;
 
-          itemUUIDs[slot + '_' + i] = 'material';
-        });
+            foundIngredients.push({ name: ing, uuid: slot, source: 'material' });
+          });
+        }
+
       });
 
-      if (Object.keys(itemUUIDs).length !== ingredients.length) return this.sendMessage(player, 'You do not have all of the ingredients!');
+      if (foundIngredients.length !== ingredients.length) return this.sendMessage(player, 'You do not have all of the ingredients!');
     }
 
     const pointChance = 25 * clamp((recipe.maxSkillForGains - skill), 0, 4);
@@ -187,24 +190,21 @@ export class Craft extends MacroCommand {
 
     // take raw ingredients
     if (ingredients) {
-      const takeUUIDS: string[] = [];
 
-      Object.keys(itemUUIDs).forEach(uuid => {
-        if (itemUUIDs[uuid] === 'left') {
+      foundIngredients.forEach(foundItem => {
+        if (foundItem.source === 'left') {
           this.game.characterHelper.setLeftHand(player, undefined);
           return;
         }
 
-        if (itemUUIDs[uuid] === 'material') {
-          const slot = uuid.split('_')[0];
+        if (foundItem.source === 'material') {
+          const slot = foundItem.uuid;
           this.game.inventoryHelper.removeMaterial(player, slot, 1);
           return;
         }
-
-        takeUUIDS.push(uuid);
       });
 
-      this.game.inventoryHelper.removeItemsFromSackByUUID(player, takeUUIDS);
+      this.game.inventoryHelper.removeItemsFromSackByUUID(player, foundIngredients.filter(x => x.source === 'sack').map(x => x.uuid));
     }
 
     const item = this.game.itemCreator.getSimpleItem(recipe.item);
