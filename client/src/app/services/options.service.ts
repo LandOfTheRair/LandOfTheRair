@@ -99,6 +99,10 @@ export class OptionsService {
     return this.opts[GameOption.SendBannerMessagesToChat];
   }
 
+  public get biggerGroundWindow(): boolean {
+    return this.opts[GameOption.BiggerGroundWindow];
+  }
+
   // sound options
   public get musicVolume(): number {
     return (this.opts[GameOption.SoundMusicVolume] || 0) / 100;

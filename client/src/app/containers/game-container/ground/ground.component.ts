@@ -9,6 +9,7 @@ import { IGround, IGroundItem, IPlayer, ISimpleItem, ItemClass } from '../../../
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
 
 @AutoUnsubscribe()
@@ -34,6 +35,7 @@ export class GroundComponent implements OnInit, OnDestroy {
 
   constructor(
     public uiService: UIService,
+    public optionsService: OptionsService,
     public gameService: GameService
   ) { }
 

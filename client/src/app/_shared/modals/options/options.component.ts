@@ -43,7 +43,8 @@ export class OptionsComponent implements OnInit, OnDestroy {
     { option: GameOption.LockWindows,               text: 'Lock all window positions' },
     { option: GameOption.NoItemAnimations,          text: 'Stop item animations' },
     { option: GameOption.ShrinkCharacterBoxes,      text: 'Shrink character boxes to health + name only' },
-    { option: GameOption.LockerTabs,                text: 'Locker will be tabs instead of dropdown' }
+    { option: GameOption.LockerTabs,                text: 'Locker will be tabs instead of dropdown' },
+    { option: GameOption.BiggerGroundWindow,        text: 'Ground will be 2 rows on top and bottom' }
     // { option: GameOption.PinLastTarget,         text: 'Pin last target click position' },
   ];
 

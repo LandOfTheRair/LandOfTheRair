@@ -21,3 +21,29 @@
     height: 68px !important;
   }
 }
+
+.big-ground {
+  .item-classes, .item-sub {
+    max-height: 136px;
+    min-height: 136px;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+    flex-wrap: wrap;
+
+    app-item {
+      max-height: 64px !important;
+    }
+  }
+
+  .item-split {
+    min-height: 32px;
+    max-height: 32px;
+    outline: 1px solid #000;
+
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

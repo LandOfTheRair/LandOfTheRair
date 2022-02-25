@@ -30,6 +30,7 @@ export enum GameOption {
   LockerTabs = 'lockerTabs',
   DebugUI = 'debugUI',
   SendBannerMessagesToChat = 'sendBannerMessagesToChat',
+  BiggerGroundWindow = 'biggerGroundWindow',
 
   // sound options
   SoundBGM = 'playBGM',
