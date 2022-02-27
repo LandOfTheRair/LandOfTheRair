@@ -129,6 +129,8 @@ export class TargettingHelper extends BaseService {
 
   public getPossibleTargetsInViewRange(player: ICharacter, findStr: string, useSight = true): ICharacter[] {
     const state = this.worldManager.getMapStateForCharacter(player);
+    if (!state) return [];
+
     const allTargets = state.getAllInRange(player, 4, [], useSight);
     const possTargets = allTargets.filter(target => {
       if (this.characterHelper.isDead(target)) return false;

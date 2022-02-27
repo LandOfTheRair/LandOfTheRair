@@ -29,6 +29,7 @@ export class Multistrike extends SpellCommand {
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
 
     const state = this.game.worldManager.getMapStateForCharacter(user);
+    if (!state) return;
 
     const numTargets = 4 + this.game.traitHelper.traitLevelValue(user, 'Multitarget');
     const targets = state.getAllHostilesInRange(user, 0);

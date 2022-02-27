@@ -9,6 +9,8 @@ export class Sing extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const state = this.game.worldManager.getMapStateForCharacter(player);
+    if (!state) return;
+
     const playersInView = state.getAllPlayersInRange(player, 4);
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 

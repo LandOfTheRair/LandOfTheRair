@@ -14,7 +14,7 @@ export class WistfulFugueSong extends Song {
     super.tick(char, effect);
 
     if (((effect.effectInfo.currentTick ?? 0) % 5) === 0) {
-      this.game.worldManager.getMapStateForCharacter(char).getAllHostilesWithoutVisibilityTo(char, 4).forEach(enemy => {
+      this.game.worldManager.getMapStateForCharacter(char)?.getAllHostilesWithoutVisibilityTo(char, 4).forEach(enemy => {
 
         if (!this.game.effectHelper.hasEffect(enemy, 'TargetSong')) {
           this.sendMessage(enemy, { message: 'You are hit with a wistful fugue!' });

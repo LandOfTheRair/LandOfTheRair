@@ -7,6 +7,7 @@ export class Vortex extends Spell {
     if (!caster) return;
 
     const map = this.game.worldManager.getMapStateForCharacter(caster);
+    if (!map) return;
 
     const addItems: ISimpleItem[] = [];
 

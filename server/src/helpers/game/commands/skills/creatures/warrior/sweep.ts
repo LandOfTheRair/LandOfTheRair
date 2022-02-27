@@ -20,6 +20,7 @@ export class Sweep extends SpellCommand {
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
 
     const state = this.game.worldManager.getMapStateForCharacter(user);
+    if (!state) return;
 
     const numTargets = 8;
     const targets = state.getAllHostilesWithoutVisibilityTo(user, 0);

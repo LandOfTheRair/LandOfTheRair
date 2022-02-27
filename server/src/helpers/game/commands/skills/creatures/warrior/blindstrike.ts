@@ -29,6 +29,7 @@ export class Blindstrike extends SpellCommand {
   override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
 
     const state = this.game.worldManager.getMapStateForCharacter(user);
+    if (!state) return;
 
     const numTargets = 1;
     const targets = state.getAllInRangeWithoutVisibilityTo(user, 0, [user.uuid]);

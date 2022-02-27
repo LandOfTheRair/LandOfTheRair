@@ -19,7 +19,7 @@ export class PowerBalladSong extends Song {
     super.tick(char, effect);
 
     if (((effect.effectInfo.currentTick ?? 0) % 5) === 0) {
-      this.game.worldManager.getMapStateForCharacter(char).getAllAlliesInRange(char, 4).forEach(ally => {
+      this.game.worldManager.getMapStateForCharacter(char)?.getAllAlliesInRange(char, 4).forEach(ally => {
         if (char === ally) return;
 
         if (!this.game.effectHelper.hasEffect(ally, 'TargetSong')) {

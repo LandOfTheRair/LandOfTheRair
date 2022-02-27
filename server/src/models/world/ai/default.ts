@@ -366,7 +366,7 @@ export class DefaultAIBehavior implements IAI {
   }
 
   private findValidAllyInView(skillRef: SkillCommand): ICharacter | undefined {
-    const allies = this.game.worldManager.getMapStateForCharacter(this.npc).getAllAlliesInRange(this.npc, 4);
+    const allies = this.game.worldManager.getMapStateForCharacter(this.npc)?.getAllAlliesInRange(this.npc, 4) ?? [];
     if (allies.length === 0) return;
 
     return sample(allies.filter(ally => skillRef.canUse(this.npc, ally)));

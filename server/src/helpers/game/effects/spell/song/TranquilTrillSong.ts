@@ -13,7 +13,7 @@ export class TranquilTrillSong extends Song {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    const allies = this.game.worldManager.getMapStateForCharacter(char).getAllAlliesInRange(char, 4);
+    const allies = this.game.worldManager.getMapStateForCharacter(char)?.getAllAlliesInRange(char, 4) ?? [];
     if (allies.length === 0) return;
 
     const numHeals = 1 + this.game.traitHelper.traitLevelValue(char, 'SoothingTranquility');

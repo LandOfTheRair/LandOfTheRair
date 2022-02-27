@@ -15,7 +15,7 @@ export class GhostWail extends SpellCommand {
   }
 
   override canUse(char: ICharacter, target: ICharacter) {
-    const nearby = this.game.worldManager.getMapStateForCharacter(char)?.getAllPlayersInRange(char, 10);
+    const nearby = this.game.worldManager.getMapStateForCharacter(char)?.getAllPlayersInRange(char, 10) ?? [];
     return char.mp.current > this.mpCost(char) && nearby.length > 0;
   }
 

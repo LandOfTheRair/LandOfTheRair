@@ -13,7 +13,7 @@ export class DeadlyDirgeSong extends Song {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    let enemies = this.game.worldManager.getMapStateForCharacter(char).getAllHostilesWithoutVisibilityTo(char, 4);
+    let enemies = this.game.worldManager.getMapStateForCharacter(char)?.getAllHostilesWithoutVisibilityTo(char, 4) ?? [];
     if (enemies.length === 0) return;
 
     const numAttacks = 1 + this.game.traitHelper.traitLevelValue(char, 'DirgeOfCerberus');

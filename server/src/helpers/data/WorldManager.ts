@@ -169,7 +169,7 @@ export class WorldManager extends BaseService {
     return { state, x, y };
   }
 
-  public getMapStateForCharacter(character: ICharacter): MapState {
+  public getMapStateForCharacter(character: ICharacter): MapState | undefined {
     return this.mapStates[character.map];
   }
 

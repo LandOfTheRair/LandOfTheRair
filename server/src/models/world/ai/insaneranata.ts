@@ -56,7 +56,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
 
     this.resetAgro(true);
 
-    const hostiles = this.game.worldManager.getMapStateForCharacter(npc).getAllHostilesInRange(npc, 4);
+    const hostiles = this.game.worldManager.getMapStateForCharacter(npc)?.getAllHostilesInRange(npc, 4) ?? [];
     if (hostiles.length === 0) {
       this.game.messageHelper.sendMessageToMap(npc.map, { from: npc.name, message: 'Oh? Have you all run away? Do not anger me!' });
       return;

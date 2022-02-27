@@ -279,7 +279,7 @@ export class DialogActionHelper extends BaseService {
     const retMessages: string[] = [];
 
     let npcCount = 0;
-    const npcsInView = this.game.worldManager.getMapStateForCharacter(npc)?.getAllInRange(npc, 4, [], false);
+    const npcsInView = this.game.worldManager.getMapStateForCharacter(npc)?.getAllInRange(npc, 4, [], false) ?? [];
     npcsInView.forEach(npcRef => {
       const npcId = (npcRef as INPC).npcId;
       if (!npcs.includes(npcId)) return;
