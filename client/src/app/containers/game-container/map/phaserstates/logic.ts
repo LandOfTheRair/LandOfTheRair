@@ -122,7 +122,9 @@ export class MapScene extends Phaser.Scene {
     const newFrame = spriteForCreatureDirection(npc.sprite, npc.dir);
 
     let sprite = this.allNPCSprites[npc.uuid];
-    if (!sprite) {
+    if (!sprite || !sprite.active) {
+      if (sprite) sprite.destroy();
+
       sprite = this.add.sprite(0, 0, 'Creatures', newFrame);
       sprite.setPipeline('OutlinePipeline');
       this.layers.npcSprites.add(sprite);
@@ -772,6 +774,9 @@ export class MapScene extends Phaser.Scene {
       Object.values(allNPCs).forEach((p) => this.updateNPCSprite(p as INPC));
 
       const diff = difference(curNPCs, newNPCs);
+
+      console.log(this.allNPCSprites, allNPCs, diff);
+
       diff.forEach(p => this.removeNPCSprite(p));
     });
 
