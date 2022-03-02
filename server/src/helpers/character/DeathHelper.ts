@@ -45,16 +45,34 @@ export class DeathHelper extends BaseService {
     player.hp.current = 1 + bonusHP;
     player.dir = Direction.South;
 
+    // we *must* remove the Dead effect before reviving, otherwise the handlers for leaving maps etc will go bonkers
+    this.game.effectHelper.removeEffectByName(player, 'Dead');
+
     // we're being revived
     if (x && y && map) {
       this.game.teleportHelper.teleport(player as Player, { x, y, map });
 
-    // tele to respawn point, then reset some vars
+    // tele to respawn point (maybe), then reset some vars
     } else {
-      this.game.teleportHelper.teleportToRespawnPoint(player as Player);
-    }
 
-    this.game.effectHelper.removeEffectByName(player, 'Dead');
+      // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
+
+      const mapData = this.game.worldManager.getMap(player.map);
+      const props = mapData?.map.properties;
+
+      if (props && props.respawnKick && props.kickMap && props.kickX && props.kickY) {
+        const respawnMap = props.kickMap;
+        const respawnX = props.kickX ?? 0;
+        const respawnY = props.kickY ?? 0;
+
+        this.game.teleportHelper.teleport(player as Player, { x: respawnX, y: respawnY, map: respawnMap });
+
+      // if it isn't, then we can teleport to our respawn point
+      } else {
+        this.game.teleportHelper.teleportToRespawnPoint(player as Player);
+
+      }
+    }
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
