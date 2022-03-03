@@ -64,7 +64,23 @@ export class RNGDungeonManager extends BaseService {
     mapData.map.properties.blockEntry = true;
 
     this.game.worldManager.getPlayersInMap(map).forEach(p => {
-      this.game.teleportHelper.teleportToRespawnPoint(p as Player);
+
+      // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
+      const props = mapData?.map.properties;
+
+      if (props && props.respawnKick && props.kickMap && props.kickX && props.kickY) {
+        const respawnMap = props.kickMap;
+        const respawnX = props.kickX ?? 0;
+        const respawnY = props.kickY ?? 0;
+
+        this.game.teleportHelper.teleport(p as Player, { x: respawnX, y: respawnY, map: respawnMap });
+
+      // if it isn't, then we can teleport to our respawn point
+      } else {
+        this.game.teleportHelper.teleportToRespawnPoint(p as Player);
+
+      }
+
       this.game.messageHelper.sendLogMessageToPlayer(p, { message: 'The ether forces you out of your current location!' });
     });
   }

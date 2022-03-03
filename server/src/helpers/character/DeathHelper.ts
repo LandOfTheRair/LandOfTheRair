@@ -56,7 +56,6 @@ export class DeathHelper extends BaseService {
     } else {
 
       // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
-
       const mapData = this.game.worldManager.getMap(player.map);
       const props = mapData?.map.properties;
 

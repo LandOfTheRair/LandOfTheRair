@@ -34,6 +34,7 @@ export enum BehaviorType {
   Resetter = 'resetter',
   AXPSwapper = 'axpswapper',
   FurUpgrader = 'furupgrader',
+  ExitWarper = 'exitwarper',
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',

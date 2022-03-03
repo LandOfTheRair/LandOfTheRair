@@ -669,10 +669,50 @@ class MapGenerator {
     this.tiledJSON.properties.blockEntryMessage = this.mapMeta.mapProps.blockEntryMessage;
   }
 
+  // place green npcs on the map
+  private addNPCs(possibleSpaces: IGeneratorMapNode[]): void {
+
+    const addedNPCs: string[] = [];
+
+    const numNPCs = this.rng.getItem(this.mapMeta.npcProps.npcCounts);
+
+    for (let i = 0; i < numNPCs; i++) {
+      if (addedNPCs.length >= numNPCs.length) continue;
+
+      const validSpaces = possibleSpaces.filter(check => !check.hasFluid
+                                                      && !check.hasWall
+                                                      && !check.hasFoliage
+                                                      && !check.hasDecor
+                                                      && !check.hasDenseDecor
+                                                      && !check.hasOpaqueDecor);
+
+      const space = this.rng.getItem(validSpaces);
+      if (!space || validSpaces.length === 0) {
+        console.error(new Error('[Solokar] No valid map space for NPC.'));
+        continue;
+      }
+
+      const { x, y } = space;
+
+      const npc = this.rng.getItem(this.mapMeta.npcProps.validNPCs.filter(checkNPC => !addedNPCs.includes(checkNPC.props.tag as string)));
+      addedNPCs.push(npc.props.tag as string);
+
+      const obj = {
+        gid: npc.gid,
+        name: npc.name,
+        x: x * 64,
+        y: (y + 1) * 64,
+        properties: {
+          ...npc.props
+        }
+      };
+
+      this.addTiledObject(MapLayer.NPCs, obj);
+    }
+  }
+
   // populate the entire map
   private populateMap(baseMap: MapGenTile[][]): void {
-    this.setMapProperties();
-    this.setSuccorport();
 
     // rip out tile data
     const firstTileGid = this.getFirstGid(MapTilesetLayer.Terrain);
@@ -730,6 +770,10 @@ class MapGenerator {
     this.addPortalEntries(possibleSpacesForPlacements.slice());
     this.addPortalExits(possibleSpacesForPlacements.slice());
     this.addStairs(possibleSpacesForPlacements.slice());
+    this.addNPCs(possibleSpacesForPlacements.slice());
+
+    this.setMapProperties();
+    this.setSuccorport();
   }
 
   // write the map file - not strictly necessary as we can do it all in memory, but helps for debugging
@@ -741,17 +785,16 @@ class MapGenerator {
   public generateBaseMap(): any {
     const baseMap = this.generateEmptyMapBase();
 
+    // get the rng past the first value by doing a basic shuffle; otherwise it seems to always pick the first one
+    const config = this.rng.getItem(this.config.configs.mapGen);
+
+    this.mapConfig = config;
+
     // pick a theme
     const theme = this.rng.getItem(Object.keys(this.config.configs.themes));
     const themeData = this.config.configs.themes[theme];
 
     this.mapTheme = themeData;
-
-    // get the rng past the first value by doing a basic shuffle; otherwise it seems to always pick the first one
-    const randomConfigOrdering = this.rng.shuffle(this.config.configs.mapGen);
-    const config = this.rng.getItem(randomConfigOrdering);
-
-    this.mapConfig = config;
 
     // create and run the map generator
     const mapGenerator = new Map[this.mapConfig.algo](...this.mapConfig.algoArgs);
@@ -804,17 +847,22 @@ export class RNGDungeonGenerator extends BaseService {
       return;
     }
 
-    const defaultSeed = (map.name.split('').map(c => c.charCodeAt(0)).reduce((a, b) => a + b, 0)  + (+this.game.dailyHelper.resetTime));
+    const defaultSeed = (map.name.split('').map(c => c.charCodeAt(0)).reduce((a, b) => a + b, 0) + (+this.game.dailyHelper.resetTime));
     seed ??= defaultSeed;
 
     this.game.logger.error('RNGDungeonGenerator', `Today's seed for ${map.name}: "${seed}"`);
 
-    const rng = RNG.clone().setSeed(seed);
+    const rng = RNG.setSeed(seed);
+
+    // discard the first result just in case
+    // if seeds are too close to each other, they sometimes all operate the same
+    rng.getItem([]);
 
     const generator = new MapGenerator(map, defaultDungeon.map.tiledJSON, rng, config, this.game.contentManager.spriteData);
     const mapJSON = generator.generateBaseMap();
 
     this.game.worldManager.createOrReplaceMap(map.name, mapJSON);
+
   }
 
 }

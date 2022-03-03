@@ -36,6 +36,12 @@ export interface IRNGDungeonRoomDecorConfig {
   decors: Array<{ quantity: number[]; decor: number[] }>;
 }
 
+export interface IRNGDungeonNPC {
+  name?: string;
+  gid: number;
+  props: Record<string, string|number>;
+}
+
 export interface IRNGDungeonMetaConfig {
   name: string;
 
@@ -62,6 +68,11 @@ export interface IRNGDungeonMetaConfig {
       teleportTagRef: string;
     };
   };
+
+  npcProps: {
+    validNPCs: IRNGDungeonNPC[];
+    npcCounts: number[];
+  };
 }
 
 export interface IRNGDungeonConfig {
@@ -86,4 +97,6 @@ export interface IRNGDungeonConfig {
   };
 
   dungeonConfigs: IRNGDungeonMetaConfig[];
+
+  npcs: Record<string, IRNGDungeonNPC>;
 }
