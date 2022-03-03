@@ -9,6 +9,15 @@ import { BaseService } from '../../models/BaseService';
 @Injectable()
 export class DailyHelper extends BaseService {
 
+  public get resetTime(): DateTime {
+    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
+    if (+theoreticalResetTime < +DateTime.fromObject({ zone: 'utc' })) {
+      theoreticalResetTime = theoreticalResetTime.plus({ days: 1 });
+    }
+
+    return theoreticalResetTime;
+  }
+
   public init() {}
 
   private canDailyActivate(checkTimestamp: number): boolean {
@@ -25,7 +34,7 @@ export class DailyHelper extends BaseService {
   }
 
   public canBuyDailyItem(player: IPlayer, item: ISimpleItem): boolean {
-    if (!item.uuid?.includes('daily')) throw new Error('Attempting to buy item as a daily item ' + JSON.stringify(item));
+    if (!this.isDailyItem(item)) throw new Error('Attempting to buy item as a daily item ' + JSON.stringify(item));
 
     if (!player.dailyItems[item.uuid]) return true;
     if (this.canDailyActivate(player.dailyItems[item.uuid])) return true;

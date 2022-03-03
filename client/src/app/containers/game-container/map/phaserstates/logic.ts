@@ -775,8 +775,6 @@ export class MapScene extends Phaser.Scene {
 
       const diff = difference(curNPCs, newNPCs);
 
-      console.log(this.allNPCSprites, allNPCs, diff);
-
       diff.forEach(p => this.removeNPCSprite(p));
     });
 

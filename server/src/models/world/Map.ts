@@ -19,6 +19,8 @@ export class WorldMap {
   private maxLevelExpPossible: number;
   private maxSkillExpPossible: number;
 
+  private teleportTags: Record<string, { x: number; y: number }> = {};
+
   private layerHashes: Partial<Record<MapLayer, any>> = {};
 
   public get width(): number {
@@ -152,6 +154,10 @@ export class WorldMap {
     return this.mapName;
   }
 
+  public get tiledJSON() {
+    return cloneDeep(this.json);
+  }
+
   constructor(private game: Game, private mapName: string, private json: any, partyName?: string) {
     this.destructureJSON();
     this.createPlanner();
@@ -245,6 +251,15 @@ export class WorldMap {
     ].forEach(layer => {
       this.parseRectangleDataIntoPositionalHash(layer);
     });
+
+    this.parseMapTagRefs();
+  }
+
+  private parseMapTagRefs(): void {
+    const objects = this.json.layers[MapLayer.Interactables].objects;
+    objects.filter(x => x.properties?.teleportTagRef).forEach(obj => {
+      this.teleportTags[obj.properties.teleportTagRef] = { x: obj.x / 64, y: (obj.y / 64) - 1 };
+    });
   }
 
   private parseObjectsIntoPositionalHash(mapLayer: MapLayer) {
@@ -292,6 +307,11 @@ export class WorldMap {
 
   private getObjectAt(mapLayer: MapLayer, x: number, y: number): null | any {
     return get(this.layerHashes, [mapLayer, x, y], null);
+  }
+
+  // get the x/y for a teleport tag (if possible)
+  public getTeleportTagRef(ref: string): { x: number; y: number } | null {
+    return this.teleportTags[ref];
   }
 
   // get the terrain tile at x/y

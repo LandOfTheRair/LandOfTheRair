@@ -6,6 +6,6 @@ export interface BaseEffect {
   apply(target: ICharacter, effect: IStatusEffect): void;
   tick(target: ICharacter, effect: IStatusEffect): void;
   unapply(target: ICharacter, effect: IStatusEffect): void;
-  destroy(target: ICharacter, effect: IStatusEffect): void;
+  expire(target: ICharacter, effect: IStatusEffect): void;
 
 }

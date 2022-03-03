@@ -18,6 +18,8 @@ export * from './MovementHelper';
 export * from './NPCHelper';
 export * from './PlayerHelper';
 export * from './QuestHelper';
+export * from './RNGDungeonGenerator';
+export * from './RNGDungeonManager';
 export * from './StatisticsHelper';
 export * from './StealHelper';
 export * from './TargettingHelper';

@@ -26,7 +26,7 @@ export class Effect implements BaseEffect {
 
   public unapply(char: ICharacter, effect: IStatusEffect) {}
 
-  public destroy(char: ICharacter, effect: IStatusEffect) {}
+  public expire(char: ICharacter, effect: IStatusEffect) {}
 
   public incoming(effect: IStatusEffect, char: ICharacter, attacker: ICharacter | null, args: DamageArgs, currentDamage: number): number {
     return currentDamage;

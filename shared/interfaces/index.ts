@@ -32,6 +32,7 @@ export * from './party';
 export * from './player';
 export * from './quest';
 export * from './recipe';
+export * from './rngdungeon';
 export * from './settings';
 export * from './sfx';
 export * from './spawner';

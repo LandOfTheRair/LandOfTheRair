@@ -7,7 +7,7 @@ import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
-  QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
+  QuestHelper, RNGDungeonGenerator, RNGDungeonManager, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, TrapHelper, VisibilityHelper } from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
@@ -107,6 +107,8 @@ export class Game {
     public configManager: ConfigManager,
     public userInputHelper: UserInputHelper,
     public discordHelper: DiscordHelper,
+    public rngDungeonGenerator: RNGDungeonGenerator,
+    public rngDungeonManager: RNGDungeonManager,
 
     public testHelper: TestHelper
 
@@ -136,7 +138,7 @@ export class Game {
       'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper', 'trapHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
-      'discordHelper',
+      'discordHelper', 'rngDungeonGenerator', 'rngDungeonManager',
       'testHelper'
     ];
 
@@ -235,6 +237,10 @@ export class Game {
       timer.startTimer(`dynamicEventTick-${now}`);
       this.dynamicEventHelper.tick(timer);
       timer.stopTimer(`dynamicEventTick-${now}`);
+
+      timer.startTimer(`rngDungeonTick-${now}`);
+      this.rngDungeonManager.tick(timer);
+      timer.stopTimer(`rngDungeonTick-${now}`);
     }
 
     timer.stopTimer(`gameloop-${now}`);

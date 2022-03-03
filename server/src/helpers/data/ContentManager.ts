@@ -16,11 +16,13 @@ import * as materialstorage from '../../../content/_output/materialstorage.json'
 import * as npcnames from '../../../content/_output/npcnames.json';
 import * as premium from '../../../content/_output/premium.json';
 import * as rarespawns from '../../../content/_output/rarespawns.json';
+import * as rngdungeonconfig from '../../../content/_output/rngdungeonconfig.json';
 import * as settings from '../../../content/_output/settings.json';
 import * as skilldescs from '../../../content/_output/skilldescs.json';
 import * as statdamagemultipliers from '../../../content/_output/statdamagemultipliers.json';
 import * as statictext from '../../../content/_output/statictext.json';
 import * as weapontiers from '../../../content/_output/weapontiers.json';
+import * as spriteinfo from '../../../content/_output/sprite-data.json';
 
 import * as spells from '../../../content/_output/spells.json';
 import * as effectData from '../../../content/_output/effect-data.json';
@@ -39,7 +41,7 @@ import { Allegiance, BaseClass, Holiday, IClassTraitTree,
   IDynamicEventData,
   IFate,
   IGameSettings,
-  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, ISpawnerData, ISpellData,
+  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, IRNGDungeonConfig, ISpawnerData, ISpellData,
   IStatusEffectData, ITrait, IWeaponTier, Rollable, Skill, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -78,6 +80,8 @@ export class ContentManager extends BaseService {
   private statDamageMultipliers: Record<Stat, number[]>;
   private staticText: { terrain: string[]; decor: Record<string, string> };
   private weaponTiers: Record<WeaponClass, IWeaponTier>;
+  private rngDungeonConfig: IRNGDungeonConfig;
+  private spriteinfo: { doorStates: any[] };
 
   public get allItems(): Record<string, IItemDefinition> {
     return cloneDeep(this.items);
@@ -149,6 +153,14 @@ export class ContentManager extends BaseService {
 
   public get weaponTiersData(): Record<string, IWeaponTier> {
     return cloneDeep(this.weaponTiers);
+  }
+
+  public get rngDungeonConfigData(): IRNGDungeonConfig {
+    return cloneDeep(this.rngDungeonConfig);
+  }
+
+  public get spriteData(): { doorStates: any[] } {
+    return cloneDeep(this.spriteinfo);
   }
 
   public async reload() {
@@ -256,6 +268,8 @@ export class ContentManager extends BaseService {
     this.statDamageMultipliers = deepfreeze(realJSON(statdamagemultipliers));
     this.staticText = deepfreeze(realJSON(statictext));
     this.weaponTiers = deepfreeze(realJSON(weapontiers));
+    this.rngDungeonConfig = deepfreeze(realJSON(rngdungeonconfig));
+    this.spriteinfo = deepfreeze(realJSON(spriteinfo));
   }
 
   private loadSpells() {
