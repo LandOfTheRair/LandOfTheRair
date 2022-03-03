@@ -341,6 +341,8 @@ class MapGenerator {
 
   // place random decorative objects
   private placeRandomDecor(chances = 9): void {
+    if (this.mapTheme.floor.decor.length === 0) return;
+
     for (let i = 0; i < this.tiledJSON.height * this.tiledJSON.width; i++) {
       if (this.tiledJSON.layers[MapLayer.Walls].data[i]
       || this.tiledJSON.layers[MapLayer.Foliage].data[i]
@@ -371,6 +373,7 @@ class MapGenerator {
 
   // place decor in rooms by theme per room
   private placeRoomDecor(room: Room): void {
+    if (this.mapTheme.floor.decor.length === 0) return;
     if (this.rng.getItem([true, ...Array(9).fill(false)])) return;
 
     const roomTypeChoice = this.rng.getItem(this.config.configs.roomDecor);
@@ -711,6 +714,50 @@ class MapGenerator {
     }
   }
 
+  // place natural resources on the map
+  private addNaturalResources(possibleSpaces: IGeneratorMapNode[]): void {
+    const validResources: string[] = [];
+
+    if (this.mapTheme.floor.placeOre) validResources.push(...this.mapMeta.resourceProps.validOre.map(x => x.id));
+    if (this.mapTheme.floor.placeTwigs) validResources.push(...this.mapMeta.resourceProps.validTrees.map(x => x.id));
+
+    if (validResources.length === 0) return;
+
+    const numResources = this.mapMeta.resourceProps.numResources;
+
+    for (let i = 0; i < numResources; i++) {
+      const validSpaces = possibleSpaces.filter(check => !check.hasFluid
+                                                      && !check.hasWall
+                                                      && !check.hasFoliage
+                                                      && !check.hasDecor
+                                                      && !check.hasDenseDecor
+                                                      && !check.hasOpaqueDecor);
+
+      const space = this.rng.getItem(validSpaces);
+      if (!space || validSpaces.length === 0) {
+        console.error(new Error('[Solokar] No valid map space for resource.'));
+        continue;
+      }
+
+      const { x, y } = space;
+
+      const resource = this.rng.getItem(validResources);
+
+      const obj = {
+        gid: 2363,
+        name: resource + ' Spawner',
+        x: x * 64,
+        y: (y + 1) * 64,
+        properties: {
+          resourceName: resource,
+          tag: 'Global Single-resource'
+        }
+      };
+
+      this.addTiledObject(MapLayer.Spawners, obj);
+    }
+  }
+
   // populate the entire map
   private populateMap(baseMap: MapGenTile[][]): void {
 
@@ -771,6 +818,7 @@ class MapGenerator {
     this.addPortalExits(possibleSpacesForPlacements.slice());
     this.addStairs(possibleSpacesForPlacements.slice());
     this.addNPCs(possibleSpacesForPlacements.slice());
+    this.addNaturalResources(possibleSpacesForPlacements.slice());
 
     this.setMapProperties();
     this.setSuccorport();

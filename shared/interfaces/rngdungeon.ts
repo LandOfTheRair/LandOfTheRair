@@ -11,6 +11,8 @@ export interface IRNGDungeonConfigFloor {
   flipLR?: boolean;
   allowTrees?: boolean;
   trees?: number[];
+  placeOre?: boolean;
+  placeTwigs?: boolean;
 }
 
 export interface IRNGDungeonConfigWall {
@@ -40,6 +42,10 @@ export interface IRNGDungeonNPC {
   name?: string;
   gid: number;
   props: Record<string, string|number>;
+}
+
+export interface IRNGDungeonResource {
+  id: string;
 }
 
 export interface IRNGDungeonMetaConfig {
@@ -73,6 +79,12 @@ export interface IRNGDungeonMetaConfig {
     validNPCs: IRNGDungeonNPC[];
     npcCounts: number[];
   };
+
+  resourceProps: {
+    numResources: number;
+    validOre: IRNGDungeonResource[];
+    validTrees: IRNGDungeonResource[];
+  };
 }
 
 export interface IRNGDungeonConfig {
@@ -99,4 +111,6 @@ export interface IRNGDungeonConfig {
   dungeonConfigs: IRNGDungeonMetaConfig[];
 
   npcs: Record<string, IRNGDungeonNPC>;
+
+  resources: Record<string, IRNGDungeonResource>;
 }
