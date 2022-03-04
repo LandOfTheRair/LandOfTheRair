@@ -64,6 +64,12 @@ export class ContentManager extends BaseService {
   private effectData: Record<string, IStatusEffectData>;
   private spells: Record<string, ISpellData>;
 
+  private customNPCs: Record<string, INPCDefinition> = {};
+  private customNPCsByMap: Record<string, Record<string, INPCDefinition>> = {};
+
+  private customSpawners: Record<string, ISpawnerData> = {};
+  private customSpawnersByMap: Record<string, Record<string, ISpawnerData>> = {};
+
   private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
   private charSelect: { baseStats: Record<Stat | 'gold', number>; allegiances: any[]; classes: any[]; weapons: any[] };
@@ -202,7 +208,7 @@ export class ContentManager extends BaseService {
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.npcs[npcId];
+    return this.npcs[npcId] || this.customNPCs[npcId];
   }
 
   public getNPCScript(npcTag: string): INPCScript {
@@ -249,6 +255,34 @@ export class ContentManager extends BaseService {
     if (!subKey) return this.settings[name];
 
     return get(this.settings[name], subKey);
+  }
+
+  public addCustomNPC(mapName: string, npcId: string, def: INPCDefinition): void {
+    this.customNPCsByMap[mapName] = this.customNPCsByMap[mapName] || {};
+    this.customNPCsByMap[mapName][npcId] = def;
+
+    this.customNPCs[npcId] = def;
+  }
+
+  public clearCustomNPCs(mapName: string): void {
+    Object.keys(this.customNPCsByMap[mapName]).forEach(npcId => {
+      delete this.customNPCs[npcId];
+      delete this.customNPCsByMap[mapName][npcId];
+    });
+  }
+
+  public addCustomSpawner(mapName: string, spawnerName: string, def: ISpawnerData): void {
+    this.customSpawnersByMap[mapName] = this.customSpawnersByMap[mapName] || {};
+    this.customSpawnersByMap[mapName][spawnerName] = def;
+
+    this.customSpawners[spawnerName] = def;
+  }
+
+  public clearCustomSpawners(mapName: string): void {
+    Object.keys(this.customSpawnersByMap[mapName]).forEach(spawnerName => {
+      delete this.customSpawners[spawnerName];
+      delete this.customSpawnersByMap[mapName][spawnerName];
+    });
   }
 
   private loadCore() {

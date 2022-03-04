@@ -1,3 +1,5 @@
+import { Allegiance, BaseClass, MonsterClass, Stat } from './building-blocks';
+import { ArmorClass, WeaponClass } from './itemtypes';
 
 export interface IRNGDungeonConfigFluid {
   spriteStart: number;
@@ -48,6 +50,44 @@ export interface IRNGDungeonResource {
   id: string;
 }
 
+export interface IRNGDungeonCreature {
+  sprite: number;
+  name: string;
+  isLegendary?: boolean;
+  monsterClass?: MonsterClass;
+  baseClass?: BaseClass;
+  statChanges?: Record<Stat, number>;
+  guaranteedSkills?: string[];
+  guaranteedTraits?: string[];
+  weaponType?: WeaponClass;
+  offhandType?: WeaponClass;
+  armorType?: ArmorClass;
+}
+
+export interface IRNGDungeonCreatureGroup {
+  name: string;
+  creatures: IRNGDungeonCreature[];
+  factions: Allegiance[];
+}
+
+export interface IRNGDungeonCreatureSkill {
+  name: string;
+  reqClass: BaseClass;
+  minLevel?: number;
+  importantSpell?: boolean;
+  grants?: string;
+}
+
+export interface IRNGDungeonCreatureTrait {
+  name: string;
+  maxLevel: number;
+}
+
+export interface IRNGDungeonScenario {
+  name: string;
+  creatureSets: Array<{ group: string; options: { creatures: IRNGDungeonCreature[] } }>;
+}
+
 export interface IRNGDungeonMetaConfig {
   name: string;
 
@@ -85,6 +125,18 @@ export interface IRNGDungeonMetaConfig {
     validOre: IRNGDungeonResource[];
     validTrees: IRNGDungeonResource[];
   };
+
+  creatureProps: {
+    level: number;
+    statScale: number;
+    baseStat: number;
+    legendaryBaseStat: number;
+    creaturesPerSet: number;
+    baseSkill: number;
+    legendaryBaseSkill: number;
+    bonusCreatureSkillChoices: number;
+    bonusCreatureTraitChoices: number;
+  };
 }
 
 export interface IRNGDungeonConfig {
@@ -113,4 +165,14 @@ export interface IRNGDungeonConfig {
   npcs: Record<string, IRNGDungeonNPC>;
 
   resources: Record<string, IRNGDungeonResource>;
+
+  creatures: Record<string, IRNGDungeonCreature>;
+
+  creatureSkills: Record<BaseClass, IRNGDungeonCreatureSkill[]>;
+
+  creatureTraits: Record<BaseClass, IRNGDungeonCreatureTrait[]>;
+
+  creatureGroupings: Record<string, IRNGDungeonCreatureGroup>;
+
+  scenarioConfigs: IRNGDungeonScenario[];
 }

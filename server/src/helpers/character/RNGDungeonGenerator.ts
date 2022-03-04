@@ -2,8 +2,9 @@
 import { Injectable } from 'injection-js';
 import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
-import { IRNGDungeonConfig, IRNGDungeonConfigFloor,
-  IRNGDungeonConfigWall, IRNGDungeonMapGenConfig, IRNGDungeonMetaConfig, MapLayer, MapTilesetLayer } from '../../interfaces';
+import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
+  IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
+  IRNGDungeonMetaConfig, MapLayer, MapTilesetLayer, Rollable, Skill, Stat } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
 
@@ -830,6 +831,195 @@ class MapGenerator {
     fs.writeJSON(`content/maps/generated/${this.mapMeta.name}.json`, this.tiledJSON);
   }
 
+  private pickCreatureSets(): string[] {
+    const scenario = this.rng.getItem(this.config.scenarioConfigs);
+    const { creatureSets } = scenario;
+
+    const pickedCreatureSets: string[] = [];
+    creatureSets.forEach(({ options }) => {
+      const validSets = options.filter(x => !pickedCreatureSets.includes(x.creatures.name));
+      const picked = this.rng.getItem(validSets);
+
+      if (!picked) return;
+
+      pickedCreatureSets.push(picked.creatures.name);
+    });
+
+    return pickedCreatureSets;
+  }
+
+  private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup }): INPCDefinition {
+
+    const level = this.mapMeta.creatureProps.level ?? 20;
+
+    const npc: Partial<INPCDefinition> = {
+      npcId: `${this.mapMeta.name} ${def.name}`,
+      sprite: def.sprite,
+      name: [def.name],
+      allegiance: faction,
+      baseClass: def.baseClass || BaseClass.Traveller,
+      monsterGroup,
+      items: {
+        equipment: {}
+      },
+      level,
+      hostility: faction === Allegiance.Enemy ? Hostility.Always : Hostility.Faction,
+      hp: { min: 100, max: 100 },
+      mp: { min: 0, max: 0 },
+      gold: { min: 100, max: 100 },
+      giveXp: { min: 100, max: 100 },
+      repMod: [],
+      skillOnKill: 1,
+      skills: {},
+      stats: {},
+      traitLevels: {},
+      usableSkills: [] as Rollable[]
+    };
+
+    if (def.monsterClass) npc.monsterClass = def.monsterClass;
+
+    // set stats
+    [Stat.STR, Stat.AGI, Stat.DEX, Stat.INT, Stat.WIS, Stat.WIL, Stat.CON, Stat.CHA, Stat.LUK].forEach(stat => {
+      npc.stats![stat] = def.isLegendary ? this.mapMeta.creatureProps.legendaryBaseStat : this.mapMeta.creatureProps.baseStat;
+    });
+
+    // set skills
+    Object.keys(Skill).forEach(skill => {
+      const skillLevel = def.isLegendary ? this.mapMeta.creatureProps.legendaryBaseSkill : this.mapMeta.creatureProps.baseSkill;
+      npc.skills![skill] = calculateSkillXPRequiredForLevel(skillLevel);
+    });
+
+    // set other calculable properties
+    npc.skillOnKill = Math.floor(1.5 * (level ?? 20));
+
+    if (npc.hp) {
+      npc.hp.max = npc.hp.min = Math.max(
+        10000,
+        Math.floor(10000 * level - 80000)
+      ) * (def.isLegendary ? 20 : 0);
+    }
+
+    if (npc.giveXp) {
+      npc.giveXp.max = Math.max(
+        1000,
+        Math.floor(3200 * level - 42000)
+      ) * (def.isLegendary ? 10 : 0);
+
+      npc.giveXp.min = Math.floor(npc.giveXp.max * 0.75);
+    }
+
+    if (npc.gold) {
+      npc.gold.max = 1000 * level * (def.isLegendary ? 25 : 0);
+      npc.gold.min = Math.floor(npc.gold.max * 0.75);
+    }
+
+    // further post-processing
+    Object.keys(def.statChanges || {}).forEach(statChange => {
+      if (!def.statChanges?.[statChange]) return;
+
+      npc.stats![statChange] = npc.stats![statChange] || 0;
+      npc.stats![statChange] += def.statChanges[statChange] * this.mapMeta.creatureProps.statScale;
+    });
+
+    // add skills
+    const potentialSkills = ['Attack', 'Charge'];
+    if (def.guaranteedSkills) potentialSkills.push(...def.guaranteedSkills);
+
+    if (npc.baseClass && npc.baseClass !== BaseClass.Traveller) {
+
+      // always choose an important one where possible (base skills)
+      const importantChoices = this.config.creatureSkills[npc.baseClass].filter(x => !potentialSkills.includes(x.name) && x.importantSpell);
+
+      if (importantChoices.length > 0) {
+        potentialSkills.push(this.rng.getItem(importantChoices));
+      }
+
+      // choose extra skills
+      for (let i = 0; i < this.mapMeta.creatureProps.bonusCreatureSkillChoices; i++) {
+        const validSkills = this.config.creatureSkills[npc.baseClass].filter(x => !potentialSkills.includes(x.name));
+
+        if (validSkills.length === 0) continue;
+
+        potentialSkills.push(this.rng.getItem(validSkills));
+      }
+    }
+
+    npc.usableSkills = potentialSkills.map(skill => ({ chance: 1, result: skill }));
+
+    // add traits
+    if (npc.traitLevels) {
+      def.guaranteedTraits?.forEach(trait => {
+        npc.traitLevels![trait] = 1;
+      });
+
+      if (npc.baseClass && npc.baseClass !== BaseClass.Traveller) {
+        const bonusTraits: string[] = [];
+
+        for (let i = 0; i < this.mapMeta.creatureProps.bonusCreatureTraitChoices; i++) {
+          const validTraits = this.config.creatureTraits[npc.baseClass].filter(x => !bonusTraits.includes(x.name));
+
+          if (validTraits.length === 0) continue;
+
+          const trait = this.rng.getItem(validTraits);
+          bonusTraits.push(trait.name);
+
+          npc.traitLevels[trait.name] = 1;
+        }
+      }
+    }
+
+    // add faction rep (simply, every faction hates everything they are not)
+    [
+      Allegiance.Enemy, Allegiance.Adventurers,
+      Allegiance.Pirates, Allegiance.Royalty,
+      Allegiance.Townsfolk, Allegiance.Underground,
+      Allegiance.Wilderness
+    ].forEach(allegiance => {
+      if (allegiance === faction) return;
+
+      npc.allegianceReputation = npc.allegianceReputation || {};
+      npc.allegianceReputation[allegiance] = -500;
+    });
+
+    // TODO: def.armorType, def.weaponType, def.offhandType
+
+    return npc as INPCDefinition;
+  }
+
+  // get NPC definitions for this map
+  private getCreatures(): INPCDefinition[][] {
+    const creatureSets = this.pickCreatureSets();
+
+    const res = creatureSets.map(setName => {
+      const { creatures, factions } = this.config.creatureGroupings[setName];
+      const faction = this.rng.getItem(factions);
+
+      const legendaryCreature = this.rng.getItem(creatures.filter(x => x.isLegendary));
+      const chosenCreatures = [legendaryCreature.name];
+
+      for (let i = 0; i < this.mapMeta.creatureProps.creaturesPerSet; i++) {
+        const validCreatures = creatures.filter(x => !chosenCreatures.includes(x.name));
+        const picked = this.rng.getItem(validCreatures);
+        chosenCreatures.push(picked.name);
+      }
+
+      const creatureDefs = chosenCreatures.map(creatureName => {
+        const npcDef = this.getNPCDefFromCreatureDef(this.config.creatures[creatureName], {
+          faction,
+          monsterGroup: setName
+        });
+
+        return npcDef;
+      });
+
+      return creatureDefs;
+
+    });
+
+    return res;
+  }
+
+  // generate the map! do all the things!
   public generateBaseMap(): any {
     const baseMap = this.generateEmptyMapBase();
 
@@ -876,7 +1066,9 @@ class MapGenerator {
     this.populateMap(baseMap);
     this.writeMapFile();
 
-    return this.tiledJSON;
+    const creatures = this.getCreatures();
+
+    return { mapJSON: this.tiledJSON, creatures };
   }
 }
 
@@ -907,10 +1099,18 @@ export class RNGDungeonGenerator extends BaseService {
     rng.getItem([]);
 
     const generator = new MapGenerator(map, defaultDungeon.map.tiledJSON, rng, config, this.game.contentManager.spriteData);
-    const mapJSON = generator.generateBaseMap();
+    const { mapJSON, creatures } = generator.generateBaseMap();
 
-    this.game.worldManager.createOrReplaceMap(map.name, mapJSON);
+    this.updateMap(map.name, mapJSON);
+    this.updateCreatures(map.name, creatures);
+  }
 
+  private updateMap(mapName: string, mapJSON: any) {
+    this.game.worldManager.createOrReplaceMap(mapName, mapJSON);
+  }
+
+  private updateCreatures(mapName: string, creatures: INPCDefinition[]) {
+    // this.game.contentManager.clearCustomNPCs / addCustomNPC
   }
 
 }
