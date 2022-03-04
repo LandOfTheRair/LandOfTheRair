@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
-  IRNGDungeonMetaConfig, MapLayer, MapTilesetLayer, Rollable, Skill, Stat } from '../../interfaces';
+  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer, Rollable, Skill, Stat } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
 
@@ -831,6 +831,17 @@ class MapGenerator {
     fs.writeJSON(`content/maps/generated/${this.mapMeta.name}.json`, this.tiledJSON);
   }
 
+  // get a list of spawners for the creatures created
+  private getSpawners(creatures: INPCDefinition[][]): ISpawnerData[][] {
+    return [];
+  }
+
+  // place spawners randomly on the map, but somewhat grouped by type in different quadrants
+  private placeSpawnersRandomly(spawners: ISpawnerData[][]): void {
+
+  }
+
+  // pick valid creature sets for this map
   private pickCreatureSets(): string[] {
     const scenario = this.rng.getItem(this.config.scenarioConfigs);
     const { creatureSets } = scenario;
@@ -848,6 +859,7 @@ class MapGenerator {
     return pickedCreatureSets;
   }
 
+  // build an npc definition from a creature definition
   private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup }): INPCDefinition {
 
     const level = this.mapMeta.creatureProps.level ?? 20;
@@ -1020,7 +1032,7 @@ class MapGenerator {
   }
 
   // generate the map! do all the things!
-  public generateBaseMap(): any {
+  public generateBaseMap(): { mapJSON: any; creatures: INPCDefinition[][]; spawners: ISpawnerData[][] } {
     const baseMap = this.generateEmptyMapBase();
 
     // get the rng past the first value by doing a basic shuffle; otherwise it seems to always pick the first one
@@ -1067,8 +1079,11 @@ class MapGenerator {
     this.writeMapFile();
 
     const creatures = this.getCreatures();
+    const spawners = this.getSpawners(creatures);
 
-    return { mapJSON: this.tiledJSON, creatures };
+    this.placeSpawnersRandomly(spawners);
+
+    return { mapJSON: this.tiledJSON, creatures, spawners };
   }
 }
 
@@ -1099,10 +1114,11 @@ export class RNGDungeonGenerator extends BaseService {
     rng.getItem([]);
 
     const generator = new MapGenerator(map, defaultDungeon.map.tiledJSON, rng, config, this.game.contentManager.spriteData);
-    const { mapJSON, creatures } = generator.generateBaseMap();
+    const { mapJSON, creatures, spawners } = generator.generateBaseMap();
 
     this.updateMap(map.name, mapJSON);
-    this.updateCreatures(map.name, creatures);
+    this.updateCreatures(map.name, creatures.flat());
+    this.updateSpawners(map.name, spawners.flat());
   }
 
   private updateMap(mapName: string, mapJSON: any) {
@@ -1111,6 +1127,10 @@ export class RNGDungeonGenerator extends BaseService {
 
   private updateCreatures(mapName: string, creatures: INPCDefinition[]) {
     // this.game.contentManager.clearCustomNPCs / addCustomNPC
+  }
+
+  private updateSpawners(mapName: string, spawners: ISpawnerData[]) {
+
   }
 
 }
