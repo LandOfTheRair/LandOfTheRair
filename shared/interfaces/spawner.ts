@@ -12,7 +12,7 @@ export interface ISpawnerData {
   tag: string;
   respawnRate: number;
   initialSpawn: number;
-  maxSpawn: number;
+  maxCreatures: number;
   spawnRadius: number;
   randomWalkRadius: number;
   leashRadius: number;

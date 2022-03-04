@@ -831,14 +831,55 @@ class MapGenerator {
     fs.writeJSON(`content/maps/generated/${this.mapMeta.name}.json`, this.tiledJSON);
   }
 
-  // get a list of spawners for the creatures created
-  private getSpawners(creatures: INPCDefinition[][]): ISpawnerData[][] {
-    return [];
+  private defaultSpawner(): ISpawnerData {
+    return {
+      npcIds: [],
+      respawnRate: 15,
+      initialSpawn: 3,
+      maxCreatures: 15,
+      spawnRadius: 2,
+      randomWalkRadius: 20,
+      leashRadius: 30,
+      respectKnowledge: true,
+      doInitialSpawnImmediately: true,
+      shouldSerialize: false,
+      alwaysSpawn: false,
+      eliteTickCap: this.mapMeta.creatureProps.eliteTickCap,
+      requireDeadToRespawn: false,
+      canSlowDown: true,
+      npcAISettings: ['default'],
+      name: '',
+      tag: '',
+      currentTick: 0,
+      x: 0,
+      y: 0
+    };
   }
 
+  // get a list of spawners for the creatures created
+  private getSpawners(creatures: INPCDefinition[][]): ISpawnerData[][] {
+    return creatures.map(creatureGroup => {
+
+      const groupSpawner = {
+        ...this.defaultSpawner(),
+        npcIds: creatureGroup
+          .filter(creature => creature.level !== this.mapMeta.creatureProps.legendaryLevel)
+          .map(creature => ({ result: creature.npcId, chance: 1 })),
+        tag: `${this.mapMeta.name} ${creatureGroup[0].monsterGroup} Spawner`,
+      };
+
+      const otherSpawners = creatureGroup.map(creature => ({
+        ...this.defaultSpawner(),
+        npcIds: [{ result: creature.npcId, chance: 1 }],
+        tag: `${creature.npcId} Spawner`,
+      }));
+
+      return [groupSpawner, ...otherSpawners];
+    });
+  }
   // place spawners randomly on the map, but somewhat grouped by type in different quadrants
   private placeSpawnersRandomly(spawners: ISpawnerData[][]): void {
-
+    // legendary creatures get a special spawner
   }
 
   // pick valid creature sets for this map
@@ -862,7 +903,8 @@ class MapGenerator {
   // build an npc definition from a creature definition
   private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup }): INPCDefinition {
 
-    const level = this.mapMeta.creatureProps.level ?? 20;
+    let level = this.mapMeta.creatureProps.level ?? 20;
+    if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 25;
 
     const npc: Partial<INPCDefinition> = {
       npcId: `${this.mapMeta.name} ${def.name}`,
@@ -1080,6 +1122,8 @@ class MapGenerator {
 
     const creatures = this.getCreatures();
     const spawners = this.getSpawners(creatures);
+
+    console.log(spawners);
 
     this.placeSpawnersRandomly(spawners);
 

@@ -128,6 +128,7 @@ export interface IRNGDungeonMetaConfig {
 
   creatureProps: {
     level: number;
+    legendaryLevel: number;
     statScale: number;
     baseStat: number;
     legendaryBaseStat: number;
@@ -136,6 +137,7 @@ export interface IRNGDungeonMetaConfig {
     legendaryBaseSkill: number;
     bonusCreatureSkillChoices: number;
     bonusCreatureTraitChoices: number;
+    eliteTickCap: number;
   };
 }
 
