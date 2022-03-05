@@ -15,6 +15,7 @@ export * from './item';
 export * from './kill';
 export * from './moditem';
 export * from './resetdungeon';
+export * from './saveplayers';
 export * from './searchitems';
 export * from './startevent';
 export * from './summon';
