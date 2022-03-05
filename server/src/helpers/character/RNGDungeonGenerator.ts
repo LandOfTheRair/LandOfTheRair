@@ -44,6 +44,9 @@ class MapGenerator {
   private mapRooms: Room[] = [];
   private mapTheme: { floor: IRNGDungeonConfigFloor; wall: IRNGDungeonConfigWall};
 
+  private creatures: INPCDefinition[][] = [];
+  private spawnersAndLegendaries: Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }> = [];
+
   private get width(): number {
     return this.tiledJSON.width;
   }
@@ -821,6 +824,11 @@ class MapGenerator {
     this.addNPCs(possibleSpacesForPlacements.slice());
     this.addNaturalResources(possibleSpacesForPlacements.slice());
 
+    this.creatures = this.getCreatures();
+    this.spawnersAndLegendaries = this.getSpawners(this.creatures);
+
+    this.placeSpawnersRandomly(possibleSpacesForPlacements.slice(), this.spawnersAndLegendaries);
+
     this.setMapProperties();
     this.setSuccorport();
   }
@@ -857,29 +865,87 @@ class MapGenerator {
   }
 
   // get a list of spawners for the creatures created
-  private getSpawners(creatures: INPCDefinition[][]): ISpawnerData[][] {
+  private getSpawners(creatures: INPCDefinition[][]): Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }> {
     return creatures.map(creatureGroup => {
+
+      const nonLegendary = creatureGroup
+        .filter(creature => creature.level !== this.mapMeta.creatureProps.legendaryLevel);
+
+      const legendary = creatureGroup
+        .find(creature => creature.level === this.mapMeta.creatureProps.legendaryLevel);
 
       const groupSpawner = {
         ...this.defaultSpawner(),
-        npcIds: creatureGroup
-          .filter(creature => creature.level !== this.mapMeta.creatureProps.legendaryLevel)
-          .map(creature => ({ result: creature.npcId, chance: 1 })),
+        npcIds: nonLegendary.map(creature => ({ result: creature.npcId, chance: 1 })),
         tag: `${this.mapMeta.name} ${creatureGroup[0].monsterGroup} Spawner`,
       };
 
-      const otherSpawners = creatureGroup.map(creature => ({
+      const otherSpawners = nonLegendary.map(creature => ({
         ...this.defaultSpawner(),
         npcIds: [{ result: creature.npcId, chance: 1 }],
         tag: `${creature.npcId} Spawner`,
       }));
 
-      return [groupSpawner, ...otherSpawners];
+      return { legendary, spawners: [groupSpawner, ...otherSpawners] };
     });
   }
+
   // place spawners randomly on the map, but somewhat grouped by type in different quadrants
-  private placeSpawnersRandomly(spawners: ISpawnerData[][]): void {
-    // legendary creatures get a special spawner
+  private placeSpawnersRandomly(
+    validSpaces: IGeneratorMapNode[],
+    spawners: Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }>
+  ): void {
+    const takenQuadrants: number[] = [];
+    const quadrants = [0, 1, 2, 3];
+
+    spawners.forEach(group => {
+      const quadrant = this.rng.getItem(quadrants.filter(q => !takenQuadrants.includes(q)));
+      takenQuadrants.push(quadrant);
+
+      const quadrant2 = this.rng.getItem(quadrants.filter(q => !takenQuadrants.includes(q)));
+      takenQuadrants.push(quadrant2);
+
+      let hasPlacedLegendary = false;
+      takenQuadrants.forEach(quad => {
+        const quadData = this.quadrants[quad];
+        const validSpacesInQuadrant = validSpaces.filter(space => (space.x < quadData.xStart
+                                                               || space.x > quadData.xEnd
+                                                               || space.y < quadData.yStart
+                                                               || space.y > quadData.yEnd)
+                                                               && !space.hasWall && !space.hasDenseDecor && !space.hasFluid);
+
+        if (!hasPlacedLegendary && group.legendary) {
+          hasPlacedLegendary = true;
+          const legendarySpawnerTile = this.rng.getItem(validSpacesInQuadrant);
+
+          this.addTiledObject(MapLayer.Spawners, {
+            gid: 2363,
+            name: 'Legendary Spawner',
+            x: legendarySpawnerTile.x * 64,
+            y: (legendarySpawnerTile.y + 1) * 64,
+            properties: {
+              tag: 'Global Lair',
+              lairName: group.legendary.npcId
+            }
+          });
+        }
+
+        for (let i = 0; i < 20; i++) {
+          const spawnerTile = this.rng.getItem(validSpacesInQuadrant);
+          const spawner = this.rng.getItem(group.spawners);
+
+          this.addTiledObject(MapLayer.Spawners, {
+            gid: 2363,
+            name: spawner.tag,
+            x: spawnerTile.x * 64,
+            y: (spawnerTile.y + 1) * 64,
+            properties: {
+              tag: spawner.tag
+            }
+          });
+        }
+      });
+    });
   }
 
   // pick valid creature sets for this map
@@ -903,8 +969,8 @@ class MapGenerator {
   // build an npc definition from a creature definition
   private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup }): INPCDefinition {
 
-    let level = this.mapMeta.creatureProps.level ?? 20;
-    if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 25;
+    let level = this.mapMeta.creatureProps.level ?? 4;
+    if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 5;
 
     const npc: Partial<INPCDefinition> = {
       npcId: `${this.mapMeta.name} ${def.name}`,
@@ -949,21 +1015,28 @@ class MapGenerator {
     if (npc.hp) {
       npc.hp.max = npc.hp.min = Math.max(
         10000,
-        Math.floor(10000 * level - 80000)
-      ) * (def.isLegendary ? 20 : 0);
+        Math.floor((8000 * level) - 100000)
+      ) * (def.isLegendary ? 20 : 1);
+    }
+
+    if (npc.mp && def.baseClass && [BaseClass.Healer, BaseClass.Mage].includes(def.baseClass)) {
+      npc.mp.max = npc.mp.min = Math.max(
+        10000,
+        Math.floor((8000 * level) - 100000)
+      ) * (def.isLegendary ? 20 : 1);
     }
 
     if (npc.giveXp) {
       npc.giveXp.max = Math.max(
         1000,
-        Math.floor(3200 * level - 42000)
-      ) * (def.isLegendary ? 10 : 0);
+        Math.floor((3200 * level) - 22000)
+      ) * (def.isLegendary ? 10 : 1);
 
       npc.giveXp.min = Math.floor(npc.giveXp.max * 0.75);
     }
 
     if (npc.gold) {
-      npc.gold.max = 1000 * level * (def.isLegendary ? 25 : 0);
+      npc.gold.max = 700 * level * (def.isLegendary ? 25 : 1);
       npc.gold.min = Math.floor(npc.gold.max * 0.75);
     }
 
@@ -985,7 +1058,7 @@ class MapGenerator {
       const importantChoices = this.config.creatureSkills[npc.baseClass].filter(x => !potentialSkills.includes(x.name) && x.importantSpell);
 
       if (importantChoices.length > 0) {
-        potentialSkills.push(this.rng.getItem(importantChoices));
+        potentialSkills.push(this.rng.getItem(importantChoices).name);
       }
 
       // choose extra skills
@@ -994,7 +1067,7 @@ class MapGenerator {
 
         if (validSkills.length === 0) continue;
 
-        potentialSkills.push(this.rng.getItem(validSkills));
+        potentialSkills.push(this.rng.getItem(validSkills).name);
       }
     }
 
@@ -1049,7 +1122,7 @@ class MapGenerator {
       const faction = this.rng.getItem(factions);
 
       const legendaryCreature = this.rng.getItem(creatures.filter(x => x.isLegendary));
-      const chosenCreatures = [legendaryCreature.name];
+      const chosenCreatures = legendaryCreature ? [legendaryCreature.name] : [];
 
       for (let i = 0; i < this.mapMeta.creatureProps.creaturesPerSet; i++) {
         const validCreatures = creatures.filter(x => !chosenCreatures.includes(x.name));
@@ -1120,14 +1193,7 @@ class MapGenerator {
     this.populateMap(baseMap);
     this.writeMapFile();
 
-    const creatures = this.getCreatures();
-    const spawners = this.getSpawners(creatures);
-
-    console.log(spawners);
-
-    this.placeSpawnersRandomly(spawners);
-
-    return { mapJSON: this.tiledJSON, creatures, spawners };
+    return { mapJSON: this.tiledJSON, creatures: this.creatures, spawners: this.spawnersAndLegendaries.map(x => x.spawners) };
   }
 }
 
@@ -1160,9 +1226,10 @@ export class RNGDungeonGenerator extends BaseService {
     const generator = new MapGenerator(map, defaultDungeon.map.tiledJSON, rng, config, this.game.contentManager.spriteData);
     const { mapJSON, creatures, spawners } = generator.generateBaseMap();
 
-    this.updateMap(map.name, mapJSON);
     this.updateCreatures(map.name, creatures.flat());
     this.updateSpawners(map.name, spawners.flat());
+
+    this.updateMap(map.name, mapJSON);
   }
 
   private updateMap(mapName: string, mapJSON: any) {
@@ -1170,11 +1237,13 @@ export class RNGDungeonGenerator extends BaseService {
   }
 
   private updateCreatures(mapName: string, creatures: INPCDefinition[]) {
-    // this.game.contentManager.clearCustomNPCs / addCustomNPC
+    this.game.contentManager.clearCustomNPCs(mapName);
+    creatures.forEach(creature => this.game.contentManager.addCustomNPC(mapName, creature));
   }
 
   private updateSpawners(mapName: string, spawners: ISpawnerData[]) {
-
+    this.game.contentManager.clearCustomSpawners(mapName);
+    spawners.forEach(spawner => this.game.contentManager.addCustomSpawner(mapName, spawner.tag, spawner));
   }
 
 }

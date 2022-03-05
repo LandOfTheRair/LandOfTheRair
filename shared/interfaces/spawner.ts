@@ -23,6 +23,7 @@ export interface ISpawnerData {
   doInitialSpawnImmediately: boolean;
   eliteTickCap: number;
   npcAISettings: string[];
+  isDangerous?: boolean;
 
   x: number;
   y: number;

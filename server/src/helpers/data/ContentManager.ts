@@ -224,7 +224,7 @@ export class ContentManager extends BaseService {
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
-    return this.spawners[spawnerTag];
+    return this.spawners[spawnerTag] || this.customSpawners[spawnerTag];
   }
 
   public getQuest(quest: string): IQuest {
@@ -257,15 +257,15 @@ export class ContentManager extends BaseService {
     return get(this.settings[name], subKey);
   }
 
-  public addCustomNPC(mapName: string, npcId: string, def: INPCDefinition): void {
+  public addCustomNPC(mapName: string, def: INPCDefinition): void {
     this.customNPCsByMap[mapName] = this.customNPCsByMap[mapName] || {};
-    this.customNPCsByMap[mapName][npcId] = def;
+    this.customNPCsByMap[mapName][def.npcId] = def;
 
-    this.customNPCs[npcId] = def;
+    this.customNPCs[def.npcId] = def;
   }
 
   public clearCustomNPCs(mapName: string): void {
-    Object.keys(this.customNPCsByMap[mapName]).forEach(npcId => {
+    Object.keys(this.customNPCsByMap?.[mapName] ?? {}).forEach(npcId => {
       delete this.customNPCs[npcId];
       delete this.customNPCsByMap[mapName][npcId];
     });
@@ -279,7 +279,7 @@ export class ContentManager extends BaseService {
   }
 
   public clearCustomSpawners(mapName: string): void {
-    Object.keys(this.customSpawnersByMap[mapName]).forEach(spawnerName => {
+    Object.keys(this.customSpawnersByMap?.[mapName] ?? {}).forEach(spawnerName => {
       delete this.customSpawners[spawnerName];
       delete this.customSpawnersByMap[mapName][spawnerName];
     });
