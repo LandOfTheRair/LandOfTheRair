@@ -1,5 +1,5 @@
 import { Allegiance, BaseClass, MonsterClass, Stat } from './building-blocks';
-import { ArmorClass, WeaponClass } from './itemtypes';
+import { ArmorClass, DamageType, WeaponClass } from './itemtypes';
 
 export interface IRNGDungeonConfigFluid {
   spriteStart: number;
@@ -81,6 +81,14 @@ export interface IRNGDungeonCreatureSkill {
 export interface IRNGDungeonCreatureTrait {
   name: string;
   maxLevel: number;
+}
+
+export interface IRNGDungeonCreatureAttribute {
+  name: string;
+  extra: {
+    potency: number;
+    damageType?: DamageType;
+  };
 }
 
 export interface IRNGDungeonScenario {
@@ -171,6 +179,8 @@ export interface IRNGDungeonConfig {
   creatures: Record<string, IRNGDungeonCreature>;
 
   creatureSkills: Record<BaseClass, IRNGDungeonCreatureSkill[]>;
+
+  creatureAttributes: Record<MonsterClass, IRNGDungeonCreatureAttribute[]>;
 
   creatureTraits: Record<BaseClass, IRNGDungeonCreatureTrait[]>;
 

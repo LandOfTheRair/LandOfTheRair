@@ -4,7 +4,7 @@ import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
-  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer, MonsterClass, Rollable, Skill, Stat } from '../../interfaces';
+  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer, Rollable, Skill, Stat } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
 
@@ -972,52 +972,6 @@ class MapGenerator {
     let level = this.mapMeta.creatureProps.level ?? 4;
     if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 5;
 
-    const baseEffects: Record<MonsterClass, any> = {
-      [MonsterClass.Humanoid]: [],
-
-      [MonsterClass.Undead]: [{
-        name: 'Attribute',
-        extra: {
-          potency: 1.25,
-          damageType: 'fire'
-        }
-      }, {
-        name: 'Attribute',
-        extra: {
-          potency: 0.75,
-          damageType: 'physical'
-        }
-      }],
-
-      [MonsterClass.Beast]: [{
-        name: 'Attribute',
-        extra: {
-          potency: 0.75,
-          damageType: 'magical'
-        }
-      }, {
-        name: 'Attribute',
-        extra: {
-          potency: 1.25,
-          damageType: 'physical'
-        }
-      }],
-
-      [MonsterClass.Dragon]: [{
-        name: 'Attribute',
-        extra: {
-          potency: 0.5,
-          damageType: 'magical'
-        }
-      }, {
-        name: 'Attribute',
-        extra: {
-          potency: 0.5,
-          damageType: 'physical'
-        }
-      }],
-    };
-
     const npc: Partial<INPCDefinition> = {
       npcId: `${this.mapMeta.name} ${def.name}`,
       sprite: def.sprite,
@@ -1045,7 +999,7 @@ class MapGenerator {
 
     if (def.monsterClass) {
       npc.monsterClass = def.monsterClass;
-      npc.baseEffects = baseEffects[def.monsterClass] || [];
+      npc.baseEffects = this.config.creatureAttributes[def.monsterClass].map(x => ({ ...x, endsAt: -1 })) || [];
     }
 
     // set stats
