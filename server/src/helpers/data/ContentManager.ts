@@ -70,6 +70,9 @@ export class ContentManager extends BaseService {
   private customSpawners: Record<string, ISpawnerData> = {};
   private customSpawnersByMap: Record<string, Record<string, ISpawnerData>> = {};
 
+  private customItems: Record<string, IItemDefinition> = {};
+  private customItemsByMap: Record<string, Record<string, IItemDefinition>> = {};
+
   private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
   private charSelect: { baseStats: Record<Stat | 'gold', number>; allegiances: any[]; classes: any[]; weapons: any[] };
@@ -204,11 +207,11 @@ export class ContentManager extends BaseService {
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
-    return this.items[itemName];
+    return this.customItems[itemName] || this.items[itemName];
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.npcs[npcId] || this.customNPCs[npcId];
+    return this.customNPCs[npcId] || this.npcs[npcId];
   }
 
   public getNPCScript(npcTag: string): INPCScript {
@@ -224,7 +227,7 @@ export class ContentManager extends BaseService {
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
-    return this.spawners[spawnerTag] || this.customSpawners[spawnerTag];
+    return this.customSpawners[spawnerTag] || this.spawners[spawnerTag];
   }
 
   public getQuest(quest: string): IQuest {
@@ -271,6 +274,20 @@ export class ContentManager extends BaseService {
     });
   }
 
+  public addCustomItem(mapName: string, def: IItemDefinition): void {
+    this.customItemsByMap[mapName] = this.customItemsByMap[mapName] || {};
+    this.customItemsByMap[mapName][def.name] = def;
+
+    this.customItems[def.name] = def;
+  }
+
+  public clearCustomItems(mapName: string): void {
+    Object.keys(this.customItemsByMap?.[mapName] ?? {}).forEach(itemName => {
+      delete this.customItems[itemName];
+      delete this.customItemsByMap[mapName][itemName];
+    });
+  }
+
   public addCustomSpawner(mapName: string, spawnerName: string, def: ISpawnerData): void {
     this.customSpawnersByMap[mapName] = this.customSpawnersByMap[mapName] || {};
     this.customSpawnersByMap[mapName][spawnerName] = def;
@@ -283,6 +300,12 @@ export class ContentManager extends BaseService {
       delete this.customSpawners[spawnerName];
       delete this.customSpawnersByMap[mapName][spawnerName];
     });
+  }
+
+  public getItemsMatchingName(mapName: string): IItemDefinition[] {
+    return Object.values(this.items)
+      .filter(item => item.name.includes(mapName))
+      .map(x => cloneDeep(x));
   }
 
   private loadCore() {

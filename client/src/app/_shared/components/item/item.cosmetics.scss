@@ -3,12 +3,54 @@
   filter: drop-shadow(0 0 5px gold);
 }
 
+@keyframes SolokarLegendary {
+  0%, 89% {
+    mask: none;
+  }
+  90% {
+    mask-position: right;
+  }
+  100% {
+    mask-position: left;
+  }
+}
+
 .cosmetic-item-Solokar {
+  filter: drop-shadow(0 0 2px purple);
+}
+
+.cosmetic-item-SolokarLegendary {
   filter: drop-shadow(0 0 5px purple);
+  mask: linear-gradient(90deg, #000 40%, #0005, #000 60%) right/300% 100%;
+
+  &.animate {
+    animation: SolokarLegendary 10000ms ease-out infinite;
+  }
+}
+
+@keyframes OrikurnisLegendary {
+  0%, 89% {
+    mask: none;
+  }
+  90% {
+    mask-position: right;
+  }
+  100% {
+    mask-position: left;
+  }
 }
 
 .cosmetic-item-Orikurnis {
+  filter: drop-shadow(0 0 2px blue);
+}
+
+.cosmetic-item-OrikurnisLegendary {
   filter: drop-shadow(0 0 5px blue);
+  mask: linear-gradient(90deg, #000 50%, #0005, #000 55%) right/300% 100%;
+
+  &.animate {
+    animation: OrikurnisLegendary 10000ms ease-out infinite;
+  }
 }
 
 .cosmetic-item-Inversify {

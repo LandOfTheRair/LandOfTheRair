@@ -2,9 +2,11 @@
 import { Injectable } from 'injection-js';
 import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
-import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
+import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
+  IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
-  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer, Rollable, Skill, Stat } from '../../interfaces';
+  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer,
+  MonsterClass, RNGItemType, Rollable, Skill, Stat } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
 
@@ -45,6 +47,7 @@ class MapGenerator {
   private mapTheme: { floor: IRNGDungeonConfigFloor; wall: IRNGDungeonConfigWall};
 
   private creatures: INPCDefinition[][] = [];
+  private items: IItemDefinition[] = [];
   private spawnersAndLegendaries: Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }> = [];
 
   private get width(): number {
@@ -56,7 +59,8 @@ class MapGenerator {
     private tiledJSON: any,
     private rng: typeof RNG,
     private readonly config: IRNGDungeonConfig,
-    private readonly spriteData: any
+    private readonly spriteData: any,
+    private readonly itemDefBases: IItemDefinition[]
   ) {}
 
   // get the first gid for a particular tileset; useful for making the dungeon look coherent
@@ -824,6 +828,7 @@ class MapGenerator {
     this.addNPCs(possibleSpacesForPlacements.slice());
     this.addNaturalResources(possibleSpacesForPlacements.slice());
 
+    this.items = this.getItems();
     this.creatures = this.getCreatures();
     this.spawnersAndLegendaries = this.getSpawners(this.creatures);
 
@@ -994,10 +999,21 @@ class MapGenerator {
       stats: {},
       traitLevels: {},
       usableSkills: [] as Rollable[],
-      baseEffects: []
+      baseEffects: [],
+      copyDrops: [
+        { result: 'equipment.leftHand',   chance: -1 },
+        { result: 'equipment.rightHand',  chance: -1 },
+        { result: 'equipment.robe1',      chance: -1 },
+      ]
     };
 
     if (def.monsterClass) {
+      if ([MonsterClass.Beast, MonsterClass.Dragon].includes(def.monsterClass)) {
+        npc.tanSkillRequired = this.mapMeta.itemProps.tanSkillRequired;
+      } else {
+        npc.copyDrops?.push({ result: 'equipment.armor', chance: -1 });
+      }
+
       npc.monsterClass = def.monsterClass;
       npc.baseEffects = this.config.creatureAttributes[def.monsterClass].map(x => ({ ...x, endsAt: -1 })) || [];
     }
@@ -1155,8 +1171,88 @@ class MapGenerator {
     return res as INPCDefinition[][];
   }
 
+  // get all item definitions for this map
+  private getItems(): IItemDefinition[] {
+    const themes = {
+      All: this.rng.getItem(this.config.itemScenarios)
+    };
+
+    // pick item themes
+    for (let i = 0; i < this.mapMeta.itemProps.numScenarios; i++) {
+      const chosenItemType = this.rng.getItem(Object.values(RNGItemType).filter(x => !themes[x]));
+      const chosenTheme = this.rng.getItem(this.config.itemScenarios.filter(x => x.name !== themes.All.name));
+
+      themes[chosenItemType] = chosenTheme;
+    }
+
+    const takenSprites: number[] = [];
+    const modifiedStats: Set<string> = new Set();
+
+    // apply themes
+    this.itemDefBases.forEach(itemDef => {
+      itemDef.baseMods = {};
+
+      // make sure this has an item def before we go crazy overwriting it
+      const itemDefConfig = this.config.itemConfigs[itemDef.itemClass];
+      if (!itemDefConfig) return;
+
+      const sprite = this.rng.getItem(itemDefConfig.sprites.filter(x => !takenSprites.includes(x)));
+      itemDef.baseMods.sprite = sprite;
+
+      takenSprites.push(sprite);
+
+      const allThemes: Set<string> = new Set();
+
+      // apply stats: global and otherwise
+      ['All', ...itemDefConfig.type].forEach(type => {
+        if (!themes[type]) return;
+
+        const theme = themes[type];
+        allThemes.add(theme.name);
+
+        Object.keys(theme.statChanges).forEach(mod => {
+          itemDef.baseMods![mod] = itemDef.baseMods![mod] ?? 0;
+          itemDef.baseMods![mod] += theme.statChanges[mod];
+
+          modifiedStats.add(mod);
+        });
+      });
+
+      // apply trait descriptions
+      const allThemesArray = Array.from(allThemes);
+      const descAddon = allThemesArray.slice(0, -1).join(', ') + ' and ' + allThemesArray.slice(-1);
+      itemDef.baseMods.desc = `${itemDef.desc}, inscribed with the runes of ${descAddon}`;
+
+      // "Powerful"
+      if (itemDef.quality === 3) {
+        Object.keys(itemDef.baseMods).forEach(statMod => {
+          if (!modifiedStats.has(statMod)) return;
+          if (itemDef.baseMods![statMod] % 1 !== 0) return;
+
+          itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod] * 1.5);
+        });
+      }
+
+      // "Legendary"
+      if (itemDef.quality === 5) {
+
+        const legendarySprite = this.rng.getItem(itemDefConfig.sprites);
+        itemDef.baseMods.sprite = legendarySprite;
+
+        Object.keys(itemDef.baseMods).forEach(statMod => {
+          if (!modifiedStats.has(statMod)) return;
+          if (itemDef.baseMods![statMod] % 1 !== 0) return;
+
+          itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod] * 2);
+        });
+      }
+    });
+
+    return this.itemDefBases;
+  }
+
   // generate the map! do all the things!
-  public generateBaseMap(): { mapJSON: any; creatures: INPCDefinition[][]; spawners: ISpawnerData[][] } {
+  public generateBaseMap(): { mapJSON: any; creatures: INPCDefinition[][]; spawners: ISpawnerData[][]; items: IItemDefinition[] } {
     const baseMap = this.generateEmptyMapBase();
 
     // get the rng past the first value by doing a basic shuffle; otherwise it seems to always pick the first one
@@ -1202,7 +1298,12 @@ class MapGenerator {
     this.populateMap(baseMap);
     this.writeMapFile();
 
-    return { mapJSON: this.tiledJSON, creatures: this.creatures, spawners: this.spawnersAndLegendaries.map(x => x.spawners) };
+    return {
+      mapJSON: this.tiledJSON,
+      creatures: this.creatures,
+      spawners: this.spawnersAndLegendaries.map(x => x.spawners),
+      items: this.items
+    };
   }
 }
 
@@ -1232,9 +1333,18 @@ export class RNGDungeonGenerator extends BaseService {
     // if seeds are too close to each other, they sometimes all operate the same
     rng.getItem([]);
 
-    const generator = new MapGenerator(map, defaultDungeon.map.tiledJSON, rng, config, this.game.contentManager.spriteData);
-    const { mapJSON, creatures, spawners } = generator.generateBaseMap();
+    const generator = new MapGenerator(
+      map,
+      defaultDungeon.map.tiledJSON,
+      rng,
+      config,
+      this.game.contentManager.spriteData,
+      this.game.contentManager.getItemsMatchingName(map.name)
+    );
 
+    const { mapJSON, creatures, spawners, items } = generator.generateBaseMap();
+
+    this.updateItems(map.name, items);
     this.updateCreatures(map.name, creatures.flat());
     this.updateSpawners(map.name, spawners.flat());
 
@@ -1243,6 +1353,11 @@ export class RNGDungeonGenerator extends BaseService {
 
   private updateMap(mapName: string, mapJSON: any) {
     this.game.worldManager.createOrReplaceMap(mapName, mapJSON);
+  }
+
+  private updateItems(mapName: string, items: IItemDefinition[]) {
+    this.game.contentManager.clearCustomItems(mapName);
+    items.forEach(item => this.game.contentManager.addCustomItem(mapName, item));
   }
 
   private updateCreatures(mapName: string, creatures: INPCDefinition[]) {

@@ -1,5 +1,28 @@
 import { Allegiance, BaseClass, MonsterClass, Stat } from './building-blocks';
-import { ArmorClass, DamageType, WeaponClass } from './itemtypes';
+import { ArmorClass, DamageType, ItemClass, WeaponClass } from './itemtypes';
+
+export enum RNGItemType {
+  Armor = 'Armor',
+  Weapon = 'Weapon',
+  Jewelry = 'Jewelry',
+
+  Caster = 'Caster',
+  Offensive = 'Offensive',
+  Defensive = 'Defensive',
+
+  Sharp = 'Sharp',
+  Blunt = 'Blunt',
+
+  Tanned = 'Tanned',
+
+  Cloth = 'Cloth',
+  Metal = 'Metal',
+  Wood = 'Wood',
+
+  OneHanded = 'OneHanded',
+  TwoHanded = 'TwoHanded',
+  Ranged = 'Ranged',
+}
 
 export interface IRNGDungeonConfigFluid {
   spriteStart: number;
@@ -96,6 +119,16 @@ export interface IRNGDungeonScenario {
   creatureSets: Array<{ group: string; options: { creatures: IRNGDungeonCreature[] } }>;
 }
 
+export interface IRNGItem {
+  sprites: number[];
+  type: RNGItemType[];
+}
+
+export interface IRNGItemScenario {
+  name: string;
+  statChanges: Partial<Record<Stat, number>>;
+}
+
 export interface IRNGDungeonMetaConfig {
   name: string;
 
@@ -147,6 +180,19 @@ export interface IRNGDungeonMetaConfig {
     bonusCreatureTraitChoices: number;
     eliteTickCap: number;
   };
+
+  itemProps: {
+    baseTier: number;
+    baseSpecificResist: number;
+    baseGeneralResist: number;
+    baseArmorClass: number;
+    baseShieldArmorClass: number;
+    baseWeaponArmorClass: number;
+    scenarioStatMultiplier: number;
+    traitLevel: number;
+    tanSkillRequired: number;
+    numScenarios: number;
+  };
 }
 
 export interface IRNGDungeonConfig {
@@ -187,4 +233,8 @@ export interface IRNGDungeonConfig {
   creatureGroupings: Record<string, IRNGDungeonCreatureGroup>;
 
   scenarioConfigs: IRNGDungeonScenario[];
+
+  itemConfigs: Record<ItemClass, IRNGItem>;
+
+  itemScenarios: IRNGItemScenario[];
 }
