@@ -1227,9 +1227,11 @@ class MapGenerator {
       if (itemDef.quality === 3) {
         Object.keys(itemDef.baseMods).forEach(statMod => {
           if (!modifiedStats.has(statMod)) return;
-          if (itemDef.baseMods![statMod] % 1 !== 0) return;
 
-          itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod] * 1.5);
+          itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 1.5;
+          if (itemDef.baseMods![statMod] % 1 === 0) {
+            itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
+          };
         });
       }
 
@@ -1241,9 +1243,11 @@ class MapGenerator {
 
         Object.keys(itemDef.baseMods).forEach(statMod => {
           if (!modifiedStats.has(statMod)) return;
-          if (itemDef.baseMods![statMod] % 1 !== 0) return;
 
-          itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod] * 2);
+          itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 2;
+          if (itemDef.baseMods![statMod] % 1 === 0) {
+            itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
+          };
         });
       }
     });
