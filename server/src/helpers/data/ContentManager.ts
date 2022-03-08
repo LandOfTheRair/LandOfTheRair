@@ -64,6 +64,9 @@ export class ContentManager extends BaseService {
   private effectData: Record<string, IStatusEffectData>;
   private spells: Record<string, ISpellData>;
 
+  private customRegionDroptables: Record<string, { drops: Rollable[] }> = {};
+  private customMapDroptables: Record<string, { drops: Rollable[] }> = {};
+
   private customNPCs: Record<string, INPCDefinition> = {};
   private customNPCsByMap: Record<string, Record<string, INPCDefinition>> = {};
 
@@ -199,11 +202,11 @@ export class ContentManager extends BaseService {
   }
 
   public getDropablesForRegion(region: string): { drops: Rollable[] } {
-    return this.regionDroptables[region];
+    return this.customRegionDroptables[region] || this.regionDroptables[region] || { drops: [] };
   }
 
   public getDroptablesForMap(mapName: string): { drops: Rollable[] } {
-    return this.mapDroptables[mapName];
+    return this.customMapDroptables[mapName] || this.mapDroptables[mapName] || { drops: [] };
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
@@ -258,6 +261,14 @@ export class ContentManager extends BaseService {
     if (!subKey) return this.settings[name];
 
     return get(this.settings[name], subKey);
+  }
+
+  public updateCustomRegionDroptables(region: string, drops: Rollable[]) {
+    this.customRegionDroptables[region] = { drops };
+  }
+
+  public updateCustomMapDroptable(mapName: string, drops: Rollable[]) {
+    this.customMapDroptables[mapName] = { drops };
   }
 
   public addCustomNPC(mapName: string, def: INPCDefinition): void {

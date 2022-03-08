@@ -6,7 +6,7 @@ import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
   IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer,
-  MonsterClass, RNGItemType, Rollable, Skill, Stat } from '../../interfaces';
+  MonsterClass, RNGItemType, Rollable, Skill, Stat, WeaponClass, WeaponClasses } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
 
@@ -48,6 +48,7 @@ class MapGenerator {
 
   private creatures: INPCDefinition[][] = [];
   private items: IItemDefinition[] = [];
+  private mapDroptable: Rollable[] = [];
   private spawnersAndLegendaries: Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }> = [];
 
   private get width(): number {
@@ -829,6 +830,7 @@ class MapGenerator {
     this.addNaturalResources(possibleSpacesForPlacements.slice());
 
     this.items = this.getItems();
+    this.mapDroptable = this.getMapDroptable();
     this.creatures = this.getCreatures();
     this.spawnersAndLegendaries = this.getSpawners(this.creatures);
 
@@ -1171,6 +1173,25 @@ class MapGenerator {
     return res as INPCDefinition[][];
   }
 
+  // get the droptable for this map
+  private getMapDroptable(): Rollable[] {
+
+    const rollables: Rollable[] = [];
+
+    for (let i = 0; i < this.mapMeta.itemProps.mapDropItems; i++) {
+      const item = this.rng.getItem(this.items.filter(x => !rollables.map(r => r.result).includes(x.name)));
+
+      let maxChance = 50;
+
+      if (item.quality === 3) maxChance = 500;
+      if (item.quality === 5) maxChance = 5000;
+
+      rollables.push({ chance: 1, maxChance, result: item.name });
+    }
+
+    return rollables;
+  }
+
   // get all item definitions for this map
   private getItems(): IItemDefinition[] {
     const themes = {
@@ -1211,16 +1232,26 @@ class MapGenerator {
         allThemes.add(theme.name);
 
         Object.keys(theme.statChanges).forEach(mod => {
+          const originMod = mod;
+
+          if (WeaponClasses.includes(itemDef.itemClass as WeaponClass) && mod === Stat.ArmorClass) {
+            mod = Stat.WeaponArmorClass;
+          }
+
           itemDef.baseMods![mod] = itemDef.baseMods![mod] ?? 0;
-          itemDef.baseMods![mod] += theme.statChanges[mod];
+          itemDef.baseMods![mod] += theme.statChanges[originMod];
 
           modifiedStats.add(mod);
         });
+
       });
 
       // apply trait descriptions
       const allThemesArray = Array.from(allThemes);
-      const descAddon = allThemesArray.slice(0, -1).join(', ') + ' and ' + allThemesArray.slice(-1);
+      const descAddon = allThemesArray.length > 1
+        ? allThemesArray.slice(0, -1).join(', ') + ' and ' + allThemesArray.slice(-1)
+        : allThemesArray[0];
+
       itemDef.baseMods.desc = `${itemDef.desc}, inscribed with the runes of ${descAddon}`;
 
       // "Powerful"
@@ -1250,13 +1281,21 @@ class MapGenerator {
           };
         });
       }
+
+      // TODO: add base stats (_after_ so they don't get slurped by the multipliers - mostly, this involves AC for armor/weapons - weapon AC needs to be handled)
     });
 
     return this.itemDefBases;
   }
 
   // generate the map! do all the things!
-  public generateBaseMap(): { mapJSON: any; creatures: INPCDefinition[][]; spawners: ISpawnerData[][]; items: IItemDefinition[] } {
+  public generateBaseMap(): {
+    mapJSON: any;
+    creatures: INPCDefinition[][];
+    spawners: ISpawnerData[][];
+    items: IItemDefinition[];
+    mapDroptable: Rollable[];
+  } {
     const baseMap = this.generateEmptyMapBase();
 
     // get the rng past the first value by doing a basic shuffle; otherwise it seems to always pick the first one
@@ -1306,7 +1345,8 @@ class MapGenerator {
       mapJSON: this.tiledJSON,
       creatures: this.creatures,
       spawners: this.spawnersAndLegendaries.map(x => x.spawners),
-      items: this.items
+      items: this.items,
+      mapDroptable: this.mapDroptable
     };
   }
 }
@@ -1346,8 +1386,9 @@ export class RNGDungeonGenerator extends BaseService {
       this.game.contentManager.getItemsMatchingName(map.name)
     );
 
-    const { mapJSON, creatures, spawners, items } = generator.generateBaseMap();
+    const { mapJSON, creatures, spawners, items, mapDroptable } = generator.generateBaseMap();
 
+    this.updateMapDroptable(map.name, mapDroptable);
     this.updateItems(map.name, items);
     this.updateCreatures(map.name, creatures.flat());
     this.updateSpawners(map.name, spawners.flat());
@@ -1357,6 +1398,10 @@ export class RNGDungeonGenerator extends BaseService {
 
   private updateMap(mapName: string, mapJSON: any) {
     this.game.worldManager.createOrReplaceMap(mapName, mapJSON);
+  }
+
+  private updateMapDroptable(mapName: string, droptable: Rollable[]) {
+    this.game.contentManager.updateCustomMapDroptable(mapName, droptable);
   }
 
   private updateItems(mapName: string, items: IItemDefinition[]) {

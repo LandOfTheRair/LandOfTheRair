@@ -192,6 +192,7 @@ export interface IRNGDungeonMetaConfig {
     traitLevel: number;
     tanSkillRequired: number;
     numScenarios: number;
+    mapDropItems: number;
   };
 }
 
