@@ -984,7 +984,7 @@ class MapGenerator {
     const scenario = this.rng.getItem(this.config.scenarioConfigs);
     const { creatureSets, name } = scenario;
 
-    this.addSpoilerLog(`Today's Monster Scenario is "${name}".`);
+    this.addSpoilerLog(`Monster Scenario is "${name}".`);
 
     const pickedCreatureSets: string[] = [];
     creatureSets.forEach(({ options }) => {
@@ -1255,9 +1255,13 @@ class MapGenerator {
   private getMapDroptable(): Rollable[] {
 
     const rollables: Rollable[] = [];
+    const potentialItems = this.items.filter(x => !x.name.includes('Punching'));
 
     for (let i = 0; i < this.mapMeta.itemProps.mapDropItems; i++) {
-      const item = this.rng.getItem(this.items.filter(x => !rollables.map(r => r.result).includes(x.name)));
+      const validItems = potentialItems.filter(x => x.itemClass !== ItemClass.Scroll
+                                                 && x.itemClass !== ItemClass.Gem
+                                                 && !rollables.map(r => r.result).includes(x.name));
+      const item = this.rng.getItem(validItems);
 
       let maxChance = 50;
 
@@ -1265,6 +1269,14 @@ class MapGenerator {
       if (item.quality === 5) maxChance = 5000;
 
       rollables.push({ chance: 1, maxChance, result: item.name });
+    }
+
+    for (let i = 0; i < 3; i++) {
+      const validItems = potentialItems.filter(x => x.itemClass === ItemClass.Gem
+                                                 && !rollables.map(r => r.result).includes(x.name));
+      const item = this.rng.getItem(validItems);
+
+      rollables.push({ chance: 1, maxChance: 200, result: item.name });
     }
 
     return rollables;
@@ -1323,11 +1335,12 @@ class MapGenerator {
 
     // apply themes
     this.itemDefBases.forEach(itemDef => {
-      itemDef.baseMods = {};
 
       // make sure this has an item def before we go crazy overwriting it
       const itemDefConfig = this.config.itemConfigs[itemDef.itemClass];
       if (!itemDefConfig) return;
+
+      itemDef.baseMods = {};
 
       const sprite = this.rng.getItem(itemDefConfig.sprites.filter(x => !takenSprites.includes(x)));
       itemDef.baseMods.sprite = sprite;
