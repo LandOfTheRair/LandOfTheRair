@@ -1005,6 +1005,7 @@ class MapGenerator {
       usableSkills: [] as Rollable[],
       baseEffects: [],
       copyDrops: [
+        { result: 'equipment.armor',      chance: -1 },
         { result: 'equipment.leftHand',   chance: -1 },
         { result: 'equipment.rightHand',  chance: -1 },
         { result: 'equipment.robe1',      chance: -1 },
@@ -1067,8 +1068,6 @@ class MapGenerator {
     if (def.monsterClass) {
       if (isTannable) {
         npc.tanSkillRequired = this.mapMeta.itemProps.tanSkillRequired;
-      } else {
-        npc.copyDrops?.push({ result: 'equipment.armor', chance: -1 });
       }
 
       npc.monsterClass = def.monsterClass;
