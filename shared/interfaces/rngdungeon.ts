@@ -1,4 +1,5 @@
 import { Allegiance, BaseClass, MonsterClass, Stat } from './building-blocks';
+import { IItemDefinition } from './item';
 import { ArmorClass, DamageType, ItemClass, WeaponClass } from './itemtypes';
 
 export enum RNGItemType {
@@ -13,8 +14,6 @@ export enum RNGItemType {
   Sharp = 'Sharp',
   Blunt = 'Blunt',
 
-  Tanned = 'Tanned',
-
   Cloth = 'Cloth',
   Metal = 'Metal',
   Wood = 'Wood',
@@ -22,6 +21,10 @@ export enum RNGItemType {
   OneHanded = 'OneHanded',
   TwoHanded = 'TwoHanded',
   Ranged = 'Ranged',
+
+  Small = 'Small',
+  Medium = 'Medium',
+  Large = 'Large',
 }
 
 export interface IRNGDungeonConfigFluid {
@@ -127,6 +130,8 @@ export interface IRNGItem {
 export interface IRNGItemScenario {
   name: string;
   statChanges: Partial<Record<Stat, number>>;
+  topLevelChanges?: Partial<IItemDefinition>;
+  requiresTypes?: RNGItemType[];
 }
 
 export interface IRNGDungeonMetaConfig {

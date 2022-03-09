@@ -1301,13 +1301,14 @@ class MapGenerator {
   // get all item definitions for this map
   private getItems(): IItemDefinition[] {
     const themes = {
-      All: this.rng.getItem(this.config.itemScenarios)
+      All: this.rng.getItem(this.config.itemScenarios.filter(x => !x.requiresTypes))
     };
 
     // pick item themes
     for (let i = 0; i < this.mapMeta.itemProps.numScenarios; i++) {
       const chosenItemType = this.rng.getItem(Object.values(RNGItemType).filter(x => !themes[x]));
-      const chosenTheme = this.rng.getItem(this.config.itemScenarios.filter(x => x.name !== themes.All.name));
+      const chosenTheme = this.rng.getItem(this.config.itemScenarios.filter(x => x.name !== themes.All.name
+                                                                              && (x.requiresTypes?.includes(chosenItemType) ?? true)));
 
       themes[chosenItemType] = chosenTheme;
 
@@ -1366,7 +1367,7 @@ class MapGenerator {
       const itemDefConfig = this.config.itemConfigs[itemDef.itemClass];
       if (!itemDefConfig) return;
 
-      itemDef.baseMods = {};
+      itemDef.baseMods = { };
 
       const allThemes: Set<string> = new Set();
 
@@ -1374,9 +1375,12 @@ class MapGenerator {
       ['All', ...itemDefConfig.type].forEach(type => {
         if (!themes[type]) return;
 
+        itemDef.baseMods!.stats = itemDef.baseMods!.stats || {};
+
         const theme = themes[type];
         allThemes.add(theme.name);
 
+        // apply stats
         Object.keys(theme.statChanges).forEach(mod => {
           const originMod = mod;
 
@@ -1385,9 +1389,16 @@ class MapGenerator {
             mod = Stat.WeaponArmorClass;
           }
 
-          itemDef.baseMods![mod] = itemDef.baseMods![mod] ?? 0;
-          itemDef.baseMods![mod] += theme.statChanges[originMod];
+          itemDef.baseMods!.stats![mod] = itemDef.baseMods!.stats![mod] ?? 0;
+          itemDef.baseMods!.stats![mod] += theme.statChanges[originMod];
         });
+
+        // apply returning etc
+        if (theme.topLevelChanges) {
+          Object.keys(theme.topLevelChanges).forEach(mod => {
+            itemDef.baseMods![mod] = theme.topLevelChanges[mod];
+          });
+        }
 
       });
 
@@ -1405,9 +1416,9 @@ class MapGenerator {
           if (!isNumber(itemDef.baseMods![statMod])) return;
           const canFloor = itemDef.baseMods![statMod] % 1 === 0;
 
-          itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 1.5;
+          itemDef.baseMods!.stats![statMod] = itemDef.baseMods!.stats![statMod] * 1.5;
           if (canFloor) {
-            itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
+            itemDef.baseMods!.stats![statMod] = Math.floor(itemDef.baseMods!.stats![statMod]);
           };
         });
       }
@@ -1416,11 +1427,11 @@ class MapGenerator {
       if (itemDef.quality === 5) {
         Object.keys(itemDef.baseMods).forEach(statMod => {
           if (!isNumber(itemDef.baseMods![statMod])) return;
-          const canFloor = itemDef.baseMods![statMod] % 1 === 0;
+          const canFloor = itemDef.baseMods!.stats![statMod] % 1 === 0;
 
-          itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 2;
+          itemDef.baseMods!.stats![statMod] = itemDef.baseMods!.stats![statMod] * 2;
           if (canFloor) {
-            itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
+            itemDef.baseMods!.stats![statMod] = Math.floor(itemDef.baseMods!.stats![statMod]);
           };
         });
       }
@@ -1437,57 +1448,57 @@ class MapGenerator {
 
       // base armor class
       if (itemDef.itemClass === ItemClass.Tunic) {
-        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass;
+        itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass;
       }
 
       if (itemDef.itemClass === ItemClass.Fur) {
-        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 3;
+        itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 3;
       }
 
       if (itemDef.itemClass === ItemClass.Breastplate) {
-        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 5;
+        itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 5;
       }
 
       if (itemDef.itemClass === ItemClass.Scaleplate) {
-        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 7;
+        itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 7;
       }
 
       if (itemDef.itemClass === ItemClass.Fullplate) {
-        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 10;
+        itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 10;
       }
 
       // weapon armor class - shield
       if (itemDef.itemClass === ItemClass.Shield) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseShieldArmorClass;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseShieldArmorClass;
       }
 
       // weapon armor class - weapons
       if (itemDef.itemClass === ItemClass.Shortsword) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass;
       }
 
       if (itemDef.itemClass === ItemClass.Longsword) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 3;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 3;
       }
 
       if (itemDef.itemClass === ItemClass.Broadsword) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 5;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 5;
       }
 
       if (itemDef.itemClass === ItemClass.Mace || itemDef.itemClass === ItemClass.Greatmace) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 7;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 7;
       }
 
       if (itemDef.itemClass === ItemClass.Halberd) {
-        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 10;
+        itemDef.baseMods.stats![Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 10;
       }
 
       if (itemDef.itemClass === ItemClass.Ring) {
-        Object.keys(ringStatBoosts).forEach(key => itemDef.baseMods![key] = ringStatBoosts[key]);
+        Object.keys(ringStatBoosts).forEach(key => itemDef.baseMods!.stats![key] = ringStatBoosts[key]);
       }
 
       if (itemDef.itemClass === ItemClass.Amulet) {
-        Object.keys(amuletStatBoosts).forEach(key => itemDef.baseMods![key] = amuletStatBoosts[key]);
+        Object.keys(amuletStatBoosts).forEach(key => itemDef.baseMods!.stats![key] = amuletStatBoosts[key]);
       }
 
       if (itemDef.itemClass === ItemClass.Earring) {
