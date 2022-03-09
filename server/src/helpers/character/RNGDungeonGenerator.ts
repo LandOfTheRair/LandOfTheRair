@@ -5,7 +5,7 @@ import { RNG, Map, Room } from 'rot-js/dist/rot';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
-  IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer,
+  IRNGDungeonMetaConfig, ISpawnerData, ItemSlot, MapLayer, MapTilesetLayer,
   MonsterClass, RNGItemType, Rollable, Skill, Stat, WeaponClass, WeaponClasses } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
@@ -974,7 +974,7 @@ class MapGenerator {
   }
 
   // build an npc definition from a creature definition
-  private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup }): INPCDefinition {
+  private getNPCDefFromCreatureDef(def: IRNGDungeonCreature, { faction, monsterGroup, isLegendary }): INPCDefinition {
 
     let level = this.mapMeta.creatureProps.level ?? 4;
     if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 5;
@@ -987,7 +987,9 @@ class MapGenerator {
       baseClass: def.baseClass || BaseClass.Traveller,
       monsterGroup,
       items: {
-        equipment: {}
+        equipment: {
+          [ItemSlot.Hands]: [{ result: this.mapMeta.itemProps.npcPunchItem, chance: 1 }]
+        }
       },
       level,
       hostility: faction === Allegiance.Enemy ? Hostility.Always : Hostility.Faction,
@@ -1009,8 +1011,61 @@ class MapGenerator {
       ]
     };
 
+    const isTannable = def.monsterClass && [MonsterClass.Beast, MonsterClass.Dragon].includes(def.monsterClass);
+
+    // give them their hard-earned items or whatever
+    if (npc.items?.equipment) {
+      if (def.armorType) {
+        npc.items.equipment[ItemSlot.Armor] = [
+          { result: `${this.mapMeta.name} Basic ${def.armorType}`,        chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Powerful ${def.armorType}`,     chance: this.mapMeta.itemProps.powerfulWeight },
+          { result: `${this.mapMeta.name} Legendary ${def.armorType}`,    chance: this.mapMeta.itemProps.legendaryWeight }
+        ];
+      }
+
+      if (def.weaponType) {
+        npc.items.equipment[ItemSlot.RightHand] = [
+          { result: `${this.mapMeta.name} Basic ${def.weaponType}`,       chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Powerful ${def.weaponType}`,    chance: this.mapMeta.itemProps.powerfulWeight },
+          { result: `${this.mapMeta.name} Legendary ${def.weaponType}`,   chance: this.mapMeta.itemProps.legendaryWeight }
+        ];
+      }
+
+      if (def.offhandType) {
+        npc.items.equipment[ItemSlot.LeftHand] = [
+          { result: `${this.mapMeta.name} Basic ${def.offhandType}`,      chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Powerful ${def.offhandType}`,   chance: this.mapMeta.itemProps.powerfulWeight },
+          { result: `${this.mapMeta.name} Legendary ${def.offhandType}`,  chance: this.mapMeta.itemProps.legendaryWeight }
+        ];
+      }
+
+      // if not beast/dragon, add cloak
+      if (!isTannable) {
+        npc.items.equipment[ItemSlot.Robe1] = [
+          { result: 'none',                                   chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Basic Cloak`,       chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Powerful Cloak`,    chance: this.mapMeta.itemProps.powerfulWeight },
+          { result: `${this.mapMeta.name} Legendary Cloak`,   chance: this.mapMeta.itemProps.legendaryWeight },
+          { result: `${this.mapMeta.name} Basic Robe`,        chance: this.mapMeta.itemProps.basicWeight },
+          { result: `${this.mapMeta.name} Powerful Robe`,     chance: this.mapMeta.itemProps.powerfulWeight },
+          { result: `${this.mapMeta.name} Legendary Robe`,    chance: this.mapMeta.itemProps.legendaryWeight }
+        ];
+      }
+    }
+
+
+    if (isLegendary) {
+      npc.dropPool = {
+        choose: {
+          min: 1,
+          max: 1
+        },
+        items: this.items.filter(x => x.name.includes('Legendary')).map(x => ({ result: x.name, chance: 1 }))
+      };
+    }
+
     if (def.monsterClass) {
-      if ([MonsterClass.Beast, MonsterClass.Dragon].includes(def.monsterClass)) {
+      if (isTannable) {
         npc.tanSkillRequired = this.mapMeta.itemProps.tanSkillRequired;
       } else {
         npc.copyDrops?.push({ result: 'equipment.armor', chance: -1 });
@@ -1160,6 +1215,7 @@ class MapGenerator {
 
         const npcDef = this.getNPCDefFromCreatureDef(this.config.creatures[creatureName], {
           faction,
+          isLegendary: this.config.creatures[creatureName].isLegendary,
           monsterGroup: setName
         });
 

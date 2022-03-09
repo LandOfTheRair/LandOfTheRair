@@ -193,6 +193,10 @@ export interface IRNGDungeonMetaConfig {
     tanSkillRequired: number;
     numScenarios: number;
     mapDropItems: number;
+    npcPunchItem: string;
+    basicWeight: number;
+    powerfulWeight: number;
+    legendaryWeight: number;
   };
 }
 

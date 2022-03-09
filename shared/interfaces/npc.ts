@@ -56,8 +56,11 @@ export interface INPCDefinition {
 
   // the drop pool for lairs that can drop X of Y items
   dropPool?: {
-    min: number;
-    max: number;
+    replace?: boolean;
+    choose: {
+      min: number;
+      max: number;
+    };
     items: Rollable[];
   };
 
@@ -178,7 +181,14 @@ export interface INPC extends ICharacter {
   noItemDrop?: boolean;
   drops?: any[];
   copyDrops?: any[];
-  dropPool?: any;
+  dropPool?: {
+    replace?: boolean;
+    choose: {
+      min: number;
+      max: number;
+    };
+    items: Rollable[];
+  };
 
   allegianceMods: Array<{ delta: number; allegiance: Allegiance }>;
   traitLevels?: Record<string, number>;
