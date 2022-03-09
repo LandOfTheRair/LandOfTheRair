@@ -24,6 +24,7 @@ export * from './mpdoc';
 export * from './peddler';
 export * from './resetter';
 export * from './smith';
+export * from './spoilerlogger';
 export * from './steelrose';
 export * from './succorer';
 export * from './tanner';

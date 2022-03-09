@@ -276,7 +276,7 @@ class MapGenerator {
     };
 
 
-    this.addSpoilerLog(`Stars added at ${x}, ${y + 1}.`, true);
+    this.addSpoilerLog(`Stairs added at ${x}, ${y + 1}.`, true);
 
     this.addTiledObject(MapLayer.Interactables, obj);
   }
@@ -984,7 +984,7 @@ class MapGenerator {
     const scenario = this.rng.getItem(this.config.scenarioConfigs);
     const { creatureSets, name } = scenario;
 
-    this.addSpoilerLog(`Today's scenario is "${name}".`);
+    this.addSpoilerLog(`Today's Monster Scenario is "${name}".`);
 
     const pickedCreatureSets: string[] = [];
     creatureSets.forEach(({ options }) => {
@@ -1283,11 +1283,43 @@ class MapGenerator {
 
       themes[chosenItemType] = chosenTheme;
 
-      this.addSpoilerLog(`Item Scenario "${chosenTheme}" applied to "${chosenItemType}" items.`);
+      this.addSpoilerLog(`Item Scenario "${chosenTheme.name}" applied to "${chosenItemType}" items.`);
     }
 
     const takenSprites: number[] = [];
     const modifiedStats: Set<string> = new Set();
+
+    // rings start with prots
+    const ringStatBoosts = {};
+    const ringStats = [
+      Stat.FireResist, Stat.IceResist, Stat.WaterResist,
+      Stat.EnergyResist, Stat.PoisonResist, Stat.PoisonResist,
+      Stat.DiseaseResist, Stat.NecroticResist
+    ];
+
+    const betterRingStats = [Stat.MagicalResist, Stat.PhysicalResist];
+
+    const isBetter = this.rng.getItem([...Array(9).fill(false), true]);
+
+    const ringStat = isBetter ? this.rng.getItem(betterRingStats) : this.rng.getItem(ringStats);
+    ringStatBoosts[ringStat] = isBetter ? this.mapMeta.itemProps.baseGeneralResist : this.mapMeta.itemProps.baseSpecificResist;
+
+    this.addSpoilerLog(`Rings will reduce incoming ${ringStat.split('Resist')[0]} damage.`);
+
+    // amulets start with boosts
+    const amuletStatBoosts = {};
+    const amuletStats = [
+      Stat.FireBoostPercent, Stat.IceBoostPercent, Stat.NecroticBoostPercent,
+      Stat.EnergyBoostPercent, Stat.PoisonBoostPercent, Stat.DiseaseBoostPercent,
+      Stat.SonicBoostPercent, Stat.HealingBoostPercent, Stat.PhysicalBoostPercent,
+      Stat.MagicalBoostPercent
+    ];
+
+    const amuletStat = this.rng.getItem(amuletStats);
+
+    amuletStatBoosts[amuletStat] = this.mapMeta.itemProps.baseBoostPercent;
+
+    this.addSpoilerLog(`Amulets will bolster outgoing ${amuletStat.split('Boost')[0]} damage.`);
 
     // apply themes
     this.itemDefBases.forEach(itemDef => {
@@ -1415,38 +1447,12 @@ class MapGenerator {
         itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 10;
       }
 
-      // rings start with prots
       if (itemDef.itemClass === ItemClass.Ring) {
-        const stats = [
-          Stat.FireResist, Stat.IceResist, Stat.WaterResist,
-          Stat.EnergyResist, Stat.PoisonResist, Stat.PoisonResist,
-          Stat.DiseaseResist, Stat.NecroticResist
-        ];
-
-        const betterStats = [Stat.MagicalResist, Stat.PhysicalResist];
-
-        const isBetter = this.rng.getItem([...Array(9).fill(false), true]);
-
-        const stat = isBetter ? this.rng.getItem(betterStats) : this.rng.getItem(stats);
-        itemDef.baseMods[stat] = isBetter ? this.mapMeta.itemProps.baseGeneralResist : this.mapMeta.itemProps.baseSpecificResist;
-
-        this.addSpoilerLog(`Rings will reduce incoming ${stat.split('Resist')[0]} damage.`);
+        Object.keys(ringStatBoosts).forEach(key => itemDef.baseMods![key] = ringStatBoosts[key]);
       }
 
-      // amulets start with boosts
       if (itemDef.itemClass === ItemClass.Amulet) {
-        const stats = [
-          Stat.FireBoostPercent, Stat.IceBoostPercent, Stat.NecroticBoostPercent,
-          Stat.EnergyBoostPercent, Stat.PoisonBoostPercent, Stat.DiseaseBoostPercent,
-          Stat.SonicBoostPercent, Stat.HealingBoostPercent, Stat.PhysicalBoostPercent,
-          Stat.MagicalBoostPercent
-        ];
-
-        const stat = this.rng.getItem(stats);
-
-        itemDef.baseMods[stat] = this.mapMeta.itemProps.baseBoostPercent;
-
-        this.addSpoilerLog(`Amulets will bolster outgoing ${stat.split('Boost')[0]} damage.`);
+        Object.keys(amuletStatBoosts).forEach(key => itemDef.baseMods![key] = amuletStatBoosts[key]);
       }
     });
 

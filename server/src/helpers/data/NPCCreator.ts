@@ -431,6 +431,7 @@ export class NPCCreator extends BaseService {
       [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior,
       [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior,
       [BehaviorType.ExitWarper]: AllBehaviors.ExitWarperBehavior,
+      [BehaviorType.SpoilerLogger]: AllBehaviors.SpoilerLoggerBehavior,
       [BehaviorType.HalloweenCandy]: AllBehaviors.HalloweenCandyBehavior,
       [BehaviorType.ThanksgivingFood]: AllBehaviors.ThanksgivingFoodBehavior,
       [BehaviorType.ThanksgivingGuns]: AllBehaviors.ThanksgivingGunsBehavior,

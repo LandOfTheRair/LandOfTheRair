@@ -35,6 +35,7 @@ export enum BehaviorType {
   AXPSwapper = 'axpswapper',
   FurUpgrader = 'furupgrader',
   ExitWarper = 'exitwarper',
+  SpoilerLogger = 'spoilerlogger',
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',
@@ -151,12 +152,20 @@ export interface IAXPSwapper {
 
 }
 
+export interface IExitWarperBehavior {
+
+}
+
+export interface ISpoilerLogger {
+  spoilerLog: string;
+}
+
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
 & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
 & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
 & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
 & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
-& IAXPSwapper & IMagicianBehavior &
+& IAXPSwapper & IMagicianBehavior & ISpoilerLogger & IExitWarperBehavior &
 {
   type: BehaviorType;
   props?: string[];
