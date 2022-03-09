@@ -185,6 +185,7 @@ export interface IRNGDungeonMetaConfig {
     baseTier: number;
     baseSpecificResist: number;
     baseGeneralResist: number;
+    baseBoostPercent: number;
     baseArmorClass: number;
     baseShieldArmorClass: number;
     baseWeaponArmorClass: number;

@@ -5,7 +5,7 @@ import { RNG, Map, Room } from 'rot-js/dist/rot';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
-  IRNGDungeonMetaConfig, ISpawnerData, ItemSlot, MapLayer, MapTilesetLayer,
+  IRNGDungeonMetaConfig, ISpawnerData, ItemClass, ItemSlot, MapLayer, MapTilesetLayer,
   MonsterClass, RNGItemType, Rollable, Skill, Stat, WeaponClass, WeaponClasses } from '../../interfaces';
 
 import { BaseService } from '../../models/BaseService';
@@ -27,6 +27,11 @@ interface IGeneratorMapNode {
   hasDecor: boolean;
   hasDenseDecor: boolean;
   hasOpaqueDecor: boolean;
+}
+
+interface ISpoilerLog {
+  isGM?: boolean;
+  message: string;
 }
 
 class MapGenerator {
@@ -51,6 +56,12 @@ class MapGenerator {
   private mapDroptable: Rollable[] = [];
   private spawnersAndLegendaries: Array<{ legendary?: INPCDefinition; spawners: ISpawnerData[] }> = [];
 
+  private spoilerLog: ISpoilerLog[] = [];
+
+  public get finalSpoilerLog(): ISpoilerLog[] {
+    return this.spoilerLog;
+  }
+
   private get width(): number {
     return this.tiledJSON.width;
   }
@@ -63,6 +74,10 @@ class MapGenerator {
     private readonly spriteData: any,
     private readonly itemDefBases: IItemDefinition[]
   ) {}
+
+  private addSpoilerLog(message: string, isGM?: boolean): void {
+    this.spoilerLog.push({ message, isGM });
+  }
 
   // get the first gid for a particular tileset; useful for making the dungeon look coherent
   private getFirstGid(layer: MapTilesetLayer): number {
@@ -165,6 +180,8 @@ class MapGenerator {
             teleportTagRef: this.mapMeta.objProps.entry.teleportTagRef + (idx + 1)
           }
         });
+
+        this.addSpoilerLog(`Entry space added at ${portal.x}, ${portal.y + 1}.`, true);
       }
     });
   }
@@ -221,6 +238,8 @@ class MapGenerator {
             teleportTag: this.mapMeta.objProps.exit.teleportTag + (idx + 1)
           }
         });
+
+        this.addSpoilerLog(`Exit portal added at ${portal.x}, ${portal.y + 1}.`, true);
       }
     });
   }
@@ -255,6 +274,9 @@ class MapGenerator {
         teleportTagRef: this.mapMeta.objProps.stairs.teleportTagRef
       }
     };
+
+
+    this.addSpoilerLog(`Stars added at ${x}, ${y + 1}.`, true);
 
     this.addTiledObject(MapLayer.Interactables, obj);
   }
@@ -935,6 +957,8 @@ class MapGenerator {
               lairName: group.legendary.npcId
             }
           });
+
+          this.addSpoilerLog(`Legendary spawner added at ${legendarySpawnerTile.x}, ${legendarySpawnerTile.y + 1}.`, true);
         }
 
         for (let i = 0; i < 20; i++) {
@@ -958,7 +982,9 @@ class MapGenerator {
   // pick valid creature sets for this map
   private pickCreatureSets(): string[] {
     const scenario = this.rng.getItem(this.config.scenarioConfigs);
-    const { creatureSets } = scenario;
+    const { creatureSets, name } = scenario;
+
+    this.addSpoilerLog(`Today's scenario is "${name}".`);
 
     const pickedCreatureSets: string[] = [];
     creatureSets.forEach(({ options }) => {
@@ -1053,7 +1079,6 @@ class MapGenerator {
         ];
       }
     }
-
 
     if (isLegendary) {
       npc.dropPool = {
@@ -1184,8 +1209,6 @@ class MapGenerator {
       npc.allegianceReputation[allegiance] = -500;
     });
 
-    // TODO: def.armorType, def.weaponType, def.offhandType
-
     return npc as INPCDefinition;
   }
 
@@ -1259,6 +1282,8 @@ class MapGenerator {
       const chosenTheme = this.rng.getItem(this.config.itemScenarios.filter(x => x.name !== themes.All.name));
 
       themes[chosenItemType] = chosenTheme;
+
+      this.addSpoilerLog(`Item Scenario "${chosenTheme}" applied to "${chosenItemType}" items.`);
     }
 
     const takenSprites: number[] = [];
@@ -1289,7 +1314,8 @@ class MapGenerator {
         Object.keys(theme.statChanges).forEach(mod => {
           const originMod = mod;
 
-          if (WeaponClasses.includes(itemDef.itemClass as WeaponClass) && mod === Stat.ArmorClass) {
+          if ((WeaponClasses.includes(itemDef.itemClass as WeaponClass) || itemDef.itemClass === ItemClass.Shield)
+          && mod === Stat.ArmorClass) {
             mod = Stat.WeaponArmorClass;
           }
 
@@ -1337,7 +1363,91 @@ class MapGenerator {
         });
       }
 
-      // TODO: add base stats (_after_ so they don't get slurped by the multipliers - mostly, this involves AC for armor/weapons - weapon AC needs to be handled)
+      // add item base stats
+      if (WeaponClasses.includes(itemDef.itemClass as WeaponClass)) {
+        itemDef.baseMods.tier = this.mapMeta.itemProps.baseTier;
+      }
+
+      // base armor class
+      if (itemDef.itemClass === ItemClass.Tunic) {
+        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass;
+      }
+
+      if (itemDef.itemClass === ItemClass.Fur) {
+        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 3;
+      }
+
+      if (itemDef.itemClass === ItemClass.Breastplate) {
+        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 5;
+      }
+
+      if (itemDef.itemClass === ItemClass.Scaleplate) {
+        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 7;
+      }
+
+      if (itemDef.itemClass === ItemClass.Fullplate) {
+        itemDef.baseMods[Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass + 10;
+      }
+
+      // weapon armor class - shield
+      if (itemDef.itemClass === ItemClass.Shield) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseShieldArmorClass;
+      }
+
+      // weapon armor class - weapons
+      if (itemDef.itemClass === ItemClass.Shortsword) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass;
+      }
+
+      if (itemDef.itemClass === ItemClass.Longsword) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 3;
+      }
+
+      if (itemDef.itemClass === ItemClass.Broadsword) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 5;
+      }
+
+      if (itemDef.itemClass === ItemClass.Mace || itemDef.itemClass === ItemClass.Greatmace) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 7;
+      }
+
+      if (itemDef.itemClass === ItemClass.Halberd) {
+        itemDef.baseMods[Stat.WeaponArmorClass] = this.mapMeta.itemProps.baseWeaponArmorClass + 10;
+      }
+
+      // rings start with prots
+      if (itemDef.itemClass === ItemClass.Ring) {
+        const stats = [
+          Stat.FireResist, Stat.IceResist, Stat.WaterResist,
+          Stat.EnergyResist, Stat.PoisonResist, Stat.PoisonResist,
+          Stat.DiseaseResist, Stat.NecroticResist
+        ];
+
+        const betterStats = [Stat.MagicalResist, Stat.PhysicalResist];
+
+        const isBetter = this.rng.getItem([...Array(9).fill(false), true]);
+
+        const stat = isBetter ? this.rng.getItem(betterStats) : this.rng.getItem(stats);
+        itemDef.baseMods[stat] = isBetter ? this.mapMeta.itemProps.baseGeneralResist : this.mapMeta.itemProps.baseSpecificResist;
+
+        this.addSpoilerLog(`Rings will reduce incoming ${stat.split('Resist')[0]} damage.`);
+      }
+
+      // amulets start with boosts
+      if (itemDef.itemClass === ItemClass.Amulet) {
+        const stats = [
+          Stat.FireBoostPercent, Stat.IceBoostPercent, Stat.NecroticBoostPercent,
+          Stat.EnergyBoostPercent, Stat.PoisonBoostPercent, Stat.DiseaseBoostPercent,
+          Stat.SonicBoostPercent, Stat.HealingBoostPercent, Stat.PhysicalBoostPercent,
+          Stat.MagicalBoostPercent
+        ];
+
+        const stat = this.rng.getItem(stats);
+
+        itemDef.baseMods[stat] = this.mapMeta.itemProps.baseBoostPercent;
+
+        this.addSpoilerLog(`Amulets will bolster outgoing ${stat.split('Boost')[0]} damage.`);
+      }
     });
 
     return this.itemDefBases;
@@ -1409,6 +1519,8 @@ class MapGenerator {
 @Injectable()
 export class RNGDungeonGenerator extends BaseService {
 
+  private spoilerLogs: Record<string, ISpoilerLog[]> = {};
+
   public init() {}
 
   public generateDungeon(map: IRNGDungeonMetaConfig, seed?: number) {
@@ -1443,6 +1555,9 @@ export class RNGDungeonGenerator extends BaseService {
 
     const { mapJSON, creatures, spawners, items, mapDroptable } = generator.generateBaseMap();
 
+    const spoilerLog = generator.finalSpoilerLog;
+    this.updateSpoilerLog(map.name, spoilerLog);
+
     this.updateMapDroptable(map.name, mapDroptable);
     this.updateItems(map.name, items);
     this.updateCreatures(map.name, creatures.flat());
@@ -1472,6 +1587,14 @@ export class RNGDungeonGenerator extends BaseService {
   private updateSpawners(mapName: string, spawners: ISpawnerData[]) {
     this.game.contentManager.clearCustomSpawners(mapName);
     spawners.forEach(spawner => this.game.contentManager.addCustomSpawner(mapName, spawner.tag, spawner));
+  }
+
+  private updateSpoilerLog(mapName: string, spoilerLog: ISpoilerLog[]): void {
+    this.spoilerLogs[mapName] = spoilerLog;
+  }
+
+  public getSpoilerLog(mapName: string): ISpoilerLog[] {
+    return this.spoilerLogs[mapName];
   }
 
 }
