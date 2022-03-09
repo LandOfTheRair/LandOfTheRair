@@ -1086,7 +1086,10 @@ class MapGenerator {
           min: 1,
           max: 1
         },
-        items: this.items.filter(x => x.name.includes('Legendary')).map(x => ({ result: x.name, chance: 1 }))
+        items: this.items
+          .filter(x => x.itemClass !== ItemClass.Scroll
+                    && x.name.includes('Legendary'))
+          .map(x => ({ result: x.name, chance: 1 }))
       };
     }
 
@@ -1273,6 +1276,16 @@ class MapGenerator {
 
     for (let i = 0; i < 3; i++) {
       const validItems = potentialItems.filter(x => x.itemClass === ItemClass.Gem
+                                                 && !rollables.map(r => r.result).includes(x.name));
+      const item = this.rng.getItem(validItems);
+
+      rollables.push({ chance: 1, maxChance: 200, result: item.name });
+    }
+
+    for (let i = 0; i < 3; i++) {
+      const validItems = potentialItems.filter(x => x.itemClass === ItemClass.Scroll
+                                                 && !x.binds
+                                                 && x.trait?.level === this.mapMeta.itemProps.traitLevel
                                                  && !rollables.map(r => r.result).includes(x.name));
       const item = this.rng.getItem(validItems);
 
@@ -1569,7 +1582,7 @@ export class RNGDungeonGenerator extends BaseService {
       rng,
       config,
       this.game.contentManager.spriteData,
-      this.game.contentManager.getItemsMatchingName(map.name)
+      this.game.contentManager.getItemsMatchingName(map.name).concat(this.game.contentManager.getItemsMatchingName('Rune Scroll'))
     );
 
     const { mapJSON, creatures, spawners, items, mapDroptable } = generator.generateBaseMap();
