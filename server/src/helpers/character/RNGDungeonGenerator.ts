@@ -2,6 +2,7 @@
 import { Injectable } from 'injection-js';
 import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
+import { isNumber } from 'lodash';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
@@ -75,6 +76,7 @@ class MapGenerator {
     private readonly itemDefBases: IItemDefinition[]
   ) {}
 
+  // add a message to the spoiler log
   private addSpoilerLog(message: string, isGM?: boolean): void {
     this.spoilerLog.push({ message, isGM });
   }
@@ -664,6 +666,7 @@ class MapGenerator {
     });
   }
 
+  // get a filtered version of the base map array with only specific tiles visible
   private mapArrayFiltered(mapArray: MapGenTile[][], filters: MapGenTile[]): Array<1|0> {
     const res: Array<1|0> = [];
 
@@ -1312,7 +1315,6 @@ class MapGenerator {
     }
 
     const takenSprites: number[] = [];
-    const modifiedStats: Set<string> = new Set();
 
     // rings start with prots
     const ringStatBoosts = {};
@@ -1329,7 +1331,7 @@ class MapGenerator {
     const ringStat = isBetter ? this.rng.getItem(betterRingStats) : this.rng.getItem(ringStats);
     ringStatBoosts[ringStat] = isBetter ? this.mapMeta.itemProps.baseGeneralResist : this.mapMeta.itemProps.baseSpecificResist;
 
-    this.addSpoilerLog(`Rings will reduce incoming ${ringStat.split('Resist')[0]} damage.`);
+    this.addSpoilerLog(`Rings (if found) will reduce incoming ${ringStat.split('Resist')[0]} damage.`);
 
     // amulets start with boosts
     const amuletStatBoosts = {};
@@ -1344,7 +1346,18 @@ class MapGenerator {
 
     amuletStatBoosts[amuletStat] = this.mapMeta.itemProps.baseBoostPercent;
 
-    this.addSpoilerLog(`Amulets will bolster outgoing ${amuletStat.split('Boost')[0]} damage.`);
+    this.addSpoilerLog(`Amulets (if found) will bolster outgoing ${amuletStat.split('Boost')[0]} damage.`);
+
+    // earrings spawn with a random trait at a certain level
+    const allPossibleTraits = this.itemDefBases
+      .filter(x => x.itemClass === ItemClass.Scroll
+                && !x.binds
+                && x.trait?.level === this.mapMeta.itemProps.traitLevel)
+      .map(x => x.trait?.name);
+
+    const chosenTrait = this.rng.getItem(allPossibleTraits);
+
+    this.addSpoilerLog(`Earrings (if found) will improve the rune "${chosenTrait}".`);
 
     // apply themes
     this.itemDefBases.forEach(itemDef => {
@@ -1354,11 +1367,6 @@ class MapGenerator {
       if (!itemDefConfig) return;
 
       itemDef.baseMods = {};
-
-      const sprite = this.rng.getItem(itemDefConfig.sprites.filter(x => !takenSprites.includes(x)));
-      itemDef.baseMods.sprite = sprite;
-
-      takenSprites.push(sprite);
 
       const allThemes: Set<string> = new Set();
 
@@ -1379,8 +1387,6 @@ class MapGenerator {
 
           itemDef.baseMods![mod] = itemDef.baseMods![mod] ?? 0;
           itemDef.baseMods![mod] += theme.statChanges[originMod];
-
-          modifiedStats.add(mod);
         });
 
       });
@@ -1396,10 +1402,11 @@ class MapGenerator {
       // "Powerful"
       if (itemDef.quality === 3) {
         Object.keys(itemDef.baseMods).forEach(statMod => {
-          if (!modifiedStats.has(statMod)) return;
+          if (!isNumber(itemDef.baseMods![statMod])) return;
+          const canFloor = itemDef.baseMods![statMod] % 1 === 0;
 
           itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 1.5;
-          if (itemDef.baseMods![statMod] % 1 === 0) {
+          if (canFloor) {
             itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
           };
         });
@@ -1407,19 +1414,21 @@ class MapGenerator {
 
       // "Legendary"
       if (itemDef.quality === 5) {
-
-        const legendarySprite = this.rng.getItem(itemDefConfig.sprites);
-        itemDef.baseMods.sprite = legendarySprite;
-
         Object.keys(itemDef.baseMods).forEach(statMod => {
-          if (!modifiedStats.has(statMod)) return;
+          if (!isNumber(itemDef.baseMods![statMod])) return;
+          const canFloor = itemDef.baseMods![statMod] % 1 === 0;
 
           itemDef.baseMods![statMod] = itemDef.baseMods![statMod] * 2;
-          if (itemDef.baseMods![statMod] % 1 === 0) {
+          if (canFloor) {
             itemDef.baseMods![statMod] = Math.floor(itemDef.baseMods![statMod]);
           };
         });
       }
+
+      const sprite = this.rng.getItem(itemDefConfig.sprites.filter(x => !takenSprites.includes(x)));
+      itemDef.baseMods.sprite = sprite;
+
+      takenSprites.push(sprite);
 
       // add item base stats
       if (WeaponClasses.includes(itemDef.itemClass as WeaponClass)) {
@@ -1479,6 +1488,10 @@ class MapGenerator {
 
       if (itemDef.itemClass === ItemClass.Amulet) {
         Object.keys(amuletStatBoosts).forEach(key => itemDef.baseMods![key] = amuletStatBoosts[key]);
+      }
+
+      if (itemDef.itemClass === ItemClass.Earring) {
+        itemDef.baseMods.trait = { name: chosenTrait, level: this.mapMeta.itemProps.traitLevel };
       }
     });
 
