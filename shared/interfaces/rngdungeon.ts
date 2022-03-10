@@ -194,7 +194,6 @@ export interface IRNGDungeonMetaConfig {
     baseArmorClass: number;
     baseShieldArmorClass: number;
     baseWeaponArmorClass: number;
-    scenarioStatMultiplier: number;
     traitLevel: number;
     tanSkillRequired: number;
     numScenarios: number;

@@ -7,7 +7,7 @@ import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
   DamageHelperPhysical, DeathHelper, DialogActionHelper, EffectHelper, InteractionHelper,
   InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
-  QuestHelper, RNGDungeonGenerator, RNGDungeonManager, StatisticsHelper, StealHelper, TargettingHelper,
+  QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
   TeleportHelper, TraitHelper, TrapHelper, VisibilityHelper } from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
@@ -19,6 +19,7 @@ import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
+import { RNGDungeonGenerator, RNGDungeonManager } from '../rng';
 import { Database } from './Database';
 import { AccountDB, CharacterDB, EventsDB, GroundDB, LogsDB, MarketDB, WorldDB } from './db';
 import { Logger } from './Logger';
