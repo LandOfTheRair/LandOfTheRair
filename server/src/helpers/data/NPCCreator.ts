@@ -140,6 +140,11 @@ export class NPCCreator extends BaseService {
     baseChar.giveXp = { ...npcDef.giveXp || { min: 1, max: 100 } };
     baseChar.skillOnKill = npcDef.skillOnKill;
 
+    // otherStats is a straight override
+    Object.keys(npcDef.otherStats || {}).forEach(stat => {
+      baseChar.stats[stat] = npcDef.otherStats?.[stat] ?? 0;
+    });
+
     if (baseChar.hostility === Hostility.Never) {
       const statSet = Math.max(5, (baseChar.level || 1) / 3);
 

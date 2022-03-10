@@ -95,6 +95,9 @@ export interface INPCDefinition {
   // the owner of the creature (used for summons)
   owner?: string;
 
+  // the "other stats" for this npc, inherited from NPC definition
+  otherStats?: Partial<Record<Stat, number>>;
+
   // how hostile the creature is (default: always)
   hostility?: Hostility;
 
@@ -207,6 +210,7 @@ export interface INPCScript {
   level?: number;
   hp?: BoundedNumber;
   mp?: BoundedNumber;
+  otherStats?: Partial<Record<Stat, number>>;
   usableSkills?: string[] | Rollable[];
   items?: ICharacterItems;
   dialog?: Record<string, any>;
