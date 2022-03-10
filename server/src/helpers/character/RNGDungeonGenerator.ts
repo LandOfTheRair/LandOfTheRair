@@ -2,7 +2,7 @@
 import { Injectable } from 'injection-js';
 import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
-import { isNumber } from 'lodash';
+import { isNumber, sample } from 'lodash';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonCreature, IRNGDungeonMapGenConfig,
@@ -1412,9 +1412,9 @@ class MapGenerator {
 
       // "Powerful"
       if (itemDef.quality === 3) {
-        Object.keys(itemDef.baseMods).forEach(statMod => {
-          if (!isNumber(itemDef.baseMods![statMod])) return;
-          const canFloor = itemDef.baseMods![statMod] % 1 === 0;
+        Object.keys(itemDef.baseMods.stats!).forEach(statMod => {
+          if (!isNumber(itemDef.baseMods!.stats![statMod])) return;
+          const canFloor = itemDef.baseMods!.stats![statMod] % 1 === 0;
 
           itemDef.baseMods!.stats![statMod] = itemDef.baseMods!.stats![statMod] * 1.5;
           if (canFloor) {
@@ -1425,8 +1425,8 @@ class MapGenerator {
 
       // "Legendary"
       if (itemDef.quality === 5) {
-        Object.keys(itemDef.baseMods).forEach(statMod => {
-          if (!isNumber(itemDef.baseMods![statMod])) return;
+        Object.keys(itemDef.baseMods.stats!).forEach(statMod => {
+          if (!isNumber(itemDef.baseMods!.stats![statMod])) return;
           const canFloor = itemDef.baseMods!.stats![statMod] % 1 === 0;
 
           itemDef.baseMods!.stats![statMod] = itemDef.baseMods!.stats![statMod] * 2;
@@ -1660,12 +1660,51 @@ export class RNGDungeonGenerator extends BaseService {
 
   // player daily treasure claims
   public hasClaimed(mapName: string, playerUUID: string): boolean {
-    return this.hasClaimed[mapName]?.[playerUUID];
+    return this.playersClaimedToday[mapName]?.[playerUUID];
   }
 
   public claim(mapName: string, playerUUID: string): void {
     this.playersClaimedToday[mapName] = this.playersClaimedToday[mapName] ?? {};
     this.playersClaimedToday[mapName][playerUUID] = true;
+  }
+
+  public getRandomItemFromMap(mapName: string, type: 'weapon'|'armor'|'jewelry'|'scroll'|'gem'): IItemDefinition | undefined {
+    let itemClasses: ItemClass[] = [];
+
+    if (type === 'weapon') {
+      itemClasses = [
+        ItemClass.Axe, ItemClass.Broadsword, ItemClass.Club,
+        ItemClass.Crossbow, ItemClass.Dagger, ItemClass.Flail,
+        ItemClass.Greataxe, ItemClass.Greatmace, ItemClass.Greatsword,
+        ItemClass.Halberd, ItemClass.Hammer, ItemClass.Longbow,
+        ItemClass.Longsword, ItemClass.Mace, ItemClass.Saucer,
+        ItemClass.Shield, ItemClass.Shortbow, ItemClass.Shortsword,
+        ItemClass.Spear, ItemClass.Staff, ItemClass.Sword,
+        ItemClass.Totem, ItemClass.Wand
+      ];
+    }
+
+    if (type === 'armor')    {
+      itemClasses = [
+        ItemClass.Amulet, ItemClass.Bracers, ItemClass.Boots,
+        ItemClass.Breastplate, ItemClass.Claws, ItemClass.Cloak,
+        ItemClass.Fullplate, ItemClass.Fur, ItemClass.Gloves,
+        ItemClass.Hat, ItemClass.Helm, ItemClass.Robe, ItemClass.Sash,
+        ItemClass.Scale, ItemClass.Tunic, ItemClass.Shield, ItemClass.Saucer
+      ];
+    }
+
+    if (type === 'jewelry')  itemClasses = [ItemClass.Earring, ItemClass.Ring, ItemClass.Amulet];
+
+    if (type === 'gem')      itemClasses = [ItemClass.Gem];
+
+    const validItems = this.game.contentManager
+      .getItemsMatchingName(mapName)
+      .filter(x => itemClasses.includes(x.itemClass) && x.sprite !== -1);
+
+    const item = sample(validItems);
+
+    return item;
   }
 
 }

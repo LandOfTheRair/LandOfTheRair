@@ -163,6 +163,9 @@ export interface ISpoilerLogger {
 
 export interface ITreasureClaimer {
   treasureMap: string;
+  teleportX: number;
+  teleportY: number;
+  teleportMap: string;
 }
 
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
