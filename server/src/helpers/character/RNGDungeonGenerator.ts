@@ -1576,9 +1576,11 @@ class MapGenerator {
 export class RNGDungeonGenerator extends BaseService {
 
   private spoilerLogs: Record<string, ISpoilerLog[]> = {};
+  private playersClaimedToday: Record<string, Record<string, boolean>> = {};
 
   public init() {}
 
+  // generate the whole-ass dungeon!
   public generateDungeon(map: IRNGDungeonMetaConfig, seed?: number) {
     const config = this.game.contentManager.rngDungeonConfigData;
 
@@ -1622,8 +1624,10 @@ export class RNGDungeonGenerator extends BaseService {
     this.updateMap(map.name, mapJSON);
   }
 
+  // updating the map info, file, and the content for the game
   private updateMap(mapName: string, mapJSON: any) {
     this.game.worldManager.createOrReplaceMap(mapName, mapJSON);
+    this.playersClaimedToday[mapName] = {};
   }
 
   private updateMapDroptable(mapName: string, droptable: Rollable[]) {
@@ -1645,12 +1649,23 @@ export class RNGDungeonGenerator extends BaseService {
     spawners.forEach(spawner => this.game.contentManager.addCustomSpawner(mapName, spawner.tag, spawner));
   }
 
+  // spoiler log related
   private updateSpoilerLog(mapName: string, spoilerLog: ISpoilerLog[]): void {
     this.spoilerLogs[mapName] = spoilerLog;
   }
 
   public getSpoilerLog(mapName: string): ISpoilerLog[] {
     return this.spoilerLogs[mapName];
+  }
+
+  // player daily treasure claims
+  public hasClaimed(mapName: string, playerUUID: string): boolean {
+    return this.hasClaimed[mapName]?.[playerUUID];
+  }
+
+  public claim(mapName: string, playerUUID: string): void {
+    this.playersClaimedToday[mapName] = this.playersClaimedToday[mapName] ?? {};
+    this.playersClaimedToday[mapName][playerUUID] = true;
   }
 
 }

@@ -36,6 +36,7 @@ export enum BehaviorType {
   FurUpgrader = 'furupgrader',
   ExitWarper = 'exitwarper',
   SpoilerLogger = 'spoilerlogger',
+  TreasureClaimer = 'treasureclaimer',
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',
@@ -160,12 +161,16 @@ export interface ISpoilerLogger {
   spoilerLog: string;
 }
 
+export interface ITreasureClaimer {
+  treasureMap: string;
+}
+
 export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
 & IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
 & IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
 & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
 & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
-& IAXPSwapper & IMagicianBehavior & ISpoilerLogger & IExitWarperBehavior &
+& IAXPSwapper & IMagicianBehavior & ISpoilerLogger & IExitWarperBehavior & ITreasureClaimer &
 {
   type: BehaviorType;
   props?: string[];

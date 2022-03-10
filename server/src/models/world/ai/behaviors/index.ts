@@ -29,5 +29,6 @@ export * from './steelrose';
 export * from './succorer';
 export * from './tanner';
 export * from './trainer';
+export * from './treasureclaimer';
 export * from './upgrader';
 export * from './vendor';
