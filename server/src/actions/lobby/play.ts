@@ -66,6 +66,18 @@ export class PlayAction extends ServerAction {
       player.y = map.respawnPoint.y;
     }
 
+    if (map && map.properties.respawnKick && map.properties.kickMap) {
+      const respawnMap = map.properties.kickMap;
+      const respawnX = map.properties.kickX ?? 0;
+      const respawnY = map.properties.kickY ?? 0;
+
+      map = game.worldManager.getMap(respawnMap)?.map;
+
+      player.map = respawnMap;
+      player.x = respawnX;
+      player.y = respawnY;
+    }
+
     await game.lobbyManager.joinGame(data.account, player);
 
     emit({

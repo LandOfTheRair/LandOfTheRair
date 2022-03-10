@@ -3,15 +3,15 @@
 import { DamageClass, distanceFrom, ICharacter, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class ChillBiteStrong extends SpellCommand {
+export class HeatBiteStrong extends SpellCommand {
 
-  override aliases = ['chillbitestrong'];
+  override aliases = ['heatbitestrong'];
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return distanceFrom(caster, target) === 0
-        && !this.game.effectHelper.hasEffect(target, 'Chilled')
-        && !this.game.effectHelper.hasEffect(target, 'RecentlyChilled');
+        && !this.game.effectHelper.hasEffect(target, 'Burning')
+        && !this.game.effectHelper.hasEffect(target, 'RecentlyBurned');
   }
 
   override use(executor: ICharacter, target: ICharacter) {
@@ -21,9 +21,9 @@ export class ChillBiteStrong extends SpellCommand {
 
     this.game.combatHelper.magicalAttack(executor, target, {
       damage,
-      damageClass: DamageClass.Ice,
-      atkMsg: 'You sunk cold fangs into %0!',
-      defMsg: '%0 sunk cold fangs into you!'
+      damageClass: DamageClass.Fire,
+      atkMsg: 'You sunk hot fangs into %0!',
+      defMsg: '%0 sunk hot fangs into you!'
     });
   }
 }

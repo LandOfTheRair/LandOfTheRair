@@ -7,6 +7,13 @@ export enum TilesWithNoFOVUpdate {
   Air = 2386
 }
 
+export enum MapTilesetLayer {
+  Terrain = 0,
+  Walls = 1,
+  Decor = 2,
+  Creatures = 3
+}
+
 // layers for the map, in order
 export enum MapLayer {
   Terrain = 0,
@@ -110,6 +117,14 @@ export interface IMapProperties {
   // the y your gear goes to for the above map
   gearDropY?: number;
 
+  // whether or not the map should send you to a specific respawn point regardless of dungeon status
+  respawnKick?: boolean;
+
+  // whether or not the map should block entry
+  blockEntry?: boolean;
+
+  // the message you recieve when trying to enter the map while entry is blocked
+  blockEntryMessage?: string;
 }
 
 export interface IMapScript {

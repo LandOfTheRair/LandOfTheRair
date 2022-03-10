@@ -116,11 +116,11 @@ export class EffectManager extends BaseService {
     }
   }
 
-  // called when an effect is destroy
-  public effectDestroy(effectName: string, character: ICharacter, effect: IStatusEffect) {
+  // called when an effect is expired (duration = 0)
+  public effectExpire(effectName: string, character: ICharacter, effect: IStatusEffect) {
     const effectRef = this.getEffectRef(effect.effectRef || effectName);
     if (effectRef) {
-      effectRef.destroy(character, effect);
+      effectRef.expire(character, effect);
     }
   }
 

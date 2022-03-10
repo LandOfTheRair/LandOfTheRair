@@ -10,7 +10,7 @@ export class Dangerous extends Effect {
     this.game.characterHelper.heal(char, Math.floor(char.hp.maximum / 20));
   }
 
-  override destroy(char: ICharacter) {
+  override unapply(char: ICharacter) {
     if (this.game.worldManager.isDungeon(char.map)) return;
 
     const anticipatedRespawn = new Date();

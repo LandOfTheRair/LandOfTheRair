@@ -21,7 +21,8 @@ export class Stairs extends MacroCommand {
       return;
     }
 
-    const { teleportMap, teleportX, teleportY, requireParty, subscriberOnly, requireHoliday, requireClass } = interactable.properties;
+    const { teleportMap, teleportX, teleportY, requireParty, subscriberOnly,
+      requireHoliday, requireClass, teleportTag, teleportTagMap } = interactable.properties;
 
     if (subscriberOnly && !this.game.subscriptionHelper.isPlayerSubscribed(player)) {
       return this.sendMessage(player, 'You found an easter egg! Sadly, it\'s spoiled.');
@@ -39,16 +40,32 @@ export class Stairs extends MacroCommand {
       return this.sendMessage(player, `That location is only seasonally open during "${requireHoliday}"!`);
     }
 
-    if (!this.game.teleportHelper.canTeleport(player, teleportMap)) {
+    if (teleportMap && !this.game.teleportHelper.canTeleport(player, teleportMap)) {
       return this.sendMessage(player, 'You cannot enter this area.');
     }
 
     this.sendMessage(player, `You ${interactable.type === 'StairsUp' ? 'ascend' : 'descend'} the staircase.`, SoundEffect.EnvStairs);
 
-    this.game.teleportHelper.teleport(
-      player,
-      { x: teleportX, y: teleportY, map: teleportMap }
-    );
+
+    // teleport-tag (solokar, etc)
+    if (teleportTag && teleportTagMap) {
+
+      const mapData = this.game.worldManager.getMap(teleportTagMap);
+      const tagData = mapData?.map.getTeleportTagRef(teleportTag);
+      if (!tagData) {
+        this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'Hmmm, it seems this portal is active, but leads nowhere.' });
+        return;
+      }
+
+      this.game.teleportHelper.teleport(player, { x: tagData.x, y: tagData.y, map: teleportTagMap });
+
+    // normal stairs
+    } else {
+      this.game.teleportHelper.teleport(
+        player,
+        { x: teleportX, y: teleportY, map: teleportMap }
+      );
+    }
 
   }
 

@@ -187,7 +187,7 @@ export class MovementHelper extends BaseService {
       teleportX, teleportY, teleportMap,
       requireHeld, requireParty, requireHoliday,
       requireQuest, requireQuestProgress, requireQuestComplete,
-      damagePercent
+      damagePercent, teleportTagMap, teleportTag, applyEffect
     } = obj.properties;
 
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
@@ -228,11 +228,40 @@ export class MovementHelper extends BaseService {
       if (!this.game.questHelper.isQuestComplete(player, requireQuestComplete)) return;
     }
 
-    this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
+    let didTeleport = false;
+
+    // if we have a teleport tag to look up, we start there
+    if (teleportTag && teleportTagMap) {
+
+      const mapData = this.game.worldManager.getMap(teleportTagMap);
+      const tagData = mapData?.map?.getTeleportTagRef(teleportTag);
+      if (!tagData) {
+        this.game.messageHelper.sendLogMessageToPlayer(player, {
+          message: 'It seems this portal is active, but the connection is severed.'
+        });
+
+        return;
+      }
+
+      didTeleport = this.game.teleportHelper.teleport(player, { x: tagData.x, y: tagData.y, map: teleportTagMap });
+
+    } else if (teleportX && teleportY && teleportMap) {
+      didTeleport = this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
+
+    } else {
+      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'It seems this portal is active, but leads nowhere.' });
+      return;
+    }
+
+    if (!didTeleport) return;
+
+    if (applyEffect) {
+      this.game.effectHelper.addEffect(player, '', applyEffect);
+    }
 
     if (isFall) {
       const fallDamagePercent = this.game.contentManager.getGameSetting('character', 'fallDamagePercent') ?? 15;
-      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || 15) / 100));
+      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || fallDamagePercent || 15) / 100));
 
       // Fleet Of Foot reduces fall damage to 1
       if (this.game.effectHelper.hasEffect(player, 'FleetOfFoot')) {

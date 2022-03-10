@@ -16,11 +16,13 @@ import * as materialstorage from '../../../content/_output/materialstorage.json'
 import * as npcnames from '../../../content/_output/npcnames.json';
 import * as premium from '../../../content/_output/premium.json';
 import * as rarespawns from '../../../content/_output/rarespawns.json';
+import * as rngdungeonconfig from '../../../content/_output/rngdungeonconfig.json';
 import * as settings from '../../../content/_output/settings.json';
 import * as skilldescs from '../../../content/_output/skilldescs.json';
 import * as statdamagemultipliers from '../../../content/_output/statdamagemultipliers.json';
 import * as statictext from '../../../content/_output/statictext.json';
 import * as weapontiers from '../../../content/_output/weapontiers.json';
+import * as spriteinfo from '../../../content/_output/sprite-data.json';
 
 import * as spells from '../../../content/_output/spells.json';
 import * as effectData from '../../../content/_output/effect-data.json';
@@ -39,7 +41,7 @@ import { Allegiance, BaseClass, Holiday, IClassTraitTree,
   IDynamicEventData,
   IFate,
   IGameSettings,
-  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, ISpawnerData, ISpellData,
+  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, IRNGDungeonConfig, ISpawnerData, ISpellData,
   IStatusEffectData, ITrait, IWeaponTier, Rollable, Skill, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -62,6 +64,18 @@ export class ContentManager extends BaseService {
   private effectData: Record<string, IStatusEffectData>;
   private spells: Record<string, ISpellData>;
 
+  private customRegionDroptables: Record<string, { drops: Rollable[] }> = {};
+  private customMapDroptables: Record<string, { drops: Rollable[] }> = {};
+
+  private customNPCs: Record<string, INPCDefinition> = {};
+  private customNPCsByMap: Record<string, Record<string, INPCDefinition>> = {};
+
+  private customSpawners: Record<string, ISpawnerData> = {};
+  private customSpawnersByMap: Record<string, Record<string, ISpawnerData>> = {};
+
+  private customItems: Record<string, IItemDefinition> = {};
+  private customItemsByMap: Record<string, Record<string, IItemDefinition>> = {};
+
   private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
   private charSelect: { baseStats: Record<Stat | 'gold', number>; allegiances: any[]; classes: any[]; weapons: any[] };
@@ -78,6 +92,8 @@ export class ContentManager extends BaseService {
   private statDamageMultipliers: Record<Stat, number[]>;
   private staticText: { terrain: string[]; decor: Record<string, string> };
   private weaponTiers: Record<WeaponClass, IWeaponTier>;
+  private rngDungeonConfig: IRNGDungeonConfig;
+  private spriteinfo: { doorStates: any[] };
 
   public get allItems(): Record<string, IItemDefinition> {
     return cloneDeep(this.items);
@@ -151,6 +167,14 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.weaponTiers);
   }
 
+  public get rngDungeonConfigData(): IRNGDungeonConfig {
+    return cloneDeep(this.rngDungeonConfig);
+  }
+
+  public get spriteData(): { doorStates: any[] } {
+    return cloneDeep(this.spriteinfo);
+  }
+
   public async reload() {
     return new Promise(resolve => {
       dl('LandOfTheRair/Content', 'content', async () => {
@@ -178,19 +202,19 @@ export class ContentManager extends BaseService {
   }
 
   public getDropablesForRegion(region: string): { drops: Rollable[] } {
-    return this.regionDroptables[region];
+    return this.customRegionDroptables[region] || this.regionDroptables[region] || { drops: [] };
   }
 
   public getDroptablesForMap(mapName: string): { drops: Rollable[] } {
-    return this.mapDroptables[mapName];
+    return this.customMapDroptables[mapName] || this.mapDroptables[mapName] || { drops: [] };
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
-    return this.items[itemName];
+    return this.customItems[itemName] || this.items[itemName];
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.npcs[npcId];
+    return this.customNPCs[npcId] || this.npcs[npcId];
   }
 
   public getNPCScript(npcTag: string): INPCScript {
@@ -206,7 +230,7 @@ export class ContentManager extends BaseService {
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
-    return this.spawners[spawnerTag];
+    return this.customSpawners[spawnerTag] || this.spawners[spawnerTag];
   }
 
   public getQuest(quest: string): IQuest {
@@ -239,6 +263,62 @@ export class ContentManager extends BaseService {
     return get(this.settings[name], subKey);
   }
 
+  public updateCustomRegionDroptables(region: string, drops: Rollable[]) {
+    this.customRegionDroptables[region] = { drops };
+  }
+
+  public updateCustomMapDroptable(mapName: string, drops: Rollable[]) {
+    this.customMapDroptables[mapName] = { drops };
+  }
+
+  public addCustomNPC(mapName: string, def: INPCDefinition): void {
+    this.customNPCsByMap[mapName] = this.customNPCsByMap[mapName] || {};
+    this.customNPCsByMap[mapName][def.npcId] = def;
+
+    this.customNPCs[def.npcId] = def;
+  }
+
+  public clearCustomNPCs(mapName: string): void {
+    Object.keys(this.customNPCsByMap?.[mapName] ?? {}).forEach(npcId => {
+      delete this.customNPCs[npcId];
+      delete this.customNPCsByMap[mapName][npcId];
+    });
+  }
+
+  public addCustomItem(mapName: string, def: IItemDefinition): void {
+    this.customItemsByMap[mapName] = this.customItemsByMap[mapName] || {};
+    this.customItemsByMap[mapName][def.name] = def;
+
+    this.customItems[def.name] = def;
+  }
+
+  public clearCustomItems(mapName: string): void {
+    Object.keys(this.customItemsByMap?.[mapName] ?? {}).forEach(itemName => {
+      delete this.customItems[itemName];
+      delete this.customItemsByMap[mapName][itemName];
+    });
+  }
+
+  public addCustomSpawner(mapName: string, spawnerName: string, def: ISpawnerData): void {
+    this.customSpawnersByMap[mapName] = this.customSpawnersByMap[mapName] || {};
+    this.customSpawnersByMap[mapName][spawnerName] = def;
+
+    this.customSpawners[spawnerName] = def;
+  }
+
+  public clearCustomSpawners(mapName: string): void {
+    Object.keys(this.customSpawnersByMap?.[mapName] ?? {}).forEach(spawnerName => {
+      delete this.customSpawners[spawnerName];
+      delete this.customSpawnersByMap[mapName][spawnerName];
+    });
+  }
+
+  public getItemsMatchingName(mapName: string): IItemDefinition[] {
+    return Object.values(this.items)
+      .filter(item => item.name.includes(mapName))
+      .map(x => cloneDeep(x));
+  }
+
   private loadCore() {
     this.allegianceStats = deepfreeze(realJSON(allegiancestats));
     this.attributeStats = deepfreeze(realJSON(attributestats));
@@ -256,6 +336,8 @@ export class ContentManager extends BaseService {
     this.statDamageMultipliers = deepfreeze(realJSON(statdamagemultipliers));
     this.staticText = deepfreeze(realJSON(statictext));
     this.weaponTiers = deepfreeze(realJSON(weapontiers));
+    this.rngDungeonConfig = deepfreeze(realJSON(rngdungeonconfig));
+    this.spriteinfo = deepfreeze(realJSON(spriteinfo));
   }
 
   private loadSpells() {

@@ -10,8 +10,8 @@ export class ChillBiteMedium extends SpellCommand {
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return distanceFrom(caster, target) === 0
-        && !this.game.effectHelper.hasEffect(target, 'Frosted')
-        && !this.game.effectHelper.hasEffect(target, 'RecentlyFrosted');
+        && !this.game.effectHelper.hasEffect(target, 'Chilled')
+        && !this.game.effectHelper.hasEffect(target, 'RecentlyChilled');
   }
 
   override use(executor: ICharacter, target: ICharacter) {

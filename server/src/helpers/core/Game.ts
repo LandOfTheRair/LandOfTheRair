@@ -19,6 +19,7 @@ import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
 import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
+import { RNGDungeonGenerator, RNGDungeonManager } from '../rng';
 import { Database } from './Database';
 import { AccountDB, CharacterDB, EventsDB, GroundDB, LogsDB, MarketDB, WorldDB } from './db';
 import { Logger } from './Logger';
@@ -107,6 +108,8 @@ export class Game {
     public configManager: ConfigManager,
     public userInputHelper: UserInputHelper,
     public discordHelper: DiscordHelper,
+    public rngDungeonGenerator: RNGDungeonGenerator,
+    public rngDungeonManager: RNGDungeonManager,
 
     public testHelper: TestHelper
 
@@ -136,7 +139,7 @@ export class Game {
       'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper', 'trapHelper',
       'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
       'playerManager', 'worldManager', 'configManager', 'userInputHelper',
-      'discordHelper',
+      'discordHelper', 'rngDungeonGenerator', 'rngDungeonManager',
       'testHelper'
     ];
 
@@ -235,6 +238,10 @@ export class Game {
       timer.startTimer(`dynamicEventTick-${now}`);
       this.dynamicEventHelper.tick(timer);
       timer.stopTimer(`dynamicEventTick-${now}`);
+
+      timer.startTimer(`rngDungeonTick-${now}`);
+      this.rngDungeonManager.tick(timer);
+      timer.stopTimer(`rngDungeonTick-${now}`);
     }
 
     timer.stopTimer(`gameloop-${now}`);

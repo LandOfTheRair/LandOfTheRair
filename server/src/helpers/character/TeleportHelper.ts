@@ -58,7 +58,7 @@ export class TeleportHelper extends BaseService {
     player: Player,
     { x, y, map }:
     { x: number; y: number; map?: string }
-  ) {
+  ): boolean {
 
     // if we're not changing maps, move on this one
     if (!map || player.map === map) {
@@ -75,11 +75,19 @@ export class TeleportHelper extends BaseService {
       this.game.worldManager.ensureMapExists(map, this.game.partyHelper.partyName(player), destinationMapName);
 
       const mapData = this.worldManager.getMap(destinationMapName);
-      if (!mapData) return;
+      if (!mapData) return false;
 
+      // check if the map exists (it may not; invalid refs happen)
       if (!mapData.state) {
         this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Warning: map ${map} does not exist.` });
-        return;
+        return false;
+      }
+
+      // some maps can temporarily block entry
+      if (mapData.map.properties.blockEntry) {
+        const message = mapData.map.properties.blockEntryMessage || 'That area is closed temporarily.';
+        this.game.messageHelper.sendLogMessageToPlayer(player, { message });
+        return false;
       }
 
       if (!player.isBeingForciblyRespawned) {
@@ -112,6 +120,8 @@ export class TeleportHelper extends BaseService {
         this.game.effectHelper.addEffect(player, '', 'EtherManipulation');
       }
     }
+
+    return true;
   }
 
   // these are all related to the teleport skill

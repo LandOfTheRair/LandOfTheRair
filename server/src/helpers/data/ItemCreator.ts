@@ -40,6 +40,15 @@ export class ItemCreator extends BaseService {
 
     this.rollStats(item, itemDefinition);
 
+    // if the item has "base mods" (used primarily for RNG dungeon items), we copy those
+    if (itemDefinition.baseMods) {
+      Object.keys(itemDefinition.baseMods).forEach(modKey => {
+        if (!itemDefinition.baseMods?.[modKey]) return;
+
+        item.mods[modKey] = itemDefinition.baseMods[modKey];
+      });
+    }
+
     return item;
 
   }

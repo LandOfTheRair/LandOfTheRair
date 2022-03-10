@@ -24,7 +24,7 @@
     letter-spacing: 1px;
     padding-left: 5px;
     position: relative;
-    word-break: break-all;
+    word-break: normal;
 
     &.banner {
       font-size: 1.1rem;
@@ -57,6 +57,10 @@
 
     &.quest {
       font-style: italic;
+    }
+
+    &.playerchat {
+      word-break: break-all;
     }
 
     &.combat {

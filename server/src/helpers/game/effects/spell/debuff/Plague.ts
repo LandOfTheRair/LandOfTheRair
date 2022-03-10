@@ -14,6 +14,12 @@ export class Plague extends Effect {
 
       if (caster) {
         effect.effectInfo.isContagious = this.game.traitHelper.hasLearnedTrait(caster as IPlayer, 'ContagiousPlague');
+
+        // pandemic lets us spread immediately
+        const numSpreads = this.game.traitHelper.traitLevelValue(caster, 'Pandemic');
+        for (let i = 0; i < numSpreads; i++) {
+          this.spread(char, effect, caster);
+        }
       }
     }
   }
@@ -35,25 +41,29 @@ export class Plague extends Effect {
 
     // spread the contagion
     if (effect.effectInfo.isContagious && ((effect.effectInfo.currentTick ?? 0) % 3) === 0) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
-      if (!mapState) return;
+      this.spread(char, effect, caster);
+    }
+  }
 
-      const nearby = mapState.getAllAlliesInRange(char, 1).filter(x => x !== char && !this.game.effectHelper.hasEffect(x, 'Plague'));
+  private spread(char: ICharacter, effect: IStatusEffect, caster: ICharacter | null) {
+    const mapState = this.game.worldManager.getMap(char.map)?.state;
+    if (!mapState) return;
 
-      const spreadTo = sample(nearby);
-      if (spreadTo) {
-        this.game.effectHelper.addEffect(spreadTo, caster ?? 'somebody', 'Plague', {
-          effectMeta: {
-            effectRef: 'Plague'
-          },
-          effect: {
-            duration: Math.floor((effect.endsAt - Date.now()) / 1000),
-            extra: {
-              ...effect.effectInfo
-            }
+    const nearby = mapState.getAllAlliesInRange(char, 1).filter(x => x !== char && !this.game.effectHelper.hasEffect(x, 'Plague'));
+
+    const spreadTo = sample(nearby);
+    if (spreadTo) {
+      this.game.effectHelper.addEffect(spreadTo, caster ?? 'somebody', 'Plague', {
+        effectMeta: {
+          effectRef: 'Plague'
+        },
+        effect: {
+          duration: Math.floor((effect.endsAt - Date.now()) / 1000),
+          extra: {
+            ...effect.effectInfo
           }
-        });
-      }
+        }
+      });
     }
   }
 

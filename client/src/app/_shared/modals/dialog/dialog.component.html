@@ -5,7 +5,7 @@
 
   <app-item *ngIf="data.displayItemName" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
 
-  {{ data.message || 'I don\'t know what to say.' }}
+  <div [innerHTML]="data.message || 'I don\'t know what to say.'"></div>
 
 </div>
 

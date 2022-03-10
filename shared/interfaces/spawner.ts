@@ -12,7 +12,7 @@ export interface ISpawnerData {
   tag: string;
   respawnRate: number;
   initialSpawn: number;
-  maxSpawn: number;
+  maxCreatures: number;
   spawnRadius: number;
   randomWalkRadius: number;
   leashRadius: number;
@@ -23,6 +23,7 @@ export interface ISpawnerData {
   doInitialSpawnImmediately: boolean;
   eliteTickCap: number;
   npcAISettings: string[];
+  isDangerous?: boolean;
 
   x: number;
   y: number;

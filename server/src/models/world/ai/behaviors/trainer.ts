@@ -252,6 +252,20 @@ export class TrainerBehavior implements IAIBehavior {
         .setLogic(async ({ env }) => {
           const player = env?.player;
 
+          const mapData = game.worldManager.getMap(npc.map);
+          const recallDisabled = mapData?.map.properties.respawnKick;
+
+          if (recallDisabled) {
+            env?.callbacks.emit({
+              type: GameServerResponse.SendAlert,
+              title: 'Unable to Recall',
+              content: `I cannot recall you here, ${player.name}, the ether is too twisting.`,
+              extraData: { npcSprite: npc.sprite },
+            });
+
+            return `I cannot recall you here, ${player.name}, the ether is too twisting.`;
+          }
+
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
             title: 'Respawn Point Set',

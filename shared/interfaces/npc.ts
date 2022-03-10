@@ -56,8 +56,11 @@ export interface INPCDefinition {
 
   // the drop pool for lairs that can drop X of Y items
   dropPool?: {
-    min: number;
-    max: number;
+    replace?: boolean;
+    choose: {
+      min: number;
+      max: number;
+    };
     items: Rollable[];
   };
 
@@ -91,6 +94,9 @@ export interface INPCDefinition {
 
   // the owner of the creature (used for summons)
   owner?: string;
+
+  // the "other stats" for this npc, inherited from NPC definition
+  otherStats?: Partial<Record<Stat, number>>;
 
   // how hostile the creature is (default: always)
   hostility?: Hostility;
@@ -178,7 +184,14 @@ export interface INPC extends ICharacter {
   noItemDrop?: boolean;
   drops?: any[];
   copyDrops?: any[];
-  dropPool?: any;
+  dropPool?: {
+    replace?: boolean;
+    choose: {
+      min: number;
+      max: number;
+    };
+    items: Rollable[];
+  };
 
   allegianceMods: Array<{ delta: number; allegiance: Allegiance }>;
   traitLevels?: Record<string, number>;
@@ -197,6 +210,7 @@ export interface INPCScript {
   level?: number;
   hp?: BoundedNumber;
   mp?: BoundedNumber;
+  otherStats?: Partial<Record<Stat, number>>;
   usableSkills?: string[] | Rollable[];
   items?: ICharacterItems;
   dialog?: Record<string, any>;

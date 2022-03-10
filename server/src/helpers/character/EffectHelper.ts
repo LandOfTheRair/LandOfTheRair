@@ -34,7 +34,7 @@ export class EffectHelper extends BaseService {
         this.tickEffect(character, effect);
         if (effect.endsAt > now || effect.endsAt === -1) return;
 
-        this.removeEffect(character, effect);
+        this.removeEffect(character, effect, true);
       });
     });
   }
@@ -142,7 +142,7 @@ export class EffectHelper extends BaseService {
   }
 
   // remove a stale or removed effect
-  public removeEffect(character: ICharacter, effect: IStatusEffect): void {
+  public removeEffect(character: ICharacter, effect: IStatusEffect, shouldExpire = false): void {
     const effectData = this.game.effectManager.getEffectData(effect.effectRef || effect.effectName);
     if (!effectData) {
       this.game.logger.error('EffectHelper', new Error(`Effect ${JSON.stringify(effect)} cannot be removed as no data could be found.`));
@@ -163,7 +163,10 @@ export class EffectHelper extends BaseService {
     this.game.characterHelper.calculateStatTotals(character);
 
     this.game.effectManager.effectUnapply(effect.effectName, character, effect);
-    this.game.effectManager.effectDestroy(effect.effectName, character, effect);
+
+    if (shouldExpire) {
+      this.game.effectManager.effectExpire(effect.effectName, character, effect);
+    }
 
     // if this spell has a recently associated with it, we apply it now
     if (recentlyRef && !effect.effectInfo.disableRecently && effect.endsAt !== -1) {

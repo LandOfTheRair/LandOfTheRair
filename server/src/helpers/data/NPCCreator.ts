@@ -67,7 +67,7 @@ export class NPCCreator extends BaseService {
     baseChar.noItemDrop = npcDef.noItemDrop ?? false;
     baseChar.drops = cloneDeep(npcDef.drops) ?? [];
     baseChar.copyDrops = npcDef.copyDrops ?? [];
-    baseChar.dropPool = npcDef.dropPool ?? null;
+    baseChar.dropPool = npcDef.dropPool ?? undefined;
     baseChar.triggers = npcDef.triggers ?? {};
     baseChar.aquaticOnly = npcDef.aquaticOnly ?? false;
     baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
@@ -139,6 +139,11 @@ export class NPCCreator extends BaseService {
     baseChar.monsterGroup = npcDef.monsterGroup;
     baseChar.giveXp = { ...npcDef.giveXp || { min: 1, max: 100 } };
     baseChar.skillOnKill = npcDef.skillOnKill;
+
+    // otherStats is a straight override
+    Object.keys(npcDef.otherStats || {}).forEach(stat => {
+      baseChar.stats[stat] = npcDef.otherStats?.[stat] ?? 0;
+    });
 
     if (baseChar.hostility === Hostility.Never) {
       const statSet = Math.max(5, (baseChar.level || 1) / 3);
@@ -430,6 +435,9 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior,
       [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior,
       [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior,
+      [BehaviorType.ExitWarper]: AllBehaviors.ExitWarperBehavior,
+      [BehaviorType.SpoilerLogger]: AllBehaviors.SpoilerLoggerBehavior,
+      [BehaviorType.TreasureClaimer]: AllBehaviors.TreasureClaimerBehavior,
       [BehaviorType.HalloweenCandy]: AllBehaviors.HalloweenCandyBehavior,
       [BehaviorType.ThanksgivingFood]: AllBehaviors.ThanksgivingFoodBehavior,
       [BehaviorType.ThanksgivingGuns]: AllBehaviors.ThanksgivingGunsBehavior,

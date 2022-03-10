@@ -286,4 +286,5 @@ export type IItemDefinition = IItem & {
     name: string[];
     level: RandomNumber;
   };
+  baseMods?: Partial<IItem>;
 };

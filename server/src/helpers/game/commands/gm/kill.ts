@@ -23,5 +23,12 @@ export class GMKill extends MacroCommand {
       damageClass: DamageClass.GM
     });
 
+    if (!this.game.characterHelper.isDead(target)) {
+      this.sendMessage(player, `I'm not sure why ${target.name} is still alive. Have some relevant stats:`);
+      this.sendMessage(player, `${target.name} has ${target.hp.current}/${target.hp.maximum} HP`);
+      this.sendMessage(player, `${target.name} stats: ${JSON.stringify(target.totalStats)}`);
+    }
+
+
   }
 }

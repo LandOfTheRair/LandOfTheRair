@@ -185,7 +185,6 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
     this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     this.showMacroEditor = true;
     this.isEditing = false;
-    console.log(this.allCustomMacros);
   }
 
   remove(macro: IMacro) {

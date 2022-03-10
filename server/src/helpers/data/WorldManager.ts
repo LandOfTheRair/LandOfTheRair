@@ -67,7 +67,9 @@ export class WorldManager extends BaseService {
     const allMaps = await readdir('content/maps');
 
     const loadedMaps: Array<{ name: string; map: any }> = await Promise.all(
-      allMaps.map(async x => ({ name: path.basename(x, '.json'), map: await fs.readJson(x) }))
+      allMaps
+        .filter(x => !x.includes('generated'))
+        .map(async x => ({ name: path.basename(x, '.json'), map: await fs.readJson(x) }))
     );
 
     loadedMaps.forEach(({ name, map }) => {
@@ -85,6 +87,16 @@ export class WorldManager extends BaseService {
       }
     });
 
+  }
+
+  public createOrReplaceMap(mapName: string, mapJson: any) {
+    this.mapsInactiveSince[mapName] = Date.now();
+    if (!this.mapNames.includes(mapName)) this.mapNames.push(mapName);
+
+    delete this.maps[mapName];
+    delete this.mapStates[mapName];
+
+    this.createMap(mapName, mapJson);
   }
 
   private createMap(mapName: string, mapJson: any) {
@@ -143,6 +155,10 @@ export class WorldManager extends BaseService {
     };
   }
 
+  public isEtherForceMap(mapName: string): boolean {
+    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs.map(x => x.name).includes(mapName);
+  }
+
   public isDungeon(mapName: string): boolean {
     return mapName.includes('-Dungeon');
   }
@@ -163,6 +179,16 @@ export class WorldManager extends BaseService {
         state = this.mapStates[newMap];
         x = this.instances[character.map].properties.gearDropX ?? this.instances[newMap].respawnPoint.x;
         y = this.instances[character.map].properties.gearDropY ?? this.instances[newMap].respawnPoint.y;
+      }
+    }
+
+    // special case for non-dungeon, volatile maps (solokar, etc)
+    const mapData = this.getMap(character.map);
+    if (mapData?.map.properties.gearDropMap) {
+      state = this.mapStates[mapData.map.properties.gearDropMap];
+      if (state) {
+        x = mapData.map.properties.gearDropX ?? mapData.map.respawnPoint.x;
+        y = mapData.map.properties.gearDropY ?? mapData.map.respawnPoint.y;
       }
     }
 
@@ -229,6 +255,8 @@ export class WorldManager extends BaseService {
       player.respawnPoint = { map: 'Rylt', x: 68, y: 13 };
     }
 
+    const mapData = this.game.worldManager.getMap(player.map);
+
     // dead people leaving get auto-respawned
     if (this.game.characterHelper.isDead(player)) {
       player.isBeingForciblyRespawned = true;
@@ -241,6 +269,11 @@ export class WorldManager extends BaseService {
       player.x = player.respawnPoint.x;
       player.y = player.respawnPoint.y;
 
+    // if the map has a respawn kick set, we will also try to force to there
+    } else if (mapData?.map.properties.respawnKick) {
+      player.map = mapData.map.properties.respawnMap;
+      player.x = mapData.map.properties.respawnX;
+      player.y = mapData.map.properties.respawnY;
     }
 
     // cannot keep summons when going between maps
