@@ -871,6 +871,7 @@ class MapGenerator {
     fs.writeJSON(`content/maps/generated/${this.mapMeta.name}.json`, this.tiledJSON);
   }
 
+  // the default spawner for normal creatures
   private defaultSpawner(): ISpawnerData {
     return {
       npcIds: [],
