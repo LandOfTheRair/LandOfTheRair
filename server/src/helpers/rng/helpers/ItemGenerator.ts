@@ -222,6 +222,19 @@ export class RNGDungeonItemGenerator {
       }
     });
 
+    // sprite cleanup just in case
+    this.itemDefBases.forEach(itemDef => {
+      const itemDefConfig = this.config.itemConfigs[itemDef.itemClass];
+      if (!itemDefConfig) return;
+
+      itemDef.baseMods = itemDef.baseMods || {};
+
+      if (itemDef.baseMods.sprite) return;
+
+      const sprite = this.rng.getItem(itemDefConfig.sprites);
+      itemDef.baseMods.sprite = sprite;
+    });
+
     return this.itemDefBases;
   }
 
