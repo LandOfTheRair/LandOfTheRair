@@ -36,7 +36,7 @@ export class RNGDungeonGenerator extends BaseService {
       seed,
       config,
       this.game.contentManager.spriteData,
-      this.game.contentManager.getItemsMatchingName(map.name).concat(this.game.contentManager.getItemsMatchingName('Rune Scroll'))
+      this.game.contentManager.getItemsMatchingName(map.name).concat(this.game.contentManager.getItemsMatchingName('Rune Scroll -'))
     );
 
     const { mapJSON, creatures, spawners, items, mapDroptable } = generator.generateBaseMap();
