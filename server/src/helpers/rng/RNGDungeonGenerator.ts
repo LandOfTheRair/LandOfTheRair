@@ -28,7 +28,7 @@ export class RNGDungeonGenerator extends BaseService {
     const defaultSeed = (map.name.split('').map(c => c.charCodeAt(0)).reduce((a, b) => a + b, 0) + (+this.game.dailyHelper.resetTime));
     seed ??= defaultSeed;
 
-    this.game.logger.error('RNGDungeonGenerator', `Today's seed for ${map.name}: "${seed}"`);
+    this.game.logger.log('RNGDungeonGenerator', `Today's seed for ${map.name}: "${seed}"`);
 
     const generator = new MapGenerator(
       map,
