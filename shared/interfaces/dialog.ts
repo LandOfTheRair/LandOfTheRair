@@ -181,6 +181,7 @@ export interface IDialogChatAction {
   displayNPCName?: string;
   displayNPCUUID?: string;
   displayItemName?: string;
+  displayItemSprite?: number;
   displayTitle?: string;
   maxDistance?: number;
   message: string;
