@@ -3,7 +3,9 @@
 
   <app-npc *ngIf="data.displayNPCSprite >= 0" [sprite]="data.displayNPCSprite"></app-npc>
 
-  <app-item *ngIf="data.displayItemName" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
+  <app-item *ngIf="data.displayItemName && !data.displayItemSprite" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
+
+  <app-item *ngIf="data.displayItemName && data.displayItemSprite" [item]="{ name: data.displayItemName, mods: { sprite: data.displayItemSprite } }"></app-item>
 
   <div [innerHTML]="data.message || 'I don\'t know what to say.'"></div>
 

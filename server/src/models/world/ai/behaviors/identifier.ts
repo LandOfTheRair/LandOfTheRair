@@ -70,11 +70,13 @@ export class IdentifierBehavior implements IAIBehavior {
           identifyTier
         );
 
+        console.log(game.itemHelper.getItemProperty(rightHand, 'sprite'));
+
         env?.callbacks.emit({
           type: GameServerResponse.SendAlert,
           title: 'Identify',
           content: identMsg,
-          extraData: { itemName: rightHand.name },
+          extraData: { itemName: rightHand.name, displayItemSprite: game.itemHelper.getItemProperty(rightHand, 'sprite') },
         });
 
         game.messageHelper.sendSimpleMessage(player, identMsg);
