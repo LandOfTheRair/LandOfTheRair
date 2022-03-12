@@ -152,6 +152,11 @@ export class RNGDungeonItemGenerator {
         });
       }
 
+      // items need a level requirement
+      itemDef.baseMods.requirements = {
+        level: this.mapMeta.creatureProps.level
+      };
+
       const sprite = this.rng.getItem(itemDefConfig.sprites.filter(x => !takenSprites.includes(x)));
       itemDef.baseMods.sprite = sprite;
 
