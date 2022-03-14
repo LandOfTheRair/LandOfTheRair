@@ -14,7 +14,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
   Direction, distanceFrom, IDialogCheckHolidayAction,
   IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction,
-  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction, MonsterClass } from '../../interfaces';
+  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction, MonsterClass, Hostility } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -76,6 +76,16 @@ export class DialogActionHelper extends BaseService {
   }
 
   private getDefaultMessage(npc: INPC) {
+    if (npc.hostility === Hostility.Always) {
+      const hostileMessages = [
+        'Die!',
+        'Begone!',
+        'Leave this place!'
+      ];
+
+      return sample(hostileMessages);
+    }
+
     if (npc.monsterClass === MonsterClass.Beast) {
       const defaultBeastMessages = [
         '_growl_',
