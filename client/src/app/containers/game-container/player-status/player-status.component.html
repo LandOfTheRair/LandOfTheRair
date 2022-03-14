@@ -68,12 +68,12 @@
       <div class="bottom-bars">
         <div class="bar-container exp" *ngIf="!player.gainingAXP" [matTooltip]="xpString(player)">
           <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
-          <span class="bar-text">{{ player.exp | number }} ({{ xpPercent(player) | number:'0.0-0' }}%)</span>
+          <span class="bar-text">{{ player.exp | number }} ({{ xpPercent(player) }}%)</span>
         </div>
 
         <div class="bar-container axp" *ngIf="player.gainingAXP">
           <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
-          <span class="bar-text">{{ player.axp | number }} ({{ axpPercent(player) | number:'0.0-0' }}%)</span>
+          <span class="bar-text">{{ player.axp | number }} ({{ axpPercent(player) }}%)</span>
         </div>
       </div>
     </div>

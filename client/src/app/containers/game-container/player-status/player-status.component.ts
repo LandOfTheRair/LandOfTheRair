@@ -88,18 +88,18 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     return calculateXPRequiredForLevel(level);
   }
 
-  xpPercent(player: IPlayer) {
+  xpPercent(player: IPlayer): string {
     const playerXP = player.exp;
     const curPlayerLevelXP = this.levelXP(player.level);
     const nextPlayerLevelXP = this.levelXP(player.level + 1);
 
-    return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100);
+    return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100).toFixed(2);
   }
 
-  axpPercent(player: IPlayer) {
+  axpPercent(player: IPlayer): string {
     const playerXP = player.axp;
 
-    return Math.min(100, (playerXP / 500) * 100);
+    return Math.min(100, (playerXP / 500) * 100).toFixed(2);
   }
 
   unapply($event, effect: IStatusEffect): void {
