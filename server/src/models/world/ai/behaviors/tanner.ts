@@ -59,8 +59,9 @@ export class TannerBehavior implements IAIBehavior {
         const {
           playersHeardDeath,
           corpseLevel,
-          tansFor
-        } = game.itemHelper.getItemProperties(rightHand, ['playersHeardDeath', 'corpseLevel', 'tansFor']);
+          tansFor,
+          searchItems
+        } = game.itemHelper.getItemProperties(rightHand, ['playersHeardDeath', 'corpseLevel', 'tansFor', 'searchItems']);
 
         if (!tansFor) return 'I can\'t do anything with that!';
 
@@ -71,6 +72,14 @@ export class TannerBehavior implements IAIBehavior {
         const item = game.itemCreator.getSimpleItem(tansFor);
         game.itemHelper.setOwner(player, item);
         game.characterHelper.setRightHand(player, item);
+
+        if (searchItems && (searchItems?.length ?? 0) > 0) {
+          const state = game.worldManager.getMapStateForCharacter(player);
+
+          if (state) {
+            state.addItemsToGround(npc.x, npc.y, searchItems);
+          }
+        }
 
         return `Thanks, ${player.name}!`;
       });
