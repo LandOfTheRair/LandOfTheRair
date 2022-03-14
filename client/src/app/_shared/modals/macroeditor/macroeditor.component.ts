@@ -141,11 +141,15 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   }
 
   updateKey($event) {
-    $event.preventDefault();
-    $event.stopPropagation();
 
     const { key, shiftKey, altKey, ctrlKey } = $event;
-    if (!key || ['Shift', 'Control', 'Alt'].includes(key)) return;
+
+    if (!['Backspace', 'Delete'].includes(key)) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+
+    if (!key || ['Shift', 'Control', 'Alt', 'Backspace', 'Delete'].includes(key)) return;
 
     this.currentlyEditingMacro.key = key.toUpperCase();
     this.currentlyEditingMacro.modifiers = this.currentlyEditingMacro.modifiers || { shift: false, ctrl: false, alt: false };
