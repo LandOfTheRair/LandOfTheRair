@@ -58,6 +58,7 @@ export class MapScene extends Phaser.Scene {
   private goldSprites = {};
   private doorStateData = {};
   private doors = [];
+  private doorTiledIdIsHorizontal = {};
 
   private playerUpdate$: Subscription;
   private currentTarget$: Subscription;
@@ -148,18 +149,22 @@ export class MapScene extends Phaser.Scene {
 
   private updateTarget(character: ICharacter) {
     if (!this.isReady) return;
+
     const oldUUID = this.targetUUID;
     const newUUID = character?.uuid;
     if (oldUUID === newUUID) return;
+
     this.setOutline(oldUUID, undefined);
     this.setOutline(newUUID, [1.0, 0.0, 0.0, 0.5]);
     this.targetUUID = newUUID;
   }
 
-  private setOutline(uuid: string, color: Array<number>) {
+  private setOutline(uuid: string, color: number[]) {
     if (!uuid) return;
+
     const target = this.allNPCSprites[uuid] as Sprite;
     if (!target) return;
+
     OutlinePipeline.setOutlineColor(target, color);
   }
 
@@ -236,6 +241,14 @@ export class MapScene extends Phaser.Scene {
     const totalX = x + this.player.x;
     const totalY = y + this.player.y;
 
+    // doors can only be fov blockers if they're horizontal doors, ie, top/bottom opening
+    const potentialDoor = get(this.allMapData.layerData[MapLayer.Interactables], [totalX, totalY]);
+    if (potentialDoor?.type === ObjectType.Door) {
+      if (!this.openDoors[potentialDoor.id]) {
+        return !this.doorTiledIdIsHorizontal[potentialDoor.id];
+      }
+    }
+
     const potentialSecretWall = get(this.allMapData.layerData[MapLayer.OpaqueDecor], [totalX, totalY]);
     const wallList = layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
     const wallLayerTile = wallList[(width * totalY) + totalX];
@@ -254,13 +267,16 @@ export class MapScene extends Phaser.Scene {
       fovSprite.setDisplaySize(64, 64);
       fovSprite.alpha = 1;
       if (!isPlayerInGame) return;
+
       const tileFov = get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
       switch (tileFov) {
       case FOVVisibility.CantSee: return;
+
       case FOVVisibility.CanSeeButDark:
         if (!this.canSeeThroughDarkAt(position.x, position.y)) return;
         fovSprite.alpha = 0.5;
         break;
+
       case FOVVisibility.CanSee:
         fovSprite.alpha = 0;
         break;
@@ -353,14 +369,16 @@ export class MapScene extends Phaser.Scene {
     this.doors.forEach(door => {
       const doorData = this.doorStateData[door.frame];
       let state = 'default';
-      if (this.openDoors[door.id])
-      {
+      if (this.openDoors[door.id]) {
         state = 'opened';
       }
+
       if (door.lastState === state) return;
+
       door.sprites.forEach(s => { s.destroy(); });
       door.sprites = [];
       door.lastState = state;
+
       const stateData = doorData.states[state];
       stateData.forEach(spriteD => {
         const spriteTilePos = positionAdd(door.tilePos, spriteD);
@@ -372,6 +390,7 @@ export class MapScene extends Phaser.Scene {
         if (door.sprites.length > 1) {
           sprite.setDepth(99);
         }
+
         sprite.setPipeline('OutlinePipeline');
         if (stateData.length > 1) {
           OutlinePipeline.setNoEdge(sprite, true);
@@ -402,8 +421,10 @@ export class MapScene extends Phaser.Scene {
   private fixWallFloors(map: Phaser.Tilemaps.Tilemap): void {
     const wallIndexOffset = map.getTileset('Walls').firstgid;
     const floorIndexOffset = map.getTileset('Terrain').firstgid;
+
     const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
       spriteTerrainSetNumber(floor.index - floorIndexOffset);
+
     const getFloorSetAt = (x: number, y: number) => {
       const floorSet = getFloorSet(map.getTileAt(x, y, true, 'Floors'));
       if (floorSet < 0) {
@@ -411,49 +432,66 @@ export class MapScene extends Phaser.Scene {
       }
       return floorSet;
     };
+
     const getWallIndex = (wall: Phaser.Tilemaps.Tile) =>
       wall.index - wallIndexOffset;
+
     const getWallIndexAt = (x: number, y: number) =>
       getFloorSet(map.getTileAt(x, y, true, 'Walls'));
+
     const cutLeft = (floor: Phaser.Tilemaps.Tile) => {
       floor.width = 32;
       floor.pixelX += 32;
     };
+
     const cutRight = (floor: Phaser.Tilemaps.Tile) => {
       floor.width = 50;
     };
+
     const walls = map.getTilesWithin(0, 0, map.width, map.height, { isNotEmpty: true }, 'Walls');
+
     walls.forEach((wall) => {
       const wallIndex = getWallIndex(wall);
       const wallDir = spriteDirectionForWall(wallIndex);
+
       // If this wall extends all the way left, and right, no cut
       if (directionHasAll(wallDir, Direction.WestAndEast)) return;
+
       // If this wall does not connect up, or down, no cut
       if (!directionHasAny(wallDir, Direction.NorthAndSouth)) return;
       const floor = map.getTileAt(wall.x, wall.y, false, 'Floors');
+
       //If this wall has no floor we can cut...then... no cut
       if (!floor) return;
+
       const floorC = getFloorSet(floor);
       const floorL = getFloorSetAt(wall.x - 1, wall.y);
       const floorR = getFloorSetAt(wall.x + 1, wall.y);
+
       //If we are between two identical floors, no cut
       if (floorL === floorR) return;
+
       //If this floor matches the floor to the right, cut it
       if (floorC === floorR) {
         cutLeft(floor);
         return;
       }
+
       //If this floor matches the floor to the left, cut it
       if (floorC === floorL) {
         cutRight(floor);
         return;
       }
+
       const wallLeft = getWallIndexAt(wall.x - 1, wall.y);
+
       //If the left wall is trying to connect to us, we can cut the right
       if (directionHasAny(spriteDirectionForWall(wallLeft), Direction.East)) {
         cutRight(floor);
       }
+
       const wallRight = getWallIndexAt(wall.x - 1, wall.y);
+
       //If the right wall is trying to connect to us, we can cut the left
       if (directionHasAny(spriteDirectionForWall(wallRight), Direction.West)) {
         cutLeft(floor);
@@ -463,10 +501,13 @@ export class MapScene extends Phaser.Scene {
 
   private fixDoorFloor(worldX: number, worldY: number) {
     const floorIndexOffset = this.tilemap.getTileset('Terrain').firstgid;
+
     const getFloorSet = (floor: Phaser.Tilemaps.Tile) =>
       spriteTerrainSetNumber(floor.index - floorIndexOffset);
+
     const getFloorSetAt = (x: number, y: number) =>
       getFloorSet(this.tilemap.getTileAt(x, y, true, 'Floors'));
+
     const doorFloor = this.tilemap.getTileAtWorldXY(worldX, worldY - 1, false, null, 'Floors');
     if (doorFloor) {
       const floorC = getFloorSet(doorFloor);
@@ -551,8 +592,12 @@ export class MapScene extends Phaser.Scene {
       if (obj.type === 'Door') {
         const doorData = this.doorStateData[frame];
         if (doorData) {
+          if (doorData.direction & Direction.WestAndEast) {
+            this.doorTiledIdIsHorizontal[obj.id] = true;
+          }
+
           this.fixDoorFloor(obj.x, obj.y);
-          this.doors.push({ id: obj.id, tilePos, frame, sprites: [], lastState:'none' });
+          this.doors.push({ id: obj.id, tilePos, frame, sprites: [], lastState: 'none' });
           return;
         }
       }
