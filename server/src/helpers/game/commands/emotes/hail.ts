@@ -22,7 +22,6 @@ export class HailEmote extends MacroCommand {
       return;
     }
 
-    this.game.characterHelper.clearAgro(player, target);
     this.sendChatMessage(player, `You hail ${target.name}!`);
     this.sendChatMessage(target, `${player.name} hails you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {

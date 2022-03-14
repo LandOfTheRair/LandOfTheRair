@@ -22,7 +22,6 @@ export class WaveEmote extends MacroCommand {
       return;
     }
 
-    this.game.characterHelper.clearAgro(player, target);
     this.sendChatMessage(player, `You wave at ${target.name}!`);
     this.sendChatMessage(target, `${player.name} waves at you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
