@@ -167,6 +167,10 @@ export class RNGDungeonItemGenerator {
         itemDef.baseMods.tier = this.mapMeta.itemProps.baseTier;
       }
 
+      if (itemDef.itemClass === ItemClass.Arrow) {
+        itemDef.baseMods.tier = this.mapMeta.itemProps.baseArrowTier;
+      }
+
       // base armor class
       if (itemDef.itemClass === ItemClass.Tunic) {
         itemDef.baseMods.stats![Stat.ArmorClass] = this.mapMeta.itemProps.baseArmorClass;

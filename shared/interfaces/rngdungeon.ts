@@ -188,6 +188,7 @@ export interface IRNGDungeonMetaConfig {
 
   itemProps: {
     baseTier: number;
+    baseArrowTier: number;
     baseSpecificResist: number;
     baseGeneralResist: number;
     baseBoostPercent: number;
