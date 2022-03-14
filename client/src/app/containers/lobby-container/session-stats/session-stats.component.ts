@@ -25,7 +25,7 @@ export class SessionStatsComponent {
   }
 
   public keysForStats(stats: ISessionStatistics) {
-    return Object.keys(stats.statistics);
+    return Object.keys(stats.statistics).filter(x => stats.statistics[x] > 0);
   }
 
 }
