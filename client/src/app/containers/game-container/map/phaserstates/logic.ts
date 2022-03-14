@@ -236,12 +236,6 @@ export class MapScene extends Phaser.Scene {
     const totalX = x + this.player.x;
     const totalY = y + this.player.y;
 
-    const potentialDoor = get(this.allMapData.layerData[MapLayer.Interactables], [totalX, totalY]);
-    if (potentialDoor?.type === ObjectType.Door) {
-      if (!this.openDoors[potentialDoor.id]) {
-        return true;
-      }
-    }
     const potentialSecretWall = get(this.allMapData.layerData[MapLayer.OpaqueDecor], [totalX, totalY]);
     const wallList = layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
     const wallLayerTile = wallList[(width * totalY) + totalX];
