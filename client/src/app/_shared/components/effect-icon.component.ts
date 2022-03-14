@@ -89,7 +89,7 @@ export class EffectIconComponent implements OnInit, OnDestroy {
 
     let baseTooltip = effDesc;
 
-    if (effName) baseTooltip = `${effName}: ${baseTooltip}`;
+    if (effName && !effName.includes('Attribute')) baseTooltip = `${effName}: ${baseTooltip}`;
     if (sourceName) baseTooltip = `${baseTooltip} [${sourceName}]`;
 
     return baseTooltip;
