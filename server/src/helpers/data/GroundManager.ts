@@ -209,16 +209,24 @@ export class GroundManager extends BaseService {
     // bad items can't get put on the ground
     if (sprite === -1) return;
 
+    // if the item has an owner, it expires in 24h. else, 3h.
+    const expiresAt = Date.now() + (1000 * ((item.mods.owner || forceSave) ? 86400 : 10800));
+
+    const potentialGroundItem: IGroundItem = {
+      item,
+      count: 1,
+      expiresAt
+    };
+
+    const cloneGroundItem = cloneDeep(potentialGroundItem);
+
     // corpses get a lil special treatment
     if (itemClass === ItemClass.Corpse) {
-      this.game.corpseManager.addCorpse(mapName, item, x, y);
+      this.game.corpseManager.addCorpse(mapName, cloneGroundItem.item, x, y);
     }
 
     updateWith(this.ground, [mapName, x, y, itemClass], (old) => old ?? [], Object);
     const container = this.ground[mapName][x][y][itemClass];
-
-    // if the item has an owner, it expires in 24h. else, 3h.
-    const expiresAt = Date.now() + (1000 * ((item.mods.owner || forceSave) ? 86400 : 10800));
 
     const matchingItem = container.find((gItem: IGroundItem) => {
       if (gItem.item.name !== item.name) return false;
@@ -237,16 +245,10 @@ export class GroundManager extends BaseService {
         matchingItem.expiresAt = expiresAt;
       }
     } else {
-      const groundItem: IGroundItem = {
-        item,
-        count: 1,
-        expiresAt
-      };
-
-      container.push(cloneDeep(groundItem));
+      container.push(cloneGroundItem);
       if (itemClass === ItemClass.Corpse) return;
       if (item.mods.owner || forceSave) {
-        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [cloneDeep(groundItem)]), Object);
+        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [cloneGroundItem]), Object);
       }
     }
   }

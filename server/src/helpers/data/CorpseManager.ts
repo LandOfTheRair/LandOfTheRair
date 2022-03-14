@@ -67,10 +67,12 @@ export class CorpseManager extends BaseService {
       if (!corpseRef || !corpseRef.mods.searchItems) return;
 
       allItems.push(...(corpseRef.mods.searchItems ?? []));
-      delete corpseRef.mods.searchItems;
+      corpseRef.mods.searchItems = [];
     });
 
     this.game.worldManager.getMap(firstCorpse.map)?.state.addItemsToGround(firstCorpse.x, firstCorpse.y, allItems);
+
+
   }
 
   // search a corpse and drop its items on the ground
@@ -80,7 +82,7 @@ export class CorpseManager extends BaseService {
 
     const corpsePos = this.corpsePositions[uuid];
     this.game.worldManager.getMap(corpsePos.map)?.state.addItemsToGround(corpsePos.x, corpsePos.y, corpseRef.mods.searchItems ?? []);
-    delete corpseRef.mods.searchItems;
+    corpseRef.mods.searchItems = [];
   }
 
   public removeCorpseFromAnyonesHands(uuid: string): void {
