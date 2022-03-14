@@ -173,6 +173,8 @@ export class DamageHelperPhysical extends BaseService {
     // add bonus damage based on skill to give weapons a little extra oomph early on
     totalDamage += random(0, bonus[Math.min(bonus.length - 1, weaponSkill)]);
 
+    totalDamage = Math.floor(totalDamage);
+
     return { damage: totalDamage, isWeak, isStrong };
   }
 
@@ -352,6 +354,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     const { damage, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, attackerSkill, bonusAttackRolls);
+    console.log(damage, isWeak, isStrong);
 
     return {
       skill:        attackerSkill,
