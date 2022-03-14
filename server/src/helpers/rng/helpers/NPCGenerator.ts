@@ -199,7 +199,10 @@ export class RNGDungeonNPCGenerator {
       const importantChoices = this.config.creatureSkills[npc.baseClass].filter(x => !potentialSkills.includes(x.name) && x.importantSpell);
 
       if (importantChoices.length > 0) {
-        potentialSkills.push(this.rng.getItem(importantChoices).name);
+        const spell = this.rng.getItem(importantChoices);
+        potentialSkills.push(spell.name);
+
+        if (spell.grants) potentialSkills.push(spell.grants);
       }
 
       // choose extra skills
@@ -208,7 +211,10 @@ export class RNGDungeonNPCGenerator {
 
         if (validSkills.length === 0) continue;
 
-        potentialSkills.push(this.rng.getItem(validSkills).name);
+        const spell = this.rng.getItem(validSkills);
+        potentialSkills.push(spell.name);
+
+        if (spell.grants) potentialSkills.push(spell.grants);
       }
     }
 
