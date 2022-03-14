@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Scream extends MacroCommand {
+export class ScreamEmote extends MacroCommand {
 
   override aliases = ['scream'];
   override canBeInstant = true;

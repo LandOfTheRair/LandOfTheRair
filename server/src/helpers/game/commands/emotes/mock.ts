@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Mock extends MacroCommand {
+export class MockEmote extends MacroCommand {
 
   override aliases = ['mock'];
   override canBeInstant = true;

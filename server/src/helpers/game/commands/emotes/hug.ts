@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Hug extends MacroCommand {
+export class HugEmote extends MacroCommand {
 
   override aliases = ['hug'];
   override canBeInstant = true;

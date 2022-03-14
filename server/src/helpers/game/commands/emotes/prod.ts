@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Prod extends MacroCommand {
+export class ProdEmote extends MacroCommand {
 
   override aliases = ['prod', 'poke'];
   override canBeInstant = true;

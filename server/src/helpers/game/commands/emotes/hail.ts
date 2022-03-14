@@ -1,9 +1,9 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class SingEmote extends MacroCommand {
+export class HailEmote extends MacroCommand {
 
-  override aliases = ['sing'];
+  override aliases = ['hail'];
   override canBeInstant = true;
   override canBeFast = true;
 
@@ -15,17 +15,18 @@ export class SingEmote extends MacroCommand {
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
 
     if (!target || args.arrayArgs.length === 0 || target === player) {
-      this.sendChatMessage(player, 'You sing!');
+      this.sendChatMessage(player, 'You hail!');
       playersInView.filter(element => element !== player).forEach(p => {
-        this.sendChatMessage(p, `${player.name} sings!`);
+        this.sendChatMessage(p, `${player.name} hails!`);
       });
       return;
     }
 
-    this.sendChatMessage(player, `You sing with ${target.name}!`);
-    this.sendChatMessage(target, `${player.name} sings with you!`);
+    this.game.characterHelper.clearAgro(player, target);
+    this.sendChatMessage(player, `You hail ${target.name}!`);
+    this.sendChatMessage(target, `${player.name} hails you!`);
     playersInView.filter(element => element !== player && element !== target).forEach(p => {
-      this.sendChatMessage(p, `${player.name} sings with ${target.name}!`);
+      this.sendChatMessage(p, `${player.name} hails ${target.name}!`);
     });
 
   }

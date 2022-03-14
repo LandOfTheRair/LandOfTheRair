@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Tickle extends MacroCommand {
+export class TickleEmote extends MacroCommand {
 
   override aliases = ['tickle'];
   override canBeInstant = true;

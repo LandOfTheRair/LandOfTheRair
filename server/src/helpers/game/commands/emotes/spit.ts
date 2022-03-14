@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Spit extends MacroCommand {
+export class SpitEmote extends MacroCommand {
 
   override aliases = ['spit'];
   override canBeInstant = true;

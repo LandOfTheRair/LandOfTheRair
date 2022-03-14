@@ -1,7 +1,7 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
-export class Scratch extends MacroCommand {
+export class ScratchEmote extends MacroCommand {
 
   override aliases = ['scratch'];
   override canBeInstant = true;
