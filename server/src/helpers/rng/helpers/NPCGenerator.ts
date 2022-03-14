@@ -130,6 +130,8 @@ export class RNGDungeonNPCGenerator {
       };
     }
 
+    npc.baseEffects = npc.baseEffects || [];
+
     if (def.monsterClass) {
       if (isTannable) {
         npc.tanSkillRequired = this.mapMeta.itemProps.tanSkillRequired;
@@ -137,6 +139,12 @@ export class RNGDungeonNPCGenerator {
 
       npc.monsterClass = def.monsterClass;
       npc.baseEffects = this.config.creatureAttributes[def.monsterClass].map(x => ({ ...x, endsAt: -1 })) || [];
+    }
+
+    // legendary creatures, legendary vision
+    if (def.isLegendary) {
+      npc.baseEffects.push({ name: 'DarkVision', endsAt: -1, extra: { potency: 1 } });
+      npc.baseEffects.push({ name: 'TrueSight', endsAt: -1, extra: { potency: 1 } });
     }
 
     // set stats
