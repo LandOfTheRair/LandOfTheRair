@@ -354,7 +354,6 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     const { damage, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, attackerSkill, bonusAttackRolls);
-    console.log(damage, isWeak, isStrong);
 
     return {
       skill:        attackerSkill,
