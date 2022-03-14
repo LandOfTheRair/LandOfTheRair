@@ -217,7 +217,7 @@ export class NPCCreator extends BaseService {
     this.characterHelper.healToFull(baseChar);
     this.characterHelper.manaToFull(baseChar);
 
-    if (baseChar.allegiance !== Allegiance.NaturalResource && baseChar.hostility === Hostility.Never) {
+    if (baseChar.allegiance !== Allegiance.NaturalResource) {
       const parser = this.createNPCDialogParser(baseChar, npcDef);
       baseChar.dialogParser = parser;
     }

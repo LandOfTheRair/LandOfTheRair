@@ -14,7 +14,7 @@ import { DialogActionType, GameServerResponse, IDialogAction,
   IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
   Direction, distanceFrom, IDialogCheckHolidayAction,
   IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction,
-  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction } from '../../interfaces';
+  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction, MonsterClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -34,7 +34,7 @@ export class DialogActionHelper extends BaseService {
 
     const messages = await (npc as any).dialogParser.parse(command, { player, callbacks }) || [];
     if ((messages || []).length === 0) {
-      messages.push(this.getDefaultMessage());
+      messages.push(this.getDefaultMessage(npc));
     }
 
     (messages || []).forEach(message => {
@@ -75,7 +75,16 @@ export class DialogActionHelper extends BaseService {
     return actions[action.type].bind(this)(action, npc, player);
   }
 
-  private getDefaultMessage() {
+  private getDefaultMessage(npc: INPC) {
+    if (npc.monsterClass === MonsterClass.Beast) {
+      const defaultBeastMessages = [
+        '_growl_',
+        '_snarl_'
+      ];
+
+      return sample(defaultBeastMessages);
+    }
+
     const defaultMessages = [
       'Hmm?',
       'What do you mean?',
