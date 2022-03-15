@@ -112,9 +112,16 @@ export function descTextFor(
   const statsText = identifyTier > 0 && affectsAttributes
     ? 'This item affects physical attributes! ' : '';
 
+  const formatStatForDisplay = (stat: Stat, statValue: number) => {
+    const sign = statValue > 0 ? '+' : '';
+    const displayValue = statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
+
+    return `${sign}${displayValue} ${stat.toUpperCase()}`;
+  };
+
   const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
   const statSpecificText = identifyTier > 2 && affectedStats.length > 0
-    ? `This item affects your stats! ${affectedStats.map(x => `+${stats[x]} ${x.toUpperCase()}`).join(', ')}. ` : '';
+    ? `This item affects your stats! ${affectedStats.map(x => `${formatStatForDisplay(x, stats[x])}`).join(', ')}. ` : '';
 
   const tier = getProp(item, itemDef, 'tier');
   const tierText = identifyTier > 2 && tier > 0 ? `This item is tier ${tier}. ` : '';
