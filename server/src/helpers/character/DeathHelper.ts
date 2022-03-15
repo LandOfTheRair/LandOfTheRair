@@ -108,6 +108,11 @@ export class DeathHelper extends BaseService {
     dead.dir = Direction.Center;
     dead.combatTicks = 0;
 
+    if (killer) {
+      this.game.characterHelper.clearAgro(dead, killer);
+      this.game.characterHelper.clearAgro(killer, dead);
+    }
+
     const corpse = this.createCorpse(dead, killer);
 
     if (this.game.characterHelper.isPlayer(dead)) {
