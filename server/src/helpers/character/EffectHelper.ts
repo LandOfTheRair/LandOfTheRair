@@ -249,14 +249,14 @@ export class EffectHelper extends BaseService {
 
   // modify incoming damage based on incoming effects
   public modifyIncomingDamage(char: ICharacter, attacker: ICharacter | null, damageArgs: DamageArgs): number {
-    let currentDamage = damageArgs.damage;
+    let currentDamage = Math.floor(damageArgs.damage);
 
     char.effects.incoming.forEach(eff => {
       const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
       if (!ref) return;
 
       if (ref.incoming) {
-        currentDamage = ref.incoming(eff, char, attacker, damageArgs, currentDamage);
+        currentDamage = Math.floor(ref.incoming(eff, char, attacker, damageArgs, currentDamage));
       }
     });
 
