@@ -174,6 +174,8 @@ export class SubscriptionHelper extends BaseService {
       }
     }
 
+    this.game.logger.log('Subscription:SilverPurchaseTotal', `${account.username} has bought ${purchase}.`);
+
     await this.saveAndUpdateAccount(account);
   }
 
@@ -199,6 +201,8 @@ export class SubscriptionHelper extends BaseService {
     account.premium.hasDoneTrial = tier <= 1;
     account.premium.subscriptionTier = tier;
 
+    this.game.logger.log('Subscription:SubscriptionStart', `${account.username} has started a tier ${tier} trial.`);
+
     await this.saveAndUpdateAccount(account);
   }
 
@@ -206,6 +210,9 @@ export class SubscriptionHelper extends BaseService {
   public async modifyAccountSilver(account: IAccount, amount = 0): Promise<void> {
     account.premium.silver ??= 0;
     account.premium.silver += amount;
+
+    const message = amount > 0 ? 'was given' : 'has spent';
+    this.game.logger.log('Subscription:SilverChange', `${account.username} ${message} ${amount} silver.`);
 
     await this.saveAndUpdateAccount(account);
   }
