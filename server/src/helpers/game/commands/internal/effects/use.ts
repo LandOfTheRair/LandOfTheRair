@@ -22,7 +22,7 @@ export class UseCommand extends MacroCommand {
     if (place === 'left')  return useItemInHand(ItemSlot.LeftHand);
     if (place === 'right') return useItemInHand(ItemSlot.RightHand);
     if (place === 'potion') return useItemInHand(ItemSlot.Potion);
-    if (place !== 'sack' && place !== 'ground') {
+    if (place !== 'sack' && place !== 'ground' && place !== 'demimagicpouch') {
       this.sendMessage(player, 'You can\'t use an item from there.');
       return;
     }
@@ -40,6 +40,19 @@ export class UseCommand extends MacroCommand {
         useItemInHand(emptyHand);
       } else {
         this.sendMessage(player, 'You reach into your sack, and grab air.');
+      }
+      return;
+    }
+
+    if (place === 'demimagicpouch') {
+      const slot = +(detail ?? 0);
+      const item = player.accountLockers.pouch.items[slot];
+      if (item) {
+        this.game.inventoryHelper.removeItemFromPouch(player, slot);
+        this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
+        useItemInHand(emptyHand);
+      } else {
+        this.sendMessage(player, 'You reach into your pouch, and grab air.');
       }
       return;
     }
