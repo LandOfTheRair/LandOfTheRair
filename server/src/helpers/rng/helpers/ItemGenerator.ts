@@ -2,7 +2,7 @@
 import { isNumber } from 'lodash';
 import { Rollable } from 'lootastic';
 import { RNG } from 'rot-js/dist/rot';
-import { IItemDefinition, IRNGDungeonConfig, IRNGDungeonMetaConfig,
+import { ArmorClass, IItemDefinition, IRNGDungeonConfig, IRNGDungeonMetaConfig,
   ItemClass, RNGItemType, Stat, WeaponClass, WeaponClasses } from '../../../interfaces';
 
 export class RNGDungeonItemGenerator {
@@ -163,7 +163,8 @@ export class RNGDungeonItemGenerator {
       takenSprites.push(sprite);
 
       // add item base stats
-      if (WeaponClasses.includes(itemDef.itemClass as WeaponClass)) {
+      if (WeaponClasses.includes(itemDef.itemClass as WeaponClass)
+      || [ItemClass.Gloves, ItemClass.Claws, ItemClass.Boots].includes(itemDef.itemClass as ArmorClass)) {
         itemDef.baseMods.tier = this.mapMeta.itemProps.baseTier;
       }
 
