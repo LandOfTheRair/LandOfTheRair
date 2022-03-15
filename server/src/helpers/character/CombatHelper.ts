@@ -126,7 +126,7 @@ export class CombatHelper extends BaseService {
 
     if (attacker && damage > 0 && reflectPhysical > 0 && damageClass === DamageClass.Physical && !hasBeenReflected) {
       this.dealDamage(defender, attacker, {
-        damage: reflectPhysical,
+        damage: Math.min(damage, reflectPhysical),
         damageClass: DamageClass.Physical,
         hasBeenReflected: true,
         defenderDamageMessage: '%0 reflected your attack!'
@@ -135,7 +135,7 @@ export class CombatHelper extends BaseService {
 
     if (attacker && damage > 0 && reflectMagical > 0 && damageClass !== DamageClass.Physical && !hasBeenReflected) {
       this.dealDamage(defender, attacker, {
-        damage: reflectMagical,
+        damage: Math.min(damage, reflectMagical),
         damageClass,
         hasBeenReflected: true,
         defenderDamageMessage: '%0 reflected your attack!'
