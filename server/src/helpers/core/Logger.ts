@@ -1,12 +1,17 @@
 
 import { Injectable } from 'injection-js';
 import Rollbar from 'rollbar';
+
+import Winston from 'winston';
+import 'winston-syslog';
+
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class Logger extends BaseService {
 
   private rollbar: Rollbar;
+  private winston: Winston.Logger;
 
   public async init() {
     if (process.env.ROLLBAR_TOKEN) {
@@ -16,15 +21,33 @@ export class Logger extends BaseService {
         captureUnhandledRejections: true
       });
     }
+
+    if (process.env.PAPERTRAIL_HOST && process.env.PAPERTRAIL_PORT) {
+      const papertrail = new (Winston.transports as any).Syslog({
+        host: process.env.PAPERTRAIL_HOST,
+        port: +process.env.PAPERTRAIL_PORT,
+        protocol: 'tls4',
+        localhost: require('os').hostname(),
+        eol: '\n',
+      });
+
+      this.winston = Winston.createLogger({
+        format: Winston.format.simple(),
+        levels: Winston.config.syslog.levels,
+        transports: [papertrail]
+      });
+    }
   }
 
-  private _logWithTs(type: 'log'|'warn'|'error', tag, ...args) {
+  private _logWithTs(type: 'info'|'warn'|'error', tag, ...args) {
+
     // eslint-disable-next-line no-console
     console[type](new Date().toISOString(), `[${tag}]`, ...args);
+    this.winston?.[type]?.(`[${tag}] ${args}`);
   }
 
   public log(tag: string, args) {
-    this._logWithTs('log', tag, args);
+    this._logWithTs('info', tag, args);
   }
 
   public warn(tag: string, args) {

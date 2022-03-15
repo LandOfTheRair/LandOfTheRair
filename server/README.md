@@ -53,6 +53,11 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 
 * `STRIPE_TOKEN` - (optional) set this to the `sk_test` or `sk_live` key depending on which Stripe environment you want to test
 
+### Papertrail Variables
+
+* `PAPERTRAIL_HOST` - (optional) set this to `logsX.papertrailapp.com` (given by Papertrail)
+* `PAPERTRAIL_PORT` - (optional) set this to `XXXXX` (given by Papertrail)
+
 ### SMTP Variables
 
 * `SMTP_SERVICE` - (optional) the SMTP service to use (default: `gmail`)
