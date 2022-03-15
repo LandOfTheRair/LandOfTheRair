@@ -106,6 +106,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.isActing) return;
     this.isActing = true;
     this.errorMessage = '';
+    this.api.setAPIError('');
 
     this.http.post(this.api.finalHTTPURL + '/auth/password-check', this.newAccount)
       .subscribe(() => {
