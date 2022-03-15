@@ -20,10 +20,14 @@ export class Transmute extends Spell {
     let totalGold = 0;
 
     Object.keys(items).forEach(itemClass => {
-      if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse || itemClass === ItemClass.Bottle) return;
+      if (itemClass === ItemClass.Coin
+      || itemClass === ItemClass.Corpse) return;
 
       items[itemClass].forEach((groundItem: IGroundItem) => {
         if (groundItem.item.mods.owner) return;
+
+        const ounces = this.game.itemHelper.getItemProperty(groundItem.item, 'ounces');
+        if (itemClass === ItemClass.Bottle && ounces > 0) return;
 
         const quality = this.game.itemHelper.getItemProperty(groundItem.item, 'quality');
         if (quality > 0) return;

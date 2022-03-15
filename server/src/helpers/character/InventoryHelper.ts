@@ -202,8 +202,15 @@ export class InventoryHelper extends BaseService {
 
   public itemValue(check: ICharacter | null, item: ISimpleItem): number {
     const { ounces: baseOunces, sellValue: baseSellValue } = this.game.itemHelper.getItemDefinition(item.name);
-    const { value, sellValue, ounces } = this.game.itemHelper.getItemProperties(item, ['value', 'sellValue', 'ounces']);
+    const {
+      itemClass,
+      value,
+      sellValue,
+      ounces
+    } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'value', 'sellValue', 'ounces']);
     const baseItemValue = sellValue || value || 1;
+
+    if (itemClass === ItemClass.Bottle && ounces === 0) return 100;
 
     const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } = this.game.contentManager.getGameSetting('character');
 
