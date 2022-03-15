@@ -117,7 +117,7 @@ export function descTextFor(
     ? `This item affects your stats! ${affectedStats.map(x => `+${stats[x]} ${x.toUpperCase()}`).join(', ')}. ` : '';
 
   const tier = getProp(item, itemDef, 'tier');
-  const tierText = identifyTier > 2 ? `This item is tier ${tier}. ` : '';
+  const tierText = identifyTier > 2 && tier > 0 ? `This item is tier ${tier}. ` : '';
 
   const useEffect = getProp(item, itemDef, 'useEffect');
   const strikeEffect = getProp(item, itemDef, 'strikeEffect');
