@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { Allegiance, ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
+import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
 import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import * as allMacros from '../../assets/content/_output/macros.json';
 import { GameService } from './game.service';
@@ -194,7 +194,7 @@ export class MacrosService {
           || macro.ignoreAutoAttack
           || player.spellChannel
           || (this.gameService.hostilityLevelFor(player, target) !== 'hostile'
-              && target.allegiance !== Allegiance.NaturalResource)
+              && !target.agro[player.uuid])
           || (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())) return;
 
           this.gameService.sendCommandString(macro.macro, target.uuid);
