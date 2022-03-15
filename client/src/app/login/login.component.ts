@@ -12,6 +12,7 @@ import { GameService } from '../services/game.service';
 import { SocketService } from '../services/socket.service';
 import { ModalService } from '../services/modal.service';
 import { APIService } from '../services/api.service';
+import { AssetService } from '../services/asset.service';
 
 @Component({
   selector: 'app-login',
@@ -45,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     public gameService: GameService,
     public socketService: SocketService,
     public optionsService: OptionsService,
+    private assetService: AssetService,
     private modalService: ModalService,
     private api: APIService,
     private store: Store,
@@ -161,10 +163,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.lastCharSlot$.pipe(take(1)).subscribe(slot => {
         if (slot === -1 || !accountData?.account?.players?.[slot]) return;
 
-        setTimeout(() => {
+        let hasLoaded = false;
+        const interval = setInterval(() => {
+          if (hasLoaded) return;
+          if (!this.assetService.assetsLoaded) return;
+
           this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: slot });
           this.store.dispatch(new SetActiveWindow('map'));
-        }, 0);
+
+          hasLoaded = true;
+          clearInterval(interval);
+        }, 1000);
       });
     }
   }
