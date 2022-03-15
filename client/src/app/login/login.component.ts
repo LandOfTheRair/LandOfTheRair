@@ -46,9 +46,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     public gameService: GameService,
     public socketService: SocketService,
     public optionsService: OptionsService,
+    public api: APIService,
     private assetService: AssetService,
     private modalService: ModalService,
-    private api: APIService,
     private store: Store,
     private http: HttpClient
   ) { }
@@ -112,7 +112,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
         this.socketService.emit(GameServerEvent.Login, this.newAccount);
       }, (err) => {
-        this.errorMessage = err.error.error;
+        this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
         this.isActing = false;
       });
   }
@@ -135,7 +135,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.socketService.emit(GameServerEvent.Register, this.newAccount);
       }, (err) => {
-        this.errorMessage = err.error.error;
+        this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
         this.isActing = false;
       });
 

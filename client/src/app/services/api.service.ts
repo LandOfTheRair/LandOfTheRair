@@ -6,6 +6,11 @@ import { environment } from '../../environments/environment';
 })
 export class APIService {
 
+  private lastAPIError: string;
+  public get apiError(): string {
+    return this.lastAPIError;
+  }
+
   public get overrideAPIURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('apiUrl');
@@ -30,5 +35,9 @@ export class APIService {
     }
 
     return environment.server.http;
+  }
+
+  public setAPIError(message: string) {
+    this.lastAPIError = message;
   }
 }

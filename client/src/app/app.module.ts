@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,6 +27,7 @@ import { ModalService } from './services/modal.service';
 import { OptionsService } from './services/options.service';
 import { SocketService } from './services/socket.service';
 import { SoundService } from './services/sound.service';
+import { HttpErrorInterceptor } from './_shared/interceptors/http-error.interceptor';
 
 
 const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
@@ -101,6 +102,11 @@ export class AccountStorageEngine implements StorageEngine {
     })
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: (logger: LoggerService) => () => {

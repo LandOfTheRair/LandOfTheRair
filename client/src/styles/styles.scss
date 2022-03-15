@@ -34,7 +34,7 @@ $landoftherair-theme: mat-dark-theme($landoftherair-primary, $landoftherair-acce
 }
 
 .split-button {
-  
+
   display: flex;
 
   mat-form-field {
@@ -50,6 +50,10 @@ $landoftherair-theme: mat-dark-theme($landoftherair-primary, $landoftherair-acce
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-toolbar.mat-warn {
+  background: #7C0D0E !important;
+}
 
 @import 'theme';
 

@@ -46,3 +46,11 @@ div.multi-menu-container {
 .ann-window {
   color: #fff;
 }
+
+.error-window {
+  visibility: hidden;
+
+  &.visible {
+    visibility: visible;
+  }
+}
