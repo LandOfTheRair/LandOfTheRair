@@ -116,6 +116,11 @@ export class CombatHelper extends BaseService {
   public dealDamage(attacker: ICharacter | null, defender: ICharacter, args: DamageArgs): void {
     if (this.game.characterHelper.isDead(defender)) return;
 
+    // npc on npc violence improvements
+    if (attacker && defender && !this.game.characterHelper.isPlayer(attacker) && !this.game.characterHelper.isPlayer(defender)) {
+      args.damage *= 5;
+    }
+
     const { damage, attackerWeapon, isHeal, isMelee, isOverTime, hasBeenReflected,
       damageClass, attackerDamageMessage, defenderDamageMessage, customSfx } = args;
 
