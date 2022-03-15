@@ -5,6 +5,7 @@ export class HolyFire extends SpellCommand {
 
   override aliases = ['holyfire', 'cast holyfire'];
   override requiresLearn = true;
+  override canTargetSelf = true;
   override spellRef = 'HolyFire';
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
