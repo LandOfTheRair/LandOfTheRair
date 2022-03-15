@@ -10,7 +10,10 @@ export class RageStance extends SpellCommand {
   override spellRef = 'RageStance';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !caster.effects.outgoing.length && !!caster.items.equipment[ItemSlot.RightHand];
+    return super.canUse(caster, target)
+        && !caster.effects.outgoing.length
+        && !this.game.effectHelper.hasEffect(caster, 'ParryStance')
+        && !!caster.items.equipment[ItemSlot.RightHand];
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
