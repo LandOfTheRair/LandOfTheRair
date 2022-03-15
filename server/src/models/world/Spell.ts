@@ -10,9 +10,6 @@ export class Spell implements BaseSpell {
 
   constructor(protected game: Game) {}
 
-  getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
-    throw new Error('Method not implemented.');
-  }
   public sendMessage(character: ICharacter|string, message: MessageInfo, messageTypes: MessageType[] = [MessageType.Miscellaneous]): void {
     this.game.messageHelper.sendLogMessageToPlayer(character, message, messageTypes);
   }
@@ -33,7 +30,7 @@ export class Spell implements BaseSpell {
         duration: override.duration ?? this.getDuration(caster, target, spellData),
         extra: {
           charges: override.charges ?? this.getCharges(caster, target, spellData),
-          potency: override.potency ?? this.game.spellManager.getPotency(caster, target, spellData)
+          potency: override.potency ?? this.getPotency(caster, target, spellData)
         }
       },
       tooltip: {
@@ -52,6 +49,10 @@ export class Spell implements BaseSpell {
 
   public getCharges(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
     return 0;
+  }
+
+  public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
+    return this.game.spellManager.getPotency(caster, target, spellData);
   }
 
 }
