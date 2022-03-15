@@ -33,7 +33,7 @@ export class AccountComponent implements OnInit, OnDestroy {
   public get canChangeTag() {
     return !this.account.discordTag
         || (this.account.discordTag
-        && this.account.discordTag.length === 18);
+        && this.account.discordTag.length > 16);
   }
 
   constructor(
