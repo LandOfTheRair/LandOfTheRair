@@ -9,9 +9,11 @@ export class HolyFire extends SpellCommand {
   override spellRef = 'HolyFire';
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    super.execute(player, args);
+    const res = super.execute(player, args);
 
-    this.game.commandHandler.getSkillRef('Light').execute(player, { ...args, overrideEffect: { range: 0, name: 'Light', potency: 1 } });
+    if (res) {
+      this.game.commandHandler.getSkillRef('Light').execute(player, { ...args, overrideEffect: { range: 0, name: 'Light', potency: 1 } });
+    }
   }
 
 }

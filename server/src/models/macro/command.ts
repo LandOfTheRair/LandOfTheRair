@@ -212,7 +212,7 @@ export class SpellCommand extends SkillCommand {
   }
 
   // called when a player casts a spell at something
-  protected castSpell(caster: ICharacter | null, args: Partial<IMacroCommandArgs>) {
+  protected castSpell(caster: ICharacter | null, args: Partial<IMacroCommandArgs>): string | boolean {
 
     // if the spell is party-based, target the whole party
     let targets: ICharacter[] = [];
@@ -247,15 +247,17 @@ export class SpellCommand extends SkillCommand {
     }
 
     // hit each of the targets
-    targets.forEach((target, idx) => {
+    const didHit = targets.map((target, idx) => {
       if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
 
       if (!this.canCastSpell(caster, target)) return;
 
       args.targetNumber = idx;
 
-      this.castSpellAt(caster, target, args);
+      return this.castSpellAt(caster, target, args);
     });
+
+    if (didHit.some(hit => !hit)) return false;
 
     // visually cast the spell anyway
     if ((caster || primaryTarget) && spellData.spellMeta.aoe) {
@@ -264,10 +266,12 @@ export class SpellCommand extends SkillCommand {
       const map = primaryTarget?.map ?? caster?.map ?? '';
 
       if (x > 0 && y > 0 && map) {
-        this.castSpellAt(caster, null, args, { x, y, map });
+        return this.castSpellAt(caster, null, args, { x, y, map });
       }
 
     }
+
+    return true;
   }
 
   // whether or not the spell can be cast - simple check that gets rolled into canUse
@@ -291,7 +295,7 @@ export class SpellCommand extends SkillCommand {
     target: ICharacter | null,
     args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string }
-  ) {
+  ): boolean {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
     if (!spellData) {
       this.game.logger.warn('SpellCommand', `No spellData found for ${this.spellRef}.`);
@@ -300,16 +304,17 @@ export class SpellCommand extends SkillCommand {
         this.game.messageHelper.sendSimpleMessage(caster, `Could not cast ${this.spellRef} - no data was found.`);
       }
 
-      return;
+      return false;
     }
 
-    const doSpellCast = () => {
+    const doSpellCast = (): boolean => {
 
       // if there's no target, we bail
       if (!targetsPosition && (!target || this.game.characterHelper.isDead(target))) {
-
-        return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+        this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+        return false;
       }
+
 
       // if we have a caster, they are no longer channeling, and we need to take their mp
       if (caster) {
@@ -317,14 +322,15 @@ export class SpellCommand extends SkillCommand {
         && target
         && !isNumber(args?.targetNumber)
         && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
-          return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+          this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+          return false;
         }
 
         const castTargets = target ? [target] : [];
 
         if ((spellData.spellMeta.aoe || target?.name)
           && !args?.targetNumber
-          && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return;
+          && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return false;
       }
 
       // try to reflect the spell if possible
@@ -339,6 +345,8 @@ export class SpellCommand extends SkillCommand {
       }
 
       this.game.spellManager.castSpell(this.spellRef, caster, hitTarget, args?.overrideEffect, args?.callbacks, args, targetsPosition);
+
+      return true;
     };
 
     if (caster && spellData.castTime) {
@@ -346,16 +354,16 @@ export class SpellCommand extends SkillCommand {
         message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...`
       });
       caster.spellChannel = { ticks: spellData.castTime, callback: doSpellCast };
-      return;
+      return true;
     }
 
-    doSpellCast();
+    return doSpellCast();
   }
 
   // default execute, primarily used by players
-  override execute(player: IPlayer, args: IMacroCommandArgs) {
+  override execute(player: IPlayer, args: IMacroCommandArgs): string | boolean | void {
     if (!args.stringArgs && this.canTargetSelf) args.stringArgs = player.uuid;
-    this.castSpell(player, args);
+    return this.castSpell(player, args);
   }
 
   // default use, primarily used by npcs
