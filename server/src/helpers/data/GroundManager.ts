@@ -297,6 +297,16 @@ export class GroundManager extends BaseService {
     return Array(count).fill(null).map(() => this.game.itemCreator.rerollItem(item.item, false));
   }
 
+  // used to remove RNG dungeon grounds - not for anywhere else
+  public async removeGround(mapName: string): Promise<void> {
+    await this.game.groundDB.removeGround(mapName);
+
+    delete this.ground[mapName];
+    delete this.saveableGround[mapName];
+    delete this.groundEntities[mapName];
+    delete this.loadedSpawners[mapName];
+  }
+
   public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
     this.removeItemFromSpecificGround(this.ground[mapName] || {}, x, y, itemClass, uuid, count);
     this.removeItemFromSpecificGround(this.saveableGround[mapName] || {}, x, y, itemClass, uuid, count);
