@@ -15,6 +15,8 @@ export class HolyAura extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (effect.effectInfo.charges) {
       effect.effectInfo.charges -= currentDamage;
       if (effect.effectInfo.charges <= 0) {
