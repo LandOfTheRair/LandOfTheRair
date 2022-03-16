@@ -24,7 +24,6 @@ export class ConjureSword extends Spell {
     }
 
     this.sendMessage(caster, { message: `You channel the ether into the form of a ${weaponType.toLowerCase()}.` });
-    console.log(item);
 
     const skill = Math.max(spellCastArgs.potency, this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1);
 
