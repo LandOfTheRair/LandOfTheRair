@@ -51,7 +51,7 @@ export class Plague extends Effect {
     const mapState = this.game.worldManager.getMap(char.map)?.state;
     if (!mapState) return;
 
-    const nearby = mapState.getAllAlliesInRange(char, 1).filter(x => x !== char
+    const nearby = mapState.getAllInRange(char, 1).filter(x => x !== char
       && caster ? this.game.targettingHelper.checkTargetForHostility(caster, x) : true
       && !this.game.effectHelper.hasEffect(x, 'Plague'));
 
