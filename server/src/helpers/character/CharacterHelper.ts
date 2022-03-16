@@ -609,6 +609,7 @@ export class CharacterHelper extends BaseService {
   // thieves and warriors have different mpregen setups
   public getMPRegen(character: ICharacter): number {
 
+    const base = this.getStat(character, Stat.MPRegen);
     let boost = 0;
 
     // healers and mages get a boost because their primary function is spellcasting
@@ -619,12 +620,17 @@ export class CharacterHelper extends BaseService {
     // thieves not in combat regen faster
     if (character.baseClass === BaseClass.Thief) {
 
-      // hidden or singing thieves have no regen
-      if (this.game.effectHelper.hasEffect(character, 'Hidden') || this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
+      boost = Math.max(0, Math.floor(base * this.game.traitHelper.traitLevelValue(character, 'ReplenishingShadows')));
+
+      // hidden thieves can regen stealth slightly faster based on their mpregen
+      if (this.game.effectHelper.hasEffect(character, 'Hidden')) return boost;
+
+      // singing thieves have a way to get their stealth back
+      if (this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
 
       // thieves in combat get less regen than out of
-      if (character.combatTicks <= 0) return this.game.contentManager.getGameSetting('character', 'thiefOOCRegen') ?? 10;
-      return                                 this.game.contentManager.getGameSetting('character', 'thiefICRegen') ?? 1;
+      if (character.combatTicks <= 0) return boost + this.game.contentManager.getGameSetting('character', 'thiefOOCRegen') ?? 10;
+      return                                 boost + this.game.contentManager.getGameSetting('character', 'thiefICRegen') ?? 1;
     }
 
     // warriors are the inverse of thieves
@@ -633,7 +639,7 @@ export class CharacterHelper extends BaseService {
       return                                 this.game.contentManager.getGameSetting('character', 'warriorICRegen') ?? 3;
     }
 
-    return this.getStat(character, Stat.MPRegen) + boost;
+    return base + boost;
   }
 
   // get the stealth value for a character
