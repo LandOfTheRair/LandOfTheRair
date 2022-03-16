@@ -194,7 +194,7 @@ export class MacrosService {
           || macro.ignoreAutoAttack
           || player.spellChannel
           || (this.gameService.hostilityLevelFor(player, target) !== 'hostile'
-              && !target.agro[player.uuid])
+              && !target.agro[player.uuid] && !player.agro[target.uuid])
           || (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())) return;
 
           this.gameService.sendCommandString(macro.macro, target.uuid);
