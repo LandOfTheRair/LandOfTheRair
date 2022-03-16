@@ -110,14 +110,14 @@
   </div>
 </div>
 
-<div class="ann-window error-window window active m-b-50" [class.visible]="errorMessage || api.error">
+<div class="ann-window error-window window active m-b-50" [class.visible]="errorMessage || api.apiError">
   <mat-toolbar class="window-header" color="warn">An Unexpected Error Occurred</mat-toolbar>
 
   <div class="window-body p-10" *ngIf="errorMessage">
     <strong>Error:</strong> {{ errorMessage }}
   </div>
 
-  <div class="window-body p-10" *ngIf="api.error">
-    <strong>API Error:</strong> {{ api.error }}
+  <div class="window-body p-10" *ngIf="api.apiError">
+    <strong>API Error:</strong> {{ api.apiError }}
   </div>
 </div>
