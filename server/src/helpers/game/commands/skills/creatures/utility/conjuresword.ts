@@ -1,4 +1,5 @@
-import { GameServerResponse, ICharacter, IDialogChatAction, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, WeaponClass, WeaponClasses } from '../../../../../../interfaces';
+import { GameServerResponse, ICharacter, IDialogChatAction, IMacroCommandArgs,
+  IPlayer, ItemClass, ItemSlot, WeaponClass, WeaponClasses } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ConjureSword extends SpellCommand {
