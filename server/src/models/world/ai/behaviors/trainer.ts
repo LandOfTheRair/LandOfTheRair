@@ -286,6 +286,11 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
+        if (player.level >= 30 && !player.subscriptionTier) {
+          if (!game.currencyHelper.hasCurrency(player, 10000)) return 'You do need to pay for this, you know. 10,000 gold is not a lot!';
+          game.currencyHelper.loseCurrency(player, 10000);
+        }
+
         game.traitHelper.resetTraits(player);
 
         game.effectHelper.removeSimilarEffects(
