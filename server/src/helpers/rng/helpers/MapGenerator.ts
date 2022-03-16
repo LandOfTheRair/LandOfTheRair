@@ -544,6 +544,8 @@ export class MapGenerator {
 
     this.tiledJSON.properties.respawnKick = true;
     this.tiledJSON.properties.blockEntryMessage = this.mapMeta.mapProps.blockEntryMessage;
+    this.tiledJSON.properties.maxLevel = this.mapMeta.mapProps.maxLevel;
+    this.tiledJSON.properties.maxSkill = this.mapMeta.mapProps.maxSkill;
   }
 
   // place green npcs on the map

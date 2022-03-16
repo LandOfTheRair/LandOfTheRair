@@ -142,6 +142,8 @@ export interface IRNGDungeonMetaConfig {
     x: number;
     y: number;
     blockEntryMessage: string;
+    maxLevel: number;
+    maxSkill: number;
   };
 
   objProps: {
