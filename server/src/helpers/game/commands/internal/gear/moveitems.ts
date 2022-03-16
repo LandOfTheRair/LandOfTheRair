@@ -264,7 +264,8 @@ export class MoveItems extends MacroCommand {
   }
 
   private getEquipmentSlot(player: IPlayer, item: ISimpleItem): ItemSlot | null {
-    const slot = EquipHash[this.game.itemHelper.getItemProperty(item, 'itemClass')];
+    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    const slot = EquipHash[itemClass];
 
     if (slot === ItemSlot.Ring) {
       if (player.items.equipment[ItemSlot.Ring1] && player.items.equipment[ItemSlot.Ring2]) return null;
@@ -286,6 +287,11 @@ export class MoveItems extends MacroCommand {
       if (player.items.equipment[ItemSlot.Robe1]) return ItemSlot.Robe2;
       if (player.items.equipment[ItemSlot.Robe2]) return ItemSlot.Robe1;
       return ItemSlot.Robe1;
+    }
+
+    // wands can only be equipped if you have the trait to do it
+    if (slot === ItemSlot.Ammo && itemClass === ItemClass.Wand && !this.game.traitHelper.hasLearnedTrait(player, 'MagicalStrikes')) {
+      return null;
     }
 
     return slot;

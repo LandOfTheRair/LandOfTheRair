@@ -348,9 +348,17 @@ export class DamageHelperPhysical extends BaseService {
 
     // if we have ammo, we grab the bonus from that
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
-    if (canShoot && ammo) {
+    const ammoClass = this.game.itemHelper.getItemProperty(ammo, 'itemClass');
+
+    if (canShoot && ammo && ammoClass !== ItemClass.Wand) {
       const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
       bonusAttackRolls += (tier ?? 0) + this.game.traitHelper.traitLevelValue(attacker, 'StrongShots');
+    }
+
+    // if we have a wand, we grab the tier of it for bonus rolls
+    if (ammoClass === ItemClass.Wand) {
+      const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
+      bonusAttackRolls += (tier ?? 0);
     }
 
     const { damage, isWeak, isStrong } = this.determineWeaponInformation(attacker, weapon, attackerSkill, bonusAttackRolls);
@@ -887,8 +895,13 @@ export class DamageHelperPhysical extends BaseService {
 
     // if we have ammo equipped, shoot it if our weapon is pew-pew
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
-    if (canShoot && ammo) {
-      const { shots, damageClass: ammoDamageClass } = this.game.itemHelper.getItemProperties(ammo, ['damageClass', 'shots']);
+    const {
+      shots,
+      damageClass: ammoDamageClass,
+      itemClass: ammoItemClass
+    } = this.game.itemHelper.getItemProperties(ammo, ['damageClass', 'shots', 'itemClass']);
+
+    if (canShoot && ammo && ammoItemClass !== ItemClass.Wand) {
 
       // if the ammo has a custom damage class, use that over everything else
       if (ammoDamageClass) {
@@ -901,6 +914,11 @@ export class DamageHelperPhysical extends BaseService {
         this.game.itemHelper.setItemProperty(ammo, 'shots', numShots - 1);
         if (numShots - 1 <= 0) this.game.characterHelper.setEquipmentSlot(attacker, ItemSlot.Ammo, undefined);
       }
+    }
+
+    // if we have "wand ammo" equipped, we can use it to change damage class (for non-bows)
+    if (!canShoot && ammo && ammoDamageClass && ammoItemClass === ItemClass.Wand) {
+      args.damageClass = ammoDamageClass;
     }
 
     const attackerScope = this.getAttackerScope(attacker, attackerWeapon, args);
@@ -1058,7 +1076,9 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     // if our ammo was shot and can apply an effect, we give it a spin
-    if (canShoot && ammo) {
+    // we must have a bow to trigger ammo effects, it does not work for wand
+    // similarly, we must have a melee weapon to trigger wand effects, but not ammo
+    if ((canShoot && ammo && ammoItemClass !== ItemClass.Wand) || (!canShoot && ammo && ammoItemClass === ItemClass.Wand)) {
       const ammoStrikeEffect: IItemEffect = this.game.itemHelper.getItemProperty(ammo, 'strikeEffect');
 
       if (ammoStrikeEffect) {

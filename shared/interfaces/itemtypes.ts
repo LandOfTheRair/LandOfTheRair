@@ -96,7 +96,7 @@ export enum MiscClass {
 export type ItemClass = WeaponClass | ArmorClass | MiscClass;
 export const ItemClass = Object.assign({}, WeaponClass, ArmorClass, MiscClass);
 
-export const AmmoClasses = [ItemClass.Arrow];
+export const AmmoClasses = [ItemClass.Arrow, ItemClass.Wand];
 
 export const SharpWeaponClasses = {
   [ItemClass.Axe]: true,
