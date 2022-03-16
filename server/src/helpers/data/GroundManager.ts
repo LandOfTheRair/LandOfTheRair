@@ -85,6 +85,7 @@ export class GroundManager extends BaseService {
       this.groundEntities[groundEntity.map]._id = groundEntity._id;
       this.groundEntities[groundEntity.map].partyName = groundEntity.partyName || '';
       this.groundEntities[groundEntity.map].treasureChests = groundEntity.treasureChests || {};
+
       this.saveableGround[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.ground[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.loadedSpawners[groundEntity.map] = cloneDeep(groundEntity.spawners);
@@ -301,10 +302,13 @@ export class GroundManager extends BaseService {
   public async removeGround(mapName: string): Promise<void> {
     await this.game.groundDB.removeGround(mapName);
 
-    delete this.ground[mapName];
-    delete this.saveableGround[mapName];
-    delete this.groundEntities[mapName];
-    delete this.loadedSpawners[mapName];
+    this.ground[mapName] = {};
+    this.saveableGround[mapName] = {};
+    this.loadedSpawners[mapName] = [];
+
+    this.groundEntities[mapName] = new Ground();
+    this.groundEntities[mapName]._id = new ObjectId();
+    this.groundEntities[mapName].treasureChests = {};
   }
 
   public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
