@@ -43,7 +43,12 @@ export class Logger extends BaseService {
 
     // eslint-disable-next-line no-console
     console[type](new Date().toISOString(), `[${tag}]`, ...args);
-    this.winston?.[type]?.(`[${tag}] ${args}`);
+
+    try {
+      this.winston?.[type]?.(`[${tag}] ${args}`);
+
+    // who logs the logger?
+    } catch {}
   }
 
   public log(tag: string, args) {
