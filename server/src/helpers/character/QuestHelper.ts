@@ -37,7 +37,7 @@ export class QuestHelper extends BaseService {
 
     // quests with no requirements are instantly completable, but _must_ exist in permanentQuestCompletion
     if (requirement.type === QuestRequirementType.None) {
-      return !!player.quests.permanentQuestCompletion[quest];
+      return true;
     }
 
     // items only require being held
@@ -88,6 +88,10 @@ export class QuestHelper extends BaseService {
     if (!questRef) return false;
 
     return this.isRequirementComplete(player, quest, questRef.requirements);
+  }
+
+  public isQuestPermanentlyComplete(player: IPlayer, quest: string): boolean {
+    return !!player.quests.permanentQuestCompletion[quest];
   }
 
   // add arbitrary data to the quest

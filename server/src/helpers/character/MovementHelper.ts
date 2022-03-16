@@ -210,7 +210,7 @@ export class MovementHelper extends BaseService {
     if (requireQuest) {
 
       // if the player has permanent completion for it, they can always get through
-      if (!this.game.questHelper.isQuestComplete(player, requireQuest)) {
+      if (!this.game.questHelper.isQuestPermanentlyComplete(player, requireQuest)) {
 
         // but if not, we check if we need a certain quest progress
         if (requireQuestProgress) {
@@ -225,7 +225,7 @@ export class MovementHelper extends BaseService {
 
     // check if player has completed quest
     if (requireQuestComplete) {
-      if (!this.game.questHelper.isQuestComplete(player, requireQuestComplete)) return;
+      if (!this.game.questHelper.isQuestPermanentlyComplete(player, requireQuestComplete)) return;
     }
 
     let didTeleport = false;
