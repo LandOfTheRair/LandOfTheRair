@@ -679,6 +679,11 @@ export class MapScene extends Phaser.Scene {
   public init(data) {
     this.hideWelcome = data.hideWelcome;
     this.player = data.player;
+
+    if (data.resetVisibilityFlags) {
+      this.specialRenders.truesight = false;
+      this.specialRenders.eagleeye = false;
+    }
   }
 
   public create() {
