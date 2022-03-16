@@ -33,6 +33,7 @@ export interface IStatusEffectInfo {
 
   applyEffect?: IItemEffect;                    // the applied effect (Apply)
   isContagious?: boolean;                       // if this effect is contagious and spreads to nearby creatures (Plague)
+  isSpreadEffect?: boolean;                     // if this effect is spread to someone else, this is set (Plague)
   isFrozen?: boolean;                           // if you're currently frozen from the effect (Stun, Chill)
   enrageTimer?: number;                         // the enrage timer associated with this effect (Mood)
   startTimer?: number;                          // when this effect starts (Mood)

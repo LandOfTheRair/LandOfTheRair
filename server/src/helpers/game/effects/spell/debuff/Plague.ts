@@ -16,9 +16,11 @@ export class Plague extends Effect {
         effect.effectInfo.isContagious = this.game.traitHelper.hasLearnedTrait(caster as IPlayer, 'ContagiousPlague');
 
         // pandemic lets us spread immediately
-        const numSpreads = this.game.traitHelper.traitLevelValue(caster, 'Pandemic');
-        for (let i = 0; i < numSpreads; i++) {
-          this.spread(char, effect, caster);
+        if (!effect.effectInfo.isSpreadEffect) {
+          const numSpreads = this.game.traitHelper.traitLevelValue(caster, 'Pandemic');
+          for (let i = 0; i < numSpreads; i++) {
+            this.spread(char, effect, caster);
+          }
         }
       }
     }
@@ -64,7 +66,8 @@ export class Plague extends Effect {
         effect: {
           duration: Math.floor((effect.endsAt - Date.now()) / 1000),
           extra: {
-            ...effect.effectInfo
+            ...effect.effectInfo,
+            isSpreadEffect: true
           }
         }
       });
