@@ -1,5 +1,5 @@
 import { ISilverPerk } from './accountpremium';
-import { Allegiance, Currency, Stat } from './building-blocks';
+import { Allegiance, BaseClass, Currency, Stat } from './building-blocks';
 import { DynamicEventRarity } from './dynamicevent';
 
 export interface IWeaponTier {
@@ -107,6 +107,42 @@ export interface IGameSettings {
     normalLootMult: number;
 
     potionDrops: Record<string, Record<string, number>>;
+  };
+
+  npcscript: {
+    trainer: {
+      assessCost: number;
+      trainCost: number;
+      resetCost: number;
+    };
+
+    steelrose: {
+      maxListings: number;
+    };
+
+    mpdoc: {
+      levels: number[];
+      normalizers: number[];
+      costs: Array<{ min: number; max: number }>;
+      values: Record<BaseClass, number[]>;
+    };
+
+    hpdoc: {
+      levels: number[];
+      normalizers: number[];
+      costs: Array<{ min: number; max: number }>;
+      values: Record<BaseClass, number[]>;
+    };
+
+    buffer: {
+      duration: number;
+      buffs: string[];
+    };
+
+    axpswapper: {
+      level: number;
+    };
+
   };
 
   players: {

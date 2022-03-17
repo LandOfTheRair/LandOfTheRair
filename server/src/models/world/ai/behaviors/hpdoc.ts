@@ -8,7 +8,7 @@ export class HPDocBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
 
-    const hpTiers: Record<BaseClass, number[]> = {
+    const hpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'hpdoc.costs') ?? {
       [BaseClass.Mage]:       [100, 375, 600, 2400],
       [BaseClass.Thief]:      [100, 425, 700, 2800],
       [BaseClass.Healer]:     [100, 400, 650, 2600],
@@ -16,11 +16,11 @@ export class HPDocBehavior implements IAIBehavior {
       [BaseClass.Traveller]:  [100, 600, 550, 2200]
     };
 
-    const levelTiers = [0, 13, 25, 50];
+    const levelTiers = game.contentManager.getGameSetting('npcscript', 'hpdoc.levels') ?? [0, 13, 25, 50];
 
-    const hpNormalizers = [100, 200, 300, 1500];
+    const hpNormalizers = game.contentManager.getGameSetting('npcscript', 'hpdoc.normalizers') ?? [100, 200, 300, 1500];
 
-    const hpCosts = [
+    const hpCosts = game.contentManager.getGameSetting('npcscript', 'hpdoc.costs') ?? [
       { min: 100,     max: 500 },
       { min: 5000,    max: 15000 },
       { min: 100000,  max: 1000000 },

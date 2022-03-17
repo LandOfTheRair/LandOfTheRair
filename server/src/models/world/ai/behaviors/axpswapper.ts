@@ -7,6 +7,8 @@ export class AXPSwapperBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IAXPSwapper) {
 
+    const level = game.contentManager.getGameSetting('npcscript', 'axpswapper.level') ?? 50;
+
     parser.addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
@@ -14,7 +16,7 @@ export class AXPSwapperBehavior implements IAIBehavior {
         if (!player) return 'You do not exist.';
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
-        if (player.level < 50) return 'You might want to come back when you get a little bit stronger.';
+        if (player.level < level) return 'You might want to come back when you get a little bit stronger.';
 
         const message = `Greetings, ${player.name}!
         I can provide you with a way to become more powerful, at the cost of killing more powerful creatures.
@@ -44,7 +46,7 @@ export class AXPSwapperBehavior implements IAIBehavior {
         if (!player) return 'You do not exist.';
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
-        if (player.level < 50) return 'You might want to come back when you get a little bit stronger.';
+        if (player.level < level) return 'You might want to come back when you get a little bit stronger.';
 
         player.gainingAXP = !player.gainingAXP;
 

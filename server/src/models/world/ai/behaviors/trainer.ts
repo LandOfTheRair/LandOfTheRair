@@ -133,8 +133,12 @@ export class TrainerBehavior implements IAIBehavior {
         const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
         if (skillLevel > maxSkillTrain) return 'You\'re way beyond my comprehension.';
 
-        if (!game.currencyHelper.hasCurrency(player, 50)) return 'You do need to pay for this, you know. 50 gold is not a lot!';
-        game.currencyHelper.loseCurrency(player, 50);
+        const assessCost = game.contentManager.getGameSetting('npcscript', 'trainer.assessCost') ?? 50;
+        if (!game.currencyHelper.hasCurrency(player, assessCost)) {
+          return `You do need to pay for this, you know. ${assessCost} gold is not a lot!`;
+        }
+
+        game.currencyHelper.loseCurrency(player, assessCost);
 
         const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
 
@@ -207,7 +211,10 @@ export class TrainerBehavior implements IAIBehavior {
         if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
         if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
 
-        if (!game.currencyHelper.hasCurrency(player, 200)) return 'You do need to pay for this, you know. 200 gold is not a lot!';
+        const trainCost = game.contentManager.getGameSetting('npcscript', 'trainer.trainCost') ?? 200;
+        if (!game.currencyHelper.hasCurrency(player, trainCost)) {
+          return `You do need to pay for this, you know. ${trainCost} gold is not a lot!`;
+        }
 
         if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
 
@@ -217,7 +224,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
 
-        game.currencyHelper.loseCurrency(player, 200);
+        game.currencyHelper.loseCurrency(player, trainCost);
 
         return `You've gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
       });
@@ -287,8 +294,11 @@ export class TrainerBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         if (player.level >= 30 && !player.subscriptionTier) {
-          if (!game.currencyHelper.hasCurrency(player, 10000)) return 'You do need to pay for this, you know. 10,000 gold is not a lot!';
-          game.currencyHelper.loseCurrency(player, 10000);
+          const resetCost = game.contentManager.getGameSetting('npcscript', 'trainer.resetCost') ?? 10000;
+          if (!game.currencyHelper.hasCurrency(player, resetCost)) {
+            return `You do need to pay for this, you know. ${resetCost} gold is not a lot!`;
+          }
+          game.currencyHelper.loseCurrency(player, resetCost);
         }
 
         game.traitHelper.resetTraits(player);

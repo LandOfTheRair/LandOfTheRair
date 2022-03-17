@@ -8,7 +8,7 @@ export class MPDocBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IMPDocBehavior) {
 
-    const mpTiers: Record<BaseClass, number[]> = {
+    const mpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'mpdoc.values') ?? {
       [BaseClass.Mage]:       [0, 0, 1000, 2000],
       [BaseClass.Thief]:      [0, 0, 300, 500],
       [BaseClass.Healer]:     [0, 0, 900, 1800],
@@ -16,11 +16,11 @@ export class MPDocBehavior implements IAIBehavior {
       [BaseClass.Traveller]:  [0, 0, 0, 0]
     };
 
-    const levelTiers = [0, 13, 25, 50];
+    const levelTiers = game.contentManager.getGameSetting('npcscript', 'mpdoc.levels') ?? [0, 13, 25, 50];
 
-    const mpNormalizers = [100, 200, 300, 1500];
+    const mpNormalizers = game.contentManager.getGameSetting('npcscript', 'mpdoc.normalizers') ?? [100, 200, 300, 1500];
 
-    const mpCosts = [
+    const mpCosts = game.contentManager.getGameSetting('npcscript', 'mpdoc.costs') ?? [
       { min: 100,     max: 500 },
       { min: 10000,   max: 30000 },
       { min: 200000,  max: 2000000 },

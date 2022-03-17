@@ -74,8 +74,10 @@ export class SteelroseBehavior implements IAIBehavior {
         const listingError = itemListError(player, sellItem, game.itemHelper.getItemDefinition(sellItem.name), price);
         if (listingError) return listingError;
 
+        const maxListingSetting = game.contentManager.getGameSetting('npcscript', 'steelrose.maxListings') ?? 25;
+
         const curListings = await game.marketDB.numberOfListings(player.username);
-        const maxListings = game.subscriptionHelper.maxMarketListings(player, 25);
+        const maxListings = game.subscriptionHelper.maxMarketListings(player, maxListingSetting);
 
         if (curListings >= maxListings) return 'You have too many items on the market board right now!';
 
