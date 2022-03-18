@@ -525,4 +525,9 @@ export class ItemHelper extends BaseService {
     return Object.keys(this.game.contentManager.allItems).filter(x => new RegExp(`.*${search}.*`, 'i').test(x));
   }
 
+  // check if the item comes from an "ether force" map
+  public isEtherForceItem(itemName: string): boolean {
+    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs.map(x => x.name).some(name => itemName.includes(name));
+  }
+
 }

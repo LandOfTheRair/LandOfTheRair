@@ -23,6 +23,7 @@ export * from './itemmodder';
 export * from './mpdoc';
 export * from './peddler';
 export * from './resetter';
+export * from './rngartificer';
 export * from './smith';
 export * from './spoilerlogger';
 export * from './steelrose';
