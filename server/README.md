@@ -87,3 +87,40 @@ To set up Discord, you'll need the above environment variables (`DISCORD_*`) and
 ## Testing While Using the Prod Client
 
 You can append `?apiUrl=localhost:6795` (or whatever you set the port to) to the URL of the production client (`https://play.rair.land/`) to test your changes locally. 
+
+## Overriding Any Configuration File
+
+While a lot of configurations are bundled with the game to ensure they work, [any configuration from the Content repository](https://github.com/LandOfTheRair/Content/) that gets put in the `_output` folder can be overridden by putting them in a `config/` folder. All files must be in JSON format, as the raw, uncompiled version (YML) will not be compiled by the game server. These files are not patched on top of existing data, and must contain all relevant data (ie, they will replace whatever exists in the game). This means that for some configuration files, the game will break unless everything is specified exactly in the same structure.
+
+The full list of configuration files as-is:
+
+* `allegiancestats.json` - used to determine the "secret" bonuses for each allegiance on character creation
+* `attributestats.json` - used to determine what attributes are valid for elite NPCs
+* `charselect.json` - used to display data about character selection, as well as stat mods for character creation
+* `droptable-maps.json` - used to determine the drop table for maps
+* `droptable-regions.json` - used to determine the drop table for regions
+* `effect-data.json` - all metadata for all effects
+* `events.json` - all possible events that can spawn randomly
+* `fate.json` - all possible results for fate
+* `hidereductions.json` - all changes made to stealth based on what items are held
+* `holidaydescs.json` - all descriptions for holidays
+* `items.json` - all items in the game
+* `materialstorage.json` - material storage metadata / display
+* `npcs.json` - all npcs in the game
+* `npcnames.json` - all possible custom npc names
+* `npc-scripts.json` - all npc scripts (for map npcs)
+* `premium.json` - all premium purchases / etc
+* `quests.json` - all quests in the game
+* `rarespawns.json` - all rarespawns in the game by map
+* `recipes.json` - all recipes in the game
+* `rngdungeonconfig.json` - all of the config for Solokar / Orikurnis (and any future RNG dungeons)
+* `settings.json` - all game settings
+* `skilldescs.json` - all skill descriptions per skill level
+* `spawners.json` - all spawners in the game
+* `spells.json` - all spells in the game
+* `sprite-data.json` - all door / other sprite data
+* `statdamagemultipliers.json` - all stat multipliers for combat / etc
+* `statictext.json` - all static text (for decor and such)
+* `traits.json` - all traits in the game
+* `trait-trees.json` - all trait trees in the game
+* `weapontiers.json` - all static damage tiers for weapons

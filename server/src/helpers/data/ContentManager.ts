@@ -1,4 +1,5 @@
 import childProcess from 'child_process';
+import fs from 'fs-extra';
 import deepfreeze from 'deep-freeze';
 import { Injectable } from 'injection-js';
 import { cloneDeep, get } from 'lodash';
@@ -319,41 +320,50 @@ export class ContentManager extends BaseService {
       .map(x => cloneDeep(x));
   }
 
+  private chooseConfigFileOrPreset(file: string, preset: any) {
+    if (fs.existsSync(`config/${file}.json`)) {
+      this.game.logger.log('ContentManager', `Using custom config file for ${file}...`);
+      return fs.readJsonSync(`config/${file}.json`);
+    }
+
+    return preset;
+  }
+
   private loadCore() {
-    this.allegianceStats = deepfreeze(realJSON(allegiancestats));
-    this.attributeStats = deepfreeze(realJSON(attributestats));
-    this.charSelect = deepfreeze(realJSON(charselect));
-    this.events = deepfreeze(realJSON(events));
-    this.fate = deepfreeze(realJSON(fate));
-    this.hideReductions = deepfreeze(realJSON(hidereductions));
-    this.holidayDescs = deepfreeze(realJSON(holidaydescs));
-    this.materialStorage = deepfreeze(realJSON(materialstorage));
-    this.npcNames = deepfreeze(realJSON(npcnames));
-    this.premium = deepfreeze(realJSON(premium));
-    this.rarespawns = deepfreeze(realJSON(rarespawns));
-    this.settings = deepfreeze(realJSON(settings));
-    this.skillDescs = deepfreeze(realJSON(skilldescs));
-    this.statDamageMultipliers = deepfreeze(realJSON(statdamagemultipliers));
-    this.staticText = deepfreeze(realJSON(statictext));
-    this.weaponTiers = deepfreeze(realJSON(weapontiers));
-    this.rngDungeonConfig = deepfreeze(realJSON(rngdungeonconfig));
-    this.spriteinfo = deepfreeze(realJSON(spriteinfo));
+    this.allegianceStats = deepfreeze(this.chooseConfigFileOrPreset('allegiancestats', realJSON(allegiancestats)));
+    this.attributeStats = deepfreeze(this.chooseConfigFileOrPreset('attributestats', realJSON(attributestats)));
+    this.charSelect = deepfreeze(this.chooseConfigFileOrPreset('charselect', realJSON(charselect)));
+    this.events = deepfreeze(this.chooseConfigFileOrPreset('events', realJSON(events)));
+    this.fate = deepfreeze(this.chooseConfigFileOrPreset('fate', realJSON(fate)));
+    this.hideReductions = deepfreeze(this.chooseConfigFileOrPreset('hidereductions', realJSON(hidereductions)));
+    this.holidayDescs = deepfreeze(this.chooseConfigFileOrPreset('holidaydescs', realJSON(holidaydescs)));
+    this.materialStorage = deepfreeze(this.chooseConfigFileOrPreset('materialstorage', realJSON(materialstorage)));
+    this.npcNames = deepfreeze(this.chooseConfigFileOrPreset('npcnames', realJSON(npcnames)));
+    this.premium = deepfreeze(this.chooseConfigFileOrPreset('premium', realJSON(premium)));
+    this.rarespawns = deepfreeze(this.chooseConfigFileOrPreset('rarespawns', realJSON(rarespawns)));
+    this.settings = deepfreeze(this.chooseConfigFileOrPreset('settings', realJSON(settings)));
+    this.skillDescs = deepfreeze(this.chooseConfigFileOrPreset('skilldescs', realJSON(skilldescs)));
+    this.statDamageMultipliers = deepfreeze(this.chooseConfigFileOrPreset('statdamagemultipliers', realJSON(statdamagemultipliers)));
+    this.staticText = deepfreeze(this.chooseConfigFileOrPreset('statictext', realJSON(statictext)));
+    this.weaponTiers = deepfreeze(this.chooseConfigFileOrPreset('weapontiers', realJSON(weapontiers)));
+    this.rngDungeonConfig = deepfreeze(this.chooseConfigFileOrPreset('rngdungeonconfig', realJSON(rngdungeonconfig)));
+    this.spriteinfo = deepfreeze(this.chooseConfigFileOrPreset('sprite-data', realJSON(spriteinfo)));
   }
 
   private loadSpells() {
-    this.spells = realJSON(spells) as any as Record<string, ISpellData>;
+    this.spells = this.chooseConfigFileOrPreset('spells', realJSON(spells)) as any as Record<string, ISpellData>;
 
     deepfreeze(this.spells);
   }
 
   private loadEffects() {
-    this.effectData = realJSON(effectData) as any as Record<string, IStatusEffectData>;
+    this.effectData = this.chooseConfigFileOrPreset('effect-data', realJSON(effectData)) as any as Record<string, IStatusEffectData>;
 
     deepfreeze(this.effectData);
   }
 
   private loadTraits() {
-    this.traits = realJSON(traits) as any as Record<string, ITrait>;
+    this.traits = this.chooseConfigFileOrPreset('traits', realJSON(traits)) as any as Record<string, ITrait>;
 
     deepfreeze(this.traits);
 
@@ -363,7 +373,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadQuests() {
-    this.quests = realJSON(quests) as any as Record<string, IQuest>;
+    this.quests = this.chooseConfigFileOrPreset('quests', realJSON(quests)) as any as Record<string, IQuest>;
 
     this.game.modkitManager.modQuests.forEach(quest => {
       if (this.quests[quest.name]) {
@@ -378,7 +388,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadMapDroptables() {
-    this.mapDroptables = realJSON(droptablesMaps).reduce((prev, cur) => {
+    this.mapDroptables = this.chooseConfigFileOrPreset('droptable-maps', realJSON(droptablesMaps)).reduce((prev, cur) => {
       if (prev[cur.mapName]) {
         this.game.logger.warn('ContentManager:LoadMapDroptables', `Duplicate map droptable for ${cur.mapName}, skipping...`);
         return;
@@ -401,7 +411,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadRegionDroptables() {
-    this.regionDroptables = realJSON(droptablesRegions).reduce((prev, cur) => {
+    this.regionDroptables = this.chooseConfigFileOrPreset('droptable-regions', realJSON(droptablesRegions)).reduce((prev, cur) => {
       if (prev[cur.regionName]) {
         this.game.logger.warn('ContentManager:LoadRegionDroptables', `Duplicate region droptable for ${cur.regionName}, skipping...`);
         return;
@@ -424,7 +434,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadItems() {
-    this.items = realJSON(items).reduce((prev, cur) => {
+    this.items = this.chooseConfigFileOrPreset('items', realJSON(items)).reduce((prev, cur) => {
       if (prev[cur.name]) {
         this.game.logger.warn('ContentManager:LoadItems', `Duplicate item ${cur.name}, skipping...`);
         return;
@@ -447,7 +457,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadNPCs() {
-    this.npcs = realJSON(npcs).reduce((prev, cur) => {
+    this.npcs = this.chooseConfigFileOrPreset('npcs', realJSON(npcs)).reduce((prev, cur) => {
       if (prev[cur.npcId]) {
         this.game.logger.warn('ContentManager:LoadNPCs', `Duplicate NPC ${cur.npcId}, skipping...`);
         return;
@@ -470,7 +480,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadNPCScripts() {
-    this.npcScripts = realJSON(npcScripts).reduce((prev, cur) => {
+    this.npcScripts = this.chooseConfigFileOrPreset('npc-scripts', realJSON(npcScripts)).reduce((prev, cur) => {
       if (prev[cur.tag]) {
         this.game.logger.warn('ContentManager:LoadNPCScripts', `Duplicate NPC Script ${cur.tag}, skipping...`);
         return;
@@ -496,7 +506,7 @@ export class ContentManager extends BaseService {
     this.recipes = {};
     this.allRecipes = {};
 
-    realJSON(recipes).forEach(recipe => {
+    this.chooseConfigFileOrPreset('recipes', realJSON(recipes)).forEach(recipe => {
       if (this.allRecipes[recipe.name]) {
         this.game.logger.warn('ContentManager:LoadRecipes', `Duplicate recipe ${recipe.name}, skipping...`);
         return;
@@ -525,7 +535,7 @@ export class ContentManager extends BaseService {
   }
 
   private loadSpawners() {
-    this.spawners = realJSON(spawners).reduce((prev, cur) => {
+    this.spawners = this.chooseConfigFileOrPreset('spawners', realJSON(spawners)).reduce((prev, cur) => {
       if (prev[cur.tag]) {
         this.game.logger.warn('ContentManager:LoadSpawners', `Duplicate spawner ${cur.tag}, skipping...`);
         return;
