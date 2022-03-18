@@ -77,7 +77,7 @@ export class DialogActionHelper extends BaseService {
 
   private getDefaultMessage(npc: INPC) {
     if (npc.hostility === Hostility.Always) {
-      const hostileMessages = [
+      const hostileMessages = this.game.contentManager.getGameSetting('npc', 'messages.hostile') ?? [
         'Die!',
         'Begone!',
         'Leave this place!'
@@ -87,7 +87,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     if (npc.monsterClass === MonsterClass.Beast) {
-      const defaultBeastMessages = [
+      const defaultBeastMessages = this.game.contentManager.getGameSetting('npc', 'messages.beast') ?? [
         '_growl_',
         '_snarl_'
       ];
@@ -95,7 +95,7 @@ export class DialogActionHelper extends BaseService {
       return sample(defaultBeastMessages);
     }
 
-    const defaultMessages = [
+    const defaultMessages = this.game.contentManager.getGameSetting('npc', 'messages.friendly') ?? [
       'Hmm?',
       'What do you mean?',
       'Hello, are you looking for me?',

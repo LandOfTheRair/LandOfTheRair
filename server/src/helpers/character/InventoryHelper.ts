@@ -5,11 +5,23 @@ import { BaseService } from '../../models/BaseService';
 @Injectable()
 export class InventoryHelper extends BaseService {
 
-  init() {}
+  private sackSize = 25;
+  private beltSize = 5;
+  private pouchSize = 5;
+  private lockerSize = 25;
+  private materialSize = 200;
+
+  init() {
+    this.sackSize = this.game.contentManager.getGameSetting('inventory', 'sackSize') ?? 25;
+    this.beltSize = this.game.contentManager.getGameSetting('inventory', 'beltSize') ?? 5;
+    this.pouchSize = this.game.contentManager.getGameSetting('inventory', 'pouchSize') ?? 5;
+    this.lockerSize = this.game.contentManager.getGameSetting('inventory', 'lockerSize') ?? 25;
+    this.materialSize = this.game.contentManager.getGameSetting('inventory', 'materialSize') ?? 200;
+  }
 
   // sack functions
   public sackSpaceLeft(player: ICharacter): number {
-    return 25 - player.items.sack.items.length;
+    return this.sackSize - player.items.sack.items.length;
   }
 
   public canAddItemToSack(player: ICharacter, item: ISimpleItem): boolean {
@@ -17,7 +29,7 @@ export class InventoryHelper extends BaseService {
     if (itemClass === ItemClass.Coin) return true;
     if (!isSackable) return false;
 
-    if (player.items.sack.items.length >= 25) return false;
+    if (player.items.sack.items.length >= this.sackSize) return false;
 
     return true;
   }
@@ -58,14 +70,14 @@ export class InventoryHelper extends BaseService {
 
   // belt functions
   public beltSpaceLeft(player: ICharacter): number {
-    return 5 - player.items.belt.items.length;
+    return this.beltSize - player.items.belt.items.length;
   }
 
   public canAddItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
     const isBeltable = this.game.itemHelper.getItemProperty(item, 'isBeltable');
     if (!isBeltable) return false;
 
-    if (player.items.belt.items.length >= 5) return false;
+    if (player.items.belt.items.length >= this.beltSize) return false;
 
     return true;
   }
@@ -96,14 +108,14 @@ export class InventoryHelper extends BaseService {
 
   // pouch functions
   public pouchSpaceLeft(player: IPlayer): number {
-    return 5 - player.accountLockers.pouch.items.length;
+    return this.pouchSize - player.accountLockers.pouch.items.length;
   }
 
   public canAddItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
     if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin) return false;
 
-    if (player.accountLockers.pouch.items.length >= 5) return false;
+    if (player.accountLockers.pouch.items.length >= this.pouchSize) return false;
 
     return true;
   }
@@ -134,7 +146,7 @@ export class InventoryHelper extends BaseService {
 
   // locker functions
   public lockerSpaceLeft(player: ICharacter, locker: IItemContainer): number {
-    return 25 - locker.items.length;
+    return this.lockerSize - locker.items.length;
   }
 
   public canAddItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
@@ -146,7 +158,7 @@ export class InventoryHelper extends BaseService {
     || item.name.includes('Conjured')
     || succorInfo) return false;
 
-    if (locker.items.length >= 25) return false;
+    if (locker.items.length >= this.lockerSize) return false;
 
     return true;
   }
@@ -176,7 +188,8 @@ export class InventoryHelper extends BaseService {
 
   // material functions
   public materialSpaceLeft(player: IPlayer, material: string): number {
-    return this.game.subscriptionHelper.maxMaterialStorageSpace(player, 200) - (player.accountLockers.materials[material] ?? 0);
+    return this.game.subscriptionHelper.maxMaterialStorageSpace(player, this.materialSize)
+         - (player.accountLockers.materials[material] ?? 0);
   }
 
   public canAddMaterial(player: IPlayer, material: string): boolean {

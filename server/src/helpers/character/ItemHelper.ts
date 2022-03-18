@@ -13,13 +13,65 @@ import { ContentManager } from '../data/ContentManager';
 @Injectable()
 export class ItemHelper extends BaseService {
 
+  private conditionThresholds = {
+    broken: 0,
+    rough: 2500,
+    tattered: 5000,
+    belowAverage: 10000,
+    average: 20000,
+    aboveAverage: 30000,
+    mint: 40000,
+    aboveMint: 50000,
+    perfect: 99999,
+    heavenly: 999999
+  };
+
+  private conditionACMods = {
+    broken: -4,
+    rough: -3,
+    tattered: -2,
+    belowAverage: -1,
+    average: 0,
+    aboveAverage: 1,
+    mint: 2,
+    aboveMint: 3,
+    perfect: 4,
+    heavenly: 5
+  };
+
   constructor(
     private content: ContentManager
   ) {
     super();
   }
 
-  public init() {}
+  public init() {
+    this.conditionThresholds = this.game.contentManager.getGameSetting('item', 'conditionThresholds') ?? {
+      broken: 0,
+      rough: 2500,
+      tattered: 5000,
+      belowAverage: 10000,
+      average: 20000,
+      aboveAverage: 30000,
+      mint: 40000,
+      aboveMint: 50000,
+      perfect: 99999,
+      heavenly: 999999
+    };
+
+    this.conditionACMods = this.game.contentManager.getGameSetting('item', 'conditionACMods') ?? {
+      broken: -4,
+      rough: -3,
+      tattered: -2,
+      belowAverage: -1,
+      average: 0,
+      aboveAverage: 1,
+      mint: 2,
+      aboveMint: 3,
+      perfect: 4,
+      heavenly: 5
+    };
+  }
 
   // get the real item for base information lookup
   public getItemDefinition(itemName: string): IItemDefinition {
@@ -204,16 +256,17 @@ export class ItemHelper extends BaseService {
   public conditionACModifier(item: ISimpleItem): number {
     item.mods.condition = item.mods.condition || 20000;
 
-    if (item.mods.condition <= 0)     return -3;
-    if (item.mods.condition <= 5000)  return -2;
-    if (item.mods.condition <= 10000) return -1;
-    if (item.mods.condition <= 20000) return 0;
-    if (item.mods.condition <= 30000) return 1;
-    if (item.mods.condition <= 40000) return 2;
-    if (item.mods.condition <= 50000) return 3;
-    if (item.mods.condition <= 99999) return 4;
+    if (item.mods.condition <= this.conditionThresholds.broken)       return this.conditionACMods.broken;
+    if (item.mods.condition <= this.conditionThresholds.rough)        return this.conditionACMods.rough;
+    if (item.mods.condition <= this.conditionThresholds.tattered)     return this.conditionACMods.tattered;
+    if (item.mods.condition <= this.conditionThresholds.belowAverage) return this.conditionACMods.belowAverage;
+    if (item.mods.condition <= this.conditionThresholds.average)      return this.conditionACMods.average;
+    if (item.mods.condition <= this.conditionThresholds.aboveAverage) return this.conditionACMods.aboveAverage;
+    if (item.mods.condition <= this.conditionThresholds.mint)         return this.conditionACMods.mint;
+    if (item.mods.condition <= this.conditionThresholds.aboveMint)    return this.conditionACMods.aboveMint;
+    if (item.mods.condition <= this.conditionThresholds.perfect)      return this.conditionACMods.perfect;
 
-    return 5;
+    return this.conditionACMods.heavenly;
   }
 
   // whether or not the player can use the item

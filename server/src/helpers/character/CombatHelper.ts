@@ -122,7 +122,8 @@ export class CombatHelper extends BaseService {
 
     // npc on npc violence improvements
     if (attacker && defender && !this.game.characterHelper.isPlayer(attacker) && !this.game.characterHelper.isPlayer(defender)) {
-      args.damage *= 5;
+      const npcViolenceMultiplier = this.game.contentManager.getGameSetting('combat', 'npcViolenceMultiplier') ?? 5;
+      args.damage *= npcViolenceMultiplier;
     }
 
     const { damage, attackerWeapon, isHeal, isMelee, isOverTime, hasBeenReflected,

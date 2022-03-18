@@ -11,6 +11,11 @@ import * as allSpellRefs from '../game/spells';
 @Injectable()
 export class SpellManager extends BaseService {
 
+  private dazedDivisor = 2;
+  private encumberedDivisor = 2;
+  private skillGainedPerCast = 1;
+  private skillGainedPerAOECast = 0.01;
+
   private spells: Record<string, BaseSpell> = {};
 
   // initialize all of the spells that exist
@@ -18,6 +23,12 @@ export class SpellManager extends BaseService {
     Object.keys(allSpellRefs).forEach(spell => {
       this.spells[spell] = new allSpellRefs[spell](this.game);
     });
+
+
+    this.dazedDivisor = this.game.contentManager.getGameSetting('spell', 'dazedDivisor') ?? 2;
+    this.encumberedDivisor = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 2;
+    this.skillGainedPerCast = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 1;
+    this.skillGainedPerAOECast = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 0.01;
   }
 
   // get the raw YML spell data
@@ -85,13 +96,13 @@ export class SpellManager extends BaseService {
 
     // encumberance cuts potency exactly in half
     if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
-      retPotency /= 2;
+      retPotency /= this.encumberedDivisor;
     }
 
     if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
        this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Dazed'))
     ) {
-      retPotency /= 2;
+      retPotency /= this.dazedDivisor;
       this.game.messageHelper.sendLogMessageToPlayer(caster, { message: 'You struggle to concentrate!' }, [MessageType.Miscellaneous]);
     }
 
@@ -116,7 +127,7 @@ export class SpellManager extends BaseService {
       ? [skillGain, Skill.Thievery]
       : [skillGain];
 
-    const skillGained = spellData.spellMeta.aoe ? 0.01 : 1;
+    const skillGained = spellData.spellMeta.aoe ? this.skillGainedPerAOECast : this.skillGainedPerCast;
     this.game.playerHelper.flagSkill(caster as Player, skillsFlagged);
     this.game.playerHelper.gainCurrentSkills(caster as Player, skillGained);
   }

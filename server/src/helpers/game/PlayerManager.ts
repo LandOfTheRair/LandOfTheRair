@@ -22,7 +22,7 @@ export class PlayerManager extends BaseService {
   private playerStates: Record<string, PlayerState> = {};
 
   public init() {
-    this.saveTicks = this.game.contentManager.getGameSetting('players', 'saveTicks') ?? 150;
+    this.saveTicks = this.game.contentManager.getGameSetting('timers', 'saveTicks') ?? 150;
   }
 
   // get all players. pretty sparingly used.

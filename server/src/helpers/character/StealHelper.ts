@@ -22,6 +22,12 @@ export class StealHelper extends BaseService {
   }
 
   public async trySteal(char: ICharacter, target: ICharacter): Promise<void> {
+    const thiefBonusMultiplier = this.game.contentManager.getGameSetting('character', 'thiefBonusMultiplier') ?? 1.5;
+    const goldStealDifficulty = this.game.contentManager.getGameSetting('character', 'goldStealDifficulty') ?? 3;
+    const itemStealDifficulty = this.game.contentManager.getGameSetting('character', 'itemStealDifficulty') ?? 10;
+    const stealSkillLower = this.game.contentManager.getGameSetting('character', 'stealSkillLower') ?? 3;
+    const stealSkillUpper = this.game.contentManager.getGameSetting('character', 'stealSkillUpper') ?? 5;
+    const stealLevelRangeForSkillGain = this.game.contentManager.getGameSetting('character', 'stealLevelRangeForSkillGain') ?? 3;
 
     const targetGold = this.game.currencyHelper.getCurrency(target);
 
@@ -35,8 +41,10 @@ export class StealHelper extends BaseService {
     const myStealth = this.game.characterHelper.getStat(char, Stat.Stealth);
     const yourPerception = this.game.characterHelper.getStat(target, Stat.Perception);
 
-    const mySkill = this.game.characterHelper.getSkillLevel(char, Skill.Thievery) * (char.baseClass === BaseClass.Thief ? 1.5 : 1);
-    const yourSkill = this.game.characterHelper.getSkillLevel(target, Skill.Thievery) * (target.baseClass === BaseClass.Thief ? 1.5 : 1);
+    const mySkill = this.game.characterHelper.getSkillLevel(char, Skill.Thievery)
+                  * (char.baseClass === BaseClass.Thief ? thiefBonusMultiplier : 1);
+    const yourSkill = this.game.characterHelper.getSkillLevel(target, Skill.Thievery)
+                    * (target.baseClass === BaseClass.Thief ? thiefBonusMultiplier : 1);
 
     const stealRoll = random(-yourSkill, mySkill);
 
@@ -46,7 +54,7 @@ export class StealHelper extends BaseService {
     const stealMod = 1 + this.game.traitHelper.traitLevelValue(char, 'ImprovedSteal') + nimbleFingersLevelValue;
 
     if (targetGold > 0) {
-      const difficulty = 3;
+      const difficulty = goldStealDifficulty;
 
       if ((stealRoll + stealMod - difficulty) < 0) {
         this.gainThiefSkill(char, 1);
@@ -56,7 +64,7 @@ export class StealHelper extends BaseService {
         return;
       }
 
-      const fuzzedSkill = random(Math.max(mySkill - 3, 1), mySkill + 5);
+      const fuzzedSkill = random(Math.max(mySkill - stealSkillLower, 1), mySkill + stealSkillUpper);
 
       const stolenGold = Math.max(
         1,
@@ -79,7 +87,7 @@ export class StealHelper extends BaseService {
       return;
 
     } else if (target.items.sack.items.length > 0) {
-      const difficulty = 10;
+      const difficulty = itemStealDifficulty;
 
       if ((stealRoll + stealMod - difficulty) < 0) {
         this.gainThiefSkill(char, 1);
@@ -108,7 +116,7 @@ export class StealHelper extends BaseService {
 
     }
 
-    if (char.level < target.level + 3) {
+    if (char.level < target.level + stealLevelRangeForSkillGain) {
       this.gainThiefSkill(char, 3);
     }
 

@@ -56,7 +56,9 @@ export interface IGameSettings {
     maxSkill: number;
     maxStats: number;
     chaSlidingDiscount: number;
+    chaMaxForDiscount: number;
     defaultMove: number;
+    maxMove: number;
     defaultCasterMPRegen: number;
     thiefOOCRegen: number;
     thiefICRegen: number;
@@ -71,6 +73,38 @@ export interface IGameSettings {
     sellChaBaseBoost: number;
     sellChaBaseDivisor: number;
     fallDamagePercent: number;
+    defaultInvulnDuration: number;
+    rotStatThreshold: number;
+    lowCONHPLossThreshold: number;
+    axpRewardThreshold: number;
+    skillActiveTicks: number;
+    thiefBonusMultiplier: number;
+    goldStealDifficulty: number;
+    itemStealDifficulty: number;
+    stealSkillLower: number;
+    stealSkillUpper: number;
+    stealLevelRangeForSkillGain: number;
+
+    creation: {
+      baseMP: Record<BaseClass, number>;
+      learnedTraits: Record<BaseClass, string>;
+    };
+
+    levelup: Record<BaseClass, {
+      hp: {
+        base: number;
+        randomConDivisor: number;
+        bonusConDivisor: number;
+        randomConBonusMultiplier: number;
+      };
+
+      mp: {
+        base: number;
+        randomMultiplier: number;
+        randomDivisor: number;
+      };
+    }>;
+
   };
 
   combat: {
@@ -81,6 +115,24 @@ export interface IGameSettings {
     cstunConMultiplier: number;
     offhandDamageReduction: number;
     resourceConditionDamage: number;
+    npcViolenceMultiplier: number;
+    magicCriticalMultiplier: number;
+    willSaveThresholdDefault: number;
+    willSavePercentDefault: number;
+    strongAttackBaseChance: number;
+    weakAttackLuckReduction: number;
+    attackVarianceBaseBonusRolls: number;
+    attackVarianceStrongBonusRolls: number;
+    skillDivisor: number;
+    damageStatDivisor: number;
+    defenseDexDivisor: number;
+    defenseOffhandSkillDivisor: number;
+    dodgeBonusDivisor: number;
+    defenderBlockBonus: number;
+    attackerAttackBonus: number;
+    levelDifferenceRange: number;
+    levelDifferenceMultiplier: number;
+    mitigationMax: number;
   };
 
   corpse: {
@@ -99,12 +151,66 @@ export interface IGameSettings {
     expireTicks: number;
   };
 
+  item: {
+    conditionThresholds: {
+      broken: number;
+      rough: number;
+      tattered: number;
+      belowAverage: number;
+      average: number;
+      aboveAverage: number;
+      mint: number;
+      aboveMint: number;
+      perfect: number;
+      heavenly: number;
+    };
+
+    conditionACMods: {
+      broken: number;
+      rough: number;
+      tattered: number;
+      belowAverage: number;
+      average: number;
+      aboveAverage: number;
+      mint: number;
+      aboveMint: number;
+      perfect: number;
+      heavenly: number;
+    };
+  };
+
+  map: {
+    xpMultiplier: {
+      uncut: number;
+      firstSoftCut: number;
+      secondSoftCut: number;
+      hardCut: number;
+      unknown: number;
+    };
+
+    defaultRespawnPoint: {
+      map: string;
+      x: number;
+      y: number;
+    };
+  };
+
+  npc: {
+    messages: {
+      hostile: string[];
+      beast: string[];
+      friendly: string[];
+    };
+  };
+
   npcgen: {
     attrMult: number;
     eliteMult: number;
     levelFuzz: number;
+    levelFuzzMinLevel: number;
     eliteLootMult: number;
     normalLootMult: number;
+    eliteLevelBonusDivisor: number;
 
     potionDrops: Record<string, Record<string, number>>;
   };
@@ -145,8 +251,23 @@ export interface IGameSettings {
 
   };
 
-  players: {
+  spell: {
+    dazedDivisor: number;
+    encumberedDivisor: number;
+    skillGainedPerCast: number;
+    skillGainedPerAOECast: number;
+  };
+
+  timers: {
+    dailyResetHour: number;
     saveTicks: number;
+  };
+
+  inventory: {
+    sackSize: number;
+    beltSize: number;
+    pouchSize: number;
+    lockerSize: number;
   };
 
   potion: Record<string, number>;

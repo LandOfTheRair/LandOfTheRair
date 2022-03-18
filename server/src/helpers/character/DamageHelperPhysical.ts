@@ -58,12 +58,50 @@ interface DefenderScope {
 @Injectable()
 export class DamageHelperPhysical extends BaseService {
 
+  private strongAttackBaseChance = 50;
+  private weakAttackLuckReduction = 10;
+  private attackVarianceBaseBonusRolls = 1;
+  private attackVarianceStrongBonusRolls = 2;
+  private skillDivisor = 4;
+  private damageStatDivisor = 4;
+  private defenseDexDivisor = 4;
+  private defenseOffhandSkillDivisor = 4;
+  private dodgeBonusDivisor = 10;
+  private defenderBlockBonus = 1;
+  private attackerAttackBonus = 10;
+  private levelDifferenceRange = 10;
+  private levelDifferenceMultiplier = 5;
+  private mitigationMax = 75;
+
+  private offhandDamageReduction = 0.8;
+  private cstunConMultiplier = 21;
+  private resourceConditionDamage = 50;
+
   constructor(
   ) {
     super();
   }
 
-  public init() {}
+  public init() {
+    this.strongAttackBaseChance = this.game.contentManager.getGameSetting('combat', 'strongAttackBaseChance') ?? 50;
+    this.weakAttackLuckReduction = this.game.contentManager.getGameSetting('combat', 'weakAttackLuckReduction') ?? 10;
+    this.attackVarianceBaseBonusRolls = this.game.contentManager.getGameSetting('combat', 'attackVarianceBaseBonusRolls') ?? 1;
+    this.attackVarianceStrongBonusRolls = this.game.contentManager.getGameSetting('combat', 'attackVarianceStrongBonusRolls') ?? 2;
+    this.skillDivisor = this.game.contentManager.getGameSetting('combat', 'skillDivisor') ?? 4;
+    this.damageStatDivisor = this.game.contentManager.getGameSetting('combat', 'damageStatDivisor') ?? 4;
+    this.defenseDexDivisor = this.game.contentManager.getGameSetting('combat', 'defenseDexDivisor') ?? 4;
+    this.defenseOffhandSkillDivisor = this.game.contentManager.getGameSetting('combat', 'defenseOffhandSkillDivisor') ?? 4;
+    this.dodgeBonusDivisor = this.game.contentManager.getGameSetting('combat', 'dodgeBonusDivisor') ?? 10;
+    this.defenderBlockBonus = this.game.contentManager.getGameSetting('combat', 'defenderBlockBonus') ?? 1;
+    this.attackerAttackBonus = this.game.contentManager.getGameSetting('combat', 'attackerAttackBonus') ?? 10;
+    this.levelDifferenceRange = this.game.contentManager.getGameSetting('combat', 'levelDifferenceRange') ?? 10;
+    this.levelDifferenceMultiplier = this.game.contentManager.getGameSetting('combat', 'levelDifferenceMultiplier') ?? 5;
+    this.mitigationMax = this.game.contentManager.getGameSetting('combat', 'mitigationMax') ?? 75;
+
+    this.offhandDamageReduction = this.game.contentManager.getGameSetting('character', 'offhandDamageReduction') ?? 0.8;
+    this.cstunConMultiplier = this.game.contentManager.getGameSetting('combat', 'cstunConMultiplier') ?? 21;
+    this.resourceConditionDamage = this.game.contentManager.getGameSetting('combat', 'resourceConditionDamage') ?? 50;
+  }
 
   // do a physical attack, and if possible, do it from the offhand too
   public physicalAttack(attacker: ICharacter, defender: ICharacter, args: PhysicalAttackArgs): PhysicalAttackReturn {
@@ -134,7 +172,7 @@ export class DamageHelperPhysical extends BaseService {
     let canBeStrong = false;
 
     // 50/50 chance to use weak dice at 10 luk. more luk = more chance of crit
-    const strongChance = 50 + (this.game.diceRollerHelper.OneToLUK(attacker) - 10);
+    const strongChance = this.strongAttackBaseChance + (this.game.diceRollerHelper.OneToLUK(attacker) - this.weakAttackLuckReduction);
 
     if (this.game.diceRollerHelper.XInOneHundred(strongChance)) {
       canBeStrong = true;
@@ -155,13 +193,13 @@ export class DamageHelperPhysical extends BaseService {
 
     // apply one variance hit + 1 per bonus roll
     let bonusDamage = 0;
-    let totalBonusRolls = 1 + bonusRolls;
+    let totalBonusRolls = this.attackVarianceBaseBonusRolls + bonusRolls;
 
     // weak hits remove all variance, always hit the min possible
     if (isWeak) totalBonusRolls = 0;
 
     // strong hits add 2 bonus variance rolls
-    if (isStrong) totalBonusRolls += 2;
+    if (isStrong) totalBonusRolls += this.attackVarianceStrongBonusRolls;
 
     for (let i = 0; i < totalBonusRolls; i++) {
       const varianceMultiplier = (random(variance.min, variance.max) / 100);
@@ -365,13 +403,13 @@ export class DamageHelperPhysical extends BaseService {
 
     return {
       skill:        attackerSkill,
-      skill4:       Math.floor(attackerSkill / 4),
+      skill4:       Math.floor(attackerSkill / this.skillDivisor),
       offense:      Math.floor(this.game.characterHelper.getStat(attacker, Stat.Offense) * offhandMultiplier),
       accuracy:     Math.floor(this.game.characterHelper.getStat(attacker, Stat.DEX) * offhandMultiplier) - accuracyLoss,
       dex:          Math.floor(this.game.characterHelper.getStat(attacker, Stat.DEX) * offhandMultiplier)
                     + this.game.traitHelper.traitLevelValue(attacker, 'MartialAcuity'),
       damageStat:   Math.floor(baseDamageStat * offhandMultiplier),
-      damageStat4:  Math.floor((baseDamageStat / 4) * offhandMultiplier),
+      damageStat4:  Math.floor((baseDamageStat / this.damageStatDivisor) * offhandMultiplier),
       level:        attacker.level,
       damage,
       isWeak,
@@ -401,17 +439,19 @@ export class DamageHelperPhysical extends BaseService {
       defense:        this.game.characterHelper.getStat(defender, Stat.Defense),
       agi:            this.game.characterHelper.getStat(defender, Stat.AGI),
       dex:            this.game.characterHelper.getStat(defender, Stat.DEX),
-      dex4:           Math.floor(this.game.characterHelper.getStat(defender, Stat.DEX) / 4),
+      dex4:           Math.floor(this.game.characterHelper.getStat(defender, Stat.DEX) / this.defenseDexDivisor),
       armorClass:     this.game.characterHelper.getStat(defender, Stat.ArmorClass) + defenderACBoost,
       weaponAC:       blockerStats?.[Stat.WeaponArmorClass] ?? 0,
       shieldAC:       shieldStats?.[Stat.ArmorClass] ?? 0,
       shieldDefense:  shieldStats?.[Stat.Defense] ?? 0,
       offhandAC:      offhandStats?.[Stat.WeaponArmorClass] ?? 0,
       offhandDefense: offhandStats?.[Stat.Defense] ?? 0,
-      offhandSkill:   defenderOffhand ? Math.floor(this.game.characterHelper.getSkillLevel(defender, offhandType as Skill) + 1) / 4 : 0,
+      offhandSkill:   defenderOffhand
+        ? Math.floor(this.game.characterHelper.getSkillLevel(defender, offhandType as Skill) + 1) / this.defenseOffhandSkillDivisor
+        : 0,
       level:          defender.level,
       mitigation:     this.game.characterHelper.getStat(defender, Stat.Mitigation),
-      dodgeBonus:     Math.floor((100 - (armorStats?.[Stat.Mitigation] ?? 0)) / 10),
+      dodgeBonus:     Math.floor((100 - (armorStats?.[Stat.Mitigation] ?? 0)) / this.dodgeBonusDivisor),
       armor:          defenderArmor,
       blocker:        defenderBlocker,
       shield:         defenderShield,
@@ -431,10 +471,10 @@ export class DamageHelperPhysical extends BaseService {
     const { attackRange, isBackstab, isMug, attackerName } = args;
     const weapon = attackerScope.weapon;
 
-    const attackerBlockLeftSide = Math.floor(10 + attackerScope.skill + attackerScope.offense);
+    const attackerBlockLeftSide = Math.floor(this.attackerAttackBonus + attackerScope.skill + attackerScope.offense);
     const attackerBlockRightSide = Math.floor(attackerScope.dex + attackerScope.skill);
 
-    const defenderDodgeLeftSide = Math.floor(1 + defenderScope.defense);
+    const defenderDodgeLeftSide = Math.floor(this.defenderBlockBonus + defenderScope.defense);
     const defenderDodgeRightSide = Math.floor(defenderScope.dex4 + defenderScope.agi);
 
     const attackerDodgeRoll = this.game.diceRollerHelper.uniformRoll(
@@ -512,10 +552,10 @@ export class DamageHelperPhysical extends BaseService {
     const { attackerName } = args;
     const weapon = attackerScope.weapon;
 
-    const defenderBlockLeftSide = Math.floor(1 + defenderScope.defense);
+    const defenderBlockLeftSide = Math.floor(this.defenderBlockBonus + defenderScope.defense);
     const defenderBlockRightSide = Math.floor(defenderScope.armorClass);
 
-    const attackerBlockLeftSide = Math.floor(10 + attackerScope.skill + attackerScope.offense);
+    const attackerBlockLeftSide = Math.floor(this.attackerAttackBonus + attackerScope.skill + attackerScope.offense);
     const attackerBlockRightSide = Math.floor(attackerScope.dex + attackerScope.skill);
 
     const attackerACRoll = Math.max(1, this.game.diceRollerHelper.uniformRoll(attackerBlockLeftSide, attackerBlockRightSide));
@@ -577,10 +617,10 @@ export class DamageHelperPhysical extends BaseService {
     const { attackerName } = args;
     const weapon = attackerScope.weapon;
 
-    const attackerBlockLeftSide = Math.floor(10 + attackerScope.skill + attackerScope.offense);
+    const attackerBlockLeftSide = Math.floor(this.attackerAttackBonus + attackerScope.skill + attackerScope.offense);
     const attackerWeaponBlockRightSide = Math.floor(attackerScope.damageStat4 + attackerScope.dex + attackerScope.skill);
 
-    const defenderWeaponBlockLeftSide = 1 + defenderScope.weaponAC;
+    const defenderWeaponBlockLeftSide = this.defenderBlockBonus + defenderScope.weaponAC;
     const defenderWeaponBlockRightSide = Math.floor(defenderScope.dex4 + defenderScope.skill);
 
     const attackerWeaponBlockRoll = this.game.diceRollerHelper.uniformRoll(attackerBlockLeftSide, attackerWeaponBlockRightSide);
@@ -646,10 +686,10 @@ export class DamageHelperPhysical extends BaseService {
     const { attackerName } = args;
     const weapon = attackerScope.weapon;
 
-    const defenderShieldBlockLeftSide = Math.floor(1 + defenderScope.shieldDefense + defenderScope.shieldAC);
+    const defenderShieldBlockLeftSide = Math.floor(this.defenderBlockBonus + defenderScope.shieldDefense + defenderScope.shieldAC);
     const defenderShieldBlockRightSide = Math.floor(defenderScope.dex4 + defenderScope.skill);
 
-    const attackerBlockLeftSide = Math.floor(10 + attackerScope.skill + attackerScope.offense);
+    const attackerBlockLeftSide = Math.floor(this.attackerAttackBonus + attackerScope.skill + attackerScope.offense);
     const attackerBlockRightSide = Math.floor(attackerScope.damageStat4 + attackerScope.dex + attackerScope.skill);
 
     const attackerShieldBlockRoll = Math.max(1, this.game.diceRollerHelper.uniformRoll(attackerBlockLeftSide, attackerBlockRightSide));
@@ -714,10 +754,10 @@ export class DamageHelperPhysical extends BaseService {
     const { attackerName } = args;
     const weapon = attackerScope.weapon;
 
-    const attackerBlockLeftSide = Math.floor(10 + attackerScope.skill + attackerScope.offense);
+    const attackerBlockLeftSide = Math.floor(this.attackerAttackBonus + attackerScope.skill + attackerScope.offense);
     const attackerBlockRightSide = Math.floor(attackerScope.damageStat4 + attackerScope.dex + attackerScope.skill);
 
-    const defenderOffhandBlockLeftSide = Math.floor(1 + defenderScope.offhandDefense + defenderScope.offhandAC);
+    const defenderOffhandBlockLeftSide = Math.floor(this.defenderBlockBonus + defenderScope.offhandDefense + defenderScope.offhandAC);
     const defenderOffhandBlockRightSide = Math.floor(defenderScope.dex4 + defenderScope.offhandSkill);
 
     const attackerOffhandBlockRoll = Math.max(1, this.game.diceRollerHelper.uniformRoll(attackerBlockLeftSide, attackerBlockRightSide));
@@ -787,7 +827,7 @@ export class DamageHelperPhysical extends BaseService {
     // next we use that to modify the con multiplier - if atk STR > def CON then the multiplier goes down and vice-versa
     // then we multiply by the def CON to get our 1/x
     // this means there's always a chance of c-stun, but high con and having higher CON than your attackers will mitigate it effectively
-    let conMultiplier = this.game.contentManager.getGameSetting('combat', 'cstunConMultiplier') ?? 21;
+    let conMultiplier = this.cstunConMultiplier;
     if (!attacker.items.equipment[ItemSlot.RightHand]) {
       conMultiplier -= this.game.traitHelper.traitLevelValue(attacker, 'StunningFist');
     }
@@ -850,7 +890,7 @@ export class DamageHelperPhysical extends BaseService {
 
     // this is a bit complicated, but how it works is offhands deal 20% damage by default
     if (isOffhand) {
-      const reduction = this.game.contentManager.getGameSetting('character', 'offhandDamageReduction') ?? 0.8;
+      const reduction = this.offhandDamageReduction;
       args.offhandMultiplier = (args.offhandMultiplier - reduction) + this.game.traitHelper.traitLevelValue(attacker, 'OffhandFinesse');
 
       if (args.offhandMultiplier < 0.1) args.offhandMultiplier = 0.1;
@@ -977,8 +1017,17 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     if (damage > 0) {
-      const levelDifferenceModifier = clamp(attackerScope.level - defenderScope.level, -10, 10) * 5;
-      const mitigationModifier = Math.min(75, defenderScope.mitigation - (defenderScope.mitigation * (levelDifferenceModifier / 100)));
+      const levelDifferenceModifier = clamp(
+        attackerScope.level - defenderScope.level,
+        -this.levelDifferenceRange,
+        this.levelDifferenceRange
+      ) * this.levelDifferenceMultiplier;
+
+      const mitigationModifier = Math.min(
+        this.mitigationMax,
+        defenderScope.mitigation - (defenderScope.mitigation * (levelDifferenceModifier / 100))
+      );
+
       const mitigatedDamage = Math.floor(damage * (mitigationModifier / 100));
       damage -= mitigatedDamage;
     }
@@ -1142,7 +1191,7 @@ export class DamageHelperPhysical extends BaseService {
       return;
     }
 
-    const conditionDamage = this.game.contentManager.getGameSetting('combat', 'resourceConditionDamage') ?? 50;
+    const conditionDamage = this.resourceConditionDamage;
     let modifierMultiplier = 1;
 
     if (defender.name.includes('vein')) {

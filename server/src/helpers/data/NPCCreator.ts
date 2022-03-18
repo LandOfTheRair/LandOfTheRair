@@ -319,9 +319,10 @@ export class NPCCreator extends BaseService {
       this.game.characterHelper.gainPermanentStat(npc, stat as Stat, Math.round(this.game.characterHelper.getBaseStat(npc, stat) / 3));
     });
 
+    const eliteLevelBonusDivisor = this.game.contentManager.getGameSetting('npcgen', 'eliteLevelBonusDivisor') ?? 10;
     const eliteMult = this.game.contentManager.getGameSetting('npcgen', 'eliteMult') ?? 4;
 
-    npc.level += Math.min(1, Math.floor(npc.level / 10));
+    npc.level += Math.min(1, Math.floor(npc.level / eliteLevelBonusDivisor));
     npc.skillOnKill *= eliteMult;
     npc.currency[Currency.Gold] = (npc.currency[Currency.Gold] || 0) * eliteMult;
     npc.giveXp.min *= eliteMult;
@@ -331,10 +332,11 @@ export class NPCCreator extends BaseService {
   private setLevel(npc: INPC, npcDef: INPCDefinition): void {
     npc.level = npcDef.level || 1;
 
+    const levelFuzzMinLevel = this.game.contentManager.getGameSetting('npcgen', 'levelFuzzMinLevel') ?? 10;
     const levelFuzz = this.game.contentManager.getGameSetting('npcgen', 'levelFuzz') ?? 2;
 
     // npcs that are > lv 10 can have their level fuzzed a bit
-    if (npc.level > 10) npc.level += random(-levelFuzz, levelFuzz);
+    if (npc.level > levelFuzzMinLevel) npc.level += random(-levelFuzz, levelFuzz);
   }
 
   private shouldLoadContainerItem(itemName: string|any): boolean {

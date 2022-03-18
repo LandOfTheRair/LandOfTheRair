@@ -10,7 +10,8 @@ import { BaseService } from '../../models/BaseService';
 export class DailyHelper extends BaseService {
 
   public get resetTime(): DateTime {
-    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
+    const dailyResetHour = this.game.contentManager.getGameSetting('timers', 'dailyResetHour') ?? 12;
+    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: dailyResetHour });
     if (+theoreticalResetTime < +DateTime.fromObject({ zone: 'utc' })) {
       theoreticalResetTime = theoreticalResetTime.plus({ days: 1 });
     }
@@ -21,7 +22,8 @@ export class DailyHelper extends BaseService {
   public init() {}
 
   private canDailyActivate(checkTimestamp: number): boolean {
-    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
+    const dailyResetHour = this.game.contentManager.getGameSetting('timers', 'dailyResetHour') ?? 12;
+    let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: dailyResetHour });
     if (+theoreticalResetTime > +DateTime.fromObject({ zone: 'utc' })) {
       theoreticalResetTime = theoreticalResetTime.minus({ days: 1 });
     }

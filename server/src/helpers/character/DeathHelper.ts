@@ -75,22 +75,25 @@ export class DeathHelper extends BaseService {
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
-    const invulnDuration = 3 + this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
+    const defaultInvulnDuration = this.game.contentManager.getGameSetting('character', 'defaultInvulnDuration') ?? 3;
+    const invulnDuration = defaultInvulnDuration + this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
     this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', { effect: { duration: invulnDuration } });
 
     // if we rotted... deal with that
     if (shouldRot) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You feel a churning sensation...' });
 
+      const rotStatThreshold = this.game.contentManager.getGameSetting('corpse', 'rotStatThreshold') ?? 5;
+
       const strLossChance = this.game.contentManager.getGameSetting('corpse', 'rotStrLossChance') ?? 5;
 
-      if ((player.stats?.[Stat.STR] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(strLossChance)) {
+      if ((player.stats?.[Stat.STR] ?? 0) > rotStatThreshold && this.game.diceRollerHelper.OneInX(strLossChance)) {
         this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
       }
 
       const agiLossChance = this.game.contentManager.getGameSetting('corpse', 'rotAgiLossChance') ?? 5;
 
-      if ((player.stats?.[Stat.AGI] ?? 0) > 5 && this.game.diceRollerHelper.OneInX(agiLossChance)) {
+      if ((player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold && this.game.diceRollerHelper.OneInX(agiLossChance)) {
         this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
       }
     }
@@ -154,7 +157,8 @@ export class DeathHelper extends BaseService {
       this.game.effectHelper.addEffect(dead, '', 'LowCON');
 
       // and lose max hp if you keep dying
-      if (this.game.characterHelper.getBaseStat(dead, Stat.HP) > 10) {
+      const lowCONHPLossThreshold = this.game.contentManager.getGameSetting('character', 'lowCONHPLossThreshold') ?? 10;
+      if (this.game.characterHelper.getBaseStat(dead, Stat.HP) > lowCONHPLossThreshold) {
         this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
       }
     }
@@ -257,7 +261,8 @@ export class DeathHelper extends BaseService {
 
     const gainKillRewards = (rewarded: IPlayer, multiplier = 1) => {
 
-      if (rewarded.level - npc.level <= 5) {
+      const axpRewardThreshold = this.game.contentManager.getGameSetting('character', 'axpRewardThreshold') ?? 5;
+      if (rewarded.level - npc.level <= axpRewardThreshold) {
         this.game.playerHelper.gainAxp(rewarded, this.game.calculatorHelper.calcAXPRewardFor(npc));
       }
 

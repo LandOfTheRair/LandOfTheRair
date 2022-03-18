@@ -8,7 +8,15 @@ import { BaseService } from '../../models/BaseService';
 @Injectable()
 export class DamageHelperMagic extends BaseService {
 
-  public init() {}
+  private magicCriticalMultiplier = 2;
+  private willSaveThresholdDefault = 20;
+  private willSavePercentDefault = 30;
+
+  public init() {
+    this.magicCriticalMultiplier = this.game.contentManager.getGameSetting('combat', 'magicCriticalMultiplier') ?? 2;
+    this.willSaveThresholdDefault = this.game.contentManager.getGameSetting('combat', 'willSaveThresholdDefault') ?? 20;
+    this.willSavePercentDefault = this.game.contentManager.getGameSetting('combat', 'willSavePercentDefault') ?? 30;
+  }
 
   magicalAttack(attacker: ICharacter | null, defender: ICharacter, args: MagicalAttackArgs) {
     if (this.game.characterHelper.isDead(defender)) return;
@@ -23,7 +31,7 @@ export class DamageHelperMagic extends BaseService {
 
     // try to do critical damage if possible
     if (attacker && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent))) {
-      startDamage *= 2;
+      startDamage *= this.magicCriticalMultiplier;
     }
 
     // try to do a WIL save if possible, default is a 20/30 save
@@ -31,8 +39,8 @@ export class DamageHelperMagic extends BaseService {
       const { willSaveThreshold, willSavePercent } = args.spellData;
       const defWIL = this.game.characterHelper.getStat(defender, Stat.WIL);
 
-      if (random(0, defWIL) >= (willSaveThreshold ?? 20)) {
-        startDamage -= (startDamage * (willSavePercent ?? 30) / 100);
+      if (random(0, defWIL) >= (willSaveThreshold ?? this.willSaveThresholdDefault)) {
+        startDamage -= (startDamage * (willSavePercent ?? this.willSavePercentDefault) / 100);
       }
     }
 

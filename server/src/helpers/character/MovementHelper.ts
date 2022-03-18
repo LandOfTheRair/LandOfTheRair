@@ -14,6 +14,8 @@ import { PlayerHelper } from './PlayerHelper';
 @Injectable()
 export class MovementHelper extends BaseService {
 
+  private maxMove = 4;
+
   constructor(
     private worldManager: WorldManager,
     private playerHelper: PlayerHelper,
@@ -24,7 +26,9 @@ export class MovementHelper extends BaseService {
     super();
   }
 
-  init() {}
+  init() {
+    this.maxMove = this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
+  }
 
   faceTowards(source: ICharacter, target: { x: number; y: number }) {
     const xDiff = target.x - source.x;
@@ -48,8 +52,8 @@ export class MovementHelper extends BaseService {
     const maxMoveRate = this.characterHelper.getStat(character, Stat.Move);
     if (maxMoveRate <= 0) return false;
 
-    xDiff = clamp(xDiff, -4, 4);
-    yDiff = clamp(yDiff, -4, 4);
+    xDiff = clamp(xDiff, -this.maxMove, this.maxMove);
+    yDiff = clamp(yDiff, -this.maxMove, this.maxMove);
 
     const map = this.worldManager.getMap(character.map)?.map;
     if (!map) return false;
@@ -261,7 +265,7 @@ export class MovementHelper extends BaseService {
 
     if (isFall) {
       const fallDamagePercent = this.game.contentManager.getGameSetting('character', 'fallDamagePercent') ?? 15;
-      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || fallDamagePercent || 15) / 100));
+      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || fallDamagePercent) / 100));
 
       // Fleet Of Foot reduces fall damage to 1
       if (this.game.effectHelper.hasEffect(player, 'FleetOfFoot')) {
