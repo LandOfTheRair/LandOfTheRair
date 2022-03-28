@@ -30,7 +30,7 @@ export class GroundComponent implements OnInit, OnDestroy {
 
   public player: IPlayer;
   public ground: IGround;
-  public groundGroups: Array<{ itemClass: ItemClass; name: string; count: number; value?: number }>;
+  public groundGroups: Array<{ itemClass: ItemClass; name: string; count: number; value?: number; sprite?: number }>;
   public currentGround: Partial<Record<ItemClass, IGroundItem[]>> = {};
 
   constructor(
@@ -56,16 +56,23 @@ export class GroundComponent implements OnInit, OnDestroy {
     const ground = this.currentGround;
 
     this.groundGroups = Object.keys(ground || {})
-      .filter(g => g !== ItemClass.Coin)
+      .filter(g => g !== ItemClass.Coin && g !== ItemClass.Corpse)
       .filter(g => ground[g].length > 0)
       .map(groundGroup => ({
           itemClass: groundGroup as ItemClass,
           name: ground[groundGroup][0].item.name,
-          sprite: groundGroup === ItemClass.Corpse
-                ? ground[groundGroup][0].item.mods.sprite
-                : (ground[groundGroup][0].item.mods.sprite ?? null),
+          sprite: ground[groundGroup][0].item.mods.sprite ?? null,
           count: sumBy(ground[groundGroup], 'count')
         }));
+
+    if (ground[ItemClass.Corpse]?.length > 0) {
+      this.groundGroups.unshift({
+        itemClass: ItemClass.Corpse,
+        name: ground[ItemClass.Corpse][0].item.name,
+        sprite: ground[ItemClass.Corpse][0].item.mods.sprite,
+        count: sumBy(ground[ItemClass.Corpse], 'count')
+      });
+    }
 
     if (ground[ItemClass.Coin]?.length > 0) {
       this.groundGroups.unshift({
