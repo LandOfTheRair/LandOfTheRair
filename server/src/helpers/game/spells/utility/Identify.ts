@@ -34,7 +34,7 @@ export class Identify extends Spell {
       type: GameServerResponse.SendAlert,
       title: 'Identify',
       content: identMsg,
-      extraData: { itemName: rightHand.name },
+      extraData: { itemName: rightHand.name, displayItemSprite: this.game.itemHelper.getItemProperty(rightHand, 'sprite') },
     });
 
     this.sendMessage(caster, { message: identMsg });
