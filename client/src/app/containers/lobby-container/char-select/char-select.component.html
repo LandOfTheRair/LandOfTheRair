@@ -53,6 +53,8 @@
           <div class="about">
             <strong class="name">{{ player.name }}</strong>
             <br>
+            {{ player.hp.current }} / {{ player.hp.maximum }} HP
+            <br>
             Level {{ player.level }} {{ player.baseClass }}
             <br>
             In {{ gameService.reformatMapName(player.map) }}
