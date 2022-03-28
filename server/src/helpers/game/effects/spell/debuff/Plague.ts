@@ -42,7 +42,8 @@ export class Plague extends Effect {
     });
 
     // spread the contagion
-    if (effect.effectInfo.isContagious && ((effect.effectInfo.currentTick ?? 0) % 3) === 0) {
+    const curTick = effect.effectInfo.currentTick ?? 0;
+    if (curTick > 3 && effect.effectInfo.isContagious && (curTick % 3) === 0) {
       this.spread(char, effect, caster);
     }
   }
