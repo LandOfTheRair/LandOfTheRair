@@ -32,8 +32,9 @@ export class EncrusterBehavior implements IAIBehavior {
         const {
           itemClass: rightItemClass,
           encrustGive: rightEncrustGive,
-          requirements: rightRequirements
-        } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'encrustGive', 'requirements']);
+          requirements: rightRequirements,
+          encrustItem: rightEncrustItem
+        } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'encrustGive', 'requirements', 'encrustItem']);
 
         if (rightItemClass === ItemClass.Gem) {
 
@@ -42,13 +43,13 @@ export class EncrusterBehavior implements IAIBehavior {
           if (!rightEncrustGive) message = 'This gem has no encrustable qualities. You can encrust it anyway, of course.';
 
           if (rightEncrustGive?.stats && rightEncrustGive?.strikeEffect) {
-            message = 'It looks like this gem gives you an attribute bonus and allows you to impart some effect onto your weapon.';
+            message = 'It looks like this gem gives you an attribute bonus and allows you to impart some effect onto your weapon strikes.';
 
           } else if (rightEncrustGive?.stats) {
             message = 'It looks like this gem gives you an attribute bonus.';
 
           } else if (rightEncrustGive?.strikeEffect) {
-            message = 'It looks like this gem allows you to impart some effect onto your weapon.';
+            message = 'It looks like this gem allows you to impart some effect onto your weapon strikes.';
           }
 
           if (rightRequirements?.level) {
@@ -76,7 +77,40 @@ export class EncrusterBehavior implements IAIBehavior {
           return message;
         }
 
-        if (!leftHand) return 'You do not have anything in your left hand!';
+        if (!leftHand && rightEncrustItem) {
+          const gemItem = game.itemCreator.getSimpleItem(rightEncrustItem);
+
+          const {
+            encrustGive: encrustEncrustGive,
+            desc: encrustEncrustDesc
+          } = game.itemHelper.getItemProperties(gemItem, ['encrustGive', 'desc']);
+
+          let message = '';
+
+          if (!encrustEncrustGive) message = `This encrusted gem is ${encrustEncrustDesc}, and it has no encrustable qualities.`;
+
+          if (encrustEncrustGive?.stats && encrustEncrustGive?.strikeEffect) {
+            message = `This encrusted gem is ${encrustEncrustDesc}, and it gives you an attribute bonus
+              as well as imparting some effect onto your weapon strikes.`;
+
+          } else if (encrustEncrustGive?.stats) {
+            message = `This encrusted gem is ${encrustEncrustDesc}, and it gives you an attribute bonus.`;
+
+          } else if (encrustEncrustGive?.strikeEffect) {
+            message = `This encrusted gem is ${encrustEncrustDesc}, and it imparts some effect onto your weapon strikes.`;
+          }
+
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: 'Gem Appraisal',
+            content: message,
+            extraData: { npcSprite: npc.sprite },
+          });
+
+          return message;
+        }
+
+        if (!leftHand && !rightEncrustItem) return 'You do not have anything in your left hand!';
 
         const {
           itemClass: leftItemClass
