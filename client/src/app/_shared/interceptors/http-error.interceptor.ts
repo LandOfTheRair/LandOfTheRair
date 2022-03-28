@@ -23,7 +23,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
             this.apiService.setAPIError(error.message ?? 'Unknown error.');
           }
 
-          return throwError(() => new Error(error?.message ?? 'Unknown error.'));
+          return throwError(() => error);
         })
       );
   }

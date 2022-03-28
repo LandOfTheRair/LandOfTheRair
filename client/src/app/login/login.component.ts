@@ -115,6 +115,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       }, (err) => {
         this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
         this.isActing = false;
+
+        // swallow the API error in this case because we know the error
+        this.api.setAPIError('');
       });
   }
 
@@ -138,6 +141,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       }, (err) => {
         this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
         this.isActing = false;
+
+        // swallow the API error in this case because we know the error
+        this.api.setAPIError('');
       });
 
   }
