@@ -13,8 +13,8 @@ export class ForgotPasswordAction extends ServerAction {
 
     try {
       await game.emailHelper.requestTemporaryPassword(data.email);
-    } catch {
-      return { wasSuccess: false, message: 'The email server is not configured, so your request was not completed.' };
+    } catch (e: any) {
+      return { wasSuccess: false, message: e.message };
     }
 
     return { wasSuccess: true, message: `A temporary password has been sent to ${email}!` };

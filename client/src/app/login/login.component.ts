@@ -151,7 +151,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public forgotPW() {
     this.modalService.input(
       'Forgot Password',
-      `Enter the email associated with your account and a temporary password will be mailed to it.
+      `Enter the email or username associated with your account and a temporary password will be mailed to your registered email.
       Please be sure to check your spam folder if you did not recieve it, as it is usually sent right away.`
     )
     .subscribe(d => {

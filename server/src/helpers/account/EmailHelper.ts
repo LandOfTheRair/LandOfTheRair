@@ -59,12 +59,24 @@ export class EmailHelper extends BaseService {
     }
   }
 
-  public async requestTemporaryPassword(email: string): Promise<void> {
-    if (!this.transport) throw new Error('SMTP not configured.');
+  public async requestTemporaryPassword(emailOrUsername: string): Promise<void> {
+
+    let email = '';
+    if (emailOrUsername.includes('@')) email = emailOrUsername;
+
+    if (!email) {
+      const account = await this.game.accountDB.getAccount(emailOrUsername);
+      if (!account) throw new Error('Account username specified, but not found.');
+      email = account.email;
+    }
 
     const code = uuid().split('-').join('');
 
     this.game.accountDB.setTemporaryPassword(email, code);
+
+    if (!this.transport) {
+      throw new Error(`The mail server is not configured. Temporary password for email ${email} set to "${code}" (if email exists).`);
+    }
 
     const mail = {
       from: 'help@rair.land',
