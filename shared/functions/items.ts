@@ -115,8 +115,9 @@ export function descTextFor(
   const formatStatForDisplay = (stat: Stat, statValue: number) => {
     const sign = statValue > 0 ? '+' : '';
     const displayValue = statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
+    const statName = statValue % 1 === 0 ? stat : stat.split('Percent')[0];
 
-    return `${sign}${displayValue} ${stat.toUpperCase()}`;
+    return `${sign}${displayValue} ${statName.toUpperCase()}`;
   };
 
   const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
