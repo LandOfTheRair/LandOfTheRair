@@ -33,7 +33,7 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.SuppressZeroDamage]: false,
       [GameOption.SuppressOutgoingDoT]: false,
       [GameOption.NoItemAnimations]: false,
-      [GameOption.EnterToggleCMD]: false,
+      [GameOption.EnterToggleCMD]: true,
       [GameOption.PinLastTarget]: false,
       [GameOption.DyingBorderWidth]: 20,
       [GameOption.DyingBorderPercent]: 25,
