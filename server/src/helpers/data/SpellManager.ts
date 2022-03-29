@@ -143,6 +143,10 @@ export class SpellManager extends BaseService {
     character.spellCooldowns[spellName] = Date.now() + (1000 * (spellData.cooldown ?? 0));
   }
 
+  public resetCooldown(character: ICharacter, spellName: string) {
+    delete character.spellCooldowns?.[spellName];
+  }
+
   // cast a spell!
   public castSpell(
     spell: string,

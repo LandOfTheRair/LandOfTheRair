@@ -14,18 +14,24 @@ export class Teleport extends Spell {
       this.game.messageHelper.sendLogMessageToPlayer(caster, {
         message: 'Something distracts your focus.'
       });
+
+      this.game.spellManager.resetCooldown(caster, 'Teleport');
       return;
     }
 
     const location = spellCastArgs.originalArgs?.stringArgs;
     if (!location) {
       this.game.teleportHelper.showTeleports(caster as IPlayer);
+
+      this.game.spellManager.resetCooldown(caster, 'Teleport');
       return;
     }
 
     const teleportLocation = (caster as IPlayer).teleportLocations[location];
     if (!teleportLocation) {
       this.sendMessage(caster, { message: 'You do not know a location with that name!' });
+
+      this.game.spellManager.resetCooldown(caster, 'Teleport');
       return;
     }
 
