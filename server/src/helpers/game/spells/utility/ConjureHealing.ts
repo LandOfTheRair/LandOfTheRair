@@ -9,6 +9,7 @@ export class ConjureHealing extends Spell {
     const rightHand = caster.items.equipment[ItemSlot.RightHand];
     if (rightHand) {
       this.sendMessage(caster, { message: 'You need to empty your right hand!' });
+      this.game.spellManager.resetCooldown(caster, 'ConjureHealing');
       return;
     }
 
