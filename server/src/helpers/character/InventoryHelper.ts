@@ -74,7 +74,8 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
-    const isBeltable = this.game.itemHelper.getItemProperty(item, 'isBeltable');
+    const { isBeltable, itemClass } = this.game.itemHelper.getItemProperties(item, ['isBeltable', 'itemClass']);
+    if (itemClass === ItemClass.Halberd && this.game.traitHelper.hasLearnedTrait(player as IPlayer, 'BigBelt')) return true;
     if (!isBeltable) return false;
 
     if (player.items.belt.items.length >= this.beltSize) return false;

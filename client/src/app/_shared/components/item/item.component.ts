@@ -268,6 +268,8 @@ export class ItemComponent implements OnDestroy {
     if (this.realItem.isSackable && this.context !== 'Coin') scopes.push('sack', 'demimagicpouch');
     if (this.realItem.isBeltable) scopes.push('belt', 'demimagicpouch');
 
+    if (this.realItem.itemClass === ItemClass.Halberd && this.viewingPlayer?.allTraits?.BigBelt) scopes.push('belt');
+
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
     && this.context !== 'GroundGroup'

@@ -71,11 +71,9 @@ export class MoveItems extends MacroCommand {
   ): boolean {
     if (!srcItem) return true;
 
-    const isSackable = this.game.itemHelper.getItemProperty(srcItem, 'isSackable');
-    const isBeltable = this.game.itemHelper.getItemProperty(srcItem, 'isBeltable');
-
     const itemClass = this.game.itemHelper.getItemProperty(srcItem, 'itemClass');
     const succorInfo = this.game.itemHelper.getItemProperty(srcItem, 'succorInfo');
+
     if (dest === 'G' && succorInfo) {
 
       let itemSlot: ItemSlot = srcSlot as ItemSlot;
@@ -109,13 +107,13 @@ export class MoveItems extends MacroCommand {
     }
 
     // Dest: S - Items must be sackable
-    if (dest === 'S' && !isSackable) {
+    if (dest === 'S' && !this.game.inventoryHelper.canAddItemToSack(player, srcItem)) {
       this.sendMessage(player, 'That item cannot fit in your sack.');
       return false;
     }
 
     // Dest: B - Items must be beltable
-    if (dest === 'B' && !isBeltable) {
+    if (dest === 'B' && !this.game.inventoryHelper.canAddItemToBelt(player, srcItem)) {
       this.sendMessage(player, 'That item cannot fit in your belt.');
       return false;
     }
