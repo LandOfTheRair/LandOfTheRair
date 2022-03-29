@@ -30,6 +30,8 @@ export class Identify extends Spell {
       caster.baseClass === BaseClass.Thief ? thiefTier : 0
     );
 
+    this.game.itemHelper.markIdentified(rightHand, castTier);
+
     spellCastArgs.callbacks?.emit({
       type: GameServerResponse.SendAlert,
       title: 'Identify',

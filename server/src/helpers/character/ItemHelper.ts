@@ -530,4 +530,8 @@ export class ItemHelper extends BaseService {
     return this.game.contentManager.rngDungeonConfigData.dungeonConfigs.map(x => x.name).some(name => itemName.includes(name));
   }
 
+  public markIdentified(item: ISimpleItem, tier: number): void {
+    item.mods.identifyTier = Math.max(item.mods.identifyTier ?? 0, tier);
+  }
+
 }

@@ -240,6 +240,9 @@ export type IItem = IConsumable & IGear & IWeapon & ITrap & IBox & IBook
   // whether the item can be sacked or not
   isSackable?: boolean;
 
+  // whether the item is identified or not, and if so, at what tier
+  identifyTier?: number;
+
   // whether the item is heavy (ie, causes encumberance)
   isHeavy?: boolean;
 

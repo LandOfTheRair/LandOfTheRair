@@ -79,6 +79,8 @@ export class IdentifierBehavior implements IAIBehavior {
 
         game.messageHelper.sendSimpleMessage(player, identMsg);
 
+        game.itemHelper.markIdentified(rightHand, identifyTier);
+
         return `Thanks, ${player.name}!`;
       });
   }

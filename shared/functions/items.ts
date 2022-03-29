@@ -64,9 +64,10 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
 }
 
 export function descTextFor(
-  player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, identifyTier = 0, thiefTier = 0
+  player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, castIdentifyTier = 0, thiefTier = 0
 ): string {
 
+  const identifyTier = Math.max(castIdentifyTier, item.mods.identifyTier ?? 0);
   const itemClass = getProp(item, itemDef, 'itemClass');
 
   // get the number of stars before the desc
