@@ -209,32 +209,38 @@ export class ItemComponent implements OnDestroy {
   determineScopes(): void {
     if (!this.context || !this.item || !this.realItem || !this.viewingPlayer || !this.canDrag) return;
 
-    const scopes = [];
+    const scopes = new Set<string>();
 
     // if any hands are empty, or you're looking at left/right hand, they can move into the hand area
     if (!this.viewingPlayer.items.equipment[ItemSlot.LeftHand]
     || !this.viewingPlayer.items.equipment[ItemSlot.RightHand]
     || this.context === 'Left'
     || this.context === 'Right') {
-      scopes.push('right', 'left');
+      scopes.add('right');
+      scopes.add('left');
     }
 
     // if you have a coin, it can go... to your coin
     if (this.realItem.itemClass === ItemClass.Coin) {
-      scopes.push('coin');
+      scopes.add('coin');
     }
 
     // if we're not buying back stuff or looking at a merchant, we can drag to the ground
     // also, it can go to its equipment slot if possible
     if (this.context !== 'Obtainagain' && this.context !== 'Merchant') {
-      scopes.push('ground', 'mapground');
+      scopes.add('ground');
+      scopes.add('mapground');
 
       const itemType = EquipHash[this.realItem.itemClass] as ItemSlot;
-      if (itemType) scopes.push(itemType.toLowerCase());
+      if (itemType) scopes.add(itemType.toLowerCase());
     }
 
     // materials can additionally go to left, right, sack
-    if (this.context === 'Kollection') scopes.push('left', 'right', 'sack');
+    if (this.context === 'Kollection') {
+      scopes.add('left');
+      scopes.add('right');
+      scopes.add('sack');
+    }
 
     // you can sell anything on your person if it isn't a coin or a corpse
     if (this.realItem.itemClass !== ItemClass.Coin
@@ -245,13 +251,14 @@ export class ItemComponent implements OnDestroy {
     && this.context !== 'Wardrobe'
     && this.context !== 'Kollection'
     && this.context !== 'Merchant'
-    && this.context !== 'Ground') scopes.push('merchant');
+    && this.context !== 'Ground') scopes.add('merchant');
 
     // you can stash anything that's not a coin or a corpse
     // who the hell would put a corpse in their locker anyway?
     if (this.realItem.itemClass !== ItemClass.Coin
     && this.realItem.itemClass !== ItemClass.Corpse) {
-      scopes.push('wardrobe', 'kollection');
+      scopes.add('wardrobe');
+      scopes.add('kollection');
     }
 
     // if we have a bottle and it's on our person, we can equip it
@@ -261,14 +268,22 @@ export class ItemComponent implements OnDestroy {
       || this.context === 'Ground'
       || this.context === 'Right'
       || this.context === 'Left')) {
-      scopes.push('potion');
+      scopes.add('potion');
     }
 
     // if the item is sackable or beltable, it can go there
-    if (this.realItem.isSackable && this.context !== 'Coin') scopes.push('sack', 'demimagicpouch');
-    if (this.realItem.isBeltable) scopes.push('belt', 'demimagicpouch');
+    if (this.realItem.isSackable && this.context !== 'Coin') {
+      scopes.add('sack');
+      scopes.add('demimagicpouch');
+    }
 
-    if (this.realItem.itemClass === ItemClass.Halberd && this.viewingPlayer?.allTraits?.BigBelt) scopes.push('belt');
+    if (this.realItem.isBeltable) {
+      scopes.add('belt');
+      scopes.add('demimagicpouch');
+    }
+
+    // special cases...
+    if (this.realItem.itemClass === ItemClass.Halberd && this.viewingPlayer?.allTraits?.BigBelt) scopes.add('belt');
 
     // item is usable if we can use it, if it's a bottle, and it's not coming from ground or equipment
     if ((canUseItem(this.viewingPlayer, this.item, this.realItem) || this.realItem.itemClass === ItemClass.Bottle)
@@ -276,9 +291,9 @@ export class ItemComponent implements OnDestroy {
     && this.context !== 'Merchant'
     && this.context !== 'Obtainagain'
     && this.context !== 'Kollection'
-    && this.context !== 'Wardrobe') scopes.push('use');
+    && this.context !== 'Wardrobe') scopes.add('use');
 
-    this.scopes = scopes;
+    this.scopes = [...scopes];
   }
 
   doMoveAction(choice: string, args: { dropUUID?: string } = {}): void {
