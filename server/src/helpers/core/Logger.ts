@@ -34,7 +34,8 @@ export class Logger extends BaseService {
       this.winston = Winston.createLogger({
         format: Winston.format.simple(),
         levels: Winston.config.syslog.levels,
-        transports: [papertrail]
+        transports: [papertrail],
+        exitOnError: (err) => err.code !== 'EPIPE'
       });
     }
   }
