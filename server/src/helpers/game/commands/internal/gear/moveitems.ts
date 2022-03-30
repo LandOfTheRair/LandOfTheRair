@@ -448,6 +448,7 @@ export class MoveItems extends MacroCommand {
       if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
       const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      if (materialSpaceLeft <= 0) return this.sendMessage(player, 'You have no more space for that material!');
 
       const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {
@@ -570,6 +571,7 @@ export class MoveItems extends MacroCommand {
       if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
       const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      if (materialSpaceLeft <= 0) return this.sendMessage(player, 'You have no more space for that material!');
 
       const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {
@@ -584,6 +586,8 @@ export class MoveItems extends MacroCommand {
         }
 
       } else {
+        if (materialSpaceLeft <= 0) return this.sendMessage(player, 'You have no more space for that item!');
+
         this.game.inventoryHelper.addMaterial(player, materialRef, 1);
         this.game.characterHelper.setRightHand(player, undefined);
 
@@ -939,6 +943,7 @@ export class MoveItems extends MacroCommand {
       if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
       const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      if (materialSpaceLeft <= 0) return this.sendMessage(player, 'You have no more space for that material!');
 
       const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {
@@ -1172,7 +1177,7 @@ export class MoveItems extends MacroCommand {
         if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
         const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
-        if (materialSpaceLeft < 0) return this.sendMessage(player, 'You have no space for that material!');
+        if (materialSpaceLeft < 0) return this.sendMessage(player, 'You have no more space for that material!');
 
         const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
@@ -1766,6 +1771,7 @@ export class MoveItems extends MacroCommand {
       if (!materialRef) return this.sendMessage(player, 'That is not a material!');
 
       const materialSpaceLeft = this.game.inventoryHelper.materialSpaceLeft(player, materialRef);
+      if (materialSpaceLeft <= 0) return this.sendMessage(player, 'You have no more space for that material!');
 
       const { withdrawInOunces } = this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {
