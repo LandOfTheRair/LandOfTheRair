@@ -49,14 +49,14 @@ export class UIService {
     // if we have selections, we gotta do all of them
     if (this.anySelected > 0) {
 
-      for (let i = this.selected.sack.length; i > 0; i--) {
+      for (let i = this.selected.sack.length; i >= 0; i--) {
         const dragData = this.selected.sack[i];
         if (!dragData) continue;
 
         this.doDropAction(dragData, droppedOn, dropUUID);
       }
 
-      for (let i = this.selected.belt.length; i > 0; i--) {
+      for (let i = this.selected.belt.length; i >= 0; i--) {
         const dragData = this.selected.belt[i];
         if (!dragData) continue;
 
