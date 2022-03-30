@@ -450,9 +450,13 @@ export class ItemHelper extends BaseService {
           }
 
         });
-      }
 
-      this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeItems);
+        if (removeItems.length > 0) {
+          this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeItems);
+          this.game.messageHelper.sendSimpleMessage(player, `You've added ${removeItems.length} pages to the book.`);
+          return;
+        }
+      }
     }
 
     const bookPages = this.game.itemHelper.getItemProperty(book, 'bookPages');
