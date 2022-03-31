@@ -187,3 +187,15 @@ export function descTextFor(
   ${statSpecificText}${dualWieldText}${traitText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}
   ${pagesText}${trapSetText}${craftedText}${conditionText}${ownedText}`;
 }
+
+export const foodTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) => {
+  const desc = getProp(item, itemDef, 'desc');
+
+  const useEffect = getProp(item, itemDef, 'useEffect');
+  if (!useEffect) return '';
+
+  const baseText = `You are looking at ${desc}.`;
+  const statText = `This food changes the following stats: ${useEffect.extra?.tooltip ?? 'None'}`;
+
+  return `${baseText} ${statText}`;
+};
