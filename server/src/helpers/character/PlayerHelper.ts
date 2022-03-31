@@ -103,6 +103,13 @@ export class PlayerHelper extends BaseService {
     if (!player.accountLockers.pouch) player.accountLockers.pouch = { items: [] };
     if (!player.accountLockers.materials) player.accountLockers.materials = {};
 
+    // add sated if nothing else exists
+    if (!this.game.effectHelper.hasEffect(player, 'Sated')
+    && !this.game.effectHelper.hasEffect(player, 'Nourished')
+    && !this.game.effectHelper.hasEffect(player, 'Malnourished')) {
+      this.game.effectHelper.addEffect(player, '', 'Sated', { effect: { duration: 21600 } });
+    }
+
     this.cleanUpInvalidItems(player);
 
     this.reformatPlayerAfterLoad(player);
