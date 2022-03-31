@@ -12,6 +12,7 @@ export * from './binder';
 export * from './buffer';
 export * from './cosmetic';
 export * from './crier';
+export * from './culinarian';
 export * from './encruster';
 export * from './exitwarper';
 export * from './furupgrader';

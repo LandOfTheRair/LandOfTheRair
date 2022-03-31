@@ -16,6 +16,7 @@ export enum BehaviorType {
   Peddler = 'peddler',
   Identifier = 'identifier',
   Tanner = 'tanner',
+  Culinarian = 'culinarian',
   Alchemist = 'alchemist',
   Smith = 'smith',
   Encruster = 'encruster',
@@ -162,6 +163,11 @@ export interface ISpoilerLogger {
   spoilerLog: string;
 }
 
+export interface ICulinarianBehavior {
+  identifyCost: number;
+  identifyCurrency?: Currency;
+}
+
 export interface ITreasureClaimer {
   treasureMap: string;
   teleportX: number;
@@ -179,7 +185,7 @@ export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
 & IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
 & IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
 & IAXPSwapper & IMagicianBehavior & ISpoilerLogger & IExitWarperBehavior & ITreasureClaimer
-& IRNGArtificer &
+& IRNGArtificer & ICulinarianBehavior &
 {
   type: BehaviorType;
   props?: string[];

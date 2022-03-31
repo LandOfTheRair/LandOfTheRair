@@ -419,6 +419,7 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Peddler]: AllBehaviors.PeddlerBehavior,
       [BehaviorType.Identifier]: AllBehaviors.IdentifierBehavior,
       [BehaviorType.Tanner]: AllBehaviors.TannerBehavior,
+      [BehaviorType.Culinarian]: AllBehaviors.CulinarianBehavior,
       [BehaviorType.Alchemist]: AllBehaviors.AlchemistBehavior,
       [BehaviorType.Banker]: AllBehaviors.BankerBehavior,
       [BehaviorType.Encruster]: AllBehaviors.EncrusterBehavior,
