@@ -24,6 +24,9 @@ export class Multishot extends SpellCommand {
 
     if (target === player) return;
 
+    const range = this.calcPlainAttackRange(player);
+    if (range === -1) return this.sendMessage(player, 'You need to have your left hand empty to use that weapon!');
+
     const weapon = player.items.equipment[ItemSlot.RightHand];
     const canShoot = this.game.itemHelper.getItemProperty(weapon, 'canShoot');
     if (!weapon || !canShoot) return this.sendMessage(player, 'You need a ranged weapon to shoot!');
