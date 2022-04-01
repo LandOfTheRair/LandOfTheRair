@@ -41,6 +41,7 @@ import { MacroEditorComponent } from './_shared/modals/macroeditor/macroeditor.c
 import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
 import { NewSpellsComponent } from './_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from './_shared/modals/options/options.component';
+import { ErrorLogComponent } from './_shared/modals/error-log/error-log.component';
 import { TextModalComponent } from './_shared/modals/text/text.component';
 import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
 
@@ -83,7 +84,7 @@ const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
   WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
   DraggableDirective, DroppableDirective, ConfirmModalComponent, InputModalComponent, AboutComponent, AccountComponent,
-  ManageSilverComponent, CurrentEventsComponent, OptionsComponent, AmountModalComponent, MacroEditorComponent,
+  ManageSilverComponent, CurrentEventsComponent, OptionsComponent, ErrorLogComponent, AmountModalComponent, MacroEditorComponent,
   TextModalComponent, NewSpellsComponent, MarketComponent, TradeskillComponent, SessionStatsComponent
 ];
 

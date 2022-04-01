@@ -20,6 +20,7 @@ import { ManageSilverComponent } from '../_shared/modals/managesilver/managesilv
 import { NewSpellsComponent } from '../_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from '../_shared/modals/options/options.component';
 import { TextModalComponent } from '../_shared/modals/text/text.component';
+import { ErrorLogComponent } from '../_shared/modals/error-log/error-log.component';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
@@ -229,6 +230,13 @@ export class ModalService {
 
   public showOptions() {
     this.dialog.open(OptionsComponent, {
+      width: '650px',
+      panelClass: 'fancy'
+    });
+  }
+
+  public showErrorLog() {
+    this.dialog.open(ErrorLogComponent, {
       width: '650px',
       panelClass: 'fancy'
     });

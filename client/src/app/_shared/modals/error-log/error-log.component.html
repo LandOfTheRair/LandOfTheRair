@@ -1,0 +1,20 @@
+
+<h1 mat-dialog-title>Error Log ({{ logger.totalErrors }})</h1>
+
+<div mat-dialog-content>
+  <div *ngIf="logger.totalErrors === 0">
+    <p>No errors logged.</p>
+  </div>
+
+  <details *ngFor="let error of logger.iterableErrors; trackBy:errorIndex">
+    <summary>
+      <strong>{{ error.message }} (x{{ error.total }})</strong>
+    </summary>
+
+    <pre>{{ error.error }}</pre>
+  </details>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close] cdkFocusInitial>Close</button>
+</div>

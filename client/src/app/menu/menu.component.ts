@@ -173,6 +173,10 @@ export class MenuComponent implements OnInit {
       handler: () => this.modalService.showOptions()
     },
     {
+      name: 'Errors',
+      handler: () => this.modalService.showErrorLog()
+    },
+    {
       name: 'Exit To Lobby',
       visibleIf: this.gameService.inGame$,
       handler: () => {

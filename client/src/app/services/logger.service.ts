@@ -1,5 +1,6 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { isString, sum } from 'lodash';
 import Rollbar from 'rollbar';
 import { environment } from '../../environments/environment';
 
@@ -9,6 +10,9 @@ import { ErrorComponent } from '../_shared/modals/error/error.component';
   providedIn: 'root'
 })
 export class LoggerService {
+
+  private loggedErrorMessages: Record<string, number> = {};
+  private loggedErrors: Array<{ message: string; error: string }> = [];
 
   private ignoredErrorMessages = {
     'TypeError: Cannot read property \'sys\' of null': true,
@@ -20,6 +24,14 @@ export class LoggerService {
   private canShowErrors = true;
 
   private rollbar: Rollbar;
+
+  public get iterableErrors(): Array<{ message: string; error: string; total: number }> {
+    return this.loggedErrors.map(err => ({ ...err, total: this.loggedErrorMessages[err.message] }));
+  }
+
+  public get totalErrors(): number {
+    return sum(Object.values(this.loggedErrorMessages)) ?? 0;
+  }
 
   constructor(
     private dialog: MatDialog
@@ -58,20 +70,35 @@ export class LoggerService {
   public error(...data) {
     console.error(...data);
 
-    /*
-    if(data[0]?.message) {
-      data[1] = data[0].message;
-      data[0] = 'New Caught Error';
+    let title = 'New Caught Error';
+    let errorStack = 'Unknown Stack Trace';
+
+    let error = data[0];
+
+    if (isString(data[0])) {
+      title = data[0];
+      error = data[1];
     }
 
-    if(data[1]?.message) {
-      data[0] = 'New Caught Error';
-      data[1] = data[1].message;
+    if (error?.message) {
+      title = `${title}: ${error.message}`;
     }
 
-    if (data.length === 1) this.showErrorWindow('New Caught Error', data[0]);
-    if (data.length >= 2)  this.showErrorWindow(data[0], data[1]);
-    */
+    if (error?.stack) errorStack = error.stack;
+
+    this.logError(title, errorStack);
+  }
+
+  private logError(errorKey: string, stack: string): void {
+    if (this.loggedErrorMessages[errorKey]) {
+      this.loggedErrorMessages[errorKey]++;
+      return;
+    }
+
+    this.loggedErrorMessages[errorKey] = 1;
+    this.loggedErrors.push({ message: errorKey, error: stack });
+
+    // this.showErrorWindow(message, error);
   }
 
   public rollbarError(error) {
