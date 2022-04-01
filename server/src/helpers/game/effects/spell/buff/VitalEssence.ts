@@ -1,5 +1,5 @@
 
-import { ICharacter, IStatusEffect, Stat, DamageArgs } from '../../../../../interfaces';
+import { ICharacter, IStatusEffect, Stat, DamageArgs, DamageClass } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class VitalEssence extends Effect {
@@ -25,6 +25,8 @@ export class VitalEssence extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number
   ): number {
+
+    if (damageArgs.damageClass === DamageClass.Heal) return currentDamage;
 
     if (effect.effectInfo.charges) {
       effect.effectInfo.charges -= 1;
