@@ -51,6 +51,7 @@
     "ngxs-reset-plugin": "^1.2.0",
     "phaser": "3.54.0",
     "queueing-subject": "^0.3.4",
+    "rollbar": "^2.24.1",
     "rss-parser": "^3.9.0",
     "rxjs": "^7.5.4",
     "rxjs-websockets": "^7.0.2",

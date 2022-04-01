@@ -1,5 +1,8 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import Rollbar from 'rollbar';
+import { environment } from '../../environments/environment';
+
 import { ErrorComponent } from '../_shared/modals/error/error.component';
 
 @Injectable({
@@ -16,11 +19,21 @@ export class LoggerService {
 
   private canShowErrors = true;
 
+  private rollbar: Rollbar;
+
   constructor(
     private dialog: MatDialog
   ) {}
 
-  public init() {}
+  public init() {
+    if (environment.rollbar.token) {
+      this.rollbar = new Rollbar({
+        accessToken: environment.rollbar.token,
+        captureUncaught: true,
+        captureUnhandledRejections: true
+      });
+    }
+  }
 
   public showErrorWindow(title: string, content: string) {
     if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
@@ -60,6 +73,10 @@ export class LoggerService {
     if (data.length >= 2)  this.showErrorWindow(data[0], data[1]);
     */
   }
+
+  public rollbarError(error) {
+    this.rollbar?.error(error.originalError || error);
+  }
 }
 
 @Injectable()
@@ -69,5 +86,6 @@ export class AlertErrorHandler implements ErrorHandler {
 
   handleError(error) {
     this.logger.error(error);
+    this.logger.rollbarError(error);
   }
 }

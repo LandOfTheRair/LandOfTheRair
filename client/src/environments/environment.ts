@@ -4,15 +4,18 @@
 
 export const environment = {
   production: false,
+
   server: {
     ws: 'ws://127.0.0.1:6975/',
     http: 'http://127.0.0.1:6975'
   },
+
   client: {
     domain: 'localhost',
     protocol: 'http',
     port: 4567
   },
+
   assetHashes: {
     creatures: 0,
     decor: 0,
@@ -25,9 +28,15 @@ export const environment = {
     decoranimations: 0,
     terrainanimations: 0
   },
+
   stripe: {
     key: 'pk_test_TNxhxgcsao9B4ouQwRXeUnmm'
   },
+
+  rollbar: {
+    token: '',
+  },
+
   version: 'localdev'
 };
 

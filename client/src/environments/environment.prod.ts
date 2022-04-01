@@ -21,6 +21,10 @@ export const environment = {
     key: 'pk_live_dHe4YokXv14cVzmj38NYbqVU'
   },
 
+  rollbar: {
+    token: '4c3ee6fe5f3a41d782f9ed595910d5b9',
+  },
+
   assetHashes: BUILDVARS.hashes,
   version: `${buildVersion} (built on ${buildDate})`
 };
