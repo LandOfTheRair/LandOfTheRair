@@ -8,7 +8,7 @@ export class HPDocBehavior implements IAIBehavior {
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
 
-    const hpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'hpdoc.costs') ?? {
+    const hpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'hpdoc.values') ?? {
       [BaseClass.Mage]:       [100, 375, 600, 2400],
       [BaseClass.Thief]:      [100, 425, 700, 2800],
       [BaseClass.Healer]:     [100, 400, 650, 2600],
