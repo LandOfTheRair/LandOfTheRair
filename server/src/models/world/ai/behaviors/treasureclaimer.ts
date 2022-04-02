@@ -3,7 +3,7 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import { IAIBehavior, INPC, IPlayer, distanceFrom,
-  ITreasureClaimer, IDialogChatAction, GameServerResponse, ItemSlot, IItemDefinition, ISimpleItem } from '../../../../interfaces';
+  ITreasureClaimer, IDialogChatAction, GameServerResponse, ItemSlot, ISimpleItem } from '../../../../interfaces';
 import { Player } from '../../../orm';
 
 export class TreasureClaimerBehavior implements IAIBehavior {
@@ -43,7 +43,7 @@ export class TreasureClaimerBehavior implements IAIBehavior {
 
         game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
 
-        return '[The pylon urges you to grasp at your desired treasure - TAKE a WEAPON, ARMOR, JEWELRY, GEM, or SCROLL.]';
+        return '[The pylon urges you to grasp at your desired treasure - TAKE a WEAPON, ARMOR, JEWELRY, or GEM.]';
       });
 
     parser.addCommand('take')
@@ -63,7 +63,7 @@ export class TreasureClaimerBehavior implements IAIBehavior {
 
         if (player.items.equipment[ItemSlot.RightHand]) return '[The pylon requires your right hand to be empty.]';
 
-        const randomItem: IItemDefinition | undefined = game.rngDungeonGenerator.getRandomItemFromMap(treasureMap, type);
+        const randomItem = game.rngDungeonGenerator.getRandomItemFromMap(treasureMap, type, ['Powerful', 'Legendary']);
 
         if (!randomItem) return '[The pylon finds your query confusing, and requests a different choice.]';
 
@@ -72,7 +72,6 @@ export class TreasureClaimerBehavior implements IAIBehavior {
 
         game.rngDungeonGenerator.claim(treasureMap, player.uuid);
 
-        console.log(teleportMap, teleportX, teleportY);
         game.teleportHelper.teleport(player as Player, { map: teleportMap, x: teleportX, y: teleportY });
 
         return '[The pylon acknowledges your query.]';

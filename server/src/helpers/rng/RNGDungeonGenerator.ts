@@ -97,7 +97,11 @@ export class RNGDungeonGenerator extends BaseService {
     this.playersClaimedToday[mapName][playerUUID] = true;
   }
 
-  public getRandomItemFromMap(mapName: string, type: 'weapon'|'armor'|'jewelry'|'scroll'|'gem'): IItemDefinition | undefined {
+  public getRandomItemFromMap(
+    mapName: string,
+    type: 'weapon'|'armor'|'jewelry'|'scroll'|'gem',
+    keywordMatches: string[] = []
+  ): IItemDefinition | undefined {
     let itemClasses: ItemClass[] = [];
 
     if (type === 'weapon') {
@@ -129,6 +133,7 @@ export class RNGDungeonGenerator extends BaseService {
 
     const validItems = this.game.contentManager
       .getItemsMatchingName(mapName)
+      .filter(x => keywordMatches.length > 0 ? keywordMatches.some(k => x.name.includes(k)) : true)
       .filter(x => itemClasses.includes(x.itemClass) && x.sprite !== -1);
 
     const item = sample(validItems);
