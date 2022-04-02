@@ -225,7 +225,12 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
   private focusInput() {
     setTimeout(() => {
-      this.commandInput?.nativeElement.focus();
+      if (!this.commandInput) return;
+
+      this.commandInput.nativeElement.focus();
+
+      // this moves the cursor to the end of the input
+      this.commandInput.nativeElement.value = this.commandInput.nativeElement.value ?? '';
     }, 0);
   }
 
