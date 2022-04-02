@@ -89,6 +89,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
         } else if ((char as INPC).hostility === Hostility.OnHit
                && (char as INPC).allegiance !== Allegiance.NaturalResource
+               && !char.agro[this.player.uuid] && !this.player.agro[char.uuid]
                && this.optionsService.dontAttackGreys) {
           this.store.dispatch(new SetCurrentCommand(`${char.name}, `));
 
