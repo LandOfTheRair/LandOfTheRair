@@ -9,6 +9,7 @@ export class Wellspring extends Spell {
     const rightHand = caster?.items.equipment[ItemSlot.RightHand];
     if (rightHand) {
       this.sendMessage(caster, { message: 'You need to empty right hand!' });
+      this.game.spellManager.resetCooldown(caster, 'Wellspring');
       return;
     }
 
