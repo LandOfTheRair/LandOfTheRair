@@ -8,7 +8,8 @@ export class RiftSlash extends SpellCommand {
   override spellRef = 'RiftSlash';
 
   override range(char: ICharacter) {
-    return 4;
+    const baseRange = super.calcPlainAttackRange(char);
+    return baseRange === -1 ? -1 : 4;
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
