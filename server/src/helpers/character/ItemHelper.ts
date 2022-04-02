@@ -78,13 +78,13 @@ export class ItemHelper extends BaseService {
     return this.content.getItemDefinition(itemName);
   }
 
-  public getItemProperty(item: ISimpleItem | undefined, prop: keyof IItem): any {
-    if (!item) return null;
+  public getItemProperty(item: ISimpleItem | undefined, prop: keyof IItem): any | undefined {
+    if (!item) return undefined;
 
     if (!isUndefined(item.mods[prop])) return item.mods[prop];
 
     const realItem = this.getItemDefinition(item.name);
-    if (!realItem) return null;
+    if (!realItem) return undefined;
 
     return realItem[prop];
   }

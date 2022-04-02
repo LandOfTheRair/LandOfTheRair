@@ -2,7 +2,7 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import { distanceFrom, EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior,
-  INPC, IPlayer, ItemClass, ItemSlot, ShieldClasses, WeaponClasses } from '../../../../interfaces';
+  INPC, IPlayer, ItemClass, ItemSlot, ShieldClasses, WeaponClass, WeaponClasses } from '../../../../interfaces';
 
 export class EncrusterBehavior implements IAIBehavior {
 
@@ -145,7 +145,10 @@ export class EncrusterBehavior implements IAIBehavior {
         if (rightHand.mods.owner && rightHand.mods.owner !== player.username) return 'That item belongs to someone else!';
         if (leftHand.mods.owner && leftHand.mods.owner !== player.username) return 'That gem belongs to someone else!';
 
-        const itemClass = game.itemHelper.getItemProperty(rightHand, 'itemClass');
+        const { itemClass, destroyOnDrop } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'destroyOnDrop']);
+        const weaponItemClass = itemClass ?? ItemClass.Rock;
+
+        if (destroyOnDrop) return 'That item is too transient for me to encrust it!';
 
         const {
           itemClass: leftItemClass,
@@ -165,9 +168,9 @@ export class EncrusterBehavior implements IAIBehavior {
         }
 
         const slots = leftEncrustGive?.slots ?? [];
-        const shouldPass = (slots.includes('weapon') && WeaponClasses.includes(itemClass))
-                        || (slots.includes('shield') && ShieldClasses.includes(itemClass))
-                        || (slots.includes(EquipHash[itemClass]));
+        const shouldPass = (slots.includes('weapon') && WeaponClasses.includes(weaponItemClass as WeaponClass))
+                        || (slots.includes('shield') && ShieldClasses.includes(weaponItemClass as WeaponClass))
+                        || (slots.includes(EquipHash[weaponItemClass]));
 
         if (!shouldPass) return 'You cannot encrust that gem into that item.';
 
