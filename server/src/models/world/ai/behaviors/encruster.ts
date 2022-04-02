@@ -145,10 +145,11 @@ export class EncrusterBehavior implements IAIBehavior {
         if (rightHand.mods.owner && rightHand.mods.owner !== player.username) return 'That item belongs to someone else!';
         if (leftHand.mods.owner && leftHand.mods.owner !== player.username) return 'That gem belongs to someone else!';
 
-        const { itemClass, destroyOnDrop } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'destroyOnDrop']);
+        const { itemClass, destroyOnDrop, shots } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'destroyOnDrop', 'shots']);
         const weaponItemClass = itemClass ?? ItemClass.Rock;
 
         if (destroyOnDrop) return 'That item is too transient for me to encrust it!';
+        if ((shots ?? 0) > 0) return 'There is too much of that item for me to encrust it!';
 
         const {
           itemClass: leftItemClass,
