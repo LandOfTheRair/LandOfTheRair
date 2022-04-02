@@ -256,6 +256,12 @@ export class RNGDungeonItemGenerator {
       const validItems = potentialItems.filter(x => x.itemClass !== ItemClass.Scroll
                                                  && x.itemClass !== ItemClass.Gem
                                                  && !rollables.map(r => r.result).includes(x.name));
+
+      if (validItems.length === 0) {
+        console.error('Solokar', 'No valid items found for map drop table!');
+        continue;
+      }
+
       const item = this.rng.getItem(validItems);
 
       let maxChance = 50;
@@ -269,6 +275,12 @@ export class RNGDungeonItemGenerator {
     for (let i = 0; i < 3; i++) {
       const validItems = potentialItems.filter(x => x.itemClass === ItemClass.Gem
                                                  && !rollables.map(r => r.result).includes(x.name));
+
+      if (validItems.length === 0) {
+        console.error('Solokar', 'No valid scroll gems found for map drop table!');
+        continue;
+      }
+
       const item = this.rng.getItem(validItems);
 
       rollables.push({ chance: 1, maxChance: 200, result: item.name });
@@ -279,6 +291,12 @@ export class RNGDungeonItemGenerator {
                                                  && !x.binds
                                                  && x.trait?.level === this.mapMeta.itemProps.traitLevel
                                                  && !rollables.map(r => r.result).includes(x.name));
+
+      if (validItems.length === 0) {
+        console.error('Solokar', 'No valid scroll items found for map drop table!');
+        continue;
+      }
+
       const item = this.rng.getItem(validItems);
 
       rollables.push({ chance: 1, maxChance: 200, result: item.name });
