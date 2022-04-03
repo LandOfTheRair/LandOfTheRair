@@ -667,8 +667,8 @@ export class MapState {
     return this.game.groundManager.getEntireGround(this.map.name, x, y);
   }
 
-  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid?: string, count = 1): IGroundItem[] {
-    return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid, count);
+  public getItemsFromGround(x: number, y: number, itemClass: ItemClass, uuid?: string): IGroundItem[] {
+    return this.game.groundManager.getItemsFromGround(this.map.name, x, y, itemClass, uuid);
   }
 
   public removeItemsFromGround(x: number, y: number, items: IGroundItem[]): void {

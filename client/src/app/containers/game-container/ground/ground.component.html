@@ -23,7 +23,7 @@
        (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
        droppable>
 
-    <ng-container *ngIf="groundGroups.length === 0">
+    <ng-container *ngIf="!groundGroups || groundGroups.length === 0">
       <div class="true-center background-text full-height">You don't see any items here</div>
     </ng-container>
 

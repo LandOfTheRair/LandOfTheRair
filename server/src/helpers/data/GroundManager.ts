@@ -258,9 +258,16 @@ export class GroundManager extends BaseService {
     return get(this.ground, [mapName, x, y], {} as any);
   }
 
-  public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', count = 1): IGroundItem[] {
+  public getTrapsFromGround(mapName: string, x: number, y: number, uuid = ''): IGroundItem[] {
+    return this.getItemsFromGround(mapName, x, y, ItemClass.TrapSet, uuid, true);
+  }
+
+  public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', allowTraps = false): IGroundItem[] {
+    if (itemClass === ItemClass.TrapSet && !allowTraps) return [];
+
     const ground = get(this.ground, [mapName, x, y], {}) as Record<ItemClass, IGroundItem[]>;
     if (!ground) return [];
+
     let potentialItems: IGroundItem[] = [];
     if (itemClass) {
       potentialItems = ground[itemClass] ?? [];
@@ -271,6 +278,7 @@ export class GroundManager extends BaseService {
         });
       });
     }
+
     // no uuid means grab the entire group
     if (!uuid) return potentialItems;
 
@@ -291,6 +299,7 @@ export class GroundManager extends BaseService {
         });
       });
     });
+
     return items;
   }
 

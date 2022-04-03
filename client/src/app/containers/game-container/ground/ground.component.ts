@@ -52,11 +52,12 @@ export class GroundComponent implements OnInit, OnDestroy {
   ngOnDestroy() {}
 
   setGround() {
-    if (!this.currentGround) return;
+    if (!this.currentGround) this.currentGround = {};
+
     const ground = this.currentGround;
 
     this.groundGroups = Object.keys(ground || {})
-      .filter(g => g !== ItemClass.Coin && g !== ItemClass.Corpse)
+      .filter(g => g !== ItemClass.Coin && g !== ItemClass.Corpse && g !== ItemClass.TrapSet)
       .filter(g => ground[g].length > 0)
       .map(groundGroup => ({
           itemClass: groundGroup as ItemClass,

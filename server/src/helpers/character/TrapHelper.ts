@@ -15,7 +15,7 @@ export class TrapHelper extends BaseService {
   }
 
   public getTrapAt(map: string, x: number, y: number): IGroundItem {
-    return this.game.groundManager.getItemsFromGround(map, x, y, ItemClass.TrapSet)[0];
+    return this.game.groundManager.getTrapsFromGround(map, x, y)[0];
   }
 
   public triggerTrap(target: ICharacter, trap: IGroundItem) {
