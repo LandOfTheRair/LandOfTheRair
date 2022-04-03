@@ -42,6 +42,13 @@ export class AccountDB extends BaseService {
     return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1, password: 1, temporaryPassword: 1 } });
   }
 
+  public async getAccountUsernameForEmail(email: string): Promise<string> {
+    const account = await this.db.findSingle<Account>(Account, { email });
+    if (!account) return '';
+
+    return account.username;
+  }
+
   // get a fully populated account object post-signin validation
   public async getAccount(username: string): Promise<Account | null> {
     const account = await this.db.findSingle<Account>(Account, { username });

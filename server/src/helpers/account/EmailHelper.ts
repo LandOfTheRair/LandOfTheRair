@@ -70,6 +70,8 @@ export class EmailHelper extends BaseService {
       email = account.email;
     }
 
+    const finalAccountUsername = await this.game.accountDB.getAccountUsernameForEmail(email);
+
     const code = uuid().split('-').join('');
 
     this.game.accountDB.setTemporaryPassword(email, code);
@@ -85,7 +87,7 @@ export class EmailHelper extends BaseService {
       subject: 'Your Land of the Rair Temporary Password',
       text: `Hello, you requested a temporary password.
 
-      Your temporary password is: ${code}
+      Your temporary password for "${finalAccountUsername}" is: ${code}
 
       Please note, this password will be automatically erased on your next login, and it did NOT replace your existing password.
 
