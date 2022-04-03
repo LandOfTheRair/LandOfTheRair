@@ -304,7 +304,7 @@ export class ItemHelper extends BaseService {
         return this.game.messageHelper.sendSimpleMessage(player, 'You already know that rune!');
       }
 
-      if (trait.restrict && !trait.restrict.includes(player.baseClass)) {
+      if (trait.restrict && trait.restrict.length > 0 && !trait.restrict.includes(player.baseClass)) {
         return this.game.messageHelper.sendSimpleMessage(player, 'You cannot learn that rune!');
       }
 
