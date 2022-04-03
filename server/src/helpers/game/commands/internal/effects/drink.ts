@@ -10,6 +10,8 @@ export class DrinkCommand extends MacroCommand {
 
   override execute(player: IPlayer) {
 
+    const allHealingEffects = ['ExactHeal', 'ExactHealRegen'];
+
     // try to use from potion first
     if (player.items.equipment[ItemSlot.Potion]) {
       this.game.itemHelper.useItemInSlot(player, ItemSlot.Potion);
@@ -19,7 +21,7 @@ export class DrinkCommand extends MacroCommand {
     // then right hand
     if (player.items.equipment[ItemSlot.RightHand]) {
       const useEffect = this.game.itemHelper.getItemProperty(player.items.equipment[ItemSlot.RightHand], 'useEffect');
-      if (useEffect && useEffect.name === 'ExactHeal') {
+      if (useEffect && allHealingEffects.includes(useEffect.name)) {
         this.game.itemHelper.useItemInSlot(player, ItemSlot.RightHand);
         return;
       }
@@ -28,7 +30,7 @@ export class DrinkCommand extends MacroCommand {
     // then left hand
     if (player.items.equipment[ItemSlot.LeftHand]) {
       const useEffect = this.game.itemHelper.getItemProperty(player.items.equipment[ItemSlot.LeftHand], 'useEffect');
-      if (useEffect && useEffect.name === 'ExactHeal') {
+      if (useEffect && allHealingEffects.includes(useEffect.name)) {
         this.game.itemHelper.useItemInSlot(player, ItemSlot.LeftHand);
         return;
       }
@@ -38,7 +40,7 @@ export class DrinkCommand extends MacroCommand {
     const firstHealIndex = player.items.sack.items.findIndex(i => {
       const useEffect = this.game.itemHelper.getItemProperty(i, 'useEffect');
       if (!useEffect) return false;
-      return useEffect.name === 'ExactHeal';
+      return allHealingEffects.includes(useEffect.name);
     });
 
     if (firstHealIndex === -1) {
