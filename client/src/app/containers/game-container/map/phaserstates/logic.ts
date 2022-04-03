@@ -106,7 +106,7 @@ export class MapScene extends Phaser.Scene {
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
         const dark = this.add.sprite(64 * (x + 4) + 32, 64 * (y + 4) + 32, blackBitmapData as any);
-        dark.alpha = 0;
+        dark.setAlpha(0);
         dark.setScrollFactor(0);
         dark.setDepth(9999);
 
@@ -135,7 +135,7 @@ export class MapScene extends Phaser.Scene {
     }
 
     if (npc.dir === Direction.Center) {
-      sprite.alpha = 0;
+      sprite.setAlpha(0);
     }
 
     if (!npc.aquaticOnly) {
@@ -265,7 +265,7 @@ export class MapScene extends Phaser.Scene {
       const fovSprite = this.fovSprites[position.x][position.y] as Sprite;
       fovSprite.setDisplayOrigin(32, 32);
       fovSprite.setDisplaySize(64, 64);
-      fovSprite.alpha = 1;
+      fovSprite.setAlpha(1);
       if (!isPlayerInGame) return;
 
       const tileFov = get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
@@ -274,11 +274,11 @@ export class MapScene extends Phaser.Scene {
 
       case FOVVisibility.CanSeeButDark:
         if (!this.canSeeThroughDarkAt(position.x, position.y)) return;
-        fovSprite.alpha = 0.5;
+        fovSprite.setAlpha(0.5);
         break;
 
       case FOVVisibility.CanSee:
-        fovSprite.alpha = 0;
+        fovSprite.setAlpha(0);
         break;
       }
 
@@ -291,7 +291,7 @@ export class MapScene extends Phaser.Scene {
       if (fovDirections === Direction.Center) {
         return;
       }
-      fovSprite.alpha = 1;
+      fovSprite.setAlpha(1);
 
       const cutDownRight = () => {
         fovSprite.setDisplayOrigin(-11, 21);
@@ -313,12 +313,14 @@ export class MapScene extends Phaser.Scene {
         case 0b011_0_1_001:
           cutRight();
           return;
+
         case 0b110_1_0_000:
         case 0b111_1_0_000:
         case 0b111_1_0_100:
         case 0b110_1_0_100:
           cutLeft();
           return;
+
         case 0b100_1_0_110:
         case 0b001_0_1_011:
         case 0b100_1_0_111:
@@ -326,16 +328,21 @@ export class MapScene extends Phaser.Scene {
         case 0b000_0_1_111:
         case 0b000_1_0_111:
           return;
+
         case Direction.South:
         case Direction.Northwest:
         case Direction.Northeast:
-          fovSprite.alpha = 0; return;
+          fovSprite.setAlpha(0);
+          return;
+
         case Direction.Southeast: cutDownRight(); return;
+
         case Direction.Southwest: fovSprite.setOrigin(1.12, 0.27); return;
+
         default:
           if (directionHasAny(fovDirections, Direction.North)) {
             if (directionHasAny(fovDirections, Direction.South)) return;
-            fovSprite.alpha = 0;
+            fovSprite.setAlpha(0);
             return;
           }
           if (directionHasAny(fovDirections, Direction.South)) {
@@ -857,7 +864,8 @@ export class MapScene extends Phaser.Scene {
   private stealthUpdate(sprite: Sprite, character: ICharacter) {
     if (character.hp.current <= 0) return;
 
-    sprite.alpha = (character.totalStats?.[Stat.Stealth] ?? 0) ? 0.7 : 1;
+    const isHidden = (character.totalStats?.[Stat.Stealth] ?? 0) > 0;
+    OutlinePipeline.setAlpha(sprite, isHidden ? 0.15 : 1);
   }
 
   // sprite updates
