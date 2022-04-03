@@ -59,10 +59,11 @@ export class Push extends Spell {
       didSecondPushWork = this.game.movementHelper.moveWithPathfinding(target, { xDiff: x, yDiff: y });
     }
 
+    const extraText = caster ? ` by ${caster.name}` : '';
     if (didFirstPushWork || didSecondPushWork) {
-      this.game.messageHelper.sendLogMessageToRadius(target, 4, { message: `${target.name} was knocked down!` });
+      this.game.messageHelper.sendLogMessageToRadius(target, 4, { message: `${target.name} was knocked down${extraText}!` });
     } else {
-      this.game.messageHelper.sendLogMessageToRadius(target, 4, { message: `${target.name} was knocked over!` });
+      this.game.messageHelper.sendLogMessageToRadius(target, 4, { message: `${target.name} was knocked over${extraText}!` });
 
       this.game.effectHelper.addEffect(target, target, 'Stun', {
         effect: {
