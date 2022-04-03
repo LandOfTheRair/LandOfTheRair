@@ -13,7 +13,7 @@ export class MessageHelper extends BaseService {
 
   public sendLogMessageToPlayer(
     charOrUUID: ICharacter | string,
-    { message, sfx, from, setTarget, logInfo }: MessageInfo,
+    { message, sfx, from, setTarget, overrideIfOnly, logInfo }: MessageInfo,
     messageTypes: MessageType[] = [MessageType.Miscellaneous],
     formatArgs: ICharacter[] = []
   ): void {
@@ -40,6 +40,7 @@ export class MessageHelper extends BaseService {
       message: sendMessage,
       sfx,
       setTarget,
+      overrideIfOnly,
       logInfo
     });
   }

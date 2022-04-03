@@ -55,7 +55,7 @@ export class PatchPlayerPosition {
 // dispatched when clicking on a targets box
 export class SetCurrentTarget {
   static type = GameAction.SetCurrentTarget;
-  constructor(public target: string) {}
+  constructor(public target: string|null, public overrideIfOnly?: string) {}
 }
 
 // dispatched when clicking on a targets box

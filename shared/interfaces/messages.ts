@@ -47,6 +47,7 @@ export interface MessageInfo {
   vfxY?: number;
   from?: string;
   setTarget?: string | null | undefined;
+  overrideIfOnly?: string;
   logInfo?: any;
   useSight?: boolean;
   except?: string[];

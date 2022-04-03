@@ -274,7 +274,7 @@ export class CombatHelper extends BaseService {
           this.game.characterHelper.isPlayer(defender) ? MessageType.Player : MessageType.NPC
         ], [defender, attacker]);
 
-        const setTargetArgs = isNumber(args.attackNum) ? {} : { setTarget: null };
+        const setTargetArgs = isNumber(args.attackNum) ? {} : { setTarget: null, overrideIfOnly: defender.uuid };
 
         const killMsg = this.game.messageHelper.formatMessage(attacker, `You ${verb} %0!`, [defender]);
         this.game.messageHelper.sendLogMessageToPlayer(attacker, {

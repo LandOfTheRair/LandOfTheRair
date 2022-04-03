@@ -236,7 +236,18 @@ export class GameState {
   }
 
   @Action(SetCurrentTarget)
-  setCurrentTarget(ctx: StateContext<IGame>, { target }: SetCurrentTarget) {
+  setCurrentTarget(ctx: StateContext<IGame>, { target, overrideIfOnly }: SetCurrentTarget) {
+    const state = ctx.getState();
+
+    // allow for us to not override the target if someone else dies
+    if (!target && overrideIfOnly) {
+      if (state.currentTarget === overrideIfOnly) {
+        ctx.patchState({ currentTarget: null });
+      }
+
+      return;
+    }
+
     ctx.patchState({ currentTarget: target });
   }
 

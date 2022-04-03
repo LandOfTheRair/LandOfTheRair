@@ -52,7 +52,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     this.socketService.registerComponentCallback('CharacterList', GameServerResponse.GameLog, (data) => {
       if (isUndefined(data.setTarget)) return;
-      this.store.dispatch(new SetCurrentTarget(data.setTarget));
+      this.store.dispatch(new SetCurrentTarget(data.setTarget, data.overrideIfOnly));
     });
   }
 
