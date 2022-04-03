@@ -19,6 +19,13 @@ export class FindFamiliarDistraction extends Spell {
     caster.pets.forEach(pet => {
       if (pet.npcId !== 'Thief Distraction') return;
 
+      // only one distraction pet per person at a time
+      if (pet.name === 'dancing shadow') {
+        pet.hp.current = 0;
+        caster.pets = (caster.pets || []).filter(x => x !== pet);
+        return;
+      }
+
       pet.stats[Stat.Move] = 0;
       pet.stats[Stat.HP] = (pet.stats[Stat.HP] ?? 100) * spellCastArgs.potency;
 
