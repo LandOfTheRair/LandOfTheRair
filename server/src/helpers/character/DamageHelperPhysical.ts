@@ -5,7 +5,7 @@ import { clamp, isNumber, random } from 'lodash';
 import { Allegiance, ArmorClass, BaseClass, CombatEffect, DamageArgs,
   DamageClass, distanceFrom, HandsClasses, ICharacter, IItemEffect, IItemEncrust, IPlayer,
   ISimpleItem, ItemClass, ItemSlot, MessageType, PhysicalAttackArgs, PhysicalAttackReturn, ShieldClasses,
-  Skill, SoundEffect, Stat } from '../../interfaces';
+  Skill, SoundEffect, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 interface WeaponAttackStats {
@@ -150,7 +150,12 @@ export class DamageHelperPhysical extends BaseService {
 
     const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
     const statMultipliers: number[] = allStatMultipliers[scaleStat];
-    const weaponStats: WeaponAttackStats = weaponTiers[itemClass ?? ItemClass.Mace];
+    let weaponStats: WeaponAttackStats = weaponTiers[itemClass ?? ItemClass.Mace];
+
+    if (this.game.traitHelper.traitLevel(attacker, 'ThiefGrip')
+    && [ItemClass.Shortsword, ItemClass.Dagger].includes(itemClass as WeaponClass)) {
+      weaponStats = weaponTiers[ItemClass.Longsword];
+    }
 
     if (!weaponStats) {
       return { damage: 0, isWeak: false, isStrong: false };
