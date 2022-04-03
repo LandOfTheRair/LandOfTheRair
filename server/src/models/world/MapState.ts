@@ -16,7 +16,7 @@ const PLAYER_KEYS = [
   'items.equipment', 'username',
   'affiliation', 'allegiance', 'alignment', 'baseClass', 'gender',
   'hp', 'mp', 'level', 'map', 'x', 'y', 'z', 'effects',
-  'totalStats.stealth'
+  'totalStats.stealth', 'totalStats.perception'
 ];
 
 const NPC_KEYS = [
