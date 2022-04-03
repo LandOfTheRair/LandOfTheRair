@@ -316,7 +316,12 @@ export class GameService {
 
   // check the hostility level between two characters
   // any changes here _might_ need to be made to server/checkTargetForHostility
-  public hostilityLevelFor(origin: ICharacter, compare: ICharacter): 'hostile'|'neutral'|'friendly' {
+  public hostilityLevelFor(origin: ICharacter, compare: ICharacter): 'hostile'|'neutral'|'friendly'|'stealth' {
+
+    const isHiddenTo = () => origin.effects._hash.Hidden
+                          && (origin.totalStats?.[Stat.Stealth] ?? 0) > (compare.totalStats?.[Stat.Perception] ?? 0);
+    const alignmentConsideringHidden = () => isHiddenTo() ? 'stealth' : 'hostile';
+
     if (!origin) return 'neutral';
 
     if (origin.allegiance === Allegiance.GM) return 'neutral';
@@ -324,9 +329,9 @@ export class GameService {
 
     if ((origin as IPlayer).partyName && (origin as IPlayer).partyName === (compare as IPlayer).partyName) return 'neutral';
 
-    if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) return 'hostile';
+    if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) return alignmentConsideringHidden();
 
-    if (origin.effects._hash.Disguise && origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]) return 'neutral';
+    if (origin.effects._hash.Disguise && origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]) return 'stealth';
 
     const hostility = (compare as INPC).hostility;
 
@@ -336,14 +341,14 @@ export class GameService {
 
     if (hostility === Hostility.Faction) {
       if (isHostileTo(origin, compare.allegiance)
-      || isHostileTo(compare, origin.allegiance)) return 'hostile';
+      || isHostileTo(compare, origin.allegiance)) return alignmentConsideringHidden();
     }
 
     if (origin.allegiance === compare.allegiance) return 'neutral';
 
-    if (hostility === Hostility.Always) return 'hostile';
+    if (hostility === Hostility.Always) return alignmentConsideringHidden();
 
-    if (origin.alignment === Alignment.Evil && compare.alignment === Alignment.Good) return 'hostile';
+    if (origin.alignment === Alignment.Evil && compare.alignment === Alignment.Good) return alignmentConsideringHidden();
 
     return 'neutral';
   }

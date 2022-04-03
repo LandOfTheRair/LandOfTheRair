@@ -26,7 +26,7 @@ const NPC_KEYS = [
   'agro', 'allegianceReputation', 'hostility', 'aquaticOnly',
   'items.equipment.leftHand', 'items.equipment.rightHand',
   'items.equipment.armor', 'items.equipment.robe1', 'items.equipment.robe2',
-  'onlyVisibleTo', 'totalStats.stealth', 'totalStats.wil', 'totalStats.cha'
+  'onlyVisibleTo', 'totalStats.stealth', 'totalStats.perception', 'totalStats.wil', 'totalStats.cha'
 ];
 
 interface RBushCharacter {

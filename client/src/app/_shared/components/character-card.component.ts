@@ -160,6 +160,11 @@ import { SocketService } from '../../services/socket.service';
     color: black;
   }
 
+  .stealth {
+    background-color: #000;
+    color: white;
+  }
+
   .char-middle {
     max-width: 120px;
     max-height: 50px;
