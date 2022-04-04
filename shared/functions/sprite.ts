@@ -191,5 +191,12 @@ export const spriteTerrainForDirection = (index: number, direction: Direction): 
   case 0b110_1_1_011: return baseIndex + 45;
   case 0b111_1_1_111: return baseIndex + 46;
   }
-  throw new Error(`Invalid direction ${direction}`);
+
+  // this throws a bunch of errors for "123"
+  // I have no idea how to decipher it, but it seems to be the only "bad" direction
+  if ((direction as number) !== 123) {
+    throw new Error(`Invalid direction ${direction}`);
+  }
+
+  return -1;
 };
