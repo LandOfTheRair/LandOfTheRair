@@ -248,7 +248,7 @@ export class RNGDungeonItemGenerator {
     return this.itemDefBases;
   }
 
-  getMapDroptable(items: IItemDefinition[]): Rollable[] {
+  getMapDroptable(items: IItemDefinition[], bonusItems: Rollable[]): Rollable[] {
     const rollables: Rollable[] = [];
     const potentialItems = items.filter(x => !x.name.includes('Punching'));
 
@@ -300,6 +300,10 @@ export class RNGDungeonItemGenerator {
       const item = this.rng.getItem(validItems);
 
       rollables.push({ chance: 1, maxChance: 200, result: item.name });
+    }
+
+    if (bonusItems?.length > 0) {
+      rollables.push(...bonusItems);
     }
 
     return rollables;

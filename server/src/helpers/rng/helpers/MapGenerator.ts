@@ -709,7 +709,7 @@ export class MapGenerator {
 
   // get the droptable for this map
   private getMapDroptable(): Rollable[] {
-    return this.itemGenerator.getMapDroptable(this.items);
+    return this.itemGenerator.getMapDroptable(this.items, this.mapMeta.droptableProps.alwaysDrop);
   }
 
   // get all item definitions for this map

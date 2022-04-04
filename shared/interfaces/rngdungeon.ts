@@ -1,4 +1,4 @@
-import { Allegiance, BaseClass, MonsterClass, Stat } from './building-blocks';
+import { Allegiance, BaseClass, MonsterClass, Rollable, Stat } from './building-blocks';
 import { IItemDefinition } from './item';
 import { ArmorClass, DamageType, ItemClass, WeaponClass } from './itemtypes';
 
@@ -205,6 +205,10 @@ export interface IRNGDungeonMetaConfig {
     basicWeight: number;
     powerfulWeight: number;
     legendaryWeight: number;
+  };
+
+  droptableProps: {
+    alwaysDrop: Rollable[];
   };
 }
 
