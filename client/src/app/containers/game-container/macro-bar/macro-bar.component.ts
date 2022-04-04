@@ -89,6 +89,10 @@ export class MacroBarComponent implements OnInit, OnDestroy {
 
   public isMacroDisabled(player: IPlayer, macro: IMacro): boolean {
     if (!macro?.for) return false;
+
+    // we make this check in case they have a spell scroll that references a spell that is a default macro
+    if (allMacros[macro.for] && !player.learnedSpells[macro.for.toLowerCase()]) return true;
+
     if (allMacros[macro.for]) return false;
     return !player.learnedSpells[macro.for.toLowerCase()] || player.spellCooldowns?.[macro.for] > Date.now();
   }
