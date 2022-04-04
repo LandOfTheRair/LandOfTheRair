@@ -22,6 +22,8 @@ export class GMSearchItems extends MacroCommand {
       itemName = args.stringArgs.substring(args.stringArgs.indexOf(' ') + 1);
     }
 
+    if (isNaN(limit)) limit = 5;
+
     if (!itemName) return false;
 
     let items;
