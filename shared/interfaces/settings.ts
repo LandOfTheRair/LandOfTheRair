@@ -49,7 +49,10 @@ export enum GameOption {
   SpritesheetEffects = 'spritesheetEffectsUrl',
 
   // other options
-  OtherAutoExec = 'otherAutoExec'
+  OtherAutoExec = 'otherAutoExec',
+
+  // custom options
+  CustomCSS = 'customCSS'
 }
 
 export interface ISettings {

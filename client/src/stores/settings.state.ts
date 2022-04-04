@@ -59,7 +59,9 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.SpritesheetTerrain]: '',
       [GameOption.SpritesheetWalls]: '',
 
-      [GameOption.OtherAutoExec]: ''
+      [GameOption.OtherAutoExec]: '',
+
+      [GameOption.CustomCSS]: ''
     }
   });
 

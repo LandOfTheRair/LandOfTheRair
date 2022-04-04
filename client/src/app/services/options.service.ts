@@ -129,12 +129,46 @@ export class OptionsService {
     return this.opts[GameOption.OtherAutoExec];
   }
 
+  // custom options
+  public get customCSS(): string {
+    return this.opts[GameOption.CustomCSS];
+  }
+
   constructor() {}
 
   init() {
     this.options$.subscribe(opts => {
       this.opts = opts;
+      this.updateCustomCSS();
     });
+  }
+
+  updateCustomCSS() {
+    const css = this.customCSS;
+
+    let styleElement = document.getElementById('custom-css');
+
+    // if we have no CSS, we bail. also, if we have a style element, we delete it
+    if (!css) {
+      if (styleElement) {
+        styleElement.remove();
+      }
+      return;
+    }
+
+    // if we have no style element, create one
+    if (!styleElement) {
+      const head = document.getElementsByTagName('head')[0];
+      styleElement = document.createElement('style');
+      styleElement.id = 'custom-css';
+      (styleElement as any).type = 'text/css';
+
+      head.appendChild(styleElement);
+    }
+
+    styleElement.textContent = '';
+    styleElement.appendChild(document.createTextNode(css));
+
   }
 
 }

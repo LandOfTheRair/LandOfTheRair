@@ -180,4 +180,5 @@ export class UIService {
 
     this.gameService.queueAction(cmd.trim(), (ctxArgs.trim() + ' ' + destArgs.trim()).trim());
   }
+
 }

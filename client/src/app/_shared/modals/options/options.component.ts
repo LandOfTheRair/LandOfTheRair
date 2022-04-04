@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { GameOption } from '../../../../interfaces';
 import { SetOption, SettingsState } from '../../../../stores';
+import { OptionsService } from '../../../services/options.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -60,18 +61,25 @@ export class OptionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private store: Store,
+    private optionsService: OptionsService,
     public dialogRef: MatDialogRef<OptionsComponent>
   ) { }
 
   ngOnInit() {
     this.options$.pipe(first())
-      .subscribe(opts => this.options = Object.assign({}, opts));
+      .subscribe(opts => {
+        this.options = Object.assign({}, opts);
+      });
   }
 
   ngOnDestroy() {}
 
   public updateOption(option) {
     this.store.dispatch(new SetOption(option as GameOption, this.options[option]));
+
+    if (option === GameOption.CustomCSS) {
+      this.optionsService.updateCustomCSS();
+    }
   }
 
 }
