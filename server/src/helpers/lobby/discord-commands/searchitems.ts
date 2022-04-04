@@ -18,7 +18,7 @@ export class SearchItemsCommand implements IDiscordCommand {
     if (!item) return message.reply(`No item matches the query "${query}".`);
 
     const fullItem = game.itemHelper.getItemDefinition(item);
-    const embed = game.discordHelper.createItemEmbed(fullItem);
+    const embed = game.discordHelper.createItemEmbed({ name: fullItem.name, mods: {}, uuid: '' });
 
     return message.channel.send({ embed });
   }

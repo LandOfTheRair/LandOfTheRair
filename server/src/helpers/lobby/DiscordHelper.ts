@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import * as Discord from 'discord.js';
 
 import { BaseService } from '../../models/BaseService';
-import { IAccount, IDiscordCommand, IItem, INPCDefinition, IPlayer, ISimpleItem, Stat, WeaponClasses } from '../../interfaces';
+import { IAccount, IDiscordCommand, INPCDefinition, IPlayer, ISimpleItem, Stat, WeaponClasses } from '../../interfaces';
 
 import * as commands from './discord-commands';
 
@@ -196,9 +196,8 @@ export class DiscordHelper extends BaseService {
   }
 
   public createMarketplaceEmbed(player: IPlayer, sellItem: ISimpleItem, price: number): Discord.MessageEmbed {
-    const fullItem = this.game.itemHelper.getItemDefinition(sellItem.name);
 
-    const embed = this.createItemEmbed(fullItem);
+    const embed = this.createItemEmbed(sellItem);
     embed
       .setAuthor(player.name)
       .setTitle('View this seller on Rair Global')
@@ -209,11 +208,15 @@ export class DiscordHelper extends BaseService {
   }
 
   // create an item embed for !item
-  public createItemEmbed(fullItem: IItem): Discord.MessageEmbed {
+  public createItemEmbed(sellItem: ISimpleItem): Discord.MessageEmbed {
+    const fullItem = this.game.itemHelper.getItemDefinition(sellItem.name);
+
+    const sprite = sellItem.mods.sprite ?? fullItem.sprite;
+
     const embed = new Discord.MessageEmbed();
     embed
       .setAuthor(fullItem.name)
-      .setThumbnail(`https://play.rair.land/assets/spritesheets/items/${fullItem.sprite.toString().padStart(4, '0')}.png`)
+      .setThumbnail(`https://play.rair.land/assets/spritesheets/items/${sprite.toString().padStart(4, '0')}.png`)
       .addField('Description', fullItem.desc)
       .addField('Item Type', fullItem.itemClass, true);
 
