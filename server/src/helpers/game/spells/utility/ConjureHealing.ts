@@ -15,7 +15,7 @@ export class ConjureHealing extends Spell {
 
     this.sendMessage(caster, { message: 'You channel magical energy into a bottle.' });
 
-    const bonusMultiplier = this.game.traitHelper.traitLevelValue(caster, 'BiggerBottles') || 1;
+    const bonusMultiplier = Math.max(1, this.game.traitHelper.traitLevelValue(caster, 'BiggerBottles'));
 
     const healingItem = this.game.itemCreator.getSimpleItem('Conjured Healing Potion');
 
