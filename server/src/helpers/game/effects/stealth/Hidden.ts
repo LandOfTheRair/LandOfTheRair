@@ -10,6 +10,9 @@ export class Hidden extends Effect {
   override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = this.game.characterHelper.getStealth(char);
     effect.effectInfo.statChanges = { [Stat.Stealth]: effect.effectInfo.potency };
+
+    const mult = this.game.traitHelper.traitLevelValue(char, 'HiddenHealing');
+    effect.effectInfo.statChanges[Stat.HPRegen] = Math.floor(effect.effectInfo.potency * mult);
   }
 
   // update everyone in sight so they can't see us (maybe)
