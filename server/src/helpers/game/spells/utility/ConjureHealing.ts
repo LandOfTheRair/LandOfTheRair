@@ -15,12 +15,14 @@ export class ConjureHealing extends Spell {
 
     this.sendMessage(caster, { message: 'You channel magical energy into a bottle.' });
 
+    const bonusMultiplier = this.game.traitHelper.traitLevelValue(caster, 'BiggerBottles') || 1;
+
     const healingItem = this.game.itemCreator.getSimpleItem('Conjured Healing Potion');
 
     const skill = this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1;
 
-    healingItem.mods.ounces = skill;
-    healingItem.mods.useEffect = { name: 'ExactHeal', potency: skill * 25 };
+    healingItem.mods.ounces = skill * bonusMultiplier;
+    healingItem.mods.useEffect = { name: 'ExactHeal', potency: skill * 25 * bonusMultiplier };
     healingItem.mods.destroyOnDrop = true;
 
     this.game.itemHelper.setOwner(caster as IPlayer, healingItem);
