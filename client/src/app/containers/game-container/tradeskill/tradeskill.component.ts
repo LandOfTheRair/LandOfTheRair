@@ -81,12 +81,12 @@ export class TradeskillComponent implements OnInit, OnDestroy {
 
   itemDesc(item: string): string {
     const realItem = this.assetService.getItem(item);
-    return realItem.desc;
+    return realItem?.desc ?? '';
   }
 
   itemTies(item: string): boolean {
     const realItem = this.assetService.getItem(item);
-    return realItem.binds;
+    return realItem?.binds ?? false;
   }
 
   recipeTrackBy(index, recipe: IRecipe) {
