@@ -994,15 +994,18 @@ export class MoveItems extends MacroCommand {
 
       if (rightHand && leftHand) return this.sendMessage(player, 'Your hands are full.');
 
+      const removeUUID = items[0].item.uuid;
+      const functionalItem = this.game.itemCreator.rerollItem(items[0].item, false);
+
       if (rightHand && !leftHand) {
         this.game.characterHelper.setLeftHand(player, rightHand);
-        this.game.characterHelper.setRightHand(player, items[0].item);
+        this.game.characterHelper.setRightHand(player, functionalItem);
 
       } else if (!rightHand) {
-        this.game.characterHelper.setRightHand(player, items[0].item);
+        this.game.characterHelper.setRightHand(player, functionalItem);
       }
 
-      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, 1);
 
       break;
     }
@@ -1013,15 +1016,18 @@ export class MoveItems extends MacroCommand {
 
       if (leftHand && rightHand) return this.sendMessage(player, 'Your hands are full.');
 
+      const removeUUID = items[0].item.uuid;
+      const functionalItem = this.game.itemCreator.rerollItem(items[0].item, false);
+
       if (leftHand && !rightHand) {
         this.game.characterHelper.setRightHand(player, leftHand);
-        this.game.characterHelper.setLeftHand(player, items[0].item);
+        this.game.characterHelper.setLeftHand(player, functionalItem);
 
       } else if (!leftHand) {
-        this.game.characterHelper.setLeftHand(player, items[0].item);
+        this.game.characterHelper.setLeftHand(player, functionalItem);
       }
 
-      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, 1);
 
       break;
     }
@@ -1032,8 +1038,11 @@ export class MoveItems extends MacroCommand {
 
       if (player.items.equipment[equipSlot]) return this.sendMessage(player, 'You already have something equipped there!');
 
-      this.game.characterHelper.setEquipmentSlot(player, equipSlot, items[0].item);
-      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, items[0].item.uuid, 1);
+      const removeUUID = items[0].item.uuid;
+      const functionalItem = this.game.itemCreator.rerollItem(items[0].item, false);
+
+      this.game.characterHelper.setEquipmentSlot(player, equipSlot, functionalItem);
+      state.removeItemFromGround(player.x, player.y, itemClass as ItemClass, removeUUID, 1);
 
       break;
     }
