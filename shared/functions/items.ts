@@ -66,6 +66,7 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
 export function descTextFor(
   player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, castIdentifyTier = 0, thiefTier = 0
 ): string {
+  if (!item || !itemDef) return 'This description cannot be generated at this time.';
 
   const identifyTier = Math.max(castIdentifyTier, item.mods.identifyTier ?? 0);
   const itemClass = getProp(item, itemDef, 'itemClass');
