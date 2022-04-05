@@ -36,8 +36,11 @@ export class CharacterDB extends BaseService {
 
     const { baseXP, baseRep } = this.game.contentManager.getGameSetting('character');
 
-    let startingXP = baseXP ?? 1000;
+
     let lockers = new PlayerLockers();
+    lockers._id = new ObjectId();
+
+    let startingXP = baseXP ?? 1000;
     let startingSkills = {};
 
     if (oldPlayerSlot !== -1) {
@@ -77,8 +80,10 @@ export class CharacterDB extends BaseService {
 
     // load old player data
     player.exp = startingXP;
-    player.lockers = lockers;
     player.paidSkills = startingSkills;
+
+    player.lockers = lockers;
+    player._lockers = lockers._id;
 
     this.game.playerHelper.becomeClass(player, player.baseClass);
     this.game.characterHelper.healToFull(player);
@@ -154,7 +159,7 @@ export class CharacterDB extends BaseService {
 
     let [items, traits, quests, statistics, lockers] = results;
 
-    if (!items) {
+    if (!items || !player._items) {
       const newItems = new PlayerItems();
       newItems._id = new ObjectId();
 
@@ -162,7 +167,7 @@ export class CharacterDB extends BaseService {
       player._items = items._id;
     }
 
-    if (!traits) {
+    if (!traits || !player._traits) {
       const newTraits = new PlayerTraits();
       newTraits._id = new ObjectId();
 
@@ -170,7 +175,7 @@ export class CharacterDB extends BaseService {
       player._traits = traits._id;
     }
 
-    if (!quests) {
+    if (!quests || !player._quests) {
       const newQuests = new PlayerQuests();
       newQuests._id = new ObjectId();
 
@@ -178,7 +183,7 @@ export class CharacterDB extends BaseService {
       player._quests = quests._id;
     }
 
-    if (!statistics) {
+    if (!statistics || !player._statistics) {
       const newStats = new PlayerStatistics();
       newStats._id = new ObjectId();
 
@@ -186,7 +191,7 @@ export class CharacterDB extends BaseService {
       player._statistics = statistics._id;
     }
 
-    if (!lockers) {
+    if (!lockers || !player._lockers) {
       const newLockers = new PlayerLockers();
       newLockers._id = new ObjectId();
 
