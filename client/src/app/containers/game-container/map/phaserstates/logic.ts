@@ -864,7 +864,7 @@ export class MapScene extends Phaser.Scene {
   private stealthUpdate(sprite: Sprite, character: ICharacter) {
     if (character.hp.current <= 0) return;
 
-    const isHidden = (character.totalStats?.[Stat.Stealth] ?? 0) > 0;
+    const isHidden = (character.totalStats?.[Stat.Stealth] ?? 0) > 0 && character.effects._hash.Hidden;
     OutlinePipeline.setAlpha(sprite, isHidden ? 0.15 : 1);
   }
 
