@@ -98,13 +98,13 @@ export class UIService {
 
     // context arg parsing
     if (context === 'Ground') {
-      ctxArgs = `${item.mods.itemClass ?? realItem.itemClass}:${item.uuid}`;
+      ctxArgs = `${item.mods?.itemClass ?? realItem?.itemClass}:${item.uuid}`;
 
     } else if (['Right', 'Left'].includes(context)) {
       ctxArgs = '_';
 
     } else if (context === 'GroundGroup') {
-      ctxArgs = `${item.mods.itemClass ?? realItem.itemClass}`;
+      ctxArgs = `${item.mods?.itemClass ?? realItem?.itemClass}`;
 
     } else if (['Sack', 'Belt', 'Equipment', 'DemiMagicPouch', 'Obtainagain'].includes(context)) {
       ctxArgs = `${contextSlot}`;
