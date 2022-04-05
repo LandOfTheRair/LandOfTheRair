@@ -72,7 +72,7 @@ export abstract class SkillCommand extends MacroCommand {
       const extraMsg: Record<BaseClass, string> = {
         [BaseClass.Healer]: 'MP',
         [BaseClass.Mage]: 'MP',
-        [BaseClass.Thief]: 'Stealth',
+        [BaseClass.Thief]: 'Energy',
         [BaseClass.Warrior]: 'Rage',
         [BaseClass.Traveller]: 'MP'
       };

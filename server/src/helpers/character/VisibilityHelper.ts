@@ -126,7 +126,7 @@ export class VisibilityHelper extends BaseService {
     if (this.game.effectHelper.hasEffect(char, 'Revealed')) return 'You cannot hide right now!';
     if (this.game.effectHelper.hasEffect(char, 'Hidden')) return 'You are already hidden!';
 
-    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return 'You do not have the stealth to hide!';
+    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return 'You do not have the energy to hide!';
 
     if (!this.canContinueHidingAtSpot(char)) return 'You cannot hide here!';
 
