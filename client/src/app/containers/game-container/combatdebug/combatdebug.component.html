@@ -55,6 +55,12 @@
     </div>
   </ng-container>
 
+  <div class="stats" *ngIf="player$ | async as player">
+    <span class="stat" *ngFor="let stat of allStats" [class.hidden]="!player.totalStats[stat.key]" [matTooltip]="stat.key">
+      {{ stat.display }} {{ player.totalStats[stat.key] }}
+    </span>
+  </div>
+
   <table class="table" *ngIf="visibleLogInfoForTable.length > 0">
     <thead>
       <tr>

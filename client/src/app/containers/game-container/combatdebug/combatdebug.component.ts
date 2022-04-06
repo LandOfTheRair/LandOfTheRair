@@ -33,6 +33,23 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
 
   public visibleLogInfoForTable = [];
 
+  public readonly allStats = [
+    { display: 'AC',  key: 'armorClass' },
+    { display: 'WAC', key: 'weaponArmorClass' },
+    { display: 'M',   key: 'mitigation' },
+    { display: 'D',   key: 'defense' },
+
+    { display: 'ReM', key: 'magicalResist' },
+    { display: 'ReP', key: 'physicalResist' },
+    { display: 'ReN', key: 'necroticResist' },
+    { display: 'ReE', key: 'energyResist' },
+    { display: 'ReW', key: 'waterResist' },
+    { display: 'ReF', key: 'fireResist' },
+    { display: 'ReI', key: 'iceResist' },
+    { display: 'ReP', key: 'poisonResist' },
+    { display: 'ReD', key: 'diseaseResist' },
+  ];
+
   public get totalLogged() {
     return this.storedLogs.length;
   }
