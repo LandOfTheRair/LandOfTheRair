@@ -72,16 +72,13 @@ export class VisibilityHelper extends BaseService {
       }
     }
 
-    /*
-    if(character.hasEffect('WallSight')) {
-      for(let xx = character.x - dist; xx <= character.x + dist; xx++) {
-        for(let yy = character.y - dist; yy <= character.y + dist; yy++) {
-          affected[xx - character.x] = affected[xx - character.x] || {};
-          affected[xx - character.x][yy - character.y] = true;
+    if (this.game.effectHelper.hasEffect(character, 'WallSight')) {
+      for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
+        for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
+          setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CanSee, Object);
         }
       }
     }
-    */
 
     character.fov = affected;
 

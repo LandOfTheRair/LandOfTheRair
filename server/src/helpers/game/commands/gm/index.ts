@@ -24,4 +24,5 @@ export * from './teleportto';
 export * from './togglemapblock';
 export * from './updatecontent';
 export * from './upgradeitem';
+export * from './wallsight';
 export * from './xp';
