@@ -179,6 +179,7 @@ export class TrainerBehavior implements IAIBehavior {
         const coinsTaken = Math.floor(Math.max(0, Math.min(heldValue, maxCoins - curValue - curTrain)));
 
         if (coinsTaken <= 0) return 'I cannot train you any more!';
+        if (isNaN(coinsTaken) || !coinsTaken) return 'I cannot train you for some reason!';
 
         game.playerHelper.trainSkill(player, skill, coinsTaken);
 
