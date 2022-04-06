@@ -79,6 +79,7 @@ import { EquipmentQuickComponent } from './containers/game-container/equipment-q
 import { PartyComponent } from './containers/game-container/party/party.component';
 import { MarketComponent } from './containers/game-container/market/market.component';
 import { TradeskillComponent } from './containers/game-container/tradeskill/tradeskill.component';
+import { CombatDebugComponent } from './containers/game-container/combatdebug/combatdebug.component';
 
 const declarations = [
   AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
@@ -130,7 +131,9 @@ const gameComponents = [
   EquipmentViewOnlyComponent,
   EquipmentViewTargetComponent,
   RuneCodexComponent,
-  PartyComponent
+  PartyComponent,
+
+  CombatDebugComponent
 ];
 
 

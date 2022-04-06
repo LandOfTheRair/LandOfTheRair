@@ -195,7 +195,7 @@ export class CombatHelper extends BaseService {
           logInfo: {
             type: 'damage',
             uuid: attacker ? attacker.uuid : '???',
-            weapon: attackerWeapon ? itemClass : '???',
+            weapon: attackerWeapon ? itemClass : (args.damageClass || '???'),
             damage,
             monsterName: defender.name
           }
@@ -218,7 +218,7 @@ export class CombatHelper extends BaseService {
           logInfo: {
             type: 'damage',
             uuid: attacker ? attacker.uuid : '???',
-            weapon: attackerWeapon ? itemClass : '???',
+            weapon: attackerWeapon ? itemClass : (args.damageClass || '???'),
             damage,
             monsterName: attacker ? attacker.name : '???'
           }

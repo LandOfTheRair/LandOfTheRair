@@ -1,0 +1,37 @@
+
+.actions {
+  display: flex;
+  margin-top: 10px;
+
+  .padding {
+    padding: 1rem;
+  }
+
+  .action {
+    color: #fff;
+    flex: 1;
+    display: flex;
+    margin-right: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.table {
+  width: 100%;
+  margin-top: 10px;
+  max-height: 420px;
+  overflow-y: scroll;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #fff;
+
+  th {
+    text-align: left;
+    border-bottom: 1px solid #fff;
+  }
+
+  tr {
+    max-height: 30px;
+  }
+}

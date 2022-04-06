@@ -36,6 +36,14 @@ export enum MessageType {
   Magic = 'magic'
 }
 
+export interface LogInfo {
+  damage: number;
+  monsterName: string;
+  uuid: string;
+  type: string;
+  weapon: string;
+}
+
 export interface MessageInfo {
   message: string;
   fromDiscord?: string;
@@ -48,7 +56,7 @@ export interface MessageInfo {
   from?: string;
   setTarget?: string | null | undefined;
   overrideIfOnly?: string;
-  logInfo?: any;
+  logInfo?: LogInfo;
   useSight?: boolean;
   except?: string[];
 }
