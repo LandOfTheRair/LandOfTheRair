@@ -441,7 +441,7 @@ export class PlayerHelper extends BaseService {
 
   // flag a certain skill for a player
   public trainSkill(player: IPlayer, skill: Skill, amt: number): void {
-    player.paidSkills[skill] ??= 0;
+    player.paidSkills[skill] = player.paidSkills[skill] || 0;
 
     const baseVal = player.paidSkills[skill] ?? 0;
     player.paidSkills[skill] = baseVal + amt;
