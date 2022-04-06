@@ -1,5 +1,13 @@
 import { IItem, IPlayer, ISimpleItem, ItemClass, Skill, Stat } from '../interfaces';
 
+const formatStatForDisplay = (stat: Stat, statValue: number) => {
+  const sign = statValue > 0 ? '+' : '';
+  const displayValue = statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
+  const statName = statValue % 1 === 0 ? stat : stat.split('Percent')[0];
+
+  return `${sign}${displayValue} ${statName.toUpperCase()}`;
+};
+
 function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
   return item.mods[prop] || itemDef[prop];
 }
@@ -114,14 +122,6 @@ export function descTextFor(
   const statsText = identifyTier > 0 && affectsAttributes
     ? 'This item affects physical attributes! ' : '';
 
-  const formatStatForDisplay = (stat: Stat, statValue: number) => {
-    const sign = statValue > 0 ? '+' : '';
-    const displayValue = statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
-    const statName = statValue % 1 === 0 ? stat : stat.split('Percent')[0];
-
-    return `${sign}${displayValue} ${statName.toUpperCase()}`;
-  };
-
   const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
   const statSpecificText = identifyTier > 2 && affectedStats.length > 0
     ? `This item affects your stats! ${affectedStats.map(x => `${formatStatForDisplay(x, stats[x])}`).join(', ')}. ` : '';
@@ -199,4 +199,27 @@ export const foodTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) 
   const statText = `This food changes the following stats: ${useEffect.extra?.tooltip ?? 'None'}`;
 
   return `${baseText} ${statText}`;
+};
+
+export const gemTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) => {
+  const desc = getProp(item, itemDef, 'desc');
+
+  const encrustGive = getProp(item, itemDef, 'encrustGive');
+  if (!encrustGive) return '';
+
+  const affectedStats = Object.keys(encrustGive.stats || {}) as Stat[];
+
+  const baseText = `You are looking at ${desc}. `;
+
+  const slotText = `This gem goes in the following slots: ${encrustGive.slots.map(x => x.toUpperCase()).join(', ')}. `;
+
+  const affectedStatsText = affectedStats.map(x => `${formatStatForDisplay(x, encrustGive.stats[x])}`).join(', ');
+  const statText = affectedStats.length > 0
+    ? `This gem changes the following stats: ${affectedStatsText}. `
+    : '';
+
+  const strikeEffect = encrustGive.strikeEffect;
+  const effectText = strikeEffect ? `This gem confers the on-hit effect ${strikeEffect.name} at potency ${strikeEffect.potency}. ` : '';
+
+  return `${baseText}${slotText}${statText}${effectText}`;
 };

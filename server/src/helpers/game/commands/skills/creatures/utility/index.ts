@@ -7,6 +7,7 @@ export * from './darkness';
 export * from './dispel';
 export * from './fate';
 export * from './foodsense';
+export * from './gemsense';
 export * from './identify';
 export * from './light';
 export * from './massteleport';
