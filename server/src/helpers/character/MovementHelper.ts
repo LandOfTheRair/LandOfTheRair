@@ -128,7 +128,8 @@ export class MovementHelper extends BaseService {
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);
-      if (!nextTileWall) {
+      const canWallWalk = this.game.effectHelper.hasEffect(character, 'WallWalk');
+      if (!nextTileWall || canWallWalk) {
         const possibleDenseObj = map.getInteractableOrDenseObject(nextX, nextY);
 
         if (possibleDenseObj?.density) {

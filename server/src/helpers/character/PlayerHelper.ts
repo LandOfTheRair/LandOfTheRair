@@ -300,7 +300,8 @@ export class PlayerHelper extends BaseService {
 
     // if we're on a dense tile, "respawn"
     const map = this.worldManager.getMap(player.map)?.map;
-    if (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y)) {
+    if (!this.game.effectHelper.hasEffect(player, 'WallWalk')
+    && (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y))) {
       this.game.messageHelper.sendSimpleMessage(player,
         `Whoops. Tell a GM "invalid loc" happened at ${player.x}, ${player.y} on ${player.map}.`
       );
