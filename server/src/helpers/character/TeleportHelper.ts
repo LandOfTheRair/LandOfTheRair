@@ -173,6 +173,9 @@ export class TeleportHelper extends BaseService {
 
   public showTeleports(player: IPlayer, spell = 'teleport') {
     const teleports = Object.keys(player.teleportLocations || {});
+    const teleportsCurrently = teleports.length;
+    const teleportsMax = this.maxLocations(player);
+
     if (teleports.length === 0) {
       this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You have not memorized any locations to teleport to.' });
 
@@ -181,7 +184,7 @@ export class TeleportHelper extends BaseService {
         displayTitle: 'No Teleports',
         options: [
           { text: 'Cancel', action: 'noop' },
-          { text: 'Memorize New', action: 'memorize' }
+          { text: `Memorize New (${teleportsCurrently}/${teleportsMax})`, action: 'memorize' }
         ]
       };
 
@@ -192,10 +195,10 @@ export class TeleportHelper extends BaseService {
     const options = [
       { text: 'Nowhere', action: 'noop' },
       { text: 'Forget Location', action: 'forget' },
-      { text: 'Memorize New', action: 'memorize' }
+      { text: `Memorize New (${teleportsCurrently}/${teleportsMax})`, action: 'memorize' }
     ];
 
-    let msg = `Your teleports (${teleports.length}/${this.maxLocations(player)}):`;
+    let msg = `Your teleports (${teleportsCurrently}/${teleportsMax}):`;
     teleports.forEach((tp, i) => {
       msg = `${msg}<br>${i + 1}: ${tp} - ${player.teleportLocations[tp].map}`;
       options.push({ text: `Teleport to ${tp} (${player.teleportLocations[tp].map})`, action: `cast ${spell} ${tp}` });
