@@ -595,6 +595,10 @@ export class MapState {
     this.triggerAndSendUpdate(npc.x, npc.y);
   }
 
+  public removeAllNPCs() {
+    this.allNPCS.forEach(npc => this.removeNPC(npc));
+  }
+
   public getCharacterByUUID(uuid: string): ICharacter | null {
     return this.npcsByUUID[uuid] || this.playersByUUID[uuid];
   }

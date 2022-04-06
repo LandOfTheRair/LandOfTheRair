@@ -54,6 +54,9 @@ export class RNGDungeonGenerator extends BaseService {
 
   // updating the map info, file, and the content for the game
   private async updateMap(mapName: string, mapJSON: any) {
+    const mapData = this.game.worldManager.getMap(mapName);
+    mapData?.state?.removeAllNPCs();
+
     await this.game.groundManager.removeGround(mapName);
     this.game.worldManager.createOrReplaceMap(mapName, mapJSON);
     this.playersClaimedToday[mapName] = {};
