@@ -650,6 +650,15 @@ export class MapGenerator {
     const takenQuadrants: number[] = [];
     const quadrants = [0, 1, 2, 3];
 
+    let allValidSpaces = validSpaces.slice();
+
+    const filterValidSpaceNearTile = (spawnerTile) => {
+      allValidSpaces = allValidSpaces.filter(space => space.x < spawnerTile.x - 3
+                                                   || space.x > spawnerTile.x + 3
+                                                   || space.y < spawnerTile.y - 3
+                                                   || space.y > spawnerTile.y + 3);
+    };
+
     spawners.forEach(group => {
       const quadrant = this.rng.getItem(quadrants.filter(q => !takenQuadrants.includes(q)));
       takenQuadrants.push(quadrant);
@@ -660,33 +669,42 @@ export class MapGenerator {
       let hasPlacedLegendary = false;
       takenQuadrants.forEach(quad => {
         const quadData = this.quadrants[quad];
-        const validSpacesInQuadrant = validSpaces.filter(space => (space.x < quadData.xStart
-                                                               || space.x > quadData.xEnd
-                                                               || space.y < quadData.yStart
-                                                               || space.y > quadData.yEnd)
-                                                               && !space.hasWall && !space.hasDenseDecor && !space.hasFluid);
+
+        const validSpacesInQuadrant = () => allValidSpaces.filter(space => (space.x < quadData.xStart
+                                                                        || space.x > quadData.xEnd
+                                                                        || space.y < quadData.yStart
+                                                                        || space.y > quadData.yEnd)
+                                                                        && !space.hasWall && !space.hasDenseDecor && !space.hasFluid);
 
         if (!hasPlacedLegendary && group.legendary) {
           hasPlacedLegendary = true;
-          const legendarySpawnerTile = this.rng.getItem(validSpacesInQuadrant);
+          const legendarySpawnerTile = this.rng.getItem(validSpacesInQuadrant());
 
-          this.addTiledObject(MapLayer.Spawners, {
-            gid: 2363,
-            name: 'Legendary Spawner',
-            x: legendarySpawnerTile.x * 64,
-            y: (legendarySpawnerTile.y + 1) * 64,
-            properties: {
-              tag: 'Global Lair',
-              lairName: group.legendary.npcId
-            }
-          });
+          if (legendarySpawnerTile) {
+            this.addTiledObject(MapLayer.Spawners, {
+              gid: 2363,
+              name: 'Legendary Spawner',
+              x: legendarySpawnerTile.x * 64,
+              y: (legendarySpawnerTile.y + 1) * 64,
+              properties: {
+                tag: 'Global Lair',
+                lairName: group.legendary.npcId
+              }
+            });
 
-          this.addSpoilerLog(`Legendary spawner added at ${legendarySpawnerTile.x}, ${legendarySpawnerTile.y + 1}.`, true);
+            filterValidSpaceNearTile(legendarySpawnerTile);
+
+            this.addSpoilerLog(`Legendary spawner added at ${legendarySpawnerTile.x}, ${legendarySpawnerTile.y + 1}.`, true);
+          }
         }
 
         for (let i = 0; i < 20; i++) {
-          const spawnerTile = this.rng.getItem(validSpacesInQuadrant);
+          const spawnerTile = this.rng.getItem(validSpacesInQuadrant());
           const spawner = this.rng.getItem(group.spawners);
+
+          if (!spawnerTile || !spawner) continue;
+
+          filterValidSpaceNearTile(spawnerTile);
 
           this.addTiledObject(MapLayer.Spawners, {
             gid: 2363,
