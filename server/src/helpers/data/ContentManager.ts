@@ -8,6 +8,7 @@ import dl from 'download-github-repo';
 
 import * as allegiancestats from '../../../content/_output/allegiancestats.json';
 import * as attributestats from '../../../content/_output/attributestats.json';
+import * as challenge from '../../../content/_output/challenge.json';
 import * as charselect from '../../../content/_output/charselect.json';
 import * as events from '../../../content/_output/events.json';
 import * as fate from '../../../content/_output/fate.json';
@@ -38,11 +39,12 @@ import * as npcScripts from '../../../content/_output/npc-scripts.json';
 import * as recipes from '../../../content/_output/recipes.json';
 import * as spawners from '../../../content/_output/spawners.json';
 
-import { Allegiance, BaseClass, Holiday, IClassTraitTree,
+import { Allegiance, BaseClass, Holiday, IChallenge, IClassTraitTree,
   IDynamicEventData,
   IFate,
   IGameSettings,
-  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest, IRecipe, IRNGDungeonConfig, ISpawnerData, ISpellData,
+  IItemDefinition, IMaterialSlotLayout, INPCDefinition, INPCScript, IPremium, IQuest,
+  IRecipe, IRNGDungeonConfig, ISpawnerData, ISpellData,
   IStatusEffectData, ITrait, IWeaponTier, Rollable, Skill, Stat, WeaponClass } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -79,6 +81,7 @@ export class ContentManager extends BaseService {
 
   private allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   private attributeStats: Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }>;
+  private challenge: IChallenge;
   private charSelect: { baseStats: Record<Stat | 'gold', number>; allegiances: any[]; classes: any[]; weapons: any[] };
   private events: Record<string, IDynamicEventData>;
   private fate: IFate;
@@ -110,6 +113,10 @@ export class ContentManager extends BaseService {
 
   public get attributeStatsData(): Array<{ attribute: string; stats: Array<{ stat: Stat; boost: number }> }> {
     return cloneDeep(this.attributeStats);
+  }
+
+  public get challengeData() {
+    return cloneDeep(this.challenge);
   }
 
   public get charSelectData() {
@@ -332,6 +339,7 @@ export class ContentManager extends BaseService {
   private loadCore() {
     this.allegianceStats = deepfreeze(this.chooseConfigFileOrPreset('allegiancestats', realJSON(allegiancestats)));
     this.attributeStats = deepfreeze(this.chooseConfigFileOrPreset('attributestats', realJSON(attributestats)));
+    this.challenge = deepfreeze(this.chooseConfigFileOrPreset('challenge', realJSON(challenge)));
     this.charSelect = deepfreeze(this.chooseConfigFileOrPreset('charselect', realJSON(charselect)));
     this.events = deepfreeze(this.chooseConfigFileOrPreset('events', realJSON(events)));
     this.fate = deepfreeze(this.chooseConfigFileOrPreset('fate', realJSON(fate)));

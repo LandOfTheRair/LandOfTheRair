@@ -151,6 +151,9 @@ export interface INPCDefinition {
 
   // automatically given to green npcs, their forced y-coordinate
   y?: number;
+
+  // the challenge rating of the creature - scales the hp / damageFactor
+  cr?: number;
 }
 
 export interface INPC extends ICharacter {

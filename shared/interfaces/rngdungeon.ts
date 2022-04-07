@@ -186,6 +186,7 @@ export interface IRNGDungeonMetaConfig {
     bonusCreatureSkillChoices: number;
     bonusCreatureTraitChoices: number;
     eliteTickCap: number;
+    cr: number;
   };
 
   itemProps: {

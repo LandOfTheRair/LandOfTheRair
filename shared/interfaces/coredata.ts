@@ -16,6 +16,18 @@ export interface IMaterialSlotLayout {
   layouts: Array<{ category: string; items: Array<string|null> }>;
 }
 
+export interface IChallenge {
+  global: {
+    cr: Record<number, { damageFactor: number }>;
+    stats: {
+      hp: Record<number, { min: number; max: number }>;
+      gold: Record<number, { min: number; max: number }>;
+      giveXp: Record<number, { min: number; max: number }>;
+      damageFactor: Record<number, { min: number; max: number }>;
+    };
+  };
+}
+
 export interface IFate {
   stat: Array<{
     chance: number;

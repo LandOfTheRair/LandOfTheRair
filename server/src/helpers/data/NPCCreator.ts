@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import uuid from 'uuid/v4';
 
 import { species } from 'fantastical';
-import { cloneDeep, isNumber, isString, merge, random, sample, zipObject } from 'lodash';
+import { clamp, cloneDeep, isNumber, isString, merge, random, sample, zipObject } from 'lodash';
 import { Parser } from 'muud';
 
 import { Alignment, Allegiance, BehaviorType, Currency, Hostility,
@@ -165,6 +165,10 @@ export class NPCCreator extends BaseService {
       baseChar.monsterClass ??= MonsterClass.Humanoid;
     }
 
+    const challengeRating = clamp(npcDef.cr ?? 0, -10, 10);
+
+    baseChar.stats[Stat.DamageFactor] = this.game.contentManager.challengeData.global.cr[challengeRating]?.damageFactor ?? 1;
+
     if (baseChar.skills[Skill.Thievery] === 0) {
       baseChar.skills[Skill.Thievery] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.floor(baseChar.level / 2));
     }
@@ -174,7 +178,16 @@ export class NPCCreator extends BaseService {
     }
 
     if (npcDef.hp) {
-      baseChar.hp.maximum = random(npcDef.hp.min, npcDef.hp.max);
+      let { min, max } = npcDef.hp;
+
+      // build based on the level
+      if (npcDef.hp.min === 0 || npcDef.hp.max === 0) {
+        const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.hp[baseChar.level];
+        min = lvlMin;
+        max = lvlMax;
+      }
+
+      baseChar.hp.maximum = random(min, max);
       baseChar.stats[Stat.HP] = baseChar.hp.maximum;
     }
 
