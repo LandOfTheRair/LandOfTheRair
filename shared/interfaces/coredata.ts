@@ -23,7 +23,7 @@ export interface IChallenge {
       hp: Record<number, { min: number; max: number }>;
       gold: Record<number, { min: number; max: number }>;
       giveXp: Record<number, { min: number; max: number }>;
-      damageFactor: Record<number, { min: number; max: number }>;
+      damageFactor: Record<number, number>;
     };
   };
 }

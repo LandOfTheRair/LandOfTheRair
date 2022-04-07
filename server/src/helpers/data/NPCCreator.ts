@@ -167,7 +167,9 @@ export class NPCCreator extends BaseService {
 
     const challengeRating = clamp(npcDef.cr ?? 0, -10, 10);
 
-    baseChar.stats[Stat.DamageFactor] = this.game.contentManager.challengeData.global.cr[challengeRating]?.damageFactor ?? 1;
+    const globalCRDF = this.game.contentManager.challengeData.global.cr[challengeRating]?.damageFactor ?? 1;
+    const globalLvlDF = this.game.contentManager.challengeData.global.stats.damageFactor[baseChar.level] ?? 1;
+    baseChar.stats[Stat.DamageFactor] = globalCRDF * globalLvlDF;
 
     if (baseChar.skills[Skill.Thievery] === 0) {
       baseChar.skills[Skill.Thievery] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.floor(baseChar.level / 2));
