@@ -95,6 +95,8 @@ export class GroundManager extends BaseService {
   // save a single ground area
   public async saveSingleGround(mapName: string) {
     const save = this.getSaveGround(mapName);
+    if (!save) return;
+
     return this.game.groundDB.saveSingleGround(save);
   }
 
@@ -108,12 +110,14 @@ export class GroundManager extends BaseService {
   private async saveGround(maps?: string[]): Promise<any> {
     if (!maps || maps.length === 0) return;
 
-    const allSaves = maps.map(map => this.getSaveGround(map));
+    const allSaves = maps.map(map => this.getSaveGround(map)).filter(Boolean) as Ground[];
     return this.game.groundDB.saveAllGrounds(allSaves);
   }
 
-  private getSaveGround(mapName: string): Ground {
+  private getSaveGround(mapName: string): Ground | undefined {
     const entity = this.groundEntities[mapName];
+    if (!entity) return undefined;
+
     entity.map = mapName;
     entity.ground = this.saveableGround[mapName] || {};
     entity.spawners = this.collectSpawners(mapName) || [];
