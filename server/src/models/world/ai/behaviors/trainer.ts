@@ -8,10 +8,12 @@ import { Player } from '../../../orm';
 export class TrainerBehavior implements IAIBehavior {
 
   private canRevive = false;
+  private hasGuild = false;
 
   init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior) {
 
     this.canRevive = behavior.trainClass.includes(BaseClass.Healer);
+    this.hasGuild = behavior.trainClass.includes(BaseClass.Thief);
 
     const { maxLevelUpLevel, maxSkillTrain } = behavior;
 
@@ -84,7 +86,8 @@ export class TrainerBehavior implements IAIBehavior {
           npcSprite: npc.sprite,
           npcMaxLevel: maxLevelUpLevel,
           npcMaxSkill: maxSkillTrain,
-          npcCanRevive: this.canRevive
+          npcCanRevive: this.canRevive,
+          npcGuildTeleport: this.hasGuild
         });
 
         return `Hello, ${env?.player.name}!`;
@@ -284,6 +287,43 @@ export class TrainerBehavior implements IAIBehavior {
           player.respawnPoint = { x: npc.x, y: npc.y, map: npc.map };
 
           return `I'll bring you right back to me when you die, ${player.name}.`;
+        });
+    }
+
+    if (this.hasGuild) {
+      parser.addCommand('guildteleport')
+        .setSyntax(['guildteleport'])
+        .setLogic(async ({ env }) => {
+          const player = env?.player;
+
+          const mapData = game.worldManager.getMap(npc.map);
+          const teleDisabled = mapData?.map.properties.respawnKick;
+
+          if (teleDisabled) {
+            env?.callbacks.emit({
+              type: GameServerResponse.SendAlert,
+              title: 'Unable to Teleport',
+              content: `I cannot teleport you from here, ${player.name}, the ether is too twisting.`,
+              extraData: { npcSprite: npc.sprite },
+            });
+
+            return `I cannot teleport you from here, ${player.name}, the ether is too twisting.`;
+          }
+
+          const teleportPoint = game.contentManager.getGameSetting('map', 'defaultThievesGuild') ?? {
+            map: 'ThievesGuild',
+            x: 15,
+            y: 15
+          };
+
+          if (player.map === teleportPoint.map) {
+            game.teleportHelper.teleport(player, { map: player.respawnPoint.map, x: player.respawnPoint.x, y: player.respawnPoint.y });
+            return `See ya, ${player.name}.`;
+          }
+
+          game.teleportHelper.teleport(player, { map: teleportPoint.map, x: teleportPoint.x, y: teleportPoint.y });
+
+          return `See ya, ${player.name}.`;
         });
     }
 

@@ -20,6 +20,7 @@ export interface IGame {
     npcMaxLevel: number;
     npcMaxSkill: number;
     npcCanRevive: boolean;
+    npcGuildTeleport: boolean;
   };
 
   vendorInfo: {

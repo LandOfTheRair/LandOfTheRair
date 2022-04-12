@@ -32,6 +32,7 @@
       <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="trainSkill()">Train Skill</button>
       <button mat-raised-button color="warn" (click)="resetTraits()">Reset Traits</button>
       <button mat-raised-button color="secondary" (click)="recall()" *ngIf="trainerInfo.npcCanRevive">Recall Me</button>
+      <button mat-raised-button color="secondary" (click)="warp()" *ngIf="trainerInfo.npcGuildTeleport">Warp Me</button>
     </div>
 
     <div class="skills">

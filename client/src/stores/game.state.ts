@@ -25,7 +25,8 @@ const defaultGame: () => IGame = () => ({
       npcSprite: 0,
       npcMaxSkill: 0,
       npcMaxLevel: 0,
-      npcCanRevive: false
+      npcCanRevive: false,
+      npcGuildTeleport: false
     },
     vendorInfo: {
       npcUUID: '',
@@ -337,7 +338,9 @@ export class GameState {
   }
 
   @Action(OpenTrainerWindow)
-  openTrainerWindow(ctx: StateContext<IGame>, { npcUUID, npcName, npcSprite, npcMaxLevel, npcMaxSkill, npcCanRevive }: OpenTrainerWindow) {
+  openTrainerWindow(ctx: StateContext<IGame>, {
+    npcUUID, npcName, npcSprite, npcMaxLevel, npcMaxSkill, npcCanRevive, npcGuildTeleport
+  }: OpenTrainerWindow) {
     ctx.patchState({
       trainerInfo: {
         npcName,
@@ -345,7 +348,8 @@ export class GameState {
         npcSprite,
         npcMaxLevel,
         npcMaxSkill,
-        npcCanRevive
+        npcCanRevive,
+        npcGuildTeleport
       }
     });
 

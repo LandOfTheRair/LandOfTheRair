@@ -205,6 +205,12 @@ export interface IGameSettings {
       x: number;
       y: number;
     };
+
+    defaultThievesGuild: {
+      map: string;
+      x: number;
+      y: number;
+    };
   };
 
   npc: {

@@ -101,6 +101,10 @@ export class TrainerComponent implements OnInit, OnDestroy {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, recall`);
   }
 
+  warp() {
+    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, guildteleport`);
+  }
+
   trainSkill() {
     this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`);
   }

@@ -80,7 +80,8 @@ export class OpenTrainerWindow {
     public npcSprite: number,
     public npcMaxLevel: number,
     public npcMaxSkill: number,
-    public npcCanRevive: boolean
+    public npcCanRevive: boolean,
+    public npcGuildTeleport: boolean
   ) {}
 }
 
