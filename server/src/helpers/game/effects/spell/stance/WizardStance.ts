@@ -34,7 +34,9 @@ export class WizardStance extends Effect {
   ): number {
     if (!attacker || damageArgs.damageClass === DamageClass.Physical) return currentDamage;
 
-    if (this.game.effectHelper.hasEffect(char, 'ImbueEnergy') && this.game.characterHelper.hasLearned(char, 'MagicMissile')) {
+    if (this.game.effectHelper.hasEffect(char, 'ImbueEnergy')
+    && this.game.characterHelper.hasLearned(char, 'MagicMissile')
+    && !this.game.characterHelper.isDead(attacker)) {
       this.game.commandHandler.getSkillRef('MagicMissile').use(char, attacker);
 
     } else {

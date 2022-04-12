@@ -27,7 +27,9 @@ export class GlacierStance extends Effect {
   ): number {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) return currentDamage;
 
-    if (this.game.effectHelper.hasEffect(char, 'ImbueFrost') && this.game.characterHelper.hasLearned(char, 'Hail')) {
+    if (this.game.effectHelper.hasEffect(char, 'ImbueFrost')
+    && this.game.characterHelper.hasLearned(char, 'Hail')
+    && !this.game.characterHelper.isDead(attacker)) {
       this.game.commandHandler.getSkillRef('Hail').use(char, attacker);
 
     } else {

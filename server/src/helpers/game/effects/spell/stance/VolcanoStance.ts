@@ -26,7 +26,9 @@ export class VolcanoStance extends Effect {
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
-    if (this.game.effectHelper.hasEffect(char, 'ImbueFlame') && this.game.characterHelper.hasLearned(char, 'Combust')) {
+    if (this.game.effectHelper.hasEffect(char, 'ImbueFlame')
+    && this.game.characterHelper.hasLearned(char, 'Combust')
+    && !this.game.characterHelper.isDead(target)) {
       this.game.commandHandler.getSkillRef('Combust').use(char, target);
 
     } else {
