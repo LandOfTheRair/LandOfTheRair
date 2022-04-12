@@ -166,9 +166,10 @@ export class NPCCreator extends BaseService {
     }
 
     const challengeRating = clamp(npcDef.cr ?? 0, -10, 10);
+    const crLevel = clamp(baseChar.level, 1, this.game.configManager.MAX_LEVEL);
 
     const globalCRDF = this.game.contentManager.challengeData.global.cr[challengeRating]?.damageFactor ?? 1;
-    const globalLvlDF = this.game.contentManager.challengeData.global.stats.damageFactor[baseChar.level] ?? 1;
+    const globalLvlDF = this.game.contentManager.challengeData.global.stats.damageFactor[crLevel] ?? 1;
     baseChar.stats[Stat.DamageFactor] = globalCRDF * globalLvlDF;
 
     if (baseChar.skills[Skill.Thievery] === 0) {
@@ -184,7 +185,7 @@ export class NPCCreator extends BaseService {
 
       // build based on the level
       if (npcDef.hp.min === 0 || npcDef.hp.max === 0) {
-        const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.hp[baseChar.level];
+        const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.hp[crLevel];
         min = lvlMin;
         max = lvlMax;
       }
