@@ -37,7 +37,7 @@
 
         <div class="actions">
           <button mat-raised-button color="primary" (click)="saveBuild(currentTree)" [disabled]="currentTree === -1">Save Current Build</button>
-          <button mat-raised-button color="primary" (click)="loadBuild(currentTree)" [disabled]="currentTree === -1">Load Current Build</button>
+          <button mat-raised-button color="primary" (click)="loadBuild(currentTree)" [disabled]="currentTree === -1 || !player.traits.savedBuilds[currentTree]">Load Current Build</button>
         </div>
       </div>
 
