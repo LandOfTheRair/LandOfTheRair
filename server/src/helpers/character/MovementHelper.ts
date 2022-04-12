@@ -192,7 +192,8 @@ export class MovementHelper extends BaseService {
       teleportX, teleportY, teleportMap,
       requireHeld, requireParty, requireHoliday,
       requireQuest, requireQuestProgress, requireQuestComplete,
-      damagePercent, teleportTagMap, teleportTag, applyEffect
+      damagePercent, teleportTagMap, teleportTag, applyEffect,
+      requireClass
     } = obj.properties;
 
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
@@ -231,6 +232,10 @@ export class MovementHelper extends BaseService {
     // check if player has completed quest
     if (requireQuestComplete) {
       if (!this.game.questHelper.isQuestPermanentlyComplete(player, requireQuestComplete)) return;
+    }
+
+    if (requireClass) {
+      if (player.baseClass !== requireClass) return;
     }
 
     let didTeleport = false;
