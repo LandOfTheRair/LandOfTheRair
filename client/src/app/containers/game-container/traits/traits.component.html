@@ -44,7 +44,7 @@
                   [class.can-buy]="canBuyTrait(trait.name)"
                   [class.no-buy]="!canBuyTrait(trait.name)"
                   *ngIf="getTrait(trait.name) as traitData"
-                  (click)="tryToBuyTrait(trait)"
+                  (click)="tryToBuyTrait(trait, $event)"
                   [matTooltip]="formatTooltip(trait, traitData)">
 
                 <div class="trait-icon"

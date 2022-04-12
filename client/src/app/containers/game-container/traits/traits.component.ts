@@ -102,14 +102,21 @@ export class TraitsComponent implements OnInit, OnDestroy {
           );
   }
 
-  public tryToBuyTrait(trait: ITraitTreeTrait): void {
+  public tryToBuyTrait(trait: ITraitTreeTrait, $event): void {
     if (!this.canBuyTrait(trait.name)) return;
+
+    const finalize = () => this.gameService.sendCommandString(`!learntrait ${trait.name}`);
+
+    if ($event.shiftKey) {
+      finalize();
+      return;
+    }
 
     this.modalService.confirm('Buy Trait', 'Are you sure you want to buy this trait?')
       .subscribe(res => {
         if (!res) return;
 
-        this.gameService.sendCommandString(`!learntrait ${trait.name}`);
+        finalize();
       });
   }
 
