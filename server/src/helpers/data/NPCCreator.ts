@@ -176,15 +176,31 @@ export class NPCCreator extends BaseService {
       baseChar.skills[Skill.Thievery] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.floor(baseChar.level / 2));
     }
 
+    if (npcDef.giveXp) {
+      if (npcDef.giveXp.min === -1 || npcDef.giveXp.max === -1) {
+        const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.giveXp[crLevel];
+        baseChar.giveXp.min = lvlMin;
+        baseChar.giveXp.max = lvlMax;
+      }
+    }
+
     if (npcDef.gold) {
-      baseChar.currency[Currency.Gold] = random(npcDef.gold.min, npcDef.gold.max);
+      let { min, max } = npcDef.gold;
+
+      if (npcDef.gold.min === -1 || npcDef.gold.max === -1) {
+        const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.gold[crLevel];
+        min = lvlMin;
+        max = lvlMax;
+      }
+
+      baseChar.currency[Currency.Gold] = random(min, max);
     }
 
     if (npcDef.hp) {
       let { min, max } = npcDef.hp;
 
       // build based on the level
-      if (npcDef.hp.min === 0 || npcDef.hp.max === 0) {
+      if (npcDef.hp.min === -1 || npcDef.hp.max === -1) {
         const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.hp[crLevel];
         min = lvlMin;
         max = lvlMax;

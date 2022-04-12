@@ -24,6 +24,8 @@ export interface IChallenge {
       gold: Record<number, { min: number; max: number }>;
       giveXp: Record<number, { min: number; max: number }>;
       damageFactor: Record<number, number>;
+      allStats: Record<number, number>;
+      allSkills: Record<number, number>;
     };
   };
 }
