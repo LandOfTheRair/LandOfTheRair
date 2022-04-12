@@ -110,7 +110,25 @@ export function descTextFor(
   const extendedDesc = getProp(item, itemDef, 'extendedDesc');
   const sense1Text = identifyTier > 0 && extendedDesc ? `This item is ${extendedDesc}. ` : '';
 
-  const stats = getProp(item, itemDef, 'stats');
+  // calculating stats is more than getting a prop unfortunately
+  const baseStats = itemDef.stats ?? {};
+  const modStats = item.mods?.stats ?? {};
+  const stats: Partial<Record<Stat, number>> = {};
+
+  for (const stat of Object.keys(baseStats)) {
+    const baseStat = baseStats[stat];
+
+    stats[stat] ??= 0;
+    stats[stat] += baseStat;
+  }
+
+  for (const stat of Object.keys(modStats)) {
+    const baseStat = modStats[stat];
+
+    stats[stat] ??= 0;
+    stats[stat] += baseStat;
+  }
+
   const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense)
     ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
 
@@ -124,7 +142,7 @@ export function descTextFor(
 
   const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
   const statSpecificText = identifyTier > 2 && affectedStats.length > 0
-    ? `This item affects your stats! ${affectedStats.map(x => `${formatStatForDisplay(x, stats[x])}`).join(', ')}. ` : '';
+    ? `This item affects your stats! ${affectedStats.map(x => `${formatStatForDisplay(x, stats[x] ?? 0)}`).join(', ')}. ` : '';
 
   const tier = getProp(item, itemDef, 'tier');
   const tierText = identifyTier > 2 && tier > 0 ? `This item is tier ${tier}. ` : '';
