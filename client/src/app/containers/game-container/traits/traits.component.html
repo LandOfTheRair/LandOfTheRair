@@ -7,7 +7,7 @@
 
             defaultX="450"
             defaultY="100"
-            defaultWidth="550"
+            defaultWidth="750"
             defaultHeight="780"
 ></app-window>
 
@@ -25,48 +25,68 @@
 
   <div class="container" *ngIf="player && traitTree">
 
-    <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
-      <ng-container *ngFor="let tree of traitTree.treeOrder">
-        <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'" *ngIf="tree !== 'Ancient' || player.level >= 50">
+    <div class="splitter">
+      <div class="build-list">
+        <div class="builds">
+          <button mat-raised-button [color]="currentTree === -1 ? 'primary' : 'accent'" (click)="changeTree(-1)">Current Build</button>
 
-          <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
+          <ng-container *ngFor="let slot of buildSlots">
+            <button mat-raised-button [color]="currentTree === slot ? 'primary' : 'accent'" (click)="changeTree(slot)">{{ player.traits.savedBuilds[slot] ? player.traits.savedBuilds[slot].name : 'No Build' }}</button>
+          </ng-container>
+        </div>
 
-            <div class="trait-req-container">
-              <div class="trait-req" *ngIf="tree !== 'Ancient'">
-                Level {{ traitRow.requiredLevel }}
-              </div>
-            </div>
+        <div class="actions">
+          <button mat-raised-button color="primary" (click)="saveBuild(currentTree)" [disabled]="currentTree === -1">Save Current Build</button>
+          <button mat-raised-button color="primary" (click)="loadBuild(currentTree)" [disabled]="currentTree === -1">Load Current Build</button>
+        </div>
+      </div>
 
-            <div class="trait-col" *ngFor="let trait of traitRow.traits">
+      <div class="build-viewer">
 
-              <div class="trait"
-                  [class.has-trait]="getTraitLevel(trait.name) > 0"
-                  [class.can-buy]="canBuyTrait(trait.name)"
-                  [class.no-buy]="!canBuyTrait(trait.name)"
-                  *ngIf="getTrait(trait.name) as traitData"
-                  (click)="tryToBuyTrait(trait, $event)"
-                  [matTooltip]="formatTooltip(trait, traitData)">
+        <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
+          <ng-container *ngFor="let tree of traitTree.treeOrder">
+            <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'" *ngIf="tree !== 'Ancient' || player.level >= 50">
 
-                <div class="trait-icon"
-                    [style.border-color]="traitData.borderColor">
-                  <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+              <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
 
-                  <div class="trait-level">
-                    <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+                <div class="trait-req-container">
+                  <div class="trait-req" *ngIf="tree !== 'Ancient'">
+                    Level {{ traitRow.requiredLevel }}
                   </div>
                 </div>
 
-                <div class="trait-name">{{ traitData.name }}</div>
+                <div class="trait-col" *ngFor="let trait of traitRow.traits">
+
+                  <div class="trait"
+                      [class.has-trait]="getTraitLevel(trait.name) > 0"
+                      [class.can-buy]="canBuyTrait(trait.name)"
+                      [class.no-buy]="!canBuyTrait(trait.name)"
+                      *ngIf="getTrait(trait.name) as traitData"
+                      (click)="tryToBuyTrait(trait, $event)"
+                      [matTooltip]="formatTooltip(trait, traitData)">
+
+                    <div class="trait-icon"
+                        [style.border-color]="traitData.borderColor">
+                      <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+
+                      <div class="trait-level">
+                        <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+                      </div>
+                    </div>
+
+                    <div class="trait-name">{{ traitData.name }}</div>
+                  </div>
+
+                </div>
+
               </div>
 
-            </div>
+            </mat-tab>
+          </ng-container>
 
-          </div>
-
-        </mat-tab>
-      </ng-container>
-
-    </mat-tab-group>
+        </mat-tab-group>
+      </div>
+    </div>
 
   </div>
 </ng-template>

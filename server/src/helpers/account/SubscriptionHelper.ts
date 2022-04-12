@@ -284,6 +284,11 @@ export class SubscriptionHelper extends BaseService {
     return baseValue + (1 + player.subscriptionTier * mult);
   }
 
+  public buildSlots(player: IPlayer, baseValue = 3): number {
+    const bonusSlots = this.game.contentManager.getGameSetting('subscriber', 'buildSlots') ?? 3;
+    return baseValue + bonusSlots;
+  }
+
   public holidayTokensGained(player: IPlayer, baseValue = 1): number {
     const mult = this.game.contentManager.getGameSetting('subscriber', 'holidayTokenGain') ?? 2;
     return baseValue * (player.subscriptionTier > 0 ? mult : 1);

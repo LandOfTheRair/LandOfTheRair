@@ -87,3 +87,35 @@
     }
   }
 }
+
+.container, .splitter {
+  height: 100%;
+}
+
+.splitter {
+  display: flex;
+  flex-direction: row;
+
+  .build-list {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+
+    border-right: 1px solid #5b5b5b;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    button {
+      border-radius: 0;
+      display: block;
+      width: 100%;
+    }
+  }
+
+  .build-viewer {
+    width: 550px;
+  }
+}

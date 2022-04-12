@@ -29,7 +29,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     respawnPoint: char.respawnPoint ?? { x: 14, y: 14, map: 'Tutorial' },
     lastDeathLocation: char.lastDeathLocation ?? undefined,
     dailyItems: char.dailyItems ?? {},
-    traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {} },
+    traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {}, savedBuilds: {} },
     ancientLevel: char.ancientLevel ?? 0,
     items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, buyback: [] },
     statistics: char.statistics ?? {

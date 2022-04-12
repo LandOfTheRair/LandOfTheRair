@@ -1,5 +1,6 @@
 
 import { Injectable } from 'injection-js';
+import { cloneDeep } from 'lodash';
 
 import { BaseClass, ICharacter, IClassTraitTree, IPlayer, ITrait, ITraitTreeTrait } from '../../interfaces';
 
@@ -117,10 +118,11 @@ export class TraitHelper extends BaseService {
 
     player.traits.tp = (player.level || 1) + 1;
 
-    // last, recalculate stats because lots of traits affect stats
-    this.game.effectHelper.removeSimilarEffects(player, 'Stance', '');
-    this.game.characterHelper.recalculateEverything(player);
+    // remove effects that might cause problems
+    this.game.effectHelper.removeSimilarEffects(player, 'Stance', '', true);
 
+    // last, recalculate stats because lots of traits affect stats
+    this.game.characterHelper.recalculateEverything(player);
   }
 
   // shorthand to roll a trait
@@ -130,6 +132,40 @@ export class TraitHelper extends BaseService {
     if (levelValue >= 100) return true;
 
     return this.game.diceRollerHelper.XInOneHundred(levelValue);
+  }
+
+  // build management
+  public saveBuild(player: IPlayer, buildSlot: number): void {
+    player.traits.savedBuilds[buildSlot] = { name: `Build ${buildSlot + 1}`, traits: cloneDeep(player.traits.traitsLearned) };
+
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Saved ${player.traits.savedBuilds[buildSlot].name}!` });
+  }
+
+  public hasBuild(player: IPlayer, buildSlot: number): boolean {
+    return !!player.traits.savedBuilds[buildSlot];
+  }
+
+  public loadBuild(player: IPlayer, buildSlot: number): void {
+    if (!this.hasBuild(player, buildSlot)) return;
+
+    this.resetTraits(player);
+
+    const loadBuild = player.traits.savedBuilds[buildSlot];
+    this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Loading ${loadBuild.name}...` });
+
+    Object.keys(loadBuild.traits).forEach(trait => {
+      for (let i = 0; i < loadBuild.traits[trait]; i++) {
+        this.learnTrait(player, trait, false);
+      }
+    });
+
+    this.game.characterHelper.recalculateEverything(player);
+  }
+
+  public renameBuild(player: IPlayer, buildSlot: number, name: string): void {
+    if (!this.hasBuild(player, buildSlot)) return;
+
+    player.traits.savedBuilds[buildSlot].name = name;
   }
 
 }

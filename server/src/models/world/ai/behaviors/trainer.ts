@@ -344,13 +344,6 @@ export class TrainerBehavior implements IAIBehavior {
 
         game.traitHelper.resetTraits(player);
 
-        game.effectHelper.removeSimilarEffects(
-          player,
-          'Stance',
-          '',
-          true
-        );
-
         return 'Your traits have been reset.';
       });
   }
