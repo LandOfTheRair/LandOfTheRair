@@ -318,6 +318,10 @@ export class TrainerBehavior implements IAIBehavior {
   tick(game: Game, npc: INPC) {
     if (!this.canRevive) return;
 
+    const mapData = game.worldManager.getMap(npc.map);
+    const recallDisabled = mapData?.map.properties.respawnKick;
+    if (recallDisabled) return;
+
     const corpses = game.groundManager.getItemsFromGround(npc.map, npc.x, npc.y, ItemClass.Corpse);
     corpses.forEach(corpse => {
       if (!corpse.item.mods.corpseUsername) return;
