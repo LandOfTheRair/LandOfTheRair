@@ -71,6 +71,7 @@ export class FindFamiliar extends Effect {
 
       // give it an effect to mark it as a pet
       this.game.effectHelper.addEffect(npc, char, 'SummonedPet', { tooltip: { desc: `Summoned by ${char.name}.` } });
+      this.game.effectHelper.addEffect(npc, char, 'DarkVision', { effect: { duration: - 1 } });
     };
 
     // create a fake spawner that allows infinite range walking that deletes itself
