@@ -276,7 +276,8 @@ export class MapGenerator {
     // if it doesn't have both sides, it's not door-able
     if (!isHorizontalDoor && !isVerticalDoor) return;
 
-    const isDoor = this.rng.getItem([true, false, false, false]);
+    // if we allow hidden walls, we randomly get a door 25% of the time, otherwise we get a door guaranteed
+    const isDoor = this.mapTheme.wall.allowHiddenWalls ? this.rng.getItem([true, false, false, false]) : true;
 
     if (isDoor) {
       const firstgid = this.getFirstGid(MapTilesetLayer.Decor);
