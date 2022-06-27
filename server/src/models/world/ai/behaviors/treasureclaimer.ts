@@ -63,7 +63,11 @@ export class TreasureClaimerBehavior implements IAIBehavior {
 
         if (player.items.equipment[ItemSlot.RightHand]) return '[The pylon requires your right hand to be empty.]';
 
-        const randomItem = game.rngDungeonGenerator.getRandomItemFromMap(treasureMap, type, ['Powerful', 'Legendary']);
+        const randomItem = game.rngDungeonGenerator.getRandomItemFromMap(
+          treasureMap,
+          type,
+          type === 'gem'
+            ? [] : ['Powerful', 'Legendary']);
 
         if (!randomItem) return '[The pylon finds your query confusing, and requests a different choice.]';
 

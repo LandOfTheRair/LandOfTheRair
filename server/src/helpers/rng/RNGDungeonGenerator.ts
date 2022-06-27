@@ -102,7 +102,7 @@ export class RNGDungeonGenerator extends BaseService {
 
   public getRandomItemFromMap(
     mapName: string,
-    type: 'weapon'|'armor'|'jewelry'|'scroll'|'gem',
+    type: 'weapon'|'armor'|'jewelry'|'gem',
     keywordMatches: string[] = []
   ): IItemDefinition | undefined {
     let itemClasses: ItemClass[] = [];
@@ -133,6 +133,8 @@ export class RNGDungeonGenerator extends BaseService {
     if (type === 'jewelry')  itemClasses = [ItemClass.Earring, ItemClass.Ring, ItemClass.Amulet];
 
     if (type === 'gem')      itemClasses = [ItemClass.Gem];
+
+    console.log(mapName, type, keywordMatches);
 
     const validItems = this.game.contentManager
       .getItemsMatchingName(mapName)
