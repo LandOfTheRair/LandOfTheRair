@@ -236,7 +236,7 @@ export class CombatHelper extends BaseService {
     this.game.characterHelper.damage(defender, args.damage);
 
     // handle outgoing effects that happen post-damage
-    if (attacker) {
+    if (attacker && !hasBeenReflected) {
       this.game.effectHelper.handleOutgoingEffects(attacker, defender, args);
     }
 
