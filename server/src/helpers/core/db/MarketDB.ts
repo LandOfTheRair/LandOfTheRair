@@ -92,6 +92,7 @@ export class MarketDB extends BaseService {
     pickup._id = new ObjectId();
 
     pickup.gold = saleValue;
+    pickup.username = username;
 
     return this.db.save(pickup);
   }
