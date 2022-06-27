@@ -350,7 +350,7 @@ export class MacroEditorComponent implements OnInit, OnDestroy {
   createMacroGroup() {
     const entered = this.data.modals.text('New Macro Bar', 'What would you like to name this macro bar?');
     entered.subscribe(text => {
-      text = text.substring(0, 10).trim();
+      text = (text || '').substring(0, 10).trim();
       if (!text || this.activeMacroBars.includes(text)) return;
 
       this.macroBars.push({ name: text, macros: [] });

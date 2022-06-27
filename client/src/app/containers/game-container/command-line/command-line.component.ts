@@ -182,7 +182,7 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         }
 
         if (shouldBypassOthers) {
-          currentCommand = currentCommand.substring(1);
+          currentCommand = (currentCommand || '').substring(1);
         }
 
         if (currentCommand === '.') {
