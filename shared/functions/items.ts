@@ -43,7 +43,7 @@ function usesString(item: ISimpleItem, itemDef: IItem): string {
 }
 
 export function isOwnedBy(player: IPlayer, item: ISimpleItem): boolean {
-  return !item.mods.owner || item.mods.owner === player.username;
+  return !item.mods || !item.mods.owner || item.mods.owner === player.username;
 }
 
 export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): boolean {
