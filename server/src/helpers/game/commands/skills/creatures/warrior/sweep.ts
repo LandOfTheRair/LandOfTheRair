@@ -23,7 +23,7 @@ export class Sweep extends SpellCommand {
     if (!state) return;
 
     const numTargets = 8;
-    const targets = state.getAllHostilesWithoutVisibilityTo(user, 0);
+    const targets = state.getAllHostilesInRange(user, 0, false);
     const foundTargets = sampleSize(targets, numTargets);
 
     if (foundTargets.length === 0) {

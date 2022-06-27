@@ -330,8 +330,8 @@ export class MapState {
   }
 
   // get ONLY HOSTILES in range
-  public getAllHostilesInRange(ref: ICharacter, radius: number): ICharacter[] {
-    const targets = this.getAllInRange(ref, radius);
+  public getAllHostilesInRange(ref: ICharacter, radius: number, useSight = true): ICharacter[] {
+    const targets = this.getAllInRange(ref, radius, [], useSight);
     return targets.filter((target: ICharacter) => this.game.targettingHelper.checkTargetForHostility(ref, target));
   }
 
