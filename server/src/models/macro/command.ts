@@ -68,22 +68,29 @@ export abstract class SkillCommand extends MacroCommand {
 
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
-    if (user.mp.current < mpCost) {
-      const extraMsg: Record<BaseClass, string> = {
-        [BaseClass.Healer]: 'MP',
-        [BaseClass.Mage]: 'MP',
-        [BaseClass.Thief]: 'Energy',
-        [BaseClass.Warrior]: 'Rage',
-        [BaseClass.Traveller]: 'MP'
-      };
-
-      this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
-      return false;
-    }
+    const extraMsg: Record<BaseClass, string> = {
+      [BaseClass.Healer]: 'MP',
+      [BaseClass.Mage]: 'MP',
+      [BaseClass.Thief]: 'Energy',
+      [BaseClass.Warrior]: 'Rage',
+      [BaseClass.Traveller]: 'MP'
+    };
 
     if (user.baseClass === BaseClass.Thief) {
+      if (user.hp.current < mpCost) {
+        this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
+        return false;
+      }
+
       this.game.characterHelper.damage(user, mpCost);
+
     } else if (mpCost > 0) {
+
+      if (user.mp.current < mpCost) {
+        this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
+        return false;
+      }
+
       this.game.characterHelper.manaDamage(user, mpCost);
     }
 
