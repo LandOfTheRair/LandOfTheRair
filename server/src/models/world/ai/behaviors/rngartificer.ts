@@ -29,9 +29,12 @@ export class RNGArtificerBehavior implements IAIBehavior {
         } = game.itemHelper.getItemProperties(rightHand, ['name', 'itemClass', 'tier', 'requirements']);
 
         const requirementsLevel = requirements?.level ?? 0;
+        const isWeapon = WeaponClasses.includes(itemClass as WeaponClass)
+           || itemClass === ItemClass.Claws
+           || itemClass === ItemClass.Gloves;
 
         if (itemClass === ItemClass.Arrow) return 'Unfortunately, the quantity of item here is too much to upgrade!';
-        if (!WeaponClasses.includes(itemClass as WeaponClass)) return 'That item is not a weapon! I thought I was very clear!';
+        if (!isWeapon) return 'That item is not a weapon! I thought I was very clear!';
         if ((tier ?? 0) < 4) return 'That item is too weak for me to upgrade!';
         if (requirementsLevel < 20) return 'That item is too weak for me to upgrade!';
         if (requirementsLevel >= 45) return 'That item is too powerful for me to upgrade!';
