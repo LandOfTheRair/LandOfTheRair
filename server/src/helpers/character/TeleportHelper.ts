@@ -201,7 +201,7 @@ export class TeleportHelper extends BaseService {
     let msg = `Your teleports (${teleportsCurrently}/${teleportsMax}):`;
     teleports.forEach((tp, i) => {
       msg = `${msg}<br>${i + 1}: ${tp} - ${player.teleportLocations[tp].map}`;
-      options.push({ text: `Teleport to ${tp} (${player.teleportLocations[tp].map})`, action: `cast ${spell} ${tp}` });
+      options.push({ text: `Teleport to "${tp}" (${player.teleportLocations[tp].map})`, action: `cast ${spell} ${tp}` });
     });
 
     this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg });
@@ -209,6 +209,7 @@ export class TeleportHelper extends BaseService {
     const formattedChat: IDialogChatAction = {
       message: 'Teleport to where?',
       displayTitle: 'Teleport',
+      width: '600px',
       options
     };
 

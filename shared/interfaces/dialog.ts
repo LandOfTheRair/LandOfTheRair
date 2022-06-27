@@ -185,6 +185,8 @@ export interface IDialogChatAction {
   displayTitle?: string;
   maxDistance?: number;
   message: string;
+  width?: string;
+  extraClasses?: string[];
   options: IDialogChatActionOption[];
 }
 

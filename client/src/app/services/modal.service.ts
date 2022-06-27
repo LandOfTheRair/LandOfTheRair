@@ -187,9 +187,14 @@ export class ModalService {
     if (this.commandDialogRef) return null;
     if ((dialogInfo.displayNPCName || dialogInfo.displayNPCUUID) && this.optionsService.classicNPCChat) return null;
 
+    dialogInfo.extraClasses ??= [];
+    if (dialogInfo.options.length > 5) dialogInfo.extraClasses.push('multi-column-options');
+
+    console.log(dialogInfo);
+
     this.commandDialogRef = this.dialog.open(DialogComponent, {
-      width: '450px',
-      panelClass: 'fancy',
+      width: dialogInfo.width ?? '450px',
+      panelClass: ['fancy', ...dialogInfo.extraClasses],
       data: dialogInfo
     });
 

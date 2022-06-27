@@ -148,6 +148,16 @@ mat-dialog-actions {
   padding-top: 0;
 }
 
+.cdk-overlay-pane.multi-column-options {
+  .mat-dialog-actions {
+    flex-direction: row;
+
+    .mat-button {
+      width: 45%;
+    }
+  }
+}
+
 .mat-dialog-content {
   overflow: hidden !important;
   max-height: 700px !important;
