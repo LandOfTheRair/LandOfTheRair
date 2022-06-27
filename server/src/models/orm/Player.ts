@@ -88,7 +88,18 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() skills: SkillBlock;
   @Property() paidSkills: SkillBlock;
   @Property() effects: IEffectContainer;
-  @Property() allegianceReputation: Partial<Record<Allegiance, number>> = {};
+  @Property() allegianceReputation: Record<Allegiance, number> = {
+    [Allegiance.None]: 0,
+    [Allegiance.Adventurers]: 0,
+    [Allegiance.Pirates]: 0,
+    [Allegiance.Royalty]: 0,
+    [Allegiance.Townsfolk]: 0,
+    [Allegiance.Underground]: 0,
+    [Allegiance.Wilderness]: 0,
+    [Allegiance.Enemy]: 0,
+    [Allegiance.NaturalResource]: 0,
+    [Allegiance.GM]: 0
+  };
 
   // player-specific props
   @Property() exp: number;

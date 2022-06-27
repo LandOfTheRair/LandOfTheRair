@@ -57,7 +57,7 @@ export interface ICharacter {
   combatTicks: number;
 
   agro: Record<string, number>;
-  allegianceReputation: Partial<Record<Allegiance, number>>;
+  allegianceReputation: Record<Allegiance, number>;
 
   allTraits: Record<string, number>;
   learnedSpells: Record<string, LearnedSpell>;
