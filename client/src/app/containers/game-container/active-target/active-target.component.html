@@ -2,7 +2,7 @@
 <ng-container *ngIf="shouldShow">
   <div class="target-name">
     <span class="dir">{{ direction }}</span>
-    <span>{{ target.name }} ({{ hostility }})</span>
+    <span>Lv. {{ level }} {{ target.name }} ({{ hostility }})</span>
     <div class="spacer"></div>
     <span class="difficulty" *ngIf="isDifficult" tooltip="This target might present some difficulty.">
       <app-icon name="crowned-skull" size="xsmall" round="true"></app-icon>

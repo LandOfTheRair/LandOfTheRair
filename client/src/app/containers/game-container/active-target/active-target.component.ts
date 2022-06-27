@@ -49,6 +49,10 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
     return this.gameService.hostilityLevelFor(this.player, this.target);
   }
 
+  public get level() {
+    return this.target.level;
+  }
+
   public get isDifficult() {
     return this.target.level > this.player.level + 5;
   }
