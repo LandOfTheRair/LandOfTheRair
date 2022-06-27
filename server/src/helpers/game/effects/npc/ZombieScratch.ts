@@ -42,7 +42,9 @@ export class ZombieScratch extends Effect {
       [Allegiance.Royalty]: -101,
       [Allegiance.Adventurers]: -101,
       [Allegiance.Wilderness]: -101,
-      [Allegiance.Underground]: -101
+      [Allegiance.Underground]: -101,
+      [Allegiance.NaturalResource]: 0,
+      [Allegiance.GM]: 0
     };
 
     npc.npcId = 'Halloween Zombie';
