@@ -9,7 +9,7 @@ export class Light extends Spell {
     if (!target) return;
 
     const basePotency = spellCastArgs.potency ?? 10;
-    const duration = basePotency * 1000;
+    const duration = basePotency * 1500;
 
     if (caster) {
       this.sendMessage(caster, { message: 'You cast away the darkness.' });
