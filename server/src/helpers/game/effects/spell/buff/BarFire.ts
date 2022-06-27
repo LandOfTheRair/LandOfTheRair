@@ -7,6 +7,7 @@ export class BarFire extends Effect {
     const boost = 1 + (this.game.traitHelper.traitLevelValue(char, 'ThermalBarrier'));
     effect.effectInfo.potency = Math.floor(boost * effect.effectInfo.potency);
     effect.effectInfo.statChanges = { [Stat.FireResist]: effect.effectInfo.potency };
+    effect.effectInfo.tooltip = `Resisting ${effect.effectInfo.potency} fire damage.`;
   }
 
 }
