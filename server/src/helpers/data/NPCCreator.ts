@@ -140,6 +140,29 @@ export class NPCCreator extends BaseService {
     baseChar.giveXp = { ...npcDef.giveXp || { min: 1, max: 100 } };
     baseChar.skillOnKill = npcDef.skillOnKill;
 
+    // set base from global if needed (stats)
+    if (baseChar.stats[Stat.STR] === 0) {
+      const setStats: Stat[] = [
+        Stat.STR, Stat.AGI, Stat.DEX,
+        Stat.INT, Stat.WIS, Stat.WIL,
+        Stat.CON, Stat.CHA, Stat.LUK
+      ];
+
+      setStats.forEach(stat => {
+        const globalSetStat = this.content.challengeData.global.stats.allStats[baseChar.level];
+        baseChar.stats[stat] = globalSetStat;
+      });
+    }
+
+    // set base from global if needed (skills)
+    // martial is set to 1 (or the correct number) if any skills are set
+    if (baseChar.skills[Skill.Martial] === 0) {
+      Object.values(Skill).forEach(skill => {
+        const globalSetSkill = this.content.challengeData.global.stats.allSkills[baseChar.level];
+        baseChar.skills[skill] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(globalSetSkill);
+      });
+    }
+
     // otherStats is a straight override
     Object.keys(npcDef.otherStats || {}).forEach(stat => {
       baseChar.stats[stat] = npcDef.otherStats?.[stat] ?? 0;
