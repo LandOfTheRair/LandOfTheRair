@@ -67,6 +67,9 @@ export interface INPCDefinition {
   // stuff that can be put in the loot table for normal drops
   drops?: Rollable[];
 
+  // the hp multiplier for the npc
+  hpMult?: number;
+
   // extra properties pulled in from the map, varies depending on the NPC
   extraProps?: any;
 

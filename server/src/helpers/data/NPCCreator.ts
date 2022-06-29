@@ -225,8 +225,9 @@ export class NPCCreator extends BaseService {
       // build based on the level
       if (npcDef.hp.min === -1 || npcDef.hp.max === -1) {
         const { min: lvlMin, max: lvlMax } = this.game.contentManager.challengeData.global.stats.hp[crLevel];
-        min = lvlMin;
-        max = lvlMax;
+        const hpMult = npcDef.hpMult ?? 1;
+        min = lvlMin * hpMult;
+        max = lvlMax * hpMult;
       }
 
       baseChar.hp.maximum = random(min, max);
