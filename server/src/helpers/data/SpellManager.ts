@@ -41,6 +41,11 @@ export class SpellManager extends BaseService {
     return this.spells[key];
   }
 
+  private getPotencyMultiplier(spellData: ISpellData): number {
+    return this.game.worldDB.getSpellMultiplierOverride(spellData.spellName) || spellData.potencyMultiplier || 1;
+  }
+
+  // get the potency for the spell based on caster/target
   public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
 
     if (!caster) return 1;
@@ -73,7 +78,7 @@ export class SpellManager extends BaseService {
       skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
     ) / skillsToAverage.length);
 
-    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * (spellData.potencyMultiplier || 1);
+    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * this.getPotencyMultiplier(spellData);
 
     const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
 
@@ -92,7 +97,7 @@ export class SpellManager extends BaseService {
     });
 
     retPotency *= maxMult;
-    retPotency *= (spellData.potencyMultiplier || 1);
+    retPotency *= this.getPotencyMultiplier(spellData);
 
     // encumberance cuts potency exactly in half
     if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {

@@ -57,4 +57,23 @@ export class WorldDB extends BaseService {
     this.saveSettings();
   }
 
+  public setSpellMultiplierOverride(spell: string, override: number): Promise<void> {
+
+    if (override === 0) {
+      delete this.settings.spellPotencyMultiplierOverrides[spell];
+    } else {
+      this.settings.spellPotencyMultiplierOverrides[spell] = override;
+    }
+
+    return this.saveSettings();
+  }
+
+  public getSpellMultiplierOverride(spell: string): number {
+    return this.settings.spellPotencyMultiplierOverrides[spell] ?? 0;
+  }
+
+  public getAllSpellMultiplierOverrides(): Record<string, number> {
+    return this.settings.spellPotencyMultiplierOverrides;
+  }
+
 }

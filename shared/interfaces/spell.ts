@@ -2,6 +2,7 @@
 import { DamageClass } from './building-blocks';
 
 export interface ISpellData {
+  spellName: string;                    // the name of the spell
   maxSkillForGain: number;              // the max skill we can gain skill points from this spell for
   mpCost: number;                       // the mp cost of the skill
 

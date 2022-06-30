@@ -17,6 +17,7 @@ export * from './moditem';
 export * from './resetdungeon';
 export * from './saveplayers';
 export * from './searchitems';
+export * from './spellmod';
 export * from './startevent';
 export * from './summon';
 export * from './teleport';
