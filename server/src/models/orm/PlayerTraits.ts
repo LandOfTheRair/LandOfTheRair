@@ -10,6 +10,6 @@ export class PlayerTraits extends BaseEntity implements ICharacterTraits {
   @Property() tp = 0;
   @Property() ap = 0;
   @Property() traitsLearned: Record<string, number> = {};
-  @Property() savedBuilds: Record<number, { name: string; traits: Record<string, number> }> = {};
+  @Property() savedBuilds: Record<number, { name: string; traits: Record<string, number>; runes: string[] }> = {};
 
 }

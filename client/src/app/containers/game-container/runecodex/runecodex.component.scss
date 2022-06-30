@@ -5,7 +5,7 @@
 
 .left-side {
   width: 505px;
-  height: 325px;
+  height: 768px;
   display: flex;
   flex-wrap: wrap;
   padding: 5px;
@@ -34,45 +34,52 @@
       }
     }
   }
-
-  .selection {
-    position: absolute;
-    width: 410px;
-    height: 325px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-  }
 }
 
 .right-side {
   width: 300px;
-  height: 335px;
+  height: 768px;
   border-left: 1px solid #000;
   overflow-y: auto;
 
-  .select-rune {
+  .rune-selector {
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 748px;
 
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    .select-rune {
+      display: flex;
 
-    color: #fff;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      padding-top: 3px;
+      padding-bottom: 3px;
 
-    user-select: none;
-    cursor: pointer;
+      color: #fff;
 
-    &.selected {
-      background-color: #6d6d6d;
+      user-select: none;
+      cursor: pointer;
+
+      &.selected {
+        background-color: #6d6d6d;
+      }
+
+      app-icon {
+        width: 30px;
+        margin-right: 10px;
+        margin-left: 10px;
+      }
     }
 
-    app-icon {
-      width: 30px;
-      margin-right: 10px;
-      margin-left: 10px;
+    .selection {
+      width: 100%;
+
+      button {
+        border-radius: 0;
+        display: block;
+        width: 100%;
+      }
     }
   }
 }

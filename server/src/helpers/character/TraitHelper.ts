@@ -136,7 +136,11 @@ export class TraitHelper extends BaseService {
 
   // build management
   public saveBuild(player: IPlayer, buildSlot: number): void {
-    player.traits.savedBuilds[buildSlot] = { name: `Build ${buildSlot + 1}`, traits: cloneDeep(player.traits.traitsLearned) };
+    player.traits.savedBuilds[buildSlot] = {
+      name: `Build ${buildSlot + 1}`,
+      traits: cloneDeep(player.traits.traitsLearned),
+      runes: cloneDeep(player.runes)
+    };
 
     this.game.messageHelper.sendLogMessageToPlayer(player, { message: `Saved ${player.traits.savedBuilds[buildSlot].name}!` });
   }
@@ -158,6 +162,10 @@ export class TraitHelper extends BaseService {
         this.learnTrait(player, trait, false);
       }
     });
+
+    if (loadBuild.runes) {
+      player.runes = loadBuild.runes;
+    }
 
     this.game.characterHelper.recalculateEverything(player);
   }

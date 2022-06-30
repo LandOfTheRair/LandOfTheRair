@@ -31,7 +31,6 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
   playerSub: Subscription;
 
   public readonly slots = [
-    {},
     {
       display: 'Level 5',
       slot: 0
@@ -40,49 +39,52 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
       display: 'Level 10',
       slot: 1
     },
+    {},
+    {},
+
+    {},
+    {},
     {
       display: 'Level 15',
       slot: 2
     },
-    {},
-
-    {
-      display: 'Level 50',
-      slot: 9
-    },
-    {},
-    {},
-    {},
     {
       display: 'Level 20',
       slot: 3
     },
 
     {
-      display: 'Level 45',
-      slot: 8
-    },
-    {},
-    {},
-    {},
-    {
       display: 'Level 25',
       slot: 4
-    },
-
-    {},
-    {
-      display: 'Level 40',
-      slot: 7
-    },
-    {
-      display: 'Level 35',
-      slot: 6
     },
     {
       display: 'Level 30',
       slot: 5
     },
+    {},
+    {},
+
+    {},
+    {},
+    {
+      display: 'Level 35',
+      slot: 6
+    },
+    {
+      display: 'Level 40',
+      slot: 7
+    },
+
+
+    {
+      display: 'Level 45',
+      slot: 8
+    },
+    {
+      display: 'Level 50',
+      slot: 9
+    },
+    {},
     {},
   ];
 

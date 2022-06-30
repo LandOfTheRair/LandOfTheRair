@@ -1,50 +1,36 @@
-<app-window windowName="runecodex"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
 
-            defaultX="160"
-            defaultY="370"
-            defaultWidth="650"
-            defaultHeight="365"
+<ng-container *ngIf="player">
+  <div class="codex-container">
+    <div class="left-side">
+      <div class="item-slot" *ngFor="let slot of slots"
+                              [class.selected]="slot.slot >= 0 && slot.slot === activeSlot"
+                              (click)="selectSlot(slot.slot)"
+                              [class.item-background]="slot.display">
 
-></app-window>
+        <span class="item-slot-bg-text" *ngIf="!(player.runes || [])[slot.slot]">{{ slot.display }}</span>
 
-<ng-template #headTemplate>
-  Rune Codex
-</ng-template>
-
-<ng-template #bodyTemplate>
-  <ng-container *ngIf="player">
-    <div class="codex-container">
-      <div class="left-side">
-        <div class="item-slot" *ngFor="let slot of slots"
-                               [class.selected]="slot.slot >= 0 && slot.slot === activeSlot"
-                               (click)="selectSlot(slot.slot)"
-                               [class.item-background]="slot.display">
-
-          <span class="item-slot-bg-text" *ngIf="!(player.runes || [])[slot.slot]">{{ slot.display }}</span>
-
-          <div class="scroll-container" *ngIf="(player.runes || [])[slot.slot]">
-            <span class="tier">{{ getTraitLevel(player.runes[slot.slot]) }}</span>
-            <app-icon size="large" [name]="getTraitIcon(player.runes[slot.slot])" [matTooltip]="getTraitName(player.runes[slot.slot])" bgColor="transparent"></app-icon>
-          </div>
-
+        <div class="scroll-container" *ngIf="(player.runes || [])[slot.slot]">
+          <span class="tier">{{ getTraitLevel(player.runes[slot.slot]) }}</span>
+          <app-icon size="large" [name]="getTraitIcon(player.runes[slot.slot])" [matTooltip]="getTraitName(player.runes[slot.slot])" bgColor="transparent"></app-icon>
         </div>
 
-      <div class="selection" *ngIf="activeRune && activeSlot >= 0">
-          <button mat-raised-button color="primary" (click)="inscribe()">Inscribe</button>
-        </div>
       </div>
+    </div>
 
-      <div class="right-side">
-        <div class="vertical-center full-width full-height background-text text-center" *ngIf="player.learnedRunes.length === 0">You don't currently know any ancient runes.</div>
+    <div class="right-side">
+      <div class="vertical-center full-width full-height background-text text-center" *ngIf="player.learnedRunes.length === 0">You don't currently know any ancient runes.</div>
 
-        <div class="select-rune" *ngFor="let rune of orderedRunes" [class.selected]="activeRune === rune" [class.text-success]="player.runes.includes(rune)" (click)="selectRune(rune)">
-          <app-icon size="xsmall" [name]="getTraitIcon(rune)" bgColor="transparent" fgColor="#fff"></app-icon> {{ getTraitName(rune) }}
+      <div class="rune-selector">
+        <div>
+          <div class="select-rune" *ngFor="let rune of orderedRunes" [class.selected]="activeRune === rune" [class.text-success]="player.runes.includes(rune)" (click)="selectRune(rune)">
+            <app-icon size="xsmall" [name]="getTraitIcon(rune)" bgColor="transparent" fgColor="#fff"></app-icon> {{ getTraitName(rune) }}
+          </div>
+        </div>
+
+        <div class="selection">
+          <button mat-raised-button color="primary" (click)="inscribe()" [disabled]="!activeRune || activeSlot < 0">Inscribe</button>
         </div>
       </div>
     </div>
-  </ng-container>
-</ng-template>
+  </div>
+</ng-container>
