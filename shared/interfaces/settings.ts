@@ -31,6 +31,7 @@ export enum GameOption {
   DebugUI = 'debugUI',
   SendBannerMessagesToChat = 'sendBannerMessagesToChat',
   BiggerGroundWindow = 'biggerGroundWindow',
+  ShowHPValueInsteadOfPercent = 'showHPValueInsteadOfPercent',
 
   // sound options
   SoundBGM = 'playBGM',

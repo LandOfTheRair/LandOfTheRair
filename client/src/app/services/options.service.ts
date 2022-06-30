@@ -103,6 +103,10 @@ export class OptionsService {
     return this.opts[GameOption.BiggerGroundWindow];
   }
 
+  public get showHPValueInsteadOfPercent(): boolean {
+    return this.opts[GameOption.ShowHPValueInsteadOfPercent];
+  }
+
   // sound options
   public get musicVolume(): number {
     return (this.opts[GameOption.SoundMusicVolume] || 0) / 100;

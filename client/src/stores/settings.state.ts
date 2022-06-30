@@ -44,6 +44,7 @@ const defaultSettings: () => ISettings = () => ({
       [GameOption.DebugUI]: false,
       [GameOption.SendBannerMessagesToChat]: false,
       [GameOption.BiggerGroundWindow]: false,
+      [GameOption.ShowHPValueInsteadOfPercent]: false,
 
       [GameOption.SoundBGM]: true,
       [GameOption.SoundSFX]: true,

@@ -10,6 +10,7 @@ import { FOVVisibility, ICharacter, IStatusEffect } from '../../../../interfaces
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
+import { OptionsService } from '../../../services/options.service';
 
 @AutoUnsubscribe()
 @Component({
@@ -45,6 +46,14 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
     return ((this.target.hp.current / this.target.hp.maximum) * 100).toFixed(2);
   }
 
+  public get targetHealthValue() {
+    if (this.optionService.showHPValueInsteadOfPercent) {
+      return `${this.target.hp.current.toLocaleString()} / ${this.target.hp.maximum.toLocaleString()}`;
+    }
+
+    return this.targetHealth + '%';
+  }
+
   public get hostility() {
     return this.gameService.hostilityLevelFor(this.player, this.target);
   }
@@ -73,7 +82,8 @@ export class ActiveTargetComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    public gameService: GameService
+    public gameService: GameService,
+    public optionService: OptionsService
   ) { }
 
   ngOnInit() {
