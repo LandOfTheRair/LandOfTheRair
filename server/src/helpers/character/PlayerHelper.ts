@@ -315,6 +315,7 @@ export class PlayerHelper extends BaseService {
         'This location is subscriber only, you\'ll have to come back later!'
       );
 
+      this.resetSpawnPointToDefault(player);
       this.teleportHelper.teleportToRespawnPoint(player);
     }
 
@@ -756,6 +757,15 @@ export class PlayerHelper extends BaseService {
     if (!state) return;
 
     state.triggerFullUpdateForPlayer(player as Player);
+  }
+
+  // reset the players respawn to the default
+  public resetSpawnPointToDefault(player: Player): void {
+    player.respawnPoint = this.game.contentManager.getGameSetting('map', 'defaultRespawnPoint') ?? {
+      map: 'Rylt',
+      x: 68,
+      y: 13
+    };
   }
 
 }

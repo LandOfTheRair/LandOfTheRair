@@ -252,11 +252,7 @@ export class WorldManager extends BaseService {
     if (!oldMap) return;
 
     if (oldMap === 'Tutorial') {
-      player.respawnPoint = this.game.contentManager.getGameSetting('map', 'defaultRespawnPoint') ?? {
-        map: 'Rylt',
-        x: 68,
-        y: 13
-      };
+      this.game.playerHelper.resetSpawnPointToDefault(player);
     }
 
     const mapData = this.game.worldManager.getMap(player.map);
