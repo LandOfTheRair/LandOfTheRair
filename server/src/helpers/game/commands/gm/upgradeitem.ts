@@ -14,7 +14,7 @@ export class GMUpgradeItem extends MacroCommand {
     if (!rightHand) return this.sendMessage(player, 'You need to hold something to upgrade in your right hand.');
 
     const leftHand = player.items.equipment[ItemSlot.LeftHand];
-    if (!leftHand) return this.sendMessage(player, 'You need to hold something to upgrade with your left hand.');
+    if (!leftHand) return this.sendMessage(player, 'You need to hold something to upgrade with in your left hand.');
 
     this.game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
     this.game.characterHelper.setLeftHand(player, undefined);
