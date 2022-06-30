@@ -23,6 +23,18 @@ export class GMEval extends MacroCommand {
     }
   }
 
+  /**
+   * Evaluate a string of code.
+   * Properties you'll have access to when you write a js function:
+   * * me - this is the player executing the function
+   * * game - a reference to the game object, which should let you do basically anything
+   *
+   * Functions you'll have access to when you write a js function:
+   * * json(obj) - serialize an object to a json string
+   * * props(obj) - get the property names of an object
+   * * players() - get all players in the game
+   * * user(username) - get a player by username
+   */
   myEval(this: any, script: string, context: any) {
     const me = context.player;
     const game = context.game;
