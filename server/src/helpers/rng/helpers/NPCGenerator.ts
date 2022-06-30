@@ -171,10 +171,11 @@ export class RNGDungeonNPCGenerator {
     }
 
     if (npc.mp && def.baseClass && [BaseClass.Healer, BaseClass.Mage].includes(def.baseClass)) {
-      npc.mp.max = npc.mp.min = Math.max(
-        10000,
-        Math.floor((8000 * level) - 100000)
-      ) * (def.isLegendary ? 20 : 1);
+
+      // we can use hp mult here because it is so invisible, it doesn't really matter
+      const multiplier = def.isLegendary ? this.mapMeta.creatureProps.hpMultiplierLegendary : this.mapMeta.creatureProps.hpMultiplierNormal;
+      npc.mp.min = this.challengeData.global.stats.mp[level].min * multiplier;
+      npc.mp.max = this.challengeData.global.stats.mp[level].max * multiplier;
     }
 
     if (npc.giveXp) {

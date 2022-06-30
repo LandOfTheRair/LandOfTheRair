@@ -21,6 +21,7 @@ export interface IChallenge {
     cr: Record<number, { damageFactor: number }>;
     stats: {
       hp: Record<number, { min: number; max: number }>;
+      mp: Record<number, { min: number; max: number }>;
       gold: Record<number, { min: number; max: number }>;
       giveXp: Record<number, { min: number; max: number }>;
       damageFactor: Record<number, number>;
