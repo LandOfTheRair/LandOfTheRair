@@ -193,7 +193,10 @@ export enum Skill {
 export enum Tradeskill {
   Alchemy = 'alchemy',
   Spellforging = 'spellforging',
-  Metalworking = 'metalworking'
+  Metalworking = 'metalworking',
+  Gemcrafting = 'gemcrafting',
+  Weavefabricating = 'weavefabricating',
+  Foodmaking = 'foodmaking'
 }
 
 export enum SkillDisplayName {
