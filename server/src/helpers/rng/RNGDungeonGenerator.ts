@@ -35,6 +35,7 @@ export class RNGDungeonGenerator extends BaseService {
       defaultDungeon.map.tiledJSON,
       seed,
       config,
+      this.game.contentManager.challengeData,
       this.game.contentManager.spriteData,
       this.game.contentManager.getItemsMatchingName(map.name).concat(this.game.contentManager.getItemsMatchingName('Rune Scroll -'))
     );

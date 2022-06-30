@@ -187,6 +187,12 @@ export interface IRNGDungeonMetaConfig {
     bonusCreatureTraitChoices: number;
     eliteTickCap: number;
     cr: number;
+    hpMultiplierNormal: number;
+    hpMultiplierLegendary: number;
+    goldMultiplierNormal: number;
+    goldMultiplierLegendary: number;
+    xpMultiplierNormal: number;
+    xpMultiplierLegendary: number;
   };
 
   itemProps: {

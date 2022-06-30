@@ -2,6 +2,7 @@
 import { Rollable } from 'lootastic';
 import { RNG } from 'rot-js/dist/rot';
 import { Allegiance, BaseClass, calculateSkillXPRequiredForLevel, Hostility,
+  IChallenge,
   IItemDefinition,
   INPCDefinition, IRNGDungeonConfig, IRNGDungeonCreature, IRNGDungeonMetaConfig,
   ItemClass, ItemSlot, MonsterClass, Skill, Stat } from '../../../interfaces';
@@ -12,6 +13,7 @@ export class RNGDungeonNPCGenerator {
     private readonly rng: RNG,
     private readonly mapMeta: IRNGDungeonMetaConfig,
     private readonly config: IRNGDungeonConfig,
+    private readonly challengeData: IChallenge,
     private readonly addSpoilerLog: (message: string) => void,
     private items: IItemDefinition[]
   ) {}
@@ -163,10 +165,9 @@ export class RNGDungeonNPCGenerator {
     npc.skillOnKill = Math.floor(1.5 * (level ?? 20));
 
     if (npc.hp) {
-      npc.hp.max = npc.hp.min = Math.max(
-        10000,
-        Math.floor((8000 * level) - 100000)
-      ) * (def.isLegendary ? 20 : 1);
+      const multiplier = def.isLegendary ? this.mapMeta.creatureProps.hpMultiplierLegendary : this.mapMeta.creatureProps.hpMultiplierNormal;
+      npc.hp.min = this.challengeData.global.stats.hp[level].min * multiplier;
+      npc.hp.max = this.challengeData.global.stats.hp[level].max * multiplier;
     }
 
     if (npc.mp && def.baseClass && [BaseClass.Healer, BaseClass.Mage].includes(def.baseClass)) {
@@ -177,17 +178,16 @@ export class RNGDungeonNPCGenerator {
     }
 
     if (npc.giveXp) {
-      npc.giveXp.max = Math.max(
-        1000,
-        Math.floor((3200 * level) - 22000)
-      ) * (def.isLegendary ? 10 : 1);
-
-      npc.giveXp.min = Math.floor(npc.giveXp.max * 0.75);
+      const multiplier = def.isLegendary ? this.mapMeta.creatureProps.xpMultiplierLegendary : this.mapMeta.creatureProps.xpMultiplierNormal;
+      npc.giveXp.min = this.challengeData.global.stats.giveXp[level].min * multiplier;
+      npc.giveXp.max = this.challengeData.global.stats.giveXp[level].max * multiplier;
     }
 
     if (npc.gold) {
-      npc.gold.max = 700 * level * (def.isLegendary ? 25 : 1);
-      npc.gold.min = Math.floor(npc.gold.max * 0.75);
+      const multiplier = def.isLegendary
+        ? this.mapMeta.creatureProps.goldMultiplierLegendary : this.mapMeta.creatureProps.goldMultiplierNormal;
+      npc.gold.min = this.challengeData.global.stats.gold[level].min * multiplier;
+      npc.gold.max = this.challengeData.global.stats.gold[level].max * multiplier;
     }
 
     // further post-processing

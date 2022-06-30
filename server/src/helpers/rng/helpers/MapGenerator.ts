@@ -2,6 +2,7 @@
 import * as fs from 'fs-extra';
 import { RNG, Map, Room } from 'rot-js/dist/rot';
 import {
+  IChallenge,
   IItemDefinition, INPCDefinition, IRNGDungeonConfig, IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall, IRNGDungeonMapGenConfig,
   IRNGDungeonMetaConfig, ISpawnerData, MapLayer, MapTilesetLayer, Rollable } from '../../../interfaces';
@@ -78,6 +79,7 @@ export class MapGenerator {
     private tiledJSON: any,
     private readonly seed: number,
     private readonly config: IRNGDungeonConfig,
+    private readonly challengeData: IChallenge,
     private readonly spriteData: any,
     private readonly itemDefBases: IItemDefinition[]
   ) {
@@ -743,7 +745,7 @@ export class MapGenerator {
     );
 
     this.npcGenerator = new RNGDungeonNPCGenerator(
-      this.rng, this.mapMeta, this.config, (msg) => this.addSpoilerLog(msg), this.itemDefBases
+      this.rng, this.mapMeta, this.config, this.challengeData, (msg) => this.addSpoilerLog(msg), this.itemDefBases
     );
 
     this.tilemapGenerator = new RNGDungeonTilemapGenerator(
