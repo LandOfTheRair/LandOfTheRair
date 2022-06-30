@@ -31,6 +31,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Install caprover
+      run: npm install -g caprover
+
     - run: npm install
 
     - run: npm run setup:full
@@ -52,13 +55,9 @@ jobs:
       uses: jakejarvis/wait-action@master
       with:
         time: '30s'
-
-    - name: Deploy Server
-      uses: AlexxNB/caprover-action@v1
-      with:
-        server: 'https://captain.server.rair.land'
-        password: '${{ secrets.CAPROVER_PASSWORD }}'
-        appname: 'game'
+        
+    - name: Caprover Deploy
+      run: caprover deploy -h 'https://captain.server.rair.land' -p '${{ secrets.CAPROVER_PASSWORD }}' -b 'master' -a 'game'
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v1.1
