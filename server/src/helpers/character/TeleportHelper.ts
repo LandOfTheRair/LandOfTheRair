@@ -130,7 +130,7 @@ export class TeleportHelper extends BaseService {
   }
 
   public memorizeLocation(player: IPlayer, name: string): boolean {
-    name = truncate(name, { length: 20, omission: '' }).trim();
+    name = truncate(name, { length: 15, omission: '' }).trim();
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (!map) return false;
 
@@ -201,7 +201,7 @@ export class TeleportHelper extends BaseService {
     let msg = `Your teleports (${teleportsCurrently}/${teleportsMax}):`;
     teleports.forEach((tp, i) => {
       msg = `${msg}<br>${i + 1}: ${tp} - ${player.teleportLocations[tp].map}`;
-      options.push({ text: `Teleport to "${tp}" (${player.teleportLocations[tp].map})`, action: `cast ${spell} ${tp}` });
+      options.push({ text: `"${tp}" (${player.teleportLocations[tp].map})`, action: `cast ${spell} ${tp}` });
     });
 
     this.game.messageHelper.sendLogMessageToPlayer(player, { message: msg });
