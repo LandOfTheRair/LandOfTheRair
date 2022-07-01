@@ -42,6 +42,10 @@
   border-left: 1px solid #000;
   overflow-y: auto;
 
+  .full-height {
+    max-height: 748px;
+  }
+
   .rune-selector {
     display: flex;
     flex-direction: column;
