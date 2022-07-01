@@ -69,6 +69,11 @@ export class TargettingHelper extends BaseService {
     // GMs are never hostile
     if (target.allegiance === Allegiance.GM) return false;
 
+    // if one of the creatures is an NPC, and one of the monsters has a grouping of NeverAttack, don't do it
+    if (!this.game.characterHelper.isPlayer(me) && !this.game.characterHelper.isPlayer(target)) {
+      if ((me as INPC).monsterGroup === 'NeverAttack' ||  (target as INPC).monsterGroup === 'NeverAttack') return false;
+    }
+
     // players and enemies are always hostile
     if (this.game.characterHelper.isPlayer(me) && target.allegiance === Allegiance.Enemy
     || this.game.characterHelper.isPlayer(target) && me.allegiance === Allegiance.Enemy) return true;
