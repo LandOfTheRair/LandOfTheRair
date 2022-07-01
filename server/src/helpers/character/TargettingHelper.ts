@@ -63,20 +63,23 @@ export class TargettingHelper extends BaseService {
     }
   ): boolean {
 
+    const isMePlayer = this.game.characterHelper.isPlayer(me);
+    const isTargetPlayer = this.game.characterHelper.isPlayer(target);
+
     // I can never be hostile to myself
     if (targetOpts.self && me === target) return false;
 
     // GMs are never hostile
     if (target.allegiance === Allegiance.GM) return false;
 
-    // if one of the creatures is an NPC, and one of the monsters has a grouping of NeverAttack, don't do it
-    if (!this.game.characterHelper.isPlayer(me) && !this.game.characterHelper.isPlayer(target)) {
+    // if both of the creatures are NPCs, and one of the monsters has a grouping of NeverAttack, don't do it
+    if (!isMePlayer && !isTargetPlayer) {
       if ((me as INPC).monsterGroup === 'NeverAttack' ||  (target as INPC).monsterGroup === 'NeverAttack') return false;
     }
 
     // players and enemies are always hostile
-    if (this.game.characterHelper.isPlayer(me) && target.allegiance === Allegiance.Enemy
-    || this.game.characterHelper.isPlayer(target) && me.allegiance === Allegiance.Enemy) return true;
+    if (isMePlayer && target.allegiance === Allegiance.Enemy
+    || isTargetPlayer && me.allegiance === Allegiance.Enemy) return true;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
     if (target.allegiance === Allegiance.NaturalResource && !me.allegianceReputation?.NaturalResource) return targetOpts.def;
@@ -85,7 +88,7 @@ export class TargettingHelper extends BaseService {
     if (targetOpts.party && (me as IPlayer).partyName && (me as IPlayer).partyName === (target as IPlayer).partyName) return false;
 
     // if I am a pet (owned by a player), and my prospective target is a player, we won't do this
-    if (targetOpts.pet && (me as INPC).owner && this.game.characterHelper.isPlayer(target)) return targetOpts.def;
+    if (targetOpts.pet && (me as INPC).owner && isTargetPlayer) return targetOpts.def;
 
     // if either of us are agro'd to each other, there is hostility
     if (targetOpts.agro && (me.agro[target.uuid] || target.agro[me.uuid])) return !targetOpts.def;
