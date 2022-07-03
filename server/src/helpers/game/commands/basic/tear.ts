@@ -18,10 +18,10 @@ export class Tear extends MacroCommand {
     const stringClasses = [ItemClass.Cloak, ItemClass.Robe, ItemClass.Sash, ItemClass.Fur, ItemClass.Tunic];
     const allClasses = [...fiberClasses, ...stringClasses];
 
-    const determineClass = (itemClass: MiscClass) => fiberClasses.includes(itemClass) ? 'String - Fiber' : 'String - Fabric';
+    const determineClass = (itemClass: MiscClass) => fiberClasses.includes(itemClass) ? 'String - Fiber' : 'String - Spell';
 
-    const getOzFromItem = (gem: ISimpleItem): number => {
-      const { requirements } = this.game.itemHelper.getItemProperties(gem, ['requirements']);
+    const getOzFromItem = (ozItem: ISimpleItem): number => {
+      const { requirements } = this.game.itemHelper.getItemProperties(ozItem, ['requirements']);
       return Math.max(1, Math.floor((requirements?.level ?? 1) / 5)) ?? 1;
     };
 
@@ -35,8 +35,8 @@ export class Tear extends MacroCommand {
       // send popup
       if (!args.stringArgs) {
 
-        // TODO: change this
         const options: string[] = uniq(player.items.sack.items
+          .filter(x => this.game.itemHelper.getItemProperty(x, 'quality') >= 1)
           .filter(x => allClasses.includes(this.game.itemHelper.getItemProperty(x, 'itemClass')))
           .map(x => this.game.itemHelper.getItemProperty(x, 'itemClass')))
           .sort();
@@ -65,6 +65,7 @@ export class Tear extends MacroCommand {
         const items = player.items.sack.items
           .filter(x => allClasses.includes(this.game.itemHelper.getItemProperty(x, 'itemClass')))
           .filter(x => this.game.itemHelper.getItemProperty(x, 'itemClass') === args.stringArgs)
+          .filter(x => this.game.itemHelper.getItemProperty(x, 'quality') >= 1)
           .filter(x => this.game.itemHelper.isOwnedBy(player, x));
 
         if (items.length === 0) return this.sendMessage(player, 'You do not have any matching tearable items in your sack!');
@@ -94,7 +95,8 @@ export class Tear extends MacroCommand {
 
     // right hand = single DE (we check stringArgs in case a mistake happened)
     if (item && !args.stringArgs) {
-      const { itemClass } = this.game.itemHelper.getItemProperties(item, ['itemClass']);
+      const { itemClass, quality } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'quality']);
+      if ((quality ?? 0) < 1) return this.sendMessage(player, 'That item offers no threads!');
       if (!allClasses.includes(itemClass as MiscClass)) return this.sendMessage(player, 'That is not tearable!');
       if (!this.game.itemHelper.isOwnedBy(player, item)) return this.sendMessage(player, 'That item is not yours to tear!');
 
