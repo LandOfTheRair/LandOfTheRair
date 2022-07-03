@@ -239,6 +239,7 @@ export class ItemHelper extends BaseService {
       conditionLoss += conditionLossModifier;
     }
 
+    item.mods = item.mods || {};
     item.mods.condition = item.mods.condition || 20000;
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
