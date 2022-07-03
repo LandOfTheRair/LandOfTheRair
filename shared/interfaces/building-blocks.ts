@@ -225,6 +225,9 @@ export enum SkillDisplayName {
   Spellforging = 'Spellforging',
   Runewriting = 'Runewriting',
   Metalworking = 'Metalworking',
+  Gemcrafting = 'Gemcrafting',
+  Weavefabricating = 'Weavefabricating',
+  Foodmaking = 'Foodmaking',
   Survival = 'survival'
 }
 

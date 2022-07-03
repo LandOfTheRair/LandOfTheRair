@@ -3,8 +3,8 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, INPC,
-  IPlayer, ITannerBehavior, ItemSlot, MessageType } from '../../../../interfaces';
+  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction, INPC,
+  IPlayer, ITannerBehavior, ItemSlot, LearnedSpell, MessageType } from '../../../../interfaces';
 
 export class TannerBehavior implements IAIBehavior {
 
@@ -28,6 +28,40 @@ export class TannerBehavior implements IAIBehavior {
 
     parser.addCommand('hello')
       .setSyntax(['hello'])
+      .setLogic(async ({ env }) => {
+        const player = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        const message = `Hello, ${player.name}!
+        You can tell me to talk about your TANNING, or I can TEACH you about Weavefabricating!`;
+
+        const options = [
+          { text: 'Lets talk about tanning!', action: 'tanning' },
+          { text: 'Leave', action: 'noop' },
+        ];
+
+        if (!game.characterHelper.hasLearned(player, 'Weavefabricating')) {
+          options.unshift({ text: 'Teach me about Weavefabricating', action: 'teach' });
+        }
+
+        const formattedChat: IDialogChatAction = {
+          message,
+          displayTitle: npc.name,
+          displayNPCName: npc.name,
+          displayNPCSprite: npc.sprite,
+          displayNPCUUID: npc.uuid,
+          options
+        };
+
+        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+
+        return message;
+      });
+
+    parser.addCommand('tanning')
+      .setSyntax(['tanning'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
         if (!player) return 'You do not exist.';
@@ -82,6 +116,22 @@ export class TannerBehavior implements IAIBehavior {
         }
 
         return `Thanks, ${player.name}!`;
+      });
+
+    parser.addCommand('teach')
+      .setSyntax(['teach'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        if (game.characterHelper.hasLearned(player, 'Weavefabricating')) return 'You already know Weavefabricating!';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Weavefabricating', LearnedSpell.FromFate);
+        game.characterHelper.forceSpellLearnStatus(player, 'Tear', LearnedSpell.FromFate);
+
+        return 'Go forth and make gorgeous fabrics!';
       });
   }
 

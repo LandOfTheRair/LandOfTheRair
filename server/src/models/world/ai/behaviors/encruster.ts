@@ -1,8 +1,8 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { distanceFrom, EquipHash, GameServerResponse, IAIBehavior, IEncrusterBehavior,
-  INPC, IPlayer, ItemClass, ItemSlot, ShieldClasses, WeaponClass, WeaponClasses } from '../../../../interfaces';
+import { distanceFrom, EquipHash, GameServerResponse, IAIBehavior, IDialogChatAction, IEncrusterBehavior,
+  INPC, IPlayer, ItemClass, ItemSlot, LearnedSpell, ShieldClasses, WeaponClass, WeaponClasses } from '../../../../interfaces';
 
 export class EncrusterBehavior implements IAIBehavior {
 
@@ -15,6 +15,40 @@ export class EncrusterBehavior implements IAIBehavior {
 
     parser.addCommand('hello')
       .setSyntax(['hello'])
+      .setLogic(async ({ env }) => {
+        const player = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 1) return 'Please come closer.';
+
+        const message = `Hello, ${player.name}!
+        You can tell me you want to do ENCRUSTING, or I can TEACH you about Gemcrafting!`;
+
+        const options = [
+          { text: 'Encrusting', action: 'encrusting' },
+          { text: 'Leave', action: 'noop' },
+        ];
+
+        if (!game.characterHelper.hasLearned(player, 'Gemcrafting')) {
+          options.unshift({ text: 'Teach me about Gemcrafting', action: 'teach' });
+        }
+
+        const formattedChat: IDialogChatAction = {
+          message,
+          displayTitle: npc.name,
+          displayNPCName: npc.name,
+          displayNPCSprite: npc.sprite,
+          displayNPCUUID: npc.uuid,
+          options
+        };
+
+        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+
+        return message;
+      });
+
+    parser.addCommand('encrusting')
+      .setSyntax(['encrusting'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
         if (!player) return 'You do not exist.';
@@ -185,6 +219,22 @@ export class EncrusterBehavior implements IAIBehavior {
         game.characterHelper.setLeftHand(player, undefined);
 
         return 'Enjoy your new encrusted item!';
+      });
+
+    parser.addCommand('teach')
+      .setSyntax(['teach'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        if (game.characterHelper.hasLearned(player, 'Gemcrafting')) return 'You already know Gemcrafting!';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Gemcrafting', LearnedSpell.FromFate);
+        game.characterHelper.forceSpellLearnStatus(player, 'Shatter', LearnedSpell.FromFate);
+
+        return 'Go forth and make great jewelry!';
       });
   }
 

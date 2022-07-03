@@ -14,6 +14,10 @@ export class Disenchant extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const item = player.items.equipment[ItemSlot.RightHand];
 
+    if (item && args.stringArgs) {
+      return this.sendMessage(player, 'You need to empty your right hand to mass disenchant!');
+    }
+
     // no right hand = mass DE
     if (!item) {
 
@@ -48,7 +52,8 @@ export class Disenchant extends MacroCommand {
       if (args.stringArgs) {
         const items = player.items.sack.items
           .filter(x => this.game.itemHelper.getItemProperty(x, 'itemClass') === args.stringArgs)
-          .filter(x => this.game.itemHelper.getItemProperty(x, 'quality') >= 1);
+          .filter(x => this.game.itemHelper.getItemProperty(x, 'quality') >= 1)
+          .filter(x => this.game.itemHelper.isOwnedBy(player, x));
 
         if (items.length === 0) return this.sendMessage(player, 'You do not have any matching disenchantable items in your sack!');
 

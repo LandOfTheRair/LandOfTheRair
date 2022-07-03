@@ -2,7 +2,7 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import { Currency, distanceFrom, foodTextFor, GameServerResponse, IAIBehavior,
-  ICulinarianBehavior, INPC, IPlayer, ItemClass, ItemSlot } from '../../../../interfaces';
+  ICulinarianBehavior, IDialogChatAction, INPC, IPlayer, ItemClass, ItemSlot, LearnedSpell } from '../../../../interfaces';
 
 export class CulinarianBehavior implements IAIBehavior {
 
@@ -15,6 +15,40 @@ export class CulinarianBehavior implements IAIBehavior {
 
     parser.addCommand('hello')
       .setSyntax(['hello'])
+      .setLogic(async ({ env }) => {
+        const player = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        const message = `Hello, ${player.name}!
+        You can tell me to talk about your FOOD, or I can TEACH you about Foodmaking!`;
+
+        const options = [
+          { text: 'Lets talk about food!', action: 'food' },
+          { text: 'Leave', action: 'noop' },
+        ];
+
+        if (!game.characterHelper.hasLearned(player, 'Foodmaking')) {
+          options.unshift({ text: 'Teach me about Foodmaking', action: 'teach' });
+        }
+
+        const formattedChat: IDialogChatAction = {
+          message,
+          displayTitle: npc.name,
+          displayNPCName: npc.name,
+          displayNPCSprite: npc.sprite,
+          displayNPCUUID: npc.uuid,
+          options
+        };
+
+        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+
+        return message;
+      });
+
+    parser.addCommand('food')
+      .setSyntax(['food'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
         if (!player) return 'You do not exist.';
@@ -75,6 +109,21 @@ export class CulinarianBehavior implements IAIBehavior {
         game.messageHelper.sendSimpleMessage(player, identMsg);
 
         return `Thanks, ${player.name}!`;
+      });
+
+    parser.addCommand('teach')
+      .setSyntax(['teach'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        if (game.characterHelper.hasLearned(player, 'Foodmaking')) return 'You already know Foodmaking!';
+
+        game.characterHelper.forceSpellLearnStatus(player, 'Foodmaking', LearnedSpell.FromFate);
+
+        return 'Go forth and make delicious food!';
       });
   }
 
