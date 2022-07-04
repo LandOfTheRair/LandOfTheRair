@@ -35,7 +35,7 @@ export class Craft extends MacroCommand {
 
       if (newOwner && recipeItem.name === transferOwnerFrom) return false;
 
-      if (transferOwnerFrom && recipeItem.name === transferOwnerFrom) {
+      if (transferOwnerFrom && recipeItem.name === transferOwnerFrom && recipeItem.mods?.owner) {
         newOwner = recipeItem.mods.owner;
         return true;
       }
