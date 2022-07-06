@@ -3,7 +3,7 @@ import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
 import {
   distanceFrom, GameServerResponse, IAIBehavior,
-  IDialogChatAction, IMagicianBehavior, INPC, IPlayer, LearnedSpell } from '../../../../interfaces';
+  IDialogChatAction, IMagicianBehavior, INPC, IPlayer, ItemClass, ItemSlot, LearnedSpell } from '../../../../interfaces';
 
 export class MagicianBehavior implements IAIBehavior {
 
@@ -17,9 +17,11 @@ export class MagicianBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const message = `Hello, ${player.name}! I am a wandering magician and I can TEACH you to do Spellforging!`;
+        const message = `Hello, ${player.name}! I am a wandering magician and I can
+        TEACH you to do Spellforging and IMBUE earrings with rune scrolls!`;
 
         const options = [
+          { text: 'Imbue', action: 'imbue' },
           { text: 'Leave', action: 'noop' },
         ];
 
@@ -41,7 +43,6 @@ export class MagicianBehavior implements IAIBehavior {
         return message;
       });
 
-
     parser.addCommand('teach')
       .setSyntax(['teach'])
       .setLogic(async ({ env }) => {
@@ -56,6 +57,35 @@ export class MagicianBehavior implements IAIBehavior {
         game.characterHelper.forceSpellLearnStatus(player, 'Disenchant', LearnedSpell.FromFate);
 
         return 'Go forth and weave magic!';
+      });
+
+    parser.addCommand('imbue')
+      .setSyntax(['imbue'])
+      .setLogic(async ({ env }) => {
+        const player: IPlayer = env?.player;
+        if (!player) return 'You do not exist.';
+
+        if (distanceFrom(player, npc) > 2) return 'Please come closer.';
+
+        const rightHand = player.items.equipment[ItemSlot.RightHand];
+        const leftHand = player.items.equipment[ItemSlot.LeftHand];
+
+        if (!rightHand || !leftHand) {
+          return `Greetings! I can imbue your empty husks of items with rune scrolls.
+        Simply hold a valid item in your right hand, and a rune scroll in your left, and I can work my magic.`;
+        }
+
+        const { trait: rightTrait } = game.itemHelper.getItemProperties(rightHand, ['trait']);
+        const { itemClass: leftClass, trait: leftTrait } = game.itemHelper.getItemProperties(leftHand, ['itemClass', 'trait']);
+
+        if (!rightTrait || rightTrait.name !== 'Unimbued') return 'The item in your right hand is not an unimbued item!';
+        if (leftClass !== ItemClass.Scroll || !leftTrait) return 'The item in your left hand is not a rune scroll!';
+        if (rightTrait.level !== leftTrait.level) return 'The magic level of the rune scroll and the item in your right hand do not match!';
+
+        rightHand.mods.trait = { name: leftTrait.name, level: leftTrait.level };
+        game.characterHelper.setLeftHand(player, undefined);
+
+        return 'Enjoy your new imbued item!';
       });
   }
 
