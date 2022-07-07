@@ -4,6 +4,9 @@ require('source-map-support').install();
 
 import path from 'path';
 import { isMainThread, Worker } from 'worker_threads';
+import { GameServerEvent } from '../interfaces';
+
+const kill = () => process.exit(0);
 
 if (isMainThread) {
 
@@ -23,6 +26,12 @@ if (isMainThread) {
     });
 
     createdWorker.on('message', (msg) => {
+
+      if (msg.type === GameServerEvent.ForceReboot) {
+        console.log('Master:ForceReboot', 'Killing game... hopefully the server restarts!');
+        kill();
+      }
+
       const target = msg.target;
       if (!target) console.error(`Worker:${worker}:TargetCheck`, `Message ${JSON.stringify(msg)} has no target.`);
 

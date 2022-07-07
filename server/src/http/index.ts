@@ -1,4 +1,5 @@
 
+export * from './forcereboot';
 export * from './passwordcheck';
 export * from './lockgame';
 export * from './logs';
