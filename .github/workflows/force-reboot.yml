@@ -24,10 +24,10 @@ jobs:
         preventFailureOnNoResponse: 'true'
         ignoreStatusCodes: '404,502'
 
-    - name: Wait 15 seconds
+    - name: Wait 30 seconds
       uses: jakejarvis/wait-action@master
       with:
-        time: '15s'
+        time: '30s'
 
     - name: Reboot Done
       uses: fjogeleit/http-request-action@master
