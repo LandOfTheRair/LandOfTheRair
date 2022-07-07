@@ -233,13 +233,13 @@ export class ItemHelper extends BaseService {
 
   // gain or lose condition
   public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+    if (!item) return;
 
     const conditionLossModifier = Math.abs(conditionLoss) * (this.game.traitHelper.traitLevelValue(character, 'CarefulTouch') / 100);
     if (conditionLoss < 0) {
       conditionLoss += conditionLossModifier;
     }
 
-    item.mods = item.mods || {};
     item.mods.condition = item.mods.condition || 20000;
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
