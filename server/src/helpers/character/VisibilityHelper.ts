@@ -38,6 +38,7 @@ export class VisibilityHelper extends BaseService {
 
     const dist = 4;
 
+    // blind OR dark and no darkvision
     if (this.game.effectHelper.hasEffect(character, 'Blind')
     || (this.isDarkAt(character.map, character.x, character.y) && !this.game.effectHelper.hasEffect(character, 'DarkVision'))) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {

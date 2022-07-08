@@ -33,7 +33,6 @@ export class TargettingHelper extends BaseService {
   public init() {}
 
   public isVisibleTo(ref: ICharacter, target: ICharacter, useSight = true): boolean {
-    if ((ref as INPC).hostility === 'Never') return true;
     if (!ref.fov && useSight) return false;
 
     if (ref.fov && useSight) {
