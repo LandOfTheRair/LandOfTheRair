@@ -19,7 +19,9 @@ export class CrashContextManager extends BaseService {
     this.context.push(message);
     if (this.context.length > 300) this.context.shift();
 
-    console.log(message);
+    if (process.env.LOG_CRASH_CONTEXT) {
+      this.game.logger.log('CrashContext', message);
+    }
   }
 
 }

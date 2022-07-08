@@ -29,6 +29,7 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 
 * `BLOCK_REGISTER` - (optional) set this to any value to block registration of new accounts - useful if you require accounts to be manually created for some reason
 * `DISABLE_TIMERS` - (optional) disable the timer reporting for game loop lag
+* `LOG_CRASH_CONTEXT` - (optional) set this to any value to enable logging of crash context (NPC/player actions)
 
 ### Networking Variables
 
