@@ -2,6 +2,7 @@
 export * from './ConfigManager';
 export * from './ContentManager';
 export * from './CorpseManager';
+export * from './CrashContextManager';
 export * from './DarknessHelper';
 export * from './EffectManager';
 export * from './GroundManager';

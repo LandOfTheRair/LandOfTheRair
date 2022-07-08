@@ -174,6 +174,7 @@ export class DefaultAIBehavior implements IAI {
     }
 
     let chosenSkill: SkillCommand | null;
+    let chosenSkillName = 'UnchosenSkill';
 
     let isThrowing = false;
 
@@ -210,11 +211,16 @@ export class DefaultAIBehavior implements IAI {
       if (!this.currentTarget) return;
 
       chosenSkill = this.checkIfCanUseSkillAndUseIt(npc, skill, this.currentTarget);
+      if (chosenSkill) {
+        chosenSkillName = skill;
+      }
     });
 
     // cast a buff spell if we have one
     if (chosenSkill!?.targetsFriendly && this.currentTarget) {
       const skill: SkillCommand = chosenSkill;
+
+      this.game.crashContext.logContextEntry(npc, `${npc.name}:B -> ${chosenSkillName} -> ${this.currentTarget.name}`);
       skill.use(npc, this.currentTarget);
       this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
 
@@ -228,11 +234,15 @@ export class DefaultAIBehavior implements IAI {
       if (skill) {
         const opts: PhysicalAttackArgs = {};
         if (isThrowing) opts.throwHand = ItemSlot.RightHand;
+
+        this.game.crashContext.logContextEntry(npc, `${npc.name}:M -> ${chosenSkillName} -> ${this.highestAgro.name}`);
         skill.use(npc, this.highestAgro, opts);
         this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
 
         // either move towards target
       } else {
+
+        this.game.crashContext.logContextEntry(npc, `${npc.name}:A -> ${this.highestAgro.name}`);
         this.moveTowards(this.highestAgro, moveRate);
       }
 

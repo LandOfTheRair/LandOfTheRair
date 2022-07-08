@@ -14,6 +14,7 @@ import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import { ConfigManager, ContentManager, CorpseManager, DarknessHelper, EffectManager,
   GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
+import { CrashContextManager } from '../data/CrashContextManager';
 import { ModKitManager } from '../data/ModKitManager';
 import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -34,7 +35,7 @@ export class Game {
   public wsCmdHandler: IWebsocketCommandHandler;
 
   constructor(
-
+    public crashContext: CrashContextManager,
     public logger: Logger,
     public transmissionHelper: TransmissionHelper,
 
@@ -121,6 +122,7 @@ export class Game {
     this.wsCmdHandler = wsCmdHandler;
 
     const initOrder = [
+      'crashContext',
       'logger',
       'transmissionHelper',
       'modkitManager',

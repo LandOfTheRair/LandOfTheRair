@@ -272,6 +272,8 @@ export class PlayerHelper extends BaseService {
         // check if we can actually cast this
         const args = (command as any).args;
 
+        this.game.crashContext.logContextEntry(player, `${player.username}#${player.name}: ${args.calledAlias} ${args.stringArgs}`);
+
         //  if we have a spell, we gotta do a lot of checks
         if (args.spell) {
           const [prefix, spell] = args.spell.split(' ');
