@@ -36,6 +36,21 @@ The content will need to be rebuilt when it changes. You can either run `npm run
 
 To commit content, you'll still need to go to that folder manually and commit, since it is a separate repository. The helpers above are added for convenience.
 
+#### Setup Script
+
+Running this sets up the environment entirely, with a symlinked content directory for editing / committing.
+
+```bash
+git clone https://github.com/LandOfTheRair/LandOfTheRair.git
+git clone https://github.com/LandOfTheRair/Content.git
+touch LandOfTheRair/.env
+cd LandOfTheRair
+npm install
+npm run setup:full
+```
+
+You'll still need to edit your `.env`, and do other project-specific setup - [see here](https://github.com/LandOfTheRair/LandOfTheRair/tree/master/server) for server setup. The client should work after running the above.
+
 #### Running Both Projects
 
 Run `npm start` and the client and server will both start up.
