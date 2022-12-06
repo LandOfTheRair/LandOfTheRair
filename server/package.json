@@ -59,7 +59,7 @@
     "pathfinding": "0.4.18",
     "process-stats": "3.5.4",
     "rbush": "3.0.1",
-    "recursive-readdir": "2.2.2",
+    "recursive-readdir": "2.2.3",
     "reflect-metadata": "0.1.13",
     "rollbar": "2.19.4",
     "rot-js": "^2.2.0",
