@@ -9,13 +9,9 @@ import { MacroCommand, SkillCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
 
-
 @Injectable()
 export class CommandHandler extends BaseService {
-
-  constructor(
-    private messageHelper: MessageHelper
-  ) {
+  constructor(private messageHelper: MessageHelper) {
     super();
   }
 
@@ -28,13 +24,15 @@ export class CommandHandler extends BaseService {
 
   // load all skills
   public init() {
-    Object.values(Commands).map(x => new x(this.game)).forEach(command => {
-      command.aliases.forEach(alias => {
-        if (!alias) return;
-        this.commands[alias.toLowerCase()] = command;
-        this.commands[alias.toLowerCase().split(' ').join('')] = command;
+    Object.values(Commands)
+      .map((x) => new x(this.game))
+      .forEach((command) => {
+        command.aliases.forEach((alias) => {
+          if (!alias) return;
+          this.commands[alias.toLowerCase()] = command;
+          this.commands[alias.toLowerCase().split(' ').join('')] = command;
+        });
       });
-    });
 
     this.commandStrings = Object.keys(this.commands);
   }
@@ -46,7 +44,6 @@ export class CommandHandler extends BaseService {
 
   // do the command for the player
   public doCommand(player: Player, data, callbacks) {
-
     let command: string = data.command;
 
     // happens *immediately*
@@ -68,13 +65,12 @@ export class CommandHandler extends BaseService {
       overrideEffect: undefined,
       calledAlias: command,
       callbacks,
-      spell: ''
+      spell: '',
     };
 
     if (data.args && isString(data.args)) {
       args.stringArgs = data.args;
       args.arrayArgs = this.parseArgs(data.args);
-
     } else if (data.args && isObject(data.args)) {
       args.objArgs = data.args;
     }
@@ -92,28 +88,42 @@ export class CommandHandler extends BaseService {
       return;
     }
 
-    if (this.game.characterHelper.isDead(player) && !commandRef.canUseWhileDead) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: 'You can\'t do that while you\'re dead!' });
+    if (
+      this.game.characterHelper.isDead(player) &&
+      !commandRef.canUseWhileDead
+    ) {
+      this.messageHelper.sendLogMessageToPlayer(player, {
+        message: "You can't do that while you're dead!",
+      });
       return;
     }
 
     if (isInstant && !commandRef.canBeInstant) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: `Command ${command} cannot be made instant.` });
+      this.messageHelper.sendLogMessageToPlayer(player, {
+        message: `Command ${command} cannot be made instant.`,
+      });
       return;
     }
 
     if (isFast && !commandRef.canBeFast) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: `Command ${command} cannot be made fast.` });
+      this.messageHelper.sendLogMessageToPlayer(player, {
+        message: `Command ${command} cannot be made fast.`,
+      });
       return;
     }
 
     if (commandRef.isGMCommand && !player.isGM) {
-      this.messageHelper.sendLogMessageToPlayer(player, { message: 'You\'re not a GM.' });
+      this.messageHelper.sendLogMessageToPlayer(player, {
+        message: "You're not a GM.",
+      });
       return;
     }
 
     if (commandRef.isGMCommand) {
-      this.game.logger.log('GMCommand', `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`);
+      this.game.logger.log(
+        'GMCommand',
+        `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`,
+      );
     }
 
     // check if we need to learn a spell before using it
@@ -128,14 +138,10 @@ export class CommandHandler extends BaseService {
     if (isInstant) {
       if (!this.game.characterHelper.canAct(player)) return;
       callback();
-
     } else if (isFast) {
       player.actionQueue.fast.push(callback as any);
-
     } else {
       player.actionQueue.slow.push(callback as any);
-
     }
   }
-
 }
