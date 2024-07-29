@@ -1,4 +1,3 @@
-
 import { Injectable } from 'injection-js';
 import { Collection, Db, MongoClient } from 'mongodb';
 import { BaseService } from '../../models/BaseService';
@@ -9,7 +8,6 @@ import { MetadataStorage } from './db/base';
 
 @Injectable()
 export class Database extends BaseService {
-
   private client: MongoClient;
   private db: Db;
 
@@ -19,24 +17,32 @@ export class Database extends BaseService {
     const fallbackUri = 'mongodb://127.0.0.1:27017';
 
     if (!process.env.DATABASE_URI) {
-      console.warn(`${source}:DB`, `No DATABASE_URI was specified, falling back to ${fallbackUri}`);
+      console.warn(
+        `${source}:DB`,
+        `No DATABASE_URI was specified, falling back to ${fallbackUri}`,
+      );
       process.env.DATABASE_URI = fallbackUri;
     }
 
     while (true) {
       try {
         console.info(`${source}:DB`, 'Connecting to database...');
-        this.client = new MongoClient(process.env.DATABASE_URI as string, { useUnifiedTopology: true });
+        this.client = new MongoClient(process.env.DATABASE_URI as string, {
+          useUnifiedTopology: true,
+        });
         await this.client.connect();
         await this.client.db('admin').command({ ping: 1 });
         console.info(`${source}:DB`, 'Database connection established...');
         break;
       } catch (e) {
-        console.error(`${source}:DB`, `Database connection failed ${e.message}, retrying in 3 seconds...`);
+        console.error(
+          `${source}:DB`,
+          `Database connection failed ${(e as Error).message}, retrying in 3 seconds...`,
+        );
         await this.client.close();
         await new Promise((resolve) => {
           setTimeout(() => resolve(null), 3000);
-        } );
+        });
       }
     }
 
@@ -44,7 +50,9 @@ export class Database extends BaseService {
   }
 
   public getCollection(entity): Collection {
-    return this.getCollectionByName(MetadataStorage.getCollectionForEntity(entity));
+    return this.getCollectionByName(
+      MetadataStorage.getCollectionForEntity(entity),
+    );
   }
 
   public getCollectionByName(name: string): Collection {
@@ -57,7 +65,7 @@ export class Database extends BaseService {
 
     const newSingle = new T();
 
-    Object.keys(foundSingle).forEach(key => {
+    Object.keys(foundSingle).forEach((key) => {
       newSingle[key] = foundSingle[key];
     });
 
@@ -80,10 +88,10 @@ export class Database extends BaseService {
 
   public async findMany<T>(T, filter): Promise<T[]> {
     const foundMany = await this.getCollection(T).find(filter).toArray();
-    return foundMany.map(foundSingle => {
+    return foundMany.map((foundSingle) => {
       const newSingle = new T();
 
-      Object.keys(foundSingle).forEach(key => {
+      Object.keys(foundSingle).forEach((key) => {
         newSingle[key] = foundSingle[key];
       });
 
@@ -97,7 +105,11 @@ export class Database extends BaseService {
 
   public async save(entity: BaseEntity): Promise<any> {
     const collection = this.getCollection(entity);
-    return collection.replaceOne({ _id: entity._id }, this.getPersistObject(entity), { upsert: true });
+    return collection.replaceOne(
+      { _id: entity._id },
+      this.getPersistObject(entity),
+      { upsert: true },
+    );
   }
 
   public async delete(entity: BaseEntity): Promise<any> {
@@ -108,5 +120,4 @@ export class Database extends BaseService {
   public prepareForTransmission(entity): any {
     return MetadataStorage.getEnumerableObject(entity);
   }
-
 }

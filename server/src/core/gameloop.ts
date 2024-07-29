@@ -1,4 +1,3 @@
-
 import 'reflect-metadata';
 
 import { parentPort } from 'worker_threads';
@@ -7,13 +6,12 @@ import { WebsocketCommandHandler } from '../helpers';
 import { GameServerResponse } from '../interfaces';
 
 export class GameloopWorker {
-
   private wsCommands: WebsocketCommandHandler;
 
   async start() {
     console.info('GAME', 'Starting game loop...');
 
-    parentPort?.on('message', message => {
+    parentPort?.on('message', (message) => {
       this.handleMessage(message);
     });
 
@@ -38,24 +36,27 @@ export class GameloopWorker {
   private async handleMessage(msg) {
     const { socketId, type, ...args } = msg;
     if (!type) {
-      this.emit(socketId, { type: GameServerResponse.Error, error: 'You must specify a `type` when sending commands.' });
+      this.emit(socketId, {
+        type: GameServerResponse.Error,
+        error: 'You must specify a `type` when sending commands.',
+      });
       return;
     }
 
     try {
       await this.wsCommands.doAction(type, args, socketId);
     } catch (e) {
-      const blacklistedErrors = [
-        'Not logged in.',
-        'Not in game.'
-      ];
+      const blacklistedErrors = ['Not logged in.', 'Not in game.'];
 
-      if (!blacklistedErrors.includes(e.message)) {
+      if (!blacklistedErrors.includes((e as Error).message)) {
         console.error('ERROR: CMD', e);
         console.error('ERROR: DATA', msg);
 
         if (process.env.NODE_ENV !== 'production') {
-          this.emit(socketId, { type: GameServerResponse.Error, error: e.message });
+          this.emit(socketId, {
+            type: GameServerResponse.Error,
+            error: (e as Error).message,
+          });
         }
       }
     }
@@ -65,5 +66,4 @@ export class GameloopWorker {
   private emit(socketId, data) {
     parentPort?.postMessage({ target: 'networking', socketId, ...data });
   }
-
 }

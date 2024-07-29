@@ -1,15 +1,21 @@
-
-import { Injectable } from 'injection-js';
 import * as Discord from 'discord.js';
+import { Injectable } from 'injection-js';
 
+import {
+  IAccount,
+  IDiscordCommand,
+  INPCDefinition,
+  IPlayer,
+  ISimpleItem,
+  Stat,
+  WeaponClasses,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
-import { IAccount, IDiscordCommand, INPCDefinition, IPlayer, ISimpleItem, Stat, WeaponClasses } from '../../interfaces';
 
 import * as commands from './discord-commands';
 
 @Injectable()
 export class DiscordHelper extends BaseService {
-
   private discord: Discord.Client;
   private discordGuild: Discord.Guild | undefined;
   private discordChannel: Discord.TextChannel | undefined;
@@ -27,7 +33,7 @@ export class DiscordHelper extends BaseService {
       await this.discord.login(process.env.DISCORD_SECRET);
       this.game.logger.log('Discord', 'Connected!');
     } catch (e) {
-      this.game.logger.error('Discord', e.message);
+      this.game.logger.error('Discord', (e as Error).message);
       return;
     }
 
@@ -35,9 +41,14 @@ export class DiscordHelper extends BaseService {
       this.game.logger.error('Discord', error);
     });
 
-    this.discordGuild = await this.discord.guilds.fetch(process.env.DISCORD_GUILD_ID);
+    this.discordGuild = await this.discord.guilds.fetch(
+      process.env.DISCORD_GUILD_ID,
+    );
     if (!this.discordGuild) {
-      this.game.logger.error('Discord', `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`);
+      this.game.logger.error(
+        'Discord',
+        `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
+      );
       return;
     }
 
@@ -45,27 +56,42 @@ export class DiscordHelper extends BaseService {
 
     // try to load the bridge channel
     if (process.env.DISCORD_CHANNEL_ID) {
-      this.discordChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_CHANNEL_ID);
+      this.discordChannel = (this.discordGuild.channels.cache as any).get(
+        process.env.DISCORD_CHANNEL_ID,
+      );
       if (!this.discordChannel) {
-        this.game.logger.error('Discord', `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`);
+        this.game.logger.error(
+          'Discord',
+          `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`,
+        );
         return;
       }
     }
 
     // try to load the bot command channel
     if (process.env.DISCORD_BOT_CHANNEL_ID) {
-      this.discordBotCommandChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_BOT_CHANNEL_ID);
+      this.discordBotCommandChannel = (
+        this.discordGuild.channels.cache as any
+      ).get(process.env.DISCORD_BOT_CHANNEL_ID);
       if (!this.discordBotCommandChannel) {
-        this.game.logger.error('Discord', `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`);
+        this.game.logger.error(
+          'Discord',
+          `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`,
+        );
         return;
       }
     }
 
     // try to load the market channel
     if (process.env.DISCORD_MARKET_CHANNEL_ID) {
-      this.discordMarketplaceChannel = (this.discordGuild.channels.cache as any).get(process.env.DISCORD_MARKET_CHANNEL_ID);
+      this.discordMarketplaceChannel = (
+        this.discordGuild.channels.cache as any
+      ).get(process.env.DISCORD_MARKET_CHANNEL_ID);
       if (!this.discordMarketplaceChannel) {
-        this.game.logger.error('Discord', `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`);
+        this.game.logger.error(
+          'Discord',
+          `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`,
+        );
         return;
       }
     }
@@ -73,11 +99,12 @@ export class DiscordHelper extends BaseService {
     this.updateLobbyChannel();
     this.watchChat();
     this.initCommands();
-
   }
 
   // get the discord user by the tag for use in this service
-  public async getDiscordUserByTag(tag: string): Promise<Discord.GuildMember | undefined> {
+  public async getDiscordUserByTag(
+    tag: string,
+  ): Promise<Discord.GuildMember | undefined> {
     try {
       const member = await this.discordGuild?.members.fetch(tag);
       return member;
@@ -152,22 +179,27 @@ export class DiscordHelper extends BaseService {
     if (subscriber) this.removeRole(user, subscriber);
     if (online) this.removeRole(user, online);
     if (events) this.removeRole(user, events);
-
   }
 
   // add a role
-  public async addRole(user: Discord.GuildMember, role: Discord.Role): Promise<void> {
+  public async addRole(
+    user: Discord.GuildMember,
+    role: Discord.Role,
+  ): Promise<void> {
     await user.roles.add(role);
   }
 
   // remove a role
-  public async removeRole(user: Discord.GuildMember, role: Discord.Role): Promise<void> {
+  public async removeRole(
+    user: Discord.GuildMember,
+    role: Discord.Role,
+  ): Promise<void> {
     await user.roles.remove(role);
   }
 
   // get a role by name
   public getRole(name: string): Discord.Role | undefined {
-    return (this.discordGuild?.roles.cache as any).find(x => x.name === name);
+    return (this.discordGuild?.roles.cache as any).find((x) => x.name === name);
   }
 
   // update the lobby channel to have in-lobby/in-game counts
@@ -177,7 +209,9 @@ export class DiscordHelper extends BaseService {
     const online = this.game.lobbyManager.usersInLobby();
     const inGame = this.game.lobbyManager.usersInGameCount();
 
-    await this.discordChannel.setTopic(`${online} user(s) connected, ${inGame} player(s) in game`);
+    await this.discordChannel.setTopic(
+      `${online} user(s) connected, ${inGame} player(s) in game`,
+    );
   }
 
   // broadcast a system message
@@ -191,17 +225,28 @@ export class DiscordHelper extends BaseService {
   }
 
   // send a marketplace update
-  public sendMarketplaceMessage(player: IPlayer, sellItem: ISimpleItem, price: number) {
-    this.discordMarketplaceChannel?.send({ embed: this.createMarketplaceEmbed(player, sellItem, price) });
+  public sendMarketplaceMessage(
+    player: IPlayer,
+    sellItem: ISimpleItem,
+    price: number,
+  ) {
+    this.discordMarketplaceChannel?.send({
+      embed: this.createMarketplaceEmbed(player, sellItem, price),
+    });
   }
 
-  public createMarketplaceEmbed(player: IPlayer, sellItem: ISimpleItem, price: number): Discord.MessageEmbed {
-
+  public createMarketplaceEmbed(
+    player: IPlayer,
+    sellItem: ISimpleItem,
+    price: number,
+  ): Discord.MessageEmbed {
     const embed = this.createItemEmbed(sellItem);
     embed
       .setAuthor(player.name)
       .setTitle('View this seller on Rair Global')
-      .setURL(`https://global.rair.land/character/?username=${player.username}&charSlot=${player.charSlot}`)
+      .setURL(
+        `https://global.rair.land/character/?username=${player.username}&charSlot=${player.charSlot}`,
+      )
       .addField('Price', price.toLocaleString() + ' gold');
 
     return embed;
@@ -216,7 +261,9 @@ export class DiscordHelper extends BaseService {
     const embed = new Discord.MessageEmbed();
     embed
       .setAuthor(fullItem.name)
-      .setThumbnail(`https://play.rair.land/assets/spritesheets/items/${sprite.toString().padStart(4, '0')}.png`)
+      .setThumbnail(
+        `https://play.rair.land/assets/spritesheets/items/${sprite.toString().padStart(4, '0')}.png`,
+      )
       .addField('Description', fullItem.desc)
       .addField('Item Type', fullItem.itemClass, true);
 
@@ -226,8 +273,10 @@ export class DiscordHelper extends BaseService {
 
     if (fullItem.requirements) {
       const requirements: string[] = [];
-      if (fullItem.requirements.baseClass) requirements.push(`Class: ${fullItem.requirements.baseClass}`);
-      if (fullItem.requirements.level)     requirements.push(`Level: ${fullItem.requirements.level}`);
+      if (fullItem.requirements.baseClass)
+        requirements.push(`Class: ${fullItem.requirements.baseClass}`);
+      if (fullItem.requirements.level)
+        requirements.push(`Level: ${fullItem.requirements.level}`);
 
       embed.addField('Requirements', requirements.join(', '), true);
     }
@@ -237,14 +286,17 @@ export class DiscordHelper extends BaseService {
 
   // create an npc embed for !npc
   public createNPCEmbed(fullCreature: INPCDefinition): Discord.MessageEmbed {
-    const hp = fullCreature.hp.min === fullCreature.hp.max
-      ? fullCreature.hp.max.toLocaleString()
-      : `${fullCreature.hp.min.toLocaleString()}~${fullCreature.hp.max.toLocaleString()}`;
+    const hp =
+      fullCreature.hp.min === fullCreature.hp.max
+        ? fullCreature.hp.max.toLocaleString()
+        : `${fullCreature.hp.min.toLocaleString()}~${fullCreature.hp.max.toLocaleString()}`;
 
     const embed = new Discord.MessageEmbed();
     embed
       .setAuthor(fullCreature.name)
-      .setThumbnail(`https://play.rair.land/assets/spritesheets/creatures/${fullCreature.sprite.toString().padStart(4, '0')}.png`);
+      .setThumbnail(
+        `https://play.rair.land/assets/spritesheets/creatures/${fullCreature.sprite.toString().padStart(4, '0')}.png`,
+      );
 
     embed
       .addField('Level', fullCreature.level, true)
@@ -259,8 +311,23 @@ export class DiscordHelper extends BaseService {
       embed.addField('Affiliation', fullCreature.affiliation, true);
     }
 
-    const importantStats = [Stat.STR, Stat.DEX, Stat.AGI, Stat.INT, Stat.WIS, Stat.WIL, Stat.CON, Stat.CHA, Stat.LUK];
-    embed.addField('Stats', importantStats.map(x => `**${x.toUpperCase()}**: ${fullCreature.stats[x]}`).join(', '));
+    const importantStats = [
+      Stat.STR,
+      Stat.DEX,
+      Stat.AGI,
+      Stat.INT,
+      Stat.WIS,
+      Stat.WIL,
+      Stat.CON,
+      Stat.CHA,
+      Stat.LUK,
+    ];
+    embed.addField(
+      'Stats',
+      importantStats
+        .map((x) => `**${x.toUpperCase()}**: ${fullCreature.stats[x]}`)
+        .join(', '),
+    );
 
     return embed;
   }
@@ -270,12 +337,25 @@ export class DiscordHelper extends BaseService {
     this.discord.on('message', (message) => {
       const { cleanContent, channel, author, member } = message;
 
-      if (!channel || !this.discordChannel || !this.discordBotCommandChannel || author.bot) return;
+      if (
+        !channel ||
+        !this.discordChannel ||
+        !this.discordBotCommandChannel ||
+        author.bot
+      )
+        return;
 
       if (channel.id === this.discordChannel.id) {
-        const username = this.game.lobbyManager.getUsernameByDiscordId[author.id];
-        const fromName = username ?? member?.nickname ?? member?.displayName ?? 'unknown';
-        this.game.messageHelper.sendMessage(fromName, cleanContent, true, !!username);
+        const username =
+          this.game.lobbyManager.getUsernameByDiscordId[author.id];
+        const fromName =
+          username ?? member?.nickname ?? member?.displayName ?? 'unknown';
+        this.game.messageHelper.sendMessage(
+          fromName,
+          cleanContent,
+          true,
+          !!username,
+        );
       }
 
       if (channel.id === this.discordBotCommandChannel.id) {
@@ -287,14 +367,16 @@ export class DiscordHelper extends BaseService {
     });
 
     this.discord.on('presenceUpdate', () => {
-      const allOnline = (this.discordGuild?.members.cache as any).filter(x => x.roles.cache.some(r => r.name === 'Online In Lobby'));
+      const allOnline = (this.discordGuild?.members.cache as any).filter((x) =>
+        x.roles.cache.some((r) => r.name === 'Online In Lobby'),
+      );
       this.game.lobbyManager.setDiscordOnlineCount(allOnline.array().length);
     });
   }
 
   // watch for commands and do stuff
   private initCommands() {
-    Object.values(commands).forEach(command => {
+    Object.values(commands).forEach((command) => {
       const cmdInst = new command();
       this.discordCommands[cmdInst.name] = cmdInst;
     });
