@@ -1,24 +1,36 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Store } from '@ngxs/store';
 import { debounce } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatMode } from '../../../../interfaces';
-import { HideWindow, LogCurrentCommandInHistory, SetActiveWindow, SetChatMode, SetCurrentCommand, ShowWindow } from '../../../../stores';
+import {
+  HideWindow,
+  LogCurrentCommandInHistory,
+  SetActiveWindow,
+  SetChatMode,
+  SetCurrentCommand,
+  ShowWindow,
+} from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-command-line',
   templateUrl: './command-line.component.html',
-  styleUrls: ['./command-line.component.scss']
+  styleUrls: ['./command-line.component.scss'],
 })
 export class CommandLineComponent implements OnInit, OnDestroy {
-
-  @ViewChild('commandInput', { read: ElementRef }) public commandInput: ElementRef;
+  @ViewChild('commandInput', { read: ElementRef })
+  public commandInput: ElementRef;
 
   public currentCommand = '';
 
@@ -26,21 +38,24 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     cmd: 'Enter your command here...',
     say: 'Talk to local players here...',
     party: 'Talk to your party here...',
-    global: 'Talk to the lobby here...'
+    global: 'Talk to the lobby here...',
   };
 
   public nextModes: Record<ChatMode, ChatMode> = {
     cmd: 'say',
     say: 'party',
     party: 'global',
-    global: 'cmd'
+    global: 'cmd',
   };
 
   command$: Subscription;
 
   private globalListener: (ev) => void;
   private sendListener: (ev) => void;
-  private debouncedUpdate = debounce((str) => this.store.dispatch(new SetCurrentCommand(str)), 250);
+  private debouncedUpdate = debounce(
+    (str) => this.store.dispatch(new SetCurrentCommand(str)),
+    250,
+  );
 
   private curIndex = -1;
 
@@ -51,26 +66,28 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private optionsService: OptionsService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {
+    this.command$ = this.gameService.currentCommand$
+      .pipe(takeUntilDestroyed())
+      .subscribe((command) => {
+        this.currentCommand = command;
+
+        if (command) {
+          this.store.dispatch(new ShowWindow('commandLine'));
+          this.store.dispatch(new SetActiveWindow('commandLine'));
+          this.focusInput();
+        }
+      });
+  }
 
   ngOnInit() {
-    this.command$ = this.gameService.currentCommand$.subscribe(command => {
-      this.currentCommand = command;
-
-      if (command) {
-        this.store.dispatch(new ShowWindow('commandLine'));
-        this.store.dispatch(new SetActiveWindow('commandLine'));
-        this.focusInput();
-      }
-    });
-
     this.globalListener = (ev) => {
-
       // allow tab to change modes
       if (ev.key === 'Tab' && this.isCmdActive) {
-        this.store.selectOnce(state => state.settings.chatMode)
-          .subscribe(chatMode => {
+        this.store
+          .selectOnce((state) => state.settings.chatMode)
+          .subscribe((chatMode) => {
             this.updateChatMode(this.nextModes[chatMode]);
           });
 
@@ -79,13 +96,16 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (ev.key === 'Enter' && !this.isCmdActive && this.optionsService.enterToggleCMD) {
+      if (
+        ev.key === 'Enter' &&
+        !this.isCmdActive &&
+        this.optionsService.enterToggleCMD
+      ) {
         this.store.dispatch(new ShowWindow('commandLine'));
       }
 
       // allow enter to unfocus chat if there is no command
       if (ev.key === 'Enter' && this.isCmdActive && !this.currentCommand) {
-
         if (this.optionsService.enterToggleCMD) {
           this.store.dispatch(new HideWindow('commandLine'));
         }
@@ -97,13 +117,17 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       }
 
       // block text entry here if there is a different text input active
-      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      if (
+        document.activeElement.tagName === 'INPUT' ||
+        document.activeElement.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
 
       if (ev.key === 'Enter') {
         this.store.dispatch(new SetActiveWindow('commandLine'));
         this.focusInput();
       }
-
     };
 
     this.sendListener = (ev) => {
@@ -139,9 +163,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     ev.preventDefault();
     ev.stopPropagation();
 
-    this.store.selectOnce(state => state.settings.chatMode)
+    this.store
+      .selectOnce((state) => state.settings.chatMode)
       .subscribe((chatMode: ChatMode) => {
-
         const reset = () => {
           this.debouncedUpdate.cancel();
           this.updateCommand('');
@@ -186,8 +210,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
         }
 
         if (currentCommand === '.') {
-          this.store.selectOnce(state => state.settings.commandHistory)
-            .subscribe(history => {
+          this.store
+            .selectOnce((state) => state.settings.commandHistory)
+            .subscribe((history) => {
               const command = history[0];
               if (!command) return;
 
@@ -206,8 +231,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   searchCommandHistory(ev, diff: number) {
     ev.preventDefault();
 
-    this.store.selectOnce(state => state.settings.commandHistory)
-      .subscribe(history => {
+    this.store
+      .selectOnce((state) => state.settings.commandHistory)
+      .subscribe((history) => {
         const newIndex = diff + this.curIndex;
         if (newIndex <= -2 || newIndex >= history.length) return;
 
@@ -230,8 +256,8 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       this.commandInput.nativeElement.focus();
 
       // this moves the cursor to the end of the input
-      this.commandInput.nativeElement.value = this.commandInput.nativeElement.value ?? '';
+      this.commandInput.nativeElement.value =
+        this.commandInput.nativeElement.value ?? '';
     }, 0);
   }
-
 }

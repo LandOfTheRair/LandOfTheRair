@@ -1,13 +1,13 @@
 <app-window windowName="inventoryPouch"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
 
-            defaultX="690"
-            defaultY="300"
-            defaultWidth="350"
-            defaultHeight="110"
+  defaultX="690"
+  defaultY="300"
+  defaultWidth="350"
+  defaultHeight="110"
 
 ></app-window>
 
@@ -16,7 +16,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="player$ | async as player">
+  @if (player$ | async; as player) {
     <app-inventory context="DemiMagicPouch" [container]="player.accountLockers.pouch" [size]="5"></app-inventory>
-  </ng-container>
+  }
 </ng-template>

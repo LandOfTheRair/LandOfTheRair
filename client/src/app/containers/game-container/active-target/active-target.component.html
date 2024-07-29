@@ -1,25 +1,30 @@
-
-<ng-container *ngIf="shouldShow">
-  <div class="target-name">
-    <span class="dir">{{ direction }}</span>
-    <span>Lv. {{ level }} {{ target.name }} ({{ hostility }})</span>
-    <div class="spacer"></div>
-    <span class="difficulty" *ngIf="isDifficult" tooltip="This target might present some difficulty.">
-      <app-icon name="crowned-skull" size="xsmall" round="true"></app-icon>
-    </span>
+@if (shouldShow) {
+<div class="target-name">
+  <span class="dir">{{ direction }}</span>
+  <span>Lv. {{ level }} {{ target.name }} ({{ hostility }})</span>
+  <div class="spacer"></div>
+  @if (isDifficult) {
+  <span class="difficulty" tooltip="This target might present some difficulty.">
+    <app-icon name="crowned-skull" size="xsmall" round="true"></app-icon>
+  </span>
+  }
+</div>
+<div class="target-affiliation">
+  @if (target.affiliation) {
+  <span><{{ target.affiliation }}></span>
+  }
+</div>
+<div class="target-health">
+  <div class="bar-container hp">
+    <span class="bar" [style.width]="targetHealth + '%'"></span>
+    <span class="bar-text">{{ targetHealthValue }}</span>
   </div>
-  <div class="target-affiliation">
-    <span *ngIf="target.affiliation"><{{ target.affiliation }}></span>
+</div>
+<div class="target-status">
+  @for (effect of effects; track effect.uuid) {
+  <div class="effect-container">
+    <app-effect-icon [effect]="effect"></app-effect-icon>
   </div>
-  <div class="target-health">
-    <div class="bar-container hp">
-      <span class="bar" [style.width]="targetHealth + '%'"></span>
-      <span class="bar-text">{{ targetHealthValue }}</span>
-    </div>
-  </div>
-  <div class="target-status">
-    <div *ngFor="let effect of effects; trackBy:trackEffectBy" class="effect-container">
-      <app-effect-icon [effect]="effect"></app-effect-icon>
-    </div>
-  </div>
-</ng-container>
+  }
+</div>
+}

@@ -7,38 +7,41 @@ import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, U
 @Component({
   selector: 'app-window',
   template: `
-  <div *ngIf="(window$ | async) as windowProps">
-    <div class="window"
+  @if ((window$ | async); as windowProps) {
+    <div>
+      <div class="window"
         [class.active]="alwaysOnTop || (activeWindow$ | async) === windowName"
         [class.hidden]="willNotHide ? false : windowProps.hidden"
         [class.minimized]="minimized"
         [class.always-on-top]="alwaysOnTop"
-
         [style.top]="windowProps.y + 'px'"
         [style.left]="windowProps.x + 'px'"
         [style.width]="width"
         [style.height]="height"
-
         [appDraggableWindow]="canDrag"
         [windowHandle]="windowDrag"
         [windowName]="windowName"
-
         (mousedown)="makeActive()"
-    >
-      <mat-toolbar class="window-header">
-        <span #windowDrag class="window-drag">
-          <ng-template [ngTemplateOutlet]="head"></ng-template>
-        </span>
-
-        <app-button-minimize *ngIf="canMinimize" (click)="minimizeWindow()"></app-button-minimize>
-        <app-button-close *ngIf="canHide" (click)="hideWindow()"></app-button-close>
-      </mat-toolbar>
-
-      <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll" *ngIf="!windowProps.hidden">
-        <ng-template [ngTemplateOutlet]="body"></ng-template>
+        >
+        <mat-toolbar class="window-header">
+          <span #windowDrag class="window-drag">
+            <ng-template [ngTemplateOutlet]="head"></ng-template>
+          </span>
+          @if (canMinimize) {
+            <app-button-minimize (click)="minimizeWindow()"></app-button-minimize>
+          }
+          @if (canHide) {
+            <app-button-close (click)="hideWindow()"></app-button-close>
+          }
+        </mat-toolbar>
+        @if (!windowProps.hidden) {
+          <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll">
+            <ng-template [ngTemplateOutlet]="body"></ng-template>
+          </div>
+        }
       </div>
     </div>
-  </div>
+  }
   `,
   styles: [`
   .window {

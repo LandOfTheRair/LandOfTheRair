@@ -1,14 +1,14 @@
 <app-window windowName="quests"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
-            [alwaysOnTop]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [alwaysOnTop]="true"
 
-            defaultX="450"
-            defaultY="100"
-            defaultWidth="550"
-            defaultHeight="650"
+  defaultX="450"
+  defaultY="100"
+  defaultWidth="550"
+  defaultHeight="650"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -16,46 +16,50 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="player">
-
+  @if (player) {
     <mat-tab-group mat-align-tabs="center" class="bring-to-top" [selectedIndex]="0" animationDuration="0ms">
-
       <mat-tab label="Active Quests">
-        <div class="vertical-center full-width full-height background-text" *ngIf="(player.quests.activeQuestProgress | keyvalue).length === 0">You don't have any active quests</div>
-
+        @if ((player.quests.activeQuestProgress | keyvalue).length === 0) {
+          <div class="vertical-center full-width full-height background-text">You don't have any active quests</div>
+        }
         <mat-list>
-          <ng-container *ngFor="let playerQuest of player.quests.activeQuestProgress | keyvalue">
-            <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
-              <h2 matLine><strong>{{ quest.name }}</strong></h2>
-              <div class="progress-container" matLine *ngIf="playerQuest.value.percentComplete">
-                <span class="progress-value">{{ playerQuest.value.rawValue }} / {{ playerQuest.value.rawValueMax }}</span>
-                <mat-progress-bar mode="determinate" [value]="playerQuest.value.percentComplete * 100"></mat-progress-bar>
-              </div>
-              <h5 matLine><em>Given By: {{ quest.giver }}</em></h5>
-              <p matLine>
-                {{ quest.desc }}
-              </p>
-            </mat-list-item>
-          </ng-container>
+          @for (playerQuest of player.quests.activeQuestProgress | keyvalue; track playerQuest) {
+            @if (getQuest(playerQuest.key); as quest) {
+              <mat-list-item>
+                <h2 matLine><strong>{{ quest.name }}</strong></h2>
+                @if (playerQuest.value.percentComplete) {
+                  <div class="progress-container" matLine>
+                    <span class="progress-value">{{ playerQuest.value.rawValue }} / {{ playerQuest.value.rawValueMax }}</span>
+                    <mat-progress-bar mode="determinate" [value]="playerQuest.value.percentComplete * 100"></mat-progress-bar>
+                  </div>
+                }
+                <h5 matLine><em>Given By: {{ quest.giver }}</em></h5>
+                <p matLine>
+                  {{ quest.desc }}
+                </p>
+              </mat-list-item>
+            }
+          }
         </mat-list>
       </mat-tab>
-
       <mat-tab label="Completed Quests">
-        <div class="vertical-center full-width full-height background-text" *ngIf="(player.quests.permanentQuestCompletion | keyvalue).length === 0">You don't have any completed quests</div>
-
+        @if ((player.quests.permanentQuestCompletion | keyvalue).length === 0) {
+          <div class="vertical-center full-width full-height background-text">You don't have any completed quests</div>
+        }
         <mat-list>
-          <ng-container *ngFor="let playerQuest of player.quests.permanentQuestCompletion | keyvalue">
-            <mat-list-item *ngIf="getQuest(playerQuest.key) as quest">
-              <h2 matLine>{{ quest.name }}</h2>
-              <h5 matLine>Given By: {{ quest.giver }}</h5>
-              <p matLine>
-                {{ quest.desc }}
-              </p>
-            </mat-list-item>
-          </ng-container>
+          @for (playerQuest of player.quests.permanentQuestCompletion | keyvalue; track playerQuest) {
+            @if (getQuest(playerQuest.key); as quest) {
+              <mat-list-item>
+                <h2 matLine>{{ quest.name }}</h2>
+                <h5 matLine>Given By: {{ quest.giver }}</h5>
+                <p matLine>
+                  {{ quest.desc }}
+                </p>
+              </mat-list-item>
+            }
+          }
         </mat-list>
       </mat-tab>
-
     </mat-tab-group>
-  </ng-container>
+  }
 </ng-template>

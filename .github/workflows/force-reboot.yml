@@ -12,27 +12,27 @@ jobs:
       matrix:
         # os: [macos-latest, ubuntu-latest, windows-latest]
         os: [ubuntu-latest]
-        node-version: [16.12.x]
+        node-version: [20.x.x]
 
     steps:
-    - name: Reboot Server
-      uses: fjogeleit/http-request-action@master
-      with:
-        url: 'https://server.rair.land/reboot/force'
-        method: 'POST'
-        data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-        preventFailureOnNoResponse: 'true'
-        ignoreStatusCodes: '404,502'
+      - name: Reboot Server
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://server.rair.land/reboot/force'
+          method: 'POST'
+          data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
+          preventFailureOnNoResponse: 'true'
+          ignoreStatusCodes: '404,502'
 
-    - name: Wait 60 seconds
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '60s'
+      - name: Wait 60 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
 
-    - name: Reboot Done
-      uses: fjogeleit/http-request-action@master
-      with:
-        url: 'https://server.rair.land/reboot/done'
-        method: 'POST'
-        data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-        preventFailureOnNoResponse: 'true'
+      - name: Reboot Done
+        uses: fjogeleit/http-request-action@master
+        with:
+          url: 'https://server.rair.land/reboot/done'
+          method: 'POST'
+          data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
+          preventFailureOnNoResponse: 'true'

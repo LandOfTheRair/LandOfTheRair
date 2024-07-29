@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IAmountData {
   title: string;
@@ -12,22 +12,17 @@ interface IAmountData {
 @Component({
   selector: 'app-text',
   templateUrl: './text.component.html',
-  styleUrls: ['./text.component.scss']
+  styleUrls: ['./text.component.scss'],
 })
-export class TextModalComponent implements OnInit {
-
+export class TextModalComponent {
   public text: string;
 
   constructor(
     public dialogRef: MatDialogRef<TextModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IAmountData
-  ) { }
-
-  ngOnInit() {
-  }
+    @Inject(MAT_DIALOG_DATA) public data: IAmountData,
+  ) {}
 
   finish() {
     this.dialogRef.close(this.text);
   }
-
 }

@@ -1,99 +1,96 @@
 <app-window windowName="traits"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
 
-            defaultX="450"
-            defaultY="100"
-            defaultWidth="750"
-            defaultHeight="836"
+  defaultX="450"
+  defaultY="100"
+  defaultWidth="750"
+  defaultHeight="836"
 ></app-window>
 
 <ng-template #headTemplate>
-  <ng-container *ngIf="player">
-    Talents ({{ player.traits.tp || 0 }} TP<span *ngIf="player.level >= 50"> / {{ player.traits.ap || 0 }} AP</span>)
-  </ng-container>
+  @if (player) {
+    Talents ({{ player.traits.tp || 0 }} TP@if (player.level >= 50) {
+    <span> / {{ player.traits.ap || 0 }} AP</span>
+    })
+  }
 </ng-template>
 
 <ng-template #bodyTemplate>
 
-  <div class="true-center background-text full-height" *ngIf="!player || !traitTree">
-    You must dedicate to a profession to progress a trait tree!
-  </div>
+  @if (!player || !traitTree) {
+    <div class="true-center background-text full-height">
+      You must dedicate to a profession to progress a trait tree!
+    </div>
+  }
 
-  <div class="container" *ngIf="player && traitTree">
-
-    <div class="splitter">
-      <div class="build-list">
-        <div class="builds">
-          <button mat-raised-button [color]="currentTree === -1 ? 'primary' : 'accent'" (click)="changeTree(-1)">Current Build</button>
-
-          <ng-container *ngFor="let slot of buildSlots">
-            <button mat-raised-button [color]="currentTree === slot ? 'primary' : 'accent'" (click)="changeTree(slot)">{{ player.traits.savedBuilds[slot] ? player.traits.savedBuilds[slot].name : 'No Build' }}</button>
-          </ng-container>
+  @if (player && traitTree) {
+    <div class="container">
+      <div class="splitter">
+        <div class="build-list">
+          <div class="builds">
+            <button mat-raised-button [color]="currentTree === -1 ? 'primary' : 'accent'" (click)="changeTree(-1)">Current Build</button>
+            @for (slot of buildSlots; track slot) {
+              <button mat-raised-button [color]="currentTree === slot ? 'primary' : 'accent'" (click)="changeTree(slot)">{{ player.traits.savedBuilds[slot] ? player.traits.savedBuilds[slot].name : 'No Build' }}</button>
+            }
+          </div>
+          <div class="actions">
+            <button mat-raised-button color="primary" (click)="saveBuild(currentTree)" [disabled]="currentTree === -1">Save Current Build</button>
+            <button mat-raised-button color="primary" (click)="loadBuild(currentTree)" [disabled]="currentTree === -1 || !player.traits.savedBuilds[currentTree]">Load Current Build</button>
+          </div>
         </div>
-
-        <div class="actions">
-          <button mat-raised-button color="primary" (click)="saveBuild(currentTree)" [disabled]="currentTree === -1">Save Current Build</button>
-          <button mat-raised-button color="primary" (click)="loadBuild(currentTree)" [disabled]="currentTree === -1 || !player.traits.savedBuilds[currentTree]">Load Current Build</button>
-        </div>
-      </div>
-
-      <div class="build-viewer">
-        <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
-          <mat-tab label="Traits">
-
-            <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
-              <ng-container *ngFor="let tree of traitTree.treeOrder">
-                <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'" *ngIf="tree !== 'Ancient' || player.level >= 50">
-
-                  <div class="trait-row" *ngFor="let traitRow of traitTree.trees[tree].tree">
-
-                    <div class="trait-req-container">
-                      <div class="trait-req" *ngIf="tree !== 'Ancient'">
-                        Level {{ traitRow.requiredLevel }}
-                      </div>
-                    </div>
-
-                    <div class="trait-col" *ngFor="let trait of traitRow.traits">
-
-                      <div class="trait"
-                          [class.has-trait]="getTraitLevel(trait.name) > 0"
-                          [class.can-buy]="canBuyTrait(trait.name)"
-                          [class.no-buy]="!canBuyTrait(trait.name)"
-                          *ngIf="getTrait(trait.name) as traitData"
-                          (click)="tryToBuyTrait(trait, $event)"
-                          [matTooltip]="formatTooltip(trait, traitData)">
-
-                        <div class="trait-icon"
-                            [style.border-color]="traitData.borderColor">
-                          <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
-
-                          <div class="trait-level">
-                            <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+        <div class="build-viewer">
+          <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
+            <mat-tab label="Traits">
+              <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
+                @for (tree of traitTree.treeOrder; track tree) {
+                  @if (tree !== 'Ancient' || player.level >= 50) {
+                    <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'">
+                      @for (traitRow of traitTree.trees[tree].tree; track traitRow) {
+                        <div class="trait-row">
+                          <div class="trait-req-container">
+                            @if (tree !== 'Ancient') {
+                              <div class="trait-req">
+                                Level {{ traitRow.requiredLevel }}
+                              </div>
+                            }
                           </div>
+                          @for (trait of traitRow.traits; track trait) {
+                            <div class="trait-col">
+                              @if (getTrait(trait.name); as traitData) {
+                                <div class="trait"
+                                  [class.has-trait]="getTraitLevel(trait.name) > 0"
+                                  [class.can-buy]="canBuyTrait(trait.name)"
+                                  [class.no-buy]="!canBuyTrait(trait.name)"
+                                  (click)="tryToBuyTrait(trait, $event)"
+                                  [matTooltip]="formatTooltip(trait, traitData)">
+                                  <div class="trait-icon"
+                                    [style.border-color]="traitData.borderColor">
+                                    <app-icon [name]="traitData.icon" [bgColor]="traitData.iconBgColor || '#ccc'" [fgColor]="traitData.iconColor || '#000'" size="large"></app-icon>
+                                    <div class="trait-level">
+                                      <span class="trait-current-level" [class.is-boosted]="getTraitLevel(trait.name) !== getTraitBoughtLevel(trait.name)">{{ getTraitLevel(trait.name) }}</span> / {{ trait.maxLevel }}
+                                    </div>
+                                  </div>
+                                  <div class="trait-name">{{ traitData.name }}</div>
+                                </div>
+                              }
+                            </div>
+                          }
                         </div>
-
-                        <div class="trait-name">{{ traitData.name }}</div>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </mat-tab>
-              </ng-container>
-
-            </mat-tab-group>
-          </mat-tab>
-
-          <mat-tab label="Runes">
-            <app-runecodex></app-runecodex>
-          </mat-tab>
-        </mat-tab-group>
+                      }
+                    </mat-tab>
+                  }
+                }
+              </mat-tab-group>
+            </mat-tab>
+            <mat-tab label="Runes">
+              <app-runecodex></app-runecodex>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
       </div>
     </div>
-
-  </div>
+  }
 </ng-template>

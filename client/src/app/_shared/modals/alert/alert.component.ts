@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IAlertData {
   title: string;
@@ -10,16 +10,11 @@ interface IAlertData {
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.component.html',
-  styleUrls: ['./alert.component.scss']
+  styleUrls: ['./alert.component.scss'],
 })
-export class AlertComponent implements OnInit {
-
+export class AlertComponent {
   constructor(
     public dialogRef: MatDialogRef<AlertComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IAlertData
+    @Inject(MAT_DIALOG_DATA) public data: IAlertData,
   ) {}
-
-  ngOnInit() {
-  }
-
 }

@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
@@ -9,17 +8,19 @@ import { GameState, HideBankWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-bank',
   templateUrl: './bank.component.html',
-  styleUrls: ['./bank.component.scss']
+  styleUrls: ['./bank.component.scss'],
 })
-export class BankComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+export class BankComponent {
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentBankWindow) bank$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -35,11 +36,9 @@ export class BankComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+    public gameService: GameService,
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -51,24 +50,29 @@ export class BankComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.bankInfoSub = this.bank$.subscribe(data => {
-      this.bankInfo = cloneDeep(data || {});
-    });
+    this.bankInfoSub = this.bank$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this.bankInfo = cloneDeep(data || {});
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideBankWindow());
-      this.store.dispatch(new HideWindow('bank'));
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideBankWindow());
+        this.store.dispatch(new HideWindow('bank'));
+      });
   }
 
-  ngOnDestroy() {}
-
   deposit(num: number) {
-    this.gameService.sendCommandString(`#${this.bankInfo.npcUUID}, deposit ${num}`);
+    this.gameService.sendCommandString(
+      `#${this.bankInfo.npcUUID}, deposit ${num}`,
+    );
   }
 
   withdraw(num: number) {
-    this.gameService.sendCommandString(`#${this.bankInfo.npcUUID}, withdraw ${num}`);
+    this.gameService.sendCommandString(
+      `#${this.bankInfo.npcUUID}, withdraw ${num}`,
+    );
   }
-
 }

@@ -1,8 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer, Skill } from '../../../../interfaces';
@@ -11,18 +10,20 @@ import { GameState, HideTrainerWindow, HideWindow } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { ModalService } from '../../../services/modal.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-trainer',
   templateUrl: './trainer.component.html',
-  styleUrls: ['./trainer.component.scss']
+  styleUrls: ['./trainer.component.scss'],
 })
-export class TrainerComponent implements OnInit, OnDestroy {
-
+export class TrainerComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentTrainerWindow) trainer$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
 
@@ -50,18 +51,16 @@ export class TrainerComponent implements OnInit, OnDestroy {
     Skill.Thievery,
     Skill.Wand,
     Skill.Conjuration,
-    Skill.Restoration
+    Skill.Restoration,
   ];
 
   constructor(
     private store: Store,
     private modalService: ModalService,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+    public gameService: GameService,
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -73,20 +72,24 @@ export class TrainerComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.trainerInfoSub = this.trainer$.subscribe(data => {
-      this.trainerInfo = cloneDeep(data || {});
-    });
+    this.trainerInfoSub = this.trainer$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this.trainerInfo = cloneDeep(data || {});
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideTrainerWindow());
-      this.store.dispatch(new HideWindow('trainer'));
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideTrainerWindow());
+        this.store.dispatch(new HideWindow('trainer'));
+      });
   }
 
-  ngOnDestroy() {}
-
   assess() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, assess ${this.activeSkill}`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, assess ${this.activeSkill}`,
+    );
   }
 
   train() {
@@ -102,20 +105,29 @@ export class TrainerComponent implements OnInit, OnDestroy {
   }
 
   warp() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, guildteleport`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, guildteleport`,
+    );
   }
 
   trainSkill() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`,
+    );
   }
 
   resetTraits() {
-    this.modalService.confirm('Reset Traits', 'Are you sure you want to reset your entire trait tree?')
-      .subscribe(res => {
+    this.modalService
+      .confirm(
+        'Reset Traits',
+        'Are you sure you want to reset your entire trait tree?',
+      )
+      .subscribe((res) => {
         if (!res) return;
 
-        this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, reset`);
+        this.gameService.sendCommandString(
+          `#${this.trainerInfo.npcUUID}, reset`,
+        );
       });
   }
-
 }

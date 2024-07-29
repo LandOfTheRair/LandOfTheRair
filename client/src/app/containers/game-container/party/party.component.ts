@@ -1,24 +1,30 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize, IParty, IPartyMember, IPlayer } from '../../../../interfaces';
+import {
+  getMultiplierBasedOnLevelDifference,
+  getMultiplierBasedOnPartySize,
+  IParty,
+  IPartyMember,
+  IPlayer,
+} from '../../../../interfaces';
 
 import { GameState } from '../../../../stores';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 
-
-@AutoUnsubscribe()
 @Component({
   selector: 'app-party',
   templateUrl: './party.component.html',
-  styleUrls: ['./party.component.scss']
+  styleUrls: ['./party.component.scss'],
 })
-export class PartyComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.party) party$: Observable<{ party: IParty; partyMembers: IPartyMember[] }>;
+export class PartyComponent {
+  @Select(GameState.party) party$: Observable<{
+    party: IParty;
+    partyMembers: IPartyMember[];
+  }>;
   @Select(GameState.player) player$: Observable<any>;
 
   public party: { party: IParty; partyMembers: IPartyMember[] };
@@ -28,22 +34,17 @@ export class PartyComponent implements OnInit, OnDestroy {
 
   public createOrJoinParty = '';
 
-  constructor(
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-    this.partySub = this.party$.subscribe(p => {
+  constructor(public gameService: GameService) {
+    this.partySub = this.party$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.party = p;
       this.partyXPMult = this.multiplier(p.party);
     });
   }
 
-  ngOnDestroy() {
-  }
-
   create() {
-    this.gameService.sendCommandString(`party create ${this.createOrJoinParty}`);
+    this.gameService.sendCommandString(
+      `party create ${this.createOrJoinParty}`,
+    );
   }
 
   join() {
@@ -72,16 +73,18 @@ export class PartyComponent implements OnInit, OnDestroy {
 
   multiplier(party: IParty): number {
     if (!party || !party.members) return 0;
-    return getMultiplierBasedOnLevelDifference(party.levelDifference) * getMultiplierBasedOnPartySize(party.members.length) * 100;
+    return (
+      getMultiplierBasedOnLevelDifference(party.levelDifference) *
+      getMultiplierBasedOnPartySize(party.members.length) *
+      100
+    );
   }
 
   directionTo(me: IPlayer, them: IPartyMember): string {
-
     if (me.username === them.username) return '✧';
 
     if (me.map !== them.map) return this.gameService.reformatMapName(them.map);
 
     return this.gameService.directionTo(me, them);
   }
-
 }

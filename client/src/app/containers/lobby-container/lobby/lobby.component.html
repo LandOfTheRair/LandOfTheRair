@@ -1,17 +1,19 @@
 
 <app-window windowName="lobby"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            canMinimize="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  canMinimize="true"
 
-            defaultX="4"
-            defaultY="80"
-            defaultWidth="800"
-            defaultHeight="500"
+  defaultX="4"
+  defaultY="80"
+  defaultWidth="800"
+  defaultHeight="500"
 ></app-window>
 
 <ng-template #headTemplate>
-  Global Chat [{{ (users$ | async).length }} online<span *ngIf="discordCount">, {{ discordCount }} Discord Player(s)</span>]
+  Global Chat [{{ (users$ | async).length }} online@if (discordCount) {
+  <span>, {{ discordCount }} Discord Player(s)</span>
+  }]
 </ng-template>
 
 <ng-template #bodyTemplate>
@@ -19,11 +21,17 @@
     <div class="left-side">
       <div class="user-list">
         <ul>
-          <li *ngFor="let user of users$ | async" class="user">
-            <span class="user-marking tier-{{ user.tier }}" *ngIf="user.tier"></span>
-            <span class="user-name">{{ user.username }}</span>
-            <img src="assets/extra/in-game.png" height="16" width="16" class="in-game" *ngIf="user.inGame" />
-          </li>
+          @for (user of users$ | async; track user) {
+            <li class="user">
+              @if (user.tier) {
+                <span class="user-marking tier-{{ user.tier }}"></span>
+              }
+              <span class="user-name">{{ user.username }}</span>
+              @if (user.inGame) {
+                <img src="assets/extra/in-game.png" height="16" width="16" class="in-game" />
+              }
+            </li>
+          }
         </ul>
       </div>
     </div>
@@ -34,11 +42,15 @@
       </div>
 
       <div class="output-area">
-        <div *ngFor="let message of messages$ | async" class="message">
-          <span class="timestamp">[{{ message.timestamp | date:'hh:mm' }}]</span>
-          <span class="username">{{ message.from }}<span *ngIf="message.source"> [{{ message.source }}]</span>:</span>
-          <span class="usermessage" [innerHTML]="message.message | linkify | replaceDiscordEmoji:16"></span>
-        </div>
+        @for (message of messages$ | async; track message) {
+          <div class="message">
+            <span class="timestamp">[{{ message.timestamp | date:'hh:mm' }}]</span>
+            <span class="username">{{ message.from }}@if (message.source) {
+              <span> [{{ message.source }}]</span>
+            }:</span>
+            <span class="usermessage" [innerHTML]="message.message | linkify | replaceDiscordEmoji:16"></span>
+          </div>
+        }
       </div>
 
       <div class="input-area">

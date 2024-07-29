@@ -1,22 +1,54 @@
 import { Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
+import {
+  get,
+  isBoolean,
+  isNumber,
+  maxBy,
+  sample,
+  sortBy,
+  startCase,
+} from 'lodash';
 import { Observable, Subject } from 'rxjs';
-import { startCase, sample, get, isNumber, isBoolean, maxBy, sortBy } from 'lodash';
 
-import { Alignment, Allegiance, ChatMode, Direction, directionFromOffset,
-  directionToSymbol, distanceFrom, FOVVisibility, GameServerEvent, Hostility, IAccount, ICharacter,
-  ICharacterCreateInfo, IDialogChatAction, IMapData, INPC, IPlayer, isHostileTo, Stat } from '../../interfaces';
-import { AccountState, GameState, LobbyState, SettingsState } from '../../stores';
+import {
+  Alignment,
+  Allegiance,
+  ChatMode,
+  Direction,
+  directionFromOffset,
+  directionToSymbol,
+  distanceFrom,
+  FOVVisibility,
+  GameServerEvent,
+  Hostility,
+  IAccount,
+  ICharacter,
+  ICharacterCreateInfo,
+  IDialogChatAction,
+  IMapData,
+  INPC,
+  IPlayer,
+  isHostileTo,
+  Stat,
+} from '../../interfaces';
+import {
+  AccountState,
+  GameState,
+  LobbyState,
+  SettingsState,
+} from '../../stores';
 
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
+export type LogMode = 'All' | 'General' | 'Combat' | 'NPC';
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameService {
-
   private bannerMessage: Subject<string> = new Subject();
   public get bannerMessage$() {
     return this.bannerMessage.asObservable();
@@ -40,13 +72,14 @@ export class GameService {
   @Select(AccountState.loggedIn) loggedIn$: Observable<boolean>;
   @Select(AccountState.account) account$: Observable<IAccount>;
 
-  @Select(LobbyState.charCreateData) charCreateData$: Observable<ICharacterCreateInfo>;
+  @Select(LobbyState.charCreateData)
+  charCreateData$: Observable<ICharacterCreateInfo>;
 
   @Select(SettingsState.accounts) accounts$: Observable<IAccount[]>;
   @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
   @Select(SettingsState.chatMode) chatMode$: Observable<ChatMode>;
   @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
-  @Select(SettingsState.currentLogMode) logMode$: Observable<string>;
+  @Select(SettingsState.currentLogMode) logMode$: Observable<LogMode>;
 
   // character list stuff
   private currentCharacter: ICharacter = null;
@@ -61,11 +94,11 @@ export class GameService {
   constructor(
     private socketService: SocketService,
     private optionsService: OptionsService,
-    private modalService: ModalService
+    private modalService: ModalService,
   ) {}
 
   init() {
-    this.inGame$.subscribe(val => {
+    this.inGame$.subscribe((val) => {
       if (val) {
         this.playGame.next(true);
         this.handleAutoExec();
@@ -80,7 +113,7 @@ export class GameService {
   }
 
   private watchCharacters() {
-    this.characters$.subscribe(c => this.allCharacters = c);
+    this.characters$.subscribe((c) => (this.allCharacters = c));
   }
 
   public updateCharacterList(player: IPlayer) {
@@ -93,18 +126,21 @@ export class GameService {
     const fov = player.fov;
     const allCharacters = this.allCharacters;
 
-    let unsorted: any[] = allCharacters.map(testChar => {
-      if ((testChar as IPlayer).username === player.username) return false;
-      if (testChar.dir === Direction.Center || testChar.hp.current === 0) return false;
+    let unsorted: any[] = allCharacters
+      .map((testChar) => {
+        if ((testChar as IPlayer).username === player.username) return false;
+        if (testChar.dir === Direction.Center || testChar.hp.current === 0)
+          {return false;}
 
-      const diffX = testChar.x - player.x;
-      const diffY = testChar.y - player.y;
+        const diffX = testChar.x - player.x;
+        const diffY = testChar.y - player.y;
 
-      const canSee = get(fov, [diffX, diffY]) >= FOVVisibility.CanSee;
-      if (!canSee) return false;
+        const canSee = get(fov, [diffX, diffY]) >= FOVVisibility.CanSee;
+        if (!canSee) return false;
 
-      return testChar;
-    }).filter(Boolean);
+        return testChar;
+      })
+      .filter(Boolean);
 
     if (unsorted.length === 0) return [];
 
@@ -113,7 +149,13 @@ export class GameService {
 
     // iterate over unsorted, find their place, or find them a new place (only if we are doing no sorting)
     if (!isBoolean(shouldSortDistance) && !isBoolean(shouldSortFriendly)) {
-      const highestOldSpace = this.previousPlacements[maxBy(Object.keys(this.previousPlacements), key => this.previousPlacements[key])];
+      const highestOldSpace =
+        this.previousPlacements[
+          maxBy(
+            Object.keys(this.previousPlacements),
+            (key) => this.previousPlacements[key],
+          )
+        ];
       const oldPositionSorting = Array(highestOldSpace).fill(null);
       const newPositionHash = {};
 
@@ -163,15 +205,20 @@ export class GameService {
 
     // sort them by distance
     if (isBoolean(shouldSortDistance)) {
-      unsorted = sortBy(unsorted, testChar => distanceFrom(player, testChar));
+      unsorted = sortBy(unsorted, (testChar) => distanceFrom(player, testChar));
 
       if (!shouldSortDistance) unsorted = unsorted.reverse();
     }
 
     // sort them by friendly
     if (isBoolean(shouldSortFriendly)) {
-      const sortOrder = shouldSortFriendly ? { friendly: 0, neutral: 1, hostile: 2 } : { hostile: 0, neutral: 1, friendly: 2 };
-      unsorted = sortBy(unsorted, testChar => sortOrder[this.hostilityLevelFor(player, testChar)]);
+      const sortOrder = shouldSortFriendly
+        ? { friendly: 0, neutral: 1, hostile: 2 }
+        : { hostile: 0, neutral: 1, friendly: 2 };
+      unsorted = sortBy(
+        unsorted,
+        (testChar) => sortOrder[this.hostilityLevelFor(player, testChar)],
+      );
     }
 
     return unsorted;
@@ -181,7 +228,7 @@ export class GameService {
     if (!this.optionsService.autoExec) return;
 
     const commands = this.optionsService.autoExec.split('\n');
-    commands.forEach(cmd => {
+    commands.forEach((cmd) => {
       this.sendCommandString(cmd);
     });
   }
@@ -196,7 +243,7 @@ export class GameService {
 
   public sendCommandString(cmdString: string, target?: string) {
     cmdString = cmdString.replace(/\\;/g, '__SEMICOLON__');
-    cmdString.split(';').forEach(cmd => {
+    cmdString.split(';').forEach((cmd) => {
       cmd = cmd.trim();
       cmd = cmd.replace(/__SEMICOLON__/g, ';');
       if (cmd === '') return;
@@ -207,7 +254,7 @@ export class GameService {
       let command = '';
       let args = '';
 
-      if (cmd.includes(',') && (/[a-zA-Z0-9]/).test(cmd[0])) {
+      if (cmd.includes(',') && /[a-zA-Z0-9]/.test(cmd[0])) {
         command = '!privatesay';
         args = cmd;
       } else {
@@ -222,8 +269,10 @@ export class GameService {
     });
   }
 
-  private checkCommandForSpecialReplacementsAndSend(command: string, args: string) {
-
+  private checkCommandForSpecialReplacementsAndSend(
+    command: string,
+    args: string,
+  ) {
     // if there are no special replacements, just send the command
     if (!args.includes('$')) {
       this.sendAction(GameServerEvent.DoCommand, { command, args });
@@ -232,43 +281,91 @@ export class GameService {
 
     const allChars = this.allVisibleCharacters;
 
-    const allNPCs = () => allChars.filter(c => !(c as any).username);
-    const allPlayers = () => allChars.filter(c => (c as any).username);
+    const allNPCs = () => allChars.filter((c) => !(c as any).username);
+    const allPlayers = () => allChars.filter((c) => (c as any).username);
 
-    const weakest = (list: ICharacter[]) => sortBy(list, c => c.hp.current)[0];
-    const strongest = (list: ICharacter[]) => sortBy(list, c => -c.hp.current)[0];
+    const weakest = (list: ICharacter[]) =>
+      sortBy(list, (c) => c.hp.current)[0];
+    const strongest = (list: ICharacter[]) =>
+      sortBy(list, (c) => -c.hp.current)[0];
 
-    const closest = (list: ICharacter[]) => sortBy(list, c => distanceFrom(this.currentCharacter, c))[0];
-    const farthest = (list: ICharacter[]) => sortBy(list, c => -distanceFrom(this.currentCharacter, c))[0];
+    const closest = (list: ICharacter[]) =>
+      sortBy(list, (c) => distanceFrom(this.currentCharacter, c))[0];
+    const farthest = (list: ICharacter[]) =>
+      sortBy(list, (c) => -distanceFrom(this.currentCharacter, c))[0];
 
     let newArgs = args;
 
-    if (args.includes('$firstnpc'))        newArgs = newArgs.replace('$firstnpc',     allChars.find(c => !(c as any).username)?.uuid ?? '');
-    if (args.includes('$firstplayer'))     newArgs = newArgs.replace('$firstplayer',  allChars.find(c => (c as any).username)?.uuid ?? '');
-    if (args.includes('$first'))           newArgs = newArgs.replace('$first',        allChars[0]?.uuid ?? '');
+    if (args.includes('$firstnpc'))
+      {newArgs = newArgs.replace(
+        '$firstnpc',
+        allChars.find((c) => !(c as any).username)?.uuid ?? '',
+      );}
+    if (args.includes('$firstplayer'))
+      {newArgs = newArgs.replace(
+        '$firstplayer',
+        allChars.find((c) => (c as any).username)?.uuid ?? '',
+      );}
+    if (args.includes('$first'))
+      {newArgs = newArgs.replace('$first', allChars[0]?.uuid ?? '');}
 
-    if (args.includes('$randomnpc'))       newArgs = newArgs.replace('$randomnpc',    sample(allNPCs())?.uuid ?? '');
-    if (args.includes('$randomplayer'))    newArgs = newArgs.replace('$randomplayer', sample(allPlayers())?.uuid ?? '');
-    if (args.includes('$random'))          newArgs = newArgs.replace('$random',       sample(allChars)?.uuid ?? '');
+    if (args.includes('$randomnpc'))
+      {newArgs = newArgs.replace('$randomnpc', sample(allNPCs())?.uuid ?? '');}
+    if (args.includes('$randomplayer'))
+      {newArgs = newArgs.replace(
+        '$randomplayer',
+        sample(allPlayers())?.uuid ?? '',
+      );}
+    if (args.includes('$random'))
+      {newArgs = newArgs.replace('$random', sample(allChars)?.uuid ?? '');}
 
-    if (args.includes('$strongestnpc'))    newArgs = newArgs.replace('$strongestnpc',    strongest(allNPCs())?.uuid ?? '');
-    if (args.includes('$strongestplayer')) newArgs = newArgs.replace('$strongestplayer', strongest(allPlayers())?.uuid ?? '');
-    if (args.includes('$strongest'))       newArgs = newArgs.replace('$strongest',       strongest(allChars)?.uuid ?? '');
+    if (args.includes('$strongestnpc'))
+      {newArgs = newArgs.replace(
+        '$strongestnpc',
+        strongest(allNPCs())?.uuid ?? '',
+      );}
+    if (args.includes('$strongestplayer'))
+      {newArgs = newArgs.replace(
+        '$strongestplayer',
+        strongest(allPlayers())?.uuid ?? '',
+      );}
+    if (args.includes('$strongest'))
+      {newArgs = newArgs.replace('$strongest', strongest(allChars)?.uuid ?? '');}
 
-    if (args.includes('$weakestnpc'))      newArgs = newArgs.replace('$weakestnpc',    weakest(allNPCs())?.uuid ?? '');
-    if (args.includes('$weakestplayer'))   newArgs = newArgs.replace('$weakestplayer', weakest(allPlayers())?.uuid ?? '');
-    if (args.includes('$weakest'))         newArgs = newArgs.replace('$weakest',       weakest(allChars)?.uuid ?? '');
+    if (args.includes('$weakestnpc'))
+      {newArgs = newArgs.replace('$weakestnpc', weakest(allNPCs())?.uuid ?? '');}
+    if (args.includes('$weakestplayer'))
+      {newArgs = newArgs.replace(
+        '$weakestplayer',
+        weakest(allPlayers())?.uuid ?? '',
+      );}
+    if (args.includes('$weakest'))
+      {newArgs = newArgs.replace('$weakest', weakest(allChars)?.uuid ?? '');}
 
-    if (args.includes('$farthestnpc'))     newArgs = newArgs.replace('$farthestnpc',    farthest(allNPCs())?.uuid ?? '');
-    if (args.includes('$farthestplayer'))  newArgs = newArgs.replace('$farthestplayer', farthest(allPlayers())?.uuid ?? '');
-    if (args.includes('$farthest'))        newArgs = newArgs.replace('$farthest',       farthest(allChars)?.uuid ?? '');
+    if (args.includes('$farthestnpc'))
+      {newArgs = newArgs.replace(
+        '$farthestnpc',
+        farthest(allNPCs())?.uuid ?? '',
+      );}
+    if (args.includes('$farthestplayer'))
+      {newArgs = newArgs.replace(
+        '$farthestplayer',
+        farthest(allPlayers())?.uuid ?? '',
+      );}
+    if (args.includes('$farthest'))
+      {newArgs = newArgs.replace('$farthest', farthest(allChars)?.uuid ?? '');}
 
-    if (args.includes('$closestnpc'))      newArgs = newArgs.replace('$closestnpc',    closest(allNPCs())?.uuid ?? '');
-    if (args.includes('$closestplayer'))   newArgs = newArgs.replace('$closestplayer', closest(allPlayers())?.uuid ?? '');
-    if (args.includes('$closest'))         newArgs = newArgs.replace('$closest',       closest(allChars)?.uuid ?? '');
+    if (args.includes('$closestnpc'))
+      {newArgs = newArgs.replace('$closestnpc', closest(allNPCs())?.uuid ?? '');}
+    if (args.includes('$closestplayer'))
+      {newArgs = newArgs.replace(
+        '$closestplayer',
+        closest(allPlayers())?.uuid ?? '',
+      );}
+    if (args.includes('$closest'))
+      {newArgs = newArgs.replace('$closest', closest(allChars)?.uuid ?? '');}
 
     this.sendAction(GameServerEvent.DoCommand, { command, args: newArgs });
-
   }
 
   public sendAction(action: GameServerEvent, args: any) {
@@ -281,7 +378,17 @@ export class GameService {
 
   private parseCommand(cmd: string) {
     const arr = cmd.split(' ');
-    const multiPrefixes = ['party', 'look', 'show', 'cast', 'stance', 'powerword', 'art', 'findfamiliar', 'song'];
+    const multiPrefixes = [
+      'party',
+      'look',
+      'show',
+      'cast',
+      'stance',
+      'powerword',
+      'art',
+      'findfamiliar',
+      'song',
+    ];
 
     let argsIndex = 1;
 
@@ -299,7 +406,11 @@ export class GameService {
   }
 
   // get the direction from a character to another one
-  public directionTo(from: { x: number; y: number; z?: number }, to: { x: number; y: number; z?: number }, useVertical = true): string {
+  public directionTo(
+    from: { x: number; y: number; z?: number },
+    to: { x: number; y: number; z?: number },
+    useVertical = true,
+  ): string {
     if (!to || !from) return '';
 
     const toZ = to.z ?? 0;
@@ -316,22 +427,36 @@ export class GameService {
 
   // check the hostility level between two characters
   // any changes here _might_ need to be made to server/checkTargetForHostility
-  public hostilityLevelFor(origin: ICharacter, compare: ICharacter): 'hostile'|'neutral'|'friendly'|'stealth' {
-
-    const isHiddenTo = () => origin.effects._hash.Hidden
-                          && (origin.totalStats?.[Stat.Stealth] ?? 0) > (compare.totalStats?.[Stat.Perception] ?? 0);
-    const alignmentConsideringHidden = () => isHiddenTo() ? 'stealth' : 'hostile';
+  public hostilityLevelFor(
+    origin: ICharacter,
+    compare: ICharacter,
+  ): 'hostile' | 'neutral' | 'friendly' | 'stealth' {
+    const isHiddenTo = () =>
+      origin.effects._hash.Hidden &&
+      (origin.totalStats?.[Stat.Stealth] ?? 0) >
+        (compare.totalStats?.[Stat.Perception] ?? 0);
+    const alignmentConsideringHidden = () =>
+      isHiddenTo() ? 'stealth' : 'hostile';
 
     if (!origin) return 'neutral';
 
     if (origin.allegiance === Allegiance.GM) return 'neutral';
     if (compare.allegiance === Allegiance.NaturalResource) return 'neutral';
 
-    if ((origin as IPlayer).partyName && (origin as IPlayer).partyName === (compare as IPlayer).partyName) return 'neutral';
+    if (
+      (origin as IPlayer).partyName &&
+      (origin as IPlayer).partyName === (compare as IPlayer).partyName
+    )
+      {return 'neutral';}
 
-    if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) return alignmentConsideringHidden();
+    if (compare.agro[origin.uuid] || origin.agro[compare.uuid])
+      {return alignmentConsideringHidden();}
 
-    if (origin.effects._hash.Disguise && origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]) return 'stealth';
+    if (
+      origin.effects._hash.Disguise &&
+      origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]
+    )
+      {return 'stealth';}
 
     const hostility = (compare as INPC).hostility;
 
@@ -340,15 +465,22 @@ export class GameService {
     if (hostility === Hostility.Never) return 'friendly';
 
     if (hostility === Hostility.Faction) {
-      if (isHostileTo(origin, compare.allegiance)
-      || isHostileTo(compare, origin.allegiance)) return alignmentConsideringHidden();
+      if (
+        isHostileTo(origin, compare.allegiance) ||
+        isHostileTo(compare, origin.allegiance)
+      )
+        {return alignmentConsideringHidden();}
     }
 
     if (origin.allegiance === compare.allegiance) return 'neutral';
 
     if (hostility === Hostility.Always) return alignmentConsideringHidden();
 
-    if (origin.alignment === Alignment.Evil && compare.alignment === Alignment.Good) return alignmentConsideringHidden();
+    if (
+      origin.alignment === Alignment.Evil &&
+      compare.alignment === Alignment.Good
+    )
+      {return alignmentConsideringHidden();}
 
     return 'neutral';
   }
@@ -357,7 +489,7 @@ export class GameService {
     const res = this.modalService.commandDialog(dialogInfo);
     if (!res) return;
 
-    res.subscribe(result => {
+    res.subscribe((result) => {
       if (!result || result === 'noop') return;
 
       const npcQuery = dialogInfo.displayNPCUUID || dialogInfo.displayNPCName;

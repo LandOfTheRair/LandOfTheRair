@@ -1,4 +1,8 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,17 +12,17 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule, StorageEngine } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
-
+import { withNgxsResetPlugin } from 'ngxs-reset-plugin';
 
 import { environment } from '../environments/environment';
 
-import * as AllStores from '../stores';
 import { GameAction } from '../interfaces';
+import * as AllStores from '../stores';
 import { GameModule } from './game.module';
 
 import { AppComponent } from './app.component';
 
+import { HttpErrorInterceptor } from './_shared/interceptors/http-error.interceptor';
 import { AssetService } from './services/asset.service';
 import { GameService } from './services/game.service';
 import { AlertErrorHandler, LoggerService } from './services/logger.service';
@@ -27,10 +31,10 @@ import { ModalService } from './services/modal.service';
 import { OptionsService } from './services/options.service';
 import { SocketService } from './services/socket.service';
 import { SoundService } from './services/sound.service';
-import { HttpErrorInterceptor } from './_shared/interceptors/http-error.interceptor';
 
-
-const allActualStores = Object.keys(AllStores).filter(x => x.endsWith('State')).map(x => AllStores[x]);
+const allActualStores = Object.keys(AllStores)
+  .filter((x) => x.endsWith('State'))
+  .map((x) => AllStores[x]);
 
 export class AccountStorageEngine implements StorageEngine {
   get length(): number {
@@ -59,28 +63,29 @@ export class AccountStorageEngine implements StorageEngine {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
-    HttpClientModule,
     BrowserModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+    }),
     BrowserAnimationsModule,
-
     GameModule,
-
-    NgxsModule.forRoot(allActualStores, { developmentMode: !environment.production }),
+    NgxsModule.forRoot(allActualStores, {
+      developmentMode: !environment.production,
+    }),
     NgxsStoragePluginModule.forRoot({
-      key: ['settings', 'macros', 'journal']
+      keys: ['settings', 'macros', 'journal'],
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
-    NgxsResetPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production,
       collapsed: true,
-      filter: action => {
-        if (!action.type) return !action.filterOutFromLogs;
+      filter: (action) => {
+        if (!action.type) {
+          return !action.filterOutFromLogs;
+        }
 
         const ignoreActions = {
           [GameAction.GameSetPlayer]: true,
@@ -94,18 +99,18 @@ export class AccountStorageEngine implements StorageEngine {
           [GameAction.SettingsActiveWindow]: true,
           [GameAction.SetCurrentCommand]: true,
           [GameAction.PartyUpdate]: true,
-          [GameAction.LogCurrentCommand]: true
+          [GameAction.LogCurrentCommand]: true,
         };
-
         return !ignoreActions[action.type];
-      }
-    })
+      },
+    }),
   ],
   providers: [
+    withNgxsResetPlugin(),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -114,7 +119,7 @@ export class AccountStorageEngine implements StorageEngine {
         return logger;
       },
       deps: [LoggerService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -123,7 +128,7 @@ export class AccountStorageEngine implements StorageEngine {
         return opts;
       },
       deps: [OptionsService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -132,7 +137,7 @@ export class AccountStorageEngine implements StorageEngine {
         return sc;
       },
       deps: [SocketService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -141,7 +146,7 @@ export class AccountStorageEngine implements StorageEngine {
         return assets;
       },
       deps: [AssetService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -150,7 +155,7 @@ export class AccountStorageEngine implements StorageEngine {
         return game;
       },
       deps: [GameService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -159,7 +164,7 @@ export class AccountStorageEngine implements StorageEngine {
         return macros;
       },
       deps: [MacrosService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -168,7 +173,7 @@ export class AccountStorageEngine implements StorageEngine {
         return modal;
       },
       deps: [ModalService],
-      multi: true
+      multi: true,
     },
     {
       provide: APP_INITIALIZER,
@@ -177,13 +182,13 @@ export class AccountStorageEngine implements StorageEngine {
         return sound;
       },
       deps: [SoundService],
-      multi: true
+      multi: true,
     },
     {
       provide: ErrorHandler,
       useClass: AlertErrorHandler,
-    }
+    },
+    provideHttpClient(withInterceptorsFromDi()),
   ],
-  bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

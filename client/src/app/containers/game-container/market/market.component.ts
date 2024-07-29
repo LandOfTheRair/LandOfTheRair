@@ -1,13 +1,24 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep, debounce, get, startCase } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
-import { calculateListingFee, EquippableItemClasses, IMarketItemInfo, IMarketListing, IMarketPickup, IPlayer,
-  ItemClass, itemListError, ItemSlot, listingFeePercent, WeaponClasses } from '../../../../interfaces';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  calculateListingFee,
+  EquippableItemClasses,
+  IMarketItemInfo,
+  IMarketListing,
+  IMarketPickup,
+  IPlayer,
+  ItemClass,
+  itemListError,
+  ItemSlot,
+  listingFeePercent,
+  WeaponClasses,
+} from '../../../../interfaces';
 import { GameState, HideMarketWindow, HideWindow } from '../../../../stores';
 import { APIService } from '../../../services/api.service';
 import { AssetService } from '../../../services/asset.service';
@@ -17,15 +28,16 @@ import { ModalService } from '../../../services/modal.service';
 
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-market',
   templateUrl: './market.component.html',
-  styleUrls: ['./market.component.scss']
+  styleUrls: ['./market.component.scss'],
 })
-export class MarketComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+export class MarketComponent {
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentMarketWindow) market$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -55,24 +67,44 @@ export class MarketComponent implements OnInit, OnDestroy {
   public tabs = ['Buy', 'Sell', 'My Listings', 'Pick Up'];
 
   public sortOptions = [
-    { name: 'Most Recent',        sort: 'mostrecent' },
-    { name: 'Least Recent',       sort: 'leastrecent' },
+    { name: 'Most Recent', sort: 'mostrecent' },
+    { name: 'Least Recent', sort: 'leastrecent' },
     { name: 'Price: Low to High', sort: 'lowtohigh' },
-    { name: 'Price: High to Low', sort: 'hightolow' }
+    { name: 'Price: High to Low', sort: 'hightolow' },
   ];
 
-  public filterTags: Array<{ name: string; includedTypes: string[]; isIncluded?: boolean; setSearchKey?: string }> = [
-    { name: 'Bottles',        includedTypes: [ItemClass.Bottle] },
-    { name: 'Cosmetics',      includedTypes: [ItemClass.Scroll], setSearchKey: 'Cosmetic' },
-    { name: 'Food',           includedTypes: [ItemClass.Food] },
-    { name: 'Gear',           includedTypes: EquippableItemClasses },
-    { name: 'Gems',           includedTypes: [ItemClass.Gem] },
-    { name: 'Misc',           includedTypes: [ItemClass.Box, ItemClass.Book, ItemClass.Key, ItemClass.Skull] },
-    { name: 'Reagents',       includedTypes: [ItemClass.Flower, ItemClass.Rock, ItemClass.Twig] },
-    { name: 'Rings',          includedTypes: [ItemClass.Ring] },
-    { name: 'Scrolls',        includedTypes: [ItemClass.Scroll] },
-    { name: 'Traps',          includedTypes: [ItemClass.Trap] },
-    { name: 'Weapons',        includedTypes: WeaponClasses }
+  public filterTags: Array<{
+    name: string;
+    includedTypes: string[];
+    isIncluded?: boolean;
+    setSearchKey?: string;
+  }> = [
+    { name: 'Bottles', includedTypes: [ItemClass.Bottle] },
+    {
+      name: 'Cosmetics',
+      includedTypes: [ItemClass.Scroll],
+      setSearchKey: 'Cosmetic',
+    },
+    { name: 'Food', includedTypes: [ItemClass.Food] },
+    { name: 'Gear', includedTypes: EquippableItemClasses },
+    { name: 'Gems', includedTypes: [ItemClass.Gem] },
+    {
+      name: 'Misc',
+      includedTypes: [
+        ItemClass.Box,
+        ItemClass.Book,
+        ItemClass.Key,
+        ItemClass.Skull,
+      ],
+    },
+    {
+      name: 'Reagents',
+      includedTypes: [ItemClass.Flower, ItemClass.Rock, ItemClass.Twig],
+    },
+    { name: 'Rings', includedTypes: [ItemClass.Ring] },
+    { name: 'Scrolls', includedTypes: [ItemClass.Scroll] },
+    { name: 'Traps', includedTypes: [ItemClass.Trap] },
+    { name: 'Weapons', includedTypes: WeaponClasses },
   ];
 
   public get listingFeePercent() {
@@ -118,11 +150,9 @@ export class MarketComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private api: APIService,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+    public gameService: GameService,
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -135,29 +165,30 @@ export class MarketComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.marketInfoSub = this.market$.subscribe(data => {
-      this.marketInfo = cloneDeep(data || {});
-      this.currentTab = '';
+    this.marketInfoSub = this.market$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this.marketInfo = cloneDeep(data || {});
+        this.currentTab = '';
 
-      setTimeout(() => {
-        this.switchTab('Buy');
-      }, 0);
-    });
+        setTimeout(() => {
+          this.switchTab('Buy');
+        }, 0);
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideMarketWindow());
-      this.store.dispatch(new HideWindow('market'));
-      this.reset();
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideMarketWindow());
+        this.store.dispatch(new HideWindow('market'));
+        this.reset();
+      });
 
-    this.playerSub = this.player$.subscribe(p => {
+    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       if (!p) return;
       this.player = p;
     });
-
   }
-
-  ngOnDestroy() {}
 
   private reset() {
     this.currentPage = 0;
@@ -167,7 +198,7 @@ export class MarketComponent implements OnInit, OnDestroy {
     this.buyableListings = null;
     this.sellValue = 1;
     this.searchQuery = '';
-    this.filterTags.forEach(t => t.isIncluded = false);
+    this.filterTags.forEach((t) => (t.isIncluded = false));
     this.currentTab = null;
   }
 
@@ -209,15 +240,20 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    this.http.get(this.api.finalHTTPURL + `/market/listings/all`, {
-      params: {
-        search: this.searchQuery,
-        page: this.currentPage.toString(),
-        sort: this.currentSort,
-        filter: this.filterTags.filter(x => x.isIncluded).map(x => x.includedTypes).flat().join(',')
-      }
-    })
-      .subscribe(d => {
+    this.http
+      .get(this.api.finalHTTPURL + `/market/listings/all`, {
+        params: {
+          search: this.searchQuery,
+          page: this.currentPage.toString(),
+          sort: this.currentSort,
+          filter: this.filterTags
+            .filter((x) => x.isIncluded)
+            .map((x) => x.includedTypes)
+            .flat()
+            .join(','),
+        },
+      })
+      .subscribe((d) => {
         this.buyableListings = (d as IMarketListing[]) || [];
         this.isLoading = false;
       });
@@ -228,8 +264,12 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    this.http.get(this.api.finalHTTPURL + `/market/listings/mine?username=${this.player.username}`)
-      .subscribe(d => {
+    this.http
+      .get(
+        this.api.finalHTTPURL +
+          `/market/listings/mine?username=${this.player.username}`,
+      )
+      .subscribe((d) => {
         this.myListings = (d as IMarketListing[]) || [];
         this.isLoading = false;
       });
@@ -238,8 +278,12 @@ export class MarketComponent implements OnInit, OnDestroy {
   loadMyPickups() {
     if (!this.player) return;
 
-    this.http.get(this.api.finalHTTPURL + `/market/pickups/mine?username=${this.player.username}`)
-      .subscribe(d => {
+    this.http
+      .get(
+        this.api.finalHTTPURL +
+          `/market/pickups/mine?username=${this.player.username}`,
+      )
+      .subscribe((d) => {
         this.myPickups = (d as IMarketPickup[]) || [];
         this.isLoading = false;
       });
@@ -247,14 +291,24 @@ export class MarketComponent implements OnInit, OnDestroy {
 
   public starTextFor(itemInfo: IMarketItemInfo) {
     const quality = get(itemInfo, 'itemOverride.quality', 0);
-    return quality - 2 > 0 ? Array(quality - 2).fill('★').join('') : '';
+    return quality - 2 > 0
+      ? Array(quality - 2)
+          .fill('★')
+          .join('')
+      : '';
   }
 
   public statStringFor(itemInfo: IMarketItemInfo) {
     const stats = get(itemInfo, 'itemOverride.stats', {});
     const statKeys = Object.keys(stats);
     if (statKeys.length === 0) return '';
-    return statKeys.map(stat => `${stats[stat] < 0 ? '' : '+'}${stats[stat]} ${stat.toUpperCase()}`).filter(Boolean).join(', ');
+    return statKeys
+      .map(
+        (stat) =>
+          `${stats[stat] < 0 ? '' : '+'}${stats[stat]} ${stat.toUpperCase()}`,
+      )
+      .filter(Boolean)
+      .join(', ');
   }
 
   public traitStringFor(itemInfo: IMarketItemInfo) {
@@ -266,13 +320,20 @@ export class MarketComponent implements OnInit, OnDestroy {
   }
 
   public effectStringFor(itemInfo: IMarketItemInfo) {
-    const effect = itemInfo.itemOverride.useEffect
-                || itemInfo.itemOverride.trapEffect
-                || itemInfo.itemOverride.equipEffect
-                || itemInfo.itemOverride.strikeEffect;
+    const effect =
+      itemInfo.itemOverride.useEffect ||
+      itemInfo.itemOverride.trapEffect ||
+      itemInfo.itemOverride.equipEffect ||
+      itemInfo.itemOverride.strikeEffect;
 
     if (!effect || !effect.name || !effect.potency) return '';
-    if (effect.name.includes('Permanent') || effect.name.includes('Fill') || effect.name.includes('Nourishment')) return '';
+    if (
+      effect.name.includes('Permanent') ||
+      effect.name.includes('Fill') ||
+      effect.name.includes('Nourishment')
+    ) {
+      return '';
+    }
 
     return `${startCase(effect.name)} (Str. ${effect.potency})`;
   }
@@ -293,14 +354,20 @@ export class MarketComponent implements OnInit, OnDestroy {
 
     if (filter.setSearchKey) {
       if (filter.isIncluded) {
-        this.filterTags.forEach(tag => tag.isIncluded = tag.setSearchKey === filter.setSearchKey);
+        this.filterTags.forEach(
+          (tag) => (tag.isIncluded = tag.setSearchKey === filter.setSearchKey),
+        );
         this.searchQuery = filter.setSearchKey;
       } else {
         this.searchQuery = '';
       }
     } else {
-      this.filterTags.forEach(tag => {
-        if (tag.setSearchKey && tag.isIncluded && this.searchQuery === tag.setSearchKey) {
+      this.filterTags.forEach((tag) => {
+        if (
+          tag.setSearchKey &&
+          tag.isIncluded &&
+          this.searchQuery === tag.setSearchKey
+        ) {
           this.searchQuery = '';
           tag.isIncluded = false;
         }
@@ -312,32 +379,49 @@ export class MarketComponent implements OnInit, OnDestroy {
   }
 
   list() {
-    this.gameService.sendCommandString(`#${this.marketInfo.npcUUID}, sell ${this.sellValue}`);
+    this.gameService.sendCommandString(
+      `#${this.marketInfo.npcUUID}, sell ${this.sellValue}`,
+    );
   }
 
   cancel(listing: IMarketListing) {
-    this.modalService.confirm('Cancel Listing', 'Are you sure you want to cancel this listing? You will not get the listing fee back!')
-      .subscribe(res => {
+    this.modalService
+      .confirm(
+        'Cancel Listing',
+        'Are you sure you want to cancel this listing? You will not get the listing fee back!',
+      )
+      .subscribe((res) => {
         if (!res) return;
-        this.gameService.sendCommandString(`#${this.marketInfo.npcUUID}, buy ${(listing as any)._id}`);
-        this.myListings = this.myListings.filter(x => x !== listing);
+        this.gameService.sendCommandString(
+          `#${this.marketInfo.npcUUID}, buy ${(listing as any)._id}`,
+        );
+        this.myListings = this.myListings.filter((x) => x !== listing);
       });
   }
 
   buy(listing: IMarketListing) {
-    this.modalService.confirm(
-      'Buy Item', `Are you sure you want to buy ${listing.itemId} for ${listing.listingInfo.price.toLocaleString()} gold?`
-    )
-      .subscribe(res => {
+    this.modalService
+      .confirm(
+        'Buy Item',
+        `Are you sure you want to buy ${
+          listing.itemId
+        } for ${listing.listingInfo.price.toLocaleString()} gold?`,
+      )
+      .subscribe((res) => {
         if (!res) return;
-        this.gameService.sendCommandString(`#${this.marketInfo.npcUUID}, buy ${(listing as any)._id}`);
-        this.buyableListings = this.buyableListings.filter(x => x !== listing);
+        this.gameService.sendCommandString(
+          `#${this.marketInfo.npcUUID}, buy ${(listing as any)._id}`,
+        );
+        this.buyableListings = this.buyableListings.filter(
+          (x) => x !== listing,
+        );
       });
   }
 
   take(pickup: IMarketPickup) {
-    this.gameService.sendCommandString(`#${this.marketInfo.npcUUID}, take ${(pickup as any)._id}`);
-    this.myPickups = this.myPickups.filter(x => x !== pickup);
+    this.gameService.sendCommandString(
+      `#${this.marketInfo.npcUUID}, take ${(pickup as any)._id}`,
+    );
+    this.myPickups = this.myPickups.filter((x) => x !== pickup);
   }
-
 }

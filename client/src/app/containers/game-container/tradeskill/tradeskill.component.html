@@ -1,14 +1,14 @@
-<app-window windowName="tradeskill"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
-            [alwaysOnTop]="true"
-
-            defaultX="450"
-            defaultY="100"
-            defaultWidth="450"
-            defaultHeight="580"
+<app-window
+  windowName="tradeskill"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [alwaysOnTop]="true"
+  defaultX="450"
+  defaultY="100"
+  defaultWidth="450"
+  defaultHeight="580"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -32,58 +32,93 @@
   </div>
 
   <div class="bottom-area">
-    <div class="category" *ngFor="let recipecat of knownRecipesArray">
+    @for (recipecat of knownRecipesArray; track recipecat) {
+    <div class="category">
       <div class="category-header">{{ recipecat.category }}</div>
       <div class="category-recipes">
-        <div class="recipe" *ngFor="let recipe of recipecat.recipes; trackBy: recipeTrackBy" (click)="chooseRecipe(recipe.name)">
-          <app-item class="recipe-result" size="normal" [showDesc]="false" [showEncrust]="false" [showCount]="false" [showOunces]="true" [item]="{ name: recipe.item, mods: {} }"></app-item>
-
+        @for (recipe of recipecat.recipes; track recipe.name) {
+        <div class="recipe" (click)="chooseRecipe(recipe.name)">
+          <app-item
+            class="recipe-result"
+            size="normal"
+            [showDesc]="false"
+            [showEncrust]="false"
+            [showCount]="false"
+            [showOunces]="true"
+            [item]="{ name: recipe.item, mods: {} }"
+          ></app-item>
           <div class="recipe-name-ing">
             <div class="recipe-name">
               {{ recipe.name }}
-
-              <span *ngIf="itemTies(recipe.item)">
-                <span *ngIf="recipe.transferOwnerFrom">
-                  (Binds; Transfers)
-                </span>
-                <span *ngIf="!recipe.transferOwnerFrom">
-                  (Binds)
-                </span>
+              @if (itemTies(recipe.item)) {
+              <span>
+                @if (recipe.transferOwnerFrom) {
+                <span>(Binds; Transfers)</span>
+                } @if (!recipe.transferOwnerFrom) {
+                <span>(Binds)</span>
+                }
               </span>
-
-              <span class="skill-gain-percent"
-                    [class.perc-0]="recipe._pointChance < 25"
-                    [class.perc-25]="recipe._pointChance >= 25 && recipe._pointChance < 50"
-                    [class.perc-50]="recipe._pointChance >= 50 && recipe._pointChance < 75"
-                    [class.perc-75]="recipe._pointChance >= 75 && recipe._pointChance < 100"
-                    [class.perc-100]="recipe._pointChance >= 100">
-                    [{{ recipe._pointChance || 0 }}%]
+              }
+              <span
+                class="skill-gain-percent"
+                [class.perc-0]="recipe._pointChance < 25"
+                [class.perc-25]="
+                  recipe._pointChance >= 25 && recipe._pointChance < 50
+                "
+                [class.perc-50]="
+                  recipe._pointChance >= 50 && recipe._pointChance < 75
+                "
+                [class.perc-75]="
+                  recipe._pointChance >= 75 && recipe._pointChance < 100
+                "
+                [class.perc-100]="recipe._pointChance >= 100"
+              >
+                [{{ recipe._pointChance || 0 }}%]
               </span>
             </div>
-
             <div class="recipe-ingredients">
-              <div class="recipe-ingredients-container" *ngIf="recipe.name === chosenCraft">
-                <app-item class="recipe-ingredient"
-                          *ngFor="let item of recipe.ingredients; trackBy: ingTrackBy"
-                          size="xsmall"
-                          [showDesc]="false"
-                          [showEncrust]="false"
-                          [showCount]="false"
-                          [matTooltip]="itemDesc(item)"
-                          [item]="{ name: item, mods: {} }"></app-item>
-
-                <span class="recipe-ingredient" *ngFor="let item of recipe.ozIngredients; trackBy: ingTrackBy">
-                  <app-item size="xsmall" [showDesc]="false" [showEncrust]="false" [showCount]="false" [item]="{ name: item.display, mods: {} }"></app-item> x {{ item.ounces }}
+              @if (recipe.name === chosenCraft) {
+              <div class="recipe-ingredients-container">
+                @for (item of recipe.ingredients; track $index) {
+                <app-item
+                  class="recipe-ingredient"
+                  size="xsmall"
+                  [showDesc]="false"
+                  [showEncrust]="false"
+                  [showCount]="false"
+                  [matTooltip]="itemDesc(item)"
+                  [item]="{ name: item, mods: {} }"
+                ></app-item>
+                } @for (item of recipe.ozIngredients; track $index) {
+                <span class="recipe-ingredient">
+                  <app-item
+                    size="xsmall"
+                    [showDesc]="false"
+                    [showEncrust]="false"
+                    [showCount]="false"
+                    [item]="{ name: item.display, mods: {} }"
+                  ></app-item>
+                  x {{ item.ounces }}
                 </span>
+                }
               </div>
+              }
             </div>
           </div>
-
-          <button class="craft-button" mat-flat-button color="primary" *ngIf="recipe.name === chosenCraft" (click)="craft(recipe.name)">
+          @if (recipe.name === chosenCraft) {
+          <button
+            class="craft-button"
+            mat-flat-button
+            color="primary"
+            (click)="craft(recipe.name)"
+          >
             Craft
           </button>
+          }
         </div>
+        }
       </div>
     </div>
+    }
   </div>
 </ng-template>

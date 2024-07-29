@@ -2,35 +2,44 @@
 
 <div mat-dialog-content>
 
-  <div class="current-holiday" *ngIf="holiday$ | async as holiday">
-    <div>
-      <strong>{{ holidayDescs[holiday].name }}</strong>
+  @if (holiday$ | async; as holiday) {
+    <div class="current-holiday">
+      <div>
+        <strong>{{ holidayDescs[holiday].name }}</strong>
+      </div>
+      <div>
+        <small><em>Takes place between {{ holidayDescs[holiday].duration }}</em></small>
+      </div>
+      <div>
+        {{ holidayDescs[holiday].text }}
+      </div>
     </div>
-    <div>
-      <small><em>Takes place between {{ holidayDescs[holiday].duration }}</em></small>
-    </div>
-    <div>
-      {{ holidayDescs[holiday].text }}
-    </div>
-  </div>
+  }
 
-  <div class="event-container" *ngIf="events$ | async as events">
-    <div class="event" *ngIf="events.length === 0 && (holiday$ | async) === null">
-      No events are currently happening.
+  @if (events$ | async; as events) {
+    <div class="event-container">
+      @if (events.length === 0 && (holiday$ | async) === null) {
+        <div class="event">
+          No events are currently happening.
+        </div>
+      }
+      @for (event of events; track event) {
+        <div class="event">
+          <div class="event-name">
+            <strong>{{ event.name }}</strong>&nbsp;&nbsp;<em>(ends at roughly {{ event.endsAt | date:'short' }})</em>
+          </div>
+          <div class="event-desc">
+            {{ event.description }}
+          </div>
+          @if (statString(event)) {
+            <div class="stats">
+              Stat Boosts: {{ statString(event) }}
+            </div>
+          }
+        </div>
+      }
     </div>
-
-    <div class="event" *ngFor="let event of events">
-      <div class="event-name">
-        <strong>{{ event.name }}</strong>&nbsp;&nbsp;<em>(ends at roughly {{ event.endsAt | date:'short' }})</em>
-      </div>
-      <div class="event-desc">
-        {{ event.description }}
-      </div>
-      <div class="stats" *ngIf="statString(event)">
-        Stat Boosts: {{ statString(event) }}
-      </div>
-    </div>
-  </div>
+  }
 
 </div>
 

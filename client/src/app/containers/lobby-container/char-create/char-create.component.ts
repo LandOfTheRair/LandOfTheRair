@@ -1,14 +1,18 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Allegiance, basePlayerSprite, ICharacterCreateInfo, Stat } from '../../../../interfaces';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  Allegiance,
+  basePlayerSprite,
+  ICharacterCreateInfo,
+  Stat,
+} from '../../../../interfaces';
 
 @Component({
   selector: 'app-char-create',
   templateUrl: './char-create.component.html',
-  styleUrls: ['./char-create.component.scss']
+  styleUrls: ['./char-create.component.scss'],
 })
-export class CharCreateComponent implements OnInit {
-
+export class CharCreateComponent {
   public overwriteChecked: boolean;
 
   public character = {
@@ -16,7 +20,7 @@ export class CharCreateComponent implements OnInit {
     gender: '',
     allegiance: '',
     baseclass: '',
-    weapons: ''
+    weapons: '',
   };
 
   public displayWeapon: string;
@@ -32,18 +36,18 @@ export class CharCreateComponent implements OnInit {
     cha: 10,
     luk: 10,
     hp: 100,
-    gold: 500
+    gold: 500,
   };
 
   public descs = {
     baseclass: '',
     allegiance: '',
-    weapon: ''
+    weapon: '',
   };
 
   public statMods = {
     baseclass: [],
-    allegiance: {}
+    allegiance: {},
   };
 
   public icons = {
@@ -51,19 +55,60 @@ export class CharCreateComponent implements OnInit {
     Thief: 'abstract-005',
     Healer: 'abstract-041',
     Warrior: 'abstract-053',
-    Traveller: 'uncertainty'
+    Traveller: 'uncertainty',
   };
 
   public readonly allStats = [
-    { stat: Stat.STR, icon: 'biceps',      tooltip: 'STR: Affects how likely you are to hit in combat and how much damage you deal' },
-    { stat: Stat.DEX, icon: 'bowman',      tooltip: 'DEX: Affects how likely you are to hit in combat' },
-    { stat: Stat.AGI, icon: 'sprint',      tooltip: 'AGI: Affects how likely you are to dodge physical attacks in combat' },
-    { stat: Stat.INT, icon: 'smart',       tooltip: 'INT: Affects damage for Conjuration damage and Mage level up MP' },
-    { stat: Stat.WIS, icon: 'wisdom',      tooltip: 'WIS: Affects damage and healing for Restoration damage and Healers level up MP' },
-    { stat: Stat.WIL, icon: 'aura',        tooltip: 'WIL: Affects your saving throw for magical attacks' },
-    { stat: Stat.CON, icon: 'glass-heart', tooltip: 'CON: Affects how likely you are to get stunned in combat and level up HP' },
-    { stat: Stat.CHA, icon: 'rose',        tooltip: 'CHA: Affects merchant shop prices' },
-    { stat: Stat.LUK, icon: 'clover',      tooltip: 'LUK: Affects random drop chance and crit chance' }
+    {
+      stat: Stat.STR,
+      icon: 'biceps',
+      tooltip:
+        'STR: Affects how likely you are to hit in combat and how much damage you deal',
+    },
+    {
+      stat: Stat.DEX,
+      icon: 'bowman',
+      tooltip: 'DEX: Affects how likely you are to hit in combat',
+    },
+    {
+      stat: Stat.AGI,
+      icon: 'sprint',
+      tooltip:
+        'AGI: Affects how likely you are to dodge physical attacks in combat',
+    },
+    {
+      stat: Stat.INT,
+      icon: 'smart',
+      tooltip:
+        'INT: Affects damage for Conjuration damage and Mage level up MP',
+    },
+    {
+      stat: Stat.WIS,
+      icon: 'wisdom',
+      tooltip:
+        'WIS: Affects damage and healing for Restoration damage and Healers level up MP',
+    },
+    {
+      stat: Stat.WIL,
+      icon: 'aura',
+      tooltip: 'WIL: Affects your saving throw for magical attacks',
+    },
+    {
+      stat: Stat.CON,
+      icon: 'glass-heart',
+      tooltip:
+        'CON: Affects how likely you are to get stunned in combat and level up HP',
+    },
+    {
+      stat: Stat.CHA,
+      icon: 'rose',
+      tooltip: 'CHA: Affects merchant shop prices',
+    },
+    {
+      stat: Stat.LUK,
+      icon: 'clover',
+      tooltip: 'LUK: Affects random drop chance and crit chance',
+    },
   ];
 
   public get charCreateData(): ICharacterCreateInfo {
@@ -71,12 +116,14 @@ export class CharCreateComponent implements OnInit {
   }
 
   public get canCreateCharacter(): boolean {
-    return this.character.name
-        && this.character.allegiance
-        && this.character.gender
-        && this.character.baseclass
-        && this.character.weapons
-        && (this.data.needsOverwrite ? this.overwriteChecked : true);
+    return (
+      this.character.name &&
+      this.character.allegiance &&
+      this.character.gender &&
+      this.character.baseclass &&
+      this.character.weapons &&
+      (this.data.needsOverwrite ? this.overwriteChecked : true)
+    );
   }
 
   public get invalidName() {
@@ -86,12 +133,8 @@ export class CharCreateComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CharCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data
-  ) { }
-
-  ngOnInit() {
-
-  }
+    @Inject(MAT_DIALOG_DATA) public data,
+  ) {}
 
   validateName() {
     let name = this.character.name;
@@ -154,7 +197,9 @@ export class CharCreateComponent implements OnInit {
   }
 
   public spriteForPlayer(): number {
-    return basePlayerSprite({ allegiance: this.character.allegiance as Allegiance, gender: this.character.gender as 'male'|'female' });
+    return basePlayerSprite({
+      allegiance: this.character.allegiance as Allegiance,
+      gender: this.character.gender as 'male' | 'female',
+    });
   }
-
 }

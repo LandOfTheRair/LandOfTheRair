@@ -1,20 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 import { GameServerEvent, IAccount } from '../../../../interfaces';
 import { AccountState } from '../../../../stores';
 import { SocketService } from '../../../services/socket.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
-  styleUrls: ['./account.component.scss']
+  styleUrls: ['./account.component.scss'],
 })
-export class AccountComponent implements OnInit, OnDestroy {
-
+export class AccountComponent {
   @Select(AccountState.account) public account$: Observable<IAccount>;
 
   public accountSub: Subscription;
@@ -27,47 +25,58 @@ export class AccountComponent implements OnInit, OnDestroy {
   public canRequestVerificationCode = true;
 
   public get canChangePassword() {
-    return this.currentPassword && this.newPassword && this.newPassword.length > 10;
+    return (
+      this.currentPassword && this.newPassword && this.newPassword.length > 10
+    );
   }
 
   public get canChangeTag() {
-    return !this.account.discordTag
-        || (this.account.discordTag
-        && this.account.discordTag.length > 16);
+    return (
+      !this.account.discordTag ||
+      (this.account.discordTag && this.account.discordTag.length > 16)
+    );
   }
 
   constructor(
     private socketService: SocketService,
-    public dialogRef: MatDialogRef<AccountComponent>
-  ) { }
-
-  ngOnInit() {
-    this.accountSub = this.account$.subscribe(acc => {
-      this.account = Object.assign({}, acc);
-    });
-  }
-
-  ngOnDestroy() {
+    public dialogRef: MatDialogRef<AccountComponent>,
+  ) {
+    this.accountSub = this.account$
+      .pipe(takeUntilDestroyed())
+      .subscribe((acc) => {
+        this.account = Object.assign({}, acc);
+      });
   }
 
   public changeTag() {
-    this.socketService.emit(GameServerEvent.ChangeDiscordTag, { discordTag: this.account.discordTag });
+    this.socketService.emit(GameServerEvent.ChangeDiscordTag, {
+      discordTag: this.account.discordTag,
+    });
   }
 
   public changeOnline() {
-    this.socketService.emit(GameServerEvent.ChangeAlwaysOnline, { alwaysOnline: this.account.alwaysOnline });
+    this.socketService.emit(GameServerEvent.ChangeAlwaysOnline, {
+      alwaysOnline: this.account.alwaysOnline,
+    });
   }
 
   public changeEvents() {
-    this.socketService.emit(GameServerEvent.ChangeEventWatcher, { eventWatcher: this.account.eventWatcher });
+    this.socketService.emit(GameServerEvent.ChangeEventWatcher, {
+      eventWatcher: this.account.eventWatcher,
+    });
   }
 
   public changePassword() {
-    this.socketService.emit(GameServerEvent.ChangePassword, { oldPassword: this.currentPassword, newPassword: this.newPassword });
+    this.socketService.emit(GameServerEvent.ChangePassword, {
+      oldPassword: this.currentPassword,
+      newPassword: this.newPassword,
+    });
   }
 
   public changeEmail() {
-    this.socketService.emit(GameServerEvent.ChangeEmail, { newEmail: this.newEmail });
+    this.socketService.emit(GameServerEvent.ChangeEmail, {
+      newEmail: this.newEmail,
+    });
     this.newEmail = '';
   }
 
@@ -81,8 +90,9 @@ export class AccountComponent implements OnInit, OnDestroy {
   }
 
   public doVerify() {
-    this.socketService.emit(GameServerEvent.SubmitVerification, { verificationCode: this.verificationCode });
+    this.socketService.emit(GameServerEvent.SubmitVerification, {
+      verificationCode: this.verificationCode,
+    });
     this.verificationCode = '';
   }
-
 }

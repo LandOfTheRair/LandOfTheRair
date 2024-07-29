@@ -1,19 +1,27 @@
 <h1 mat-dialog-title>{{ data.displayTitle || 'A Mysterious Voice' }}</h1>
 <div mat-dialog-content>
 
-  <app-npc *ngIf="data.displayNPCSprite >= 0" [sprite]="data.displayNPCSprite"></app-npc>
+  @if (data.displayNPCSprite >= 0) {
+    <app-npc [sprite]="data.displayNPCSprite"></app-npc>
+  }
 
-  <app-item *ngIf="data.displayItemName && !data.displayItemSprite" [item]="{ name: data.displayItemName, mods: {} }"></app-item>
+  @if (data.displayItemName && !data.displayItemSprite) {
+    <app-item [item]="{ name: data.displayItemName, mods: {} }"></app-item>
+  }
 
-  <app-item *ngIf="data.displayItemName && data.displayItemSprite" [item]="{ name: data.displayItemName, mods: { sprite: data.displayItemSprite } }"></app-item>
+  @if (data.displayItemName && data.displayItemSprite) {
+    <app-item [item]="{ name: data.displayItemName, mods: { sprite: data.displayItemSprite } }"></app-item>
+  }
 
   <div [innerHTML]="data.message || 'I don\'t know what to say.'"></div>
 
 </div>
 
 <div mat-dialog-actions>
-  <button mat-button
-          [mat-dialog-close]="option.action"
-          [color]="option.action !== 'noop' ? 'primary' : ''"
-          *ngFor="let option of data.options">{{ option.text }}</button>
+  @for (option of data.options; track option) {
+    <button mat-button
+      [mat-dialog-close]="option.action"
+      [color]="option.action !== 'noop' ? 'primary' : ''"
+    >{{ option.text }}</button>
+  }
 </div>

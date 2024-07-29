@@ -1,9 +1,15 @@
 <h1 mat-dialog-title>{{ data?.title || 'No Title' }}</h1>
 <div mat-dialog-content>
-  <app-npc *ngIf="data.extraData?.npcSprite >= 0" [sprite]="data.extraData.npcSprite"></app-npc>
-  <app-item *ngIf="data.extraData?.itemName && !data.extraData.displayItemSprite" [item]="{ name: data.extraData.itemName, mods: {} }"></app-item>
-  <app-item *ngIf="data.extraData?.itemName && data.extraData.displayItemSprite" [item]="{ name: data.extraData.itemName, mods: { sprite: data.extraData.displayItemSprite } }"></app-item>
-  
+  @if (data.extraData?.npcSprite >= 0) {
+    <app-npc [sprite]="data.extraData.npcSprite"></app-npc>
+  }
+  @if (data.extraData?.itemName && !data.extraData.displayItemSprite) {
+    <app-item [item]="{ name: data.extraData.itemName, mods: {} }"></app-item>
+  }
+  @if (data.extraData?.itemName && data.extraData.displayItemSprite) {
+    <app-item [item]="{ name: data.extraData.itemName, mods: { sprite: data.extraData.displayItemSprite } }"></app-item>
+  }
+
   <div [innerHTML]="data?.content || 'I don\'t know what to say.'"></div>
 
 </div>

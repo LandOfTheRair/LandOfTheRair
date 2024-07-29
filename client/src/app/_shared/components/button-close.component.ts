@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-button-close',
@@ -7,17 +7,14 @@ import { Component, OnInit } from '@angular/core';
       <mat-icon>close</mat-icon>
     </button>
   `,
-  styles: [`
-  :host {
-    background-color: #8b0000;
-  }
-  `]
+  styles: [
+    `
+      :host {
+        background-color: #8b0000;
+      }
+    `,
+  ],
 })
-export class ButtonCloseComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class ButtonCloseComponent {
+  constructor() {}
 }

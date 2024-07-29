@@ -1,49 +1,63 @@
 
 <app-window windowName="map"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="false"
-            [willNotHide]="true"
-            (hide)="quitGame()"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="false"
+  [willNotHide]="true"
+  (hide)="quitGame()"
 
-            defaultX="385"
-            defaultY="101"
-            defaultWidth="576"
-            defaultHeight="608"
+  defaultX="385"
+  defaultY="101"
+  defaultWidth="576"
+  defaultHeight="608"
 ></app-window>
 
 <ng-template #headTemplate>
-  <ng-container *ngIf="currentPlayer | async as player">
-    Map - {{ gameService.reformatMapName(player.map) }} <span *ngIf="optionsService.debugUI">(X:{{ player.x }} Y:{{ player.y }} Z:{{ player.z }})</span>
-  </ng-container>
+  @if (currentPlayer | async; as player) {
+    Map - {{ gameService.reformatMapName(player.map) }} @if (optionsService.debugUI) {
+    <span>(X:{{ player.x }} Y:{{ player.y }} Z:{{ player.z }})</span>
+  }
+}
 </ng-template>
 
 <ng-template #bodyTemplate>
   <div class="dropzone"
-       dropScope="mapground"
-       (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
-       droppable></div>
+    dropScope="mapground"
+    (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
+  droppable></div>
 
-  <div class="loading-cover" *ngIf="hideMapFromView"></div>
+  @if (hideMapFromView) {
+    <div class="loading-cover"></div>
+  }
 
   <app-active-target></app-active-target>
 
-  <div class="loader" *ngIf="loadString" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
+  @if (loadString) {
+    <div class="loader" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
+  }
 
-  <div class="loader banner" *ngIf="bannerString" [class.fade-out]="fadeOut" [innerHTML]="bannerString"></div>
+  @if (bannerString) {
+    <div class="loader banner" [class.fade-out]="fadeOut" [innerHTML]="bannerString"></div>
+  }
 
   <div class="map"></div>
 
-  <div class="dying-border"
-       [style.--blur-max-size]="optionsService.dyingBorderWidth"
-       *ngIf="canSeeLowHealthBorder"></div>
+  @if (canSeeLowHealthBorder) {
+    <div class="dying-border"
+      [style.--blur-max-size]="optionsService.dyingBorderWidth"
+    ></div>
+  }
 
-  <ng-container *ngIf="itemTooltip$ | async as tooltipData">
-    <div class="item-text" *ngIf="tooltipData.tooltip">
-      <div [innerHTML]="tooltipData.tooltip"></div>
-      <div class="item-upgrades">
-        <app-item [size]="'small'" [item]="{ name: item, mods: { itemClass: 'Rock' } }" *ngFor="let item of tooltipData.upgrades"></app-item>
+  @if (itemTooltip$ | async; as tooltipData) {
+    @if (tooltipData.tooltip) {
+      <div class="item-text">
+        <div [innerHTML]="tooltipData.tooltip"></div>
+        <div class="item-upgrades">
+          @for (item of tooltipData.upgrades; track item) {
+            <app-item [size]="'small'" [item]="{ name: item, mods: { itemClass: 'Rock' } }"></app-item>
+          }
+        </div>
       </div>
-    </div>
-  </ng-container>
+    }
+  }
 </ng-template>

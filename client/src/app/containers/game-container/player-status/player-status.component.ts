@@ -1,25 +1,28 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { clamp } from 'lodash';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
-import { IAccount, IPlayer, IStatusEffect, SilverPurchase } from '../../../../interfaces';
+import {
+  IAccount,
+  IPlayer,
+  IStatusEffect,
+  SilverPurchase,
+} from '../../../../interfaces';
 import { AccountState, GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { calculateXPRequiredForLevel } from '../../../../interfaces';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-player-status',
   templateUrl: './player-status.component.html',
-  styleUrls: ['./player-status.component.scss']
+  styleUrls: ['./player-status.component.scss'],
 })
-export class PlayerStatusComponent implements OnInit, OnDestroy {
-
+export class PlayerStatusComponent {
   @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) player$: Observable<IPlayer>;
   public account: IAccount;
@@ -33,15 +36,15 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe(p => this.setPlayer(p));
-    this.accountSub = this.account$.subscribe(a => this.setAccount(a));
+    public gameService: GameService,
+  ) {
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => this.setPlayer(p));
+    this.accountSub = this.account$
+      .pipe(takeUntilDestroyed())
+      .subscribe((a) => this.setAccount(a));
   }
-
-  ngOnDestroy() {}
 
   private setPlayer(p: IPlayer) {
     this.player = p;
@@ -53,10 +56,6 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     this.showPouch = !!a.premium.silverPurchases?.[SilverPurchase.MagicPouch];
   }
 
-  trackEffectBy(effect: IStatusEffect) {
-    return effect.uuid;
-  }
-
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
 
@@ -64,16 +63,16 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
       ...player.effects.buff,
       ...player.effects.debuff,
       ...player.effects.incoming,
-      ...player.effects.outgoing
-    ].filter(x => !x.effectInfo.hidden);
+      ...player.effects.outgoing,
+    ].filter((x) => !x.effectInfo.hidden);
 
     if (player.spellChannel) {
       base.unshift({
         uuid: 'channel',
         effectName: 'Channeling',
         sourceName: '',
-        endsAt: Date.now() + (player.spellChannel.ticks * 1000),
-        effectInfo: { potency: 1 }
+        endsAt: Date.now() + player.spellChannel.ticks * 1000,
+        effectInfo: { potency: 1 },
       });
     }
 
@@ -81,7 +80,9 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   }
 
   xpString(player: IPlayer): string {
-    return `${player.exp.toLocaleString()} / ${this.levelXP(player.level + 1).toLocaleString()}`;
+    return `${player.exp.toLocaleString()} / ${this.levelXP(
+      player.level + 1,
+    ).toLocaleString()}`;
   }
 
   levelXP(level: number): number {
@@ -93,7 +94,12 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
     const curPlayerLevelXP = this.levelXP(player.level);
     const nextPlayerLevelXP = this.levelXP(player.level + 1);
 
-    return clamp((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP) * 100, 0, 100).toFixed(2);
+    return clamp(
+      ((playerXP - curPlayerLevelXP) / (nextPlayerLevelXP - curPlayerLevelXP)) *
+        100,
+      0,
+      100,
+    ).toFixed(2);
   }
 
   axpPercent(player: IPlayer): string {
@@ -117,5 +123,4 @@ export class PlayerStatusComponent implements OnInit, OnDestroy {
   showWindow(window: string): void {
     this.store.dispatch(new ToggleWindow(window));
   }
-
 }

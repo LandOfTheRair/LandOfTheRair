@@ -2,17 +2,20 @@
 <h1 mat-dialog-title>Error Log ({{ logger.totalErrors }})</h1>
 
 <div mat-dialog-content>
-  <div *ngIf="logger.totalErrors === 0">
-    <p>No errors logged.</p>
-  </div>
+  @if (logger.totalErrors === 0) {
+    <div>
+      <p>No errors logged.</p>
+    </div>
+  }
 
-  <details *ngFor="let error of logger.iterableErrors; trackBy:errorIndex">
-    <summary>
-      <strong>{{ error.message }} (x{{ error.total }})</strong>
-    </summary>
-
-    <pre>{{ error.error }}</pre>
-  </details>
+  @for (error of logger.iterableErrors; track errorIndex($index, error)) {
+    <details>
+      <summary>
+        <strong>{{ error.message }} (x{{ error.total }})</strong>
+      </summary>
+      <pre>{{ error.error }}</pre>
+    </details>
+  }
 </div>
 
 <div mat-dialog-actions>

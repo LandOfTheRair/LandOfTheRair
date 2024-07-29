@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { IItemContainer, IPlayer } from '../../../../interfaces';
@@ -8,10 +8,9 @@ import { UIService } from '../../../services/ui.service';
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
-  styleUrls: ['./inventory.component.scss']
+  styleUrls: ['./inventory.component.scss'],
 })
-export class InventoryComponent implements OnInit {
-
+export class InventoryComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   @Input() public size: number;
@@ -25,12 +24,10 @@ export class InventoryComponent implements OnInit {
   }
 
   public get slots() {
-    return Array(this.size).fill(null).map((v, i) => i);
+    return Array(this.size)
+      .fill(null)
+      .map((v, i) => i);
   }
 
-  constructor(public uiService: UIService) { }
-
-  ngOnInit() {
-  }
-
+  constructor(public uiService: UIService) {}
 }

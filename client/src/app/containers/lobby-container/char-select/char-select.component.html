@@ -1,13 +1,13 @@
 
 
 <app-window windowName="charselect"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
 
-            defaultX="805"
-            defaultY="80"
-            defaultWidth="550"
-            defaultHeight="500"
+  defaultX="805"
+  defaultY="80"
+  defaultWidth="550"
+  defaultHeight="500"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -16,73 +16,78 @@
 
 <ng-template #bodyTemplate>
 
-  <ng-container *ngIf="account">
+  @if (account) {
     <div class="char-buttons">
-      <ng-container *ngFor="let player of account.players; let i = index">
+      @for (player of account.players; track player; let i = $index) {
         <button class="tab-button" mat-raised-button [color]="(charSlot === i) ? 'primary' : ''" (click)="setCharSlot(i)">
-          <div *ngIf="player">
-            {{ player.name }}
-            <br>
-            <small>Level {{ player.level }} {{ player.baseClass }}</small>
-          </div>
-
-          <div *ngIf="!player">
-            Slot {{ i + 1 }}
-          </div>
-        </button>
-      </ng-container>
-    </div>
-
-    <div class="create-area vertical-center full-width full-height background-text" *ngIf="!account.players[charSlot]">
-      You do not currently have a character in this slot.
-
-      <ng-container *ngIf="gameService.charCreateData$ | async as charCreateData">
-        <button mat-flat-button color="accent" class="create-button m-t-20" (click)="create(charCreateData, charSlot, account.players[charSlot])">
-          Create Character
-        </button>
-      </ng-container>
-    </div>
-
-    <div class="char-viewer" *ngIf="account.players[charSlot] as player">
-      <div class="left-side">
-        <div class="about-player">
-          <div class="sprite">
-            <app-npc [sprite]="spriteForPlayer(player)"></app-npc>
-          </div>
-
-          <div class="about">
-            <strong class="name">{{ player.name }}</strong>
-            <br>
-            {{ player.hp.current }} / {{ player.hp.maximum }} HP
-            <br>
-            Level {{ player.level }} {{ player.baseClass }}
-            <br>
-            In {{ gameService.reformatMapName(player.map) }}
-            <br>
-            <br>
-            <a target="_blank" href="https://global.rair.land/character?username={{ account.username }}&charSlot={{ player.charSlot }}">Global Viewer</a>
-          </div>
-        </div>
-
-        <div class="actions" *ngIf="gameService.charCreateData$ | async as charCreateData">
-          <button mat-flat-button color="accent" class="create-button" (click)="create(charCreateData, charSlot, account.players[charSlot])">
-            {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
+          @if (player) {
+            <div>
+              {{ player.name }}
+              <br>
+                <small>Level {{ player.level }} {{ player.baseClass }}</small>
+              </div>
+            }
+            @if (!player) {
+              <div>
+                Slot {{ i + 1 }}
+              </div>
+            }
           </button>
-
-          <button mat-flat-button color="primary" class="play-button" [disabled]="!account.players[charSlot]" (click)="play(charSlot)" *ngIf="assetService.assetsLoaded">
-            Play
-          </button>
-
-          <button mat-flat-button color="primary" class="play-button" [disabled]="true" *ngIf="!assetService.assetsLoaded">
-            Loading...
-          </button>
-        </div>
+        }
       </div>
+      @if (!account.players[charSlot]) {
+        <div class="create-area vertical-center full-width full-height background-text">
+          You do not currently have a character in this slot.
+          @if (gameService.charCreateData$ | async; as charCreateData) {
+            <button mat-flat-button color="accent" class="create-button m-t-20" (click)="create(charCreateData, charSlot, account.players[charSlot])">
+              Create Character
+            </button>
+          }
+        </div>
+      }
+      @if (account.players[charSlot]; as player) {
+        <div class="char-viewer">
+          <div class="left-side">
+            <div class="about-player">
+              <div class="sprite">
+                <app-npc [sprite]="spriteForPlayer(player)"></app-npc>
+              </div>
+              <div class="about">
+                <strong class="name">{{ player.name }}</strong>
+                <br>
+                  {{ player.hp.current }} / {{ player.hp.maximum }} HP
+                  <br>
+                    Level {{ player.level }} {{ player.baseClass }}
+                    <br>
+                      In {{ gameService.reformatMapName(player.map) }}
+                      <br>
+                        <br>
+                          <a target="_blank" href="https://global.rair.land/character?username={{ account.username }}&charSlot={{ player.charSlot }}">Global Viewer</a>
+                        </div>
+                      </div>
+                      @if (gameService.charCreateData$ | async; as charCreateData) {
+                        <div class="actions">
+                          <button mat-flat-button color="accent" class="create-button" (click)="create(charCreateData, charSlot, account.players[charSlot])">
+                            {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
+                          </button>
+                          @if (assetService.assetsLoaded) {
+                            <button mat-flat-button color="primary" class="play-button" [disabled]="!account.players[charSlot]" (click)="play(charSlot)">
+                              Play
+                            </button>
+                          }
+                          @if (!assetService.assetsLoaded) {
+                            <button mat-flat-button color="primary" class="play-button" [disabled]="true">
+                              Loading...
+                            </button>
+                          }
+                        </div>
+                      }
+                    </div>
+                    <div class="right-side">
+                      <app-equipment-viewonly [player]="player"></app-equipment-viewonly>
+                    </div>
+                  </div>
+                }
+              }
 
-      <div class="right-side">
-        <app-equipment-viewonly [player]="player"></app-equipment-viewonly>
-      </div>
-    </div>
-  </ng-container>
-
-</ng-template>
+            </ng-template>

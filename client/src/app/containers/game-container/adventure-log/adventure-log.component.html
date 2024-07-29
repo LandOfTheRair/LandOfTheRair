@@ -1,31 +1,39 @@
-<app-window windowName="adventureLog"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="false"
-
-            defaultX="4"
-            defaultY="401"
-            defaultWidth="380"
-            defaultHeight="308"
-
+<app-window
+  windowName="adventureLog"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="false"
+  defaultX="4"
+  defaultY="401"
+  defaultWidth="380"
+  defaultHeight="308"
 ></app-window>
 
-<ng-template #headTemplate>
-  Adventure Log
-</ng-template>
+<ng-template #headTemplate>Adventure Log</ng-template>
 
 <ng-template #bodyTemplate>
   <div class="buttons">
-    <ng-container *ngFor="let tab of ['All', 'General', 'Combat', 'NPC']">
-      <button class="tab-button" mat-raised-button [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''" (click)="changeTab(tab)">{{ tab }}</button>
-    </ng-container>
+    @for (tab of chatTabs; track tab) {
+    <button
+      class="tab-button"
+      mat-raised-button
+      [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''"
+      (click)="changeTab(tab)"
+    >
+      {{ tab }}
+    </button>
+    }
   </div>
-  <div class="log-area" *ngIf="(gameService.logMode$ | async) as logMode">
-    <div class="message"
-         *ngFor="let message of messages"
-         [ngClass]="message.messageTypes"
-         [class.hidden]="!isMessageVisible(logMode, message)"
-         [innerHTML]="message.display">
-    </div>
+  @if ((gameService.logMode$ | async); as logMode) {
+  <div class="log-area">
+    @for (message of messages; track message) {
+    <div
+      class="message"
+      [ngClass]="message.messageTypes"
+      [class.hidden]="!isMessageVisible(logMode, message)"
+      [innerHTML]="message.display"
+    ></div>
+    }
   </div>
+  }
 </ng-template>

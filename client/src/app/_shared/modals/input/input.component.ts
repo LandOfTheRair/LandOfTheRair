@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IInputData {
   title: string;
@@ -14,18 +14,13 @@ interface IInputData {
 @Component({
   selector: 'app-input-request',
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss']
+  styleUrls: ['./input.component.scss'],
 })
-export class InputModalComponent implements OnInit {
-
+export class InputModalComponent {
   public value = '';
 
   constructor(
     public dialogRef: MatDialogRef<InputModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IInputData
-  ) { }
-
-  ngOnInit() {
-  }
-
+    @Inject(MAT_DIALOG_DATA) public data: IInputData,
+  ) {}
 }
