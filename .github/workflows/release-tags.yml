@@ -15,56 +15,56 @@ jobs:
       matrix:
         # os: [macos-latest, ubuntu-latest, windows-latest]
         os: [windows-latest]
-        node-version: [16.12.x]
+        node-version: [20.x.x]
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - run: npm install
+      - run: npm install
 
-    - run: npm run setup:full
+      - run: npm run setup:full
 
-    - run: npm run lint
+      - run: npm run lint
 
-    - run: npm run build
+      - run: npm run build
 
-    - run: cd server && npm run build:package
+      - run: cd server && npm run build:package
 
-    - uses: little-core-labs/get-git-tag@v3.0.1
-      id: loadTagName
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: loadTagName
 
-    - uses: pCYSl5EDgo/cat@master
-      id: loadChangelog
-      with:
-        path: CHANGELOG-current.md
+      - uses: pCYSl5EDgo/cat@master
+        id: loadChangelog
+        with:
+          path: CHANGELOG-current.md
 
-    - name: Create Release
-      id: createRelease
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: ${{ steps.loadChangelog.outputs.text }}
-        draft: false
-        prerelease: false
+      - name: Create Release
+        id: createRelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ steps.loadChangelog.outputs.text }}
+          draft: false
+          prerelease: false
 
-    - name: Upload Server Binary
-      id: uploadReleaseAsset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.createRelease.outputs.upload_url }}
-        asset_path: ./server/build/lotr-server.exe
-        asset_name: lotr-server.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
+      - name: Upload Server Binary
+        id: uploadReleaseAsset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.createRelease.outputs.upload_url }}
+          asset_path: ./server/build/lotr-server.exe
+          asset_name: lotr-server.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
 
     #- name: Deploy Server
     #  uses: AlexxNB/caprover-action@v1
