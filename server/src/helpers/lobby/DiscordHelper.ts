@@ -273,10 +273,12 @@ export class DiscordHelper extends BaseService {
 
     if (fullItem.requirements) {
       const requirements: string[] = [];
-      if (fullItem.requirements.baseClass)
+      if (fullItem.requirements.baseClass) {
         requirements.push(`Class: ${fullItem.requirements.baseClass}`);
-      if (fullItem.requirements.level)
+      }
+      if (fullItem.requirements.level) {
         requirements.push(`Level: ${fullItem.requirements.level}`);
+      }
 
       embed.addField('Requirements', requirements.join(', '), true);
     }
@@ -342,8 +344,9 @@ export class DiscordHelper extends BaseService {
         !this.discordChannel ||
         !this.discordBotCommandChannel ||
         author.bot
-      )
+      ) {
         return;
+      }
 
       if (channel.id === this.discordChannel.id) {
         const username =
