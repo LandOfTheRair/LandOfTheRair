@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-button-minimize',
@@ -7,17 +7,14 @@ import { Component, OnInit } from '@angular/core';
       <mat-icon>minimize</mat-icon>
     </button>
   `,
-  styles: [`
-  :host {
-    background-color: #a17f1a;
-  }
-  `]
+  styles: [
+    `
+      :host {
+        background-color: #a17f1a;
+      }
+    `,
+  ],
 })
-export class ButtonMinimizeComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class ButtonMinimizeComponent {
+  constructor() {}
 }

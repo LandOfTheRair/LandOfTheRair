@@ -1,22 +1,16 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
-        "project": [
-          "tsconfig.json"
-        ],
+        "project": ["tsconfig.json"],
         "createDefaultProgram": true
       },
+      "plugins": ["@typescript-eslint"],
       "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
+        "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
@@ -53,16 +47,9 @@
         "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-use-before-define": "error",
         "@typescript-eslint/prefer-for-of": "off",
-        "arrow-parens": [
-          "off",
-          "always"
-        ],
-        "curly": [
-          "error",
-          "multi-line"
-        ],
+        "arrow-parens": ["off", "always"],
+        "curly": ["error", "multi-line"],
         "no-underscore-dangle": "off",
-        "import/order": "error",
         "keyword-spacing": "error",
         "object-curly-spacing": ["error", "always"],
         "space-infix-ops": ["error"],
@@ -79,12 +66,8 @@
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended"
-      ],
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }
   ]

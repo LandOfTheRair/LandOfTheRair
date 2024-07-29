@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IErrorAlertData {
   title: string;
@@ -9,16 +9,11 @@ interface IErrorAlertData {
 @Component({
   selector: 'app-error',
   templateUrl: './error.component.html',
-  styleUrls: ['./error.component.scss']
+  styleUrls: ['./error.component.scss'],
 })
-export class ErrorComponent implements OnInit {
-
+export class ErrorComponent {
   constructor(
     public dialogRef: MatDialogRef<ErrorComponent>,
-    @Inject(MAT_DIALOG_DATA) public errorData: IErrorAlertData
+    @Inject(MAT_DIALOG_DATA) public errorData: IErrorAlertData,
   ) {}
-
-  ngOnInit() {
-  }
-
 }

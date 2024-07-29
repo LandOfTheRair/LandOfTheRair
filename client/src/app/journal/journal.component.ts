@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
@@ -9,10 +9,9 @@ import { JournalState, UpdateJournal } from '../../stores';
 @Component({
   selector: 'app-journal',
   templateUrl: './journal.component.html',
-  styleUrls: ['./journal.component.scss']
+  styleUrls: ['./journal.component.scss'],
 })
-export class JournalComponent implements OnInit, OnDestroy {
-
+export class JournalComponent implements OnInit {
   @Select(JournalState.journal) private journal$: Observable<string>;
 
   public journal: string;
@@ -20,14 +19,10 @@ export class JournalComponent implements OnInit, OnDestroy {
   constructor(private store: Store) {}
 
   ngOnInit() {
-    this.journal$.pipe(first())
-      .subscribe(j => this.journal = j);
+    this.journal$.pipe(first()).subscribe((j) => (this.journal = j));
   }
-
-  ngOnDestroy() {}
 
   public updateJournal() {
     this.store.dispatch(new UpdateJournal(this.journal));
   }
-
 }

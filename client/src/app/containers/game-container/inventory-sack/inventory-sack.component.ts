@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
@@ -12,24 +12,14 @@ import { GameService } from '../../../services/game.service';
 @Component({
   selector: 'app-inventory-sack',
   templateUrl: './inventory-sack.component.html',
-  styleUrls: ['./inventory-sack.component.scss']
+  styleUrls: ['./inventory-sack.component.scss'],
 })
-export class InventorySackComponent implements OnInit, OnDestroy {
-
+export class InventorySackComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
-  constructor(
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-  }
-
-  ngOnDestroy() {
-  }
+  constructor(public gameService: GameService) {}
 
   depositAll() {
     this.gameService.sendCommandString('depositall');
   }
-
 }

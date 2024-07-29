@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
@@ -16,11 +16,13 @@ import { UIService } from '../../../services/ui.service';
 @Component({
   selector: 'app-vendor',
   templateUrl: './vendor.component.html',
-  styleUrls: ['./vendor.component.scss']
+  styleUrls: ['./vendor.component.scss'],
 })
-export class VendorComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+export class VendorComponent implements OnInit {
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -29,11 +31,15 @@ export class VendorComponent implements OnInit, OnDestroy {
   public vendorInfo: any = {};
 
   public get slots() {
-    return Array(20).fill(null).map((v, i) => i);
+    return Array(20)
+      .fill(null)
+      .map((v, i) => i);
   }
 
   public get buybackSlots() {
-    return Array(5).fill(null).map((v, i) => i);
+    return Array(5)
+      .fill(null)
+      .map((v, i) => i);
   }
 
   vendorInfoSub: Subscription;
@@ -43,8 +49,8 @@ export class VendorComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {}
 
   ngOnInit() {
     this.posSub = this.curPos$.subscribe((pos) => {
@@ -59,7 +65,7 @@ export class VendorComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.vendorInfoSub = this.vendor$.subscribe(data => {
+    this.vendorInfoSub = this.vendor$.subscribe((data) => {
       this.vendorInfo = cloneDeep(data || {});
     });
 
@@ -68,8 +74,6 @@ export class VendorComponent implements OnInit, OnDestroy {
       this.store.dispatch(new HideWindow('vendor'));
     });
   }
-
-  ngOnDestroy() {}
 
   boughtDailyAlready(player: IPlayer, item: ISimpleItem): boolean {
     const boughtTime = player.dailyItems?.[item?.uuid];
@@ -90,5 +94,4 @@ export class VendorComponent implements OnInit, OnDestroy {
   sellall() {
     this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, sellall`);
   }
-
 }

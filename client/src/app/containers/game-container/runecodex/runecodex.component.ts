@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
@@ -7,8 +7,8 @@ import { Observable, Subscription } from 'rxjs';
 import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
-import { GameService } from '../../../services/game.service';
 import { AssetService } from '../../../services/asset.service';
+import { GameService } from '../../../services/game.service';
 
 import * as AllTraits from '../../../../assets/content/_output/traits.json';
 
@@ -16,10 +16,9 @@ import * as AllTraits from '../../../../assets/content/_output/traits.json';
 @Component({
   selector: 'app-runecodex',
   templateUrl: './runecodex.component.html',
-  styleUrls: ['./runecodex.component.scss']
+  styleUrls: ['./runecodex.component.scss'],
 })
-export class RuneCodexComponent implements OnInit, OnDestroy {
-
+export class RuneCodexComponent implements OnInit {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   public player: IPlayer;
@@ -33,11 +32,11 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
   public readonly slots = [
     {
       display: 'Level 5',
-      slot: 0
+      slot: 0,
     },
     {
       display: 'Level 10',
-      slot: 1
+      slot: 1,
     },
     {},
     {},
@@ -46,20 +45,20 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
     {},
     {
       display: 'Level 15',
-      slot: 2
+      slot: 2,
     },
     {
       display: 'Level 20',
-      slot: 3
+      slot: 3,
     },
 
     {
       display: 'Level 25',
-      slot: 4
+      slot: 4,
     },
     {
       display: 'Level 30',
-      slot: 5
+      slot: 5,
     },
     {},
     {},
@@ -68,21 +67,20 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
     {},
     {
       display: 'Level 35',
-      slot: 6
+      slot: 6,
     },
     {
       display: 'Level 40',
-      slot: 7
+      slot: 7,
     },
-
 
     {
       display: 'Level 45',
-      slot: 8
+      slot: 8,
     },
     {
       display: 'Level 50',
-      slot: 9
+      slot: 9,
     },
     {},
     {},
@@ -90,24 +88,20 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
 
   constructor(
     private assetService: AssetService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {}
 
   ngOnInit() {
-    this.playerSub = this.player$.subscribe(p => {
+    this.playerSub = this.player$.subscribe((p) => {
       this.player = p;
       this.sortRunes();
     });
-  }
-
-  ngOnDestroy() {
   }
 
   private sortRunes() {
     if (!this.player) return;
     this.orderedRunes = this.player.learnedRunes.slice();
     this.orderedRunes.sort();
-
   }
 
   getTraitIcon(runescrollName: string): string {
@@ -128,7 +122,9 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
     const item = this.assetService.getItem(runescrollName);
     if (!AllTraits[item?.trait?.name]) return 'Unknown Rune';
 
-    return AllTraits[item.trait.name].name + ' ' + this.getTraitLevel(runescrollName);
+    return (
+      AllTraits[item.trait.name].name + ' ' + this.getTraitLevel(runescrollName)
+    );
   }
 
   selectSlot(slot: number) {
@@ -150,9 +146,10 @@ export class RuneCodexComponent implements OnInit, OnDestroy {
   }
 
   inscribe() {
-    this.gameService.sendCommandString(`inscribe ${this.activeSlot} ${this.activeRune}`);
+    this.gameService.sendCommandString(
+      `inscribe ${this.activeSlot} ${this.activeRune}`,
+    );
     this.activeRune = '';
     this.activeSlot = -1;
   }
-
 }

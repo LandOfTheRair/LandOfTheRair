@@ -1,15 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
+import { Component, Input } from '@angular/core';
+import {
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  ItemSlot,
+} from '../../../../interfaces';
 import { AssetService } from '../../../services/asset.service';
 import { UIService } from '../../../services/ui.service';
 
 @Component({
   selector: 'app-equipment-viewonly',
   templateUrl: './equipment-viewonly.component.html',
-  styleUrls: ['./equipment-viewonly.component.scss']
+  styleUrls: ['./equipment-viewonly.component.scss'],
 })
-export class EquipmentViewOnlyComponent implements OnInit {
-
+export class EquipmentViewOnlyComponent {
   @Input() public player: IPlayer;
   @Input() public hideGold = false;
 
@@ -18,25 +22,25 @@ export class EquipmentViewOnlyComponent implements OnInit {
       template: 'coin',
       scope: 'coin',
       dropScope: 'Sack',
-      canShow: () => !this.hideGold
+      canShow: () => !this.hideGold,
     },
     {
       slot: 'ear',
       name: 'Earring',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'head',
       name: 'Helm',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'neck',
       name: 'Amulet',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {},
 
@@ -44,7 +48,7 @@ export class EquipmentViewOnlyComponent implements OnInit {
       slot: 'waist',
       name: 'Sash',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {},
     {},
@@ -53,7 +57,7 @@ export class EquipmentViewOnlyComponent implements OnInit {
       slot: 'wrists',
       name: 'Bracers',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
 
     {
@@ -61,7 +65,7 @@ export class EquipmentViewOnlyComponent implements OnInit {
       name: 'Ring',
       scope: 'ring',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       template: 'hand',
@@ -70,7 +74,7 @@ export class EquipmentViewOnlyComponent implements OnInit {
       scope: 'right',
       dropScope: 'Right',
       hand: 'Right',
-      canShow: () => true
+      canShow: () => true,
     },
     {},
     {
@@ -80,21 +84,21 @@ export class EquipmentViewOnlyComponent implements OnInit {
       scope: 'left',
       dropScope: 'Left',
       hand: 'Left',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'ring2',
       name: 'Ring',
       scope: 'ring',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
 
     {
       slot: 'hands',
       name: 'Gloves',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {},
     {},
@@ -103,49 +107,45 @@ export class EquipmentViewOnlyComponent implements OnInit {
       slot: 'feet',
       name: 'Boots',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
 
     {
       slot: 'potion',
       name: 'Potion',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'armor',
       scope: ['armor', 'robe'],
       name: 'Armor',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'robe1',
       name: 'Robe',
       scope: 'robe',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
-    slot: 'robe2',
+      slot: 'robe2',
       name: 'Robe',
       scope: 'robe',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
     {
       slot: 'ammo',
       name: 'Ammo',
       dropScope: 'Equipment',
-      canShow: () => true
+      canShow: () => true,
     },
-
   ];
 
-  constructor(public uiService: UIService, public assetService: AssetService) { }
-
-  ngOnInit() {
-  }
+  constructor(public uiService: UIService, public assetService: AssetService) {}
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };
@@ -155,5 +155,4 @@ export class EquipmentViewOnlyComponent implements OnInit {
     if (!item) return false;
     return this.assetService.getItem(item.name)?.itemClass === ItemClass.Coin;
   }
-
 }

@@ -1,9 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
-import { IPlayer, ISimpleItem, ItemClass, ItemSlot } from '../../../../interfaces';
+import {
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  ItemSlot,
+} from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 
@@ -14,17 +19,16 @@ import { UIService } from '../../../services/ui.service';
 @Component({
   selector: 'app-equipment-quick',
   templateUrl: './equipment-quick.component.html',
-  styleUrls: ['./equipment-quick.component.scss']
+  styleUrls: ['./equipment-quick.component.scss'],
 })
-export class EquipmentQuickComponent implements OnInit, OnDestroy {
-
+export class EquipmentQuickComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   public readonly slots = [
     {
       template: 'coin',
       scope: 'coin',
-      dropScope: 'Sack'
+      dropScope: 'Sack',
     },
     {
       template: 'hand',
@@ -32,7 +36,7 @@ export class EquipmentQuickComponent implements OnInit, OnDestroy {
       slot: 'rightHand',
       scope: 'right',
       dropScope: 'Right',
-      hand: 'Right'
+      hand: 'Right',
     },
     {},
     {
@@ -41,27 +45,20 @@ export class EquipmentQuickComponent implements OnInit, OnDestroy {
       slot: 'leftHand',
       scope: 'left',
       dropScope: 'Left',
-      hand: 'Left'
+      hand: 'Left',
     },
     {
       slot: 'potion',
       name: 'Potion',
-      dropScope: 'Equipment'
-    }
-
+      dropScope: 'Equipment',
+    },
   ];
 
   constructor(
     public uiService: UIService,
     public gameService: GameService,
-    public assetService: AssetService
-  ) { }
-
-  ngOnInit() {
-  }
-
-  ngOnDestroy() {
-  }
+    public assetService: AssetService,
+  ) {}
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };
@@ -71,5 +68,4 @@ export class EquipmentQuickComponent implements OnInit, OnDestroy {
     if (!item) return false;
     return this.assetService.getItem(item.name).itemClass === ItemClass.Coin;
   }
-
 }

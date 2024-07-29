@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
@@ -11,10 +11,9 @@ import { MacrosService } from '../../../services/macros.service';
 @Component({
   selector: 'app-macro',
   templateUrl: './macro.component.html',
-  styleUrls: ['./macro.component.scss']
+  styleUrls: ['./macro.component.scss'],
 })
-export class MacroComponent implements OnInit, OnDestroy {
-
+export class MacroComponent implements OnInit {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   private cooldownDisplayValue = new BehaviorSubject<number>(0);
@@ -52,16 +51,18 @@ export class MacroComponent implements OnInit, OnDestroy {
   }
 
   get macroKeybind() {
-    if (!this.macroRef) return '';
+    if (!this.macroRef) {
+      return '';
+    }
     return this.macroService.buildMacroString(this.macroRef);
   }
 
-  constructor(public macroService: MacrosService) { }
+  constructor(public macroService: MacrosService) {}
 
   ngOnInit() {
     this.cooldownSub = interval(100)
       .pipe(switchMap(() => this.cooldownDisplayValue))
-      .subscribe(v => {
+      .subscribe((v) => {
         if (Date.now() > v) {
           this.cooldownDisplay = '';
           return;
@@ -78,10 +79,10 @@ export class MacroComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy() {}
-
   reformatTooltipTextForPlayer(player: IPlayer, text: string): string {
-    if (player.baseClass === BaseClass.Thief) return text.split('MP').join('HP');
+    if (player.baseClass === BaseClass.Thief) {
+      return text.split('MP').join('HP');
+    }
 
     return text;
   }

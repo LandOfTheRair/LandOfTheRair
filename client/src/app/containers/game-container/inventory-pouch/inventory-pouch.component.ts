@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
@@ -12,20 +12,10 @@ import { GameService } from '../../../services/game.service';
 @Component({
   selector: 'app-inventory-pouch',
   templateUrl: './inventory-pouch.component.html',
-  styleUrls: ['./inventory-pouch.component.scss']
+  styleUrls: ['./inventory-pouch.component.scss'],
 })
-export class InventoryPouchComponent implements OnInit, OnDestroy {
-
+export class InventoryPouchComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
-  constructor(
-    public gameService: GameService
-  ) { }
-
-  ngOnInit() {
-  }
-
-  ngOnDestroy() {
-  }
-
+  constructor(public gameService: GameService) {}
 }

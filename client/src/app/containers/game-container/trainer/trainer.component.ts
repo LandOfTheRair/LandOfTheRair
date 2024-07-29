@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep } from 'lodash';
@@ -17,12 +17,14 @@ import { UIService } from '../../../services/ui.service';
 @Component({
   selector: 'app-trainer',
   templateUrl: './trainer.component.html',
-  styleUrls: ['./trainer.component.scss']
+  styleUrls: ['./trainer.component.scss'],
 })
-export class TrainerComponent implements OnInit, OnDestroy {
-
+export class TrainerComponent implements OnInit {
   @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentTrainerWindow) trainer$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
 
@@ -50,15 +52,15 @@ export class TrainerComponent implements OnInit, OnDestroy {
     Skill.Thievery,
     Skill.Wand,
     Skill.Conjuration,
-    Skill.Restoration
+    Skill.Restoration,
   ];
 
   constructor(
     private store: Store,
     private modalService: ModalService,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {}
 
   ngOnInit() {
     this.posSub = this.curPos$.subscribe((pos) => {
@@ -73,7 +75,7 @@ export class TrainerComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.trainerInfoSub = this.trainer$.subscribe(data => {
+    this.trainerInfoSub = this.trainer$.subscribe((data) => {
       this.trainerInfo = cloneDeep(data || {});
     });
 
@@ -83,10 +85,10 @@ export class TrainerComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {}
-
   assess() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, assess ${this.activeSkill}`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, assess ${this.activeSkill}`,
+    );
   }
 
   train() {
@@ -102,20 +104,29 @@ export class TrainerComponent implements OnInit, OnDestroy {
   }
 
   warp() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, guildteleport`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, guildteleport`,
+    );
   }
 
   trainSkill() {
-    this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`);
+    this.gameService.sendCommandString(
+      `#${this.trainerInfo.npcUUID}, trainskill ${this.activeSkill}`,
+    );
   }
 
   resetTraits() {
-    this.modalService.confirm('Reset Traits', 'Are you sure you want to reset your entire trait tree?')
-      .subscribe(res => {
+    this.modalService
+      .confirm(
+        'Reset Traits',
+        'Are you sure you want to reset your entire trait tree?',
+      )
+      .subscribe((res) => {
         if (!res) return;
 
-        this.gameService.sendCommandString(`#${this.trainerInfo.npcUUID}, reset`);
+        this.gameService.sendCommandString(
+          `#${this.trainerInfo.npcUUID}, reset`,
+        );
       });
   }
-
 }

@@ -1,11 +1,21 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Store } from '@ngxs/store';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Subscription } from 'rxjs';
-import { GameServerEvent, IAccount, ICharacterCreateInfo, IPlayer, basePlayerSprite } from '../../../../interfaces';
-import { SetActiveWindow, SetCharSlot, SetLastCharSlotPlayed } from '../../../../stores';
+import {
+  basePlayerSprite,
+  GameServerEvent,
+  IAccount,
+  ICharacterCreateInfo,
+  IPlayer,
+} from '../../../../interfaces';
+import {
+  SetActiveWindow,
+  SetCharSlot,
+  SetLastCharSlotPlayed,
+} from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
@@ -15,10 +25,9 @@ import { CharCreateComponent } from '../char-create/char-create.component';
 @Component({
   selector: 'app-char-select',
   templateUrl: './char-select.component.html',
-  styleUrls: ['./char-select.component.scss']
+  styleUrls: ['./char-select.component.scss'],
 })
-export class CharSelectComponent implements AfterViewInit, OnDestroy {
-
+export class CharSelectComponent implements AfterViewInit {
   @ViewChild('tabs', { static: false }) tabs: MatTabGroup;
   public account: IAccount;
   public charSlot: number;
@@ -29,24 +38,20 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
     private dialog: MatDialog,
     public gameService: GameService,
     public socketService: SocketService,
-    public assetService: AssetService
-  ) { }
+    public assetService: AssetService,
+  ) {}
 
   ngAfterViewInit() {
     this.charSlotAccount$ = combineLatest([
       this.gameService.account$,
-      this.gameService.charSlot$
+      this.gameService.charSlot$,
     ]).subscribe(([account, charSlot]) => {
-
       // we don't talk about this mess
       setTimeout(() => {
         this.account = account;
         this.charSlot = charSlot.slot;
       }, 0);
     });
-  }
-
-  ngOnDestroy() {
   }
 
   public setCharSlot(index) {
@@ -57,16 +62,23 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
     return basePlayerSprite(player);
   }
 
-  create(charCreateData: ICharacterCreateInfo, slot: number, needsOverwrite: boolean) {
+  create(
+    charCreateData: ICharacterCreateInfo,
+    slot: number,
+    needsOverwrite: boolean,
+  ) {
     const dialogRef = this.dialog.open(CharCreateComponent, {
       panelClass: 'fancy',
       disableClose: true,
-      data: { needsOverwrite, slot, charCreateData }
+      data: { needsOverwrite, slot, charCreateData },
     });
 
-    dialogRef.afterClosed().subscribe(char => {
+    dialogRef.afterClosed().subscribe((char) => {
       if (!char) return;
-      this.socketService.emit(GameServerEvent.CreateCharacter, { slot, ...char });
+      this.socketService.emit(GameServerEvent.CreateCharacter, {
+        slot,
+        ...char,
+      });
     });
   }
 
@@ -75,5 +87,4 @@ export class CharSelectComponent implements AfterViewInit, OnDestroy {
     this.store.dispatch(new SetActiveWindow('map'));
     this.store.dispatch(new SetLastCharSlotPlayed(charSlot));
   }
-
 }

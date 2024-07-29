@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
@@ -15,11 +15,13 @@ import { UIService } from '../../../services/ui.service';
 @Component({
   selector: 'app-bank',
   templateUrl: './bank.component.html',
-  styleUrls: ['./bank.component.scss']
+  styleUrls: ['./bank.component.scss'],
 })
-export class BankComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+export class BankComponent implements OnInit {
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentBankWindow) bank$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -35,8 +37,8 @@ export class BankComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     public uiService: UIService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {}
 
   ngOnInit() {
     this.posSub = this.curPos$.subscribe((pos) => {
@@ -51,7 +53,7 @@ export class BankComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.bankInfoSub = this.bank$.subscribe(data => {
+    this.bankInfoSub = this.bank$.subscribe((data) => {
       this.bankInfo = cloneDeep(data || {});
     });
 
@@ -61,14 +63,15 @@ export class BankComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {}
-
   deposit(num: number) {
-    this.gameService.sendCommandString(`#${this.bankInfo.npcUUID}, deposit ${num}`);
+    this.gameService.sendCommandString(
+      `#${this.bankInfo.npcUUID}, deposit ${num}`,
+    );
   }
 
   withdraw(num: number) {
-    this.gameService.sendCommandString(`#${this.bankInfo.npcUUID}, withdraw ${num}`);
+    this.gameService.sendCommandString(
+      `#${this.bankInfo.npcUUID}, withdraw ${num}`,
+    );
   }
-
 }
