@@ -8,8 +8,8 @@ You can either use Docker, or you can use your own installed Node / Mongo / Redi
 
 ### Other Repos
 
-* [Assets](https://github.com/LandOfTheRair/Assets) - home of bgm, macicons, sfx, and spritesheets (frontend content)
-* [Content](https://github.com/LandOfTheRair/Content) - home of droptables, items, maps, npc stats, npc scripts, quests, recipes, and spawners (backend content)
+- [Assets](https://github.com/LandOfTheRair/Assets) - home of bgm, macicons, sfx, and spritesheets (frontend content)
+- [Content](https://github.com/LandOfTheRair/Content) - home of droptables, items, maps, npc stats, npc scripts, quests, recipes, and spawners (backend content)
 
 ### Docker
 
@@ -21,8 +21,8 @@ You will want to be using Node 16.12 (at least) to run this project.
 
 #### Setup
 
-* `npm install` - set up the monorepo
-* `npm run setup:full` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
+- `npm install` - set up the monorepo
+- `npm run setup:full` - setup both the client and server for development (See "Developing Content" for some advice on running the same instance of the Content folder for client and server).
 
 #### Developing Code-related Content
 
@@ -35,6 +35,21 @@ One option you have to run Land of the Rair and actively work on the content, is
 The content will need to be rebuilt when it changes. You can either run `npm run content:build` to do it when needed, or `npm run content:watch` to watch for changes.
 
 To commit content, you'll still need to go to that folder manually and commit, since it is a separate repository. The helpers above are added for convenience.
+
+#### Setup Script
+
+Running this sets up the environment entirely, with a symlinked content directory for editing / committing.
+
+```bash
+git clone https://github.com/LandOfTheRair/LandOfTheRair.git
+git clone https://github.com/LandOfTheRair/Content.git
+touch LandOfTheRair/.env
+cd LandOfTheRair
+npm install
+npm run setup:full
+```
+
+You'll still need to edit your `.env`, and do other project-specific setup - [see here](https://github.com/LandOfTheRair/LandOfTheRair/tree/master/server) for server setup. The client should work after running the above.
 
 #### Running Both Projects
 
