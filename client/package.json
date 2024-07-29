@@ -54,7 +54,7 @@
     "rss-parser": "^3.9.0",
     "rxjs": "^7.5.4",
     "rxjs-websockets": "^7.0.2",
-    "zone.js": "~0.13.3"
+    "zone.js": "^0.14.8"
   },
   "devDependencies": {
     "@angular-devkit/architect": "^0.1602.14",
@@ -83,7 +83,7 @@
     "md5-file": "^4.0.0",
     "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
-    "typescript": "^5.1.6",
+    "typescript": "5.2",
     "webfont": "^7.1.4"
   }
 }
