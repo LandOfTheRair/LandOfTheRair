@@ -207,6 +207,8 @@ export class GroundManager extends BaseService {
   }
 
   public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem, forceSave?: boolean): void {
+    if (!item) return;
+
     const { itemClass: itemItemClass, sprite } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'sprite']);
 
     const itemClass = itemItemClass ?? ItemClass.Box;
