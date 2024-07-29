@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
-    "bcrypt": "5.0.0",
+    "bcrypt": "5.1.1",
     "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
     "deep-freeze": "0.0.1",
