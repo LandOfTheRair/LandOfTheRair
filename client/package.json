@@ -2,8 +2,8 @@
   "name": "lotr-client",
   "version": "0.0.0",
   "engines": {
-    "node": "16.12.0",
-    "npm": "8.1.0"
+    "node": ">= 18",
+    "npm": ">= 8"
   },
   "scripts": {
     "ng": "ng",
@@ -34,7 +34,6 @@
     "@angular/pwa": "^0.803.4",
     "@angular/router": "~13.2.3",
     "@angular/service-worker": "~13.2.3",
-    "@material-extended/mde": "^3.0.3",
     "@ngxs-labs/immer-adapter": "^3.0.5",
     "@ngxs/devtools-plugin": "^3.7.3",
     "@ngxs/logger-plugin": "^3.7.3",

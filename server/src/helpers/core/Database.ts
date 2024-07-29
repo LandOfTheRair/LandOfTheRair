@@ -31,6 +31,7 @@ export class Database extends BaseService {
           useUnifiedTopology: true,
         });
         await this.client.connect();
+        console.info(`${source}:DB`, 'Connected; pinging admin...');
         await this.client.db('admin').command({ ping: 1 });
         console.info(`${source}:DB`, 'Database connection established...');
         break;
