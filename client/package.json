@@ -83,7 +83,7 @@
     "md5-file": "^4.0.0",
     "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
-    "typescript": "5.2",
+    "typescript": "5.4",
     "webfont": "^7.1.4"
   }
 }
