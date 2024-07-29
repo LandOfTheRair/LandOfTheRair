@@ -3,9 +3,8 @@
   [class.active]="isActive"
   [class.has-macro]="macroRef"
   [class.disable-effects]="disableEffects"
-  >
-  <div class="macro">
-    <!-- [popover]="macroTooltipTemplate" -->
+>
+  <div class="macro" [mdePopoverTriggerFor]="macroTooltipTemplate">
     <app-icon
       [name]="iconName"
       [disabled]="disabled"
@@ -14,23 +13,21 @@
     ></app-icon>
 
     @if (cooldownDisplay) {
-      <div class="cooldown">{{ cooldownDisplay }} s</div>
-    }
-
-    @if (macroKeybind) {
-      <div class="keybind">
-        {{ macroKeybind }}
-      </div>
+    <div class="cooldown">{{ cooldownDisplay }} s</div>
+    } @if (macroKeybind) {
+    <div class="keybind">
+      {{ macroKeybind }}
+    </div>
     }
   </div>
 
-  <!-- TODO: re-enable this
-  <popover-content
-    #macroTooltipTemplate
-    [placement]="'top'"
-    [popoverDisabled]="!macroRef || !showTooltip"
-    mdePopoverEnterDelay="1000"
-    >
+  <mde-popover
+    #macroTooltipTemplate="mdePopover"
+    [mdePopoverPositionY]="'above'"
+    [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'"
+    [mdePopoverOverlapTrigger]="false"
+    [mdePopoverEnterDelay]="1000"
+  >
     <mat-card class="tooltip-card">
       <mat-card-title>
         <strong>{{ macroName || 'Empty' }}</strong>
@@ -41,6 +38,5 @@
         </div>
       </mat-card-content>
     </mat-card>
-  </popover-content>
-  -->
+  </mde-popover>
 </div>

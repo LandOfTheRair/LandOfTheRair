@@ -46,7 +46,6 @@
     "luxon": "^1.25.0",
     "marked": "^1.2.5",
     "ngx-color-picker": "~17",
-    "ngx-float-ui": "^18.0.1",
     "ngxs-reset-plugin": "^4.0.0",
     "phaser": "3.54.0",
     "queueing-subject": "^0.3.4",

@@ -5,79 +5,107 @@ import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { Currency, IGame } from '../interfaces';
-import { HideBankWindow, HideLockerWindow, HideMarketWindow, HideTradeskillWindow, HideTrainerWindow,
-  HideVendorWindow, Login, OpenBankWindow, OpenLockerWindow, OpenMarketWindow, OpenTradeskillWindow, OpenTrainerWindow,
-  OpenVendorWindow, PatchGameStateForPlayer, PatchPlayer, PatchPlayerPosition, PlayerReady, PlayGame,
-  QuitGame, SetCurrentItemTooltip, SetCurrentTarget, SetMap, SetPlayer, ShowWindow, UpdateParty, ViewCharacterEquipment } from './actions';
+import {
+  HideBankWindow,
+  HideLockerWindow,
+  HideMarketWindow,
+  HideTradeskillWindow,
+  HideTrainerWindow,
+  HideVendorWindow,
+  Login,
+  OpenBankWindow,
+  OpenLockerWindow,
+  OpenMarketWindow,
+  OpenTradeskillWindow,
+  OpenTrainerWindow,
+  OpenVendorWindow,
+  PatchGameStateForPlayer,
+  PatchPlayer,
+  PatchPlayerPosition,
+  PlayerReady,
+  PlayGame,
+  QuitGame,
+  SetCurrentItemTooltip,
+  SetCurrentTarget,
+  SetMap,
+  SetPlayer,
+  ShowWindow,
+  UpdateParty,
+  ViewCharacterEquipment,
+} from './actions';
 
-const setPlayerForDiscord = player => (window as any).discordGlobalCharacter = player;
+const setPlayerForDiscord = (player) =>
+  ((window as any).discordGlobalCharacter = player);
 
 const defaultGame: () => IGame = () => ({
-    inGame: false,
-    currentTarget: '',
-    itemTooltip: { tooltip: '', upgrades: [] },
-    player: null,
-    map: null,
-    currentHoliday: null,
-    trainerInfo: {
-      npcUUID: '',
-      npcName: '',
-      npcSprite: 0,
-      npcMaxSkill: 0,
-      npcMaxLevel: 0,
-      npcCanRevive: false,
-      npcGuildTeleport: false
-    },
-    vendorInfo: {
-      npcUUID: '',
-      npcName: '',
-      npcSprite: 0,
-      npcVendorCurrency: Currency.Gold,
-      npcVendorItems: [],
-      npcVendorDailyItems: []
-    },
-    bankInfo: {
-      npcUUID: '',
-      npcName: '',
-      npcSprite: 0,
-      npcBank: '',
-      npcBranch: ''
-    },
-    marketInfo: {
-      npcUUID: '',
-      npcName: '',
-      npcSprite: 0,
-    },
-    mapInfo: {
-      players: {},
-      npcs: {},
-      ground: {},
-      openDoors: {}
-    },
-    lockerInfo: {
-      lockerName: '',
-      showLockers: [],
-      playerLockers: {},
-      accountLockers: {}
-    },
-    partyInfo: {
-      party: null,
-      partyMembers: null
-    },
-    tradeskillInfo: {
-      tradeskill: null
-    },
-    inspectingCharacter: null
-  });
+  inGame: false,
+  currentTarget: '',
+  itemTooltip: { tooltip: '', upgrades: [] },
+  player: null,
+  map: null,
+  currentHoliday: null,
+  trainerInfo: {
+    npcUUID: '',
+    npcName: '',
+    npcSprite: 0,
+    npcMaxSkill: 0,
+    npcMaxLevel: 0,
+    npcCanRevive: false,
+    npcGuildTeleport: false,
+  },
+  vendorInfo: {
+    npcUUID: '',
+    npcName: '',
+    npcSprite: 0,
+    npcVendorCurrency: Currency.Gold,
+    npcVendorItems: [],
+    npcVendorDailyItems: [],
+  },
+  bankInfo: {
+    npcUUID: '',
+    npcName: '',
+    npcSprite: 0,
+    npcBank: '',
+    npcBranch: '',
+  },
+  marketInfo: {
+    npcUUID: '',
+    npcName: '',
+    npcSprite: 0,
+  },
+  mapInfo: {
+    players: {},
+    npcs: {},
+    ground: {},
+    openDoors: {},
+  },
+  lockerInfo: {
+    lockerName: '',
+    showLockers: [],
+    playerLockers: {},
+    accountLockers: {},
+  },
+  partyInfo: {
+    party: null,
+    partyMembers: null,
+  },
+  tradeskillInfo: {
+    tradeskill: null,
+  },
+  inspectingCharacter: null,
+});
 
 @State<IGame>({
   name: 'game',
-  defaults: defaultGame()
+  defaults: defaultGame(),
 })
 @Injectable()
 export class GameState {
-
-  static box = new Subject<{ side: 'left'|'right'; color: string; text: string }>();
+  static box = new Subject<{
+    side: 'left' | 'right';
+    color: string;
+    text: string;
+  }>();
 
   @Selector()
   static player(state: IGame) {
@@ -86,7 +114,10 @@ export class GameState {
 
   @Selector()
   static currentTarget(state: IGame) {
-    return state.mapInfo.players[state.currentTarget] || state.mapInfo.npcs[state.currentTarget];
+    return (
+      state.mapInfo.players[state.currentTarget] ||
+      state.mapInfo.npcs[state.currentTarget]
+    );
   }
 
   @Selector()
@@ -98,17 +129,22 @@ export class GameState {
   static allCharacters(state: IGame) {
     return [
       ...Object.values(state.mapInfo.players),
-      ...Object.values(state.mapInfo.npcs)
+      ...Object.values(state.mapInfo.npcs),
     ];
   }
 
   @Selector()
   static currentGround(state: IGame) {
-    return state.mapInfo.ground[state.player.x][state.player.y];
+    if (!state.player) return {};
+
+    return state.mapInfo.ground[state.player.x]?.[state.player.y];
   }
 
   @Selector()
   static currentPosition(state: IGame) {
+    if (!state.player) {
+      return { x: 0, y: 0 };
+    }
     return { x: state.player.x, y: state.player.y };
   }
 
@@ -237,7 +273,10 @@ export class GameState {
   }
 
   @Action(SetCurrentTarget)
-  setCurrentTarget(ctx: StateContext<IGame>, { target, overrideIfOnly }: SetCurrentTarget) {
+  setCurrentTarget(
+    ctx: StateContext<IGame>,
+    { target, overrideIfOnly }: SetCurrentTarget,
+  ) {
     const state = ctx.getState();
 
     // allow for us to not override the target if someone else dies
@@ -253,7 +292,10 @@ export class GameState {
   }
 
   @Action(SetCurrentItemTooltip)
-  setItemTooltip(ctx: StateContext<IGame>, { tooltip, upgrades }: SetCurrentItemTooltip) {
+  setItemTooltip(
+    ctx: StateContext<IGame>,
+    { tooltip, upgrades }: SetCurrentItemTooltip,
+  ) {
     ctx.patchState({ itemTooltip: { tooltip, upgrades } });
   }
 
@@ -275,35 +317,55 @@ export class GameState {
         if (patch.path === '/hp/current') {
           const hpDiff = patch.value - copyState.player.hp.current;
           if (hpDiff === 0) return;
-          GameState.box.next({ side: 'right', color: hpDiff > 0 ? 'blue' : 'red', text: `${hpDiff > 0 ? '+' : ''}${hpDiff} HP` });
+          GameState.box.next({
+            side: 'right',
+            color: hpDiff > 0 ? 'blue' : 'red',
+            text: `${hpDiff > 0 ? '+' : ''}${hpDiff} HP`,
+          });
         }
 
         if (patch.path === '/exp') {
           const xpDiff = patch.value - copyState.player.exp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'left', color: 'green', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} XP` });
+          GameState.box.next({
+            side: 'left',
+            color: 'green',
+            text: `${xpDiff > 0 ? '+' : ''}${xpDiff} XP`,
+          });
         }
 
         if (patch.path === '/axp') {
           const xpDiff = patch.value - copyState.player.axp;
           if (xpDiff === 0) return;
-          GameState.box.next({ side: 'left', color: '#aa5c39', text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP` });
+          GameState.box.next({
+            side: 'left',
+            color: '#aa5c39',
+            text: `${xpDiff > 0 ? '+' : ''}${xpDiff} AXP`,
+          });
         }
 
-
         const blacklistedEffects = ['Swimming'];
-        if (patch.op === 'add'
-        && patch.path.includes('/effects/_hash')
-        && patch.value.effectName
-        && !blacklistedEffects.includes(patch.value.effectName)) {
+        if (
+          patch.op === 'add' &&
+          patch.path.includes('/effects/_hash') &&
+          patch.value.effectName &&
+          !blacklistedEffects.includes(patch.value.effectName)
+        ) {
           setTimeout(() => {
-            GameState.box.next({ side: 'left', color: 'blue', text: `+${patch.value.effectName}` });
-          }, (i * 250));
+            GameState.box.next({
+              side: 'left',
+              color: 'blue',
+              text: `+${patch.value.effectName}`,
+            });
+          }, i * 250);
         }
       });
 
       try {
-        copyState.player = applyPatch(cloneDeep(copyState.player), patches).newDocument;
+        copyState.player = applyPatch(
+          cloneDeep(copyState.player),
+          patches,
+        ).newDocument;
       } catch {}
     }
 
@@ -311,14 +373,20 @@ export class GameState {
   }
 
   @Action(PatchGameStateForPlayer)
-  patchPlayerState(ctx: StateContext<IGame>, { statePatches }: PatchGameStateForPlayer) {
+  patchPlayerState(
+    ctx: StateContext<IGame>,
+    { statePatches }: PatchGameStateForPlayer,
+  ) {
     const state = ctx.getState();
     const copyState = { ...state };
 
     // can't get patches if we're not in game
     if (!copyState.player || !statePatches) return;
 
-    ctx.patchState({ mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches).newDocument });
+    ctx.patchState({
+      mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches)
+        .newDocument,
+    });
   }
 
   @Action(PatchPlayerPosition)
@@ -338,9 +406,18 @@ export class GameState {
   }
 
   @Action(OpenTrainerWindow)
-  openTrainerWindow(ctx: StateContext<IGame>, {
-    npcUUID, npcName, npcSprite, npcMaxLevel, npcMaxSkill, npcCanRevive, npcGuildTeleport
-  }: OpenTrainerWindow) {
+  openTrainerWindow(
+    ctx: StateContext<IGame>,
+    {
+      npcUUID,
+      npcName,
+      npcSprite,
+      npcMaxLevel,
+      npcMaxSkill,
+      npcCanRevive,
+      npcGuildTeleport,
+    }: OpenTrainerWindow,
+  ) {
     ctx.patchState({
       trainerInfo: {
         npcName,
@@ -349,8 +426,8 @@ export class GameState {
         npcMaxLevel,
         npcMaxSkill,
         npcCanRevive,
-        npcGuildTeleport
-      }
+        npcGuildTeleport,
+      },
     });
 
     this.store.dispatch(new ShowWindow('trainer'));
@@ -362,9 +439,17 @@ export class GameState {
   }
 
   @Action(OpenVendorWindow)
-  openVendorWindow(ctx: StateContext<IGame>, {
-    npcUUID, npcName, npcSprite, npcVendorCurrency, npcVendorDailyItems, npcVendorItems
-  }: OpenVendorWindow) {
+  openVendorWindow(
+    ctx: StateContext<IGame>,
+    {
+      npcUUID,
+      npcName,
+      npcSprite,
+      npcVendorCurrency,
+      npcVendorDailyItems,
+      npcVendorItems,
+    }: OpenVendorWindow,
+  ) {
     ctx.patchState({
       vendorInfo: {
         npcName,
@@ -372,8 +457,8 @@ export class GameState {
         npcSprite,
         npcVendorCurrency,
         npcVendorItems,
-        npcVendorDailyItems
-      }
+        npcVendorDailyItems,
+      },
     });
 
     this.store.dispatch(new ShowWindow('vendor'));
@@ -385,17 +470,18 @@ export class GameState {
   }
 
   @Action(OpenBankWindow)
-  openBankWindow(ctx: StateContext<IGame>, {
-    npcUUID, npcName, npcSprite, npcBank, npcBranch
-  }: OpenBankWindow) {
+  openBankWindow(
+    ctx: StateContext<IGame>,
+    { npcUUID, npcName, npcSprite, npcBank, npcBranch }: OpenBankWindow,
+  ) {
     ctx.patchState({
       bankInfo: {
         npcName,
         npcUUID,
         npcSprite,
         npcBank,
-        npcBranch
-      }
+        npcBranch,
+      },
     });
 
     this.store.dispatch(new ShowWindow('bank'));
@@ -407,15 +493,16 @@ export class GameState {
   }
 
   @Action(OpenMarketWindow)
-  openMarketWindow(ctx: StateContext<IGame>, {
-    npcUUID, npcName, npcSprite
-  }: OpenMarketWindow) {
+  openMarketWindow(
+    ctx: StateContext<IGame>,
+    { npcUUID, npcName, npcSprite }: OpenMarketWindow,
+  ) {
     ctx.patchState({
       marketInfo: {
         npcName,
         npcUUID,
-        npcSprite
-      }
+        npcSprite,
+      },
     });
 
     this.store.dispatch(new ShowWindow('market'));
@@ -427,21 +514,32 @@ export class GameState {
   }
 
   @Action(ViewCharacterEquipment)
-  viewCharacterEquipment(ctx: StateContext<IGame>, { character }: ViewCharacterEquipment) {
+  viewCharacterEquipment(
+    ctx: StateContext<IGame>,
+    { character }: ViewCharacterEquipment,
+  ) {
     ctx.patchState({ inspectingCharacter: character });
 
     this.store.dispatch(new ShowWindow('equipmentViewTarget'));
   }
 
   @Action(OpenLockerWindow)
-  openLockerWindow(ctx: StateContext<IGame>, { lockerName, showLockers, playerLockers, accountLockers }: OpenLockerWindow) {
+  openLockerWindow(
+    ctx: StateContext<IGame>,
+    {
+      lockerName,
+      showLockers,
+      playerLockers,
+      accountLockers,
+    }: OpenLockerWindow,
+  ) {
     ctx.patchState({
       lockerInfo: {
         lockerName,
         showLockers,
         playerLockers,
-        accountLockers
-      }
+        accountLockers,
+      },
     });
 
     this.store.dispatch(new ShowWindow('locker'));
@@ -453,11 +551,14 @@ export class GameState {
   }
 
   @Action(OpenTradeskillWindow)
-  openTradeskillWindow(ctx: StateContext<IGame>, { tradeskill }: OpenTradeskillWindow) {
+  openTradeskillWindow(
+    ctx: StateContext<IGame>,
+    { tradeskill }: OpenTradeskillWindow,
+  ) {
     ctx.patchState({
       tradeskillInfo: {
-        tradeskill
-      }
+        tradeskill,
+      },
     });
 
     this.store.dispatch(new ShowWindow('tradeskill'));

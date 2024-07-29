@@ -22,9 +22,9 @@ import { DraggableDirective } from './_shared/directives/dragdrop/draggable.dire
 import { DroppableDirective } from './_shared/directives/dragdrop/droppable.directive';
 import { DraggableDirective as DraggableWindowDirective } from './_shared/directives/draggable-window.directive';
 
-import { InputModalComponent } from './_shared/modals/input/input.component';
 import { ConfirmModalComponent } from './_shared/modals/confirm/confirm.component';
 import { DialogComponent } from './_shared/modals/dialog/dialog.component';
+import { InputModalComponent } from './_shared/modals/input/input.component';
 
 import { DiscordEmojiPipe } from './_shared/pipes/discord-emoji.pipe';
 import { GoldifyPipe } from './_shared/pipes/goldify.pipe';
@@ -33,17 +33,17 @@ import { LinkifyPipe } from './_shared/pipes/linkify.pipe';
 import { LoginComponent } from './login/login.component';
 import { MenuComponent } from './menu/menu.component';
 
+import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
 import { SkillIconComponent } from './_shared/components/skill-icon';
 import { AccountComponent } from './_shared/modals/account/account.component';
 import { AmountModalComponent } from './_shared/modals/amount/amount.component';
 import { CurrentEventsComponent } from './_shared/modals/currentevents/currentevents.component';
+import { ErrorLogComponent } from './_shared/modals/error-log/error-log.component';
 import { MacroEditorComponent } from './_shared/modals/macroeditor/macroeditor.component';
 import { ManageSilverComponent } from './_shared/modals/managesilver/managesilver.component';
 import { NewSpellsComponent } from './_shared/modals/newspells/newspells.component';
 import { OptionsComponent } from './_shared/modals/options/options.component';
-import { ErrorLogComponent } from './_shared/modals/error-log/error-log.component';
 import { TextModalComponent } from './_shared/modals/text/text.component';
-import { EquipmentViewOnlyComponent } from './_shared/components/equipment-viewonly/equipment-viewonly.component';
 
 import { ActiveTargetComponent } from './containers/game-container/active-target/active-target.component';
 import { AdventureLogComponent } from './containers/game-container/adventure-log/adventure-log.component';
@@ -68,25 +68,58 @@ import { VendorComponent } from './containers/game-container/vendor/vendor.compo
 
 import { CharCreateComponent } from './containers/lobby-container/char-create/char-create.component';
 import { CharSelectComponent } from './containers/lobby-container/char-select/char-select.component';
-import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 import { LobbyContainerComponent } from './containers/lobby-container/lobby-container.component';
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
+import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 
-import { JournalComponent } from './journal/journal.component';
+import {
+  MdePopover,
+  MdePopoverTarget,
+  MdePopoverTrigger,
+} from 'client/src/app/_shared/components/popover/popover.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
-import { LockerComponent } from './containers/game-container/locker/locker.component';
-import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';
-import { PartyComponent } from './containers/game-container/party/party.component';
-import { MarketComponent } from './containers/game-container/market/market.component';
-import { TradeskillComponent } from './containers/game-container/tradeskill/tradeskill.component';
 import { CombatDebugComponent } from './containers/game-container/combatdebug/combatdebug.component';
+import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';
+import { LockerComponent } from './containers/game-container/locker/locker.component';
+import { MarketComponent } from './containers/game-container/market/market.component';
+import { PartyComponent } from './containers/game-container/party/party.component';
+import { TradeskillComponent } from './containers/game-container/tradeskill/tradeskill.component';
+import { JournalComponent } from './journal/journal.component';
 
 const declarations = [
-  AlertComponent, ErrorComponent, DraggableWindowDirective, ButtonCloseComponent, ButtonMinimizeComponent, IconComponent,
-  WindowComponent, DiscordEmojiPipe, GoldifyPipe, LinkifyPipe, EffectIconComponent, DialogComponent, NPCComponent,
-  DraggableDirective, DroppableDirective, ConfirmModalComponent, InputModalComponent, AboutComponent, AccountComponent,
-  ManageSilverComponent, CurrentEventsComponent, OptionsComponent, ErrorLogComponent, AmountModalComponent, MacroEditorComponent,
-  TextModalComponent, NewSpellsComponent, MarketComponent, TradeskillComponent, SessionStatsComponent
+  AlertComponent,
+  ErrorComponent,
+  DraggableWindowDirective,
+  ButtonCloseComponent,
+  ButtonMinimizeComponent,
+  IconComponent,
+  WindowComponent,
+  DiscordEmojiPipe,
+  GoldifyPipe,
+  LinkifyPipe,
+  EffectIconComponent,
+  DialogComponent,
+  NPCComponent,
+  DraggableDirective,
+  DroppableDirective,
+  ConfirmModalComponent,
+  InputModalComponent,
+  AboutComponent,
+  AccountComponent,
+  ManageSilverComponent,
+  CurrentEventsComponent,
+  OptionsComponent,
+  ErrorLogComponent,
+  AmountModalComponent,
+  MacroEditorComponent,
+  TextModalComponent,
+  NewSpellsComponent,
+  MarketComponent,
+  TradeskillComponent,
+  SessionStatsComponent,
+  MdePopover,
+  MdePopoverTarget,
+  MdePopoverTrigger,
 ];
 
 const gameComponents = [
@@ -133,14 +166,13 @@ const gameComponents = [
   RuneCodexComponent,
   PartyComponent,
 
-  CombatDebugComponent
+  CombatDebugComponent,
 ];
-
 
 @NgModule({
   declarations: [...declarations, ...gameComponents],
   providers: [DiscordEmojiPipe, GoldifyPipe, LinkifyPipe],
   imports: [CommonModule, FormsModule, UIModule],
-  exports: [...declarations, ...gameComponents]
+  exports: [...declarations, ...gameComponents],
 })
-export class GameModule { }
+export class GameModule {}

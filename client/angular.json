@@ -7,27 +7,16 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss",
-          "spec": false
+          "style": "scss"
         },
-        "@schematics/angular:class": {
-          "spec": false
-        },
-        "@schematics/angular:directive": {
-          "spec": false
-        },
-        "@schematics/angular:guard": {
-          "spec": false
-        },
+        "@schematics/angular:class": {},
+        "@schematics/angular:directive": {},
+        "@schematics/angular:guard": {},
         "@schematics/angular:module": {
           "spec": false
         },
-        "@schematics/angular:pipe": {
-          "spec": false
-        },
-        "@schematics/angular:service": {
-          "spec": false
-        }
+        "@schematics/angular:pipe": {},
+        "@schematics/angular:service": {}
       },
       "root": "",
       "sourceRoot": "src",
@@ -40,9 +29,7 @@
               "base": "dist"
             },
             "index": "src/index.html",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "aot": false,
             "assets": [
@@ -57,12 +44,8 @@
               "src/_headers",
               "src/_redirects"
             ],
-            "styles": [
-              "src/styles/styles.scss"
-            ],
-            "scripts": [
-              "node_modules/phaser/dist/phaser.js"
-            ],
+            "styles": ["src/styles/styles.scss"],
+            "scripts": ["node_modules/phaser/dist/phaser.js"],
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -124,10 +107,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

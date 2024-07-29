@@ -56,8 +56,7 @@
       <div class="true-center background-text full-height full-width">
         Select an item category
       </div>
-      } @for (item of (currentGround[currentItemClass] || []); track item.uuid)
-      {
+      } @for (item of (currentGround[currentItemClass] || []); track $index) {
       <app-item
         [size]="'lg'"
         context="Ground"

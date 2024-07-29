@@ -24,7 +24,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ColorPickerModule } from 'ngx-color-picker';
-import { NgxFloatUiModule } from 'ngx-float-ui';
 
 const matImports = [
   MatToolbarModule,
@@ -49,15 +48,15 @@ const matImports = [
   MatListModule,
   MatProgressBarModule,
 
-  NgxFloatUiModule,
-
   ColorPickerModule,
 ];
 
+const components = [];
+
 @NgModule({
-  declarations: [],
+  declarations: [...components],
   imports: [CommonModule, ...matImports],
-  exports: [...matImports],
+  exports: [...matImports, ...components],
   providers: [
     { provide: MAT_TABS_CONFIG, useValue: { animationDuration: '0ms' } },
   ],

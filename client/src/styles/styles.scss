@@ -30,8 +30,6 @@ $landoftherair-theme: mat-dark-theme(
 // that you are using.
 @include angular-material-theme($landoftherair-theme);
 
-@import '../../node_modules/ngx-float-ui/css/theme-white.css';
-
 /* You can add global styles to this file, and also import other style files */
 
 .cdk-overlay-container {
