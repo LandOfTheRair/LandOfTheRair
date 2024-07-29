@@ -1,27 +1,31 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Store } from '@ngxs/store';
-
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 
 import marked from 'marked';
 import { Subscription } from 'rxjs';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
+import { WindowComponent } from '../../../_shared/components/window.component';
+import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
-import { WindowComponent } from '../../../_shared/components/window.component';
-import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-adventure-log',
   templateUrl: './adventure-log.component.html',
-  styleUrls: ['./adventure-log.component.scss']
+  styleUrls: ['./adventure-log.component.scss'],
 })
 export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
   public messages: Array<{ messageTypes: MessageType[]; message: string }> = [];
@@ -36,33 +40,49 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     private optionsService: OptionsService,
     private socketService: SocketService,
     private discordEmojiPipe: DiscordEmojiPipe,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {
+    this.inGame$ = this.gameService.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe((inGame) => {
+        if (inGame) return;
+
+        this.messages = [];
+      });
+  }
 
   ngOnInit() {
     this.initMarkdownRenderer();
 
-    this.inGame$ = this.gameService.inGame$.subscribe(inGame => {
-      if (inGame) return;
+    this.socketService.registerComponentCallback(
+      'AdventureLog',
+      GameServerResponse.GameLog,
+      (data) => {
+        if (data.messageTypes.includes(MessageType.Chatter))
+          data.message = `<local:${data.from}> ${data.message}`;
+        this.addMessage(data);
+      },
+    );
 
-      this.messages = [];
-    });
-
-    this.socketService.registerComponentCallback('AdventureLog', GameServerResponse.GameLog, (data) => {
-      if (data.messageTypes.includes(MessageType.Chatter)) data.message = `<local:${data.from}> ${data.message}`;
-      this.addMessage(data);
-    });
-
-    this.socketService.registerComponentCallback('AdventureLog', GameServerResponse.Chat, (data) => {
-      this.addMessage({
-        messageTypes: [MessageType.Lobby, MessageType.Chatter, MessageType.PlayerChat],
-        message: `<lobby:${data.from}> ${data.message}`
-      });
-    });
+    this.socketService.registerComponentCallback(
+      'AdventureLog',
+      GameServerResponse.Chat,
+      (data) => {
+        this.addMessage({
+          messageTypes: [
+            MessageType.Lobby,
+            MessageType.Chatter,
+            MessageType.PlayerChat,
+          ],
+          message: `<lobby:${data.from}> ${data.message}`,
+        });
+      },
+    );
   }
 
   ngAfterViewInit() {
-    const outputAreaDOMElement = this.window.nativeElement.querySelector('.log-area');
+    const outputAreaDOMElement =
+      this.window.nativeElement.querySelector('.log-area');
 
     const scrollToBottom = () => {
       outputAreaDOMElement.scrollTop = outputAreaDOMElement.scrollHeight;
@@ -73,7 +93,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.mutationObserver.observe(outputAreaDOMElement, {
-        childList: true
+      childList: true,
     });
 
     setTimeout(() => {
@@ -87,7 +107,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initMarkdownRenderer() {
     this.renderer = new marked.Renderer();
-    const ident = t => t;
+    const ident = (t) => t;
 
     this.renderer.blockquote = ident;
     this.renderer.html = ident;
@@ -103,14 +123,18 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderer.br = ident;
     this.renderer.del = ident;
     this.renderer.image = ident;
-    this.renderer.link = (href, title, text) => `<a target="_blank" href="${href}">${text}</a>`;
+    this.renderer.link = (href, title, text) =>
+      `<a target="_blank" href="${href}">${text}</a>`;
   }
 
-  public changeTab(newTab: 'All'|'General'|'Combat'|'NPC') {
+  public changeTab(newTab: 'All' | 'General' | 'Combat' | 'NPC') {
     this.store.dispatch(new SetLogMode(newTab));
   }
 
-  public isMessageVisible(logMode: 'All'|'General'|'Combat'|'NPC', message): boolean {
+  public isMessageVisible(
+    logMode: 'All' | 'General' | 'Combat' | 'NPC',
+    message,
+  ): boolean {
     if (logMode === 'All') return true;
     if (logMode === 'NPC') return message.typeHash[MessageType.NPCChatter];
 
@@ -123,28 +147,43 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private addMessage(message) {
-
     // create a small hash to quickly look up messages by type
     message.typeHash = {};
-    message.messageTypes.forEach(type => message.typeHash[type] = true);
+    message.messageTypes.forEach((type) => (message.typeHash[type] = true));
 
-    if (this.optionsService.suppressOutgoingDoT && message.typeHash[MessageType.OutOvertime]) return;
-    if (this.optionsService.suppressZeroDamage
-    && (message.message.includes('[0') || message.message.includes('misses!') || message.message.includes('blocked by your'))) return;
+    if (
+      this.optionsService.suppressOutgoingDoT &&
+      message.typeHash[MessageType.OutOvertime]
+    )
+      return;
+    if (
+      this.optionsService.suppressZeroDamage &&
+      (message.message.includes('[0') ||
+        message.message.includes('misses!') ||
+        message.message.includes('blocked by your'))
+    )
+      return;
 
-    message.display = this.discordEmojiPipe.transform(marked(message.message, { renderer: this.renderer }), 12);
+    message.display = this.discordEmojiPipe.transform(
+      marked(message.message, { renderer: this.renderer }),
+      12,
+    );
 
-    if (message.source) message.display = `[${message.source}] ${message.display}`;
+    if (message.source)
+      message.display = `[${message.source}] ${message.display}`;
 
     if (message.typeHash[MessageType.Banner]) {
       this.gameService.sendUIBannerMessage(message.display);
     }
 
-    if (!message.typeHash[MessageType.Banner] || (message.typeHash[MessageType.Banner] && this.optionsService.sendBannerMessagesToChat)) {
+    if (
+      !message.typeHash[MessageType.Banner] ||
+      (message.typeHash[MessageType.Banner] &&
+        this.optionsService.sendBannerMessagesToChat)
+    ) {
       this.messages.push(message);
     }
 
     if (this.messages.length > 500) this.messages.shift();
   }
-
 }

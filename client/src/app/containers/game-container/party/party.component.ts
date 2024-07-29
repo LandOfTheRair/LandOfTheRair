@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import {
   getMultiplierBasedOnLevelDifference,
@@ -13,15 +12,15 @@ import {
 
 import { GameState } from '../../../../stores';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-party',
   templateUrl: './party.component.html',
   styleUrls: ['./party.component.scss'],
 })
-export class PartyComponent implements OnInit {
+export class PartyComponent {
   @Select(GameState.party) party$: Observable<{
     party: IParty;
     partyMembers: IPartyMember[];
@@ -35,10 +34,8 @@ export class PartyComponent implements OnInit {
 
   public createOrJoinParty = '';
 
-  constructor(public gameService: GameService) {}
-
-  ngOnInit() {
-    this.partySub = this.party$.subscribe((p) => {
+  constructor(public gameService: GameService) {
+    this.partySub = this.party$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.party = p;
       this.partyXPMult = this.multiplier(p.party);
     });

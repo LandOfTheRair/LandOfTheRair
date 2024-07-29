@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { Store } from '@ngxs/store';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Subscription } from 'rxjs';
 import {
   basePlayerSprite,
@@ -21,13 +21,12 @@ import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 import { CharCreateComponent } from '../char-create/char-create.component';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-char-select',
   templateUrl: './char-select.component.html',
   styleUrls: ['./char-select.component.scss'],
 })
-export class CharSelectComponent implements AfterViewInit {
+export class CharSelectComponent {
   @ViewChild('tabs', { static: false }) tabs: MatTabGroup;
   public account: IAccount;
   public charSlot: number;
@@ -39,19 +38,19 @@ export class CharSelectComponent implements AfterViewInit {
     public gameService: GameService,
     public socketService: SocketService,
     public assetService: AssetService,
-  ) {}
-
-  ngAfterViewInit() {
+  ) {
     this.charSlotAccount$ = combineLatest([
       this.gameService.account$,
       this.gameService.charSlot$,
-    ]).subscribe(([account, charSlot]) => {
-      // we don't talk about this mess
-      setTimeout(() => {
-        this.account = account;
-        this.charSlot = charSlot.slot;
-      }, 0);
-    });
+    ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([account, charSlot]) => {
+        // we don't talk about this mess
+        setTimeout(() => {
+          this.account = account;
+          this.charSlot = charSlot.slot;
+        }, 0);
+      });
   }
 
   public setCharSlot(index) {

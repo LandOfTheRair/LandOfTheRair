@@ -1,24 +1,25 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { sortBy } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { GameServerResponse, IPlayer, LogInfo } from '../../../../interfaces';
 import { GameState, HideWindow } from '../../../../stores';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-combatdebug',
   templateUrl: './combatdebug.component.html',
-  styleUrls: ['./combatdebug.component.scss']
+  styleUrls: ['./combatdebug.component.scss'],
 })
 export class CombatDebugComponent implements OnInit, OnDestroy {
-
-  @Select(GameState.currentPosition) curPos$: Observable<{ x: number; y: number }>;
+  @Select(GameState.currentPosition) curPos$: Observable<{
+    x: number;
+    y: number;
+  }>;
   @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
@@ -34,10 +35,10 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
   public visibleLogInfoForTable = [];
 
   public readonly allStats = [
-    { display: 'AC',  key: 'armorClass' },
+    { display: 'AC', key: 'armorClass' },
     { display: 'WAC', key: 'weaponArmorClass' },
-    { display: 'M',   key: 'mitigation' },
-    { display: 'D',   key: 'defense' },
+    { display: 'M', key: 'mitigation' },
+    { display: 'D', key: 'defense' },
 
     { display: 'ReM', key: 'magicalResist' },
     { display: 'ReP', key: 'physicalResist' },
@@ -57,23 +58,29 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private socketService: SocketService,
-    public gameService: GameService
-  ) { }
+    public gameService: GameService,
+  ) {
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideWindow('combatdebug'));
+      });
+  }
 
   ngOnInit() {
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideWindow('combatdebug'));
-    });
+    this.socketService.registerComponentCallback(
+      'CombatDebug',
+      GameServerResponse.GameLog,
+      (data) => {
+        if (!data.logInfo || !this.isLogging) return;
 
-    this.socketService.registerComponentCallback('CombatDebug', GameServerResponse.GameLog, (data) => {
-      if (!data.logInfo || !this.isLogging) return;
+        if (this.totalLogged >= this.totalToLog) return;
 
-      if (this.totalLogged >= this.totalToLog) return;
+        this.storedLogs.push(data.logInfo);
 
-      this.storedLogs.push(data.logInfo);
-
-      this.addLogInfo(data.logInfo);
-    });
+        this.addLogInfo(data.logInfo);
+      },
+    );
   }
 
   ngOnDestroy() {
@@ -81,7 +88,6 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
   }
 
   private addLogInfo(loginfo: LogInfo): void {
-
     let type = loginfo.type;
     if (type === 'damage') {
       type = `damage-${loginfo.weapon}`;
@@ -97,18 +103,21 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
   }
 
   private recalculateTable(): void {
-    const damageByType = Object.keys(this.damageByType).map(x => ({
+    const damageByType = Object.keys(this.damageByType).map((x) => ({
       type: x,
       totalDamage: this.damageByType[x],
-      times: this.damageByCount[x]
+      times: this.damageByCount[x],
     }));
 
-    this.visibleLogInfoForTable = sortBy(damageByType, ['totalDamage', 'times']).reverse();
+    this.visibleLogInfoForTable = sortBy(damageByType, [
+      'totalDamage',
+      'times',
+    ]).reverse();
   }
 
   private logToCSV(): string {
     const columns = Object.keys(this.storedLogs[0]);
-    const data = this.storedLogs.map(x => columns.map(c => x[c]).join(','));
+    const data = this.storedLogs.map((x) => columns.map((c) => x[c]).join(','));
 
     return `${columns}\n${data.join('\n')}`;
   }
@@ -125,11 +134,11 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
 
   public downloadCSV() {
     const fileName = `lotr-combatlog-${Date.now()}.csv`;
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(this.logToCSV());
+    const dataStr =
+      'data:text/json;charset=utf-8,' + encodeURIComponent(this.logToCSV());
     const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute('href',     dataStr);
+    downloadAnchorNode.setAttribute('href', dataStr);
     downloadAnchorNode.setAttribute('download', fileName);
     downloadAnchorNode.click();
   }
-
 }

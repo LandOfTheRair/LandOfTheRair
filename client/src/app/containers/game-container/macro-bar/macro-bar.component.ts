@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 
@@ -19,7 +18,6 @@ import {
 import { GameService } from '../../../services/game.service';
 import { MacrosService } from '../../../services/macros.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-macro-bar',
   templateUrl: './macro-bar.component.html',

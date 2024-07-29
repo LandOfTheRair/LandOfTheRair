@@ -1,11 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Select, Selector, Store } from '@ngxs/store';
 import { cloneDeep, isUndefined, merge } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import allMacros from '../../../../assets/content/_output/macros.json';
 import macicons from '../../../../assets/generated/macicons.json';
 import {
@@ -39,13 +39,12 @@ const defaultMacro = () => ({
   modifiers: { shift: false, ctrl: false, alt: false },
 });
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-macroeditor',
   templateUrl: './macroeditor.component.html',
   styleUrls: ['./macroeditor.component.scss'],
 })
-export class MacroEditorComponent implements OnInit {
+export class MacroEditorComponent {
   private readonly ICONS_PER_PAGE = 36;
   private readonly MACROS_PER_PAGE = 24;
 
@@ -117,53 +116,57 @@ export class MacroEditorComponent implements OnInit {
     private store: Store,
     public dialogRef: MatDialogRef<MacroEditorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.macroSub = combineLatest([
       this.customMacros$,
       this.currentPlayerMacros$,
       this.charSlot$,
-    ]).subscribe(([macs, currentMacs, charSlot]) => {
-      const defaultMacros = Object.values(allMacros).filter(
-        (mac) => (mac as any).isDefault,
-      ) as IMacro[];
-      const learnedMacs = Object.values(currentMacs.learnedMacros) as IMacro[];
-      const customMacros = Object.values(macs).filter(
-        (mac) => mac.createdCharSlot === charSlot.slot,
-      );
+    ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([macs, currentMacs, charSlot]) => {
+        const defaultMacros = Object.values(allMacros).filter(
+          (mac) => (mac as any).isDefault,
+        ) as IMacro[];
+        const learnedMacs = Object.values(
+          currentMacs.learnedMacros,
+        ) as IMacro[];
+        const customMacros = Object.values(macs).filter(
+          (mac) => mac.createdCharSlot === charSlot.slot,
+        );
 
-      const shouldReset = this.macros.length === 0;
+        const shouldReset = this.macros.length === 0;
 
-      this.allMacros = Object.assign(
-        {},
-        allMacros,
-        macs,
-        currentMacs.learnedMacros,
-      );
-      this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
-      this.allCustomMacros = macs;
+        this.allMacros = Object.assign(
+          {},
+          allMacros,
+          macs,
+          currentMacs.learnedMacros,
+        );
+        this.macros = defaultMacros.concat(learnedMacs).concat(customMacros);
+        this.allCustomMacros = macs;
 
-      this.allPossibleForTargets = learnedMacs
-        .map((x) => x.for)
-        .filter(Boolean)
-        .sort();
+        this.allPossibleForTargets = learnedMacs
+          .map((x) => x.for)
+          .filter(Boolean)
+          .sort();
 
-      if (shouldReset) {
-        this.setMacroGroupPage(0);
-      }
-    });
+        if (shouldReset) {
+          this.setMacroGroupPage(0);
+        }
+      });
 
-    this.macroBarSub = this.currentPlayerMacros$.subscribe((bars) => {
-      if (!bars) return;
+    this.macroBarSub = this.currentPlayerMacros$
+      .pipe(takeUntilDestroyed())
+      .subscribe((bars) => {
+        if (!bars) return;
 
-      this.activeMacroBars = cloneDeep(bars.activeMacroBars);
-      this.macroBars = cloneDeep(Object.values(bars.macroBars));
-    });
+        this.activeMacroBars = cloneDeep(bars.activeMacroBars);
+        this.macroBars = cloneDeep(Object.values(bars.macroBars));
+      });
 
-    this.playerSub = this.currentPlayer$.subscribe(
-      (player) => (this.player = player),
-    );
+    this.playerSub = this.currentPlayer$
+      .pipe(takeUntilDestroyed())
+      .subscribe((player) => (this.player = player));
 
     this.setMacroGroupPage(0);
   }

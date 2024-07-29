@@ -1,20 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { GameOption } from '../../../../interfaces';
 import { SetOption, SettingsState } from '../../../../stores';
 import { OptionsService } from '../../../services/options.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',
   styleUrls: ['./options.component.scss'],
 })
-export class OptionsComponent implements OnInit {
+export class OptionsComponent {
   @Select(SettingsState.options) options$: Observable<any>;
 
   public options: any = {};
@@ -105,9 +103,7 @@ export class OptionsComponent implements OnInit {
     private store: Store,
     private optionsService: OptionsService,
     public dialogRef: MatDialogRef<OptionsComponent>,
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.options$.pipe(first()).subscribe((opts) => {
       this.options = Object.assign({}, opts);
     });

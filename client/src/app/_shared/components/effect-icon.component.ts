@@ -1,11 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { Component, Input } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as effectData from '../../../assets/content/_output/effect-data.json';
 import { IStatusEffect } from '../../../interfaces';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-effect-icon',
   template: `
@@ -77,7 +76,7 @@ import { IStatusEffect } from '../../../interfaces';
     `,
   ],
 })
-export class EffectIconComponent implements OnInit {
+export class EffectIconComponent {
   @Input() public effect: IStatusEffect;
   @Input() public defaultTransparent: boolean;
 
@@ -144,9 +143,11 @@ export class EffectIconComponent implements OnInit {
     return Math.floor((this.effect.endsAt - Date.now()) / 1000);
   }
 
-  ngOnInit() {
-    this.tickSub = timer(0, 1000).subscribe(() => {
-      this.currentTicksLeft = this.ticks;
-    });
+  constructor() {
+    this.tickSub = timer(0, 1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.currentTicksLeft = this.ticks;
+      });
   }
 }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import {
   IPlayer,
@@ -15,7 +14,6 @@ import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-equipment-quick',
   templateUrl: './equipment-quick.component.html',

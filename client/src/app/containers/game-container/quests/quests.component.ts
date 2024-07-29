@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer, IQuest } from '../../../../interfaces';
@@ -11,13 +11,12 @@ import { GameService } from '../../../services/game.service';
 
 import * as allQuests from '../../../../assets/content/_output/quests.json';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-quests',
   templateUrl: './quests.component.html',
   styleUrls: ['./quests.component.scss'],
 })
-export class QuestsComponent implements OnInit {
+export class QuestsComponent {
   @Select(SettingsState.activeWindow) public activeWindow$: Observable<string>;
   @Select(GameState.player) player$: Observable<IPlayer>;
 
@@ -29,10 +28,10 @@ export class QuestsComponent implements OnInit {
     return allQuests;
   }
 
-  constructor(public gameService: GameService) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => this.setPlayer(p));
+  constructor(public gameService: GameService) {
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => this.setPlayer(p));
   }
 
   private setPlayer(player: IPlayer) {

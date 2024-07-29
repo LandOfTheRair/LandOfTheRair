@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable } from 'rxjs';
 import {
   Allegiance,
@@ -20,15 +19,15 @@ import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-equipment-main',
   templateUrl: './equipment-main.component.html',
   styleUrls: ['./equipment-main.component.scss'],
 })
-export class EquipmentMainComponent implements OnInit {
+export class EquipmentMainComponent {
   @Select(SettingsState.currentCharView) charView$: Observable<string>;
   @Select(GameState.player) player$: Observable<IPlayer>;
 
@@ -240,16 +239,16 @@ export class EquipmentMainComponent implements OnInit {
     public uiService: UIService,
     public gameService: GameService,
     public assetService: AssetService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => {
+  ) {
+    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.player = p;
     });
 
-    this.charViewSub = this.charView$.subscribe((c) => {
-      this.charView = c;
-    });
+    this.charViewSub = this.charView$
+      .pipe(takeUntilDestroyed())
+      .subscribe((c) => {
+        this.charView = c;
+      });
   }
 
   createContext(slot: any, player: IPlayer) {

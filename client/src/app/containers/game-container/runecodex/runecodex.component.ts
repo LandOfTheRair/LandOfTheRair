@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
@@ -12,13 +12,12 @@ import { GameService } from '../../../services/game.service';
 
 import * as AllTraits from '../../../../assets/content/_output/traits.json';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-runecodex',
   templateUrl: './runecodex.component.html',
   styleUrls: ['./runecodex.component.scss'],
 })
-export class RuneCodexComponent implements OnInit {
+export class RuneCodexComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
   public player: IPlayer;
@@ -89,10 +88,8 @@ export class RuneCodexComponent implements OnInit {
   constructor(
     private assetService: AssetService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => {
+  ) {
+    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.player = p;
       this.sortRunes();
     });

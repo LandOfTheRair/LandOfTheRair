@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Select, Store } from '@ngxs/store';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { ICharacter } from '../../../../interfaces';
@@ -10,13 +10,12 @@ import { GameService } from '../../../services/game.service';
 
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-equipment-view-target',
   templateUrl: './equipment-view-target.component.html',
   styleUrls: ['./equipment-view-target.component.scss'],
 })
-export class EquipmentViewTargetComponent implements OnInit {
+export class EquipmentViewTargetComponent {
   @Select(GameState.inGame) inGame$: Observable<any>;
   @Select(GameState.inspectingCharacter) char$: Observable<ICharacter>;
 
@@ -26,11 +25,11 @@ export class EquipmentViewTargetComponent implements OnInit {
     private store: Store,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideWindow('equipmentViewTarget'));
-    });
+  ) {
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideWindow('equipmentViewTarget'));
+      });
   }
 }

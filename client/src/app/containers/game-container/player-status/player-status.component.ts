@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { clamp } from 'lodash';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 import {
   IAccount,
@@ -14,16 +13,16 @@ import { AccountState, GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { calculateXPRequiredForLevel } from '../../../../interfaces';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-player-status',
   templateUrl: './player-status.component.html',
   styleUrls: ['./player-status.component.scss'],
 })
-export class PlayerStatusComponent implements OnInit {
+export class PlayerStatusComponent {
   @Select(AccountState.account) account$: Observable<IAccount>;
   @Select(GameState.player) player$: Observable<IPlayer>;
   public account: IAccount;
@@ -38,11 +37,13 @@ export class PlayerStatusComponent implements OnInit {
     private store: Store,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => this.setPlayer(p));
-    this.accountSub = this.account$.subscribe((a) => this.setAccount(a));
+  ) {
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => this.setPlayer(p));
+    this.accountSub = this.account$
+      .pipe(takeUntilDestroyed())
+      .subscribe((a) => this.setAccount(a));
   }
 
   private setPlayer(p: IPlayer) {

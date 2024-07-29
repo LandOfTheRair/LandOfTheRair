@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep, debounce, get, startCase } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   calculateListingFee,
   EquippableItemClasses,
@@ -28,13 +28,12 @@ import { ModalService } from '../../../services/modal.service';
 
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-market',
   templateUrl: './market.component.html',
   styleUrls: ['./market.component.scss'],
 })
-export class MarketComponent implements OnInit {
+export class MarketComponent {
   @Select(GameState.currentPosition) curPos$: Observable<{
     x: number;
     y: number;
@@ -152,10 +151,8 @@ export class MarketComponent implements OnInit {
     private api: APIService,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -168,22 +165,26 @@ export class MarketComponent implements OnInit {
       }
     });
 
-    this.marketInfoSub = this.market$.subscribe((data) => {
-      this.marketInfo = cloneDeep(data || {});
-      this.currentTab = '';
+    this.marketInfoSub = this.market$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this.marketInfo = cloneDeep(data || {});
+        this.currentTab = '';
 
-      setTimeout(() => {
-        this.switchTab('Buy');
-      }, 0);
-    });
+        setTimeout(() => {
+          this.switchTab('Buy');
+        }, 0);
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideMarketWindow());
-      this.store.dispatch(new HideWindow('market'));
-      this.reset();
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideMarketWindow());
+        this.store.dispatch(new HideWindow('market'));
+        this.reset();
+      });
 
-    this.playerSub = this.player$.subscribe((p) => {
+    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       if (!p) return;
       this.player = p;
     });

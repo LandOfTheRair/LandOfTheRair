@@ -1,19 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 import { GameServerEvent, IAccount } from '../../../../interfaces';
 import { AccountState } from '../../../../stores';
 import { SocketService } from '../../../services/socket.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-account',
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.scss'],
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent {
   @Select(AccountState.account) public account$: Observable<IAccount>;
 
   public accountSub: Subscription;
@@ -41,12 +40,12 @@ export class AccountComponent implements OnInit {
   constructor(
     private socketService: SocketService,
     public dialogRef: MatDialogRef<AccountComponent>,
-  ) {}
-
-  ngOnInit() {
-    this.accountSub = this.account$.subscribe((acc) => {
-      this.account = Object.assign({}, acc);
-    });
+  ) {
+    this.accountSub = this.account$
+      .pipe(takeUntilDestroyed())
+      .subscribe((acc) => {
+        this.account = Object.assign({}, acc);
+      });
   }
 
   public changeTag() {

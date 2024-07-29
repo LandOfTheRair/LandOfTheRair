@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { sum } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import {
@@ -18,17 +17,17 @@ import { AccountState, GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as allTraitTrees from '../../../../assets/content/_output/trait-trees.json';
 import * as allTraits from '../../../../assets/content/_output/traits.json';
 import { ModalService } from '../../../services/modal.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-traits',
   templateUrl: './traits.component.html',
   styleUrls: ['./traits.component.scss'],
 })
-export class TraitsComponent implements OnInit {
+export class TraitsComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(AccountState.account) account$: Observable<IAccount>;
 
@@ -54,11 +53,13 @@ export class TraitsComponent implements OnInit {
     private modalService: ModalService,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => this.setPlayer(p));
-    this.accountSub = this.account$.subscribe((a) => this.setAccount(a));
+  ) {
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => this.setPlayer(p));
+    this.accountSub = this.account$
+      .pipe(takeUntilDestroyed())
+      .subscribe((a) => this.setAccount(a));
   }
 
   private setPlayer(player: IPlayer) {

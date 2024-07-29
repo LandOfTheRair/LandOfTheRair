@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { get } from 'lodash';
@@ -13,16 +12,16 @@ import {
 } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-active-target',
   templateUrl: './active-target.component.html',
   styleUrls: ['./active-target.component.scss'],
 })
-export class ActiveTargetComponent implements OnInit {
+export class ActiveTargetComponent {
   @Select(GameState.player) player$: Observable<ICharacter>;
   @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
 
@@ -89,11 +88,13 @@ export class ActiveTargetComponent implements OnInit {
   constructor(
     public gameService: GameService,
     public optionService: OptionsService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = this.player$.subscribe((p) => (this.player = p));
-    this.targetSub = this.currentTarget$.subscribe((t) => (this.target = t));
+  ) {
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => (this.player = p));
+    this.targetSub = this.currentTarget$
+      .pipe(takeUntilDestroyed())
+      .subscribe((t) => (this.target = t));
   }
 
   trackEffectBy(effect: IStatusEffect) {

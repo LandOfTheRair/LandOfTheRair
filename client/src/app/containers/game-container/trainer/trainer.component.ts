@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer, Skill } from '../../../../interfaces';
@@ -11,15 +10,15 @@ import { GameState, HideTrainerWindow, HideWindow } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { ModalService } from '../../../services/modal.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-trainer',
   templateUrl: './trainer.component.html',
   styleUrls: ['./trainer.component.scss'],
 })
-export class TrainerComponent implements OnInit {
+export class TrainerComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.currentPosition) curPos$: Observable<{
     x: number;
@@ -60,10 +59,8 @@ export class TrainerComponent implements OnInit {
     private modalService: ModalService,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -75,14 +72,18 @@ export class TrainerComponent implements OnInit {
       }
     });
 
-    this.trainerInfoSub = this.trainer$.subscribe((data) => {
-      this.trainerInfo = cloneDeep(data || {});
-    });
+    this.trainerInfoSub = this.trainer$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this.trainerInfo = cloneDeep(data || {});
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideTrainerWindow());
-      this.store.dispatch(new HideWindow('trainer'));
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideTrainerWindow());
+        this.store.dispatch(new HideWindow('trainer'));
+      });
   }
 
   assess() {

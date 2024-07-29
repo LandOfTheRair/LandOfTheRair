@@ -12,16 +12,17 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { NgxsStoragePluginModule, StorageEngine } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
+import { withNgxsResetPlugin } from 'ngxs-reset-plugin';
 
 import { environment } from '../environments/environment';
 
-import * as AllStores from '../stores';
 import { GameAction } from '../interfaces';
+import * as AllStores from '../stores';
 import { GameModule } from './game.module';
 
 import { AppComponent } from './app.component';
 
+import { HttpErrorInterceptor } from './_shared/interceptors/http-error.interceptor';
 import { AssetService } from './services/asset.service';
 import { GameService } from './services/game.service';
 import { AlertErrorHandler, LoggerService } from './services/logger.service';
@@ -30,7 +31,6 @@ import { ModalService } from './services/modal.service';
 import { OptionsService } from './services/options.service';
 import { SocketService } from './services/socket.service';
 import { SoundService } from './services/sound.service';
-import { HttpErrorInterceptor } from './_shared/interceptors/http-error.interceptor';
 
 const allActualStores = Object.keys(AllStores)
   .filter((x) => x.endsWith('State'))
@@ -76,10 +76,9 @@ export class AccountStorageEngine implements StorageEngine {
       developmentMode: !environment.production,
     }),
     NgxsStoragePluginModule.forRoot({
-      key: ['settings', 'macros', 'journal'],
+      keys: ['settings', 'macros', 'journal'],
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
-    NgxsResetPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot({
       disabled: environment.production,
       collapsed: true,
@@ -107,6 +106,7 @@ export class AccountStorageEngine implements StorageEngine {
     }),
   ],
   providers: [
+    withNgxsResetPlugin(),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,

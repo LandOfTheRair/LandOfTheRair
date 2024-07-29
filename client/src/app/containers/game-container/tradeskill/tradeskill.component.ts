@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { clamp, cloneDeep, groupBy, sortBy } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 
 import {
@@ -21,18 +20,18 @@ import {
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as allRecipes from '../../../../assets/content/_output/recipes.json';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 import { AssetService } from '../../../services/asset.service';
 const recipes = (allRecipes as any).default || allRecipes;
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-tradeskill',
   templateUrl: './tradeskill.component.html',
   styleUrls: ['./tradeskill.component.scss'],
 })
-export class TradeskillComponent implements OnInit {
+export class TradeskillComponent {
   @Select(GameState.currentTradeskillWindow) tradeskill$: Observable<any>;
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.inGame) inGame$: Observable<any>;
@@ -56,25 +55,25 @@ export class TradeskillComponent implements OnInit {
     private assetService: AssetService,
     public uiService: UIService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.playerSub = combineLatest([this.player$, this.tradeskill$]).subscribe(
-      ([player, tradeskill]) => {
+  ) {
+    this.playerSub = combineLatest([this.player$, this.tradeskill$])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([player, tradeskill]) => {
         this.setPlayer(player);
         this.tradeskillInfo = cloneDeep(tradeskill || {});
         this.updateSkill();
         this.updateRecipes();
-      },
-    );
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideTradeskillWindow());
-      this.store.dispatch(new HideWindow('tradeskill'));
-      this.chosenCraft = '';
-      this.knownRecipes = {};
-      this.knownRecipesArray = [];
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideTradeskillWindow());
+        this.store.dispatch(new HideWindow('tradeskill'));
+        this.chosenCraft = '';
+        this.knownRecipes = {};
+        this.knownRecipesArray = [];
+      });
   }
 
   chooseRecipe(name: string) {

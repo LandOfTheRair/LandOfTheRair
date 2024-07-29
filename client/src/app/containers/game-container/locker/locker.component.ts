@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IPlayer } from '../../../../interfaces';
 import { GameState, HideLockerWindow, HideWindow } from '../../../../stores';
 
@@ -13,13 +13,12 @@ import * as materialLayout from '../../../../assets/content/_output/materialstor
 import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-locker',
   templateUrl: './locker.component.html',
   styleUrls: ['./locker.component.scss'],
 })
-export class LockerComponent implements OnInit {
+export class LockerComponent {
   @Select(GameState.currentPosition) curPos$: Observable<{
     x: number;
     y: number;
@@ -50,10 +49,8 @@ export class LockerComponent implements OnInit {
     public uiService: UIService,
     public optionsService: OptionsService,
     public gameService: GameService,
-  ) {}
-
-  ngOnInit() {
-    this.posSub = this.curPos$.subscribe((pos) => {
+  ) {
+    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -66,8 +63,9 @@ export class LockerComponent implements OnInit {
       }
     });
 
-    this.lockerInfoSub = combineLatest([this.locker$, this.player$]).subscribe(
-      ([lockerInfo, player]) => {
+    this.lockerInfoSub = combineLatest([this.locker$, this.player$])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([lockerInfo, player]) => {
         this.lockerInfo = cloneDeep(lockerInfo || {});
         this.player = player;
 
@@ -91,14 +89,15 @@ export class LockerComponent implements OnInit {
             (x) => x === this.lockerInfo.lockerName,
           );
         }
-      },
-    );
+      });
 
-    this.gameStatusSub = this.inGame$.subscribe(() => {
-      this.store.dispatch(new HideLockerWindow());
-      this.store.dispatch(new HideWindow('locker'));
-      this.lockerNames = [];
-    });
+    this.gameStatusSub = this.inGame$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.store.dispatch(new HideLockerWindow());
+        this.store.dispatch(new HideWindow('locker'));
+        this.lockerNames = [];
+      });
   }
 
   public changeLocker(event) {

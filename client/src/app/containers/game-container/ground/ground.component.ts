@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { sumBy } from 'lodash';
 
-import { AutoUnsubscribe } from 'ngx-auto-unsubscribe';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subscription } from 'rxjs';
 import {
   IGround,
@@ -18,13 +18,12 @@ import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
 
-@AutoUnsubscribe()
 @Component({
   selector: 'app-ground',
   templateUrl: './ground.component.html',
   styleUrls: ['./ground.component.scss'],
 })
-export class GroundComponent implements OnInit {
+export class GroundComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
   @Select(GameState.currentGround) ground$: Observable<IGround>;
 
@@ -48,15 +47,17 @@ export class GroundComponent implements OnInit {
     public uiService: UIService,
     public optionsService: OptionsService,
     public gameService: GameService,
-  ) {}
+  ) {
+    this.groundSub = this.ground$
+      .pipe(takeUntilDestroyed())
+      .subscribe((ground) => {
+        this.currentGround = ground;
+        this.setGround();
+      });
 
-  ngOnInit() {
-    this.groundSub = this.ground$.subscribe((ground) => {
-      this.currentGround = ground;
-      this.setGround();
-    });
-
-    this.playerSub = this.player$.subscribe((p) => (this.player = p));
+    this.playerSub = this.player$
+      .pipe(takeUntilDestroyed())
+      .subscribe((p) => (this.player = p));
   }
 
   setGround() {
