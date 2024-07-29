@@ -1,4 +1,4 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -58,132 +58,123 @@ export class AccountStorageEngine implements StorageEngine {
   }
 }
 
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    BrowserAnimationsModule,
-
-    GameModule,
-
-    NgxsModule.forRoot(allActualStores, { developmentMode: !environment.production }),
-    NgxsStoragePluginModule.forRoot({
-      key: ['settings', 'macros', 'journal']
-    }),
-    NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
-    NgxsResetPluginModule.forRoot(),
-    NgxsLoggerPluginModule.forRoot({
-      disabled: environment.production,
-      collapsed: true,
-      filter: action => {
-        if (!action.type) return !action.filterOutFromLogs;
-
-        const ignoreActions = {
-          [GameAction.GameSetPlayer]: true,
-          [GameAction.GamePatchPlayer]: true,
-          [GameAction.GamePatchPlayerState]: true,
-          [GameAction.GameSetPosition]: true,
-          [GameAction.SetCurrentItemTooltip]: true,
-          [GameAction.SettingsUpdateWindowPosition]: true,
-          [GameAction.SettingsSetDefaultWindowPosition]: true,
-          [GameAction.SettingsShowWindow]: true,
-          [GameAction.SettingsActiveWindow]: true,
-          [GameAction.SetCurrentCommand]: true,
-          [GameAction.PartyUpdate]: true,
-          [GameAction.LogCurrentCommand]: true
-        };
-
-        return !ignoreActions[action.type];
-      }
-    })
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpErrorInterceptor,
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (logger: LoggerService) => () => {
-        logger.init();
-        return logger;
-      },
-      deps: [LoggerService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (opts: OptionsService) => () => {
-        opts.init();
-        return opts;
-      },
-      deps: [OptionsService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (sc: SocketService) => () => {
-        sc.init();
-        return sc;
-      },
-      deps: [SocketService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (assets: AssetService) => () => {
-        assets.init();
-        return assets;
-      },
-      deps: [AssetService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (game: GameService) => () => {
-        game.init();
-        return game;
-      },
-      deps: [GameService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (macros: MacrosService) => () => {
-        macros.init();
-        return macros;
-      },
-      deps: [MacrosService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (modal: ModalService) => () => {
-        modal.init();
-        return modal;
-      },
-      deps: [ModalService],
-      multi: true
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (sound: SoundService) => () => {
-        sound.init();
-        return sound;
-      },
-      deps: [SoundService],
-      multi: true
-    },
-    {
-      provide: ErrorHandler,
-      useClass: AlertErrorHandler,
-    }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+        BrowserAnimationsModule,
+        GameModule,
+        NgxsModule.forRoot(allActualStores, { developmentMode: !environment.production }),
+        NgxsStoragePluginModule.forRoot({
+            key: ['settings', 'macros', 'journal']
+        }),
+        NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
+        NgxsResetPluginModule.forRoot(),
+        NgxsLoggerPluginModule.forRoot({
+            disabled: environment.production,
+            collapsed: true,
+            filter: action => {
+                if (!action.type)
+                    return !action.filterOutFromLogs;
+                const ignoreActions = {
+                    [GameAction.GameSetPlayer]: true,
+                    [GameAction.GamePatchPlayer]: true,
+                    [GameAction.GamePatchPlayerState]: true,
+                    [GameAction.GameSetPosition]: true,
+                    [GameAction.SetCurrentItemTooltip]: true,
+                    [GameAction.SettingsUpdateWindowPosition]: true,
+                    [GameAction.SettingsSetDefaultWindowPosition]: true,
+                    [GameAction.SettingsShowWindow]: true,
+                    [GameAction.SettingsActiveWindow]: true,
+                    [GameAction.SetCurrentCommand]: true,
+                    [GameAction.PartyUpdate]: true,
+                    [GameAction.LogCurrentCommand]: true
+                };
+                return !ignoreActions[action.type];
+            }
+        })], providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (logger: LoggerService) => () => {
+                logger.init();
+                return logger;
+            },
+            deps: [LoggerService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (opts: OptionsService) => () => {
+                opts.init();
+                return opts;
+            },
+            deps: [OptionsService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (sc: SocketService) => () => {
+                sc.init();
+                return sc;
+            },
+            deps: [SocketService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (assets: AssetService) => () => {
+                assets.init();
+                return assets;
+            },
+            deps: [AssetService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (game: GameService) => () => {
+                game.init();
+                return game;
+            },
+            deps: [GameService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (macros: MacrosService) => () => {
+                macros.init();
+                return macros;
+            },
+            deps: [MacrosService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (modal: ModalService) => () => {
+                modal.init();
+                return modal;
+            },
+            deps: [ModalService],
+            multi: true
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: (sound: SoundService) => () => {
+                sound.init();
+                return sound;
+            },
+            deps: [SoundService],
+            multi: true
+        },
+        {
+            provide: ErrorHandler,
+            useClass: AlertErrorHandler,
+        },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
