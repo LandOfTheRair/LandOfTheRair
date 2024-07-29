@@ -45,7 +45,9 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     this.inGame$ = this.gameService.inGame$
       .pipe(takeUntilDestroyed())
       .subscribe((inGame) => {
-        if (inGame) return;
+        if (inGame) {
+          return;
+        }
 
         this.messages = [];
       });
@@ -58,8 +60,10 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       'AdventureLog',
       GameServerResponse.GameLog,
       (data) => {
-        if (data.messageTypes.includes(MessageType.Chatter))
+        if (data.messageTypes.includes(MessageType.Chatter)) {
           data.message = `<local:${data.from}> ${data.message}`;
+        }
+
         this.addMessage(data);
       },
     );
@@ -154,23 +158,26 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     if (
       this.optionsService.suppressOutgoingDoT &&
       message.typeHash[MessageType.OutOvertime]
-    )
+    ) {
       return;
+    }
     if (
       this.optionsService.suppressZeroDamage &&
       (message.message.includes('[0') ||
         message.message.includes('misses!') ||
         message.message.includes('blocked by your'))
-    )
+    ) {
       return;
+    }
 
     message.display = this.discordEmojiPipe.transform(
       marked(message.message, { renderer: this.renderer }),
       12,
     );
 
-    if (message.source)
+    if (message.source) {
       message.display = `[${message.source}] ${message.display}`;
+    }
 
     if (message.typeHash[MessageType.Banner]) {
       this.gameService.sendUIBannerMessage(message.display);

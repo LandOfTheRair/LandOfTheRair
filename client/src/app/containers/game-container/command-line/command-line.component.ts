@@ -120,8 +120,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
       if (
         document.activeElement.tagName === 'INPUT' ||
         document.activeElement.tagName === 'TEXTAREA'
-      )
+      ) {
         return;
+      }
 
       if (ev.key === 'Enter') {
         this.store.dispatch(new SetActiveWindow('commandLine'));
