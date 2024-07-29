@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
-import { of, timer } from 'rxjs';
+import { Observable, of, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
@@ -14,13 +14,24 @@ import { GameService } from '../services/game.service';
 import { ModalService } from '../services/modal.service';
 import { SocketService } from '../services/socket.service';
 
+interface MenuItem {
+  name: string;
+  handler: () => void;
+  children?: MenuItem[];
+
+  icon?: string;
+  borderTop?: boolean;
+  visibleIf?: Observable<boolean>;
+
+  disabled?: boolean;
+}
+
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit {
-
   private serverAssetHash: string;
 
   public get serverMismatchWarning(): boolean {
@@ -34,11 +45,11 @@ export class MenuComponent implements OnInit {
   }
 
   public get minimumResolutionWarning(): boolean {
-    return (window.innerHeight < 900 || window.innerWidth < 1280);
+    return window.innerHeight < 900 || window.innerWidth < 1280;
   }
 
   public isMenuVisible: boolean;
-  public menuItems = [
+  public menuItems: MenuItem[] = [
     {
       name: 'Game',
       handler: () => {},
@@ -46,18 +57,18 @@ export class MenuComponent implements OnInit {
         {
           name: 'My Account',
           icon: 'account_circle',
-          handler: () => this.modalService.showAccount()
+          handler: () => this.modalService.showAccount(),
         },
         {
           name: 'Current Events',
           icon: 'event',
-          handler: () => this.modalService.showCurrentEvents()
+          handler: () => this.modalService.showCurrentEvents(),
         },
         {
           name: 'Manage Silver',
           icon: 'account_balance',
-          visibleIf: this.gameService.inGame$.pipe(map(x => !x)),
-          handler: () => this.modalService.showManageSilver()
+          visibleIf: this.gameService.inGame$.pipe(map((x) => !x)),
+          handler: () => this.modalService.showManageSilver(),
         },
         {
           name: 'Leaderboard',
@@ -68,8 +79,12 @@ export class MenuComponent implements OnInit {
         {
           name: 'Blog',
           icon: 'rss_feed',
-          visibleIf: this.announcementService.latestAnnouncement,
-          handler: () => window.open(this.announcementService.latestAnnouncement.link, '_blank'),
+          visibleIf: of(!!this.announcementService.latestAnnouncement),
+          handler: () =>
+            window.open(
+              this.announcementService.latestAnnouncement.link,
+              '_blank',
+            ),
         },
         {
           name: 'Help',
@@ -80,21 +95,21 @@ export class MenuComponent implements OnInit {
           name: 'Reload UI',
           icon: 'refresh',
           visibleIf: of(navigator.userAgent.includes('Electron')),
-          handler: () => window.location.reload()
+          handler: () => window.location.reload(),
         },
         {
           name: 'Download',
           icon: 'download',
           visibleIf: of(!navigator.userAgent.includes('Electron')),
-          handler: () => window.open('https://rair.land/download', '_blank')
+          handler: () => window.open('https://rair.land/download', '_blank'),
         },
         {
           name: 'About',
           icon: 'info',
           handler: () => this.modalService.showAbout(),
-          borderTop: true
-        }
-      ]
+          borderTop: true,
+        },
+      ],
     },
     {
       name: 'Windows',
@@ -102,93 +117,102 @@ export class MenuComponent implements OnInit {
       children: [
         {
           name: 'Journal',
-          handler: () => this.store.dispatch(new ShowWindow('journal'))
+          handler: () => this.store.dispatch(new ShowWindow('journal')),
         },
         {
           name: 'Command Line',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('commandLine'))
+          handler: () => this.store.dispatch(new ShowWindow('commandLine')),
         },
         {
           name: 'Character',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('equipmentMain'))
+          handler: () => this.store.dispatch(new ShowWindow('equipmentMain')),
         },
         {
           name: 'Belt',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('inventoryBelt'))
+          handler: () => this.store.dispatch(new ShowWindow('inventoryBelt')),
         },
         {
           name: 'Sack',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('inventorySack'))
+          handler: () => this.store.dispatch(new ShowWindow('inventorySack')),
         },
         {
           name: 'Ground',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('ground'))
+          handler: () => this.store.dispatch(new ShowWindow('ground')),
         },
         {
           name: 'Party',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('party'))
+          handler: () => this.store.dispatch(new ShowWindow('party')),
         },
         {
           name: 'Quests',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('quests'))
+          handler: () => this.store.dispatch(new ShowWindow('quests')),
         },
         {
           name: 'Talents',
           visibleIf: this.gameService.inGame$,
-          handler: () => this.store.dispatch(new ShowWindow('traits'))
+          handler: () => this.store.dispatch(new ShowWindow('traits')),
         },
         {
           name: 'Reset Window Positions',
           borderTop: true,
           handler: () => {
-            this.modalService.confirm('Reset Window Positions', 'Are you sure you want to reset all your window positions?')
-              .subscribe(res => {
+            this.modalService
+              .confirm(
+                'Reset Window Positions',
+                'Are you sure you want to reset all your window positions?',
+              )
+              .subscribe((res) => {
                 if (!res) return;
 
                 this.store.dispatch(new ResetWindowPositions());
               });
-          }
+          },
         },
-      ]
+      ],
     },
     {
       name: 'Macros',
       visibleIf: this.gameService.inGame$,
-      handler: () => this.modalService.showMacros()
+      handler: () => this.modalService.showMacros(),
     },
     {
       name: 'Options',
-      handler: () => this.modalService.showOptions()
+      handler: () => this.modalService.showOptions(),
     },
     {
       name: 'Errors',
-      handler: () => this.modalService.showErrorLog()
+      handler: () => this.modalService.showErrorLog(),
     },
     {
       name: 'Exit To Lobby',
       visibleIf: this.gameService.inGame$,
       handler: () => {
-        this.modalService.confirm('Exit Game', 'Are you sure you want to exit to lobby?')
-          .subscribe(res => {
+        this.modalService
+          .confirm('Exit Game', 'Are you sure you want to exit to lobby?')
+          .subscribe((res) => {
             if (!res) return;
 
             this.socketService.emit(GameServerEvent.QuitGame);
           });
-      }
+      },
     },
     {
       name: 'Log Out',
       borderTop: true,
       handler: () => {
-        this.modalService.confirm('Log Out', 'Are you sure you want to log out of Land of the Rair?')
-          .subscribe(res => {
+        this.modalService
+          .confirm(
+            'Log Out',
+            'Are you sure you want to log out of Land of the Rair?',
+          )
+          .subscribe((res) => {
             if (!res) return;
 
             this.socketService.emit(GameServerEvent.QuitGame);
@@ -205,10 +229,9 @@ export class MenuComponent implements OnInit {
               this.socketService.tryDisconnect();
               this.socketService.init();
             }, 100);
-
           });
-      }
-    }
+      },
+    },
   ];
 
   // show the warning or not, default yes, unsaved
@@ -227,11 +250,11 @@ export class MenuComponent implements OnInit {
     private api: APIService,
     public socketService: SocketService,
     public gameService: GameService,
-    public assetService: AssetService
-  ) { }
+    public assetService: AssetService,
+  ) {}
 
   ngOnInit() {
-    this.assetService.assetHash$.subscribe(hash => {
+    this.assetService.assetHash$.subscribe((hash) => {
       this.serverAssetHash = hash;
     });
 
@@ -239,7 +262,6 @@ export class MenuComponent implements OnInit {
   }
 
   private watchResetTime() {
-
     const setResetTimestamp = () => {
       let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
       if (+theoreticalResetTime < DateTime.fromObject({ zone: 'utc' })) {
@@ -251,8 +273,8 @@ export class MenuComponent implements OnInit {
 
     const formatTimestring = () => {
       const diff = (this.resetTimestamp - this.nowTimestamp) / 1000;
-      const hours = Math.floor((diff / 60) / 60) % 60;
-      const minutes = Math.floor((diff / 60)) % 60;
+      const hours = Math.floor(diff / 60 / 60) % 60;
+      const minutes = Math.floor(diff / 60) % 60;
 
       this.timestampDisplay = `${hours > 0 ? hours + 'h' : ''} ${minutes}m`;
     };
@@ -260,12 +282,11 @@ export class MenuComponent implements OnInit {
     setResetTimestamp();
     formatTimestring();
 
-    timer(0, 60000)
-      .subscribe(() => {
-        this.nowTimestamp = +DateTime.fromObject({ zone: 'utc' });
-        if (this.nowTimestamp > this.resetTimestamp) setResetTimestamp();
-        formatTimestring();
-      });
+    timer(0, 60000).subscribe(() => {
+      this.nowTimestamp = +DateTime.fromObject({ zone: 'utc' });
+      if (this.nowTimestamp > this.resetTimestamp) setResetTimestamp();
+      formatTimestring();
+    });
   }
 
   public hideResolution() {
@@ -275,5 +296,4 @@ export class MenuComponent implements OnInit {
   public hideMismatch() {
     this.showMismatchWarning = false;
   }
-
 }

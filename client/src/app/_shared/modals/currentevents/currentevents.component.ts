@@ -14,7 +14,7 @@ import * as holidayDescs from '../../../../assets/content/_output/holidaydescs.j
 })
 export class CurrentEventsComponent {
   @Select(GameState.currentHoliday) holiday$: Observable<Holiday>;
-  @Select(LobbyState.events) events$: Observable<IDynamicEvent>;
+  @Select(LobbyState.events) events$: Observable<IDynamicEvent[]>;
 
   public get holidayDescs() {
     return holidayDescs;

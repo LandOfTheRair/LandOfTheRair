@@ -5,11 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { get } from 'lodash';
 
-import {
-  FOVVisibility,
-  ICharacter,
-  IStatusEffect,
-} from '../../../../interfaces';
+import { FOVVisibility, ICharacter } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -95,9 +91,5 @@ export class ActiveTargetComponent {
     this.targetSub = this.currentTarget$
       .pipe(takeUntilDestroyed())
       .subscribe((t) => (this.target = t));
-  }
-
-  trackEffectBy(effect: IStatusEffect) {
-    return effect.uuid;
   }
 }

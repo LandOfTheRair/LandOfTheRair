@@ -56,10 +56,6 @@ export class PlayerStatusComponent {
     this.showPouch = !!a.premium.silverPurchases?.[SilverPurchase.MagicPouch];
   }
 
-  trackEffectBy(effect: IStatusEffect) {
-    return effect.uuid;
-  }
-
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
 

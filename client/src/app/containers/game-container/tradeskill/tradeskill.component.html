@@ -1,10 +1,10 @@
-<app-window windowName="tradeskill"
+<app-window
+  windowName="tradeskill"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
   [initialHide]="true"
   [alwaysOnTop]="true"
-
   defaultX="450"
   defaultY="100"
   defaultWidth="450"
@@ -33,68 +33,92 @@
 
   <div class="bottom-area">
     @for (recipecat of knownRecipesArray; track recipecat) {
-      <div class="category">
-        <div class="category-header">{{ recipecat.category }}</div>
-        <div class="category-recipes">
-          @for (recipe of recipecat.recipes; track recipeTrackBy($index, recipe)) {
-            <div class="recipe" (click)="chooseRecipe(recipe.name)">
-              <app-item class="recipe-result" size="normal" [showDesc]="false" [showEncrust]="false" [showCount]="false" [showOunces]="true" [item]="{ name: recipe.item, mods: {} }"></app-item>
-              <div class="recipe-name-ing">
-                <div class="recipe-name">
-                  {{ recipe.name }}
-                  @if (itemTies(recipe.item)) {
-                    <span>
-                      @if (recipe.transferOwnerFrom) {
-                        <span>
-                          (Binds; Transfers)
-                        </span>
-                      }
-                      @if (!recipe.transferOwnerFrom) {
-                        <span>
-                          (Binds)
-                        </span>
-                      }
-                    </span>
-                  }
-                  <span class="skill-gain-percent"
-                    [class.perc-0]="recipe._pointChance < 25"
-                    [class.perc-25]="recipe._pointChance >= 25 && recipe._pointChance < 50"
-                    [class.perc-50]="recipe._pointChance >= 50 && recipe._pointChance < 75"
-                    [class.perc-75]="recipe._pointChance >= 75 && recipe._pointChance < 100"
-                    [class.perc-100]="recipe._pointChance >= 100">
-                    [{{ recipe._pointChance || 0 }}%]
-                  </span>
-                </div>
-                <div class="recipe-ingredients">
-                  @if (recipe.name === chosenCraft) {
-                    <div class="recipe-ingredients-container">
-                      @for (item of recipe.ingredients; track ingTrackBy($index, item)) {
-                        <app-item class="recipe-ingredient"
-                          size="xsmall"
-                          [showDesc]="false"
-                          [showEncrust]="false"
-                          [showCount]="false"
-                          [matTooltip]="itemDesc(item)"
-                        [item]="{ name: item, mods: {} }"></app-item>
-                      }
-                      @for (item of recipe.ozIngredients; track ingTrackBy($index, item)) {
-                        <span class="recipe-ingredient">
-                          <app-item size="xsmall" [showDesc]="false" [showEncrust]="false" [showCount]="false" [item]="{ name: item.display, mods: {} }"></app-item> x {{ item.ounces }}
-                        </span>
-                      }
-                    </div>
-                  }
-                </div>
-              </div>
+    <div class="category">
+      <div class="category-header">{{ recipecat.category }}</div>
+      <div class="category-recipes">
+        @for (recipe of recipecat.recipes; track recipe.name) {
+        <div class="recipe" (click)="chooseRecipe(recipe.name)">
+          <app-item
+            class="recipe-result"
+            size="normal"
+            [showDesc]="false"
+            [showEncrust]="false"
+            [showCount]="false"
+            [showOunces]="true"
+            [item]="{ name: recipe.item, mods: {} }"
+          ></app-item>
+          <div class="recipe-name-ing">
+            <div class="recipe-name">
+              {{ recipe.name }}
+              @if (itemTies(recipe.item)) {
+              <span>
+                @if (recipe.transferOwnerFrom) {
+                <span>(Binds; Transfers)</span>
+                } @if (!recipe.transferOwnerFrom) {
+                <span>(Binds)</span>
+                }
+              </span>
+              }
+              <span
+                class="skill-gain-percent"
+                [class.perc-0]="recipe._pointChance < 25"
+                [class.perc-25]="
+                  recipe._pointChance >= 25 && recipe._pointChance < 50
+                "
+                [class.perc-50]="
+                  recipe._pointChance >= 50 && recipe._pointChance < 75
+                "
+                [class.perc-75]="
+                  recipe._pointChance >= 75 && recipe._pointChance < 100
+                "
+                [class.perc-100]="recipe._pointChance >= 100"
+              >
+                [{{ recipe._pointChance || 0 }}%]
+              </span>
+            </div>
+            <div class="recipe-ingredients">
               @if (recipe.name === chosenCraft) {
-                <button class="craft-button" mat-flat-button color="primary" (click)="craft(recipe.name)">
-                  Craft
-                </button>
+              <div class="recipe-ingredients-container">
+                @for (item of recipe.ingredients; track $index) {
+                <app-item
+                  class="recipe-ingredient"
+                  size="xsmall"
+                  [showDesc]="false"
+                  [showEncrust]="false"
+                  [showCount]="false"
+                  [matTooltip]="itemDesc(item)"
+                  [item]="{ name: item, mods: {} }"
+                ></app-item>
+                } @for (item of recipe.ozIngredients; track $index) {
+                <span class="recipe-ingredient">
+                  <app-item
+                    size="xsmall"
+                    [showDesc]="false"
+                    [showEncrust]="false"
+                    [showCount]="false"
+                    [item]="{ name: item.display, mods: {} }"
+                  ></app-item>
+                  x {{ item.ounces }}
+                </span>
+                }
+              </div>
               }
             </div>
+          </div>
+          @if (recipe.name === chosenCraft) {
+          <button
+            class="craft-button"
+            mat-flat-button
+            color="primary"
+            (click)="craft(recipe.name)"
+          >
+            Craft
+          </button>
           }
         </div>
+        }
       </div>
+    </div>
     }
   </div>
 </ng-template>

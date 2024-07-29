@@ -41,9 +41,12 @@ export class TradeskillComponent {
 
   public tradeskillInfo: any = {};
   public player: IPlayer;
-  public knownRecipes: Record<string, IRecipe[]> = {};
-  public knownRecipesArray: Array<{ category: string; recipes: IRecipe[] }> =
-    [];
+  public knownRecipes: Record<string, (IRecipe & { _pointChance: number })[]> =
+    {};
+  public knownRecipesArray: Array<{
+    category: string;
+    recipes: (IRecipe & { _pointChance: number })[];
+  }> = [];
   public skill = 0;
   public skillPercent = 0;
   public skillName: string;
@@ -92,14 +95,6 @@ export class TradeskillComponent {
   itemTies(item: string): boolean {
     const realItem = this.assetService.getItem(item);
     return realItem?.binds ?? false;
-  }
-
-  recipeTrackBy(index, recipe: IRecipe) {
-    return recipe.name;
-  }
-
-  ingTrackBy(index) {
-    return index;
   }
 
   private setPlayer(player: IPlayer) {

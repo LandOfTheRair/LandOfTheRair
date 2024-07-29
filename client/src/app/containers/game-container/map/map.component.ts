@@ -36,7 +36,10 @@ import { MapScene, PreloadScene } from './phaserstates';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
-  @Select(GameState.itemTooltip) public itemTooltip$: Observable<string>;
+  @Select(GameState.itemTooltip) public itemTooltip$: Observable<{
+    tooltip: string;
+    upgrades: string[];
+  }>;
 
   @Select(GameState.player) private player$: Observable<IPlayer>;
   @Select(GameState.currentTarget)

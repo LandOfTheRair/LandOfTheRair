@@ -9,7 +9,6 @@ import {
   IGround,
   IGroundItem,
   IPlayer,
-  ISimpleItem,
   ItemClass,
 } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
@@ -101,9 +100,5 @@ export class GroundComponent {
 
   changeItemClass(iClass: ItemClass) {
     this.currentItemClass = iClass;
-  }
-
-  groundItemTrackBy(item: ISimpleItem): string {
-    return item.uuid;
   }
 }

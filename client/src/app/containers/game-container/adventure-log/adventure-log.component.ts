@@ -16,7 +16,7 @@ import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { SetLogMode } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
-import { GameService } from '../../../services/game.service';
+import { GameService, LogMode } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
 
@@ -26,9 +26,15 @@ import { SocketService } from '../../../services/socket.service';
   styleUrls: ['./adventure-log.component.scss'],
 })
 export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
+  public readonly chatTabs: LogMode[] = ['All', 'General', 'Combat', 'NPC'];
+
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
-  public messages: Array<{ messageTypes: MessageType[]; message: string }> = [];
+  public messages: Array<{
+    messageTypes: MessageType[];
+    message: string;
+    display?: string;
+  }> = [];
 
   private mutationObserver: MutationObserver;
   private renderer: marked.Renderer;
@@ -131,14 +137,11 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       `<a target="_blank" href="${href}">${text}</a>`;
   }
 
-  public changeTab(newTab: 'All' | 'General' | 'Combat' | 'NPC') {
+  public changeTab(newTab: LogMode) {
     this.store.dispatch(new SetLogMode(newTab));
   }
 
-  public isMessageVisible(
-    logMode: 'All' | 'General' | 'Combat' | 'NPC',
-    message,
-  ): boolean {
+  public isMessageVisible(logMode: LogMode, message): boolean {
     if (logMode === 'All') return true;
     if (logMode === 'NPC') return message.typeHash[MessageType.NPCChatter];
 

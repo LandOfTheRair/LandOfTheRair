@@ -540,8 +540,4 @@ export class MacroEditorComponent {
       this.setPage(this.findPage(this.currentlyEditingMacro.icon));
     });
   }
-
-  trackMacroBy(idx: number) {
-    return idx;
-  }
 }
