@@ -35,10 +35,10 @@
     "@angular/router": "^18.1.2",
     "@angular/service-worker": "^18.1.2",
     "@ngxs-labs/immer-adapter": "^3.0.5",
-    "@ngxs/devtools-plugin": "^3.8.2",
-    "@ngxs/logger-plugin": "^3.8.2",
-    "@ngxs/storage-plugin": "^3.8.2",
-    "@ngxs/store": "^3.8.2",
+    "@ngxs/devtools-plugin": "^18.0.0",
+    "@ngxs/logger-plugin": "^18.0.0",
+    "@ngxs/storage-plugin": "^18.0.0",
+    "@ngxs/store": "^18.0.0",
     "fast-json-patch": "3.0.0-1",
     "howler": "^2.2.1",
     "immer": "^9.0.6",
@@ -85,5 +85,34 @@
     "ts-node": "~7.0.0",
     "typescript": "5.4",
     "webfont": "^7.1.4"
+  },
+  "overrides": {
+    "@angular/cdk": {
+      "@angular/common": ">= 14",
+      "@angular/core": ">= 14",
+      "@angular/animations": ">= 14",
+      "@angular/platform-browser": ">= 14",
+      "@angular/forms": ">= 14",
+      "@angular/material": ">= 14"
+    },
+    "@angular/material": {
+      "@angular/common": ">= 14",
+      "@angular/core": ">= 14",
+      "@angular/animations": ">= 14",
+      "@angular/platform-browser": ">= 14",
+      "@angular/forms": ">= 14",
+      "@angular/cdk": ">= 14"
+    },
+    "@ngxs-labs/immer-adapter": {
+      "@angular/core": ">= 14",
+      "@ngxs/store": ">= 14",
+      "immer": ">= 3"
+    },
+    "queueing-subject": {
+      "rxjs": ">= 7"
+    },
+    "rxjs-websockets": {
+      "rxjs": ">= 7"
+    }
   }
 }
