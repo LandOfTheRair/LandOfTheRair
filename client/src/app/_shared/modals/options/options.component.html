@@ -16,59 +16,65 @@
         <fieldset>
           <legend>Interaction Options</legend>
 
-          <div class="m-t-5" *ngFor="let option of interactionOptions">
-            <mat-checkbox [(ngModel)]="options[option.option]"
-                          (change)="updateOption(option.option)"
-                          [ngModelOptions]="{ standalone: true }">
-              {{ option.text }}
-            </mat-checkbox>
-          </div>
+          @for (option of interactionOptions; track option) {
+            <div class="m-t-5">
+              <mat-checkbox [(ngModel)]="options[option.option]"
+                (change)="updateOption(option.option)"
+                [ngModelOptions]="{ standalone: true }">
+                {{ option.text }}
+              </mat-checkbox>
+            </div>
+          }
         </fieldset>
 
         <fieldset>
           <legend>Message Options</legend>
 
-          <div class="m-t-5" *ngFor="let option of messageOptions">
-            <mat-checkbox [(ngModel)]="options[option.option]"
-                          (change)="updateOption(option.option)"
-                          [ngModelOptions]="{ standalone: true }">
-              {{ option.text }}
-            </mat-checkbox>
-          </div>
+          @for (option of messageOptions; track option) {
+            <div class="m-t-5">
+              <mat-checkbox [(ngModel)]="options[option.option]"
+                (change)="updateOption(option.option)"
+                [ngModelOptions]="{ standalone: true }">
+                {{ option.text }}
+              </mat-checkbox>
+            </div>
+          }
         </fieldset>
 
         <fieldset>
           <legend>Interface Options</legend>
 
-          <div class="m-t-5" *ngFor="let option of uiOptions">
-            <mat-checkbox [(ngModel)]="options[option.option]"
-                          (change)="updateOption(option.option)"
-                          [ngModelOptions]="{ standalone: true }">
-              {{ option.text }}
-            </mat-checkbox>
-          </div>
+          @for (option of uiOptions; track option) {
+            <div class="m-t-5">
+              <mat-checkbox [(ngModel)]="options[option.option]"
+                (change)="updateOption(option.option)"
+                [ngModelOptions]="{ standalone: true }">
+                {{ option.text }}
+              </mat-checkbox>
+            </div>
+          }
 
           <div class="slider-option-row">
             <div class="slider-label">Dying Border Width</div>
             <mat-slider [min]="0"
-                        [max]="300"
-                        [step]="5"
-                        [(ngModel)]="options.dyingBorderWidth"
-                        [ngModelOptions]="{ standalone: true }"
-                        (change)="updateOption('dyingBorderWidth')"
-                        thumbLabel="true"></mat-slider>
+              [max]="300"
+              [step]="5"
+              [(ngModel)]="options.dyingBorderWidth"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="updateOption('dyingBorderWidth')"
+            thumbLabel="true"></mat-slider>
             <div>{{ options.dyingBorderWidth }}px</div>
           </div>
 
           <div class="slider-option-row">
             <div class="slider-label">Dying Border Trigger %</div>
             <mat-slider [min]="5"
-                        [max]="95"
-                        [step]="5"
-                        [(ngModel)]="options.dyingBorderPercent"
-                        [ngModelOptions]="{ standalone: true }"
-                        (change)="updateOption('dyingBorderPercent')"
-                        thumbLabel="true"></mat-slider>
+              [max]="95"
+              [step]="5"
+              [(ngModel)]="options.dyingBorderPercent"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="updateOption('dyingBorderPercent')"
+            thumbLabel="true"></mat-slider>
             <div>{{ options.dyingBorderPercent }}%</div>
           </div>
 
@@ -99,13 +105,15 @@
 
         <fieldset>
           <legend>UI Debug Options</legend>
-          <div class="m-t-5" *ngFor="let option of debugOptions">
-            <mat-checkbox [(ngModel)]="options[option.option]"
-                          (change)="updateOption(option.option)"
-                          [ngModelOptions]="{ standalone: true }">
-              {{ option.text }}
-            </mat-checkbox>
-          </div>
+          @for (option of debugOptions; track option) {
+            <div class="m-t-5">
+              <mat-checkbox [(ngModel)]="options[option.option]"
+                (change)="updateOption(option.option)"
+                [ngModelOptions]="{ standalone: true }">
+                {{ option.text }}
+              </mat-checkbox>
+            </div>
+          }
         </fieldset>
 
       </form>
@@ -116,24 +124,24 @@
       <form class="option-container">
         <div>
           <mat-checkbox [(ngModel)]="options.playBGM"
-                        (change)="updateOption('playBGM')"
-                        [ngModelOptions]="{ standalone: true }">
+            (change)="updateOption('playBGM')"
+            [ngModelOptions]="{ standalone: true }">
             Play Background Music
           </mat-checkbox>
         </div>
 
         <div>
           <mat-checkbox [(ngModel)]="options.playSFX"
-                        (change)="updateOption('playSFX')"
-                        [ngModelOptions]="{ standalone: true }">
+            (change)="updateOption('playSFX')"
+            [ngModelOptions]="{ standalone: true }">
             Play Sound Effects
           </mat-checkbox>
         </div>
 
         <div>
           <mat-checkbox [(ngModel)]="options.playNostalgia"
-                        (change)="updateOption('playNostalgia')"
-                        [ngModelOptions]="{ standalone: true }">
+            (change)="updateOption('playNostalgia')"
+            [ngModelOptions]="{ standalone: true }">
             Play Nostalgia Background Music & Sound Effects
           </mat-checkbox>
         </div>
@@ -141,24 +149,24 @@
         <div class="slider-option-row">
           <div class="slider-label">Music Volume</div>
           <mat-slider [min]="0"
-                      [max]="100"
-                      [step]="5"
-                      [(ngModel)]="options.volumeMusic"
-                      [ngModelOptions]="{ standalone: true }"
-                      (change)="updateOption('volumeMusic')"
-                      thumbLabel="true"></mat-slider>
+            [max]="100"
+            [step]="5"
+            [(ngModel)]="options.volumeMusic"
+            [ngModelOptions]="{ standalone: true }"
+            (change)="updateOption('volumeMusic')"
+          thumbLabel="true"></mat-slider>
           <div>{{ options.volumeMusic }}%</div>
         </div>
 
         <div class="slider-option-row">
           <div class="slider-label">SFX Volume</div>
           <mat-slider [min]="0"
-                      [max]="100"
-                      [step]="5"
-                      [(ngModel)]="options.volumeSFX"
-                      [ngModelOptions]="{ standalone: true }"
-                      (change)="updateOption('volumeSFX')"
-                      thumbLabel="true"></mat-slider>
+            [max]="100"
+            [step]="5"
+            [(ngModel)]="options.volumeSFX"
+            [ngModelOptions]="{ standalone: true }"
+            (change)="updateOption('volumeSFX')"
+          thumbLabel="true"></mat-slider>
           <div>{{ options.volumeSFX }}%</div>
         </div>
       </form>
@@ -176,7 +184,7 @@
             rows="5"
             [(ngModel)]="options.otherAutoExec"
             (change)="updateOption('otherAutoExec')"
-            [ngModelOptions]="{ standalone: true }"></textarea>
+          [ngModelOptions]="{ standalone: true }"></textarea>
         </mat-form-field>
       </form>
     </mat-tab>
@@ -187,40 +195,42 @@
           <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
         </p>
 
-        <mat-form-field class="full-width" *ngFor="let spritesheet of spritesheets" appearance="outline">
-          <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
-          <input matInput
-            type="text"
-            [id]="spritesheet"
-            [name]="spritesheet"
-            [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.webp'"
-            [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
-            autocomplete="off"
-            (change)="updateOption('spritesheet' + spritesheet + 'Url')"
-            [ngModelOptions]="{ standalone: true }" />
-        </mat-form-field>
-      </form>
-    </mat-tab>
+        @for (spritesheet of spritesheets; track spritesheet) {
+          <mat-form-field class="full-width" appearance="outline">
+            <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
+            <input matInput
+              type="text"
+              [id]="spritesheet"
+              [name]="spritesheet"
+              [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.webp'"
+              [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
+              autocomplete="off"
+              (change)="updateOption('spritesheet' + spritesheet + 'Url')"
+              [ngModelOptions]="{ standalone: true }" />
+            </mat-form-field>
+          }
+        </form>
+      </mat-tab>
 
-    <mat-tab label="Custom">
-      <form autocomplete="off" class="option-container">
-        <mat-form-field class="full-width">
-          <mat-label>Custom CSS</mat-label>
-          <textarea matInput
-            type="text"
-            placeholder="Custom CSS"
-            rows="10"
-            [(ngModel)]="options.customCSS"
-            (change)="updateOption('customCSS')"
+      <mat-tab label="Custom">
+        <form autocomplete="off" class="option-container">
+          <mat-form-field class="full-width">
+            <mat-label>Custom CSS</mat-label>
+            <textarea matInput
+              type="text"
+              placeholder="Custom CSS"
+              rows="10"
+              [(ngModel)]="options.customCSS"
+              (change)="updateOption('customCSS')"
             [ngModelOptions]="{ standalone: true }"></textarea>
-        </mat-form-field>
-      </form>
-    </mat-tab>
+          </mat-form-field>
+        </form>
+      </mat-tab>
 
-  </mat-tab-group>
+    </mat-tab-group>
 
-</div>
+  </div>
 
-<div mat-dialog-actions>
-  <button mat-button mat-dialog-close>Close</button>
-</div>
+  <div mat-dialog-actions>
+    <button mat-button mat-dialog-close>Close</button>
+  </div>

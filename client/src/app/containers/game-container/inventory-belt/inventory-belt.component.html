@@ -1,12 +1,12 @@
 <app-window windowName="inventoryBelt"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
 
-            defaultX="962"
-            defaultY="388"
-            defaultWidth="350"
-            defaultHeight="110"
+  defaultX="962"
+  defaultY="388"
+  defaultWidth="350"
+  defaultHeight="110"
 
 ></app-window>
 
@@ -15,7 +15,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="player$ | async as player">
+  @if (player$ | async; as player) {
     <app-inventory context="Belt" [container]="player.items.belt" [size]="5"></app-inventory>
-  </ng-container>
+  }
 </ng-template>

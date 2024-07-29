@@ -2,25 +2,35 @@
 
 <app-menu></app-menu>
 
-<app-login 
-  *ngIf="!socketService.isConnected || (gameService.loggedIn$ | async) === false"
-></app-login>
+@if (!socketService.isConnected || (gameService.loggedIn$ | async) === false) {
+  <app-login
+  ></app-login>
+}
 
-<app-lobby-container 
-  *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)"
-></app-lobby-container>
+@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
+  <app-lobby-container
+  ></app-lobby-container>
+}
 
 <app-game-container></app-game-container>
 
-<app-journal *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)"></app-journal>
+@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
+  <app-journal></app-journal>
+}
 
 <!-- If we are logged in and not subscribed, suggest checking out a subscription -->
-<div *ngIf="socketService.isConnected && (gameService.loggedIn$ | async)">
-  <div class="subscribe-banner" *ngIf="account$ | async as account">
-    <span *ngIf="!isSubscribed(account)">
-      You're not currently subscribed. Please consider subscribing or buying silver to help keep the lights on! Want to know what you get for subscribing?
-      <br>
-      <a href="http://rair.land/docs/subscriber-benefits/" target="_blank">Check this out to see all the awesome perks of subscribing!</a>
-    </span>
-  </div>
-</div>
+@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
+  <div>
+    @if (account$ | async; as account) {
+      <div class="subscribe-banner">
+        @if (!isSubscribed(account)) {
+          <span>
+            You're not currently subscribed. Please consider subscribing or buying silver to help keep the lights on! Want to know what you get for subscribing?
+            <br>
+              <a href="http://rair.land/docs/subscriber-benefits/" target="_blank">Check this out to see all the awesome perks of subscribing!</a>
+            </span>
+          }
+        </div>
+      }
+    </div>
+  }

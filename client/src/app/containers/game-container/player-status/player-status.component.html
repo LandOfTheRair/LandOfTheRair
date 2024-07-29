@@ -1,21 +1,20 @@
 <app-window windowName="playerStatus"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="false"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="false"
 
-            defaultX="385"
-            defaultY="4"
-            defaultWidth="576"
-            defaultHeight="96"
+  defaultX="385"
+  defaultY="4"
+  defaultWidth="576"
+  defaultHeight="96"
 ></app-window>
 
 <ng-template #headTemplate>
-  <ng-container *ngIf="player">
+  @if (player) {
     <span class="window-has-more-buttons">
       <span>
         {{ player.name }} the level {{ player.level }} {{ player.baseClass }}
       </span>
-
       <span class="window-extra-buttons">
         <button mat-icon-button (click)="showWindow('equipmentMain')" matTooltip="Toggle Equipment">
           <app-icon name="battle-gear" size="xsmall"></app-icon>
@@ -26,57 +25,62 @@
         <button mat-icon-button (click)="showWindow('inventorySack')" matTooltip="Toggle Sack">
           <app-icon name="swap-bag" size="xsmall"></app-icon>
         </button>
-        <button mat-icon-button (click)="showWindow('inventoryPouch')" matTooltip="Toggle Pouch" *ngIf="showPouch">
-          <app-icon name="knapsack" size="xsmall"></app-icon>
-        </button>
+        @if (showPouch) {
+          <button mat-icon-button (click)="showWindow('inventoryPouch')" matTooltip="Toggle Pouch">
+            <app-icon name="knapsack" size="xsmall"></app-icon>
+          </button>
+        }
         <button mat-icon-button (click)="showWindow('inventoryBelt')" matTooltip="Toggle Belt">
           <app-icon name="belt" size="xsmall"></app-icon>
         </button>
       </span>
     </span>
-  </ng-container>
+  }
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <div class="container" *ngIf="player">
-
-    <div class="buffs"
-         droppable
-         (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
-         dropScope="use">
-      <ng-container *ngIf="effects.length > 0; else noEffects">
-        <app-effect-icon [effect]="effect" defaultTransparent="true" *ngFor="let effect of effects; trackBy:trackEffectBy" (contextmenu)="unapply($event, effect)"></app-effect-icon>
-      </ng-container>
-
-      <ng-template #noEffects>
-        <div class="true-center background-text full-height full-width">Drop a potion or food here to consume it</div>
-      </ng-template>
-    </div>
-
-    <div class="bars">
-      <div class="top-bars">
-        <div class="bar-container hp">
-          <span class="bar" [style.width]="(player.hp.current / player.hp.maximum * 100) + '%'" *ngIf="player.hp.current !== -1"></span>
-          <span class="bar-text">{{ player.hp.current }}/{{ player.hp.maximum }}</span>
+  @if (player) {
+    <div class="container">
+      <div class="buffs"
+        droppable
+        (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
+        dropScope="use">
+        @if (effects.length > 0) {
+          @for (effect of effects; track trackEffectBy($index, effect)) {
+            <app-effect-icon [effect]="effect" defaultTransparent="true" (contextmenu)="unapply($event, effect)"></app-effect-icon>
+          }
+        } @else {
+          <div class="true-center background-text full-height full-width">Drop a potion or food here to consume it</div>
+        }
+      </div>
+      <div class="bars">
+        <div class="top-bars">
+          <div class="bar-container hp">
+            @if (player.hp.current !== -1) {
+              <span class="bar" [style.width]="(player.hp.current / player.hp.maximum * 100) + '%'"></span>
+            }
+            <span class="bar-text">{{ player.hp.current }}/{{ player.hp.maximum }}</span>
+          </div>
+          <div class="bar-container energy {{ player.baseClass }}">
+            <span class="bar" [style.width]="(player.mp.current / player.mp.maximum * 100) + '%'"></span>
+            <span class="bar-text">{{ player.mp.current }}/{{ player.mp.maximum }}</span>
+          </div>
         </div>
-        <div class="bar-container energy {{ player.baseClass }}">
-          <span class="bar" [style.width]="(player.mp.current / player.mp.maximum * 100) + '%'"></span>
-          <span class="bar-text">{{ player.mp.current }}/{{ player.mp.maximum }}</span>
+        <div class="bottom-bars">
+          @if (!player.gainingAXP) {
+            <div class="bar-container exp" [matTooltip]="xpString(player)">
+              <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
+              <span class="bar-text">{{ player.exp | number }} ({{ xpPercent(player) }}%)</span>
+            </div>
+          }
+          @if (player.gainingAXP) {
+            <div class="bar-container axp">
+              <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
+              <span class="bar-text">{{ player.axp | number }} ({{ axpPercent(player) }}%)</span>
+            </div>
+          }
         </div>
       </div>
-
-      <div class="bottom-bars">
-        <div class="bar-container exp" *ngIf="!player.gainingAXP" [matTooltip]="xpString(player)">
-          <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
-          <span class="bar-text">{{ player.exp | number }} ({{ xpPercent(player) }}%)</span>
-        </div>
-
-        <div class="bar-container axp" *ngIf="player.gainingAXP">
-          <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
-          <span class="bar-text">{{ player.axp | number }} ({{ axpPercent(player) }}%)</span>
-        </div>
-      </div>
     </div>
-
-  </div>
+  }
 </ng-template>

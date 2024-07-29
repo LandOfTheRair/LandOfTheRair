@@ -1,14 +1,14 @@
 <app-window windowName="combatdebug"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
-            [alwaysOnTop]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [alwaysOnTop]="true"
 
-            defaultX="450"
-            defaultY="100"
-            defaultWidth="372"
-            defaultHeight="510"
+  defaultX="450"
+  defaultY="100"
+  defaultWidth="372"
+  defaultHeight="510"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -20,61 +20,65 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="!isLogging">
+  @if (!isLogging) {
     <div class="actions">
       <mat-form-field class="full-width action padding">
         <input matInput
-               type="number"
-               placeholder="# logs"
-               [(ngModel)]="totalToLog"
-               [disabled]="isLogging"
-               [ngModelOptions]="{ standalone: true }" />
-      </mat-form-field>
-
-      <div class="action">
-        <button mat-raised-button color="primary" (click)="toggleLogging()">Start Logging</button>
+          type="number"
+          placeholder="# logs"
+          [(ngModel)]="totalToLog"
+          [disabled]="isLogging"
+          [ngModelOptions]="{ standalone: true }" />
+        </mat-form-field>
+        <div class="action">
+          <button mat-raised-button color="primary" (click)="toggleLogging()">Start Logging</button>
+        </div>
+        <div class="action"></div>
       </div>
+    }
 
-      <div class="action"></div>
-    </div>
-  </ng-container>
-
-  <ng-container *ngIf="isLogging">
-    <div class="actions">
-      <div class="action text">
-        {{ totalLogged | number }} / {{ totalToLog | number }}
+    @if (isLogging) {
+      <div class="actions">
+        <div class="action text">
+          {{ totalLogged | number }} / {{ totalToLog | number }}
+        </div>
+        <div class="action">
+          <button mat-raised-button color="primary" (click)="toggleLogging()">Stop Logging</button>
+        </div>
+        <div class="action">
+          <button mat-raised-button color="secondary" (click)="downloadCSV()">CSV</button>
+        </div>
       </div>
+    }
 
-      <div class="action">
-        <button mat-raised-button color="primary" (click)="toggleLogging()">Stop Logging</button>
+    @if (player$ | async; as player) {
+      <div class="stats">
+        @for (stat of allStats; track stat) {
+          <span class="stat" [class.hidden]="!player.totalStats[stat.key]" [matTooltip]="stat.key">
+            {{ stat.display }} {{ player.totalStats[stat.key] }}
+          </span>
+        }
       </div>
+    }
 
-      <div class="action">
-        <button mat-raised-button color="secondary" (click)="downloadCSV()">CSV</button>
-      </div>
-    </div>
-  </ng-container>
-
-  <div class="stats" *ngIf="player$ | async as player">
-    <span class="stat" *ngFor="let stat of allStats" [class.hidden]="!player.totalStats[stat.key]" [matTooltip]="stat.key">
-      {{ stat.display }} {{ player.totalStats[stat.key] }}
-    </span>
-  </div>
-
-  <table class="table" *ngIf="visibleLogInfoForTable.length > 0">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Times</th>
-        <th>Total Damage</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let log of visibleLogInfoForTable">
-        <td>{{ log.type }}</td>
-        <td>{{ log.times | number }}</td>
-        <td>{{ log.totalDamage | number }}</td>
-      </tr>
-    </tbody>
-  </table>
-</ng-template>
+    @if (visibleLogInfoForTable.length > 0) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Times</th>
+            <th>Total Damage</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of visibleLogInfoForTable; track log) {
+            <tr>
+              <td>{{ log.type }}</td>
+              <td>{{ log.times | number }}</td>
+              <td>{{ log.totalDamage | number }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </ng-template>

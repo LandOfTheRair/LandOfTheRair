@@ -1,41 +1,57 @@
 
-<img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="gameService.loggedIn$ | async" [matMenuTriggerFor]="menu" />
-<img src="assets/favicon/android-chrome-512x512.png" class="root-icon" *ngIf="(gameService.loggedIn$ | async) === false" />
-<div class="activated" *ngIf="gameService.loggedIn$ | async">
-  <div class="menu-text">⚙</div>
-</div>
+@if (gameService.loggedIn$ | async) {
+  <img src="assets/favicon/android-chrome-512x512.png" class="root-icon" [matMenuTriggerFor]="menu" />
+}
+@if ((gameService.loggedIn$ | async) === false) {
+  <img src="assets/favicon/android-chrome-512x512.png" class="root-icon" />
+}
+@if (gameService.loggedIn$ | async) {
+  <div class="activated">
+    <div class="menu-text">⚙</div>
+  </div>
+}
 
 <div class="status-indicator">
 
-  <mat-chip-list *ngIf="!socketService.isConnected">
-    <mat-chip color="warn" selected>
-      <mat-icon class="m-r-10">offline_bolt</mat-icon> Disconnected. Reconnecting...
-    </mat-chip>
-  </mat-chip-list>
+  @if (!socketService.isConnected) {
+    <mat-chip-list>
+      <mat-chip color="warn" selected>
+        <mat-icon class="m-r-10">offline_bolt</mat-icon> Disconnected. Reconnecting...
+      </mat-chip>
+    </mat-chip-list>
+  }
 
-  <mat-chip-list *ngIf="!assetService.assetsLoaded">
-    <mat-chip color="primary" selected>
-      <mat-icon class="m-r-10">play_for_work</mat-icon> Loading assets...
-    </mat-chip>
-  </mat-chip-list>
+  @if (!assetService.assetsLoaded) {
+    <mat-chip-list>
+      <mat-chip color="primary" selected>
+        <mat-icon class="m-r-10">play_for_work</mat-icon> Loading assets...
+      </mat-chip>
+    </mat-chip-list>
+  }
 
-  <mat-chip-list *ngIf="socketService.isConnected && serverMismatchWarning">
-    <mat-chip color="accent" selected>
-      <mat-icon class="m-r-10">info</mat-icon> You are connected to a different, unofficial server.
-    </mat-chip>
-  </mat-chip-list>
+  @if (socketService.isConnected && serverMismatchWarning) {
+    <mat-chip-list>
+      <mat-chip color="accent" selected>
+        <mat-icon class="m-r-10">info</mat-icon> You are connected to a different, unofficial server.
+      </mat-chip>
+    </mat-chip-list>
+  }
 
-  <mat-chip-list *ngIf="assetMismatchWarning && showMismatchWarning">
-    <mat-chip color="warn" selected (click)="hideMismatch()">
-      <mat-icon class="m-r-10">warning</mat-icon> Asset mismatch error - Items/NPCs may not render correctly. Reload to fix.
-    </mat-chip>
-  </mat-chip-list>
+  @if (assetMismatchWarning && showMismatchWarning) {
+    <mat-chip-list>
+      <mat-chip color="warn" selected (click)="hideMismatch()">
+        <mat-icon class="m-r-10">warning</mat-icon> Asset mismatch error - Items/NPCs may not render correctly. Reload to fix.
+      </mat-chip>
+    </mat-chip-list>
+  }
 
-  <mat-chip-list *ngIf="minimumResolutionWarning && showResolutionWarning">
-    <mat-chip color="warn" selected (click)="hideResolution()">
-      <mat-icon class="m-r-10">warning</mat-icon> Warning: Land of the Rair is best played with a resolution of at least 1280x900. You can still play and shrink some UI elements, but it might negatively affect your gameplay.
-    </mat-chip>
-  </mat-chip-list>
+  @if (minimumResolutionWarning && showResolutionWarning) {
+    <mat-chip-list>
+      <mat-chip color="warn" selected (click)="hideResolution()">
+        <mat-icon class="m-r-10">warning</mat-icon> Warning: Land of the Rair is best played with a resolution of at least 1280x900. You can still play and shrink some UI elements, but it might negatively affect your gameplay.
+      </mat-chip>
+    </mat-chip-list>
+  }
 
 </div>
 
@@ -47,44 +63,51 @@
 
   <hr>
 
-  <ng-container *ngFor="let menuItem of menuItems; let i = index">
-    <ng-container *ngIf="menuItem.children">
-      <hr *ngIf="menuItem.borderTop">
-
-      <button mat-menu-item
+    @for (menuItem of menuItems; track menuItem; let i = $index) {
+      @if (menuItem.children) {
+        @if (menuItem.borderTop) {
+          <hr>
+          }
+          @if (!menuItem.visibleIf || (menuItem.visibleIf | async)) {
+            <button mat-menu-item
               [matMenuTriggerFor]="subMenu"
               [class.hidden]="!menuItem.name"
               [disabled]="menuItem.disabled"
-              *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
               (click)="menuItem.handler()">
-        {{ menuItem.name }}
-      </button>
-
-      <mat-menu #subMenu="matMenu">
-        <ng-container *ngFor="let childItem of (menuItem.children || [])">
-          <hr *ngIf="childItem.borderTop">
-
-          <button mat-menu-item
-                  (click)="childItem.handler()"
-                  [disabled]="childItem.disabled"
-                  *ngIf="!childItem.visibleIf || (childItem.visibleIf | async)">
-                  <mat-icon *ngIf="childItem.icon">{{ childItem.icon }}</mat-icon>
-                  <span>{{ childItem.name }}</span>
-          </button>
-        </ng-container>
-      </mat-menu>
-    </ng-container>
-
-    <ng-container *ngIf="!menuItem.children">
-      <hr *ngIf="menuItem.borderTop">
-
-      <button mat-menu-item
-              [class.hidden]="!menuItem.name"
-              [disabled]="menuItem.disabled"
-              *ngIf="!menuItem.visibleIf || (menuItem.visibleIf | async)"
-              (click)="menuItem.handler()">
-        {{ menuItem.name }}
-      </button>
-    </ng-container>
-  </ng-container>
-</mat-menu>
+              {{ menuItem.name }}
+            </button>
+          }
+          <mat-menu #subMenu="matMenu">
+            @for (childItem of (menuItem.children || []); track childItem) {
+              @if (childItem.borderTop) {
+                <hr>
+                }
+                @if (!childItem.visibleIf || (childItem.visibleIf | async)) {
+                  <button mat-menu-item
+                    (click)="childItem.handler()"
+                    [disabled]="childItem.disabled"
+                    >
+                    @if (childItem.icon) {
+                      <mat-icon>{{ childItem.icon }}</mat-icon>
+                    }
+                    <span>{{ childItem.name }}</span>
+                  </button>
+                }
+              }
+            </mat-menu>
+          }
+          @if (!menuItem.children) {
+            @if (menuItem.borderTop) {
+              <hr>
+              }
+              @if (!menuItem.visibleIf || (menuItem.visibleIf | async)) {
+                <button mat-menu-item
+                  [class.hidden]="!menuItem.name"
+                  [disabled]="menuItem.disabled"
+                  (click)="menuItem.handler()">
+                  {{ menuItem.name }}
+                </button>
+              }
+            }
+          }
+        </mat-menu>

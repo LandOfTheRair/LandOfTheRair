@@ -1,14 +1,14 @@
 <app-window windowName="trainer"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="true"
-            [initialHide]="true"
-            [alwaysOnTop]="true"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [alwaysOnTop]="true"
 
-            defaultX="670"
-            defaultY="120"
-            defaultWidth="600"
-            defaultHeight="444"
+  defaultX="670"
+  defaultY="120"
+  defaultWidth="600"
+  defaultHeight="444"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -24,21 +24,31 @@
     </div>
 
     <div class="buttons">
-      <ng-container *ngIf="player$ | async as player">
-        <button mat-raised-button color="primary" *ngIf="!player.gainingAXP" (click)="train()">Level Up</button>
-        <button mat-raised-button color="primary" *ngIf="player.gainingAXP" (click)="ancient()">Ancient</button>
-      </ng-container>
+      @if (player$ | async; as player) {
+        @if (!player.gainingAXP) {
+          <button mat-raised-button color="primary" (click)="train()">Level Up</button>
+        }
+        @if (player.gainingAXP) {
+          <button mat-raised-button color="primary" (click)="ancient()">Ancient</button>
+        }
+      }
       <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="assess()">Assess Skill</button>
       <button mat-raised-button color="secondary" [disabled]="!activeSkill" (click)="trainSkill()">Train Skill</button>
       <button mat-raised-button color="warn" (click)="resetTraits()">Reset Traits</button>
-      <button mat-raised-button color="secondary" (click)="recall()" *ngIf="trainerInfo.npcCanRevive">Recall Me</button>
-      <button mat-raised-button color="secondary" (click)="warp()" *ngIf="trainerInfo.npcGuildTeleport">Warp Me</button>
+      @if (trainerInfo.npcCanRevive) {
+        <button mat-raised-button color="secondary" (click)="recall()">Recall Me</button>
+      }
+      @if (trainerInfo.npcGuildTeleport) {
+        <button mat-raised-button color="secondary" (click)="warp()">Warp Me</button>
+      }
     </div>
 
     <div class="skills">
-      <div class="skill" *ngFor="let skill of skills" (click)="activeSkill = skill" [class.active]="activeSkill === skill">
-        <app-skill-icon [skill]="skill" size="large" round="true"></app-skill-icon>
-      </div>
+      @for (skill of skills; track skill) {
+        <div class="skill" (click)="activeSkill = skill" [class.active]="activeSkill === skill">
+          <app-skill-icon [skill]="skill" size="large" round="true"></app-skill-icon>
+        </div>
+      }
     </div>
   </div>
 </ng-template>

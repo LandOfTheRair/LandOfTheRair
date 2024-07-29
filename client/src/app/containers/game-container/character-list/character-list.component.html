@@ -1,26 +1,34 @@
 <app-window windowName="characterList"
-            [head]="headTemplate"
-            [body]="bodyTemplate"
-            [canHide]="false"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="false"
 
-            defaultX="4"
-            defaultY="101"
-            defaultWidth="380"
-            defaultHeight="300"
+  defaultX="4"
+  defaultY="101"
+  defaultWidth="380"
+  defaultHeight="300"
 ></app-window>
 
 <ng-template #headTemplate>
-Characters In View
+  Characters In View
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <ng-container *ngIf="player">
+  @if (player) {
     <div class="p-bottom-20 p-left-5 p-right-25 char-container">
-      <div class="vertical-center full-width full-height background-text" *ngIf="gameService.allVisibleCharacters.length === 0">You don't see anyone nearby</div>
-      <div class="char-card-container" *ngFor="let character of gameService.allVisibleCharacters; let i = index">
-        <app-character-card [origin]="player" [disabled]="disableInteractions" [char]="character" *ngIf="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(player, character, $event)"></app-character-card>
-      </div>
-      <div class="char-spacer" *ngIf="gameService.allVisibleCharacters.length % 2 === 1"></div>
+      @if (gameService.allVisibleCharacters.length === 0) {
+        <div class="vertical-center full-width full-height background-text">You don't see anyone nearby</div>
+      }
+      @for (character of gameService.allVisibleCharacters; track character; let i = $index) {
+        <div class="char-card-container">
+          @if (character) {
+            <app-character-card [origin]="player" [disabled]="disableInteractions" [char]="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(player, character, $event)"></app-character-card>
+          }
+        </div>
+      }
+      @if (gameService.allVisibleCharacters.length % 2 === 1) {
+        <div class="char-spacer"></div>
+      }
     </div>
-  </ng-container>
+  }
 </ng-template>

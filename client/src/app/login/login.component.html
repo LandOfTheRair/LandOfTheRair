@@ -1,17 +1,17 @@
 
-<div class="ann-window window active m-b-50" *ngIf="announcementService.latestAnnouncement as announcement">
-  <mat-toolbar class="window-header">Latest Announcement</mat-toolbar>
-
-  <div class="window-body p-10">
-    <div class="m-b-20">
-      <a [href]="announcement.link">{{ announcement.title }}</a> &middot; Posted by {{ announcement.author }}
-    </div>
-
-    <div>
-      {{ announcement.summary || 'No summary provided.' }}
+@if (announcementService.latestAnnouncement; as announcement) {
+  <div class="ann-window window active m-b-50">
+    <mat-toolbar class="window-header">Latest Announcement</mat-toolbar>
+    <div class="window-body p-10">
+      <div class="m-b-20">
+        <a [href]="announcement.link">{{ announcement.title }}</a> &middot; Posted by {{ announcement.author }}
+      </div>
+      <div>
+        {{ announcement.summary || 'No summary provided.' }}
+      </div>
     </div>
   </div>
-</div>
+}
 
 <div class="window active m-b-50">
   <mat-toolbar class="window-header">
@@ -20,104 +20,126 @@
 
   <div class="window-body p-10">
     <form>
-      <mat-form-field class="full-width" *ngIf="isRegistering">
-        <input matInput
-               type="email"
-               placeholder="Email Address"
-               name="email"
-               autocomplete="email"
-               [(ngModel)]="newAccount.email"
-               [disabled]="isActing"
-               [ngModelOptions]="{ standalone: true }" />
-      </mat-form-field>
-
-      <div class="full-width">
-        <mat-form-field>
+      @if (isRegistering) {
+        <mat-form-field class="full-width">
           <input matInput
-                 type="text"
-                 name="username"
-                 autocomplete="text"
-                 placeholder="Username"
-                 [(ngModel)]="newAccount.username"
-                 [disabled]="isActing"
-                 [ngModelOptions]="{ standalone: true }" />
-        </mat-form-field>
+            type="email"
+            placeholder="Email Address"
+            name="email"
+            autocomplete="email"
+            [(ngModel)]="newAccount.email"
+            [disabled]="isActing"
+            [ngModelOptions]="{ standalone: true }" />
+          </mat-form-field>
+        }
 
-        <button mat-icon-button [matMenuTriggerFor]="accountSwitcher" *ngIf="!isRegistering && (gameService.accounts$ | async).length > 0" type="button">
-          <mat-icon>swap_horizontal_circle</mat-icon>
-        </button>
+        <div class="full-width">
+          <mat-form-field>
+            <input matInput
+              type="text"
+              name="username"
+              autocomplete="text"
+              placeholder="Username"
+              [(ngModel)]="newAccount.username"
+              [disabled]="isActing"
+              [ngModelOptions]="{ standalone: true }" />
+            </mat-form-field>
 
-        <mat-menu #accountSwitcher="matMenu">
-          <button mat-menu-item disabled>All Accounts</button>
-          <div mat-menu-item *ngFor="let account of gameService.accounts$ | async" class="multi-menu-container">
-            <button mat-flat-button (click)="addToLogin(account)" class="thin-button">{{ account.username }}</button>
-            <button mat-icon-button (click)="removeFromList(account)" class="thin-button">
-              <mat-icon>remove_circle</mat-icon>
-            </button>
+            @if (!isRegistering && (gameService.accounts$ | async).length > 0) {
+              <button mat-icon-button [matMenuTriggerFor]="accountSwitcher" type="button">
+                <mat-icon>swap_horizontal_circle</mat-icon>
+              </button>
+            }
+
+            <mat-menu #accountSwitcher="matMenu">
+              <button mat-menu-item disabled>All Accounts</button>
+              @for (account of gameService.accounts$ | async; track account) {
+                <div mat-menu-item class="multi-menu-container">
+                  <button mat-flat-button (click)="addToLogin(account)" class="thin-button">{{ account.username }}</button>
+                  <button mat-icon-button (click)="removeFromList(account)" class="thin-button">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </div>
+              }
+            </mat-menu>
           </div>
-        </mat-menu>
+
+          <div class="full-width">
+            <mat-form-field>
+              <input matInput
+                type="password"
+                placeholder="Password"
+                autocomplete="password"
+                [(ngModel)]="newAccount.password"
+                [disabled]="isActing"
+                [ngModelOptions]="{ standalone: true }" />
+              </mat-form-field>
+
+              @if (!isRegistering) {
+                <button mat-flat-button color="secondary" type="button" (click)="forgotPW()">
+                  I Forgot
+                </button>
+              }
+            </div>
+
+            <div class="m-b-20">
+              @if (isRegistering) {
+                <mat-checkbox [(ngModel)]="agreedToTerms"
+                  [ngModelOptions]="{ standalone: true }"
+                  >
+                  I've read the <a href="https://rair.land/docs/code-of-conduct/" target="_blank">Code of Conduct</a> and agree to the <a href="https://rair.land/docs/privacy/" target="_blank">Privacy Policy</a>
+                </mat-checkbox>
+              }
+            </div>
+
+            @if (!isRegistering) {
+              <button mat-flat-button color="primary" [disabled]="isActing || !canLogin" (click)="login()">Login</button>
+            }
+
+            @if (isRegistering) {
+              <button mat-flat-button color="primary" [disabled]="isActing || !canRegister" (click)="register()">Register</button>
+            }
+
+            <button mat-stroked-button color="accent" class="m-l-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
+
+            <mat-checkbox class="m-l-10"
+              [(ngModel)]="newAccount.autologin"
+              [disabled]="isActing"
+            [ngModelOptions]="{ standalone: true }">Auto-login</mat-checkbox>
+
+            @if (isActing) {
+              <mat-chip-list class="float-right">
+                <mat-chip color="primary">
+                  <mat-progress-spinner mode="indeterminate" diameter="16" class="m-r-10"></mat-progress-spinner> Working...
+                </mat-chip>
+              </mat-chip-list>
+            }
+          </form>
+
+          @if (wasKicked$ | async) {
+            <div class="m-t-10">
+              <mat-chip-list>
+                <mat-chip color="warn" selected>
+                  <mat-icon class="m-r-10">error</mat-icon> You were logged in from another location. This connection was terminated automatically.
+                </mat-chip>
+              </mat-chip-list>
+            </div>
+          }
+        </div>
       </div>
 
-      <div class="full-width">
-        <mat-form-field>
-          <input matInput
-                 type="password"
-                 placeholder="Password"
-                 autocomplete="password"
-                 [(ngModel)]="newAccount.password"
-                 [disabled]="isActing"
-                 [ngModelOptions]="{ standalone: true }" />
-        </mat-form-field>
+      <div class="ann-window error-window window active m-b-50" [class.visible]="errorMessage || api.apiError">
+        <mat-toolbar class="window-header" color="warn">An Unexpected Error Occurred</mat-toolbar>
 
-        <button mat-flat-button color="secondary" *ngIf="!isRegistering" type="button" (click)="forgotPW()">
-          I Forgot
-        </button>
+        @if (errorMessage) {
+          <div class="window-body p-10">
+            <strong>Error:</strong> {{ errorMessage }}
+          </div>
+        }
+
+        @if (api.apiError) {
+          <div class="window-body p-10">
+            <strong>API Error:</strong> {{ api.apiError }}
+          </div>
+        }
       </div>
-
-      <div class="m-b-20">
-        <mat-checkbox [(ngModel)]="agreedToTerms"
-                      [ngModelOptions]="{ standalone: true }"
-                      *ngIf="isRegistering">
-          I've read the <a href="https://rair.land/docs/code-of-conduct/" target="_blank">Code of Conduct</a> and agree to the <a href="https://rair.land/docs/privacy/" target="_blank">Privacy Policy</a>
-        </mat-checkbox>
-      </div>
-
-      <button mat-flat-button color="primary" *ngIf="!isRegistering" [disabled]="isActing || !canLogin" (click)="login()">Login</button>
-
-      <button mat-flat-button color="primary" *ngIf="isRegistering" [disabled]="isActing || !canRegister" (click)="register()">Register</button>
-
-      <button mat-stroked-button color="accent" class="m-l-10" (click)="registerMode()" [disabled]="isActing">{{ isRegistering ? 'Login' : 'Register' }}?</button>
-
-      <mat-checkbox class="m-l-10"
-                    [(ngModel)]="newAccount.autologin"
-                    [disabled]="isActing"
-                    [ngModelOptions]="{ standalone: true }">Auto-login</mat-checkbox>
-
-      <mat-chip-list class="float-right" *ngIf="isActing">
-        <mat-chip color="primary">
-          <mat-progress-spinner mode="indeterminate" diameter="16" class="m-r-10"></mat-progress-spinner> Working...
-        </mat-chip>
-      </mat-chip-list>
-    </form>
-
-    <div *ngIf="wasKicked$ | async" class="m-t-10">
-      <mat-chip-list>
-        <mat-chip color="warn" selected>
-          <mat-icon class="m-r-10">error</mat-icon> You were logged in from another location. This connection was terminated automatically.
-        </mat-chip>
-      </mat-chip-list>
-    </div>
-  </div>
-</div>
-
-<div class="ann-window error-window window active m-b-50" [class.visible]="errorMessage || api.apiError">
-  <mat-toolbar class="window-header" color="warn">An Unexpected Error Occurred</mat-toolbar>
-
-  <div class="window-body p-10" *ngIf="errorMessage">
-    <strong>Error:</strong> {{ errorMessage }}
-  </div>
-
-  <div class="window-body p-10" *ngIf="api.apiError">
-    <strong>API Error:</strong> {{ api.apiError }}
-  </div>
-</div>

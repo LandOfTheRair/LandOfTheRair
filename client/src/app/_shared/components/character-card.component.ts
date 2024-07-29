@@ -11,76 +11,81 @@ import { SocketService } from '../../services/socket.service';
   selector: 'app-character-card',
   template: `
     <div class="char-card" [attr.uuid]="char.uuid" [class.disabled]="disabled">
-      <ng-container *ngIf="currentTarget$ | async as currentTarget">
-        <div class="char-target" *ngIf="currentTarget.uuid === char.uuid">
-          <div class="outer circle"></div>
-          <div class="middle circle"></div>
-          <div class="inner circle"></div>
-          <div class="innermost circle"></div>
-        </div>
-      </ng-container>
-
+      @if (currentTarget$ | async; as currentTarget) {
+        @if (currentTarget.uuid === char.uuid) {
+          <div class="char-target">
+            <div class="outer circle"></div>
+            <div class="middle circle"></div>
+            <div class="inner circle"></div>
+            <div class="innermost circle"></div>
+          </div>
+        }
+      }
+    
       <div class="char-left-container">
         <div
           class="char-health d-flex justify-content-center"
           [ngClass]="[barClass()]"
-        >
+          >
           <app-life-heart [target]="char"></app-life-heart>
         </div>
-
-        <div
-          class="char-direction vertical-center"
-          *ngIf="!optionService.shrinkCharacterBoxes"
-        >
-          {{ directionTo() }}
-        </div>
+    
+        @if (!optionService.shrinkCharacterBoxes) {
+          <div
+            class="char-direction vertical-center"
+            >
+            {{ directionTo() }}
+          </div>
+        }
       </div>
-
+    
       <div class="char-middle">
         <div
           class="effect-container"
           [class.animate]="effect"
           [ngClass]="[effect]"
         ></div>
-
+    
         <div class="char-title" [ngClass]="[barClass()]">
           <div class="char-name">
             {{ char.name }}
           </div>
         </div>
-
-        <div class="char-gear" *ngIf="!optionService.shrinkCharacterBoxes">
-          <div class="gear-item right">
-            <app-item
-              size="xsmall"
-              [showDesc]="false"
-              [showEncrust]="false"
-              [showCount]="false"
-              [item]="rightHand"
-            ></app-item>
+    
+        @if (!optionService.shrinkCharacterBoxes) {
+          <div class="char-gear">
+            <div class="gear-item right">
+              <app-item
+                size="xsmall"
+                [showDesc]="false"
+                [showEncrust]="false"
+                [showCount]="false"
+                [item]="rightHand"
+              ></app-item>
+            </div>
+            <div class="gear-item armor">
+              <app-item
+                size="xsmall"
+                [showDesc]="false"
+                [showEncrust]="false"
+                [showCount]="false"
+                [item]="armorItem"
+              ></app-item>
+            </div>
+            <div class="gear-item left">
+              <app-item
+                size="xsmall"
+                [showDesc]="false"
+                [showEncrust]="false"
+                [showCount]="false"
+                [item]="leftHand"
+              ></app-item>
+            </div>
           </div>
-          <div class="gear-item armor">
-            <app-item
-              size="xsmall"
-              [showDesc]="false"
-              [showEncrust]="false"
-              [showCount]="false"
-              [item]="armorItem"
-            ></app-item>
-          </div>
-          <div class="gear-item left">
-            <app-item
-              size="xsmall"
-              [showDesc]="false"
-              [showEncrust]="false"
-              [showCount]="false"
-              [item]="leftHand"
-            ></app-item>
-          </div>
-        </div>
+        }
       </div>
     </div>
-  `,
+    `,
   styles: [
     `
       .char-card {

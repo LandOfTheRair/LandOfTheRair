@@ -1,45 +1,65 @@
 
 <div class="item-container"
-    [ngClass]="[size]"
-    [class.transparent]="showOutline"
-    draggable
-    [dragScope]="scopes"
-    [dragEnabled]="item && !displayOnly"
-    [dragData]="getDragData()"
-    (click)="attemptToMultiselect($event)"
-    (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
-    (mouseover)="updateWithDesc()"
-    (mouseenter)="determineScopes()"
-    (mouseout)="removeDesc()"
-    (mouseleave)="removeDesc()">
+  [ngClass]="[size]"
+  [class.transparent]="showOutline"
+  draggable
+  [dragScope]="scopes"
+  [dragEnabled]="item && !displayOnly"
+  [dragData]="getDragData()"
+  (click)="attemptToMultiselect($event)"
+  (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
+  (mouseover)="updateWithDesc()"
+  (mouseenter)="determineScopes()"
+  (mouseout)="removeDesc()"
+  (mouseleave)="removeDesc()">
 
-  <img [src]="imgUrl"
-      *ngIf="!shouldSpriteAnimate"
+  @if (!shouldSpriteAnimate) {
+    <img [src]="imgUrl"
       [style.object-position]="spriteLocation"
       [class.hidden]="!item"
       [class.animate]="shouldAnimate"
       [class.transparent]="transparent"
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
+  }
 
-  <img [src]="animUrl"
-      *ngIf="shouldSpriteAnimate"
+  @if (shouldSpriteAnimate) {
+    <img [src]="animUrl"
       class="item-animation"
       [class.hidden]="!item"
       [class.animate]="shouldAnimate"
       [class.transparent]="transparent"
       [ngClass]="['cosmetic-item-' + cosmeticName]" />
+  }
 
-  <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" *ngIf="item && showEncrust && item.mods.encrustItem" />
+  @if (item && showEncrust && item.mods.encrustItem) {
+    <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" />
+  }
 
-  <div class="item-background" *ngIf="item && showBackground"></div>
-  <div class="glow-container" [ngClass]="[glowColor]" *ngIf="item && showDesc"></div>
-  <div class="animation-container"
+  @if (item && showBackground) {
+    <div class="item-background"></div>
+  }
+  @if (item && showDesc) {
+    <div class="glow-container" [ngClass]="[glowColor]"></div>
+  }
+  @if (item && cosmeticName) {
+    <div class="animation-container"
       [class.animate]="shouldAnimate"
       [ngClass]="['cosmetic-bg-' + cosmeticName]"
-      *ngIf="item && cosmeticName"></div>
-  <span class="count" *ngIf="item && showCount && realCount > 0">{{ realCount | number }} <small>x</small></span>
-  <span class="ounces" *ngIf="item && showOunces && realOunces >= 0">{{ realOunces | number }} <small>oz</small></span>
-  <span class="value" *ngIf="item && showValue">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
-  <span class="value succor" *ngIf="item && showOunces && realSuccorInfo">{{ gameService.reformatName(realSuccorInfo.map) }}</span>
-  <span class="ounces" *ngIf="item && showDesc && realItem?.trapEffect && realItem?.itemClass === 'Trap' && item.mods.itemClass !== 'TrapSet'">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
+    ></div>
+  }
+  @if (item && showCount && realCount > 0) {
+    <span class="count">{{ realCount | number }} <small>x</small></span>
+  }
+  @if (item && showOunces && realOunces >= 0) {
+    <span class="ounces">{{ realOunces | number }} <small>oz</small></span>
+  }
+  @if (item && showValue) {
+    <span class="value">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
+  }
+  @if (item && showOunces && realSuccorInfo) {
+    <span class="value succor">{{ gameService.reformatName(realSuccorInfo.map) }}</span>
+  }
+  @if (item && showDesc && realItem?.trapEffect && realItem?.itemClass === 'Trap' && item.mods.itemClass !== 'TrapSet') {
+    <span class="ounces">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
+  }
 </div>
