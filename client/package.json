@@ -84,7 +84,7 @@
     "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
     "typescript": "5.4",
-    "webfont": "^7.1.4"
+    "webfont": "^11.2.26"
   },
   "overrides": {
     "@angular/cdk": {
