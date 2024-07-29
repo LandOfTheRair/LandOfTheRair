@@ -17,12 +17,7 @@
       [ngStyle]="popoverArrowStyles"
       *ngIf="!overlapTrigger"
     ></div>
-    <div
-      class="mde-popover-content"
-      [ngStyle]="popoverContentStyles"
-      [cdkTrapFocus]="focusTrapEnabled"
-      [cdkTrapFocusAutoCapture]="focusTrapAutoCaptureEnabled"
-    >
+    <div class="mde-popover-content" [ngStyle]="popoverContentStyles">
       <ng-content></ng-content>
     </div>
   </div>
