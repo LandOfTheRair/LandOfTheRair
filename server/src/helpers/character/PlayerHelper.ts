@@ -2,9 +2,20 @@ import { Injectable } from 'injection-js';
 import { isArray, random, size } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Allegiance, BaseClass, BGM, Direction,
+import {
+  Allegiance,
+  BaseClass,
+  BGM,
+  Direction,
   Holiday,
-  initializePlayer, IPlayer, ISuccorInfo, MessageType, Skill, Stat, Tradeskill } from '../../interfaces';
+  initializePlayer,
+  IPlayer,
+  ISuccorInfo,
+  MessageType,
+  Skill,
+  Stat,
+  Tradeskill,
+} from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { GetSwimLevel, StaticTextHelper, WorldManager } from '../data';
@@ -12,16 +23,14 @@ import { CharacterHelper } from './CharacterHelper';
 import { TeleportHelper } from './TeleportHelper';
 import { VisibilityHelper } from './VisibilityHelper';
 
-
 @Injectable()
 export class PlayerHelper extends BaseService {
-
   private mapXPMultiplier = {
     uncut: 1,
     firstSoftCut: 0.9,
     secondSoftCut: 0.75,
     hardCut: 0.5,
-    unknown: 0.1
+    unknown: 0.1,
   };
 
   constructor(
@@ -29,24 +38,27 @@ export class PlayerHelper extends BaseService {
     private staticTextHelper: StaticTextHelper,
     private visibilityHelper: VisibilityHelper,
     private teleportHelper: TeleportHelper,
-    private worldManager: WorldManager
+    private worldManager: WorldManager,
   ) {
     super();
   }
 
   public init() {
-    this.mapXPMultiplier = this.game.contentManager.getGameSetting('map', 'xpMultiplier') ?? {
+    this.mapXPMultiplier = this.game.contentManager.getGameSetting(
+      'map',
+      'xpMultiplier',
+    ) ?? {
       uncut: 1,
       firstSoftCut: 0.9,
       secondSoftCut: 0.75,
       hardCut: 0.5,
-      unknown: 0.1
+      unknown: 0.1,
     };
   }
 
   public migrate(player: Player, playerAccount: Account): void {
     const basePlayer = initializePlayer({});
-    Object.keys(basePlayer).forEach(key => {
+    Object.keys(basePlayer).forEach((key) => {
       if (player[key]) return;
       player[key] = basePlayer[key];
     });
@@ -79,14 +91,16 @@ export class PlayerHelper extends BaseService {
     if (player.learnedRunes.length > 0) {
       const remove: string[] = [];
 
-      player.learnedRunes.forEach(rune => {
+      player.learnedRunes.forEach((rune) => {
         const runeItem = this.game.itemHelper.getItemDefinition(rune);
         if (runeItem) return;
 
         remove.push(rune);
       });
 
-      player.learnedRunes = player.learnedRunes.filter(x => !remove.includes(x));
+      player.learnedRunes = player.learnedRunes.filter(
+        (x) => !remove.includes(x),
+      );
     }
 
     player.agro = {};
@@ -94,20 +108,29 @@ export class PlayerHelper extends BaseService {
     player.isGM = playerAccount.isGameMaster;
     player.isTester = playerAccount.isTester;
     player.username = playerAccount.username;
-    player.subscriptionTier = this.game.subscriptionHelper.getSubscriptionTier(playerAccount);
+    player.subscriptionTier =
+      this.game.subscriptionHelper.getSubscriptionTier(playerAccount);
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';
 
-    if (!player.accountLockers.lockers) player.accountLockers.lockers = { Shared: { items: [] } };
-    if (!player.accountLockers.pouch) player.accountLockers.pouch = { items: [] };
+    if (!player.accountLockers.lockers) {
+      player.accountLockers.lockers = { Shared: { items: [] } };
+    }
+    if (!player.accountLockers.pouch) {
+      player.accountLockers.pouch = { items: [] };
+    }
     if (!player.accountLockers.materials) player.accountLockers.materials = {};
 
     // add sated if nothing else exists
-    if (!this.game.effectHelper.hasEffect(player, 'Sated')
-    && !this.game.effectHelper.hasEffect(player, 'Nourished')
-    && !this.game.effectHelper.hasEffect(player, 'Malnourished')) {
-      this.game.effectHelper.addEffect(player, '', 'Sated', { effect: { duration: 21600 } });
+    if (
+      !this.game.effectHelper.hasEffect(player, 'Sated') &&
+      !this.game.effectHelper.hasEffect(player, 'Nourished') &&
+      !this.game.effectHelper.hasEffect(player, 'Malnourished')
+    ) {
+      this.game.effectHelper.addEffect(player, '', 'Sated', {
+        effect: { duration: 21600 },
+      });
     }
 
     this.cleanUpInvalidItems(player);
@@ -118,11 +141,11 @@ export class PlayerHelper extends BaseService {
   }
 
   private cleanUpInvalidItems(player: IPlayer): void {
-
-    const isValidItem = (itemName) => this.game.contentManager.getItemDefinition(itemName);
+    const isValidItem = (itemName) =>
+      this.game.contentManager.getItemDefinition(itemName);
 
     // clean invalid equipment
-    Object.keys(player.items.equipment).forEach(slot => {
+    Object.keys(player.items.equipment).forEach((slot) => {
       const item = player.items.equipment[slot];
 
       if (!item) return;
@@ -133,51 +156,72 @@ export class PlayerHelper extends BaseService {
 
     // clean invalid inventory
     const removeBeltUUIDs: string[] = [];
-    player.items.belt.items.forEach(item => {
+    player.items.belt.items.forEach((item) => {
       if (isValidItem(item.name)) return;
       removeBeltUUIDs.push(item.uuid);
     });
 
-    this.game.inventoryHelper.removeItemsFromBeltByUUID(player, removeBeltUUIDs);
+    this.game.inventoryHelper.removeItemsFromBeltByUUID(
+      player,
+      removeBeltUUIDs,
+    );
 
     const removeSackUUIDS: string[] = [];
-    player.items.sack.items.forEach(item => {
+    player.items.sack.items.forEach((item) => {
       if (isValidItem(item.name)) return;
       removeSackUUIDS.push(item.uuid);
     });
 
-    this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeSackUUIDS);
+    this.game.inventoryHelper.removeItemsFromSackByUUID(
+      player,
+      removeSackUUIDS,
+    );
 
     const removePouchUUIDs: string[] = [];
-    player.accountLockers.pouch.items.forEach(item => {
+    player.accountLockers.pouch.items.forEach((item) => {
       if (isValidItem(item.name)) return;
       removePouchUUIDs.push(item.uuid);
     });
 
-    this.game.inventoryHelper.removeItemsFromPouchByUUID(player, removePouchUUIDs);
+    this.game.inventoryHelper.removeItemsFromPouchByUUID(
+      player,
+      removePouchUUIDs,
+    );
 
     // lockers
-    Object.values(player.accountLockers.lockers || {}).concat(Object.values(player.lockers.lockers || {}))
-      .forEach(locker => {
+    Object.values(player.accountLockers.lockers || {})
+      .concat(Object.values(player.lockers.lockers || {}))
+      .forEach((locker) => {
         const removeUUIDs: string[] = [];
-        locker.items.forEach(item => {
+        locker.items.forEach((item) => {
           if (isValidItem(item.name)) return;
           removeUUIDs.push(item.uuid);
         });
 
-        this.game.inventoryHelper.removeItemsFromLockerByUUID(player, removeUUIDs, locker);
+        this.game.inventoryHelper.removeItemsFromLockerByUUID(
+          player,
+          removeUUIDs,
+          locker,
+        );
       });
-
   }
 
-  public becomeClass(player: IPlayer, baseClass: BaseClass, recalculateAfterTrait = true) {
-    const maxMP: Record<BaseClass, number> = this.game.contentManager.getGameSetting('character', 'creation.baseMP') ?? {
-      [BaseClass.Healer]: 50,
-      [BaseClass.Mage]: 70,
-      [BaseClass.Warrior]: 100,
-      [BaseClass.Thief]: 100,
-      [BaseClass.Traveller]: 0
-    };
+  public becomeClass(
+    player: IPlayer,
+    baseClass: BaseClass,
+    recalculateAfterTrait = true,
+  ) {
+    const maxMP: Record<BaseClass, number> =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'creation.baseMP',
+      ) ?? {
+        [BaseClass.Healer]: 50,
+        [BaseClass.Mage]: 70,
+        [BaseClass.Warrior]: 100,
+        [BaseClass.Thief]: 100,
+        [BaseClass.Traveller]: 0,
+      };
 
     player.baseClass = baseClass;
     player.mp.maximum = maxMP[baseClass];
@@ -189,34 +233,43 @@ export class PlayerHelper extends BaseService {
       player.mp.current = 0;
     }
 
-    const learnTrait: Record<BaseClass, string> = this.game.contentManager.getGameSetting('character', 'creation.learnedTraits') ?? {
-      [BaseClass.Healer]: 'Afflict',
-      [BaseClass.Mage]: 'MagicMissile',
-      [BaseClass.Warrior]: 'Cleave',
-      [BaseClass.Thief]: 'ImprovedHide',
-      [BaseClass.Traveller]: ''
-    };
+    const learnTrait: Record<BaseClass, string> =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'creation.learnedTraits',
+      ) ?? {
+        [BaseClass.Healer]: 'Afflict',
+        [BaseClass.Mage]: 'MagicMissile',
+        [BaseClass.Warrior]: 'Cleave',
+        [BaseClass.Thief]: 'ImprovedHide',
+        [BaseClass.Traveller]: '',
+      };
 
     if (learnTrait[player.baseClass]) {
-      this.game.traitHelper.learnTrait(player, learnTrait[player.baseClass], recalculateAfterTrait);
+      this.game.traitHelper.learnTrait(
+        player,
+        learnTrait[player.baseClass],
+        recalculateAfterTrait,
+      );
     }
 
     if (baseClass === BaseClass.Healer) {
-      player.skills[Skill.Restoration] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+      player.skills[Skill.Restoration] =
+        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
     }
 
     if (baseClass === BaseClass.Mage) {
-      player.skills[Skill.Conjuration] = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+      player.skills[Skill.Conjuration] =
+        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
     }
   }
 
   public reformatPlayerBeforeSave(player: Player): void {
-
     // persist remaining ticks so on load we don't lose effect times
-    Object.values(player.effects || {}).forEach(arr => {
+    Object.values(player.effects || {}).forEach((arr) => {
       if (!isArray(arr)) return;
 
-      arr.forEach(eff => {
+      arr.forEach((eff) => {
         if (eff.endsAt === -1) return;
         eff._ticksLeft = Math.floor((eff.endsAt - Date.now()) / 1000);
       });
@@ -224,20 +277,19 @@ export class PlayerHelper extends BaseService {
   }
 
   public reformatPlayerAfterLoad(player: Player): void {
-
     // re-hydrate effect timers
-    Object.values(player.effects || {}).forEach(arr => {
+    Object.values(player.effects || {}).forEach((arr) => {
       if (!isArray(arr)) return;
 
-      arr.forEach(eff => {
+      arr.forEach((eff) => {
         if (!eff._ticksLeft) return;
-        eff.endsAt = Date.now() + (eff._ticksLeft * 1000);
+        eff.endsAt = Date.now() + eff._ticksLeft * 1000;
         delete eff._ticksLeft;
       });
     });
   }
 
-  public tick(player: Player, type: 'fast'|'slow', tick: number): void {
+  public tick(player: Player, type: 'fast' | 'slow', tick: number): void {
     if (type === 'slow') {
       this.characterHelper.tick(player, tick);
       this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
@@ -261,7 +313,10 @@ export class PlayerHelper extends BaseService {
     if (player.actionQueue && canAct) {
       const queue = player.actionQueue[type] || [];
 
-      const actions = type === 'fast' ? 5 : (this.getStat(player as IPlayer, Stat.ActionSpeed) || 1);
+      const actions =
+        type === 'fast'
+          ? 5
+          : this.getStat(player as IPlayer, Stat.ActionSpeed) || 1;
 
       for (let i = 0; i < actions; i++) {
         const command = queue.shift();
@@ -272,25 +327,47 @@ export class PlayerHelper extends BaseService {
         // check if we can actually cast this
         const args = (command as any).args;
 
-        this.game.crashContext.logContextEntry(player, `${player.username}#${player.name}: ${args.calledAlias} ${args.stringArgs}`);
+        this.game.crashContext.logContextEntry(
+          player,
+          `${player.username}#${player.name}: ${args.calledAlias} ${args.stringArgs}`,
+        );
 
         //  if we have a spell, we gotta do a lot of checks
         if (args.spell) {
           const [prefix, spell] = args.spell.split(' ');
-          let hasLearned = this.game.characterHelper.hasLearned(player, spell || prefix);
-          if (!hasLearned && (prefix === 'stance' || prefix === 'powerword' || prefix === 'findfamiliar' || prefix === 'song')) {
-            hasLearned = this.game.characterHelper.hasLearned(player, `${prefix}${spell}`);
+          let hasLearned = this.game.characterHelper.hasLearned(
+            player,
+            spell || prefix,
+          );
+          if (
+            !hasLearned &&
+            (prefix === 'stance' ||
+              prefix === 'powerword' ||
+              prefix === 'findfamiliar' ||
+              prefix === 'song')
+          ) {
+            hasLearned = this.game.characterHelper.hasLearned(
+              player,
+              `${prefix}${spell}`,
+            );
           }
 
           // if we have to bail because we dont know the spell, we let them know
           if (!hasLearned) {
-            this.game.messageHelper.sendSimpleMessage(player, 'You do not know that ability!');
+            this.game.messageHelper.sendSimpleMessage(
+              player,
+              'You do not know that ability!',
+            );
             continue;
 
-          // otherwise, we know it, but we'll try to abuse an item for it
+            // otherwise, we know it, but we'll try to abuse an item for it
           } else {
             if (this.game.characterHelper.hasLearnedFromItem(player, spell)) {
-              args.overrideEffect = this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(player, spell);
+              args.overrideEffect =
+                this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(
+                  player,
+                  spell,
+                );
             }
           }
         }
@@ -302,10 +379,14 @@ export class PlayerHelper extends BaseService {
 
     // if we're on a dense tile, "respawn"
     const map = this.worldManager.getMap(player.map)?.map;
-    if (!this.game.effectHelper.hasEffect(player, 'WallWalk')
-    && (map?.getWallAt(player.x, player.y) || map?.getDenseDecorAt(player.x, player.y))) {
-      this.game.messageHelper.sendSimpleMessage(player,
-        `Whoops. Tell a GM "invalid loc" happened at ${player.x}, ${player.y} on ${player.map}.`
+    if (
+      !this.game.effectHelper.hasEffect(player, 'WallWalk') &&
+      (map?.getWallAt(player.x, player.y) ||
+        map?.getDenseDecorAt(player.x, player.y))
+    ) {
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        `Whoops. Tell a GM "invalid loc" happened at ${player.x}, ${player.y} on ${player.map}.`,
       );
 
       this.teleportHelper.teleportToRespawnPoint(player);
@@ -313,17 +394,23 @@ export class PlayerHelper extends BaseService {
 
     // bop players who aren't subscribers out of subscriber maps
     if (map?.subscriberOnly && !player.subscriptionTier) {
-      this.game.messageHelper.sendSimpleMessage(player,
-        'This location is subscriber only, you\'ll have to come back later!'
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        "This location is subscriber only, you'll have to come back later!",
       );
 
       this.resetSpawnPointToDefault(player);
       this.teleportHelper.teleportToRespawnPoint(player);
     }
 
-    if (map?.holiday && !this.game.holidayHelper.isHoliday(map.holiday as Holiday) && !player.isGM) {
-      this.game.messageHelper.sendSimpleMessage(player,
-        'This location is not active during this time of year!'
+    if (
+      map?.holiday &&
+      !this.game.holidayHelper.isHoliday(map.holiday as Holiday) &&
+      !player.isGM
+    ) {
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'This location is not active during this time of year!',
       );
 
       this.teleportHelper.teleportToRespawnPoint(player);
@@ -331,11 +418,14 @@ export class PlayerHelper extends BaseService {
   }
 
   public clearActionQueue(player: Player, target?: string) {
-
     // if we specify a target, we remove them from the queue as convenience
     if (player && player.actionQueue && target) {
-      player.actionQueue.fast = player.actionQueue.fast.filter(x => !(x as any).args.stringArgs.includes(target));
-      player.actionQueue.slow = player.actionQueue.slow.filter(x => !(x as any).args.stringArgs.includes(target));
+      player.actionQueue.fast = player.actionQueue.fast.filter(
+        (x) => !(x as any).args.stringArgs.includes(target),
+      );
+      player.actionQueue.slow = player.actionQueue.slow.filter(
+        (x) => !(x as any).args.stringArgs.includes(target),
+      );
       return;
     }
 
@@ -344,8 +434,10 @@ export class PlayerHelper extends BaseService {
   }
 
   // reset swim level, fov, region desc
-  public resetStatus(player: Player, opts: { ignoreMessages?: boolean; sendFOV?: boolean } = { sendFOV: true }) {
-
+  public resetStatus(
+    player: Player,
+    opts: { ignoreMessages?: boolean; sendFOV?: boolean } = { sendFOV: true },
+  ) {
     this.visibilityHelper.calculatePlayerFOV(player, opts.sendFOV);
 
     const map = this.worldManager.getMap(player.map)?.map;
@@ -362,12 +454,18 @@ export class PlayerHelper extends BaseService {
       player.swimElement = element;
       player.swimLevel = swimLevel;
 
-      if (!this.game.effectHelper.hasEffect(player, 'Swimming')
-      && !this.game.effectHelper.hasEffect(player, 'Drowning')) {
-        const swimDuration = this.game.characterHelper.getStat(player, Stat.STR);
-        this.game.effectHelper.addEffect(player, '', 'Swimming', { effect: { duration: swimDuration } });
+      if (
+        !this.game.effectHelper.hasEffect(player, 'Swimming') &&
+        !this.game.effectHelper.hasEffect(player, 'Drowning')
+      ) {
+        const swimDuration = this.game.characterHelper.getStat(
+          player,
+          Stat.STR,
+        );
+        this.game.effectHelper.addEffect(player, '', 'Swimming', {
+          effect: { duration: swimDuration },
+        });
       }
-
     } else {
       player.swimElement = '';
       player.swimLevel = 0;
@@ -386,37 +484,49 @@ export class PlayerHelper extends BaseService {
 
     // send message updates while the player is walking around the world
     if (!opts.ignoreMessages) {
-
       const regionDesc = map.getRegionDescriptionAt(player.x, player.y);
 
       let desc = '';
 
-      const descObj = map.getInteractableAt(player.x, player.y) || map.getDecorAt(player.x, player.y);
+      const descObj =
+        map.getInteractableAt(player.x, player.y) ||
+        map.getDecorAt(player.x, player.y);
       desc = this.staticTextHelper.getGidDescription(descObj?.gid);
 
       // we do this to avoid unnecessary lookups
       if (!desc) {
-        desc = this.staticTextHelper.getGidDescription(map.getFluidAt(player.x, player.y));
+        desc = this.staticTextHelper.getGidDescription(
+          map.getFluidAt(player.x, player.y),
+        );
       }
 
       if (!desc) {
-        desc = map.getFoliageAt(player.x, player.y) ? 'You are near some trees.' : '';
+        desc = map.getFoliageAt(player.x, player.y)
+          ? 'You are near some trees.'
+          : '';
       }
 
       if (!desc) {
-        desc = this.staticTextHelper.getGidDescription(map.getFloorAt(player.x, player.y));
+        desc = this.staticTextHelper.getGidDescription(
+          map.getFloorAt(player.x, player.y),
+        );
       }
 
       if (!desc) {
-        desc = this.staticTextHelper.getGidDescription(map.getTerrainAt(player.x, player.y));
+        desc = this.staticTextHelper.getGidDescription(
+          map.getTerrainAt(player.x, player.y),
+        );
       }
 
       // send a new region desc if possible
       const hasNewRegion = regionDesc && regionDesc !== player.lastRegionDesc;
       if (hasNewRegion) {
         player.lastRegionDesc = regionDesc;
-        this.game.messageHelper.sendLogMessageToPlayer(player, { message: regionDesc }, [MessageType.Environment]);
-
+        this.game.messageHelper.sendLogMessageToPlayer(
+          player,
+          { message: regionDesc },
+          [MessageType.Environment],
+        );
       } else if (!regionDesc) {
         player.lastRegionDesc = '';
       }
@@ -424,7 +534,11 @@ export class PlayerHelper extends BaseService {
       // send a new tile desc if possible
       if (!hasNewRegion && desc && desc !== player.lastTileDesc) {
         player.lastTileDesc = desc;
-        this.game.messageHelper.sendLogMessageToPlayer(player, { message: desc }, [MessageType.Environment]);
+        this.game.messageHelper.sendLogMessageToPlayer(
+          player,
+          { message: desc },
+          [MessageType.Environment],
+        );
       }
     }
   }
@@ -435,11 +549,15 @@ export class PlayerHelper extends BaseService {
   }
 
   // flag a certain skill for a player
-  public flagSkill(player: IPlayer, skill: Skill|Skill[]): void {
+  public flagSkill(player: IPlayer, skill: Skill | Skill[]): void {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
 
     if (skill.length !== 0) {
-      player.skillTicks = this.game.contentManager.getGameSetting('character', 'skillActiveTicks') ?? 30;
+      player.skillTicks =
+        this.game.contentManager.getGameSetting(
+          'character',
+          'skillActiveTicks',
+        ) ?? 30;
     }
   }
 
@@ -490,16 +608,18 @@ export class PlayerHelper extends BaseService {
     if (player.gainingAXP && xpGained > 0) return;
 
     if (xpGained > 0) {
-      const xpGainBoostPercent = this.game.characterHelper.getStat(player, Stat.XPBonusPercent)
-                               + this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
-      xpGained += Math.floor((xpGainBoostPercent * xpGained) / 100);
+      const xpGainBoostPercent =
+        this.game.characterHelper.getStat(player, Stat.XPBonusPercent) +
+        this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
+      xpGained += Math.floor(xpGainBoostPercent * xpGained);
       xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
-      xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, { floor: true });
+      xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, {
+        floor: true,
+      });
     }
 
     player.exp = Math.max(Math.floor(player.exp + xpGained), 1);
     player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
-
   }
 
   // gain axp for a player
@@ -507,13 +627,18 @@ export class PlayerHelper extends BaseService {
     if (!player.gainingAXP && axpGained > 0) return;
 
     axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
-    axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, { floor: true });
+    axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, {
+      floor: true,
+    });
     player.axp = Math.max(Math.floor(player.axp + axpGained), 0);
-
   }
 
   // try to gain skill based on the current map etc
-  public tryGainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
+  public tryGainSkill(
+    player: IPlayer,
+    skill: Skill,
+    skillGained: number,
+  ): void {
     if (!this.canGainSkillOnMap(player, skill)) {
       this.gainSkill(player, skill, 1);
       return;
@@ -531,9 +656,11 @@ export class PlayerHelper extends BaseService {
   public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
     if (!skill) skill = Skill.Martial;
 
-    const skillGainBoostPercent = this.game.characterHelper.getStat(player, Stat.SkillBonusPercent)
-                                + this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
-    skillGained += Math.floor((skillGainBoostPercent * skillGained) / 100);
+    const skillGainBoostPercent =
+      this.game.characterHelper.getStat(player, Stat.SkillBonusPercent) +
+      this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
+
+    skillGained += Math.floor(skillGainBoostPercent * skillGained);
 
     // paid skill is doubled as long as we have money in it
     const paidVal = player.paidSkills?.[skill] ?? 0;
@@ -545,17 +672,30 @@ export class PlayerHelper extends BaseService {
     skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
-    player.skills[skill.toLowerCase()] = Math.max((player.skills[skill.toLowerCase()] ?? 0) + skillGained, 0);
-    player.skills[skill.toLowerCase()] = Math.min(player.skills[skill.toLowerCase()], this.game.configManager.MAX_SKILL_EXP);
+    player.skills[skill.toLowerCase()] = Math.max(
+      (player.skills[skill.toLowerCase()] ?? 0) + skillGained,
+      0,
+    );
+    player.skills[skill.toLowerCase()] = Math.min(
+      player.skills[skill.toLowerCase()],
+      this.game.configManager.MAX_SKILL_EXP,
+    );
   }
 
   // gain tradeskill skill for a character
-  public gainTradeskill(player: IPlayer, skill: Tradeskill, skillGained: number): void {
+  public gainTradeskill(
+    player: IPlayer,
+    skill: Tradeskill,
+    skillGained: number,
+  ): void {
     if (!skill) return;
 
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
-    player.tradeskills[skill.toLowerCase()] = Math.max((player.tradeskills[skill.toLowerCase()] ?? 0) + skillGained, 0);
+    player.tradeskills[skill.toLowerCase()] = Math.max(
+      (player.tradeskills[skill.toLowerCase()] ?? 0) + skillGained,
+      0,
+    );
   }
 
   // gain all currently flagged skills
@@ -565,42 +705,64 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'four') ?? [];
+      const skillgain =
+        this.game.contentManager.getGameSetting('skillgain', 'four') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.45));
-      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
+      this.tryGainSkill(
+        player,
+        secondary,
+        skillGained * (skillgain[1] ?? 0.25),
+      );
       this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.15));
-      this.tryGainSkill(player, quaternary, skillGained * (skillgain[3] ?? 0.15));
-
+      this.tryGainSkill(
+        player,
+        quaternary,
+        skillGained * (skillgain[3] ?? 0.15),
+      );
     } else if (tertiary) {
-      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'three') ?? [];
+      const skillgain =
+        this.game.contentManager.getGameSetting('skillgain', 'three') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.55));
-      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
-      this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.20));
-
+      this.tryGainSkill(
+        player,
+        secondary,
+        skillGained * (skillgain[1] ?? 0.25),
+      );
+      this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.2));
     } else if (secondary) {
-      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'two') ?? [];
+      const skillgain =
+        this.game.contentManager.getGameSetting('skillgain', 'two') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.75));
-      this.tryGainSkill(player, secondary, skillGained * (skillgain[1] ?? 0.25));
-
+      this.tryGainSkill(
+        player,
+        secondary,
+        skillGained * (skillgain[1] ?? 0.25),
+      );
     } else {
-      const skillgain = this.game.contentManager.getGameSetting('skillgain', 'one') ?? [];
+      const skillgain =
+        this.game.contentManager.getGameSetting('skillgain', 'one') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 1));
     }
   }
 
   // modify rep for a faction
-  public modifyReputationForAllegiance(player: IPlayer, allegiance: Allegiance, mod: number): void {
-
+  public modifyReputationForAllegiance(
+    player: IPlayer,
+    allegiance: Allegiance,
+    mod: number,
+  ): void {
     // event that can double rep gain
-    if (this.game.dynamicEventHelper.isEventActive('Friendship Festival')) mod *= 2;
+    if (this.game.dynamicEventHelper.isEventActive('Friendship Festival')) {
+      mod *= 2;
+    }
 
-    player.allegianceReputation[allegiance] = player.allegianceReputation[allegiance] ?? 0;
+    player.allegianceReputation[allegiance] =
+      player.allegianceReputation[allegiance] ?? 0;
     player.allegianceReputation[allegiance]! += mod;
   }
 
   // gain stats for leveling up
   public gainLevelStats(player: IPlayer): void {
-
     const con = this.game.characterHelper.getStat(player, Stat.CON);
     const wis = this.game.characterHelper.getStat(player, Stat.WIS);
     const int = this.game.characterHelper.getStat(player, Stat.INT);
@@ -608,28 +770,42 @@ export class PlayerHelper extends BaseService {
     const classStats: Record<BaseClass, () => void> = {
       [BaseClass.Traveller]: () => {
         const {
-          base, randomConDivisor, bonusConDivisor, randomConBonusMultiplier
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Traveller.hp');
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Traveller.hp',
+        );
 
         const hpGained = Math.floor(
           random(
             base ?? 2,
-            (randomConBonusMultiplier ?? 1) * con / (randomConDivisor ?? 2)
-          ) + con / (bonusConDivisor ?? 2)
+            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 2),
+          ) +
+            con / (bonusConDivisor ?? 2),
         );
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
       },
 
       [BaseClass.Warrior]: () => {
         const {
-          base, randomConDivisor, bonusConDivisor, randomConBonusMultiplier
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Warrior.hp');
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Warrior.hp',
+        );
 
         const hpGained = Math.floor(
           random(
             base ?? 1,
-            (randomConBonusMultiplier ?? 1) * con / (randomConDivisor ?? 2)
-          ) + con / (bonusConDivisor ?? 2)
+            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 2),
+          ) +
+            con / (bonusConDivisor ?? 2),
         );
 
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
@@ -637,14 +813,21 @@ export class PlayerHelper extends BaseService {
 
       [BaseClass.Thief]: () => {
         const {
-          base, randomConDivisor, bonusConDivisor, randomConBonusMultiplier
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Thief.hp');
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Thief.hp',
+        );
 
         const hpGained = Math.floor(
           random(
             base ?? 2,
-            (randomConBonusMultiplier ?? 1) * con / (randomConDivisor ?? 1)
-          ) + con / (bonusConDivisor ?? 2)
+            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
+          ) +
+            con / (bonusConDivisor ?? 2),
         );
 
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
@@ -652,47 +835,77 @@ export class PlayerHelper extends BaseService {
 
       [BaseClass.Healer]: () => {
         const {
-          base, randomConDivisor, bonusConDivisor, randomConBonusMultiplier
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Healer.hp');
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Healer.hp',
+        );
 
         const hpGained = Math.floor(
           random(
             base ?? 3,
-            (randomConBonusMultiplier ?? 3) * con / (randomConDivisor ?? 5)
-          ) + con / (bonusConDivisor ?? 3)
+            ((randomConBonusMultiplier ?? 3) * con) / (randomConDivisor ?? 5),
+          ) +
+            con / (bonusConDivisor ?? 3),
         );
 
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
 
         const {
-          base: baseMP, randomMultiplier, randomDivisor
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Healer.mp');
+          base: baseMP,
+          randomMultiplier,
+          randomDivisor,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Healer.mp',
+        );
 
-        const mpGained = Math.floor(random(baseMP ?? 1, wis * (randomMultiplier ?? 1)) + wis / (randomDivisor ?? 3));
+        const mpGained = Math.floor(
+          random(baseMP ?? 1, wis * (randomMultiplier ?? 1)) +
+            wis / (randomDivisor ?? 3),
+        );
         this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
       },
 
       [BaseClass.Mage]: () => {
         const {
-          base, randomConDivisor, bonusConDivisor, randomConBonusMultiplier
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Mage.hp');
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Mage.hp',
+        );
 
         const hpGained = Math.floor(
           random(
             base ?? 1,
-            (randomConBonusMultiplier ?? 1) * con / (randomConDivisor ?? 1)
-          ) + con / (bonusConDivisor ?? 1)
+            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
+          ) +
+            con / (bonusConDivisor ?? 1),
         );
 
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
 
         const {
-          base: baseMP, randomMultiplier, randomDivisor
-        } = this.game.contentManager.getGameSetting('character', 'levelup.Healer.mp');
+          base: baseMP,
+          randomMultiplier,
+          randomDivisor,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Healer.mp',
+        );
 
-        const mpGained = Math.floor(random(baseMP ?? 2, int * (randomMultiplier ?? 2)) + int / (randomDivisor ?? 5));
+        const mpGained = Math.floor(
+          random(baseMP ?? 2, int * (randomMultiplier ?? 2)) +
+            int / (randomDivisor ?? 5),
+        );
         this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
-      }
+      },
     };
 
     classStats[player.baseClass]();
@@ -705,7 +918,9 @@ export class PlayerHelper extends BaseService {
     do {
       if (player.level >= maxLevel) break;
 
-      const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(player.level + 1);
+      const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(
+        player.level + 1,
+      );
       if (player.exp >= neededXp) {
         player.level += 1;
         if (player.level > player.highestLevel) {
@@ -721,7 +936,9 @@ export class PlayerHelper extends BaseService {
   }
 
   public tryAncientLevelUp(player: IPlayer): void {
-    const maxPerLevel = this.game.contentManager.getGameSetting('character', 'axpPerLevel') ?? 500;
+    const maxPerLevel =
+      this.game.contentManager.getGameSetting('character', 'axpPerLevel') ??
+      500;
 
     while (player.axp > maxPerLevel) {
       player.axp -= maxPerLevel;
@@ -738,17 +955,29 @@ export class PlayerHelper extends BaseService {
     if (!map) return;
 
     if (!map.canSuccor(player)) {
-      this.game.messageHelper.sendSimpleMessage(player, 'The blob turns to ash in your hand!');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'The blob turns to ash in your hand!',
+      );
       return;
     }
 
     if (!succorInfo.map || !succorInfo.x || !succorInfo.y) {
-      this.game.messageHelper.sendSimpleMessage(player, 'Your succor is not valid.');
-      this.game.logger.log('PlayerHelper:DoSuccor', `Bad Succor: ${JSON.stringify(succorInfo)}`);
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'Your succor is not valid.',
+      );
+      this.game.logger.log(
+        'PlayerHelper:DoSuccor',
+        `Bad Succor: ${JSON.stringify(succorInfo)}`,
+      );
       return;
     }
 
-    this.game.messageHelper.sendSimpleMessage(player, 'You are whisked back to the place in your stored memories!');
+    this.game.messageHelper.sendSimpleMessage(
+      player,
+      'You are whisked back to the place in your stored memories!',
+    );
     this.game.teleportHelper.teleport(player as Player, succorInfo);
     this.game.transmissionHelper.sendMovementPatch(player as Player);
   }
@@ -763,11 +992,13 @@ export class PlayerHelper extends BaseService {
 
   // reset the players respawn to the default
   public resetSpawnPointToDefault(player: Player): void {
-    player.respawnPoint = this.game.contentManager.getGameSetting('map', 'defaultRespawnPoint') ?? {
+    player.respawnPoint = this.game.contentManager.getGameSetting(
+      'map',
+      'defaultRespawnPoint',
+    ) ?? {
       map: 'Rylt',
       x: 68,
-      y: 13
+      y: 13,
     };
   }
-
 }
