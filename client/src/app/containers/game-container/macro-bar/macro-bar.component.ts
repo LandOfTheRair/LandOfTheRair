@@ -1,12 +1,9 @@
-import { Component } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { createSelectMap, Store } from '@ngxs/store';
 
 import allMacros from '../../../../assets/content/_output/macros.json';
 
-import { ICharacter, IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
+import { IMacro, IMacroBar, IPlayer } from '../../../../interfaces';
 import {
   GameState,
   MacrosState,
@@ -22,12 +19,15 @@ import { MacrosService } from '../../../services/macros.service';
   selector: 'app-macro-bar',
   templateUrl: './macro-bar.component.html',
   styleUrls: ['./macro-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MacroBarComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(MacrosService.currentPlayerMacros) macros$: Observable<any>;
-  @Select(MacrosState.allMacros) allMacros$: Observable<any>;
-  @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
+  public pageData = createSelectMap({
+    player: GameState.player,
+    macros: MacrosService.currentPlayerMacros,
+    allMacros: MacrosState.allMacros,
+    currentTarget: GameState.currentTarget,
+  });
 
   public readonly macroArray = Array(10)
     .fill(null)
@@ -49,14 +49,13 @@ export class MacroBarComponent {
     }
 
     if (macro.mode === 'autoTarget') {
-      this.currentTarget$.pipe(first()).subscribe((target) => {
-        if (target) {
-          this.gameService.sendCommandString(macro.macro, target.uuid);
-          return;
-        }
+      const target = this.pageData.currentTarget();
+      if (target) {
+        this.gameService.sendCommandString(macro.macro, target.uuid);
+        return;
+      }
 
-        this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
-      });
+      this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
       return;
     }
 

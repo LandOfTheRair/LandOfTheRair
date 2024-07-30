@@ -1,22 +1,22 @@
 <div
   class="macro-container"
-  [class.active]="isActive"
-  [class.has-macro]="macroRef"
-  [class.disable-effects]="disableEffects"
+  [class.active]="isActive()"
+  [class.has-macro]="macroRef()"
+  [class.disable-effects]="disableEffects()"
 >
   <div class="macro" [mdePopoverTriggerFor]="macroTooltipTemplate">
     <app-icon
-      [name]="iconName"
-      [disabled]="disabled"
-      [bgColor]="background"
-      [fgColor]="foreground"
+      [name]="iconName()"
+      [disabled]="disabled()"
+      [bgColor]="background()"
+      [fgColor]="foreground()"
     ></app-icon>
 
-    @if (cooldownDisplay) {
-    <div class="cooldown">{{ cooldownDisplay }} s</div>
-    } @if (macroKeybind) {
+    @if (cooldownDisplay(); as cooldown) {
+    <div class="cooldown">{{ cooldown }} s</div>
+    } @if (macroKeybind(); as macroKey) {
     <div class="keybind">
-      {{ macroKeybind }}
+      {{ macroKey }}
     </div>
     }
   </div>
@@ -24,18 +24,18 @@
   <mde-popover
     #macroTooltipTemplate="mdePopover"
     [mdePopoverPositionY]="'above'"
-    [mdePopoverTriggerOn]="macroRef && showTooltip ? 'hover' : 'none'"
+    [mdePopoverTriggerOn]="macroRef() && showTooltip() ? 'hover' : 'none'"
     [mdePopoverOverlapTrigger]="false"
     [mdePopoverEnterDelay]="1000"
   >
     <mat-card class="tooltip-card">
       <mat-card-title>
-        <strong>{{ macroName || 'Empty' }}</strong>
+        <strong>{{ macroName() || 'Empty' }}</strong>
       </mat-card-title>
       <mat-card-content>
-        <div *ngIf="player$ | async as player">
-          {{ reformatTooltipTextForPlayer(player, macroTooltip) }}
-        </div>
+        @if(player(); as player) {
+        {{ reformatTooltipTextForPlayer(player, macroTooltip()) }}
+        }
       </mat-card-content>
     </mat-card>
   </mde-popover>

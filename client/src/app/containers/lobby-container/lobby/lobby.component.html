@@ -1,9 +1,8 @@
-
-<app-window windowName="lobby"
+<app-window
+  windowName="lobby"
   [head]="headTemplate"
   [body]="bodyTemplate"
   canMinimize="true"
-
   defaultX="4"
   defaultY="80"
   defaultWidth="800"
@@ -21,16 +20,21 @@
     <div class="left-side">
       <div class="user-list">
         <ul>
-          @for (user of users$ | async; track user) {
-            <li class="user">
-              @if (user.tier) {
-                <span class="user-marking tier-{{ user.tier }}"></span>
-              }
-              <span class="user-name">{{ user.username }}</span>
-              @if (user.inGame) {
-                <img src="assets/extra/in-game.png" height="16" width="16" class="in-game" />
-              }
-            </li>
+          @for (user of users$ | async; track user.username) {
+          <li class="user">
+            @if (user.tier) {
+            <span class="user-marking tier-{{ user.tier }}"></span>
+            }
+            <span class="user-name">{{ user.username }}</span>
+            @if (user.inGame) {
+            <img
+              src="assets/extra/in-game.png"
+              height="16"
+              width="16"
+              class="in-game"
+            />
+            }
+          </li>
           }
         </ul>
       </div>
@@ -38,25 +42,46 @@
 
     <div class="right-side">
       <div class="motd">
-        System: <span [innerHTML]="((motd$ | async) || 'No MOTD.') | linkify"></span>
+        System:
+        <span [innerHTML]="(motd$ | async) || 'No MOTD.' | linkify"></span>
       </div>
 
       <div class="output-area">
         @for (message of messages$ | async; track message) {
-          <div class="message">
-            <span class="timestamp">[{{ message.timestamp | date:'hh:mm' }}]</span>
-            <span class="username">{{ message.from }}@if (message.source) {
-              <span> [{{ message.source }}]</span>
-            }:</span>
-            <span class="usermessage" [innerHTML]="message.message | linkify | replaceDiscordEmoji:16"></span>
-          </div>
+        <div class="message">
+          <span class="timestamp">
+            [{{ message.timestamp | date : 'hh:mm' }}]
+          </span>
+          <span class="username">
+            {{ message.from }}@if (message.source) {
+            <span>[{{ message.source }}]</span>
+            }:
+          </span>
+          <span
+            class="usermessage"
+            [innerHTML]="message.message | linkify | replaceDiscordEmoji : 16"
+          ></span>
+        </div>
         }
       </div>
 
       <div class="input-area">
-        <input class="input" type="text" [(ngModel)]="currentMessage" [ngModelOptions]="{ standalone: true }" (keydown.enter)="sendMessage()" placeholder="Chat message here!" />
+        <input
+          class="input"
+          type="text"
+          [(ngModel)]="currentMessage"
+          [ngModelOptions]="{ standalone: true }"
+          (keydown.enter)="sendMessage()"
+          placeholder="Chat message here!"
+        />
 
-        <button mat-flat-button [disabled]="!currentMessage" (click)="sendMessage()" color="accent" class="button">
+        <button
+          mat-flat-button
+          [disabled]="!currentMessage"
+          (click)="sendMessage()"
+          color="accent"
+          class="button"
+        >
           <mat-icon>send</mat-icon>
         </button>
       </div>

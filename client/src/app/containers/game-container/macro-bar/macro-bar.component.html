@@ -1,58 +1,83 @@
-
-<app-window windowName="macroBar"
+<app-window
+  windowName="macroBar"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="false"
-
   defaultX="385"
   defaultY="710"
   defaultWidth="576"
-
 ></app-window>
 
-<ng-template #headTemplate>
-  Macros
-</ng-template>
+<ng-template #headTemplate>Macros</ng-template>
 
 <ng-template #bodyTemplate>
   <div class="macro-group-body">
-    @if (player$ | async; as player) {
-      @if (allMacros$ | async; as allMacros) {
-        @if ((macros$ | async); as macros) {
-          <div class="macro-group-container">
-            @for (group of macros.activeMacroBars; track group; let i = $index) {
-              <div>
-                @if (macros.macroBars[group]) {
-                  <div class="macro-group">
-                    <div class="group-name">
-                      <div class="arrow arrow-left" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, -1)">
-                        &#9664;
-                      </div>
-                      <div class="text-rotated">
-                        {{ group }}
-                      </div>
-                      <div class="arrow arrow-right" (click)="changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, 1)">
-                        &#9654;
-                      </div>
-                    </div>
-                    @for (macroIdx of macroArray; track macroIdx) {
-                      <div class="macrobar-item">
-                        <app-macro
-                          (click)="operateOnMacro(player, allMacros[macros.macroBars[group].macros[macroIdx]])"
-                          [macroRef]="allMacros[macros.macroBars[group].macros[macroIdx]]"
-                          [isActive]="macros.macroBars[group].macros[macroIdx] === macros.activeMacro"
-                          [disabled]="isMacroDisabled(player, allMacros[macros.macroBars[group].macros[macroIdx]])"
-                          [cooldown]="macroCooldown(player, allMacros[macros.macroBars[group].macros[macroIdx]])"
-                        ></app-macro>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-            }
+    @if(pageData.macros(); as macros) {
+    <div class="macro-group-container">
+      @for (group of macros.activeMacroBars; track i; let i = $index) {
+      <div>
+        @if (macros.macroBars[group]) {
+        <div class="macro-group">
+          <div class="group-name">
+            <div
+              class="arrow arrow-left"
+              (click)="
+                changeMacroGroup(
+                  macros.activeMacroBars,
+                  macros.macroBars,
+                  i,
+                  -1
+                )
+              "
+            >
+              &#9664;
+            </div>
+            <div class="text-rotated">
+              {{ group }}
+            </div>
+            <div
+              class="arrow arrow-right"
+              (click)="
+                changeMacroGroup(macros.activeMacroBars, macros.macroBars, i, 1)
+              "
+            >
+              &#9654;
+            </div>
           </div>
+          @for (macroIdx of macroArray; track macroIdx) {
+          <div class="macrobar-item">
+            @let allMacros = pageData.allMacros();
+            <app-macro
+              (click)="
+                operateOnMacro(
+                  pageData.player(),
+                  allMacros[macros.macroBars[group].macros[macroIdx]]
+                )
+              "
+              [macroRef]="allMacros[macros.macroBars[group].macros[macroIdx]]"
+              [isActive]="
+                macros.macroBars[group].macros[macroIdx] === macros.activeMacro
+              "
+              [disabled]="
+                isMacroDisabled(
+                  pageData.player(),
+                  allMacros[macros.macroBars[group].macros[macroIdx]]
+                )
+              "
+              [cooldown]="
+                macroCooldown(
+                  pageData.player(),
+                  allMacros[macros.macroBars[group].macros[macroIdx]]
+                )
+              "
+            ></app-macro>
+          </div>
+          }
+        </div>
         }
+      </div>
       }
+    </div>
     }
   </div>
 </ng-template>
