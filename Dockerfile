@@ -1,4 +1,4 @@
-FROM node:13.14.0-alpine
+FROM node:22-alpine
 RUN apk add --no-cache libc6-compat
 RUN ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
 RUN mkdir -p /usr/src/app
