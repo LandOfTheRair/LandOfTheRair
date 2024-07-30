@@ -27,7 +27,7 @@
     </div>
     } @if (groundGroups.length > 0) {
     <div class="item-classes">
-      @for (itemGroup of groundGroups; track itemGroup) {
+      @for (itemGroup of groundGroups; track $index) {
       <app-item
         (click)="changeItemClass(itemGroup.itemClass)"
         [class.selected]="itemGroup.itemClass === currentItemClass"

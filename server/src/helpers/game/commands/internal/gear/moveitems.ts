@@ -1946,23 +1946,28 @@ export class MoveItems extends MacroCommand {
 
           const { withdrawInOunces } =
             this.game.lockerHelper.getMaterialData(materialRef);
+
           if (withdrawInOunces) {
             const totalOz =
-              this.game.itemHelper.getItemProperty(item.item, 'ounces') ?? 1;
-            const takeOz = Math.min(materialSpaceLeft, totalOz);
+              item.count *
+              (this.game.itemHelper.getItemProperty(item.item, 'ounces') ?? 1);
 
-            item.item.mods.ounces = totalOz - takeOz;
-            this.game.inventoryHelper.addMaterial(player, materialRef, takeOz);
-
-            if (item.item.mods.ounces <= 0) {
-              state.removeItemFromGround(
-                player.x,
-                player.y,
-                itemClass as ItemClass,
-                item.item.uuid,
-                1,
+            if (totalOz > materialSpaceLeft) {
+              return this.sendMessage(
+                player,
+                'There is not enough space for all these items!',
               );
             }
+
+            item.item.mods.ounces = 0;
+            this.game.inventoryHelper.addMaterial(player, materialRef, totalOz);
+            state.removeItemFromGround(
+              player.x,
+              player.y,
+              itemClass as ItemClass,
+              item.item.uuid,
+              item.count,
+            );
           } else {
             const totalPossible = Math.min(materialSpaceLeft, item.count);
 
