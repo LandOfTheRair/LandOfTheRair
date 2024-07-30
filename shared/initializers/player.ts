@@ -2,7 +2,6 @@ import { BaseClass, IPlayer, Skill } from '../interfaces';
 import { initializeCharacter } from './character';
 
 export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
-
   const baseChar = initializeCharacter(char);
 
   return {
@@ -22,7 +21,7 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     skillTicks: 0,
     lastTileDesc: '',
     lastRegionDesc: '',
-    paidSkills: char.paidSkills ?? { },
+    paidSkills: char.paidSkills ?? {},
     bgmSetting: char.bgmSetting ?? 'wilderness',
     hungerTicks: char.hungerTicks ?? 0,
     partyName: char.partyName ?? '',
@@ -31,21 +30,49 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     dailyItems: char.dailyItems ?? {},
     traits: char.traits ?? { tp: 0, ap: 0, traitsLearned: {}, savedBuilds: {} },
     ancientLevel: char.ancientLevel ?? 0,
-    items: char.items ?? { equipment: {}, sack: { items: [] }, belt: { items: [] }, buyback: [] },
+    items: char.items ?? {
+      equipment: {},
+      sack: { items: [] },
+      belt: { items: [] },
+      buyback: [],
+    },
     statistics: char.statistics ?? {
-      statistics: {}, baseClass: BaseClass.Traveller, name: 'Unknown', level: 0, xp: 0, charSlot: 0, username: ''
+      statistics: {},
+      baseClass: BaseClass.Traveller,
+      name: 'Unknown',
+      level: 0,
+      xp: 0,
+      charSlot: 0,
+      username: '',
     },
     lockers: char.lockers ?? { lockers: {} },
     bank: char.bank ?? { deposits: {} },
-    accountLockers: char.accountLockers ?? { lockers: {}, materials: {}, pouch: { items: [] } },
+    accountLockers: char.accountLockers ?? {
+      lockers: {},
+      materials: {},
+      pouch: { items: [] },
+    },
     quests: char.quests ?? {
-      permanentQuestCompletion: {}, npcDailyQuests: {}, activeQuestProgress: {}, questKillWatches: {}, questStats: {}
+      permanentQuestCompletion: {},
+      npcDailyQuests: {},
+      activeQuestProgress: {},
+      questKillWatches: {},
+      questStats: {},
     },
     runes: char.runes ?? [],
     learnedRunes: char.learnedRunes ?? [],
     tradeskills: char.tradeskills ?? {},
     learnedRecipes: char.learnedRecipes ?? [],
     teleportLocations: char.teleportLocations ?? {},
-    sessionStatistics: char.sessionStatistics ?? { statistics: {}, start: Date.now(), end: 0, baseClass: '', name: '', level: 0 }
+    sessionStatistics: char.sessionStatistics ?? {
+      statistics: {},
+      start: Date.now(),
+      end: 0,
+      baseClass: '',
+      name: '',
+      level: 0,
+    },
+    isGM: false,
+    isTester: false,
   };
 };

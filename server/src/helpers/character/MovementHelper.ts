@@ -1,8 +1,18 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined, random } from 'lodash';
 
-import { DamageClass, directionDiagonalToWestEast, directionFromOffset,
-  ICharacter, INPC, ObjectType, SoundEffect, Stat, TrackedStatistic } from '../../interfaces';
+import {
+  DamageClass,
+  directionDiagonalToWestEast,
+  directionFromOffset,
+  ICharacter,
+  INPC,
+  isAtLeastTester,
+  ObjectType,
+  SoundEffect,
+  Stat,
+  TrackedStatistic,
+} from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
@@ -13,7 +23,6 @@ import { PlayerHelper } from './PlayerHelper';
 
 @Injectable()
 export class MovementHelper extends BaseService {
-
   private maxMove = 4;
 
   constructor(
@@ -21,13 +30,14 @@ export class MovementHelper extends BaseService {
     private playerHelper: PlayerHelper,
     private characterHelper: CharacterHelper,
     private interactionHelper: InteractionHelper,
-    private combatHelper: CombatHelper
+    private combatHelper: CombatHelper,
   ) {
     super();
   }
 
   init() {
-    this.maxMove = this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
+    this.maxMove =
+      this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
   }
 
   faceTowards(source: ICharacter, target: { x: number; y: number }) {
@@ -42,12 +52,21 @@ export class MovementHelper extends BaseService {
     const xDiff = target.x - source.x;
     const yDiff = target.y - source.y;
 
-    return this.game.movementHelper.moveWithPathfinding(source, { xDiff, yDiff });
+    return this.game.movementHelper.moveWithPathfinding(source, {
+      xDiff,
+      yDiff,
+    });
   }
 
   moveWithPathfinding(character: ICharacter, { xDiff, yDiff }): boolean {
-
-    if (isUndefined(xDiff) || isUndefined(yDiff) || isNaN(xDiff) || isNaN(yDiff)) return false;
+    if (
+      isUndefined(xDiff) ||
+      isUndefined(yDiff) ||
+      isNaN(xDiff) ||
+      isNaN(yDiff)
+    ) {
+      return false;
+    }
 
     const maxMoveRate = this.characterHelper.getStat(character, Stat.Move);
     if (maxMoveRate <= 0) return false;
@@ -58,7 +77,12 @@ export class MovementHelper extends BaseService {
     const map = this.worldManager.getMap(character.map)?.map;
     if (!map) return false;
 
-    const steps = map.findPath(character.x, character.y, character.x + xDiff, character.y + yDiff);
+    const steps = map.findPath(
+      character.x,
+      character.y,
+      character.x + xDiff,
+      character.y + yDiff,
+    );
 
     if (steps.length > maxMoveRate) {
       steps.length = maxMoveRate;
@@ -68,11 +92,18 @@ export class MovementHelper extends BaseService {
 
     if (this.characterHelper.isPlayer(character)) {
       this.playerHelper.resetStatus(character as Player, { sendFOV: false });
-      this.game.statisticsHelper.addStatistic(character as Player, TrackedStatistic.Steps, steps.length);
+      this.game.statisticsHelper.addStatistic(
+        character as Player,
+        TrackedStatistic.Steps,
+        steps.length,
+      );
       this.game.transmissionHelper.sendMovementPatch(character as Player);
 
       const mapData = this.game.worldManager.getMap(character.map);
-      const interactable = mapData?.map.getInteractableAt(character.x, character.y);
+      const interactable = mapData?.map.getInteractableAt(
+        character.x,
+        character.y,
+      );
 
       if (interactable) {
         this.handleInteractable(character as Player, interactable);
@@ -83,7 +114,9 @@ export class MovementHelper extends BaseService {
   }
 
   moveRandomly(character: ICharacter, numSteps: number): void {
-    const steps = Array(numSteps).fill(null).map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
+    const steps = Array(numSteps)
+      .fill(null)
+      .map(() => ({ x: random(-1, 1), y: random(-1, 1) }));
     if (steps.length === 0) return;
 
     this.takeSequenceOfSteps(character, steps);
@@ -93,7 +126,7 @@ export class MovementHelper extends BaseService {
   takeSequenceOfSteps(
     character: ICharacter,
     steps: Array<{ x: number; y: number }>,
-    opts: { isChasing: boolean } = { isChasing: false }
+    opts: { isChasing: boolean } = { isChasing: false },
   ): boolean {
     const mapData = this.worldManager.getMap(character.map);
     if (!mapData) return false;
@@ -105,7 +138,7 @@ export class MovementHelper extends BaseService {
     const oldX = character.x;
     const oldY = character.y;
 
-    steps.forEach(step => {
+    steps.forEach((step) => {
       if (!wasSuccessfulWithNoInterruptions) return;
       const nextX = clamp(character.x + step.x, 0, map.width);
       const nextY = clamp(character.y + step.y, 0, map.height);
@@ -115,8 +148,16 @@ export class MovementHelper extends BaseService {
         return;
       }
 
-      const oldEventSource = map.getInteractableOfTypeAt(character.x, character.y, ObjectType.EventSource);
-      const newEventSource = map.getInteractableOfTypeAt(nextX, nextY, ObjectType.EventSource);
+      const oldEventSource = map.getInteractableOfTypeAt(
+        character.x,
+        character.y,
+        ObjectType.EventSource,
+      );
+      const newEventSource = map.getInteractableOfTypeAt(
+        nextX,
+        nextY,
+        ObjectType.EventSource,
+      );
 
       // aquatic npcs can't leave the water
       if (!this.characterHelper.isPlayer(character)) {
@@ -128,28 +169,31 @@ export class MovementHelper extends BaseService {
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);
-      const canWallWalk = this.game.effectHelper.hasEffect(character, 'WallWalk');
+      const canWallWalk = this.game.effectHelper.hasEffect(
+        character,
+        'WallWalk',
+      );
       if (!nextTileWall || canWallWalk) {
         const possibleDenseObj = map.getInteractableOrDenseObject(nextX, nextY);
 
         if (possibleDenseObj?.density) {
-
           if (possibleDenseObj.type === ObjectType.Door) {
-
             // if we bump into a door and can't open it: cannot move anymore
-            if (!this.interactionHelper.tryToOpenDoor(character, possibleDenseObj)) {
+            if (
+              !this.interactionHelper.tryToOpenDoor(character, possibleDenseObj)
+            ) {
               wasSuccessfulWithNoInterruptions = false;
               return;
             }
 
-          // if we bump into a dense object, we cannot move anymore
+            // if we bump into a dense object, we cannot move anymore
           } else {
             wasSuccessfulWithNoInterruptions = false;
             return;
           }
         }
 
-      // if we run into a wall: nope, no more movement
+        // if we run into a wall: nope, no more movement
       } else {
         wasSuccessfulWithNoInterruptions = false;
         return;
@@ -161,15 +205,23 @@ export class MovementHelper extends BaseService {
 
       // handle step events
       if (oldEventSource && oldEventSource.properties.offEvent) {
-        this.game.worldManager.getMapStateForCharacter(character)?.handleEvent(oldEventSource.properties.offEvent, character);
+        this.game.worldManager
+          .getMapStateForCharacter(character)
+          ?.handleEvent(oldEventSource.properties.offEvent, character);
       }
 
       if (newEventSource && newEventSource.properties.onEvent) {
-        this.game.worldManager.getMapStateForCharacter(character)?.handleEvent(newEventSource.properties.onEvent, character);
+        this.game.worldManager
+          .getMapStateForCharacter(character)
+          ?.handleEvent(newEventSource.properties.onEvent, character);
       }
     });
 
-    const trap = this.game.trapHelper.getTrapAt(character.map, character.x, character.y);
+    const trap = this.game.trapHelper.getTrapAt(
+      character.map,
+      character.x,
+      character.y,
+    );
     if (trap && !this.game.traitHelper.traitLevel(character, 'GentleStep')) {
       this.game.trapHelper.triggerTrap(character, trap);
     }
@@ -181,46 +233,76 @@ export class MovementHelper extends BaseService {
 
   private handleInteractable(player: Player, obj): void {
     switch (obj.type) {
-    case 'Fall':     return this.handleTeleport(player, obj, true);
-    case 'Teleport': return this.handleTeleport(player, obj);
-    case 'Locker':   return this.handleLocker(player, obj.name);
+      case 'Fall':
+        return this.handleTeleport(player, obj, true);
+      case 'Teleport':
+        return this.handleTeleport(player, obj);
+      case 'Locker':
+        return this.handleLocker(player, obj.name);
     }
   }
 
   private handleTeleport(player: Player, obj, isFall = false): void {
     const {
-      teleportX, teleportY, teleportMap,
-      requireHeld, requireParty, requireHoliday,
-      requireQuest, requireQuestProgress, requireQuestComplete,
-      damagePercent, teleportTagMap, teleportTag, applyEffect,
-      requireClass
+      teleportX,
+      teleportY,
+      teleportMap,
+      requireHeld,
+      requireParty,
+      requireHoliday,
+      requireQuest,
+      requireQuestProgress,
+      requireQuestComplete,
+      damagePercent,
+      teleportTagMap,
+      teleportTag,
+      applyEffect,
+      requireClass,
+      requireTester,
     } = obj.properties;
 
+    if (requireTester && !isAtLeastTester(player)) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'This area is under construction!',
+      });
+      return;
+    }
+
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You must gather your party before venturing forth.' });
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You must gather your party before venturing forth.',
+      });
       return;
     }
 
     if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: `That location is only seasonally open during "${requireHoliday}"!` });
+        message: `That location is only seasonally open during "${requireHoliday}"!`,
+      });
       return;
     }
 
     // check if player has a held item
-    if (requireHeld
-    && !this.characterHelper.hasHeldItem(player, requireHeld, 'left')
-    && !this.characterHelper.hasHeldItem(player, requireHeld, 'right')) return;
+    if (
+      requireHeld &&
+      !this.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
+      !this.characterHelper.hasHeldItem(player, requireHeld, 'right')
+    ) {
+      return;
+    }
 
     // check if player has a quest (and the corresponding quest progress, if necessary)
     if (requireQuest) {
-
       // if the player has permanent completion for it, they can always get through
-      if (!this.game.questHelper.isQuestPermanentlyComplete(player, requireQuest)) {
-
+      if (
+        !this.game.questHelper.isQuestPermanentlyComplete(player, requireQuest)
+      ) {
         // but if not, we check if we need a certain quest progress
         if (requireQuestProgress) {
-          const questData = this.game.questHelper.getQuestProgress(player, requireQuest);
+          const questData = this.game.questHelper.getQuestProgress(
+            player,
+            requireQuest,
+          );
           if (!questData || !questData[requireQuestProgress]) return;
         }
 
@@ -231,7 +313,14 @@ export class MovementHelper extends BaseService {
 
     // check if player has completed quest
     if (requireQuestComplete) {
-      if (!this.game.questHelper.isQuestPermanentlyComplete(player, requireQuestComplete)) return;
+      if (
+        !this.game.questHelper.isQuestPermanentlyComplete(
+          player,
+          requireQuestComplete,
+        )
+      ) {
+        return;
+      }
     }
 
     if (requireClass) {
@@ -242,24 +331,32 @@ export class MovementHelper extends BaseService {
 
     // if we have a teleport tag to look up, we start there
     if (teleportTag && teleportTagMap) {
-
       const mapData = this.game.worldManager.getMap(teleportTagMap);
       const tagData = mapData?.map?.getTeleportTagRef(teleportTag);
       if (!tagData) {
         this.game.messageHelper.sendLogMessageToPlayer(player, {
-          message: 'It seems this portal is active, but the connection is severed.'
+          message:
+            'It seems this portal is active, but the connection is severed.',
         });
 
         return;
       }
 
-      didTeleport = this.game.teleportHelper.teleport(player, { x: tagData.x, y: tagData.y, map: teleportTagMap });
-
+      didTeleport = this.game.teleportHelper.teleport(player, {
+        x: tagData.x,
+        y: tagData.y,
+        map: teleportTagMap,
+      });
     } else if (teleportX && teleportY && teleportMap) {
-      didTeleport = this.game.teleportHelper.teleport(player, { x: teleportX, y: teleportY, map: teleportMap });
-
+      didTeleport = this.game.teleportHelper.teleport(player, {
+        x: teleportX,
+        y: teleportY,
+        map: teleportMap,
+      });
     } else {
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'It seems this portal is active, but leads nowhere.' });
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'It seems this portal is active, but leads nowhere.',
+      });
       return;
     }
 
@@ -270,8 +367,14 @@ export class MovementHelper extends BaseService {
     }
 
     if (isFall) {
-      const fallDamagePercent = this.game.contentManager.getGameSetting('character', 'fallDamagePercent') ?? 15;
-      let hpLost = Math.floor(player.hp.maximum * ((damagePercent || fallDamagePercent) / 100));
+      const fallDamagePercent =
+        this.game.contentManager.getGameSetting(
+          'character',
+          'fallDamagePercent',
+        ) ?? 15;
+      let hpLost = Math.floor(
+        player.hp.maximum * ((damagePercent || fallDamagePercent) / 100),
+      );
 
       // Fleet Of Foot reduces fall damage to 1
       if (this.game.effectHelper.hasEffect(player, 'FleetOfFoot')) {
@@ -282,12 +385,14 @@ export class MovementHelper extends BaseService {
       this.combatHelper.dealOnesidedDamage(player, {
         damage,
         damageClass: DamageClass.Physical,
-        damageMessage: 'You\'ve fallen!',
+        damageMessage: "You've fallen!",
         suppressIfNegative: true,
-        overrideSfx: SoundEffect.CombatHitMelee
+        overrideSfx: SoundEffect.CombatHitMelee,
       });
     } else {
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'Your surroundings shift.' });
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'Your surroundings shift.',
+      });
     }
   }
 
