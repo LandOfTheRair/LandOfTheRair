@@ -7,48 +7,60 @@ import { environment } from '../../environments/environment';
 import { ErrorComponent } from '../_shared/modals/error/error.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoggerService {
-
   private loggedErrorMessages: Record<string, number> = {};
   private loggedErrors: Array<{ message: string; error: string }> = [];
 
   private ignoredErrorMessages = {
-    'TypeError: Cannot read property \'sys\' of null': true,
-    'Cannot read property \'sys\' of null': true,
-    'TypeError: Cannot read property \'sys\' of undefined': true,
-    'Cannot read property \'sys\' of undefined': true
+    "TypeError: Cannot read property 'sys' of null": true,
+    "Cannot read property 'sys' of null": true,
+    "TypeError: Cannot read property 'sys' of undefined": true,
+    "Cannot read property 'sys' of undefined": true,
   };
 
   private canShowErrors = true;
 
   private rollbar: Rollbar;
 
-  public get iterableErrors(): Array<{ message: string; error: string; total: number }> {
-    return this.loggedErrors.map(err => ({ ...err, total: this.loggedErrorMessages[err.message] }));
+  public get iterableErrors(): Array<{
+    message: string;
+    error: string;
+    total: number;
+  }> {
+    return this.loggedErrors.map((err) => ({
+      ...err,
+      total: this.loggedErrorMessages[err.message],
+    }));
   }
 
   public get totalErrors(): number {
     return sum(Object.values(this.loggedErrorMessages)) ?? 0;
   }
 
-  constructor(
-    private dialog: MatDialog
-  ) {}
+  constructor(private dialog: MatDialog) {}
 
   public init() {
     if (environment.rollbar.token) {
       this.rollbar = new Rollbar({
         accessToken: environment.rollbar.token,
         captureUncaught: true,
-        captureUnhandledRejections: true
+        captureUnhandledRejections: true,
       });
     }
   }
 
   public showErrorWindow(title: string, content: string) {
-    if (this.ignoredErrorMessages[title] || this.ignoredErrorMessages[content] || !this.canShowErrors || !title || !content) return;
+    if (
+      this.ignoredErrorMessages[title] ||
+      this.ignoredErrorMessages[content] ||
+      !this.canShowErrors ||
+      !title ||
+      !content
+    ) {
+      return;
+    }
 
     this.dialog.afterAllClosed.subscribe(() => {
       this.canShowErrors = true;
@@ -57,9 +69,9 @@ export class LoggerService {
     this.canShowErrors = false;
 
     this.dialog.open(ErrorComponent, {
-      width: '450px',
+      width: '550px',
       panelClass: 'fancy',
-      data: { title, content }
+      data: { title, content },
     });
   }
 
@@ -108,7 +120,6 @@ export class LoggerService {
 
 @Injectable()
 export class AlertErrorHandler implements ErrorHandler {
-
   constructor(private logger: LoggerService) {}
 
   handleError(error) {

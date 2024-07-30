@@ -1,34 +1,39 @@
-<app-window windowName="characterList"
+<app-window
+  windowName="characterList"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="false"
-
   defaultX="4"
   defaultY="101"
   defaultWidth="380"
   defaultHeight="300"
 ></app-window>
 
-<ng-template #headTemplate>
-  Characters In View
-</ng-template>
+<ng-template #headTemplate>Characters In View</ng-template>
 
 <ng-template #bodyTemplate>
   @if (player) {
-    <div class="p-bottom-20 p-left-5 p-right-25 char-container">
-      @if (gameService.allVisibleCharacters.length === 0) {
-        <div class="vertical-center full-width full-height background-text">You don't see anyone nearby</div>
-      }
-      @for (character of gameService.allVisibleCharacters; track character; let i = $index) {
-        <div class="char-card-container">
-          @if (character) {
-            <app-character-card [origin]="player" [disabled]="disableInteractions" [char]="character" (click)="doAction(character, $event)" (contextmenu)="doAltAction(player, character, $event)"></app-character-card>
-          }
-        </div>
-      }
-      @if (gameService.allVisibleCharacters.length % 2 === 1) {
-        <div class="char-spacer"></div>
+  <div class="p-bottom-20 p-left-5 p-right-25 char-container">
+    @if (gameService.allVisibleCharacters.length === 0) {
+    <div class="vertical-center full-width full-height background-text">
+      You don't see anyone nearby
+    </div>
+    } @for (character of gameService.allVisibleCharacters; track character.uuid;
+    let i = $index) {
+    <div class="char-card-container">
+      @if (character) {
+      <app-character-card
+        [origin]="player"
+        [disabled]="disableInteractions"
+        [char]="character"
+        (click)="doAction(character, $event)"
+        (contextmenu)="doAltAction(player, character, $event)"
+      ></app-character-card>
       }
     </div>
+    } @if (gameService.allVisibleCharacters.length % 2 === 1) {
+    <div class="char-spacer"></div>
+    }
+  </div>
   }
 </ng-template>
