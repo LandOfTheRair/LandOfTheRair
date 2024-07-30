@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { IDialogChatAction } from '../../../../interfaces';
 
@@ -6,10 +6,9 @@ import { IDialogChatAction } from '../../../../interfaces';
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<DialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IDialogChatAction,
-  ) {}
+  public dialogRef = inject(MatDialogRef<DialogComponent>);
+  public data: IDialogChatAction = inject(MAT_DIALOG_DATA);
 }

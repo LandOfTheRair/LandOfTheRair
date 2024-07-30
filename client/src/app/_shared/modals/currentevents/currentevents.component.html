@@ -1,46 +1,41 @@
 <h1 mat-dialog-title>Current Events</h1>
 
 <div mat-dialog-content>
-
-  @if (holiday$ | async; as holiday) {
-    <div class="current-holiday">
-      <div>
-        <strong>{{ holidayDescs[holiday].name }}</strong>
-      </div>
-      <div>
-        <small><em>Takes place between {{ holidayDescs[holiday].duration }}</em></small>
-      </div>
-      <div>
-        {{ holidayDescs[holiday].text }}
-      </div>
+  @if (holiday(); as holiday) {
+  <div class="current-holiday">
+    <div>
+      <strong>{{ holidayDescs[holiday].name }}</strong>
     </div>
-  }
-
-  @if (events$ | async; as events) {
-    <div class="event-container">
-      @if (events.length === 0 && (holiday$ | async) === null) {
-        <div class="event">
-          No events are currently happening.
-        </div>
-      }
-      @for (event of events; track event) {
-        <div class="event">
-          <div class="event-name">
-            <strong>{{ event.name }}</strong>&nbsp;&nbsp;<em>(ends at roughly {{ event.endsAt | date:'short' }})</em>
-          </div>
-          <div class="event-desc">
-            {{ event.description }}
-          </div>
-          @if (statString(event)) {
-            <div class="stats">
-              Stat Boosts: {{ statString(event) }}
-            </div>
-          }
-        </div>
+    <div>
+      <small>
+        <em>Takes place between {{ holidayDescs[holiday].duration }}</em>
+      </small>
+    </div>
+    <div>
+      {{ holidayDescs[holiday].text }}
+    </div>
+  </div>
+  } @if (events(); as events) {
+  <div class="event-container">
+    @if (events.length === 0 && !holiday()) {
+    <div class="event">No events are currently happening.</div>
+    } @for (event of events; track event) {
+    <div class="event">
+      <div class="event-name">
+        <strong>{{ event.name }}</strong>
+        &nbsp;&nbsp;
+        <em>(ends at roughly {{ event.endsAt | date : 'short' }})</em>
+      </div>
+      <div class="event-desc">
+        {{ event.description }}
+      </div>
+      @if (statString(event)) {
+      <div class="stats">Stat Boosts: {{ statString(event) }}</div>
       }
     </div>
+    }
+  </div>
   }
-
 </div>
 
 <div mat-dialog-actions>

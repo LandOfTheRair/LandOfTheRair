@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IInputData {
@@ -15,12 +15,11 @@ interface IInputData {
   selector: 'app-input-request',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InputModalComponent {
-  public value = '';
+  public dialogRef = inject(MatDialogRef<InputModalComponent>);
+  public data: IInputData = inject(MAT_DIALOG_DATA);
 
-  constructor(
-    public dialogRef: MatDialogRef<InputModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IInputData,
-  ) {}
+  public value = '';
 }

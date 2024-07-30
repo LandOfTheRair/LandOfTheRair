@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { LoggerService } from '../../../services/logger.service';
 
@@ -6,10 +6,9 @@ import { LoggerService } from '../../../services/logger.service';
   selector: 'app-error-log',
   templateUrl: './error-log.component.html',
   styleUrls: ['./error-log.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorLogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ErrorLogComponent>,
-    public logger: LoggerService,
-  ) {}
+  public dialogRef = inject(MatDialogRef<ErrorLogComponent>);
+  public logger = inject(LoggerService);
 }

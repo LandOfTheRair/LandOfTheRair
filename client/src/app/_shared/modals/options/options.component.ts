@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { select, Store } from '@ngxs/store';
 import { GameOption } from '../../../../interfaces';
 import { SetOption, SettingsState } from '../../../../stores';
 import { OptionsService } from '../../../services/options.service';
@@ -11,9 +14,13 @@ import { OptionsService } from '../../../services/options.service';
   selector: 'app-options',
   templateUrl: './options.component.html',
   styleUrls: ['./options.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OptionsComponent {
-  @Select(SettingsState.options) options$: Observable<any>;
+  private store = inject(Store);
+  private optionsService = inject(OptionsService);
+  public dialogRef = inject(MatDialogRef<OptionsComponent>);
+  public optionsSelector = select(SettingsState.options);
 
   public options: any = {};
 
@@ -99,13 +106,9 @@ export class OptionsComponent {
     'Effects',
   ];
 
-  constructor(
-    private store: Store,
-    private optionsService: OptionsService,
-    public dialogRef: MatDialogRef<OptionsComponent>,
-  ) {
-    this.options$.pipe(first()).subscribe((opts) => {
-      this.options = Object.assign({}, opts);
+  constructor() {
+    effect(() => {
+      this.options = Object.assign({}, this.optionsSelector());
     });
   }
 

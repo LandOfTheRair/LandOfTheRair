@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IErrorAlertData {
@@ -10,10 +10,9 @@ interface IErrorAlertData {
   selector: 'app-error',
   templateUrl: './error.component.html',
   styleUrls: ['./error.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ErrorComponent>,
-    @Inject(MAT_DIALOG_DATA) public errorData: IErrorAlertData,
-  ) {}
+  public dialogRef = inject(MatDialogRef<ErrorComponent>);
+  public data: IErrorAlertData = inject(MAT_DIALOG_DATA);
 }

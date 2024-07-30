@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IConfirmData {
@@ -15,10 +15,9 @@ interface IConfirmData {
   selector: 'app-confirm',
   templateUrl: './confirm.component.html',
   styleUrls: ['./confirm.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmModalComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IConfirmData,
-  ) {}
+  public dialogRef = inject(MatDialogRef<ConfirmModalComponent>);
+  public data: IConfirmData = inject(MAT_DIALOG_DATA);
 }

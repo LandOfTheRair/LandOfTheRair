@@ -1,117 +1,170 @@
 <h1 mat-dialog-title>My Account</h1>
 
 <div mat-dialog-content>
-  @if (account) {
-    <form>
-      <mat-form-field class="full-width">
-        <input matInput
-          type="email"
-          placeholder="Email Address"
-          [(ngModel)]="account.email"
-          [disabled]="true"
-          [ngModelOptions]="{ standalone: true }" />
+  @if (account(); as account) {
+  <form>
+    <mat-form-field class="full-width">
+      <input
+        matInput
+        type="email"
+        placeholder="Email Address"
+        [(ngModel)]="account.email"
+        [disabled]="true"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </mat-form-field>
+    <fieldset>
+      <legend>Change/Verify Email</legend>
+      <div class="split-button">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            type="text"
+            placeholder="New Email"
+            [(ngModel)]="newEmail"
+            [ngModelOptions]="{ standalone: true }"
+          />
         </mat-form-field>
-        <fieldset>
-          <legend>
-            Change/Verify Email
-          </legend>
-          <div class="split-button">
-            <mat-form-field class="full-width">
-              <input matInput
-                type="text"
-                placeholder="New Email"
-                [(ngModel)]="newEmail"
-                [ngModelOptions]="{ standalone: true }" />
-              </mat-form-field>
-              <div class="m-l-20 true-center">
-                <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!newEmail" (click)="changeEmail()">Update</button>
-              </div>
-            </div>
-            @if (!account.emailVerified) {
-              <div class="split-button">
-                <mat-form-field class="full-width">
-                  <input matInput
-                    type="text"
-                    placeholder="Verification Code"
-                    [(ngModel)]="verificationCode"
-                    [ngModelOptions]="{ standalone: true }" />
-                  </mat-form-field>
-                  <div class="m-l-20 true-center">
-                    <button mat-raised-button color="secondary" class="form-inline-button m-r-10" [disabled]="!canRequestVerificationCode" (click)="requestVerify()">
-                      {{ canRequestVerificationCode ? 'Request Verification Code' : 'Please Wait...' }}
-                    </button>
-                    <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!verificationCode" (click)="doVerify()">
-                      Verify
-                    </button>
-                  </div>
-                </div>
-              }
-            </fieldset>
-            <fieldset class="m-t-20">
-              <legend>
-                Change Password
-              </legend>
-              <mat-form-field class="full-width">
-                <input matInput
-                  type="password"
-                  placeholder="Current Password"
-                  [(ngModel)]="currentPassword"
-                  [ngModelOptions]="{ standalone: true }" />
-                </mat-form-field>
-                <div class="split-button">
-                  <mat-form-field class="full-width">
-                    <input matInput
-                      type="password"
-                      placeholder="New Password"
-                      [(ngModel)]="newPassword"
-                      [ngModelOptions]="{ standalone: true }" />
-                    </mat-form-field>
-                    <div class="m-l-20 true-center">
-                      <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangePassword" (click)="changePassword()">Update</button>
-                    </div>
-                  </div>
-                </fieldset>
-                <fieldset class="m-t-20">
-                  <legend>
-                    Discord Options
-                  </legend>
-                  <div class="split-button">
-                    <mat-form-field class="full-width">
-                      <input matInput
-                        type="text"
-                        placeholder="Discord ID (123456789123456789)"
-                        [(ngModel)]="account.discordTag"
-                        [ngModelOptions]="{ standalone: true }" />
-                      </mat-form-field>
-                      <div class="m-l-20 true-center">
-                        <button mat-raised-button color="primary" class="form-inline-button" [disabled]="!canChangeTag" (click)="changeTag()">Update</button>
-                      </div>
-                    </div>
-                    <div class="m-b-10">
-                      <small>
-                        <em>To get your ID, enable Developer Settings in Appearance > Developer Mode, then right-click yourself and click "Copy ID"</em>
-                      </small>
-                    </div>
-                    <mat-checkbox [(ngModel)]="account.alwaysOnline"
-                      matTooltip="When you're always online, if you're online in Discord, you'll also show as online in the lobby."
-                      matTooltipPosition="right"
-                      (change)="changeOnline()"
-                      [ngModelOptions]="{ standalone: true }">
-                      Always Online
-                    </mat-checkbox>
-                    <mat-checkbox [(ngModel)]="account.eventWatcher"
-                      matTooltip="When you're watching events, you'll receive a ping when an in-game event happens."
-                      matTooltipPosition="right"
-                      (change)="changeEvents()"
-                      class="m-l-20"
-                      [ngModelOptions]="{ standalone: true }">
-                      Event Watcher
-                    </mat-checkbox>
-                  </fieldset>
-                </form>
-              }
-            </div>
+        <div class="m-l-20 true-center">
+          <button
+            mat-raised-button
+            color="primary"
+            class="form-inline-button"
+            [disabled]="!newEmail"
+            (click)="changeEmail()"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+      @if (!account.emailVerified) {
+      <div class="split-button">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            type="text"
+            placeholder="Verification Code"
+            [(ngModel)]="verificationCode"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <div class="m-l-20 true-center">
+          <button
+            mat-raised-button
+            color="secondary"
+            class="form-inline-button m-r-10"
+            [disabled]="!canRequestVerificationCode"
+            (click)="requestVerify()"
+          >
+            {{
+              canRequestVerificationCode
+                ? 'Request Verification Code'
+                : 'Please Wait...'
+            }}
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="form-inline-button"
+            [disabled]="!verificationCode"
+            (click)="doVerify()"
+          >
+            Verify
+          </button>
+        </div>
+      </div>
+      }
+    </fieldset>
+    <fieldset class="m-t-20">
+      <legend>Change Password</legend>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          type="password"
+          placeholder="Current Password"
+          [(ngModel)]="currentPassword"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </mat-form-field>
+      <div class="split-button">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            type="password"
+            placeholder="New Password"
+            [(ngModel)]="newPassword"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <div class="m-l-20 true-center">
+          <button
+            mat-raised-button
+            color="primary"
+            class="form-inline-button"
+            [disabled]="!canChangePassword"
+            (click)="changePassword()"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="m-t-20">
+      <legend>Discord Options</legend>
+      <div class="split-button">
+        <mat-form-field class="full-width">
+          <input
+            matInput
+            type="text"
+            placeholder="Discord ID (123456789123456789)"
+            [(ngModel)]="account.discordTag"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <div class="m-l-20 true-center">
+          <button
+            mat-raised-button
+            color="primary"
+            class="form-inline-button"
+            [disabled]="!canChangeTag"
+            (click)="changeTag()"
+          >
+            Update
+          </button>
+        </div>
+      </div>
+      <div class="m-b-10">
+        <small>
+          <em>
+            To get your ID, enable Developer Settings in Appearance > Developer
+            Mode, then right-click yourself and click "Copy ID"
+          </em>
+        </small>
+      </div>
+      <mat-checkbox
+        [(ngModel)]="account.alwaysOnline"
+        matTooltip="When you're always online, if you're online in Discord, you'll also show as online in the lobby."
+        matTooltipPosition="right"
+        (change)="changeOnline()"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        Always Online
+      </mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="account.eventWatcher"
+        matTooltip="When you're watching events, you'll receive a ping when an in-game event happens."
+        matTooltipPosition="right"
+        (change)="changeEvents()"
+        class="m-l-20"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        Event Watcher
+      </mat-checkbox>
+    </fieldset>
+  </form>
+  }
+</div>
 
-            <div mat-dialog-actions>
-              <button mat-button mat-dialog-close>Close</button>
-            </div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+</div>

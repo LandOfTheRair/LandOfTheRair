@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IAmountData {
@@ -13,14 +13,13 @@ interface IAmountData {
   selector: 'app-text',
   templateUrl: './text.component.html',
   styleUrls: ['./text.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TextModalComponent {
-  public text: string;
+  public dialogRef = inject(MatDialogRef<TextModalComponent>);
+  public data: IAmountData = inject(MAT_DIALOG_DATA);
 
-  constructor(
-    public dialogRef: MatDialogRef<TextModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IAmountData,
-  ) {}
+  public text: string;
 
   finish() {
     this.dialogRef.close(this.text);

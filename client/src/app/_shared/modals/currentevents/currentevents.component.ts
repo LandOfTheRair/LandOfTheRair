@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { Holiday, IDynamicEvent } from '../../../../interfaces';
+import { select } from '@ngxs/store';
+import { IDynamicEvent } from '../../../../interfaces';
 import { GameState, LobbyState } from '../../../../stores';
 
 import * as holidayDescs from '../../../../assets/content/_output/holidaydescs.json';
@@ -11,16 +10,16 @@ import * as holidayDescs from '../../../../assets/content/_output/holidaydescs.j
   selector: 'app-currentevents',
   templateUrl: './currentevents.component.html',
   styleUrls: ['./currentevents.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CurrentEventsComponent {
-  @Select(GameState.currentHoliday) holiday$: Observable<Holiday>;
-  @Select(LobbyState.events) events$: Observable<IDynamicEvent[]>;
+  public dialogRef = inject(MatDialogRef<CurrentEventsComponent>);
+  public holiday = select(GameState.currentHoliday);
+  public events = select(LobbyState.events);
 
   public get holidayDescs() {
     return holidayDescs;
   }
-
-  constructor(public dialogRef: MatDialogRef<CurrentEventsComponent>) {}
 
   // format the stat string nicely
   public statString(event: IDynamicEvent): string {

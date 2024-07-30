@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 interface IAlertData {
@@ -11,10 +11,9 @@ interface IAlertData {
   selector: 'app-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertComponent {
-  constructor(
-    public dialogRef: MatDialogRef<AlertComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IAlertData,
-  ) {}
+  public dialogRef = inject(MatDialogRef<AlertComponent>);
+  public data: IAlertData = inject(MAT_DIALOG_DATA);
 }
