@@ -1,4 +1,3 @@
-
 export * from './allegiance';
 export * from './axp';
 export * from './crash';
@@ -13,6 +12,7 @@ export * from './gaintradeskill';
 export * from './gg';
 export * from './item';
 export * from './kill';
+export * from './modcreature';
 export * from './moditem';
 export * from './resetdungeon';
 export * from './saveplayers';
