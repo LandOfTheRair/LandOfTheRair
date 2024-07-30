@@ -1,17 +1,20 @@
-
 import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, random, sample } from 'lodash';
 
-import { GameAction, IDynamicEvent, IDynamicEventData, INPC, Stat } from '../../../interfaces';
+import {
+  GameAction,
+  IDynamicEvent,
+  IDynamicEventData,
+  INPC,
+  Stat,
+} from '../../../interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
 
-
 @Injectable()
 export class DynamicEventHelper extends BaseService {
-
   private activeEventNames: Record<string, boolean> = {};
   private activeEvents: IDynamicEvent[] = [];
   private statTotals: Partial<Record<Stat, number>> = {};
@@ -29,7 +32,7 @@ export class DynamicEventHelper extends BaseService {
 
     timer.startTimer(`dynamicevent-${now}`);
 
-    this.activeEvents.forEach(event => {
+    this.activeEvents.forEach((event) => {
       if (event.endsAt > Date.now()) return;
 
       this.stopEvent(event);
@@ -42,7 +45,6 @@ export class DynamicEventHelper extends BaseService {
 
   // start a new event
   public startEvent(event: IDynamicEvent): void {
-
     // if we have an event by this name, we update it
     if (this.activeEventNames[event.name]) {
       this.updateEvent(event);
@@ -58,16 +60,19 @@ export class DynamicEventHelper extends BaseService {
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.EventCreate,
-      event: this.game.db.prepareForTransmission(setEvent)
+      event: this.game.db.prepareForTransmission(setEvent),
     });
 
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
     if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(event.eventData?.startMessage ?? ref.startMessage);
-
+      this.game.messageHelper.broadcastSystemMessage(
+        event.eventData?.startMessage ?? ref.startMessage,
+      );
     } else {
-      this.game.messageHelper.broadcastSystemMessage(`A new event "${setEvent.name}" has started!`);
+      this.game.messageHelper.broadcastSystemMessage(
+        `A new event "${setEvent.name}" has started!`,
+      );
     }
 
     this.recalculateStatTotals();
@@ -75,22 +80,25 @@ export class DynamicEventHelper extends BaseService {
 
   // stop an event
   public stopEvent(event: IDynamicEvent): void {
-    this.activeEvents = this.activeEvents.filter(x => x !== event);
+    this.activeEvents = this.activeEvents.filter((x) => x !== event);
     this.game.eventsDB.deleteEvent(event as DynamicEvent);
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.EventDelete,
-      event: this.game.db.prepareForTransmission(event)
+      event: this.game.db.prepareForTransmission(event),
     });
 
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
     if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(event.eventData?.endMessage ?? ref.endMessage);
-      this.eventCooldowns[eventRef] = Date.now() + (1000 * (ref.cooldown ?? 0));
-
+      this.game.messageHelper.broadcastSystemMessage(
+        event.eventData?.endMessage ?? ref.endMessage,
+      );
+      this.eventCooldowns[eventRef] = Date.now() + 1000 * (ref.cooldown ?? 0);
     } else {
-      this.game.messageHelper.broadcastSystemMessage(`"${event.name}" has ended.`);
+      this.game.messageHelper.broadcastSystemMessage(
+        `"${event.name}" has ended.`,
+      );
     }
 
     this.handleSpecialEventsEnd(event);
@@ -99,7 +107,7 @@ export class DynamicEventHelper extends BaseService {
 
   // update an event to have new props (extending a festival f.ex)
   public updateEvent(event: IDynamicEvent): void {
-    const updEvent = this.activeEvents.find(x => x.name === event.name);
+    const updEvent = this.activeEvents.find((x) => x.name === event.name);
     if (!updEvent) return;
 
     merge(updEvent, event);
@@ -108,7 +116,7 @@ export class DynamicEventHelper extends BaseService {
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.EventCreate,
-      event: this.game.db.prepareForTransmission(updEvent)
+      event: this.game.db.prepareForTransmission(updEvent),
     });
 
     this.recalculateStatTotals();
@@ -121,7 +129,7 @@ export class DynamicEventHelper extends BaseService {
 
   // get events formatted to send to a player
   public getEventsForPlayer(): IDynamicEvent[] {
-    return this.activeEvents.map(x => this.game.db.prepareForTransmission(x));
+    return this.activeEvents.map((x) => this.game.db.prepareForTransmission(x));
   }
 
   // get a stat value to boost with (not a percent)
@@ -136,28 +144,32 @@ export class DynamicEventHelper extends BaseService {
 
   // used to check if there exists an event with this name
   public getActiveEvent(eventName: string): IDynamicEvent | undefined {
-    return this.activeEvents.find(x => x.name === eventName);
+    return this.activeEvents.find((x) => x.name === eventName);
   }
 
   // start a dynamic event
   public startDynamicEvent(event: IDynamicEventData): void {
     if (!event.name) {
-      this.game.logger.error('DynamicEventHelper', new Error(`Event ${JSON.stringify(event)} does not have a name!`));
+      this.game.logger.error(
+        'DynamicEventHelper',
+        new Error(`Event ${JSON.stringify(event)} does not have a name!`),
+      );
       return;
     }
 
     if (!this.canDoEvent(event)) return;
+    if (!this.existsEnoughPlayersToDoEvent()) return;
 
     const newEvent = cloneDeep(event);
     this.handleSpecialEventsStart(newEvent);
 
     this.startEvent({
       description: newEvent.description,
-      endsAt: Date.now() + (newEvent.duration * 1000),
+      endsAt: Date.now() + newEvent.duration * 1000,
       name: newEvent.name,
       eventRef: newEvent.name,
       eventData: newEvent,
-      extraData: newEvent.extraData
+      extraData: newEvent.extraData,
     });
   }
 
@@ -171,10 +183,10 @@ export class DynamicEventHelper extends BaseService {
     this.activeEventNames = {};
     this.statTotals = {};
 
-    this.getEvents().forEach(event => {
+    this.getEvents().forEach((event) => {
       this.activeEventNames[event.name] = true;
 
-      Object.keys(event.statBoost || {}).forEach(stat => {
+      Object.keys(event.statBoost || {}).forEach((stat) => {
         this.statTotals[stat] = this.statTotals[stat] ?? 0;
         this.statTotals[stat] += event.statBoost?.[stat] ?? 0;
       });
@@ -182,7 +194,9 @@ export class DynamicEventHelper extends BaseService {
   }
 
   private cleanStaleEvents(): void {
-    this.activeEvents = this.activeEvents.filter(x => x.name !== 'Double Trouble');
+    this.activeEvents = this.activeEvents.filter(
+      (x) => x.name !== 'Double Trouble',
+    );
   }
 
   // check for other events and start them possibly
@@ -192,24 +206,31 @@ export class DynamicEventHelper extends BaseService {
 
     const rarity = settings.event;
 
-    Object.keys(events).forEach(eventName => {
+    Object.keys(events).forEach((eventName) => {
       const event = this.getEventRef(eventName);
       if (!event) return;
 
       // if it can't trigger, bail
-      if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) return;
+      if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) {
+        return;
+      }
 
       // if the map isn't active, bail
-      if (event.map && !this.game.worldManager.currentlyActiveMapHash[event.map]) return;
+      if (
+        event.map &&
+        !this.game.worldManager.currentlyActiveMapHash[event.map]
+      ) {
+        return;
+      }
 
       if (event.npc) {
         let isAlive = false;
 
-        this.game.worldManager.allMapNames.forEach(map => {
+        this.game.worldManager.allMapNames.forEach((map) => {
           const mapData = this.game.worldManager.getMap(map);
           if (!mapData) return;
 
-          mapData.state.allNPCS.forEach(npc => {
+          mapData.state.allNPCS.forEach((npc) => {
             if (npc.npcId !== event.npc) return;
 
             isAlive = true;
@@ -220,7 +241,12 @@ export class DynamicEventHelper extends BaseService {
       }
 
       // if there's a conflicting event, bail
-      if (event.conflicts && event.conflicts.some(e => this.isEventActive(e))) return;
+      if (
+        event.conflicts &&
+        event.conflicts.some((e) => this.isEventActive(e))
+      ) {
+        return;
+      }
 
       this.startDynamicEvent(event);
     });
@@ -241,27 +267,33 @@ export class DynamicEventHelper extends BaseService {
     return true;
   }
 
-  private canDoDoubleTrouble(): boolean {
+  private existsEnoughPlayersToDoEvent(): boolean {
+    return this.game.playerManager.numPlayersOnline() > 0;
+  }
 
+  private canDoDoubleTrouble(): boolean {
     let hasTarget = false;
 
-    this.game.worldManager.allMapNames.forEach(map => {
+    this.game.worldManager.allMapNames.forEach((map) => {
       if (hasTarget) return;
 
       const mapData = this.game.worldManager.getMap(map);
       if (!mapData) return;
 
-      mapData.state.allNPCS.forEach(npc => {
+      mapData.state.allNPCS.forEach((npc) => {
         if (hasTarget) return;
 
         if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
         if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
-        const checkSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid);
+        const checkSpawner = this.game.worldManager
+          .getMap(npc.map)
+          ?.state.getNPCSpawner(npc.uuid);
         if (!checkSpawner) return;
 
-        const checkSpawners = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        const checkSpawners = this.game.worldManager
+          .getMap(npc.map)
+          ?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
         if ((checkSpawners?.length ?? 0) > 1) return;
-
 
         hasTarget = true;
       });
@@ -271,20 +303,23 @@ export class DynamicEventHelper extends BaseService {
   }
 
   private doDoubleTrouble(event: IDynamicEventData): void {
-
     const targets: INPC[] = [];
 
-    this.game.worldManager.allMapNames.forEach(map => {
+    this.game.worldManager.allMapNames.forEach((map) => {
       const mapData = this.game.worldManager.getMap(map);
       if (!mapData) return;
 
-      mapData.state.allNPCS.forEach(npc => {
+      mapData.state.allNPCS.forEach((npc) => {
         if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
         if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
-        const checkSpawner = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid);
+        const checkSpawner = this.game.worldManager
+          .getMap(npc.map)
+          ?.state.getNPCSpawner(npc.uuid);
         if (!checkSpawner) return;
 
-        const checkSpawners = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        const checkSpawners = this.game.worldManager
+          .getMap(npc.map)
+          ?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
         if ((checkSpawners?.length ?? 0) > 1) return;
 
         targets.push(npc);
@@ -294,14 +329,20 @@ export class DynamicEventHelper extends BaseService {
     const target = sample(targets);
     if (!target) return;
 
-    const spawner = this.game.worldManager.getMap(target.map)?.state.getNPCSpawner(target.uuid);
+    const spawner = this.game.worldManager
+      .getMap(target.map)
+      ?.state.getNPCSpawner(target.uuid);
     if (!spawner) return;
 
     const npcDef = this.game.npcHelper.getNPCDefinition(target.npcId);
     event.startMessage = `The ether is blurring around "${npcDef.name}", temporarily bringing a clone into the world!`;
     event.description = `There are two "${npcDef.name}" in the world!`;
 
-    event.extraData = { map: target.map, spawner: spawner.spawnerName, name: target.name };
+    event.extraData = {
+      map: target.map,
+      spawner: spawner.spawnerName,
+      name: target.name,
+    };
 
     spawner.forceSpawnNPC();
   }
@@ -310,7 +351,9 @@ export class DynamicEventHelper extends BaseService {
     if (!event.extraData) return;
 
     const { map, spawner } = event.extraData;
-    const spawnerRef = this.game.worldManager.getMap(map)?.state.getNPCSpawnerByName(spawner);
+    const spawnerRef = this.game.worldManager
+      .getMap(map)
+      ?.state.getNPCSpawnerByName(spawner);
     if (!spawnerRef) return;
 
     if (spawnerRef.allNPCS.length <= 1) return;
@@ -320,9 +363,14 @@ export class DynamicEventHelper extends BaseService {
 
   private canDoRareSpawn(): boolean {
     const allSpawns = this.game.contentManager.rarespawnsData;
-    return Object.keys(allSpawns)
-      .some(map => allSpawns[map].spawns
-        .some(mon => !this.game.worldManager.getMap(map)?.state.getNPCSpawnerByName(`${mon} Spawner`)));
+    return Object.keys(allSpawns).some((map) =>
+      allSpawns[map].spawns.some(
+        (mon) =>
+          !this.game.worldManager
+            .getMap(map)
+            ?.state.getNPCSpawnerByName(`${mon} Spawner`),
+      ),
+    );
   }
 
   private doRareSpawn(): void {
@@ -339,16 +387,16 @@ export class DynamicEventHelper extends BaseService {
 
       const mapRef = this.game.worldManager.getMap(spawnMap);
       if (mapRef) {
-
         const { state: checkState } = mapRef;
 
-        const checkSpawner = checkState.getNPCSpawnerByName(`${spawnMonster} Spawner`);
+        const checkSpawner = checkState.getNPCSpawnerByName(
+          `${spawnMonster} Spawner`,
+        );
         if (checkSpawner) {
           spawnMap = null;
           spawnMonster = null;
         }
       }
-
     } while (!spawnMap || !spawnMonster);
 
     do {
@@ -363,7 +411,10 @@ export class DynamicEventHelper extends BaseService {
           let isValidSpawn = true;
           for (let xx = x - 2; xx <= x + 2; xx++) {
             for (let yy = y - 2; yy <= y + 2; yy++) {
-              if (checkMap.getWallAt(xx, yy) || checkMap.getDenseDecorAt(x, y)) {
+              if (
+                checkMap.getWallAt(xx, yy) ||
+                checkMap.getDenseDecorAt(x, y)
+              ) {
                 isValidSpawn = false;
               }
             }
@@ -373,14 +424,11 @@ export class DynamicEventHelper extends BaseService {
             x = null;
             y = null;
           }
-
         } else {
           x = null;
           y = null;
         }
-
       }
-
     } while (!x || !y);
 
     const spawnerOpts = {
@@ -400,7 +448,10 @@ export class DynamicEventHelper extends BaseService {
       respectKnowledge: false,
       doInitialSpawnImmediately: true,
       npcCreateCallback: (npc) => {
-        const ai = this.game.worldManager.getMap(npc.map)?.state.getNPCSpawner(npc.uuid)?.getNPCAI(npc.uuid);
+        const ai = this.game.worldManager
+          .getMap(npc.map)
+          ?.state.getNPCSpawner(npc.uuid)
+          ?.getNPCAI(npc.uuid);
         if (ai) {
           ai.death = (killer) => {
             let message = `${npc.name} has been slain by otherworldly forces!`;
@@ -411,7 +462,7 @@ export class DynamicEventHelper extends BaseService {
             this.game.messageHelper.broadcastSystemMessage(message);
           };
         }
-      }
+      },
     } as Partial<Spawner>;
 
     const finalMapRef = this.game.worldManager.getMap(spawnMap);
@@ -420,10 +471,9 @@ export class DynamicEventHelper extends BaseService {
     const { map, state } = finalMapRef;
 
     const spawner = new Spawner(this.game, map, state, {
-      ...spawnerOpts
+      ...spawnerOpts,
     } as Partial<Spawner>);
 
     state.addSpawner(spawner);
   }
-
 }

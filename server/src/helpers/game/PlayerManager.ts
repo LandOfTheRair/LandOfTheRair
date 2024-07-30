@@ -5,16 +5,12 @@ import { Account, Player, PlayerState } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { CharacterHelper } from '../character/CharacterHelper';
 
-
 @Injectable()
 export class PlayerManager extends BaseService {
-
   private currentSlowTick = 0;
   private saveTicks = 150;
 
-  constructor(
-    private characterHelper: CharacterHelper
-  ) {
+  constructor(private characterHelper: CharacterHelper) {
     super();
   }
 
@@ -22,7 +18,13 @@ export class PlayerManager extends BaseService {
   private playerStates: Record<string, PlayerState> = {};
 
   public init() {
-    this.saveTicks = this.game.contentManager.getGameSetting('timers', 'saveTicks') ?? 150;
+    this.saveTicks =
+      this.game.contentManager.getGameSetting('timers', 'saveTicks') ?? 150;
+  }
+
+  // get the number of players online. pretty sparingly used.
+  public numPlayersOnline(): number {
+    return Object.values(this.inGamePlayers).length;
   }
 
   // get all players. pretty sparingly used.
@@ -47,7 +49,6 @@ export class PlayerManager extends BaseService {
 
   // add a player to the game
   public async addPlayerToGame(player: Player) {
-
     const username = player.username;
     this.inGamePlayers[username] = player;
 
@@ -66,7 +67,11 @@ export class PlayerManager extends BaseService {
     delete this.playerStates[username];
     this.game.transmissionHelper.stopWatching(player);
 
-    this.game.transmissionHelper.sendActionToAccount(username, GameAction.GameSetPlayer, { player: null });
+    this.game.transmissionHelper.sendActionToAccount(
+      username,
+      GameAction.GameSetPlayer,
+      { player: null },
+    );
   }
 
   // recalculate stats and do other sync related data
@@ -74,11 +79,10 @@ export class PlayerManager extends BaseService {
     this.characterHelper.recalculateEverything(player);
   }
 
-  private tick(timer, type: 'slow'|'fast', tick: number) {
+  private tick(timer, type: 'slow' | 'fast', tick: number) {
     const now = Date.now();
 
-    Object.values(this.inGamePlayers).forEach(player => {
-
+    Object.values(this.inGamePlayers).forEach((player) => {
       this.game.playerHelper.tick(player, type, tick);
 
       // effects tick at most once per second
@@ -120,9 +124,8 @@ export class PlayerManager extends BaseService {
     this.tick(timer, 'slow', tick);
 
     this.currentSlowTick++;
-    if ((this.currentSlowTick % this.saveTicks) === 0) {
+    if (this.currentSlowTick % this.saveTicks === 0) {
       this.saveAllPlayers();
     }
   }
-
 }
