@@ -20,7 +20,7 @@ export class Interact extends MacroCommand {
 
     let cmdInfo = {};
     switch (interactable.type) {
-    case 'Door': cmdInfo = this.doDoor(interactable, mapData.state); break;
+      case 'Door': cmdInfo = this.doDoor(interactable, mapData.state); break;
     }
 
     const { command, shouldContinue, errorMessage }: any = cmdInfo;

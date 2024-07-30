@@ -120,19 +120,19 @@ export class Attribute extends Effect {
 
   private determineColor(attr: AttributeType) {
     switch (attr) {
-    case 'physical': return '#000';
-    case 'sharp':    return '#000';
-    case 'blunt':    return '#000';
-    case 'turkey':   return '#000';
+      case 'physical': return '#000';
+      case 'sharp':    return '#000';
+      case 'blunt':    return '#000';
+      case 'turkey':   return '#000';
 
-    case 'magical':  return '#f0f';
-    case 'necrotic': return '#0a0';
-    case 'fire':     return '#DC143C';
-    case 'ice':      return '#000080';
-    case 'water':    return '#1a1aff';
-    case 'energy':   return '#f0f';
+      case 'magical':  return '#f0f';
+      case 'necrotic': return '#0a0';
+      case 'fire':     return '#DC143C';
+      case 'ice':      return '#000080';
+      case 'water':    return '#1a1aff';
+      case 'energy':   return '#f0f';
 
-    default:         return '#000';
+      default:         return '#000';
     }
   }
 

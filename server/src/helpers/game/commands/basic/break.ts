@@ -16,15 +16,15 @@ export class Break extends MacroCommand {
 
     let itemSlot: ItemSlot | null = null;
     switch (handChoice) {
-    case 'left':
-      itemSlot = ItemSlot.LeftHand;
-      break;
-    case 'right':
-      itemSlot = ItemSlot.RightHand;
-      break;
-    default:
-      this.sendMessage(player, 'That is not one of your hands! (left, or right)');
-      return;
+      case 'left':
+        itemSlot = ItemSlot.LeftHand;
+        break;
+      case 'right':
+        itemSlot = ItemSlot.RightHand;
+        break;
+      default:
+        this.sendMessage(player, 'That is not one of your hands! (left, or right)');
+        return;
     }
 
     const item = player.items.equipment[itemSlot];

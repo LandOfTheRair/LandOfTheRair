@@ -154,10 +154,10 @@ export class CosmeticBehavior implements IAIBehavior {
         let itemSuffix = '';
 
         switch (cosmetic) {
-        case 'inversify':  { silverKey = SilverPurchase.CosmeticInversify ; itemSuffix = 'Inversify'; break; }
-        case 'ancientify': { silverKey = SilverPurchase.CosmeticAncientify; itemSuffix = 'Ancientify'; break; }
-        case 'etherpulse': { silverKey = SilverPurchase.CosmeticEtherPulse; itemSuffix = 'Ether Pulse'; break; }
-        case 'ghostether': { silverKey = SilverPurchase.CosmeticGhostEther; itemSuffix = 'Ghost Ether'; break; }
+          case 'inversify':  { silverKey = SilverPurchase.CosmeticInversify ; itemSuffix = 'Inversify'; break; }
+          case 'ancientify': { silverKey = SilverPurchase.CosmeticAncientify; itemSuffix = 'Ancientify'; break; }
+          case 'etherpulse': { silverKey = SilverPurchase.CosmeticEtherPulse; itemSuffix = 'Ether Pulse'; break; }
+          case 'ghostether': { silverKey = SilverPurchase.CosmeticGhostEther; itemSuffix = 'Ghost Ether'; break; }
         }
 
         game.subscriptionHelper.takeCosmetic(account, silverKey as SilverPurchase);

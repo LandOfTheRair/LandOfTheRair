@@ -34,8 +34,9 @@ export class MessageHelper extends BaseService {
     if (from) message = `**${from}**: ${message}`;
 
     let sendMessage = message;
-    if (formatArgs.length > 0)
+    if (formatArgs.length > 0) {
       sendMessage = this.formatMessage(ref, sendMessage, formatArgs);
+    }
 
     if (sfx) this.playSoundForPlayer(ref as Player, sfx);
 
@@ -88,8 +89,9 @@ export class MessageHelper extends BaseService {
       if (except && except.includes(checkPlayer.uuid)) return;
 
       let sendMessage = message;
-      if (formatArgs.length > 0)
+      if (formatArgs.length > 0) {
         sendMessage = this.formatMessage(checkPlayer, sendMessage, formatArgs);
+      }
 
       if (sfx) this.playSoundForPlayer(checkPlayer as Player, sfx);
 
@@ -228,8 +230,9 @@ export class MessageHelper extends BaseService {
           c.y - target.y,
         ) ||
         !this.game.visibilityHelper.canSeeThroughStealthOf(target, c)
-      )
+      ) {
         name = 'somebody';
+      }
       if (target === c) name = 'yourself';
       return str.replace(new RegExp(`%${idx}`), name);
     }, message);

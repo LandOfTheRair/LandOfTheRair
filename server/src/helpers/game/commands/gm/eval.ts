@@ -14,9 +14,9 @@ export class GMEval extends MacroCommand {
     try {
       const result = this.myEval.call({}, args.stringArgs, { game: this.game, player });
       switch (args.calledAlias) {
-      case '@exec': this.sendMessage(player, 'Command Executed'); break;
-      case '@evalj': this.sendMessage(player, `Command Result<br>${JSON.stringify(result, null, 2).replace(/\n/g, '<br>')}`); break;
-      default: this.sendMessage(player, `Command Result<br>${result}`); break;
+        case '@exec': this.sendMessage(player, 'Command Executed'); break;
+        case '@evalj': this.sendMessage(player, `Command Result<br>${JSON.stringify(result, null, 2).replace(/\n/g, '<br>')}`); break;
+        default: this.sendMessage(player, `Command Result<br>${result}`); break;
       }
     } catch (error) {
       this.sendMessage(player, `Eval Error: ${error}`);
