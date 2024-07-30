@@ -118,7 +118,7 @@ export class GameService {
 
   public updateCharacterList(player: IPlayer) {
     this.currentCharacter = player;
-    this.visibleCharacterList = this.visibleCharacters(player);
+    this.visibleCharacterList = this.visibleCharacters(player).filter(Boolean);
   }
 
   private visibleCharacters(player: IPlayer): ICharacter[] {
@@ -129,8 +129,9 @@ export class GameService {
     let unsorted: any[] = allCharacters
       .map((testChar) => {
         if ((testChar as IPlayer).username === player.username) return false;
-        if (testChar.dir === Direction.Center || testChar.hp.current === 0)
-          {return false;}
+        if (testChar.dir === Direction.Center || testChar.hp.current === 0) {
+          return false;
+        }
 
         const diffX = testChar.x - player.x;
         const diffY = testChar.y - player.y;
@@ -296,74 +297,92 @@ export class GameService {
 
     let newArgs = args;
 
-    if (args.includes('$firstnpc'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$firstnpc')) {
+      newArgs = newArgs.replace(
         '$firstnpc',
         allChars.find((c) => !(c as any).username)?.uuid ?? '',
-      );}
-    if (args.includes('$firstplayer'))
-      {newArgs = newArgs.replace(
+      );
+    }
+    if (args.includes('$firstplayer')) {
+      newArgs = newArgs.replace(
         '$firstplayer',
         allChars.find((c) => (c as any).username)?.uuid ?? '',
-      );}
-    if (args.includes('$first'))
-      {newArgs = newArgs.replace('$first', allChars[0]?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$first')) {
+      newArgs = newArgs.replace('$first', allChars[0]?.uuid ?? '');
+    }
 
-    if (args.includes('$randomnpc'))
-      {newArgs = newArgs.replace('$randomnpc', sample(allNPCs())?.uuid ?? '');}
-    if (args.includes('$randomplayer'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$randomnpc')) {
+      newArgs = newArgs.replace('$randomnpc', sample(allNPCs())?.uuid ?? '');
+    }
+    if (args.includes('$randomplayer')) {
+      newArgs = newArgs.replace(
         '$randomplayer',
         sample(allPlayers())?.uuid ?? '',
-      );}
-    if (args.includes('$random'))
-      {newArgs = newArgs.replace('$random', sample(allChars)?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$random')) {
+      newArgs = newArgs.replace('$random', sample(allChars)?.uuid ?? '');
+    }
 
-    if (args.includes('$strongestnpc'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$strongestnpc')) {
+      newArgs = newArgs.replace(
         '$strongestnpc',
         strongest(allNPCs())?.uuid ?? '',
-      );}
-    if (args.includes('$strongestplayer'))
-      {newArgs = newArgs.replace(
+      );
+    }
+    if (args.includes('$strongestplayer')) {
+      newArgs = newArgs.replace(
         '$strongestplayer',
         strongest(allPlayers())?.uuid ?? '',
-      );}
-    if (args.includes('$strongest'))
-      {newArgs = newArgs.replace('$strongest', strongest(allChars)?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$strongest')) {
+      newArgs = newArgs.replace('$strongest', strongest(allChars)?.uuid ?? '');
+    }
 
-    if (args.includes('$weakestnpc'))
-      {newArgs = newArgs.replace('$weakestnpc', weakest(allNPCs())?.uuid ?? '');}
-    if (args.includes('$weakestplayer'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$weakestnpc')) {
+      newArgs = newArgs.replace('$weakestnpc', weakest(allNPCs())?.uuid ?? '');
+    }
+    if (args.includes('$weakestplayer')) {
+      newArgs = newArgs.replace(
         '$weakestplayer',
         weakest(allPlayers())?.uuid ?? '',
-      );}
-    if (args.includes('$weakest'))
-      {newArgs = newArgs.replace('$weakest', weakest(allChars)?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$weakest')) {
+      newArgs = newArgs.replace('$weakest', weakest(allChars)?.uuid ?? '');
+    }
 
-    if (args.includes('$farthestnpc'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$farthestnpc')) {
+      newArgs = newArgs.replace(
         '$farthestnpc',
         farthest(allNPCs())?.uuid ?? '',
-      );}
-    if (args.includes('$farthestplayer'))
-      {newArgs = newArgs.replace(
+      );
+    }
+    if (args.includes('$farthestplayer')) {
+      newArgs = newArgs.replace(
         '$farthestplayer',
         farthest(allPlayers())?.uuid ?? '',
-      );}
-    if (args.includes('$farthest'))
-      {newArgs = newArgs.replace('$farthest', farthest(allChars)?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$farthest')) {
+      newArgs = newArgs.replace('$farthest', farthest(allChars)?.uuid ?? '');
+    }
 
-    if (args.includes('$closestnpc'))
-      {newArgs = newArgs.replace('$closestnpc', closest(allNPCs())?.uuid ?? '');}
-    if (args.includes('$closestplayer'))
-      {newArgs = newArgs.replace(
+    if (args.includes('$closestnpc')) {
+      newArgs = newArgs.replace('$closestnpc', closest(allNPCs())?.uuid ?? '');
+    }
+    if (args.includes('$closestplayer')) {
+      newArgs = newArgs.replace(
         '$closestplayer',
         closest(allPlayers())?.uuid ?? '',
-      );}
-    if (args.includes('$closest'))
-      {newArgs = newArgs.replace('$closest', closest(allChars)?.uuid ?? '');}
+      );
+    }
+    if (args.includes('$closest')) {
+      newArgs = newArgs.replace('$closest', closest(allChars)?.uuid ?? '');
+    }
 
     this.sendAction(GameServerEvent.DoCommand, { command, args: newArgs });
   }
@@ -446,17 +465,20 @@ export class GameService {
     if (
       (origin as IPlayer).partyName &&
       (origin as IPlayer).partyName === (compare as IPlayer).partyName
-    )
-      {return 'neutral';}
+    ) {
+      return 'neutral';
+    }
 
-    if (compare.agro[origin.uuid] || origin.agro[compare.uuid])
-      {return alignmentConsideringHidden();}
+    if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) {
+      return alignmentConsideringHidden();
+    }
 
     if (
       origin.effects._hash.Disguise &&
       origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]
-    )
-      {return 'stealth';}
+    ) {
+      return 'stealth';
+    }
 
     const hostility = (compare as INPC).hostility;
 
@@ -468,8 +490,9 @@ export class GameService {
       if (
         isHostileTo(origin, compare.allegiance) ||
         isHostileTo(compare, origin.allegiance)
-      )
-        {return alignmentConsideringHidden();}
+      ) {
+        return alignmentConsideringHidden();
+      }
     }
 
     if (origin.allegiance === compare.allegiance) return 'neutral';
@@ -479,8 +502,9 @@ export class GameService {
     if (
       origin.alignment === Alignment.Evil &&
       compare.alignment === Alignment.Good
-    )
-      {return alignmentConsideringHidden();}
+    ) {
+      return alignmentConsideringHidden();
+    }
 
     return 'neutral';
   }

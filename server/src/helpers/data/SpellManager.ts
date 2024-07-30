@@ -1,8 +1,21 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
-import { BaseClass, BaseSpell, DamageClass, ICharacter, IItemEffect,
-  IMacroCommandArgs, ISpellData, IStatusEffectData, ItemSlot, MessageType, Skill, SoundEffect, Stat } from '../../interfaces';
+import {
+  BaseClass,
+  BaseSpell,
+  DamageClass,
+  ICharacter,
+  IItemEffect,
+  IMacroCommandArgs,
+  ISpellData,
+  IStatusEffectData,
+  ItemSlot,
+  MessageType,
+  Skill,
+  SoundEffect,
+  Stat,
+} from '../../interfaces';
 
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -10,7 +23,6 @@ import * as allSpellRefs from '../game/spells';
 
 @Injectable()
 export class SpellManager extends BaseService {
-
   private dazedDivisor = 2;
   private encumberedDivisor = 2;
   private skillGainedPerCast = 1;
@@ -20,15 +32,21 @@ export class SpellManager extends BaseService {
 
   // initialize all of the spells that exist
   public init() {
-    Object.keys(allSpellRefs).forEach(spell => {
+    Object.keys(allSpellRefs).forEach((spell) => {
       this.spells[spell] = new allSpellRefs[spell](this.game);
     });
 
-
-    this.dazedDivisor = this.game.contentManager.getGameSetting('spell', 'dazedDivisor') ?? 2;
-    this.encumberedDivisor = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 2;
-    this.skillGainedPerCast = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 1;
-    this.skillGainedPerAOECast = this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ?? 0.01;
+    this.dazedDivisor =
+      this.game.contentManager.getGameSetting('spell', 'dazedDivisor') ?? 2;
+    this.encumberedDivisor =
+      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
+      2;
+    this.skillGainedPerCast =
+      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
+      1;
+    this.skillGainedPerAOECast =
+      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
+      0.01;
   }
 
   // get the raw YML spell data
@@ -42,53 +60,73 @@ export class SpellManager extends BaseService {
   }
 
   private getPotencyMultiplier(spellData: ISpellData): number {
-    return this.game.worldDB.getSpellMultiplierOverride(spellData.spellName) || spellData.potencyMultiplier || 1;
+    return (
+      this.game.worldDB.getSpellMultiplierOverride(spellData.spellName) ||
+      spellData.potencyMultiplier ||
+      1
+    );
   }
 
   // get the potency for the spell based on caster/target
-  public getPotency(caster: ICharacter | null, target: ICharacter | null, spellData: ISpellData): number {
-
+  public getPotency(
+    caster: ICharacter | null,
+    target: ICharacter | null,
+    spellData: ISpellData,
+  ): number {
     if (!caster) return 1;
 
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,
       [BaseClass.Mage]: Skill.Conjuration,
-      [BaseClass.Thief]: Skill.Thievery
+      [BaseClass.Thief]: Skill.Thievery,
     };
 
     const isStatic = spellData.spellMeta?.staticPotency;
 
     let skillsToAverage = [skills[caster.baseClass]];
     if (!skills[caster.baseClass]) {
-
       if (caster.items.equipment[ItemSlot.RightHand]) {
         const { type, secondaryType } = this.game.itemHelper.getItemProperties(
-          caster.items.equipment[ItemSlot.RightHand], ['type', 'secondaryType']
+          caster.items.equipment[ItemSlot.RightHand],
+          ['type', 'secondaryType'],
         );
         skillsToAverage = [type, secondaryType];
       } else {
         skillsToAverage = [Skill.Martial];
       }
-
     }
 
     skillsToAverage = skillsToAverage.filter(Boolean);
 
-    const baseSkillValue = Math.floor(sum(
-      skillsToAverage.map(skill => this.game.characterHelper.getSkillLevel(caster, skill) + 1)
-    ) / skillsToAverage.length);
+    const baseSkillValue = Math.floor(
+      sum(
+        skillsToAverage.map(
+          (skill) => this.game.characterHelper.getSkillLevel(caster, skill) + 1,
+        ),
+      ) / skillsToAverage.length,
+    );
 
-    if (spellData.spellMeta.useSkillAsPotency) return baseSkillValue * this.getPotencyMultiplier(spellData);
+    if (spellData.spellMeta.useSkillAsPotency) {
+      return baseSkillValue * this.getPotencyMultiplier(spellData);
+    }
 
-    const statMult = caster ? this.game.characterHelper.getStat(caster, this.game.characterHelper.castStat(caster)) : 1;
+    const baseStat = this.game.characterHelper.getStat(
+      caster,
+      this.game.characterHelper.castStat(caster),
+    );
+    const statMult = caster ? baseStat : 1;
 
     const bonusRolls = isStatic
       ? 0
       : random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
 
+    const basePotency = this.game.diceRollerHelper.diceRoll(
+      baseSkillValue + bonusRolls,
+      statMult,
+    );
     let retPotency = isStatic
       ? (baseSkillValue + bonusRolls) * statMult
-      : this.game.diceRollerHelper.diceRoll(baseSkillValue + bonusRolls, statMult);
+      : basePotency;
 
     let maxMult = 1;
     (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
@@ -104,11 +142,18 @@ export class SpellManager extends BaseService {
       retPotency /= this.encumberedDivisor;
     }
 
-    if (this.game.effectHelper.hasEffect(caster, 'Dazed') &&
-       this.game.diceRollerHelper.XInOneHundred(this.game.effectHelper.getEffectPotency(caster, 'Dazed'))
+    if (
+      this.game.effectHelper.hasEffect(caster, 'Dazed') &&
+      this.game.diceRollerHelper.XInOneHundred(
+        this.game.effectHelper.getEffectPotency(caster, 'Dazed'),
+      )
     ) {
       retPotency /= this.dazedDivisor;
-      this.game.messageHelper.sendLogMessageToPlayer(caster, { message: 'You struggle to concentrate!' }, [MessageType.Miscellaneous]);
+      this.game.messageHelper.sendLogMessageToPlayer(
+        caster,
+        { message: 'You struggle to concentrate!' },
+        [MessageType.Miscellaneous],
+      );
     }
 
     return Math.max(1, Math.floor(retPotency));
@@ -119,20 +164,27 @@ export class SpellManager extends BaseService {
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,
       [BaseClass.Mage]: Skill.Conjuration,
-      [BaseClass.Thief]: Skill.Thievery
+      [BaseClass.Thief]: Skill.Thievery,
     };
 
     const skillGain = skills[caster.baseClass];
     if (!skillGain) return;
 
-    const skillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(caster, skillGain);
-    if (skillLevel > spellData.maxSkillForGain ?? 0) return;
+    const skillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
+      caster,
+      skillGain,
+    );
+    if (skillLevel > (spellData.maxSkillForGain ?? 0)) return;
 
-    const skillsFlagged = this.game.effectHelper.hasEffect(caster, 'Hidden') && skillGain !== Skill.Thievery
-      ? [skillGain, Skill.Thievery]
-      : [skillGain];
+    const skillsFlagged =
+      this.game.effectHelper.hasEffect(caster, 'Hidden') &&
+      skillGain !== Skill.Thievery
+        ? [skillGain, Skill.Thievery]
+        : [skillGain];
 
-    const skillGained = spellData.spellMeta.aoe ? this.skillGainedPerAOECast : this.skillGainedPerCast;
+    const skillGained = spellData.spellMeta.aoe
+      ? this.skillGainedPerAOECast
+      : this.skillGainedPerCast;
     this.game.playerHelper.flagSkill(caster as Player, skillsFlagged);
     this.game.playerHelper.gainCurrentSkills(caster as Player, skillGained);
   }
@@ -141,11 +193,16 @@ export class SpellManager extends BaseService {
     return Date.now() > (character.spellCooldowns?.[spellName] ?? 0);
   }
 
-  private cooldownSpell(character: ICharacter, spellName: string, spellData: ISpellData): void {
+  private cooldownSpell(
+    character: ICharacter,
+    spellName: string,
+    spellData: ISpellData,
+  ): void {
     if (!spellData.cooldown) return;
 
     character.spellCooldowns = character.spellCooldowns || {};
-    character.spellCooldowns[spellName] = Date.now() + (1000 * (spellData.cooldown ?? 0));
+    character.spellCooldowns[spellName] =
+      Date.now() + 1000 * (spellData.cooldown ?? 0);
   }
 
   public resetCooldown(character: ICharacter, spellName: string) {
@@ -155,12 +212,12 @@ export class SpellManager extends BaseService {
   // cast a spell!
   public castSpell(
     spell: string,
-    caster: ICharacter|null = null,
-    target: ICharacter|null = null,
+    caster: ICharacter | null = null,
+    target: ICharacter | null = null,
     override: Partial<IItemEffect> = {},
     callbacks?: any,
     originalArgs?: Partial<IMacroCommandArgs>,
-    targetsPosition?: { x: number; y: number; map: string }
+    targetsPosition?: { x: number; y: number; map: string },
   ): void {
     if (!caster && !target) return;
 
@@ -168,24 +225,52 @@ export class SpellManager extends BaseService {
 
     const spellData = this.getSpellData(spell);
     if (!spellData) {
-      this.game.logger.error('SpellManager', new Error(`Tried to cast invalid spell ${spell}.`));
+      this.game.logger.error(
+        'SpellManager',
+        new Error(`Tried to cast invalid spell ${spell}.`),
+      );
       return;
     }
 
     const spellRef = this.getSpell(spell);
     if (!spellRef) {
-      this.game.logger.error('SpellManager', new Error(`Tried to ref invalid spell ${spell}.`));
+      this.game.logger.error(
+        'SpellManager',
+        new Error(`Tried to ref invalid spell ${spell}.`),
+      );
       return;
     }
 
     // send messages to caster/target where applicable
-    const { casterMessage, casterSfx, targetMessage, targetSfx, resistLowerTrait, creatureSummoned, extraAttackTrait,
-      doesAttack, doesHeal, doesOvertime, noHostileTarget, bonusAgro, canBeResisted, range, fizzledBy } = spellData.spellMeta;
+    const {
+      casterMessage,
+      casterSfx,
+      targetMessage,
+      targetSfx,
+      resistLowerTrait,
+      creatureSummoned,
+      extraAttackTrait,
+      doesAttack,
+      doesHeal,
+      doesOvertime,
+      noHostileTarget,
+      bonusAgro,
+      canBeResisted,
+      range,
+      fizzledBy,
+    } = spellData.spellMeta;
 
     if (target && fizzledBy && fizzledBy.length > 0) {
-      if (fizzledBy.some(effectToFizzleOn => this.game.effectHelper.hasEffect(target, effectToFizzleOn))) {
+      if (
+        fizzledBy.some((effectToFizzleOn) =>
+          this.game.effectHelper.hasEffect(target, effectToFizzleOn),
+        )
+      ) {
         if (caster) {
-          this.game.messageHelper.sendSimpleMessage(caster, `Your ${spell} spell fizzles on that creature!`);
+          this.game.messageHelper.sendSimpleMessage(
+            caster,
+            `Your ${spell} spell fizzles on that creature!`,
+          );
         }
 
         return;
@@ -193,12 +278,17 @@ export class SpellManager extends BaseService {
     }
 
     // buff spells can't be cast on hostiles
-    if (caster
-    && target
-    && noHostileTarget
-    && this.game.targettingHelper.checkTargetForHostility(caster, target)
-    && !this.game.characterHelper.isPlayer(target)) {
-      this.game.messageHelper.sendSimpleMessage(caster, 'You cannot target that creature with this spell!');
+    if (
+      caster &&
+      target &&
+      noHostileTarget &&
+      this.game.targettingHelper.checkTargetForHostility(caster, target) &&
+      !this.game.characterHelper.isPlayer(target)
+    ) {
+      this.game.messageHelper.sendSimpleMessage(
+        caster,
+        'You cannot target that creature with this spell!',
+      );
       return;
     }
 
@@ -209,7 +299,10 @@ export class SpellManager extends BaseService {
     // gain skill for the spell cast, but only if you're actually casting it
     if (caster && chance === 100) {
       if (!this.canCastSpell(caster, spell)) {
-        this.game.messageHelper.sendSimpleMessage(caster, 'That spell is still cooling down!');
+        this.game.messageHelper.sendSimpleMessage(
+          caster,
+          'That spell is still cooling down!',
+        );
         return;
       }
 
@@ -224,59 +317,114 @@ export class SpellManager extends BaseService {
 
     // try to resist the spell
     if (caster && target && canBeResisted) {
-      const casterRoll = this.game.diceRollerHelper.OneToStat(caster, this.game.characterHelper.castStat(caster))
-                       + (resistLowerTrait ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait) : 0);
-      const targetRoll = this.game.diceRollerHelper.OneToStat(target, Stat.WIL)
-                       + this.game.characterHelper.getStat(target, Stat.SavingThrow);
+      const casterRoll =
+        this.game.diceRollerHelper.OneToStat(
+          caster,
+          this.game.characterHelper.castStat(caster),
+        ) +
+        (resistLowerTrait
+          ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait)
+          : 0);
+      const targetRoll =
+        this.game.diceRollerHelper.OneToStat(target, Stat.WIL) +
+        this.game.characterHelper.getStat(target, Stat.SavingThrow);
 
       if (targetRoll > casterRoll) {
-        this.game.messageHelper.sendSimpleMessage(caster, `${target.name} resisted your spell!`);
+        this.game.messageHelper.sendSimpleMessage(
+          caster,
+          `${target.name} resisted your spell!`,
+        );
         return;
       }
-
     }
 
     // send a message to the caster if they're not the target
     if (caster !== target && caster && casterMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(caster, { message: casterMessage, sfx: casterSfx as SoundEffect });
+      this.game.messageHelper.sendLogMessageToPlayer(caster, {
+        message: casterMessage,
+        sfx: casterSfx as SoundEffect,
+      });
     }
 
     // send a message to the target
     if (target && targetMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(target, { message: targetMessage, sfx: targetSfx as SoundEffect });
+      this.game.messageHelper.sendLogMessageToPlayer(target, {
+        message: targetMessage,
+        sfx: targetSfx as SoundEffect,
+      });
     }
 
     // try to add a buff effect if needed
     if (doesOvertime && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, target, spellData, override);
-      if (caster && noHostileTarget && spellEffInfo.effect?.duration && spellEffInfo.effect.duration !== -1) {
+      const spellEffInfo = spellRef.getOverrideEffectInfo(
+        caster,
+        target,
+        spellData,
+        override,
+      );
+      if (
+        caster &&
+        noHostileTarget &&
+        spellEffInfo.effect?.duration &&
+        spellEffInfo.effect.duration !== -1
+      ) {
         spellEffInfo.effect.duration = Math.floor(
-          spellEffInfo.effect.duration * (1 + this.game.traitHelper.traitLevelValue(caster, 'EffectiveSupporter'))
+          spellEffInfo.effect.duration *
+            (1 +
+              this.game.traitHelper.traitLevelValue(
+                caster,
+                'EffectiveSupporter',
+              )),
         );
       }
 
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', spell, spellEffInfo);
+      this.game.effectHelper.addEffect(
+        target,
+        caster ?? 'somebody',
+        spell,
+        spellEffInfo,
+      );
     }
 
     // try to summon creatures if possible
     if (creatureSummoned && target) {
-      const spellEffInfo = spellRef.getOverrideEffectInfo(caster, caster, spellData, override);
-      const ffEffectData: IStatusEffectData = cloneDeep(this.game.effectManager.getEffectData(spell));
+      const spellEffInfo = spellRef.getOverrideEffectInfo(
+        caster,
+        caster,
+        spellData,
+        override,
+      );
+      const ffEffectData: IStatusEffectData = cloneDeep(
+        this.game.effectManager.getEffectData(spell),
+      );
       ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
-      ffEffectData.effect.extra.potency = spellEffInfo.effect?.extra?.potency ?? 10;
+      ffEffectData.effect.extra.potency =
+        spellEffInfo.effect?.extra?.potency ?? 10;
       ffEffectData.effect.extra.effectIcon = ffEffectData.tooltip.icon;
-      ffEffectData.effect.extra.summonCreatures = spellData.spellMeta.creatureSummoned ?? ['Mage Summon Deer'];
+      ffEffectData.effect.extra.summonCreatures = spellData.spellMeta
+        .creatureSummoned ?? ['Mage Summon Deer'];
 
-      this.game.effectHelper.addEffect(target, caster ?? 'somebody', 'FindFamiliar', ffEffectData);
+      this.game.effectHelper.addEffect(
+        target,
+        caster ?? 'somebody',
+        'FindFamiliar',
+        ffEffectData,
+      );
     }
 
     // cast the spell however many number of times
     let numCasts = 1;
-    if (caster && extraAttackTrait) numCasts += this.game.traitHelper.traitLevelValue(caster, extraAttackTrait);
+    if (caster && extraAttackTrait) {
+      numCasts += this.game.traitHelper.traitLevelValue(
+        caster,
+        extraAttackTrait,
+      );
+    }
 
     for (let i = 0; i < numCasts; i++) {
-
-      const potency = override.potency || this.game.spellManager.getPotency(caster, target, spellData);
+      const potency =
+        override.potency ||
+        this.game.spellManager.getPotency(caster, target, spellData);
       const spellRange = override.range ?? range ?? 0;
       const duration = override.duration || 0;
 
@@ -287,7 +435,7 @@ export class SpellManager extends BaseService {
           sfx: SoundEffect.CombatHitSpell,
           damage: potency,
           damageClass: spellData.damageClass || DamageClass.Energy,
-          spellData
+          spellData,
         });
       }
 
@@ -298,15 +446,19 @@ export class SpellManager extends BaseService {
           sfx: SoundEffect.SpellHeal,
           damage: -potency,
           damageClass: spellData.damageClass || DamageClass.Heal,
-          spellData
+          spellData,
         });
       }
 
       spellRef.cast(caster, target, {
-        potency, range: spellRange, duration, callbacks, spellData, originalArgs,
-        ...(targetsPosition || {})
+        potency,
+        range: spellRange,
+        duration,
+        callbacks,
+        spellData,
+        originalArgs,
+        ...(targetsPosition || {}),
       });
     }
   }
-
 }
