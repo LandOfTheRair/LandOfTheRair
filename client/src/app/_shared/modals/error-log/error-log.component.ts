@@ -12,8 +12,4 @@ export class ErrorLogComponent {
     public dialogRef: MatDialogRef<ErrorLogComponent>,
     public logger: LoggerService,
   ) {}
-
-  errorIndex(index, item) {
-    return item.message;
-  }
 }

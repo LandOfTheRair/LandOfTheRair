@@ -1,20 +1,17 @@
-
 <h1 mat-dialog-title>Error Log ({{ logger.totalErrors }})</h1>
 
 <div mat-dialog-content>
   @if (logger.totalErrors === 0) {
-    <div>
-      <p>No errors logged.</p>
-    </div>
-  }
-
-  @for (error of logger.iterableErrors; track errorIndex($index, error)) {
-    <details>
-      <summary>
-        <strong>{{ error.message }} (x{{ error.total }})</strong>
-      </summary>
-      <pre>{{ error.error }}</pre>
-    </details>
+  <div>
+    <p>No errors logged.</p>
+  </div>
+  } @for (error of logger.iterableErrors; track error.message) {
+  <details>
+    <summary>
+      <strong>{{ error.message }} (x{{ error.total }})</strong>
+    </summary>
+    <pre>{{ error.error }}</pre>
+  </details>
   }
 </div>
 
