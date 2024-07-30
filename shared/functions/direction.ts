@@ -1,8 +1,6 @@
-
 /* eslint-disable no-bitwise */
 
 import { Direction } from '../interfaces/direction';
-
 
 /**
  * Splits a multi direction into an array of single directions
@@ -30,21 +28,39 @@ export function directionSplit(direction: Direction): Array<Direction> {
  * @returns A symbol, or symbols representing the direction.
  * ex: `Northeast` for Direction.Northeast, or `South North` for directionToName(Direction.North | Direction.South,' ')
  */
-export function directionToName(direction: Direction, seperator: (string | null) = null): string {
+export function directionToName(
+  direction: Direction,
+  seperator: string | null = null,
+): string {
   switch (direction) {
-  case null:                return 'Center';
-  case Direction.Center:    return 'Center';
-  case Direction.Northwest: return 'Northwest';
-  case Direction.North:     return 'North';
-  case Direction.Northeast: return 'Northeast';
-  case Direction.West:      return 'West';
-  case Direction.East:      return 'East';
-  case Direction.Southwest: return 'Southwest';
-  case Direction.South:     return 'South';
-  case Direction.Southeast: return 'Southeast';
-  default:
-    if (!seperator) throw new Error(`Failed to convert ${direction} to direction symbol`);
-    return directionSplit(direction).map((dir) => directionToName(dir, null)).join(seperator);
+    case null:
+      return 'Center';
+    case Direction.Center:
+      return 'Center';
+    case Direction.Northwest:
+      return 'Northwest';
+    case Direction.North:
+      return 'North';
+    case Direction.Northeast:
+      return 'Northeast';
+    case Direction.West:
+      return 'West';
+    case Direction.East:
+      return 'East';
+    case Direction.Southwest:
+      return 'Southwest';
+    case Direction.South:
+      return 'South';
+    case Direction.Southeast:
+      return 'Southeast';
+    default:
+      if (!seperator) {
+        throw new Error(`Failed to convert ${direction} to direction symbol`);
+      }
+
+      return directionSplit(direction)
+        .map((dir) => directionToName(dir, null))
+        .join(seperator);
   }
 }
 
@@ -57,21 +73,39 @@ export function directionToName(direction: Direction, seperator: (string | null)
  * @returns An initial, or initials representing the direction.
  * ex: `NE` for `directionToInitial(Direction.Northeast)`, or `S N` for `directionToInitial(Direction.North | Direction.South, ' ')`
  */
-export function directionToInitial(direction: Direction, seperator: (string | null) = null): string {
+export function directionToInitial(
+  direction: Direction,
+  seperator: string | null = null,
+): string {
   switch (direction) {
-  case null:                return 'C';
-  case Direction.Center:    return 'C';
-  case Direction.Northwest: return 'NW';
-  case Direction.North:     return 'N';
-  case Direction.Northeast: return 'NE';
-  case Direction.West:      return 'W';
-  case Direction.East:      return 'E';
-  case Direction.Southwest: return 'SW';
-  case Direction.South:     return 'S';
-  case Direction.Southeast: return 'SE';
-  default:
-    if (!seperator) throw new Error(`Failed to convert ${direction} to direction initial`);
-    return directionSplit(direction).map((dir) => directionToInitial(dir, null)).join(seperator);
+    case null:
+      return 'C';
+    case Direction.Center:
+      return 'C';
+    case Direction.Northwest:
+      return 'NW';
+    case Direction.North:
+      return 'N';
+    case Direction.Northeast:
+      return 'NE';
+    case Direction.West:
+      return 'W';
+    case Direction.East:
+      return 'E';
+    case Direction.Southwest:
+      return 'SW';
+    case Direction.South:
+      return 'S';
+    case Direction.Southeast:
+      return 'SE';
+    default:
+      if (!seperator) {
+        throw new Error(`Failed to convert ${direction} to direction initial`);
+      }
+
+      return directionSplit(direction)
+        .map((dir) => directionToInitial(dir, null))
+        .join(seperator);
   }
 }
 
@@ -106,21 +140,39 @@ export function directionHasAny(direction: Direction, contains: Direction) {
  * @returns A symbol, or symbols representing the direction.
  * ex: `↗` for `directionToSymbol(Direction.Northeast)`, or `↓ ↑` for `directionToSymbol(Direction.North | Direction.South,' ')`
  */
-export function directionToSymbol(direction: Direction, seperator: (string | null) = null): string {
+export function directionToSymbol(
+  direction: Direction,
+  seperator: string | null = null,
+): string {
   switch (direction) {
-  case null:                return '✧';
-  case Direction.Center:    return '✧';
-  case Direction.Northwest: return '↖';
-  case Direction.North:     return '↑';
-  case Direction.Northeast: return '↗';
-  case Direction.West:      return '←';
-  case Direction.East:      return '→';
-  case Direction.Southwest: return '↙';
-  case Direction.South:     return '↓';
-  case Direction.Southeast: return '↘';
-  default:
-    if (seperator === null) throw new Error(`Failed to convert ${direction} to direction symbol`);
-    return directionSplit(direction).map((dir) => directionToSymbol(dir, null)).join(seperator);
+    case null:
+      return '✧';
+    case Direction.Center:
+      return '✧';
+    case Direction.Northwest:
+      return '↖';
+    case Direction.North:
+      return '↑';
+    case Direction.Northeast:
+      return '↗';
+    case Direction.West:
+      return '←';
+    case Direction.East:
+      return '→';
+    case Direction.Southwest:
+      return '↙';
+    case Direction.South:
+      return '↓';
+    case Direction.Southeast:
+      return '↘';
+    default:
+      if (seperator === null) {
+        throw new Error(`Failed to convert ${direction} to direction symbol`);
+      }
+
+      return directionSplit(direction)
+        .map((dir) => directionToSymbol(dir, null))
+        .join(seperator);
   }
 }
 
@@ -132,43 +184,73 @@ export function directionToSymbol(direction: Direction, seperator: (string | nul
  * @param seperator A string used to seperate the direction text.
  * @returns A direction, or combined direction, or null if it could not be parsed
  */
-export function directionFromText(directionText: string, seperator: (string | null) = null): Direction | null {
+export function directionFromText(
+  directionText: string,
+  seperator: string | null = null,
+): Direction | null {
   if (!directionText) return null;
   directionText = directionText.toUpperCase();
   switch (directionText) {
-  case 'C':         return Direction.Center;
-  case 'NW':        return Direction.Northwest;
-  case 'N':         return Direction.North;
-  case 'NE':        return Direction.Northeast;
-  case 'W':         return Direction.West;
-  case 'E':         return Direction.East;
-  case 'SW':        return Direction.Southwest;
-  case 'S':         return Direction.South;
-  case 'SE':        return Direction.Southeast;
-  case 'CENTER':    return Direction.Center;
-  case 'NORTHWEST': return Direction.Northwest;
-  case 'NORTH':     return Direction.North;
-  case 'NORTHEAST': return Direction.Northeast;
-  case 'WEST':      return Direction.West;
-  case 'EAST':      return Direction.East;
-  case 'SOUTHWEST': return Direction.Southwest;
-  case 'SOUTH':     return Direction.South;
-  case 'SOUTHEAST': return Direction.Southeast;
-  case '✧':         return Direction.Center;
-  case '↖':         return Direction.Northwest;
-  case '↑':         return Direction.North;
-  case '↗':         return Direction.Northeast;
-  case '←':         return Direction.West;
-  case '→':         return Direction.East;
-  case '↙':         return Direction.Southwest;
-  case '↓':         return Direction.South;
-  case '↘':         return Direction.Southeast;
-  default:
-    if (!seperator) return null;
-    return directionText
-      .split(seperator)
-      .map((dirT) => directionFromText(dirT, seperator) ?? Direction.Center)
-      .reduce((last, curr) => last | curr);
+    case 'C':
+      return Direction.Center;
+    case 'NW':
+      return Direction.Northwest;
+    case 'N':
+      return Direction.North;
+    case 'NE':
+      return Direction.Northeast;
+    case 'W':
+      return Direction.West;
+    case 'E':
+      return Direction.East;
+    case 'SW':
+      return Direction.Southwest;
+    case 'S':
+      return Direction.South;
+    case 'SE':
+      return Direction.Southeast;
+    case 'CENTER':
+      return Direction.Center;
+    case 'NORTHWEST':
+      return Direction.Northwest;
+    case 'NORTH':
+      return Direction.North;
+    case 'NORTHEAST':
+      return Direction.Northeast;
+    case 'WEST':
+      return Direction.West;
+    case 'EAST':
+      return Direction.East;
+    case 'SOUTHWEST':
+      return Direction.Southwest;
+    case 'SOUTH':
+      return Direction.South;
+    case 'SOUTHEAST':
+      return Direction.Southeast;
+    case '✧':
+      return Direction.Center;
+    case '↖':
+      return Direction.Northwest;
+    case '↑':
+      return Direction.North;
+    case '↗':
+      return Direction.Northeast;
+    case '←':
+      return Direction.West;
+    case '→':
+      return Direction.East;
+    case '↙':
+      return Direction.Southwest;
+    case '↓':
+      return Direction.South;
+    case '↘':
+      return Direction.Southeast;
+    default:
+      if (!seperator) return null;
+      return directionText
+        .split(seperator)
+        .map((dirT) => directionFromText(dirT, seperator) ?? Direction.Center)
+        .reduce((last, curr) => last | curr);
   }
 }
 /**
@@ -177,19 +259,33 @@ export function directionFromText(directionText: string, seperator: (string | nu
  * @param direction An enum to convert to an offset
  * @returns An offset. ex: Northwest is `{ x: -1, y: -1 }`
  */
-export function directionToOffset(direction: Direction): {x: number; y: number} {
+export function directionToOffset(direction: Direction): {
+  x: number;
+  y: number;
+} {
   switch (direction) {
-  case null:                return { x:  0, y:  0 };
-  case Direction.Center:    return { x:  0, y:  0 };
-  case Direction.Northwest: return { x: -1, y: -1 };
-  case Direction.North:     return { x:  0, y: -1 };
-  case Direction.Northeast: return { x:  1, y: -1 };
-  case Direction.West:      return { x: -1, y:  0 };
-  case Direction.East:      return { x:  1, y:  0 };
-  case Direction.Southwest: return { x: -1, y:  1 };
-  case Direction.South:     return { x:  0, y:  1 };
-  case Direction.Southeast: return { x:  1, y:  1 };
-  default: throw new Error(`Failed to convert ${direction} into a position`);
+    case null:
+      return { x: 0, y: 0 };
+    case Direction.Center:
+      return { x: 0, y: 0 };
+    case Direction.Northwest:
+      return { x: -1, y: -1 };
+    case Direction.North:
+      return { x: 0, y: -1 };
+    case Direction.Northeast:
+      return { x: 1, y: -1 };
+    case Direction.West:
+      return { x: -1, y: 0 };
+    case Direction.East:
+      return { x: 1, y: 0 };
+    case Direction.Southwest:
+      return { x: -1, y: 1 };
+    case Direction.South:
+      return { x: 0, y: 1 };
+    case Direction.Southeast:
+      return { x: 1, y: 1 };
+    default:
+      throw new Error(`Failed to convert ${direction} into a position`);
   }
 }
 
@@ -200,7 +296,10 @@ export function directionToOffset(direction: Direction): {x: number; y: number} 
  * @param offsetY The y offset from zero
  * @returns A direction
  */
-export function directionFromOffset(offsetX: number, offsetY: number): Direction {
+export function directionFromOffset(
+  offsetX: number,
+  offsetY: number,
+): Direction {
   if (offsetX > 0) {
     if (offsetY > 0) return Direction.Southeast;
     if (offsetY < 0) return Direction.Northeast;
@@ -223,11 +322,16 @@ export function directionFromOffset(offsetX: number, offsetY: number): Direction
  */
 export function directionDiagonalToWestEast(direction: Direction): Direction {
   switch (direction) {
-  case Direction.Northwest: return Direction.West;
-  case Direction.Northeast: return Direction.East;
-  case Direction.Southwest: return Direction.West;
-  case Direction.Southeast: return Direction.East;
-  default: return direction;
+    case Direction.Northwest:
+      return Direction.West;
+    case Direction.Northeast:
+      return Direction.East;
+    case Direction.Southwest:
+      return Direction.West;
+    case Direction.Southeast:
+      return Direction.East;
+    default:
+      return direction;
   }
 }
 
@@ -236,8 +340,13 @@ export function directionDiagonalToWestEast(direction: Direction): Direction {
  */
 export function directionList() {
   return [
-    Direction.Northwest, Direction.North, Direction.Northeast,
-    Direction.West,                       Direction.East,
-    Direction.Southwest, Direction.South, Direction.Southeast
+    Direction.Northwest,
+    Direction.North,
+    Direction.Northeast,
+    Direction.West,
+    Direction.East,
+    Direction.Southwest,
+    Direction.South,
+    Direction.Southeast,
   ];
 }
