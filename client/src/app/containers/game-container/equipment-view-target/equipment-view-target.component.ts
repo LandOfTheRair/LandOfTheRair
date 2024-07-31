@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
 
-import { ICharacter } from '../../../../interfaces';
+import { IPlayer } from '../../../../interfaces';
 import { GameState, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -17,7 +17,7 @@ import { UIService } from '../../../services/ui.service';
 })
 export class EquipmentViewTargetComponent {
   @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.inspectingCharacter) char$: Observable<ICharacter>;
+  @Select(GameState.inspectingCharacter) char$: Observable<IPlayer>;
 
   gameStatusSub: Subscription;
 

@@ -1,49 +1,69 @@
-<app-window windowName="bank"
+<app-window
+  windowName="bank"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
   [initialHide]="true"
   [alwaysOnTop]="true"
-
-  defaultX="450"
-  defaultY="100"
-  defaultWidth="450"
-  defaultHeight="285"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="450"
+  [defaultHeight]="285"
 ></app-window>
 
-<ng-template #headTemplate>
-  {{ bankInfo.npcBank }} Bank
-</ng-template>
+<ng-template #headTemplate>{{ bankInfo.npcBank }} Bank</ng-template>
 
 <ng-template #bodyTemplate>
   @if (player$ | async; as player) {
-    <div>
-      <div class="bank-container">
-        <div class="bank-intro">
-          <app-npc [sprite]="bankInfo.npcSprite"></app-npc>
-          Hello, adventurer! I'm {{ bankInfo.npcName }}, a bank teller with the {{ bankInfo.npcBank }} national bank, {{ bankInfo.npcBranch }} branch. According to my records, you have {{ (player.bank.deposits.gold || 0) | number }} gold in the bank here, and {{ (player.currency.gold || 0) | number }} gold in your sack.
-        </div>
-        <div class="bank-actions">
-          <mat-form-field class="full-width m-t-20" appearance="outline">
-            <mat-label>Amount to deposit/withdraw</mat-label>
-            <input matInput
-              type="number"
-              [placeholder]="'Deposit or withdraw gold...'"
-              min="0"
-              autofocus
-              autocomplete="off"
-              cdkFocusInitial
-              [(ngModel)]="amount"
-              [ngModelOptions]="{ standalone: true }" />
-            </mat-form-field>
-            <div class="bank-action-buttons">
-              <button mat-raised-button color="primary" (click)="deposit(amount)">Deposit</button>
-              <button mat-stroked-button color="primary" (click)="deposit(player.currency.gold)">Deposit All</button>
-              <button mat-raised-button color="primary" (click)="withdraw(amount)">Withdraw</button>
-              <button mat-stroked-button color="primary" (click)="withdraw(player.bank.deposits.gold)">Withdraw All</button>
-            </div>
-          </div>
+  <div>
+    <div class="bank-container">
+      <div class="bank-intro">
+        <app-npc [sprite]="bankInfo.npcSprite"></app-npc>
+        Hello, adventurer! I'm {{ bankInfo.npcName }}, a bank teller with the
+        {{ bankInfo.npcBank }} national bank, {{ bankInfo.npcBranch }} branch.
+        According to my records, you have
+        {{ player.bank.deposits.gold || 0 | number }} gold in the bank here, and
+        {{ player.currency.gold || 0 | number }} gold in your sack.
+      </div>
+      <div class="bank-actions">
+        <mat-form-field class="full-width m-t-20" appearance="outline">
+          <mat-label>Amount to deposit/withdraw</mat-label>
+          <input
+            matInput
+            type="number"
+            [placeholder]="'Deposit or withdraw gold...'"
+            min="0"
+            autofocus
+            autocomplete="off"
+            cdkFocusInitial
+            [(ngModel)]="amount"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <div class="bank-action-buttons">
+          <button mat-raised-button color="primary" (click)="deposit(amount)">
+            Deposit
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="deposit(player.currency.gold)"
+          >
+            Deposit All
+          </button>
+          <button mat-raised-button color="primary" (click)="withdraw(amount)">
+            Withdraw
+          </button>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="withdraw(player.bank.deposits.gold)"
+          >
+            Withdraw All
+          </button>
         </div>
       </div>
-    }
-  </ng-template>
+    </div>
+  </div>
+  }
+</ng-template>

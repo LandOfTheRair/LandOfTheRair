@@ -1,189 +1,270 @@
-<app-window windowName="equipmentMain"
+<app-window
+  windowName="equipmentMain"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
   [canScroll]="charView === 'Skills'"
-
-  defaultX="962"
-  defaultY="4"
-  defaultWidth="350"
-  defaultHeight="384"
-
+  [defaultX]="962"
+  [defaultY]="4"
+  [defaultWidth]="350"
+  [defaultHeight]="384"
 ></app-window>
 
 <ng-template #headTemplate>
   @if (charView) {
-    <span class="window-has-more-buttons">
-      <span>
-        My {{ charView }}
-      </span>
-      <span class="window-extra-buttons">
-        <button class="is-selector" mat-icon-button [disabled]="charView === 'Equipment'" (click)="changeView('Equipment')" matTooltip="Show Equipment">
-          <app-icon name="battle-gear" size="xsmall"></app-icon>
-        </button>
-        <button class="is-selector" mat-icon-button [disabled]="charView === 'Stats'" (click)="changeView('Stats')" matTooltip="Show Stats">
-          <app-icon name="biceps" size="xsmall"></app-icon>
-        </button>
-        <button class="is-selector" mat-icon-button [disabled]="charView === 'Skills'" (click)="changeView('Skills')" matTooltip="Show Skills">
-          <app-icon name="broadsword" size="xsmall"></app-icon>
-        </button>
-        <button class="is-selector" mat-icon-button [disabled]="charView === 'Reputation'" (click)="changeView('Reputation')" matTooltip="Show Reputation">
-          <app-icon name="ages" size="xsmall"></app-icon>
-        </button>
-      </span>
+  <span class="window-has-more-buttons">
+    <span>My {{ charView }}</span>
+    <span class="window-extra-buttons">
+      <button
+        class="is-selector"
+        mat-icon-button
+        [disabled]="charView === 'Equipment'"
+        (click)="changeView('Equipment')"
+        matTooltip="Show Equipment"
+      >
+        <app-icon name="battle-gear" size="xsmall"></app-icon>
+      </button>
+      <button
+        class="is-selector"
+        mat-icon-button
+        [disabled]="charView === 'Stats'"
+        (click)="changeView('Stats')"
+        matTooltip="Show Stats"
+      >
+        <app-icon name="biceps" size="xsmall"></app-icon>
+      </button>
+      <button
+        class="is-selector"
+        mat-icon-button
+        [disabled]="charView === 'Skills'"
+        (click)="changeView('Skills')"
+        matTooltip="Show Skills"
+      >
+        <app-icon name="broadsword" size="xsmall"></app-icon>
+      </button>
+      <button
+        class="is-selector"
+        mat-icon-button
+        [disabled]="charView === 'Reputation'"
+        (click)="changeView('Reputation')"
+        matTooltip="Show Reputation"
+      >
+        <app-icon name="ages" size="xsmall"></app-icon>
+      </button>
     </span>
+  </span>
   }
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (charView) {
-    @if (charView === 'Equipment') {
-      <ng-container *ngTemplateOutlet="viewEquipment"></ng-container>
-    }
-    @if (charView === 'Stats') {
-      <ng-container *ngTemplateOutlet="viewStats"></ng-container>
-    }
-    @if (charView === 'Skills') {
-      <ng-container *ngTemplateOutlet="viewSkills"></ng-container>
-    }
-    @if (charView === 'Reputation') {
-      <ng-container *ngTemplateOutlet="viewReputation"></ng-container>
-    }
-  }
+  @if (charView) { @if (charView === 'Equipment') {
+  <ng-container *ngTemplateOutlet="viewEquipment"></ng-container>
+  } @if (charView === 'Stats') {
+  <ng-container *ngTemplateOutlet="viewStats"></ng-container>
+  } @if (charView === 'Skills') {
+  <ng-container *ngTemplateOutlet="viewSkills"></ng-container>
+  } @if (charView === 'Reputation') {
+  <ng-container *ngTemplateOutlet="viewReputation"></ng-container>
+  } }
 </ng-template>
 
 <ng-template #viewReputation>
   @if (player) {
-    <table class="display-table">
-      @for (allegiance of allegiances; track allegiance) {
-        <tr>
-          <td class="label">{{ allegiance }}</td>
-          <td class="text-right">{{ hostilityForAllegiance(player.allegianceReputation[allegiance] || 0) }}</td>
-        </tr>
-      }
-    </table>
+  <table class="display-table">
+    @for (allegiance of allegiances; track allegiance) {
+    <tr>
+      <td class="label">{{ allegiance }}</td>
+      <td class="text-right">
+        {{
+          hostilityForAllegiance(player.allegianceReputation[allegiance] || 0)
+        }}
+      </td>
+    </tr>
+    }
+  </table>
   }
 </ng-template>
 
 <ng-template #viewStats>
   @if (player) {
-    <table class="display-table">
-      @for (stat of stats; track stat) {
-        <tr>
-          <td [matTooltip]="stat.tooltip" matTooltipPosition="left"><app-icon [name]="stat.icon" size="xsmall" round="true"></app-icon></td>
-          <td class="label">{{ statText(stat.stat, player.totalStats[stat.stat]) }}</td>
-          <td class="number">
-            {{ player.totalStats[stat.stat] }}
-          </td>
-          <td class="number">
-            <span [class.higher-stat]="player.stats[stat.stat] < player.totalStats[stat.stat]"
-              [class.lower-stat]="player.stats[stat.stat] > player.totalStats[stat.stat]">
-              (@if (player.totalStats[stat.stat] - player.stats[stat.stat] > 0) {
-              <span>+</span>
-              }{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
-            </span>
-          </td>
-        </tr>
-      }
-    </table>
+  <table class="display-table">
+    @for (stat of stats; track stat) {
+    <tr>
+      <td [matTooltip]="stat.tooltip" matTooltipPosition="left">
+        <app-icon [name]="stat.icon" size="xsmall" [round]="true"></app-icon>
+      </td>
+      <td class="label">
+        {{ statText(stat.stat, player.totalStats[stat.stat]) }}
+      </td>
+      <td class="number">
+        {{ player.totalStats[stat.stat] }}
+      </td>
+      <td class="number">
+        <span
+          [class.higher-stat]="
+            player.stats[stat.stat] < player.totalStats[stat.stat]
+          "
+          [class.lower-stat]="
+            player.stats[stat.stat] > player.totalStats[stat.stat]
+          "
+        >
+          (@if (player.totalStats[stat.stat] - player.stats[stat.stat] > 0) {
+          <span>+</span>
+          }{{ player.totalStats[stat.stat] - player.stats[stat.stat] }})
+        </span>
+      </td>
+    </tr>
+    }
+  </table>
   }
 </ng-template>
 
 <ng-template #viewSkills>
   @if (player) {
-    <table class="display-table">
-      @for (skill of sortedSkills(); track skill) {
-        <tr>
-          <td [matTooltip]="skill.tooltip" matTooltipPosition="left"><app-skill-icon [skill]="skill.skill" size="xsmall" round="true" [showTooltip]="false"></app-skill-icon></td>
-          <td class="label">{{ skillText(skill.skill, player.skills[skill.skill], player.totalStats[skill.skill + 'Bonus']) }}</td>
-          <td class="number">
-            <div class="number-container">
-              <div class="number-value">
-                {{ skillLevel(player.skills[skill.skill], player.totalStats[skill.skill + 'Bonus']) }}
-              </div>
-            </div>
-          </td>
-          <td class="number">
-            <span [class.higher-stat]="player.totalStats[skill.skill + 'Bonus'] > 0"
-              [class.lower-stat]="player.totalStats[skill.skill + 'Bonus'] < 0">
-              (@if (player.totalStats[skill.skill + 'Bonus'] > 0) {
-              <span>+</span>
-              }{{ player.totalStats[skill.skill + 'Bonus'] }})
-            </span>
-          </td>
-          <td class="icon">
-            @if (player.paidSkills[skill.skill] > 10) {
-              <app-item size="xsmall" [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: 0 } }"></app-item>
-            }
-          </td>
-        </tr>
-      }
-    </table>
+  <table class="display-table">
+    @for (skill of sortedSkills(); track skill) {
+    <tr>
+      <td [matTooltip]="skill.tooltip" matTooltipPosition="left">
+        <app-skill-icon
+          [skill]="skill.skill"
+          size="xsmall"
+          [round]="true"
+          [showTooltip]="false"
+        ></app-skill-icon>
+      </td>
+      <td class="label">
+        {{
+          skillText(
+            skill.skill,
+            player.skills[skill.skill],
+            player.totalStats[skill.skill + 'Bonus']
+          )
+        }}
+      </td>
+      <td class="number">
+        <div class="number-container">
+          <div class="number-value">
+            {{
+              skillLevel(
+                player.skills[skill.skill],
+                player.totalStats[skill.skill + 'Bonus']
+              )
+            }}
+          </div>
+        </div>
+      </td>
+      <td class="number">
+        <span
+          [class.higher-stat]="player.totalStats[skill.skill + 'Bonus'] > 0"
+          [class.lower-stat]="player.totalStats[skill.skill + 'Bonus'] < 0"
+        >
+          (@if (player.totalStats[skill.skill + 'Bonus'] > 0) {
+          <span>+</span>
+          }{{ player.totalStats[skill.skill + 'Bonus'] }})
+        </span>
+      </td>
+      <td class="icon">
+        @if (player.paidSkills[skill.skill] > 10) {
+        <app-item
+          size="xsmall"
+          [item]="{
+            name: 'Gold Coin',
+            mods: { currency: 'gold', itemClass: 'Coin', value: 0 },
+            uuid: ''
+          }"
+        ></app-item>
+        }
+      </td>
+    </tr>
+    }
+  </table>
   }
 </ng-template>
 
 <ng-template #viewEquipment>
   @if (player) {
-    <div class="item-container">
-      @for (slot of slots; track slot) {
-        <div class="item-slot"
-          [class.item-background]="slot.template || slot.slot"
-          [class.selected]="uiService.selected.equipment[slot.slot]"
-          [dropScope]="slot.scope || slot.slot"
-          (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)"
-          droppable>
-          @if (!slot.template) {
-            <ng-container *ngTemplateOutlet="itemGenericTemplate; context: createContext(slot, player)"></ng-container>
-          }
-          @if (slot.template === 'coin') {
-            <ng-container *ngTemplateOutlet="itemCoinTemplate; context: createContext(slot, player)"></ng-container>
-          }
-          @if (slot.template === 'hand') {
-            <ng-container *ngTemplateOutlet="itemHandTemplate; context: createContext(slot, player)"></ng-container>
-          }
-        </div>
+  <div class="item-container">
+    @for (slot of slots; track slot) {
+    <div
+      class="item-slot"
+      [class.item-background]="slot.template || slot.slot"
+      [class.selected]="uiService.selected.equipment[slot.slot]"
+      [dropScope]="slot.scope || slot.slot"
+      (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)"
+      droppable
+    >
+      @if (!slot.template) {
+      <ng-container
+        *ngTemplateOutlet="
+          itemGenericTemplate;
+          context: createContext(slot, player)
+        "
+      ></ng-container>
+      } @if (slot.template === 'coin') {
+      <ng-container
+        *ngTemplateOutlet="
+          itemCoinTemplate;
+          context: createContext(slot, player)
+        "
+      ></ng-container>
+      } @if (slot.template === 'hand') {
+      <ng-container
+        *ngTemplateOutlet="
+          itemHandTemplate;
+          context: createContext(slot, player)
+        "
+      ></ng-container>
       }
     </div>
+    }
+  </div>
   }
 </ng-template>
 
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
-    <span class="item-slot-bg-text">{{ slot.name }}</span>
-  }
-  @if ((player.items.equipment || {})[slot.slot]) {
-    <app-item
-      [size]="'lg'"
-      [context]="'Equipment'"
-      [contextSlot]="slot.slot"
-      [viewingPlayer]="player"
-      [showCount]="slot.slot === 'ammo'"
-      [showOunces]="slot.slot === 'potion'"
-    [item]="player.items.equipment[slot.slot]"></app-item>
+  <span class="item-slot-bg-text">{{ slot.name }}</span>
+  } @if ((player.items.equipment || {})[slot.slot]) {
+  <app-item
+    [context]="'Equipment'"
+    [contextSlot]="slot.slot"
+    [viewingPlayer]="player"
+    [showCount]="slot.slot === 'ammo'"
+    [showOunces]="slot.slot === 'potion'"
+    [item]="player.items.equipment[slot.slot]"
+  ></app-item>
   }
 </ng-template>
 
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
-    <span class="item-slot-bg-text">{{ slot.name }}</span>
-  }
-  @if ((player.items.equipment || {})[slot.slot]) {
-    <app-item
-      [size]="'lg'"
-      [context]="slot.hand"
-      contextSlot="_"
-      showOunces="true"
-      [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
-      [viewingPlayer]="player"
-    [item]="player.items.equipment[slot.slot]"></app-item>
+  <span class="item-slot-bg-text">{{ slot.name }}</span>
+  } @if ((player.items.equipment || {})[slot.slot]) {
+  <app-item
+    [context]="slot.hand"
+    contextSlot="_"
+    [showOunces]="true"
+    [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
+    [viewingPlayer]="player"
+    [item]="player.items.equipment[slot.slot]"
+  ></app-item>
   }
 </ng-template>
 
 <ng-template #itemCoinTemplate let-slot="slot" let-player="player">
-  <app-item [size]="'lg'"
+  <app-item
     context="Coin"
     contextSlot="_"
-    showValue="true"
+    [showValue]="true"
     [viewingPlayer]="player"
-  [item]="{ name: 'Gold Coin', mods: { currency: 'gold', itemClass: 'Coin', value: player.currency.gold } }"></app-item>
+    [item]="{
+      name: 'Gold Coin',
+      mods: {
+        currency: 'gold',
+        itemClass: 'Coin',
+        value: player.currency.gold
+      },
+      uuid: ''
+    }"
+  ></app-item>
 </ng-template>

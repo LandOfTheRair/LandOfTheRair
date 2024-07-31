@@ -6,6 +6,7 @@ import {
   IRNGDungeonMetaConfig,
   ISpawnerData,
   ItemClass,
+  ItemClassType,
   Rollable,
 } from '../../interfaces';
 
@@ -130,7 +131,7 @@ export class RNGDungeonGenerator extends BaseService {
     type: 'weapon' | 'armor' | 'jewelry' | 'gem',
     keywordMatches: string[] = [],
   ): IItemDefinition | undefined {
-    let itemClasses: ItemClass[] = [];
+    let itemClasses: ItemClassType[] = [];
 
     if (type === 'weapon') {
       itemClasses = [

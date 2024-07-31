@@ -1,63 +1,65 @@
-
-<app-window windowName="map"
+<app-window
+  windowName="map"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="false"
   [willNotHide]="true"
   (hide)="quitGame()"
-
-  defaultX="385"
-  defaultY="101"
-  defaultWidth="576"
-  defaultHeight="608"
+  [defaultX]="385"
+  [defaultY]="101"
+  [defaultWidth]="576"
+  [defaultHeight]="608"
 ></app-window>
 
 <ng-template #headTemplate>
-  @if (currentPlayer | async; as player) {
-    Map - {{ gameService.reformatMapName(player.map) }} @if (optionsService.debugUI) {
-    <span>(X:{{ player.x }} Y:{{ player.y }} Z:{{ player.z }})</span>
-  }
-}
+  @if (currentPlayer | async; as player) { Map -
+  {{ gameService.reformatMapName(player.map) }} @if (optionsService.debugUI) {
+  <span>(X:{{ player.x }} Y:{{ player.y }} Z:{{ player.z }})</span>
+  } }
 </ng-template>
 
 <ng-template #bodyTemplate>
-  <div class="dropzone"
+  <div
+    class="dropzone"
     dropScope="mapground"
     (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
-  droppable></div>
+    droppable
+  ></div>
 
   @if (hideMapFromView) {
-    <div class="loading-cover"></div>
+  <div class="loading-cover"></div>
   }
 
   <app-active-target></app-active-target>
 
   @if (loadString) {
-    <div class="loader" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
-  }
-
-  @if (bannerString) {
-    <div class="loader banner" [class.fade-out]="fadeOut" [innerHTML]="bannerString"></div>
+  <div class="loader" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
+  } @if (bannerString) {
+  <div
+    class="loader banner"
+    [class.fade-out]="fadeOut"
+    [innerHTML]="bannerString"
+  ></div>
   }
 
   <div class="map"></div>
 
   @if (canSeeLowHealthBorder) {
-    <div class="dying-border"
-      [style.--blur-max-size]="optionsService.dyingBorderWidth"
-    ></div>
-  }
-
-  @if (itemTooltip$ | async; as tooltipData) {
-    @if (tooltipData.tooltip) {
-      <div class="item-text">
-        <div [innerHTML]="tooltipData.tooltip"></div>
-        <div class="item-upgrades">
-          @for (item of tooltipData.upgrades; track item) {
-            <app-item [size]="'small'" [item]="{ name: item, mods: { itemClass: 'Rock' } }"></app-item>
-          }
-        </div>
-      </div>
-    }
-  }
+  <div
+    class="dying-border"
+    [style.--blur-max-size]="optionsService.dyingBorderWidth"
+  ></div>
+  } @if (itemTooltip$ | async; as tooltipData) { @if (tooltipData.tooltip) {
+  <div class="item-text">
+    <div [innerHTML]="tooltipData.tooltip"></div>
+    <div class="item-upgrades">
+      @for (item of tooltipData.upgrades; track item) {
+      <app-item
+        [size]="'small'"
+        [item]="{ name: item, mods: { itemClass: 'Rock' }, uuid: '' }"
+      ></app-item>
+      }
+    </div>
+  </div>
+  } }
 </ng-template>

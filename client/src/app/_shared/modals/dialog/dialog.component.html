@@ -1,27 +1,32 @@
 <h1 mat-dialog-title>{{ data.displayTitle || 'A Mysterious Voice' }}</h1>
 <div mat-dialog-content>
-
   @if (data.displayNPCSprite >= 0) {
-    <app-npc [sprite]="data.displayNPCSprite"></app-npc>
-  }
-
-  @if (data.displayItemName && !data.displayItemSprite) {
-    <app-item [item]="{ name: data.displayItemName, mods: {} }"></app-item>
-  }
-
-  @if (data.displayItemName && data.displayItemSprite) {
-    <app-item [item]="{ name: data.displayItemName, mods: { sprite: data.displayItemSprite } }"></app-item>
+  <app-npc [sprite]="data.displayNPCSprite"></app-npc>
+  } @if (data.displayItemName && !data.displayItemSprite) {
+  <app-item
+    [item]="{ name: data.displayItemName, mods: {}, uuid: '' }"
+  ></app-item>
+  } @if (data.displayItemName && data.displayItemSprite) {
+  <app-item
+    [item]="{
+      name: data.displayItemName,
+      mods: { sprite: data.displayItemSprite },
+      uuid: ''
+    }"
+  ></app-item>
   }
 
   <div [innerHTML]="data.message || 'I don\'t know what to say.'"></div>
-
 </div>
 
 <div mat-dialog-actions>
   @for (option of data.options; track option) {
-    <button mat-button
-      [mat-dialog-close]="option.action"
-      [color]="option.action !== 'noop' ? 'primary' : ''"
-    >{{ option.text }}</button>
+  <button
+    mat-button
+    [mat-dialog-close]="option.action"
+    [color]="option.action !== 'noop' ? 'primary' : ''"
+  >
+    {{ option.text }}
+  </button>
   }
 </div>

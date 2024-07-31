@@ -3,10 +3,10 @@
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="false"
-  defaultX="385"
-  defaultY="4"
-  defaultWidth="576"
-  defaultHeight="96"
+  [defaultX]="385"
+  [defaultY]="4"
+  [defaultWidth]="576"
+  [defaultHeight]="96"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -70,7 +70,7 @@
       @if (effects.length > 0) { @for (effect of effects; track effect.uuid) {
       <app-effect-icon
         [effect]="effect"
-        defaultTransparent="true"
+        [defaultTransparent]="true"
         (contextmenu)="unapply($event, effect)"
       ></app-effect-icon>
       } } @else {

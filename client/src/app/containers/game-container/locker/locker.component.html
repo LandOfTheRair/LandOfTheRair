@@ -5,10 +5,10 @@
   [canHide]="true"
   [initialHide]="true"
   [alwaysOnTop]="true"
-  defaultX="450"
-  defaultY="100"
-  defaultWidth="370"
-  defaultHeight="440"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="370"
+  [defaultHeight]="440"
 ></app-window>
 
 <ng-template #headTemplate>{{ lockerInfo.lockerName }} Wardrobe</ng-template>
@@ -79,7 +79,7 @@
           @if (itemSlot && materialData.slots[itemSlot]) {
           <app-item
             [showDesc]="false"
-            showCount="true"
+            [showCount]="true"
             context="Kollection"
             [contextSlot]="itemSlot"
             [viewingPlayer]="player"
@@ -89,7 +89,11 @@
             [canDrag]="
               ((player.accountLockers.materials || {})[itemSlot] || 0) > 0
             "
-            [item]="{ name: materialData.slots[itemSlot].items[0], mods: {} }"
+            [item]="{
+              name: materialData.slots[itemSlot].items[0],
+              mods: {},
+              uuid: ''
+            }"
           ></app-item>
           }
         </div>

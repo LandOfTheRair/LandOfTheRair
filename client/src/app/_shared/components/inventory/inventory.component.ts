@@ -25,7 +25,7 @@ export class InventoryComponent {
   public size = input<number>();
   public displaySize = input<ItemSize>('normal');
   public dropContext? = input<string>();
-  public context = input<MenuContext>();
+  public context = input<MenuContext | string>();
   public container = input<IItemContainer>();
 
   public realDropContext = computed(() => this.dropContext() || this.context());

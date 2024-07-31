@@ -1,7 +1,7 @@
 import { ItemSlot } from './building-blocks';
 
 export type DamageType =
-  'physical'
+  | 'physical'
   | 'necrotic'
   | 'fire'
   | 'ice'
@@ -20,7 +20,7 @@ export const MagicClasses: Record<DamageType, boolean> = {
   energy: true,
   poison: true,
   disease: true,
-  sonic: false
+  sonic: false,
 };
 
 export enum WeaponClass {
@@ -83,18 +83,20 @@ export enum MiscClass {
   Flower = 'Flower',
   Food = 'Food',
   Gem = 'Gem',
-  Hands = 'Hands',      // this is unique, because it's literally only created for combat
+  Hands = 'Hands', // this is unique, because it's literally only created for combat
   Key = 'Key',
   Rock = 'Rock',
   Scale = 'Scale',
   Scroll = 'Scroll',
   Trap = 'Trap',
   TrapSet = 'TrapSet',
-  Twig = 'Twig'
+  Twig = 'Twig',
 }
 
 export type ItemClass = WeaponClass | ArmorClass | MiscClass;
 export const ItemClass = Object.assign({}, WeaponClass, ArmorClass, MiscClass);
+
+export type ItemClassType = `${ItemClass}`;
 
 export const AmmoClasses = [ItemClass.Arrow, ItemClass.Wand];
 
@@ -111,18 +113,29 @@ export const SharpWeaponClasses = {
   [ItemClass.Longsword]: true,
   [ItemClass.Shortbow]: true,
   [ItemClass.Shortsword]: true,
-  [ItemClass.Spear]: true
+  [ItemClass.Spear]: true,
 };
 
 export const WeaponClasses = Object.values(WeaponClass);
 
 export const ShieldClasses = [ItemClass.Shield, ItemClass.Saucer];
 
-export const ArmorClasses = [ItemClass.Tunic, ItemClass.Breastplate, ItemClass.Fur, ItemClass.Fullplate, ItemClass.Scaleplate];
+export const ArmorClasses = [
+  ItemClass.Tunic,
+  ItemClass.Breastplate,
+  ItemClass.Fur,
+  ItemClass.Fullplate,
+  ItemClass.Scaleplate,
+];
 
 export const RobeClasses = [ItemClass.Cloak, ItemClass.Robe];
 
-export const HeadClasses = [ItemClass.Hat, ItemClass.Helm, ItemClass.Skull, ItemClass.Saucer];
+export const HeadClasses = [
+  ItemClass.Hat,
+  ItemClass.Helm,
+  ItemClass.Skull,
+  ItemClass.Saucer,
+];
 
 export const NeckClasses = [ItemClass.Amulet];
 
@@ -134,29 +147,33 @@ export const RingClasses = [ItemClass.Ring];
 
 export const FeetClasses = [ItemClass.Boots];
 
-export const HandsClasses = [ItemClass.Gloves, ItemClass.Claws, ItemClass.Hands];
+export const HandsClasses = [
+  ItemClass.Gloves,
+  ItemClass.Claws,
+  ItemClass.Hands,
+];
 
 export const EarClasses = [ItemClass.Earring];
 
 export const PotionClasses = [ItemClass.Bottle];
 
 export const EquipHash: Partial<Record<ArmorClass, ItemSlot>> = {};
-ArmorClasses.forEach(t => EquipHash[t] = ItemSlot.Armor);
-RobeClasses.forEach(t => EquipHash[t] = ItemSlot.Robe);
-HeadClasses.forEach(t => EquipHash[t] = ItemSlot.Head);
-NeckClasses.forEach(t => EquipHash[t] = ItemSlot.Neck);
-WaistClasses.forEach(t => EquipHash[t] = ItemSlot.Waist);
-WristsClasses.forEach(t => EquipHash[t] = ItemSlot.Wrists);
-RingClasses.forEach(t => EquipHash[t] = ItemSlot.Ring);
-FeetClasses.forEach(t => EquipHash[t] = ItemSlot.Feet);
-HandsClasses.forEach(t => EquipHash[t] = ItemSlot.Hands);
-EarClasses.forEach(t => EquipHash[t] = ItemSlot.Ear);
-PotionClasses.forEach(t => EquipHash[t] = ItemSlot.Potion);
-AmmoClasses.forEach(t => EquipHash[t] = ItemSlot.Ammo);
+ArmorClasses.forEach((t) => (EquipHash[t] = ItemSlot.Armor));
+RobeClasses.forEach((t) => (EquipHash[t] = ItemSlot.Robe));
+HeadClasses.forEach((t) => (EquipHash[t] = ItemSlot.Head));
+NeckClasses.forEach((t) => (EquipHash[t] = ItemSlot.Neck));
+WaistClasses.forEach((t) => (EquipHash[t] = ItemSlot.Waist));
+WristsClasses.forEach((t) => (EquipHash[t] = ItemSlot.Wrists));
+RingClasses.forEach((t) => (EquipHash[t] = ItemSlot.Ring));
+FeetClasses.forEach((t) => (EquipHash[t] = ItemSlot.Feet));
+HandsClasses.forEach((t) => (EquipHash[t] = ItemSlot.Hands));
+EarClasses.forEach((t) => (EquipHash[t] = ItemSlot.Ear));
+PotionClasses.forEach((t) => (EquipHash[t] = ItemSlot.Potion));
+AmmoClasses.forEach((t) => (EquipHash[t] = ItemSlot.Ammo));
 
 export const GivesBonusInHandItemClasses = [
   ...Object.keys(WeaponClass),
-  ...NeckClasses
+  ...NeckClasses,
 ];
 
 export const EquippableItemClasses = [
@@ -169,10 +186,10 @@ export const EquippableItemClasses = [
   ...RingClasses,
   ...FeetClasses,
   ...HandsClasses,
-  ...EarClasses
+  ...EarClasses,
 ];
 
 export const EquippableItemClassesWithWeapons = [
   ...Object.keys(WeaponClass),
-  ...AmmoClasses
+  ...AmmoClasses,
 ];

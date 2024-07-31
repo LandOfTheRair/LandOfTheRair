@@ -35,7 +35,6 @@
   <span class="item-slot-bg-text">{{ slot.name }}</span>
   } @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
-    [size]="'lg'"
     [viewingPlayer]="player"
     [showCount]="slot.slot === 'ammo'"
     [showOunces]="slot.slot === 'potion'"
@@ -49,8 +48,7 @@
   <span class="item-slot-bg-text">{{ slot.name }}</span>
   } @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
-    [size]="'lg'"
-    showOunces="true"
+    [showOunces]="true"
     [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
     [viewingPlayer]="player"
     [item]="player.items.equipment[slot.slot]"
@@ -61,12 +59,16 @@
 <ng-template #itemCoinTemplate let-slot="slot" let-player="player">
   @if (!hideGold()) {
   <app-item
-    [size]="'lg'"
-    showValue="true"
+    [showValue]="true"
     [viewingPlayer]="player"
     [item]="{
       name: 'Gold Coin',
-      mods: { currency: 'gold', itemClass: 'Coin', value: player.currency.gold }
+      mods: {
+        currency: 'gold',
+        itemClass: 'Coin',
+        value: player.currency.gold
+      },
+      uuid: ''
     }"
   ></app-item>
   }

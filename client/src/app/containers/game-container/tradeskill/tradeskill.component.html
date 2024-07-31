@@ -5,10 +5,10 @@
   [canHide]="true"
   [initialHide]="true"
   [alwaysOnTop]="true"
-  defaultX="450"
-  defaultY="100"
-  defaultWidth="450"
-  defaultHeight="580"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="450"
+  [defaultHeight]="580"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -45,7 +45,7 @@
             [showEncrust]="false"
             [showCount]="false"
             [showOunces]="true"
-            [item]="{ name: recipe.item, mods: {} }"
+            [item]="{ name: recipe.item, mods: {}, uuid: '' }"
           ></app-item>
           <div class="recipe-name-ing">
             <div class="recipe-name">
@@ -87,7 +87,7 @@
                   [showEncrust]="false"
                   [showCount]="false"
                   [matTooltip]="itemDesc(item)"
-                  [item]="{ name: item, mods: {} }"
+                  [item]="{ name: item, mods: {}, uuid: '' }"
                 ></app-item>
                 } @for (item of recipe.ozIngredients; track $index) {
                 <span class="recipe-ingredient">
@@ -96,7 +96,7 @@
                     [showDesc]="false"
                     [showEncrust]="false"
                     [showCount]="false"
-                    [item]="{ name: item.display, mods: {} }"
+                    [item]="{ name: item.display, mods: {}, uuid: '' }"
                   ></app-item>
                   x {{ item.ounces }}
                 </span>

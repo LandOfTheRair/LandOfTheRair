@@ -1,14 +1,14 @@
-<app-window windowName="vendor"
+<app-window
+  windowName="vendor"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
   [initialHide]="true"
   [alwaysOnTop]="true"
-
-  defaultX="450"
-  defaultY="100"
-  defaultWidth="372"
-  defaultHeight="510"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="372"
+  [defaultHeight]="510"
 ></app-window>
 
 <ng-template #headTemplate>
@@ -18,7 +18,11 @@
     </span>
 
     <span class="window-extra-buttons">
-      <button mat-icon-button (click)="sellall()" matTooltip="Sell All From Sack">
+      <button
+        mat-icon-button
+        (click)="sellall()"
+        matTooltip="Sell All From Sack"
+      >
         <app-icon name="pay-money" size="xsmall"></app-icon>
       </button>
 
@@ -31,80 +35,113 @@
 
 <ng-template #bodyTemplate>
   @if (player$ | async; as player) {
-    <div>
-      <div class="vendor-container" droppable [dropScope]="'merchant'" (onDrop)="uiService.buildAndDoDropAction($event, 'Merchant', vendorInfo.npcUUID)">
-        <div class="vendor-intro">
-          <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
-          Hello, savvy shopper! I have many fine wares to sell, and I accept <strong>{{ vendorInfo.npcVendorCurrency }}</strong> for them! I can also assess the item in your right hand!
-          <br><br>
-          <div class="text-center">You have {{ (player.currency[vendorInfo.npcVendorCurrency] || 0) | number }} {{ vendorInfo.npcVendorCurrency }} to spend.</div>
-        </div>
-        <div class="vendor-tabs">
-          @if (vendorInfo.npcUUID) {
-            <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
-              @if (vendorInfo.npcVendorItems?.length) {
-                <mat-tab [label]="'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'">
-                  <div class="item-container">
-                    @for (slot of slots; track slot) {
-                      <div class="item-slot item-background">
-                        @if (vendorInfo.npcVendorItems[slot]) {
-                          <app-item
-                            [context]="'Merchant'"
-                            [contextSlot]="vendorInfo.npcUUID + ':' + 'v:' + slot"
-                            [showDesc]="true"
-                            [showOunces]="true"
-                            [showValue]="true"
-                            [viewingPlayer]="player"
-                          [item]="vendorInfo.npcVendorItems[slot]"></app-item>
-                        }
-                      </div>
-                    }
-                  </div>
-                </mat-tab>
-              }
-              @if (vendorInfo.npcVendorDailyItems?.length) {
-                <mat-tab [label]="'Daily Items (' + (vendorInfo.npcVendorDailyItems?.length || 0) + ')'">
-                  <div class="item-container">
-                    @for (slot of slots; track slot) {
-                      <div class="item-slot item-background">
-                        @if (vendorInfo.npcVendorDailyItems[slot]) {
-                          <app-item
-                            [context]="'Merchant'"
-                            [contextSlot]="vendorInfo.npcUUID + ':' + 'd:' + slot"
-                            [showDesc]="true"
-                            [showOunces]="true"
-                            [showValue]="true"
-                            [overrideValue]="boughtDailyAlready(player, vendorInfo.npcVendorDailyItems[slot]) ? 'SOLD OUT' : ''"
-                            [viewingPlayer]="player"
-                          [item]="vendorInfo.npcVendorDailyItems[slot]"></app-item>
-                        }
-                      </div>
-                    }
-                  </div>
-                </mat-tab>
-              }
-              <mat-tab label="Buy Back Items">
-                <div class="item-container">
-                  @for (slot of buybackSlots; track slot) {
-                    <div class="item-slot item-background">
-                      @if (player.items.buyback[slot]) {
-                        <app-item
-                          [context]="'Obtainagain'"
-                          [contextSlot]="vendorInfo.npcUUID + ':' + slot"
-                          [showDesc]="true"
-                          [showOunces]="true"
-                          [showValue]="true"
-                          [viewingPlayer]="player"
-                        [item]="player.items.buyback[slot]"></app-item>
-                      }
-                    </div>
-                  }
-                </div>
-              </mat-tab>
-            </mat-tab-group>
-          }
+  <div>
+    <div
+      class="vendor-container"
+      droppable
+      [dropScope]="'merchant'"
+      (onDrop)="
+        uiService.buildAndDoDropAction($event, 'Merchant', vendorInfo.npcUUID)
+      "
+    >
+      <div class="vendor-intro">
+        <app-npc [sprite]="vendorInfo.npcSprite"></app-npc>
+        Hello, savvy shopper! I have many fine wares to sell, and I accept
+        <strong>{{ vendorInfo.npcVendorCurrency }}</strong>
+        for them! I can also assess the item in your right hand!
+        <br />
+        <br />
+        <div class="text-center">
+          You have
+          {{ player.currency[vendorInfo.npcVendorCurrency] || 0 | number }}
+          {{ vendorInfo.npcVendorCurrency }} to spend.
         </div>
       </div>
+      <div class="vendor-tabs">
+        @if (vendorInfo.npcUUID) {
+        <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
+          @if (vendorInfo.npcVendorItems?.length) {
+          <mat-tab
+            [label]="
+              'Shop Items (' + (vendorInfo.npcVendorItems?.length || 0) + ')'
+            "
+          >
+            <div class="item-container">
+              @for (slot of slots; track slot) {
+              <div class="item-slot item-background">
+                @if (vendorInfo.npcVendorItems[slot]) {
+                <app-item
+                  [context]="'Merchant'"
+                  [contextSlot]="vendorInfo.npcUUID + ':' + 'v:' + slot"
+                  [showDesc]="true"
+                  [showOunces]="true"
+                  [showValue]="true"
+                  [viewingPlayer]="player"
+                  [item]="vendorInfo.npcVendorItems[slot]"
+                ></app-item>
+                }
+              </div>
+              }
+            </div>
+          </mat-tab>
+          } @if (vendorInfo.npcVendorDailyItems?.length) {
+          <mat-tab
+            [label]="
+              'Daily Items (' +
+              (vendorInfo.npcVendorDailyItems?.length || 0) +
+              ')'
+            "
+          >
+            <div class="item-container">
+              @for (slot of slots; track slot) {
+              <div class="item-slot item-background">
+                @if (vendorInfo.npcVendorDailyItems[slot]) {
+                <app-item
+                  [context]="'Merchant'"
+                  [contextSlot]="vendorInfo.npcUUID + ':' + 'd:' + slot"
+                  [showDesc]="true"
+                  [showOunces]="true"
+                  [showValue]="true"
+                  [overrideValue]="
+                    boughtDailyAlready(
+                      player,
+                      vendorInfo.npcVendorDailyItems[slot]
+                    )
+                      ? 'SOLD OUT'
+                      : ''
+                  "
+                  [viewingPlayer]="player"
+                  [item]="vendorInfo.npcVendorDailyItems[slot]"
+                ></app-item>
+                }
+              </div>
+              }
+            </div>
+          </mat-tab>
+          }
+          <mat-tab label="Buy Back Items">
+            <div class="item-container">
+              @for (slot of buybackSlots; track slot) {
+              <div class="item-slot item-background">
+                @if (player.items.buyback[slot]) {
+                <app-item
+                  [context]="'Obtainagain'"
+                  [contextSlot]="vendorInfo.npcUUID + ':' + slot"
+                  [showDesc]="true"
+                  [showOunces]="true"
+                  [showValue]="true"
+                  [viewingPlayer]="player"
+                  [item]="player.items.buyback[slot]"
+                ></app-item>
+                }
+              </div>
+              }
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+        }
+      </div>
     </div>
+  </div>
   }
 </ng-template>

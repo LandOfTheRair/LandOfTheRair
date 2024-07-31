@@ -1,4 +1,3 @@
-
 export enum Allegiance {
   // for things that do not have an allegiance
   None = 'None',
@@ -17,13 +16,13 @@ export enum Allegiance {
   NaturalResource = 'NaturalResource',
 
   // for GMs
-  GM = 'GM'
+  GM = 'GM',
 }
 
 export enum Alignment {
   Good = 'good',
   Neutral = 'neutral',
-  Evil = 'evil'
+  Evil = 'evil',
 }
 
 export enum DamageClass {
@@ -48,7 +47,7 @@ export enum DamageClass {
 
   // different classes of weapons
   Sharp = 'sharp',
-  Blunt = 'blunt'
+  Blunt = 'blunt',
 }
 
 export enum BaseClass {
@@ -56,7 +55,7 @@ export enum BaseClass {
   Mage = 'Mage',
   Thief = 'Thief',
   Healer = 'Healer',
-  Warrior = 'Warrior'
+  Warrior = 'Warrior',
 }
 
 export enum ItemSlot {
@@ -65,24 +64,23 @@ export enum ItemSlot {
   Ear = 'ear',
   Waist = 'waist',
   Wrists = 'wrists',
-  Ring = 'ring',      // internal type, not to be used as an actual slot
+  Ring = 'ring', // internal type, not to be used as an actual slot
   Ring1 = 'ring1',
   Ring2 = 'ring2',
   Hands = 'hands',
   Feet = 'feet',
   Armor = 'armor',
-  Robe = 'robe',      // internal type, not to be used as an actual slot
+  Robe = 'robe', // internal type, not to be used as an actual slot
   Robe1 = 'robe1',
   Robe2 = 'robe2',
   RightHand = 'rightHand',
   LeftHand = 'leftHand',
   Trinket = 'trinket',
   Potion = 'potion',
-  Ammo = 'ammo'
+  Ammo = 'ammo',
 }
 
 export enum Stat {
-
   // core
   STR = 'str',
   DEX = 'dex',
@@ -169,7 +167,7 @@ export enum Stat {
   TwoHandedBonus = 'twohandedBonus',
   ThieveryBonus = 'thieveryBonus',
   ConjurationBonus = 'conjurationBonus',
-  RestorationBonus = 'restorationBonus'
+  RestorationBonus = 'restorationBonus',
 }
 
 export enum Skill {
@@ -187,7 +185,7 @@ export enum Skill {
   TwoHanded = 'twohanded',
   Thievery = 'thievery',
   Conjuration = 'conjuration',
-  Restoration = 'restoration'
+  Restoration = 'restoration',
 }
 
 export enum Tradeskill {
@@ -196,11 +194,10 @@ export enum Tradeskill {
   Metalworking = 'metalworking',
   Gemcrafting = 'gemcrafting',
   Weavefabricating = 'weavefabricating',
-  Foodmaking = 'foodmaking'
+  Foodmaking = 'foodmaking',
 }
 
 export enum SkillDisplayName {
-
   // base item classes
   Mace = 'Maces',
   Axe = 'Axes',
@@ -228,27 +225,27 @@ export enum SkillDisplayName {
   Gemcrafting = 'Gemcrafting',
   Weavefabricating = 'Weavefabricating',
   Foodmaking = 'Foodmaking',
-  Survival = 'survival'
+  Survival = 'survival',
 }
 
 export enum Hostility {
   Never = 'Never',
   OnHit = 'OnHit',
   Faction = 'Faction',
-  Always = 'Always'
+  Always = 'Always',
 }
 
 export enum FOVVisibility {
   CantSee = 0,
   CanSee = 1,
-  CanSeeButDark = 2
+  CanSeeButDark = 2,
 }
 
 export enum LearnedSpell {
   FromFate = -2,
   FromItem = -1,
   Unlearned = 0,
-  FromTraits = 1
+  FromTraits = 1,
 }
 
 export enum Currency {
@@ -267,20 +264,22 @@ export enum Currency {
 
   Fate = 'threads of fate',
   Silver = 'silver',
-  Gold = 'gold'
+  Gold = 'gold',
 }
+
+export type CurrencyType = `${Currency}`;
 
 export enum Holiday {
   Halloween = 'Halloween',
   Thanksgiving = 'Thanksgiving',
-  Christmas = 'Christmas'
+  Christmas = 'Christmas',
 }
 
 export enum MonsterClass {
   Beast = 'Beast',
   Dragon = 'Dragon',
   Humanoid = 'Humanoid',
-  Undead = 'Undead'
+  Undead = 'Undead',
 }
 
 export type SkillBlock = Partial<Record<Skill, number>>;

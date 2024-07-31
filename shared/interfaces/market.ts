@@ -1,4 +1,4 @@
-import { IItem, IItemRequirements } from './item';
+import { IItem, IItemDefinition, IItemRequirements, ISimpleItem } from './item';
 import { ItemClass } from './itemtypes';
 
 export interface IMarketItemInfo {
@@ -8,7 +8,7 @@ export interface IMarketItemInfo {
   uuid: string;
   cosmetic: string;
   condition: number;
-  itemOverride: Partial<IItem>;
+  itemOverride: IItemDefinition & Partial<IItem> & ISimpleItem;
 }
 
 export interface IMarketListing {

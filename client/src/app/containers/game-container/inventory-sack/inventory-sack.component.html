@@ -1,23 +1,24 @@
-<app-window windowName="inventorySack"
+<app-window
+  windowName="inventorySack"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
-
-  defaultX="962"
-  defaultY="498"
-  defaultWidth="350"
-  defaultHeight="384"
-
+  [defaultX]="962"
+  [defaultY]="498"
+  [defaultWidth]="350"
+  [defaultHeight]="384"
 ></app-window>
 
 <ng-template #headTemplate>
   <span class="window-has-more-buttons">
-    <span>
-      Sack
-    </span>
+    <span>Sack</span>
 
     <span class="window-extra-buttons">
-      <button mat-icon-button (click)="depositAll()" matTooltip="Deposit All Materials">
+      <button
+        mat-icon-button
+        (click)="depositAll()"
+        matTooltip="Deposit All Materials"
+      >
         <app-icon name="expense" size="xsmall"></app-icon>
       </button>
     </span>
@@ -26,6 +27,10 @@
 
 <ng-template #bodyTemplate>
   @if (player$ | async; as player) {
-    <app-inventory context="Sack" [container]="player.items.sack" [size]="25"></app-inventory>
+  <app-inventory
+    context="Sack"
+    [container]="player.items.sack"
+    [size]="25"
+  ></app-inventory>
   }
 </ng-template>

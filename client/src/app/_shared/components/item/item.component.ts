@@ -76,7 +76,7 @@ export class ItemComponent implements OnDestroy {
   public showBackground = input<boolean>(false);
   public showEncrust = input<boolean>(true);
   public showOutline = input<boolean>(false);
-  public context = input<MenuContext>();
+  public context = input<MenuContext | string>();
   public contextSlot = input<number | string>();
   public containerUUID = input<string>();
   public overrideValue = input<number | string>();

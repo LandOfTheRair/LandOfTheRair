@@ -1,22 +1,23 @@
-<app-window windowName="inventoryPouch"
+<app-window
+  windowName="inventoryPouch"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
   [initialHide]="true"
-
-  defaultX="690"
-  defaultY="300"
-  defaultWidth="350"
-  defaultHeight="110"
-
+  [defaultX]="690"
+  [defaultY]="300"
+  [defaultWidth]="350"
+  [defaultHeight]="110"
 ></app-window>
 
-<ng-template #headTemplate>
-  Demi-Magic Pouch
-</ng-template>
+<ng-template #headTemplate>Demi-Magic Pouch</ng-template>
 
 <ng-template #bodyTemplate>
   @if (player$ | async; as player) {
-    <app-inventory context="DemiMagicPouch" [container]="player.accountLockers.pouch" [size]="5"></app-inventory>
+  <app-inventory
+    context="DemiMagicPouch"
+    [container]="player.accountLockers.pouch"
+    [size]="5"
+  ></app-inventory>
   }
 </ng-template>

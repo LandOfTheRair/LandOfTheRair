@@ -1,21 +1,22 @@
-<app-window windowName="inventoryBelt"
+<app-window
+  windowName="inventoryBelt"
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
-
-  defaultX="962"
-  defaultY="388"
-  defaultWidth="350"
-  defaultHeight="110"
-
+  [defaultX]="962"
+  [defaultY]="388"
+  [defaultWidth]="350"
+  [defaultHeight]="110"
 ></app-window>
 
-<ng-template #headTemplate>
-  Belt
-</ng-template>
+<ng-template #headTemplate>Belt</ng-template>
 
 <ng-template #bodyTemplate>
   @if (player$ | async; as player) {
-    <app-inventory context="Belt" [container]="player.items.belt" [size]="5"></app-inventory>
+  <app-inventory
+    context="Belt"
+    [container]="player.items.belt"
+    [size]="5"
+  ></app-inventory>
   }
 </ng-template>

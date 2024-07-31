@@ -1,42 +1,34 @@
-
-
-<app-window windowName="sessionstats"
+<app-window
+  windowName="sessionstats"
   [head]="headTemplate"
   [body]="bodyTemplate"
-
-  defaultX="356"
-  defaultY="582"
-  defaultWidth="450"
-  defaultHeight="300"
+  [defaultX]="356"
+  [defaultY]="582"
+  [defaultWidth]="450"
+  [defaultHeight]="300"
 ></app-window>
 
-<ng-template #headTemplate>
-  Last Session Stats
-</ng-template>
+<ng-template #headTemplate>Last Session Stats</ng-template>
 
 <ng-template #bodyTemplate>
-
   @if (stats$ | async; as stats) {
-    <div class="char-container">
-      {{ stats.name }} the level {{ stats.level }} {{ stats.baseClass }}
-    </div>
-    <div class="duration-container">
-      Duration: {{ duration(stats.start, stats.end) }}
-    </div>
-    <div class="stats-container">
-      <mat-chip-list>
-        @for (stat of keysForStats(stats); track stat) {
-          <mat-chip color="primary" selected>
-            {{ stat }} ({{ stats.statistics[stat] | number }})
-          </mat-chip>
-        }
-      </mat-chip-list>
-      @if (keysForStats(stats).length === 0) {
-        <div class="silly-goat">
-          You just logged in and out!
-        </div>
+  <div class="char-container">
+    {{ stats.name }} the level {{ stats.level }} {{ stats.baseClass }}
+  </div>
+  <div class="duration-container">
+    Duration: {{ duration(stats.start, stats.end) }}
+  </div>
+  <div class="stats-container">
+    <mat-chip-list>
+      @for (stat of keysForStats(stats); track stat) {
+      <mat-chip color="primary" selected>
+        {{ stat }} ({{ stats.statistics[stat] | number }})
+      </mat-chip>
       }
-    </div>
+    </mat-chip-list>
+    @if (keysForStats(stats).length === 0) {
+    <div class="silly-goat">You just logged in and out!</div>
+    }
+  </div>
   }
-
 </ng-template>
