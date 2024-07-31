@@ -1,22 +1,27 @@
-
-@if (player$ | async; as player) {
-  <div class="item-container" droppable
-    [dropScope]="realDropContext.toLowerCase()"
-    (onDrop)="uiService.buildAndDoDropAction($event, context)"
-    >
-    @for (slot of slots; track slot) {
-      <div class="item-slot item-background" [class.selected]="uiService.isSelected(realDropContext, slot)">
-        @if (container?.items[slot]) {
-          <app-item
-            [size]="displaySize"
-            [context]="context"
-            [contextSlot]="slot"
-            [showDesc]="true"
-            [showOunces]="true"
-            [viewingPlayer]="player"
-          [item]="container.items[slot]"></app-item>
-        }
-      </div>
+@if (player(); as player) {
+<div
+  class="item-container"
+  droppable
+  [dropScope]="realDropContext().toLowerCase()"
+  (onDrop)="uiService.buildAndDoDropAction($event, context())"
+>
+  @for (slot of slots(); track slot) {
+  <div
+    class="item-slot item-background"
+    [class.selected]="uiService.isSelected(realDropContext(), slot)"
+  >
+    @if (container()?.items[slot]; as item) {
+    <app-item
+      [size]="displaySize()"
+      [context]="context()"
+      [contextSlot]="slot"
+      [showDesc]="true"
+      [showOunces]="true"
+      [viewingPlayer]="player"
+      [item]="item"
+    ></app-item>
     }
   </div>
+  }
+</div>
 }

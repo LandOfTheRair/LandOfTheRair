@@ -4,8 +4,8 @@
   [body]="bodyTemplate"
   [canHide]="true"
   [initialHide]="true"
-  defaultX="4"
-  defaultY="710"
+  [defaultX]="4"
+  [defaultY]="710"
   defaultWidth="380"
   [defaultHeight]="optionsService.biggerGroundWindow ? 336 : 208"
 ></app-window>
@@ -25,13 +25,16 @@
     <div class="true-center background-text full-height">
       You don't see any items here
     </div>
-    } @if (groundGroups.length > 0) {
+    }
+
+    <!---->
+    @if (groundGroups.length > 0) {
     <div class="item-classes">
       @for (itemGroup of groundGroups; track $index) {
       <app-item
         (click)="changeItemClass(itemGroup.itemClass)"
         [class.selected]="itemGroup.itemClass === currentItemClass"
-        [size]="'lg'"
+        [size]="'normal'"
         [showDesc]="false"
         context="GroundGroup"
         [contextSlot]="itemGroup.itemClass"
@@ -41,24 +44,31 @@
         [viewingPlayer]="player"
         [item]="{
           name: itemGroup.name,
-          mods: { sprite: itemGroup.sprite, value: itemGroup.value || 0 }
+          mods: { sprite: itemGroup.sprite, value: itemGroup.value || 0 },
+          uuid: ''
         }"
       ></app-item>
       }
     </div>
+
+    <!---->
     @if (optionsService.biggerGroundWindow) {
     <div class="item-split">
       {{ currentItemClass }}
     </div>
     }
+
     <div class="item-sub">
       @if (!currentItemClass) {
       <div class="true-center background-text full-height full-width">
         Select an item category
       </div>
-      } @for (item of (currentGround[currentItemClass] || []); track $index) {
+      }
+
+      <!---->
+      @for (item of (currentGround[currentItemClass] || []); track $index) {
       <app-item
-        [size]="'lg'"
+        [size]="'normal'"
         context="Ground"
         [contextSlot]="item.item.uuid"
         [count]="item.count"

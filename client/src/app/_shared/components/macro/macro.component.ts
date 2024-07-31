@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   signal,
 } from '@angular/core';
@@ -20,6 +21,7 @@ import { MacrosService } from '../../../services/macros.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MacroComponent {
+  public macroService = inject(MacrosService);
   public player = select(GameState.player);
 
   // private cooldownDisplayValue = new BehaviorSubject<number>(0);
@@ -46,7 +48,7 @@ export class MacroComponent {
     return this.macroService.buildMacroString(this.macroRef());
   });
 
-  constructor(public macroService: MacrosService) {
+  constructor() {
     const cooldownObs = toObservable(this.cooldown);
 
     this.cooldownSub = interval(100)

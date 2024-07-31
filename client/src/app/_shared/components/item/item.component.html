@@ -1,65 +1,110 @@
+@let itemData = item();
 
-<div class="item-container"
-  [ngClass]="[size]"
-  [class.transparent]="showOutline"
+<div
+  class="item-container"
+  [ngClass]="[size()]"
+  [class.transparent]="showOutline()"
   draggable
-  [dragScope]="scopes"
-  [dragEnabled]="item && !displayOnly"
+  [dragScope]="scopes()"
+  [dragEnabled]="itemData && !displayOnly()"
   [dragData]="getDragData()"
   (click)="attemptToMultiselect($event)"
   (contextmenu)="automaticallyTakeActionBasedOnOpenWindows()"
   (mouseover)="updateWithDesc()"
-  (mouseenter)="determineScopes()"
   (mouseout)="removeDesc()"
-  (mouseleave)="removeDesc()">
-
+  (mouseleave)="removeDesc()"
+>
   @if (!shouldSpriteAnimate) {
-    <img [src]="imgUrl"
-      [style.object-position]="spriteLocation"
-      [class.hidden]="!item"
-      [class.animate]="shouldAnimate"
-      [class.transparent]="transparent"
-      [ngClass]="['cosmetic-item-' + cosmeticName]" />
+  <img
+    [src]="imgUrl()"
+    [style.object-position]="spriteLocation()"
+    [class.hidden]="!itemData"
+    [class.animate]="shouldAnimate"
+    [class.transparent]="transparent()"
+    [ngClass]="['cosmetic-item-' + cosmeticName()]"
+  />
   }
 
+  <!---->
   @if (shouldSpriteAnimate) {
-    <img [src]="animUrl"
-      class="item-animation"
-      [class.hidden]="!item"
-      [class.animate]="shouldAnimate"
-      [class.transparent]="transparent"
-      [ngClass]="['cosmetic-item-' + cosmeticName]" />
+  <img
+    [src]="animUrl()"
+    class="item-animation"
+    [class.hidden]="!itemData"
+    [class.animate]="shouldAnimate"
+    [class.transparent]="transparent()"
+    [ngClass]="['cosmetic-item-' + cosmeticName()]"
+  />
   }
 
-  @if (item && showEncrust && item.mods.encrustItem) {
-    <img [src]="imgUrl" [style.object-position]="encrustLocation" class="encrust" />
+  <!---->
+  @if (itemData && showEncrust() && itemData.mods.encrustItem) {
+  <img
+    [src]="imgUrl()"
+    [style.object-position]="encrustLocation()"
+    class="encrust"
+  />
   }
 
-  @if (item && showBackground) {
-    <div class="item-background"></div>
+  <!---->
+  @if (itemData && showBackground()) {
+  <div class="item-background"></div>
   }
-  @if (item && showDesc) {
-    <div class="glow-container" [ngClass]="[glowColor]"></div>
+
+  <!---->
+  @if (itemData && showDesc()) {
+  <div class="glow-container" [ngClass]="[glowColor()]"></div>
   }
-  @if (item && cosmeticName) {
-    <div class="animation-container"
-      [class.animate]="shouldAnimate"
-      [ngClass]="['cosmetic-bg-' + cosmeticName]"
-    ></div>
+
+  <!---->
+  @if (itemData && cosmeticName()) {
+  <div
+    class="animation-container"
+    [class.animate]="shouldAnimate"
+    [ngClass]="['cosmetic-bg-' + cosmeticName()]"
+  ></div>
   }
-  @if (item && showCount && realCount > 0) {
-    <span class="count">{{ realCount | number }} <small>x</small></span>
+
+  <!---->
+  @if (itemData && showCount() && realCount() > 0) {
+  <span class="count">
+    {{ realCount() | number }}
+    <small>x</small>
+  </span>
   }
-  @if (item && showOunces && realOunces >= 0) {
-    <span class="ounces">{{ realOunces | number }} <small>oz</small></span>
+
+  <!---->
+  @if (itemData && showOunces() && realOunces() >= 0) {
+  <span class="ounces">
+    {{ realOunces() | number }}
+    <small>oz</small>
+  </span>
   }
-  @if (item && showValue) {
-    <span class="value">{{ overrideValue || ((item.mods.buybackValue || item.mods.value | goldify)) }}</span>
+
+  <!---->
+  @if (itemData && showValue()) {
+  <span class="value">
+    {{
+      overrideValue() ||
+        (itemData.mods.buybackValue || itemData.mods.value | goldify)
+    }}
+  </span>
   }
-  @if (item && showOunces && realSuccorInfo) {
-    <span class="value succor">{{ gameService.reformatName(realSuccorInfo.map) }}</span>
+
+  <!---->
+  @if (itemData && showOunces() && realSuccorInfo()) {
+  <span class="value succor">
+    {{ gameService.reformatName(realSuccorInfo().map) }}
+  </span>
   }
-  @if (item && showDesc && realItem?.trapEffect && realItem?.itemClass === 'Trap' && item.mods.itemClass !== 'TrapSet') {
-    <span class="ounces">{{ item.mods.trapUses }} <small>x</small> {{ realItem.trapEffect.name }}</span>
+
+  <!---->
+  @if (itemData && showDesc() && realItem()?.trapEffect && realItem()?.itemClass
+  === 'Trap' && itemData.mods.itemClass !== 'TrapSet') {
+  <span class="ounces">
+    {{ itemData.mods.trapUses }}
+    <small>x</small>
+    {{ realItem().trapEffect.name }}
+  </span>
   }
 </div>

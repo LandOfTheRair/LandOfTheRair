@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import {
   IPlayer,
   ISimpleItem,
@@ -12,10 +12,11 @@ import { UIService } from '../../../services/ui.service';
   selector: 'app-equipment-viewonly',
   templateUrl: './equipment-viewonly.component.html',
   styleUrls: ['./equipment-viewonly.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EquipmentViewOnlyComponent {
-  @Input() public player: IPlayer;
-  @Input() public hideGold = false;
+  public player = input<IPlayer>();
+  public hideGold = input<boolean>(false);
 
   public readonly slots = [
     {

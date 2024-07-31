@@ -1,33 +1,40 @@
-import { Component, Input } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { IItemContainer, IPlayer } from '../../../../interfaces';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
+import { select } from '@ngxs/store';
+import { IItemContainer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
+import {
+  ItemSize,
+  MenuContext,
+} from '../../../_shared/components/item/item.component';
 import { UIService } from '../../../services/ui.service';
 
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public player = select(GameState.player);
 
-  @Input() public size: number;
-  @Input() public displaySize = 'lg';
-  @Input() public dropContext?: string;
-  @Input() public context: 'Sack' | 'Belt' | 'DemiMagicPouch' | string;
-  @Input() public container: IItemContainer;
+  public size = input<number>();
+  public displaySize = input<ItemSize>('normal');
+  public dropContext? = input<string>();
+  public context = input<MenuContext>();
+  public container = input<IItemContainer>();
 
-  public get realDropContext(): string {
-    return this.dropContext || this.context;
-  }
+  public realDropContext = computed(() => this.dropContext() || this.context());
 
-  public get slots() {
-    return Array(this.size)
+  public slots = computed(() =>
+    Array(this.size())
       .fill(null)
-      .map((v, i) => i);
-  }
+      .map((v, i) => i),
+  );
 
   constructor(public uiService: UIService) {}
 }
