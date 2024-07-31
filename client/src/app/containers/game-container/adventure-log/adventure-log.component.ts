@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 
@@ -41,13 +42,13 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   inGame$: Subscription;
 
-  constructor(
-    private store: Store,
-    private optionsService: OptionsService,
-    private socketService: SocketService,
-    private discordEmojiPipe: DiscordEmojiPipe,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  private optionsService = inject(OptionsService);
+  private socketService = inject(SocketService);
+  private discordEmojiPipe = inject(DiscordEmojiPipe);
+  public gameService = inject(GameService);
+
+  constructor() {
     this.inGame$ = this.gameService.inGame$
       .pipe(takeUntilDestroyed())
       .subscribe((inGame) => {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { GameServerResponse } from '../../../interfaces';
 import { GameService } from '../../services/game.service';
 import { SocketService } from '../../services/socket.service';
@@ -10,7 +10,10 @@ import { SocketService } from '../../services/socket.service';
 })
 export class GameContainerComponent implements OnInit {
 
-  constructor(private socketService: SocketService, public gameService: GameService) { }
+  private socketService = inject(SocketService);
+  public gameService = inject(GameService);
+  
+  constructor() { }
 
   ngOnInit() {
     this.socketService.registerComponentCallback('GameContainer', GameServerResponse.DialogChat, (data) => {

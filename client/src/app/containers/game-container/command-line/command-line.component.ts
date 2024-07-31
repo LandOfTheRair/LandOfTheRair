@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { debounce } from 'lodash';
@@ -63,11 +64,11 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     return this.commandInput?.nativeElement === document.activeElement;
   }
 
-  constructor(
-    private store: Store,
-    private optionsService: OptionsService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  private optionsService = inject(OptionsService);
+  public gameService = inject(GameService);
+
+  constructor() {
     this.command$ = this.gameService.currentCommand$
       .pipe(takeUntilDestroyed())
       .subscribe((command) => {

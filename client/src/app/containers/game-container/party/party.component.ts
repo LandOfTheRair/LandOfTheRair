@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { Observable } from 'rxjs';
@@ -34,7 +34,9 @@ export class PartyComponent {
 
   public createOrJoinParty = '';
 
-  constructor(public gameService: GameService) {
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.partySub = this.party$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.party = p;
       this.partyXPMult = this.multiplier(p.party);

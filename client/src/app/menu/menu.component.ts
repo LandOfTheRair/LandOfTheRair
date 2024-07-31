@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
 import { Observable, of, timer } from 'rxjs';
@@ -32,6 +32,14 @@ interface MenuItem {
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit {
+  private store = inject(Store);
+  private announcementService = inject(AnnouncementService);
+  private modalService = inject(ModalService);
+  private api = inject(APIService);
+  public socketService = inject(SocketService);
+  public gameService = inject(GameService);
+  public assetService = inject(AssetService);
+
   private serverAssetHash: string;
 
   public get serverMismatchWarning(): boolean {
@@ -242,16 +250,6 @@ export class MenuComponent implements OnInit {
   public resetTimestamp: number;
   public nowTimestamp: number;
   public timestampDisplay: string;
-
-  constructor(
-    private store: Store,
-    private announcementService: AnnouncementService,
-    private modalService: ModalService,
-    private api: APIService,
-    public socketService: SocketService,
-    public gameService: GameService,
-    public assetService: AssetService,
-  ) {}
 
   ngOnInit() {
     this.assetService.assetHash$.subscribe((hash) => {

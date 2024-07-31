@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, inject, NgZone, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import * as Phaser from 'phaser';
 import {
@@ -106,15 +106,13 @@ export class MapComponent implements OnInit {
     );
   }
 
-  constructor(
-    private assetService: AssetService,
-    public gameService: GameService,
-    private socketService: SocketService,
-    private store: Store,
-    private zone: NgZone,
-    public optionsService: OptionsService,
-    public uiService: UIService,
-  ) {}
+  private assetService = inject(AssetService);
+  public gameService = inject(GameService);
+  private socketService = inject(SocketService);
+  private store = inject(Store);
+  private zone = inject(NgZone);
+  public optionsService = inject(OptionsService);
+  public uiService = inject(UIService);
 
   ngOnInit(): void {
     this.playerSub = this.allPlayers$.subscribe((pHash) =>

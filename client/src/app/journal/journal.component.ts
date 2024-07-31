@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -15,7 +15,9 @@ export class JournalComponent {
 
   public journal: string;
 
-  constructor(private store: Store) {
+  private store = inject(Store);
+  
+  constructor() {
     this.journal$
       .pipe(takeUntilDestroyed())
       .pipe(first())

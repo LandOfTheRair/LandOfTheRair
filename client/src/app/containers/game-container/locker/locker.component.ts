@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { combineLatest, Observable, Subscription } from 'rxjs';
@@ -44,12 +44,12 @@ export class LockerComponent {
     return materialLayout;
   }
 
-  constructor(
-    private store: Store,
-    public uiService: UIService,
-    public optionsService: OptionsService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  public uiService = inject(UIService);
+  public optionsService = inject(OptionsService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { Observable } from 'rxjs';
@@ -15,5 +15,5 @@ import { GameService } from '../../../services/game.service';
 export class InventoryPouchComponent {
   @Select(GameState.player) player$: Observable<IPlayer>;
 
-  constructor(public gameService: GameService) {}
+  public gameService = inject(GameService);
 }

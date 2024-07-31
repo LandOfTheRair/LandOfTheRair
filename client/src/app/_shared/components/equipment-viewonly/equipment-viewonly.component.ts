@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import {
   IPlayer,
   ISimpleItem,
@@ -146,7 +151,8 @@ export class EquipmentViewOnlyComponent {
     },
   ];
 
-  constructor(public uiService: UIService, public assetService: AssetService) {}
+  public uiService = inject(UIService);
+  public assetService = inject(AssetService);
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };

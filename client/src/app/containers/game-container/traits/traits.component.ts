@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { sum } from 'lodash';
@@ -49,11 +49,11 @@ export class TraitsComponent {
     return this.player.traits.traitsLearned || {};
   }
 
-  constructor(
-    private modalService: ModalService,
-    public uiService: UIService,
-    public gameService: GameService,
-  ) {
+  private modalService = inject(ModalService);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = this.player$
       .pipe(takeUntilDestroyed())
       .subscribe((p) => this.setPlayer(p));

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { sumBy } from 'lodash';
@@ -42,11 +42,11 @@ export class GroundComponent {
   }>;
   public currentGround: Partial<Record<ItemClass, IGroundItem[]>> = {};
 
-  constructor(
-    public uiService: UIService,
-    public optionsService: OptionsService,
-    public gameService: GameService,
-  ) {
+  public uiService = inject(UIService);
+  public optionsService = inject(OptionsService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.groundSub = this.ground$
       .pipe(takeUntilDestroyed())
       .subscribe((ground) => {

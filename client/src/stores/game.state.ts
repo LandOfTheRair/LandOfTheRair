@@ -1,6 +1,6 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
@@ -230,7 +230,7 @@ export class GameState {
     return state.partyInfo;
   }
 
-  constructor(private store: Store) {}
+  private store = inject(Store);
 
   @Action(Login)
   login(ctx: StateContext<IGame>, { info }: Login) {

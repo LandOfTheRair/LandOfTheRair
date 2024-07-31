@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { Observable } from 'rxjs';
@@ -234,12 +234,12 @@ export class EquipmentMainComponent {
     Allegiance.Wilderness,
   ];
 
-  constructor(
-    private store: Store,
-    public uiService: UIService,
-    public gameService: GameService,
-    public assetService: AssetService,
-  ) {
+  private store = inject(Store);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  public assetService = inject(AssetService);
+  
+  constructor() {
     this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.player = p;
     });

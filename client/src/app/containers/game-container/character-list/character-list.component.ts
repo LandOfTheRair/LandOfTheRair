@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { isUndefined } from 'lodash';
@@ -49,12 +49,12 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
   public disableInteractions = false;
 
-  constructor(
-    private store: Store,
-    private socketService: SocketService,
-    private optionsService: OptionsService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  private socketService = inject(SocketService);
+  private optionsService = inject(OptionsService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = this.player$
       .pipe(takeUntilDestroyed())
       .subscribe((p) => (this.player = p));

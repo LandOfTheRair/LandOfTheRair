@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { clamp } from 'lodash';
 
@@ -33,11 +33,11 @@ export class PlayerStatusComponent {
   playerSub: Subscription;
   accountSub: Subscription;
 
-  constructor(
-    private store: Store,
-    public uiService: UIService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = this.player$
       .pipe(takeUntilDestroyed())
       .subscribe((p) => this.setPlayer(p));

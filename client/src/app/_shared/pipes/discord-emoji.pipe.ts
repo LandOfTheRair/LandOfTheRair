@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Pipe({
@@ -6,7 +6,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class DiscordEmojiPipe implements PipeTransform {
 
-constructor(private sanitizer: DomSanitizer) { }
+private sanitizer = inject(DomSanitizer);
+
+constructor() { }
 
 public transform(message: string, size: number): SafeHtml {
   return this.sanitizer.bypassSecurityTrustHtml(

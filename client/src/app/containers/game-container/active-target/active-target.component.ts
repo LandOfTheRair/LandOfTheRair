@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { Observable, Subscription } from 'rxjs';
@@ -81,10 +81,10 @@ export class ActiveTargetComponent {
     ];
   }
 
-  constructor(
-    public gameService: GameService,
-    public optionService: OptionsService,
-  ) {
+  public gameService = inject(GameService);
+  public optionService = inject(OptionsService);
+  
+  constructor() {
     this.playerSub = this.player$
       .pipe(takeUntilDestroyed())
       .subscribe((p) => (this.player = p));

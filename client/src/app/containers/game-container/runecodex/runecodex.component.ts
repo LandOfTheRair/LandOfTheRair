@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -85,10 +85,10 @@ export class RuneCodexComponent {
     {},
   ];
 
-  constructor(
-    private assetService: AssetService,
-    public gameService: GameService,
-  ) {
+  private assetService = inject(AssetService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
       this.player = p;
       this.sortRunes();

@@ -1,4 +1,4 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { isString, sum } from 'lodash';
 import Rollbar from 'rollbar';
@@ -39,7 +39,7 @@ export class LoggerService {
     return sum(Object.values(this.loggedErrorMessages)) ?? 0;
   }
 
-  constructor(private dialog: MatDialog) {}
+  private dialog = inject(MatDialog);
 
   public init() {
     if (environment.rollbar.token) {
@@ -120,7 +120,9 @@ export class LoggerService {
 
 @Injectable()
 export class AlertErrorHandler implements ErrorHandler {
-  constructor(private logger: LoggerService) {}
+  private logger = inject(LoggerService);
+
+  constructor() {}
 
   handleError(error) {
     this.logger.error(error);

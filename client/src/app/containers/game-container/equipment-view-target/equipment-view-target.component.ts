@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subscription } from 'rxjs';
@@ -21,11 +21,11 @@ export class EquipmentViewTargetComponent {
 
   gameStatusSub: Subscription;
 
-  constructor(
-    private store: Store,
-    public uiService: UIService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.gameStatusSub = this.inGame$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {

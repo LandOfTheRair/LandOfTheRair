@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
@@ -32,13 +32,13 @@ export class CharSelectComponent {
   public charSlot: number;
   public charSlotAccount$: Subscription;
 
-  constructor(
-    private store: Store,
-    private dialog: MatDialog,
-    public gameService: GameService,
-    public socketService: SocketService,
-    public assetService: AssetService,
-  ) {
+  private store = inject(Store);
+  private dialog = inject(MatDialog);
+  public gameService = inject(GameService);
+  public socketService = inject(SocketService);
+  public assetService = inject(AssetService);
+  
+  constructor() {
     this.charSlotAccount$ = combineLatest([
       this.gameService.account$,
       this.gameService.charSlot$,

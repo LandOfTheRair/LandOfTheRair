@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
 } from '@angular/core';
 import { select } from '@ngxs/store';
@@ -36,5 +37,5 @@ export class InventoryComponent {
       .map((v, i) => i),
   );
 
-  constructor(public uiService: UIService) {}
+  public uiService = inject(UIService);
 }

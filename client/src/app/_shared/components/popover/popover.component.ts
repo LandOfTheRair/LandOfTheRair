@@ -35,6 +35,7 @@ import {
   EventEmitter,
   HostBinding,
   HostListener,
+  inject,
   Input,
   NgZone,
   OnDestroy,
@@ -411,7 +412,10 @@ export class MdePopover implements MdePopoverPanel, OnDestroy {
 
   @ViewChild(TemplateRef) templateRef: TemplateRef<any>;
 
-  constructor(private _elementRef: ElementRef, public zone: NgZone) {
+  private _elementRef = inject(ElementRef);
+  public zone = inject(NgZone);
+
+  constructor() {
     this.setPositionClasses();
   }
 

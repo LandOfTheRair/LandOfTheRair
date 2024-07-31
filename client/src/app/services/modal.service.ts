@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
@@ -38,12 +38,10 @@ export class ModalService {
   private commandDialogRef: MatDialogRef<DialogComponent>;
   private spellDialogRef: MatDialogRef<NewSpellsComponent>;
 
-  constructor(
-    private socketService: SocketService,
-    private optionsService: OptionsService,
-    private snackbar: MatSnackBar,
-    private dialog: MatDialog,
-  ) {}
+  private socketService = inject(SocketService);
+  private optionsService = inject(OptionsService);
+  private snackbar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   public init() {
     this.inGame$.subscribe((val) => {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Select, Store } from '@ngxs/store';
@@ -41,17 +41,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     return this.isConnected && this.newAccount.username && this.newAccount.password && this.newAccount.email && this.agreedToTerms;
   }
 
-  constructor(
-    public announcementService: AnnouncementService,
-    public gameService: GameService,
-    public socketService: SocketService,
-    public optionsService: OptionsService,
-    public api: APIService,
-    private assetService: AssetService,
-    private modalService: ModalService,
-    private store: Store,
-    private http: HttpClient
-  ) { }
+  public announcementService = inject(AnnouncementService);
+  public gameService = inject(GameService);
+  public socketService = inject(SocketService);
+  public optionsService = inject(OptionsService);
+  public api = inject(APIService);
+  private assetService = inject(AssetService);
+  private modalService = inject(ModalService);
+  private store = inject(Store);
+  private http = inject(HttpClient);
+  
+  constructor() { }
 
   ngOnInit() {
     this.newAccount = { username: '', password: '', email: '', autologin: false };

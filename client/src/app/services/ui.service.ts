@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { GameService } from './game.service';
 import { ModalService } from './modal.service';
 
@@ -13,10 +13,8 @@ export class UIService {
     equipment: {},
   };
 
-  constructor(
-    private modalService: ModalService,
-    private gameService: GameService,
-  ) {}
+  private modalService = inject(ModalService);
+  private gameService = inject(GameService);
 
   // reset selection
   public resetSelection() {

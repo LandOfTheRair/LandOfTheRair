@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -28,7 +28,9 @@ export class QuestsComponent {
     return allQuests;
   }
 
-  constructor(public gameService: GameService) {
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = this.player$
       .pipe(takeUntilDestroyed())
       .subscribe((p) => this.setPlayer(p));

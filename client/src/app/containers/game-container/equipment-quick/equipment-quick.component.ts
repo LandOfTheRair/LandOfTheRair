@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 
 import { Observable } from 'rxjs';
@@ -52,11 +52,9 @@ export class EquipmentQuickComponent {
     },
   ];
 
-  constructor(
-    public uiService: UIService,
-    public gameService: GameService,
-    public assetService: AssetService,
-  ) {}
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  public assetService = inject(AssetService);
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };

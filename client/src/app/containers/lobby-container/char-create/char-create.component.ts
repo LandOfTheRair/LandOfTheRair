@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   Allegiance,
@@ -131,10 +131,8 @@ export class CharCreateComponent {
     return !name || name.length < 2 || name.length > 20;
   }
 
-  constructor(
-    public dialogRef: MatDialogRef<CharCreateComponent>,
-    @Inject(MAT_DIALOG_DATA) public data,
-  ) {}
+  public dialogRef = inject(MatDialogRef);
+  public data = inject(MAT_DIALOG_DATA);
 
   validateName() {
     let name = this.character.name;

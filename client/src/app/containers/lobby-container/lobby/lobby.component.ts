@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { GameServerEvent, GameServerResponse, IChatMessage, IChatUser } from '../../../../interfaces';
@@ -24,9 +24,9 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private mutationObserver: MutationObserver;
 
-  constructor(
-    private socketService: SocketService
-  ) { }
+  private socketService = inject(SocketService);
+  
+  constructor() { }
 
   ngOnInit() {
     this.socketService.registerComponentCallback(

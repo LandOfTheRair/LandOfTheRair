@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { clamp, cloneDeep, groupBy, sortBy } from 'lodash';
@@ -53,12 +53,12 @@ export class TradeskillComponent {
 
   public chosenCraft: string;
 
-  constructor(
-    private store: Store,
-    private assetService: AssetService,
-    public uiService: UIService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  private assetService = inject(AssetService);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.playerSub = combineLatest([this.player$, this.tradeskill$])
       .pipe(takeUntilDestroyed())
       .subscribe(([player, tradeskill]) => {

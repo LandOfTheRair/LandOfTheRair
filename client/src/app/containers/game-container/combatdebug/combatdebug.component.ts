@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { sortBy } from 'lodash';
 import { Observable, Subscription } from 'rxjs';
@@ -55,11 +55,11 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
     return this.storedLogs.length;
   }
 
-  constructor(
-    private store: Store,
-    private socketService: SocketService,
-    public gameService: GameService,
-  ) {
+  private store = inject(Store);
+  private socketService = inject(SocketService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.gameStatusSub = this.inGame$
       .pipe(takeUntilDestroyed())
       .subscribe(() => {

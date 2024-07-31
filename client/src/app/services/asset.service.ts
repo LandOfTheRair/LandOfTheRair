@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 import { Select } from '@ngxs/store';
 import { Observable, forkJoin } from 'rxjs';
@@ -79,7 +79,10 @@ export class AssetService {
     return meta.hash;
   }
 
-  constructor(private http: HttpClient, private api: APIService) { }
+  private http = inject(HttpClient);
+  private api = inject(APIService);
+  
+  constructor() { }
 
   public init() {
     const spritesheets = ['Creatures', 'Decor', 'Effects', 'Items', 'Swimming', 'Terrain', 'Walls', 'ItemsAnimations', 'DecorAnimations'];

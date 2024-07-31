@@ -5,13 +5,13 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { APIService } from '../../services/api.service';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-  constructor(private apiService: APIService) {}
+  private apiService = inject(APIService);
 
   intercept(
     request: HttpRequest<unknown>,

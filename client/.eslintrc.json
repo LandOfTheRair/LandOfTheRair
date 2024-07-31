@@ -8,12 +8,16 @@
         "project": ["tsconfig.json"],
         "createDefaultProgram": true
       },
-      "plugins": ["@typescript-eslint"],
+      "plugins": ["@typescript-eslint", "@rdlabo/rules"],
       "extends": [
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@rdlabo/rules/deny-constructor-di": "error",
+        "@rdlabo/rules/import-inject-object": "error",
+        "@rdlabo/rules/deny-import-from-ionic-module": "error",
+        "@rdlabo/rules/implements-ionic-lifecycle": "error",
         "@angular-eslint/component-selector": [
           "error",
           {

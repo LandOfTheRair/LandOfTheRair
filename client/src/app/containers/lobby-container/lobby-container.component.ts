@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { LobbyState } from '../../../stores';
@@ -13,8 +13,6 @@ import { OptionsService } from '../../services/options.service';
 export class LobbyContainerComponent {
   @Select(LobbyState.lastSessionStats) stats$: Observable<any>;
 
-  constructor(
-    public optionsService: OptionsService,
-    public gameService: GameService,
-  ) {}
+  public optionsService = inject(OptionsService);
+  public gameService = inject(GameService);
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Select } from '@ngxs/store';
 import {
   get,
@@ -91,11 +91,9 @@ export class GameService {
     return this.visibleCharacterList;
   }
 
-  constructor(
-    private socketService: SocketService,
-    private optionsService: OptionsService,
-    private modalService: ModalService,
-  ) {}
+  private socketService = inject(SocketService);
+  private optionsService = inject(OptionsService);
+  private modalService = inject(ModalService);
 
   init() {
     this.inGame$.subscribe((val) => {

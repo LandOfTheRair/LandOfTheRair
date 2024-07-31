@@ -6,10 +6,9 @@ import { GameOption } from '../../interfaces';
 import { SettingsState } from '../../stores';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OptionsService {
-
   @Select(SettingsState.options) options$: Observable<Record<GameOption, any>>;
 
   private opts: Partial<Record<GameOption, any>> = {};
@@ -138,10 +137,8 @@ export class OptionsService {
     return this.opts[GameOption.CustomCSS];
   }
 
-  constructor() {}
-
   init() {
-    this.options$.subscribe(opts => {
+    this.options$.subscribe((opts) => {
       this.opts = opts;
       this.updateCustomCSS();
     });
@@ -172,7 +169,5 @@ export class OptionsService {
 
     styleElement.textContent = '';
     styleElement.appendChild(document.createTextNode(css));
-
   }
-
 }

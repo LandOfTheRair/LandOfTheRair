@@ -1,38 +1,59 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Select, Selector, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 
-import { ICharacter, IGame, IMacro, IMacroContainer, IPlayer } from '../../interfaces';
-import { GameState, LearnMacro, MacrosState, SetActiveMacro, SetCurrentCommand, SettingsState } from '../../stores';
 import * as allMacros from '../../assets/content/_output/macros.json';
+import {
+  ICharacter,
+  IGame,
+  IMacro,
+  IMacroContainer,
+  IPlayer,
+} from '../../interfaces';
+import {
+  GameState,
+  LearnMacro,
+  MacrosState,
+  SetActiveMacro,
+  SetCurrentCommand,
+  SettingsState,
+} from '../../stores';
 import { GameService } from './game.service';
 
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MacrosService {
-
   @Select(GameState.player) private player$: Observable<IPlayer>;
   @Select(GameState.inGame) private inGame$: Observable<boolean>;
-  @Select(GameState.currentTarget) private currentTarget$: Observable<ICharacter>;
+  @Select(GameState.currentTarget)
+  private currentTarget$: Observable<ICharacter>;
   @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
   @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
-  @Select(MacrosState.customMacros) private customMacros$: Observable<Record<string, IMacro>>;
-  @Select(MacrosService.currentPlayerActiveMacro) private activeMacro$: Observable<IMacro>;
-  @Select(MacrosService.currentPlayerMacros) private currentMacros$: Observable<any>;
+  @Select(MacrosState.customMacros) private customMacros$: Observable<
+    Record<string, IMacro>
+  >;
+  @Select(MacrosService.currentPlayerActiveMacro)
+  private activeMacro$: Observable<IMacro>;
+  @Select(MacrosService.currentPlayerMacros)
+  private currentMacros$: Observable<any>;
 
   private macroMap: Record<string, IMacro> = {};
 
   private activeWindow: string;
 
   private macroIgnoreWindows = {
-    lobby: true, bank: true,
-    shop: true, marketboard: true, party: true,
-    commandLine: true, journal: true
+    lobby: true,
+    bank: true,
+    shop: true,
+    marketboard: true,
+    party: true,
+    commandLine: true,
+    journal: true,
   };
 
   private get allMacrosHash(): Record<string, IMacro> {
@@ -45,34 +66,43 @@ export class MacrosService {
     if (!player) return null;
 
     return {
-      activeMacro: macroState.activeMacros?.[player.username]?.[player.charSlot],
-      activeMacroBars: macroState.activeMacroBars?.[player.username]?.[player.charSlot],
-      learnedMacros: macroState.learnedMacros?.[player.username]?.[player.charSlot] ?? {},
-      macroBars: macroState.characterMacros?.[player.username]?.[player.charSlot]
+      activeMacro:
+        macroState.activeMacros?.[player.username]?.[player.charSlot],
+      activeMacroBars:
+        macroState.activeMacroBars?.[player.username]?.[player.charSlot],
+      learnedMacros:
+        macroState.learnedMacros?.[player.username]?.[player.charSlot] ?? {},
+      macroBars:
+        macroState.characterMacros?.[player.username]?.[player.charSlot],
     };
   }
 
   @Selector([GameState, MacrosState, MacrosState.allMacros])
-  static currentPlayerActiveMacro(gameState: IGame, macroState: IMacroContainer, allPossibleMacros) {
+  static currentPlayerActiveMacro(
+    gameState: IGame,
+    macroState: IMacroContainer,
+    allPossibleMacros,
+  ) {
     const player = gameState.player;
     if (!player) return null;
 
-    return allPossibleMacros[macroState.activeMacros?.[player.username]?.[player.charSlot]];
+    return allPossibleMacros[
+      macroState.activeMacros?.[player.username]?.[player.charSlot]
+    ];
   }
 
-  constructor(
-    private store: Store,
-    private modalService: ModalService,
-    private optionsService: OptionsService,
-    private gameService: GameService
-  ) {}
+  private store = inject(Store);
+  private modalService = inject(ModalService);
+  private optionsService = inject(OptionsService);
+  private gameService = inject(GameService);
 
   public init() {
-    this.activeWindow$.subscribe(w => this.activeWindow = w);
-    combineLatest([this.customMacros$, this.charSlot$])
-      .subscribe(([macros, charSlot]) => {
+    this.activeWindow$.subscribe((w) => (this.activeWindow = w));
+    combineLatest([this.customMacros$, this.charSlot$]).subscribe(
+      ([macros, charSlot]) => {
         this.parseMacroMap(macros, charSlot.slot);
-      });
+      },
+    );
 
     this.watchForNewMacroAlerts();
     this.watchForMacros();
@@ -101,11 +131,15 @@ export class MacrosService {
   private parseMacroMap(macroMap: Record<string, IMacro>, charSlot: number) {
     this.macroMap = {};
 
-    const defaultMacros = Object.values(allMacros).filter(mac => (mac as any).isDefault);
+    const defaultMacros = Object.values(allMacros).filter(
+      (mac) => (mac as any).isDefault,
+    );
 
-    const allCheckableMacros = Object.values(macroMap).filter(macro => macro.createdCharSlot === charSlot).concat(defaultMacros);
+    const allCheckableMacros = Object.values(macroMap)
+      .filter((macro) => macro.createdCharSlot === charSlot)
+      .concat(defaultMacros);
 
-    allCheckableMacros.forEach(macro => {
+    allCheckableMacros.forEach((macro) => {
       if (!macro.key) return;
       this.macroMap[this.buildMacroString(macro)] = macro;
     });
@@ -116,9 +150,14 @@ export class MacrosService {
   }
 
   private shouldIgnoreMacro() {
-    if (document.getElementsByTagName('mat-dialog-container').length > 0) return true;
+    if (document.getElementsByTagName('mat-dialog-container').length > 0)
+      return true;
 
-    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return true;
+    if (
+      document.activeElement.tagName === 'INPUT' ||
+      document.activeElement.tagName === 'TEXTAREA'
+    )
+      return true;
 
     if (this.macroIgnoreWindows[this.activeWindow]) return true;
 
@@ -164,7 +203,7 @@ export class MacrosService {
       }
 
       if (macro.mode === 'autoTarget') {
-        this.currentTarget$.pipe(first()).subscribe(target => {
+        this.currentTarget$.pipe(first()).subscribe((target) => {
           if (target) {
             this.gameService.sendCommandString(macro.macro, target.uuid);
             return;
@@ -183,19 +222,28 @@ export class MacrosService {
 
   private autoAttackLoop() {
     setInterval(() => {
-      combineLatest([this.inGame$, this.player$, this.activeMacro$, this.currentTarget$])
+      combineLatest([
+        this.inGame$,
+        this.player$,
+        this.activeMacro$,
+        this.currentTarget$,
+      ])
         .pipe(first())
         .subscribe(([inGame, player, macro, target]) => {
-          if (!inGame
-          || !macro
-          || !target
-          || !this.optionsService.autoAttack
-          || !target.agro[player.uuid]
-          || macro.ignoreAutoAttack
-          || player.spellChannel
-          || (this.gameService.hostilityLevelFor(player, target) !== 'hostile'
-              && !target.agro[player.uuid] && !player.agro[target.uuid])
-          || (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())) return;
+          if (
+            !inGame ||
+            !macro ||
+            !target ||
+            !this.optionsService.autoAttack ||
+            !target.agro[player.uuid] ||
+            macro.ignoreAutoAttack ||
+            player.spellChannel ||
+            (this.gameService.hostilityLevelFor(player, target) !== 'hostile' &&
+              !target.agro[player.uuid] &&
+              !player.agro[target.uuid]) ||
+            (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())
+          )
+            return;
 
           this.gameService.sendCommandString(macro.macro, target.uuid);
         });
@@ -203,33 +251,45 @@ export class MacrosService {
   }
 
   private watchForNewMacroAlerts() {
-    combineLatest([this.player$, this.currentMacros$])
-      .subscribe(([player, currentMacros]) => {
-        if (!player || !currentMacros || !currentMacros.macroBars || !currentMacros.activeMacro) return;
+    combineLatest([this.player$, this.currentMacros$]).subscribe(
+      ([player, currentMacros]) => {
+        if (
+          !player ||
+          !currentMacros ||
+          !currentMacros.macroBars ||
+          !currentMacros.activeMacro
+        )
+          return;
 
         const newSpells = Object.keys(player.learnedSpells || {})
-          .map(spell => {
-            const baseObj = cloneDeep(Object.values(this.allMacrosHash).find(macro => (macro.for || macro.name).toLowerCase() === spell));
+          .map((spell) => {
+            const baseObj = cloneDeep(
+              Object.values(this.allMacrosHash).find(
+                (macro) => (macro.for || macro.name).toLowerCase() === spell,
+              ),
+            );
             if (!baseObj) return null;
 
             baseObj.isDefault = true;
             return baseObj;
           })
-          .filter(spell => spell && !currentMacros.learnedMacros[spell.name])
-          .filter(spell => !Object.keys(currentMacros.macroBars || {})
-                              .map(bar => currentMacros.macroBars[bar].macros)
-                              .flat()
-                              .includes(spell.name)
+          .filter((spell) => spell && !currentMacros.learnedMacros[spell.name])
+          .filter(
+            (spell) =>
+              !Object.keys(currentMacros.macroBars || {})
+                .map((bar) => currentMacros.macroBars[bar].macros)
+                .flat()
+                .includes(spell.name),
           );
 
         if (newSpells.length === 0) return;
 
         this.modalService.newSpells(newSpells, currentMacros.macroBars);
 
-        newSpells.forEach(spell => {
+        newSpells.forEach((spell) => {
           this.store.dispatch(new LearnMacro(spell));
         });
-      });
+      },
+    );
   }
-
 }

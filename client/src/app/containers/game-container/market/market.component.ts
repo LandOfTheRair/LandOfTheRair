@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 
 import { cloneDeep, debounce, get, startCase } from 'lodash';
@@ -143,15 +143,15 @@ export class MarketComponent {
     return this.buyableListings?.length > 0;
   }
 
-  constructor(
-    private http: HttpClient,
-    private store: Store,
-    private assetService: AssetService,
-    private modalService: ModalService,
-    private api: APIService,
-    public uiService: UIService,
-    public gameService: GameService,
-  ) {
+  private http = inject(HttpClient);
+  private store = inject(Store);
+  private assetService = inject(AssetService);
+  private modalService = inject(ModalService);
+  private api = inject(APIService);
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  
+  constructor() {
     this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;

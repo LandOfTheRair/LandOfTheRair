@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { createSelectMap, Store } from '@ngxs/store';
 
 import allMacros from '../../../../assets/content/_output/macros.json';
@@ -33,7 +33,8 @@ export class MacroBarComponent {
     .fill(null)
     .map((x, i) => i);
 
-  constructor(private store: Store, public gameService: GameService) {}
+  private store = inject(Store);
+  public gameService = inject(GameService);
 
   public operateOnMacro(player: IPlayer, macro: IMacro) {
     if (!macro || this.isMacroDisabled(player, macro)) return;
