@@ -1,52 +1,56 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  Directive,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngxs/store';
-import { Subject, merge, fromEvent } from 'rxjs';
+import { fromEvent, merge, Subject } from 'rxjs';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { UpdateWindowPosition } from '../../../stores';
 import { OptionsService } from '../../services/options.service';
 
 @Directive({
-  selector: '[appDraggableWindow]'
+  selector: '[appDraggableWindow]',
 })
 export class DraggableDirective implements OnInit, OnDestroy {
-  private isDragAllowed = true;
-  private handle: HTMLElement = null;
+  private optionsService = inject(OptionsService);
+  public store = inject(Store);
+  public element = inject(ElementRef);
+
   private destroy$ = new Subject<void>();
 
-  @Input('appDraggableWindow')
-  set allowDrag(value: boolean) {
-    this.isDragAllowed = value;
+  public isDragAllowed = input<boolean>(true, { alias: 'appDraggableWindow' });
+  public windowHandle = input<HTMLElement>();
+  public windowName = input<string>();
+  public windowLocation = input<Position>();
+
+  constructor() {
+    effect(() => {
+      const handle = this.windowHandle();
+
+      if (this.isDragAllowed()) {
+        handle.style.position = 'relative';
+        handle.className += ' cursor-draggable';
+      } else {
+        handle.className = handle.className.replace(' cursor-draggable', '');
+      }
+    });
+
+    effect(() => {
+      const windowLoc = this.windowLocation();
+      if (!windowLoc) return;
+
+      this.setNativeCoords(windowLoc);
+    });
   }
-
-  @Input()
-  set windowHandle(handle: HTMLElement) {
-    this.handle = handle;
-
-    if (this.isDragAllowed) {
-      this.handle.style.position = 'relative';
-      this.handle.className += ' cursor-draggable';
-    } else {
-      this.handle.className = this.handle.className.replace(' cursor-draggable', '');
-    }
-  }
-
-  @Input()
-  public windowName: string;
-
-  @Input()
-  public set windowLocation(data) {
-    if (!data) return;
-    this.setNativeCoords(data);
-  }
-
-  constructor(
-    private optionsService: OptionsService,
-    public store: Store,
-    public element: ElementRef
-  ) {}
 
   ngOnInit(): void {
-    const mouseToMoveData = (mouse: MouseEvent) => ({
+    const mouseToMoveData = (mouse: MouseEvent) =>
+      ({
         event: mouse,
         x: mouse.clientX,
         y: mouse.clientY,
@@ -54,56 +58,82 @@ export class DraggableDirective implements OnInit, OnDestroy {
         button: mouse.button,
       } as PositionEvent);
 
-    const touchToMoveData = (touch: TouchEvent) => ({
+    const touchToMoveData = (touch: TouchEvent) =>
+      ({
         event: touch,
         x: touch.changedTouches[0].clientX,
         y: touch.changedTouches[0].clientY,
         target: touch.target,
-        button: 1
+        button: 1,
       } as PositionEvent);
 
     const nativeElement = this.element.nativeElement;
 
-    const mousedown$ = fromEvent<MouseEvent>(nativeElement, 'mousedown').pipe(map(mouseToMoveData));
-    const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove').pipe(map(mouseToMoveData));
-    const mouseup$ = fromEvent<MouseEvent>(document, 'mouseup').pipe(map(mouseToMoveData));
-    const mouseleave$ = fromEvent<MouseEvent>(document.body, 'mouseleave').pipe(map(mouseToMoveData));
+    const mousedown$ = fromEvent<MouseEvent>(nativeElement, 'mousedown').pipe(
+      map(mouseToMoveData),
+    );
+    const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove').pipe(
+      map(mouseToMoveData),
+    );
+    const mouseup$ = fromEvent<MouseEvent>(document, 'mouseup').pipe(
+      map(mouseToMoveData),
+    );
+    const mouseleave$ = fromEvent<MouseEvent>(document.body, 'mouseleave').pipe(
+      map(mouseToMoveData),
+    );
 
-    const touchstart$ = fromEvent<TouchEvent>(nativeElement, 'touchstart').pipe(map(touchToMoveData));
-    const touchmove$ = fromEvent<TouchEvent>(document, 'touchmove').pipe(map(touchToMoveData));
-    const touchend$ = fromEvent<TouchEvent>(nativeElement, 'touchend').pipe(map(touchToMoveData));
+    const touchstart$ = fromEvent<TouchEvent>(nativeElement, 'touchstart').pipe(
+      map(touchToMoveData),
+    );
+    const touchmove$ = fromEvent<TouchEvent>(document, 'touchmove').pipe(
+      map(touchToMoveData),
+    );
+    const touchend$ = fromEvent<TouchEvent>(nativeElement, 'touchend').pipe(
+      map(touchToMoveData),
+    );
 
     const startmove$ = merge(mousedown$, touchstart$);
     const movemove$ = merge(mousemove$, touchmove$);
     const endmove$ = merge(mouseup$, touchend$, mouseleave$);
 
-    startmove$.pipe(takeUntil(this.destroy$)).subscribe(startMove => {
+    startmove$.pipe(takeUntil(this.destroy$)).subscribe((startMove) => {
       if (this.optionsService.lockWindows) return;
-      if (!this.isDragAllowed) return;
-      if (startMove.button === 2 || (this.handle !== undefined && startMove.target !== this.handle)) return;
+      if (!this.isDragAllowed()) return;
+      if (
+        startMove.button === 2 ||
+        (this.windowHandle() !== undefined &&
+          startMove.target !== this.windowHandle())
+      ) {
+        return;
+      }
+
       startMove.event.preventDefault();
       startMove.event.stopPropagation();
 
       const windowCoords = this.getNativeCoords();
       const startCoord = this.diff(windowCoords, startMove);
-      endmove$.pipe(takeUntil(this.destroy$)).subscribe(endmove => {
-          endmove.event.preventDefault();
-          endmove.event.stopPropagation();
+      endmove$.pipe(takeUntil(this.destroy$)).subscribe((endmove) => {
+        endmove.event.preventDefault();
+        endmove.event.stopPropagation();
       });
-      const pospipe$ = movemove$.pipe(takeUntil(endmove$), takeUntil(this.destroy$),
+      const pospipe$ = movemove$.pipe(
+        takeUntil(endmove$),
+        takeUntil(this.destroy$),
         map((moveMove) => {
           moveMove.event.preventDefault();
           moveMove.event.stopPropagation();
           return this.clampWindow(this.diff(startCoord, moveMove));
-        })
+        }),
       );
 
-      pospipe$.subscribe(position => {
+      pospipe$.subscribe((position) => {
         this.setNativeCoords(position);
       });
 
-      pospipe$.pipe(debounceTime(500)).subscribe(position => {
-        this.store.dispatch(new UpdateWindowPosition(this.windowName, position, true));
+      pospipe$.pipe(debounceTime(200)).subscribe((position) => {
+        this.store.dispatch(
+          new UpdateWindowPosition(this.windowName(), position, true),
+        );
       });
     });
   }

@@ -1,224 +1,251 @@
-
 /* eslint-disable */
 
 import { Observable, of as observableOf, Subscription } from 'rxjs';
 
-import { Directive, ElementRef, EventEmitter, HostListener, Input, NgZone, OnDestroy, OnInit, Output, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
 import { map } from 'rxjs/operators';
 import { DomHelper } from './dom-helper';
-import { DropEvent } from './drop-event.model';
 import { NgDragDropService } from './dragdrop.service';
-
-
+import { DropEvent } from './drop-event.model';
 
 @Directive({
-    selector: '[droppable]'
+  selector: '[droppable]',
 })
 export class DroppableDirective implements OnInit, OnDestroy {
+  /**
+   *  Event fired when Drag dragged element enters a valid drop target.
+   */
+  @Output() onDragEnter: EventEmitter<any> = new EventEmitter();
 
-    /**
-     *  Event fired when Drag dragged element enters a valid drop target.
-     */
-    @Output() onDragEnter: EventEmitter<any> = new EventEmitter();
+  /**
+   * Event fired when an element is being dragged over a valid drop target
+   */
+  @Output() onDragOver: EventEmitter<any> = new EventEmitter();
 
-    /**
-     * Event fired when an element is being dragged over a valid drop target
-     */
-    @Output() onDragOver: EventEmitter<any> = new EventEmitter();
+  /**
+   * Event fired when a dragged element leaves a valid drop target.
+   */
+  @Output() onDragLeave: EventEmitter<any> = new EventEmitter();
 
-    /**
-     * Event fired when a dragged element leaves a valid drop target.
-     */
-    @Output() onDragLeave: EventEmitter<any> = new EventEmitter();
+  /**
+   * Event fired when an element is dropped on a valid drop target.
+   */
+  @Output() onDrop: EventEmitter<DropEvent> = new EventEmitter();
 
-    /**
-     * Event fired when an element is dropped on a valid drop target.
-     */
-    @Output() onDrop: EventEmitter<DropEvent> = new EventEmitter();
+  /**
+   * CSS class that is applied when a compatible draggable is being dragged over this droppable.
+   */
+  @Input() dragOverClass = 'drag-over-border';
 
-    /**
-     * CSS class that is applied when a compatible draggable is being dragged over this droppable.
-     */
-    @Input() dragOverClass = 'drag-over-border';
+  /**
+   * CSS class applied on this droppable when a compatible draggable item is being dragged.
+   * This can be used to visually show allowed drop zones.
+   */
+  @Input() dragHintClass = 'drag-hint-border';
 
-    /**
-     * CSS class applied on this droppable when a compatible draggable item is being dragged.
-     * This can be used to visually show allowed drop zones.
-     */
-    @Input() dragHintClass = 'drag-hint-border';
+  /**
+   * Defines compatible drag drop pairs. Values must match both in draggable and droppable.dropScope.
+   */
+  @Input() dropScope: string | Array<string> | Function = 'default';
 
-    /**
-     * Defines compatible drag drop pairs. Values must match both in draggable and droppable.dropScope.
-     */
-    @Input() dropScope: string | Array<string> | Function  = 'default';
+  /**
+   * Defines if drop is enabled. `true` by default.
+   */
+  @Input() set dropEnabled(value: boolean) {
+    this._dropEnabled = value;
 
-    /**
-     * Defines if drop is enabled. `true` by default.
-     */
-    @Input() set dropEnabled(value: boolean) {
-      this._dropEnabled = value;
-
-      if (this._dropEnabled === true) {
-        this.subscribeService();
-      } else {
-        this.unsubscribeService();
-      }
-    }
-
-    get dropEnabled() {
-        return this._dropEnabled;
-    }
-
-    dragStartSubscription: Subscription;
-
-    dragEndSubscription: Subscription;
-
-    _dropEnabled = true;
-
-    _isDragActive = false;
-
-    _isServiceActive = false;
-
-    unbindDragEnterListener: Function;
-
-    unbindDragOverListener: Function;
-
-    unbindDragLeaveListener: Function;
-
-    constructor(protected el: ElementRef, private renderer: Renderer2,
-                private ng2DragDropService: NgDragDropService, private zone: NgZone) {
-    }
-
-    ngOnInit() {
-      if (this.dropEnabled === true) {
-        this.subscribeService();
-      }
-    }
-
-    ngOnDestroy() {
+    if (this._dropEnabled === true) {
+      this.subscribeService();
+    } else {
       this.unsubscribeService();
-      this.unbindDragListeners();
     }
+  }
 
-    dragEnter(e) {
+  get dropEnabled() {
+    return this._dropEnabled;
+  }
+
+  dragStartSubscription: Subscription;
+
+  dragEndSubscription: Subscription;
+
+  _dropEnabled = true;
+
+  _isDragActive = false;
+
+  _isServiceActive = false;
+
+  unbindDragEnterListener: Function;
+
+  unbindDragOverListener: Function;
+
+  unbindDragLeaveListener: Function;
+
+  constructor(
+    protected el: ElementRef,
+    private renderer: Renderer2,
+    private ng2DragDropService: NgDragDropService,
+    private zone: NgZone,
+  ) {}
+
+  ngOnInit() {
+    if (this.dropEnabled === true) {
+      this.subscribeService();
+    }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeService();
+    this.unbindDragListeners();
+  }
+
+  dragEnter(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.onDragEnter.emit(e);
+  }
+
+  dragOver(e, result) {
+    if (result) {
+      DomHelper.addClass(this.el, this.dragOverClass);
       e.preventDefault();
-      e.stopPropagation();
-      this.onDragEnter.emit(e);
+      this.onDragOver.emit(e);
     }
+  }
 
-    dragOver(e, result) {
-      if (result) {
-        DomHelper.addClass(this.el, this.dragOverClass);
+  dragLeave(e) {
+    DomHelper.removeClass(this.el, this.dragOverClass);
+    e.preventDefault();
+    this.onDragLeave.emit(e);
+  }
+
+  @HostListener('drop', ['$event'])
+  drop(e) {
+    this.allowDrop().subscribe((result) => {
+      if (result && this._isDragActive) {
+        DomHelper.removeClass(this.el, this.dragOverClass);
         e.preventDefault();
-        this.onDragOver.emit(e);
+        e.stopPropagation();
+
+        this.ng2DragDropService.onDragEnd.next(null);
+        this.onDrop.emit(new DropEvent(e, this.ng2DragDropService.dragData));
+        this.ng2DragDropService.dragData = null;
+        this.ng2DragDropService.scope = null;
       }
-    }
+    });
+  }
 
-    dragLeave(e) {
-      DomHelper.removeClass(this.el, this.dragOverClass);
-      e.preventDefault();
-      this.onDragLeave.emit(e);
-    }
+  allowDrop(): Observable<boolean> {
+    let allowed: boolean | Observable<boolean> = false;
 
-    @HostListener('drop', ['$event'])
-    drop(e) {
-      this.allowDrop().subscribe(result => {
-        if (result && this._isDragActive) {
-          DomHelper.removeClass(this.el, this.dragOverClass);
-          e.preventDefault();
-          e.stopPropagation();
-
-          this.ng2DragDropService.onDragEnd.next(null);
-          this.onDrop.emit(new DropEvent(e, this.ng2DragDropService.dragData));
-          this.ng2DragDropService.dragData = null;
-          this.ng2DragDropService.scope = null;
-        }
-      });
-    }
-
-    allowDrop(): Observable<boolean> {
-      let allowed: boolean | Observable<boolean> = false;
-
-      /* eslint-disable curly */
-      /* eslint-disable brace-style */
-      if (typeof this.dropScope === 'string') {
-        if (typeof this.ng2DragDropService.scope === 'string')
-          allowed = this.ng2DragDropService.scope === this.dropScope;
-        else if (this.ng2DragDropService.scope instanceof Array)
-          allowed = this.ng2DragDropService.scope.indexOf(this.dropScope) > -1;
-      } else if (this.dropScope instanceof Array) {
-        if (typeof this.ng2DragDropService.scope === 'string')
-          allowed = this.dropScope.indexOf(this.ng2DragDropService.scope) > -1;
-        else if (this.ng2DragDropService.scope instanceof Array)
-          allowed = this.dropScope.filter(item => {
-              return this.ng2DragDropService.scope.indexOf(item) !== -1;
+    /* eslint-disable curly */
+    /* eslint-disable brace-style */
+    if (typeof this.dropScope === 'string') {
+      if (typeof this.ng2DragDropService.scope === 'string')
+        allowed = this.ng2DragDropService.scope === this.dropScope;
+      else if (this.ng2DragDropService.scope instanceof Array)
+        allowed = this.ng2DragDropService.scope.indexOf(this.dropScope) > -1;
+    } else if (this.dropScope instanceof Array) {
+      if (typeof this.ng2DragDropService.scope === 'string')
+        allowed = this.dropScope.indexOf(this.ng2DragDropService.scope) > -1;
+      else if (this.ng2DragDropService.scope instanceof Array)
+        allowed =
+          this.dropScope.filter((item) => {
+            return this.ng2DragDropService.scope.indexOf(item) !== -1;
           }).length > 0;
-      } else if (typeof this.dropScope === 'function') {
-        allowed = this.dropScope(this.ng2DragDropService.dragData);
-        if (allowed instanceof Observable) {
-          return allowed.pipe(map(result => result && this.dropEnabled));
-        }
+    } else if (typeof this.dropScope === 'function') {
+      allowed = this.dropScope(this.ng2DragDropService.dragData);
+      if (allowed instanceof Observable) {
+        return allowed.pipe(map((result) => result && this.dropEnabled));
       }
-
-      /* eslint-enable curly */
-      /* eslint-disable brace-style */
-
-      return observableOf(allowed && this.dropEnabled);
     }
 
-    subscribeService() {
-      if (this._isServiceActive === true) {
-        return;
-      }
+    /* eslint-enable curly */
+    /* eslint-disable brace-style */
 
-      this._isServiceActive = true;
-      this.dragStartSubscription = this.ng2DragDropService.onDragStart.subscribe(() => {
+    return observableOf(allowed && this.dropEnabled);
+  }
+
+  subscribeService() {
+    if (this._isServiceActive === true) {
+      return;
+    }
+
+    this._isServiceActive = true;
+    this.dragStartSubscription = this.ng2DragDropService.onDragStart.subscribe(
+      () => {
         this._isDragActive = true;
-        this.allowDrop().subscribe(result => {
+        this.allowDrop().subscribe((result) => {
           if (result && this._isDragActive) {
             DomHelper.addClass(this.el, this.dragHintClass);
 
             this.zone.runOutsideAngular(() => {
-              this.unbindDragEnterListener = this.renderer.listen(this.el.nativeElement, 'dragenter', (dragEvent) => {
-                this.dragEnter(dragEvent);
-              });
-              this.unbindDragOverListener = this.renderer.listen(this.el.nativeElement, 'dragover', (dragEvent) => {
-                this.dragOver(dragEvent, result);
-              });
-              this.unbindDragLeaveListener = this.renderer.listen(this.el.nativeElement, 'dragleave', (dragEvent) => {
-                this.dragLeave(dragEvent);
-              });
+              this.unbindDragEnterListener = this.renderer.listen(
+                this.el.nativeElement,
+                'dragenter',
+                (dragEvent) => {
+                  this.dragEnter(dragEvent);
+                },
+              );
+              this.unbindDragOverListener = this.renderer.listen(
+                this.el.nativeElement,
+                'dragover',
+                (dragEvent) => {
+                  this.dragOver(dragEvent, result);
+                },
+              );
+              this.unbindDragLeaveListener = this.renderer.listen(
+                this.el.nativeElement,
+                'dragleave',
+                (dragEvent) => {
+                  this.dragLeave(dragEvent);
+                },
+              );
             });
           }
         });
-      });
+      },
+    );
 
-      this.dragEndSubscription = this.ng2DragDropService.onDragEnd.subscribe(() => {
+    this.dragEndSubscription = this.ng2DragDropService.onDragEnd.subscribe(
+      () => {
         this._isDragActive = false;
         DomHelper.removeClass(this.el, this.dragHintClass);
         this.unbindDragListeners();
-      });
-    }
+      },
+    );
+  }
 
-    unsubscribeService() {
-      this._isServiceActive = false;
-      if (this.dragStartSubscription) {
-        this.dragStartSubscription.unsubscribe();
-      }
-      if (this.dragEndSubscription) {
-        this.dragEndSubscription.unsubscribe();
-      }
+  unsubscribeService() {
+    this._isServiceActive = false;
+    if (this.dragStartSubscription) {
+      this.dragStartSubscription.unsubscribe();
     }
+    if (this.dragEndSubscription) {
+      this.dragEndSubscription.unsubscribe();
+    }
+  }
 
-    unbindDragListeners() {
-      if (this.unbindDragEnterListener) {
-        this.unbindDragEnterListener();
-      }
-      if (this.unbindDragOverListener) {
-        this.unbindDragOverListener();
-      }
-      if (this.unbindDragLeaveListener) {
-        this.unbindDragLeaveListener();
-      }
+  unbindDragListeners() {
+    if (this.unbindDragEnterListener) {
+      this.unbindDragEnterListener();
     }
+    if (this.unbindDragOverListener) {
+      this.unbindDragOverListener();
+    }
+    if (this.unbindDragLeaveListener) {
+      this.unbindDragLeaveListener();
+    }
+  }
 }
