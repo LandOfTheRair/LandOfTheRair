@@ -150,14 +150,16 @@ export class MacrosService {
   }
 
   private shouldIgnoreMacro() {
-    if (document.getElementsByTagName('mat-dialog-container').length > 0)
+    if (document.getElementsByTagName('mat-dialog-container').length > 0) {
       return true;
+    }
 
     if (
       document.activeElement.tagName === 'INPUT' ||
       document.activeElement.tagName === 'TEXTAREA'
-    )
+    ) {
       return true;
+    }
 
     if (this.macroIgnoreWindows[this.activeWindow]) return true;
 
@@ -242,8 +244,9 @@ export class MacrosService {
               !target.agro[player.uuid] &&
               !player.agro[target.uuid]) ||
             (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())
-          )
+          ) {
             return;
+          }
 
           this.gameService.sendCommandString(macro.macro, target.uuid);
         });
@@ -258,8 +261,9 @@ export class MacrosService {
           !currentMacros ||
           !currentMacros.macroBars ||
           !currentMacros.activeMacro
-        )
+        ) {
           return;
+        }
 
         const newSpells = Object.keys(player.learnedSpells || {})
           .map((spell) => {
