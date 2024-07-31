@@ -1,78 +1,94 @@
-
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { GameOption, ISettings } from '../interfaces';
-import { AddAccount, HideWindow, LogCurrentCommandInHistory, Login, Logout,
-  RemoveAccount, ResetWindowPositions, SetActiveWindow, SetAssetHash, SetCharacterView, SetCharSlot, SetChatMode,
-  SetCurrentCommand, SetDefaultWindowPosition, SetLastCharSlotPlayed, SetLogMode, SetOption,
-  ShowWindow, ToggleWindow, UpdateWindowPosition } from './actions';
+import {
+  AddAccount,
+  HideWindow,
+  LogCurrentCommandInHistory,
+  Login,
+  Logout,
+  RemoveAccount,
+  ResetWindowPositions,
+  SetActiveWindow,
+  SetAssetHash,
+  SetCharacterView,
+  SetCharSlot,
+  SetChatMode,
+  SetCurrentCommand,
+  SetDefaultWindowPosition,
+  SetLastCharSlotPlayed,
+  SetLogMode,
+  SetOption,
+  ShowWindow,
+  ToggleWindow,
+  UpdateWindowPosition,
+} from './actions';
 
 const defaultWindowPositions = {};
 
 const defaultSettings: () => ISettings = () => ({
-    accounts: [],
-    windows: {},
-    activeWindow: '',
-    charSlot: 0,
-    lastCharSlot: -1,
-    wasKicked: false,
-    assetHash: '',
-    chatMode: 'cmd',
-    logMode: 'All',
-    currentCommand: '',
-    commandHistory: [],
-    characterView: 'Equipment',
-    options: {
-      [GameOption.RightClickCMDSend]: false,
-      [GameOption.AutoAttack]: true,
-      [GameOption.AutoJoin]: false,
-      [GameOption.DontAttackGreys]: true,
-      [GameOption.HideLobbyWhilePlaying]: true,
-      [GameOption.NoNPCModals]: false,
-      [GameOption.LockWindows]: false,
-      [GameOption.SuppressZeroDamage]: false,
-      [GameOption.SuppressOutgoingDoT]: false,
-      [GameOption.NoItemAnimations]: false,
-      [GameOption.EnterToggleCMD]: true,
-      [GameOption.PinLastTarget]: false,
-      [GameOption.DyingBorderWidth]: 20,
-      [GameOption.DyingBorderPercent]: 25,
-      [GameOption.ShouldSortDistance]: null,
-      [GameOption.ShouldSortFriendly]: null,
-      [GameOption.ShrinkCharacterBoxes]: false,
-      [GameOption.LockerTabs]: false,
-      [GameOption.DebugUI]: false,
-      [GameOption.SendBannerMessagesToChat]: false,
-      [GameOption.BiggerGroundWindow]: false,
-      [GameOption.ShowHPValueInsteadOfPercent]: false,
+  accounts: [],
+  windows: {},
+  activeWindow: '',
+  charSlot: 0,
+  lastCharSlot: -1,
+  wasKicked: false,
+  assetHash: '',
+  chatMode: 'cmd',
+  logMode: 'All',
+  currentCommand: '',
+  commandHistory: [],
+  characterView: 'Equipment',
+  options: {
+    [GameOption.RightClickCMDSend]: false,
+    [GameOption.AutoAttack]: true,
+    [GameOption.AutoJoin]: false,
+    [GameOption.DontAttackGreys]: true,
+    [GameOption.HideLobbyWhilePlaying]: true,
+    [GameOption.NoNPCModals]: false,
+    [GameOption.LockWindows]: false,
+    [GameOption.SuppressZeroDamage]: false,
+    [GameOption.SuppressOutgoingDoT]: false,
+    [GameOption.NoItemAnimations]: false,
+    [GameOption.EnterToggleCMD]: true,
+    [GameOption.PinLastTarget]: false,
+    [GameOption.DyingBorderWidth]: 20,
+    [GameOption.DyingBorderPercent]: 25,
+    [GameOption.ShouldSortDistance]: null,
+    [GameOption.ShouldSortFriendly]: null,
+    [GameOption.ShrinkCharacterBoxes]: false,
+    [GameOption.LockerTabs]: false,
+    [GameOption.DebugUI]: false,
+    [GameOption.SendBannerMessagesToChat]: false,
+    [GameOption.BiggerGroundWindow]: false,
+    [GameOption.ShowHPValueInsteadOfPercent]: false,
 
-      [GameOption.SoundBGM]: true,
-      [GameOption.SoundSFX]: true,
-      [GameOption.SoundNostalgia]: false,
-      [GameOption.SoundMusicVolume]: 50,
-      [GameOption.SoundSFXVolume]: 50,
+    [GameOption.SoundBGM]: true,
+    [GameOption.SoundSFX]: true,
+    [GameOption.SoundNostalgia]: false,
+    [GameOption.SoundMusicVolume]: 50,
+    [GameOption.SoundSFXVolume]: 50,
 
-      [GameOption.SpritesheetCreatures]: '',
-      [GameOption.SpritesheetDecor]: '',
-      [GameOption.SpritesheetEffects]: '',
-      [GameOption.SpritesheetItems]: '',
-      [GameOption.SpritesheetSwimming]: '',
-      [GameOption.SpritesheetTerrain]: '',
-      [GameOption.SpritesheetWalls]: '',
+    [GameOption.SpritesheetCreatures]: '',
+    [GameOption.SpritesheetDecor]: '',
+    [GameOption.SpritesheetEffects]: '',
+    [GameOption.SpritesheetItems]: '',
+    [GameOption.SpritesheetSwimming]: '',
+    [GameOption.SpritesheetTerrain]: '',
+    [GameOption.SpritesheetWalls]: '',
 
-      [GameOption.OtherAutoExec]: '',
+    [GameOption.OtherAutoExec]: '',
 
-      [GameOption.CustomCSS]: ''
-    }
-  });
+    [GameOption.CustomCSS]: '',
+  },
+});
 
 @State<ISettings>({
   name: 'settings',
-  defaults: defaultSettings()
+  defaults: defaultSettings(),
 })
 @Injectable()
 export class SettingsState implements NgxsOnInit {
-
   @Selector()
   static currentCharView(state: ISettings) {
     return state.characterView ?? 'Equipment';
@@ -90,7 +106,7 @@ export class SettingsState implements NgxsOnInit {
 
   @Selector()
   static autologin(state: ISettings) {
-    return state.accounts.find(acc => acc.autologin);
+    return state.accounts.find((acc) => acc.autologin);
   }
 
   @Selector()
@@ -100,7 +116,14 @@ export class SettingsState implements NgxsOnInit {
 
   @Selector()
   static window(state: ISettings) {
-    return (window: string) => state.windows[window] || {};
+    return (window: string) =>
+      state.windows[window] || {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        hidden: true,
+      };
   }
 
   @Selector()
@@ -161,20 +184,24 @@ export class SettingsState implements NgxsOnInit {
       return;
     }
 
-    const oldAccounts = state.accounts
-      .map(x => Object.assign({}, x, { autologin: false }));
+    const oldAccounts = state.accounts.map((x) =>
+      Object.assign({}, x, { autologin: false }),
+    );
 
     const accounts = [...oldAccounts];
     ctx.patchState({ accounts, wasKicked: kick, assetHash: '' });
   }
 
   @Action(AddAccount)
-  addAccount(ctx: StateContext<ISettings>, { username, password, autologin }: AddAccount) {
+  addAccount(
+    ctx: StateContext<ISettings>,
+    { username, password, autologin }: AddAccount,
+  ) {
     const state = ctx.getState();
 
     const oldAccounts = state.accounts
-      .filter(x => x.username !== username)
-      .map(x => Object.assign({}, x, { autologin: false }));
+      .filter((x) => x.username !== username)
+      .map((x) => Object.assign({}, x, { autologin: false }));
 
     const accounts = [{ username, password, autologin }, ...oldAccounts];
     ctx.patchState({ accounts });
@@ -184,12 +211,15 @@ export class SettingsState implements NgxsOnInit {
   removeAccount(ctx: StateContext<ISettings>, { username }: RemoveAccount) {
     const state = ctx.getState();
 
-    const accounts = [...state.accounts.filter(x => x.username !== username)];
+    const accounts = [...state.accounts.filter((x) => x.username !== username)];
     ctx.patchState({ accounts });
   }
 
   @Action(UpdateWindowPosition)
-  updateWindowPos(ctx: StateContext<ISettings>, { windowName, windowProps, overwrite }: UpdateWindowPosition) {
+  updateWindowPos(
+    ctx: StateContext<ISettings>,
+    { windowName, windowProps, overwrite }: UpdateWindowPosition,
+  ) {
     const state = ctx.getState();
     const windows = { ...state.windows };
     if (!windows[windowName] || overwrite) {
@@ -199,7 +229,10 @@ export class SettingsState implements NgxsOnInit {
   }
 
   @Action(SetDefaultWindowPosition)
-  setDefaultWindowPos(ctx: StateContext<ISettings>, { windowName, windowProps }: SetDefaultWindowPosition) {
+  setDefaultWindowPos(
+    ctx: StateContext<ISettings>,
+    { windowName, windowProps }: SetDefaultWindowPosition,
+  ) {
     defaultWindowPositions[windowName] = windowProps;
   }
 
@@ -208,8 +241,12 @@ export class SettingsState implements NgxsOnInit {
     const state = ctx.getState();
     const windows = { ...state.windows };
 
-    Object.keys(defaultWindowPositions).forEach(winName => {
-      windows[winName] = Object.assign({}, windows[winName], defaultWindowPositions[winName]);
+    Object.keys(defaultWindowPositions).forEach((winName) => {
+      windows[winName] = Object.assign(
+        {},
+        windows[winName],
+        defaultWindowPositions[winName],
+      );
     });
 
     ctx.patchState({ windows });
@@ -220,7 +257,9 @@ export class SettingsState implements NgxsOnInit {
     const state = ctx.getState();
     const windows = { ...state.windows };
     if (windows[windowName]) {
-      windows[windowName] = Object.assign({}, windows[windowName], { hidden: false });
+      windows[windowName] = Object.assign({}, windows[windowName], {
+        hidden: false,
+      });
     }
 
     ctx.patchState({ windows, activeWindow: windowName });
@@ -231,7 +270,9 @@ export class SettingsState implements NgxsOnInit {
     const state = ctx.getState();
     const windows = { ...state.windows };
     if (windows[windowName]) {
-      windows[windowName] = Object.assign({}, windows[windowName], { hidden: true });
+      windows[windowName] = Object.assign({}, windows[windowName], {
+        hidden: true,
+      });
     }
 
     ctx.patchState({ windows });
@@ -242,14 +283,19 @@ export class SettingsState implements NgxsOnInit {
     const state = ctx.getState();
     const windows = { ...state.windows };
     if (windows[windowName]) {
-      windows[windowName] = Object.assign({}, windows[windowName], { hidden: !windows[windowName].hidden });
+      windows[windowName] = Object.assign({}, windows[windowName], {
+        hidden: !windows[windowName].hidden,
+      });
     }
 
     ctx.patchState({ windows });
   }
 
   @Action(SetActiveWindow)
-  setActiveWindow(ctx: StateContext<ISettings>, { windowName }: SetActiveWindow) {
+  setActiveWindow(
+    ctx: StateContext<ISettings>,
+    { windowName }: SetActiveWindow,
+  ) {
     ctx.patchState({ activeWindow: windowName });
   }
 
@@ -274,7 +320,10 @@ export class SettingsState implements NgxsOnInit {
   }
 
   @Action(LogCurrentCommandInHistory)
-  logCommand(ctx: StateContext<ISettings>, { currentCommand }: LogCurrentCommandInHistory) {
+  logCommand(
+    ctx: StateContext<ISettings>,
+    { currentCommand }: LogCurrentCommandInHistory,
+  ) {
     const state = ctx.getState();
     const history = [...(state.commandHistory || [])];
 
@@ -283,11 +332,13 @@ export class SettingsState implements NgxsOnInit {
       if (history.length > 20) history.length = 20;
       ctx.patchState({ commandHistory: history });
     }
-
   }
 
   @Action(SetCurrentCommand)
-  setCurrentCommand(ctx: StateContext<ISettings>, { command }: SetCurrentCommand) {
+  setCurrentCommand(
+    ctx: StateContext<ISettings>,
+    { command }: SetCurrentCommand,
+  ) {
     ctx.patchState({ currentCommand: command });
   }
 
@@ -301,8 +352,10 @@ export class SettingsState implements NgxsOnInit {
   }
 
   @Action(SetLastCharSlotPlayed)
-  setLastCharSlot(ctx: StateContext<ISettings>, { charSlot }: SetLastCharSlotPlayed) {
+  setLastCharSlot(
+    ctx: StateContext<ISettings>,
+    { charSlot }: SetLastCharSlotPlayed,
+  ) {
     ctx.patchState({ lastCharSlot: charSlot });
   }
-
 }

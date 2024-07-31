@@ -1,4 +1,3 @@
-
 export interface IAccountSettings {
   username: string;
   password: string;
@@ -8,7 +7,6 @@ export interface IAccountSettings {
 export type ChatMode = 'cmd' | 'say' | 'global' | 'party';
 
 export enum GameOption {
-
   // interface options
   RightClickCMDSend = 'rightClickCMDSend',
   AutoAttack = 'autoAttack',
@@ -53,21 +51,29 @@ export enum GameOption {
   OtherAutoExec = 'otherAutoExec',
 
   // custom options
-  CustomCSS = 'customCSS'
+  CustomCSS = 'customCSS',
+}
+
+export interface IWindowProps {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  hidden?: boolean;
 }
 
 export interface ISettings {
   accounts: IAccountSettings[];
-  windows: Record<string, { x: number; y: number; width: number; height: number; hidden?: boolean }>;
+  windows: Record<string, IWindowProps>;
   activeWindow: string;
   charSlot: number;
   lastCharSlot: number;
   wasKicked: boolean;
   assetHash: string;
   chatMode: ChatMode;
-  logMode: 'All'|'General'|'Combat'|'NPC';
+  logMode: 'All' | 'General' | 'Combat' | 'NPC';
   currentCommand: string;
   commandHistory: string[];
-  characterView: 'Equipment'|'Stats'|'Skills'|'Reputation';
-  options: Record<GameOption, number|boolean|string>;
+  characterView: 'Equipment' | 'Stats' | 'Skills' | 'Reputation';
+  options: Record<GameOption, number | boolean | string>;
 }

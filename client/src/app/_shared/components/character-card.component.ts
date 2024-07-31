@@ -1,6 +1,13 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { select } from '@ngxs/store';
 import { GameServerResponse, ICharacter, ItemSlot } from '../../../interfaces';
 import { GameState } from '../../../stores';
 import { GameService } from '../../services/game.service';
@@ -10,82 +17,82 @@ import { SocketService } from '../../services/socket.service';
 @Component({
   selector: 'app-character-card',
   template: `
-    <div class="char-card" [attr.uuid]="char.uuid" [class.disabled]="disabled">
-      @if (currentTarget$ | async; as currentTarget) {
-        @if (currentTarget.uuid === char.uuid) {
-          <div class="char-target">
-            <div class="outer circle"></div>
-            <div class="middle circle"></div>
-            <div class="inner circle"></div>
-            <div class="innermost circle"></div>
-          </div>
-        }
+    <div
+      class="char-card"
+      [attr.uuid]="char().uuid"
+      [class.disabled]="disabled()"
+    >
+      @if (currentTarget()?.uuid === char().uuid) {
+      <div class="char-target">
+        <div class="outer circle"></div>
+        <div class="middle circle"></div>
+        <div class="inner circle"></div>
+        <div class="innermost circle"></div>
+      </div>
       }
-    
+
       <div class="char-left-container">
         <div
           class="char-health d-flex justify-content-center"
           [ngClass]="[barClass()]"
-          >
-          <app-life-heart [target]="char"></app-life-heart>
+        >
+          <app-life-heart [target]="char()"></app-life-heart>
         </div>
-    
+
         @if (!optionService.shrinkCharacterBoxes) {
-          <div
-            class="char-direction vertical-center"
-            >
-            {{ directionTo() }}
-          </div>
+        <div class="char-direction vertical-center">
+          {{ directionTo() }}
+        </div>
         }
       </div>
-    
+
       <div class="char-middle">
         <div
           class="effect-container"
           [class.animate]="effect"
           [ngClass]="[effect]"
         ></div>
-    
+
         <div class="char-title" [ngClass]="[barClass()]">
           <div class="char-name">
-            {{ char.name }}
+            {{ char().name }}
           </div>
         </div>
-    
+
         @if (!optionService.shrinkCharacterBoxes) {
-          <div class="char-gear">
-            <div class="gear-item right">
-              <app-item
-                size="xsmall"
-                [showDesc]="false"
-                [showEncrust]="false"
-                [showCount]="false"
-                [item]="rightHand"
-              ></app-item>
-            </div>
-            <div class="gear-item armor">
-              <app-item
-                size="xsmall"
-                [showDesc]="false"
-                [showEncrust]="false"
-                [showCount]="false"
-                [item]="armorItem"
-              ></app-item>
-            </div>
-            <div class="gear-item left">
-              <app-item
-                size="xsmall"
-                [showDesc]="false"
-                [showEncrust]="false"
-                [showCount]="false"
-                [item]="leftHand"
-              ></app-item>
-            </div>
+        <div class="char-gear">
+          <div class="gear-item right">
+            <app-item
+              size="xsmall"
+              [showDesc]="false"
+              [showEncrust]="false"
+              [showCount]="false"
+              [item]="rightHand()"
+            ></app-item>
           </div>
+          <div class="gear-item armor">
+            <app-item
+              size="xsmall"
+              [showDesc]="false"
+              [showEncrust]="false"
+              [showCount]="false"
+              [item]="armorItem()"
+            ></app-item>
+          </div>
+          <div class="gear-item left">
+            <app-item
+              size="xsmall"
+              [showDesc]="false"
+              [showEncrust]="false"
+              [showCount]="false"
+              [item]="leftHand()"
+            ></app-item>
+          </div>
+        </div>
         }
       </div>
     </div>
-    `,
+  `,
   styles: [
     `
       .char-card {
@@ -353,51 +360,52 @@ import { SocketService } from '../../services/socket.service';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CharacterCardComponent implements OnInit, OnDestroy {
-  @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
+  private socketService = inject(SocketService);
+  private gameService = inject(GameService);
+  public optionService = inject(OptionsService);
 
-  @Input() public disabled: boolean;
-  @Input() public origin: ICharacter;
-  @Input() public char: ICharacter;
+  public currentTarget = select(GameState.currentTarget);
+
+  public disabled = input<boolean>();
+  public origin = input<ICharacter>();
+  public char = input<ICharacter>();
 
   public effect = '';
   private cfxId: string;
 
-  public get armorItem() {
-    return (
-      this.char.items?.equipment?.[ItemSlot.Robe2] ||
-      this.char.items?.equipment?.[ItemSlot.Robe1] ||
-      this.char.items?.equipment?.[ItemSlot.Armor]
-    );
-  }
+  public armorItem = computed(
+    () =>
+      this.char().items?.equipment?.[ItemSlot.Robe2] ||
+      this.char().items?.equipment?.[ItemSlot.Robe1] ||
+      this.char().items?.equipment?.[ItemSlot.Armor],
+  );
 
-  public get rightHand() {
-    return this.char.items?.equipment?.[ItemSlot.RightHand];
-  }
+  public rightHand = computed(
+    () => this.char().items?.equipment?.[ItemSlot.RightHand],
+  );
+  public leftHand = computed(
+    () => this.char().items?.equipment?.[ItemSlot.LeftHand],
+  );
 
-  public get leftHand() {
-    return this.char.items?.equipment?.[ItemSlot.LeftHand];
-  }
+  public directionTo = computed(() =>
+    this.gameService.directionTo(this.origin(), this.char(), false),
+  );
 
-  public get isCurrentTarget(): boolean {
-    return false;
-  }
-
-  constructor(
-    private socketService: SocketService,
-    private gameService: GameService,
-    public optionService: OptionsService,
-  ) {}
+  public barClass = computed(() =>
+    this.gameService.hostilityLevelFor(this.origin(), this.char()),
+  );
 
   ngOnInit() {
-    this.cfxId = this.constructor.name + '-' + this.char.uuid;
+    this.cfxId = this.constructor.name + '-' + this.char().uuid;
 
     this.socketService.registerComponentCallback(
       this.cfxId,
       GameServerResponse.PlayCFX,
       ({ defenderUUID, effect }) => {
-        if (defenderUUID !== this.char.uuid) return;
+        if (defenderUUID !== this.char().uuid) return;
 
         this.effect = effect;
         setTimeout(() => {
@@ -409,13 +417,5 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.socketService.unregisterComponentCallbacks(this.cfxId);
-  }
-
-  public directionTo() {
-    return this.gameService.directionTo(this.origin, this.char, false);
-  }
-
-  public barClass() {
-    return this.gameService.hostilityLevelFor(this.origin, this.char);
   }
 }

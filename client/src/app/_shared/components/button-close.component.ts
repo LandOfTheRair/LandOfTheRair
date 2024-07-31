@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-button-close',
@@ -14,7 +14,6 @@ import { Component } from '@angular/core';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonCloseComponent {
-  constructor() {}
-}
+export class ButtonCloseComponent {}

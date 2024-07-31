@@ -1,145 +1,178 @@
-import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HideWindow, SetActiveWindow, SetDefaultWindowPosition, SettingsState, UpdateWindowPosition } from '../../../stores';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+  TemplateRef,
+} from '@angular/core';
+import { select, Store } from '@ngxs/store';
+import {
+  HideWindow,
+  SetActiveWindow,
+  SetDefaultWindowPosition,
+  SettingsState,
+  UpdateWindowPosition,
+} from '../../../stores';
 
 @Component({
   selector: 'app-window',
   template: `
-  @if ((window$ | async); as windowProps) {
+    @let windowProps = currentWindowProps();
     <div>
-      <div class="window"
-        [class.active]="alwaysOnTop || (activeWindow$ | async) === windowName"
-        [class.hidden]="willNotHide ? false : windowProps.hidden"
-        [class.minimized]="minimized"
-        [class.always-on-top]="alwaysOnTop"
+      <div
+        class="window"
+        [class.active]="alwaysOnTop() || activeWindow() === windowName()"
+        [class.hidden]="willNotHide() ? false : windowProps.hidden"
+        [class.minimized]="minimized()"
+        [class.always-on-top]="alwaysOnTop()"
         [style.top]="windowProps.y + 'px'"
         [style.left]="windowProps.x + 'px'"
-        [style.width]="width"
-        [style.height]="height"
-        [appDraggableWindow]="canDrag"
+        [style.width]="width()"
+        [style.height]="height()"
+        [appDraggableWindow]="canDrag()"
         [windowHandle]="windowDrag"
-        [windowName]="windowName"
+        [windowName]="windowName()"
         (mousedown)="makeActive()"
-        >
+      >
         <mat-toolbar class="window-header">
           <span #windowDrag class="window-drag">
-            <ng-template [ngTemplateOutlet]="head"></ng-template>
+            <ng-template [ngTemplateOutlet]="head()"></ng-template>
           </span>
-          @if (canMinimize) {
-            <app-button-minimize (click)="minimizeWindow()"></app-button-minimize>
+          @if (canMinimize()) {
+          <app-button-minimize (click)="minimizeWindow()"></app-button-minimize>
           }
-          @if (canHide) {
-            <app-button-close (click)="hideWindow()"></app-button-close>
+
+          <!-- -->
+          @if (canHide()) {
+          <app-button-close (click)="hideWindow()"></app-button-close>
           }
         </mat-toolbar>
         @if (!windowProps.hidden) {
-          <div class="window-body" [class.hidden]="minimized" [class.can-scroll]="canScroll">
-            <ng-template [ngTemplateOutlet]="body"></ng-template>
-          </div>
+        <div
+          class="window-body"
+          [class.hidden]="minimized()"
+          [class.can-scroll]="canScroll()"
+        >
+          <ng-template [ngTemplateOutlet]="body()"></ng-template>
+        </div>
         }
       </div>
     </div>
-  }
   `,
-  styles: [`
-  .window {
-    position: absolute;
-    z-index: 1000;
-  }
+  styles: [
+    `
+      .window {
+        position: absolute;
+        z-index: 1000;
+      }
 
-  .window-drag {
-    z-index: 1002;
-  }
+      .window-drag {
+        z-index: 1002;
+      }
 
-  .window.active {
-    z-index: 1001;
-  }
+      .window.active {
+        z-index: 1001;
+      }
 
-  .window.always-on-top {
-    z-index: 1002 !important;
-  }
+      .window.always-on-top {
+        z-index: 1002 !important;
+      }
 
-  .window.minimized {
-    max-height: 32px;
-  }
+      .window.minimized {
+        max-height: 32px;
+      }
 
-  .window-header {
-    display: flex;
-  }
+      .window-header {
+        display: flex;
+      }
 
-  .window-header span {
-    flex: 1;
-  }
+      .window-header span {
+        flex: 1;
+      }
 
-  .window-body.can-scroll {
-    overflow-y: auto;
-  }
-  `]
+      .window-body.can-scroll {
+        overflow-y: auto;
+      }
+    `,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WindowComponent implements OnInit {
+  private store = inject(Store);
 
-  @Output() public hide = new EventEmitter();
-  @Output() public minimize = new EventEmitter();
+  public activeWindow = select(SettingsState.activeWindow);
+  public getWindowProps = select(SettingsState.window);
 
-  @Input() public windowName = '';
-  @Input() public canHide = false;
-  @Input() public canMinimize = false;
-  @Input() public willNotHide = false;
-  @Input() public initialHide = false;
-  @Input() public canScroll = false;
-  @Input() public alwaysOnTop = false;
+  public currentWindowProps = computed(() =>
+    this.getWindowProps()(this.windowName()),
+  );
 
-  @Input() public head: TemplateRef<any>;
-  @Input() public body: TemplateRef<any>;
+  public hide = output();
+  public minimize = output<boolean>();
 
-  @Input() public defaultX: number;
-  @Input() public defaultY: number;
-  @Input() public defaultWidth: number|string;
-  @Input() public defaultHeight: number|string;
+  public windowName = input.required<string>();
+  public canHide = input<boolean>(false);
+  public canMinimize = input<boolean>(false);
+  public canScroll = input<boolean>(false);
+  public willNotHide = input<boolean>(false);
+  public initialHide = input<boolean>(false);
+  public alwaysOnTop = input<boolean>(false);
 
-  @Input() public canDrag = true;
+  public head = input<TemplateRef<any>>();
+  public body = input<TemplateRef<any>>();
 
-  @Select(SettingsState.activeWindow) public activeWindow$: Observable<string>;
+  public defaultX = input<number>();
+  public defaultY = input<number>();
+  public defaultWidth = input<number | string>();
+  public defaultHeight = input<number | string>();
 
-  public window$: Observable<any>;
-  public minimized: boolean;
+  public canDrag = input<boolean>(true);
 
-  public get width() {
-    if (!this.defaultWidth) return 'auto';
-    return this.defaultWidth + 'px';
-  }
+  public minimized = signal<boolean>(false);
 
-  public get height() {
-    if (!this.defaultHeight) return 'auto';
-    return this.defaultHeight + 'px';
-  }
+  public width = computed(() => {
+    if (!this.defaultWidth()) return 'auto';
+    return this.defaultWidth() + 'px';
+  });
 
-  constructor(private store: Store) { }
+  public height = computed(() => {
+    if (!this.defaultHeight()) return 'auto';
+    return this.defaultHeight() + 'px';
+  });
 
   ngOnInit() {
-    const opts: any = { x: this.defaultX, y: this.defaultY, hidden: this.initialHide };
-    if (this.defaultWidth) opts.width = this.defaultWidth;
-    if (this.defaultHeight) opts.height = this.defaultHeight;
+    const opts: any = {
+      x: this.defaultX(),
+      y: this.defaultY(),
+      hidden: this.initialHide(),
+    };
+    if (this.defaultWidth()) opts.width = this.defaultWidth();
+    if (this.defaultHeight()) opts.height = this.defaultHeight();
 
-    this.store.dispatch(new SetDefaultWindowPosition(this.windowName, { x: this.defaultX, y: this.defaultY }));
-    this.store.dispatch(new UpdateWindowPosition(this.windowName, opts));
-    this.window$ = this.store.select(SettingsState.window).pipe(map(x => x(this.windowName)));
+    this.store.dispatch(
+      new SetDefaultWindowPosition(this.windowName(), {
+        x: this.defaultX(),
+        y: this.defaultY(),
+      }),
+    );
+    this.store.dispatch(new UpdateWindowPosition(this.windowName(), opts));
   }
 
   minimizeWindow() {
-    this.minimized = !this.minimized;
-    this.minimize.next(this.minimized);
+    this.minimized.set(!this.minimized());
+    this.minimize.emit(this.minimized());
   }
 
   hideWindow() {
-    this.hide.next(null);
-    this.store.dispatch(new HideWindow(this.windowName));
+    this.hide.emit();
+    this.store.dispatch(new HideWindow(this.windowName()));
   }
 
   async makeActive() {
-    this.store.dispatch(new SetActiveWindow(this.windowName));
+    this.store.dispatch(new SetActiveWindow(this.windowName()));
   }
-
 }
