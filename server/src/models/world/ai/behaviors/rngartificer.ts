@@ -1,15 +1,22 @@
-
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { IAIBehavior, INPC, IPlayer, distanceFrom, ISpoilerLogger,
-  ItemSlot, ItemClass, WeaponClasses, WeaponClass } from '../../../../interfaces';
+import {
+  distanceFrom,
+  IAIBehavior,
+  INPC,
+  IPlayer,
+  ISpoilerLogger,
+  ItemClass,
+  ItemSlot,
+  WeaponClass,
+  WeaponClasses,
+} from '../../../../interfaces';
 
 export class RNGArtificerBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: ISpoilerLogger) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -24,21 +31,41 @@ export class RNGArtificerBehavior implements IAIBehavior {
                   I find that this process lets the weapon itself last much longer!`;
         }
 
-        const {
-          name, itemClass, tier, requirements
-        } = game.itemHelper.getItemProperties(rightHand, ['name', 'itemClass', 'tier', 'requirements']);
+        const { name, itemClass, tier, requirements } =
+          game.itemHelper.getItemProperties(rightHand, [
+            'name',
+            'itemClass',
+            'tier',
+            'requirements',
+          ]);
 
         const requirementsLevel = requirements?.level ?? 0;
-        const isWeapon = WeaponClasses.includes(itemClass as WeaponClass)
-           || itemClass === ItemClass.Claws
-           || itemClass === ItemClass.Gloves;
+        const isWeapon =
+          WeaponClasses.includes(itemClass as WeaponClass) ||
+          itemClass === ItemClass.Claws ||
+          itemClass === ItemClass.Gloves;
 
-        if (itemClass === ItemClass.Arrow) return 'Unfortunately, the quantity of item here is too much to upgrade!';
-        if (!isWeapon) return 'That item is not a weapon! I thought I was very clear!';
+        if (itemClass === ItemClass.Arrow) {
+          return 'Unfortunately, the quantity of item here is too much to upgrade!';
+        }
+
+        if (!isWeapon) {
+          return 'That item is not a weapon! I thought I was very clear!';
+        }
+
         if ((tier ?? 0) < 4) return 'That item is too weak for me to upgrade!';
-        if (requirementsLevel < 20) return 'That item is too weak for me to upgrade!';
-        if (requirementsLevel >= 45) return 'That item is too powerful for me to upgrade!';
-        if (!game.itemHelper.isEtherForceItem(name ?? '')) return 'That item does not originate from the twisted ether!';
+
+        if (requirementsLevel < 20) {
+          return 'That item is too weak for me to upgrade!';
+        }
+
+        if (requirementsLevel >= 45) {
+          return 'That item is too powerful for me to upgrade!';
+        }
+
+        if (!game.itemHelper.isEtherForceItem(name ?? '')) {
+          return 'That item does not originate from the twisted ether!';
+        }
 
         let neededItem = '';
         let neededQty = 0;
@@ -74,9 +101,17 @@ export class RNGArtificerBehavior implements IAIBehavior {
           requiredLevel = 45;
         }
 
-        if (player.level < requiredLevel) return `You need to be level ${requiredLevel} to upgrade this ${itemClass?.toLowerCase()}!`;
+        if (player.level < requiredLevel) {
+          return `You need to be level ${requiredLevel} to upgrade this ${itemClass?.toLowerCase()}!`;
+        }
 
-        const matchingItems = player.items.sack.items.filter(x => x.name === neededItem && game.itemHelper.isOwnedBy(player, x));
+        const matchingItems = player.items.sack.items
+          .filter(
+            (x) =>
+              x.name === neededItem && game.itemHelper.isOwnedBy(player, x),
+          )
+          .slice(0, neededQty);
+
         if (matchingItems.length < neededQty) {
           return `To upgrade this item to the next stage, you need ${neededQty} ${neededItem.toLowerCase()}(s) in your sack!`;
         }
@@ -99,7 +134,7 @@ export class RNGArtificerBehavior implements IAIBehavior {
         if (requirementsLevel === 35) {
           rightHand.mods.requirements = { level: 40 };
 
-          Object.keys(rightHand.mods.stats ?? {}).forEach(stat => {
+          Object.keys(rightHand.mods.stats ?? {}).forEach((stat) => {
             rightHand.mods.stats![stat] = rightHand.mods.stats![stat]! * 2;
           });
         }
@@ -109,11 +144,13 @@ export class RNGArtificerBehavior implements IAIBehavior {
           rightHand.mods.requirements = { level: 45 };
         }
 
-        game.inventoryHelper.removeItemsFromSackByUUID(player, matchingItems.map(x => x.uuid));
+        game.inventoryHelper.removeItemsFromSackByUUID(
+          player,
+          matchingItems.map((x) => x.uuid),
+        );
 
         return `Your ${itemClass?.toLowerCase()} has been upgraded to the next stage!`;
       });
-
   }
 
   tick() {}
