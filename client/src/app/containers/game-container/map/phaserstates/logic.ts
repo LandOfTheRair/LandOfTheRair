@@ -1114,8 +1114,9 @@ export class MapScene extends Phaser.Scene {
 
     if (!this.visibleItemSprites[x]) this.visibleItemSprites[x] = {};
     if (!this.visibleItemSprites[x][y]) this.visibleItemSprites[x][y] = {};
-    if (!this.visibleItemSprites[x][y][realItem.itemClass])
+    if (!this.visibleItemSprites[x][y][realItem.itemClass]) {
       this.visibleItemSprites[x][y][realItem.itemClass] = null;
+    }
 
     const currentItemSprite = this.visibleItemSprites[x][y][realItem.itemClass];
 
