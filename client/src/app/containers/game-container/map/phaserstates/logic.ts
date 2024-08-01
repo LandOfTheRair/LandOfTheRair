@@ -2,26 +2,49 @@
 /* eslint-disable no-underscore-dangle */
 
 import { cloneDeep, difference, get, setWith } from 'lodash';
-import { Subscription } from 'rxjs';
 import * as Phaser from 'phaser';
+import { Subscription } from 'rxjs';
 import {
-  basePlayerSprite, FOVVisibility, ICharacter, IMapData, INPC,
-  IPlayer, ISimpleItem, ItemClass, MapLayer, ObjectType, Stat, TilesWithNoFOVUpdate,
-  spriteTerrainSetNumber, Direction, positionWorldXYToTile, positionSubtract, positionText,
-  positionIsZero, positionDistanceFromZero, spriteDirectionForWall, spriteForCreatureDirection,
-  spriteTerrainForDirection, positionSurrounding, directionHasAny, directionHasAll,
-  positionInRange, positionWorldToTile, positionAdd, positionTileToWorld } from '../../../../../interfaces';
+  basePlayerSprite,
+  Direction,
+  directionHasAll,
+  directionHasAny,
+  FOVVisibility,
+  ICharacter,
+  IMapData,
+  INPC,
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  MapLayer,
+  ObjectType,
+  positionAdd,
+  positionDistanceFromZero,
+  positionInRange,
+  positionIsZero,
+  positionSubtract,
+  positionSurrounding,
+  positionText,
+  positionTileToWorld,
+  positionWorldToTile,
+  positionWorldXYToTile,
+  spriteDirectionForWall,
+  spriteForCreatureDirection,
+  spriteTerrainForDirection,
+  spriteTerrainSetNumber,
+  Stat,
+  TilesWithNoFOVUpdate,
+} from '../../../../../interfaces';
 import { MapRenderGame } from '../phasergame';
 
 import decorAnimations from '../../../../../assets/content/_output/decoranims.json';
-import terrainAnimations from '../../../../../assets/content/_output/terrainanims.json';
 import spriteData from '../../../../../assets/content/_output/sprite-data.json';
-import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
+import terrainAnimations from '../../../../../assets/content/_output/terrainanims.json';
 import OutlinePipeline from '../../../../pipelines/OutlinePipeline';
+import { TrueSightMap, TrueSightMapReversed } from '../tileconversionmaps';
 import Sprite = Phaser.GameObjects.Sprite;
 
 export class MapScene extends Phaser.Scene {
-
   // the current map in JSON form
   private allMapData: IMapData;
   public game: MapRenderGame;
@@ -45,7 +68,7 @@ export class MapScene extends Phaser.Scene {
 
   private specialRenders = {
     truesight: false,
-    eagleeye: false
+    eagleeye: false,
   };
 
   private firstCreate = true;
@@ -105,7 +128,11 @@ export class MapScene extends Phaser.Scene {
 
     for (let x = -4; x <= 4; x++) {
       for (let y = -4; y <= 4; y++) {
-        const dark = this.add.sprite(64 * (x + 4) + 32, 64 * (y + 4) + 32, blackBitmapData as any);
+        const dark = this.add.sprite(
+          64 * (x + 4) + 32,
+          64 * (y + 4) + 32,
+          blackBitmapData as any,
+        );
         dark.setAlpha(0);
         dark.setScrollFactor(0);
         dark.setDepth(9999);
@@ -203,8 +230,10 @@ export class MapScene extends Phaser.Scene {
     const spriteGenderBase = basePlayerSprite(player);
 
     const sprite = this.add.sprite(
-      this.convertPosition(player.x), this.convertPosition(player.y),
-      'Creatures', spriteForCreatureDirection(spriteGenderBase, player.dir)
+      this.convertPosition(player.x),
+      this.convertPosition(player.y),
+      'Creatures',
+      spriteForCreatureDirection(spriteGenderBase, player.dir),
     );
     sprite.setPipeline('OutlinePipeline');
 
@@ -242,52 +271,72 @@ export class MapScene extends Phaser.Scene {
     const totalY = y + this.player.y;
 
     // doors can only be fov blockers if they're horizontal doors, ie, top/bottom opening
-    const potentialDoor = get(this.allMapData.layerData[MapLayer.Interactables], [totalX, totalY]);
+    const potentialDoor = get(
+      this.allMapData.layerData[MapLayer.Interactables],
+      [totalX, totalY],
+    );
     if (potentialDoor?.type === ObjectType.Door) {
       if (!this.openDoors[potentialDoor.id]) {
         return !this.doorTiledIdIsHorizontal[potentialDoor.id];
       }
     }
 
-    const potentialSecretWall = get(this.allMapData.layerData[MapLayer.OpaqueDecor], [totalX, totalY]);
-    const wallList = layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
-    const wallLayerTile = wallList[(width * totalY) + totalX];
+    const potentialSecretWall = get(
+      this.allMapData.layerData[MapLayer.OpaqueDecor],
+      [totalX, totalY],
+    );
+    const wallList =
+      layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
+    const wallLayerTile = wallList[width * totalY + totalX];
 
-    return (potentialSecretWall?.type === ObjectType.SecretWall && !this.specialRenders.truesight)
-        || (wallLayerTile !== TilesWithNoFOVUpdate.Empty && wallLayerTile !== TilesWithNoFOVUpdate.Air);
+    return (
+      (potentialSecretWall?.type === ObjectType.SecretWall &&
+        !this.specialRenders.truesight) ||
+      (wallLayerTile !== TilesWithNoFOVUpdate.Empty &&
+        wallLayerTile !== TilesWithNoFOVUpdate.Air)
+    );
   }
 
   // update the fov sprites whenever we get new fov
   private updateFOV() {
-
     const isPlayerInGame = this.allPlayerSprites[this.player.uuid];
-    positionInRange({ x:0, y: 0 }, 4, position => {
+    positionInRange({ x: 0, y: 0 }, 4, (position) => {
       const fovSprite = this.fovSprites[position.x][position.y] as Sprite;
       fovSprite.setDisplayOrigin(32, 32);
       fovSprite.setDisplaySize(64, 64);
       fovSprite.setAlpha(1);
       if (!isPlayerInGame) return;
 
-      const tileFov = get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
+      const tileFov =
+        get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
       switch (tileFov) {
-      case FOVVisibility.CantSee: return;
+        case FOVVisibility.CantSee:
+          return;
 
-      case FOVVisibility.CanSeeButDark:
-        if (!this.canSeeThroughDarkAt(position.x, position.y)) return;
-        fovSprite.setAlpha(0.5);
-        break;
+        case FOVVisibility.CanSeeButDark:
+          if (!this.canSeeThroughDarkAt(position.x, position.y)) return;
+          fovSprite.setAlpha(0.5);
+          break;
 
-      case FOVVisibility.CanSee:
-        fovSprite.setAlpha(0);
-        break;
+        case FOVVisibility.CanSee:
+          fovSprite.setAlpha(0);
+          break;
       }
 
       const isWallHere = this.isFovBlocker(position.x, position.y);
       if (!isWallHere) return;
-      const fovDirections = positionSurrounding().reduce((combinedDirections, tileOffset) =>
-        !(get(this.player.fov, [position.x + tileOffset.x, position.y + tileOffset.y]) ?? FOVVisibility.CantSee) ?
-        (combinedDirections | tileOffset.direction) : combinedDirections
-    , Direction.Center);
+      const fovDirections = positionSurrounding().reduce(
+        (combinedDirections, tileOffset) =>
+          !(
+            get(this.player.fov, [
+              position.x + tileOffset.x,
+              position.y + tileOffset.y,
+            ]) ?? FOVVisibility.CantSee
+          )
+            ? combinedDirections | tileOffset.direction
+            : combinedDirections,
+        Direction.Center,
+      );
       if (fovDirections === Direction.Center) {
         return;
       }
@@ -335,9 +384,13 @@ export class MapScene extends Phaser.Scene {
           fovSprite.setAlpha(0);
           return;
 
-        case Direction.Southeast: cutDownRight(); return;
+        case Direction.Southeast:
+          cutDownRight();
+          return;
 
-        case Direction.Southwest: fovSprite.setOrigin(1.12, 0.27); return;
+        case Direction.Southwest:
+          fovSprite.setOrigin(1.12, 0.27);
+          return;
 
         default:
           if (directionHasAny(fovDirections, Direction.North)) {
@@ -368,12 +421,13 @@ export class MapScene extends Phaser.Scene {
     if (!this.player) return false;
     if (this.player.effects._hash.Blind) return false;
 
-    const darkCheck = get(this.player.fov, [x, y]) === FOVVisibility.CanSeeButDark;
+    const darkCheck =
+      get(this.player.fov, [x, y]) === FOVVisibility.CanSeeButDark;
     return darkCheck && !!this.player.effects._hash.DarkVision;
   }
 
   private updateDoors() {
-    this.doors.forEach(door => {
+    this.doors.forEach((door) => {
       const doorData = this.doorStateData[door.frame];
       let state = 'default';
       if (this.openDoors[door.id]) {
@@ -382,15 +436,22 @@ export class MapScene extends Phaser.Scene {
 
       if (door.lastState === state) return;
 
-      door.sprites.forEach(s => { s.destroy(); });
+      door.sprites.forEach((s) => {
+        s.destroy();
+      });
       door.sprites = [];
       door.lastState = state;
 
       const stateData = doorData.states[state];
-      stateData.forEach(spriteD => {
+      stateData.forEach((spriteD) => {
         const spriteTilePos = positionAdd(door.tilePos, spriteD);
         const spriteWorldPos = positionTileToWorld(spriteTilePos);
-        const sprite = this.add.sprite(spriteWorldPos.x, spriteWorldPos.y, spriteD.spritesheetName, spriteD.spritesheetId);
+        const sprite = this.add.sprite(
+          spriteWorldPos.x,
+          spriteWorldPos.y,
+          spriteD.spritesheetName,
+          spriteD.spritesheetId,
+        );
         door.sprites.push(sprite);
 
         sprite.setInteractive();
@@ -404,13 +465,13 @@ export class MapScene extends Phaser.Scene {
         }
 
         sprite.on('pointerover', () => {
-          door.sprites.forEach(related => {
+          door.sprites.forEach((related) => {
             OutlinePipeline.setOutlineColor(related, [1.0, 1.0, 0.0, 0.5]);
           });
         });
 
         sprite.on('pointerout', () => {
-          door.sprites.forEach(related => {
+          door.sprites.forEach((related) => {
             OutlinePipeline.setOutlineColor(related, undefined);
           });
         });
@@ -422,9 +483,9 @@ export class MapScene extends Phaser.Scene {
     return lowPosition * 64 + (centerOn ? 32 : 0);
   }
 
- /**
-  * Detects if floor below wall should be cut, and fixes it
-  */
+  /**
+   * Detects if floor below wall should be cut, and fixes it
+   */
   private fixWallFloors(map: Phaser.Tilemaps.Tilemap): void {
     const wallIndexOffset = map.getTileset('Walls').firstgid;
     const floorIndexOffset = map.getTileset('Terrain').firstgid;
@@ -455,7 +516,14 @@ export class MapScene extends Phaser.Scene {
       floor.width = 50;
     };
 
-    const walls = map.getTilesWithin(0, 0, map.width, map.height, { isNotEmpty: true }, 'Walls');
+    const walls = map.getTilesWithin(
+      0,
+      0,
+      map.width,
+      map.height,
+      { isNotEmpty: true },
+      'Walls',
+    );
 
     walls.forEach((wall) => {
       const wallIndex = getWallIndex(wall);
@@ -515,11 +583,17 @@ export class MapScene extends Phaser.Scene {
     const getFloorSetAt = (x: number, y: number) =>
       getFloorSet(this.tilemap.getTileAt(x, y, true, 'Floors'));
 
-    const doorFloor = this.tilemap.getTileAtWorldXY(worldX, worldY - 1, false, null, 'Floors');
+    const doorFloor = this.tilemap.getTileAtWorldXY(
+      worldX,
+      worldY - 1,
+      false,
+      null,
+      'Floors',
+    );
     if (doorFloor) {
       const floorC = getFloorSet(doorFloor);
       const floorL = getFloorSetAt(doorFloor.x - 1, doorFloor.y);
-      const floorR = getFloorSetAt(doorFloor.x + 1, doorFloor.y);;
+      const floorR = getFloorSetAt(doorFloor.x + 1, doorFloor.y);
       if (floorL !== floorR) {
         if (floorC === floorR) {
           doorFloor.width = 32;
@@ -532,32 +606,35 @@ export class MapScene extends Phaser.Scene {
   }
 
   private loadAnimations() {
-    Object.values(decorAnimations).forEach(animData => {
-
+    Object.values(decorAnimations).forEach((animData) => {
       const animOffset = animData.frame;
       const animSpeed = (animData as any).speed ?? 7;
 
       this.anims.create({
         key: 'decor-' + animOffset.toString(),
         frameRate: animSpeed,
-        frames: this.anims.generateFrameNumbers('DecorAnimations', { start: (animOffset * 4) + 1, end: (animOffset * 4) + 3 }),
-        repeat: -1
+        frames: this.anims.generateFrameNumbers('DecorAnimations', {
+          start: animOffset * 4 + 1,
+          end: animOffset * 4 + 3,
+        }),
+        repeat: -1,
       });
     });
 
-    Object.values(terrainAnimations).forEach(animData => {
-
+    Object.values(terrainAnimations).forEach((animData) => {
       const animOffset = animData.frame;
       const animSpeed = (animData as any).speed ?? 2;
 
       this.anims.create({
         key: 'terrain-' + animOffset.toString(),
         frameRate: animSpeed,
-        frames: this.anims.generateFrameNumbers('TerrainAnimations', { start: (animOffset * 4) + 1, end: (animOffset * 4) + 3 }),
+        frames: this.anims.generateFrameNumbers('TerrainAnimations', {
+          start: animOffset * 4 + 1,
+          end: animOffset * 4 + 3,
+        }),
         repeat: -1,
-        yoyo: true
+        yoyo: true,
       });
-
     });
   }
 
@@ -571,7 +648,10 @@ export class MapScene extends Phaser.Scene {
       const y = Math.floor((i - x) / layer.width);
 
       const sprite = this.add.sprite(
-        this.convertPosition(x, true), this.convertPosition(y, true), 'TerrainAnimations', terrainAnimations[tile].frame
+        this.convertPosition(x, true),
+        this.convertPosition(y, true),
+        'TerrainAnimations',
+        terrainAnimations[tile].frame,
       );
 
       sprite.play('terrain-' + terrainAnimations[tile].frame.toString());
@@ -586,7 +666,7 @@ export class MapScene extends Phaser.Scene {
 
     const isSubscribed = this.player.subscriptionTier > 0;
 
-    layer.objects.forEach(obj => {
+    layer.objects.forEach((obj) => {
       // hide fillables, since they have the correct thing beneath
       if (obj.type === 'Fillable') return;
 
@@ -604,7 +684,13 @@ export class MapScene extends Phaser.Scene {
           }
 
           this.fixDoorFloor(obj.x, obj.y);
-          this.doors.push({ id: obj.id, tilePos, frame, sprites: [], lastState: 'none' });
+          this.doors.push({
+            id: obj.id,
+            tilePos,
+            frame,
+            sprites: [],
+            lastState: 'none',
+          });
           return;
         }
       }
@@ -621,9 +707,13 @@ export class MapScene extends Phaser.Scene {
       }
 
       // surprisingly interactables can be interacted with
-      if (obj.type === 'StairsUp' || obj.type === 'StairsDown'
-       || obj.type === 'ClimbUp' || obj.type === 'ClimbDown'
-       || obj.type === 'Door') {
+      if (
+        obj.type === 'StairsUp' ||
+        obj.type === 'StairsDown' ||
+        obj.type === 'ClimbUp' ||
+        obj.type === 'ClimbDown' ||
+        obj.type === 'Door'
+      ) {
         sprite.setInteractive();
       }
 
@@ -652,12 +742,21 @@ export class MapScene extends Phaser.Scene {
       if (!this.player || pointer.rightButtonReleased()) return;
 
       const clickedTilePostion = positionWorldXYToTile(pointer);
-      const playerToClickedOffset = positionSubtract(clickedTilePostion, this.player);
+      const playerToClickedOffset = positionSubtract(
+        clickedTilePostion,
+        this.player,
+      );
 
       const doCommand = (command: string) => {
-        this.game.socketService.sendAction({ command, args: positionText(playerToClickedOffset) });
+        this.game.socketService.sendAction({
+          command,
+          args: positionText(playerToClickedOffset),
+        });
       };
-      const interactTile = this.allMapData.layerData[MapLayer.Interactables]?.[clickedTilePostion.x]?.[clickedTilePostion.y];
+      const interactTile =
+        this.allMapData.layerData[MapLayer.Interactables]?.[
+          clickedTilePostion.x
+        ]?.[clickedTilePostion.y];
       if (interactTile) {
         switch (interactTile.type as ObjectType) {
           case 'Fall':
@@ -717,11 +816,14 @@ export class MapScene extends Phaser.Scene {
     this.createFOV();
     this.setupMapInteractions();
 
-    spriteData.doorStates.forEach(doorState => {
+    spriteData.doorStates.forEach((doorState) => {
       this.doorStateData[doorState.tiledId] = doorState;
     });
 
-    this.cache.tilemap.add('map', { data: tiledJSON, format: Phaser.Tilemaps.Formats.TILED_JSON });
+    this.cache.tilemap.add('map', {
+      data: tiledJSON,
+      format: Phaser.Tilemaps.Formats.TILED_JSON,
+    });
 
     const map = this.make.tilemap({ key: 'map' });
     this.tilemap = map;
@@ -754,7 +856,9 @@ export class MapScene extends Phaser.Scene {
       this.registerEvents();
 
       // update the loader as we load the map
-      let text = `Welcome to ${this.game.gameService.reformatMapName(player.map)}!`;
+      let text = `Welcome to ${this.game.gameService.reformatMapName(
+        player.map,
+      )}!`;
       if (tiledJSON.properties.creator) {
         text = `${text}<br><small><em>Created by ${tiledJSON.properties.creator}</em></small>`;
       }
@@ -765,13 +869,15 @@ export class MapScene extends Phaser.Scene {
       setTimeout(() => {
         this.game.observables.loadPercent.next('');
       }, 1000);
-    }
-    else {
+    } else {
       this.createPlayerSprite(player);
     }
 
     // start the camera at our x,y
-    this.cameras.main.centerOn(this.convertPosition(player.x, true), this.convertPosition(player.y, true));
+    this.cameras.main.centerOn(
+      this.convertPosition(player.x, true),
+      this.convertPosition(player.y, true),
+    );
 
     this.game.observables.hideMap.next(false);
     setTimeout(() => {
@@ -794,31 +900,40 @@ export class MapScene extends Phaser.Scene {
       this.drawVFX(vfx);
     });
 
-    this.currentTarget$ = this.game.observables.target.subscribe(updTarget => {
-      this.updateTarget(updTarget);
-    });
+    this.currentTarget$ = this.game.observables.target.subscribe(
+      (updTarget) => {
+        this.updateTarget(updTarget);
+      },
+    );
 
     // watch for player updates
-    this.playerUpdate$ = this.game.observables.player.subscribe(updPlayer => {
+    this.playerUpdate$ = this.game.observables.player.subscribe((updPlayer) => {
       this.player = updPlayer;
       this.updatePlayerSprite(updPlayer);
       this.updateSelf(updPlayer);
       this.checkTruesight(updPlayer);
+      this.checkEagleEye(updPlayer);
     });
 
     // watch for other players to come in
-    this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(allPlayers => {
-      const curPlayers = Object.keys(this.allPlayerSprites).filter(f => f !== this.player.uuid);
-      const newPlayers = Object.keys(allPlayers);
+    this.allPlayersUpdate$ = this.game.observables.allPlayers.subscribe(
+      (allPlayers) => {
+        const curPlayers = Object.keys(this.allPlayerSprites).filter(
+          (f) => f !== this.player.uuid,
+        );
+        const newPlayers = Object.keys(allPlayers);
 
-      Object.values(allPlayers).forEach(p => this.updatePlayerSprite(p as IPlayer));
+        Object.values(allPlayers).forEach((p) =>
+          this.updatePlayerSprite(p as IPlayer),
+        );
 
-      const diff = difference(curPlayers, newPlayers);
-      diff.forEach(p => this.removePlayerSprite(p));
-    });
+        const diff = difference(curPlayers, newPlayers);
+        diff.forEach((p) => this.removePlayerSprite(p));
+      },
+    );
 
     // watch for npcs to come in
-    this.allNPCsUpdate$ = this.game.observables.allNPCs.subscribe(allNPCs => {
+    this.allNPCsUpdate$ = this.game.observables.allNPCs.subscribe((allNPCs) => {
       const curNPCs = Object.keys(this.allNPCSprites);
       const newNPCs = Object.keys(allNPCs);
 
@@ -826,14 +941,16 @@ export class MapScene extends Phaser.Scene {
 
       const diff = difference(curNPCs, newNPCs);
 
-      diff.forEach(p => this.removeNPCSprite(p));
+      diff.forEach((p) => this.removeNPCSprite(p));
     });
 
-    this.openDoorsUpdate$ = this.game.observables.openDoors.subscribe(openDoors => {
-      this.openDoors = openDoors;
-    });
+    this.openDoorsUpdate$ = this.game.observables.openDoors.subscribe(
+      (openDoors) => {
+        this.openDoors = openDoors;
+      },
+    );
 
-    this.groundUpdate$ = this.game.observables.ground.subscribe(ground => {
+    this.groundUpdate$ = this.game.observables.ground.subscribe((ground) => {
       this.ground = ground;
       this.removeOldItemSprites();
       this.updateGroundSprites();
@@ -844,7 +961,10 @@ export class MapScene extends Phaser.Scene {
 
   public update() {
     if (!this.player) return;
-    this.cameras.main.centerOn(this.convertPosition(this.player.x, true), this.convertPosition(this.player.y, true));
+    this.cameras.main.centerOn(
+      this.convertPosition(this.player.x, true),
+      this.convertPosition(this.player.y, true),
+    );
     this.updateFOV();
     this.updateDoors();
   }
@@ -864,14 +984,18 @@ export class MapScene extends Phaser.Scene {
   private stealthUpdate(sprite: Sprite, character: ICharacter) {
     if (character.hp.current <= 0) return;
 
-    const isHidden = (character.totalStats?.[Stat.Stealth] ?? 0) > 0 && character.effects._hash.Hidden;
+    const isHidden =
+      (character.totalStats?.[Stat.Stealth] ?? 0) > 0 &&
+      character.effects._hash.Hidden;
     OutlinePipeline.setAlpha(sprite, isHidden ? 0.15 : 1);
   }
 
   // sprite updates
   private updatePlayerSpriteData(sprite: Sprite, player: IPlayer) {
-
-    const playerFrame = spriteForCreatureDirection(basePlayerSprite(player), player.dir);
+    const playerFrame = spriteForCreatureDirection(
+      basePlayerSprite(player),
+      player.dir,
+    );
     sprite.setFrame(playerFrame);
 
     this.updateSpriteSwimData(sprite, player);
@@ -887,10 +1011,27 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updateSpriteSwimData(sprite: Sprite, char: ICharacter) {
-    const tileCheck = (char.y * this.allMapData.tiledJSON.width) + char.x;
+    const tileCheck = char.y * this.allMapData.tiledJSON.width + char.x;
     const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
     const isSwimming = !!fluid[tileCheck];
     OutlinePipeline.setSwimming(sprite, isSwimming);
+  }
+
+  // eagleye functions
+  private checkEagleEye(player: IPlayer) {
+    const hasEagleEye = player.effects._hash.EagleEye;
+
+    if (this.specialRenders.eagleeye && !hasEagleEye) {
+      this.handleEagleEye(false);
+    }
+
+    if (!this.specialRenders.eagleeye && hasEagleEye) {
+      this.handleEagleEye(true);
+    }
+  }
+
+  private handleEagleEye(canSeeEagleEye: boolean) {
+    this.specialRenders.eagleeye = canSeeEagleEye;
   }
 
   // truesight functions
@@ -920,15 +1061,19 @@ export class MapScene extends Phaser.Scene {
 
   // check if something is in range
   private notInRange(centerX: number, centerY: number, x: number, y: number) {
-    return x < centerX - 4 || x > centerX + 4 || y < centerY - 4 || y > centerY + 4;
+    return (
+      x < centerX - 4 || x > centerX + 4 || y < centerY - 4 || y > centerY + 4
+    );
   }
 
   // item-render functions
   private canCreateItemSpriteAt(x: number, y: number): boolean {
-    const tileCheck = (y * this.allMapData.tiledJSON.width) + x;
+    const tileCheck = y * this.allMapData.tiledJSON.width + x;
     const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
     const foliage = this.allMapData.tiledJSON.layers[MapLayer.Foliage].data;
-    return this.specialRenders.eagleeye || (!fluid[tileCheck] && !foliage[tileCheck]);
+    return (
+      this.specialRenders.eagleeye || (!fluid[tileCheck] && !foliage[tileCheck])
+    );
   }
 
   private updateGroundSprites() {
@@ -941,10 +1086,15 @@ export class MapScene extends Phaser.Scene {
         if (!itemsXY) continue;
 
         // Get the number of items on the tile, by summing the amount of items in each array
-        const numItemsHere = Object.keys(itemsXY).map((type) => itemsXY[type].length).reduce((a, b) => a + b, 0);
+        const numItemsHere = Object.keys(itemsXY)
+          .map((type) => itemsXY[type].length)
+          .reduce((a, b) => a + b, 0);
 
-        Object.keys(itemsXY).forEach(itemType => {
-          if (itemsXY[itemType].length === 0 || (itemType === ItemClass.Coin && numItemsHere > 1)) {
+        Object.keys(itemsXY).forEach((itemType) => {
+          if (
+            itemsXY[itemType].length === 0 ||
+            (itemType === ItemClass.Coin && numItemsHere > 1)
+          ) {
             if (get(this.goldSprites, [x, y])) this.createTreasureSprite(x, y);
             return;
           }
@@ -964,7 +1114,8 @@ export class MapScene extends Phaser.Scene {
 
     if (!this.visibleItemSprites[x]) this.visibleItemSprites[x] = {};
     if (!this.visibleItemSprites[x][y]) this.visibleItemSprites[x][y] = {};
-    if (!this.visibleItemSprites[x][y][realItem.itemClass]) this.visibleItemSprites[x][y][realItem.itemClass] = null;
+    if (!this.visibleItemSprites[x][y][realItem.itemClass])
+      this.visibleItemSprites[x][y][realItem.itemClass] = null;
 
     const currentItemSprite = this.visibleItemSprites[x][y][realItem.itemClass];
 
@@ -978,8 +1129,15 @@ export class MapScene extends Phaser.Scene {
 
     const isCorpse = realItem.itemClass === ItemClass.Corpse;
     const spritesheet = isCorpse ? 'Creatures' : 'Items';
-    const itemSpriteNumber = isCorpse ? item.mods.sprite : (item.mods.sprite ?? realItem.sprite);
-    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), spritesheet, itemSpriteNumber) as any;
+    const itemSpriteNumber = isCorpse
+      ? item.mods.sprite
+      : item.mods.sprite ?? realItem.sprite;
+    const sprite = this.add.sprite(
+      32 + x * 64,
+      32 + y * 64,
+      spritesheet,
+      itemSpriteNumber,
+    ) as any;
     this.visibleItemSprites[x][y][realItem.itemClass] = sprite;
     this.visibleItemUUIDHash[sprite.uuid] = sprite;
 
@@ -1004,7 +1162,12 @@ export class MapScene extends Phaser.Scene {
       currentItemSprite.destroy();
     }
 
-    const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Terrain', spritePos) as any;
+    const sprite = this.add.sprite(
+      32 + x * 64,
+      32 + y * 64,
+      'Terrain',
+      spritePos,
+    ) as any;
     this.goldSprites[x][y] = sprite;
 
     sprite._realX = x;
@@ -1014,7 +1177,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private removeOldItemSprites() {
-    this.layers.groundItems.each(sprite => {
+    this.layers.groundItems.each((sprite) => {
       const x = sprite._realX;
       const y = sprite._realY;
 
@@ -1022,21 +1185,29 @@ export class MapScene extends Phaser.Scene {
       ground = ground || {};
 
       const myGround = ground[sprite.itemClass] || [];
-      if (this.notInRange(this.player.x, this.player.y, x, y) || !myGround || !myGround[0] || myGround[0].item.uuid !== sprite.uuid) {
+      if (
+        this.notInRange(this.player.x, this.player.y, x, y) ||
+        !myGround ||
+        !myGround[0] ||
+        myGround[0].item.uuid !== sprite.uuid
+      ) {
         delete this.visibleItemUUIDHash[sprite.uuid];
         this.visibleItemSprites[x][y][sprite.itemClass] = null;
         sprite.destroy();
       }
     });
 
-    this.layers.gold.each(sprite => {
+    this.layers.gold.each((sprite) => {
       const x = sprite._realX;
       const y = sprite._realY;
 
       let ground = this.ground[x] ? this.ground[x][y] : null;
       ground = ground || {};
 
-      if (this.notInRange(this.player.x, this.player.y, x, y) || !ground[ItemClass.Coin]) {
+      if (
+        this.notInRange(this.player.x, this.player.y, x, y) ||
+        !ground[ItemClass.Coin]
+      ) {
         this.goldSprites[x][y] = null;
         sprite.destroy();
       }
@@ -1044,19 +1215,21 @@ export class MapScene extends Phaser.Scene {
   }
 
   private drawVFX(vfxData): void {
-
     const { vfx, vfxX, vfxY, vfxRadius, vfxTimeout } = vfxData;
 
     for (let x = vfxX - vfxRadius; x <= vfxX + vfxRadius; x++) {
       for (let y = vfxY - vfxRadius; y <= vfxY + vfxRadius; y++) {
         try {
-
-          const sprite = this.add.sprite(32 + (x * 64), 32 + (y * 64), 'Effects', vfx);
+          const sprite = this.add.sprite(
+            32 + x * 64,
+            32 + y * 64,
+            'Effects',
+            vfx,
+          );
 
           setTimeout(() => {
             sprite.destroy();
           }, vfxTimeout ?? 2000);
-
         } catch {}
       }
     }
@@ -1064,14 +1237,18 @@ export class MapScene extends Phaser.Scene {
 
   private goldSpriteForLocation(x: number, y: number) {
     const checkTile = (checkX: number, checkY: number) =>
-       get(this.ground, [checkX, checkY, ItemClass.Coin], []).length > 0 &&
-       this.canCreateItemSpriteAt(checkX, checkY);
+      get(this.ground, [checkX, checkY, ItemClass.Coin], []).length > 0 &&
+      this.canCreateItemSpriteAt(checkX, checkY);
 
     if (!checkTile(x, y)) return 0;
 
-    const goldDirections = positionSurrounding().reduce((combinedDirections, tileOffset) =>
-      checkTile(x + tileOffset.x, y + tileOffset.y) ? (combinedDirections | tileOffset.direction) : combinedDirections
-    , Direction.Center);
+    const goldDirections = positionSurrounding().reduce(
+      (combinedDirections, tileOffset) =>
+        checkTile(x + tileOffset.x, y + tileOffset.y)
+          ? combinedDirections | tileOffset.direction
+          : combinedDirections,
+      Direction.Center,
+    );
 
     return spriteTerrainForDirection(336, goldDirections);
   }

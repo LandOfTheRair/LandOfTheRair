@@ -1,32 +1,60 @@
-
 import { isNumber } from 'lodash';
 
 import { Game } from '../../helpers';
-import { BaseClass, Direction, directionFromText, directionToOffset, distanceFrom, ICharacter, IItemEffect,
-  IMacroCommand, IMacroCommandArgs, IPlayer, ItemClass, ItemSlot, MessageType, SoundEffect, Stat } from '../../interfaces';
+import {
+  BaseClass,
+  Direction,
+  directionFromText,
+  directionToOffset,
+  distanceFrom,
+  ICharacter,
+  IItemEffect,
+  IMacroCommand,
+  IMacroCommandArgs,
+  IPlayer,
+  ItemClass,
+  ItemSlot,
+  MessageType,
+  SoundEffect,
+  Stat,
+} from '../../interfaces';
 import { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
-
-  abstract aliases: string[];   // the aliases representing this command
-  canBeInstant = false;         // whether the command can happen immediately (ie, UI-related functions)
-  canBeFast = false;            // whether the command can happen on the 'fast' cycle (used for 'faster' commands outside the round timer)
-  isGMCommand = false;          // whether or not the command is GM-only
-  requiresLearn = false;        // whether or not the command must be learned first
-  canUseWhileDead = false;      // whether or not the command can be used while dead
+  abstract aliases: string[]; // the aliases representing this command
+  canBeInstant = false; // whether the command can happen immediately (ie, UI-related functions)
+  canBeFast = false; // whether the command can happen on the 'fast' cycle (used for 'faster' commands outside the round timer)
+  isGMCommand = false; // whether or not the command is GM-only
+  requiresLearn = false; // whether or not the command must be learned first
+  canUseWhileDead = false; // whether or not the command can be used while dead
 
   constructor(protected game: Game) {}
 
-  protected sendMessage(character: ICharacter, message: string, sfx?: SoundEffect): void {
+  protected sendMessage(
+    character: ICharacter,
+    message: string,
+    sfx?: SoundEffect,
+  ): void {
     this.game.messageHelper.sendSimpleMessage(character, message, sfx);
   }
 
-  protected sendChatMessage(character: ICharacter, message: string, sfx?: SoundEffect): void {
-    this.game.messageHelper.sendLogMessageToPlayer(character, { message, sfx }, [MessageType.PlayerChat]);
+  protected sendChatMessage(
+    character: ICharacter,
+    message: string,
+    sfx?: SoundEffect,
+  ): void {
+    this.game.messageHelper.sendLogMessageToPlayer(
+      character,
+      { message, sfx },
+      [MessageType.PlayerChat],
+    );
   }
 
   protected youDontSeeThatPerson(character: ICharacter, targetArgs: string) {
-    this.game.messageHelper.sendLogMessageToPlayer(character, { message: 'You don\'t see that person.', setTarget: null });
+    this.game.messageHelper.sendLogMessageToPlayer(character, {
+      message: "You don't see that person.",
+      setTarget: null,
+    });
 
     // clear the queue of this person if we don't see them
     if (targetArgs) {
@@ -34,15 +62,23 @@ export abstract class MacroCommand implements IMacroCommand {
     }
   }
 
-  execute(executor: IPlayer, args: IMacroCommandArgs): void {}                                                                                 // always used only by people who can execute commands (players)
-  use(executor: ICharacter | null, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }): void {}    // used by anyone who has access to the command (players, npcs, environment)
+  execute(executor: IPlayer, args: IMacroCommandArgs): void {} // always used only by people who can execute commands (players)
+  use(
+    executor: ICharacter | null,
+    target: ICharacter | null,
+    args?: any,
+    targetsPosition?: { x: number; y: number; map: string },
+  ): void {} // used by anyone who has access to the command (players, npcs, environment)
 }
 
 export abstract class SkillCommand extends MacroCommand {
+  targetsFriendly = false; // whether or not the command can target friendly creatures (for enemies)
 
-  targetsFriendly = false;      // whether or not the command can target friendly creatures (for enemies)
-
-  mpCost(caster?: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>) {
+  mpCost(
+    caster?: ICharacter,
+    targets?: ICharacter[],
+    overrideEffect?: Partial<IItemEffect>,
+  ) {
     return 0;
   }
 
@@ -63,7 +99,11 @@ export abstract class SkillCommand extends MacroCommand {
   }
 
   // try to consume the mp (returning false if we fail)
-  tryToConsumeMP(user: ICharacter, targets?: ICharacter[], overrideEffect?: Partial<IItemEffect>): boolean {
+  tryToConsumeMP(
+    user: ICharacter,
+    targets?: ICharacter[],
+    overrideEffect?: Partial<IItemEffect>,
+  ): boolean {
     if (this.game.traitHelper.rollTraitValue(user, 'Clearcasting')) return true;
 
     const mpCost = this.mpCost(user, targets, overrideEffect);
@@ -71,23 +111,27 @@ export abstract class SkillCommand extends MacroCommand {
     const extraMsg: Record<BaseClass, string> = {
       [BaseClass.Healer]: 'MP',
       [BaseClass.Mage]: 'MP',
-      [BaseClass.Thief]: 'Energy',
+      [BaseClass.Thief]: 'HP',
       [BaseClass.Warrior]: 'Rage',
-      [BaseClass.Traveller]: 'MP'
+      [BaseClass.Traveller]: 'MP',
     };
 
     if (user.baseClass === BaseClass.Thief) {
-      if (user.hp.current < mpCost) {
-        this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
+      if (user.hp.current <= mpCost) {
+        this.sendMessage(
+          user,
+          `You do not have enough ${extraMsg[user.baseClass]}!`,
+        );
         return false;
       }
 
       this.game.characterHelper.damage(user, mpCost);
-
     } else if (mpCost > 0) {
-
       if (user.mp.current < mpCost) {
-        this.sendMessage(user, `You do not have enough ${extraMsg[user.baseClass]}!`);
+        this.sendMessage(
+          user,
+          `You do not have enough ${extraMsg[user.baseClass]}!`,
+        );
         return false;
       }
 
@@ -99,10 +143,12 @@ export abstract class SkillCommand extends MacroCommand {
 
   // get either the target character or the center for an aoe
   getTarget(
-    user: ICharacter, args: string, allowSelf = false, allowDirection = false
+    user: ICharacter,
+    args: string,
+    allowSelf = false,
+    allowDirection = false,
   ): ICharacter | { x: number; y: number; map: string } | null {
-
-    let target: ICharacter|null = null;
+    let target: ICharacter | null = null;
     args = args.trim();
 
     const range = this.range(user);
@@ -116,7 +162,6 @@ export abstract class SkillCommand extends MacroCommand {
 
       // can only go as many steps as range
       for (let i = 0; i < Math.min(range, splitArgs.length); i++) {
-
         // you can specify a max of 4 directions
         if (i >= 4) continue;
 
@@ -140,7 +185,10 @@ export abstract class SkillCommand extends MacroCommand {
     }
 
     if (args && target !== user) {
-      target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(user, args);
+      target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
+        user,
+        args,
+      );
     }
 
     if (allowSelf && !target) {
@@ -166,10 +214,19 @@ export abstract class SkillCommand extends MacroCommand {
 
     if (!rightHand) return 0;
 
-    const { attackRange, twoHanded } = this.game.itemHelper.getItemProperties(rightHand, ['twoHanded', 'attackRange']);
+    const { attackRange, twoHanded } = this.game.itemHelper.getItemProperties(
+      rightHand,
+      ['twoHanded', 'attackRange'],
+    );
 
     // if you have a twohanded item and a lefthand, you can't use it
-    if (twoHanded && leftHand && !this.game.traitHelper.traitLevel(attacker, 'TitanGrip')) return -1;
+    if (
+      twoHanded &&
+      leftHand &&
+      !this.game.traitHelper.traitLevel(attacker, 'TitanGrip')
+    ) {
+      return -1;
+    }
 
     return attackRange || defaultRange;
   }
@@ -182,10 +239,16 @@ export class SpellCommand extends SkillCommand {
   spellDataRef = '';
   canTargetSelf = false;
 
-  override mpCost(caster?: ICharacter, targets: ICharacter[] = [], overrideEffect?: Partial<IItemEffect>) {
+  override mpCost(
+    caster?: ICharacter,
+    targets: ICharacter[] = [],
+    overrideEffect?: Partial<IItemEffect>,
+  ) {
     if (overrideEffect) return 0;
 
-    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(
+      this.spellDataRef || this.spellRef,
+    );
     if (!spellData) return 0;
 
     let cost = Math.max(targets.length, 1) * (spellData.mpCost ?? 0);
@@ -195,14 +258,23 @@ export class SpellCommand extends SkillCommand {
       const rightHand = caster.items.equipment[ItemSlot.RightHand];
 
       if (rightHand) {
-        const itemClass = this.game.itemHelper.getItemProperty(rightHand, 'itemClass');
+        const itemClass = this.game.itemHelper.getItemProperty(
+          rightHand,
+          'itemClass',
+        );
 
         if (itemClass === ItemClass.Wand) {
-          cost *= Math.max(0, (1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty')));
+          cost *= Math.max(
+            0,
+            1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty'),
+          );
         }
 
         if (itemClass === ItemClass.Totem) {
-          cost *= Math.max(0, (1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty')));
+          cost *= Math.max(
+            0,
+            1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty'),
+          );
         }
       }
     }
@@ -219,17 +291,29 @@ export class SpellCommand extends SkillCommand {
   }
 
   // called when a player casts a spell at something
-  protected castSpell(caster: ICharacter | null, args: Partial<IMacroCommandArgs>): string | boolean {
-
+  protected castSpell(
+    caster: ICharacter | null,
+    args: Partial<IMacroCommandArgs>,
+  ): string | boolean {
     // if the spell is party-based, target the whole party
     let targets: ICharacter[] = [];
-    let primaryTarget: { x: number; y: number; map: string } | ICharacter | null = args.primaryTarget ?? null;
+    let primaryTarget:
+      | { x: number; y: number; map: string }
+      | ICharacter
+      | null = args.primaryTarget ?? null;
 
-    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(
+      this.spellDataRef || this.spellRef,
+    );
 
     // if we're not a party target spell, we look for a primary target (location or character)
     if (caster && !spellData.spellMeta.targetsParty && args?.stringArgs) {
-      primaryTarget = this.getTarget(caster, (args?.stringArgs ?? '').trim(), this.canTargetSelf, spellData.spellMeta.allowDirectional);
+      primaryTarget = this.getTarget(
+        caster,
+        (args?.stringArgs ?? '').trim(),
+        this.canTargetSelf,
+        spellData.spellMeta.allowDirectional,
+      );
       if ((primaryTarget as ICharacter)?.name) {
         targets = [primaryTarget as ICharacter];
       }
@@ -237,25 +321,38 @@ export class SpellCommand extends SkillCommand {
 
     // if we have a primary target and we have an aoe spell
     if (primaryTarget && spellData.spellMeta.aoe) {
-
       // attempt to boost the range of the spell
       let rangeBoost = 0;
       if (caster && spellData.spellMeta.aoeRangeTrait) {
-        rangeBoost = this.game.traitHelper.traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
+        rangeBoost = this.game.traitHelper.traitLevelValue(
+          caster,
+          spellData.spellMeta.aoeRangeTrait,
+        );
       }
 
-      targets = this.game.targettingHelper.getPossibleAOETargets(caster, primaryTarget, (spellData.spellMeta.range ?? 0) + rangeBoost);
+      targets = this.game.targettingHelper.getPossibleAOETargets(
+        caster,
+        primaryTarget,
+        (spellData.spellMeta.range ?? 0) + rangeBoost,
+      );
     }
 
     // if we target the party we do it all differently
     if (caster && spellData.spellMeta.targetsParty) {
-      targets = this.game.partyHelper.getAllPartyMembersInRange(caster as IPlayer);
+      targets = this.game.partyHelper.getAllPartyMembersInRange(
+        caster as IPlayer,
+      );
       targets.push(caster);
     }
 
     // hit each of the targets
     const didHit = targets.map((target, idx) => {
-      if (!target) return this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
+      if (!target) {
+        return this.youDontSeeThatPerson(
+          caster as IPlayer,
+          args?.stringArgs ?? '',
+        );
+      }
 
       if (!this.canCastSpell(caster, target)) return;
 
@@ -264,7 +361,7 @@ export class SpellCommand extends SkillCommand {
       return this.castSpellAt(caster, target, args);
     });
 
-    if (didHit.some(hit => !hit)) return false;
+    if (didHit.some((hit) => !hit)) return false;
 
     // visually cast the spell anyway
     if ((caster || primaryTarget) && spellData.spellMeta.aoe) {
@@ -275,14 +372,16 @@ export class SpellCommand extends SkillCommand {
       if (x > 0 && y > 0 && map) {
         return this.castSpellAt(caster, null, args, { x, y, map });
       }
-
     }
 
     return true;
   }
 
   // whether or not the spell can be cast - simple check that gets rolled into canUse
-  protected canCastSpell(caster: ICharacter | null, target: ICharacter): boolean {
+  protected canCastSpell(
+    caster: ICharacter | null,
+    target: ICharacter,
+  ): boolean {
     if (!this.canTargetSelf && target === caster) return false;
 
     // if they're hostile - no buffing
@@ -290,8 +389,18 @@ export class SpellCommand extends SkillCommand {
     if (!spellData) return false;
 
     const { noHostileTarget } = spellData.spellMeta;
-    const areBothPlayers = caster && this.game.characterHelper.isPlayer(caster) && this.game.characterHelper.isPlayer(target);
-    if (caster && noHostileTarget && !areBothPlayers && this.game.targettingHelper.checkTargetForHostility(caster, target)) return false;
+    const areBothPlayers =
+      caster &&
+      this.game.characterHelper.isPlayer(caster) &&
+      this.game.characterHelper.isPlayer(target);
+    if (
+      caster &&
+      noHostileTarget &&
+      !areBothPlayers &&
+      this.game.targettingHelper.checkTargetForHostility(caster, target)
+    ) {
+      return false;
+    }
 
     return true;
   }
@@ -301,66 +410,94 @@ export class SpellCommand extends SkillCommand {
     caster: ICharacter | null,
     target: ICharacter | null,
     args?: Partial<IMacroCommandArgs>,
-    targetsPosition?: { x: number; y: number; map: string }
+    targetsPosition?: { x: number; y: number; map: string },
   ): boolean {
     const spellData = this.game.spellManager.getSpellData(this.spellRef);
     if (!spellData) {
-      this.game.logger.warn('SpellCommand', `No spellData found for ${this.spellRef}.`);
+      this.game.logger.warn(
+        'SpellCommand',
+        `No spellData found for ${this.spellRef}.`,
+      );
 
       if (caster) {
-        this.game.messageHelper.sendSimpleMessage(caster, `Could not cast ${this.spellRef} - no data was found.`);
+        this.game.messageHelper.sendSimpleMessage(
+          caster,
+          `Could not cast ${this.spellRef} - no data was found.`,
+        );
       }
 
       return false;
     }
 
     const doSpellCast = (): boolean => {
-
       // if there's no target, we bail
-      if (!targetsPosition && (!target || this.game.characterHelper.isDead(target))) {
+      if (
+        !targetsPosition &&
+        (!target || this.game.characterHelper.isDead(target))
+      ) {
         this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
         return false;
       }
 
-
       // if we have a caster, they are no longer channeling, and we need to take their mp
       if (caster) {
-        if (caster !== target
-        && target
-        && !isNumber(args?.targetNumber)
-        && !this.game.targettingHelper.isTargetInViewRange(caster, target)) {
+        if (
+          caster !== target &&
+          target &&
+          !isNumber(args?.targetNumber) &&
+          !this.game.targettingHelper.isTargetInViewRange(caster, target)
+        ) {
           this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
           return false;
         }
 
         const castTargets = target ? [target] : [];
 
-        if ((spellData.spellMeta.aoe || target?.name)
-          && !args?.targetNumber
-          && !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)) return false;
+        if (
+          (spellData.spellMeta.aoe || target?.name) &&
+          !args?.targetNumber &&
+          !this.tryToConsumeMP(caster, castTargets, args?.overrideEffect)
+        ) {
+          return false;
+        }
       }
 
       // try to reflect the spell if possible
       let hitTarget = target;
-      if (caster
-      && target
-      && target !== caster
-      && this.game.characterHelper.isPlayer(target)
-      && !spellData.spellMeta.noReflect
-      && this.game.diceRollerHelper.XInOneHundred(this.game.characterHelper.getStat(target, Stat.SpellReflectChance))) {
+      if (
+        caster &&
+        target &&
+        target !== caster &&
+        this.game.characterHelper.isPlayer(target) &&
+        !spellData.spellMeta.noReflect &&
+        this.game.diceRollerHelper.XInOneHundred(
+          this.game.characterHelper.getStat(target, Stat.SpellReflectChance),
+        )
+      ) {
         hitTarget = caster;
       }
 
-      this.game.spellManager.castSpell(this.spellRef, caster, hitTarget, args?.overrideEffect, args?.callbacks, args, targetsPosition);
+      this.game.spellManager.castSpell(
+        this.spellRef,
+        caster,
+        hitTarget,
+        args?.overrideEffect,
+        args?.callbacks,
+        args,
+        targetsPosition,
+      );
 
       return true;
     };
 
     if (caster && spellData.castTime) {
       this.game.messageHelper.sendLogMessageToRadius(caster, 4, {
-        message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...`
+        message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...`,
       });
-      caster.spellChannel = { ticks: spellData.castTime, callback: doSpellCast };
+      caster.spellChannel = {
+        ticks: spellData.castTime,
+        callback: doSpellCast,
+      };
       return true;
     }
 
@@ -368,22 +505,33 @@ export class SpellCommand extends SkillCommand {
   }
 
   // default execute, primarily used by players
-  override execute(player: IPlayer, args: IMacroCommandArgs): string | boolean | void {
+  override execute(
+    player: IPlayer,
+    args: IMacroCommandArgs,
+  ): string | boolean | void {
     if (!args.stringArgs && this.canTargetSelf) args.stringArgs = player.uuid;
     return this.castSpell(player, args);
   }
 
   // default use, primarily used by npcs
-  override use(char: ICharacter | null, target: ICharacter | null, args?: any, targetsPosition?: { x: number; y: number; map: string }) {
-
+  override use(
+    char: ICharacter | null,
+    target: ICharacter | null,
+    args?: any,
+    targetsPosition?: { x: number; y: number; map: string },
+  ) {
     // aoe spells are handled differently
-    const spellData = this.game.spellManager.getSpellData(this.spellDataRef || this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(
+      this.spellDataRef || this.spellRef,
+    );
     if (spellData.spellMeta.aoe) {
-      this.castSpell(char, { primaryTarget: target ?? targetsPosition, ...(args || {}) });
+      this.castSpell(char, {
+        primaryTarget: target ?? targetsPosition,
+        ...(args || {}),
+      });
       return;
     }
 
     this.castSpellAt(char, target, args, targetsPosition);
   }
-
 }
