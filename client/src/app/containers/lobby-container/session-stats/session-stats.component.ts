@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { select } from '@ngxs/store';
 import { DateTime } from 'luxon';
 
@@ -9,6 +9,7 @@ import { LobbyState } from '../../../../stores';
   selector: 'app-session-stats',
   templateUrl: './session-stats.component.html',
   styleUrls: ['./session-stats.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SessionStatsComponent {
   public stats = select(LobbyState.lastSessionStats);

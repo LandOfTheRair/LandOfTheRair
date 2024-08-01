@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { select, Store } from '@ngxs/store';
 
 import {
@@ -24,6 +24,7 @@ import * as skillDescs from '../../../../assets/content/_output/skilldescs.json'
   selector: 'app-equipment-main',
   templateUrl: './equipment-main.component.html',
   styleUrls: ['./equipment-main.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EquipmentMainComponent {
   public charView = select(SettingsState.currentCharView);

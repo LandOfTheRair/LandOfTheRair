@@ -27,7 +27,7 @@
       @if (character) {
       <app-character-card
         [origin]="player()"
-        [disabled]="disableInteractions"
+        [disabled]="disableInteractions()"
         [char]="character"
         (click)="doAction(character, $event)"
         (contextmenu)="doAltAction(player(), character, $event)"

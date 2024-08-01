@@ -1,4 +1,9 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { select, Store } from '@ngxs/store';
@@ -25,6 +30,7 @@ import { CharCreateComponent } from '../char-create/char-create.component';
   selector: 'app-char-select',
   templateUrl: './char-select.component.html',
   styleUrls: ['./char-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CharSelectComponent {
   @ViewChild('tabs', { static: false }) tabs: MatTabGroup;

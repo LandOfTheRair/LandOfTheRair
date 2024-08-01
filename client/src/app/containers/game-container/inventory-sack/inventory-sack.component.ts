@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { select } from '@ngxs/store';
 
 import { GameState } from '../../../../stores';
@@ -9,6 +9,7 @@ import { GameService } from '../../../services/game.service';
   selector: 'app-inventory-sack',
   templateUrl: './inventory-sack.component.html',
   styleUrls: ['./inventory-sack.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventorySackComponent {
   public player = select(GameState.player);

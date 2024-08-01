@@ -1,4 +1,10 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { select, Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
 import { Observable, of, timer } from 'rxjs';
@@ -37,6 +43,7 @@ interface MenuItem {
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent implements OnInit {
   private store = inject(Store);

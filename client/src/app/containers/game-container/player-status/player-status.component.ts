@@ -1,4 +1,9 @@
-import { Component, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { select, Store } from '@ngxs/store';
 import { clamp } from 'lodash';
 
@@ -14,6 +19,7 @@ import { UIService } from '../../../services/ui.service';
   selector: 'app-player-status',
   templateUrl: './player-status.component.html',
   styleUrls: ['./player-status.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerStatusComponent {
   public account = select(AccountState.account);

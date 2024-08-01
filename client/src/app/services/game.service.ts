@@ -73,17 +73,20 @@ export class GameService {
   private modalService = inject(ModalService);
 
   constructor() {
-    effect(() => {
-      const val = this.inGame();
-      if (val) {
-        this.playGame.next(true);
-        this.handleAutoExec();
-        return;
-      }
+    effect(
+      () => {
+        const val = this.inGame();
+        if (val) {
+          this.playGame.next(true);
+          this.handleAutoExec();
+          return;
+        }
 
-      this.playGame.next(false);
-      this.quitGame.next();
-    });
+        this.playGame.next(false);
+        this.quitGame.next();
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   init() {}

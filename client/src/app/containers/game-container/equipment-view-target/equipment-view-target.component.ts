@@ -1,4 +1,9 @@
-import { Component, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { select, Store } from '@ngxs/store';
 
 import { GameState, HideWindow } from '../../../../stores';
@@ -11,6 +16,7 @@ import { UIService } from '../../../services/ui.service';
   selector: 'app-equipment-view-target',
   templateUrl: './equipment-view-target.component.html',
   styleUrls: ['./equipment-view-target.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EquipmentViewTargetComponent {
   public inGame = select(GameState.inGame);

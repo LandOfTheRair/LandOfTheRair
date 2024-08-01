@@ -1,4 +1,9 @@
-import { Component, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { select, Store } from '@ngxs/store';
 import { JournalState, UpdateJournal } from '../../stores';
 
@@ -6,6 +11,7 @@ import { JournalState, UpdateJournal } from '../../stores';
   selector: 'app-journal',
   templateUrl: './journal.component.html',
   styleUrls: ['./journal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JournalComponent {
   public journalData = select(JournalState.journal);

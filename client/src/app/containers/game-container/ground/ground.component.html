@@ -33,7 +33,7 @@
       @for (itemGroup of groups; track $index) {
       <app-item
         (click)="changeItemClass(itemGroup.itemClass)"
-        [class.selected]="itemGroup.itemClass === currentItemClass"
+        [class.selected]="itemGroup.itemClass === currentItemClass()"
         [size]="'normal'"
         [showDesc]="false"
         context="GroundGroup"
@@ -54,27 +54,27 @@
     <!---->
     @if (optionsService.biggerGroundWindow) {
     <div class="item-split">
-      {{ currentItemClass }}
+      {{ currentItemClass() }}
     </div>
     }
 
     <div class="item-sub">
-      @if (!currentItemClass) {
+      @if (!currentItemClass()) {
       <div class="true-center background-text full-height full-width">
         Select an item category
       </div>
       }
 
       <!---->
-      @for (item of (currentGround[currentItemClass] || []); track $index) {
+      @for (item of (currentGround[currentItemClass()] || []); track $index) {
       <app-item
         [size]="'normal'"
         context="Ground"
         [contextSlot]="item.item.uuid"
         [count]="item.count"
         [viewingPlayer]="player()"
-        [showCount]="currentItemClass !== 'Coin'"
-        [showValue]="currentItemClass === 'Coin'"
+        [showCount]="currentItemClass() !== 'Coin'"
+        [showValue]="currentItemClass() === 'Coin'"
         [item]="item.item"
       ></app-item>
       }

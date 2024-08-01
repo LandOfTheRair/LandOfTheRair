@@ -1,4 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { select } from '@ngxs/store';
 
 import { sumBy } from 'lodash';
@@ -22,6 +28,7 @@ interface GroundGroup {
   selector: 'app-ground',
   templateUrl: './ground.component.html',
   styleUrls: ['./ground.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroundComponent {
   public uiService = inject(UIService);
@@ -31,7 +38,7 @@ export class GroundComponent {
   public player = select(GameState.player);
   public ground = select(GameState.currentGround);
 
-  public currentItemClass: ItemClass;
+  public currentItemClass = signal<ItemClass>(undefined);
 
   public groundGroups = computed(() => {
     const ground = this.ground();
@@ -73,6 +80,6 @@ export class GroundComponent {
   });
 
   changeItemClass(iClass: ItemClass) {
-    this.currentItemClass = iClass;
+    this.currentItemClass.set(iClass);
   }
 }

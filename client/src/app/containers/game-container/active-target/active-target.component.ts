@@ -1,4 +1,9 @@
-import { Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+} from '@angular/core';
 import { select } from '@ngxs/store';
 
 import { get } from 'lodash';
@@ -13,6 +18,7 @@ import { OptionsService } from '../../../services/options.service';
   selector: 'app-active-target',
   templateUrl: './active-target.component.html',
   styleUrls: ['./active-target.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActiveTargetComponent {
   public gameService = inject(GameService);

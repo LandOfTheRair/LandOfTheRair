@@ -1,4 +1,12 @@
-import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { select, Store } from '@ngxs/store';
 
 import { isUndefined } from 'lodash';
@@ -31,6 +39,7 @@ import { SocketService } from '../../../services/socket.service';
   selector: 'app-character-list',
   templateUrl: './character-list.component.html',
   styleUrls: ['./character-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CharacterListComponent implements OnInit, OnDestroy {
   public player = select(GameState.player);
@@ -39,7 +48,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   public command = select(SettingsState.currentCommand);
   public macro = select(MacrosService.currentPlayerActiveMacro);
 
-  public disableInteractions = false;
+  public disableInteractions = signal<boolean>(false);
 
   private store = inject(Store);
   private socketService = inject(SocketService);
@@ -75,7 +84,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   }
 
   public doAction(char: ICharacter, $event?: any) {
-    if (this.disableInteractions) return;
+    if (this.disableInteractions()) return;
 
     // can't interact with the dead
     if (char.hp.current <= 0) return;
@@ -89,9 +98,9 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     if ($event?.ctrlKey) return;
 
     // disable ui interactions for a bit so we don't spam
-    this.disableInteractions = true;
+    this.disableInteractions.set(true);
     setTimeout(() => {
-      this.disableInteractions = false;
+      this.disableInteractions.set(false);
     }, 250);
 
     const cmd = this.command();

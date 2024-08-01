@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { select } from '@ngxs/store';
 
 import {
@@ -17,6 +17,7 @@ import { UIService } from '../../../services/ui.service';
   selector: 'app-equipment-quick',
   templateUrl: './equipment-quick.component.html',
   styleUrls: ['./equipment-quick.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EquipmentQuickComponent {
   public uiService = inject(UIService);

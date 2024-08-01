@@ -32,15 +32,19 @@
 
   <app-active-target></app-active-target>
 
-  @if (loadString) {
-  <div class="loader" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
+  @if (loadString(); as loadString) {
+  <div
+    class="loader"
+    [class.fade-out]="fadeOut()"
+    [innerHTML]="loadString"
+  ></div>
   }
 
   <!-- -->
-  @if (bannerString) {
+  @if (bannerString(); as bannerString) {
   <div
     class="loader banner"
-    [class.fade-out]="fadeOut"
+    [class.fade-out]="fadeOut()"
     [innerHTML]="bannerString"
   ></div>
   }
