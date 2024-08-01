@@ -787,6 +787,11 @@ export class PlayerHelper extends BaseService {
             con / (bonusConDivisor ?? 2),
         );
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${hpGained} max HP!`,
+        );
       },
 
       [BaseClass.Warrior]: () => {
@@ -831,6 +836,11 @@ export class PlayerHelper extends BaseService {
         );
 
         this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${hpGained} max HP!`,
+        );
       },
 
       [BaseClass.Healer]: () => {
@@ -868,6 +878,11 @@ export class PlayerHelper extends BaseService {
             wis / (randomDivisor ?? 3),
         );
         this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
+        );
       },
 
       [BaseClass.Mage]: () => {
@@ -905,6 +920,11 @@ export class PlayerHelper extends BaseService {
             int / (randomDivisor ?? 5),
         );
         this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
+        );
       },
     };
 
