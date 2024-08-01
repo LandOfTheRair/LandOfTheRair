@@ -316,6 +316,8 @@ export class DynamicEventHelper extends BaseService {
           .getMap(npc.map)
           ?.state.getNPCSpawner(npc.uuid);
         if (!checkSpawner) return;
+        if (!checkSpawner.areAnyNPCsAlive) return;
+        if (checkSpawner.allNPCS.length > 1) return;
 
         const checkSpawners = this.game.worldManager
           .getMap(npc.map)
