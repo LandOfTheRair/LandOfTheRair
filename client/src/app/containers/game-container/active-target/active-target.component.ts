@@ -11,6 +11,7 @@ import { get } from 'lodash';
 import { FOVVisibility, ICharacter } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
+import { hostilityLevelFor } from '../../../_shared/helpers';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 
@@ -60,10 +61,7 @@ export class ActiveTargetComponent {
   });
 
   public hostility = computed(() => {
-    return this.gameService.hostilityLevelFor(
-      this.player(),
-      this.target() as ICharacter,
-    );
+    return hostilityLevelFor(this.player(), this.target() as ICharacter);
   });
 
   public level = computed(() => this.target().level);

@@ -1,17 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  NgZone,
-  signal,
-} from '@angular/core';
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject, NgZone } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { select, Store } from '@ngxs/store';
 import * as Phaser from 'phaser';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
@@ -41,7 +29,6 @@ import { MapScene, PreloadScene } from './phaserstates';
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapComponent {
   private assetService = inject(AssetService);
@@ -86,9 +73,9 @@ export class MapComponent {
 
   // loading text
   private loadPercent = new BehaviorSubject<string>('');
-  public loadString = signal<string>('');
-  public bannerString = signal<string>('');
-  public fadeOut = signal<boolean>(false);
+  public loadString: string;
+  public bannerString: string;
+  public fadeOut: boolean;
 
   private game: MapRenderGame;
 
@@ -181,45 +168,45 @@ export class MapComponent {
         }
       });
 
-    const loadPercent = toSignal(this.loadPercent);
-    effect(
-      () => {
-        const d = loadPercent();
+    // have to do it this way so zone doesn't lose it's mind
+    this.loadPercent.pipe(takeUntilDestroyed()).subscribe((d) => {
+      this.zone.run(() => {
         // if we don't have anything, we set a fadeout boolean and then trigger css animations
         if (!d) {
-          this.fadeOut.set(true);
+          this.fadeOut = true;
 
           setTimeout(() => {
-            this.loadString.set(d);
-            this.fadeOut.set(false);
+            this.loadString = d;
+            this.fadeOut = false;
           }, 5000);
 
           return;
         }
 
         // if we do have something, we just set it
-        this.loadString.set(d);
-        this.fadeOut.set(false);
-      },
-      { allowSignalWrites: true },
-    );
+        this.loadString = d;
+        this.fadeOut = false;
+      });
+    });
 
     // have to do it this way so zone doesn't lose it's mind
     this.gameService.bannerMessage$
       .pipe(takeUntilDestroyed())
       .subscribe((d) => {
-        // if we do have something, we just set it
-        this.bannerString.set(d);
-        this.fadeOut.set(false);
-
-        setTimeout(() => {
-          this.fadeOut.set(true);
+        this.zone.run(() => {
+          // if we do have something, we just set it
+          this.bannerString = d;
+          this.fadeOut = false;
 
           setTimeout(() => {
-            this.fadeOut.set(false);
-            this.bannerString.set('');
-          }, 2000);
-        }, 1000);
+            this.fadeOut = true;
+
+            setTimeout(() => {
+              this.fadeOut = false;
+              this.bannerString = '';
+            }, 2000);
+          }, 1000);
+        });
       });
 
     this.hideMap.pipe(takeUntilDestroyed()).subscribe((d) => {
@@ -227,22 +214,16 @@ export class MapComponent {
     });
 
     // reset when we get a quit signal
-    const quit = toSignal(this.gameService.quitGame$);
-    effect(
-      () => {
-        quit();
+    this.gameService.quitGame$.pipe(takeUntilDestroyed()).subscribe(() => {
+      if (this.game) {
+        this.game.destroy(true);
+        this.game = null;
+        this.allBoxes.forEach((b) => b.clearSelf());
+      }
 
-        if (this.game) {
-          this.game.destroy(true);
-          this.game = null;
-          this.allBoxes.forEach((b) => b.clearSelf());
-        }
-
-        this.map.next(null);
-        this.loadPercent.next('');
-      },
-      { allowSignalWrites: true },
-    );
+      this.map.next(null);
+      this.loadPercent.next('');
+    });
   }
 
   private createBox(boxData) {

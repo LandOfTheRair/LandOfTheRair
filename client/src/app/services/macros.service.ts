@@ -14,6 +14,7 @@ import {
 } from '../../stores';
 import { GameService } from './game.service';
 
+import { hostilityLevelFor } from 'client/src/app/_shared/helpers';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 @Injectable({
@@ -233,8 +234,7 @@ export class MacrosService {
         !target.agro[player.uuid] ||
         macro.ignoreAutoAttack ||
         player.spellChannel ||
-        (this.gameService.hostilityLevelFor(player, target as ICharacter) !==
-          'hostile' &&
+        (hostilityLevelFor(player, target as ICharacter) !== 'hostile' &&
           !target.agro[player.uuid] &&
           !player.agro[target.uuid]) ||
         (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())

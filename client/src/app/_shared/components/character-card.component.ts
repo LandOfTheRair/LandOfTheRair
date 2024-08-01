@@ -10,6 +10,7 @@ import {
 import { select } from '@ngxs/store';
 import { GameServerResponse, ICharacter, ItemSlot } from '../../../interfaces';
 import { GameState } from '../../../stores';
+import { hostilityLevelFor } from '../../_shared/helpers';
 import { GameService } from '../../services/game.service';
 import { OptionsService } from '../../services/options.service';
 import { SocketService } from '../../services/socket.service';
@@ -395,7 +396,7 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
   );
 
   public barClass = computed(() =>
-    this.gameService.hostilityLevelFor(this.origin(), this.char()),
+    hostilityLevelFor(this.origin(), this.char()),
   );
 
   ngOnInit() {

@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
   inject,
   OnDestroy,
   OnInit,
@@ -11,7 +10,6 @@ import { select, Store } from '@ngxs/store';
 
 import { isUndefined } from 'lodash';
 
-import { timer } from 'rxjs';
 import {
   Allegiance,
   GameServerResponse,
@@ -29,8 +27,9 @@ import {
   ViewCharacterEquipment,
 } from '../../../../stores';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { GameService } from '../../../services/game.service';
+import { GameService } from 'client/src/app/services/game.service';
+import { VisibleCharactersService } from 'client/src/app/services/visiblecharacters.service';
+import { hostilityLevelFor } from '../../../_shared/helpers';
 import { MacrosService } from '../../../services/macros.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
@@ -53,18 +52,8 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   private store = inject(Store);
   private socketService = inject(SocketService);
   private optionsService = inject(OptionsService);
-  public gameService = inject(GameService);
-
-  constructor() {
-    timer(0, 500)
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.gameService.updateCharacterList(this.player()));
-
-    effect(() => {
-      this.curPos();
-      this.gameService.updateCharacterList(this.player());
-    });
-  }
+  private gameService = inject(GameService);
+  public visibleCharactersService = inject(VisibleCharactersService);
 
   ngOnInit() {
     this.socketService.registerComponentCallback(
@@ -119,7 +108,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
     } else if (
       (char as IPlayer).username &&
       !cmd &&
-      this.gameService.hostilityLevelFor(this.player(), char) !== 'hostile'
+      hostilityLevelFor(this.player(), char) !== 'hostile'
     ) {
       this.store.dispatch(
         new SetCurrentCommand(`#${(char as IPlayer).name}, `),

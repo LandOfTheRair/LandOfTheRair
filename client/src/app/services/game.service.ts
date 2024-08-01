@@ -1,35 +1,19 @@
 import { effect, inject, Injectable } from '@angular/core';
 import { select } from '@ngxs/store';
-import {
-  get,
-  isBoolean,
-  isNumber,
-  maxBy,
-  sample,
-  sortBy,
-  startCase,
-} from 'lodash';
+import { sample, sortBy, startCase } from 'lodash';
 import { Subject } from 'rxjs';
 
 import {
-  Alignment,
-  Allegiance,
-  Direction,
   directionFromOffset,
   directionToSymbol,
   distanceFrom,
-  FOVVisibility,
   GameServerEvent,
-  Hostility,
   ICharacter,
   IDialogChatAction,
-  INPC,
-  IPlayer,
-  isHostileTo,
-  Stat,
 } from '../../interfaces';
 import { GameState } from '../../stores';
 
+import { VisibleCharactersService } from 'client/src/app/services/visiblecharacters.service';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
@@ -57,20 +41,13 @@ export class GameService {
 
   public currentMap = select(GameState.map);
   public inGame = select(GameState.inGame);
-  private allCharacters = select(GameState.allCharacters);
 
-  // character list stuff
-  private currentCharacter: ICharacter = null;
-  private previousPlacements: Record<string, number> = {};
-
-  private visibleCharacterList: ICharacter[] = [];
-  public get allVisibleCharacters(): ICharacter[] {
-    return this.visibleCharacterList;
-  }
+  private player = select(GameState.player);
 
   private socketService = inject(SocketService);
   private optionsService = inject(OptionsService);
   private modalService = inject(ModalService);
+  private visibleCharactersService = inject(VisibleCharactersService);
 
   constructor() {
     effect(
@@ -90,115 +67,6 @@ export class GameService {
   }
 
   init() {}
-
-  public updateCharacterList(player: IPlayer) {
-    this.currentCharacter = player;
-    this.visibleCharacterList = this.visibleCharacters(player).filter(Boolean);
-  }
-
-  private visibleCharacters(player: IPlayer): ICharacter[] {
-    if (!player || this.allCharacters.length === 0) return [];
-    const fov = player.fov;
-    const allCharacters = this.allCharacters();
-
-    let unsorted: any[] = allCharacters
-      .map((testChar) => {
-        if ((testChar as IPlayer).username === player.username) return false;
-        if (testChar.dir === Direction.Center || testChar.hp.current === 0) {
-          return false;
-        }
-
-        const diffX = testChar.x - player.x;
-        const diffY = testChar.y - player.y;
-
-        const canSee = get(fov, [diffX, diffY]) >= FOVVisibility.CanSee;
-        if (!canSee) return false;
-
-        return testChar;
-      })
-      .filter(Boolean);
-
-    if (unsorted.length === 0) return [];
-
-    const shouldSortDistance = this.optionsService.sortByDistance;
-    const shouldSortFriendly = this.optionsService.sortFriendlies;
-
-    // iterate over unsorted, find their place, or find them a new place (only if we are doing no sorting)
-    if (!isBoolean(shouldSortDistance) && !isBoolean(shouldSortFriendly)) {
-      const highestOldSpace =
-        this.previousPlacements[
-          maxBy(
-            Object.keys(this.previousPlacements),
-            (key) => this.previousPlacements[key],
-          )
-        ];
-      const oldPositionSorting = Array(highestOldSpace).fill(null);
-      const newPositionHash = {};
-
-      const unfilledSpaces = oldPositionSorting.reduce((prev, cur, idx) => {
-        prev[idx] = null;
-        return prev;
-      }, {});
-
-      const needFill = [];
-
-      // sort old creatures into the array, and if they weren't there before, we mark them as filler
-      for (let i = 0; i < unsorted.length; i++) {
-        const creature = unsorted[i];
-
-        const oldPos = this.previousPlacements[creature.uuid];
-        if (isNumber(oldPos)) {
-          oldPositionSorting[oldPos] = creature;
-          delete unfilledSpaces[oldPos];
-        } else {
-          needFill.push(creature);
-        }
-      }
-
-      // get all the filler spaces, and put the unsorted creatures into them
-      const fillKeys = Object.keys(unfilledSpaces);
-
-      for (let i = 0; i < needFill.length; i++) {
-        const fillSpot = fillKeys.shift();
-        if (fillSpot) {
-          oldPositionSorting[+fillSpot] = needFill[i];
-        } else {
-          oldPositionSorting.push(needFill[i]);
-        }
-      }
-
-      // create a new position hash
-      for (let i = 0; i < oldPositionSorting.length; i++) {
-        const creature = oldPositionSorting[i];
-        if (!creature) continue;
-
-        newPositionHash[creature.uuid] = i;
-      }
-
-      this.previousPlacements = newPositionHash;
-      unsorted = oldPositionSorting;
-    }
-
-    // sort them by distance
-    if (isBoolean(shouldSortDistance)) {
-      unsorted = sortBy(unsorted, (testChar) => distanceFrom(player, testChar));
-
-      if (!shouldSortDistance) unsorted = unsorted.reverse();
-    }
-
-    // sort them by friendly
-    if (isBoolean(shouldSortFriendly)) {
-      const sortOrder = shouldSortFriendly
-        ? { friendly: 0, neutral: 1, hostile: 2 }
-        : { hostile: 0, neutral: 1, friendly: 2 };
-      unsorted = sortBy(
-        unsorted,
-        (testChar) => sortOrder[this.hostilityLevelFor(player, testChar)],
-      );
-    }
-
-    return unsorted;
-  }
 
   private handleAutoExec() {
     if (!this.optionsService.autoExec) return;
@@ -255,7 +123,7 @@ export class GameService {
       return;
     }
 
-    const allChars = this.allVisibleCharacters;
+    const allChars = this.visibleCharactersService.allVisibleCharacters();
 
     const allNPCs = () => allChars.filter((c) => !(c as any).username);
     const allPlayers = () => allChars.filter((c) => (c as any).username);
@@ -266,9 +134,9 @@ export class GameService {
       sortBy(list, (c) => -c.hp.current)[0];
 
     const closest = (list: ICharacter[]) =>
-      sortBy(list, (c) => distanceFrom(this.currentCharacter, c))[0];
+      sortBy(list, (c) => distanceFrom(this.player(), c))[0];
     const farthest = (list: ICharacter[]) =>
-      sortBy(list, (c) => -distanceFrom(this.currentCharacter, c))[0];
+      sortBy(list, (c) => -distanceFrom(this.player(), c))[0];
 
     let newArgs = args;
 
@@ -417,71 +285,6 @@ export class GameService {
     const diffY = to.y - from.y;
     const dir = directionFromOffset(diffX, diffY);
     return directionToSymbol(dir);
-  }
-
-  // check the hostility level between two characters
-  // any changes here _might_ need to be made to server/checkTargetForHostility
-  public hostilityLevelFor(
-    origin: ICharacter,
-    compare: ICharacter,
-  ): 'hostile' | 'neutral' | 'friendly' | 'stealth' {
-    const isHiddenTo = () =>
-      origin.effects._hash.Hidden &&
-      (origin.totalStats?.[Stat.Stealth] ?? 0) >
-        (compare.totalStats?.[Stat.Perception] ?? 0);
-    const alignmentConsideringHidden = () =>
-      isHiddenTo() ? 'stealth' : 'hostile';
-
-    if (!origin) return 'neutral';
-
-    if (origin.allegiance === Allegiance.GM) return 'neutral';
-    if (compare.allegiance === Allegiance.NaturalResource) return 'neutral';
-
-    if (
-      (origin as IPlayer).partyName &&
-      (origin as IPlayer).partyName === (compare as IPlayer).partyName
-    ) {
-      return 'neutral';
-    }
-
-    if (compare.agro[origin.uuid] || origin.agro[compare.uuid]) {
-      return alignmentConsideringHidden();
-    }
-
-    if (
-      origin.effects._hash.Disguise &&
-      origin.totalStats[Stat.CHA] > compare.totalStats[Stat.WIL]
-    ) {
-      return 'stealth';
-    }
-
-    const hostility = (compare as INPC).hostility;
-
-    if (!hostility) return 'neutral';
-
-    if (hostility === Hostility.Never) return 'friendly';
-
-    if (hostility === Hostility.Faction) {
-      if (
-        isHostileTo(origin, compare.allegiance) ||
-        isHostileTo(compare, origin.allegiance)
-      ) {
-        return alignmentConsideringHidden();
-      }
-    }
-
-    if (origin.allegiance === compare.allegiance) return 'neutral';
-
-    if (hostility === Hostility.Always) return alignmentConsideringHidden();
-
-    if (
-      origin.alignment === Alignment.Evil &&
-      compare.alignment === Alignment.Good
-    ) {
-      return alignmentConsideringHidden();
-    }
-
-    return 'neutral';
   }
 
   public showCommandableDialog(dialogInfo: IDialogChatAction) {
