@@ -8,6 +8,7 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
+  "extends": ["prettier"],
   "plugins": [
     "eslint-plugin-prettier",
     "eslint-plugin-jsdoc",
@@ -53,19 +54,7 @@
       }
     ],
     "indent": "off",
-    "@typescript-eslint/indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1,
-        "FunctionDeclaration": {
-          "parameters": "first"
-        },
-        "FunctionExpression": {
-          "parameters": "first"
-        }
-      }
-    ],
+    "@typescript-eslint/indent": "off",
     "@typescript-eslint/member-delimiter-style": [
       "error",
       {
