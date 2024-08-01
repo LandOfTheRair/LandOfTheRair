@@ -1,8 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { select } from '@ngxs/store';
 
-import { Subscription } from 'rxjs';
-
 import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
@@ -23,8 +21,6 @@ export class RuneCodexComponent {
 
   public activeSlot = -1;
   public activeRune: string;
-
-  playerSub: Subscription;
 
   public readonly slots = [
     {

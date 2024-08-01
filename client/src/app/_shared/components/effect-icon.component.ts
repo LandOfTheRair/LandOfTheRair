@@ -5,7 +5,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { timer } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as effectData from '../../../assets/content/_output/effect-data.json';
@@ -94,8 +94,6 @@ export class EffectIconComponent {
 
   public currentTicksLeft = signal<number>(0);
 
-  tickSub: Subscription;
-
   public iconData = computed(
     () =>
       (
@@ -159,7 +157,7 @@ export class EffectIconComponent {
   }
 
   constructor() {
-    this.tickSub = timer(0, 1000)
+    timer(0, 1000)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.currentTicksLeft.set(this.getRemainingTicks());

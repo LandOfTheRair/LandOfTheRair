@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { select } from '@ngxs/store';
-import { interval, Subscription } from 'rxjs';
+import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { BaseClass, IMacro, IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
@@ -24,9 +24,7 @@ export class MacroComponent {
   public macroService = inject(MacrosService);
   public player = select(GameState.player);
 
-  // private cooldownDisplayValue = new BehaviorSubject<number>(0);
   public cooldownDisplay = signal<string>('');
-  cooldownSub: Subscription;
 
   public size = input('normal');
   public macroRef = input<IMacro>();
@@ -51,7 +49,7 @@ export class MacroComponent {
   constructor() {
     const cooldownObs = toObservable(this.cooldown);
 
-    this.cooldownSub = interval(100)
+    interval(100)
       .pipe(takeUntilDestroyed())
       .pipe(switchMap(() => cooldownObs))
       .subscribe((v) => {

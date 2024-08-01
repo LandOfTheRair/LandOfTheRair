@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { select } from '@ngxs/store';
-import { Subscription } from 'rxjs';
 import { GameServerEvent } from '../../../../interfaces';
 import { AccountState } from '../../../../stores';
 import { SocketService } from '../../../services/socket.service';
@@ -18,7 +17,6 @@ export class AccountComponent {
 
   public account = select(AccountState.account);
 
-  public accountSub: Subscription;
   public currentPassword: string;
   public newPassword: string;
   public newEmail: string;
