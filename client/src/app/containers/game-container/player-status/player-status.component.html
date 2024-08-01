@@ -67,13 +67,17 @@
       (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
       dropScope="use"
     >
-      @if (effects.length > 0) { @for (effect of effects; track effect.uuid) {
+      @if (effects().length > 0) {
+      <!---->
+      @for (effect of effects(); track effect.uuid) {
       <app-effect-icon
         [effect]="effect"
         [defaultTransparent]="true"
         (contextmenu)="unapply($event, effect)"
       ></app-effect-icon>
-      } } @else {
+      } }
+      <!---->
+      @else {
       <div class="true-center background-text full-height full-width">
         Drop a potion or food here to consume it
       </div>
@@ -110,7 +114,9 @@
             {{ player.exp | number }} ({{ xpPercent(player) }}%)
           </span>
         </div>
-        } @if (player.gainingAXP) {
+        }
+        <!---->
+        @if (player.gainingAXP) {
         <div class="bar-container axp">
           <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
           <span class="bar-text">

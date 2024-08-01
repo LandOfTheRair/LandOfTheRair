@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  effect,
+  computed,
   inject,
 } from '@angular/core';
 import { select, Store } from '@ngxs/store';
@@ -25,23 +25,14 @@ export class PlayerStatusComponent {
   public account = select(AccountState.account);
   public player = select(GameState.player);
 
-  public effects: IStatusEffect[] = [];
-  public showPouch: boolean;
+  public effects = computed(() => this.getEffects(this.player()));
+  public showPouch = computed(
+    () => !!this.account().premium.silverPurchases?.[SilverPurchase.MagicPouch],
+  );
 
   private store = inject(Store);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-
-  constructor() {
-    effect(() => {
-      this.effects = this.getEffects(this.player());
-    });
-
-    effect(() => {
-      this.showPouch =
-        !!this.account().premium.silverPurchases?.[SilverPurchase.MagicPouch];
-    });
-  }
 
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
