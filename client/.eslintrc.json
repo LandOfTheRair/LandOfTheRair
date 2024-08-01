@@ -16,8 +16,6 @@
       "rules": {
         "@rdlabo/rules/deny-constructor-di": "error",
         "@rdlabo/rules/import-inject-object": "error",
-        "@rdlabo/rules/deny-import-from-ionic-module": "error",
-        "@rdlabo/rules/implements-ionic-lifecycle": "error",
         "@angular-eslint/prefer-on-push-component-change-detection": "warn",
         "@angular-eslint/component-selector": [
           "error",
