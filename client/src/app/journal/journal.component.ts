@@ -1,8 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { JournalState, UpdateJournal } from '../../stores';
 
 @Component({
@@ -11,17 +8,18 @@ import { JournalState, UpdateJournal } from '../../stores';
   styleUrls: ['./journal.component.scss'],
 })
 export class JournalComponent {
-  @Select(JournalState.journal) private journal$: Observable<string>;
+  public journalData = select(JournalState.journal);
 
   public journal: string;
 
   private store = inject(Store);
-  
+
   constructor() {
-    this.journal$
-      .pipe(takeUntilDestroyed())
-      .pipe(first())
-      .subscribe((j) => (this.journal = j));
+    effect(() => {
+      if (this.journal) return;
+
+      this.journal = this.journalData();
+    });
   }
 
   public updateJournal() {

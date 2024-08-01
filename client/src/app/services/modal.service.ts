@@ -1,8 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { effect, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { select } from '@ngxs/store';
 
 import {
   GameServerEvent,
@@ -34,7 +33,8 @@ import { SocketService } from './socket.service';
   providedIn: 'root',
 })
 export class ModalService {
-  @Select(GameState.inGame) inGame$: Observable<boolean>;
+  public inGame = select(GameState.inGame);
+
   private commandDialogRef: MatDialogRef<DialogComponent>;
   private spellDialogRef: MatDialogRef<NewSpellsComponent>;
 
@@ -43,13 +43,16 @@ export class ModalService {
   private snackbar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
 
-  public init() {
-    this.inGame$.subscribe((val) => {
-      if (!val && this.commandDialogRef) {
+  constructor() {
+    effect(() => {
+      const inGame = this.inGame();
+      if (!inGame && this.commandDialogRef) {
         this.commandDialogRef.close();
       }
     });
+  }
 
+  public init() {
     this.socketService.wsConnected$.subscribe((val) => {
       if (val) return;
 

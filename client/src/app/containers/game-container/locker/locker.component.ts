@@ -1,10 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
-import { combineLatest, Observable, Subscription } from 'rxjs';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { IPlayer } from '../../../../interfaces';
 import { GameState, HideLockerWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -19,26 +16,18 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./locker.component.scss'],
 })
 export class LockerComponent {
-  @Select(GameState.currentPosition) curPos$: Observable<{
-    x: number;
-    y: number;
-  }>;
-  @Select(GameState.currentLockerWindow) locker$: Observable<any>;
-  @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public curPos = select(GameState.currentPosition);
+  public locker = select(GameState.currentLockerWindow);
+  public inGame = select(GameState.inGame);
+  public player = select(GameState.player);
 
   private lastPos = { x: 0, y: 0 };
-  public player: IPlayer;
   public lockerInfo: any = {};
   public lockerNames = [];
   public amount = 0;
   public allLockers = {};
   public currentLocker = '';
   public activeLockerSlot = -1;
-
-  lockerInfoSub: Subscription;
-  posSub: Subscription;
-  gameStatusSub: Subscription;
 
   public get materialData() {
     return materialLayout;
@@ -48,9 +37,11 @@ export class LockerComponent {
   public uiService = inject(UIService);
   public optionsService = inject(OptionsService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
+    effect(() => {
+      const pos = this.curPos();
+
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -63,41 +54,44 @@ export class LockerComponent {
       }
     });
 
-    this.lockerInfoSub = combineLatest([this.locker$, this.player$])
-      .pipe(takeUntilDestroyed())
-      .subscribe(([lockerInfo, player]) => {
-        this.lockerInfo = cloneDeep(lockerInfo || {});
-        this.player = player;
+    effect(() => {
+      const player = this.player();
+      const lockerInfo = this.locker();
 
-        this.allLockers = {};
-        Object.assign(
-          this.allLockers,
-          this.lockerInfo.playerLockers || {},
-          this.lockerInfo.accountLockers || {},
-          player?.lockers.lockers || {},
-          player?.accountLockers?.lockers || {},
+      this.lockerInfo = cloneDeep(lockerInfo || {});
+
+      this.allLockers = {};
+      Object.assign(
+        this.allLockers,
+        this.lockerInfo.playerLockers || {},
+        this.lockerInfo.accountLockers || {},
+        player?.lockers.lockers || {},
+        player?.accountLockers?.lockers || {},
+      );
+
+      if (
+        player &&
+        this.lockerInfo.lockerName &&
+        this.lockerNames.length === 0
+      ) {
+        this.lockerNames = this.lockerInfo.showLockers;
+        this.currentLocker = this.lockerInfo.lockerName;
+        this.activeLockerSlot = this.lockerNames.findIndex(
+          (x) => x === this.lockerInfo.lockerName,
         );
+      }
+    });
 
-        if (
-          player &&
-          this.lockerInfo.lockerName &&
-          this.lockerNames.length === 0
-        ) {
-          this.lockerNames = this.lockerInfo.showLockers;
-          this.currentLocker = this.lockerInfo.lockerName;
-          this.activeLockerSlot = this.lockerNames.findIndex(
-            (x) => x === this.lockerInfo.lockerName,
-          );
-        }
-      });
+    effect(
+      () => {
+        this.inGame();
 
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
         this.store.dispatch(new HideLockerWindow());
         this.store.dispatch(new HideWindow('locker'));
         this.lockerNames = [];
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   public changeLocker(event) {

@@ -1,14 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
-
-import { Observable, Subscription } from 'rxjs';
+import { Component, computed, inject } from '@angular/core';
+import { select } from '@ngxs/store';
 
 import { get } from 'lodash';
 
 import { FOVVisibility, ICharacter } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 
@@ -18,78 +15,75 @@ import { OptionsService } from '../../../services/options.service';
   styleUrls: ['./active-target.component.scss'],
 })
 export class ActiveTargetComponent {
-  @Select(GameState.player) player$: Observable<ICharacter>;
-  @Select(GameState.currentTarget) currentTarget$: Observable<ICharacter>;
+  public gameService = inject(GameService);
+  public optionService = inject(OptionsService);
 
-  public player: ICharacter;
-  public target: ICharacter;
+  public player = select(GameState.player);
+  public target = select(GameState.currentTarget);
 
-  playerSub: Subscription;
-  targetSub: Subscription;
+  public isInFOV = computed(() => {
+    const player = this.player();
+    const target = this.target();
 
-  public get isInFOV(): boolean {
-    if (!this.player || !this.target) return false;
+    if (!player || !target) return false;
 
-    const diffX = this.target.x - this.player.x;
-    const diffY = this.target.y - this.player.y;
+    const diffX = target.x - player.x;
+    const diffY = target.y - player.y;
 
-    return get(this.player.fov, [diffX, diffY]) >= FOVVisibility.CanSee;
-  }
+    return get(player.fov, [diffX, diffY]) >= FOVVisibility.CanSee;
+  });
 
-  public get shouldShow() {
-    return (
-      this.player && this.target && this.target.hp.current > 0 && this.isInFOV
-    );
-  }
+  public shouldShow = computed(
+    () =>
+      this.player() &&
+      this.target() &&
+      this.target().hp.current > 0 &&
+      this.isInFOV(),
+  );
 
-  public get targetHealth() {
-    return ((this.target.hp.current / this.target.hp.maximum) * 100).toFixed(2);
-  }
+  public targetHealth = computed(() =>
+    ((this.target().hp.current / this.target().hp.maximum) * 100).toFixed(2),
+  );
 
-  public get targetHealthValue() {
+  public targetHealthValue = computed(() => {
     if (this.optionService.showHPValueInsteadOfPercent) {
-      return `${this.target.hp.current.toLocaleString()} / ${this.target.hp.maximum.toLocaleString()}`;
+      return `${this.target().hp.current.toLocaleString()} / ${this.target().hp.maximum.toLocaleString()}`;
     }
 
     return this.targetHealth + '%';
-  }
+  });
 
-  public get hostility() {
-    return this.gameService.hostilityLevelFor(this.player, this.target);
-  }
+  public hostility = computed(() => {
+    return this.gameService.hostilityLevelFor(
+      this.player(),
+      this.target() as ICharacter,
+    );
+  });
 
-  public get level() {
-    return this.target.level;
-  }
+  public level = computed(() => this.target().level);
 
-  public get isDifficult() {
-    return this.target.level > this.player.level + 5;
-  }
+  public isDifficult = computed(
+    () => this.target().level > this.player().level + 5,
+  );
 
-  public get direction() {
-    return this.gameService.directionTo(this.player, this.target, false);
-  }
+  public direction = computed(() =>
+    this.gameService.directionTo(
+      this.player(),
+      this.target() as ICharacter,
+      false,
+    ),
+  );
 
-  public get effects() {
-    if (!this.target) return [];
+  public effects = computed(() => {
+    const target = this.target();
+
+    if (!target) return [];
 
     return [
-      ...this.target.effects.buff,
-      ...this.target.effects.debuff,
-      ...this.target.effects.incoming,
-      ...this.target.effects.outgoing,
+      ...target.effects.buff,
+      ...target.effects.debuff,
+      ...target.effects.incoming,
+      ...target.effects.outgoing,
     ];
-  }
-
-  public gameService = inject(GameService);
-  public optionService = inject(OptionsService);
-  
-  constructor() {
-    this.playerSub = this.player$
-      .pipe(takeUntilDestroyed())
-      .subscribe((p) => (this.player = p));
-    this.targetSub = this.currentTarget$
-      .pipe(takeUntilDestroyed())
-      .subscribe((t) => (this.target = t));
-  }
+  });
 }

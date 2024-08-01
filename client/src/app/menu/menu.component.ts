@@ -1,14 +1,21 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Component, effect, inject, OnInit } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { DateTime } from 'luxon';
 import { Observable, of, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GameServerEvent } from '../../interfaces';
-import { Logout, ResetWindowPositions, ShowWindow } from '../../stores';
+import {
+  AccountState,
+  GameState,
+  Logout,
+  ResetWindowPositions,
+  ShowWindow,
+} from '../../stores';
 import { AnnouncementService } from '../services/announcement.service';
 import { APIService } from '../services/api.service';
 
+import { toObservable } from '@angular/core/rxjs-interop';
 import { AssetService } from '../services/asset.service';
 import { GameService } from '../services/game.service';
 import { ModalService } from '../services/modal.service';
@@ -39,6 +46,9 @@ export class MenuComponent implements OnInit {
   public socketService = inject(SocketService);
   public gameService = inject(GameService);
   public assetService = inject(AssetService);
+
+  public inGame = select(GameState.inGame);
+  public loggedIn = select(AccountState.loggedIn);
 
   private serverAssetHash: string;
 
@@ -75,7 +85,7 @@ export class MenuComponent implements OnInit {
         {
           name: 'Manage Silver',
           icon: 'account_balance',
-          visibleIf: this.gameService.inGame$.pipe(map((x) => !x)),
+          visibleIf: toObservable(this.inGame).pipe(map((x) => !x)),
           handler: () => this.modalService.showManageSilver(),
         },
         {
@@ -129,42 +139,42 @@ export class MenuComponent implements OnInit {
         },
         {
           name: 'Command Line',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('commandLine')),
         },
         {
           name: 'Character',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('equipmentMain')),
         },
         {
           name: 'Belt',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('inventoryBelt')),
         },
         {
           name: 'Sack',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('inventorySack')),
         },
         {
           name: 'Ground',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('ground')),
         },
         {
           name: 'Party',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('party')),
         },
         {
           name: 'Quests',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('quests')),
         },
         {
           name: 'Talents',
-          visibleIf: this.gameService.inGame$,
+          visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('traits')),
         },
         {
@@ -187,7 +197,7 @@ export class MenuComponent implements OnInit {
     },
     {
       name: 'Macros',
-      visibleIf: this.gameService.inGame$,
+      visibleIf: toObservable(this.inGame),
       handler: () => this.modalService.showMacros(),
     },
     {
@@ -200,7 +210,7 @@ export class MenuComponent implements OnInit {
     },
     {
       name: 'Exit To Lobby',
-      visibleIf: this.gameService.inGame$,
+      visibleIf: toObservable(this.inGame),
       handler: () => {
         this.modalService
           .confirm('Exit Game', 'Are you sure you want to exit to lobby?')
@@ -251,11 +261,13 @@ export class MenuComponent implements OnInit {
   public nowTimestamp: number;
   public timestampDisplay: string;
 
-  ngOnInit() {
-    this.assetService.assetHash$.subscribe((hash) => {
-      this.serverAssetHash = hash;
+  constructor() {
+    effect(() => {
+      this.serverAssetHash = this.assetService.assetHash();
     });
+  }
 
+  ngOnInit() {
     this.watchResetTime();
   }
 

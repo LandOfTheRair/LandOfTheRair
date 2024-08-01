@@ -1,17 +1,17 @@
 import {
   Component,
+  effect,
   ElementRef,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 import { debounce } from 'lodash';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ChatMode } from '../../../../interfaces';
 import {
   HideWindow,
@@ -19,6 +19,7 @@ import {
   SetActiveWindow,
   SetChatMode,
   SetCurrentCommand,
+  SettingsState,
   ShowWindow,
 } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
@@ -30,6 +31,9 @@ import { OptionsService } from '../../../services/options.service';
   styleUrls: ['./command-line.component.scss'],
 })
 export class CommandLineComponent implements OnInit, OnDestroy {
+  public chatMode = select(SettingsState.chatMode);
+  public currentCommandFromSettings = select(SettingsState.currentCommand);
+
   @ViewChild('commandInput', { read: ElementRef })
   public commandInput: ElementRef;
 
@@ -69,9 +73,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
   public gameService = inject(GameService);
 
   constructor() {
-    this.command$ = this.gameService.currentCommand$
-      .pipe(takeUntilDestroyed())
-      .subscribe((command) => {
+    effect(
+      () => {
+        const command = this.currentCommandFromSettings();
         this.currentCommand = command;
 
         if (command) {
@@ -79,7 +83,9 @@ export class CommandLineComponent implements OnInit, OnDestroy {
           this.store.dispatch(new SetActiveWindow('commandLine'));
           this.focusInput();
         }
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit() {

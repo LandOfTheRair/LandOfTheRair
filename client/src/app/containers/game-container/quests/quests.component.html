@@ -14,7 +14,7 @@
 <ng-template #headTemplate>Quest Log</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player) {
+  @if (player(); as player) {
   <mat-tab-group
     mat-align-tabs="center"
     class="bring-to-top"
@@ -29,7 +29,10 @@
       }
       <mat-list>
         @for (playerQuest of player.quests.activeQuestProgress | keyvalue; track
-        playerQuest) { @if (getQuest(playerQuest.key); as quest) {
+        $index) {
+
+        <!-- -->
+        @if (getQuest(playerQuest.key); as quest) {
         <mat-list-item>
           <h2 matLine>
             <strong>{{ quest.name }}</strong>
@@ -64,7 +67,10 @@
       }
       <mat-list>
         @for (playerQuest of player.quests.permanentQuestCompletion | keyvalue;
-        track playerQuest) { @if (getQuest(playerQuest.key); as quest) {
+        track $index) {
+
+        <!-- -->
+        @if (getQuest(playerQuest.key); as quest) {
         <mat-list-item>
           <h2 matLine>{{ quest.name }}</h2>
           <h5 matLine>Given By: {{ quest.giver }}</h5>

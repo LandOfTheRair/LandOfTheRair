@@ -1,7 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Component, computed, inject } from '@angular/core';
+import { select } from '@ngxs/store';
 
-import { Observable } from 'rxjs';
 import {
   getMultiplierBasedOnLevelDifference,
   getMultiplierBasedOnPartySize,
@@ -12,7 +11,6 @@ import {
 
 import { GameState } from '../../../../stores';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 
 @Component({
@@ -21,27 +19,16 @@ import { GameService } from '../../../services/game.service';
   styleUrls: ['./party.component.scss'],
 })
 export class PartyComponent {
-  @Select(GameState.party) party$: Observable<{
-    party: IParty;
-    partyMembers: IPartyMember[];
-  }>;
-  @Select(GameState.player) player$: Observable<any>;
+  public party = select(GameState.party);
+  public player = select(GameState.player);
 
-  public party: { party: IParty; partyMembers: IPartyMember[] };
-  public partySub;
-
-  public partyXPMult = 100;
+  public partyXPMult = computed(() => {
+    return this.multiplier(this.party()?.party) ?? 100;
+  });
 
   public createOrJoinParty = '';
 
   public gameService = inject(GameService);
-  
-  constructor() {
-    this.partySub = this.party$.pipe(takeUntilDestroyed()).subscribe((p) => {
-      this.party = p;
-      this.partyXPMult = this.multiplier(p.party);
-    });
-  }
 
   create() {
     this.gameService.sendCommandString(

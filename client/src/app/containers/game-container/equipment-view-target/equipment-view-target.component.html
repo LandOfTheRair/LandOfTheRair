@@ -12,13 +12,13 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Viewing @if (char$ | async; as char) {
+  Viewing @if (char(); as char) {
   {{ char.name }}
   }
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (char$ | async; as char) {
+  @if (char(); as char) {
   <app-equipment-viewonly
     [player]="char"
     [hideGold]="true"

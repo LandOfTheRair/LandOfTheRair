@@ -37,7 +37,10 @@
     </div>
     <div class="action"></div>
   </div>
-  } @if (isLogging) {
+  }
+
+  <!-- -->
+  @if (isLogging) {
   <div class="actions">
     <div class="action text">
       {{ totalLogged | number }} / {{ totalToLog | number }}
@@ -53,7 +56,7 @@
       </button>
     </div>
   </div>
-  } @if (player$ | async; as player) {
+  } @if (player(); as player) {
   <div class="stats">
     @for (stat of allStats; track stat) {
     <span
@@ -65,7 +68,10 @@
     </span>
     }
   </div>
-  } @if (visibleLogInfoForTable.length > 0) {
+  }
+
+  <!-- -->
+  @if (visibleLogInfoForTable.length > 0) {
   <table class="table">
     <thead>
       <tr>

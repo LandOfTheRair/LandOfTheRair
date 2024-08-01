@@ -1,13 +1,11 @@
-import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 
 import { clamp, cloneDeep, groupBy, sortBy } from 'lodash';
-import { combineLatest, Observable, Subscription } from 'rxjs';
 
 import {
   calculateTradeskillLevelFromXP,
   calculateTradeskillXPRequiredForLevel,
-  IPlayer,
   IRecipe,
   Tradeskill,
 } from '../../../../interfaces';
@@ -20,7 +18,6 @@ import {
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as allRecipes from '../../../../assets/content/_output/recipes.json';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 import { AssetService } from '../../../services/asset.service';
@@ -32,15 +29,11 @@ const recipes = (allRecipes as any).default || allRecipes;
   styleUrls: ['./tradeskill.component.scss'],
 })
 export class TradeskillComponent {
-  @Select(GameState.currentTradeskillWindow) tradeskill$: Observable<any>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(GameState.inGame) inGame$: Observable<any>;
-
-  gameStatusSub: Subscription;
-  playerSub: Subscription;
+  public tradeskill = select(GameState.currentTradeskillWindow);
+  public player = select(GameState.player);
+  public inGame = select(GameState.inGame);
 
   public tradeskillInfo: any = {};
-  public player: IPlayer;
   public knownRecipes: Record<string, (IRecipe & { _pointChance: number })[]> =
     {};
   public knownRecipesArray: Array<{
@@ -57,26 +50,29 @@ export class TradeskillComponent {
   private assetService = inject(AssetService);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
-  constructor() {
-    this.playerSub = combineLatest([this.player$, this.tradeskill$])
-      .pipe(takeUntilDestroyed())
-      .subscribe(([player, tradeskill]) => {
-        this.setPlayer(player);
-        this.tradeskillInfo = cloneDeep(tradeskill || {});
-        this.updateSkill();
-        this.updateRecipes();
-      });
 
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+  constructor() {
+    effect(() => {
+      this.player();
+      const tradeskill = this.tradeskill();
+
+      this.tradeskillInfo = cloneDeep(tradeskill || {});
+      this.updateSkill();
+      this.updateRecipes();
+    });
+
+    effect(
+      () => {
+        this.inGame();
+
         this.store.dispatch(new HideTradeskillWindow());
         this.store.dispatch(new HideWindow('tradeskill'));
         this.chosenCraft = '';
         this.knownRecipes = {};
         this.knownRecipesArray = [];
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   chooseRecipe(name: string) {
@@ -97,13 +93,9 @@ export class TradeskillComponent {
     return realItem?.binds ?? false;
   }
 
-  private setPlayer(player: IPlayer) {
-    this.player = player;
-  }
-
   private getPlayerSkillXP(): number {
     return (
-      (this.player.tradeskills || {})[
+      (this.player().tradeskills || {})[
         this.tradeskillInfo.tradeskill.toLowerCase()
       ] ?? 0
     );
@@ -141,10 +133,12 @@ export class TradeskillComponent {
       )
       .filter((x) => (x.requireSkill ? x.requireSkill <= skill : true))
       .filter((x) =>
-        x.requireClass ? x.requireClass.includes(this.player.baseClass) : true,
+        x.requireClass
+          ? x.requireClass.includes(this.player().baseClass)
+          : true,
       )
       .filter((x) =>
-        x.requireLearn ? this.player.learnedRecipes.includes(x.name) : true,
+        x.requireLearn ? this.player().learnedRecipes.includes(x.name) : true,
       );
 
     knownRecipes.forEach(
@@ -176,7 +170,7 @@ export class TradeskillComponent {
     }
 
     const curXP =
-      (this.player.tradeskills || {})[
+      (this.player().tradeskills || {})[
         this.tradeskillInfo.tradeskill.toLowerCase()
       ] ?? 0;
     const skill = calculateTradeskillLevelFromXP(curXP);

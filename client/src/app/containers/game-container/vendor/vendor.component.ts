@@ -1,15 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, computed, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
 import { DateTime } from 'luxon';
-import { Observable, Subscription } from 'rxjs';
 
 import { IPlayer, ISimpleItem } from '../../../../interfaces';
 import { GameState, HideVendorWindow, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UIService } from '../../../services/ui.service';
 
 @Component({
@@ -18,16 +16,13 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./vendor.component.scss'],
 })
 export class VendorComponent {
-  @Select(GameState.currentPosition) curPos$: Observable<{
-    x: number;
-    y: number;
-  }>;
-  @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
-  @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public curPos = select(GameState.currentPosition);
+  public vendor = select(GameState.currentVendorWindow);
+  public inGame = select(GameState.inGame);
+  public player = select(GameState.player);
 
   private lastPos = { x: 0, y: 0 };
-  public vendorInfo: any = {};
+  public vendorData = computed(() => cloneDeep(this.vendor()));
 
   public get slots() {
     return Array(20)
@@ -41,39 +36,36 @@ export class VendorComponent {
       .map((v, i) => i);
   }
 
-  vendorInfoSub: Subscription;
-  posSub: Subscription;
-  gameStatusSub: Subscription;
-
   private store = inject(Store);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
-      if (!pos) return;
-      if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
-      this.lastPos.x = pos.x;
-      this.lastPos.y = pos.y;
+    effect(
+      () => {
+        const pos = this.curPos();
 
-      if (this.vendorInfo.npcUUID) {
+        if (!pos) return;
+        if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
+        this.lastPos.x = pos.x;
+        this.lastPos.y = pos.y;
+
+        if (this.vendorData()?.npcUUID) {
+          this.store.dispatch(new HideVendorWindow());
+          this.store.dispatch(new HideWindow('vendor'));
+        }
+      },
+      { allowSignalWrites: true },
+    );
+
+    effect(
+      () => {
+        this.inGame();
         this.store.dispatch(new HideVendorWindow());
         this.store.dispatch(new HideWindow('vendor'));
-      }
-    });
-
-    this.vendorInfoSub = this.vendor$
-      .pipe(takeUntilDestroyed())
-      .subscribe((data) => {
-        this.vendorInfo = cloneDeep(data || {});
-      });
-
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
-        this.store.dispatch(new HideVendorWindow());
-        this.store.dispatch(new HideWindow('vendor'));
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   boughtDailyAlready(player: IPlayer, item: ISimpleItem): boolean {
@@ -89,10 +81,12 @@ export class VendorComponent {
   }
 
   assess() {
-    this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, assess`);
+    this.gameService.sendCommandString(`#${this.vendorData().npcUUID}, assess`);
   }
 
   sellall() {
-    this.gameService.sendCommandString(`#${this.vendorInfo.npcUUID}, sellall`);
+    this.gameService.sendCommandString(
+      `#${this.vendorData().npcUUID}, sellall`,
+    );
   }
 }

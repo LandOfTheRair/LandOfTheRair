@@ -26,7 +26,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @if (player(); as player) {
   <app-inventory
     context="Sack"
     [container]="player.items.sack"

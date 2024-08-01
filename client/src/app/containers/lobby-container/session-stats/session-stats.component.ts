@@ -1,19 +1,17 @@
 import { Component } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { select } from '@ngxs/store';
 import { DateTime } from 'luxon';
 
-import { LobbyState } from '../../../../stores';
 import { ISessionStatistics } from '../../../../interfaces';
+import { LobbyState } from '../../../../stores';
 
 @Component({
   selector: 'app-session-stats',
   templateUrl: './session-stats.component.html',
-  styleUrls: ['./session-stats.component.scss']
+  styleUrls: ['./session-stats.component.scss'],
 })
 export class SessionStatsComponent {
-
-  @Select(LobbyState.lastSessionStats) stats$: Observable<ISessionStatistics>;
+  public stats = select(LobbyState.lastSessionStats);
 
   public duration(start: number, end: number): string {
     const startDate = DateTime.fromMillis(start);
@@ -25,7 +23,6 @@ export class SessionStatsComponent {
   }
 
   public keysForStats(stats: ISessionStatistics) {
-    return Object.keys(stats.statistics).filter(x => stats.statistics[x] > 0);
+    return Object.keys(stats.statistics).filter((x) => stats.statistics[x] > 0);
   }
-
 }

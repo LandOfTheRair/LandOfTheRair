@@ -1,18 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 
 import { cloneDeep, debounce, get, startCase } from 'lodash';
-import { Observable, Subscription } from 'rxjs';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   calculateListingFee,
   EquippableItemClasses,
   IMarketItemInfo,
   IMarketListing,
   IMarketPickup,
-  IPlayer,
   ItemClass,
   itemListError,
   ItemSlot,
@@ -34,23 +31,14 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./market.component.scss'],
 })
 export class MarketComponent {
-  @Select(GameState.currentPosition) curPos$: Observable<{
-    x: number;
-    y: number;
-  }>;
-  @Select(GameState.currentMarketWindow) market$: Observable<any>;
-  @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public curPos = select(GameState.currentPosition);
+  public market = select(GameState.currentMarketWindow);
+  public inGame = select(GameState.inGame);
+  public player = select(GameState.player);
 
   private lastPos = { x: 0, y: 0 };
   public marketInfo: any = {};
-  public player: IPlayer;
   public isLoading = false;
-
-  marketInfoSub: Subscription;
-  posSub: Subscription;
-  gameStatusSub: Subscription;
-  playerSub: Subscription;
 
   public searchQuery = '';
   public sellValue = 1;
@@ -114,7 +102,7 @@ export class MarketComponent {
   public get listingFee(): number {
     if (!this.player) return 0;
 
-    const item = this.player.items.equipment[ItemSlot.RightHand];
+    const item = this.player().items.equipment[ItemSlot.RightHand];
     if (!item) return 0;
 
     const realItem = this.assetService.getItem(item.name);
@@ -126,13 +114,13 @@ export class MarketComponent {
   public get sellError(): string {
     if (!this.player) return '';
 
-    const item = this.player.items.equipment[ItemSlot.RightHand];
+    const item = this.player().items.equipment[ItemSlot.RightHand];
     if (!item) return 'You need to hold an item to sell.';
 
     const realItem = this.assetService.getItem(item.name);
     if (!realItem) return 'That item is too unique to sell.';
 
-    return itemListError(this.player, item, realItem, this.sellValue);
+    return itemListError(this.player(), item, realItem, this.sellValue);
   }
 
   public get canGoBack() {
@@ -150,9 +138,10 @@ export class MarketComponent {
   private api = inject(APIService);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.posSub = this.curPos$.pipe(takeUntilDestroyed()).subscribe((pos) => {
+    effect(() => {
+      const pos = this.curPos();
       if (!pos) return;
       if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
       this.lastPos.x = pos.x;
@@ -165,29 +154,26 @@ export class MarketComponent {
       }
     });
 
-    this.marketInfoSub = this.market$
-      .pipe(takeUntilDestroyed())
-      .subscribe((data) => {
-        this.marketInfo = cloneDeep(data || {});
-        this.currentTab = '';
+    effect(() => {
+      const data = this.market();
+      this.marketInfo = cloneDeep(data || {});
+      this.currentTab = '';
 
-        setTimeout(() => {
-          this.switchTab('Buy');
-        }, 0);
-      });
+      setTimeout(() => {
+        this.switchTab('Buy');
+      }, 0);
+    });
 
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+    effect(
+      () => {
+        this.inGame();
+
         this.store.dispatch(new HideMarketWindow());
         this.store.dispatch(new HideWindow('market'));
         this.reset();
-      });
-
-    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
-      if (!p) return;
-      this.player = p;
-    });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   private reset() {
@@ -267,7 +253,7 @@ export class MarketComponent {
     this.http
       .get(
         this.api.finalHTTPURL +
-          `/market/listings/mine?username=${this.player.username}`,
+          `/market/listings/mine?username=${this.player().username}`,
       )
       .subscribe((d) => {
         this.myListings = (d as IMarketListing[]) || [];
@@ -281,7 +267,7 @@ export class MarketComponent {
     this.http
       .get(
         this.api.finalHTTPURL +
-          `/market/pickups/mine?username=${this.player.username}`,
+          `/market/pickups/mine?username=${this.player().username}`,
       )
       .subscribe((d) => {
         this.myPickups = (d as IMarketPickup[]) || [];

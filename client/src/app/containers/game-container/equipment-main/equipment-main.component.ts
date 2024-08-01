@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 
-import { Observable } from 'rxjs';
 import {
   Allegiance,
   calculateSkillLevelFromXP,
@@ -19,7 +18,6 @@ import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 
 @Component({
@@ -28,14 +26,8 @@ import * as skillDescs from '../../../../assets/content/_output/skilldescs.json'
   styleUrls: ['./equipment-main.component.scss'],
 })
 export class EquipmentMainComponent {
-  @Select(SettingsState.currentCharView) charView$: Observable<string>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
-
-  public charViewSub;
-  public playerSub;
-
-  public charView: string;
-  public player: IPlayer;
+  public charView = select(SettingsState.currentCharView);
+  public player = select(GameState.player);
 
   public readonly slots = [
     {
@@ -238,18 +230,6 @@ export class EquipmentMainComponent {
   public uiService = inject(UIService);
   public gameService = inject(GameService);
   public assetService = inject(AssetService);
-  
-  constructor() {
-    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
-      this.player = p;
-    });
-
-    this.charViewSub = this.charView$
-      .pipe(takeUntilDestroyed())
-      .subscribe((c) => {
-        this.charView = c;
-      });
-  }
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };

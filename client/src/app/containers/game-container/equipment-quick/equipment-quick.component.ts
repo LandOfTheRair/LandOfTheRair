@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { select } from '@ngxs/store';
 
-import { Observable } from 'rxjs';
 import {
   IPlayer,
   ISimpleItem,
@@ -20,7 +19,11 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./equipment-quick.component.scss'],
 })
 export class EquipmentQuickComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public uiService = inject(UIService);
+  public gameService = inject(GameService);
+  public assetService = inject(AssetService);
+
+  public player = select(GameState.player);
 
   public readonly slots = [
     {
@@ -51,10 +54,6 @@ export class EquipmentQuickComponent {
       dropScope: 'Equipment',
     },
   ];
-
-  public uiService = inject(UIService);
-  public gameService = inject(GameService);
-  public assetService = inject(AssetService);
 
   createContext(slot: any, player: IPlayer) {
     return { slot, player };

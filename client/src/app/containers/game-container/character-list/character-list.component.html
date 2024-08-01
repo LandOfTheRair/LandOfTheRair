@@ -18,20 +18,26 @@
     <div class="vertical-center full-width full-height background-text">
       You don't see anyone nearby
     </div>
-    } @for (character of gameService.allVisibleCharacters; track character.uuid;
+    }
+
+    <!-- -->
+    @for (character of gameService.allVisibleCharacters; track character.uuid;
     let i = $index) {
     <div class="char-card-container">
       @if (character) {
       <app-character-card
-        [origin]="player"
+        [origin]="player()"
         [disabled]="disableInteractions"
         [char]="character"
         (click)="doAction(character, $event)"
-        (contextmenu)="doAltAction(player, character, $event)"
+        (contextmenu)="doAltAction(player(), character, $event)"
       ></app-character-card>
       }
     </div>
-    } @if (gameService.allVisibleCharacters.length % 2 === 1) {
+    }
+
+    <!-- -->
+    @if (gameService.allVisibleCharacters.length % 2 === 1) {
     <div class="char-spacer"></div>
     }
   </div>

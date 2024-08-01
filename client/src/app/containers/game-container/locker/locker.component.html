@@ -14,7 +14,7 @@
 <ng-template #headTemplate>{{ lockerInfo.lockerName }} Wardrobe</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player && lockerNames.length > 0) {
+  @if (player() && lockerNames.length > 0) {
   <div>
     @if (!optionsService.lockerTabs) {
     <mat-form-field appearance="fill" class="full-width">
@@ -26,16 +26,22 @@
     </mat-form-field>
     @if (currentLocker === 'Materials') {
     <ng-container
-      *ngTemplateOutlet="materialStorage; context: { player: player }"
+      *ngTemplateOutlet="materialStorage; context: { player: player() }"
     ></ng-container>
-    } @if (currentLocker !== 'Materials') {
+    }
+
+    <!-- -->
+    @if (currentLocker !== 'Materials') {
     <ng-container
       *ngTemplateOutlet="
         lockerStorage;
-        context: { player: player, lockerName: currentLocker }
+        context: { player: player(), lockerName: currentLocker }
       "
     ></ng-container>
-    } } @if (optionsService.lockerTabs) {
+    } }
+
+    <!-- -->
+    @if (optionsService.lockerTabs) {
     <mat-tab-group
       mat-align-tabs="center"
       [selectedIndex]="activeLockerSlot"
@@ -45,13 +51,16 @@
       <mat-tab [label]="lockerName">
         @if (lockerName === 'Materials') {
         <ng-container
-          *ngTemplateOutlet="materialStorage; context: { player: player }"
+          *ngTemplateOutlet="materialStorage; context: { player: player() }"
         ></ng-container>
-        } @if (lockerName !== 'Materials') {
+        }
+
+        <!-- -->
+        @if (lockerName !== 'Materials') {
         <ng-container
           *ngTemplateOutlet="
             lockerStorage;
-            context: { player: player, lockerName: lockerName }
+            context: { player: player(), lockerName: lockerName }
           "
         ></ng-container>
         }

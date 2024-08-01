@@ -11,18 +11,21 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  @if (player) { Talents ({{ player.traits.tp || 0 }} TP@if (player.level >= 50)
-  {
+  @if (player(); as player) { Talents ({{ player.traits.tp || 0 }} TP@if
+  (player.level >= 50) {
   <span>/ {{ player.traits.ap || 0 }} AP</span>
   }) }
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (!player || !traitTree) {
+  @let playerData = player(); @if (!playerData || !traitTree) {
   <div class="true-center background-text full-height">
     You must dedicate to a profession to progress a trait tree!
   </div>
-  } @if (player && traitTree) {
+  }
+
+  <!-- -->
+  @if (playerData && traitTree) {
   <div class="container">
     <div class="splitter">
       <div class="build-list">
@@ -41,8 +44,8 @@
             (click)="changeTree(slot)"
           >
             {{
-              player.traits.savedBuilds[slot]
-                ? player.traits.savedBuilds[slot].name
+              playerData.traits.savedBuilds[slot]
+                ? playerData.traits.savedBuilds[slot].name
                 : 'No Build'
             }}
           </button>
@@ -62,7 +65,7 @@
             color="primary"
             (click)="loadBuild(currentTree)"
             [disabled]="
-              currentTree === -1 || !player.traits.savedBuilds[currentTree]
+              currentTree === -1 || !playerData.traits.savedBuilds[currentTree]
             "
           >
             Load Current Build
@@ -73,8 +76,9 @@
         <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
           <mat-tab label="Traits">
             <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
-              @for (tree of traitTree.treeOrder; track tree) { @if (tree !==
-              'Ancient' || player.level >= 50) {
+              @for (tree of traitTree.treeOrder; track tree) {
+              <!-- -->
+              @if (tree !== 'Ancient' || playerData.level >= 50) {
               <mat-tab [label]="tree + ' (' + traitsSpent(tree) + ')'">
                 @for (traitRow of traitTree.trees[tree].tree; track traitRow) {
                 <div class="trait-row">

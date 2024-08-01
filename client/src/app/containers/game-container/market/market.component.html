@@ -18,7 +18,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player) {
+  @if (player()) {
   <div>
     <mat-toolbar>
       @for (tab of tabs; track tab) {
@@ -34,11 +34,20 @@
     <div class="content">
       @if (currentTab === 'Buy') {
       <ng-template [ngTemplateOutlet]="marketBuy"></ng-template>
-      } @if (currentTab === 'Sell') {
+      }
+
+      <!-- -->
+      @if (currentTab === 'Sell') {
       <ng-template [ngTemplateOutlet]="marketSell"></ng-template>
-      } @if (currentTab === 'My Listings') {
+      }
+
+      <!-- -->
+      @if (currentTab === 'My Listings') {
       <ng-template [ngTemplateOutlet]="marketListings"></ng-template>
-      } @if (currentTab === 'Pick Up') {
+      }
+
+      <!-- -->
+      @if (currentTab === 'Pick Up') {
       <ng-template [ngTemplateOutlet]="marketPickup"></ng-template>
       }
     </div>
@@ -120,13 +129,19 @@
         ></app-icon>
         Loading...
       </div>
-      } @if (!isLoading && buyableListings?.length === 0) {
+      }
+
+      <!-- -->
+      @if (!isLoading && buyableListings?.length === 0) {
       <div
         class="background-text text-center content full-width full-height true-center big-text"
       >
         There are no items here, or none match your search criteria.
       </div>
-      } @if (!isLoading && buyableListings?.length > 0) {
+      }
+
+      <!-- -->
+      @if (!isLoading && buyableListings?.length > 0) {
       <div class="content scrollable">
         @for (listing of buyableListings; track listing) {
         <div class="spacing">
@@ -156,7 +171,7 @@
             <div class="thin-line">
               <small
                 [class.text-danger]="
-                  listing.listingInfo.price > player.currency.gold
+                  listing.listingInfo.price > player().currency.gold
                 "
               >
                 <em>{{ listing.listingInfo.price | number }} gold</em>
@@ -169,8 +184,8 @@
               color="primary"
               (click)="buy(listing)"
               [disabled]="
-                player.username === listing.listingInfo.seller ||
-                player.currency.gold < listing.listingInfo.price
+                player().username === listing.listingInfo.seller ||
+                player().currency.gold < listing.listingInfo.price
               "
             >
               Buy
@@ -222,11 +237,8 @@
       <div class="col">
         <div>
           <div class="item-slot item-background">
-            @if (player.items.equipment.rightHand) {
-            <app-item
-              [item]="player.items.equipment.rightHand"
-              [showOunces]="true"
-            ></app-item>
+            @if (player().items.equipment.rightHand; as rightHand) {
+            <app-item [item]="rightHand" [showOunces]="true"></app-item>
             }
           </div>
         </div>
@@ -236,7 +248,10 @@
       <div class="col text-danger text-center">
         {{ sellError }}
       </div>
-      } @if (!sellError) {
+      }
+
+      <!-- -->
+      @if (!sellError) {
       <div class="col text-success text-center">Ready to sell!</div>
       }
 
@@ -268,7 +283,7 @@
 
       <div
         class="col text-center"
-        [class.text-danger]="listingFee > player.currency.gold"
+        [class.text-danger]="listingFee > player().currency.gold"
       >
         <h3 class="text-center">Listing Fee ({{ listingFeePercent }}%)</h3>
         <br />
@@ -308,13 +323,19 @@
       </div>
       }
     </div>
-    } @if (myListings?.length === 0) {
+    }
+
+    <!-- -->
+    @if (myListings?.length === 0) {
     <div
       class="background-text text-center content full-width full-height true-center big-text"
     >
       You do not have any items listed on the market.
     </div>
-    } @if (myListings?.length > 0) {
+    }
+
+    <!-- -->
+    @if (myListings?.length > 0) {
     <div class="content scrollable">
       @for (listing of myListings; track listing) {
       <div class="spacing">
@@ -365,13 +386,19 @@
       </div>
       }
     </div>
-    } @if (myPickups?.length === 0) {
+    }
+
+    <!-- -->
+    @if (myPickups?.length === 0) {
     <div
       class="background-text text-center content full-width full-height true-center big-text"
     >
       You do not have anything to pick up.
     </div>
-    } @if (myPickups?.length > 0) {
+    }
+
+    <!-- -->
+    @if (myPickups?.length > 0) {
     <div class="content scrollable">
       @for (pickup of myPickups; track $index) {
       <div class="spacing">
@@ -383,7 +410,10 @@
               [showDesc]="false"
               [showOunces]="true"
             ></app-item>
-            } @if (!pickup.itemInfo) {
+            }
+
+            <!-- -->
+            @if (!pickup.itemInfo) {
             <app-item
               [showValue]="true"
               [item]="{
@@ -405,7 +435,10 @@
             <strong>{{ pickup.itemInfo.itemOverride.name }}</strong>
             {{ starTextFor(pickup.itemInfo) }}
           </div>
-          } @if (!pickup.itemInfo) {
+          }
+
+          <!-- -->
+          @if (!pickup.itemInfo) {
           <div>
             <strong>{{ pickup.gold | number }} Gold</strong>
           </div>
@@ -416,7 +449,7 @@
             mat-flat-button
             color="primary"
             (click)="take(pickup)"
-            [disabled]="pickup.itemInfo && player.items.equipment.rightHand"
+            [disabled]="pickup.itemInfo && player().items.equipment.rightHand"
           >
             Take
           </button>

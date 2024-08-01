@@ -17,7 +17,7 @@
     <mat-form-field class="mode-select" floatLabel="never">
       <mat-label>Mode</mat-label>
       <mat-select
-        [value]="gameService.chatMode$ | async"
+        [value]="chatMode()"
         panelClass="game"
         (selectionChange)="updateChatMode($event.value)"
       >
@@ -38,10 +38,7 @@
         (keydown.escape)="updateCommand('')"
         (keydown.enter)="sendCommand($event)"
         (input)="updateCommand(commandInput.value)"
-        [placeholder]="
-          placeholderTexts[gameService.chatMode$ | async] ||
-          'Enter text here...'
-        "
+        [placeholder]="placeholderTexts[chatMode()] || 'Enter text here...'"
         maxlength="200"
         autocomplete="off"
         autocorrect="off"

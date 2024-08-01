@@ -1,9 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { effect, inject, Injectable } from '@angular/core';
+import { select } from '@ngxs/store';
 import { Howl } from 'howler';
-import { combineLatest, Observable } from 'rxjs';
 
-import { BGM, GameOption, GameServerResponse } from '../../interfaces';
+import { GameOption, GameServerResponse } from '../../interfaces';
 import { GameState, SettingsState } from '../../stores';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
@@ -15,12 +14,41 @@ export class SoundService {
   private currentBGM: Howl;
   private curBGM: string;
 
-  @Select(GameState.inGame) inGame$: Observable<boolean>;
-  @Select(GameState.currentBGM) bgm$: Observable<BGM>;
-  @Select(SettingsState.options) options$: Observable<Record<GameOption, any>>;
+  public inGame = select(GameState.inGame);
+  public bgm = select(GameState.currentBGM);
+  public options = select(SettingsState.options);
 
   private optionsService = inject(OptionsService);
   private socketService = inject(SocketService);
+
+  constructor() {
+    effect(() => {
+      this.options();
+      if (!this.currentBGM) return;
+      this.currentBGM.volume(this.optionsService.musicVolume);
+    });
+
+    effect(() => {
+      const inGame = this.inGame();
+      const bgm = this.bgm();
+      const options = this.options();
+
+      if (!inGame || !bgm || !this.optionsService.playBGM) {
+        this.curBGM = '';
+        if (this.currentBGM) this.currentBGM.stop();
+        return;
+      }
+
+      const fullBGM = options[GameOption.SoundNostalgia]
+        ? `${bgm}-nostalgia`
+        : bgm;
+      if (fullBGM === this.curBGM) return;
+
+      this.curBGM = fullBGM;
+
+      this.updateBGM(fullBGM);
+    });
+  }
 
   init() {
     this.socketService.registerComponentCallback(
@@ -35,30 +63,6 @@ export class SoundService {
         });
 
         sfxRef.play();
-      },
-    );
-
-    this.options$.subscribe(() => {
-      if (!this.currentBGM) return;
-      this.currentBGM.volume(this.optionsService.musicVolume);
-    });
-
-    combineLatest([this.inGame$, this.bgm$, this.options$]).subscribe(
-      ([inGame, bgm, options]) => {
-        if (!inGame || !bgm || !this.optionsService.playBGM) {
-          this.curBGM = '';
-          if (this.currentBGM) this.currentBGM.stop();
-          return;
-        }
-
-        const fullBGM = options[GameOption.SoundNostalgia]
-          ? `${bgm}-nostalgia`
-          : bgm;
-        if (fullBGM === this.curBGM) return;
-
-        this.curBGM = fullBGM;
-
-        this.updateBGM(fullBGM);
       },
     );
   }

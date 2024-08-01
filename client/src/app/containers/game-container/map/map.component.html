@@ -34,7 +34,10 @@
 
   @if (loadString) {
   <div class="loader" [class.fade-out]="fadeOut" [innerHTML]="loadString"></div>
-  } @if (bannerString) {
+  }
+
+  <!-- -->
+  @if (bannerString) {
   <div
     class="loader banner"
     [class.fade-out]="fadeOut"
@@ -44,12 +47,18 @@
 
   <div class="map"></div>
 
-  @if (canSeeLowHealthBorder) {
+  @if (canSeeLowHealthBorder()) {
   <div
     class="dying-border"
     [style.--blur-max-size]="optionsService.dyingBorderWidth"
   ></div>
-  } @if (itemTooltip$ | async; as tooltipData) { @if (tooltipData.tooltip) {
+  }
+
+  <!-- -->
+  @if (itemTooltip(); as tooltipData) {
+
+  <!-- -->
+  @if (tooltipData.tooltip) {
   <div class="item-text">
     <div [innerHTML]="tooltipData.tooltip"></div>
     <div class="item-upgrades">

@@ -3,7 +3,7 @@
   [head]="headTemplate"
   [body]="bodyTemplate"
   [canHide]="true"
-  [canScroll]="charView === 'Skills'"
+  [canScroll]="charView() === 'Skills'"
   [defaultX]="962"
   [defaultY]="4"
   [defaultWidth]="350"
@@ -11,7 +11,7 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  @if (charView) {
+  @if (charView(); as charView) {
   <span class="window-has-more-buttons">
     <span>My {{ charView }}</span>
     <span class="window-extra-buttons">
@@ -57,19 +57,31 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (charView) { @if (charView === 'Equipment') {
+  @if (charView(); as charView) {
+
+  <!-- -->
+  @if (charView === 'Equipment') {
   <ng-container *ngTemplateOutlet="viewEquipment"></ng-container>
-  } @if (charView === 'Stats') {
+  }
+
+  <!-- -->
+  @if (charView === 'Stats') {
   <ng-container *ngTemplateOutlet="viewStats"></ng-container>
-  } @if (charView === 'Skills') {
+  }
+
+  <!-- -->
+  @if (charView === 'Skills') {
   <ng-container *ngTemplateOutlet="viewSkills"></ng-container>
-  } @if (charView === 'Reputation') {
+  }
+
+  <!-- -->
+  @if (charView === 'Reputation') {
   <ng-container *ngTemplateOutlet="viewReputation"></ng-container>
   } }
 </ng-template>
 
 <ng-template #viewReputation>
-  @if (player) {
+  @if (player(); as player) {
   <table class="display-table">
     @for (allegiance of allegiances; track allegiance) {
     <tr>
@@ -86,7 +98,7 @@
 </ng-template>
 
 <ng-template #viewStats>
-  @if (player) {
+  @if (player(); as player) {
   <table class="display-table">
     @for (stat of stats; track stat) {
     <tr>
@@ -120,7 +132,7 @@
 </ng-template>
 
 <ng-template #viewSkills>
-  @if (player) {
+  @if (player(); as player) {
   <table class="display-table">
     @for (skill of sortedSkills(); track skill) {
     <tr>
@@ -182,7 +194,7 @@
 </ng-template>
 
 <ng-template #viewEquipment>
-  @if (player) {
+  @if (player(); as player) {
   <div class="item-container">
     @for (slot of slots; track slot) {
     <div
@@ -200,14 +212,20 @@
           context: createContext(slot, player)
         "
       ></ng-container>
-      } @if (slot.template === 'coin') {
+      }
+
+      <!-- -->
+      @if (slot.template === 'coin') {
       <ng-container
         *ngTemplateOutlet="
           itemCoinTemplate;
           context: createContext(slot, player)
         "
       ></ng-container>
-      } @if (slot.template === 'hand') {
+      }
+
+      <!-- -->
+      @if (slot.template === 'hand') {
       <ng-container
         *ngTemplateOutlet="
           itemHandTemplate;
@@ -224,7 +242,10 @@
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
   <span class="item-slot-bg-text">{{ slot.name }}</span>
-  } @if ((player.items.equipment || {})[slot.slot]) {
+  }
+
+  <!-- -->
+  @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
     [context]="'Equipment'"
     [contextSlot]="slot.slot"
@@ -239,7 +260,10 @@
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
   <span class="item-slot-bg-text">{{ slot.name }}</span>
-  } @if ((player.items.equipment || {})[slot.slot]) {
+  }
+
+  <!-- -->
+  @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
     [context]="slot.hand"
     contextSlot="_"

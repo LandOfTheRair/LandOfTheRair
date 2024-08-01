@@ -10,7 +10,7 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  @if (player) {
+  @if (player(); as player) {
   <span class="window-has-more-buttons">
     <span>
       {{ player.name }} the level {{ player.level }} {{ player.baseClass }}
@@ -59,7 +59,7 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player) {
+  @if (player(); as player) {
   <div class="container">
     <div
       class="buffs"

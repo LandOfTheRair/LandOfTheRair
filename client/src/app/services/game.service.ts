@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { effect, inject, Injectable } from '@angular/core';
+import { select } from '@ngxs/store';
 import {
   get,
   isBoolean,
@@ -9,12 +9,11 @@ import {
   sortBy,
   startCase,
 } from 'lodash';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 import {
   Alignment,
   Allegiance,
-  ChatMode,
   Direction,
   directionFromOffset,
   directionToSymbol,
@@ -22,22 +21,14 @@ import {
   FOVVisibility,
   GameServerEvent,
   Hostility,
-  IAccount,
   ICharacter,
-  ICharacterCreateInfo,
   IDialogChatAction,
-  IMapData,
   INPC,
   IPlayer,
   isHostileTo,
   Stat,
 } from '../../interfaces';
-import {
-  AccountState,
-  GameState,
-  LobbyState,
-  SettingsState,
-} from '../../stores';
+import { GameState } from '../../stores';
 
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
@@ -64,26 +55,12 @@ export class GameService {
     return this.quitGame.asObservable();
   }
 
-  @Select(GameState.inGame) inGame$: Observable<boolean>;
-  @Select(GameState.player) currentPlayer$: Observable<IPlayer>;
-  @Select(GameState.map) currentMap$: Observable<IMapData>;
-  @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
-
-  @Select(AccountState.loggedIn) loggedIn$: Observable<boolean>;
-  @Select(AccountState.account) account$: Observable<IAccount>;
-
-  @Select(LobbyState.charCreateData)
-  charCreateData$: Observable<ICharacterCreateInfo>;
-
-  @Select(SettingsState.accounts) accounts$: Observable<IAccount[]>;
-  @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
-  @Select(SettingsState.chatMode) chatMode$: Observable<ChatMode>;
-  @Select(SettingsState.currentCommand) currentCommand$: Observable<string>;
-  @Select(SettingsState.currentLogMode) logMode$: Observable<LogMode>;
+  public currentMap = select(GameState.map);
+  public inGame = select(GameState.inGame);
+  private allCharacters = select(GameState.allCharacters);
 
   // character list stuff
   private currentCharacter: ICharacter = null;
-  private allCharacters: ICharacter[] = [];
   private previousPlacements: Record<string, number> = {};
 
   private visibleCharacterList: ICharacter[] = [];
@@ -95,8 +72,9 @@ export class GameService {
   private optionsService = inject(OptionsService);
   private modalService = inject(ModalService);
 
-  init() {
-    this.inGame$.subscribe((val) => {
+  constructor() {
+    effect(() => {
+      const val = this.inGame();
       if (val) {
         this.playGame.next(true);
         this.handleAutoExec();
@@ -106,13 +84,9 @@ export class GameService {
       this.playGame.next(false);
       this.quitGame.next();
     });
-
-    this.watchCharacters();
   }
 
-  private watchCharacters() {
-    this.characters$.subscribe((c) => (this.allCharacters = c));
-  }
+  init() {}
 
   public updateCharacterList(player: IPlayer) {
     this.currentCharacter = player;
@@ -122,7 +96,7 @@ export class GameService {
   private visibleCharacters(player: IPlayer): ICharacter[] {
     if (!player || this.allCharacters.length === 0) return [];
     const fov = player.fov;
-    const allCharacters = this.allCharacters;
+    const allCharacters = this.allCharacters();
 
     let unsorted: any[] = allCharacters
       .map((testChar) => {

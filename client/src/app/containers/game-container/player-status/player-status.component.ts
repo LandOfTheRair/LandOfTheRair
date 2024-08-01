@@ -1,19 +1,12 @@
-import { Component, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { clamp } from 'lodash';
 
-import { Observable, Subscription } from 'rxjs';
-import {
-  IAccount,
-  IPlayer,
-  IStatusEffect,
-  SilverPurchase,
-} from '../../../../interfaces';
+import { IPlayer, IStatusEffect, SilverPurchase } from '../../../../interfaces';
 import { AccountState, GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { calculateXPRequiredForLevel } from '../../../../interfaces';
 import { UIService } from '../../../services/ui.service';
 
@@ -23,37 +16,25 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./player-status.component.scss'],
 })
 export class PlayerStatusComponent {
-  @Select(AccountState.account) account$: Observable<IAccount>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  public account: IAccount;
-  public player: IPlayer;
+  public account = select(AccountState.account);
+  public player = select(GameState.player);
+
   public effects: IStatusEffect[] = [];
   public showPouch: boolean;
-
-  playerSub: Subscription;
-  accountSub: Subscription;
 
   private store = inject(Store);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.playerSub = this.player$
-      .pipe(takeUntilDestroyed())
-      .subscribe((p) => this.setPlayer(p));
-    this.accountSub = this.account$
-      .pipe(takeUntilDestroyed())
-      .subscribe((a) => this.setAccount(a));
-  }
+    effect(() => {
+      this.effects = this.getEffects(this.player());
+    });
 
-  private setPlayer(p: IPlayer) {
-    this.player = p;
-    this.effects = this.getEffects(p);
-  }
-
-  private setAccount(a: IAccount) {
-    this.account = a;
-    this.showPouch = !!a.premium.silverPurchases?.[SilverPurchase.MagicPouch];
+    effect(() => {
+      this.showPouch =
+        !!this.account().premium.silverPurchases?.[SilverPurchase.MagicPouch];
+    });
   }
 
   getEffects(player: IPlayer): IStatusEffect[] {

@@ -13,7 +13,7 @@
 <ng-template #headTemplate>Demi-Magic Pouch</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @if (player(); as player) {
   <app-inventory
     context="DemiMagicPouch"
     [container]="player.accountLockers.pouch"

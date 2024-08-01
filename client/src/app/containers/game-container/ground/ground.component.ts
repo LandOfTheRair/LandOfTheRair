@@ -1,21 +1,22 @@
-import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Component, computed, inject } from '@angular/core';
+import { select } from '@ngxs/store';
 
 import { sumBy } from 'lodash';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, Subscription } from 'rxjs';
-import {
-  IGround,
-  IGroundItem,
-  IPlayer,
-  ItemClass,
-} from '../../../../interfaces';
+import { ItemClass } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { UIService } from '../../../services/ui.service';
+
+interface GroundGroup {
+  itemClass: ItemClass;
+  name: string;
+  count: number;
+  value?: number;
+  sprite?: number;
+}
 
 @Component({
   selector: 'app-ground',
@@ -23,48 +24,19 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./ground.component.scss'],
 })
 export class GroundComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(GameState.currentGround) ground$: Observable<IGround>;
-
-  playerSub: Subscription;
-  groundSub: Subscription;
-
-  public currentItemClass: ItemClass;
-
-  public player: IPlayer;
-  public ground: IGround;
-  public groundGroups: Array<{
-    itemClass: ItemClass;
-    name: string;
-    count: number;
-    value?: number;
-    sprite?: number;
-  }>;
-  public currentGround: Partial<Record<ItemClass, IGroundItem[]>> = {};
-
   public uiService = inject(UIService);
   public optionsService = inject(OptionsService);
   public gameService = inject(GameService);
-  
-  constructor() {
-    this.groundSub = this.ground$
-      .pipe(takeUntilDestroyed())
-      .subscribe((ground) => {
-        this.currentGround = ground;
-        this.setGround();
-      });
 
-    this.playerSub = this.player$
-      .pipe(takeUntilDestroyed())
-      .subscribe((p) => (this.player = p));
-  }
+  public player = select(GameState.player);
+  public ground = select(GameState.currentGround);
 
-  setGround() {
-    if (!this.currentGround) this.currentGround = {};
+  public currentItemClass: ItemClass;
 
-    const ground = this.currentGround;
+  public groundGroups = computed(() => {
+    const ground = this.ground();
 
-    this.groundGroups = Object.keys(ground || {})
+    const baseGroups: GroundGroup[] = Object.keys(ground || {})
       .filter(
         (g) =>
           g !== ItemClass.Coin &&
@@ -80,7 +52,7 @@ export class GroundComponent {
       }));
 
     if (ground[ItemClass.Corpse]?.length > 0) {
-      this.groundGroups.unshift({
+      baseGroups.unshift({
         itemClass: ItemClass.Corpse,
         name: ground[ItemClass.Corpse][0].item.name,
         sprite: ground[ItemClass.Corpse][0].item.mods.sprite,
@@ -89,14 +61,16 @@ export class GroundComponent {
     }
 
     if (ground[ItemClass.Coin]?.length > 0) {
-      this.groundGroups.unshift({
+      baseGroups.unshift({
         itemClass: ItemClass.Coin,
         name: ground[ItemClass.Coin][0].item.name,
         count: ground[ItemClass.Coin][0].item.mods.value,
         value: ground[ItemClass.Coin][0].item.mods.value,
       });
     }
-  }
+
+    return baseGroups;
+  });
 
   changeItemClass(iClass: ItemClass) {
     this.currentItemClass = iClass;

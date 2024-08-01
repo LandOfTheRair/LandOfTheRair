@@ -13,7 +13,7 @@
 <ng-template #headTemplate>Ground</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (currentGround) {
+  @let groups = groundGroups(); @if (ground(); as currentGround) {
   <div
     class="full-height"
     [class.big-ground]="optionsService.biggerGroundWindow"
@@ -21,16 +21,16 @@
     (onDrop)="uiService.buildAndDoDropAction($event, 'ground')"
     droppable
   >
-    @if (!groundGroups || groundGroups.length === 0) {
+    @if (!groups || groups.length === 0) {
     <div class="true-center background-text full-height">
       You don't see any items here
     </div>
     }
 
     <!---->
-    @if (groundGroups.length > 0) {
+    @if (groups.length > 0) {
     <div class="item-classes">
-      @for (itemGroup of groundGroups; track $index) {
+      @for (itemGroup of groups; track $index) {
       <app-item
         (click)="changeItemClass(itemGroup.itemClass)"
         [class.selected]="itemGroup.itemClass === currentItemClass"
@@ -41,7 +41,7 @@
         [showCount]="itemGroup.itemClass !== 'Coin'"
         [showValue]="itemGroup.itemClass === 'Coin'"
         [count]="itemGroup.count"
-        [viewingPlayer]="player"
+        [viewingPlayer]="player()"
         [item]="{
           name: itemGroup.name,
           mods: { sprite: itemGroup.sprite, value: itemGroup.value || 0 },
@@ -72,7 +72,7 @@
         context="Ground"
         [contextSlot]="item.item.uuid"
         [count]="item.count"
-        [viewingPlayer]="player"
+        [viewingPlayer]="player()"
         [showCount]="currentItemClass !== 'Coin'"
         [showValue]="currentItemClass === 'Coin'"
         [item]="item.item"

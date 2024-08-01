@@ -14,7 +14,7 @@
 <ng-template #headTemplate>
   <span class="window-has-more-buttons">
     <span>
-      {{ vendorInfo.npcName }}
+      {{ vendorData()?.npcName }}
     </span>
 
     <span class="window-extra-buttons">
@@ -34,7 +34,9 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @let vendorInfo = vendorData();
+  <!-- -->
+  @if (player(); as player) {
   <div>
     <div
       class="vendor-container"
@@ -84,7 +86,10 @@
               }
             </div>
           </mat-tab>
-          } @if (vendorInfo.npcVendorDailyItems?.length) {
+          }
+
+          <!-- -->
+          @if (vendorInfo.npcVendorDailyItems?.length) {
           <mat-tab
             [label]="
               'Daily Items (' +

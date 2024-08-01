@@ -1,44 +1,60 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { GameServerEvent, GameServerResponse, IAccountSettings } from '../../interfaces';
-import { AddAccount, Login, RemoveAccount, SetActiveWindow, SettingsState } from '../../stores';
+import { select, Store } from '@ngxs/store';
+import {
+  GameServerEvent,
+  GameServerResponse,
+  IAccountSettings,
+} from '../../interfaces';
+import {
+  AddAccount,
+  Login,
+  RemoveAccount,
+  SetActiveWindow,
+  SettingsState,
+} from '../../stores';
 import { AnnouncementService } from '../services/announcement.service';
-import { OptionsService } from '../services/options.service';
-import { GameService } from '../services/game.service';
-import { SocketService } from '../services/socket.service';
-import { ModalService } from '../services/modal.service';
 import { APIService } from '../services/api.service';
 import { AssetService } from '../services/asset.service';
+import { GameService } from '../services/game.service';
+import { ModalService } from '../services/modal.service';
+import { OptionsService } from '../services/options.service';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
-  @Select(SettingsState.wasKicked) public wasKicked$: Observable<boolean>;
-  @Select(SettingsState.autologin) public autologin$: Observable<string>;
-  @Select(SettingsState.lastCharSlot) public lastCharSlot$: Observable<number>;
+  public wasKicked = select(SettingsState.wasKicked);
+  public autologin = select(SettingsState.autologin);
+  public lastCharSlot = select(SettingsState.lastCharSlot);
+  public accounts = select(SettingsState.accounts);
 
   public isActing: boolean;
   public isRegistering: boolean;
-  public newAccount: IAccountSettings | any = { };
+  public newAccount: IAccountSettings | any = {};
   public agreedToTerms: boolean;
   public isConnected = false;
 
   public errorMessage: string;
 
   public get canLogin() {
-    return this.isConnected && this.newAccount.username && this.newAccount.password;
+    return (
+      this.isConnected && this.newAccount.username && this.newAccount.password
+    );
   }
 
   public get canRegister() {
-    return this.isConnected && this.newAccount.username && this.newAccount.password && this.newAccount.email && this.agreedToTerms;
+    return (
+      this.isConnected &&
+      this.newAccount.username &&
+      this.newAccount.password &&
+      this.newAccount.email &&
+      this.agreedToTerms
+    );
   }
 
   public announcementService = inject(AnnouncementService);
@@ -50,19 +66,26 @@ export class LoginComponent implements OnInit, OnDestroy {
   private modalService = inject(ModalService);
   private store = inject(Store);
   private http = inject(HttpClient);
-  
-  constructor() { }
+
+  constructor() {}
 
   ngOnInit() {
-    this.newAccount = { username: '', password: '', email: '', autologin: false };
+    this.newAccount = {
+      username: '',
+      password: '',
+      email: '',
+      autologin: false,
+    };
     this.socketService.registerComponentCallback(
-      'Login', GameServerResponse.Error,
-      (data) => this.setErrorMessage(data.error)
+      'Login',
+      GameServerResponse.Error,
+      (data) => this.setErrorMessage(data.error),
     );
 
     this.socketService.registerComponentCallback(
-      'Login', GameServerResponse.Login,
-      (data) => this.setAccount(data)
+      'Login',
+      GameServerResponse.Login,
+      (data) => this.setAccount(data),
     );
 
     this.loadURLAccount();
@@ -90,12 +113,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private tryAutoconnect() {
-    this.autologin$.pipe(take(1)).subscribe(acc => {
-      if (!acc) return;
+    const acc = this.autologin();
+    if (!acc) return;
 
-      this.newAccount = Object.assign({}, acc);
-      this.login();
-    });
+    this.newAccount = Object.assign({}, acc);
+    this.login();
   }
 
   public registerMode() {
@@ -108,17 +130,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
     this.api.setAPIError('');
 
-    this.http.post(this.api.finalHTTPURL + '/auth/password-check', this.newAccount)
-      .subscribe(() => {
+    this.http
+      .post(this.api.finalHTTPURL + '/auth/password-check', this.newAccount)
+      .subscribe(
+        () => {
+          this.socketService.emit(GameServerEvent.Login, this.newAccount);
+          this.assetService.loadAssets();
+        },
+        (err) => {
+          this.errorMessage =
+            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
+          this.isActing = false;
 
-        this.socketService.emit(GameServerEvent.Login, this.newAccount);
-      }, (err) => {
-        this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
-        this.isActing = false;
-
-        // swallow the API error in this case because we know the error
-        this.api.setAPIError('');
-      });
+          // swallow the API error in this case because we know the error
+          this.api.setAPIError('');
+        },
+      );
   }
 
   public addToLogin(account) {
@@ -135,53 +162,65 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = true;
     this.errorMessage = '';
 
-    this.http.post(this.api.finalHTTPURL + '/auth/register-check', this.newAccount)
-      .subscribe(() => {
-        this.socketService.emit(GameServerEvent.Register, this.newAccount);
-      }, (err) => {
-        this.errorMessage = err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
-        this.isActing = false;
+    this.http
+      .post(this.api.finalHTTPURL + '/auth/register-check', this.newAccount)
+      .subscribe(
+        () => {
+          this.socketService.emit(GameServerEvent.Register, this.newAccount);
+        },
+        (err) => {
+          this.errorMessage =
+            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
+          this.isActing = false;
 
-        // swallow the API error in this case because we know the error
-        this.api.setAPIError('');
-      });
-
+          // swallow the API error in this case because we know the error
+          this.api.setAPIError('');
+        },
+      );
   }
 
   public forgotPW() {
-    this.modalService.input(
-      'Forgot Password',
-      `Enter the email or username associated with your account and a temporary password will be mailed to your registered email.
-      Please be sure to check your spam folder if you did not recieve it, as it is usually sent right away.`
-    )
-    .subscribe(d => {
-      if (!d) return;
+    this.modalService
+      .input(
+        'Forgot Password',
+        `Enter the email or username associated with your account and a temporary password will be mailed to your registered email.
+      Please be sure to check your spam folder if you did not recieve it, as it is usually sent right away.`,
+      )
+      .subscribe((d) => {
+        if (!d) return;
 
-      this.socketService.emit(GameServerEvent.ForgotPassword, { email: d });
-    });
+        this.socketService.emit(GameServerEvent.ForgotPassword, { email: d });
+      });
   }
 
   private setAccount(accountData: any) {
     this.isActing = false;
-    this.store.dispatch(new AddAccount(this.newAccount.username, this.newAccount.password, this.newAccount.autologin));
+    this.store.dispatch(
+      new AddAccount(
+        this.newAccount.username,
+        this.newAccount.password,
+        this.newAccount.autologin,
+      ),
+    );
     this.store.dispatch(new SetActiveWindow('lobby'));
     this.store.dispatch(new Login(accountData));
     if (this.optionsService.autoJoin) {
-      this.lastCharSlot$.pipe(take(1)).subscribe(slot => {
-        if (slot === -1 || !accountData?.account?.players?.[slot]) return;
+      const slot = this.lastCharSlot();
+      if (slot === -1 || !accountData?.account?.players?.[slot]) return;
 
-        let hasLoaded = false;
-        const interval = setInterval(() => {
-          if (hasLoaded) return;
-          if (!this.assetService.assetsLoaded) return;
+      let hasLoaded = false;
+      const interval = setInterval(() => {
+        if (hasLoaded) return;
+        if (!this.assetService.assetsLoaded()) return;
 
-          this.socketService.emit(GameServerEvent.PlayCharacter, { charSlot: slot });
-          this.store.dispatch(new SetActiveWindow('map'));
+        this.socketService.emit(GameServerEvent.PlayCharacter, {
+          charSlot: slot,
+        });
+        this.store.dispatch(new SetActiveWindow('map'));
 
-          hasLoaded = true;
-          clearInterval(interval);
-        }, 1000);
-      });
+        hasLoaded = true;
+        clearInterval(interval);
+      }, 1000);
     }
   }
 
@@ -189,5 +228,4 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isActing = false;
     this.errorMessage = error;
   }
-
 }

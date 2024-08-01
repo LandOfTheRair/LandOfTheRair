@@ -1,8 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select } from '@ngxs/store';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { IPlayer } from '../../../../interfaces';
 import { GameState } from '../../../../stores';
@@ -18,9 +17,8 @@ import * as AllTraits from '../../../../assets/content/_output/traits.json';
   styleUrls: ['./runecodex.component.scss'],
 })
 export class RuneCodexComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
+  public player = select(GameState.player);
 
-  public player: IPlayer;
   public orderedRunes: string[] = [];
 
   public activeSlot = -1;
@@ -87,17 +85,16 @@ export class RuneCodexComponent {
 
   private assetService = inject(AssetService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.playerSub = this.player$.pipe(takeUntilDestroyed()).subscribe((p) => {
-      this.player = p;
-      this.sortRunes();
+    effect(() => {
+      this.sortRunes(this.player());
     });
   }
 
-  private sortRunes() {
-    if (!this.player) return;
-    this.orderedRunes = this.player.learnedRunes.slice();
+  private sortRunes(player: IPlayer) {
+    if (!player) return;
+    this.orderedRunes = player.learnedRunes.slice();
     this.orderedRunes.sort();
   }
 

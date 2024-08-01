@@ -12,10 +12,11 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  {{ trainerInfo.npcName || 'Unknown' }} (Trainer)
+  {{ trainerData()?.npcName || 'Unknown' }} (Trainer)
 </ng-template>
 
 <ng-template #bodyTemplate>
+  @let trainerInfo = trainerData();
   <div class="trainer-container">
     <div class="trainer-intro">
       <app-npc [sprite]="trainerInfo.npcSprite"></app-npc>
@@ -26,11 +27,16 @@
     </div>
 
     <div class="buttons">
-      @if (player$ | async; as player) { @if (!player.gainingAXP) {
+      @if (player(); as player) {
+      <!-- -->
+      @if (!player.gainingAXP) {
       <button mat-raised-button color="primary" (click)="train()">
         Level Up
       </button>
-      } @if (player.gainingAXP) {
+      }
+
+      <!-- -->
+      @if (player.gainingAXP) {
       <button mat-raised-button color="primary" (click)="ancient()">
         Ancient
       </button>
@@ -58,7 +64,10 @@
       <button mat-raised-button color="secondary" (click)="recall()">
         Recall Me
       </button>
-      } @if (trainerInfo.npcGuildTeleport) {
+      }
+
+      <!-- -->
+      @if (trainerInfo.npcGuildTeleport) {
       <button mat-raised-button color="secondary" (click)="warp()">
         Warp Me
       </button>

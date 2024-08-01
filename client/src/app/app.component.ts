@@ -1,6 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Component, inject, OnInit } from '@angular/core';
+import { select } from '@ngxs/store';
 
 import { environment } from '../environments/environment';
 import { IAccount, isSubscribed } from '../interfaces';
@@ -14,7 +13,8 @@ import { SocketService } from './services/socket.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  @Select(AccountState.account) account$: Observable<IAccount>;
+  public account = select(AccountState.account);
+  public loggedIn = select(AccountState.loggedIn);
 
   public socketService = inject(SocketService);
   public gameService = inject(GameService);

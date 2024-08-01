@@ -1,6 +1,6 @@
-import { IVendorItem } from './behaviors';
 import { Currency, Holiday } from './building-blocks';
-import { ICharacter, IItemContainer } from './character';
+import { IItemContainer } from './character';
+import { ISimpleItem } from './item';
 import { INPC } from './npc';
 import { IParty, IPartyMember } from './party';
 import { IPlayer } from './player';
@@ -28,8 +28,8 @@ export interface IGame {
     npcName: string;
     npcSprite: number;
     npcVendorCurrency: Currency;
-    npcVendorItems: IVendorItem[];
-    npcVendorDailyItems: IVendorItem[];
+    npcVendorItems: ISimpleItem[];
+    npcVendorDailyItems: ISimpleItem[];
   };
 
   bankInfo: {
@@ -69,5 +69,5 @@ export interface IGame {
     tradeskill: string;
   };
 
-  inspectingCharacter: ICharacter | null;
+  inspectingCharacter: IPlayer | null;
 }

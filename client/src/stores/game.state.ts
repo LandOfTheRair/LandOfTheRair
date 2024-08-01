@@ -4,7 +4,13 @@ import { inject, Injectable } from '@angular/core';
 import { applyPatch } from 'fast-json-patch';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
-import { Currency, IGame } from '../interfaces';
+import {
+  Currency,
+  IGame,
+  IGroundItem,
+  ISimpleItem,
+  ItemClass,
+} from '../interfaces';
 import {
   HideBankWindow,
   HideLockerWindow,
@@ -134,10 +140,12 @@ export class GameState {
   }
 
   @Selector()
-  static currentGround(state: IGame) {
+  static currentGround(
+    state: IGame,
+  ): Partial<Record<ItemClass, IGroundItem[]>> {
     if (!state.player) return {};
 
-    return state.mapInfo.ground[state.player.x]?.[state.player.y];
+    return state.mapInfo.ground[state.player.x]?.[state.player.y] ?? {};
   }
 
   @Selector()
@@ -456,8 +464,8 @@ export class GameState {
         npcUUID,
         npcSprite,
         npcVendorCurrency,
-        npcVendorItems,
-        npcVendorDailyItems,
+        npcVendorItems: npcVendorItems as unknown as ISimpleItem[],
+        npcVendorDailyItems: npcVendorDailyItems as unknown as ISimpleItem[],
       },
     });
 

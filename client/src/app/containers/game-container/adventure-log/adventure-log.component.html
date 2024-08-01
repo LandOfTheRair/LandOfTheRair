@@ -17,14 +17,14 @@
     <button
       class="tab-button"
       mat-raised-button
-      [color]="tab === (gameService.logMode$ | async) ? 'primary' : ''"
+      [color]="tab === logMode() ? 'primary' : ''"
       (click)="changeTab(tab)"
     >
       {{ tab }}
     </button>
     }
   </div>
-  @if ((gameService.logMode$ | async); as logMode) {
+  @if (logMode(); as logMode) {
   <div class="log-area">
     @for (message of messages; track message) {
     <div

@@ -1,17 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { Select, Selector, Store } from '@ngxs/store';
+import { effect, inject, Injectable } from '@angular/core';
+import { select, Selector, Store } from '@ngxs/store';
 import { cloneDeep } from 'lodash';
-import { combineLatest, Observable } from 'rxjs';
-import { first } from 'rxjs/operators';
 
 import * as allMacros from '../../assets/content/_output/macros.json';
-import {
-  ICharacter,
-  IGame,
-  IMacro,
-  IMacroContainer,
-  IPlayer,
-} from '../../interfaces';
+import { ICharacter, IGame, IMacro, IMacroContainer } from '../../interfaces';
 import {
   GameState,
   LearnMacro,
@@ -28,23 +20,16 @@ import { OptionsService } from './options.service';
   providedIn: 'root',
 })
 export class MacrosService {
-  @Select(GameState.player) private player$: Observable<IPlayer>;
-  @Select(GameState.inGame) private inGame$: Observable<boolean>;
-  @Select(GameState.currentTarget)
-  private currentTarget$: Observable<ICharacter>;
-  @Select(SettingsState.charSlot) charSlot$: Observable<{ slot: number }>;
-  @Select(SettingsState.activeWindow) private activeWindow$: Observable<string>;
-  @Select(MacrosState.customMacros) private customMacros$: Observable<
-    Record<string, IMacro>
-  >;
-  @Select(MacrosService.currentPlayerActiveMacro)
-  private activeMacro$: Observable<IMacro>;
-  @Select(MacrosService.currentPlayerMacros)
-  private currentMacros$: Observable<any>;
+  private charSlot = select(SettingsState.charSlot);
+  private player = select(GameState.player);
+  private inGame = select(GameState.inGame);
+  private currentTarget = select(GameState.currentTarget);
+  private activeWindow = select(SettingsState.activeWindow);
+  private customMacros = select(MacrosState.customMacros);
+  private activeMacros = select(MacrosService.currentPlayerActiveMacro);
+  private currentMacros = select(MacrosService.currentPlayerMacros);
 
   private macroMap: Record<string, IMacro> = {};
-
-  private activeWindow: string;
 
   private macroIgnoreWindows = {
     lobby: true,
@@ -96,15 +81,26 @@ export class MacrosService {
   private optionsService = inject(OptionsService);
   private gameService = inject(GameService);
 
-  public init() {
-    this.activeWindow$.subscribe((w) => (this.activeWindow = w));
-    combineLatest([this.customMacros$, this.charSlot$]).subscribe(
-      ([macros, charSlot]) => {
-        this.parseMacroMap(macros, charSlot.slot);
-      },
-    );
+  constructor() {
+    effect(() => {
+      const macros = this.customMacros();
+      const charSlot = this.charSlot();
 
-    this.watchForNewMacroAlerts();
+      this.parseMacroMap(macros, charSlot.slot);
+    });
+
+    effect(
+      () => {
+        const player = this.player();
+        const currentMacros = this.currentMacros();
+
+        this.watchForNewMacroAlerts(player, currentMacros);
+      },
+      { allowSignalWrites: true },
+    );
+  }
+
+  public init() {
     this.watchForMacros();
     this.autoAttackLoop();
   }
@@ -161,7 +157,7 @@ export class MacrosService {
       return true;
     }
 
-    if (this.macroIgnoreWindows[this.activeWindow]) return true;
+    if (this.macroIgnoreWindows[this.activeWindow()]) return true;
 
     return false;
   }
@@ -205,14 +201,14 @@ export class MacrosService {
       }
 
       if (macro.mode === 'autoTarget') {
-        this.currentTarget$.pipe(first()).subscribe((target) => {
-          if (target) {
-            this.gameService.sendCommandString(macro.macro, target.uuid);
-            return;
-          }
+        const target = this.currentTarget();
+        if (target) {
+          this.gameService.sendCommandString(macro.macro, target.uuid);
+          return;
+        }
 
-          this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
-        });
+        this.store.dispatch(new SetCurrentCommand(`#${macro.macro}`));
+
         return;
       }
 
@@ -224,76 +220,69 @@ export class MacrosService {
 
   private autoAttackLoop() {
     setInterval(() => {
-      combineLatest([
-        this.inGame$,
-        this.player$,
-        this.activeMacro$,
-        this.currentTarget$,
-      ])
-        .pipe(first())
-        .subscribe(([inGame, player, macro, target]) => {
-          if (
-            !inGame ||
-            !macro ||
-            !target ||
-            !this.optionsService.autoAttack ||
-            !target.agro[player.uuid] ||
-            macro.ignoreAutoAttack ||
-            player.spellChannel ||
-            (this.gameService.hostilityLevelFor(player, target) !== 'hostile' &&
-              !target.agro[player.uuid] &&
-              !player.agro[target.uuid]) ||
-            (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())
-          ) {
-            return;
-          }
+      const inGame = this.inGame();
+      const player = this.player();
+      const macro = this.activeMacros();
+      const target = this.currentTarget();
 
-          this.gameService.sendCommandString(macro.macro, target.uuid);
-        });
+      if (
+        !inGame ||
+        !macro ||
+        !target ||
+        !this.optionsService.autoAttack ||
+        !target.agro[player.uuid] ||
+        macro.ignoreAutoAttack ||
+        player.spellChannel ||
+        (this.gameService.hostilityLevelFor(player, target as ICharacter) !==
+          'hostile' &&
+          !target.agro[player.uuid] &&
+          !player.agro[target.uuid]) ||
+        (macro?.for && player.spellCooldowns?.[macro.for] > Date.now())
+      ) {
+        return;
+      }
+
+      this.gameService.sendCommandString(macro.macro, target.uuid);
     }, 1000);
   }
 
-  private watchForNewMacroAlerts() {
-    combineLatest([this.player$, this.currentMacros$]).subscribe(
-      ([player, currentMacros]) => {
-        if (
-          !player ||
-          !currentMacros ||
-          !currentMacros.macroBars ||
-          !currentMacros.activeMacro
-        ) {
-          return;
-        }
+  private watchForNewMacroAlerts(player, currentMacros) {
+    if (
+      !player ||
+      !currentMacros ||
+      !currentMacros.macroBars ||
+      !currentMacros.activeMacro
+    ) {
+      return;
+    }
 
-        const newSpells = Object.keys(player.learnedSpells || {})
-          .map((spell) => {
-            const baseObj = cloneDeep(
-              Object.values(this.allMacrosHash).find(
-                (macro) => (macro.for || macro.name).toLowerCase() === spell,
-              ),
-            );
-            if (!baseObj) return null;
+    const newSpells = Object.keys(player.learnedSpells || {})
+      .map((spell) => {
+        const baseObj = cloneDeep(
+          Object.values(this.allMacrosHash).find(
+            (macro) => (macro.for || macro.name).toLowerCase() === spell,
+          ),
+        );
+        if (!baseObj) return null;
 
-            baseObj.isDefault = true;
-            return baseObj;
-          })
-          .filter((spell) => spell && !currentMacros.learnedMacros[spell.name])
-          .filter(
-            (spell) =>
-              !Object.keys(currentMacros.macroBars || {})
-                .map((bar) => currentMacros.macroBars[bar].macros)
-                .flat()
-                .includes(spell.name),
-          );
+        baseObj.isDefault = true;
+        return baseObj;
+      })
+      .filter((spell) => spell && !currentMacros.learnedMacros[spell.name])
+      .filter(
+        (spell) =>
+          !Object.keys(currentMacros.macroBars || {})
+            .map((bar) => currentMacros.macroBars[bar].macros)
+            .flat()
+            .includes(spell.name),
+      );
 
-        if (newSpells.length === 0) return;
+    if (newSpells.length === 0) return;
 
-        this.modalService.newSpells(newSpells, currentMacros.macroBars);
+    this.modalService.newSpells(newSpells, currentMacros.macroBars);
 
-        newSpells.forEach((spell) => {
-          this.store.dispatch(new LearnMacro(spell));
-        });
-      },
-    );
+    newSpells.forEach((spell) => {
+      this.store.dispatch(new LearnMacro(spell));
+    });
   }
 }

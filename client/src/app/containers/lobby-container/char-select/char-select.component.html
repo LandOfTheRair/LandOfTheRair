@@ -11,7 +11,10 @@
 <ng-template #headTemplate>Characters</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (account) {
+  @let charSlot = charSlots().slot;
+
+  <!---->
+  @if (account(); as account) {
   <div class="char-buttons">
     @for (player of account.players; track i; let i = $index) {
     <button
@@ -36,8 +39,8 @@
   <div
     class="create-area vertical-center full-width full-height background-text"
   >
-    You do not currently have a character in this slot. @if
-    (gameService.charCreateData$ | async; as charCreateData) {
+    You do not currently have a character in this slot. @if (charCreateData();
+    as charCreateData) {
     <button
       mat-flat-button
       color="accent"
@@ -75,7 +78,7 @@
           </a>
         </div>
       </div>
-      @if (gameService.charCreateData$ | async; as charCreateData) {
+      @if (charCreateData(); as charCreateData) {
       <div class="actions">
         <button
           mat-flat-button
@@ -85,7 +88,7 @@
         >
           {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
         </button>
-        @if (assetService.assetsLoaded) {
+        @if (assetService.assetsLoaded()) {
         <button
           mat-flat-button
           color="primary"
@@ -95,7 +98,7 @@
         >
           Play
         </button>
-        } @if (!assetService.assetsLoaded) {
+        } @else {
         <button
           mat-flat-button
           color="primary"

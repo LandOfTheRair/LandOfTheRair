@@ -13,14 +13,20 @@
 <ng-template #headTemplate>
   <span class="window-has-more-buttons">
     <span>
-      Party@if (party; as partyInfo) { @if (partyInfo.party) {
-      <span>: {{ partyInfo.party.name }} ({{ partyXPMult }}% XP Share)</span>
+      Party@if (party(); as partyInfo) {
+      <!-- -->
+      @if (partyInfo.party) {
+      <span>: {{ partyInfo.party.name }} ({{ partyXPMult() }}% XP Share)</span>
       } }
     </span>
 
     <span class="window-extra-buttons">
-      @if (player$ | async; as player) { @if (party; as partyInfo) { @if
-      (player.username === partyInfo.party?.members[0]) {
+      @if (player(); as player) {
+      <!-- -->
+      @if (party(); as partyInfo) {
+
+      <!-- -->
+      @if (player.username === partyInfo.party?.members[0]) {
       <button
         mat-icon-button
         color="warn"
@@ -29,7 +35,10 @@
       >
         <app-icon name="boss-key" size="xsmall"></app-icon>
       </button>
-      } @if (partyInfo.party) {
+      }
+
+      <!-- -->
+      @if (partyInfo.party) {
       <button
         mat-icon-button
         color="warn"
@@ -38,7 +47,10 @@
       >
         <app-icon name="invisible" size="xsmall"></app-icon>
       </button>
-      } @if (player.username === partyInfo.party?.members[0]) {
+      }
+
+      <!-- -->
+      @if (player.username === partyInfo.party?.members[0]) {
       <button
         mat-icon-button
         color="warn"
@@ -53,8 +65,13 @@
 </ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) { @if (party; as partyInfo) { @if
-  (partyInfo.party) {
+  @if (player(); as player) {
+
+  <!-- -->
+  @if (party(); as partyInfo) {
+
+  <!-- -->
+  @if (partyInfo.party) {
   <div class="party">
     <table>
       <tr>
@@ -95,7 +112,10 @@
           >
             <app-icon name="barefoot" size="xsmall"></app-icon>
           </button>
-          } @if (member !== player.username && player.username ===
+          }
+
+          <!-- -->
+          @if (member !== player.username && player.username ===
           partyInfo.party?.members[0]) {
           <button
             mat-icon-button
@@ -111,7 +131,10 @@
       }
     </table>
   </div>
-  } @if (!partyInfo.party) {
+  }
+
+  <!-- -->
+  @if (!partyInfo.party) {
   <div class="no-party">
     <div class="input">
       <mat-form-field class="show-underline full-width" floatLabel="never">

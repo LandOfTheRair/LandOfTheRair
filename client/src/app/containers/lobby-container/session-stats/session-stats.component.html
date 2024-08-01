@@ -11,7 +11,7 @@
 <ng-template #headTemplate>Last Session Stats</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (stats$ | async; as stats) {
+  @if (stats(); as stats) {
   <div class="char-container">
     {{ stats.name }} the level {{ stats.level }} {{ stats.baseClass }}
   </div>

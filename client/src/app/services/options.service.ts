@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { effect, Injectable } from '@angular/core';
+import { select } from '@ngxs/store';
 
 import { GameOption } from '../../interfaces';
 import { SettingsState } from '../../stores';
@@ -9,7 +8,7 @@ import { SettingsState } from '../../stores';
   providedIn: 'root',
 })
 export class OptionsService {
-  @Select(SettingsState.options) options$: Observable<Record<GameOption, any>>;
+  public options = select(SettingsState.options);
 
   private opts: Partial<Record<GameOption, any>> = {};
 
@@ -137,12 +136,14 @@ export class OptionsService {
     return this.opts[GameOption.CustomCSS];
   }
 
-  init() {
-    this.options$.subscribe((opts) => {
-      this.opts = opts;
+  constructor() {
+    effect(() => {
+      this.opts = this.options();
       this.updateCustomCSS();
     });
   }
+
+  init() {}
 
   updateCustomCSS() {
     const css = this.customCSS;

@@ -11,10 +11,13 @@
   [defaultHeight]="285"
 ></app-window>
 
-<ng-template #headTemplate>{{ bankInfo.npcBank }} Bank</ng-template>
+<ng-template #headTemplate>{{ bankData()?.npcBank }} Bank</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @let bankInfo = bankData();
+
+  <!-- -->
+  @if (player(); as player) {
   <div>
     <div class="bank-container">
       <div class="bank-intro">

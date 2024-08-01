@@ -1,4 +1,12 @@
-import { Currency, GameAction, ICharacter, IItemContainer, IParty, IPartyMember, IPlayer, IVendorItem } from '../../interfaces';
+import {
+  Currency,
+  GameAction,
+  IItemContainer,
+  IParty,
+  IPartyMember,
+  IPlayer,
+  IVendorItem,
+} from '../../interfaces';
 
 // dispatched when the play game button is hit
 export class PlayGame {
@@ -55,13 +63,13 @@ export class PatchPlayerPosition {
 // dispatched when clicking on a targets box
 export class SetCurrentTarget {
   static type = GameAction.SetCurrentTarget;
-  constructor(public target: string|null, public overrideIfOnly?: string) {}
+  constructor(public target: string | null, public overrideIfOnly?: string) {}
 }
 
 // dispatched when clicking on a targets box
 export class ViewCharacterEquipment {
   static type = GameAction.ViewCharacterEquipment;
-  constructor(public character: ICharacter) {}
+  constructor(public character: IPlayer) {}
 }
 
 // dispatched when hovering over an item
@@ -81,7 +89,7 @@ export class OpenTrainerWindow {
     public npcMaxLevel: number,
     public npcMaxSkill: number,
     public npcCanRevive: boolean,
-    public npcGuildTeleport: boolean
+    public npcGuildTeleport: boolean,
   ) {}
 }
 
@@ -99,7 +107,7 @@ export class OpenVendorWindow {
     public npcSprite: number,
     public npcVendorCurrency: Currency,
     public npcVendorItems: IVendorItem[],
-    public npcVendorDailyItems: IVendorItem[]
+    public npcVendorDailyItems: IVendorItem[],
   ) {}
 }
 
@@ -116,7 +124,7 @@ export class OpenBankWindow {
     public npcName: string,
     public npcSprite: number,
     public npcBank: string,
-    public npcBranch: string
+    public npcBranch: string,
   ) {}
 }
 
@@ -131,7 +139,7 @@ export class OpenMarketWindow {
   constructor(
     public npcUUID: string,
     public npcName: string,
-    public npcSprite: number
+    public npcSprite: number,
   ) {}
 }
 
@@ -140,7 +148,6 @@ export class HideMarketWindow {
   static type = GameAction.NPCActionHideMarket;
 }
 
-
 // dispatched when opening a locker
 export class OpenLockerWindow {
   static type = GameAction.LockerActionShow;
@@ -148,7 +155,7 @@ export class OpenLockerWindow {
     public lockerName: string,
     public showLockers: string[],
     public playerLockers: Record<string, IItemContainer>,
-    public accountLockers: Record<string, IItemContainer>
+    public accountLockers: Record<string, IItemContainer>,
   ) {}
 }
 
@@ -162,16 +169,14 @@ export class UpdateParty {
   static type = GameAction.PartyUpdate;
   constructor(
     public party: IParty,
-    public partyMembers: Record<string, IPartyMember>
+    public partyMembers: Record<string, IPartyMember>,
   ) {}
 }
 
 // dispatched when opening a locker
 export class OpenTradeskillWindow {
   static type = GameAction.ShowTradeskill;
-  constructor(
-    public tradeskill: string
-  ) {}
+  constructor(public tradeskill: string) {}
 }
 
 // dispatched when closing the game

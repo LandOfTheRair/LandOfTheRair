@@ -1,20 +1,20 @@
-import { Component, ViewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, inject, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { Store } from '@ngxs/store';
-import { combineLatest, Subscription } from 'rxjs';
+import { select, Store } from '@ngxs/store';
 import {
   basePlayerSprite,
   GameServerEvent,
-  IAccount,
   ICharacterCreateInfo,
   IPlayer,
 } from '../../../../interfaces';
 import {
+  AccountState,
+  LobbyState,
   SetActiveWindow,
   SetCharSlot,
   SetLastCharSlotPlayed,
+  SettingsState,
 } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
@@ -28,30 +28,15 @@ import { CharCreateComponent } from '../char-create/char-create.component';
 })
 export class CharSelectComponent {
   @ViewChild('tabs', { static: false }) tabs: MatTabGroup;
-  public account: IAccount;
-  public charSlot: number;
-  public charSlotAccount$: Subscription;
+  public account = select(AccountState.account);
+  public charSlots = select(SettingsState.charSlot);
+  public charCreateData = select(LobbyState.charCreateData);
 
   private store = inject(Store);
   private dialog = inject(MatDialog);
   public gameService = inject(GameService);
   public socketService = inject(SocketService);
   public assetService = inject(AssetService);
-  
-  constructor() {
-    this.charSlotAccount$ = combineLatest([
-      this.gameService.account$,
-      this.gameService.charSlot$,
-    ])
-      .pipe(takeUntilDestroyed())
-      .subscribe(([account, charSlot]) => {
-        // we don't talk about this mess
-        setTimeout(() => {
-          this.account = account;
-          this.charSlot = charSlot.slot;
-        }, 0);
-      });
-  }
 
   public setCharSlot(index) {
     this.store.dispatch(new SetCharSlot(index));

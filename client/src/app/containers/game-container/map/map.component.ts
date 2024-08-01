@@ -1,13 +1,8 @@
-import { Component, inject, NgZone, OnInit } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, computed, effect, inject, NgZone } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { select, Store } from '@ngxs/store';
 import * as Phaser from 'phaser';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  Subject,
-  Subscription,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   GameServerEvent,
@@ -35,25 +30,23 @@ import { MapScene, PreloadScene } from './phaserstates';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
 })
-export class MapComponent implements OnInit {
-  @Select(GameState.itemTooltip) public itemTooltip$: Observable<{
-    tooltip: string;
-    upgrades: string[];
-  }>;
+export class MapComponent {
+  private assetService = inject(AssetService);
+  public gameService = inject(GameService);
+  private socketService = inject(SocketService);
+  private store = inject(Store);
+  private zone = inject(NgZone);
+  public optionsService = inject(OptionsService);
+  public uiService = inject(UIService);
 
-  @Select(GameState.player) private player$: Observable<IPlayer>;
-  @Select(GameState.currentTarget)
-  private currentTarget$: Observable<ICharacter>;
-  @Select(GameState.players) private allPlayers$: Observable<
-    Record<string, Partial<IPlayer>>
-  >;
-  @Select(GameState.npcs) private allNPCs$: Observable<
-    Record<string, Partial<INPC>>
-  >;
-  @Select(GameState.openDoors) private openDoors$: Observable<
-    Record<number, boolean>
-  >;
-  @Select(GameState.ground) private ground$: Observable<IGround>;
+  public itemTooltip = select(GameState.itemTooltip);
+  public player = select(GameState.player);
+  public target = select(GameState.currentTarget);
+  public playerHash = select(GameState.players);
+  public npcHash = select(GameState.npcs);
+  public doorHash = select(GameState.openDoors);
+  public groundHash = select(GameState.ground);
+  public inGame = select(GameState.inGame);
 
   // simple subjects to be passed into the map for whatever purposes
   public map = new BehaviorSubject<any>(null);
@@ -71,14 +64,6 @@ export class MapComponent implements OnInit {
     vfxTimeout: number;
   }>();
 
-  // subs
-  meSub: Subscription;
-  playerSub: Subscription;
-  npcSub: Subscription;
-  doorSub: Subscription;
-  groundSub: Subscription;
-  boxSub: Subscription;
-
   // boxes
   private allBoxes: FloatingBox[] = [];
 
@@ -94,42 +79,45 @@ export class MapComponent implements OnInit {
 
   private game: MapRenderGame;
 
-  private player: IPlayer;
-
-  public get canSeeLowHealthBorder(): boolean {
+  public canSeeLowHealthBorder = computed(() => {
     return (
-      this.player &&
-      this.player.hp.current <=
-        this.player.hp.maximum *
+      this.player() &&
+      this.player().hp.current <=
+        this.player().hp.maximum *
           ((this.optionsService.dyingBorderPercent ?? 25) / 100) &&
       this.optionsService.canShowDyingBorder
     );
-  }
+  });
 
-  private assetService = inject(AssetService);
-  public gameService = inject(GameService);
-  private socketService = inject(SocketService);
-  private store = inject(Store);
-  private zone = inject(NgZone);
-  public optionsService = inject(OptionsService);
-  public uiService = inject(UIService);
+  constructor() {
+    effect(() => {
+      this.allPlayers.next(this.playerHash());
+    });
 
-  ngOnInit(): void {
-    this.playerSub = this.allPlayers$.subscribe((pHash) =>
-      this.allPlayers.next(pHash),
-    );
-    this.npcSub = this.allNPCs$.subscribe((pHash) => this.allNPCs.next(pHash));
-    this.doorSub = this.openDoors$.subscribe((dHash) =>
-      this.openDoors.next(dHash),
-    );
-    this.groundSub = this.ground$.subscribe((g) => this.ground.next(g));
-    this.meSub = this.player$.subscribe((p) => (this.player = p));
+    effect(() => {
+      this.allNPCs.next(this.npcHash());
+    });
 
-    this.boxSub = GameState.box.subscribe((data) => this.createBox(data));
+    effect(() => {
+      this.openDoors.next(this.doorHash());
+    });
 
-    this.gameService.currentMap$.subscribe(() => {
+    effect(() => {
+      this.ground.next(this.groundHash());
+    });
+
+    effect(() => {
+      this.currentTarget.next(this.target() as ICharacter);
+    });
+
+    effect(() => {
+      this.gameService.currentMap();
       this.hideMap.next(true);
     });
+
+    GameState.box
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => this.createBox(data));
 
     this.socketService.registerComponentCallback(
       'VFX',
@@ -147,42 +135,41 @@ export class MapComponent implements OnInit {
       },
     );
 
-    this.currentTarget$.subscribe((target) => {
-      this.currentTarget.next(target);
-    });
-
     // play game when we get the signal and have a valid map
     combineLatest([
       this.gameService.playGame$,
-      this.gameService.currentPlayer$,
-      this.gameService.currentMap$,
-    ]).subscribe(([play, player, mapData]) => {
-      if (!play || !player || !mapData) return;
-      const areMapsDifferent =
-        player?.map &&
-        this.currentPlayer.getValue()?.map &&
-        player?.map !== this.currentPlayer.getValue()?.map;
+      toObservable(this.player),
+      toObservable(this.gameService.currentMap),
+    ])
+      .pipe(takeUntilDestroyed())
+      .subscribe(([play, player, mapData]) => {
+        if (!play || !player || !mapData) return;
+        const areMapsDifferent =
+          player?.map &&
+          this.currentPlayer.getValue()?.map &&
+          player?.map !== this.currentPlayer.getValue()?.map;
 
-      this.map.next(mapData);
-      this.currentPlayer.next(player);
+        this.map.next(mapData);
+        this.currentPlayer.next(player);
 
-      if (!this.game) {
-        this.zone.runOutsideAngular(() => {
-          this.initMap();
-        });
-      }
+        if (!this.game) {
+          this.zone.runOutsideAngular(() => {
+            this.initMap();
+          });
+        }
 
-      if (this.game && areMapsDifferent) {
-        this.zone.runOutsideAngular(() => {
-          this.game.scene
-            .getScene('MapScene')
-            ?.scene.restart({ hideWelcome: true, resetVisibilityFlags: true });
-        });
-      }
-    });
+        if (this.game && areMapsDifferent) {
+          this.zone.runOutsideAngular(() => {
+            this.game.scene.getScene('MapScene')?.scene.restart({
+              hideWelcome: true,
+              resetVisibilityFlags: true,
+            });
+          });
+        }
+      });
 
     // have to do it this way so zone doesn't lose it's mind
-    this.loadPercent.subscribe((d) => {
+    this.loadPercent.pipe(takeUntilDestroyed()).subscribe((d) => {
       this.zone.run(() => {
         // if we don't have anything, we set a fadeout boolean and then trigger css animations
         if (!d) {
@@ -203,29 +190,31 @@ export class MapComponent implements OnInit {
     });
 
     // have to do it this way so zone doesn't lose it's mind
-    this.gameService.bannerMessage$.subscribe((d) => {
-      this.zone.run(() => {
-        // if we do have something, we just set it
-        this.bannerString = d;
-        this.fadeOut = false;
-
-        setTimeout(() => {
-          this.fadeOut = true;
+    this.gameService.bannerMessage$
+      .pipe(takeUntilDestroyed())
+      .subscribe((d) => {
+        this.zone.run(() => {
+          // if we do have something, we just set it
+          this.bannerString = d;
+          this.fadeOut = false;
 
           setTimeout(() => {
-            this.fadeOut = false;
-            this.bannerString = '';
-          }, 2000);
-        }, 1000);
-      });
-    });
+            this.fadeOut = true;
 
-    this.hideMap.subscribe((d) => {
+            setTimeout(() => {
+              this.fadeOut = false;
+              this.bannerString = '';
+            }, 2000);
+          }, 1000);
+        });
+      });
+
+    this.hideMap.pipe(takeUntilDestroyed()).subscribe((d) => {
       this.hideMapFromView = d;
     });
 
     // reset when we get a quit signal
-    this.gameService.quitGame$.subscribe(() => {
+    this.gameService.quitGame$.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.game) {
         this.game.destroy(true);
         this.game = null;

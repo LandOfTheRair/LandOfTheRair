@@ -13,7 +13,7 @@
 <ng-template #headTemplate>Hands</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @if (player(); as player) {
   <div class="item-container">
     @for (slot of slots; track slot) {
     <div
@@ -31,14 +31,18 @@
           context: createContext(slot, player)
         "
       ></ng-container>
-      } @if (slot.template === 'coin') {
+      }
+      <!-- -->
+      @if (slot.template === 'coin') {
       <ng-container
         *ngTemplateOutlet="
           itemCoinTemplate;
           context: createContext(slot, player)
         "
       ></ng-container>
-      } @if (slot.template === 'hand') {
+      }
+      <!-- -->
+      @if (slot.template === 'hand') {
       <ng-container
         *ngTemplateOutlet="
           itemHandTemplate;
@@ -55,7 +59,9 @@
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
   <span class="item-slot-bg-text">{{ slot.name }}</span>
-  } @if ((player.items.equipment || {})[slot.slot]) {
+  }
+  <!-- -->
+  @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
     [context]="'Equipment'"
     [contextSlot]="slot.slot"
@@ -70,7 +76,10 @@
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
   <span class="item-slot-bg-text">{{ slot.name }}</span>
-  } @if ((player.items.equipment || {})[slot.slot]) {
+  }
+
+  <!-- -->
+  @if ((player.items.equipment || {})[slot.slot]) {
   <app-item
     [context]="slot.hand"
     contextSlot="_"

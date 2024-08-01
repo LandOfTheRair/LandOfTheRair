@@ -12,7 +12,7 @@
 <ng-template #headTemplate>Belt</ng-template>
 
 <ng-template #bodyTemplate>
-  @if (player$ | async; as player) {
+  @if (player(); as player) {
   <app-inventory
     context="Belt"
     [container]="player.items.belt"

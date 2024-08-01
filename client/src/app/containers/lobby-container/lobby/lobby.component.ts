@@ -1,23 +1,29 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { GameServerEvent, GameServerResponse, IChatMessage, IChatUser } from '../../../../interfaces';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { select } from '@ngxs/store';
+import { GameServerEvent, GameServerResponse } from '../../../../interfaces';
 import { LobbyState } from '../../../../stores';
-import { SocketService } from '../../../services/socket.service';
 import { WindowComponent } from '../../../_shared/components/window.component';
+import { SocketService } from '../../../services/socket.service';
 
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
-  styleUrls: ['./lobby.component.scss']
+  styleUrls: ['./lobby.component.scss'],
 })
 export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
-  @Select(LobbyState.motd) public motd$: Observable<string>;
-  @Select(LobbyState.users) public users$: Observable<IChatUser[]>;
-  @Select(LobbyState.messages) public messages$: Observable<IChatMessage[]>;
+  public motd = select(LobbyState.motd);
+  public users = select(LobbyState.users);
+  public messages = select(LobbyState.messages);
 
   public discordCount = 0;
   public currentMessage: string;
@@ -25,18 +31,18 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   private mutationObserver: MutationObserver;
 
   private socketService = inject(SocketService);
-  
-  constructor() { }
 
   ngOnInit() {
     this.socketService.registerComponentCallback(
-      'Lobby', GameServerResponse.UserCountUpdate,
-      (data) => this.discordCount = data.count
+      'Lobby',
+      GameServerResponse.UserCountUpdate,
+      (data) => (this.discordCount = data.count),
     );
   }
 
   ngAfterViewInit() {
-    const outputAreaDOMElement = this.window.nativeElement.querySelector('.output-area');
+    const outputAreaDOMElement =
+      this.window.nativeElement.querySelector('.output-area');
 
     const scrollToBottom = () => {
       outputAreaDOMElement.scrollTop = outputAreaDOMElement.scrollHeight;
@@ -47,7 +53,7 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.mutationObserver.observe(outputAreaDOMElement, {
-        childList: true
+      childList: true,
     });
 
     setTimeout(() => {
@@ -62,8 +68,9 @@ export class LobbyComponent implements OnInit, AfterViewInit, OnDestroy {
   sendMessage() {
     if (!this.currentMessage || !this.currentMessage.trim()) return;
 
-    this.socketService.emit(GameServerEvent.Chat, { content: this.currentMessage.trim() });
+    this.socketService.emit(GameServerEvent.Chat, {
+      content: this.currentMessage.trim(),
+    });
     this.currentMessage = '';
   }
-
 }

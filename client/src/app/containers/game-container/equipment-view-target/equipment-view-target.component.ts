@@ -1,9 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Select, Store } from '@ngxs/store';
-import { Observable, Subscription } from 'rxjs';
+import { Component, effect, inject } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 
-import { IPlayer } from '../../../../interfaces';
 import { GameState, HideWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
@@ -16,20 +13,20 @@ import { UIService } from '../../../services/ui.service';
   styleUrls: ['./equipment-view-target.component.scss'],
 })
 export class EquipmentViewTargetComponent {
-  @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.inspectingCharacter) char$: Observable<IPlayer>;
-
-  gameStatusSub: Subscription;
+  public inGame = select(GameState.inGame);
+  public char = select(GameState.inspectingCharacter);
 
   private store = inject(Store);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+    effect(
+      () => {
+        this.inGame();
         this.store.dispatch(new HideWindow('equipmentViewTarget'));
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 }

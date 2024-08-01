@@ -1,16 +1,14 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 
 import { isUndefined } from 'lodash';
 
-import { combineLatest, Observable, Subscription, timer } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { timer } from 'rxjs';
 import {
   Allegiance,
   GameServerResponse,
   Hostility,
   ICharacter,
-  IMacro,
   INPC,
   IPlayer,
   ItemSlot,
@@ -35,17 +33,11 @@ import { SocketService } from '../../../services/socket.service';
   styleUrls: ['./character-list.component.scss'],
 })
 export class CharacterListComponent implements OnInit, OnDestroy {
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(GameState.allCharacters) characters$: Observable<ICharacter[]>;
-  @Select(GameState.currentPosition) pos$: Observable<{ x: number; y: number }>;
-  @Select(SettingsState.currentCommand) command$: Observable<string>;
-  @Select(MacrosService.currentPlayerActiveMacro) macro$: Observable<IMacro>;
-
-  playerSub: Subscription;
-  timerSub: Subscription;
-  moveSub: Subscription;
-
-  public player: IPlayer;
+  public player = select(GameState.player);
+  public characters = select(GameState.allCharacters);
+  public curPos = select(GameState.currentPosition);
+  public command = select(SettingsState.currentCommand);
+  public macro = select(MacrosService.currentPlayerActiveMacro);
 
   public disableInteractions = false;
 
@@ -53,18 +45,16 @@ export class CharacterListComponent implements OnInit, OnDestroy {
   private socketService = inject(SocketService);
   private optionsService = inject(OptionsService);
   public gameService = inject(GameService);
-  
-  constructor() {
-    this.playerSub = this.player$
-      .pipe(takeUntilDestroyed())
-      .subscribe((p) => (this.player = p));
 
-    this.timerSub = timer(0, 500)
+  constructor() {
+    timer(0, 500)
       .pipe(takeUntilDestroyed())
-      .subscribe(() => this.gameService.updateCharacterList(this.player));
-    this.moveSub = this.pos$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => this.gameService.updateCharacterList(this.player));
+      .subscribe(() => this.gameService.updateCharacterList(this.player()));
+
+    effect(() => {
+      this.curPos();
+      this.gameService.updateCharacterList(this.player());
+    });
   }
 
   ngOnInit() {
@@ -104,34 +94,33 @@ export class CharacterListComponent implements OnInit, OnDestroy {
       this.disableInteractions = false;
     }, 250);
 
-    combineLatest([this.command$, this.macro$])
-      .pipe(first())
-      .subscribe(([cmd, macro]) => {
-        if ((char as INPC).hostility === Hostility.Never) {
-          this.gameService.sendCommandString(`${char.uuid}, hello`);
-        } else if (
-          (char as INPC).hostility === Hostility.OnHit &&
-          (char as INPC).allegiance !== Allegiance.NaturalResource &&
-          !char.agro[this.player.uuid] &&
-          !this.player.agro[char.uuid] &&
-          this.optionsService.dontAttackGreys
-        ) {
-          this.store.dispatch(new SetCurrentCommand(`${char.name}, `));
-        } else if (
-          (char as IPlayer).username &&
-          !cmd &&
-          this.gameService.hostilityLevelFor(this.player, char) !== 'hostile'
-        ) {
-          this.store.dispatch(
-            new SetCurrentCommand(`#${(char as IPlayer).name}, `),
-          );
-        } else if (cmd) {
-          this.gameService.sendCommandString(cmd, char.uuid);
-          this.store.dispatch(new SetCurrentCommand(''));
-        } else if (macro) {
-          this.gameService.sendCommandString(macro.macro, char.uuid);
-        }
-      });
+    const cmd = this.command();
+    const macro = this.macro();
+
+    if ((char as INPC).hostility === Hostility.Never) {
+      this.gameService.sendCommandString(`${char.uuid}, hello`);
+    } else if (
+      (char as INPC).hostility === Hostility.OnHit &&
+      (char as INPC).allegiance !== Allegiance.NaturalResource &&
+      !char.agro[this.player().uuid] &&
+      !this.player().agro[char.uuid] &&
+      this.optionsService.dontAttackGreys
+    ) {
+      this.store.dispatch(new SetCurrentCommand(`${char.name}, `));
+    } else if (
+      (char as IPlayer).username &&
+      !cmd &&
+      this.gameService.hostilityLevelFor(this.player(), char) !== 'hostile'
+    ) {
+      this.store.dispatch(
+        new SetCurrentCommand(`#${(char as IPlayer).name}, `),
+      );
+    } else if (cmd) {
+      this.gameService.sendCommandString(cmd, char.uuid);
+      this.store.dispatch(new SetCurrentCommand(''));
+    } else if (macro) {
+      this.gameService.sendCommandString(macro.macro, char.uuid);
+    }
   }
 
   public doAltAction(player: ICharacter, char: ICharacter, $event?: any) {
@@ -140,7 +129,7 @@ export class CharacterListComponent implements OnInit, OnDestroy {
 
     // we can view characters loadouts
     if ((char as IPlayer).username) {
-      this.store.dispatch(new ViewCharacterEquipment(char));
+      this.store.dispatch(new ViewCharacterEquipment(char as IPlayer));
       return;
     }
 

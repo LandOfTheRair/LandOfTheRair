@@ -1,20 +1,19 @@
 import {
   AfterViewInit,
   Component,
+  effect,
   ElementRef,
+  inject,
   OnDestroy,
   OnInit,
   ViewChild,
-  inject,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 
 import marked from 'marked';
-import { Subscription } from 'rxjs';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameServerResponse, MessageType } from '../../../../interfaces';
-import { SetLogMode } from '../../../../stores';
+import { GameState, SetLogMode, SettingsState } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
 import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
 import { GameService, LogMode } from '../../../services/game.service';
@@ -27,6 +26,9 @@ import { SocketService } from '../../../services/socket.service';
   styleUrls: ['./adventure-log.component.scss'],
 })
 export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
+  public inGame = select(GameState.inGame);
+  public logMode = select(SettingsState.currentLogMode);
+
   public readonly chatTabs: LogMode[] = ['All', 'General', 'Combat', 'NPC'];
 
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
@@ -40,8 +42,6 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   private mutationObserver: MutationObserver;
   private renderer: marked.Renderer;
 
-  inGame$: Subscription;
-
   private store = inject(Store);
   private optionsService = inject(OptionsService);
   private socketService = inject(SocketService);
@@ -49,15 +49,14 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   public gameService = inject(GameService);
 
   constructor() {
-    this.inGame$ = this.gameService.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe((inGame) => {
-        if (inGame) {
-          return;
-        }
+    effect(() => {
+      const inGame = this.inGame();
+      if (inGame) {
+        return;
+      }
 
-        this.messages = [];
-      });
+      this.messages = [];
+    });
   }
 
   ngOnInit() {

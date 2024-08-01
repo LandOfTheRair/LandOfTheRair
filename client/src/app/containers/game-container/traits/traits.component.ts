@@ -1,8 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Select } from '@ngxs/store';
+import { Component, effect, inject } from '@angular/core';
+import { select } from '@ngxs/store';
 
 import { sum } from 'lodash';
-import { Observable, Subscription } from 'rxjs';
 
 import {
   IAccount,
@@ -17,7 +16,6 @@ import { AccountState, GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as allTraitTrees from '../../../../assets/content/_output/trait-trees.json';
 import * as allTraits from '../../../../assets/content/_output/traits.json';
 import { ModalService } from '../../../services/modal.service';
@@ -28,13 +26,9 @@ import { ModalService } from '../../../services/modal.service';
   styleUrls: ['./traits.component.scss'],
 })
 export class TraitsComponent {
-  @Select(GameState.player) player$: Observable<IPlayer>;
-  @Select(AccountState.account) account$: Observable<IAccount>;
+  public player = select(GameState.player);
+  public account = select(AccountState.account);
 
-  playerSub: Subscription;
-  accountSub: Subscription;
-
-  public player: IPlayer;
   public traitTree: IClassTraitTree;
 
   public currentTree = -1;
@@ -43,34 +37,33 @@ export class TraitsComponent {
 
   private get currentTreeTraits() {
     if (this.currentTree >= 0) {
-      return this.player.traits.savedBuilds[this.currentTree]?.traits || {};
+      return this.player().traits.savedBuilds[this.currentTree]?.traits || {};
     }
 
-    return this.player.traits.traitsLearned || {};
+    return this.player().traits.traitsLearned || {};
   }
 
   private modalService = inject(ModalService);
   public uiService = inject(UIService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.playerSub = this.player$
-      .pipe(takeUntilDestroyed())
-      .subscribe((p) => this.setPlayer(p));
-    this.accountSub = this.account$
-      .pipe(takeUntilDestroyed())
-      .subscribe((a) => this.setAccount(a));
+    effect(() => {
+      this.setPlayer(this.player());
+    });
+
+    effect(() => {
+      this.setAccount(this.account());
+    });
   }
 
   private setPlayer(player: IPlayer) {
     if (!player) {
-      this.player = null;
       this.traitTree = null;
       this.currentTree = -1;
       return;
     }
 
-    this.player = player;
     this.traitTree = allTraitTrees[player.baseClass];
   }
 
@@ -119,7 +112,7 @@ export class TraitsComponent {
   public getTraitLevel(traitName: string): number {
     if (this.currentTree !== -1) return this.currentTreeTraits[traitName] ?? 0;
 
-    return this.player.allTraits[traitName] ?? 0;
+    return this.player().allTraits[traitName] ?? 0;
   }
 
   public getTraitBoughtLevel(traitName: string): number {
@@ -135,10 +128,10 @@ export class TraitsComponent {
 
     return (
       (traitRef.isAncient
-        ? this.player.traits.ap > 0
-        : this.player.traits.tp > 0) &&
+        ? this.player().traits.ap > 0
+        : this.player().traits.tp > 0) &&
       this.getTraitBoughtLevel(trait) < traitRef.maxLevel &&
-      this.player.level >= reqLevel &&
+      this.player().level >= reqLevel &&
       (traitRef.requires
         ? this.getTraitBoughtLevel(traitRef.requires) >=
           this.getTraitInTree(traitRef.requires).maxLevel

@@ -1,12 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngxs/store';
 import { sortBy } from 'lodash';
-import { Observable, Subscription } from 'rxjs';
 
-import { GameServerResponse, IPlayer, LogInfo } from '../../../../interfaces';
+import { GameServerResponse, LogInfo } from '../../../../interfaces';
 import { GameState, HideWindow } from '../../../../stores';
 
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GameService } from '../../../services/game.service';
 import { SocketService } from '../../../services/socket.service';
 
@@ -16,15 +14,8 @@ import { SocketService } from '../../../services/socket.service';
   styleUrls: ['./combatdebug.component.scss'],
 })
 export class CombatDebugComponent implements OnInit, OnDestroy {
-  @Select(GameState.currentPosition) curPos$: Observable<{
-    x: number;
-    y: number;
-  }>;
-  @Select(GameState.currentVendorWindow) vendor$: Observable<any>;
-  @Select(GameState.inGame) inGame$: Observable<any>;
-  @Select(GameState.player) player$: Observable<IPlayer>;
-
-  gameStatusSub: Subscription;
+  public inGame = select(GameState.inGame);
+  public player = select(GameState.player);
 
   private damageByCount: Record<string, number> = {};
   private damageByType: Record<string, number> = {};
@@ -58,13 +49,15 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
   private store = inject(Store);
   private socketService = inject(SocketService);
   public gameService = inject(GameService);
-  
+
   constructor() {
-    this.gameStatusSub = this.inGame$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() => {
+    effect(
+      () => {
+        this.inGame();
         this.store.dispatch(new HideWindow('combatdebug'));
-      });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit() {

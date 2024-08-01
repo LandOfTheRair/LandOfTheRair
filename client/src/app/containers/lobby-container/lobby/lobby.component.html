@@ -10,7 +10,7 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Global Chat [{{ (users$ | async).length }} online@if (discordCount) {
+  Global Chat [{{ users().length }} online@if (discordCount) {
   <span>, {{ discordCount }} Discord Player(s)</span>
   }]
 </ng-template>
@@ -20,7 +20,7 @@
     <div class="left-side">
       <div class="user-list">
         <ul>
-          @for (user of users$ | async; track user.username) {
+          @for (user of users(); track user.username) {
           <li class="user">
             @if (user.tier) {
             <span class="user-marking tier-{{ user.tier }}"></span>
@@ -43,11 +43,11 @@
     <div class="right-side">
       <div class="motd">
         System:
-        <span [innerHTML]="(motd$ | async) || 'No MOTD.' | linkify"></span>
+        <span [innerHTML]="motd() || 'No MOTD.' | linkify"></span>
       </div>
 
       <div class="output-area">
-        @for (message of messages$ | async; track message) {
+        @for (message of messages(); track $index) {
         <div class="message">
           <span class="timestamp">
             [{{ message.timestamp | date : 'hh:mm' }}]

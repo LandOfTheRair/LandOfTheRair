@@ -1,36 +1,37 @@
-
-
 <app-menu></app-menu>
 
-@if (!socketService.isConnected || (gameService.loggedIn$ | async) === false) {
-  <app-login
-  ></app-login>
+@if (!socketService.isConnected || loggedIn() === false) {
+<app-login></app-login>
 }
 
-@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
-  <app-lobby-container
-  ></app-lobby-container>
+<!-- -->
+@if (socketService.isConnected && loggedIn()) {
+<app-lobby-container></app-lobby-container>
 }
 
 <app-game-container></app-game-container>
 
-@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
-  <app-journal></app-journal>
+@if (socketService.isConnected && loggedIn()) {
+<app-journal></app-journal>
 }
 
 <!-- If we are logged in and not subscribed, suggest checking out a subscription -->
-@if (socketService.isConnected && (gameService.loggedIn$ | async)) {
-  <div>
-    @if (account$ | async; as account) {
-      <div class="subscribe-banner">
-        @if (!isSubscribed(account)) {
-          <span>
-            You're not currently subscribed. Please consider subscribing or buying silver to help keep the lights on! Want to know what you get for subscribing?
-            <br>
-              <a href="http://rair.land/docs/subscriber-benefits/" target="_blank">Check this out to see all the awesome perks of subscribing!</a>
-            </span>
-          }
-        </div>
-      }
-    </div>
+@if (socketService.isConnected && loggedIn()) {
+<div>
+  @if (account(); as account) {
+  <div class="subscribe-banner">
+    @if (!isSubscribed(account)) {
+    <span>
+      You're not currently subscribed. Please consider subscribing or buying
+      silver to help keep the lights on! Want to know what you get for
+      subscribing?
+      <br />
+      <a href="http://rair.land/docs/subscriber-benefits/" target="_blank">
+        Check this out to see all the awesome perks of subscribing!
+      </a>
+    </span>
+    }
+  </div>
   }
+</div>
+}
