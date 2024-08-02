@@ -1,4 +1,3 @@
-
 import { GameAction, ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
@@ -21,11 +20,10 @@ export class CreateGMCommand implements ILobbyCommand {
     emit({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
-      message: `${account.username} is ${account.isTester ? 'now' : 'no longer'} a tester.`,
-      from: '★System'
+      message: `${account.username} is ${account.isTester ? 'now' : 'no longer'} a GM.`,
+      from: '★System',
     });
 
     return true;
-
   }
 }
