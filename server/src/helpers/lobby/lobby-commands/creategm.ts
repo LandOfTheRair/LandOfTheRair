@@ -20,7 +20,7 @@ export class CreateGMCommand implements ILobbyCommand {
     emit({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
-      message: `${account.username} is ${account.isTester ? 'now' : 'no longer'} a GM.`,
+      message: `${account.username} is ${account.isGameMaster ? 'now' : 'no longer'} a GM.`,
       from: '★System',
     });
 
