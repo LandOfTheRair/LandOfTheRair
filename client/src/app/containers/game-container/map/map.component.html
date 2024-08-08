@@ -47,7 +47,7 @@
 
   <div class="map"></div>
 
-  @if (canSeeLowHealthBorder) {
+  @if (canSeeLowHealthBorder()) {
   <div
     class="dying-border"
     [style.--blur-max-size]="optionsService.dyingBorderWidth"
