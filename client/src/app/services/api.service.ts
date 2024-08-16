@@ -1,15 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class APIService {
-
-  private lastAPIError: string;
-  public get apiError(): string {
-    return this.lastAPIError;
-  }
+  public apiError = signal<string>('');
 
   public get overrideAPIURL() {
     const params = new URLSearchParams(window.location.search);
@@ -18,7 +14,10 @@ export class APIService {
 
   public get overrideAPIUser() {
     const params = new URLSearchParams(window.location.search);
-    return { username: params.get('username'), password: params.get('password') };
+    return {
+      username: params.get('username'),
+      password: params.get('password'),
+    };
   }
 
   public get finalWSURL(): string {
@@ -38,6 +37,6 @@ export class APIService {
   }
 
   public setAPIError(message: string) {
-    this.lastAPIError = message;
+    this.apiError.set(message);
   }
 }

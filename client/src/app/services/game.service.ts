@@ -13,7 +13,7 @@ import {
 } from '../../interfaces';
 import { GameState } from '../../stores';
 
-import { VisibleCharactersService } from 'client/src/app/services/visiblecharacters.service';
+import { VisibleCharactersService } from '../../app/services/visiblecharacters.service';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';

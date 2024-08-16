@@ -14,7 +14,7 @@ import {
 } from '../../stores';
 import { GameService } from './game.service';
 
-import { hostilityLevelFor } from 'client/src/app/_shared/helpers';
+import { hostilityLevelFor } from '../../app/_shared/helpers';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
 @Injectable({

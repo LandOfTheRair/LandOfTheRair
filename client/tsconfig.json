@@ -1,8 +1,18 @@
 {
   "compileOnSave": false,
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
+    "baseUrl": "./",
+    "rootDir": "../",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "declaration": false,
@@ -16,7 +26,10 @@
     "importHelpers": true,
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2018", "es2019", "es2020", "es2022", "dom", "scripthost"],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@interfaces/*": ["../shared/interfaces/*"]
+    }
   },
   "angularCompilerOptions": {
     "strictTemplates": true,

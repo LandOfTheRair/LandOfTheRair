@@ -76,7 +76,7 @@ import {
   MdePopover,
   MdePopoverTarget,
   MdePopoverTrigger,
-} from 'client/src/app/_shared/components/popover/popover.component';
+} from '../app/_shared/components/popover/popover.component';
 import { ErrorComponent } from './_shared/modals/error/error.component';
 import { CombatDebugComponent } from './containers/game-container/combatdebug/combatdebug.component';
 import { EquipmentQuickComponent } from './containers/game-container/equipment-quick/equipment-quick.component';

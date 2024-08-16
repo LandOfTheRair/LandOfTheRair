@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2018",
     "sourceMap": true,
-    "baseUrl": "./",
+    "baseUrl": "../",
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
@@ -20,12 +20,8 @@
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": false,
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2018"
-    ],
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["es2018"],
     "paths": {
       "@interfaces/*": ["shared/interfaces/*"]
     }

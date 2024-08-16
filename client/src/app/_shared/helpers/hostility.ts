@@ -9,7 +9,7 @@ import {
 import { ICharacter } from '@interfaces/character';
 import { INPC } from '@interfaces/npc';
 import { IPlayer } from '@interfaces/player';
-import { isHostileTo } from 'shared/functions';
+import { isHostileTo } from '../../../../../shared/functions';
 
 // any changes here _might_ need to be made to server/checkTargetForHostility
 export function hostilityLevelFor(

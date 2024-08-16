@@ -27,8 +27,8 @@ import {
   ViewCharacterEquipment,
 } from '../../../../stores';
 
-import { GameService } from 'client/src/app/services/game.service';
-import { VisibleCharactersService } from 'client/src/app/services/visiblecharacters.service';
+import { GameService } from '../../../../app/services/game.service';
+import { VisibleCharactersService } from '../../../../app/services/visiblecharacters.service';
 import { hostilityLevelFor } from '../../../_shared/helpers';
 import { MacrosService } from '../../../services/macros.service';
 import { OptionsService } from '../../../services/options.service';

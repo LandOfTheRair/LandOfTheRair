@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 
 import { select, Store } from '@ngxs/store';
 import {
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public agreedToTerms: boolean;
   public isConnected = false;
 
-  public errorMessage: string;
+  public errorMessage = signal<string>('');
 
   public get canLogin() {
     return (
@@ -127,7 +127,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public login() {
     if (this.isActing) return;
     this.isActing = true;
-    this.errorMessage = '';
+    this.errorMessage.set('');
     this.api.setAPIError('');
 
     this.http
@@ -138,8 +138,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.assetService.loadAssets();
         },
         (err) => {
-          this.errorMessage =
-            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
+          this.setErrorMessage(
+            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.',
+          );
           this.isActing = false;
 
           // swallow the API error in this case because we know the error
@@ -160,7 +161,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public register() {
     if (this.isActing) return;
     this.isActing = true;
-    this.errorMessage = '';
+    this.errorMessage.set('');
 
     this.http
       .post(this.api.finalHTTPURL + '/auth/register-check', this.newAccount)
@@ -169,8 +170,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.socketService.emit(GameServerEvent.Register, this.newAccount);
         },
         (err) => {
-          this.errorMessage =
-            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.';
+          this.setErrorMessage(
+            err?.error?.error ?? err?.message ?? 'Absolutely unknown error.',
+          );
           this.isActing = false;
 
           // swallow the API error in this case because we know the error
@@ -226,6 +228,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private setErrorMessage(error: string) {
     this.isActing = false;
-    this.errorMessage = error;
+    this.errorMessage.set(error);
   }
 }
