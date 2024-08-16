@@ -26,7 +26,7 @@ export class RNGDungeonGenerator extends BaseService {
 
     const defaultDungeon = this.game.worldManager.getMap('RNGTemplate100');
 
-    if (!defaultDungeon) {
+    if (!defaultDungeon || !defaultDungeon.map) {
       this.game.logger.error(
         'RNGDungeonGenerator',
         'Could not find default dungeon template.',
