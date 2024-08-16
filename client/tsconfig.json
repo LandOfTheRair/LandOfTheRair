@@ -10,12 +10,13 @@
     "strictNullChecks": false,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "target": "es2020",
+    "target": "es2022",
     "module": "es2020",
     "moduleResolution": "node",
     "importHelpers": true,
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2018", "es2019", "es2020", "dom", "scripthost"]
+    "lib": ["es2018", "es2019", "es2020", "es2022", "dom", "scripthost"],
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
