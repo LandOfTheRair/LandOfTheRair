@@ -72,7 +72,7 @@
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
     "download-github-repo": "^0.1.4",
-    "eslint": "8.2.0",
+    "eslint": "8.57.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jsdoc": "37.9.4",
     "eslint-plugin-prefer-arrow": "1.2.3",
