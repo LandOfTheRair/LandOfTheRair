@@ -57,7 +57,7 @@ export class ActiveTargetComponent {
       return `${this.target().hp.current.toLocaleString()} / ${this.target().hp.maximum.toLocaleString()}`;
     }
 
-    return this.targetHealth + '%';
+    return this.targetHealth() + '%';
   });
 
   public hostility = computed(() => {
