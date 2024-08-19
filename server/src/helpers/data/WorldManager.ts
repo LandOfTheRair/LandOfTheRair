@@ -1,6 +1,5 @@
-
-import path from 'path';
 import { Injectable } from 'injection-js';
+import path from 'path';
 
 import fs from 'fs-extra';
 import { cloneDeep, zipObject } from 'lodash';
@@ -14,7 +13,6 @@ import * as MapScripts from '../../models/world/mapscripts';
 
 @Injectable()
 export class WorldManager extends BaseService {
-
   // live maps
   private maps: Record<string, WorldMap> = {};
   private instances: Record<string, InstancedWorldMap> = {};
@@ -53,23 +51,30 @@ export class WorldManager extends BaseService {
   }
 
   public get currentlyActiveMapHash(): Record<string, any> {
-    return zipObject([...this.activeMaps], Array(this.activeMaps.size).fill(true));
+    return zipObject(
+      [...this.activeMaps],
+      Array(this.activeMaps.size).fill(true),
+    );
   }
 
   public async init() {
-
     // load map scripts first
-    Object.keys(MapScripts).forEach(mapScript => {
+    Object.keys(MapScripts).forEach((mapScript) => {
       const scriptObj = new MapScripts[mapScript]();
       this.mapScripts[scriptObj.name] = scriptObj;
     });
 
-    const allMaps = await readdir('content/maps');
+    const baseMaps = await readdir('content/maps');
+    const outMaps = await readdir('content/_output/maps');
+    const allMaps = [...baseMaps, ...outMaps];
 
     const loadedMaps: Array<{ name: string; map: any }> = await Promise.all(
       allMaps
-        .filter(x => !x.includes('generated'))
-        .map(async x => ({ name: path.basename(x, '.json'), map: await fs.readJson(x) }))
+        .filter((x) => !x.includes('generated'))
+        .map(async (x) => ({
+          name: path.basename(x, '.json'),
+          map: await fs.readJson(x),
+        })),
     );
 
     loadedMaps.forEach(({ name, map }) => {
@@ -83,10 +88,14 @@ export class WorldManager extends BaseService {
       this.mapNames.push(name);
 
       if (map.properties.script && !this.mapScripts[map.properties.script]) {
-        this.game.logger.error('MapLoading', new Error(`Map ${name} references script ${map.properties.script} which does not exist!`));
+        this.game.logger.error(
+          'MapLoading',
+          new Error(
+            `Map ${name} references script ${map.properties.script} which does not exist!`,
+          ),
+        );
       }
     });
-
   }
 
   public createOrReplaceMap(mapName: string, mapJson: any) {
@@ -106,7 +115,12 @@ export class WorldManager extends BaseService {
   }
 
   private createInstancedMap(mapName: string, mapJson: any, partyName: string) {
-    this.instances[mapName] = new InstancedWorldMap(this.game, mapName, cloneDeep(mapJson), partyName);
+    this.instances[mapName] = new InstancedWorldMap(
+      this.game,
+      mapName,
+      cloneDeep(mapJson),
+      partyName,
+    );
     this.mapStates[mapName] = new MapState(this.game, this.instances[mapName]);
     this.handleMapSetup(this.instances[mapName], this.mapStates[mapName]);
   }
@@ -125,7 +139,11 @@ export class WorldManager extends BaseService {
   }
 
   public isAnyPlayerInPartyMap(partyName: string): boolean {
-    return Object.keys(this.mapPlayerCounts).filter(x => this.mapPlayerCounts[x] > 0 && x.includes(`(${partyName})`)).length > 0;
+    return (
+      Object.keys(this.mapPlayerCounts).filter(
+        (x) => this.mapPlayerCounts[x] > 0 && x.includes(`(${partyName})`),
+      ).length > 0
+    );
   }
 
   public getDestinationMapName(player: IPlayer, mapName: string): string {
@@ -140,23 +158,35 @@ export class WorldManager extends BaseService {
     return this.mapScripts[map];
   }
 
-  public ensureMapExists(mapName: string, partyName: string, mapNameWithParty: string): void {
+  public ensureMapExists(
+    mapName: string,
+    partyName: string,
+    mapNameWithParty: string,
+  ): void {
     if (mapName === mapNameWithParty) return;
     if (this.instances[mapNameWithParty]) return;
 
-    this.createInstancedMap(mapNameWithParty, this.instancedMapPrototypes[mapName], partyName);
+    this.createInstancedMap(
+      mapNameWithParty,
+      this.instancedMapPrototypes[mapName],
+      partyName,
+    );
     this.instanceNameToInstancePrototype[mapNameWithParty] = mapName;
   }
 
-  public getMap(mapName: string): { map: WorldMap; state: MapState } | undefined {
+  public getMap(
+    mapName: string,
+  ): { map: WorldMap; state: MapState } | undefined {
     return {
       map: this.instances[mapName] || this.maps[mapName],
-      state: this.mapStates[mapName]
+      state: this.mapStates[mapName],
     };
   }
 
   public isEtherForceMap(mapName: string): boolean {
-    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs.map(x => x.name).includes(mapName);
+    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs
+      .map((x) => x.name)
+      .includes(mapName);
   }
 
   public isDungeon(mapName: string): boolean {
@@ -166,19 +196,23 @@ export class WorldManager extends BaseService {
   public getMapStateAndXYForCharacterItemDrop(
     character: ICharacter,
     defaultX: number,
-    defaultY: number
+    defaultY: number,
   ): { state: MapState; x: number; y: number } {
-
     let state = this.mapStates[character.map];
     let x = defaultX;
     let y = defaultY;
 
     if (this.isDungeon(character.map)) {
-      const newMap = this.instances[character.map].properties.gearDropMap ?? character.map;
+      const newMap =
+        this.instances[character.map].properties.gearDropMap ?? character.map;
       if (newMap !== character.map) {
         state = this.mapStates[newMap];
-        x = this.instances[character.map].properties.gearDropX ?? this.instances[newMap].respawnPoint.x;
-        y = this.instances[character.map].properties.gearDropY ?? this.instances[newMap].respawnPoint.y;
+        x =
+          this.instances[character.map].properties.gearDropX ??
+          this.instances[newMap].respawnPoint.x;
+        y =
+          this.instances[character.map].properties.gearDropY ??
+          this.instances[newMap].respawnPoint.y;
       }
     }
 
@@ -219,8 +253,10 @@ export class WorldManager extends BaseService {
 
   public getPlayersInMap(map: string): ICharacter[] {
     return Object.keys(this.playersInMaps)
-      .filter(x => this.playersInMaps[x] === map)
-      .map(x => this.game.playerManager.getPlayerByUsername(x)) as ICharacter[];
+      .filter((x) => this.playersInMaps[x] === map)
+      .map((x) =>
+        this.game.playerManager.getPlayerByUsername(x),
+      ) as ICharacter[];
   }
 
   public joinMap(player: Player) {
@@ -234,7 +270,10 @@ export class WorldManager extends BaseService {
 
     if (!this.activeMaps.has(mapName)) {
       this.activeMaps.add(mapName);
-      this.game.groundManager.boostSpawnersInMapBasedOnTimestamp(mapName, this.mapsInactiveSince[mapName] ?? 0);
+      this.game.groundManager.boostSpawnersInMapBasedOnTimestamp(
+        mapName,
+        this.mapsInactiveSince[mapName] ?? 0,
+      );
       delete this.mapsInactiveSince[mapName];
     }
 
@@ -243,7 +282,7 @@ export class WorldManager extends BaseService {
 
     this.game.logger.log(
       'Map:Join',
-      `${player.name} (${player.username}) joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`
+      `${player.name} (${player.username}) joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`,
     );
   }
 
@@ -263,13 +302,13 @@ export class WorldManager extends BaseService {
       this.game.deathHelper.restore(player);
       player.isBeingForciblyRespawned = false;
 
-    // people leaving dungeons (via slam) get banished to respawn
+      // people leaving dungeons (via slam) get banished to respawn
     } else if (kickToRespawnPointIfInDungeon && this.isDungeon(oldMap)) {
       player.map = player.respawnPoint.map;
       player.x = player.respawnPoint.x;
       player.y = player.respawnPoint.y;
 
-    // if the map has a respawn kick set, we will also try to force to there
+      // if the map has a respawn kick set, we will also try to force to there
     } else if (mapData?.map.properties.respawnKick) {
       player.map = mapData.map.properties.respawnMap;
       player.x = mapData.map.properties.respawnX;
@@ -284,7 +323,10 @@ export class WorldManager extends BaseService {
     delete this.playersInMaps[player.username];
 
     this.mapPlayerCounts[oldMap] = this.mapPlayerCounts[oldMap] || 0;
-    this.mapPlayerCounts[oldMap] = Math.max(this.mapPlayerCounts[oldMap] - 1, 0);
+    this.mapPlayerCounts[oldMap] = Math.max(
+      this.mapPlayerCounts[oldMap] - 1,
+      0,
+    );
     if (this.mapPlayerCounts[oldMap] <= 0) {
       this.activeMaps.delete(oldMap);
 
@@ -304,24 +346,27 @@ export class WorldManager extends BaseService {
 
         this.game.logger.log(
           'Map:Recycle',
-          `Recycling instance map ${oldMap}.`
+          `Recycling instance map ${oldMap}.`,
         );
       }
     }
 
     this.game.logger.log(
       'Map:Leave',
-      `${player.name} (${player.username}) leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`
+      `${player.name} (${player.username}) leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`,
     );
   }
 
   public steadyTick(timer) {
     const now = Date.now();
 
-    this.activeMaps.forEach(activeMap => {
+    this.activeMaps.forEach((activeMap) => {
       const state = this.mapStates[activeMap];
       if (!state) {
-        this.game.logger.error('WorldManager:MapTick', new Error(`Map ${activeMap} does not have state.`));
+        this.game.logger.error(
+          'WorldManager:MapTick',
+          new Error(`Map ${activeMap} does not have state.`),
+        );
         return;
       }
 
@@ -332,10 +377,13 @@ export class WorldManager extends BaseService {
   }
 
   public npcTick(timer) {
-    this.activeMaps.forEach(activeMap => {
+    this.activeMaps.forEach((activeMap) => {
       const state = this.mapStates[activeMap];
       if (!state) {
-        this.game.logger.error('WorldManager:MapTick', new Error(`Map ${activeMap} does not have state.`));
+        this.game.logger.error(
+          'WorldManager:MapTick',
+          new Error(`Map ${activeMap} does not have state.`),
+        );
         return;
       }
 
@@ -356,5 +404,4 @@ export class WorldManager extends BaseService {
   public getCharacter(uuid: string): ICharacter {
     return this.characterUUIDHash[uuid];
   }
-
 }
