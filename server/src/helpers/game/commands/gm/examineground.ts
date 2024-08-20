@@ -1,0 +1,46 @@
+import { get, isNumber } from 'lodash';
+
+import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import { MacroCommand } from '../../../../models/macro';
+
+export class GMExamineGround extends MacroCommand {
+  override aliases = ['@examineground', '@exground', '@exg'];
+  override isGMCommand = true;
+  override canBeInstant = false;
+  override canBeFast = false;
+
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
+    const [itemClass, arraySlot, drill] = args.arrayArgs;
+    console.log(args.arrayArgs);
+
+    const ground = this.game.worldManager
+      .getMap(player.map)
+      ?.state.getEntireGround(player.x, player.y);
+    if (!ground) {
+      this.sendMessage(player, 'No ground here!');
+      return;
+    }
+
+    let examineTarget = ground;
+
+    if (itemClass) {
+      examineTarget = ground[itemClass];
+    }
+
+    if (isNumber(+arraySlot) && !isNaN(+arraySlot)) {
+      examineTarget = ground[itemClass][+arraySlot];
+    }
+
+    if (drill) {
+      examineTarget = get(ground[itemClass][+arraySlot], drill);
+    }
+
+    this.sendMessage(
+      player,
+      `Examine Ground: ${itemClass}[${arraySlot}] (${drill || 'all'}):`,
+    );
+    this.sendMessage(player, '===');
+    this.sendMessage(player, `\`${JSON.stringify(examineTarget, null, 2)}\``);
+    this.sendMessage(player, '===');
+  }
+}
