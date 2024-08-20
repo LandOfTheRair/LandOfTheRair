@@ -1,11 +1,13 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   effect,
   ElementRef,
   inject,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { select, Store } from '@ngxs/store';
@@ -24,6 +26,7 @@ import { SocketService } from '../../../services/socket.service';
   selector: 'app-adventure-log',
   templateUrl: './adventure-log.component.html',
   styleUrls: ['./adventure-log.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   public inGame = select(GameState.inGame);
@@ -33,11 +36,13 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
-  public messages: Array<{
-    messageTypes: MessageType[];
-    message: string;
-    display?: string;
-  }> = [];
+  public messages = signal<
+    Array<{
+      messageTypes: MessageType[];
+      message: string;
+      display?: string;
+    }>
+  >([]);
 
   private mutationObserver: MutationObserver;
   private renderer: marked.Renderer;
@@ -49,14 +54,17 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   public gameService = inject(GameService);
 
   constructor() {
-    effect(() => {
-      const inGame = this.inGame();
-      if (inGame) {
-        return;
-      }
+    effect(
+      () => {
+        const inGame = this.inGame();
+        if (inGame) {
+          return;
+        }
 
-      this.messages = [];
-    });
+        this.messages.set([]);
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngOnInit() {
@@ -191,9 +199,16 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       (message.typeHash[MessageType.Banner] &&
         this.optionsService.sendBannerMessagesToChat)
     ) {
-      this.messages.push(message);
+      this.messages.update((messages) => {
+        return [...messages, message];
+      });
     }
 
-    if (this.messages.length > 500) this.messages.shift();
+    if (this.messages.length > 500) {
+      this.messages.update((messages) => {
+        messages.shift();
+        return messages;
+      });
+    }
   }
 }

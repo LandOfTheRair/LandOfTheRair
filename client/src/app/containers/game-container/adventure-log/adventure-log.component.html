@@ -12,28 +12,31 @@
 <ng-template #headTemplate>Adventure Log</ng-template>
 
 <ng-template #bodyTemplate>
+  @let userLogMode = logMode();
+
   <div class="buttons">
     @for (tab of chatTabs; track tab) {
     <button
       class="tab-button"
       mat-raised-button
-      [color]="tab === logMode() ? 'primary' : ''"
+      [color]="tab === userLogMode ? 'primary' : ''"
       (click)="changeTab(tab)"
     >
       {{ tab }}
     </button>
     }
   </div>
-  @if (logMode(); as logMode) {
+
   <div class="log-area">
-    @for (message of messages; track message) {
+    @for (message of messages(); track $index) {
     <div
       class="message"
       [ngClass]="message.messageTypes"
-      [class.hidden]="!isMessageVisible(logMode, message)"
+      [class.hidden]="!isMessageVisible(userLogMode, message)"
       [innerHTML]="message.display"
     ></div>
     }
   </div>
-  }
+
+  {{ messages() | json }}
 </ng-template>
