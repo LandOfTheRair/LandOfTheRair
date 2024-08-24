@@ -1,4 +1,5 @@
 import { Injectable } from 'injection-js';
+import { LoggerTimer } from 'logger-timer';
 import path from 'path';
 
 import fs from 'fs-extra';
@@ -64,10 +65,22 @@ export class WorldManager extends BaseService {
       this.mapScripts[scriptObj.name] = scriptObj;
     });
 
+    const timer = new LoggerTimer({
+      isActive: !process.env.DISABLE_TIMERS,
+      dumpThreshold: 500,
+    });
+
+    timer.startTimer('basemaps');
     const baseMaps = await readdir('content/maps');
+    timer.stopTimer('basemaps');
+
+    timer.startTimer('outputmaps');
     const outMaps = await readdir('content/_output/maps');
+    timer.stopTimer('outputmaps');
+
     const allMaps = [...baseMaps, ...outMaps];
 
+    timer.startTimer('readmaps');
     const loadedMaps: Array<{ name: string; map: any }> = await Promise.all(
       allMaps
         .filter((x) => !x.includes('generated'))
@@ -76,7 +89,9 @@ export class WorldManager extends BaseService {
           map: await fs.readJson(x),
         })),
     );
+    timer.stopTimer('readmaps');
 
+    timer.startTimer('loadmaps');
     loadedMaps.forEach(({ name, map }) => {
       if (this.isDungeon(name)) {
         this.instancedMapPrototypes[name] = map;
@@ -84,7 +99,9 @@ export class WorldManager extends BaseService {
       }
 
       this.mapsInactiveSince[name] = Date.now();
+      timer.startTimer('createmap-' + name);
       this.createMap(name, map);
+      timer.stopTimer('createmap-' + name);
       this.mapNames.push(name);
 
       if (map.properties.script && !this.mapScripts[map.properties.script]) {
@@ -96,6 +113,9 @@ export class WorldManager extends BaseService {
         );
       }
     });
+    timer.stopTimer('loadmaps');
+
+    timer.dumpTimers();
   }
 
   public createOrReplaceMap(mapName: string, mapJson: any) {

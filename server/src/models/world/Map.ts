@@ -1,14 +1,20 @@
-
 import { cloneDeep, get, setWith } from 'lodash';
+import { LoggerTimer } from 'logger-timer';
 
 import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 import { Game } from '../../helpers';
 
-import { IMapData, IMapProperties, IPlayer, MapLayer, ObjectType, TilesWithNoFOVUpdate } from '../../interfaces';
+import {
+  IMapData,
+  IMapProperties,
+  IPlayer,
+  MapLayer,
+  ObjectType,
+  TilesWithNoFOVUpdate,
+} from '../../interfaces';
 
 export class WorldMap {
-
   private densityMap: Pathfinder.Grid;
   private planner: any;
   private fov: Mrpas;
@@ -102,7 +108,7 @@ export class WorldMap {
     return {
       map: this.properties.respawnMap || this.mapName,
       x: this.properties.respawnX,
-      y: this.properties.respawnY
+      y: this.properties.respawnY,
     };
   }
 
@@ -158,19 +164,45 @@ export class WorldMap {
     return cloneDeep(this.json);
   }
 
-  constructor(private game: Game, private mapName: string, private json: any, partyName?: string) {
+  constructor(
+    private game: Game,
+    private mapName: string,
+    private json: any,
+    partyName?: string,
+  ) {
+    const timer = new LoggerTimer({
+      isActive: !process.env.DISABLE_TIMERS,
+      dumpThreshold: 500,
+    });
+
+    timer.startTimer(`destructure-${mapName}`);
     this.destructureJSON();
+    timer.stopTimer(`destructure-${mapName}`);
+
+    timer.startTimer(`planner-${mapName}`);
     this.createPlanner();
+    timer.stopTimer(`planner-${mapName}`);
+
+    timer.startTimer(`initground-${mapName}`);
     game.groundManager.initGroundForMap(mapName, partyName);
+    timer.stopTimer(`initground-${mapName}`);
+
+    timer.startTimer(`maxes-${mapName}`);
     this.setMaxes();
+    timer.stopTimer(`maxes-${mapName}`);
+
+    timer.startTimer(`reformat-${mapName}`);
     this.reformatJSON();
+    timer.stopTimer(`reformat-${mapName}`);
+
+    timer.dumpTimers();
   }
 
   private reformatJSON() {
     this.formattedJson = cloneDeep(this.json);
 
     this.formattedJson.layers.length = 10;
-    this.formattedJson.tilesets.forEach(tileset => {
+    this.formattedJson.tilesets.forEach((tileset) => {
       delete tileset.terrains;
     });
 
@@ -178,17 +210,25 @@ export class WorldMap {
 
     // clear air tiles that are on the wall layer because they're see-through
     for (let i = 0; i < mapWallTiles.length; i++) {
-      if (mapWallTiles[i] === TilesWithNoFOVUpdate.Air) mapWallTiles[i] = TilesWithNoFOVUpdate.Empty;
+      if (mapWallTiles[i] === TilesWithNoFOVUpdate.Air) {
+        mapWallTiles[i] = TilesWithNoFOVUpdate.Empty;
+      }
     }
   }
 
   private setMaxes() {
     const settings = this.game.contentManager.settingsData;
     const { maxSkill } = settings.character;
-    this.firstCutExpValue = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 2);
-    this.secondCutExpValue = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 5);
-    this.maxLevelExpPossible = this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 6);
-    this.maxSkillExpPossible = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(Math.min(maxSkill, this.maxSkill));
+    this.firstCutExpValue =
+      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 2);
+    this.secondCutExpValue =
+      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 5);
+    this.maxLevelExpPossible =
+      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 6);
+    this.maxSkillExpPossible =
+      this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
+        Math.min(maxSkill, this.maxSkill),
+      );
   }
 
   private createPlanner() {
@@ -196,7 +236,6 @@ export class WorldMap {
 
     for (let dx = 0; dx < this.width; dx++) {
       for (let dy = 0; dy < this.height; dy++) {
-
         const isDense = this.getWallAt(dx, dy) || this.getDenseDecorAt(dx, dy);
 
         densityMap.setWalkableAt(dx, dy, !isDense);
@@ -212,17 +251,20 @@ export class WorldMap {
     */
 
     this.planner = new Pathfinder.AStarFinder({
-      diagonalMovement: Pathfinder.DiagonalMovement.Always
+      diagonalMovement: Pathfinder.DiagonalMovement.Always,
     });
-
 
     this.fov = new Mrpas(this.width, this.height, (x, y) => {
       const tile = this.getWallAt(x, y);
 
       // if the tile is either empty or air, we look for interactables/opaquedecor
       // if neither, we can see here
-      if (tile === TilesWithNoFOVUpdate.Empty || tile === TilesWithNoFOVUpdate.Air) {
-        const object = this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
+      if (
+        tile === TilesWithNoFOVUpdate.Empty ||
+        tile === TilesWithNoFOVUpdate.Air
+      ) {
+        const object =
+          this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
         return !object || (object && !object.opacity);
       }
 
@@ -238,8 +280,8 @@ export class WorldMap {
       MapLayer.OpaqueDecor,
       MapLayer.Interactables,
       MapLayer.NPCs,
-      MapLayer.Spawners
-    ].forEach(layer => {
+      MapLayer.Spawners,
+    ].forEach((layer) => {
       this.parseObjectsIntoPositionalHash(layer);
     });
 
@@ -247,8 +289,8 @@ export class WorldMap {
       MapLayer.RegionDescriptions,
       MapLayer.BackgroundMusic,
       MapLayer.Succorport,
-      MapLayer.ZLevel
-    ].forEach(layer => {
+      MapLayer.ZLevel,
+    ].forEach((layer) => {
       this.parseRectangleDataIntoPositionalHash(layer);
     });
 
@@ -257,14 +299,19 @@ export class WorldMap {
 
   private parseMapTagRefs(): void {
     const objects = this.json.layers[MapLayer.Interactables].objects;
-    objects.filter(x => x.properties?.teleportTagRef).forEach(obj => {
-      this.teleportTags[obj.properties.teleportTagRef] = { x: obj.x / 64, y: (obj.y / 64) - 1 };
-    });
+    objects
+      .filter((x) => x.properties?.teleportTagRef)
+      .forEach((obj) => {
+        this.teleportTags[obj.properties.teleportTagRef] = {
+          x: obj.x / 64,
+          y: obj.y / 64 - 1,
+        };
+      });
   }
 
   private parseObjectsIntoPositionalHash(mapLayer: MapLayer) {
-    const objects = this.json.layers[mapLayer].objects;
-    objects.forEach(obj => {
+    const objects = this.json.layers[mapLayer]?.objects ?? [];
+    objects.forEach((obj) => {
       const realX = Math.floor(obj.x / 64);
       const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
 
@@ -287,7 +334,7 @@ export class WorldMap {
 
   private parseRectangleDataIntoPositionalHash(mapLayer: MapLayer) {
     const objects = this.json.layers[mapLayer].objects;
-    objects.forEach(obj => {
+    objects.forEach((obj) => {
       const realX = Math.floor(obj.x / 64);
       const realY = Math.floor(obj.y / 64); // -1 to adjust for Tiled
       const realW = Math.floor(obj.width / 64);
@@ -302,7 +349,7 @@ export class WorldMap {
   }
 
   private getArrayLayerData(mapLayer: MapLayer, x: number, y: number): number {
-    return this.json.layers[mapLayer].data[x + (y * (this.width))];
+    return this.json.layers[mapLayer].data[x + y * this.width];
   }
 
   private getObjectAt(mapLayer: MapLayer, x: number, y: number): null | any {
@@ -394,7 +441,11 @@ export class WorldMap {
   }
 
   // filter objects at the given x/y for a type of object
-  public getInteractableOfTypeAt(x: number, y: number, type: ObjectType): null | any {
+  public getInteractableOfTypeAt(
+    x: number,
+    y: number,
+    type: ObjectType,
+  ): null | any {
     const obj = this.getInteractableAt(x, y);
     return obj?.type === type ? obj : null;
   }
@@ -411,7 +462,9 @@ export class WorldMap {
 
   // find a door by a given id
   public findDoorById(id: number) {
-    return this.json.layers[MapLayer.Interactables].objects.find(x => x.id === id);
+    return this.json.layers[MapLayer.Interactables].objects.find(
+      (x) => x.id === id,
+    );
   }
 
   // find all decor by a particular decor name
@@ -420,16 +473,16 @@ export class WorldMap {
     const denseDecor = this.json.layers[MapLayer.DenseDecor].objects;
     const opaqueDecor = this.json.layers[MapLayer.OpaqueDecor].objects;
 
-    return [
-      ...decor,
-      ...denseDecor,
-      ...opaqueDecor
-    ].filter(x => x.name === name);
+    return [...decor, ...denseDecor, ...opaqueDecor].filter(
+      (x) => x.name === name,
+    );
   }
 
   // find an interactable by its name
   public findInteractableByName(name: string) {
-    return this.json.layers[MapLayer.Interactables].objects.find(x => x.name === name);
+    return this.json.layers[MapLayer.Interactables].objects.find(
+      (x) => x.name === name,
+    );
   }
 
   // check if there's a dense object or an interactable that isn't a door
@@ -439,18 +492,36 @@ export class WorldMap {
   }
 
   // whether or not there's a wall or, optionally, an air space at the tile
-  public checkIfActualWallAt(x: number, y: number, shouldAirCountForWall = true): boolean {
+  public checkIfActualWallAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall = true,
+  ): boolean {
     const wallAt = this.getWallAt(x, y);
-    return !!(wallAt && (shouldAirCountForWall ? true : wallAt !== TilesWithNoFOVUpdate.Air));
+    return !!(
+      wallAt &&
+      (shouldAirCountForWall ? true : wallAt !== TilesWithNoFOVUpdate.Air)
+    );
   }
 
   // whether or not there is a wall or foliage at the chosen tile
-  public checkIfHideableTileAt(x: number, y: number, shouldAirCountForWall = true): boolean {
-    return !!(this.checkIfActualWallAt(x, y, shouldAirCountForWall) || this.getFoliageAt(x, y));
+  public checkIfHideableTileAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall = true,
+  ): boolean {
+    return !!(
+      this.checkIfActualWallAt(x, y, shouldAirCountForWall) ||
+      this.getFoliageAt(x, y)
+    );
   }
 
   // whether or not you can hide at a certain position (checks walls and foliage of surrounding tiles)
-  public checkIfCanHideAt(x: number, y: number, shouldAirCountForWall = true): boolean {
+  public checkIfCanHideAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall = true,
+  ): boolean {
     for (let xx = x - 1; xx <= x + 1; xx++) {
       for (let yy = y - 1; yy <= y + 1; yy++) {
         const tile = this.checkIfHideableTileAt(xx, yy, shouldAirCountForWall);
@@ -463,7 +534,6 @@ export class WorldMap {
 
   // build a path between x/y->x/y
   public findPath(startX: number, startY: number, endX: number, endY: number) {
-
     const grid = this.densityMap.clone();
 
     // doing this allows us to click on walls and move towards them
@@ -491,9 +561,9 @@ export class WorldMap {
 
   // whether or not the current tile is teleportable
   public canTeleport(player: IPlayer): boolean {
-    return !this.getSuccorportPropertiesAt(player.x, player.y)?.restrictTeleport;
+    return !this.getSuccorportPropertiesAt(player.x, player.y)
+      ?.restrictTeleport;
   }
-
 }
 
 export class InstancedWorldMap extends WorldMap {

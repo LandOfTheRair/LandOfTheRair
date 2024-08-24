@@ -1,36 +1,84 @@
-
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
-import { IWebsocketCommandHandler } from '../../interfaces/internal';
+import { GameEvent, IWebsocketCommandHandler } from '../../interfaces';
 
+import { EventEmitter } from 'events';
 import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
-import { CalculatorHelper, CharacterHelper, CombatHelper, CurrencyHelper, DailyHelper, DamageHelperMagic, DamageHelperOnesided,
-  DamageHelperPhysical, DeathHelper, DialogActionHelper, EffectHelper, InteractionHelper,
-  InventoryHelper, ItemHelper, LockerHelper, MovementHelper, NPCHelper, PlayerHelper,
-  QuestHelper, StatisticsHelper, StealHelper, TargettingHelper,
-  TeleportHelper, TraitHelper, TrapHelper, VisibilityHelper } from '../character';
+import {
+  CalculatorHelper,
+  CharacterHelper,
+  CombatHelper,
+  CurrencyHelper,
+  DailyHelper,
+  DamageHelperMagic,
+  DamageHelperOnesided,
+  DamageHelperPhysical,
+  DeathHelper,
+  DialogActionHelper,
+  EffectHelper,
+  InteractionHelper,
+  InventoryHelper,
+  ItemHelper,
+  LockerHelper,
+  MovementHelper,
+  NPCHelper,
+  PlayerHelper,
+  QuestHelper,
+  StatisticsHelper,
+  StealHelper,
+  TargettingHelper,
+  TeleportHelper,
+  TraitHelper,
+  TrapHelper,
+  VisibilityHelper,
+} from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
-import { ConfigManager, ContentManager, CorpseManager, DarknessHelper, EffectManager,
-  GroundManager, ItemCreator, NPCCreator, SpellManager, StaticTextHelper, WorldManager } from '../data';
+import {
+  ConfigManager,
+  ContentManager,
+  CorpseManager,
+  DarknessHelper,
+  EffectManager,
+  GroundManager,
+  ItemCreator,
+  NPCCreator,
+  SpellManager,
+  StaticTextHelper,
+  WorldManager,
+} from '../data';
 import { CrashContextManager } from '../data/CrashContextManager';
 import { ModKitManager } from '../data/ModKitManager';
 import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
-import { DynamicEventHelper, DiceRollerHelper, HolidayHelper, LootHelper } from '../game/tools';
+import {
+  DiceRollerHelper,
+  DynamicEventHelper,
+  HolidayHelper,
+  LootHelper,
+} from '../game/tools';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { RNGDungeonGenerator, RNGDungeonManager } from '../rng';
 import { Database } from './Database';
-import { AccountDB, CharacterDB, EventsDB, GroundDB, LogsDB, MarketDB, WorldDB } from './db';
+import {
+  AccountDB,
+  CharacterDB,
+  EventsDB,
+  GroundDB,
+  LogsDB,
+  MarketDB,
+  WorldDB,
+} from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
 import { UserInputHelper } from './UserInputHelper';
 
 @Injectable()
 export class Game {
-
   private ticksElapsed = 0;
+
+  public readonly gameEvents = new EventEmitter();
 
   public wsCmdHandler: IWebsocketCommandHandler;
 
@@ -112,11 +160,12 @@ export class Game {
     public rngDungeonGenerator: RNGDungeonGenerator,
     public rngDungeonManager: RNGDungeonManager,
 
-    public testHelper: TestHelper
-
+    public testHelper: TestHelper,
   ) {}
 
   public async init(wsCmdHandler: IWebsocketCommandHandler) {
+    this.gameEvents.setMaxListeners(100);
+
     await this.db.tryConnect('GAME');
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
@@ -127,37 +176,100 @@ export class Game {
       'transmissionHelper',
       'modkitManager',
       'contentManager',
-      'db', 'logsDB', 'worldDB', 'marketDB', 'characterDB', 'accountDB', 'groundDB', 'eventsDB',
-      'emailHelper', 'profanityHelper', 'effectManager', 'corpseManager',
-      'lobbyManager', 'subscriptionHelper',
-      'characterRoller', 'currencyHelper',
-      'itemCreator', 'dialogActionHelper', 'npcCreator', 'deathHelper', 'targettingHelper', 'teleportHelper',
-      'damageHelperOnesided', 'damageHelperMagic', 'damageHelperPhysical', 'combatHelper', 'questHelper',
-      'diceRollerHelper', 'lootHelper', 'holidayHelper',
-      'movementHelper', 'visibilityHelper', 'staticTextHelper', 'interactionHelper',
+      'db',
+      'logsDB',
+      'worldDB',
+      'marketDB',
+      'characterDB',
+      'accountDB',
+      'groundDB',
+      'eventsDB',
+      'emailHelper',
+      'profanityHelper',
+      'effectManager',
+      'corpseManager',
+      'lobbyManager',
+      'subscriptionHelper',
+      'characterRoller',
+      'currencyHelper',
+      'itemCreator',
+      'dialogActionHelper',
+      'npcCreator',
+      'deathHelper',
+      'targettingHelper',
+      'teleportHelper',
+      'damageHelperOnesided',
+      'damageHelperMagic',
+      'damageHelperPhysical',
+      'combatHelper',
+      'questHelper',
+      'diceRollerHelper',
+      'lootHelper',
+      'holidayHelper',
+      'movementHelper',
+      'visibilityHelper',
+      'staticTextHelper',
+      'interactionHelper',
       'calculatorHelper',
-      'characterHelper', 'itemHelper', 'npcHelper', 'playerHelper', 'inventoryHelper',
-      'effectHelper', 'groundManager', 'spellManager', 'dailyHelper', 'bankHelper', 'lockerHelper',
-      'statisticsHelper', 'partyHelper', 'partyManager', 'darknessHelper', 'trapHelper',
-      'commandHandler', 'messageHelper', 'dynamicEventHelper', 'traitHelper', 'stealHelper',
-      'playerManager', 'worldManager', 'configManager', 'userInputHelper',
-      'discordHelper', 'rngDungeonGenerator', 'rngDungeonManager',
-      'testHelper'
+      'characterHelper',
+      'itemHelper',
+      'npcHelper',
+      'playerHelper',
+      'inventoryHelper',
+      'effectHelper',
+      'groundManager',
+      'spellManager',
+      'dailyHelper',
+      'bankHelper',
+      'lockerHelper',
+      'statisticsHelper',
+      'partyHelper',
+      'partyManager',
+      'darknessHelper',
+      'trapHelper',
+      'commandHandler',
+      'messageHelper',
+      'dynamicEventHelper',
+      'traitHelper',
+      'stealHelper',
+      'playerManager',
+      'worldManager',
+      'configManager',
+      'userInputHelper',
+      'discordHelper',
+      'rngDungeonGenerator',
+      'rngDungeonManager',
+      'testHelper',
     ];
 
+    const timer = new LoggerTimer({
+      isActive: !process.env.DISABLE_TIMERS,
+      dumpThreshold: 100,
+    });
     for (const i of initOrder) {
       this.logger.log('Game:Init', `Initializing ${i}...`);
+
       this[i].game = this;
+
+      timer.startTimer(`init-${i}`);
       await this[i].init();
+      timer.stopTimer(`init-${i}`);
     }
 
+    timer.dumpTimers();
+
     if (this.worldDB.running) {
-      this.logger.error('Game:Init', 'Warning: the last shutdown was unsafe. Data may have been lost.');
+      this.logger.error(
+        'Game:Init',
+        'Warning: the last shutdown was unsafe. Data may have been lost.',
+      );
     }
 
     this.worldDB.saveRunning();
 
     this.setupEmergencyHandlers();
+
+    this.gameEvents.emit(GameEvent.GameStarted);
 
     this.loop();
   }
@@ -170,20 +282,31 @@ export class Game {
     });
 
     [
-      'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGTRAP', 'SIGABRT',
-      'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
+      'SIGHUP',
+      'SIGINT',
+      'SIGQUIT',
+      'SIGTRAP',
+      'SIGABRT',
+      'SIGBUS',
+      'SIGFPE',
+      'SIGUSR1',
+      'SIGSEGV',
+      'SIGUSR2',
+      'SIGTERM',
     ].forEach((sig) => {
       process.on(sig as any, async () => {
-        this.logger.log(`Game:Exit:${sig}`, 'Beginning save of players and ground...');
+        this.logger.log(
+          `Game:Exit:${sig}`,
+          'Beginning save of players and ground...',
+        );
         await Promise.all([
           this.playerManager.saveAllPlayers(),
           this.groundManager.saveAllGround(),
-          this.worldDB.saveStopped()
-        ])
-          .then(() => {
-            this.logger.log('Game:Exit', 'Finished save of players and ground.');
-            process.exit(0);
-          });
+          this.worldDB.saveStopped(),
+        ]).then(() => {
+          this.logger.log('Game:Exit', 'Finished save of players and ground.');
+          process.exit(0);
+        });
       });
     });
   }
@@ -191,7 +314,10 @@ export class Game {
   public loop() {
     const trueTick = this.ticksElapsed / 10;
 
-    const timer = new LoggerTimer({ isActive: !process.env.DISABLE_TIMERS, dumpThreshold: 250 });
+    const timer = new LoggerTimer({
+      isActive: !process.env.DISABLE_TIMERS,
+      dumpThreshold: 250,
+    });
 
     const now = Date.now();
 
