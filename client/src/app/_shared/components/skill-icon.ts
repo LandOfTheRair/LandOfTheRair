@@ -65,7 +65,7 @@ const skillData = {
     <app-icon
       [size]="size()"
       [name]="icon()"
-      [matTooltipDisabled]="!showTooltip"
+      [matTooltipDisabled]="!showTooltip()"
       [matTooltip]="tooltip()"
       [round]="round()"
     ></app-icon>
