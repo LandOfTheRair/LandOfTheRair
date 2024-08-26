@@ -126,10 +126,12 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
-        if (!behavior.joinClass)
+        if (!behavior.joinClass) {
           return `I have no brotherhood for you, ${player.name}.`;
-        if (player.baseClass !== BaseClass.Traveller)
+        }
+        if (player.baseClass !== BaseClass.Traveller) {
           return 'You seem to have made a choice already.';
+        }
 
         game.playerHelper.becomeClass(player, behavior.joinClass);
 
@@ -165,15 +167,17 @@ export class TrainerBehavior implements IAIBehavior {
           [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
         };
 
-        if ((ignores[behavior.joinClass] || []).includes(skill))
+        if ((ignores[behavior.joinClass] || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
+        }
 
         const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
           player,
           skill,
         );
-        if (skillLevel > maxSkillTrain)
+        if (skillLevel > maxSkillTrain) {
           return "You're way beyond my comprehension.";
+        }
 
         const assessCost =
           game.contentManager.getGameSetting(
@@ -215,20 +219,23 @@ export class TrainerBehavior implements IAIBehavior {
           [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
         };
 
-        if ((ignores[behavior.joinClass] || []).includes(skill))
+        if ((ignores[behavior.joinClass] || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
+        }
 
         const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
           player,
           skill,
         );
-        if (skillLevel > maxSkillTrain)
+        if (skillLevel > maxSkillTrain) {
           return "You're way beyond my comprehension.";
+        }
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold coins in your right hand!';
-        if (rightHand.name !== 'Gold Coin')
+        if (rightHand.name !== 'Gold Coin') {
           return 'You need to hold coins in your right hand!';
+        }
 
         // you can only spend as much as the trainer can train to
         const heldValue = rightHand.mods.value || 1;
@@ -242,8 +249,9 @@ export class TrainerBehavior implements IAIBehavior {
         );
 
         if (coinsTaken <= 0) return 'I cannot train you any more!';
-        if (isNaN(coinsTaken) || !coinsTaken)
+        if (isNaN(coinsTaken) || !coinsTaken) {
           return 'I cannot train you for some reason!';
+        }
 
         game.playerHelper.trainSkill(player, skill, coinsTaken);
 
@@ -277,10 +285,12 @@ export class TrainerBehavior implements IAIBehavior {
         if (
           player.baseClass !== BaseClass.Traveller &&
           !behavior.trainClass.includes(player.baseClass)
-        )
+        ) {
           return 'I cannot train you.';
-        if (player.gainingAXP)
+        }
+        if (player.gainingAXP) {
           return 'You seem to be training with the ancient arts at present.';
+        }
 
         const trainCost =
           game.contentManager.getGameSetting(
@@ -291,15 +301,17 @@ export class TrainerBehavior implements IAIBehavior {
           return `You do need to pay for this, you know. ${trainCost} gold is not a lot!`;
         }
 
-        if (player.level >= maxLevelUpLevel)
+        if (player.level >= maxLevelUpLevel) {
           return 'You are too advanced for my teachings.';
+        }
 
         const oldLevel = player.level;
         game.playerHelper.tryLevelUp(player, maxLevelUpLevel);
         const newLevel = player.level;
 
-        if (oldLevel === newLevel)
+        if (oldLevel === newLevel) {
           return 'You are not experienced enough to train with me.';
+        }
 
         game.currencyHelper.loseCurrency(player, trainCost);
 
@@ -316,13 +328,16 @@ export class TrainerBehavior implements IAIBehavior {
         if (
           player.baseClass !== BaseClass.Traveller &&
           !behavior.trainClass.includes(player.baseClass)
-        )
+        ) {
           return 'I cannot train you.';
-        if (!player.gainingAXP)
+        }
+        if (!player.gainingAXP) {
           return 'You do not seem to be training with the ancient arts at present.';
+        }
 
-        if (!game.currencyHelper.hasCurrency(player, 50000))
+        if (!game.currencyHelper.hasCurrency(player, 50000)) {
           return 'You do need to pay for this, you know. 50,000 gold is not a lot!';
+        }
 
         if (player.level < 50) return 'You are not ready for my teachings.';
 
@@ -330,8 +345,9 @@ export class TrainerBehavior implements IAIBehavior {
         game.playerHelper.tryAncientLevelUp(player);
         const newLevel = player.traits.ap;
 
-        if (oldLevel === newLevel)
+        if (oldLevel === newLevel) {
           return 'You are not experienced enough to train with me.';
+        }
 
         game.currencyHelper.loseCurrency(player, 50000);
 

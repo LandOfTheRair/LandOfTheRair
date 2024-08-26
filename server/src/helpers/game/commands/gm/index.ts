@@ -17,6 +17,7 @@ export * from './modcreature';
 export * from './modground';
 export * from './moditem';
 export * from './resetdungeon';
+export * from './respawnnpc';
 export * from './saveplayers';
 export * from './searchitems';
 export * from './spellmod';

@@ -1,16 +1,20 @@
-
-import uuid from 'uuid/v4';
 import { extend, isArray, random, sample } from 'lodash';
+import uuid from 'uuid/v4';
 import { Game } from '../../helpers';
 
-import { Holiday, Hostility, IAI, INPC, INPCDefinition } from '../../interfaces';
+import {
+  Holiday,
+  Hostility,
+  IAI,
+  INPC,
+  INPCDefinition,
+} from '../../interfaces';
 import { WorldMap } from './Map';
 import { MapState } from './MapState';
 
 import { AllAIBehaviors } from './ai';
 
 export class Spawner {
-
   public readonly id = uuid();
 
   private x: number;
@@ -22,50 +26,50 @@ export class Spawner {
   private currentEliteTick = 0;
 
   // spawner settings
-  private respawnRate = 120;                        // the number of seconds before a new creatures comes from the spawner
+  private respawnRate = 120; // the number of seconds before a new creatures comes from the spawner
 
-  private initialSpawn = 0;                         // the number of creatures the spawner will spawn initially
-  private maxCreatures = 5;                         // the maximum number of creatures the spawner can have
-  private spawnRadius = 0;                          // the number of tiles around the spawner that a creature can spawn
-  private randomWalkRadius = 10;                    // the number of tiles away a creature will walk on it's own
-  private leashRadius = 20;                         // the number of tiles away a creature can chase before it's pulled back to the spawner
+  private initialSpawn = 0; // the number of creatures the spawner will spawn initially
+  private maxCreatures = 5; // the maximum number of creatures the spawner can have
+  private spawnRadius = 0; // the number of tiles around the spawner that a creature can spawn
+  private randomWalkRadius = 10; // the number of tiles away a creature will walk on it's own
+  private leashRadius = 20; // the number of tiles away a creature can chase before it's pulled back to the spawner
 
-  private paths: string[] = [];                     // the paths creatures can walk specified by this spawner
-  private npcDefs: INPCDefinition[] = [];           // the npc definitions
-  private npcIds: string[] | any[] = [];            // the npc ids or { npcId, chance } for potential spawned creatures
-  private npcAISettings: string[] = [];             // the ai the npcs should consider when spawning (if none, default is used)
+  private paths: string[] = []; // the paths creatures can walk specified by this spawner
+  private npcDefs: INPCDefinition[] = []; // the npc definitions
+  private npcIds: string[] | any[] = []; // the npc ids or { npcId, chance } for potential spawned creatures
+  private npcAISettings: string[] = []; // the ai the npcs should consider when spawning (if none, default is used)
 
-  private alwaysSpawn: boolean;                     // whether the spawner should always spawn or not (used for specific spawners that cannot be blocked by caps)
-  private shouldSerialize: boolean;                 // whether the spawner should save its state or not (boss only)
-  private requireDeadToRespawn = false;             // whether the spawner can keep spawning while it has living creatures
-  private isDangerous = false;                      // whether the creature is "dangerous" or not (strips)
-  private respectKnowledge = true;                  // whether the npcs should be acting if true, they only act where players have knowledge (green, town, and lair spawners always act)
-  private requireHoliday: Holiday;                  // if this spawner requires a holiday to be active, it's set to this
-  private attributeAddChance = 0;                   // whether the spawner can add random attributes to the npcs it spawns (and the chance for it to do so)
+  private alwaysSpawn: boolean; // whether the spawner should always spawn or not (used for specific spawners that cannot be blocked by caps)
+  private shouldSerialize: boolean; // whether the spawner should save its state or not (boss only)
+  private requireDeadToRespawn = false; // whether the spawner can keep spawning while it has living creatures
+  private isDangerous = false; // whether the creature is "dangerous" or not (strips)
+  private respectKnowledge = true; // whether the npcs should be acting if true, they only act where players have knowledge (green, town, and lair spawners always act)
+  private requireHoliday: Holiday; // if this spawner requires a holiday to be active, it's set to this
+  private attributeAddChance = 0; // whether the spawner can add random attributes to the npcs it spawns (and the chance for it to do so)
 
-  private shouldStrip = false;                      // whether the creature should strip all your gear on death
-  private stripRadius = 0;                          // the radius around the strip point (0 = no spread) gear spreads to
-  private stripX: number;                           // the specific x to strip to (default: spawner x)
-  private stripY: number;                           // the specific y to strip to (default: spawner y)
-  private shouldEatTier = 0;                        // if the creature eats, and if so, how badly it does
+  private shouldStrip = false; // whether the creature should strip all your gear on death
+  private stripRadius = 0; // the radius around the strip point (0 = no spread) gear spreads to
+  private stripX: number; // the specific x to strip to (default: spawner x)
+  private stripY: number; // the specific y to strip to (default: spawner y)
+  private shouldEatTier = 0; // if the creature eats, and if so, how badly it does
 
-  private eliteTickCap = 50;                        // the number of creatures required to spawn an elite (-1 = no elites)
-  private removeDeadNPCs = true;                    // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
-  private removeWhenNoNPCs = false;                 // remove this spawner when no npcs? generally used for on-the-fly spawners
-  private npcCreateCallback: (npc: INPC) => void;   // the callback for creating an npc - used for summons, generally
-  private doInitialSpawnImmediately: boolean;       // whether or not the spawner should spawn creatures immediately or wait
+  private eliteTickCap = 50; // the number of creatures required to spawn an elite (-1 = no elites)
+  private removeDeadNPCs = true; // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
+  private removeWhenNoNPCs = false; // remove this spawner when no npcs? generally used for on-the-fly spawners
+  private npcCreateCallback: (npc: INPC) => void; // the callback for creating an npc - used for summons, generally
+  private doInitialSpawnImmediately: boolean; // whether or not the spawner should spawn creatures immediately or wait
 
-  private requireEvent: string;                     // the event required for this spawner to be active
+  private requireEvent: string; // the event required for this spawner to be active
 
   // spawner live properties
-  private npcs: INPC[] = [];                        // the npcs currently in existence on this spawner
-  private hasDoneInitialSpawn: boolean;             // whether or not the initial spawn has been done for this spawner
-  private npcAI: Record<string, IAI> = {};          // the ai for each npc on this spawner
+  private npcs: INPC[] = []; // the npcs currently in existence on this spawner
+  private hasDoneInitialSpawn: boolean; // whether or not the initial spawn has been done for this spawner
+  private npcAI: Record<string, IAI> = {}; // the ai for each npc on this spawner
   private replaceNPCTicks: Record<string, number> = {}; // the number of ticks before we replace a dead (probably green) NPC
   private replaceNPCDefs: Record<string, INPCDefinition> = {};
 
   public get areAnyNPCsAlive(): boolean {
-    return this.npcs.some(npc => !this.game.characterHelper.isDead(npc));
+    return this.npcs.some((npc) => !this.game.characterHelper.isDead(npc));
   }
 
   public get canBeSaved(): boolean {
@@ -73,7 +77,10 @@ export class Spawner {
   }
 
   public get walkingAttributes() {
-    return { randomWalkRadius: this.randomWalkRadius, leashRadius: this.leashRadius };
+    return {
+      randomWalkRadius: this.randomWalkRadius,
+      leashRadius: this.leashRadius,
+    };
   }
 
   public get hasPaths(): boolean {
@@ -105,11 +112,15 @@ export class Spawner {
   }
 
   private get canRespawn(): boolean {
-    return !this.mapRef.disableCreatureRespawn && (this.currentTick === 0 || this.currentTick > this.respawnRate && this.respawnRate > 0);
+    return (
+      !this.mapRef.disableCreatureRespawn &&
+      (this.currentTick === 0 ||
+        (this.currentTick > this.respawnRate && this.respawnRate > 0))
+    );
   }
 
   private get isUnderNPCCap(): boolean {
-    return (this.npcs.length) < this.maxCreatures;
+    return this.npcs.length < this.maxCreatures;
   }
 
   private get isAbleToSpawn(): boolean {
@@ -124,17 +135,35 @@ export class Spawner {
     return this.respectKnowledge;
   }
 
+  public get allPossibleNPCSpawns(): INPCDefinition[] {
+    return this.npcDefs;
+  }
+
   private get canBeActive(): boolean {
-    if (this.requireHoliday && !this.game.holidayHelper.isHoliday(this.requireHoliday)) return false;
-    if (this.requireEvent && !this.game.dynamicEventHelper.isEventActive(this.requireEvent)) return false;
+    if (
+      this.requireHoliday &&
+      !this.game.holidayHelper.isHoliday(this.requireHoliday)
+    )
+      return false;
+    if (
+      this.requireEvent &&
+      !this.game.dynamicEventHelper.isEventActive(this.requireEvent)
+    )
+      return false;
     return true;
   }
 
-  constructor(private game: Game, private mapRef: WorldMap, private mapState: MapState, spawnOpts: Partial<Spawner> = {}) {
+  constructor(
+    private game: Game,
+    private mapRef: WorldMap,
+    private mapState: MapState,
+    spawnOpts: Partial<Spawner> = {},
+  ) {
     extend(this, spawnOpts);
 
     if (this.mapRef.disableCreatureRespawn) this.currentTick = 0;
-    if (this.doInitialSpawnImmediately && this.currentTick === 0) this.doInitialSpawn();
+    if (this.doInitialSpawnImmediately && this.currentTick === 0)
+      this.doInitialSpawn();
   }
 
   public setTick(tick: number): void {
@@ -162,14 +191,21 @@ export class Spawner {
 
   // triggers on world slow ticks
   public npcTick(): void {
-    this.npcs.forEach(npc => {
-
-      if (this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && !this.replaceNPCDefs[npc.uuid]) {
+    this.npcs.forEach((npc) => {
+      if (
+        this.removeDeadNPCs &&
+        this.game.characterHelper.isDead(npc) &&
+        !this.replaceNPCDefs[npc.uuid]
+      ) {
         this.removeNPC(npc);
         return;
       }
 
-      if (!this.removeDeadNPCs && this.game.characterHelper.isDead(npc) && this.replaceNPCDefs[npc.uuid]) {
+      if (
+        !this.removeDeadNPCs &&
+        this.game.characterHelper.isDead(npc) &&
+        this.replaceNPCDefs[npc.uuid]
+      ) {
         if (!this.replaceNPCTicks[npc.uuid]) {
           this.propagateRemoveNPC(npc);
         }
@@ -187,13 +223,15 @@ export class Spawner {
       }
 
       // if the spawner respects player knowledge (generally, monsters do), then we don't trigger unless a player is nearby
-      if (this.respectKnowledge && !this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y)) {
+      if (
+        this.respectKnowledge &&
+        !this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y)
+      ) {
         return;
       }
 
       this.npcAI[npc.uuid].tick();
       this.npcAI[npc.uuid].mechanicTick();
-
     });
 
     if (this.npcs.length === 0 && this.removeWhenNoNPCs) {
@@ -205,18 +243,20 @@ export class Spawner {
     return this.npcAI[npcUUID];
   }
 
-  public forceSpawnNPC(opts: {
-    npcId?: string;
-    npcDef?: INPCDefinition;
-    spawnLoc?: { x: number; y: number };
-    createCallback?: (npc: INPC) => void;
-  } = {}): INPC | null {
+  public forceSpawnNPC(
+    opts: {
+      npcId?: string;
+      npcDef?: INPCDefinition;
+      spawnLoc?: { x: number; y: number };
+      createCallback?: (npc: INPC) => void;
+    } = {},
+  ): INPC | null {
     return this.createNPC(opts);
   }
 
   // triggers every second, for clearing buffs
   private buffTick(): void {
-    this.npcs.forEach(npc => this.game.effectHelper.tickEffects(npc));
+    this.npcs.forEach((npc) => this.game.effectHelper.tickEffects(npc));
   }
 
   private doInitialSpawn() {
@@ -233,22 +273,29 @@ export class Spawner {
 
     // npcDefs means we have to maintain these and spawn them all at once
     // primarily this exists for the green spawner
-    (this.npcDefs || []).forEach(npcDef => {
+    (this.npcDefs || []).forEach((npcDef) => {
       this.createNPC({ npcDef });
     });
   }
 
-  private createNPC(opts: {
-    npcId?: string;
-    npcDef?: INPCDefinition;
-    spawnLoc?: { x: number; y: number };
-    createCallback?: (npc: INPC) => void;
-  } = {}): INPC | null {
+  private createNPC(
+    opts: {
+      npcId?: string;
+      npcDef?: INPCDefinition;
+      spawnLoc?: { x: number; y: number };
+      createCallback?: (npc: INPC) => void;
+    } = {},
+  ): INPC | null {
     if (!this.canBeActive) return null;
 
-    const hasOwnId = (this.npcIds && this.npcIds.length === 0) || (this.npcDefs && this.npcDefs.length === 0);
+    const hasOwnId =
+      (this.npcIds && this.npcIds.length === 0) ||
+      (this.npcDefs && this.npcDefs.length === 0);
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
-      this.game.logger.error('Spawner', `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`);
+      this.game.logger.error(
+        'Spawner',
+        `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`,
+      );
       this.removeSelf();
       return null;
     }
@@ -257,26 +304,35 @@ export class Spawner {
 
     let chosenNPCDef = npcDef;
     if (!chosenNPCDef) {
-
       let chosenNPCId = npcId;
       if (!chosenNPCId) {
-        chosenNPCId = this.game.lootHelper.chooseWithReplacement(this.npcIds, 1)[0];
+        chosenNPCId = this.game.lootHelper.chooseWithReplacement(
+          this.npcIds,
+          1,
+        )[0];
       }
 
       if (chosenNPCId) {
         chosenNPCDef = this.game.npcHelper.getNPCDefinition(chosenNPCId);
       }
-
     }
 
     if (!chosenNPCDef) {
-      this.game.logger.error('Spawner', `Could not get NPC definition for ${this.name}.`);
+      this.game.logger.error(
+        'Spawner',
+        `Could not get NPC definition for ${this.name}.`,
+      );
       return null;
     }
 
-    const npc = this.game.npcCreator.createCharacterFromNPCDefinition(chosenNPCDef as INPCDefinition);
+    const npc = this.game.npcCreator.createCharacterFromNPCDefinition(
+      chosenNPCDef as INPCDefinition,
+    );
 
-    let foundCoordinates = { x: opts.spawnLoc?.x ?? chosenNPCDef?.x ?? 0, y: opts.spawnLoc?.y ?? chosenNPCDef?.y ?? 0 };
+    let foundCoordinates = {
+      x: opts.spawnLoc?.x ?? chosenNPCDef?.x ?? 0,
+      y: opts.spawnLoc?.y ?? chosenNPCDef?.y ?? 0,
+    };
     let attempts = 0;
 
     while (!foundCoordinates.x || !foundCoordinates.y) {
@@ -285,14 +341,21 @@ export class Spawner {
 
       const isWall = this.mapRef.checkIfActualWallAt(x, y);
       const hasDenseObject = this.mapRef.checkIfDenseObjectAt(x, y);
-      const invalidLocation = x < 4 || y < 4 || x > this.mapRef.width - 4 || y > this.mapRef.height - 4;
+      const invalidLocation =
+        x < 4 ||
+        y < 4 ||
+        x > this.mapRef.width - 4 ||
+        y > this.mapRef.height - 4;
 
       if (!isWall && !hasDenseObject && !invalidLocation) {
         foundCoordinates = { x, y };
       }
 
       if (attempts++ > 100) {
-        this.game.logger.error('Spawner', `Could not place a creature at ${this.x}, ${this.y} - ${this.mapRef.name}`);
+        this.game.logger.error(
+          'Spawner',
+          `Could not place a creature at ${this.x}, ${this.y} - ${this.mapRef.name}`,
+        );
         break;
       }
     }
@@ -317,7 +380,13 @@ export class Spawner {
       return null;
     }
 
-    const aiInst = new AllAIBehaviors[ai](this.game, this.mapRef, this.mapState, this, npc);
+    const aiInst = new AllAIBehaviors[ai](
+      this.game,
+      this.mapRef,
+      this.mapState,
+      this,
+      npc,
+    );
 
     npc.shouldStrip = this.shouldStrip;
     npc.shouldEatTier = this.shouldEatTier;
@@ -360,7 +429,7 @@ export class Spawner {
   }
 
   private removeNPC(npc: INPC): void {
-    this.npcs = this.npcs.filter(c => c.uuid !== npc.uuid);
+    this.npcs = this.npcs.filter((c) => c.uuid !== npc.uuid);
     delete this.npcAI[npc.uuid];
     this.propagateRemoveNPC(npc);
 
@@ -379,14 +448,14 @@ export class Spawner {
 
   // make an enemy elite
   private tryElitify(npc: INPC) {
-
     // can never make elite
     if (this.eliteTickCap <= 0 || npc.hostility === Hostility.Never) return;
 
     this.currentEliteTick++;
 
     // elites can happen randomly 1% of the time, or are guaranteed upon cap
-    if (this.currentEliteTick < this.eliteTickCap || random(1, 100) !== 1) return;
+    if (this.currentEliteTick < this.eliteTickCap || random(1, 100) !== 1)
+      return;
 
     this.currentEliteTick = 0;
 
@@ -395,7 +464,8 @@ export class Spawner {
 
   // add a random attribute to an npc
   private tryAttribute(npc: INPC) {
-    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance)) return;
+    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance))
+      return;
     this.game.npcCreator.addAttribute(npc);
   }
 
