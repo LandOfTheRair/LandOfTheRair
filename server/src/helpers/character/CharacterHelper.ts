@@ -1,21 +1,36 @@
-
 import { Injectable } from 'injection-js';
 import { clamp, random } from 'lodash';
 
-import { Allegiance, BaseClass, EquipHash, GivesBonusInHandItemClasses, Hostility,
-  ICharacter, IItemEffect, INPC, IPlayer, ISimpleItem, ItemClass, ItemSlot, LearnedSpell, Skill, Stat } from '../../interfaces';
+import {
+  Allegiance,
+  BaseClass,
+  EquipHash,
+  GivesBonusInHandItemClasses,
+  Hostility,
+  ICharacter,
+  IItemEffect,
+  INPC,
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  ItemSlot,
+  LearnedSpell,
+  Skill,
+  Stat,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import { Player } from '../../models';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
-
   public init() {}
 
   // check if the character is dead
   public isDead(char: ICharacter): boolean {
-    return char.hp.current <= 0 || this.game.effectHelper.hasEffect(char, 'Dead');
+    return (
+      char.hp.current <= 0 || this.game.effectHelper.hasEffect(char, 'Dead')
+    );
   }
 
   // check if the character can currently act
@@ -47,8 +62,16 @@ export class CharacterHelper extends BaseService {
     // natural resources cannot heal
     if (hp > 0 && char.allegiance === Allegiance.NaturalResource) return;
 
-    char.hp.current = clamp(char.hp.current + hp, char.hp.minimum, char.hp.maximum);
-    char.hp.current = this.game.userInputHelper.cleanNumber(char.hp.current, 1, { floor: true });
+    char.hp.current = clamp(
+      char.hp.current + hp,
+      char.hp.minimum,
+      char.hp.maximum,
+    );
+    char.hp.current = this.game.userInputHelper.cleanNumber(
+      char.hp.current,
+      1,
+      { floor: true },
+    );
   }
 
   public manaDamage(char: ICharacter, mp: number): void {
@@ -56,8 +79,16 @@ export class CharacterHelper extends BaseService {
   }
 
   public mana(char: ICharacter, mp: number): void {
-    char.mp.current = clamp(char.mp.current + mp, char.mp.minimum, char.mp.maximum);
-    char.mp.current = this.game.userInputHelper.cleanNumber(char.mp.current, 1, { floor: true });
+    char.mp.current = clamp(
+      char.mp.current + mp,
+      char.mp.minimum,
+      char.mp.maximum,
+    );
+    char.mp.current = this.game.userInputHelper.cleanNumber(
+      char.mp.current,
+      1,
+      { floor: true },
+    );
   }
 
   // get the primary spell casting stat for a character
@@ -67,51 +98,80 @@ export class CharacterHelper extends BaseService {
       [BaseClass.Mage]: Stat.INT,
       [BaseClass.Thief]: Stat.INT,
       [BaseClass.Warrior]: Stat.STR,
-      [BaseClass.Traveller]: Stat.LUK
+      [BaseClass.Traveller]: Stat.LUK,
     };
 
     return stats[char.baseClass];
   }
 
   // check if this player is holding something
-  public hasHeldItem(char: ICharacter, item: string, hand: 'left'|'right' = 'right'): boolean {
+  public hasHeldItem(
+    char: ICharacter,
+    item: string,
+    hand: 'left' | 'right' = 'right',
+  ): boolean {
     const ref = char.items.equipment[`${hand}Hand`];
-    return !!(ref && ref.name === item && (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username));
+    return !!(
+      ref &&
+      ref.name === item &&
+      (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username)
+    );
   }
 
   public hasHeldItemInEitherHand(char: ICharacter, item: string): boolean {
-    return this.hasHeldItem(char, item, 'right') || this.hasHeldItem(char, item, 'left');
+    return (
+      this.hasHeldItem(char, item, 'right') ||
+      this.hasHeldItem(char, item, 'left')
+    );
   }
 
   public hasHeldItems(char: ICharacter, item1: string, item2: string): boolean {
-    return (this.hasHeldItem(char, item1, 'right') && this.hasHeldItem(char, item2, 'left'))
-        || (this.hasHeldItem(char, item2, 'right') && this.hasHeldItem(char, item1, 'left'));
+    return (
+      (this.hasHeldItem(char, item1, 'right') &&
+        this.hasHeldItem(char, item2, 'left')) ||
+      (this.hasHeldItem(char, item2, 'right') &&
+        this.hasHeldItem(char, item1, 'left'))
+    );
   }
 
   // take an item from either hand
   public takeItemFromEitherHand(char: ICharacter, item: string): void {
-    if (this.hasHeldItem(char, item, 'left'))  this.setEquipmentSlot(char, ItemSlot.LeftHand, undefined);
-    if (this.hasHeldItem(char, item, 'right')) this.setEquipmentSlot(char, ItemSlot.RightHand, undefined);
+    if (this.hasHeldItem(char, item, 'left')) {
+      this.setEquipmentSlot(char, ItemSlot.LeftHand, undefined);
+    }
+    if (this.hasHeldItem(char, item, 'right')) {
+      this.setEquipmentSlot(char, ItemSlot.RightHand, undefined);
+    }
   }
 
   // check if the person has an empty hand
   public hasEmptyHand(char: ICharacter): boolean {
-    return !(char.items.equipment[ItemSlot.RightHand] && char.items.equipment[ItemSlot.LeftHand]);
+    return !(
+      char.items.equipment[ItemSlot.RightHand] &&
+      char.items.equipment[ItemSlot.LeftHand]
+    );
   }
 
   // get an empty hand for the character
   public getEmptyHand(char: ICharacter): ItemSlot | null {
     if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
-    if (!char.items.equipment[ItemSlot.LeftHand])  return ItemSlot.LeftHand;
+    if (!char.items.equipment[ItemSlot.LeftHand]) return ItemSlot.LeftHand;
     return null;
   }
 
   // set the characters equipment slot to something, undefined = unequip
-  public setEquipmentSlot(char: ICharacter, slot: ItemSlot, item: ISimpleItem | undefined): void {
+  public setEquipmentSlot(
+    char: ICharacter,
+    slot: ItemSlot,
+    item: ISimpleItem | undefined,
+  ): void {
     const oldItem = char.items.equipment[slot];
 
     if (oldItem) {
-      const wearEffect = this.game.itemHelper.getItemProperty(oldItem, 'equipEffect');
+      const wearEffect = this.game.itemHelper.getItemProperty(
+        oldItem,
+        'equipEffect',
+      );
       if (wearEffect) {
         const oldEffectCount = this.equipmentEffectCount(char, wearEffect.name);
         if (oldEffectCount <= 1) {
@@ -123,7 +183,10 @@ export class CharacterHelper extends BaseService {
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { itemClass, equipEffect } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'equipEffect']);
+      const { itemClass, equipEffect } = this.game.itemHelper.getItemProperties(
+        item,
+        ['itemClass', 'equipEffect'],
+      );
       if (itemClass === ItemClass.Corpse) return;
 
       if (equipEffect) {
@@ -137,28 +200,52 @@ export class CharacterHelper extends BaseService {
   }
 
   public tryDance(char: ICharacter): void {
-    const danceLevel = this.game.traitHelper.traitLevelValue(char, 'DivineDancing');
+    const danceLevel = this.game.traitHelper.traitLevelValue(
+      char,
+      'DivineDancing',
+    );
     if (danceLevel === 0) return;
 
-    this.game.movementHelper.moveWithPathfinding(char, { xDiff: random(-danceLevel, danceLevel), yDiff: random(-danceLevel, danceLevel) });
+    this.game.movementHelper.moveWithPathfinding(char, {
+      xDiff: random(-danceLevel, danceLevel),
+      yDiff: random(-danceLevel, danceLevel),
+    });
   }
 
   // drop your hands on the ground
   public dropHands(char: ICharacter): void {
     if (this.isPlayer(char)) {
-      const value = this.game.traitHelper.traitLevelValue(char, 'DeathGrip') + this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
+      const value =
+        this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
+        this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
       if (this.game.diceRollerHelper.XInOneHundred(value)) return;
     }
 
-    const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(char, char.x, char.y);
+    const {
+      state,
+      x: dropX,
+      y: dropY,
+    } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(
+      char,
+      char.x,
+      char.y,
+    );
 
     if (char.items.equipment[ItemSlot.RightHand]) {
-      state.addItemToGround(dropX, dropY, char.items.equipment[ItemSlot.RightHand] as ISimpleItem);
+      state.addItemToGround(
+        dropX,
+        dropY,
+        char.items.equipment[ItemSlot.RightHand] as ISimpleItem,
+      );
       this.setRightHand(char, undefined);
     }
 
     if (char.items.equipment[ItemSlot.LeftHand]) {
-      state.addItemToGround(dropX, dropY, char.items.equipment[ItemSlot.LeftHand] as ISimpleItem);
+      state.addItemToGround(
+        dropX,
+        dropY,
+        char.items.equipment[ItemSlot.LeftHand] as ISimpleItem,
+      );
       this.setLeftHand(char, undefined);
     }
   }
@@ -182,12 +269,19 @@ export class CharacterHelper extends BaseService {
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
     if ((char as INPC).owner && target === (char as INPC).owner) return;
     if ((target as INPC).owner && char === (target as INPC).owner) return;
-    if ((char as INPC).monsterGroup
-    && (target as INPC).monsterGroup
-    && (char as INPC).monsterGroup === (target as INPC).monsterGroup) return;
+    if (
+      (char as INPC).monsterGroup &&
+      (target as INPC).monsterGroup &&
+      (char as INPC).monsterGroup === (target as INPC).monsterGroup
+    ) {
+      return;
+    }
 
     // boost by both sides threat multiplier
-    const amountMult = 1 + this.getStat(char, Stat.ThreatMultiplier) + this.getStat(target, Stat.ThreatMultiplier);
+    const amountMult =
+      1 +
+      this.getStat(char, Stat.ThreatMultiplier) +
+      this.getStat(target, Stat.ThreatMultiplier);
     amount *= amountMult;
 
     if (this.game.effectHelper.hasEffect(char, 'Invisibility')) {
@@ -198,8 +292,13 @@ export class CharacterHelper extends BaseService {
       this.game.effectHelper.removeEffectByName(char, 'Shadowmeld');
     }
 
-    const modifyAgro = (agroChar: ICharacter, agroTarget: ICharacter, modAmount: number) => {
-      agroChar.agro[agroTarget.uuid] = (agroChar.agro[agroTarget.uuid] || 0) + modAmount;
+    const modifyAgro = (
+      agroChar: ICharacter,
+      agroTarget: ICharacter,
+      modAmount: number,
+    ) => {
+      agroChar.agro[agroTarget.uuid] =
+        (agroChar.agro[agroTarget.uuid] || 0) + modAmount;
 
       if (agroChar.agro[agroTarget.uuid] <= 0) {
         delete agroChar.agro[agroTarget.uuid];
@@ -210,19 +309,22 @@ export class CharacterHelper extends BaseService {
     modifyAgro(target, char, amount);
 
     if (this.isPlayer(char) && !this.isPlayer(target)) {
-      this.game.partyHelper.getAllPartyMembersInRange(char as IPlayer).forEach(otherPlayer => {
-        modifyAgro(target, otherPlayer, 1);
-        modifyAgro(otherPlayer, target, 1);
-      });
+      this.game.partyHelper
+        .getAllPartyMembersInRange(char as IPlayer)
+        .forEach((otherPlayer) => {
+          modifyAgro(target, otherPlayer, 1);
+          modifyAgro(otherPlayer, target, 1);
+        });
     }
 
     if (this.isPlayer(target) && !this.isPlayer(char)) {
-      this.game.partyHelper.getAllPartyMembersInRange(target as IPlayer).forEach(otherPlayer => {
-        modifyAgro(char, otherPlayer, 1);
-        modifyAgro(otherPlayer, char, 1);
-      });
+      this.game.partyHelper
+        .getAllPartyMembersInRange(target as IPlayer)
+        .forEach((otherPlayer) => {
+          modifyAgro(char, otherPlayer, 1);
+          modifyAgro(otherPlayer, char, 1);
+        });
     }
-
   }
 
   // clear agro for a particular char
@@ -230,9 +332,11 @@ export class CharacterHelper extends BaseService {
     delete char.agro[target.uuid];
 
     if (this.isPlayer(target) && !this.isPlayer(char)) {
-      this.game.partyHelper.getAllPartyMembersInRange(target as IPlayer).forEach(otherPlayer => {
-        delete char.agro[otherPlayer.uuid];
-      });
+      this.game.partyHelper
+        .getAllPartyMembersInRange(target as IPlayer)
+        .forEach((otherPlayer) => {
+          delete char.agro[otherPlayer.uuid];
+        });
     }
   }
 
@@ -255,8 +359,11 @@ export class CharacterHelper extends BaseService {
   }
 
   // gain a permanent stat (from a bottle, or some other source)
-  public gainPermanentStat(character: ICharacter, stat: Stat, value = 1): boolean {
-
+  public gainPermanentStat(
+    character: ICharacter,
+    stat: Stat,
+    value = 1,
+  ): boolean {
     // hp/mp always go up with no limit
     if (stat === Stat.HP || stat === Stat.MP) {
       character.stats[stat] = (character.stats[stat] ?? 1) + value;
@@ -277,14 +384,26 @@ export class CharacterHelper extends BaseService {
     this.calculateStatTotals(character);
 
     return true;
-
   }
 
   // lose a permanent stat (from any reason)
-  public losePermanentStat(character: ICharacter, stat: Stat, value = 1): boolean {
-
-    const oneStats = [Stat.CHA, Stat.CON, Stat.DEX, Stat.INT, Stat.WIL, Stat.WIS, Stat.STR, Stat.AGI, Stat.LUK];
-    const minimum = (oneStats.includes(stat) ? 1 : 0);
+  public losePermanentStat(
+    character: ICharacter,
+    stat: Stat,
+    value = 1,
+  ): boolean {
+    const oneStats = [
+      Stat.CHA,
+      Stat.CON,
+      Stat.DEX,
+      Stat.INT,
+      Stat.WIL,
+      Stat.WIS,
+      Stat.STR,
+      Stat.AGI,
+      Stat.LUK,
+    ];
+    const minimum = oneStats.includes(stat) ? 1 : 0;
 
     const curStat = character.stats[stat] ?? minimum;
 
@@ -295,7 +414,6 @@ export class CharacterHelper extends BaseService {
     character.stats[stat] = (character.stats[stat] ?? minimum) - value;
 
     return true;
-
   }
 
   // recalculate everything, basically when equipment changes usually
@@ -308,12 +426,17 @@ export class CharacterHelper extends BaseService {
 
   // check if this character is encumbered
   public checkEncumberance(character: ICharacter): void {
-
     // only players can be encumbered
     if (!this.isPlayer(character)) return;
 
     // warrior, healer, traveller can wear heavy armor
-    if ([BaseClass.Warrior, BaseClass.Healer, BaseClass.Traveller].includes(character.baseClass)) return;
+    if (
+      [BaseClass.Warrior, BaseClass.Healer, BaseClass.Traveller].includes(
+        character.baseClass,
+      )
+    ) {
+      return;
+    }
 
     // lightenarmor trait means no encumber as well, also clear encumber in rare cases that it matters
     if (this.game.traitHelper.traitLevelValue(character, 'LightenArmor')) {
@@ -322,7 +445,7 @@ export class CharacterHelper extends BaseService {
     }
 
     let castEncumber = false;
-    Object.values(character.items.equipment).forEach(item => {
+    Object.values(character.items.equipment).forEach((item) => {
       const isHeavy = this.game.itemHelper.getItemProperty(item, 'isHeavy');
       if (!isHeavy) return;
 
@@ -331,17 +454,16 @@ export class CharacterHelper extends BaseService {
 
     if (castEncumber) {
       this.game.effectHelper.addEffect(character, '', 'Encumbered');
-
     } else if (this.game.effectHelper.hasEffect(character, 'Encumbered')) {
       this.game.effectHelper.removeEffectByName(character, 'Encumbered');
-
     }
   }
 
   // recalculate what spells we know based on traits and items
   public recalculateLearnedSpells(character: ICharacter): void {
-
-    const fromFate = Object.keys(character.learnedSpells).filter(x => character.learnedSpells[x] === LearnedSpell.FromFate);
+    const fromFate = Object.keys(character.learnedSpells).filter(
+      (x) => character.learnedSpells[x] === LearnedSpell.FromFate,
+    );
 
     character.learnedSpells = {};
 
@@ -353,7 +475,7 @@ export class CharacterHelper extends BaseService {
     };
 
     // check all traits for spells
-    Object.keys(character.allTraits).forEach(trait => {
+    Object.keys(character.allTraits).forEach((trait) => {
       const traitRef = this.game.traitHelper.getTraitData(trait);
       if (!traitRef || !traitRef.spellGiven) return;
 
@@ -361,15 +483,22 @@ export class CharacterHelper extends BaseService {
     });
 
     // check all items
-    Object.keys(character.items.equipment).forEach(itemSlot => {
+    Object.keys(character.items.equipment).forEach((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
       // no spells if we can't technically use the item
-      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
+      if (
+        this.isPlayer(character) &&
+        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+      ) {
+        return;
+      }
 
       // check if it has an effect, and if we can use that effect
-      const { useEffect } = this.game.itemHelper.getItemProperties(item, ['useEffect']);
+      const { useEffect } = this.game.itemHelper.getItemProperties(item, [
+        'useEffect',
+      ]);
 
       if (useEffect && useEffect.uses) {
         learnSpell(useEffect.name, LearnedSpell.FromItem);
@@ -377,7 +506,7 @@ export class CharacterHelper extends BaseService {
     });
 
     // re-learn fated spells last
-    fromFate.forEach(spell => learnSpell(spell, LearnedSpell.FromFate));
+    fromFate.forEach((spell) => learnSpell(spell, LearnedSpell.FromFate));
   }
 
   // recalculate all traits that exist for this character
@@ -386,23 +515,40 @@ export class CharacterHelper extends BaseService {
 
     // base traits from self/learned
     if (this.isPlayer(character)) {
-      Object.assign(character.allTraits, this.game.traitHelper.getAllLearnedTraits(character as IPlayer));
+      Object.assign(
+        character.allTraits,
+        this.game.traitHelper.getAllLearnedTraits(character as IPlayer),
+      );
     } else {
       Object.assign(character.allTraits, (character as INPC).traitLevels);
     }
 
     // traits from equipment
-    Object.keys(character.items.equipment).forEach(itemSlot => {
+    Object.keys(character.items.equipment).forEach((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
       // no bonus if we can't technically use the item
-      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
+      if (
+        this.isPlayer(character) &&
+        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+      ) {
+        return;
+      }
 
       // only some items give bonuses in hands
-      const { itemClass, trait } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'trait']);
-      if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
-      && !GivesBonusInHandItemClasses.includes(itemClass as ItemClass)) return;
+      const { itemClass, trait } = this.game.itemHelper.getItemProperties(
+        item,
+        ['itemClass', 'trait'],
+      );
+      if (
+        [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
+          itemSlot as ItemSlot,
+        ) &&
+        !GivesBonusInHandItemClasses.includes(itemClass as ItemClass)
+      ) {
+        return;
+      }
 
       if (trait) {
         character.allTraits[trait.name] = character.allTraits[trait.name] || 0;
@@ -412,64 +558,90 @@ export class CharacterHelper extends BaseService {
 
     // get benefits from inscribed rune scrolls
     if (this.isPlayer(character)) {
-      (character as IPlayer).runes.forEach(rune => {
+      (character as IPlayer).runes.forEach((rune) => {
         if (!rune) return;
 
         const item = this.game.itemHelper.getItemDefinition(rune);
         if (!item?.trait) return;
 
-        character.allTraits[item.trait.name] = character.allTraits[item.trait.name] || 0;
+        character.allTraits[item.trait.name] =
+          character.allTraits[item.trait.name] || 0;
         character.allTraits[item.trait.name] += item.trait.level ?? 0;
       });
     }
   }
 
   // get the total stats from traits
-  public getStatValueAddFromTraits(character: ICharacter): Partial<Record<Stat, number>> {
+  public getStatValueAddFromTraits(
+    character: ICharacter,
+  ): Partial<Record<Stat, number>> {
     const stats = {};
 
-    Object.keys(character.allTraits).forEach(trait => {
+    Object.keys(character.allTraits).forEach((trait) => {
       const traitRef = this.game.traitHelper.getTraitData(trait);
       if (!traitRef || !traitRef.statsGiven) return;
 
-      Object.keys(traitRef.statsGiven).forEach(stat => {
+      Object.keys(traitRef.statsGiven).forEach((stat) => {
         if (!traitRef.statsGiven?.[stat]) return;
 
         stats[stat] = stats[stat] || 0;
-        stats[stat] += (traitRef.statsGiven[stat] ?? 0) * (this.game.traitHelper.traitLevel(character, trait) ?? 0);
+        stats[stat] +=
+          (traitRef.statsGiven[stat] ?? 0) *
+          (this.game.traitHelper.traitLevel(character, trait) ?? 0);
       });
     });
 
     // handle reflective coating - boost spell reflect
-    const reflectiveBoost = this.game.traitHelper.traitLevelValue(character, 'ReflectiveCoating');
+    const reflectiveBoost = this.game.traitHelper.traitLevelValue(
+      character,
+      'ReflectiveCoating',
+    );
     if (reflectiveBoost > 0) {
       stats[Stat.SpellReflectChance] = stats[Stat.SpellReflectChance] ?? 0;
 
       const leftHand = character.items.equipment[ItemSlot.LeftHand];
       const rightHand = character.items.equipment[ItemSlot.RightHand];
 
-      if (leftHand && this.game.itemHelper.getItemProperty(leftHand, 'itemClass') === ItemClass.Shield) {
+      if (
+        leftHand &&
+        this.game.itemHelper.getItemProperty(leftHand, 'itemClass') ===
+          ItemClass.Shield
+      ) {
         stats[Stat.SpellReflectChance] += reflectiveBoost;
       }
 
-      if (rightHand && this.game.itemHelper.getItemProperty(rightHand, 'itemClass') === ItemClass.Shield) {
+      if (
+        rightHand &&
+        this.game.itemHelper.getItemProperty(rightHand, 'itemClass') ===
+          ItemClass.Shield
+      ) {
         stats[Stat.SpellReflectChance] += reflectiveBoost;
       }
     }
 
     // handle unarmored savant - set base mitigation
-    const savantBoost = this.game.traitHelper.traitLevelValue(character, 'UnarmoredSavant');
+    const savantBoost = this.game.traitHelper.traitLevelValue(
+      character,
+      'UnarmoredSavant',
+    );
     if (savantBoost > 0) {
       stats[Stat.Mitigation] = stats[Stat.Mitigation] ?? 0;
 
       // if you have a main hand item, your bonus is cut in half
-      const mainHandItemMultiplier = character.items.equipment[ItemSlot.RightHand] ? 0.5 : 1;
+      const mainHandItemMultiplier = character.items.equipment[
+        ItemSlot.RightHand
+      ]
+        ? 0.5
+        : 1;
 
       const item = character.items.equipment[ItemSlot.Armor];
       const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
 
-      if (!item || [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)) {
-        stats[Stat.Mitigation] += (savantBoost * mainHandItemMultiplier);
+      if (
+        !item ||
+        [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)
+      ) {
+        stats[Stat.Mitigation] += savantBoost * mainHandItemMultiplier;
 
         // adjust for fur being a base 10 already
         if (itemClass === ItemClass.Fur) stats[Stat.Mitigation] -= 10;
@@ -481,7 +653,6 @@ export class CharacterHelper extends BaseService {
 
   // calculate the total stats for a character from their current loadout
   public calculateStatTotals(character: ICharacter): void {
-
     const oldPerception = character.totalStats[Stat.Perception];
     const oldStealth = character.totalStats[Stat.Stealth];
 
@@ -491,20 +662,22 @@ export class CharacterHelper extends BaseService {
       bonusStats = (character as IPlayer).quests.questStats;
     }
 
-    const defaultMove = this.game.contentManager.getGameSetting('character', 'defaultMove') ?? 3;
+    const defaultMove =
+      this.game.contentManager.getGameSetting('character', 'defaultMove') ?? 3;
 
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
-    character.totalStats[Stat.Move] = character.totalStats[Stat.Move] ?? defaultMove;
+    character.totalStats[Stat.Move] =
+      character.totalStats[Stat.Move] ?? defaultMove;
 
     const addStat = (stat: Stat, bonus: number) => {
       character.totalStats[stat] = character.totalStats[stat] || 0;
-      character.totalStats[stat]! += (bonus ?? 0);
+      character.totalStats[stat]! += bonus ?? 0;
       character.totalStats[stat] = Math.max(character.totalStats[stat]!, 0);
     };
 
     // add quest completion bonuses
-    Object.keys(bonusStats).forEach(stat => {
+    Object.keys(bonusStats).forEach((stat) => {
       addStat(stat as Stat, bonusStats[stat]);
     });
 
@@ -515,24 +688,39 @@ export class CharacterHelper extends BaseService {
     });
 
     // calculate stats from gear
-    Object.keys(character.items.equipment).forEach(itemSlot => {
+    Object.keys(character.items.equipment).forEach((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
       // no bonus if we can't technically use the item
-      if (this.isPlayer(character) && !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)) return;
+      if (
+        this.isPlayer(character) &&
+        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+      ) {
+        return;
+      }
 
       // only some items give bonuses in hands
       const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
-      if ([ItemSlot.RightHand, ItemSlot.LeftHand].includes(itemSlot as ItemSlot)
-      && !GivesBonusInHandItemClasses.includes(itemClass)) return;
+      if (
+        [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
+          itemSlot as ItemSlot,
+        ) &&
+        !GivesBonusInHandItemClasses.includes(itemClass)
+      ) {
+        return;
+      }
 
       // shields don't work in right hand unless you have the trait
-      if (itemClass === ItemClass.Shield
-      && itemSlot === ItemSlot.RightHand
-      && !this.game.traitHelper.traitLevel(character, 'Shieldbearer')) return;
+      if (
+        itemClass === ItemClass.Shield &&
+        itemSlot === ItemSlot.RightHand &&
+        !this.game.traitHelper.traitLevel(character, 'Shieldbearer')
+      ) {
+        return;
+      }
 
-      Object.values(Stat).forEach(stat => {
+      Object.values(Stat).forEach((stat) => {
         const bonus = this.game.itemHelper.getStat(item, stat);
         addStat(stat, bonus);
       });
@@ -540,10 +728,11 @@ export class CharacterHelper extends BaseService {
 
     // get trait/effect stats
     const traitStatBoosts = this.getStatValueAddFromTraits(character);
-    const effectStatBoosts = this.game.effectHelper.effectStatBonuses(character);
+    const effectStatBoosts =
+      this.game.effectHelper.effectStatBonuses(character);
 
     const addStatsFromHash = (hash) => {
-      Object.keys(hash).forEach(stat => {
+      Object.keys(hash).forEach((stat) => {
         character.totalStats[stat] = character.totalStats[stat] || 0;
         character.totalStats[stat] += hash[stat];
       });
@@ -555,29 +744,47 @@ export class CharacterHelper extends BaseService {
     // set hp/mp
     if (character.totalStats.hp) {
       character.hp.maximum = character.totalStats.hp;
-      character.hp.current = Math.min(character.hp.current, character.hp.maximum);
+      character.hp.current = Math.min(
+        character.hp.current,
+        character.hp.maximum,
+      );
     }
 
     if (character.totalStats.mp) {
       character.mp.maximum = character.totalStats.mp;
-      character.mp.current = Math.min(character.mp.current, character.mp.maximum);
+      character.mp.current = Math.min(
+        character.mp.current,
+        character.mp.maximum,
+      );
     }
 
     // can't move more than one screen at a time
-    const maxMove = this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
-    character.totalStats[Stat.Move] = clamp(character.totalStats[Stat.Move] ?? 0, 0, maxMove);
+    const maxMove =
+      this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
+    character.totalStats[Stat.Move] = clamp(
+      character.totalStats[Stat.Move] ?? 0,
+      0,
+      maxMove,
+    );
 
     // if we're a player and our perception changes, we do a full visual update
     const state = this.game.worldManager.getMap(character.map)?.state;
     if (!state) return;
 
-    if (this.isPlayer(character) && oldPerception !== character.totalStats[Stat.Perception]) {
+    if (
+      this.isPlayer(character) &&
+      oldPerception !== character.totalStats[Stat.Perception]
+    ) {
       state.triggerFullUpdateForPlayer(character as Player);
     }
 
     // update stealth to do hide reductions
     if ((character.totalStats[Stat.Stealth] ?? 0) > 0) {
-      character.totalStats[Stat.Stealth] = Math.max(0, (character.totalStats[Stat.Stealth] ?? 0) - this.getStealthPenalty(character));
+      character.totalStats[Stat.Stealth] = Math.max(
+        0,
+        (character.totalStats[Stat.Stealth] ?? 0) -
+          this.getStealthPenalty(character),
+      );
 
       // if the stealth is different we gotta trigger an update
       if (oldStealth !== character.totalStats[Stat.Stealth]) {
@@ -591,7 +798,9 @@ export class CharacterHelper extends BaseService {
     const value = character.totalStats[stat] ?? 0;
     if (value < 0 && stat === Stat.Mitigation) return 0;
     if (value === 0 && stat === Stat.DamageFactor) return 1;
-    if (value !== 0 && stat === Stat.DamageFactor && this.isPlayer(character)) return 1 + value;
+    if (value !== 0 && stat === Stat.DamageFactor && this.isPlayer(character)) {
+      return 1 + value;
+    }
     return value;
   }
 
@@ -603,25 +812,47 @@ export class CharacterHelper extends BaseService {
   // hp regen is a min of 1, affected by a con modifier past 21
   public getHPRegen(character: ICharacter): number {
     const baseHPRegen = 1 + this.getStat(character, Stat.HPRegen);
-    const hpRegenSlidingCon = this.game.contentManager.getGameSetting('character', 'hpRegenSlidingCon') ?? 21;
-    return Math.max(baseHPRegen, baseHPRegen + Math.max(0, this.getStat(character, Stat.CON) - hpRegenSlidingCon));
+    const hpRegenSlidingCon =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'hpRegenSlidingCon',
+      ) ?? 21;
+    return Math.max(
+      baseHPRegen,
+      baseHPRegen +
+        Math.max(0, this.getStat(character, Stat.CON) - hpRegenSlidingCon),
+    );
   }
 
   // thieves and warriors have different mpregen setups
   public getMPRegen(character: ICharacter): number {
-
     const base = this.getStat(character, Stat.MPRegen);
     let boost = 0;
 
     // healers and mages get a boost because their primary function is spellcasting
-    if (character.baseClass === BaseClass.Mage || character.baseClass === BaseClass.Healer) {
-      boost = this.game.contentManager.getGameSetting('character', 'defaultCasterMPRegen') ?? 10;
+    if (
+      character.baseClass === BaseClass.Mage ||
+      character.baseClass === BaseClass.Healer
+    ) {
+      boost =
+        this.game.contentManager.getGameSetting(
+          'character',
+          'defaultCasterMPRegen',
+        ) ?? 10;
     }
 
     // thieves not in combat regen faster
     if (character.baseClass === BaseClass.Thief) {
-
-      boost = Math.max(0, Math.floor(base * this.game.traitHelper.traitLevelValue(character, 'ReplenishingShadows')));
+      boost = Math.max(
+        0,
+        Math.floor(
+          base *
+            this.game.traitHelper.traitLevelValue(
+              character,
+              'ReplenishingShadows',
+            ),
+        ),
+      );
 
       // hidden thieves can regen stealth slightly faster based on their mpregen
       if (this.game.effectHelper.hasEffect(character, 'Hidden')) return boost;
@@ -630,14 +861,38 @@ export class CharacterHelper extends BaseService {
       if (this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
 
       // thieves in combat get less regen than out of
-      if (character.combatTicks <= 0) return boost + this.game.contentManager.getGameSetting('character', 'thiefOOCRegen') ?? 10;
-      return                                 boost + this.game.contentManager.getGameSetting('character', 'thiefICRegen') ?? 1;
+      if (character.combatTicks <= 0) {
+        return (
+          boost +
+          (this.game.contentManager.getGameSetting(
+            'character',
+            'thiefOOCRegen',
+          ) ?? 10)
+        );
+      }
+      return (
+        boost +
+        (this.game.contentManager.getGameSetting('character', 'thiefICRegen') ??
+          1)
+      );
     }
 
     // warriors are the inverse of thieves
     if (character.baseClass === BaseClass.Warrior) {
-      if (character.combatTicks <= 0) return this.game.contentManager.getGameSetting('character', 'warriorOOCRegen') ?? -3;
-      return                                 this.game.contentManager.getGameSetting('character', 'warriorICRegen') ?? 3;
+      if (character.combatTicks <= 0) {
+        return (
+          this.game.contentManager.getGameSetting(
+            'character',
+            'warriorOOCRegen',
+          ) ?? -3
+        );
+      }
+      return (
+        this.game.contentManager.getGameSetting(
+          'character',
+          'warriorICRegen',
+        ) ?? 3
+      );
     }
 
     return base + boost;
@@ -645,38 +900,62 @@ export class CharacterHelper extends BaseService {
 
   // get the stealth value for a character
   public getStealth(char: ICharacter): number {
-    let stealth = this.getSkillLevel(char, Skill.Thievery) + char.level + this.getStat(char, Stat.AGI);
+    let stealth =
+      this.getSkillLevel(char, Skill.Thievery) +
+      char.level +
+      this.getStat(char, Stat.AGI);
     if (char.baseClass === BaseClass.Thief) {
-      stealth *= this.game.contentManager.getGameSetting('character', 'thiefStealthMultiplier') ?? 1.5;
+      stealth *=
+        this.game.contentManager.getGameSetting(
+          'character',
+          'thiefStealthMultiplier',
+        ) ?? 1.5;
     }
 
     if (this.game.effectHelper.hasEffect(char, 'Encumbered')) {
-      stealth /= this.game.contentManager.getGameSetting('character', 'stealthEncumberDivisor') ?? 2;
+      stealth /=
+        this.game.contentManager.getGameSetting(
+          'character',
+          'stealthEncumberDivisor',
+        ) ?? 2;
     }
 
     return Math.floor(stealth);
   }
 
   public getStealthPenalty(char: ICharacter): number {
-
     const leftHandClass = char.items.equipment[ItemSlot.LeftHand]
-      ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
+      ? this.game.itemHelper.getItemProperty(
+          char.items.equipment[ItemSlot.LeftHand],
+          'itemClass',
+        )
       : null;
 
     const rightHandClass = char.items.equipment[ItemSlot.RightHand]
-      ? this.game.itemHelper.getItemProperty(char.items.equipment[ItemSlot.RightHand], 'itemClass')
+      ? this.game.itemHelper.getItemProperty(
+          char.items.equipment[ItemSlot.RightHand],
+          'itemClass',
+        )
       : null;
 
     const hideReductions = this.game.contentManager.hideReductionsData;
-    const totalReduction = (hideReductions[leftHandClass]) || 0 + (hideReductions[rightHandClass] || 0);
-    const shadowSheathMultiplier = Math.max(0, 1 - this.game.traitHelper.traitLevelValue(char, 'ShadowSheath'));
+    const totalReduction =
+      hideReductions[leftHandClass] ||
+      0 + (hideReductions[rightHandClass] || 0);
+    const shadowSheathMultiplier = Math.max(
+      0,
+      1 - this.game.traitHelper.traitLevelValue(char, 'ShadowSheath'),
+    );
 
     return Math.floor(totalReduction * shadowSheathMultiplier);
   }
 
   // get perception value for a character
   public getPerception(char: ICharacter): number {
-    let perception = this.getStat(char, Stat.Perception) + char.level + this.getStat(char, Stat.WIS);
+    let perception =
+      this.getStat(char, Stat.Perception) +
+      char.level +
+      this.getStat(char, Stat.WIS);
     if (char.baseClass === BaseClass.Thief) perception *= 1.5;
 
     return perception;
@@ -709,17 +988,22 @@ export class CharacterHelper extends BaseService {
 
   // get the skill level for the character
   public getSkillLevel(character: ICharacter, skill: Skill) {
-    return this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill)
-         + this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat);
+    return (
+      this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) +
+      this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat)
+    );
   }
 
   // check if there exists an equipment effect on a character
   public equipmentEffectCount(character: ICharacter, effect: string): number {
-    return Object.keys(character.items.equipment).filter(itemSlot => {
+    return Object.keys(character.items.equipment).filter((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return false;
 
-      const equipEffect = this.game.itemHelper.getItemProperty(item, 'equipEffect');
+      const equipEffect = this.game.itemHelper.getItemProperty(
+        item,
+        'equipEffect',
+      );
       if (!equipEffect) return;
 
       return equipEffect.name === effect;
@@ -728,20 +1012,37 @@ export class CharacterHelper extends BaseService {
 
   // check gear and try to cast effects
   public tryToCastEquipmentEffects(character: ICharacter) {
-    Object.keys(character.items.equipment).forEach(itemSlot => {
+    Object.keys(character.items.equipment).forEach((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
-      const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['equipEffect', 'itemClass']);
+      const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(
+        item,
+        ['equipEffect', 'itemClass'],
+      );
       if (!equipEffect) return;
 
-      if (EquipHash[itemClass as ItemClass] && EquipHash[itemClass as ItemClass] !== itemSlot) return;
+      if (
+        EquipHash[itemClass as ItemClass] &&
+        EquipHash[itemClass as ItemClass] !== itemSlot
+      ) {
+        return;
+      }
 
-      const existingEffect = this.game.effectHelper.getEffect(character, equipEffect.name);
+      const existingEffect = this.game.effectHelper.getEffect(
+        character,
+        equipEffect.name,
+      );
       if (existingEffect && existingEffect.endsAt === -1) return;
 
       this.game.effectHelper.addEffect(character, '', equipEffect.name, {
-        effect: { duration: -1, extra: { potency: equipEffect.potency ?? 1, persistThroughDeath: true } }
+        effect: {
+          duration: -1,
+          extra: {
+            potency: equipEffect.potency ?? 1,
+            persistThroughDeath: true,
+          },
+        },
       });
     });
   }
@@ -753,7 +1054,9 @@ export class CharacterHelper extends BaseService {
 
   // get the specific learned state for a spell
   public learnedState(character: ICharacter, spell: string): LearnedSpell {
-    return (character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned);
+    return (
+      character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned
+    );
   }
 
   // whether or not this particular character knows how to cast a spell/ability
@@ -761,26 +1064,46 @@ export class CharacterHelper extends BaseService {
     return character.learnedSpells[spell] === LearnedSpell.FromItem;
   }
 
-  public forceSpellLearnStatus(character: ICharacter, spell: string, state: LearnedSpell): void {
+  public forceSpellLearnStatus(
+    character: ICharacter,
+    spell: string,
+    state: LearnedSpell,
+  ): void {
     character.learnedSpells[spell.toLowerCase()] = state;
   }
 
   // try to break items that have a limited number of uses
-  public abuseItemsForLearnedSkillAndGetEffect(character: ICharacter, spell: string): IItemEffect | undefined {
-    if (character.learnedSpells[spell.toLowerCase()] !== LearnedSpell.FromItem) return;
+  public abuseItemsForLearnedSkillAndGetEffect(
+    character: ICharacter,
+    spell: string,
+  ): IItemEffect | undefined {
+    if (
+      character.learnedSpells[spell.toLowerCase()] !== LearnedSpell.FromItem
+    ) {
+      return;
+    }
 
     let foundItem!: ISimpleItem;
     let foundSlot!: ItemSlot;
     let foundEffect!: IItemEffect;
 
-    Object.keys(character.items.equipment).forEach(slot => {
+    Object.keys(character.items.equipment).forEach((slot) => {
       if (foundSlot || foundEffect || foundItem) return;
 
       const item = character.items.equipment[slot];
       if (!item) return;
 
-      const { useEffect, itemClass } = this.game.itemHelper.getItemProperties(item, ['useEffect', 'itemClass']);
-      if (!useEffect || useEffect.name.toLowerCase() !== spell.toLowerCase() || itemClass === ItemClass.Bottle) return;
+      const { useEffect, itemClass } = this.game.itemHelper.getItemProperties(
+        item,
+        ['useEffect', 'itemClass'],
+      );
+      if (
+        !useEffect ||
+        useEffect.name.toLowerCase() !== spell.toLowerCase() ||
+        itemClass === ItemClass.Bottle
+      ) {
+        return;
+      }
 
       foundSlot = slot as ItemSlot;
       foundItem = item;
@@ -807,7 +1130,6 @@ export class CharacterHelper extends BaseService {
     delete pet.owner;
 
     owner.pets = owner.pets || [];
-    owner.pets = owner.pets.filter(x => x !== pet);
+    owner.pets = owner.pets.filter((x) => x !== pet);
   }
-
 }
