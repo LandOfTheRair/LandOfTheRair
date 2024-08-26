@@ -143,13 +143,15 @@ export class Spawner {
     if (
       this.requireHoliday &&
       !this.game.holidayHelper.isHoliday(this.requireHoliday)
-    )
+    ) {
       return false;
+    }
     if (
       this.requireEvent &&
       !this.game.dynamicEventHelper.isEventActive(this.requireEvent)
-    )
+    ) {
       return false;
+    }
     return true;
   }
 
@@ -162,8 +164,9 @@ export class Spawner {
     extend(this, spawnOpts);
 
     if (this.mapRef.disableCreatureRespawn) this.currentTick = 0;
-    if (this.doInitialSpawnImmediately && this.currentTick === 0)
+    if (this.doInitialSpawnImmediately && this.currentTick === 0) {
       this.doInitialSpawn();
+    }
   }
 
   public setTick(tick: number): void {
@@ -454,8 +457,9 @@ export class Spawner {
     this.currentEliteTick++;
 
     // elites can happen randomly 1% of the time, or are guaranteed upon cap
-    if (this.currentEliteTick < this.eliteTickCap || random(1, 100) !== 1)
+    if (this.currentEliteTick < this.eliteTickCap || random(1, 100) !== 1) {
       return;
+    }
 
     this.currentEliteTick = 0;
 
@@ -464,8 +468,9 @@ export class Spawner {
 
   // add a random attribute to an npc
   private tryAttribute(npc: INPC) {
-    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance))
+    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance)) {
       return;
+    }
     this.game.npcCreator.addAttribute(npc);
   }
 
