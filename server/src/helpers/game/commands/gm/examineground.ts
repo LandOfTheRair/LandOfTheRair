@@ -11,7 +11,6 @@ export class GMExamineGround extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [itemClass, arraySlot, drill] = args.arrayArgs;
-    console.log(args.arrayArgs);
 
     const ground = this.game.worldManager
       .getMap(player.map)
