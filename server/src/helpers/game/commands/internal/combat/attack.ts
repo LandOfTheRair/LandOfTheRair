@@ -1,10 +1,14 @@
-
-
-import { distanceFrom, ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../interfaces';
+import {
+  distanceFrom,
+  ICharacter,
+  IMacroCommandArgs,
+  IPlayer,
+  ItemSlot,
+  PhysicalAttackArgs,
+} from '../../../../../interfaces';
 import { SkillCommand } from '../../../../../models/macro';
 
 export class AttackCommand extends SkillCommand {
-
   override aliases = ['a', 'attack'];
 
   override range(char: ICharacter) {
@@ -15,19 +19,35 @@ export class AttackCommand extends SkillCommand {
     if (!args.stringArgs) return false;
 
     const range = this.range(player);
-    if (range === -1) return this.sendMessage(player, 'You need to have your left hand empty to use that weapon!');
+    if (range === -1) {
+      return this.sendMessage(
+        player,
+        'You need to have your left hand empty to use that weapon!',
+      );
+    }
 
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, args.stringArgs);
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
+      player,
+      args.stringArgs,
+    );
     if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if (target === player) return;
 
-    if (distanceFrom(player, target) > range) return this.sendMessage(player, 'That target is too far away!');
+    if (distanceFrom(player, target) > range) {
+      return this.sendMessage(player, 'That target is too far away!');
+    }
 
     this.use(player, target, { attackRange: range });
   }
 
-  override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
+  override use(
+    user: ICharacter,
+    target: ICharacter,
+    opts: PhysicalAttackArgs = {},
+  ): void {
+    this.tryToEquipAmmoForBow(user);
+
     opts.attackRange = this.range(user);
     this.game.combatHelper.physicalAttack(user, target, opts);
 
@@ -37,4 +57,24 @@ export class AttackCommand extends SkillCommand {
     }
   }
 
+  private tryToEquipAmmoForBow(user: ICharacter) {
+    const weapon = user.items.equipment[ItemSlot.RightHand];
+    if (!this.game.itemHelper.getItemProperty(weapon, 'canShoot')) return;
+    if (user.items.equipment[ItemSlot.Ammo]) return;
+
+    // as a last resort, we traverse the sack, then slot the first item we find in ammo, then use it
+    const firstShotIndex = user.items.sack.items.findIndex((i) => {
+      const numShots = this.game.itemHelper.getItemProperty(i, 'shots');
+      return numShots > 0;
+    });
+
+    if (firstShotIndex === -1) {
+      return;
+    }
+
+    // we equip the ammo we found
+    const item = user.items.sack.items[firstShotIndex];
+    this.game.inventoryHelper.removeItemFromSack(user, firstShotIndex);
+    this.game.characterHelper.setEquipmentSlot(user, ItemSlot.Ammo, item);
+  }
 }
