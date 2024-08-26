@@ -1,32 +1,45 @@
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { BaseClass, distanceFrom, GameAction, GameServerResponse, IAIBehavior,
+import {
+  BaseClass,
+  distanceFrom,
+  GameAction,
+  GameServerResponse,
+  IAIBehavior,
   IDialogChatAction,
-  INPC, IPlayer, ItemClass, ItemSlot, ITrainerBehavior, Skill, Stat } from '../../../../interfaces';
+  INPC,
+  IPlayer,
+  ItemClass,
+  ItemSlot,
+  ITrainerBehavior,
+  Skill,
+  Stat,
+} from '../../../../interfaces';
 import { Player } from '../../../orm';
 
 export class TrainerBehavior implements IAIBehavior {
-
   private canRevive = false;
   private hasGuild = false;
 
   init(game: Game, npc: INPC, parser: Parser, behavior: ITrainerBehavior) {
-
     this.canRevive = behavior.trainClass.includes(BaseClass.Healer);
     this.hasGuild = behavior.trainClass.includes(BaseClass.Thief);
 
     const { maxLevelUpLevel, maxSkillTrain } = behavior;
 
     if (!maxLevelUpLevel || !maxSkillTrain) {
-      game.logger.error('Behavior:Trainer', `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`);
+      game.logger.error(
+        'Behavior:Trainer',
+        `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`,
+      );
       return;
     }
 
     // default guidance
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
-
         const player: IPlayer = env?.player;
         if (!player) return 'You seem strange.';
 
@@ -43,23 +56,31 @@ export class TrainerBehavior implements IAIBehavior {
           return `We have no business, ${player.name}.`;
         }
 
-        if (behavior.joinClass && player.baseClass === BaseClass.Traveller) {
+        if (
+          behavior.joinClass &&
+          behavior.joinClass !== player.baseClass &&
+          player.baseClass === BaseClass.Traveller
+        ) {
           env?.callbacks.emit({
             type: GameServerResponse.SendConfirm,
             title: `Join the ${behavior.joinClass} Brotherhood?`,
             content: `I cannot train you unless you join the ${behavior.joinClass} brotherhood, ${player.name}. Would you like to join us?`,
-            extraData: { npcSprite: npc.sprite, okText: 'Yes, join!', cancelText: 'No, I need to think more' },
-            okAction: { command: '!privatesay', args: `${npc.uuid}, join` }
+            extraData: {
+              npcSprite: npc.sprite,
+              okText: 'Yes, join!',
+              cancelText: 'No, I need to think more',
+            },
+            okAction: { command: '!privatesay', args: `${npc.uuid}, join` },
           });
 
           return `I cannot currently train you, but would you like to JOIN the ${behavior.joinClass} brotherhood?`;
         }
 
-        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) {
-
-          const options = [
-            { text: 'Leave', action: 'noop' },
-          ];
+        if (
+          player.baseClass !== BaseClass.Traveller &&
+          !behavior.trainClass.includes(player.baseClass)
+        ) {
+          const options = [{ text: 'Leave', action: 'noop' }];
 
           if (this.canRevive) {
             options.unshift({ text: 'Can you recall me?', action: 'recall' });
@@ -71,10 +92,14 @@ export class TrainerBehavior implements IAIBehavior {
             displayNPCName: npc.name,
             displayNPCSprite: npc.sprite,
             displayNPCUUID: npc.uuid,
-            options
+            options,
           };
 
-          game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+          game.transmissionHelper.sendResponseToAccount(
+            player.username,
+            GameServerResponse.DialogChat,
+            formattedChat,
+          );
 
           return `I cannot train you, ${player.name}.`;
         }
@@ -87,21 +112,24 @@ export class TrainerBehavior implements IAIBehavior {
           npcMaxLevel: maxLevelUpLevel,
           npcMaxSkill: maxSkillTrain,
           npcCanRevive: this.canRevive,
-          npcGuildTeleport: this.hasGuild
+          npcGuildTeleport: this.hasGuild,
         });
 
         return `Hello, ${env?.player.name}!`;
       });
 
-    parser.addCommand('join')
+    parser
+      .addCommand('join')
       .setSyntax(['join'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
-        if (!behavior.joinClass) return `I have no brotherhood for you, ${player.name}.`;
-        if (player.baseClass !== BaseClass.Traveller) return 'You seem to have made a choice already.';
+        if (!behavior.joinClass)
+          return `I have no brotherhood for you, ${player.name}.`;
+        if (player.baseClass !== BaseClass.Traveller)
+          return 'You seem to have made a choice already.';
 
         game.playerHelper.becomeClass(player, behavior.joinClass);
 
@@ -115,7 +143,8 @@ export class TrainerBehavior implements IAIBehavior {
         return `Welcome to the ${behavior.joinClass} brotherhood, ${player.name}.`;
       });
 
-    parser.addCommand('assess')
+    parser
+      .addCommand('assess')
       .setSyntax(['assess <string:skill*>'])
       .setLogic(async ({ env, args }) => {
         const player = env?.player;
@@ -125,30 +154,48 @@ export class TrainerBehavior implements IAIBehavior {
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
         const ignores = {
-          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Thievery, Skill.Conjuration],
-          [BaseClass.Mage]:       [Skill.Restoration, Skill.Thievery],
-          [BaseClass.Healer]:     [Skill.Thievery, Skill.Conjuration],
-          [BaseClass.Thief]:      [Skill.Wand, Skill.Restoration, Skill.Conjuration]
+          [BaseClass.Warrior]: [
+            Skill.Wand,
+            Skill.Restoration,
+            Skill.Thievery,
+            Skill.Conjuration,
+          ],
+          [BaseClass.Mage]: [Skill.Restoration, Skill.Thievery],
+          [BaseClass.Healer]: [Skill.Thievery, Skill.Conjuration],
+          [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
         };
 
-        if ((ignores[behavior.joinClass] || []).includes(skill)) return 'I\'m afraid I can\'t help you with that skill.';
+        if ((ignores[behavior.joinClass] || []).includes(skill))
+          return "I'm afraid I can't help you with that skill.";
 
-        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
-        if (skillLevel > maxSkillTrain) return 'You\'re way beyond my comprehension.';
+        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
+          player,
+          skill,
+        );
+        if (skillLevel > maxSkillTrain)
+          return "You're way beyond my comprehension.";
 
-        const assessCost = game.contentManager.getGameSetting('npcscript', 'trainer.assessCost') ?? 50;
+        const assessCost =
+          game.contentManager.getGameSetting(
+            'npcscript',
+            'trainer.assessCost',
+          ) ?? 50;
         if (!game.currencyHelper.hasCurrency(player, assessCost)) {
           return `You do need to pay for this, you know. ${assessCost} gold is not a lot!`;
         }
 
         game.currencyHelper.loseCurrency(player, assessCost);
 
-        const percentWay = game.calculatorHelper.assessPercentToNextSkill(player, skill);
+        const percentWay = game.calculatorHelper.assessPercentToNextSkill(
+          player,
+          skill,
+        );
 
         return `You're ${percentWay}% of the way to your next ${skill.toUpperCase()} skill level.`;
       });
 
-    parser.addCommand('trainskill')
+    parser
+      .addCommand('trainskill')
       .setSyntax(['trainskill <string:skill*>'])
       .setLogic(async ({ env, args }) => {
         const player = env?.player;
@@ -158,31 +205,45 @@ export class TrainerBehavior implements IAIBehavior {
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
         const ignores = {
-          [BaseClass.Warrior]:    [Skill.Wand, Skill.Restoration, Skill.Conjuration],
-          [BaseClass.Mage]:       [Skill.Restoration],
-          [BaseClass.Healer]:     [Skill.Conjuration],
-          [BaseClass.Thief]:      [Skill.Wand, Skill.Restoration, Skill.Conjuration]
+          [BaseClass.Warrior]: [
+            Skill.Wand,
+            Skill.Restoration,
+            Skill.Conjuration,
+          ],
+          [BaseClass.Mage]: [Skill.Restoration],
+          [BaseClass.Healer]: [Skill.Conjuration],
+          [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
         };
 
-        if ((ignores[behavior.joinClass] || []).includes(skill)) return 'I\'m afraid I can\'t help you with that skill.';
+        if ((ignores[behavior.joinClass] || []).includes(skill))
+          return "I'm afraid I can't help you with that skill.";
 
-        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(player, skill);
-        if (skillLevel > maxSkillTrain) return 'You\'re way beyond my comprehension.';
+        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
+          player,
+          skill,
+        );
+        if (skillLevel > maxSkillTrain)
+          return "You're way beyond my comprehension.";
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold coins in your right hand!';
-        if (rightHand.name !== 'Gold Coin') return 'You need to hold coins in your right hand!';
+        if (rightHand.name !== 'Gold Coin')
+          return 'You need to hold coins in your right hand!';
 
         // you can only spend as much as the trainer can train to
         const heldValue = rightHand.mods.value || 1;
-        const maxCoins = game.calculatorHelper.calculateSkillXPRequiredForLevel(maxSkillTrain);
+        const maxCoins =
+          game.calculatorHelper.calculateSkillXPRequiredForLevel(maxSkillTrain);
         const curValue = player.skills[skill] || 0;
         const curTrain = player.paidSkills[skill] || 0;
 
-        const coinsTaken = Math.floor(Math.max(0, Math.min(heldValue, maxCoins - curValue - curTrain)));
+        const coinsTaken = Math.floor(
+          Math.max(0, Math.min(heldValue, maxCoins - curValue - curTrain)),
+        );
 
         if (coinsTaken <= 0) return 'I cannot train you any more!';
-        if (isNaN(coinsTaken) || !coinsTaken) return 'I cannot train you for some reason!';
+        if (isNaN(coinsTaken) || !coinsTaken)
+          return 'I cannot train you for some reason!';
 
         game.playerHelper.trainSkill(player, skill, coinsTaken);
 
@@ -206,43 +267,62 @@ export class TrainerBehavior implements IAIBehavior {
         return 'I hope the training pays off!';
       });
 
-    parser.addCommand('train')
+    parser
+      .addCommand('train')
       .setSyntax(['train'])
       .setLogic(async ({ env }) => {
         const player: Player = env?.player;
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
-        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
-        if (player.gainingAXP) return 'You seem to be training with the ancient arts at present.';
+        if (
+          player.baseClass !== BaseClass.Traveller &&
+          !behavior.trainClass.includes(player.baseClass)
+        )
+          return 'I cannot train you.';
+        if (player.gainingAXP)
+          return 'You seem to be training with the ancient arts at present.';
 
-        const trainCost = game.contentManager.getGameSetting('npcscript', 'trainer.trainCost') ?? 200;
+        const trainCost =
+          game.contentManager.getGameSetting(
+            'npcscript',
+            'trainer.trainCost',
+          ) ?? 200;
         if (!game.currencyHelper.hasCurrency(player, trainCost)) {
           return `You do need to pay for this, you know. ${trainCost} gold is not a lot!`;
         }
 
-        if (player.level >= maxLevelUpLevel) return 'You are too advanced for my teachings.';
+        if (player.level >= maxLevelUpLevel)
+          return 'You are too advanced for my teachings.';
 
         const oldLevel = player.level;
         game.playerHelper.tryLevelUp(player, maxLevelUpLevel);
         const newLevel = player.level;
 
-        if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
+        if (oldLevel === newLevel)
+          return 'You are not experienced enough to train with me.';
 
         game.currencyHelper.loseCurrency(player, trainCost);
 
         return `You've gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
       });
 
-    parser.addCommand('ancient')
+    parser
+      .addCommand('ancient')
       .setSyntax(['ancient'])
       .setLogic(async ({ env }) => {
         const player: Player = env?.player;
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
-        if (player.baseClass !== BaseClass.Traveller && !behavior.trainClass.includes(player.baseClass)) return 'I cannot train you.';
-        if (!player.gainingAXP) return 'You do not seem to be training with the ancient arts at present.';
+        if (
+          player.baseClass !== BaseClass.Traveller &&
+          !behavior.trainClass.includes(player.baseClass)
+        )
+          return 'I cannot train you.';
+        if (!player.gainingAXP)
+          return 'You do not seem to be training with the ancient arts at present.';
 
-        if (!game.currencyHelper.hasCurrency(player, 50000)) return 'You do need to pay for this, you know. 50,000 gold is not a lot!';
+        if (!game.currencyHelper.hasCurrency(player, 50000))
+          return 'You do need to pay for this, you know. 50,000 gold is not a lot!';
 
         if (player.level < 50) return 'You are not ready for my teachings.';
 
@@ -250,7 +330,8 @@ export class TrainerBehavior implements IAIBehavior {
         game.playerHelper.tryAncientLevelUp(player);
         const newLevel = player.traits.ap;
 
-        if (oldLevel === newLevel) return 'You are not experienced enough to train with me.';
+        if (oldLevel === newLevel)
+          return 'You are not experienced enough to train with me.';
 
         game.currencyHelper.loseCurrency(player, 50000);
 
@@ -258,7 +339,8 @@ export class TrainerBehavior implements IAIBehavior {
       });
 
     if (this.canRevive) {
-      parser.addCommand('recall')
+      parser
+        .addCommand('recall')
         .setSyntax(['recall'])
         .setLogic(async ({ env }) => {
           const player = env?.player;
@@ -291,7 +373,8 @@ export class TrainerBehavior implements IAIBehavior {
     }
 
     if (this.hasGuild) {
-      parser.addCommand('guildteleport')
+      parser
+        .addCommand('guildteleport')
         .setSyntax(['guildteleport'])
         .setLogic(async ({ env }) => {
           const player = env?.player;
@@ -310,24 +393,36 @@ export class TrainerBehavior implements IAIBehavior {
             return `I cannot teleport you from here, ${player.name}, the ether is too twisting.`;
           }
 
-          const teleportPoint = game.contentManager.getGameSetting('map', 'defaultThievesGuild') ?? {
+          const teleportPoint = game.contentManager.getGameSetting(
+            'map',
+            'defaultThievesGuild',
+          ) ?? {
             map: 'ThievesGuild',
             x: 15,
-            y: 15
+            y: 15,
           };
 
           if (player.map === teleportPoint.map) {
-            game.teleportHelper.teleport(player, { map: player.respawnPoint.map, x: player.respawnPoint.x, y: player.respawnPoint.y });
+            game.teleportHelper.teleport(player, {
+              map: player.respawnPoint.map,
+              x: player.respawnPoint.x,
+              y: player.respawnPoint.y,
+            });
             return `See ya, ${player.name}.`;
           }
 
-          game.teleportHelper.teleport(player, { map: teleportPoint.map, x: teleportPoint.x, y: teleportPoint.y });
+          game.teleportHelper.teleport(player, {
+            map: teleportPoint.map,
+            x: teleportPoint.x,
+            y: teleportPoint.y,
+          });
 
           return `See ya, ${player.name}.`;
         });
     }
 
-    parser.addCommand('reset')
+    parser
+      .addCommand('reset')
       .setSyntax(['reset'])
       .setLogic(async ({ env }) => {
         const player: Player = env?.player;
@@ -335,7 +430,11 @@ export class TrainerBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         if (player.level >= 30 && !player.subscriptionTier) {
-          const resetCost = game.contentManager.getGameSetting('npcscript', 'trainer.resetCost') ?? 10000;
+          const resetCost =
+            game.contentManager.getGameSetting(
+              'npcscript',
+              'trainer.resetCost',
+            ) ?? 10000;
           if (!game.currencyHelper.hasCurrency(player, resetCost)) {
             return `You do need to pay for this, you know. ${resetCost} gold is not a lot!`;
           }
@@ -355,11 +454,18 @@ export class TrainerBehavior implements IAIBehavior {
     const recallDisabled = mapData?.map.properties.respawnKick;
     if (recallDisabled) return;
 
-    const corpses = game.groundManager.getItemsFromGround(npc.map, npc.x, npc.y, ItemClass.Corpse);
-    corpses.forEach(corpse => {
+    const corpses = game.groundManager.getItemsFromGround(
+      npc.map,
+      npc.x,
+      npc.y,
+      ItemClass.Corpse,
+    );
+    corpses.forEach((corpse) => {
       if (!corpse.item.mods.corpseUsername) return;
 
-      const player = game.playerManager.getPlayerByUsername(corpse.item.mods.corpseUsername);
+      const player = game.playerManager.getPlayerByUsername(
+        corpse.item.mods.corpseUsername,
+      );
       if (!player) return;
 
       game.messageHelper.sendSimpleMessage(player, `${npc.name} revived you!`);
