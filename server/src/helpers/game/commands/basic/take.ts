@@ -1,56 +1,97 @@
-
 import { capitalize } from 'lodash';
 
-import { ICharacter, IMacroCommandArgs, ItemSlot } from '../../../../interfaces';
-import { MacroCommand } from '../../../../models/macro';
+import {
+  ICharacter,
+  IMacroCommandArgs,
+  ISimpleItem,
+  ItemSlot,
+} from '../../../../interfaces';
+import { MacroCommand, Player } from '../../../../models';
 
 export class Take extends MacroCommand {
-
   override aliases = ['take'];
   override canBeInstant = false;
   override canBeFast = true;
 
   override execute(char: ICharacter, args: IMacroCommandArgs) {
-
     const rightHand = char.items.equipment[ItemSlot.RightHand];
     const leftHand = char.items.equipment[ItemSlot.LeftHand];
 
-    if (rightHand && leftHand) return this.sendMessage(char, 'Your hands are full.');
+    if (rightHand && leftHand) {
+      return this.sendMessage(char, 'Your hands are full.');
+    }
 
     let query = args.stringArgs;
     if (query.includes(' from')) query = query.split(' from').join('');
 
     let [itemTypeOrName, container] = query.split(' ');
 
-    itemTypeOrName = itemTypeOrName.toLowerCase().split(' ').join('');
+    itemTypeOrName = itemTypeOrName.split(' ').join('');
     container = (container || 'sack').toLowerCase();
 
-    if (!['belt', 'sack', 'pouch'].includes(container)) return this.sendMessage(char, 'Invalid container.');
+    let item: ISimpleItem | undefined;
 
-    const containerItems = char.items[container].items;
-    let takeItemSlot = -1;
+    if (container === 'ground') {
+      if (!rightHand) {
+        this.game.commandHandler.doCommand(
+          char as Player,
+          { command: `!GtR`, args: `${itemTypeOrName}` },
+          args.callbacks,
+        );
+      } else if (!leftHand) {
+        this.game.commandHandler.doCommand(
+          char as Player,
+          { command: `!GtL`, args: `${itemTypeOrName}` },
+          args.callbacks,
+        );
+      } else {
+        this.sendMessage(char, 'No hands empty!');
+      }
 
-    for (let i = containerItems.length; i >= 0; i--) {
-      if (takeItemSlot >= 0) continue;
+      return;
+    } else {
+      if (!['belt', 'sack', 'pouch'].includes(container)) {
+        return this.sendMessage(char, 'Invalid container.');
+      }
 
-      const checkItem = containerItems[i];
-      if (!checkItem) continue;
+      const containerItems = char.items[container].items;
+      let takeItemSlot = -1;
 
-      const { name, itemClass } = this.game.itemHelper.getItemProperties(checkItem, ['name', 'itemClass']);
+      for (let i = containerItems.length; i >= 0; i--) {
+        if (takeItemSlot >= 0) continue;
 
-      if (itemTypeOrName === 'any') takeItemSlot = i;
-      if (itemClass?.toLowerCase() === itemTypeOrName) takeItemSlot = i;
-      if (name?.toLowerCase().split(' ').join('').includes(itemTypeOrName)) takeItemSlot = i;
+        const checkItem = containerItems[i];
+        if (!checkItem) continue;
+
+        const { name, itemClass } = this.game.itemHelper.getItemProperties(
+          checkItem,
+          ['name', 'itemClass'],
+        );
+
+        itemTypeOrName = itemTypeOrName.toLowerCase();
+        if (itemTypeOrName === 'any') takeItemSlot = i;
+        if (itemClass?.toLowerCase() === itemTypeOrName) takeItemSlot = i;
+        if (name?.toLowerCase().split(' ').join('').includes(itemTypeOrName)) {
+          takeItemSlot = i;
+        }
+      }
+
+      if (takeItemSlot === -1) {
+        return this.sendMessage(char, 'Item was not found.');
+      }
+
+      item = char.items[container].items[takeItemSlot];
+      if (!item) return;
+
+      this.game.inventoryHelper[`removeItemFrom${capitalize(container)}`](
+        char,
+        takeItemSlot,
+      );
     }
 
-    if (takeItemSlot === -1) return this.sendMessage(char, 'Item was not found.');
-
-    const item = char.items[container].items[takeItemSlot];
-    if (!item) return;
-
-    this.game.inventoryHelper[`removeItemFrom${capitalize(container)}`](char, takeItemSlot);
+    if (!item) return this.sendMessage(char, 'No matching item found.');
 
     if (!rightHand) this.game.characterHelper.setRightHand(char, item);
-    else            this.game.characterHelper.setLeftHand(char, item);
+    else this.game.characterHelper.setLeftHand(char, item);
   }
 }
