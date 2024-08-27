@@ -123,6 +123,10 @@ export class MessageHelper extends BaseService {
     message: string,
     sfx?: SoundEffect,
   ): void {
+    if (character.takenOverBy) {
+      this.sendLogMessageToPlayer(character.takenOverBy, { message, sfx });
+    }
+
     this.sendLogMessageToPlayer(character, { message, sfx });
   }
 

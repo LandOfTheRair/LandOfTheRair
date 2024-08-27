@@ -1,18 +1,44 @@
-
 import { ObjectId } from 'mongodb';
 import { Entity, Property } from '../../helpers/core/db/decorators';
-import { Alignment, Allegiance, BaseClass, BGM, BoundedNumber, CharacterCurrency,
-  Direction, IAccountBank, ICharacterItems, ICharacterQuests, ICharacterTraits,
-  IEffectContainer, IMacroCommandArgs, IPlayer, ICharacterStatistics, LearnedSpell,
-  SkillBlock, StatBlock, ICharacterLockers, IMaterialStorage,
-  SubscriptionTier, ICharacterPouch, INPC, TradeskillBlock, ISessionStatistics } from '../../interfaces';
-import { BaseEntity, PROP_SERVER_ONLY, PROP_TEMPORARY, PROP_UNSAVED_SHARED } from '../BaseEntity';
+import {
+  Alignment,
+  Allegiance,
+  BaseClass,
+  BGM,
+  BoundedNumber,
+  CharacterCurrency,
+  Direction,
+  IAccountBank,
+  ICharacter,
+  ICharacterItems,
+  ICharacterLockers,
+  ICharacterPouch,
+  ICharacterQuests,
+  ICharacterStatistics,
+  ICharacterTraits,
+  IEffectContainer,
+  IMacroCommandArgs,
+  IMaterialStorage,
+  INPC,
+  IPlayer,
+  ISessionStatistics,
+  LearnedSpell,
+  SkillBlock,
+  StatBlock,
+  SubscriptionTier,
+  TradeskillBlock,
+} from '../../interfaces';
+import {
+  BaseEntity,
+  PROP_SERVER_ONLY,
+  PROP_TEMPORARY,
+  PROP_UNSAVED_SHARED,
+} from '../BaseEntity';
 
 type CommandCallback = () => void & { args: IMacroCommandArgs };
 
 @Entity()
 export class Player extends BaseEntity implements IPlayer {
-
   // relation props
   @Property(PROP_SERVER_ONLY()) _account: ObjectId;
   @Property(PROP_SERVER_ONLY()) _items: ObjectId;
@@ -27,7 +53,9 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) bank: IAccountBank;
   @Property(PROP_UNSAVED_SHARED()) statistics: ICharacterStatistics;
   @Property(PROP_UNSAVED_SHARED()) lockers: ICharacterLockers;
-  @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers & IMaterialStorage & ICharacterPouch;
+  @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers &
+    IMaterialStorage &
+    ICharacterPouch;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;
@@ -48,19 +76,29 @@ export class Player extends BaseEntity implements IPlayer {
   // temporary props
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
-  @Property(PROP_TEMPORARY()) actionQueue: { fast: CommandCallback[]; slow: CommandCallback[] } = { fast: [], slow: [] };
+  @Property(PROP_TEMPORARY()) actionQueue: {
+    fast: CommandCallback[];
+    slow: CommandCallback[];
+  } = { fast: [], slow: [] };
   @Property(PROP_TEMPORARY()) lastTileDesc = '';
   @Property(PROP_TEMPORARY()) lastRegionDesc = '';
   @Property(PROP_TEMPORARY()) partyName = '';
   @Property(PROP_TEMPORARY()) skillTicks = 0;
   @Property(PROP_TEMPORARY()) lastDeathLocation;
   @Property(PROP_TEMPORARY()) isBeingForciblyRespawned: boolean;
-  @Property(PROP_TEMPORARY()) spellChannel: { ticks: number; callback: () => void };
+  @Property(PROP_TEMPORARY()) spellChannel: {
+    ticks: number;
+    callback: () => void;
+  };
   @Property(PROP_TEMPORARY()) pets: INPC[];
   @Property(PROP_TEMPORARY()) sessionStatistics: ISessionStatistics;
+  @Property(PROP_TEMPORARY()) takingOver: ICharacter;
 
   // other server props
-  @Property(PROP_SERVER_ONLY()) teleportLocations: Record<string, { x: number; y: number; map: string }>;
+  @Property(PROP_SERVER_ONLY()) teleportLocations: Record<
+    string,
+    { x: number; y: number; map: string }
+  >;
 
   // all characters have these props
   @Property() uuid: string;
@@ -69,7 +107,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property() allegiance: Allegiance;
   @Property() alignment: Alignment;
   @Property() baseClass: BaseClass;
-  @Property() gender: 'male'|'female';
+  @Property() gender: 'male' | 'female';
 
   @Property() hp: BoundedNumber;
   @Property() mp: BoundedNumber;
@@ -98,7 +136,7 @@ export class Player extends BaseEntity implements IPlayer {
     [Allegiance.Wilderness]: 0,
     [Allegiance.Enemy]: 0,
     [Allegiance.NaturalResource]: 0,
-    [Allegiance.GM]: 0
+    [Allegiance.GM]: 0,
   };
 
   // player-specific props

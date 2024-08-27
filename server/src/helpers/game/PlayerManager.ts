@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 
-import { GameAction, IPlayer } from '../../interfaces';
+import { GameAction, ICharacter, IPlayer } from '../../interfaces';
 import { Account, Player, PlayerState } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { CharacterHelper } from '../character/CharacterHelper';
@@ -72,6 +72,12 @@ export class PlayerManager extends BaseService {
       GameAction.GameSetPlayer,
       { player: null },
     );
+
+    const char = player as ICharacter;
+    if (char.takingOver) {
+      delete char.takingOver.takenOverBy;
+      delete char.takingOver;
+    }
   }
 
   // recalculate stats and do other sync related data

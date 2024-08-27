@@ -23,6 +23,7 @@ export * from './searchitems';
 export * from './spellmod';
 export * from './startevent';
 export * from './summon';
+export * from './takeover';
 export * from './teleport';
 export * from './teleportto';
 export * from './togglemapblock';

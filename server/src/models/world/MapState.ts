@@ -649,13 +649,16 @@ export class MapState {
     const state = this.game.playerManager.getPlayerState(player);
     if (!state) return;
 
+    const playerX = player.takingOver?.x ?? player.x;
+    const playerY = player.takingOver?.y ?? player.y;
+
     // update players
     const nearbyPlayers = this.players
       .search({
-        minX: player.x - 4,
-        maxX: player.x + 4,
-        minY: player.y - 4,
-        maxY: player.y + 4,
+        minX: playerX - 4,
+        maxX: playerX + 4,
+        minY: playerY - 4,
+        maxY: playerY + 4,
       })
       .filter(({ uuid }) => uuid !== player.uuid)
       .filter((p) =>
@@ -674,13 +677,16 @@ export class MapState {
     const state = this.game.playerManager.getPlayerState(player);
     if (!state) return;
 
+    const playerX = player.takingOver?.x ?? player.x;
+    const playerY = player.takingOver?.y ?? player.y;
+
     // update players
     const nearbyNPCs = this.npcs
       .search({
-        minX: player.x - 4,
-        maxX: player.x + 4,
-        minY: player.y - 4,
-        maxY: player.y + 4,
+        minX: playerX - 4,
+        maxX: playerX + 4,
+        minY: playerY - 4,
+        maxY: playerY + 4,
       })
       .filter((p) =>
         this.game.visibilityHelper.canSeeThroughStealthOf(
@@ -700,8 +706,11 @@ export class MapState {
     const state = this.game.playerManager.getPlayerState(player);
     if (!state) return;
 
+    const playerX = player.takingOver?.x ?? player.x;
+    const playerY = player.takingOver?.y ?? player.y;
+
     // update players
-    state.ground = this.getGroundVision(player.x, player.y, 4);
+    state.ground = this.getGroundVision(playerX, playerY, 4);
   }
 
   // player functions

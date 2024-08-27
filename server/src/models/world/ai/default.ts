@@ -16,6 +16,7 @@ import {
   directionFromText,
   directionToOffset,
   distanceFrom,
+  GameAction,
   Hostility,
   IAI,
   ICharacter,
@@ -89,6 +90,28 @@ export class DefaultAIBehavior implements IAI {
     if (this.stanceCooldown > 0) this.stanceCooldown--;
     this.highestAgro = null;
     this.currentTarget = null;
+
+    if (npc.takenOverBy) {
+      this.game.wsCmdHandler.sendToSocket(npc.takenOverBy.username, {
+        action: GameAction.GamePatchPlayer,
+        player: {
+          name: npc.name,
+          items: npc.items,
+          x: npc.x,
+          y: npc.y,
+          fov: npc.fov,
+          effects: npc.effects,
+          hp: npc.hp,
+          mp: npc.mp,
+          dir: npc.dir,
+          sprite: npc.sprite,
+          baseClass: npc.baseClass,
+          level: npc.level,
+          stats: npc.stats,
+          skills: npc.skills,
+        },
+      });
+    }
   }
 
   mechanicTick() {}
@@ -103,7 +126,12 @@ export class DefaultAIBehavior implements IAI {
     this.attemptUsePotion();
   }
 
-  death(killer: ICharacter | undefined | null) {}
+  death(killer: ICharacter | undefined | null) {
+    if (this.npc.takenOverBy) {
+      delete this.npc.takenOverBy?.takingOver;
+      delete this.npc.takenOverBy;
+    }
+  }
 
   private init() {
     const { randomWalkRadius, leashRadius } = this.spawner.walkingAttributes;

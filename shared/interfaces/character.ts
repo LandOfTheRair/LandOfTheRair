@@ -1,10 +1,19 @@
-
-import { Alignment, Allegiance, BaseClass, CharacterCurrency, FOVVisibility, LearnedSpell, SkillBlock, StatBlock } from './building-blocks';
+import {
+  Alignment,
+  Allegiance,
+  BaseClass,
+  CharacterCurrency,
+  FOVVisibility,
+  LearnedSpell,
+  SkillBlock,
+  StatBlock,
+} from './building-blocks';
 import { ICharacterItems } from './characteritems';
 import { Direction } from './direction';
 import { IEffectContainer } from './effect';
 import { ISimpleItem } from './item';
 import { INPC } from './npc';
+import { IPlayer } from './player';
 
 export interface IItemContainer {
   items: ISimpleItem[];
@@ -14,7 +23,7 @@ export enum SwimLevel {
   SpringWater = 1,
   NormalWater = 2,
   ChillWater = 6,
-  Lava = 8
+  Lava = 8,
 }
 
 export interface BoundedNumber {
@@ -35,7 +44,7 @@ export interface ICharacter {
   hp: BoundedNumber;
   mp: BoundedNumber;
 
-  gender: 'male'|'female';
+  gender: 'male' | 'female';
   fov: Record<number, Record<number, FOVVisibility>>;
   map: string;
   x: number;
@@ -65,5 +74,7 @@ export interface ICharacter {
   spellChannel?: { ticks: number; callback: () => void };
 
   pets?: INPC[];
-}
 
+  takingOver?: ICharacter;
+  takenOverBy?: IPlayer;
+}

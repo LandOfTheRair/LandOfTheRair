@@ -2,7 +2,7 @@ import didYouMean from 'didyoumean2';
 import { Injectable } from 'injection-js';
 import { isObject, isString } from 'lodash';
 
-import { IMacroCommandArgs } from '../../interfaces';
+import { ICharacter, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { MacroCommand, SkillCommand } from '../../models/macro';
@@ -44,6 +44,16 @@ export class CommandHandler extends BaseService {
 
   // do the command for the player
   public doCommand(player: Player, data, callbacks) {
+    if (
+      (player as ICharacter).takingOver &&
+      !data.command.includes('@takeover')
+    ) {
+      this.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You are in view-only mode.',
+      });
+      return;
+    }
+
     let command: string = data.command;
 
     // happens *immediately*
