@@ -244,16 +244,26 @@ export class TrainerBehavior implements IAIBehavior {
         const curValue = player.skills[skill] || 0;
         const curTrain = player.paidSkills[skill] || 0;
 
+        const totalCost = maxCoins - curValue - curTrain;
+        const costMult =
+          game.contentManager.getGameSetting(
+            'character',
+            'trainingCostGoldMultiplier',
+          ) ?? 1;
+        const totalCostWithMult = Math.floor(totalCost * costMult);
+
         const coinsTaken = Math.floor(
-          Math.max(0, Math.min(heldValue, maxCoins - curValue - curTrain)),
+          Math.max(0, Math.min(heldValue, totalCostWithMult)),
         );
+
+        const skillTrainingGained = Math.floor(coinsTaken / costMult);
 
         if (coinsTaken <= 0) return 'I cannot train you any more!';
         if (isNaN(coinsTaken) || !coinsTaken) {
           return 'I cannot train you for some reason!';
         }
 
-        game.playerHelper.trainSkill(player, skill, coinsTaken);
+        game.playerHelper.trainSkill(player, skill, skillTrainingGained);
 
         // gain 1/10 of the gold as exp
         let expGained = 1;
