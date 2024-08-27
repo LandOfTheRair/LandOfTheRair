@@ -1,4 +1,3 @@
-
 export * from './ExactHeal';
 export * from './ExactHealMP';
 export * from './ExactHealRegen';
@@ -23,6 +22,8 @@ export * from './PermanentWIS';
 
 export * from './PermanentExperience';
 export * from './PermanentSkill';
+
+export * from './GainSilver';
 
 export * from './Malnourished';
 export * from './Nourishment';

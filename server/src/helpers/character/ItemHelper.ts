@@ -1,9 +1,22 @@
-
 import { Injectable } from 'injection-js';
 import { cloneDeep, isNumber, isUndefined } from 'lodash';
 
-import { Allegiance, canUseItem, GameServerResponse, ICharacter, IDialogChatAction, IItem, IItemDefinition, IItemRequirements,
-  IPlayer, ISimpleItem, isOwnedBy, ItemClass, ItemSlot, Stat } from '../../interfaces';
+import {
+  Allegiance,
+  canUseItem,
+  GameServerResponse,
+  ICharacter,
+  IDialogChatAction,
+  IItem,
+  IItemDefinition,
+  IItemRequirements,
+  IPlayer,
+  ISimpleItem,
+  isOwnedBy,
+  ItemClass,
+  ItemSlot,
+  Stat,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
 
@@ -12,7 +25,6 @@ import { ContentManager } from '../data/ContentManager';
 
 @Injectable()
 export class ItemHelper extends BaseService {
-
   private conditionThresholds = {
     broken: 0,
     rough: 2500,
@@ -23,7 +35,7 @@ export class ItemHelper extends BaseService {
     mint: 40000,
     aboveMint: 50000,
     perfect: 99999,
-    heavenly: 999999
+    heavenly: 999999,
   };
 
   private conditionACMods = {
@@ -36,17 +48,18 @@ export class ItemHelper extends BaseService {
     mint: 2,
     aboveMint: 3,
     perfect: 4,
-    heavenly: 5
+    heavenly: 5,
   };
 
-  constructor(
-    private content: ContentManager
-  ) {
+  constructor(private content: ContentManager) {
     super();
   }
 
   public init() {
-    this.conditionThresholds = this.game.contentManager.getGameSetting('item', 'conditionThresholds') ?? {
+    this.conditionThresholds = this.game.contentManager.getGameSetting(
+      'item',
+      'conditionThresholds',
+    ) ?? {
       broken: 0,
       rough: 2500,
       tattered: 5000,
@@ -56,10 +69,13 @@ export class ItemHelper extends BaseService {
       mint: 40000,
       aboveMint: 50000,
       perfect: 99999,
-      heavenly: 999999
+      heavenly: 999999,
     };
 
-    this.conditionACMods = this.game.contentManager.getGameSetting('item', 'conditionACMods') ?? {
+    this.conditionACMods = this.game.contentManager.getGameSetting(
+      'item',
+      'conditionACMods',
+    ) ?? {
       broken: -4,
       rough: -3,
       tattered: -2,
@@ -69,7 +85,7 @@ export class ItemHelper extends BaseService {
       mint: 2,
       aboveMint: 3,
       perfect: 4,
-      heavenly: 5
+      heavenly: 5,
     };
   }
 
@@ -78,7 +94,10 @@ export class ItemHelper extends BaseService {
     return this.content.getItemDefinition(itemName);
   }
 
-  public getItemProperty(item: ISimpleItem | undefined, prop: keyof IItem): any | undefined {
+  public getItemProperty(
+    item: ISimpleItem | undefined,
+    prop: keyof IItem,
+  ): any | undefined {
     if (!item) return undefined;
 
     if (!isUndefined(item.mods[prop])) return item.mods[prop];
@@ -89,13 +108,20 @@ export class ItemHelper extends BaseService {
     return realItem[prop];
   }
 
-  public getItemProperties(item: ISimpleItem | undefined, props: Array<keyof IItem>): Partial<IItem> {
+  public getItemProperties(
+    item: ISimpleItem | undefined,
+    props: Array<keyof IItem>,
+  ): Partial<IItem> {
     const hash = {};
-    props.forEach(prop => hash[prop] = this.getItemProperty(item, prop));
+    props.forEach((prop) => (hash[prop] = this.getItemProperty(item, prop)));
     return hash;
   }
 
-  public setItemProperty(item: ISimpleItem, prop: keyof IItem, value: any): void {
+  public setItemProperty(
+    item: ISimpleItem,
+    prop: keyof IItem,
+    value: any,
+  ): void {
     item.mods[prop] = value;
   }
 
@@ -117,7 +143,11 @@ export class ItemHelper extends BaseService {
   }
 
   // upgrade an item with another item
-  public upgradeItem(baseItem: ISimpleItem, upgradeItem: string, bypassLimit = false): boolean {
+  public upgradeItem(
+    baseItem: ISimpleItem,
+    upgradeItem: string,
+    bypassLimit = false,
+  ): boolean {
     const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
     if (!upgradeRef) return false;
     if (!this.canUpgradeItem(baseItem, bypassLimit)) return false;
@@ -143,7 +173,7 @@ export class ItemHelper extends BaseService {
 
     let upgradeStat = 0;
     if (item.mods.upgrades) {
-      item.mods.upgrades.forEach(upgrade => {
+      item.mods.upgrades.forEach((upgrade) => {
         const upgradeItem = this.getItemDefinition(upgrade);
         if (!upgradeItem) return;
 
@@ -170,7 +200,10 @@ export class ItemHelper extends BaseService {
     return isOwnedBy(character as IPlayer, item);
   }
 
-  public ownsAndItemUnbroken(character: ICharacter, item: ISimpleItem): boolean {
+  public ownsAndItemUnbroken(
+    character: ICharacter,
+    item: ISimpleItem,
+  ): boolean {
     if (!this.isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
     if (this.isItemBroken(item)) return false;
 
@@ -184,17 +217,25 @@ export class ItemHelper extends BaseService {
     // GMs can wear everything disregarding requirements
     if (char.allegiance === Allegiance.GM) return true;
 
-    const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
+    const requirements: IItemRequirements =
+      this.game.itemHelper.getItemProperty(item, 'requirements');
     if (requirements) {
-      if (requirements.alignment && char.alignment !== requirements.alignment) return false;
-      if (requirements.baseClass && char.baseClass !== requirements.baseClass) return false;
+      if (requirements.alignment && char.alignment !== requirements.alignment) {
+        return false;
+      }
+      if (requirements.baseClass && char.baseClass !== requirements.baseClass) {
+        return false;
+      }
       if (requirements.level && char.level < requirements.level) return false;
     }
 
     return true;
   }
 
-  public mergeItemRequirements(firstItemRequirements: IItemRequirements | undefined, secondItemRequirements: IItemRequirements) {
+  public mergeItemRequirements(
+    firstItemRequirements: IItemRequirements | undefined,
+    secondItemRequirements: IItemRequirements,
+  ) {
     if (!secondItemRequirements) {
       return firstItemRequirements;
     }
@@ -203,13 +244,18 @@ export class ItemHelper extends BaseService {
     }
 
     const requirements = cloneDeep(firstItemRequirements);
-    if (secondItemRequirements?.alignment && !firstItemRequirements?.alignment) {
+    if (
+      secondItemRequirements?.alignment &&
+      !firstItemRequirements?.alignment
+    ) {
       requirements.alignment = secondItemRequirements.alignment;
     }
     if (secondItemRequirements?.baseClass && !firstItemRequirements.baseClass) {
       requirements.baseClass = secondItemRequirements.baseClass;
     }
-    if ((secondItemRequirements?.level ?? 1) > (firstItemRequirements?.level ?? 1)) {
+    if (
+      (secondItemRequirements?.level ?? 1) > (firstItemRequirements?.level ?? 1)
+    ) {
       requirements.level = secondItemRequirements.level ?? 0;
     }
     if (secondItemRequirements?.quest && !firstItemRequirements.quest) {
@@ -220,22 +266,44 @@ export class ItemHelper extends BaseService {
   }
 
   // check if an item is usable
-  public reasonCantGetBenefitsFromItem(player: IPlayer, item: ISimpleItem): string {
-    const requirements: IItemRequirements = this.game.itemHelper.getItemProperty(item, 'requirements');
+  public reasonCantGetBenefitsFromItem(
+    player: IPlayer,
+    item: ISimpleItem,
+  ): string {
+    const requirements: IItemRequirements =
+      this.game.itemHelper.getItemProperty(item, 'requirements');
     if (requirements) {
-      if (requirements.alignment && player.alignment !== requirements.alignment) return 'Your alignment does not match this items!';
-      if (requirements.baseClass && player.baseClass !== requirements.baseClass) return 'You are not the correct class for this item!';
-      if (requirements.level && player.level < requirements.level) return 'You are not high enough level for this item!';
+      if (
+        requirements.alignment &&
+        player.alignment !== requirements.alignment
+      ) {
+        return 'Your alignment does not match this items!';
+      }
+      if (
+        requirements.baseClass &&
+        player.baseClass !== requirements.baseClass
+      ) {
+        return 'You are not the correct class for this item!';
+      }
+      if (requirements.level && player.level < requirements.level) {
+        return 'You are not high enough level for this item!';
+      }
     }
 
     return 'You cannot use this item. Who knows why, the item must not like you?';
   }
 
   // gain or lose condition
-  public gainCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+  public gainCondition(
+    item: ISimpleItem,
+    conditionLoss: number,
+    character: ICharacter,
+  ) {
     if (!item) return;
 
-    const conditionLossModifier = Math.abs(conditionLoss) * (this.game.traitHelper.traitLevelValue(character, 'CarefulTouch') / 100);
+    const conditionLossModifier =
+      Math.abs(conditionLoss) *
+      (this.game.traitHelper.traitLevelValue(character, 'CarefulTouch') / 100);
     if (conditionLoss < 0) {
       conditionLoss += conditionLossModifier;
     }
@@ -249,7 +317,11 @@ export class ItemHelper extends BaseService {
     }
   }
 
-  public loseCondition(item: ISimpleItem, conditionLoss: number, character: ICharacter) {
+  public loseCondition(
+    item: ISimpleItem,
+    conditionLoss: number,
+    character: ICharacter,
+  ) {
     this.gainCondition(item, -conditionLoss, character);
   }
 
@@ -257,90 +329,167 @@ export class ItemHelper extends BaseService {
   public conditionACModifier(item: ISimpleItem): number {
     item.mods.condition = item.mods.condition || 20000;
 
-    if (item.mods.condition <= this.conditionThresholds.broken)       return this.conditionACMods.broken;
-    if (item.mods.condition <= this.conditionThresholds.rough)        return this.conditionACMods.rough;
-    if (item.mods.condition <= this.conditionThresholds.tattered)     return this.conditionACMods.tattered;
-    if (item.mods.condition <= this.conditionThresholds.belowAverage) return this.conditionACMods.belowAverage;
-    if (item.mods.condition <= this.conditionThresholds.average)      return this.conditionACMods.average;
-    if (item.mods.condition <= this.conditionThresholds.aboveAverage) return this.conditionACMods.aboveAverage;
-    if (item.mods.condition <= this.conditionThresholds.mint)         return this.conditionACMods.mint;
-    if (item.mods.condition <= this.conditionThresholds.aboveMint)    return this.conditionACMods.aboveMint;
-    if (item.mods.condition <= this.conditionThresholds.perfect)      return this.conditionACMods.perfect;
+    if (item.mods.condition <= this.conditionThresholds.broken) {
+      return this.conditionACMods.broken;
+    }
+    if (item.mods.condition <= this.conditionThresholds.rough) {
+      return this.conditionACMods.rough;
+    }
+    if (item.mods.condition <= this.conditionThresholds.tattered) {
+      return this.conditionACMods.tattered;
+    }
+    if (item.mods.condition <= this.conditionThresholds.belowAverage) {
+      return this.conditionACMods.belowAverage;
+    }
+    if (item.mods.condition <= this.conditionThresholds.average) {
+      return this.conditionACMods.average;
+    }
+    if (item.mods.condition <= this.conditionThresholds.aboveAverage) {
+      return this.conditionACMods.aboveAverage;
+    }
+    if (item.mods.condition <= this.conditionThresholds.mint) {
+      return this.conditionACMods.mint;
+    }
+    if (item.mods.condition <= this.conditionThresholds.aboveMint) {
+      return this.conditionACMods.aboveMint;
+    }
+    if (item.mods.condition <= this.conditionThresholds.perfect) {
+      return this.conditionACMods.perfect;
+    }
 
     return this.conditionACMods.heavenly;
   }
 
   // whether or not the player can use the item
   public canUseItem(player: IPlayer, item: ISimpleItem): boolean {
-    return canUseItem(player, item, this.game.itemHelper.getItemDefinition(item.name));
+    return canUseItem(
+      player,
+      item,
+      this.game.itemHelper.getItemDefinition(item.name),
+    );
   }
 
   // try to use the item in the equipment slot for the player
   public useItemInSlot(player: IPlayer, source: ItemSlot, tryEffect = true) {
-
     const item = player.items.equipment[source];
     if (!item) return;
 
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (!map) return;
 
-    const { succorInfo, ounces, itemClass, trait, recipe } = this.getItemProperties(item,
-      ['succorInfo', 'ounces', 'itemClass', 'trait', 'recipe']
-    );
+    const { succorInfo, ounces, itemClass, trait, recipe } =
+      this.getItemProperties(item, [
+        'succorInfo',
+        'ounces',
+        'itemClass',
+        'trait',
+        'recipe',
+      ]);
 
     if (succorInfo && !map.canSuccor(player)) {
-      this.game.messageHelper.sendSimpleMessage(player, 'You stop, unable to envision the place in your memory!');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'You stop, unable to envision the place in your memory!',
+      );
       return;
     }
 
     const canGetBenefits = this.canGetBenefitsFromItem(player, item);
-    if (!canGetBenefits) return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item!');
+    if (!canGetBenefits) {
+      return this.game.messageHelper.sendSimpleMessage(
+        player,
+        'You cannot use that item!',
+      );
+    }
     if (tryEffect && !this.tryToUseItem(player, item, source)) {
-      return this.game.messageHelper.sendSimpleMessage(player, 'You cannot use that item like that!');
+      return this.game.messageHelper.sendSimpleMessage(
+        player,
+        'You cannot use that item like that!',
+      );
     }
 
-    const isUsableScroll = item.name.includes('Rune Scroll') && itemClass === ItemClass.Scroll;
+    const isUsableScroll =
+      item.name.includes('Rune Scroll') && itemClass === ItemClass.Scroll;
     if (trait && isUsableScroll) {
       if (player.learnedRunes.includes(item.name)) {
-        return this.game.messageHelper.sendSimpleMessage(player, 'You already know that rune!');
+        return this.game.messageHelper.sendSimpleMessage(
+          player,
+          'You already know that rune!',
+        );
       }
 
-      if (trait.restrict && trait.restrict.length > 0 && !trait.restrict.includes(player.baseClass)) {
-        return this.game.messageHelper.sendSimpleMessage(player, 'You cannot learn that rune!');
+      if (
+        trait.restrict &&
+        trait.restrict.length > 0 &&
+        !trait.restrict.includes(player.baseClass)
+      ) {
+        return this.game.messageHelper.sendSimpleMessage(
+          player,
+          'You cannot learn that rune!',
+        );
       }
 
       player.learnedRunes.push(item.name);
-      this.game.messageHelper.sendSimpleMessage(player, `You've learned the rune symbol to enhance "${trait?.name}"!`);
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        `You've learned the rune symbol to enhance "${trait?.name}"!`,
+      );
     }
 
-    const isUsableRecipe = item.name.includes('Recipe Book') && itemClass === ItemClass.Scroll;
+    const isUsableRecipe =
+      item.name.includes('Recipe Book') && itemClass === ItemClass.Scroll;
     if (recipe && isUsableRecipe) {
       if (player.learnedRecipes.includes(recipe)) {
-        return this.game.messageHelper.sendSimpleMessage(player, 'You already know that recipe!');
+        return this.game.messageHelper.sendSimpleMessage(
+          player,
+          'You already know that recipe!',
+        );
       }
 
       const recipeRef = this.game.contentManager.getRecipe(recipe);
-      if (!recipeRef) return this.game.messageHelper.sendSimpleMessage(player, 'That recipe does not exist!');
+      if (!recipeRef) {
+        return this.game.messageHelper.sendSimpleMessage(
+          player,
+          'That recipe does not exist!',
+        );
+      }
 
-      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, recipeRef.recipeType);
-      if (skill < recipeRef.requireSkill) return this.game.messageHelper.sendSimpleMessage(player, 'You are not skilled enough for that!');
+      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
+        player,
+        recipeRef.recipeType,
+      );
+      if (skill < recipeRef.requireSkill) {
+        return this.game.messageHelper.sendSimpleMessage(
+          player,
+          'You are not skilled enough for that!',
+        );
+      }
 
       player.learnedRecipes.push(recipe);
-      this.game.messageHelper.sendSimpleMessage(player, `You've learned the recipe for "${recipe}"!`);
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        `You've learned the recipe for "${recipe}"!`,
+      );
     }
 
     const totalOunces = ounces ?? 0;
-    let shouldRemove = totalOunces <= 0
-                    && (itemClass === ItemClass.Bottle || itemClass === ItemClass.Food || isUsableScroll || isUsableRecipe);
+    let shouldRemove =
+      totalOunces <= 0 &&
+      (itemClass === ItemClass.Bottle ||
+        itemClass === ItemClass.Food ||
+        isUsableScroll ||
+        isUsableRecipe);
 
     // if it's an empty bottle currently, we just remove it
     if (itemClass === ItemClass.Bottle && totalOunces === 0) {
       shouldRemove = true;
-      this.game.messageHelper.sendSimpleMessage(player, 'The bottle was empty.');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'The bottle was empty.',
+      );
 
-    // otherwise we take away an ounce, and if it's empty, we toss it
+      // otherwise we take away an ounce, and if it's empty, we toss it
     } else if (totalOunces > 0) {
-
       item.mods.ounces = totalOunces - 1;
       if (item.mods.ounces <= 0) shouldRemove = true;
     }
@@ -357,11 +506,17 @@ export class ItemHelper extends BaseService {
   }
 
   // try to break the item
-  public tryToBreakItem(player: ICharacter, item: ISimpleItem, source: ItemSlot): void {
-    const { itemClass, useEffect } = this.getItemProperties(item, ['itemClass', 'useEffect']);
+  public tryToBreakItem(
+    player: ICharacter,
+    item: ISimpleItem,
+    source: ItemSlot,
+  ): void {
+    const { itemClass, useEffect } = this.getItemProperties(item, [
+      'itemClass',
+      'useEffect',
+    ]);
 
     if (useEffect && useEffect.uses && useEffect.uses !== 0) {
-
       // uses === -1 = permanent use
       if (useEffect.uses > 0) {
         item.mods.useEffect = cloneDeep(useEffect);
@@ -370,7 +525,10 @@ export class ItemHelper extends BaseService {
         // it broke, rip
         if (useEffect.uses - 1 <= 0) {
           this.game.characterHelper.setEquipmentSlot(player, source, undefined);
-          this.game.messageHelper.sendSimpleMessage(player, `Your ${itemClass?.toLowerCase() || 'item'} has fizzled and turned to dust.`);
+          this.game.messageHelper.sendSimpleMessage(
+            player,
+            `Your ${itemClass?.toLowerCase() || 'item'} has fizzled and turned to dust.`,
+          );
           this.game.characterHelper.recalculateEverything(player);
         }
       }
@@ -378,10 +536,18 @@ export class ItemHelper extends BaseService {
   }
 
   // try to actually use the item
-  public tryToUseItem(player: IPlayer, item: ISimpleItem, source: ItemSlot): boolean {
+  public tryToUseItem(
+    player: IPlayer,
+    item: ISimpleItem,
+    source: ItemSlot,
+  ): boolean {
     if (!this.canUseItem(player, item)) return false;
 
-    const { itemClass, useEffect, ounces } = this.getItemProperties(item, ['itemClass', 'useEffect', 'ounces']);
+    const { itemClass, useEffect, ounces } = this.getItemProperties(item, [
+      'itemClass',
+      'useEffect',
+      'ounces',
+    ]);
 
     if (useEffect && (useEffect.uses || (ounces && ounces !== 0))) {
       if (!this.game.effectManager.getEffectData(useEffect.name)) {
@@ -394,11 +560,17 @@ export class ItemHelper extends BaseService {
 
       // an item with uses (ring, scroll) will cast instead of apply directly
       if (useEffect.uses) {
-        this.game.spellManager.castSpell(useEffect.name, player, player, { duration: duration ?? 10, potency, extra: extraData });
+        this.game.spellManager.castSpell(useEffect.name, player, player, {
+          duration: duration ?? 10,
+          potency,
+          extra: extraData,
+        });
 
-      // an item without uses (and has ounces, such as bottles) will apply the effect directly
+        // an item without uses (and has ounces, such as bottles) will apply the effect directly
       } else {
-        this.game.effectHelper.addEffect(player, '', useEffect.name, { effect: { duration: duration ?? 10, extra: extraData } });
+        this.game.effectHelper.addEffect(player, '', useEffect.name, {
+          effect: { duration: duration ?? 10, extra: extraData },
+        });
       }
     }
 
@@ -416,21 +588,31 @@ export class ItemHelper extends BaseService {
   }
 
   public useBook(player: IPlayer, book: ISimpleItem, source: ItemSlot): void {
-    const { bookCurrentPage, bookItemFilter } = this.getItemProperties(book, ['bookCurrentPage', 'bookItemFilter']);
+    const { bookCurrentPage, bookItemFilter } = this.getItemProperties(book, [
+      'bookCurrentPage',
+      'bookItemFilter',
+    ]);
 
     const page = bookCurrentPage ?? 0;
 
     if (bookItemFilter) {
-      const pages = this.game.inventoryHelper.getItemsFromSackByName(player, bookItemFilter);
+      const pages = this.game.inventoryHelper.getItemsFromSackByName(
+        player,
+        bookItemFilter,
+      );
       const removeItems: string[] = [];
 
       book.mods.bookPages = book.mods.bookPages || [];
 
       if (pages.length > 0) {
-        pages.forEach(item => {
+        pages.forEach((item) => {
           if (!this.isOwnedBy(player, item)) return;
 
-          const { bookPage, extendedDesc } = this.game.itemHelper.getItemProperties(item, ['bookPage', 'extendedDesc']);
+          const { bookPage, extendedDesc } =
+            this.game.itemHelper.getItemProperties(item, [
+              'bookPage',
+              'extendedDesc',
+            ]);
 
           // if the item has a specific page and we don't have one, we set it
           if (isNumber(bookPage)) {
@@ -438,23 +620,33 @@ export class ItemHelper extends BaseService {
 
             if (!book.mods.bookPages![setPage]) {
               removeItems.push(item.uuid);
-              book.mods.bookPages![setPage] = { id: item.name, text: extendedDesc ?? 'no description' };
+              book.mods.bookPages![setPage] = {
+                id: item.name,
+                text: extendedDesc ?? 'no description',
+              };
             }
 
-          // push it because the book is limitless
+            // push it because the book is limitless
           } else {
-
-            if (!book.mods.bookPages!.find(x => x.id === item.name)) {
+            if (!book.mods.bookPages!.find((x) => x.id === item.name)) {
               removeItems.push(item.uuid);
-              book.mods.bookPages!.push({ id: item.name, text: extendedDesc ?? 'no description' });
+              book.mods.bookPages!.push({
+                id: item.name,
+                text: extendedDesc ?? 'no description',
+              });
             }
           }
-
         });
 
         if (removeItems.length > 0) {
-          this.game.inventoryHelper.removeItemsFromSackByUUID(player, removeItems);
-          this.game.messageHelper.sendSimpleMessage(player, `You've added ${removeItems.length} pages to the book.`);
+          this.game.inventoryHelper.removeItemsFromSackByUUID(
+            player,
+            removeItems,
+          );
+          this.game.messageHelper.sendSimpleMessage(
+            player,
+            `You've added ${removeItems.length} pages to the book.`,
+          );
           return;
         }
       }
@@ -464,7 +656,10 @@ export class ItemHelper extends BaseService {
     const readPage = (bookPages || [])[page];
 
     if (!readPage) {
-      this.game.messageHelper.sendSimpleMessage(player, 'This book has no pages to read!');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'This book has no pages to read!',
+      );
       return;
     }
 
@@ -476,67 +671,90 @@ export class ItemHelper extends BaseService {
         { text: 'Previous Page', action: `prevpage ${source}` },
         { text: 'Next Page', action: `nextpage ${source}` },
         { text: 'Close Book', action: 'noop' },
-      ]
+      ],
     };
 
-    this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+    this.game.transmissionHelper.sendResponseToAccount(
+      player.username,
+      GameServerResponse.DialogChat,
+      formattedChat,
+    );
   }
 
   public useRNGBox(player: IPlayer, box: ISimpleItem, source: ItemSlot): void {
     if (!this.game.itemHelper.isOwnedBy(player, box)) {
-      this.game.messageHelper.sendSimpleMessage(player, 'This box isn\'t yours to open!');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        "This box isn't yours to open!",
+      );
       return;
     }
 
-    const { containedItems } = this.game.itemHelper.getItemProperties(box, ['containedItems']);
+    const { containedItems } = this.game.itemHelper.getItemProperties(box, [
+      'containedItems',
+    ]);
     if (!containedItems || containedItems.length === 0) {
       this.game.messageHelper.sendSimpleMessage(player, 'The box was empty!');
       return;
     }
 
-    const choice = this.game.lootHelper.chooseWithReplacement(containedItems, 1)[0];
+    const choice = this.game.lootHelper.chooseWithReplacement(
+      containedItems,
+      1,
+    )[0];
     if (choice === 'none') {
-      this.game.messageHelper.sendSimpleMessage(player, 'The box was empty! Better luck next time!');
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        'The box was empty! Better luck next time!',
+      );
       return;
     }
 
     const itemRef = this.game.itemCreator.getSimpleItem(choice);
     this.game.characterHelper.setEquipmentSlot(player, source, itemRef);
 
-    this.game.messageHelper.sendSimpleMessage(player, 'You got something out of the box!');
+    this.game.messageHelper.sendSimpleMessage(
+      player,
+      'You got something out of the box!',
+    );
   }
 
   // try to bind the item to the player, like when picking it up or equipping it
   public tryToBindItem(character: ICharacter, item: ISimpleItem): void {
-
-    const { binds, desc, tellsBind, itemClass, owner } = this.getItemProperties(item,
-      ['binds', 'tellsBind', 'itemClass', 'owner', 'desc']
+    const { binds, desc, tellsBind, itemClass, owner } = this.getItemProperties(
+      item,
+      ['binds', 'tellsBind', 'itemClass', 'owner', 'desc'],
     );
 
     if (binds && (character as IPlayer).username && !owner) {
       this.setItemProperty(item, 'owner', (character as IPlayer).username);
       this.game.messageHelper.sendLogMessageToPlayer(character, {
-        message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`
+        message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`,
       });
 
       if (tellsBind) {
-        this.game.messageHelper.sendLogMessageToRadius(character, 4, { message: `*** ${character.name} has looted ${desc}.` });
+        this.game.messageHelper.sendLogMessageToRadius(character, 4, {
+          message: `*** ${character.name} has looted ${desc}.`,
+        });
       }
     }
   }
 
   // search all items for similar things
   public searchItems(search: string): string[] {
-    return Object.keys(this.game.contentManager.allItems).filter(x => new RegExp(`.*${search}.*`, 'i').test(x));
+    return Object.keys(this.game.contentManager.allItems).filter((x) =>
+      new RegExp(`.*${search}.*`, 'i').test(x),
+    );
   }
 
   // check if the item comes from an "ether force" map
   public isEtherForceItem(itemName: string): boolean {
-    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs.map(x => x.name).some(name => itemName.includes(name));
+    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs
+      .map((x) => x.name)
+      .some((name) => itemName.includes(name));
   }
 
   public markIdentified(item: ISimpleItem, tier: number): void {
     item.mods.identifyTier = Math.max(item.mods.identifyTier ?? 0, tier);
   }
-
 }

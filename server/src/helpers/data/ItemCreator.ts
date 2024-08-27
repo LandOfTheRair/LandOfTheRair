@@ -1,9 +1,14 @@
-
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Currency, IItemDefinition, ISimpleItem, ItemClass, ItemQuality } from '../../interfaces';
+import {
+  Currency,
+  IItemDefinition,
+  ISimpleItem,
+  ItemClass,
+  ItemQuality,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from './ContentManager';
 
@@ -11,10 +16,7 @@ import { ContentManager } from './ContentManager';
 // not to be confused with ItemHelper which is for HELPER FUNCTIONS that MODIFY ITEMS
 @Injectable()
 export class ItemCreator extends BaseService {
-
-  constructor(
-    private content: ContentManager
-  ) {
+  constructor(private content: ContentManager) {
     super();
   }
 
@@ -23,7 +25,9 @@ export class ItemCreator extends BaseService {
   // get an item that can be equipped
   public getSimpleItem(itemName: string): ISimpleItem {
     const itemDefinition = this.content.getItemDefinition(itemName);
-    if (!itemDefinition) throw new Error(`Item ${itemName} does not exist and cannot be created.`);
+    if (!itemDefinition) {
+      throw new Error(`Item ${itemName} does not exist and cannot be created.`);
+    }
 
     const item: ISimpleItem = { name: itemName, uuid: uuid(), mods: {} };
 
@@ -32,7 +36,7 @@ export class ItemCreator extends BaseService {
       item.mods.currency = Currency.Gold;
     }
 
-    ['ounces', 'shots', 'trapUses'].forEach(modKey => {
+    ['ounces', 'shots', 'trapUses'].forEach((modKey) => {
       if (!itemDefinition[modKey]) return;
 
       item.mods[modKey] = itemDefinition[modKey];
@@ -42,7 +46,7 @@ export class ItemCreator extends BaseService {
 
     // if the item has "base mods" (used primarily for RNG dungeon items), we copy those
     if (itemDefinition.baseMods) {
-      Object.keys(itemDefinition.baseMods).forEach(modKey => {
+      Object.keys(itemDefinition.baseMods).forEach((modKey) => {
         if (!itemDefinition.baseMods?.[modKey]) return;
 
         item.mods[modKey] = itemDefinition.baseMods[modKey];
@@ -50,7 +54,6 @@ export class ItemCreator extends BaseService {
     }
 
     return item;
-
   }
 
   // get a gold item of the specified value
@@ -61,9 +64,15 @@ export class ItemCreator extends BaseService {
   }
 
   // create a succor item at this location
-  public createSuccorItem(map: string, x: number, y: number, ounces: number = 1): ISimpleItem {
-
-    const region = this.game.worldManager.getMap(map)?.map.getRegionNameAt(x, y);
+  public createSuccorItem(
+    map: string,
+    x: number,
+    y: number,
+    ounces: number = 1,
+  ): ISimpleItem {
+    const region = this.game.worldManager
+      .getMap(map)
+      ?.map.getRegionNameAt(x, y);
 
     const succorItem = this.game.itemCreator.getSimpleItem('Succor Blob');
     succorItem.mods.destroyOnDrop = true;
@@ -92,13 +101,12 @@ export class ItemCreator extends BaseService {
 
   // do randomStats, randomTrait, assign quality
   private rollStats(item: ISimpleItem, itemDef: IItemDefinition): ISimpleItem {
-
     const qualityValues: number[] = [];
 
-    if (itemDef.randomTrait) {
+    if (itemDef.randomTrait && itemDef.randomTrait.name.length > 0) {
       item.mods.trait = {
         name: sample(itemDef.randomTrait.name) ?? 'unknown',
-        level: 0
+        level: 0,
       };
 
       const { min, max } = itemDef.randomTrait.level;
@@ -106,7 +114,7 @@ export class ItemCreator extends BaseService {
 
       item.mods.trait.level = rolled;
 
-      let percentileRank = +(((rolled) / (max)) / 0.25).toFixed(0);
+      let percentileRank = +(rolled / max / 0.25).toFixed(0);
       if (percentileRank <= 0) percentileRank = 1;
 
       qualityValues.push(rolled === max ? ItemQuality.PERFECT : percentileRank);
@@ -117,7 +125,7 @@ export class ItemCreator extends BaseService {
 
       const allRandomStats = Object.keys(itemDef.randomStats);
 
-      allRandomStats.forEach(randomStat => {
+      allRandomStats.forEach((randomStat) => {
         const { min, max } = itemDef.randomStats[randomStat];
         const rolled = random(min, max);
 
@@ -126,19 +134,23 @@ export class ItemCreator extends BaseService {
         item.mods.stats![randomStat] = item.mods.stats![randomStat] || 0;
         item.mods.stats![randomStat] += rolled;
 
-        let percentileRank = +(((rolled) / (max)) / 0.25).toFixed(0);
+        let percentileRank = +(rolled / max / 0.25).toFixed(0);
         if (percentileRank <= 0) percentileRank = 1;
 
-        qualityValues.push(rolled === max ? ItemQuality.PERFECT : percentileRank);
+        qualityValues.push(
+          rolled === max ? ItemQuality.PERFECT : percentileRank,
+        );
       });
     }
 
     if (qualityValues.length > 0) {
-      const overallQuality = Math.max(1, Math.floor(sum(qualityValues) / qualityValues.length));
+      const overallQuality = Math.max(
+        1,
+        Math.floor(sum(qualityValues) / qualityValues.length),
+      );
       item.mods.quality = Math.max(1, overallQuality);
     }
 
     return item;
   }
-
 }

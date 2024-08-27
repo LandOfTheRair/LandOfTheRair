@@ -129,9 +129,13 @@ export class WorldManager extends BaseService {
   }
 
   private createMap(mapName: string, mapJson: any) {
-    this.maps[mapName] = new WorldMap(this.game, mapName, mapJson);
-    this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
-    this.handleMapSetup(this.maps[mapName], this.mapStates[mapName]);
+    try {
+      this.maps[mapName] = new WorldMap(this.game, mapName, mapJson);
+      this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
+      this.handleMapSetup(this.maps[mapName], this.mapStates[mapName]);
+    } catch (e) {
+      this.game.logger.log('WorldManager', `Could not create map ${mapName}`);
+    }
   }
 
   private createInstancedMap(mapName: string, mapJson: any, partyName: string) {
