@@ -1,20 +1,38 @@
-
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { Allegiance, basePlayerSprite, Currency, Direction, ICharacter, INPC,
-  IPlayer, ISimpleItem, ItemClass, ItemSlot, Skill, Stat, TrackedStatistic } from '../../interfaces';
+import {
+  Allegiance,
+  basePlayerSprite,
+  Currency,
+  Direction,
+  ICharacter,
+  INPC,
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  ItemSlot,
+  Skill,
+  Stat,
+  TrackedStatistic,
+} from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class DeathHelper extends BaseService {
-
   public init() {}
 
   // revive the player from their death
-  public restore(player: IPlayer, { x, y, map, shouldRot }: { x?: number; y?: number; map?: string; shouldRot?: boolean } = {}): void {
-
+  public restore(
+    player: IPlayer,
+    {
+      x,
+      y,
+      map,
+      shouldRot,
+    }: { x?: number; y?: number; map?: string; shouldRot?: boolean } = {},
+  ): void {
     // store old pos to look up corpse
     const oldX = player.x;
     const oldY = player.y;
@@ -23,15 +41,27 @@ export class DeathHelper extends BaseService {
     // remove our corpse if we have one
     if (player.corpseRef) {
       const oldMapState = this.game.worldManager.getMap(oldMap)?.state;
-      oldMapState?.removeItemFromGround(oldX, oldY, ItemClass.Corpse, player.corpseRef.uuid);
+      oldMapState?.removeItemFromGround(
+        oldX,
+        oldY,
+        ItemClass.Corpse,
+        player.corpseRef.uuid,
+      );
 
       if (x && y && map) {
         const newMapState = this.game.worldManager.getMap(map)?.state;
-        newMapState?.removeItemFromGround(x, y, ItemClass.Corpse, player.corpseRef.uuid);
+        newMapState?.removeItemFromGround(
+          x,
+          y,
+          ItemClass.Corpse,
+          player.corpseRef.uuid,
+        );
       }
 
       this.game.corpseManager.removeCorpse(player.corpseRef);
-      this.game.corpseManager.removeCorpseFromAnyonesHands(player.corpseRef.uuid);
+      this.game.corpseManager.removeCorpseFromAnyonesHands(
+        player.corpseRef.uuid,
+      );
       delete player.corpseRef;
     }
 
@@ -39,7 +69,10 @@ export class DeathHelper extends BaseService {
 
     const bonusHP = Math.min(
       player.hp.maximum,
-      Math.floor(player.hp.maximum * this.game.traitHelper.traitLevelValue(player, 'EtherRecombobulation'))
+      Math.floor(
+        player.hp.maximum *
+          this.game.traitHelper.traitLevelValue(player, 'EtherRecombobulation'),
+      ),
     );
 
     player.hp.current = 1 + bonusHP;
@@ -52,48 +85,78 @@ export class DeathHelper extends BaseService {
     if (x && y && map) {
       this.game.teleportHelper.teleport(player as Player, { x, y, map });
 
-    // tele to respawn point (maybe), then reset some vars
+      // tele to respawn point (maybe), then reset some vars
     } else {
-
       // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
       const mapData = this.game.worldManager.getMap(player.map);
       const props = mapData?.map.properties;
 
-      if (props && props.respawnKick && props.kickMap && props.kickX && props.kickY) {
+      if (
+        props &&
+        props.respawnKick &&
+        props.kickMap &&
+        props.kickX &&
+        props.kickY
+      ) {
         const respawnMap = props.kickMap;
         const respawnX = props.kickX ?? 0;
         const respawnY = props.kickY ?? 0;
 
-        this.game.teleportHelper.teleport(player as Player, { x: respawnX, y: respawnY, map: respawnMap });
+        this.game.teleportHelper.teleport(player as Player, {
+          x: respawnX,
+          y: respawnY,
+          map: respawnMap,
+        });
 
-      // if it isn't, then we can teleport to our respawn point
+        // if it isn't, then we can teleport to our respawn point
       } else {
         this.game.teleportHelper.teleportToRespawnPoint(player as Player);
-
       }
     }
 
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
-    const defaultInvulnDuration = this.game.contentManager.getGameSetting('character', 'defaultInvulnDuration') ?? 3;
-    const invulnDuration = defaultInvulnDuration + this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
-    this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', { effect: { duration: invulnDuration } });
+    const defaultInvulnDuration =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'defaultInvulnDuration',
+      ) ?? 3;
+    const invulnDuration =
+      defaultInvulnDuration +
+      this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
+    this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', {
+      effect: { duration: invulnDuration },
+    });
 
     // if we rotted... deal with that
     if (shouldRot) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message: 'You feel a churning sensation...' });
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You feel a churning sensation...',
+      });
 
-      const rotStatThreshold = this.game.contentManager.getGameSetting('corpse', 'rotStatThreshold') ?? 5;
+      const rotStatThreshold =
+        this.game.contentManager.getGameSetting('corpse', 'rotStatThreshold') ??
+        5;
 
-      const strLossChance = this.game.contentManager.getGameSetting('corpse', 'rotStrLossChance') ?? 5;
+      const strLossChance =
+        this.game.contentManager.getGameSetting('corpse', 'rotStrLossChance') ??
+        5;
 
-      if ((player.stats?.[Stat.STR] ?? 0) > rotStatThreshold && this.game.diceRollerHelper.OneInX(strLossChance)) {
+      if (
+        (player.stats?.[Stat.STR] ?? 0) > rotStatThreshold &&
+        this.game.diceRollerHelper.OneInX(strLossChance)
+      ) {
         this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
       }
 
-      const agiLossChance = this.game.contentManager.getGameSetting('corpse', 'rotAgiLossChance') ?? 5;
+      const agiLossChance =
+        this.game.contentManager.getGameSetting('corpse', 'rotAgiLossChance') ??
+        5;
 
-      if ((player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold && this.game.diceRollerHelper.OneInX(agiLossChance)) {
+      if (
+        (player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold &&
+        this.game.diceRollerHelper.OneInX(agiLossChance)
+      ) {
         this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
       }
     }
@@ -120,21 +183,32 @@ export class DeathHelper extends BaseService {
 
     if (this.game.characterHelper.isPlayer(dead)) {
       const shouldMakeCorpse = ((killer as INPC)?.shouldEatTier ?? 0) <= 0;
-      this.playerDie(dead as IPlayer, shouldMakeCorpse ? corpse as ISimpleItem : undefined, killer);
+      this.playerDie(
+        dead as IPlayer,
+        shouldMakeCorpse ? (corpse as ISimpleItem) : undefined,
+        killer,
+      );
     } else {
       this.npcDie(dead as INPC, corpse, killer);
     }
   }
 
   // mark last death location, add dead effect, clear action queue, check low con, drop hands if npc killed me
-  private playerDie(dead: IPlayer, corpse?: ISimpleItem, killer?: ICharacter): void {
+  private playerDie(
+    dead: IPlayer,
+    corpse?: ISimpleItem,
+    killer?: ICharacter,
+  ): void {
     this.game.playerHelper.clearActionQueue(dead as Player);
 
     this.game.statisticsHelper.addStatistic(dead, TrackedStatistic.Deaths);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
-    const deathTimer = this.game.contentManager.getGameSetting('corpse', 'playerExpire') ?? 500;
-    this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', { effect: { duration: deathTimer } });
+    const deathTimer =
+      this.game.contentManager.getGameSetting('corpse', 'playerExpire') ?? 500;
+    this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', {
+      effect: { duration: deathTimer },
+    });
     dead.dir = Direction.Center;
 
     if (corpse) {
@@ -142,9 +216,7 @@ export class DeathHelper extends BaseService {
 
       const state = this.game.worldManager.getMap(dead.map)?.state;
       state?.addItemToGround(dead.x, dead.y, corpse);
-
     } else {
-
       this.game.teleportHelper.teleportToRespawnPoint(dead as Player);
       // this.restore(dead);
     }
@@ -157,8 +229,15 @@ export class DeathHelper extends BaseService {
       this.game.effectHelper.addEffect(dead, '', 'LowCON');
 
       // and lose max hp if you keep dying
-      const lowCONHPLossThreshold = this.game.contentManager.getGameSetting('character', 'lowCONHPLossThreshold') ?? 10;
-      if (this.game.characterHelper.getBaseStat(dead, Stat.HP) > lowCONHPLossThreshold) {
+      const lowCONHPLossThreshold =
+        this.game.contentManager.getGameSetting(
+          'character',
+          'lowCONHPLossThreshold',
+        ) ?? 10;
+      if (
+        this.game.characterHelper.getBaseStat(dead, Stat.HP) >
+        lowCONHPLossThreshold
+      ) {
         this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
       }
     }
@@ -184,8 +263,10 @@ export class DeathHelper extends BaseService {
   // dispatch ai death, calculate loot drops
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
   public npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
-
-    const ai = this.game.worldManager.getMap(dead.map)?.state.getNPCSpawner(dead.uuid)?.getNPCAI(dead.uuid);
+    const ai = this.game.worldManager
+      .getMap(dead.map)
+      ?.state.getNPCSpawner(dead.uuid)
+      ?.getNPCAI(dead.uuid);
     ai?.death(killer);
 
     if (!dead.noItemDrop) {
@@ -219,10 +300,12 @@ export class DeathHelper extends BaseService {
         corpse.mods.searchItems = allItems;
         corpse.mods.tansFor = dead.tansFor || '';
         corpse.mods.corpseLevel = baseNPC?.level ?? dead.level;
-        corpse.mods.playersHeardDeath = state.getAllPlayersInRange(dead, 4).map(x => x.uuid);
+        corpse.mods.playersHeardDeath = state
+          .getAllPlayersInRange(dead, 4)
+          .map((x) => x.uuid);
         state.addItemToGround(dead.x, dead.y, corpse);
 
-      // drop items on ground
+        // drop items on ground
       } else {
         state.addItemsToGround(dead.x, dead.y, allItems);
       }
@@ -244,6 +327,26 @@ export class DeathHelper extends BaseService {
     }
   }
 
+  private playerKillXPMultiplierBasedOnSpawnTime(spawnTime: number): number {
+    const deathXPMultiplierMaxHours =
+      this.game.contentManager.getGameSetting(
+        'npc',
+        'deathXPMultiplierMaxHours',
+      ) ?? 8;
+    const deathXPMultiplierMaxXP =
+      this.game.contentManager.getGameSetting(
+        'npc',
+        'deathXPMultiplierMaxXP',
+      ) ?? 4;
+
+    const maxMinutesElapsed = deathXPMultiplierMaxHours * 60;
+    const minutesElapsed = Math.floor((Date.now() - spawnTime) / 1000 / 60);
+    const accountedMinutes = Math.min(maxMinutesElapsed, minutesElapsed);
+    const divisor = accountedMinutes / maxMinutesElapsed;
+
+    return deathXPMultiplierMaxXP * divisor;
+  }
+
   // clear action queue of the dead uuid
   private playerKill(killer: IPlayer, dead: ICharacter): void {
     this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
@@ -252,18 +355,31 @@ export class DeathHelper extends BaseService {
     this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.Kills);
 
     if (this.game.effectHelper.hasEffect(dead, 'Dangerous')) {
-      this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.KillsLair);
+      this.game.statisticsHelper.addStatistic(
+        killer,
+        TrackedStatistic.KillsLair,
+      );
     }
 
     const npc: INPC = dead as INPC;
 
-    const earnedExp = random(npc.giveXp.min, npc.giveXp.max);
+    const aliveMultiplier = this.playerKillXPMultiplierBasedOnSpawnTime(
+      npc.spawnedAt ?? Date.now(),
+    );
+    const baseEarnedExp = random(npc.giveXp.min, npc.giveXp.max);
+    const earnedExp = baseEarnedExp * (1 + aliveMultiplier);
 
     const gainKillRewards = (rewarded: IPlayer, multiplier = 1) => {
-
-      const axpRewardThreshold = this.game.contentManager.getGameSetting('character', 'axpRewardThreshold') ?? 5;
+      const axpRewardThreshold =
+        this.game.contentManager.getGameSetting(
+          'character',
+          'axpRewardThreshold',
+        ) ?? 5;
       if (rewarded.level - npc.level <= axpRewardThreshold) {
-        this.game.playerHelper.gainAxp(rewarded, this.game.calculatorHelper.calcAXPRewardFor(npc));
+        this.game.playerHelper.gainAxp(
+          rewarded,
+          this.game.calculatorHelper.calcAXPRewardFor(npc),
+        );
       }
 
       this.game.questHelper.tryUpdateQuestProgressForKill(rewarded, npc.npcId);
@@ -271,27 +387,36 @@ export class DeathHelper extends BaseService {
       const mult = this.game.playerHelper.expMultiplierForMap(rewarded);
       this.game.playerHelper.gainExp(rewarded, earnedExp * multiplier * mult);
 
-      rewarded.flaggedSkills = (rewarded.flaggedSkills || []).filter(x => this.game.playerHelper.canGainSkillOnMap(rewarded, x));
-      this.game.playerHelper.gainCurrentSkills(rewarded, npc.skillOnKill * multiplier);
+      rewarded.flaggedSkills = (rewarded.flaggedSkills || []).filter((x) =>
+        this.game.playerHelper.canGainSkillOnMap(rewarded, x),
+      );
+      this.game.playerHelper.gainCurrentSkills(
+        rewarded,
+        npc.skillOnKill * multiplier,
+      );
 
       npc.allegianceMods.forEach(({ delta, allegiance }) => {
-        this.game.playerHelper.modifyReputationForAllegiance(rewarded, allegiance, delta);
+        this.game.playerHelper.modifyReputationForAllegiance(
+          rewarded,
+          allegiance,
+          delta,
+        );
       });
     };
 
     gainKillRewards(killer);
 
-    const partyMembers = this.game.partyHelper.getAllPartyMembersInRange(killer);
+    const partyMembers =
+      this.game.partyHelper.getAllPartyMembersInRange(killer);
     const partyMultiplier = this.game.partyHelper.getTotalXPMultiplier(killer);
 
-    partyMembers.forEach(otherPlayer => {
+    partyMembers.forEach((otherPlayer) => {
       gainKillRewards(otherPlayer, partyMultiplier);
     });
   }
 
   // try to strip, try to eat
   private npcKill(killer: INPC, dead: ICharacter): void {
-
     // clear the agro when something is killed by an npc
     this.game.characterHelper.clearAgro(killer, dead);
     this.game.characterHelper.clearAgro(dead, killer);
@@ -305,15 +430,26 @@ export class DeathHelper extends BaseService {
     const eatTier = killer.shouldEatTier ?? 0;
 
     if (eatTier > 0) {
-      this.game.messageHelper.sendLogMessageToPlayer(dead, { message: `${killer.name} makes a quick meal out of you!` });
+      this.game.messageHelper.sendLogMessageToPlayer(dead, {
+        message: `${killer.name} makes a quick meal out of you!`,
+      });
 
-      const { eatXpLossMultiplier, eatSkillLossMultiplier } = this.game.contentManager.getGameSetting('corpse');
+      const { eatXpLossMultiplier, eatSkillLossMultiplier } =
+        this.game.contentManager.getGameSetting('corpse');
 
-      const lostXP = Math.floor((this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) * eatXpLossMultiplier) * eatTier);
+      const lostXP = Math.floor(
+        this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) *
+          eatXpLossMultiplier *
+          eatTier,
+      );
       const lostSkill = Math.floor(eatSkillLossMultiplier * eatTier);
       const randomSkill = sample(Object.keys(dead.skills)) as Skill;
 
-      this.game.characterHelper.losePermanentStat(dead, Stat.HP, Math.floor(eatTier));
+      this.game.characterHelper.losePermanentStat(
+        dead,
+        Stat.HP,
+        Math.floor(eatTier),
+      );
 
       this.game.playerHelper.loseExp(dead as IPlayer, lostXP);
       this.game.playerHelper.loseSkill(dead as IPlayer, randomSkill, lostSkill);
@@ -325,32 +461,54 @@ export class DeathHelper extends BaseService {
     if (this.game.effectHelper.hasEffect(character, 'SecondWind')) return;
 
     if (this.game.characterHelper.isPlayer(character)) {
-      this.game.statisticsHelper.addStatistic(character as IPlayer, TrackedStatistic.Strips);
+      this.game.statisticsHelper.addStatistic(
+        character as IPlayer,
+        TrackedStatistic.Strips,
+      );
     }
 
     this.game.messageHelper.sendLogMessageToPlayer(character, {
-      message: 'You see a flaming wisp dance before your eyes, taking your equipment with it!'
+      message:
+        'You see a flaming wisp dance before your eyes, taking your equipment with it!',
     });
 
-    const { state, x: dropX, y: dropY } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(character, x, y);
+    const {
+      state,
+      x: dropX,
+      y: dropY,
+    } = this.game.worldManager.getMapStateAndXYForCharacterItemDrop(
+      character,
+      x,
+      y,
+    );
 
-    const pickSlot = () => ({ x: random(dropX - radius, dropX + radius), y: random(dropY - radius, dropY + radius) });
+    const pickSlot = () => ({
+      x: random(dropX - radius, dropX + radius),
+      y: random(dropY - radius, dropY + radius),
+    });
 
     this.game.characterHelper.dropHands(character);
 
     const allItemDrops: Array<{ x: number; y: number; item: ISimpleItem }> = [];
 
     // take the gold
-    const goldTotal = this.game.currencyHelper.getCurrency(character, Currency.Gold);
+    const goldTotal = this.game.currencyHelper.getCurrency(
+      character,
+      Currency.Gold,
+    );
     if (goldTotal > 0) {
-      this.game.currencyHelper.loseCurrency(character, goldTotal, Currency.Gold);
+      this.game.currencyHelper.loseCurrency(
+        character,
+        goldTotal,
+        Currency.Gold,
+      );
 
       const goldItem = this.game.itemCreator.getGold(goldTotal);
       allItemDrops.push({ ...pickSlot(), item: goldItem });
     }
 
     // take the gear
-    Object.keys(character.items.equipment).forEach(itemSlot => {
+    Object.keys(character.items.equipment).forEach((itemSlot) => {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
@@ -358,37 +516,57 @@ export class DeathHelper extends BaseService {
       if (itemSlot === ItemSlot.Potion) return;
 
       allItemDrops.push({ ...pickSlot(), item });
-      this.game.characterHelper.setEquipmentSlot(character, itemSlot as ItemSlot, undefined);
+      this.game.characterHelper.setEquipmentSlot(
+        character,
+        itemSlot as ItemSlot,
+        undefined,
+      );
     });
 
     // take the belt & sack
     const sackItems = character.items.sack.items
-      .filter(item => !this.game.itemHelper.getItemProperty(item, 'succorInfo'))
-      .map(item => ({ ...pickSlot(), item }));
+      .filter(
+        (item) => !this.game.itemHelper.getItemProperty(item, 'succorInfo'),
+      )
+      .map((item) => ({ ...pickSlot(), item }));
 
-    this.game.inventoryHelper.removeItemsFromSackByUUID(character, sackItems.map(i => i.item.uuid));
+    this.game.inventoryHelper.removeItemsFromSackByUUID(
+      character,
+      sackItems.map((i) => i.item.uuid),
+    );
     allItemDrops.push(...sackItems);
 
     const beltItems = character.items.belt.items
-      .filter(item => !this.game.itemHelper.getItemProperty(item, 'succorInfo'))
-      .map(item => ({ ...pickSlot(), item }));
+      .filter(
+        (item) => !this.game.itemHelper.getItemProperty(item, 'succorInfo'),
+      )
+      .map((item) => ({ ...pickSlot(), item }));
 
-    this.game.inventoryHelper.removeItemsFromBeltByUUID(character, beltItems.map(i => i.item.uuid));
+    this.game.inventoryHelper.removeItemsFromBeltByUUID(
+      character,
+      beltItems.map((i) => i.item.uuid),
+    );
     allItemDrops.push(...beltItems);
 
     // finally, banish them to the ground
-    state.addItemsToGroundSpread(allItemDrops, { x: dropX, y: dropY }, radius, true);
+    state.addItemsToGroundSpread(
+      allItemDrops,
+      { x: dropX, y: dropY },
+      radius,
+      true,
+    );
   }
 
   // corpse creating
-  private createCorpse(character: ICharacter, killer?: ICharacter): ISimpleItem|undefined {
+  private createCorpse(
+    character: ICharacter,
+    killer?: ICharacter,
+  ): ISimpleItem | undefined {
     if (this.game.characterHelper.isPlayer(character)) {
       if (((killer as INPC)?.shouldEatTier ?? 0) > 0) return undefined;
 
       return this.createPlayerCorpse(character as IPlayer);
-
     } else {
-
       if (character.allegiance === Allegiance.NaturalResource) return undefined;
       return this.createNPCCorpse(character as INPC);
     }
@@ -405,7 +583,7 @@ export class DeathHelper extends BaseService {
   }
 
   // create npc corpse
-  private createNPCCorpse(npc: INPC): ISimpleItem|undefined {
+  private createNPCCorpse(npc: INPC): ISimpleItem | undefined {
     if (npc.noCorpseDrop) return undefined;
 
     const baseCorpse = this.game.itemCreator.getSimpleItem('Corpse');
@@ -414,5 +592,4 @@ export class DeathHelper extends BaseService {
 
     return baseCorpse;
   }
-
 }

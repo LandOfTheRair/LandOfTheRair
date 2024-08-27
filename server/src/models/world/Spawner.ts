@@ -414,6 +414,8 @@ export class Spawner {
 
     this.addNPC(npc, aiInst, npcDef);
 
+    npc.spawnedAt = Date.now();
+
     return npc;
   }
 

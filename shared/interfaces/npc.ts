@@ -1,6 +1,18 @@
 import { IAIBehavior, IBehavior } from './behaviors';
-import { Alignment, Allegiance, BaseClass, Hostility, ItemSlot,
-  MonsterClass, RandomNumber, Rollable, Skill, SkillBlock, Stat, StatBlock } from './building-blocks';
+import {
+  Alignment,
+  Allegiance,
+  BaseClass,
+  Hostility,
+  ItemSlot,
+  MonsterClass,
+  RandomNumber,
+  Rollable,
+  Skill,
+  SkillBlock,
+  Stat,
+  StatBlock,
+} from './building-blocks';
 import { BoundedNumber, ICharacter } from './character';
 import { ICharacterItems } from './characteritems';
 import { IDialogTree } from './dialog';
@@ -9,7 +21,7 @@ import { IStatusEffectInfo } from './status-effect';
 export enum NPCTriggerType {
   Spawn = 'spawn',
   Leash = 'leash',
-  Combat = 'combat'
+  Combat = 'combat',
 }
 
 export interface INPCDefinition {
@@ -43,7 +55,11 @@ export interface INPCDefinition {
   baseClass?: BaseClass;
 
   // the base effects given to the creature (usually attributes/truesight/etc)
-  baseEffects?: Array<{ name: string; endsAt: number; extra: IStatusEffectInfo }>;
+  baseEffects?: Array<{
+    name: string;
+    endsAt: number;
+    extra: IStatusEffectInfo;
+  }>;
 
   // the behaviors for the npc
   behaviors?: IBehavior[];
@@ -206,6 +222,8 @@ export interface INPC extends ICharacter {
   maxWanderRandomlyDistance: number;
 
   tansFor?: string;
+
+  spawnedAt?: number;
 }
 
 export interface INPCScript {
