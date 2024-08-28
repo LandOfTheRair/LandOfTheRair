@@ -21,16 +21,6 @@
     "node": ">= 18",
     "npm": ">= 8"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/landoftherair/lotr2.git"
-  },
-  "author": "Kyle Kemp <kyle@seiyria.com>",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/landoftherair/lotr2/issues"
-  },
-  "homepage": "https://github.com/landoftherair/lotr2#readme",
   "dependencies": {
     "bcrypt": "5.0.0",
     "bufferutil": "^4.0.2",

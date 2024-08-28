@@ -5,6 +5,16 @@
     "node": ">= 18",
     "npm": ">= 8"
   },
+  "author": "Kyle Kemp <kyle@seiyria.com>",
+  "homepage": "https://github.com/landoftherair/landoftherair#readme",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/landoftherair/landoftherair/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/landoftherair/landoftherair.git"
+  },
   "scripts": {
     "setup": "lerna exec -- npm install",
     "setup:full": "npm run setup && lerna exec -- npm run setup",
