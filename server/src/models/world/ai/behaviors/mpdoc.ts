@@ -19,7 +19,7 @@ export class MPDocBehavior implements IAIBehavior {
     const mpTiers: Record<BaseClass, number[]> =
       game.contentManager.getGameSetting('npcscript', 'mpdoc.values') ?? {
         [BaseClass.Mage]: [0, 0, 1000, 2000],
-        [BaseClass.Arcanist]: [0, 0, 500, 1400],
+        [BaseClass.Arcanist]: [0, 0, 500, 1000],
         [BaseClass.Thief]: [0, 0, 300, 500],
         [BaseClass.Healer]: [0, 0, 900, 1800],
         [BaseClass.Warrior]: [0, 0, 200, 400],
@@ -94,13 +94,16 @@ export class MPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
+        if (!mpTiers[player.baseClass]) return 'Unsure how help!';
+
         const playerBaseMp = game.characterHelper.getBaseStat(player, Stat.MP);
         const maxMpForTier = mpTiers[player.baseClass][tier];
         if (playerBaseMp > maxMpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
-        if (!rightHand || rightHand.name !== 'Gold Coin')
+        if (!rightHand || rightHand.name !== 'Gold Coin') {
           return 'No gold! No help!';
+        }
 
         let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
           player,
@@ -113,8 +116,9 @@ export class MPDocBehavior implements IAIBehavior {
         let totalAvailable = rightHand.mods.value ?? 0;
         let totalCost = 0;
 
-        if (cost > totalAvailable)
+        if (cost > totalAvailable) {
           return `Need ${cost.toLocaleString()} gold for magic force!`;
+        }
 
         while (cost > 0 && cost <= totalAvailable) {
           totalAvailable -= cost;

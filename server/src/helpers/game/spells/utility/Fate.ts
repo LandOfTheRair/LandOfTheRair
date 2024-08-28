@@ -141,8 +141,9 @@ export class Fate extends Spell {
 
       let good = false;
       let statBoosting = Math.floor(caster.level / divisor) * statBoost;
-      if (base === 0 || this.game.diceRollerHelper.XInOneHundred(35))
+      if (base === 0 || this.game.diceRollerHelper.XInOneHundred(35)) {
         good = true;
+      }
 
       message = good ? goodmessage : antimessage;
 
@@ -151,18 +152,19 @@ export class Fate extends Spell {
         message = 'You think about it for a moment, then hesitate.';
       }
 
-      if (good)
+      if (good) {
         this.game.characterHelper.gainPermanentStat(
           caster,
           stat as Stat,
           statBoosting,
         );
-      else
+      } else {
         this.game.characterHelper.losePermanentStat(
           caster,
           stat as Stat,
           statBoosting,
         );
+      }
 
       this.game.characterHelper.recalculateEverything(caster);
     }

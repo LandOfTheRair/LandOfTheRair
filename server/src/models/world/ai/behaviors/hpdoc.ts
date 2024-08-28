@@ -94,13 +94,16 @@ export class HPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
+        if (!hpTiers[player.baseClass]) return 'Unsure how help!';
+
         const playerBaseHp = game.characterHelper.getBaseStat(player, Stat.HP);
         const maxHpForTier = hpTiers[player.baseClass][tier];
         if (playerBaseHp > maxHpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
-        if (!rightHand || rightHand.name !== 'Gold Coin')
+        if (!rightHand || rightHand.name !== 'Gold Coin') {
           return 'No gold! No help!';
+        }
 
         let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
           player,
@@ -113,8 +116,9 @@ export class HPDocBehavior implements IAIBehavior {
         let totalAvailable = rightHand.mods.value ?? 0;
         let totalCost = 0;
 
-        if (cost > totalAvailable)
+        if (cost > totalAvailable) {
           return `Need ${cost.toLocaleString()} gold for life force!`;
+        }
 
         while (cost > 0 && cost <= totalAvailable) {
           totalAvailable -= cost;
