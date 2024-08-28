@@ -1,36 +1,56 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { BaseClass, distanceFrom, GameServerResponse, IAIBehavior,
-  IDialogChatAction, IHPDocBehavior, INPC, IPlayer, ItemSlot, Stat } from '../../../../interfaces';
+import {
+  BaseClass,
+  distanceFrom,
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  IHPDocBehavior,
+  INPC,
+  IPlayer,
+  ItemSlot,
+  Stat,
+} from '../../../../interfaces';
 
 export class HPDocBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
+    const hpTiers: Record<BaseClass, number[]> =
+      game.contentManager.getGameSetting('npcscript', 'hpdoc.values') ?? {
+        [BaseClass.Mage]: [100, 375, 600, 2400],
+        [BaseClass.Arcanist]: [50, 250, 400, 1800],
+        [BaseClass.Thief]: [100, 425, 700, 2800],
+        [BaseClass.Healer]: [100, 400, 650, 2600],
+        [BaseClass.Warrior]: [100, 450, 800, 3000],
+        [BaseClass.Traveller]: [100, 600, 550, 2200],
+      };
 
-    const hpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'hpdoc.values') ?? {
-      [BaseClass.Mage]:       [100, 375, 600, 2400],
-      [BaseClass.Thief]:      [100, 425, 700, 2800],
-      [BaseClass.Healer]:     [100, 400, 650, 2600],
-      [BaseClass.Warrior]:    [100, 450, 800, 3000],
-      [BaseClass.Traveller]:  [100, 600, 550, 2200]
-    };
+    const levelTiers = game.contentManager.getGameSetting(
+      'npcscript',
+      'hpdoc.levels',
+    ) ?? [0, 13, 25, 50];
 
-    const levelTiers = game.contentManager.getGameSetting('npcscript', 'hpdoc.levels') ?? [0, 13, 25, 50];
+    const hpNormalizers = game.contentManager.getGameSetting(
+      'npcscript',
+      'hpdoc.normalizers',
+    ) ?? [100, 200, 300, 1500];
 
-    const hpNormalizers = game.contentManager.getGameSetting('npcscript', 'hpdoc.normalizers') ?? [100, 200, 300, 1500];
-
-    const hpCosts = game.contentManager.getGameSetting('npcscript', 'hpdoc.costs') ?? [
-      { min: 100,     max: 500 },
-      { min: 5000,    max: 15000 },
-      { min: 100000,  max: 1000000 },
-      { min: 1000000, max: 10000000 }
+    const hpCosts = game.contentManager.getGameSetting(
+      'npcscript',
+      'hpdoc.costs',
+    ) ?? [
+      { min: 100, max: 500 },
+      { min: 5000, max: 15000 },
+      { min: 100000, max: 1000000 },
+      { min: 1000000, max: 10000000 },
     ];
 
     const { hpTier } = behavior;
     const tier = hpTier ?? 1;
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -50,15 +70,20 @@ export class HPDocBehavior implements IAIBehavior {
           options: [
             { text: 'Teach me', action: 'teach' },
             { text: 'Leave', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('teach')
+    parser
+      .addCommand('teach')
       .setSyntax(['teach'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -74,14 +99,22 @@ export class HPDocBehavior implements IAIBehavior {
         if (playerBaseHp > maxHpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
-        if (!rightHand || rightHand.name !== 'Gold Coin') return 'No gold! No help!';
+        if (!rightHand || rightHand.name !== 'Gold Coin')
+          return 'No gold! No help!';
 
-        let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(player, Stat.HP, maxHpForTier, hpNormalizers[tier], hpCosts[tier]);
+        let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+          player,
+          Stat.HP,
+          maxHpForTier,
+          hpNormalizers[tier],
+          hpCosts[tier],
+        );
         let totalHPGained = 0;
         let totalAvailable = rightHand.mods.value ?? 0;
         let totalCost = 0;
 
-        if (cost > totalAvailable) return `Need ${cost.toLocaleString()} gold for life force!`;
+        if (cost > totalAvailable)
+          return `Need ${cost.toLocaleString()} gold for life force!`;
 
         while (cost > 0 && cost <= totalAvailable) {
           totalAvailable -= cost;
@@ -93,7 +126,13 @@ export class HPDocBehavior implements IAIBehavior {
           if (hp >= maxHpForTier) {
             cost = -1;
           } else {
-            cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(player, Stat.HP, maxHpForTier, hpNormalizers[tier], hpCosts[tier]);
+            cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+              player,
+              Stat.HP,
+              maxHpForTier,
+              hpNormalizers[tier],
+              hpCosts[tier],
+            );
           }
         }
 

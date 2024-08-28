@@ -155,7 +155,7 @@ export class TrainerBehavior implements IAIBehavior {
         const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
-        const ignores = {
+        const ignores: Record<BaseClass, Skill[]> = {
           [BaseClass.Warrior]: [
             Skill.Wand,
             Skill.Restoration,
@@ -163,8 +163,10 @@ export class TrainerBehavior implements IAIBehavior {
             Skill.Conjuration,
           ],
           [BaseClass.Mage]: [Skill.Restoration, Skill.Thievery],
+          [BaseClass.Arcanist]: [Skill.Restoration, Skill.Thievery],
           [BaseClass.Healer]: [Skill.Thievery, Skill.Conjuration],
           [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
+          [BaseClass.Traveller]: [],
         };
 
         if ((ignores[behavior.joinClass] || []).includes(skill)) {
@@ -215,6 +217,7 @@ export class TrainerBehavior implements IAIBehavior {
             Skill.Conjuration,
           ],
           [BaseClass.Mage]: [Skill.Restoration],
+          [BaseClass.Arcanist]: [Skill.Restoration],
           [BaseClass.Healer]: [Skill.Conjuration],
           [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
         };

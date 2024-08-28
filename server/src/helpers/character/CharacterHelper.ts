@@ -22,6 +22,8 @@ import { BaseService } from '../../models/BaseService';
 
 import { Player } from '../../models';
 
+import { isMPClass } from '../../../../shared/functions';
+
 @Injectable()
 export class CharacterHelper extends BaseService {
   public init() {}
@@ -99,6 +101,7 @@ export class CharacterHelper extends BaseService {
       [BaseClass.Thief]: Stat.INT,
       [BaseClass.Warrior]: Stat.STR,
       [BaseClass.Traveller]: Stat.LUK,
+      [BaseClass.Arcanist]: Stat.INT,
     };
 
     return stats[char.baseClass];
@@ -830,10 +833,7 @@ export class CharacterHelper extends BaseService {
     let boost = 0;
 
     // healers and mages get a boost because their primary function is spellcasting
-    if (
-      character.baseClass === BaseClass.Mage ||
-      character.baseClass === BaseClass.Healer
-    ) {
+    if (isMPClass(character.baseClass)) {
       boost =
         this.game.contentManager.getGameSetting(
           'character',

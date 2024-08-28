@@ -1,36 +1,56 @@
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { BaseClass, distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
-  IMPDocBehavior, INPC, IPlayer, ItemSlot, Stat } from '../../../../interfaces';
+import {
+  BaseClass,
+  distanceFrom,
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  IMPDocBehavior,
+  INPC,
+  IPlayer,
+  ItemSlot,
+  Stat,
+} from '../../../../interfaces';
 
 export class MPDocBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IMPDocBehavior) {
+    const mpTiers: Record<BaseClass, number[]> =
+      game.contentManager.getGameSetting('npcscript', 'mpdoc.values') ?? {
+        [BaseClass.Mage]: [0, 0, 1000, 2000],
+        [BaseClass.Arcanist]: [0, 0, 500, 1400],
+        [BaseClass.Thief]: [0, 0, 300, 500],
+        [BaseClass.Healer]: [0, 0, 900, 1800],
+        [BaseClass.Warrior]: [0, 0, 200, 400],
+        [BaseClass.Traveller]: [0, 0, 0, 0],
+      };
 
-    const mpTiers: Record<BaseClass, number[]> = game.contentManager.getGameSetting('npcscript', 'mpdoc.values') ?? {
-      [BaseClass.Mage]:       [0, 0, 1000, 2000],
-      [BaseClass.Thief]:      [0, 0, 300, 500],
-      [BaseClass.Healer]:     [0, 0, 900, 1800],
-      [BaseClass.Warrior]:    [0, 0, 200, 400],
-      [BaseClass.Traveller]:  [0, 0, 0, 0]
-    };
+    const levelTiers = game.contentManager.getGameSetting(
+      'npcscript',
+      'mpdoc.levels',
+    ) ?? [0, 13, 25, 50];
 
-    const levelTiers = game.contentManager.getGameSetting('npcscript', 'mpdoc.levels') ?? [0, 13, 25, 50];
+    const mpNormalizers = game.contentManager.getGameSetting(
+      'npcscript',
+      'mpdoc.normalizers',
+    ) ?? [100, 200, 300, 1500];
 
-    const mpNormalizers = game.contentManager.getGameSetting('npcscript', 'mpdoc.normalizers') ?? [100, 200, 300, 1500];
-
-    const mpCosts = game.contentManager.getGameSetting('npcscript', 'mpdoc.costs') ?? [
-      { min: 100,     max: 500 },
-      { min: 10000,   max: 30000 },
-      { min: 200000,  max: 2000000 },
-      { min: 2000000, max: 20000000 }
+    const mpCosts = game.contentManager.getGameSetting(
+      'npcscript',
+      'mpdoc.costs',
+    ) ?? [
+      { min: 100, max: 500 },
+      { min: 10000, max: 30000 },
+      { min: 200000, max: 2000000 },
+      { min: 2000000, max: 20000000 },
     ];
 
     const { mpTier } = behavior;
     const tier = mpTier ?? 1;
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -50,15 +70,20 @@ export class MPDocBehavior implements IAIBehavior {
           options: [
             { text: 'Teach me', action: 'teach' },
             { text: 'Leave', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('teach')
+    parser
+      .addCommand('teach')
       .setSyntax(['teach'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -74,14 +99,22 @@ export class MPDocBehavior implements IAIBehavior {
         if (playerBaseMp > maxMpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
-        if (!rightHand || rightHand.name !== 'Gold Coin') return 'No gold! No help!';
+        if (!rightHand || rightHand.name !== 'Gold Coin')
+          return 'No gold! No help!';
 
-        let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(player, Stat.MP, maxMpForTier, mpNormalizers[tier], mpCosts[tier]);
+        let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+          player,
+          Stat.MP,
+          maxMpForTier,
+          mpNormalizers[tier],
+          mpCosts[tier],
+        );
         let totalMPGained = 0;
         let totalAvailable = rightHand.mods.value ?? 0;
         let totalCost = 0;
 
-        if (cost > totalAvailable) return `Need ${cost.toLocaleString()} gold for magic force!`;
+        if (cost > totalAvailable)
+          return `Need ${cost.toLocaleString()} gold for magic force!`;
 
         while (cost > 0 && cost <= totalAvailable) {
           totalAvailable -= cost;
@@ -93,7 +126,13 @@ export class MPDocBehavior implements IAIBehavior {
           if (mp >= maxMpForTier) {
             cost = -1;
           } else {
-            cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(player, Stat.MP, maxMpForTier, mpNormalizers[tier], mpCosts[tier]);
+            cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+              player,
+              Stat.MP,
+              maxMpForTier,
+              mpNormalizers[tier],
+              mpCosts[tier],
+            );
           }
         }
 

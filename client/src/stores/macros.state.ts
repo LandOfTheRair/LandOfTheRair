@@ -210,6 +210,7 @@ export class MacrosState {
           [BaseClass.Healer]: ['Afflict'],
           [BaseClass.Warrior]: ['Cleave'],
           [BaseClass.Traveller]: [],
+          [BaseClass.Arcanist]: [],
         };
 
         const learns = additionalMacros[curPlayer.baseClass] || [];

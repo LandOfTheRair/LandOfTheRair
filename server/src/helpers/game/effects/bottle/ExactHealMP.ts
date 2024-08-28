@@ -1,12 +1,9 @@
-import { BaseClass, ICharacter, IStatusEffect } from '../../../../interfaces';
+import { ICharacter, isMPClass, IStatusEffect } from '../../../../interfaces';
 import { Effect } from '../../../../models';
 
 export class ExactHealMP extends Effect {
   override apply(char: ICharacter, effect: IStatusEffect) {
-    if (
-      char.baseClass !== BaseClass.Healer &&
-      char.baseClass !== BaseClass.Mage
-    ) {
+    if (!isMPClass(char.baseClass)) {
       this.sendMessage(char, { message: 'This tastes like slime mold juice.' });
       return;
     }

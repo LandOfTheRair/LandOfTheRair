@@ -218,6 +218,7 @@ export class PlayerHelper extends BaseService {
       ) ?? {
         [BaseClass.Healer]: 50,
         [BaseClass.Mage]: 70,
+        [BaseClass.Arcanist]: 30,
         [BaseClass.Warrior]: 100,
         [BaseClass.Thief]: 100,
         [BaseClass.Traveller]: 0,
@@ -242,6 +243,7 @@ export class PlayerHelper extends BaseService {
         [BaseClass.Mage]: 'MagicMissile',
         [BaseClass.Warrior]: 'Cleave',
         [BaseClass.Thief]: 'ImprovedHide',
+        [BaseClass.Arcanist]: '',
         [BaseClass.Traveller]: '',
       };
 
@@ -912,7 +914,49 @@ export class PlayerHelper extends BaseService {
           randomDivisor,
         } = this.game.contentManager.getGameSetting(
           'character',
-          'levelup.Healer.mp',
+          'levelup.Mage.mp',
+        );
+
+        const mpGained = Math.floor(
+          random(baseMP ?? 2, int * (randomMultiplier ?? 2)) +
+            int / (randomDivisor ?? 5),
+        );
+        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
+
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
+        );
+      },
+
+      [BaseClass.Arcanist]: () => {
+        const {
+          base,
+          randomConDivisor,
+          bonusConDivisor,
+          randomConBonusMultiplier,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Arcanist.hp',
+        );
+
+        const hpGained = Math.floor(
+          random(
+            base ?? 1,
+            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
+          ) +
+            con / (bonusConDivisor ?? 1),
+        );
+
+        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+
+        const {
+          base: baseMP,
+          randomMultiplier,
+          randomDivisor,
+        } = this.game.contentManager.getGameSetting(
+          'character',
+          'levelup.Arcanist.mp',
         );
 
         const mpGained = Math.floor(

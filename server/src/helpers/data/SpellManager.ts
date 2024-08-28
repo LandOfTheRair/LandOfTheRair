@@ -78,6 +78,7 @@ export class SpellManager extends BaseService {
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,
       [BaseClass.Mage]: Skill.Conjuration,
+      [BaseClass.Arcanist]: Skill.Conjuration,
       [BaseClass.Thief]: Skill.Thievery,
     };
 
