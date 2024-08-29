@@ -1,12 +1,10 @@
-
 import { Injectable } from 'injection-js';
-import { random, sum } from 'lodash';
+import { random } from 'lodash';
 import { ICharacter, Stat } from '../../../interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
 export class DiceRollerHelper extends BaseService {
-
   public init() {}
 
   // an X in Y chance - eg, a 5 in 100
@@ -32,8 +30,11 @@ export class DiceRollerHelper extends BaseService {
   }
 
   // "dice roll" - close enough - roll dice and sum the values
-  diceRoll(rolls: number, sides: number, minimumMult = 0): number {
-    return sum(Array(rolls).fill(0).map(() => random(Math.floor(sides * minimumMult), sides)));
+  diceRoll(rolls: number, sides: number, minSidesDivisor = 2): number {
+    const min = sides / minSidesDivisor;
+    const max = sides;
+
+    return rolls * (min + Math.floor(Math.random() * (max - min + 1)));
   }
 
   // a one-to-luk roll, which will be used for anything rolling luk
@@ -44,5 +45,4 @@ export class DiceRollerHelper extends BaseService {
   OneToLUK(char: ICharacter): number {
     return this.OneToStat(char, Stat.LUK);
   }
-
 }
