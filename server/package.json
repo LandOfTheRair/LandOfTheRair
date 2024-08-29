@@ -12,6 +12,7 @@
     "start": "node dist/server/src/core/index",
     "start:dev": "nodemon --delay 1000 --ext json --watch content/_output/maps --exec \"npm run tsc:dev\"",
     "tsc:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/server/src/core/index.js\"",
+    "content:dev": "cd content && npm run watch",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
     "test": "npm run lint",
     "build": "tsc",
