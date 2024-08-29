@@ -11,11 +11,15 @@ export interface IWeaponTier {
   strongPercent: number;
 }
 
+export interface IMaterialSlotData {
+  items: string[];
+  sprite: number;
+  withdrawInOunces?: boolean;
+}
+
 export interface IMaterialSlotLayout {
-  slots: Record<
-    string,
-    { items: string[]; sprite: number; withdrawInOunces?: boolean }
-  >;
+  slots: Record<string, IMaterialSlotData>;
+
   layouts: Array<{ category: string; items: Array<string | null> }>;
 }
 
