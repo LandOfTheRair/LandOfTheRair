@@ -12,8 +12,11 @@ export interface IWeaponTier {
 }
 
 export interface IMaterialSlotLayout {
-  slots: Record<string, { items: string[]; sprite: number; withdrawInOunces?: boolean }>;
-  layouts: Array<{ category: string; items: Array<string|null> }>;
+  slots: Record<
+    string,
+    { items: string[]; sprite: number; withdrawInOunces?: boolean }
+  >;
+  layouts: Array<{ category: string; items: Array<string | null> }>;
 }
 
 export interface IChallenge {
@@ -60,8 +63,22 @@ export interface IFate {
   }>;
 }
 
-export interface IGameSettings {
+export interface ClassLevelup {
+  hp: {
+    base: number;
+    randomConDivisor: number;
+    bonusConDivisor: number;
+    randomConBonusMultiplier: number;
+  };
 
+  mp: {
+    base: number;
+    randomMultiplier: number;
+    randomDivisor: number;
+  };
+}
+
+export interface IGameSettings {
   auth: {
     verificationHourExpiration: number;
   };
@@ -105,21 +122,9 @@ export interface IGameSettings {
       learnedTraits: Record<BaseClass, string>;
     };
 
-    levelup: Record<BaseClass, {
-      hp: {
-        base: number;
-        randomConDivisor: number;
-        bonusConDivisor: number;
-        randomConBonusMultiplier: number;
-      };
+    allClasses: BaseClass[];
 
-      mp: {
-        base: number;
-        randomMultiplier: number;
-        randomDivisor: number;
-      };
-    }>;
-
+    levelup: Record<BaseClass, ClassLevelup>;
   };
 
   combat: {
@@ -217,6 +222,8 @@ export interface IGameSettings {
   };
 
   npc: {
+    deathXPMultiplierMaxHours: number;
+    deathXPMultiplierMaxXP: number;
     messages: {
       hostile: string[];
       beast: string[];
@@ -269,7 +276,6 @@ export interface IGameSettings {
     axpswapper: {
       level: number;
     };
-
   };
 
   spell: {

@@ -75,23 +75,25 @@ export class SpellManager extends BaseService {
   ): number {
     if (!caster) return 1;
 
-    const skills = {
+    const skills: Record<BaseClass, Skill | undefined> = {
       [BaseClass.Healer]: Skill.Restoration,
       [BaseClass.Mage]: Skill.Conjuration,
       [BaseClass.Arcanist]: Skill.Conjuration,
       [BaseClass.Thief]: Skill.Thievery,
+      [BaseClass.Traveller]: undefined,
+      [BaseClass.Warrior]: undefined,
     };
 
     const isStatic = spellData.spellMeta?.staticPotency;
 
-    let skillsToAverage = [skills[caster.baseClass]];
+    let skillsToAverage: Skill[] = [skills[caster.baseClass]] as Skill[];
     if (!skills[caster.baseClass]) {
       if (caster.items.equipment[ItemSlot.RightHand]) {
         const { type, secondaryType } = this.game.itemHelper.getItemProperties(
           caster.items.equipment[ItemSlot.RightHand],
           ['type', 'secondaryType'],
         );
-        skillsToAverage = [type, secondaryType];
+        skillsToAverage = [type, secondaryType] as Skill[];
       } else {
         skillsToAverage = [Skill.Martial];
       }
