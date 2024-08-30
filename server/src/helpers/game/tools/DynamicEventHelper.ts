@@ -228,7 +228,7 @@ export class DynamicEventHelper extends BaseService {
 
         this.game.worldManager.allMapNames.forEach((map) => {
           const mapData = this.game.worldManager.getMap(map);
-          if (!mapData) return;
+          if (!mapData || !mapData.state) return;
 
           mapData.state.allNPCS.forEach((npc) => {
             if (npc.npcId !== event.npc) return;
