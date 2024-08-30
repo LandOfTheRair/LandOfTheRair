@@ -140,6 +140,15 @@ export class SpellManager extends BaseService {
     retPotency *= maxMult;
     retPotency *= this.getPotencyMultiplier(spellData);
 
+    const arcaneHunger = this.game.effectHelper.getEffect(
+      caster,
+      'ArcaneHunger',
+    );
+    if (arcaneHunger) {
+      const charges = arcaneHunger.effectInfo.charges ?? 0;
+      retPotency += retPotency * (charges / 10);
+    }
+
     // encumberance cuts potency exactly in half
     if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
       retPotency /= this.encumberedDivisor;
@@ -435,7 +444,7 @@ export class SpellManager extends BaseService {
         this.game.combatHelper.magicalAttack(caster, target, {
           atkMsg: spellData.spellMeta.casterAttackMessage || '',
           defMsg: spellData.spellMeta.targetAttackMessage || '',
-          sfx: SoundEffect.CombatHitSpell,
+          sfx: i === 0 ? SoundEffect.CombatHitSpell : undefined,
           damage: potency,
           damageClass: spellData.damageClass || DamageClass.Energy,
           spellData,
@@ -446,7 +455,7 @@ export class SpellManager extends BaseService {
         this.game.combatHelper.magicalAttack(caster, target, {
           atkMsg: spellData.spellMeta.casterAttackMessage || '',
           defMsg: spellData.spellMeta.targetAttackMessage || '',
-          sfx: SoundEffect.SpellHeal,
+          sfx: i === 0 ? SoundEffect.SpellHeal : undefined,
           damage: -potency,
           damageClass: spellData.damageClass || DamageClass.Heal,
           spellData,
@@ -462,6 +471,33 @@ export class SpellManager extends BaseService {
         originalArgs,
         ...(targetsPosition || {}),
       });
+    }
+
+    // check for arcane hunger
+    if (caster) {
+      const arcaneHungerSet = this.game.traitHelper.traitLevelValue(
+        caster,
+        'ArcaneHunger',
+      );
+
+      if (arcaneHungerSet > 0) {
+        const existingEffect = this.game.effectHelper.getEffect(
+          caster,
+          'ArcaneHunger',
+        );
+        const chargeSet = Math.min(
+          arcaneHungerSet,
+          1 + (existingEffect?.effectInfo.charges ?? 0),
+        );
+
+        this.game.effectHelper.addEffect(caster, caster, 'ArcaneHunger', {
+          effect: {
+            extra: {
+              charges: chargeSet,
+            },
+          },
+        });
+      }
     }
   }
 }

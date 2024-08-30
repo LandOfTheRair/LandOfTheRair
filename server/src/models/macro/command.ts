@@ -254,6 +254,18 @@ export class SpellCommand extends SkillCommand {
 
     let cost = Math.max(targets.length, 1) * (spellData.mpCost ?? 0);
 
+    // try to do arcane hunger
+    if (caster) {
+      const arcaneHunger = this.game.effectHelper.getEffect(
+        caster,
+        'ArcaneHunger',
+      );
+      if (arcaneHunger) {
+        const charges = arcaneHunger.effectInfo.charges ?? 1;
+        cost += cost * (charges / 5);
+      }
+    }
+
     // try to do wand/totem specialty
     if (caster) {
       const rightHand = caster.items.equipment[ItemSlot.RightHand];
