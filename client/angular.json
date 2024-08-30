@@ -39,6 +39,7 @@
               "src/assets/fonts",
               "src/assets/generated",
               "src/assets/sfx",
+              "src/assets/macicons",
               "src/assets/spritesheets",
               "src/assets/content/_output",
               "src/_headers",
