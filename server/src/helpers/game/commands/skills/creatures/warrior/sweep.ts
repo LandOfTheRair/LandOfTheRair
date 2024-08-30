@@ -1,11 +1,12 @@
-
-import { sampleSize } from 'lodash';
-
-import { ICharacter, IMacroCommandArgs, IPlayer, PhysicalAttackArgs } from '../../../../../../interfaces';
+import {
+  ICharacter,
+  IMacroCommandArgs,
+  IPlayer,
+  PhysicalAttackArgs,
+} from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Sweep extends SpellCommand {
-
   override aliases = ['sweep', 'art sweep'];
   override requiresLearn = true;
 
@@ -17,34 +18,44 @@ export class Sweep extends SpellCommand {
     this.use(player, player, { attackRange: 0 });
   }
 
-  override use(user: ICharacter, target: ICharacter, opts: PhysicalAttackArgs = {}): void {
-
+  override use(
+    user: ICharacter,
+    target: ICharacter,
+    opts: PhysicalAttackArgs = {},
+  ): void {
     const state = this.game.worldManager.getMapStateForCharacter(user);
     if (!state) return;
 
-    const numTargets = 8;
-    const targets = state.getAllHostilesInRange(user, 0, false);
-    const foundTargets = sampleSize(targets, numTargets);
+    const foundTargets = this.game.targettingHelper.getPossibleAOETargets(
+      user,
+      user,
+      0,
+      8,
+    );
 
     if (foundTargets.length === 0) {
       this.sendMessage(user, 'You kick around wildly, hitting no one!');
       return;
     }
 
-    const damageMult = 1 + this.game.traitHelper.traitLevelValue(user, 'StrongSweep');
+    const damageMult =
+      1 + this.game.traitHelper.traitLevelValue(user, 'StrongSweep');
 
     foundTargets.forEach((chosenTarget, i) => {
-      this.game.combatHelper.physicalAttack(user, chosenTarget,
-        { ...opts, isKick: true, damageMult, numAttacks: foundTargets.length, attackNum: i }
-      );
+      this.game.combatHelper.physicalAttack(user, chosenTarget, {
+        ...opts,
+        isKick: true,
+        damageMult,
+        numAttacks: foundTargets.length,
+        attackNum: i,
+      });
     });
 
     const defensePenalty = 25;
     if (defensePenalty > 0) {
-      this.game.effectHelper.addEffect(user, user, 'LoweredDefenses', { effect: { extra: { potency: defensePenalty } } });
+      this.game.effectHelper.addEffect(user, user, 'LoweredDefenses', {
+        effect: { extra: { potency: defensePenalty } },
+      });
     }
-
-
   }
-
 }
