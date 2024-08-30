@@ -110,7 +110,7 @@ export class SpellManager extends BaseService {
     );
 
     if (spellData.spellMeta.useSkillAsPotency) {
-      return baseSkillValue * this.getPotencyMultiplier(spellData);
+      return Math.floor(baseSkillValue * this.getPotencyMultiplier(spellData));
     }
 
     const baseStat = this.game.characterHelper.getStat(
