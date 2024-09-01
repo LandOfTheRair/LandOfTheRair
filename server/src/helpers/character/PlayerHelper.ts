@@ -211,56 +211,43 @@ export class PlayerHelper extends BaseService {
     baseClass: BaseClass,
     recalculateAfterTrait = true,
   ) {
-    const maxMP: Record<BaseClass, number> =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'creation.baseMP',
-      ) ?? {
-        [BaseClass.Healer]: 50,
-        [BaseClass.Mage]: 70,
-        [BaseClass.Arcanist]: 30,
-        [BaseClass.Warrior]: 100,
-        [BaseClass.Thief]: 100,
-        [BaseClass.Traveller]: 0,
-      };
+    const maxMP = this.game.contentManager.getClassConfigSetting<'baseMP'>(
+      player.baseClass,
+      'baseMP',
+    );
 
     player.baseClass = baseClass;
-    player.mp.maximum = maxMP[baseClass];
-    player.stats.mp = maxMP[baseClass];
+    player.mp.maximum = maxMP;
+    player.stats.mp = maxMP;
 
-    player.mp.current = maxMP[baseClass];
+    player.mp.current = 0;
 
-    if (baseClass === BaseClass.Warrior) {
-      player.mp.current = 0;
-    }
+    const learnTrait =
+      this.game.contentManager.getClassConfigSetting<'learnedTrait'>(
+        player.baseClass,
+        'learnedTrait',
+      );
 
-    const learnTrait: Record<BaseClass, string> =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'creation.learnedTraits',
-      ) ?? {
-        [BaseClass.Healer]: 'Afflict',
-        [BaseClass.Mage]: 'MagicMissile',
-        [BaseClass.Warrior]: 'Cleave',
-        [BaseClass.Thief]: 'ImprovedHide',
-        [BaseClass.Arcanist]: '',
-        [BaseClass.Traveller]: '',
-      };
-
-    if (learnTrait[player.baseClass]) {
+    if (learnTrait) {
       this.game.traitHelper.learnTrait(
         player,
-        learnTrait[player.baseClass],
+        learnTrait,
         recalculateAfterTrait,
       );
     }
 
-    if (baseClass === BaseClass.Healer) {
+    const castSkill =
+      this.game.contentManager.getClassConfigSetting<'castSkill'>(
+        player.baseClass,
+        'castSkill',
+      );
+
+    if (castSkill === Skill.Restoration) {
       player.skills[Skill.Restoration] =
         this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
     }
 
-    if (baseClass === BaseClass.Mage) {
+    if (castSkill === Skill.Conjuration) {
       player.skills[Skill.Conjuration] =
         this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
     }
@@ -766,213 +753,45 @@ export class PlayerHelper extends BaseService {
   // gain stats for leveling up
   public gainLevelStats(player: IPlayer): void {
     const con = this.game.characterHelper.getStat(player, Stat.CON);
-    const wis = this.game.characterHelper.getStat(player, Stat.WIS);
-    const int = this.game.characterHelper.getStat(player, Stat.INT);
 
-    const classStats: Record<BaseClass, () => void> = {
-      [BaseClass.Traveller]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Traveller.hp',
-        );
+    const { hp, mp } =
+      this.game.contentManager.getClassConfigSetting<'levelup'>(
+        player.baseClass,
+        'levelup',
+      );
 
-        const hpGained = Math.floor(
-          random(
-            base ?? 2,
-            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 2),
-          ) +
-            con / (bonusConDivisor ?? 2),
-        );
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
+    const hpGained = Math.floor(
+      random(
+        hp.base,
+        (hp.randomConBonusMultiplier * con) / hp.randomConDivisor,
+      ) +
+        con / (hp.bonusConDivisor ?? 2),
+    );
 
-        this.game.messageHelper.sendSimpleMessage(
-          player,
-          `You gained ${hpGained} max HP!`,
-        );
-      },
+    if (hpGained > 0) {
+      this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
 
-      [BaseClass.Warrior]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Warrior.hp',
-        );
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        `You gained ${hpGained} max HP!`,
+      );
+    }
 
-        const hpGained = Math.floor(
-          random(
-            base ?? 1,
-            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 2),
-          ) +
-            con / (bonusConDivisor ?? 2),
-        );
+    const mpGainStat = this.game.characterHelper.getStat(player, mp.statUsed);
 
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
-      },
+    const mpGained = Math.floor(
+      random(mp.base, mpGainStat * mp.randomMultiplier) +
+        mpGainStat / mp.randomDivisor,
+    );
 
-      [BaseClass.Thief]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Thief.hp',
-        );
+    if (mpGained > 0 && mp.base > 0) {
+      this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
 
-        const hpGained = Math.floor(
-          random(
-            base ?? 2,
-            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
-          ) +
-            con / (bonusConDivisor ?? 2),
-        );
-
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
-
-        this.game.messageHelper.sendSimpleMessage(
-          player,
-          `You gained ${hpGained} max HP!`,
-        );
-      },
-
-      [BaseClass.Healer]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Healer.hp',
-        );
-
-        const hpGained = Math.floor(
-          random(
-            base ?? 3,
-            ((randomConBonusMultiplier ?? 3) * con) / (randomConDivisor ?? 5),
-          ) +
-            con / (bonusConDivisor ?? 3),
-        );
-
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
-
-        const {
-          base: baseMP,
-          randomMultiplier,
-          randomDivisor,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Healer.mp',
-        );
-
-        const mpGained = Math.floor(
-          random(baseMP ?? 1, wis * (randomMultiplier ?? 1)) +
-            wis / (randomDivisor ?? 3),
-        );
-        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
-
-        this.game.messageHelper.sendSimpleMessage(
-          player,
-          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
-        );
-      },
-
-      [BaseClass.Mage]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Mage.hp',
-        );
-
-        const hpGained = Math.floor(
-          random(
-            base ?? 1,
-            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
-          ) +
-            con / (bonusConDivisor ?? 1),
-        );
-
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
-
-        const {
-          base: baseMP,
-          randomMultiplier,
-          randomDivisor,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Mage.mp',
-        );
-
-        const mpGained = Math.floor(
-          random(baseMP ?? 2, int * (randomMultiplier ?? 2)) +
-            int / (randomDivisor ?? 5),
-        );
-        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
-
-        this.game.messageHelper.sendSimpleMessage(
-          player,
-          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
-        );
-      },
-
-      [BaseClass.Arcanist]: () => {
-        const {
-          base,
-          randomConDivisor,
-          bonusConDivisor,
-          randomConBonusMultiplier,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Arcanist.hp',
-        );
-
-        const hpGained = Math.floor(
-          random(
-            base ?? 1,
-            ((randomConBonusMultiplier ?? 1) * con) / (randomConDivisor ?? 1),
-          ) +
-            con / (bonusConDivisor ?? 1),
-        );
-
-        this.game.characterHelper.gainPermanentStat(player, Stat.HP, hpGained);
-
-        const {
-          base: baseMP,
-          randomMultiplier,
-          randomDivisor,
-        } = this.game.contentManager.getGameSetting(
-          'character',
-          'levelup.Arcanist.mp',
-        );
-
-        const mpGained = Math.floor(
-          random(baseMP ?? 2, int * (randomMultiplier ?? 2)) +
-            int / (randomDivisor ?? 5),
-        );
-        this.game.characterHelper.gainPermanentStat(player, Stat.MP, mpGained);
-
-        this.game.messageHelper.sendSimpleMessage(
-          player,
-          `You gained ${hpGained} max HP and ${mpGained} max MP!`,
-        );
-      },
-    };
-
-    classStats[player.baseClass]();
+      this.game.messageHelper.sendSimpleMessage(
+        player,
+        `You gained ${mpGained} max MP!`,
+      );
+    }
 
     this.game.characterHelper.recalculateEverything(player);
   }

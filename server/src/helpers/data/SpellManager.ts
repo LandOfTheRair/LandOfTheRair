@@ -2,7 +2,6 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
 import {
-  BaseClass,
   BaseSpell,
   DamageClass,
   ICharacter,
@@ -75,19 +74,16 @@ export class SpellManager extends BaseService {
   ): number {
     if (!caster) return 1;
 
-    const skills: Record<BaseClass, Skill | undefined> = {
-      [BaseClass.Healer]: Skill.Restoration,
-      [BaseClass.Mage]: Skill.Conjuration,
-      [BaseClass.Arcanist]: Skill.Conjuration,
-      [BaseClass.Thief]: Skill.Thievery,
-      [BaseClass.Traveller]: undefined,
-      [BaseClass.Warrior]: undefined,
-    };
+    const castSkill =
+      this.game.contentManager.getClassConfigSetting<'castSkill'>(
+        caster.baseClass,
+        'castSkill',
+      );
 
     const isStatic = spellData.spellMeta?.staticPotency;
 
-    let skillsToAverage: Skill[] = [skills[caster.baseClass]] as Skill[];
-    if (!skills[caster.baseClass]) {
+    let skillsToAverage: Skill[] = [castSkill] as Skill[];
+    if (!castSkill) {
       if (caster.items.equipment[ItemSlot.RightHand]) {
         const { type, secondaryType } = this.game.itemHelper.getItemProperties(
           caster.items.equipment[ItemSlot.RightHand],
@@ -173,14 +169,11 @@ export class SpellManager extends BaseService {
 
   // gain skill for casting a spell
   private gainSkill(caster: ICharacter, spellData: ISpellData): void {
-    const skills = {
-      [BaseClass.Healer]: Skill.Restoration,
-      [BaseClass.Mage]: Skill.Conjuration,
-      [BaseClass.Arcanist]: Skill.Conjuration,
-      [BaseClass.Thief]: Skill.Thievery,
-    };
-
-    const skillGain = skills[caster.baseClass];
+    const skillGain =
+      this.game.contentManager.getClassConfigSetting<'castSkill'>(
+        caster.baseClass,
+        'castSkill',
+      );
     if (!skillGain) return;
 
     const skillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(

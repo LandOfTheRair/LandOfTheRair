@@ -264,13 +264,7 @@ export class RNGDungeonNPCGenerator {
       npc.hp.max = this.challengeData.global.stats.hp[level].max * multiplier;
     }
 
-    if (
-      npc.mp &&
-      def.baseClass &&
-      [BaseClass.Healer, BaseClass.Mage, BaseClass.Arcanist].includes(
-        def.baseClass,
-      )
-    ) {
+    if (npc.mp && def.baseClass && npc.mp.min > 0) {
       // we can use hp mult here because it is so invisible, it doesn't really matter
       const multiplier = def.isLegendary
         ? this.mapMeta.creatureProps.hpMultiplierLegendary

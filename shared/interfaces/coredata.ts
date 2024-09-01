@@ -82,6 +82,7 @@ export interface ClassLevelup {
   };
 
   mp: {
+    statUsed: Stat;
     base: number;
     randomMultiplier: number;
     randomDivisor: number;
@@ -93,6 +94,7 @@ export interface ClassConfig {
   usesMana: boolean;
   castStat: Stat;
   castSkill: Skill;
+  canBeEncumbered: boolean;
   castResource: 'MP' | 'HP' | 'Rage';
   learnedTrait: string;
   noFateTraits: string[];

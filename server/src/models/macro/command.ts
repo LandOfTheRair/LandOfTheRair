@@ -2,7 +2,6 @@ import { isNumber } from 'lodash';
 
 import { Game } from '../../helpers';
 import {
-  BaseClass,
   Direction,
   directionFromText,
   directionToOffset,
@@ -108,31 +107,27 @@ export abstract class SkillCommand extends MacroCommand {
 
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
-    const extraMsg: Record<BaseClass, string> = {
-      [BaseClass.Healer]: 'MP',
-      [BaseClass.Mage]: 'MP',
-      [BaseClass.Arcanist]: 'MP',
-      [BaseClass.Thief]: 'HP',
-      [BaseClass.Warrior]: 'Rage',
-      [BaseClass.Traveller]: 'MP',
-    };
+    const extraMsg =
+      this.game.contentManager.getClassConfigSetting<'castResource'>(
+        user.baseClass,
+        'castResource',
+      );
 
-    if (user.baseClass === BaseClass.Thief) {
+    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+      user.baseClass,
+      'usesMana',
+    );
+
+    if (!usesMana) {
       if (user.hp.current <= mpCost) {
-        this.sendMessage(
-          user,
-          `You do not have enough ${extraMsg[user.baseClass]}!`,
-        );
+        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
         return false;
       }
 
       this.game.characterHelper.damage(user, mpCost);
     } else if (mpCost > 0) {
       if (user.mp.current < mpCost) {
-        this.sendMessage(
-          user,
-          `You do not have enough ${extraMsg[user.baseClass]}!`,
-        );
+        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
         return false;
       }
 

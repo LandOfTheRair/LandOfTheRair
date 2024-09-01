@@ -95,16 +95,10 @@ export class CharacterHelper extends BaseService {
 
   // get the primary spell casting stat for a character
   public castStat(char: ICharacter): Stat {
-    const stats: Record<BaseClass, Stat> = {
-      [BaseClass.Healer]: Stat.WIS,
-      [BaseClass.Mage]: Stat.INT,
-      [BaseClass.Thief]: Stat.INT,
-      [BaseClass.Warrior]: Stat.STR,
-      [BaseClass.Traveller]: Stat.LUK,
-      [BaseClass.Arcanist]: Stat.INT,
-    };
-
-    return stats[char.baseClass];
+    return this.game.contentManager.getClassConfigSetting<'castStat'>(
+      char.baseClass,
+      'castStat',
+    );
   }
 
   // check if this player is holding something
@@ -367,9 +361,11 @@ export class CharacterHelper extends BaseService {
     stat: Stat,
     value = 1,
   ): boolean {
+    const cleanValue = this.game.userInputHelper.cleanNumber(value, 0);
+
     // hp/mp always go up with no limit
     if (stat === Stat.HP || stat === Stat.MP) {
-      character.stats[stat] = (character.stats[stat] ?? 1) + value;
+      character.stats[stat] = (character.stats[stat] ?? 1) + cleanValue;
       return true;
     }
 
@@ -378,10 +374,10 @@ export class CharacterHelper extends BaseService {
     const hardBaseCap = this.game.configManager.MAX_STATS;
 
     // cannot exceed the hard cap
-    if (curStat + value > hardBaseCap) return false;
+    if (curStat + cleanValue > hardBaseCap) return false;
 
     // but if we're under it, we boost
-    character.stats[stat] = (character.stats[stat] ?? 1) + value;
+    character.stats[stat] = (character.stats[stat] ?? 1) + cleanValue;
 
     // recalculate stats
     this.calculateStatTotals(character);
@@ -432,12 +428,14 @@ export class CharacterHelper extends BaseService {
     // only players can be encumbered
     if (!this.isPlayer(character)) return;
 
-    // warrior, healer, traveller can wear heavy armor
-    if (
-      [BaseClass.Warrior, BaseClass.Healer, BaseClass.Traveller].includes(
+    const canBeEncumbered =
+      this.game.contentManager.getClassConfigSetting<'canBeEncumbered'>(
         character.baseClass,
-      )
-    ) {
+        'canBeEncumbered',
+      );
+
+    // some classes can wear heavy armor
+    if (!canBeEncumbered) {
       return;
     }
 

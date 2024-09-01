@@ -155,21 +155,13 @@ export class TrainerBehavior implements IAIBehavior {
         const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
-        const ignores: Record<BaseClass, Skill[]> = {
-          [BaseClass.Warrior]: [
-            Skill.Wand,
-            Skill.Restoration,
-            Skill.Thievery,
-            Skill.Conjuration,
-          ],
-          [BaseClass.Mage]: [Skill.Restoration, Skill.Thievery],
-          [BaseClass.Arcanist]: [Skill.Restoration, Skill.Thievery],
-          [BaseClass.Healer]: [Skill.Thievery, Skill.Conjuration],
-          [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
-          [BaseClass.Traveller]: [],
-        };
+        const ignores =
+          game.contentManager.getClassConfigSetting<'noTrainSkills'>(
+            player.baseClass,
+            'noTrainSkills',
+          );
 
-        if ((ignores[behavior.joinClass] || []).includes(skill)) {
+        if ((ignores || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
         }
 
@@ -210,19 +202,13 @@ export class TrainerBehavior implements IAIBehavior {
         const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
-        const ignores = {
-          [BaseClass.Warrior]: [
-            Skill.Wand,
-            Skill.Restoration,
-            Skill.Conjuration,
-          ],
-          [BaseClass.Mage]: [Skill.Restoration],
-          [BaseClass.Arcanist]: [Skill.Restoration],
-          [BaseClass.Healer]: [Skill.Conjuration],
-          [BaseClass.Thief]: [Skill.Wand, Skill.Restoration, Skill.Conjuration],
-        };
+        const ignores =
+          game.contentManager.getClassConfigSetting<'noTrainSkills'>(
+            player.baseClass,
+            'noTrainSkills',
+          );
 
-        if ((ignores[behavior.joinClass] || []).includes(skill)) {
+        if ((ignores || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
         }
 

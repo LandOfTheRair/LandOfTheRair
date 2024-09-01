@@ -2,7 +2,6 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
-  BaseClass,
   distanceFrom,
   GameServerResponse,
   IAIBehavior,
@@ -16,16 +15,6 @@ import {
 
 export class HPDocBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
-    const hpTiers: Record<BaseClass, number[]> =
-      game.contentManager.getGameSetting('npcscript', 'hpdoc.values') ?? {
-        [BaseClass.Mage]: [100, 375, 600, 2400],
-        [BaseClass.Arcanist]: [50, 250, 400, 1800],
-        [BaseClass.Thief]: [100, 425, 700, 2800],
-        [BaseClass.Healer]: [100, 400, 650, 2600],
-        [BaseClass.Warrior]: [100, 450, 800, 3000],
-        [BaseClass.Traveller]: [100, 600, 550, 2200],
-      };
-
     const levelTiers = game.contentManager.getGameSetting(
       'npcscript',
       'hpdoc.levels',
@@ -94,10 +83,15 @@ export class HPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
-        if (!hpTiers[player.baseClass]) return 'Unsure how help!';
+        const hpTiers = game.contentManager.getClassConfigSetting<'hpMaxes'>(
+          player.baseClass,
+          'hpMaxes',
+        );
+
+        if (!hpTiers) return 'Unsure how help!';
 
         const playerBaseHp = game.characterHelper.getBaseStat(player, Stat.HP);
-        const maxHpForTier = hpTiers[player.baseClass][tier];
+        const maxHpForTier = hpTiers[tier];
         if (playerBaseHp > maxHpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];

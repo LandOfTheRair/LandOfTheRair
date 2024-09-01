@@ -1,5 +1,4 @@
 import {
-  BaseClass,
   Currency,
   ICharacter,
   IPlayer,
@@ -174,14 +173,18 @@ export class Fate extends Spell {
         caster,
         learnSpell,
       );
+
+      const noFateTraits =
+        this.game.contentManager.getClassConfigSetting<'noFateTraits'>(
+          player.baseClass,
+          'noFateTraits',
+        );
+
       if (
         learnState === LearnedSpell.FromFate ||
         learnState === LearnedSpell.FromTraits ||
-        (learnSpell === 'Succor' && caster.baseClass === BaseClass.Healer) ||
-        (learnSpell === 'Identify' &&
-          [BaseClass.Thief, BaseClass.Mage, BaseClass.Arcanist].includes(
-            caster.baseClass,
-          ))
+        (learnSpell === 'Succor' && noFateTraits.includes('Succor')) ||
+        (learnSpell === 'Identify' && noFateTraits.includes('Identify'))
       ) {
         message =
           'You feel a magical energy encompass you for a moment, then it fades.';

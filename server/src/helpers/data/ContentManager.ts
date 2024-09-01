@@ -319,13 +319,16 @@ export class ContentManager extends BaseService {
     return this.events[name];
   }
 
-  public getClassConfigSetting(baseClass: BaseClass, key: keyof ClassConfig) {
+  public getClassConfigSetting<T extends keyof ClassConfig>(
+    baseClass: BaseClass,
+    key: keyof ClassConfig,
+  ): ClassConfig[T] {
     const ret = this.settings.classConfig[baseClass][key];
     if (isUndefined(ret)) {
       throw new Error(`Class config key ${baseClass}->${key} was undefined.`);
     }
 
-    return ret;
+    return ret as ClassConfig[T];
   }
 
   public getGameSetting(name: keyof IGameSettings, subKey?: string): any {

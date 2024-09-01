@@ -2,7 +2,6 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
-  BaseClass,
   distanceFrom,
   GameServerResponse,
   IAIBehavior,
@@ -16,16 +15,6 @@ import {
 
 export class MPDocBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IMPDocBehavior) {
-    const mpTiers: Record<BaseClass, number[]> =
-      game.contentManager.getGameSetting('npcscript', 'mpdoc.values') ?? {
-        [BaseClass.Mage]: [0, 0, 1000, 2000],
-        [BaseClass.Arcanist]: [0, 0, 500, 1000],
-        [BaseClass.Thief]: [0, 0, 300, 500],
-        [BaseClass.Healer]: [0, 0, 900, 1800],
-        [BaseClass.Warrior]: [0, 0, 200, 400],
-        [BaseClass.Traveller]: [0, 0, 0, 0],
-      };
-
     const levelTiers = game.contentManager.getGameSetting(
       'npcscript',
       'mpdoc.levels',
@@ -94,10 +83,15 @@ export class MPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
-        if (!mpTiers[player.baseClass]) return 'Unsure how help!';
+        const mpTiers = game.contentManager.getClassConfigSetting<'mpMaxes'>(
+          player.baseClass,
+          'mpMaxes',
+        );
+
+        if (!mpTiers) return 'Unsure how help!';
 
         const playerBaseMp = game.characterHelper.getBaseStat(player, Stat.MP);
-        const maxMpForTier = mpTiers[player.baseClass][tier];
+        const maxMpForTier = mpTiers[tier];
         if (playerBaseMp > maxMpForTier) return 'Too powerful! No help!';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
