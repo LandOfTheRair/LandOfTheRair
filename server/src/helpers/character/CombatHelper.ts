@@ -3,7 +3,6 @@ import { isNumber, sample } from 'lodash';
 
 import {
   Allegiance,
-  BaseClass,
   CombatEffect,
   DamageArgs,
   DamageClass,
@@ -52,7 +51,13 @@ export class CombatHelper extends BaseService {
   ): PhysicalAttackReturn {
     const res = this.physical.physicalAttack(attacker, defender, args);
 
-    if (attacker.baseClass === BaseClass.Warrior) {
+    const gainsManaOnHitOrDodge =
+      this.game.contentManager.getClassConfigSetting<'gainsManaOnHitOrDodge'>(
+        attacker.baseClass,
+        'gainsManaOnHitOrDodge',
+      );
+
+    if (gainsManaOnHitOrDodge) {
       if (res.block || res.dodge) {
         this.game.characterHelper.mana(
           attacker,

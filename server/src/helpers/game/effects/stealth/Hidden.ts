@@ -1,18 +1,27 @@
-import { BaseClass, ICharacter, IPlayer, IStatusEffect, Skill, Stat } from '../../../../interfaces';
+import {
+  ICharacter,
+  IPlayer,
+  IStatusEffect,
+  Skill,
+  Stat,
+} from '../../../../interfaces';
 import { Effect } from '../../../../models';
 
 export class Hidden extends Effect {
-
   private breakHide(char: ICharacter) {
     this.game.effectHelper.removeEffectByName(char, 'Hidden');
   }
 
   override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = this.game.characterHelper.getStealth(char);
-    effect.effectInfo.statChanges = { [Stat.Stealth]: effect.effectInfo.potency };
+    effect.effectInfo.statChanges = {
+      [Stat.Stealth]: effect.effectInfo.potency,
+    };
 
     const mult = this.game.traitHelper.traitLevelValue(char, 'HiddenHealing');
-    effect.effectInfo.statChanges[Stat.HPRegen] = Math.floor(effect.effectInfo.potency * mult);
+    effect.effectInfo.statChanges[Stat.HPRegen] = Math.floor(
+      effect.effectInfo.potency * mult,
+    );
   }
 
   // update everyone in sight so they can't see us (maybe)
@@ -26,24 +35,43 @@ export class Hidden extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
+    const requiresMPToHide =
+      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
+        char.baseClass,
+        'requiresMPToHide',
+      );
+
     // thieves have to use their stealth bar
-    if (char.baseClass === BaseClass.Thief) {
+    if (requiresMPToHide) {
       const state = this.game.worldManager.getMap(char.map)?.state;
       if (!state) return;
 
       // tick operates on mp5
       if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
-        const numHostile = state.getAllHostilesWithoutVisibilityToInFOV(char, 4);
+        const numHostile = state.getAllHostilesWithoutVisibilityToInFOV(
+          char,
+          4,
+        );
         if (numHostile.length === 0) {
           this.game.characterHelper.mana(char, 1);
           return;
         }
 
-        const hostileReduction = this.game.traitHelper.traitLevelValue(char, 'ImprovedHide');
-        const totalReduction = Math.max(1, numHostile.length - hostileReduction);
+        const hostileReduction = this.game.traitHelper.traitLevelValue(
+          char,
+          'ImprovedHide',
+        );
+        const totalReduction = Math.max(
+          1,
+          numHostile.length - hostileReduction,
+        );
 
         if (this.game.characterHelper.isPlayer(char)) {
-          this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
+          this.game.playerHelper.tryGainSkill(
+            char as IPlayer,
+            Skill.Thievery,
+            1,
+          );
         }
 
         this.game.characterHelper.manaDamage(char, totalReduction);
@@ -66,5 +94,4 @@ export class Hidden extends Effect {
 
     state.triggerPlayerUpdateInRadius(char.x, char.y);
   }
-
 }

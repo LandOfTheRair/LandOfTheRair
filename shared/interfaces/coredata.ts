@@ -96,6 +96,18 @@ export interface ClassConfig {
   castSkill: Skill;
   canBeEncumbered: boolean;
   castResource: 'MP' | 'HP' | 'Rage';
+  regensLikeThief: boolean;
+  regensLikeWarrior: boolean;
+  hasStealthBonus: boolean;
+  hasPerceptionBonus: boolean;
+  gainsManaOnHitOrDodge: boolean;
+  canLockpick: boolean;
+  hasStealBonus: boolean;
+  requiresMPToHide: boolean;
+  canGainMPFromIntPots: boolean;
+  canGainMPFromWisPots: boolean;
+  gainsSkillFromSinging: boolean;
+  canAppraiseWhileIdentifying: boolean;
   learnedTrait: string;
   noFateTraits: string[];
   noTrainSkills: Skill[];

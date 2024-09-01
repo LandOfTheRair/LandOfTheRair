@@ -3,7 +3,6 @@ import { clamp, random } from 'lodash';
 
 import {
   Allegiance,
-  BaseClass,
   EquipHash,
   GivesBonusInHandItemClasses,
   Hostility,
@@ -21,8 +20,6 @@ import {
 import { BaseService } from '../../models/BaseService';
 
 import { Player } from '../../models';
-
-import { isMPClass } from '../../../../shared/functions';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
@@ -830,8 +827,13 @@ export class CharacterHelper extends BaseService {
     const base = this.getStat(character, Stat.MPRegen);
     let boost = 0;
 
+    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+      character.baseClass,
+      'usesMana',
+    );
+
     // healers and mages get a boost because their primary function is spellcasting
-    if (isMPClass(character.baseClass)) {
+    if (usesMana) {
       boost =
         this.game.contentManager.getGameSetting(
           'character',
@@ -839,8 +841,14 @@ export class CharacterHelper extends BaseService {
         ) ?? 10;
     }
 
+    const regensLikeThief =
+      this.game.contentManager.getClassConfigSetting<'regensLikeThief'>(
+        character.baseClass,
+        'regensLikeThief',
+      );
+
     // thieves not in combat regen faster
-    if (character.baseClass === BaseClass.Thief) {
+    if (regensLikeThief) {
       boost = Math.max(
         0,
         Math.floor(
@@ -875,8 +883,14 @@ export class CharacterHelper extends BaseService {
       );
     }
 
+    const regensLikeWarrior =
+      this.game.contentManager.getClassConfigSetting<'regensLikeWarrior'>(
+        character.baseClass,
+        'regensLikeWarrior',
+      );
+
     // warriors are the inverse of thieves
-    if (character.baseClass === BaseClass.Warrior) {
+    if (regensLikeWarrior) {
       if (character.combatTicks <= 0) {
         return (
           this.game.contentManager.getGameSetting(
@@ -902,7 +916,14 @@ export class CharacterHelper extends BaseService {
       this.getSkillLevel(char, Skill.Thievery) +
       char.level +
       this.getStat(char, Stat.AGI);
-    if (char.baseClass === BaseClass.Thief) {
+
+    const hasStealthBonus =
+      this.game.contentManager.getClassConfigSetting<'hasStealthBonus'>(
+        char.baseClass,
+        'hasStealthBonus',
+      );
+
+    if (hasStealthBonus) {
       stealth *=
         this.game.contentManager.getGameSetting(
           'character',
@@ -954,7 +975,14 @@ export class CharacterHelper extends BaseService {
       this.getStat(char, Stat.Perception) +
       char.level +
       this.getStat(char, Stat.WIS);
-    if (char.baseClass === BaseClass.Thief) perception *= 1.5;
+
+    const hasPerceptionBonus =
+      this.game.contentManager.getClassConfigSetting<'hasPerceptionBonus'>(
+        char.baseClass,
+        'hasPerceptionBonus',
+      );
+
+    if (hasPerceptionBonus) perception *= 1.5;
 
     return perception;
   }

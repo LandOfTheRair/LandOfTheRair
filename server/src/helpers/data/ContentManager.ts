@@ -321,7 +321,7 @@ export class ContentManager extends BaseService {
 
   public getClassConfigSetting<T extends keyof ClassConfig>(
     baseClass: BaseClass,
-    key: keyof ClassConfig,
+    key: T,
   ): ClassConfig[T] {
     const ret = this.settings.classConfig[baseClass][key];
     if (isUndefined(ret)) {

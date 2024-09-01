@@ -1,19 +1,22 @@
-
 import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { Allegiance, BaseClass, FOVVisibility, ICharacter, INPC, IPlayer, Stat } from '../../interfaces';
+import {
+  Allegiance,
+  FOVVisibility,
+  ICharacter,
+  INPC,
+  IPlayer,
+  Stat,
+} from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data/WorldManager';
 
 @Injectable()
 export class VisibilityHelper extends BaseService {
-
-  constructor(
-    private worldManager: WorldManager
-  ) {
+  constructor(private worldManager: WorldManager) {
     super();
   }
 
@@ -30,7 +33,6 @@ export class VisibilityHelper extends BaseService {
 
   // calculate a fov for a character and set it
   calculateFOV(character: ICharacter): void {
-
     const map = this.worldManager.getMap(character.map)?.map;
     if (!map) return;
 
@@ -39,35 +41,63 @@ export class VisibilityHelper extends BaseService {
     const dist = 4;
 
     // blind OR dark and no darkvision
-    if (this.game.effectHelper.hasEffect(character, 'Blind')
-    || (this.isDarkAt(character.map, character.x, character.y) && !this.game.effectHelper.hasEffect(character, 'DarkVision'))) {
+    if (
+      this.game.effectHelper.hasEffect(character, 'Blind') ||
+      (this.isDarkAt(character.map, character.x, character.y) &&
+        !this.game.effectHelper.hasEffect(character, 'DarkVision'))
+    ) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
         for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
-          setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CantSee, Object);
+          setWith(
+            affected,
+            [xx - character.x, yy - character.y],
+            FOVVisibility.CantSee,
+            Object,
+          );
         }
       }
 
-    // no dark, calculate fov
+      // no dark, calculate fov
     } else {
       map.fovCalculator.compute(
-        character.x, character.y, dist,
-        (x, y) => get(affected, [x - character.x, y - character.y]) >= FOVVisibility.CanSee,
+        character.x,
+        character.y,
+        dist,
+        (x, y) =>
+          get(affected, [x - character.x, y - character.y]) >=
+          FOVVisibility.CanSee,
         (x, y) => {
-          if (this.isDarkAt(character.map, x, y)
-          && this.game.effectHelper.hasEffect(character, 'DarkVision')) {
-            setWith(affected, [x - character.x, y - character.y], FOVVisibility.CanSeeButDark, Object);
-
+          if (
+            this.isDarkAt(character.map, x, y) &&
+            this.game.effectHelper.hasEffect(character, 'DarkVision')
+          ) {
+            setWith(
+              affected,
+              [x - character.x, y - character.y],
+              FOVVisibility.CanSeeButDark,
+              Object,
+            );
           } else {
-            setWith(affected, [x - character.x, y - character.y], FOVVisibility.CanSee, Object);
+            setWith(
+              affected,
+              [x - character.x, y - character.y],
+              FOVVisibility.CanSee,
+              Object,
+            );
           }
-        }
+        },
       );
 
       if (!this.game.effectHelper.hasEffect(character, 'DarkVision')) {
         for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
           for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
             if (!this.isDarkAt(character.map, xx, yy)) continue;
-            setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CantSee, Object);
+            setWith(
+              affected,
+              [xx - character.x, yy - character.y],
+              FOVVisibility.CantSee,
+              Object,
+            );
           }
         }
       }
@@ -76,13 +106,17 @@ export class VisibilityHelper extends BaseService {
     if (this.game.effectHelper.hasEffect(character, 'WallSight')) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
         for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
-          setWith(affected, [xx - character.x, yy - character.y], FOVVisibility.CanSee, Object);
+          setWith(
+            affected,
+            [xx - character.x, yy - character.y],
+            FOVVisibility.CanSee,
+            Object,
+          );
         }
       }
     }
 
     character.fov = affected;
-
   }
 
   // whether or not someone can see a spot in their FOV
@@ -109,22 +143,44 @@ export class VisibilityHelper extends BaseService {
   public canHide(char: ICharacter): boolean {
     if (this.game.effectHelper.hasEffect(char, 'Revealed')) return false;
     if (this.game.effectHelper.hasEffect(char, 'Hidden')) return false;
-    if (this.game.effectHelper.hasEffect(char, 'Singing') && !this.game.traitHelper.traitLevel(char, 'Shadowsong')) return false;
+    if (
+      this.game.effectHelper.hasEffect(char, 'Singing') &&
+      !this.game.traitHelper.traitLevel(char, 'Shadowsong')
+    ) {
+      return false;
+    }
 
-    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return false;
+    const requiresMPToHide =
+      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
+        char.baseClass,
+        'requiresMPToHide',
+      );
+
+    if (requiresMPToHide && char.mp.current <= 0) return false;
 
     if (!this.canContinueHidingAtSpot(char)) return false;
 
     return true;
-
   }
 
   // the reason you can't hide
   public reasonUnableToHide(char: ICharacter): string {
-    if (this.game.effectHelper.hasEffect(char, 'Revealed')) return 'You cannot hide right now!';
-    if (this.game.effectHelper.hasEffect(char, 'Hidden')) return 'You are already hidden!';
+    if (this.game.effectHelper.hasEffect(char, 'Revealed')) {
+      return 'You cannot hide right now!';
+    }
+    if (this.game.effectHelper.hasEffect(char, 'Hidden')) {
+      return 'You are already hidden!';
+    }
 
-    if (char.baseClass === BaseClass.Thief && char.mp.current <= 0) return 'You do not have the energy to hide!';
+    const requiresMPToHide =
+      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
+        char.baseClass,
+        'requiresMPToHide',
+      );
+
+    if (requiresMPToHide && char.mp.current <= 0) {
+      return 'You do not have the energy to hide!';
+    }
 
     if (!this.canContinueHidingAtSpot(char)) return 'You cannot hide here!';
 
@@ -133,27 +189,40 @@ export class VisibilityHelper extends BaseService {
 
   // whether or not someone can see through another characters potential stealth
   public canSeeThroughStealthOf(char: ICharacter, hiding: ICharacter): boolean {
-
     if (!char || !hiding) return false;
 
     // if the looker is a GM, they can see everything
     if (char.allegiance === Allegiance.GM) return true;
 
     // some creatures appear *only* for certain others (thanksgiving, etc)
-    if ((hiding as INPC).onlyVisibleTo && (hiding as INPC).onlyVisibleTo !== char.uuid) return false;
+    if (
+      (hiding as INPC).onlyVisibleTo &&
+      (hiding as INPC).onlyVisibleTo !== char.uuid
+    ) {
+      return false;
+    }
 
     // if in same party, they can always see each other
-    if ((hiding as IPlayer).partyName && (char as IPlayer).partyName === (hiding as IPlayer).partyName) return true;
+    if (
+      (hiding as IPlayer).partyName &&
+      (char as IPlayer).partyName === (hiding as IPlayer).partyName
+    ) {
+      return true;
+    }
 
     // if the hider is invisible and the seer does not have truesight, they are not visible
-    if (this.game.effectHelper.hasEffect(hiding, 'Invisibility') && !this.game.effectHelper.hasEffect(char, 'TrueSight')) return false;
+    if (
+      this.game.effectHelper.hasEffect(hiding, 'Invisibility') &&
+      !this.game.effectHelper.hasEffect(char, 'TrueSight')
+    ) {
+      return false;
+    }
 
     // nothing can see shadowmeld
     if (this.game.effectHelper.hasEffect(hiding, 'Shadowmeld')) return false;
 
     // last are stealth checks, if you have hidden it triggers the perception/stealth checks
     if (this.game.effectHelper.hasEffect(hiding, 'Hidden')) {
-
       // perception is simple: stats + level. thieves get a multiplier
       const perception = this.game.characterHelper.getPerception(char);
 
@@ -167,5 +236,4 @@ export class VisibilityHelper extends BaseService {
 
     return true;
   }
-
 }

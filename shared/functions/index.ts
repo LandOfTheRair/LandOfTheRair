@@ -1,4 +1,3 @@
-export * from './classes';
 export * from './direction';
 export * from './distance';
 export * from './exp';
