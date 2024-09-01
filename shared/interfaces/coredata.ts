@@ -1,5 +1,11 @@
 import { ISilverPerk } from './accountpremium';
-import { Allegiance, BaseClass, Currency, Stat } from './building-blocks';
+import {
+  Allegiance,
+  BaseClass,
+  Currency,
+  Skill,
+  Stat,
+} from './building-blocks';
 import { DynamicEventRarity } from './dynamicevent';
 
 export interface IWeaponTier {
@@ -82,10 +88,26 @@ export interface ClassLevelup {
   };
 }
 
+export interface ClassConfig {
+  baseMP: number;
+  usesMana: boolean;
+  castStat: Stat;
+  castSkill: Skill;
+  castResource: 'MP' | 'HP' | 'Rage';
+  learnedTrait: string;
+  noFateTraits: string[];
+  noTrainSkills: Skill[];
+  hpMaxes: [number, number, number, number];
+  mpMaxes: [number, number, number, number];
+  levelup: ClassLevelup;
+}
+
 export interface IGameSettings {
   auth: {
     verificationHourExpiration: number;
   };
+
+  classConfig: Record<BaseClass, ClassConfig>;
 
   character: {
     maxLevel: number;
@@ -120,11 +142,6 @@ export interface IGameSettings {
     stealSkillLower: number;
     stealSkillUpper: number;
     stealLevelRangeForSkillGain: number;
-
-    creation: {
-      baseMP: Record<BaseClass, number>;
-      learnedTraits: Record<BaseClass, string>;
-    };
 
     allClasses: BaseClass[];
 

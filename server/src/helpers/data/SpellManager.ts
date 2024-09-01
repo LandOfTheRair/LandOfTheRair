@@ -176,6 +176,7 @@ export class SpellManager extends BaseService {
     const skills = {
       [BaseClass.Healer]: Skill.Restoration,
       [BaseClass.Mage]: Skill.Conjuration,
+      [BaseClass.Arcanist]: Skill.Conjuration,
       [BaseClass.Thief]: Skill.Thievery,
     };
 
@@ -399,7 +400,7 @@ export class SpellManager extends BaseService {
     }
 
     // try to summon creatures if possible
-    if (creatureSummoned && target) {
+    if ((creatureSummoned?.length ?? 0) > 0 && target) {
       const spellEffInfo = spellRef.getOverrideEffectInfo(
         caster,
         caster,
