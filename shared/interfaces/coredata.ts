@@ -156,6 +156,7 @@ export interface IGameSettings {
     stealSkillLower: number;
     stealSkillUpper: number;
     stealLevelRangeForSkillGain: number;
+    vortexMaxItems: number;
 
     allClasses: BaseClass[];
 
