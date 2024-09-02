@@ -77,6 +77,11 @@ import { UserInputHelper } from './UserInputHelper';
 @Injectable()
 export class Game {
   private ticksElapsed = 0;
+  private isReady = false;
+
+  public get isGameReady() {
+    return this.isReady;
+  }
 
   public readonly gameEvents = new EventEmitter();
 
@@ -269,9 +274,16 @@ export class Game {
 
     this.setupEmergencyHandlers();
 
-    this.gameEvents.emit(GameEvent.GameStarted);
+    this.emit(GameEvent.GameStarted);
+
+    this.isReady = true;
 
     this.loop();
+  }
+
+  private emit(event: GameEvent): void {
+    this.logger.log('Game:Event', `Emitting: ${event}`);
+    this.gameEvents.emit(event);
   }
 
   private setupEmergencyHandlers() {

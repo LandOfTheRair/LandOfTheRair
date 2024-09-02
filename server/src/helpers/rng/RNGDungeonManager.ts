@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { IRNGDungeonMetaConfig } from '../../interfaces';
+import { GameEvent, IRNGDungeonMetaConfig } from '../../interfaces';
 import { Player } from '../../models';
 
 import { BaseService } from '../../models/BaseService';
@@ -10,7 +10,9 @@ export class RNGDungeonManager extends BaseService {
   private lastDungeonReset = '';
 
   public init(): void {
-    this.generateDungeons();
+    this.game.gameEvents.once(GameEvent.GameStarted, () => {
+      this.generateDungeons();
+    });
   }
 
   public tick(timer): void {

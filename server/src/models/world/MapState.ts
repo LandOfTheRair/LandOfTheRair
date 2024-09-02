@@ -129,9 +129,15 @@ export class MapState {
       dumpThreshold: 500,
     });
 
+    // for when the world is still loading
     this.game.gameEvents.once(GameEvent.GameStarted, () => {
       this.createSpawners();
     });
+
+    // if the world is already loaded
+    if (this.game.isGameReady) {
+      this.createSpawners();
+    }
 
     this.timer.dumpTimers();
   }
