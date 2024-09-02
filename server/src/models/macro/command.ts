@@ -250,7 +250,7 @@ export class SpellCommand extends SkillCommand {
     let cost = Math.max(targets.length, 1) * (spellData.mpCost ?? 0);
 
     // try to do arcane hunger
-    if (caster) {
+    if (caster && spellData.spellMeta.doesAttack) {
       const arcaneHunger = this.game.effectHelper.getEffect(
         caster,
         'ArcaneHunger',

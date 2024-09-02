@@ -136,13 +136,15 @@ export class SpellManager extends BaseService {
     retPotency *= maxMult;
     retPotency *= this.getPotencyMultiplier(spellData);
 
-    const arcaneHunger = this.game.effectHelper.getEffect(
-      caster,
-      'ArcaneHunger',
-    );
-    if (arcaneHunger) {
-      const charges = arcaneHunger.effectInfo.charges ?? 0;
-      retPotency += retPotency * (charges / 10);
+    if (spellData.spellMeta.doesAttack) {
+      const arcaneHunger = this.game.effectHelper.getEffect(
+        caster,
+        'ArcaneHunger',
+      );
+      if (arcaneHunger) {
+        const charges = arcaneHunger.effectInfo.charges ?? 0;
+        retPotency += retPotency * (charges / 10);
+      }
     }
 
     // encumberance cuts potency exactly in half
@@ -468,7 +470,7 @@ export class SpellManager extends BaseService {
     }
 
     // check for arcane hunger
-    if (caster) {
+    if (caster && spellData.spellMeta.doesAttack) {
       const arcaneHungerSet = this.game.traitHelper.traitLevelValue(
         caster,
         'ArcaneHunger',
@@ -479,8 +481,11 @@ export class SpellManager extends BaseService {
           caster,
           'ArcaneHunger',
         );
+
+        const arcaneHungerMax = 3 + Math.floor(caster.level / 4);
+
         const chargeSet = Math.min(
-          arcaneHungerSet,
+          arcaneHungerMax,
           1 + (existingEffect?.effectInfo.charges ?? 0),
         );
 
