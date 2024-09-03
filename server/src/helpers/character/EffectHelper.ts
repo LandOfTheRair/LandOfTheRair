@@ -2,22 +2,43 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { Allegiance, BuffType, DamageArgs, DeepPartial, ICharacter, IStatusEffect, IStatusEffectData, Stat } from '../../interfaces';
+import {
+  Allegiance,
+  BuffType,
+  DamageArgs,
+  DeepPartial,
+  ICharacter,
+  IStatusEffect,
+  IStatusEffectData,
+  Stat,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class EffectHelper extends BaseService {
-
   public init() {}
 
-  private formatEffectMessage(message: string, effectData: IStatusEffectData): string {
+  private formatEffectMessage(
+    message: string,
+    effectData: IStatusEffectData,
+  ): string {
+    const potency = Math.floor(effectData.effect.extra.potency ?? 0);
+    const potency5 = Math.floor(potency / 5);
+    const potency10 = Math.floor(potency / 10);
     return (message || '')
-      .split('%potency').join(effectData.effect.extra.potency?.toLocaleString());
+      .split('%potency10')
+      .join(potency10.toLocaleString())
+      .split('%potency5')
+      .join(potency5.toLocaleString())
+      .split('%potency')
+      .join(potency.toLocaleString());
   }
 
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
-    const effectData = this.game.effectManager.getEffectData(effect.effectRef || effect.effectName);
+    const effectData = this.game.effectManager.getEffectData(
+      effect.effectRef || effect.effectName,
+    );
     if (!effectData || !effectData.effectMeta.effectRef) return;
 
     this.game.effectManager.effectTick(effect.effectName, character, effect);
@@ -27,10 +48,10 @@ export class EffectHelper extends BaseService {
   public tickEffects(character: ICharacter): void {
     const now = Date.now();
 
-    Object.values(character.effects).forEach(effectContainer => {
+    Object.values(character.effects).forEach((effectContainer) => {
       if (!isArray(effectContainer)) return;
 
-      effectContainer.forEach(effect => {
+      effectContainer.forEach((effect) => {
         this.tickEffect(character, effect);
         if (effect.endsAt > now || effect.endsAt === -1) return;
 
@@ -44,22 +65,37 @@ export class EffectHelper extends BaseService {
     character: ICharacter,
     source: string | { name: string; uuid: string },
     effectName: string,
-    modifyEffectInfo: DeepPartial<IStatusEffectData> = {}
+    modifyEffectInfo: DeepPartial<IStatusEffectData> = {},
   ): void {
-    if (character.allegiance === Allegiance.NaturalResource && effectName !== 'Attribute') return;
+    if (
+      character.allegiance === Allegiance.NaturalResource &&
+      effectName !== 'Attribute'
+    ) {
+      return;
+    }
 
     if (!effectName) {
-      this.game.logger.error('EffectHelper:AddEffect', new Error('Attempting to create an undefined effect'));
+      this.game.logger.error(
+        'EffectHelper:AddEffect',
+        new Error('Attempting to create an undefined effect'),
+      );
       return;
     }
 
     const rawEffectData = this.game.effectManager.getEffectData(effectName);
     if (!rawEffectData) {
-      this.game.logger.error('EffectHelper:AddEffect', `Could not find an effect ${effectName}.`);
+      this.game.logger.error(
+        'EffectHelper:AddEffect',
+        `Could not find an effect ${effectName}.`,
+      );
       return;
     }
 
-    const effectData: IStatusEffectData = merge({}, rawEffectData, modifyEffectInfo);
+    const effectData: IStatusEffectData = merge(
+      {},
+      rawEffectData,
+      modifyEffectInfo,
+    );
     const { type, extra, duration } = effectData.effect;
     const { recentlyRef, noStack } = effectData.effectMeta;
 
@@ -75,42 +111,57 @@ export class EffectHelper extends BaseService {
 
     const effect: IStatusEffect = {
       uuid: uuid(),
-      tooltip: this.formatEffectMessage(effectData.tooltip.desc ?? 'No info.', effectData),
+      tooltip: this.formatEffectMessage(
+        effectData.tooltip.desc ?? 'No info.',
+        effectData,
+      ),
       effectName,
-      endsAt: duration === -1 ? -1 : Date.now() + (1000 * duration),
+      endsAt: duration === -1 ? -1 : Date.now() + 1000 * duration,
       effectInfo: extra || {},
       effectRef: effectData.effectMeta.effectRef || '',
-      sourceName: ''
+      sourceName: '',
     };
 
     if (effectData.effectMeta?.effectRef) {
-      effect.effectName = this.game.effectManager.getEffectName(character, effect);
+      effect.effectName = this.game.effectManager.getEffectName(
+        character,
+        effect,
+      );
     }
 
     // environments doing damage or effects would get this
     if (isString(source)) {
       effect.sourceName = source as string;
 
-    // but most of the time a friendly monster will be afflicting us with something
+      // but most of the time a friendly monster will be afflicting us with something
     } else {
       effect.sourceName = (source as ICharacter).name;
       effect.sourceUUID = (source as ICharacter).uuid;
-
     }
 
     if (type !== 'useonly') {
-
       // for now, we always overwrite when uniques and not worn
       // but still only one cast per target per caster (so you can't stack 6 poison on the same target)
-      const priorEffect = character.effects[type].find(e => e.effectName === effect.effectName
-                                                         && (effect.effectInfo.unique ? true : e.sourceUUID === effect.sourceUUID));
+      const priorEffect = character.effects[type].find(
+        (e) =>
+          e.effectName === effect.effectName &&
+          (effect.effectInfo.unique
+            ? true
+            : e.sourceUUID === effect.sourceUUID),
+      );
 
       // if the effect is permanent, we do _not_ overwrite, at all
-      if (priorEffect && priorEffect.endsAt === -1 && !priorEffect.effectInfo.charges) {
+      if (
+        priorEffect &&
+        priorEffect.endsAt === -1 &&
+        !priorEffect.effectInfo.charges
+      ) {
         return;
       }
 
-      character.effects[type] = character.effects[type].filter(e => e.effectName !== effect.effectName);
+      character.effects[type] = character.effects[type].filter(
+        (e) => e.effectName !== effect.effectName,
+      );
 
       character.effects._hash = character.effects._hash || {};
       character.effects._hash[effect.effectName] = effect;
@@ -129,33 +180,55 @@ export class EffectHelper extends BaseService {
   public removeEffectByName(character: ICharacter, effectName: string): void {
     const effectData = this.game.effectManager.getEffectData(effectName);
     if (!effectData) {
-      this.game.logger.error('EffectHelper', new Error(`Effect ${effectName} cannot be removed as no data could be found.`));
+      this.game.logger.error(
+        'EffectHelper',
+        new Error(
+          `Effect ${effectName} cannot be removed as no data could be found.`,
+        ),
+      );
       return;
     }
 
     const { type } = effectData.effect;
 
-    const foundEffect = character.effects[type].find(x => x.effectName === effectName);
+    const foundEffect = character.effects[type].find(
+      (x) => x.effectName === effectName,
+    );
     if (!foundEffect) return;
 
     this.removeEffect(character, foundEffect);
   }
 
   // remove a stale or removed effect
-  public removeEffect(character: ICharacter, effect: IStatusEffect, shouldExpire = false): void {
-    const effectData = this.game.effectManager.getEffectData(effect.effectRef || effect.effectName);
+  public removeEffect(
+    character: ICharacter,
+    effect: IStatusEffect,
+    shouldExpire = false,
+  ): void {
+    const effectData = this.game.effectManager.getEffectData(
+      effect.effectRef || effect.effectName,
+    );
     if (!effectData) {
-      this.game.logger.error('EffectHelper', new Error(`Effect ${JSON.stringify(effect)} cannot be removed as no data could be found.`));
+      this.game.logger.error(
+        'EffectHelper',
+        new Error(
+          `Effect ${JSON.stringify(effect)} cannot be removed as no data could be found.`,
+        ),
+      );
       return;
     }
 
     const { type } = effectData.effect;
     const { recentlyRef } = effectData.effectMeta;
 
-    character.effects[type] = character.effects[type].filter(e => e.uuid !== effect.uuid);
+    character.effects[type] = character.effects[type].filter(
+      (e) => e.uuid !== effect.uuid,
+    );
 
     // in case you have multiples of a spell cast on you
-    if (!character.effects[type].find(x => x.effectName === effect.effectName)) {
+    if (
+      !character.effects[type].find((x) => x.effectName === effect.effectName)
+    ) {
       delete character.effects._hash[effect.effectName];
     }
 
@@ -165,25 +238,41 @@ export class EffectHelper extends BaseService {
     this.game.effectManager.effectUnapply(effect.effectName, character, effect);
 
     if (shouldExpire) {
-      this.game.effectManager.effectExpire(effect.effectName, character, effect);
+      this.game.effectManager.effectExpire(
+        effect.effectName,
+        character,
+        effect,
+      );
     }
 
     // if this spell has a recently associated with it, we apply it now
-    if (recentlyRef && !effect.effectInfo.disableRecently && effect.endsAt !== -1) {
+    if (
+      recentlyRef &&
+      !effect.effectInfo.disableRecently &&
+      effect.endsAt !== -1
+    ) {
       this.addEffect(character, '', recentlyRef);
     }
   }
 
-  public removeEffectManually(character: ICharacter, effectNameOrUUID: string, force = false): void {
-
+  public removeEffectManually(
+    character: ICharacter,
+    effectNameOrUUID: string,
+    force = false,
+  ): void {
     let effect!: IStatusEffect;
 
-    Object.values(character.effects).forEach(effectContainer => {
+    Object.values(character.effects).forEach((effectContainer) => {
       if (!isArray(effectContainer)) return;
 
       effectContainer.forEach((checkEffect: IStatusEffect) => {
         if (effect) return;
-        if (checkEffect.effectName !== effectNameOrUUID && checkEffect.uuid !== effectNameOrUUID) return;
+        if (
+          checkEffect.effectName !== effectNameOrUUID &&
+          checkEffect.uuid !== effectNameOrUUID
+        ) {
+          return;
+        }
         if (!force && checkEffect.endsAt === -1) return;
 
         effect = checkEffect;
@@ -192,7 +281,9 @@ export class EffectHelper extends BaseService {
 
     if (!effect) return;
 
-    const meta = this.game.effectManager.getEffectData(effect.effectRef || effect.effectName);
+    const meta = this.game.effectManager.getEffectData(
+      effect.effectRef || effect.effectName,
+    );
     if (!meta || !meta.effect.extra.canRemove) return;
 
     this.removeEffect(character, effect);
@@ -200,11 +291,13 @@ export class EffectHelper extends BaseService {
 
   // remove all effects
   public clearEffectsForDeath(character: ICharacter): void {
-    Object.values(character.effects).forEach(effectContainer => {
+    Object.values(character.effects).forEach((effectContainer) => {
       if (!isArray(effectContainer)) return;
 
-      effectContainer.forEach(effect => {
-        const meta = this.game.effectManager.getEffectData(effect.effectRef || effect.effectName);
+      effectContainer.forEach((effect) => {
+        const meta = this.game.effectManager.getEffectData(
+          effect.effectRef || effect.effectName,
+        );
         if (meta.effect.extra.persistThroughDeath) return;
 
         this.removeEffect(character, effect);
@@ -213,16 +306,17 @@ export class EffectHelper extends BaseService {
   }
 
   // get total effect stat bonuses
-  public effectStatBonuses(character: ICharacter): Partial<Record<Stat, number>> {
-
+  public effectStatBonuses(
+    character: ICharacter,
+  ): Partial<Record<Stat, number>> {
     const stats: Partial<Record<Stat, number>> = {};
 
-    Object.values(character.effects).forEach(effectContainer => {
+    Object.values(character.effects).forEach((effectContainer) => {
       if (!isArray(effectContainer)) return;
 
       effectContainer.forEach((checkEffect: IStatusEffect) => {
         const statBoosts = checkEffect.effectInfo.statChanges;
-        Object.keys(statBoosts || {}).forEach(stat => {
+        Object.keys(statBoosts || {}).forEach((stat) => {
           stats[stat] = stats[stat] || 0;
           stats[stat] += statBoosts?.[stat] ?? 0;
         });
@@ -248,15 +342,23 @@ export class EffectHelper extends BaseService {
   }
 
   // modify incoming damage based on incoming effects
-  public modifyIncomingDamage(char: ICharacter, attacker: ICharacter | null, damageArgs: DamageArgs): number {
+  public modifyIncomingDamage(
+    char: ICharacter,
+    attacker: ICharacter | null,
+    damageArgs: DamageArgs,
+  ): number {
     let currentDamage = Math.floor(damageArgs.damage);
 
-    char.effects.incoming.forEach(eff => {
-      const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
+    char.effects.incoming.forEach((eff) => {
+      const ref = this.game.effectManager.getEffectRef(
+        eff.effectRef || eff.effectName,
+      );
       if (!ref) return;
 
       if (ref.incoming) {
-        currentDamage = Math.floor(ref.incoming(eff, char, attacker, damageArgs, currentDamage));
+        currentDamage = Math.floor(
+          ref.incoming(eff, char, attacker, damageArgs, currentDamage),
+        );
       }
     });
 
@@ -264,9 +366,15 @@ export class EffectHelper extends BaseService {
   }
 
   // handle outgoing effects (damage bonuses, etc) effects
-  public handleOutgoingEffects(char: ICharacter, attacker: ICharacter, damageArgs: DamageArgs): void {
-    char.effects.outgoing.forEach(eff => {
-      const ref = this.game.effectManager.getEffectRef(eff.effectRef || eff.effectName);
+  public handleOutgoingEffects(
+    char: ICharacter,
+    attacker: ICharacter,
+    damageArgs: DamageArgs,
+  ): void {
+    char.effects.outgoing.forEach((eff) => {
+      const ref = this.game.effectManager.getEffectRef(
+        eff.effectRef || eff.effectName,
+      );
       if (!ref || !ref.outgoing) return;
 
       ref.outgoing(eff, char, attacker, damageArgs);
@@ -275,7 +383,7 @@ export class EffectHelper extends BaseService {
 
   // dispellable effects are only in buff (not incoming or outgoing), and they must be self-removable
   public dispellableEffects(char: ICharacter): IStatusEffect[] {
-    return char.effects[BuffType.Buff].filter(x => {
+    return char.effects[BuffType.Buff].filter((x) => {
       if (x.endsAt === -1) return false;
       if (!x.effectInfo.canRemove) return false;
 
@@ -284,14 +392,24 @@ export class EffectHelper extends BaseService {
   }
 
   // remove similar effects based on a query (such as for stances and imbues)
-  public removeSimilarEffects(char: ICharacter, query: string, except: string, cancelPerms = false, force = false): void {
-    Object.keys(char.effects._hash).forEach(effectName => {
-      if (effectName === except
-      || !effectName.includes(query)
-      || ((!cancelPerms && char.effects._hash[effectName].endsAt === -1) || force)) return;
+  public removeSimilarEffects(
+    char: ICharacter,
+    query: string,
+    except: string,
+    cancelPerms = false,
+    force = false,
+  ): void {
+    Object.keys(char.effects._hash).forEach((effectName) => {
+      if (
+        effectName === except ||
+        !effectName.includes(query) ||
+        (!cancelPerms && char.effects._hash[effectName].endsAt === -1) ||
+        force
+      ) {
+        return;
+      }
 
       this.removeEffect(char, char.effects._hash[effectName]);
     });
   }
-
 }
