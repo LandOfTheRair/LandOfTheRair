@@ -600,7 +600,7 @@ export class PlayerHelper extends BaseService {
       const xpGainBoostPercent =
         this.game.characterHelper.getStat(player, Stat.XPBonusPercent) +
         this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
-      xpGained += Math.floor(xpGainBoostPercent * xpGained);
+      xpGained += Math.floor((xpGainBoostPercent / 100) * xpGained);
       xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
       xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, {
         floor: true,
@@ -649,7 +649,7 @@ export class PlayerHelper extends BaseService {
       this.game.characterHelper.getStat(player, Stat.SkillBonusPercent) +
       this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
 
-    skillGained += Math.floor(skillGainBoostPercent * skillGained);
+    skillGained += Math.floor((skillGainBoostPercent / 100) * skillGained);
 
     // paid skill is doubled as long as we have money in it
     const paidVal = player.paidSkills?.[skill] ?? 0;
