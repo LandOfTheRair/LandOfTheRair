@@ -100,6 +100,12 @@ export class TrainerComponent {
     );
   }
 
+  cleanse() {
+    this.gameService.sendCommandString(
+      `#${this.trainerData().npcUUID}, cleanse`,
+    );
+  }
+
   warp() {
     this.gameService.sendCommandString(
       `#${this.trainerData().npcUUID}, guildteleport`,

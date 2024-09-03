@@ -83,6 +83,7 @@ export class TrainerBehavior implements IAIBehavior {
           const options = [{ text: 'Leave', action: 'noop' }];
 
           if (this.canRevive) {
+            options.unshift({ text: 'Can you cleanse me?', action: 'cleanse' });
             options.unshift({ text: 'Can you recall me?', action: 'recall' });
           }
 
@@ -354,6 +355,24 @@ export class TrainerBehavior implements IAIBehavior {
       });
 
     if (this.canRevive) {
+      parser
+        .addCommand('cleanse')
+        .setSyntax(['cleanse'])
+        .setLogic(async ({ env }) => {
+          const player = env?.player;
+
+          game.commandHandler.getSkillRef('Cleanse').use(null, player);
+
+          env?.callbacks.emit({
+            type: GameServerResponse.SendAlert,
+            title: 'Cleansed',
+            content: `You're now cleansed, ${player.name}. May Maer be with you.`,
+            extraData: { npcSprite: npc.sprite },
+          });
+
+          return `You're now cleansed, ${player.name}. May Maer be with you.`;
+        });
+
       parser
         .addCommand('recall')
         .setSyntax(['recall'])
