@@ -231,6 +231,7 @@ export abstract class SkillCommand extends MacroCommand {
 export class SpellCommand extends SkillCommand {
   override aliases: string[] = [];
   override requiresLearn = true;
+  isAutomaticSpell = false;
   spellRef = '';
   spellDataRef = '';
   canTargetSelf = false;
@@ -295,7 +296,25 @@ export class SpellCommand extends SkillCommand {
   }
 
   override canUse(char: ICharacter, target: ICharacter) {
-    return super.canUse(char, target) && this.canCastSpell(char, target);
+    let isBlockedByEffect = false;
+
+    if (this.isAutomaticSpell && this.spellRef) {
+      const spellData = this.game.spellManager.getSpellData(this.spellRef);
+      const effectName = spellData.spellMeta.linkedEffectName;
+
+      if (effectName) {
+        isBlockedByEffect = this.game.effectHelper.hasEffect(
+          target,
+          effectName,
+        );
+      }
+    }
+
+    return (
+      super.canUse(char, target) &&
+      this.canCastSpell(char, target) &&
+      !isBlockedByEffect
+    );
   }
 
   // called when a player casts a spell at something

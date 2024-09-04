@@ -412,6 +412,17 @@ export class CharacterHelper extends BaseService {
     return true;
   }
 
+  private addTraitLevel(
+    character: ICharacter,
+    trait: string,
+    traitLevel: number,
+  ): void {
+    if (!trait) return;
+
+    character.allTraits[trait] ??= 0;
+    character.allTraits[trait] += traitLevel;
+  }
+
   // recalculate everything, basically when equipment changes usually
   public recalculateEverything(character: ICharacter): void {
     this.recalculateTraits(character);
@@ -473,7 +484,7 @@ export class CharacterHelper extends BaseService {
     };
 
     // check all traits for spells
-    Object.keys(character.allTraits).forEach((trait) => {
+    Object.keys(character.allTraits ?? {}).forEach((trait) => {
       const traitRef = this.game.traitHelper.getTraitData(trait);
       if (!traitRef || !traitRef.spellGiven) return;
 
@@ -511,15 +522,20 @@ export class CharacterHelper extends BaseService {
   public recalculateTraits(character: ICharacter): void {
     character.allTraits = {};
 
+    let learnedTraits = {};
+
     // base traits from self/learned
     if (this.isPlayer(character)) {
-      Object.assign(
-        character.allTraits,
-        this.game.traitHelper.getAllLearnedTraits(character as IPlayer),
+      learnedTraits = this.game.traitHelper.getAllLearnedTraits(
+        character as IPlayer,
       );
     } else {
-      Object.assign(character.allTraits, (character as INPC).traitLevels);
+      learnedTraits = (character as INPC).traitLevels ?? {};
     }
+
+    Object.keys(learnedTraits).forEach((traitKey) => {
+      this.addTraitLevel(character, traitKey, learnedTraits[traitKey]);
+    });
 
     // traits from equipment
     Object.keys(character.items.equipment).forEach((itemSlot) => {
@@ -549,8 +565,7 @@ export class CharacterHelper extends BaseService {
       }
 
       if (trait) {
-        character.allTraits[trait.name] = character.allTraits[trait.name] || 0;
-        character.allTraits[trait.name] += trait.level;
+        this.addTraitLevel(character, trait.name, trait.level);
       }
     });
 
@@ -562,9 +577,7 @@ export class CharacterHelper extends BaseService {
         const item = this.game.itemHelper.getItemDefinition(rune);
         if (!item?.trait) return;
 
-        character.allTraits[item.trait.name] =
-          character.allTraits[item.trait.name] || 0;
-        character.allTraits[item.trait.name] += item.trait.level ?? 0;
+        this.addTraitLevel(character, item.trait.name, item.trait.level);
       });
     }
   }
@@ -575,7 +588,7 @@ export class CharacterHelper extends BaseService {
   ): Partial<Record<Stat, number>> {
     const stats = {};
 
-    Object.keys(character.allTraits).forEach((trait) => {
+    Object.keys(character.allTraits ?? {}).forEach((trait) => {
       const traitRef = this.game.traitHelper.getTraitData(trait);
       if (!traitRef || !traitRef.statsGiven) return;
 

@@ -5,7 +5,7 @@ import { isObject, isString } from 'lodash';
 import { ICharacter, IMacroCommandArgs } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
-import { MacroCommand, SkillCommand } from '../../models/macro';
+import { MacroCommand, SkillCommand, SpellCommand } from '../../models/macro';
 import * as Commands from './commands';
 import { MessageHelper } from './MessageHelper';
 
@@ -24,15 +24,45 @@ export class CommandHandler extends BaseService {
 
   // load all skills
   public init() {
+    const baseSpellList = this.game.contentManager.getSpells();
+
     Object.values(Commands)
       .map((x) => new x(this.game))
       .forEach((command) => {
+        const dataRef = (command as SpellCommand).spellDataRef;
+        const spellRef = (command as SpellCommand).spellRef;
+        if (dataRef) {
+          delete baseSpellList[dataRef];
+        }
+
+        if (spellRef) {
+          delete baseSpellList[spellRef];
+        }
+
         command.aliases.forEach((alias) => {
           if (!alias) return;
           this.commands[alias.toLowerCase()] = command;
           this.commands[alias.toLowerCase().split(' ').join('')] = command;
         });
       });
+
+    const remainingSpellsByName = Object.keys(baseSpellList);
+    remainingSpellsByName.forEach((spellName) => {
+      const spellCommand = new SpellCommand(this.game);
+      spellCommand.spellRef = spellName;
+      spellCommand.requiresLearn = true;
+      spellCommand.isAutomaticSpell = true;
+
+      spellCommand.aliases = [
+        spellName.toLowerCase(),
+        `cast ${spellName.toLowerCase()}`,
+      ];
+
+      spellCommand.aliases.forEach((alias) => {
+        this.commands[alias.toLowerCase()] = spellCommand;
+        this.commands[alias.toLowerCase().split(' ').join('')] = spellCommand;
+      });
+    });
 
     this.commandStrings = Object.keys(this.commands);
   }

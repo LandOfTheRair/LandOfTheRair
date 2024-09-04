@@ -573,7 +573,13 @@ export class DefaultAIBehavior implements IAI {
     if ((target as INPC).allegiance === Allegiance.NaturalResource) return null;
 
     const skillRef = this.game.commandHandler.getSkillRef(skillName);
-    if (!skillRef) return null;
+    if (!skillRef) {
+      this.game.logger.warn(
+        `NPC:${npc.name}`,
+        `NPC using unknown skill ${skillName}.`,
+      );
+      return null;
+    }
     if (!skillRef.canUse(npc, target)) return null;
 
     return skillRef;

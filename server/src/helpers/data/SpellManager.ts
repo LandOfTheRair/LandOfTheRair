@@ -18,6 +18,7 @@ import {
 
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
+import { Spell } from '../../models/world/Spell';
 import * as allSpellRefs from '../game/spells';
 
 @Injectable()
@@ -31,8 +32,15 @@ export class SpellManager extends BaseService {
 
   // initialize all of the spells that exist
   public init() {
+    const baseSpellList = this.game.contentManager.getSpells();
+
     Object.keys(allSpellRefs).forEach((spell) => {
       this.spells[spell] = new allSpellRefs[spell](this.game);
+      delete baseSpellList[spell];
+    });
+
+    Object.keys(baseSpellList).forEach((otherSpellName) => {
+      this.spells[otherSpellName] = new Spell(this.game);
     });
 
     this.dazedDivisor =

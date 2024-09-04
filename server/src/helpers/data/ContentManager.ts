@@ -272,51 +272,136 @@ export class ContentManager extends BaseService {
   }
 
   public getItemDefinition(itemName: string): IItemDefinition {
-    return this.customItems[itemName] || this.items[itemName];
+    const ret = this.customItems[itemName] || this.items[itemName];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:Item',
+        `Item ${itemName} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.customNPCs[npcId] || this.npcs[npcId];
+    const ret = this.customNPCs[npcId] || this.npcs[npcId];
+    if (!ret) {
+      this.game.logger.error('Content:NPC', `NPC ${npcId} does not exist.`);
+    }
+
+    return ret;
   }
 
   public getNPCScript(npcTag: string): INPCScript {
-    return this.npcScripts[npcTag];
+    const ret = this.npcScripts[npcTag];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:NPCScript',
+        `NPC Script ${npcTag} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
-  public getRecipesForTradeskill(tradeskill): IRecipe[] {
-    return this.recipes[tradeskill] || [];
+  public getRecipesForTradeskill(tradeskill: string): IRecipe[] {
+    const ret = this.recipes[tradeskill] || [];
+    if (!ret || ret.length === 0) {
+      this.game.logger.error(
+        'Content:TradeskillRecipes',
+        `Recipe tradeskill ${tradeskill} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
   public getRecipe(name: string): IRecipe | undefined {
-    return this.allRecipes[name];
+    const ret = this.allRecipes[name];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:Recipe',
+        `Recipe ${name} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
   public getSpawnerByTag(spawnerTag: string): ISpawnerData {
-    return this.customSpawners[spawnerTag] || this.spawners[spawnerTag];
+    const ret = this.customSpawners[spawnerTag] || this.spawners[spawnerTag];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:Spawner',
+        `Spawner ${spawnerTag} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
   public getQuest(quest: string): IQuest {
-    return this.quests[quest];
+    const ret = this.quests[quest];
+    if (!ret) {
+      this.game.logger.error('Content:Quest', `Quest ${quest} does not exist.`);
+    }
+
+    return ret;
   }
 
   public getTrait(trait: string): ITrait {
-    return this.traits[trait];
+    const ret = this.traits[trait];
+    if (!ret) {
+      this.game.logger.error('Content:Trait', `Trait ${trait} does not exist.`);
+    }
+
+    return ret;
   }
 
   public getTraitTree(tree: BaseClass): IClassTraitTree {
-    return this.traitTrees[tree];
+    const ret = this.traitTrees[tree];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:TraitTree',
+        `Trait Tree ${tree} does not exist.`,
+      );
+    }
+
+    return ret;
   }
 
   public getEffect(name: string): IStatusEffectData {
-    return this.effectData[name];
+    const ret = this.effectData[name];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:Effect',
+        `Effect ${name} does not exist.`,
+      );
+    }
+
+    return ret;
+  }
+
+  public getSpells(): Record<string, ISpellData> {
+    return cloneDeep(this.spells);
   }
 
   public getSpell(name: string): ISpellData {
-    return this.spells[name];
+    const ret = this.spells[name];
+    if (!ret) {
+      this.game.logger.error('Content:Spell', `Spell ${name} does not exist.`);
+    }
+
+    return ret;
   }
 
   public getEvent(name: string): IDynamicEventData {
-    return this.events[name];
+    const ret = this.events[name];
+    if (!ret) {
+      this.game.logger.error('Content:Event', `Event ${name} does not exist.`);
+    }
+
+    return ret;
   }
 
   public getClassConfigSetting<T extends keyof ClassConfig>(
