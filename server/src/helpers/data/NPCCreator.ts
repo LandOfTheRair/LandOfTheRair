@@ -389,7 +389,7 @@ export class NPCCreator extends BaseService {
   }
 
   public getNPCName(npc: INPCDefinition): string {
-    if (isString(npc.name)) return npc.name as unknown as string;
+    if (npc.name && isString(npc.name)) return npc.name as unknown as string;
 
     // if the npc has a static name
     if (npc.name) {
