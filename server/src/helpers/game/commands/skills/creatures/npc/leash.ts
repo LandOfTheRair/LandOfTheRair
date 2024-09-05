@@ -1,14 +1,16 @@
-
 import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Leash extends SpellCommand {
-
   override aliases = ['leash'];
   override requiresLearn = true;
 
   override canUse(): boolean {
     return true;
+  }
+
+  override mpCost(): number {
+    return 0;
   }
 
   override use(executor: ICharacter) {

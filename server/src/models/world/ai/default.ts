@@ -326,10 +326,11 @@ export class DefaultAIBehavior implements IAI {
         skill,
         this.currentTarget,
       );
-      if (chosenSkill) {
-        chosenSkillName = skill;
-      }
     });
+
+    if (chosenSkill!) {
+      chosenSkillName = chosenSkill.aliases.join(',');
+    }
 
     // cast a buff spell if we have one
     if (chosenSkill!?.targetsFriendly && this.currentTarget) {
