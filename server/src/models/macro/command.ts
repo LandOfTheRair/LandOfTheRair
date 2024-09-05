@@ -303,10 +303,15 @@ export class SpellCommand extends SkillCommand {
       const effectName = spellData.spellMeta.linkedEffectName;
 
       if (effectName) {
-        isBlockedByEffect = this.game.effectHelper.hasEffect(
-          target,
-          effectName,
-        );
+        const effectData = this.game.contentManager.getEffect(effectName);
+        const recentlyEffect = effectData.effectMeta.recentlyRef;
+
+        isBlockedByEffect =
+          this.game.effectHelper.hasEffect(target, effectName) ||
+          !!(
+            recentlyEffect &&
+            this.game.effectHelper.hasEffect(target, recentlyEffect)
+          );
       }
     }
 

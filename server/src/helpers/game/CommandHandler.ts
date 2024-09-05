@@ -46,12 +46,22 @@ export class CommandHandler extends BaseService {
         });
       });
 
-    const remainingSpellsByName = Object.keys(baseSpellList);
+    const remainingSpellsByName = Object.keys(baseSpellList).sort();
     remainingSpellsByName.forEach((spellName) => {
       const spellCommand = new SpellCommand(this.game);
       spellCommand.spellRef = spellName;
       spellCommand.requiresLearn = true;
       spellCommand.isAutomaticSpell = true;
+
+      if (baseSpellList[spellName].spellMeta?.noHostileTarget) {
+        spellCommand.canTargetSelf = true;
+        spellCommand.targetsFriendly = true;
+      }
+
+      this.game.logger.log(
+        `CommandHandler:SpellInit`,
+        `Initializing autospell ${spellName} (${baseSpellList[spellName].spellMeta?.noHostileTarget ? 'ally-only' : 'free-cast'})...`,
+      );
 
       spellCommand.aliases = [
         spellName.toLowerCase(),
