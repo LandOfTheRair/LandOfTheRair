@@ -65,7 +65,12 @@ export class Spell implements BaseSpell {
         override.duration = effectInfo.effect.duration;
       }
 
-      if (caster && durationScaleStat && durationScaleValue) {
+      if (
+        caster &&
+        durationScaleStat &&
+        durationScaleValue &&
+        durationScaleValue !== -1
+      ) {
         override.duration =
           this.game.characterHelper.getStat(caster, durationScaleStat) *
           durationScaleValue;

@@ -1,17 +1,10 @@
-import { ICharacter, SpellCastArgs, Stat } from '../../../../interfaces';
+import { ICharacter, Stat } from '../../../../interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class VitalEssence extends Spell {
-
   override getCharges(caster: ICharacter | null) {
-    return caster ? this.game.characterHelper.getStat(caster, Stat.WIS) * 100 : 10;
+    return caster
+      ? this.game.characterHelper.getStat(caster, Stat.WIS) * 100
+      : 10;
   }
-
-  override getDuration(): number {
-    return -1;
-  }
-
-  override cast(caster: ICharacter | null, target: ICharacter | null, spellCastArgs: SpellCastArgs): void {
-  }
-
 }
