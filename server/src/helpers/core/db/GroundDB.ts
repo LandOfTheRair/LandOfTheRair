@@ -1,4 +1,3 @@
-
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../../models/BaseService';
 import { Ground } from '../../../models/orm/Ground';
@@ -6,10 +5,7 @@ import { Database } from '../Database';
 
 @Injectable()
 export class GroundDB extends BaseService {
-
-  constructor(
-    private db: Database
-  ) {
+  constructor(private db: Database) {
     super();
   }
 
@@ -38,20 +34,36 @@ export class GroundDB extends BaseService {
   }
 
   public async saveAllGrounds(grounds: Ground[]): Promise<any> {
-    grounds = grounds.filter(x => !this.game.worldManager.isDungeon(x.map) || (this.game.worldManager.isDungeon(x.map) && x.partyName));
+    grounds = grounds.filter(
+      (x) =>
+        !this.game.worldManager.isDungeon(x.map) ||
+        (this.game.worldManager.isDungeon(x.map) && x.partyName),
+    );
     if (grounds.length === 0) return;
 
     const groundColl = this.db.getCollection(Ground);
 
     const massOp = groundColl.initializeUnorderedBulkOp();
-    grounds.forEach(ground => {
-
+    grounds.forEach((ground) => {
       massOp
         .find({ map: ground.map })
         .upsert()
-        .updateOne({ $set: { ground: ground.ground, spawners: ground.spawners, savedAt: Date.now() } });
+        .updateOne({
+          $set: {
+            ground: ground.ground,
+            spawners: ground.spawners,
+            savedAt: Date.now(),
+          },
+        });
     });
 
-    return massOp.execute();
+    try {
+      return await massOp.execute();
+    } catch (e) {
+      this.game.logger.error(
+        'GroundSave',
+        `There was an error saving the ground. Typically, this is some awkward error with Solokar and not having a party name.`,
+      );
+    }
   }
 }

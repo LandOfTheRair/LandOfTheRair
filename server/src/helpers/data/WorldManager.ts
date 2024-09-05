@@ -47,6 +47,8 @@ export class WorldManager extends BaseService {
   // the mapping of every npc/player by their uuid for lookup
   private characterUUIDHash: Record<string, ICharacter> = {};
 
+  private isLeavingMap: Record<string, boolean> = {};
+
   public get currentlyActiveMaps(): string[] {
     return [...this.activeMaps];
   }
@@ -311,8 +313,12 @@ export class WorldManager extends BaseService {
   }
 
   public leaveMap(player: Player, kickToRespawnPointIfInDungeon = false) {
+    if (this.isLeavingMap[player.username]) return;
+
     const oldMap = this.playersInMaps[player.username];
     if (!oldMap) return;
+
+    this.isLeavingMap[player.username] = true;
 
     if (oldMap === 'Tutorial') {
       this.game.playerHelper.resetSpawnPointToDefault(player);
@@ -379,6 +385,8 @@ export class WorldManager extends BaseService {
       'Map:Leave',
       `${player.name} (${player.username}) leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`,
     );
+
+    this.isLeavingMap[player.username] = false;
   }
 
   public steadyTick(timer) {
