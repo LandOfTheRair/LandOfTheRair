@@ -102,6 +102,8 @@ export class ItemHelper extends BaseService {
 
     if (!isUndefined(item.mods[prop])) return item.mods[prop];
 
+    if (item.name === 'hands') return undefined;
+
     const realItem = this.getItemDefinition(item.name);
     if (!realItem) return undefined;
 

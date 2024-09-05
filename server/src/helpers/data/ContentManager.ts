@@ -60,6 +60,7 @@ import {
   ISpawnerData,
   ISpellData,
   IStatusEffectData,
+  ItemClass,
   ITrait,
   IWeaponTier,
   Rollable,
@@ -70,6 +71,17 @@ import {
 import { BaseService } from '../../models/BaseService';
 
 const realJSON = (json) => json.default || json;
+
+const getHandsItem = () => ({
+  name: 'hands',
+  uuid: 'hands',
+  mods: {
+    itemClass: ItemClass.Hands,
+    type: Skill.Martial,
+    tier: 1,
+    condition: 20000,
+  },
+});
 
 @Injectable()
 export class ContentManager extends BaseService {
