@@ -2,7 +2,6 @@ import { StatBlock } from './building-blocks';
 import { IStatusEffect } from './status-effect';
 
 export enum BuffType {
-
   // buffs. positive effects. generally unique.
   Buff = 'buff',
 
@@ -13,7 +12,7 @@ export enum BuffType {
   OutgoingModifier = 'outgoing',
 
   // incoming modifiers. used to modify incoming damage.
-  IncomingModifier = 'incoming'
+  IncomingModifier = 'incoming',
 }
 
 export interface IEffectContainer {
@@ -27,7 +26,6 @@ export interface IEffectContainer {
 }
 
 export interface IItemEffectExtra {
-
   // the tooltip to be displayed (food)
   tooltip?: string;
 

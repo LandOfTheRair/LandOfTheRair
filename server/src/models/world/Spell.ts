@@ -58,8 +58,17 @@ export class Spell implements BaseSpell {
         spellData.spellMeta.linkedEffectName,
       );
 
-      if (effectInfo.effect.duration) {
+      const { duration, durationScaleStat, durationScaleValue } =
+        effectInfo.effect;
+
+      if (duration) {
         override.duration = effectInfo.effect.duration;
+      }
+
+      if (caster && durationScaleStat && durationScaleValue) {
+        override.duration =
+          this.game.characterHelper.getStat(caster, durationScaleStat) *
+          durationScaleValue;
       }
 
       if (effectInfo.effect.extra.charges) {
@@ -73,7 +82,7 @@ export class Spell implements BaseSpell {
       baseTooltip = effectInfo.tooltip;
     }
 
-    return {
+    const effect = {
       effect: {
         duration:
           override.duration ?? this.getDuration(caster, target, spellData),
@@ -86,6 +95,8 @@ export class Spell implements BaseSpell {
       },
       tooltip: baseTooltip,
     };
+
+    return effect;
   }
 
   public getUnformattedTooltipDesc(

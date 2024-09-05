@@ -378,6 +378,7 @@ export class SpellManager extends BaseService {
         spellData,
         override,
       );
+
       if (
         caster &&
         noHostileTarget &&

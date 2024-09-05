@@ -2,7 +2,6 @@ import { ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Aid extends Effect {
-
   public override create(char: ICharacter, effect: IStatusEffect) {
     const potency = effect.effectInfo.potency ?? 0;
 
@@ -11,10 +10,7 @@ export class Aid extends Effect {
 
     effect.effectInfo.statChanges = {
       [Stat.DEX]: dexBoost,
-      [Stat.Offense]: offenseBoost
+      [Stat.Offense]: offenseBoost,
     };
-
-    effect.effectInfo.tooltip = `Increase DEX by ${dexBoost} and Offense by ${offenseBoost}.`;
   }
-
 }
