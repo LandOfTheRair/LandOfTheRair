@@ -136,7 +136,10 @@ export class NPCCreator extends BaseService {
           // check if it can't shoot (ie, is ammo) and we don't have a right hand, or it's not two handed (useful for shields and others)
         } else if (
           !leftHandItem.shots &&
-          (!rightHandItem || (rightHandItem && !rightHandItem.twoHanded))
+          (!rightHandItem ||
+            (rightHandItem &&
+              !rightHandItem.twoHanded &&
+              !rightHandItem.canShoot))
         ) {
           baseChar.items.equipment[ItemSlot.LeftHand] =
             this.loadItem(potentialLeftHand);
