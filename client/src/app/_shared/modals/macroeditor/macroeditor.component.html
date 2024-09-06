@@ -340,6 +340,7 @@
                   <button
                     mat-stroked-button
                     color="warn"
+                    [disabled]="activeMacroBars.includes(group.name)"
                     (click)="removeMacroGroup(group.name)"
                   >
                     &times;
