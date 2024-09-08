@@ -57,8 +57,8 @@ export class SpellManager extends BaseService {
   }
 
   // get the raw YML spell data
-  public getSpellData(key: string): ISpellData {
-    return this.game.contentManager.getSpell(key);
+  public getSpellData(key: string, context: string): ISpellData {
+    return this.game.contentManager.getSpell(key, context);
   }
 
   // get the ref to the spell for casting
@@ -239,7 +239,7 @@ export class SpellManager extends BaseService {
 
     if (target && this.game.characterHelper.isDead(target)) return;
 
-    const spellData = this.getSpellData(spell);
+    const spellData = this.getSpellData(spell, `CS:${caster?.name}`);
     if (!spellData) {
       this.game.logger.error(
         'SpellManager',
@@ -412,7 +412,10 @@ export class SpellManager extends BaseService {
         override,
       );
       const ffEffectData: IStatusEffectData = cloneDeep(
-        this.game.effectManager.getEffectData(spell),
+        this.game.effectManager.getEffectData(
+          spell,
+          `FF:${caster?.name}:${spellData.spellName}`,
+        ),
       );
       ffEffectData.effect.duration = spellEffInfo.effect?.duration ?? 10;
       ffEffectData.effect.extra.potency =

@@ -245,6 +245,7 @@ export class SpellCommand extends SkillCommand {
 
     const spellData = this.game.spellManager.getSpellData(
       this.spellDataRef || this.spellRef,
+      `MPC:${caster?.name}`,
     );
     if (!spellData) return 0;
 
@@ -299,11 +300,17 @@ export class SpellCommand extends SkillCommand {
     let isBlockedByEffect = false;
 
     if (this.isAutomaticSpell && this.spellRef) {
-      const spellData = this.game.spellManager.getSpellData(this.spellRef);
+      const spellData = this.game.spellManager.getSpellData(
+        this.spellRef,
+        `CU:${char.name}`,
+      );
       const effectName = spellData.spellMeta.linkedEffectName;
 
       if (effectName) {
-        const effectData = this.game.contentManager.getEffect(effectName);
+        const effectData = this.game.contentManager.getEffect(
+          effectName,
+          `CU:${char?.name}`,
+        );
         const recentlyEffect = effectData.effectMeta.recentlyRef;
 
         isBlockedByEffect =
@@ -336,6 +343,7 @@ export class SpellCommand extends SkillCommand {
 
     const spellData = this.game.spellManager.getSpellData(
       this.spellDataRef || this.spellRef,
+      `CS:${caster?.name}`,
     );
 
     // if we're not a party target spell, we look for a primary target (location or character)
@@ -417,7 +425,10 @@ export class SpellCommand extends SkillCommand {
     if (!this.canTargetSelf && target === caster) return false;
 
     // if they're hostile - no buffing
-    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(
+      this.spellRef,
+      `CCS:${caster?.name}`,
+    );
     if (!spellData) return false;
 
     const { noHostileTarget } = spellData.spellMeta;
@@ -444,7 +455,10 @@ export class SpellCommand extends SkillCommand {
     args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string },
   ): boolean {
-    const spellData = this.game.spellManager.getSpellData(this.spellRef);
+    const spellData = this.game.spellManager.getSpellData(
+      this.spellRef,
+      `CSA:${caster?.name}`,
+    );
     if (!spellData) {
       this.game.logger.warn(
         'SpellCommand',
@@ -555,6 +569,7 @@ export class SpellCommand extends SkillCommand {
     // aoe spells are handled differently
     const spellData = this.game.spellManager.getSpellData(
       this.spellDataRef || this.spellRef,
+      `USE:${char?.name}`,
     );
     if (spellData.spellMeta.aoe) {
       this.castSpell(char, {

@@ -552,7 +552,12 @@ export class ItemHelper extends BaseService {
     ]);
 
     if (useEffect && (useEffect.uses || (ounces && ounces !== 0))) {
-      if (!this.game.effectManager.getEffectData(useEffect.name)) {
+      if (
+        !this.game.effectManager.getEffectData(
+          useEffect.name,
+          `TTUI:USE:${item.name}`,
+        )
+      ) {
         return false;
       }
 

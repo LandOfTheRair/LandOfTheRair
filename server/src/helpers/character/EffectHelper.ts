@@ -38,6 +38,7 @@ export class EffectHelper extends BaseService {
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
     const effectData = this.game.effectManager.getEffectData(
       effect.effectRef || effect.effectName,
+      `TE:${character.name}`,
     );
     if (!effectData || !effectData.effectMeta.effectRef) return;
 
@@ -82,7 +83,10 @@ export class EffectHelper extends BaseService {
       return;
     }
 
-    const rawEffectData = this.game.effectManager.getEffectData(effectName);
+    const rawEffectData = this.game.effectManager.getEffectData(
+      effectName,
+      `AE:${character.name}`,
+    );
     if (!rawEffectData) {
       this.game.logger.error(
         'EffectHelper:AddEffect',
@@ -178,7 +182,10 @@ export class EffectHelper extends BaseService {
 
   // remove a stale or removed effect
   public removeEffectByName(character: ICharacter, effectName: string): void {
-    const effectData = this.game.effectManager.getEffectData(effectName);
+    const effectData = this.game.effectManager.getEffectData(
+      effectName,
+      `REBN:${character.name}`,
+    );
     if (!effectData) {
       this.game.logger.error(
         'EffectHelper',
@@ -207,6 +214,7 @@ export class EffectHelper extends BaseService {
   ): void {
     const effectData = this.game.effectManager.getEffectData(
       effect.effectRef || effect.effectName,
+      `RE:${character.name}`,
     );
     if (!effectData) {
       this.game.logger.error(
@@ -283,6 +291,7 @@ export class EffectHelper extends BaseService {
 
     const meta = this.game.effectManager.getEffectData(
       effect.effectRef || effect.effectName,
+      `REM:${character.name}`,
     );
     if (!meta || !meta.effect.extra.canRemove) return;
 
@@ -297,6 +306,7 @@ export class EffectHelper extends BaseService {
       effectContainer.forEach((effect) => {
         const meta = this.game.effectManager.getEffectData(
           effect.effectRef || effect.effectName,
+          `CEFD:${character.name}`,
         );
         if (meta.effect.extra.persistThroughDeath) return;
 

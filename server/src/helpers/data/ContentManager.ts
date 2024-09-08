@@ -288,7 +288,7 @@ export class ContentManager extends BaseService {
     if (!ret) {
       this.game.logger.error(
         'Content:Item',
-        `Item ${itemName} does not exist.`,
+        new Error(`Item ${itemName} does not exist.`),
       );
     }
 
@@ -298,7 +298,10 @@ export class ContentManager extends BaseService {
   public getNPCDefinition(npcId: string): INPCDefinition {
     const ret = this.customNPCs[npcId] || this.npcs[npcId];
     if (!ret) {
-      this.game.logger.error('Content:NPC', `NPC ${npcId} does not exist.`);
+      this.game.logger.error(
+        'Content:NPC',
+        new Error(`NPC ${npcId} does not exist.`),
+      );
     }
 
     return ret;
@@ -309,7 +312,7 @@ export class ContentManager extends BaseService {
     if (!ret) {
       this.game.logger.error(
         'Content:NPCScript',
-        `NPC Script ${npcTag} does not exist.`,
+        new Error(`NPC Script ${npcTag} does not exist.`),
       );
     }
 
@@ -321,7 +324,7 @@ export class ContentManager extends BaseService {
     if (!ret || ret.length === 0) {
       this.game.logger.error(
         'Content:TradeskillRecipes',
-        `Recipe tradeskill ${tradeskill} does not exist.`,
+        new Error(`Recipe tradeskill ${tradeskill} does not exist.`),
       );
     }
 
@@ -333,7 +336,7 @@ export class ContentManager extends BaseService {
     if (!ret) {
       this.game.logger.error(
         'Content:Recipe',
-        `Recipe ${name} does not exist.`,
+        new Error(`Recipe ${name} does not exist.`),
       );
     }
 
@@ -345,7 +348,7 @@ export class ContentManager extends BaseService {
     if (!ret) {
       this.game.logger.error(
         'Content:Spawner',
-        `Spawner ${spawnerTag} does not exist.`,
+        new Error(`Spawner ${spawnerTag} does not exist.`),
       );
     }
 
@@ -355,16 +358,22 @@ export class ContentManager extends BaseService {
   public getQuest(quest: string): IQuest {
     const ret = this.quests[quest];
     if (!ret) {
-      this.game.logger.error('Content:Quest', `Quest ${quest} does not exist.`);
+      this.game.logger.error(
+        'Content:Quest',
+        new Error(`Quest ${quest} does not exist.`),
+      );
     }
 
     return ret;
   }
 
-  public getTrait(trait: string): ITrait {
+  public getTrait(trait: string, context: string): ITrait {
     const ret = this.traits[trait];
     if (!ret) {
-      this.game.logger.error('Content:Trait', `Trait ${trait} does not exist.`);
+      this.game.logger.error(
+        'Content:Trait',
+        new Error(`Trait ${trait} does not exist (ctx: ${context}).`),
+      );
     }
 
     return ret;
@@ -375,19 +384,19 @@ export class ContentManager extends BaseService {
     if (!ret) {
       this.game.logger.error(
         'Content:TraitTree',
-        `Trait Tree ${tree} does not exist.`,
+        new Error(`Trait Tree ${tree} does not exist.`),
       );
     }
 
     return ret;
   }
 
-  public getEffect(name: string): IStatusEffectData {
+  public getEffect(name: string, context: string): IStatusEffectData {
     const ret = this.effectData[name];
     if (!ret) {
       this.game.logger.error(
         'Content:Effect',
-        `Effect ${name} does not exist.`,
+        new Error(`Effect ${name} does not exist (ctx: ${context}).`),
       );
     }
 
@@ -398,10 +407,13 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.spells);
   }
 
-  public getSpell(name: string): ISpellData {
+  public getSpell(name: string, context: string): ISpellData {
     const ret = this.spells[name];
     if (!ret) {
-      this.game.logger.error('Content:Spell', `Spell ${name} does not exist.`);
+      this.game.logger.error(
+        'Content:Spell',
+        new Error(`Spell ${name} does not exist (ctx: ${context}).`),
+      );
     }
 
     return ret;
@@ -410,7 +422,10 @@ export class ContentManager extends BaseService {
   public getEvent(name: string): IDynamicEventData {
     const ret = this.events[name];
     if (!ret) {
-      this.game.logger.error('Content:Event', `Event ${name} does not exist.`);
+      this.game.logger.error(
+        'Content:Event',
+        new Error(`Event ${name} does not exist.`),
+      );
     }
 
     return ret;

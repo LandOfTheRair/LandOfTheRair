@@ -485,7 +485,10 @@ export class CharacterHelper extends BaseService {
 
     // check all traits for spells
     Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = this.game.traitHelper.getTraitData(trait);
+      const traitRef = this.game.traitHelper.getTraitData(
+        trait,
+        `RLS:${character.name}`,
+      );
       if (!traitRef || !traitRef.spellGiven) return;
 
       learnSpell(traitRef.spellGiven, LearnedSpell.FromTraits);
@@ -589,7 +592,10 @@ export class CharacterHelper extends BaseService {
     const stats = {};
 
     Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = this.game.traitHelper.getTraitData(trait);
+      const traitRef = this.game.traitHelper.getTraitData(
+        trait,
+        `GSVAFT:${character.name}`,
+      );
       if (!traitRef || !traitRef.statsGiven) return;
 
       Object.keys(traitRef.statsGiven).forEach((stat) => {

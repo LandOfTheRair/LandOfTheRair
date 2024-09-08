@@ -56,6 +56,7 @@ export class Spell implements BaseSpell {
     if (spellData.spellMeta.linkedEffectName) {
       const effectInfo = this.game.contentManager.getEffect(
         spellData.spellMeta.linkedEffectName,
+        `GOEI:${caster?.name}:${spellData.spellName}`,
       );
 
       const { duration, durationScaleStat, durationScaleValue } =
