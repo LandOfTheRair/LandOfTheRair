@@ -32,6 +32,8 @@ export class Stairs extends MacroCommand {
       teleportMap,
       teleportX,
       teleportY,
+      teleportMessage,
+      requireHeld,
       requireParty,
       requireTester,
       subscriberOnly,
@@ -40,6 +42,14 @@ export class Stairs extends MacroCommand {
       teleportTag,
       teleportTagMap,
     } = interactable.properties;
+
+    if (
+      requireHeld &&
+      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
+      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'right')
+    ) {
+      return;
+    }
 
     if (requireTester && !isAtLeastTester(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
@@ -116,6 +126,12 @@ export class Stairs extends MacroCommand {
         y: teleportY,
         map: teleportMap,
       });
+
+      if (teleportMessage) {
+        this.game.messageHelper.sendLogMessageToPlayer(player, {
+          message: teleportMessage,
+        });
+      }
     }
   }
 }

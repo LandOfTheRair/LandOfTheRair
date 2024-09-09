@@ -32,6 +32,8 @@ export class Climbs extends MacroCommand {
       teleportMap,
       teleportX,
       teleportY,
+      requireHeld,
+      teleportMessage,
       requireParty,
       subscriberOnly,
       requireHoliday,
@@ -63,6 +65,14 @@ export class Climbs extends MacroCommand {
       );
     }
 
+    if (
+      requireHeld &&
+      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
+      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'right')
+    ) {
+      return;
+    }
+
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
       return this.sendMessage(
         player,
@@ -86,6 +96,12 @@ export class Climbs extends MacroCommand {
       `You climb ${interactable.type === 'ClimbUp' ? 'up' : 'down'}.`,
       SoundEffect.EnvStairs,
     );
+
+    if (teleportMessage) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: teleportMessage,
+      });
+    }
 
     this.game.teleportHelper.teleport(player, {
       x: teleportX,

@@ -247,6 +247,7 @@ export class MovementHelper extends BaseService {
       teleportX,
       teleportY,
       teleportMap,
+      teleportMessage,
       requireHeld,
       requireParty,
       requireHoliday,
@@ -391,7 +392,7 @@ export class MovementHelper extends BaseService {
       });
     } else {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: 'Your surroundings shift.',
+        message: teleportMessage ?? 'Your surroundings shift.',
       });
     }
   }
