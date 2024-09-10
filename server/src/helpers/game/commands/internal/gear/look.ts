@@ -160,8 +160,6 @@ export class LookCommand extends MacroCommand {
           player,
           `You are looking at a door. It: ${unlockMethods.join(', ')}.`,
         );
-
-        console.log({ requireHeld, requireLockpick, skillRequired });
       }
     }
   }
