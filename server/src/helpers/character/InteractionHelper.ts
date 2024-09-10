@@ -71,10 +71,10 @@ export class InteractionHelper extends BaseService {
 
           // if we don't have the right item, whoops
         } else {
-          this.game.itemHelper.loseCondition(rightHand, 500000, character);
+          this.game.itemHelper.loseCondition(rightHand, 5000, character);
           this.game.messageHelper.sendSimpleMessage(
             character,
-            'Your key is broken!',
+            'The key does not fit in the lock!',
           );
           return false;
         }
