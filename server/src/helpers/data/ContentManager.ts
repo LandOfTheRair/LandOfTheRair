@@ -881,4 +881,10 @@ export class ContentManager extends BaseService {
 
     deepfreeze(this.spawners);
   }
+
+  public getSkillDescription(skill: Skill, skillLevel: number): string {
+    return this.skillDescs[skill][
+      Math.min(this.skillDescs[skill].length - 1, skillLevel ?? 0)
+    ];
+  }
 }

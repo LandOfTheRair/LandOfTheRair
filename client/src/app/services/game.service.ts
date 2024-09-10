@@ -242,7 +242,6 @@ export class GameService {
     const arr = cmd.split(' ');
     const multiPrefixes = [
       'party',
-      'look',
       'show',
       'cast',
       'stance',

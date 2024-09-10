@@ -68,73 +68,9 @@ export abstract class MacroCommand implements IMacroCommand {
     args?: any,
     targetsPosition?: { x: number; y: number; map: string },
   ): void {} // used by anyone who has access to the command (players, npcs, environment)
-}
-
-export abstract class SkillCommand extends MacroCommand {
-  targetsFriendly = false; // whether or not the command can target friendly creatures (for enemies)
-
-  mpCost(
-    caster?: ICharacter,
-    targets?: ICharacter[],
-    overrideEffect?: Partial<IItemEffect>,
-  ) {
-    return 0;
-  }
-
-  hpCost(caster?: ICharacter) {
-    return 0;
-  }
 
   range(caster?: ICharacter): number {
     return 0;
-  }
-
-  // whether or not we can use the skill
-  canUse(user: ICharacter, target: ICharacter): boolean {
-    if (user.mp.current < this.mpCost(user)) return false;
-    if (user.hp.current < this.hpCost(user)) return false;
-    if (distanceFrom(user, target) > this.range(user)) return false;
-    return true;
-  }
-
-  // try to consume the mp (returning false if we fail)
-  tryToConsumeMP(
-    user: ICharacter,
-    targets?: ICharacter[],
-    overrideEffect?: Partial<IItemEffect>,
-  ): boolean {
-    if (this.game.traitHelper.rollTraitValue(user, 'Clearcasting')) return true;
-
-    const mpCost = this.mpCost(user, targets, overrideEffect);
-
-    const extraMsg =
-      this.game.contentManager.getClassConfigSetting<'castResource'>(
-        user.baseClass,
-        'castResource',
-      );
-
-    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
-      user.baseClass,
-      'usesMana',
-    );
-
-    if (!usesMana) {
-      if (user.hp.current <= mpCost) {
-        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
-        return false;
-      }
-
-      this.game.characterHelper.damage(user, mpCost);
-    } else if (mpCost > 0) {
-      if (user.mp.current < mpCost) {
-        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
-        return false;
-      }
-
-      this.game.characterHelper.manaDamage(user, mpCost);
-    }
-
-    return true;
   }
 
   // get either the target character or the center for an aoe
@@ -202,6 +138,70 @@ export abstract class SkillCommand extends MacroCommand {
     }
 
     return target;
+  }
+}
+
+export abstract class SkillCommand extends MacroCommand {
+  targetsFriendly = false; // whether or not the command can target friendly creatures (for enemies)
+
+  mpCost(
+    caster?: ICharacter,
+    targets?: ICharacter[],
+    overrideEffect?: Partial<IItemEffect>,
+  ) {
+    return 0;
+  }
+
+  hpCost(caster?: ICharacter) {
+    return 0;
+  }
+
+  // whether or not we can use the skill
+  canUse(user: ICharacter, target: ICharacter): boolean {
+    if (user.mp.current < this.mpCost(user)) return false;
+    if (user.hp.current < this.hpCost(user)) return false;
+    if (distanceFrom(user, target) > this.range(user)) return false;
+    return true;
+  }
+
+  // try to consume the mp (returning false if we fail)
+  tryToConsumeMP(
+    user: ICharacter,
+    targets?: ICharacter[],
+    overrideEffect?: Partial<IItemEffect>,
+  ): boolean {
+    if (this.game.traitHelper.rollTraitValue(user, 'Clearcasting')) return true;
+
+    const mpCost = this.mpCost(user, targets, overrideEffect);
+
+    const extraMsg =
+      this.game.contentManager.getClassConfigSetting<'castResource'>(
+        user.baseClass,
+        'castResource',
+      );
+
+    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+      user.baseClass,
+      'usesMana',
+    );
+
+    if (!usesMana) {
+      if (user.hp.current <= mpCost) {
+        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
+        return false;
+      }
+
+      this.game.characterHelper.damage(user, mpCost);
+    } else if (mpCost > 0) {
+      if (user.mp.current < mpCost) {
+        this.sendMessage(user, `You do not have enough ${extraMsg}!`);
+        return false;
+      }
+
+      this.game.characterHelper.manaDamage(user, mpCost);
+    }
+
+    return true;
   }
 
   calcPlainAttackRange(attacker: ICharacter, defaultRange = 0): number {

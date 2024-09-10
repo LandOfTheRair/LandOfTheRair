@@ -61,7 +61,7 @@
 
         <mat-menu #accountSwitcher="matMenu">
           <button mat-menu-item disabled>All Accounts</button>
-          @for (account of accounts(); track account) {
+          @for (account of accounts(); track account.username) {
           <div mat-menu-item class="multi-menu-container">
             <button
               mat-flat-button
