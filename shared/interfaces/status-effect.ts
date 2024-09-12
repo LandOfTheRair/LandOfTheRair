@@ -26,6 +26,8 @@ export interface IStatusEffectInfo {
 
   charges?: number; // the number of charges this effect has remaining
 
+  spriteChange?: number; // the sprite to change to from this effect
+
   buildUpMax?: number; // the max buildup value required for this to burst
   buildUpCurrent?: number; // the current buildup value
   buildUpDecay?: number; // the decay value for the buildup

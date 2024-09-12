@@ -992,8 +992,12 @@ export class MapScene extends Phaser.Scene {
 
   // sprite updates
   private updatePlayerSpriteData(sprite: Sprite, player: IPlayer) {
+    const firstSpriteOverideEffect = Object.values(player.effects._hash).filter(
+      (e) => e.effectInfo?.spriteChange > -1,
+    )[0]?.effectInfo.spriteChange;
+
     const playerFrame = spriteForCreatureDirection(
-      basePlayerSprite(player),
+      firstSpriteOverideEffect ?? basePlayerSprite(player),
       player.dir,
     );
     sprite.setFrame(playerFrame);
