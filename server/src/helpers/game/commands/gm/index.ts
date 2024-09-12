@@ -16,6 +16,7 @@ export * from './kill';
 export * from './modcreature';
 export * from './modground';
 export * from './moditem';
+export * from './removeeffect';
 export * from './resetdungeon';
 export * from './respawnnpc';
 export * from './saveplayers';
