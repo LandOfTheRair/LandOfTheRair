@@ -86,7 +86,11 @@ export abstract class MacroCommand implements IMacroCommand {
     const range = this.range(user);
 
     // try to do directional casting, ie, n w w e
-    const splitArgs = args.split(' ');
+    const splitArgs = args.split(' ').filter(Boolean);
+
+    if (allowDirection && splitArgs.length === 0) {
+      return { map: user.map, x: user.x, y: user.y };
+    }
 
     if (allowDirection && (splitArgs.length > 0 || args.length <= 2)) {
       let curX = user.x;
@@ -347,7 +351,11 @@ export class SpellCommand extends SkillCommand {
     );
 
     // if we're not a party target spell, we look for a primary target (location or character)
-    if (caster && !spellData.spellMeta.targetsParty && args?.stringArgs) {
+    if (
+      caster &&
+      !spellData.spellMeta.targetsParty &&
+      (args?.stringArgs || spellData.spellMeta.allowDirectional)
+    ) {
       primaryTarget = this.getTarget(
         caster,
         (args?.stringArgs ?? '').trim(),
