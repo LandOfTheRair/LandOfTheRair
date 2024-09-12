@@ -415,6 +415,18 @@ export class EffectHelper extends BaseService {
     });
   }
 
+  // check for similar effects based on a query (such as for stances and imbues)
+  public hasSimilarEffects(
+    char: ICharacter,
+    query: string,
+    except?: string,
+  ): boolean {
+    return Object.keys(char.effects._hash).some(
+      (effectName) =>
+        effectName.includes(query) || (except ? effectName === except : false),
+    );
+  }
+
   // remove similar effects based on a query (such as for stances and imbues)
   public removeSimilarEffects(
     char: ICharacter,

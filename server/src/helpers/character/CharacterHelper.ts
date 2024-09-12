@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { clamp, random } from 'lodash';
+import { clamp, isString, random } from 'lodash';
 
 import {
   Allegiance,
@@ -1081,6 +1081,23 @@ export class CharacterHelper extends BaseService {
         equipEffect.name,
       );
       if (existingEffect && existingEffect.endsAt === -1) return;
+
+      const effectData = this.game.effectManager.getEffectData(
+        equipEffect.name,
+        'TTCEE',
+      );
+
+      if (effectData.effect.extra.unique) {
+        const query = isString(effectData.effect.extra.unique)
+          ? effectData.effect.extra.unique
+          : equipEffect.name;
+        const hasSimilar = this.game.effectHelper.hasSimilarEffects(
+          character,
+          query,
+        );
+
+        if (hasSimilar) return;
+      }
 
       this.game.effectHelper.addEffect(character, '', equipEffect.name, {
         effect: {
