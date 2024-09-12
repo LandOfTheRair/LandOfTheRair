@@ -126,6 +126,10 @@ export class EffectHelper extends BaseService {
       sourceName: '',
     };
 
+    if (effectData.tooltip.name) {
+      effect.effectInfo.tooltipName = effectData.tooltip.name;
+    }
+
     if (effectData.effectMeta?.effectRef) {
       effect.effectName = this.game.effectManager.getEffectName(
         character,

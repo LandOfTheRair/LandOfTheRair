@@ -363,7 +363,9 @@ export class GameState {
             GameState.box.next({
               side: 'left',
               color: 'blue',
-              text: `+${patch.value.effectName}`,
+              text: `+${
+                patch.value.effectInfo.tooltipName ?? patch.value.effectName
+              }`,
             });
           }, i * 250);
         }
