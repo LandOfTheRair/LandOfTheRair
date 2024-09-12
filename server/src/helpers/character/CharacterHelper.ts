@@ -1074,6 +1074,8 @@ export class CharacterHelper extends BaseService {
         return;
       }
 
+      if (!this.game.itemHelper.canGetBenefitsFromItem(character, item)) return;
+
       const existingEffect = this.game.effectHelper.getEffect(
         character,
         equipEffect.name,
