@@ -77,8 +77,15 @@ export class Spell implements BaseSpell {
           durationScaleValue;
       }
 
-      if (effectInfo.effect.extra.charges) {
-        override.charges = effectInfo.effect.extra.charges;
+      if (
+        caster &&
+        durationScaleStat &&
+        durationScaleValue &&
+        duration === -1 &&
+        spellData.spellMeta.useDurationAsCharges
+      ) {
+        override.charges = override.duration;
+        override.duration = -1;
       }
 
       if (effectInfo.effect.extra.potency) {
