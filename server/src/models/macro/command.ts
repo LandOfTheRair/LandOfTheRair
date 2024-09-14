@@ -471,7 +471,6 @@ export class SpellCommand extends SkillCommand {
     args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string },
   ): boolean {
-    console.log('cast at', caster?.name);
     const spellData = this.game.spellManager.getSpellData(
       this.spellRef,
       `CSA:${caster?.name}`,
