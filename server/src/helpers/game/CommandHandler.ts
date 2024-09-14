@@ -48,19 +48,29 @@ export class CommandHandler extends BaseService {
 
     const remainingSpellsByName = Object.keys(baseSpellList).sort();
     remainingSpellsByName.forEach((spellName) => {
+      let message = 'free-cast';
+
       const spellCommand = new SpellCommand(this.game);
       spellCommand.spellRef = spellName;
       spellCommand.requiresLearn = true;
       spellCommand.isAutomaticSpell = true;
 
       if (baseSpellList[spellName].spellMeta?.noHostileTarget) {
+        message = 'ally-only';
         spellCommand.canTargetSelf = true;
         spellCommand.targetsFriendly = true;
       }
 
+      if (baseSpellList[spellName].spellMeta?.targetsCaster) {
+        message = 'self-only';
+        spellCommand.canTargetSelf = true;
+        spellCommand.targetsFriendly = true;
+        spellCommand.noPlayerArgs = true;
+      }
+
       this.game.logger.log(
         `CommandHandler:SpellInit`,
-        `Initializing autospell ${spellName} (${baseSpellList[spellName].spellMeta?.noHostileTarget ? 'ally-only' : 'free-cast'})...`,
+        `Initializing autospell ${spellName} (${message})...`,
       );
 
       spellCommand.aliases = [

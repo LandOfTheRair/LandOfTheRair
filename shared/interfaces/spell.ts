@@ -37,6 +37,7 @@ export interface ISpellData {
     targetAttackMessage?: string; // if the spell does an attack, this is the unformatted message to send to the caster
     targetSfx?: string; // if the spell does NOT attack, this is the SFX it sends along with targetMessage
     targetsParty?: boolean; // if the spell targets the entire casters party (aka, powerwords)
+    targetsCaster?: boolean; // if the spell targets only the caster
     range?: number; // if the spell is an aoe, this is the default range from the center it targets (default 0)
     resistLowerTrait?: string; // if the spell canBeResisted, this trait will improve the chance of the spell cast going through
     spellRef: string; // the reference to the spell for casting purposes

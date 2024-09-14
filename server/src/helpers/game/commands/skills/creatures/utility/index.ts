@@ -1,4 +1,3 @@
-export * from './augury';
 export * from './conjurehealing';
 export * from './conjureshield';
 export * from './conjuresword';
@@ -7,8 +6,5 @@ export * from './fate';
 export * from './foodsense';
 export * from './gemsense';
 export * from './identify';
-export * from './massteleport';
 export * from './reincarnate';
-export * from './teleport';
-export * from './vortex';
 export * from './wellspring';

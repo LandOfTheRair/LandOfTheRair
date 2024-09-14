@@ -1,4 +1,4 @@
-import { isNumber } from 'lodash';
+import { isNumber, uniq } from 'lodash';
 
 import { Game } from '../../helpers';
 import {
@@ -239,6 +239,7 @@ export class SpellCommand extends SkillCommand {
   spellRef = '';
   spellDataRef = '';
   canTargetSelf = false;
+  noPlayerArgs = false;
 
   override mpCost(
     caster?: ICharacter,
@@ -393,6 +394,13 @@ export class SpellCommand extends SkillCommand {
       targets.push(caster);
     }
 
+    if (caster && spellData.spellMeta.targetsCaster) {
+      targets.push(caster);
+    }
+
+    // you can only target someone once with a spell
+    targets = uniq(targets);
+
     // hit each of the targets
     const didHit = targets.map((target, idx) => {
       if (!target) {
@@ -463,6 +471,7 @@ export class SpellCommand extends SkillCommand {
     args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string },
   ): boolean {
+    console.log('cast at', caster?.name);
     const spellData = this.game.spellManager.getSpellData(
       this.spellRef,
       `CSA:${caster?.name}`,
@@ -563,7 +572,10 @@ export class SpellCommand extends SkillCommand {
     player: IPlayer,
     args: IMacroCommandArgs,
   ): string | boolean | void {
-    if (!args.stringArgs && this.canTargetSelf) args.stringArgs = player.uuid;
+    if (!args.stringArgs && this.canTargetSelf && !this.noPlayerArgs) {
+      args.stringArgs = player.uuid;
+    }
+
     return this.castSpell(player, args);
   }
 

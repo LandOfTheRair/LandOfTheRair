@@ -269,6 +269,7 @@ export class SpellManager extends BaseService {
       doesAttack,
       doesHeal,
       doesOvertime,
+      targetsCaster,
       noHostileTarget,
       bonusAgro,
       canBeResisted,
@@ -355,7 +356,7 @@ export class SpellManager extends BaseService {
     }
 
     // send a message to the caster if they're not the target
-    if (caster !== target && caster && casterMessage) {
+    if ((targetsCaster || caster !== target) && caster && casterMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, {
         message: casterMessage,
         sfx: casterSfx as SoundEffect,
