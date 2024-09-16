@@ -17,6 +17,7 @@ import { Parser } from 'muud';
 import {
   Alignment,
   Allegiance,
+  BaseClass,
   BehaviorType,
   Currency,
   Hostility,
@@ -98,6 +99,7 @@ export class NPCCreator extends BaseService {
     baseChar.dropPool = npcDef.dropPool ?? undefined;
     baseChar.triggers = npcDef.triggers ?? {};
     baseChar.aquaticOnly = npcDef.aquaticOnly ?? false;
+    baseChar.baseClass = npcDef.baseClass ?? BaseClass.Traveller;
     baseChar.maxWanderRandomlyDistance = npcDef.maxWanderRandomlyDistance ?? 0;
     baseChar.tansFor = npcDef.tansFor ?? '';
 
