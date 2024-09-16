@@ -16,6 +16,14 @@ export class Multistrike extends SpellCommand {
     return this.calcPlainAttackRange(char);
   }
 
+  override mpCost() {
+    return 0;
+  }
+
+  override canCastSpell() {
+    return true;
+  }
+
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const weapon = player.items.equipment[ItemSlot.RightHand];
     if (!weapon) {

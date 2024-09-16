@@ -250,6 +250,8 @@ export class SpellCommand extends SkillCommand {
   ) {
     if (overrideEffect) return 0;
 
+    if (!this.spellDataRef && !this.spellRef) return 0;
+
     const spellData = this.game.spellManager.getSpellData(
       this.spellDataRef || this.spellRef,
       `MPC:${caster?.name}`,
@@ -442,6 +444,7 @@ export class SpellCommand extends SkillCommand {
     target: ICharacter,
   ): boolean {
     if (!this.canTargetSelf && target === caster) return false;
+    if (!this.spellDataRef && !this.spellRef) return false;
 
     // if they're hostile - no buffing
     const spellData = this.game.spellManager.getSpellData(

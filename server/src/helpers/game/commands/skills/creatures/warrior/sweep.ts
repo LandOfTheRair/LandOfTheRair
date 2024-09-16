@@ -10,6 +10,14 @@ export class Sweep extends SpellCommand {
   override aliases = ['sweep', 'art sweep'];
   override requiresLearn = true;
 
+  override mpCost() {
+    return 0;
+  }
+
+  override canCastSpell() {
+    return true;
+  }
+
   override range(char: ICharacter) {
     return 0;
   }
