@@ -74,6 +74,7 @@ export abstract class MacroCommand implements IMacroCommand {
   }
 
   // get either the target character or the center for an aoe
+  // this function is for players only. NPCs will never run through it.
   getTarget(
     user: ICharacter,
     args: string,
@@ -88,6 +89,7 @@ export abstract class MacroCommand implements IMacroCommand {
     // try to do directional casting, ie, n w w e
     const splitArgs = args.split(' ').filter(Boolean);
 
+    // players casting on themselves short circuit this way
     if (allowDirection && splitArgs.length === 0) {
       return { map: user.map, x: user.x, y: user.y };
     }
@@ -351,9 +353,10 @@ export class SpellCommand extends SkillCommand {
       `CS:${caster?.name}`,
     );
 
-    // if we're not a party target spell, we look for a primary target (location or character)
+    // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
       caster &&
+      this.game.characterHelper.isPlayer(caster) &&
       !spellData.spellMeta.targetsParty &&
       (args?.stringArgs || spellData.spellMeta.allowDirectional)
     ) {

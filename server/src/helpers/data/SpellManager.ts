@@ -131,9 +131,7 @@ export class SpellManager extends BaseService {
       baseSkillValue + bonusRolls,
       statMult,
     );
-    let retPotency = isStatic
-      ? (baseSkillValue + bonusRolls) * statMult
-      : basePotency;
+    let retPotency = isStatic ? baseSkillValue * statMult : basePotency;
 
     let maxMult = 1;
     (spellData.skillMultiplierChanges || []).forEach(([baseSkill, mult]) => {
