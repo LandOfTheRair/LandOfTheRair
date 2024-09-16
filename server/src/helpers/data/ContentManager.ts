@@ -25,6 +25,7 @@ import * as spriteinfo from '../../../content/_output/sprite-data.json';
 import * as statdamagemultipliers from '../../../content/_output/statdamagemultipliers.json';
 import * as statictext from '../../../content/_output/statictext.json';
 import * as weapontiers from '../../../content/_output/weapontiers.json';
+import * as weapontiersnpc from '../../../content/_output/weapontiersnpc.json';
 
 import * as droptablesMaps from '../../../content/_output/droptable-maps.json';
 import * as droptablesRegions from '../../../content/_output/droptable-regions.json';
@@ -144,6 +145,7 @@ export class ContentManager extends BaseService {
   private statDamageMultipliers: Record<Stat, number[]>;
   private staticText: { terrain: string[]; decor: Record<string, string> };
   private weaponTiers: Record<WeaponClass, IWeaponTier>;
+  private weaponTiersNPC: Record<WeaponClass, IWeaponTier>;
   private rngDungeonConfig: IRNGDungeonConfig;
   private spriteinfo: { doorStates: any[] };
 
@@ -233,6 +235,10 @@ export class ContentManager extends BaseService {
 
   public get weaponTiersData(): Record<string, IWeaponTier> {
     return cloneDeep(this.weaponTiers);
+  }
+
+  public get weaponTiersNPCData(): Record<string, IWeaponTier> {
+    return cloneDeep(this.weaponTiersNPC);
   }
 
   public get rngDungeonConfigData(): IRNGDungeonConfig {
@@ -583,6 +589,9 @@ export class ContentManager extends BaseService {
     );
     this.weaponTiers = deepfreeze(
       this.chooseConfigFileOrPreset('weapontiers', realJSON(weapontiers)),
+    );
+    this.weaponTiersNPC = deepfreeze(
+      this.chooseConfigFileOrPreset('weapontiersnpc', realJSON(weapontiersnpc)),
     );
     this.rngDungeonConfig = deepfreeze(
       this.chooseConfigFileOrPreset(

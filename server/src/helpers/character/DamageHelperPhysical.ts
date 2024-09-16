@@ -211,6 +211,22 @@ export class DamageHelperPhysical extends BaseService {
     return res;
   }
 
+  private getTierDataForAttacker(attacker: ICharacter) {
+    const playerTiers = this.game.contentManager.weaponTiersData;
+    const npcTiers = this.game.contentManager.weaponTiersNPCData;
+
+    // player
+    if (this.game.characterHelper.isPlayer(attacker)) return playerTiers;
+
+    // player summon
+    if (attacker.allegianceReputation[Allegiance.Enemy] < -10000) {
+      return playerTiers;
+    }
+
+    // npc or npc summon
+    return npcTiers;
+  }
+
   // get the base damage information for a weapon
   private determineWeaponInformation(
     attacker: ICharacter,
@@ -243,7 +259,7 @@ export class DamageHelperPhysical extends BaseService {
 
     const allStatMultipliers =
       this.game.contentManager.statDamageMultipliersData;
-    const weaponTiers = this.game.contentManager.weaponTiersData;
+    const weaponTiers = this.getTierDataForAttacker(attacker);
 
     const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
     const statMultipliers: number[] = allStatMultipliers[scaleStat];
