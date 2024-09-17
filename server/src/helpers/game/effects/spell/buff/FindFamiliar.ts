@@ -15,7 +15,7 @@ export class FindFamiliar extends Effect {
     const mapData = this.game.worldManager.getMap(char.map);
     if (!mapData) return;
 
-    const potency = char.level;
+    const potency = effect.effectInfo.potency ?? 1;
 
     const npcCreateCallback = (npc: INPC) => {
       npc.allegianceReputation = char.allegianceReputation;
