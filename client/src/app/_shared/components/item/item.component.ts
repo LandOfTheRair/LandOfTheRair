@@ -305,8 +305,10 @@ export class ItemComponent implements OnDestroy {
   });
 
   public encrustLocation = computed(() => {
-    if (!this.item() || !this.item().mods.encrustItem) return '0px 0px';
+    if (!this.item() || !this.item().mods?.encrustItem) return '0px 0px';
     const encrustItem = this.assetService.getItem(this.item().mods.encrustItem);
+    if (!encrustItem) return '0px 0px';
+
     const divisor = 32;
     const y = Math.floor(encrustItem.sprite / divisor);
     const x = encrustItem.sprite % divisor;
@@ -393,7 +395,7 @@ export class ItemComponent implements OnDestroy {
     if (!context || !this.item() || !this.viewingPlayer()) return;
 
     // these items shouldn't be dropped accidentally
-    if (this.realItem().destroyOnDrop || this.item().mods?.destroyOnDrop) {
+    if (this.realItem()?.destroyOnDrop || this.item().mods?.destroyOnDrop) {
       return;
     }
 
