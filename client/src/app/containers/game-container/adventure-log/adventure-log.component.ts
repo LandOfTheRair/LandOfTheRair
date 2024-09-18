@@ -74,6 +74,12 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
         this.messages.set(this.allMessages.slice());
+
+        setTimeout(() => {
+          const outputAreaDOMElement =
+            this.window.nativeElement.querySelector('.log-area');
+          outputAreaDOMElement.scrollTop = outputAreaDOMElement.scrollHeight;
+        }, 0);
       });
   }
 
