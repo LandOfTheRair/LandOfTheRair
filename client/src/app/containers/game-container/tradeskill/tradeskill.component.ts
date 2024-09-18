@@ -95,7 +95,7 @@ export class TradeskillComponent {
 
   private getPlayerSkillXP(): number {
     return (
-      (this.player().tradeskills || {})[
+      (this.player()?.tradeskills || {})[
         this.tradeskillInfo.tradeskill.toLowerCase()
       ] ?? 0
     );
@@ -170,7 +170,7 @@ export class TradeskillComponent {
     }
 
     const curXP =
-      (this.player().tradeskills || {})[
+      (this.player()?.tradeskills || {})[
         this.tradeskillInfo.tradeskill.toLowerCase()
       ] ?? 0;
     const skill = calculateTradeskillLevelFromXP(curXP);
