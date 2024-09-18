@@ -255,6 +255,10 @@ export class SpellManager extends BaseService {
       return;
     }
 
+    if (caster) {
+      override = this.seekSpellOverrides(caster, spellData, override);
+    }
+
     // send messages to caster/target where applicable
     const {
       casterMessage,
@@ -453,7 +457,8 @@ export class SpellManager extends BaseService {
           defMsg: spellData.spellMeta.targetAttackMessage || '',
           sfx: i === 0 ? SoundEffect.CombatHitSpell : undefined,
           damage: potency,
-          damageClass: spellData.damageClass || DamageClass.Energy,
+          damageClass:
+            override.damageClass || spellData.damageClass || DamageClass.Energy,
           spellData,
         });
       }
@@ -464,7 +469,8 @@ export class SpellManager extends BaseService {
           defMsg: spellData.spellMeta.targetAttackMessage || '',
           sfx: i === 0 ? SoundEffect.SpellHeal : undefined,
           damage: -potency,
-          damageClass: spellData.damageClass || DamageClass.Heal,
+          damageClass:
+            override.damageClass || spellData.damageClass || DamageClass.Heal,
           spellData,
         });
       }
@@ -480,34 +486,54 @@ export class SpellManager extends BaseService {
       });
     }
 
-    // check for arcane hunger
-    if (caster && spellData.spellMeta.doesAttack) {
-      const arcaneHungerSet = this.game.traitHelper.traitLevelValue(
+    if (caster) {
+      this.handleArcaneHunger(caster, spellData);
+    }
+  }
+
+  private seekSpellOverrides(
+    caster: ICharacter,
+    spellData: ISpellData,
+    overrides: Partial<IItemEffect>,
+  ): Partial<IItemEffect> {
+    if (spellData.spellName === 'MagicMissile') {
+      if (this.game.traitHelper.traitLevelValue(caster, 'SonicMissiles')) {
+        overrides.damageClass = DamageClass.Sonic;
+      }
+    }
+
+    return overrides;
+  }
+
+  // check for arcane hunger
+  private handleArcaneHunger(caster: ICharacter, spellData: ISpellData) {
+    if (!spellData.spellMeta.doesAttack) return;
+
+    const arcaneHungerSet = this.game.traitHelper.traitLevelValue(
+      caster,
+      'ArcaneHunger',
+    );
+
+    if (arcaneHungerSet > 0) {
+      const existingEffect = this.game.effectHelper.getEffect(
         caster,
         'ArcaneHunger',
       );
 
-      if (arcaneHungerSet > 0) {
-        const existingEffect = this.game.effectHelper.getEffect(
-          caster,
-          'ArcaneHunger',
-        );
+      const arcaneHungerMax = 3 + Math.floor(caster.level / 4);
 
-        const arcaneHungerMax = 3 + Math.floor(caster.level / 4);
+      const chargeSet = Math.min(
+        arcaneHungerMax,
+        1 + (existingEffect?.effectInfo.charges ?? 0),
+      );
 
-        const chargeSet = Math.min(
-          arcaneHungerMax,
-          1 + (existingEffect?.effectInfo.charges ?? 0),
-        );
-
-        this.game.effectHelper.addEffect(caster, caster, 'ArcaneHunger', {
-          effect: {
-            extra: {
-              charges: chargeSet,
-            },
+      this.game.effectHelper.addEffect(caster, caster, 'ArcaneHunger', {
+        effect: {
+          extra: {
+            charges: chargeSet,
           },
-        });
-      }
+        },
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-import { StatBlock } from './building-blocks';
+import { DamageClass, StatBlock } from './building-blocks';
 import { IStatusEffect } from './status-effect';
 
 export enum BuffType {
@@ -60,4 +60,7 @@ export interface IItemEffect {
 
   // extra data that is used by different items
   extra?: IItemEffectExtra;
+
+  // the damage type for this effect
+  damageClass?: DamageClass;
 }
