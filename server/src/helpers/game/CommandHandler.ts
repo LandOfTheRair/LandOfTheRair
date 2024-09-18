@@ -39,11 +39,7 @@ export class CommandHandler extends BaseService {
           delete baseSpellList[spellRef];
         }
 
-        command.aliases.forEach((alias) => {
-          if (!alias) return;
-          this.commands[alias.toLowerCase()] = command;
-          this.commands[alias.toLowerCase().split(' ').join('')] = command;
-        });
+        this.addCommandAliases(command);
       });
 
     const remainingSpellsByName = Object.keys(baseSpellList).sort();
@@ -78,13 +74,19 @@ export class CommandHandler extends BaseService {
         `cast ${spellName.toLowerCase()}`,
       ];
 
-      spellCommand.aliases.forEach((alias) => {
-        this.commands[alias.toLowerCase()] = spellCommand;
-        this.commands[alias.toLowerCase().split(' ').join('')] = spellCommand;
-      });
+      this.addCommandAliases(spellCommand);
     });
 
     this.commandStrings = Object.keys(this.commands);
+  }
+
+  private addCommandAliases(command: MacroCommand): void {
+    const aliases = command.aliases.filter(Boolean);
+
+    aliases.forEach((alias) => {
+      this.commands[alias.toLowerCase()] = command;
+      this.commands[alias.toLowerCase().split(' ').join('')] = command;
+    });
   }
 
   // get a ref to a skill
@@ -136,7 +138,7 @@ export class CommandHandler extends BaseService {
     }
 
     // validate the command / prefixes
-    const commandRef = this.commands[command.toLowerCase()];
+    const commandRef = this.getSkillRef(command);
     if (!commandRef) {
       const didyoumean = didYouMean(command, this.commandStrings);
       let message = `Command "${command}" does not exist.`;
