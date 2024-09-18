@@ -7,7 +7,7 @@ import {
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Multishot extends SpellCommand {
-  override aliases = ['cast multishot'];
+  override aliases = ['multishot', 'cast multishot'];
   override requiresLearn = true;
 
   override mpCost() {
