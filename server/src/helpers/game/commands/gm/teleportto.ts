@@ -42,5 +42,7 @@ export class GMTeleportTo extends MacroCommand {
       y: target.y,
       map: target.map,
     });
+
+    this.game.playerManager.saveAllPlayers();
   }
 }
