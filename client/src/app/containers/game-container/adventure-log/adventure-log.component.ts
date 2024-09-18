@@ -14,6 +14,8 @@ import { select, Store } from '@ngxs/store';
 
 import marked from 'marked';
 
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { timer } from 'rxjs';
 import { GameServerResponse, MessageType } from '../../../../interfaces';
 import { GameState, SetLogMode, SettingsState } from '../../../../stores';
 import { WindowComponent } from '../../../_shared/components/window.component';
@@ -21,6 +23,12 @@ import { DiscordEmojiPipe } from '../../../_shared/pipes/discord-emoji.pipe';
 import { GameService, LogMode } from '../../../services/game.service';
 import { OptionsService } from '../../../services/options.service';
 import { SocketService } from '../../../services/socket.service';
+
+interface LogMessage {
+  messageTypes: MessageType[];
+  message: string;
+  display?: string;
+}
 
 @Component({
   selector: 'app-adventure-log',
@@ -36,13 +44,9 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
-  public messages = signal<
-    Array<{
-      messageTypes: MessageType[];
-      message: string;
-      display?: string;
-    }>
-  >([]);
+  private allMessages: LogMessage[] = [];
+
+  public messages = signal<LogMessage[]>([]);
 
   private mutationObserver: MutationObserver;
   private renderer: marked.Renderer;
@@ -65,6 +69,12 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       { allowSignalWrites: true },
     );
+
+    timer(0, 100)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.messages.set(this.allMessages.slice());
+      });
   }
 
   ngOnInit() {
@@ -199,16 +209,11 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       (message.typeHash[MessageType.Banner] &&
         this.optionsService.sendBannerMessagesToChat)
     ) {
-      this.messages.update((messages) => {
-        return [...messages, message];
-      });
+      this.allMessages.push(message);
     }
 
-    if (this.messages.length > 500) {
-      this.messages.update((messages) => {
-        messages.shift();
-        return messages;
-      });
+    if (this.allMessages.length > 500) {
+      this.allMessages.shift();
     }
   }
 }
