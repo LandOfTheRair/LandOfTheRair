@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/indent */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 import { BaseClass, Currency } from './building-blocks';
@@ -43,7 +43,7 @@ export enum BehaviorType {
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',
   ThanksgivingTurkey = 'thanksgivingturkey',
-  ChristmasSanta = 'christmassanta'
+  ChristmasSanta = 'christmassanta',
 }
 
 export interface IVendorItem {
@@ -71,6 +71,9 @@ export interface ICrierBehavior {
 
 export interface IHallOfHeroesBehavior {
   message: string;
+  body: string;
+  leftHand: string;
+  rightHand: string;
 }
 
 export interface IPeddlerBehavior {
@@ -121,43 +124,25 @@ export interface IMPDocBehavior {
   mpTier?: number;
 }
 
-export interface IMagicianBehavior {
+export interface IMagicianBehavior {}
 
-}
+export interface IUpgraderBehavior {}
 
-export interface IUpgraderBehavior {
-}
+export interface ISteelroseBehavior {}
 
-export interface ISteelroseBehavior {
-}
+export interface IBufferBehavior {}
 
-export interface IBufferBehavior {
+export interface IItemModderBehavior {}
 
-}
+export interface IResetterBehavior {}
 
-export interface IItemModderBehavior {
+export interface ICosmeticsBehavior {}
 
-}
+export interface IBinderBehavior {}
 
-export interface IResetterBehavior {
+export interface IAXPSwapper {}
 
-}
-
-export interface ICosmeticsBehavior {
-
-}
-
-export interface IBinderBehavior {
-
-}
-
-export interface IAXPSwapper {
-
-}
-
-export interface IExitWarperBehavior {
-
-}
+export interface IExitWarperBehavior {}
 
 export interface ISpoilerLogger {
   spoilerLog: string;
@@ -175,18 +160,36 @@ export interface ITreasureClaimer {
   teleportMap: string;
 }
 
-export interface IRNGArtificer {
+export interface IRNGArtificer {}
 
-}
-
-export type IBehavior = IVendorBehavior & ITrainerBehavior & ICrierBehavior
-& IPeddlerBehavior & IIdentifierBehavior & ITannerBehavior & ISmithBehavior
-& IEncrusterBehavior & IBankerBehavior & IAlchemistBehavior & ISteelroseBehavior & ISuccorerBehavior
-& IUpgraderBehavior & IHallOfHeroesBehavior & IHPDocBehavior & IMPDocBehavior
-& IBufferBehavior & IItemModderBehavior & IResetterBehavior & ICosmeticsBehavior & IBinderBehavior
-& IAXPSwapper & IMagicianBehavior & ISpoilerLogger & IExitWarperBehavior & ITreasureClaimer
-& IRNGArtificer & ICulinarianBehavior &
-{
-  type: BehaviorType;
-  props?: string[];
-};
+export type IBehavior = IVendorBehavior &
+  ITrainerBehavior &
+  ICrierBehavior &
+  IPeddlerBehavior &
+  IIdentifierBehavior &
+  ITannerBehavior &
+  ISmithBehavior &
+  IEncrusterBehavior &
+  IBankerBehavior &
+  IAlchemistBehavior &
+  ISteelroseBehavior &
+  ISuccorerBehavior &
+  IUpgraderBehavior &
+  IHallOfHeroesBehavior &
+  IHPDocBehavior &
+  IMPDocBehavior &
+  IBufferBehavior &
+  IItemModderBehavior &
+  IResetterBehavior &
+  ICosmeticsBehavior &
+  IBinderBehavior &
+  IAXPSwapper &
+  IMagicianBehavior &
+  ISpoilerLogger &
+  IExitWarperBehavior &
+  ITreasureClaimer &
+  IRNGArtificer &
+  ICulinarianBehavior & {
+    type: BehaviorType;
+    props?: string[];
+  };
