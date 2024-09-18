@@ -140,19 +140,22 @@ export class MarketComponent {
   public gameService = inject(GameService);
 
   constructor() {
-    effect(() => {
-      const pos = this.curPos();
-      if (!pos) return;
-      if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
-      this.lastPos.x = pos.x;
-      this.lastPos.y = pos.y;
+    effect(
+      () => {
+        const pos = this.curPos();
+        if (!pos) return;
+        if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
+        this.lastPos.x = pos.x;
+        this.lastPos.y = pos.y;
 
-      if (this.marketInfo.npcUUID) {
-        this.store.dispatch(new HideMarketWindow());
-        this.store.dispatch(new HideWindow('market'));
-        this.reset();
-      }
-    });
+        if (this.marketInfo.npcUUID) {
+          this.store.dispatch(new HideMarketWindow());
+          this.store.dispatch(new HideWindow('market'));
+          this.reset();
+        }
+      },
+      { allowSignalWrites: true },
+    );
 
     effect(() => {
       const data = this.market();

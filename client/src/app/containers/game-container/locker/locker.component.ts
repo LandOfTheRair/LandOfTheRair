@@ -39,20 +39,23 @@ export class LockerComponent {
   public gameService = inject(GameService);
 
   constructor() {
-    effect(() => {
-      const pos = this.curPos();
+    effect(
+      () => {
+        const pos = this.curPos();
 
-      if (!pos) return;
-      if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
-      this.lastPos.x = pos.x;
-      this.lastPos.y = pos.y;
+        if (!pos) return;
+        if (pos.x === this.lastPos.x && pos.y === this.lastPos.y) return;
+        this.lastPos.x = pos.x;
+        this.lastPos.y = pos.y;
 
-      if (this.lockerInfo.lockerName) {
-        this.store.dispatch(new HideLockerWindow());
-        this.store.dispatch(new HideWindow('locker'));
-        this.lockerNames = [];
-      }
-    });
+        if (this.lockerInfo.lockerName) {
+          this.store.dispatch(new HideLockerWindow());
+          this.store.dispatch(new HideWindow('locker'));
+          this.lockerNames = [];
+        }
+      },
+      { allowSignalWrites: true },
+    );
 
     effect(() => {
       const player = this.player();
