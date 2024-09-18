@@ -56,7 +56,7 @@ export class Spawner {
   private eliteTickCap = 50; // the number of creatures required to spawn an elite (-1 = no elites)
   private removeDeadNPCs = true; // remove npcs when dead? if no, this is a spawner like a green spawner, where those npcs need to respawn
   private removeWhenNoNPCs = false; // remove this spawner when no npcs? generally used for on-the-fly spawners
-  private npcCreateCallback: (npc: INPC) => void; // the callback for creating an npc - used for summons, generally
+  private npcCreateCallback: (npc: INPC, spawner: Spawner) => void; // the callback for creating an npc - used for summons, generally
   private doInitialSpawnImmediately: boolean; // whether or not the spawner should spawn creatures immediately or wait
 
   private requireEvent: string; // the event required for this spawner to be active
@@ -407,12 +407,12 @@ export class Spawner {
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
-    if (this.npcCreateCallback) this.npcCreateCallback(npc);
+    this.addNPC(npc, aiInst, npcDef);
+
+    if (this.npcCreateCallback) this.npcCreateCallback(npc, this);
     if (createCallback) createCallback(npc);
 
     this.game.characterHelper.calculateStatTotals(npc);
-
-    this.addNPC(npc, aiInst, npcDef);
 
     npc.spawnedAt = Date.now();
 

@@ -65,14 +65,9 @@ export class DynamicEventHelper extends BaseService {
 
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
-    if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(
-        event.eventData?.startMessage ?? ref.startMessage,
-      );
-    } else {
-      this.game.messageHelper.broadcastSystemMessage(
-        `A new event "${setEvent.name}" has started!`,
-      );
+    const startMessage = event.eventData?.startMessage ?? ref?.startMessage;
+    if (ref && startMessage) {
+      this.game.messageHelper.broadcastSystemMessage(startMessage);
     }
 
     this.recalculateStatTotals();
@@ -90,15 +85,10 @@ export class DynamicEventHelper extends BaseService {
 
     const eventRef = event.eventRef ?? '';
     const ref = this.getEventRef(eventRef);
-    if (ref) {
-      this.game.messageHelper.broadcastSystemMessage(
-        event.eventData?.endMessage ?? ref.endMessage,
-      );
+    const endMessage = event.eventData?.endMessage ?? ref?.endMessage;
+    if (ref && endMessage) {
+      this.game.messageHelper.broadcastSystemMessage(endMessage);
       this.eventCooldowns[eventRef] = Date.now() + 1000 * (ref.cooldown ?? 0);
-    } else {
-      this.game.messageHelper.broadcastSystemMessage(
-        `"${event.name}" has ended.`,
-      );
     }
 
     this.handleSpecialEventsEnd(event);
@@ -449,14 +439,15 @@ export class DynamicEventHelper extends BaseService {
       removeDeadNPCs: true,
       respectKnowledge: false,
       doInitialSpawnImmediately: true,
-      npcCreateCallback: (npc) => {
-        const ai = this.game.worldManager
-          .getMap(npc.map)
-          ?.state.getNPCSpawner(npc.uuid)
-          ?.getNPCAI(npc.uuid);
+      npcCreateCallback: (npc: INPC, npcSpawner: Spawner) => {
+        this.game.messageHelper.broadcastSystemMessage(
+          `${npc.name} is descending upon ${spawnMap}!`,
+        );
+
+        const ai = npcSpawner.getNPCAI(npc.uuid);
         if (ai) {
           ai.death = (killer) => {
-            let message = `${npc.name} has been slain by otherworldly forces!`;
+            let message = `${npc.name} has been slain by worldly forces!`;
             if (killer) {
               message = `${npc.name} has been slain by ${killer.name}!`;
             }
