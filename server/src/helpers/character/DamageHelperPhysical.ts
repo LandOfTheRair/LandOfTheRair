@@ -219,7 +219,7 @@ export class DamageHelperPhysical extends BaseService {
     if (this.game.characterHelper.isPlayer(attacker)) return playerTiers;
 
     // player summon
-    if (attacker.allegianceReputation[Allegiance.Enemy] < -10000) {
+    if (attacker.allegianceReputation?.[Allegiance.Enemy] < -10000) {
       return playerTiers;
     }
 
