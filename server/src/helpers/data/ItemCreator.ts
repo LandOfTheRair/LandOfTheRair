@@ -24,9 +24,17 @@ export class ItemCreator extends BaseService {
 
   // get an item that can be equipped
   public getSimpleItem(itemName: string): ISimpleItem {
-    const itemDefinition = this.content.getItemDefinition(itemName);
-    if (!itemDefinition) {
-      throw new Error(`Item ${itemName} does not exist and cannot be created.`);
+    let itemDefinition;
+
+    try {
+      itemDefinition = this.content.getItemDefinition(itemName);
+      if (!itemDefinition) {
+        throw new Error(
+          `Item ${itemName} does not exist and cannot be created.`,
+        );
+      }
+    } catch (e) {
+      throw e;
     }
 
     const item: ISimpleItem = { name: itemName, uuid: uuid(), mods: {} };
