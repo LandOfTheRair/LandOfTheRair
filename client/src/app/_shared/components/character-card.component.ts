@@ -14,6 +14,7 @@ import { hostilityLevelFor } from '../../_shared/helpers';
 import { GameService } from '../../services/game.service';
 import { OptionsService } from '../../services/options.service';
 import { SocketService } from '../../services/socket.service';
+import { UIService } from '../../services/ui.service';
 
 @Component({
   selector: 'app-character-card',
@@ -22,6 +23,9 @@ import { SocketService } from '../../services/socket.service';
       class="char-card"
       [attr.uuid]="char().uuid"
       [class.disabled]="disabled()"
+      droppable
+      (onDrop)="uiService.buildAndDoDropAction($event, 'trade', char().uuid)"
+      dropScope="trade"
     >
       @if (currentTarget()?.uuid === char().uuid) {
       <div class="char-target">
@@ -367,6 +371,7 @@ export class CharacterCardComponent implements OnInit, OnDestroy {
   private socketService = inject(SocketService);
   private gameService = inject(GameService);
   public optionService = inject(OptionsService);
+  public uiService = inject(UIService);
 
   public currentTarget = select(GameState.currentTarget);
 

@@ -99,6 +99,10 @@ export class ItemComponent implements OnDestroy {
 
     const scopes = new Set<string>();
 
+    if (context === 'Left' || context === 'Right') {
+      scopes.add('trade');
+    }
+
     // if any hands are empty, or you're looking at left/right hand, they can move into the hand area
     if (
       !viewingPlayer.items.equipment[ItemSlot.LeftHand] ||

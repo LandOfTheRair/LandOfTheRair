@@ -77,4 +77,6 @@ export interface ICharacter {
 
   takingOver?: ICharacter;
   takenOverBy?: IPlayer;
+
+  isTradeEnabled?: boolean;
 }

@@ -93,6 +93,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_TEMPORARY()) pets: INPC[];
   @Property(PROP_TEMPORARY()) sessionStatistics: ISessionStatistics;
   @Property(PROP_TEMPORARY()) takingOver: ICharacter;
+  @Property(PROP_TEMPORARY()) isTradeEnabled?: boolean;
 
   // other server props
   @Property(PROP_SERVER_ONLY()) teleportLocations: Record<

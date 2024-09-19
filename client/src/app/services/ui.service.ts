@@ -42,6 +42,14 @@ export class UIService {
 
   // build and do a drop on a spot. if any selections, we handle all of them
   public buildAndDoDropAction(event, droppedOn, dropUUID?: string) {
+    if (droppedOn === 'trade') {
+      this.gameService.sendCommandString(
+        `dotrade ${event.dragData.context.toLowerCase()} ${dropUUID}`,
+      );
+      this.resetSelection();
+      return;
+    }
+
     // if we have selections, we gotta do all of them
     if (this.anySelected > 0) {
       for (let i = this.selected.sack.length; i >= 0; i--) {

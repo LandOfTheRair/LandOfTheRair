@@ -249,6 +249,7 @@ export class GameService {
       'art',
       'findfamiliar',
       'song',
+      'trade',
     ];
 
     let argsIndex = 1;
