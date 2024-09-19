@@ -577,10 +577,12 @@ export class CharacterHelper extends BaseService {
       (character as IPlayer).runes.forEach((rune) => {
         if (!rune) return;
 
-        const item = this.game.itemHelper.getItemDefinition(rune);
-        if (!item?.trait) return;
+        try {
+          const item = this.game.itemHelper.getItemDefinition(rune);
+          if (!item?.trait) return;
 
-        this.addTraitLevel(character, item.trait.name, item.trait.level);
+          this.addTraitLevel(character, item.trait.name, item.trait.level);
+        } catch {}
       });
     }
   }
