@@ -78,6 +78,12 @@ export const shouldSendPlayerPatch = (patch: Operation): boolean => {
     return false;
   }
 
+  if (
+    (patch.op === 'replace' || patch.op === 'add') &&
+    patch.path.includes('/currentTick')
+  ) {
+    return false;
+  }
   return true;
 };
 
