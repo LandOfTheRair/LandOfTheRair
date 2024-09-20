@@ -1,23 +1,31 @@
-
 import { Injectable } from 'injection-js';
 
-import { generate, observe, Observer, unobserve } from 'fast-json-patch';
+import {
+  generate,
+  observe,
+  Observer,
+  Operation,
+  unobserve,
+} from 'fast-json-patch';
 
 import { GameAction, GameServerResponse, IPlayer } from '../../interfaces';
 import { Player, PlayerState } from '../../models';
 import { BaseService } from '../../models/BaseService';
+import { modifyPatch, shouldSendPatch } from './PatchModifiers';
 
-interface PlayerPatch {
-  patches?: any[];
+export interface PlayerPatchSet {
+  patches?: Operation[];
   player?: Partial<IPlayer>;
 }
 
 @Injectable()
 export class TransmissionHelper extends BaseService {
-
   private playerPatchWatchers: Record<string, Observer<Player>> = {};
   private playerStateWatchers: Record<string, Observer<PlayerState>> = {};
-  private playerPatchQueue: Record<string, { patches: any[]; player: Partial<IPlayer> }> = {};
+  private playerPatchQueue: Record<
+    string,
+    { patches: Operation[]; player: Partial<IPlayer> }
+  > = {};
 
   public async init() {}
 
@@ -42,24 +50,21 @@ export class TransmissionHelper extends BaseService {
   }
 
   // queue data to be sent to a player during their next patch
-  public queuePlayerPatch(player: Player, patch: PlayerPatch) {
+  public queuePlayerPatch(player: Player, patch: PlayerPatchSet) {
     if (patch.patches) {
-      this.playerPatchQueue[player.username].patches.push(...patch.patches.filter(p => {
-        if (p.path.includes('/effects/_hash')) return true;
-
-        // ideally, it would not generate these patches, but we take what we can
-        if (['/x', '/y', '/dir', '/corpseRef'].includes(p.path)) return false;
-        if (p.path.includes('createdAt')) return false;
-        if (p.path.includes('currentTick')) return false;
-        if (p.path.includes('fov')) return false;
-        if (p.path.includes('_')) return false;
-
-        return true;
-      }));
+      this.playerPatchQueue[player.username].patches.push(
+        ...patch.patches
+          .filter((p) => shouldSendPatch(p))
+          .map((p) => modifyPatch(p)),
+      );
     }
 
     if (patch.player) {
-      this.playerPatchQueue[player.username].player = Object.assign({}, this.playerPatchQueue[player.username].player, patch.player);
+      this.playerPatchQueue[player.username].player = Object.assign(
+        {},
+        this.playerPatchQueue[player.username].player,
+        patch.player,
+      );
     }
   }
 
@@ -89,17 +94,20 @@ export class TransmissionHelper extends BaseService {
     const patches = generate(this.playerStateWatchers[player.username]);
     if (patches.length === 0) return;
 
-    this.sendActionToAccount(player.username, GameAction.GamePatchPlayerState, { statePatches: patches });
+    this.sendActionToAccount(player.username, GameAction.GamePatchPlayerState, {
+      statePatches: patches,
+    });
   }
 
   // send a specific patch for player FOV
   public sendFOVPatch(player: Player) {
-    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, { player: { fov: player.fov } });
+    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, {
+      player: { fov: player.fov },
+    });
   }
 
   // send a specific patch for player movement
   public sendMovementPatch(player: Player, blankFOV = false) {
-
     const fov = blankFOV ? {} : player.fov;
     if (blankFOV) {
       for (let x = -4; x <= 4; x++) {
@@ -111,14 +119,19 @@ export class TransmissionHelper extends BaseService {
     }
 
     this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, {
-      player: { fov: player.fov, x: player.x, y: player.y, dir: player.dir }
+      player: { fov: player.fov, x: player.x, y: player.y, dir: player.dir },
     });
   }
 
   // send patches to a player about themselves
   public patchPlayer(player: Player) {
     const patchData = this.playerPatchQueue[player.username];
-    if (patchData.patches.length === 0 && Object.keys(patchData.player).length === 0) return;
+    if (
+      patchData.patches.length === 0 &&
+      Object.keys(patchData.player).length === 0
+    ) {
+      return;
+    }
 
     this.sendPlayerPatches(player, patchData);
     patchData.player = {};
@@ -126,8 +139,15 @@ export class TransmissionHelper extends BaseService {
   }
 
   // specific helper to send patches to a player
-  public sendPlayerPatches(player: Player, patchData: PlayerPatch = {}): void {
-    this.sendActionToAccount(player.username, GameAction.GamePatchPlayer, patchData);
+  public sendPlayerPatches(
+    player: Player,
+    patchData: PlayerPatchSet = {},
+  ): void {
+    this.sendActionToAccount(
+      player.username,
+      GameAction.GamePatchPlayer,
+      patchData,
+    );
   }
 
   // send generic data to an account. probably not too useful.
@@ -138,27 +158,42 @@ export class TransmissionHelper extends BaseService {
   }
 
   // send an action to a player. also very useful
-  public sendActionToPlayer(player: Player, action: GameAction, data = {}): void {
+  public sendActionToPlayer(
+    player: Player,
+    action: GameAction,
+    data = {},
+  ): void {
     this.sendActionToAccount(player.username, action, data);
   }
 
   // send an action to an account. very useful.
-  public sendActionToAccount(username: string, action: GameAction, data: any): void {
+  public sendActionToAccount(
+    username: string,
+    action: GameAction,
+    data: any,
+  ): void {
     if (!username) return;
 
     this.game.wsCmdHandler.sendToSocket(username, { action, ...data });
   }
 
   // send a response to an account. very useful.
-  public sendResponseToPlayer(player: IPlayer, type: GameServerResponse, data: any): void {
+  public sendResponseToPlayer(
+    player: IPlayer,
+    type: GameServerResponse,
+    data: any,
+  ): void {
     this.sendResponseToAccount(player.username, type, data);
   }
 
   // send a response to an account. very useful.
-  public sendResponseToAccount(username: string, type: GameServerResponse, data: any): void {
+  public sendResponseToAccount(
+    username: string,
+    type: GameServerResponse,
+    data: any,
+  ): void {
     if (!username) return;
 
     this.game.wsCmdHandler.sendToSocket(username, { type, ...data });
   }
-
 }

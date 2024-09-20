@@ -335,7 +335,7 @@ export class CharacterHelper extends BaseService {
   }
 
   // begin engaging in combat
-  public engageInCombat(char: ICharacter, combatTicks = 5) {
+  public engageInCombat(char: ICharacter, combatTicks = 6) {
     char.combatTicks = combatTicks;
   }
 
