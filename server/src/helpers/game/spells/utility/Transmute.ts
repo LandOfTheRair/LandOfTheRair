@@ -10,7 +10,10 @@ import { Spell } from '../../../../models/world/Spell';
 export class Transmute extends Spell {
   override getPotency(caster: ICharacter | null) {
     return caster
-      ? this.game.characterHelper.getSkillLevel(caster, Skill.Thievery) + 10
+      ? Math.max(
+          this.game.characterHelper.getSkillLevel(caster, Skill.Thievery),
+          this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration),
+        ) + 10
       : 10;
   }
 
