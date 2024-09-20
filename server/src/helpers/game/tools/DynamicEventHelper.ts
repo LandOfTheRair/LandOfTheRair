@@ -64,6 +64,8 @@ export class DynamicEventHelper extends BaseService {
     });
 
     const eventRef = event.eventRef ?? '';
+    if (!eventRef) return;
+
     const ref = this.getEventRef(eventRef);
     const startMessage = event.eventData?.startMessage ?? ref?.startMessage;
     if (ref && startMessage) {
@@ -84,6 +86,8 @@ export class DynamicEventHelper extends BaseService {
     });
 
     const eventRef = event.eventRef ?? '';
+    if (!eventRef) return;
+
     const ref = this.getEventRef(eventRef);
     const endMessage = event.eventData?.endMessage ?? ref?.endMessage;
     if (ref && endMessage) {
