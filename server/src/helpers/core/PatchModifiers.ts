@@ -1,64 +1,70 @@
 import { Operation } from 'fast-json-patch';
 
-export const shouldSendPatch = (p: Operation): boolean => {
-  if (p.path.includes('/effects/_hash')) return true;
+export const shouldSendPatch = (patch: Operation): boolean => {
+  if (patch.path.includes('/effects/_hash')) return true;
 
   // remove these patches since they're mostly superfluous
   if (
-    p.path === '/combatTicks' &&
-    p.op === 'replace' &&
-    p.value !== 0 &&
-    p.value !== 5
+    patch.path === '/combatTicks' &&
+    patch.op === 'replace' &&
+    patch.value !== 0 &&
+    patch.value !== 5
   ) {
     return false;
   }
 
-  if (p.op === 'replace' && p.path.includes('/statistics')) return false;
-
-  if (
-    p.op === 'replace' &&
-    p.path.includes('/npcs') &&
-    p.path.includes('/mp')
-  ) {
+  if (patch.op === 'replace' && patch.path.includes('/statistics')) {
     return false;
   }
 
   if (
-    p.op === 'replace' &&
-    p.path.includes('/allegianceReputation') &&
-    ![-102, -101, -100, -99, -98, 98, 99, 100, 101, 102].includes(p.value)
+    patch.op === 'replace' &&
+    patch.path.includes('/npcs') &&
+    patch.path.includes('/mp')
   ) {
     return false;
   }
 
   if (
-    p.op === 'replace' &&
-    p.path.includes('/condition') &&
-    ![0, 1, 4999, 5000, 5001, 9999, 10000, 10001].includes(p.value)
+    patch.op === 'replace' &&
+    patch.path.includes('/allegianceReputation') &&
+    ![-102, -101, -100, -99, -98, 98, 99, 100, 101, 102].includes(patch.value)
   ) {
     return false;
   }
 
   if (
-    p.op === 'replace' &&
-    p.path.includes('/paidSkills') &&
-    p.value % 10 !== 0
+    patch.op === 'replace' &&
+    patch.path.includes('/condition') &&
+    ![0, 1, 4999, 5000, 5001, 9999, 10000, 10001].includes(patch.value)
   ) {
     return false;
   }
 
-  if (p.op === 'replace' && p.path.includes('/skills') && p.value % 10 !== 0) {
+  if (
+    patch.op === 'replace' &&
+    patch.path.includes('/paidSkills') &&
+    patch.value % 10 !== 0
+  ) {
     return false;
   }
 
-  if (p.op === 'replace' && p.path.includes('/agro')) return false;
+  if (
+    patch.op === 'replace' &&
+    patch.path.includes('/skills') &&
+    patch.value % 10 !== 0
+  ) {
+    return false;
+  }
+
+  if (patch.op === 'replace' && patch.path.includes('/agro')) return false;
 
   // ideally, it would not generate these patches, but we take what we can
-  if (['/x', '/y', '/dir', '/corpseRef'].includes(p.path)) return false;
-  if (p.path.includes('createdAt')) return false;
-  if (p.path.includes('currentTick')) return false;
-  if (p.path.includes('fov')) return false;
-  if (p.path.includes('_')) return false;
+  if (['/x', '/y', '/dir', '/corpseRef'].includes(patch.path)) return false;
+  if (patch.path.includes('createdAt')) return false;
+  if (patch.path.includes('currentTick')) return false;
+  if (patch.path.includes('fov')) return false;
+  if (patch.path.includes('_')) return false;
 
   return true;
 };
@@ -84,6 +90,9 @@ export const shouldSendPlayerPatch = (patch: Operation): boolean => {
   ) {
     return false;
   }
+
+  if (patch.op === 'replace' && patch.path.includes('/agro')) return false;
+
   return true;
 };
 
