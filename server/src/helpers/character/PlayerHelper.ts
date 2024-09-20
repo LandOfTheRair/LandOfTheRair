@@ -92,7 +92,7 @@ export class PlayerHelper extends BaseService {
       const remove: string[] = [];
 
       player.learnedRunes.forEach((rune) => {
-        const runeItem = this.game.itemHelper.getItemDefinition(rune);
+        const runeItem = this.game.contentManager.hasItemDefinition(rune);
         if (runeItem) return;
 
         remove.push(rune);
@@ -101,6 +101,19 @@ export class PlayerHelper extends BaseService {
       player.learnedRunes = player.learnedRunes.filter(
         (x) => !remove.includes(x),
       );
+    }
+
+    if (player.runes.length > 0) {
+      const remove: string[] = [];
+
+      player.runes.forEach((rune) => {
+        const runeItem = this.game.contentManager.hasItemDefinition(rune);
+        if (runeItem) return;
+
+        remove.push(rune);
+      });
+
+      player.runes = player.runes.filter((x) => !remove.includes(x));
     }
 
     player.agro = {};

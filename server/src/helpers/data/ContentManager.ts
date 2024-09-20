@@ -275,6 +275,10 @@ export class ContentManager extends BaseService {
     this.loadSpells();
   }
 
+  public hasItemDefinition(itemName: string): boolean {
+    return !!this.customItems[itemName] || !!this.items[itemName];
+  }
+
   public getDropablesForRegion(region: string): { drops: Rollable[] } {
     return (
       this.customRegionDroptables[region] ||
