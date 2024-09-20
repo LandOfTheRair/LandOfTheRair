@@ -758,9 +758,11 @@ export class PlayerHelper extends BaseService {
       mod *= 2;
     }
 
-    player.allegianceReputation[allegiance] =
-      player.allegianceReputation[allegiance] ?? 0;
-    player.allegianceReputation[allegiance]! += mod;
+    try {
+      player.allegianceReputation[allegiance] =
+        player.allegianceReputation[allegiance] ?? 0;
+      player.allegianceReputation[allegiance]! += mod;
+    } catch {}
   }
 
   // gain stats for leveling up
