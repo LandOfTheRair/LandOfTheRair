@@ -52,7 +52,6 @@ const PLAYER_KEYS = [
 
 const NPC_KEYS = [
   'dir',
-  'swimLevel',
   'uuid',
   'name',
   'sprite',
@@ -71,7 +70,6 @@ const NPC_KEYS = [
   'agro',
   'allegianceReputation',
   'hostility',
-  'aquaticOnly',
   'items.equipment.leftHand',
   'items.equipment.rightHand',
   'items.equipment.armor',
