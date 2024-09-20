@@ -11,7 +11,11 @@ import {
 import { GameAction, GameServerResponse, IPlayer } from '../../interfaces';
 import { Player, PlayerState } from '../../models';
 import { BaseService } from '../../models/BaseService';
-import { modifyPatch, shouldSendPatch } from './PatchModifiers';
+import {
+  modifyPlayerPatch,
+  shouldSendPatch,
+  shouldSendPlayerPatch,
+} from './PatchModifiers';
 
 export interface PlayerPatchSet {
   patches?: Operation[];
@@ -53,9 +57,7 @@ export class TransmissionHelper extends BaseService {
   public queuePlayerPatch(player: Player, patch: PlayerPatchSet) {
     if (patch.patches) {
       this.playerPatchQueue[player.username].patches.push(
-        ...patch.patches
-          .filter((p) => shouldSendPatch(p))
-          .map((p) => modifyPatch(p)),
+        ...patch.patches.filter((p) => shouldSendPatch(p)),
       );
     }
 
@@ -91,7 +93,9 @@ export class TransmissionHelper extends BaseService {
 
   // send a patch to a player regarding their player state
   public patchPlayerState(player: Player) {
-    const patches = generate(this.playerStateWatchers[player.username]);
+    const patches = generate(this.playerStateWatchers[player.username])
+      .filter((p) => shouldSendPlayerPatch(p))
+      .map((p) => modifyPlayerPatch(p));
     if (patches.length === 0) return;
 
     this.sendActionToAccount(player.username, GameAction.GamePatchPlayerState, {
