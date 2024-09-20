@@ -110,7 +110,7 @@ export const modifyPlayerPatch = (patch: Operation): Operation => {
         delete corpse.item.mods.corpseLevel;
         delete corpse.item.mods.playersHeardDeath;
 
-        if (corpse.item.mods.searchItems.length > 0) {
+        if ((corpse.item.mods.searchItems?.length ?? 0) > 0) {
           corpse.item.mods.searchItems = [1];
         }
       });
