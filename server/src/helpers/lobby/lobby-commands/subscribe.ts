@@ -1,5 +1,8 @@
-
-import { GameAction, ILobbyCommand, SubscriptionTier } from '../../../interfaces';
+import {
+  GameAction,
+  ILobbyCommand,
+  SubscriptionTier,
+} from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -7,7 +10,7 @@ export class SubscribeCommand implements ILobbyCommand {
   name = '/subscribe';
   syntax = '/subscribe <days> <accountname> (account must be online)';
 
-  do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: Game, emit: (args) => void) {
     const [cmd, days, rest] = message.split(' ');
 
     if (!rest) return false;
@@ -21,10 +24,9 @@ export class SubscribeCommand implements ILobbyCommand {
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message: `${account.username} was given a ${days}-day subscription.`,
-      from: '★System'
+      from: '★System',
     });
 
     return true;
-
   }
 }

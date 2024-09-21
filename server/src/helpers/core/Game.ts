@@ -68,6 +68,7 @@ import {
   GroundDB,
   LogsDB,
   MarketDB,
+  RedeemableDB,
   WorldDB,
 } from './db';
 import { Logger } from './Logger';
@@ -104,6 +105,7 @@ export class Game {
     public marketDB: MarketDB,
     public groundDB: GroundDB,
     public eventsDB: EventsDB,
+    public redeemableDB: RedeemableDB,
 
     public emailHelper: EmailHelper,
     public profanityHelper: ProfanityHelper,
@@ -189,6 +191,7 @@ export class Game {
       'accountDB',
       'groundDB',
       'eventsDB',
+      'redeemableDB',
       'emailHelper',
       'profanityHelper',
       'effectManager',

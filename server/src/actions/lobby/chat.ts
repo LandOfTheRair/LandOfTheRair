@@ -11,8 +11,9 @@ export class ChatAction extends ServerAction {
       emit({
         action: GameAction.ChatAddMessage,
         timestamp: Date.now(),
-        message: 'You are not able to chat at this time. Contact a GM or email help@rair.land if you believe this is in error.',
-        from: '★System'
+        message:
+          'You are not able to chat at this time. Contact a GM or email help@rair.land if you believe this is in error.',
+        from: '★System',
       });
 
       return {};
@@ -25,33 +26,34 @@ export class ChatAction extends ServerAction {
       const cmd = data.content.split(' ')[0];
       if (game.lobbyManager.hasCommand(cmd)) {
         if (data.account.isGameMaster) {
-          const res = game.lobbyManager.doCommand(cmd, data.content, emit);
+          const res = await game.lobbyManager.doCommand(
+            cmd,
+            data.content,
+            emit,
+          );
           if (!res) {
             const syntax = game.lobbyManager.getCommandSyntax(cmd);
             emit({
               action: GameAction.ChatAddMessage,
               timestamp: Date.now(),
               message: `Invalid usage. Syntax: ${syntax}`,
-              from: '★System'
+              from: '★System',
             });
           }
-
         } else {
           emit({
             action: GameAction.ChatAddMessage,
             timestamp: Date.now(),
             message: 'Only GMs can use slash commands.',
-            from: '★System'
+            from: '★System',
           });
-
         }
-
       } else {
         emit({
           action: GameAction.ChatAddMessage,
           timestamp: Date.now(),
           message: 'That slash command does not exist.',
-          from: '★System'
+          from: '★System',
         });
       }
 
@@ -60,10 +62,12 @@ export class ChatAction extends ServerAction {
 
     try {
       game.messageHelper.sendMessage(data.username, data.content);
-
     } catch (e) {
       game.logger.error('ChatAction', e);
-      return { message: 'Could not send chat message? Try again, or if this persists contact a GM.' };
+      return {
+        message:
+          'Could not send chat message? Try again, or if this persists contact a GM.',
+      };
     }
 
     return {};

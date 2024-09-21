@@ -7,7 +7,7 @@ export class CreateGMCommand implements ILobbyCommand {
   name = '/creategm';
   syntax = '/creategm <accountname> (account must be online)';
 
-  do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: Game, emit: (args) => void) {
     const [cmd, rest] = message.split(' ');
 
     if (!rest) return false;

@@ -1,4 +1,3 @@
-
 export interface IInternalCommand {
   name: string;
 }
@@ -9,5 +8,5 @@ export interface IDiscordCommand extends IInternalCommand {
 
 export interface ILobbyCommand extends IInternalCommand {
   syntax: string;
-  do(message: string, game, emit: (args) => void): boolean;
+  do(message: string, game, emit: (args) => void): Promise<boolean>;
 }

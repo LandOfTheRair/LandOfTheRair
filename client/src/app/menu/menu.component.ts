@@ -85,6 +85,19 @@ export class MenuComponent implements OnInit {
           handler: () => this.modalService.showAccount(),
         },
         {
+          name: 'Redeem Code',
+          icon: 'password',
+          handler: () => {
+            this.modalService
+              .input('Redeem Code', 'Enter the code you want to redeem here.')
+              .subscribe((code) => {
+                this.socketService.emit(GameServerEvent.CodeRedeem, {
+                  code,
+                });
+              });
+          },
+        },
+        {
           name: 'Current Events',
           icon: 'event',
           handler: () => this.modalService.showCurrentEvents(),

@@ -1,7 +1,11 @@
-
 import { Injectable } from 'injection-js';
 
-import { GameAction, GameServerResponse, IAccount, ILobbyCommand } from '../../interfaces';
+import {
+  GameAction,
+  GameServerResponse,
+  IAccount,
+  ILobbyCommand,
+} from '../../interfaces';
 import { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { WorldManager } from '../data';
@@ -20,10 +24,9 @@ class LobbyState {
 
 @Injectable()
 export class LobbyManager extends BaseService {
-
   constructor(
     private playerManager: PlayerManager,
-    private worldManager: WorldManager
+    private worldManager: WorldManager,
   ) {
     super();
   }
@@ -89,7 +92,11 @@ export class LobbyManager extends BaseService {
 
   public leaveGame(username: string): void {
     const player = this.playerManager.getPlayerByUsername(username);
-    if (!player) throw new Error(`Lobby leave game could not get player for username ${username}`);
+    if (!player) {
+      throw new Error(
+        `Lobby leave game could not get player for username ${username}`,
+      );
+    }
 
     this.game.partyHelper.leaveParty(player);
     this.worldManager.leaveMap(player, true);
@@ -110,11 +117,11 @@ export class LobbyManager extends BaseService {
 
     this.game.wsCmdHandler.broadcast({
       action: GameAction.ChatUserLeaveGame,
-      username
+      username,
     });
 
     this.game.wsCmdHandler.sendToSocket(username, {
-      action: GameAction.GameQuit
+      action: GameAction.GameQuit,
     });
   }
 
@@ -132,7 +139,6 @@ export class LobbyManager extends BaseService {
     }
   }
 
-
   public usersInGameCount(): number {
     return this.state.gamePlayerCount;
   }
@@ -145,7 +151,7 @@ export class LobbyManager extends BaseService {
     if (count !== oldCount) {
       this.game.wsCmdHandler.broadcast({
         type: GameServerResponse.UserCountUpdate,
-        count
+        count,
       });
     }
   }
@@ -162,13 +168,17 @@ export class LobbyManager extends BaseService {
     return this.lobbyCommands[cmd].syntax;
   }
 
-  public doCommand(cmd: string, message: string, emit: (args) => void): boolean {
+  public async doCommand(
+    cmd: string,
+    message: string,
+    emit: (args) => void,
+  ): Promise<boolean> {
     if (!this.lobbyCommands[cmd]) return false;
     return this.lobbyCommands[cmd].do(message, this.game, emit);
   }
 
   private initCommands() {
-    Object.values(commands).forEach(command => {
+    Object.values(commands).forEach((command) => {
       const cmdInst = new command();
       this.lobbyCommands[cmdInst.name] = cmdInst;
     });

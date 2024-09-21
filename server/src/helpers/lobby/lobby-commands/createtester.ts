@@ -1,4 +1,3 @@
-
 import { GameAction, ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
@@ -8,7 +7,7 @@ export class CreateTesterCommand implements ILobbyCommand {
   name = '/createtester';
   syntax = '/createtester <accountname> (account must be online)';
 
-  do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: Game, emit: (args) => void) {
     const [cmd, rest] = message.split(' ');
 
     if (!rest) return false;
@@ -22,10 +21,9 @@ export class CreateTesterCommand implements ILobbyCommand {
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message: `${account.username} is ${account.isTester ? 'now' : 'no longer'} a tester.`,
-      from: '★System'
+      from: '★System',
     });
 
     return true;
-
   }
 }

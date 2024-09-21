@@ -1,4 +1,3 @@
-
 import { GameAction, ILobbyCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
@@ -7,7 +6,7 @@ export class KickCommand implements ILobbyCommand {
   name = '/kick';
   syntax = '/kick <accountname> (account must be online)';
 
-  do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: Game, emit: (args) => void) {
     const [cmd, rest] = message.split(' ');
 
     if (!rest) return false;
@@ -20,7 +19,7 @@ export class KickCommand implements ILobbyCommand {
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message: `${rest} was kicked from game.`,
-      from: '★System'
+      from: '★System',
     });
 
     return true;

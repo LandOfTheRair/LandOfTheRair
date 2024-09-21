@@ -1,4 +1,3 @@
-
 export interface IServerResponse {
   type: GameServerResponse;
   error?: string;
@@ -21,7 +20,11 @@ export interface IServerAction {
   canBeUnattended: boolean;
 
   validate(args?): boolean;
-  act(game, { broadcast, emit, register, unregister }: WebsocketCallbacks, args?): Promise<{ wasSuccess?: boolean; message?: string }>;
+  act(
+    game,
+    { broadcast, emit, register, unregister }: WebsocketCallbacks,
+    args?,
+  ): Promise<{ wasSuccess?: boolean; message?: string }>;
 }
 
 export enum GameServerEvent {
@@ -57,7 +60,9 @@ export enum GameServerEvent {
   DoCommand = 'Game:Emit:DoCommand',
 
   PremiumBuy = 'Premium:Buy:Item',
-  PremiumSilverBuy = 'Premium:SilverBuy:Item'
+  PremiumSilverBuy = 'Premium:SilverBuy:Item',
+
+  CodeRedeem = 'Code:Redeem:Single',
 }
 
 export enum GameServerResponse {
@@ -86,7 +91,7 @@ export enum GameServerResponse {
 
   DialogChat = 'Game:Response:NPCDialog',
   PlaySFX = 'Game:Response:PlaySFX',
-  PlayCFX = 'Game:Response:PlayCFX'
+  PlayCFX = 'Game:Response:PlayCFX',
 }
 
 export enum GameAction {

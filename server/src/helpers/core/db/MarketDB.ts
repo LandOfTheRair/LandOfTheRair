@@ -9,7 +9,7 @@ import {
   IPlayer,
   ISimpleItem,
 } from '../../../interfaces';
-import { MarketListing, MarketPickup } from '../../../models';
+import { MarketListing, MarketPickup, Redeemable } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { Database } from '../Database';
 
@@ -123,5 +123,43 @@ export class MarketDB extends BaseService {
     pickup.username = username;
 
     return this.db.save(pickup);
+  }
+
+  public async createPickupFromRedeemable(
+    username: string,
+    redeemable: Redeemable,
+  ): Promise<any> {
+    if (redeemable.gold) {
+      const pickup: MarketPickup = new MarketPickup();
+      pickup._id = new ObjectId();
+      pickup.username = username;
+      pickup.gold = redeemable.gold;
+
+      await this.db.save(pickup);
+    }
+
+    if (redeemable.item) {
+      const pickup: MarketPickup = new MarketPickup();
+      pickup._id = new ObjectId();
+      pickup.username = username;
+
+      const item = this.game.itemCreator.getSimpleItem(redeemable.item);
+      const itemDefinition = this.game.itemHelper.getItemDefinition(item.name);
+
+      pickup.itemInfo = {
+        condition: 20000,
+        cosmetic: '',
+        uuid: item.uuid,
+        sprite: this.game.itemHelper.getItemProperty(item, 'sprite'),
+        itemClass: this.game.itemHelper.getItemProperty(item, 'itemClass'),
+        requirements: this.game.itemHelper.getItemProperty(
+          item,
+          'requirements',
+        ),
+        itemOverride: Object.assign({}, itemDefinition, item),
+      };
+
+      await this.db.save(pickup);
+    }
   }
 }

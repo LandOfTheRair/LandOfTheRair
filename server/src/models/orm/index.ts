@@ -1,4 +1,3 @@
-
 export * from './Account';
 export * from './AccountBank';
 export * from './AccountDaily';
@@ -13,4 +12,5 @@ export * from './Player';
 export * from './PlayerItems';
 export * from './PlayerQuests';
 export * from './PlayerTraits';
+export * from './Redeemable';
 export * from './WorldSettings';
