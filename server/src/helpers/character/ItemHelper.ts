@@ -17,6 +17,7 @@ import {
   ItemSlot,
   Stat,
 } from '../../interfaces';
+import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
 
@@ -743,6 +744,16 @@ export class ItemHelper extends BaseService {
         this.game.messageHelper.sendLogMessageToRadius(character, 4, {
           message: `*** ${character.name} has looted ${desc}.`,
         });
+      }
+
+      const ach = this.game.achievementsHelper.getItemForAchievementUse(
+        item.name,
+      );
+      if (this.game.characterHelper.isPlayer(character) && ach) {
+        this.game.achievementsHelper.earnAchievement(
+          character as Player,
+          ach.name,
+        );
       }
     }
   }

@@ -114,7 +114,6 @@
     "comma-spacing": ["error", { "before": false, "after": true }],
     "arrow-spacing": ["error", { "before": true, "after": true }],
     "space-before-blocks": ["error"],
-    "brace-style": ["error", "1tbs"],
     "comma-dangle": "off",
     "complexity": "off",
     "constructor-super": "error",

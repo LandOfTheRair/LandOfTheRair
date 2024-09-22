@@ -91,6 +91,7 @@ export class MenuComponent implements OnInit {
             this.modalService
               .input('Redeem Code', 'Enter the code you want to redeem here.')
               .subscribe((code) => {
+                if (!code) return;
                 this.socketService.emit(GameServerEvent.CodeRedeem, {
                   code,
                 });

@@ -269,6 +269,18 @@ export class DeathHelper extends BaseService {
       ?.getNPCAI(dead.uuid);
     ai?.death(killer);
 
+    const ach = this.game.achievementsHelper.getNPCForAchievementUse(
+      dead.npcId,
+    );
+    if (
+      killer &&
+      dead.npcId &&
+      ach &&
+      this.game.characterHelper.isPlayer(killer)
+    ) {
+      this.game.achievementsHelper.earnAchievement(killer as Player, ach.name);
+    }
+
     if (!dead.noItemDrop) {
       const state = this.game.worldManager.getMap(dead.map)?.state;
       if (!state) return;

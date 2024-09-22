@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/indent */
 import { Alignment, Currency, Holiday, ItemSlot } from './building-blocks';
 import { IItem } from './item';
 
@@ -27,7 +27,8 @@ export enum DialogActionType {
   CheckNPCsAndDropItems = 'checkNearbyNPCsAndDropItems',
   CheckAnyHostilesNearby = 'checkAnyHostilesNearby',
   DropItems = 'dropItems',
-  KillSelfSilently = 'killSelfSilently'
+  KillSelfSilently = 'killSelfSilently',
+  GrantAchievement = 'grantAchievement',
 }
 
 // dialog items, used for check/take/give
@@ -199,11 +200,23 @@ export interface IKillSelfSilentlyAction {
   leaveMessage?: string;
 }
 
-export type IDialogAction = IDialogChatAction & IDialogCheckItemAction
-& IDialogGiveItemAction & IDialogTakeItemAction & IDialogGiveEffectAction
-& IDialogCheckLevelAction & IDialogCheckAlignmentAction & IDialogSetAlignmentAction
-& IDialogCheckItemCanUpgradeAction & IDialogAddItemUpgradeAction
-& { type: DialogActionType; maxDistance?: number };
+export interface IGrantAchievementAction {
+  achievementName: string;
+}
+
+export type IDialogAction = IDialogChatAction &
+  IDialogCheckItemAction &
+  IDialogGiveItemAction &
+  IDialogTakeItemAction &
+  IDialogGiveEffectAction &
+  IDialogCheckLevelAction &
+  IDialogCheckAlignmentAction &
+  IDialogSetAlignmentAction &
+  IDialogCheckItemCanUpgradeAction &
+  IDialogAddItemUpgradeAction & {
+    type: DialogActionType;
+    maxDistance?: number;
+  };
 
 export interface IDialogTree {
   keyword: Record<string, { actions: IDialogAction[] }>;

@@ -5,6 +5,7 @@ import { GameEvent, IWebsocketCommandHandler } from '../../interfaces';
 import { EventEmitter } from 'events';
 import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import {
+  AchievementsHelper,
   CalculatorHelper,
   CharacterHelper,
   CombatHelper,
@@ -152,6 +153,7 @@ export class Game {
     public partyManager: PartyManager,
     public darknessHelper: DarknessHelper,
     public trapHelper: TrapHelper,
+    public achievementsHelper: AchievementsHelper,
 
     public messageHelper: MessageHelper,
     public dynamicEventHelper: DynamicEventHelper,
@@ -235,6 +237,7 @@ export class Game {
       'partyManager',
       'darknessHelper',
       'trapHelper',
+      'achievementsHelper',
       'commandHandler',
       'messageHelper',
       'dynamicEventHelper',

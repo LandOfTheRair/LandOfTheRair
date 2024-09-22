@@ -2,14 +2,20 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, IBinderBehavior,
-  IDialogChatAction, INPC, ItemClass, ItemSlot } from '../../../../interfaces';
+  distanceFrom,
+  GameServerResponse,
+  IAIBehavior,
+  IBinderBehavior,
+  IDialogChatAction,
+  INPC,
+  ItemClass,
+  ItemSlot,
+} from '../../../../interfaces';
 
 export class BinderBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IBinderBehavior) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -28,15 +34,20 @@ export class BinderBehavior implements IAIBehavior {
           options: [
             { text: 'Bind', action: 'bind' },
             { text: 'No thanks!', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return 'Hello!';
       });
 
-    parser.addCommand('bind')
+    parser
+      .addCommand('bind')
       .setSyntax(['bind'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -47,21 +58,34 @@ export class BinderBehavior implements IAIBehavior {
         // Bind the item
         const item = player.items.equipment[ItemSlot.RightHand];
         if (!item) return 'You must be holding an item in your right hand!';
-        if (item.mods.owner === player.username) return 'You already own that item!';
-        if (item.mods.owner && item.mods.owner !== player.username) return 'That item belongs to someone else!';
+        if (item.mods.owner === player.username) {
+          return 'You already own that item!';
+        }
+        if (item.mods.owner && item.mods.owner !== player.username) {
+          return 'That item belongs to someone else!';
+        }
 
         // Check for unbindable item classes
         const itemClass = game.itemHelper.getItemProperty(item, 'itemClass');
 
         if (itemClass === ItemClass.Corpse) return 'That is disrespectful.';
-        if (itemClass === ItemClass.Coin) return 'I can\'t engrave onto something so small.';
+        if (itemClass === ItemClass.Coin) {
+          return "I can't engrave onto something so small.";
+        }
 
         game.itemHelper.setItemProperty(item, 'owner', player.username);
-        if (item.mods.owner === player.username) return 'Done! It is now yours.';
+
+        const ach = game.achievementsHelper.getItemForAchievementUse(item.name);
+        if (ach) {
+          game.achievementsHelper.earnAchievement(player, ach.name);
+        }
+
+        if (item.mods.owner === player.username) {
+          return 'Done! It is now yours.';
+        }
 
         return 'I was unable to bind that item!';
       });
-
   }
 
   tick() {}

@@ -1,4 +1,5 @@
 export * from './Account';
+export * from './AccountAchievements';
 export * from './AccountBank';
 export * from './AccountDaily';
 export * from './AccountLockers';

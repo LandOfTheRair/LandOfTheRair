@@ -27,6 +27,7 @@ import * as statictext from '../../../content/_output/statictext.json';
 import * as weapontiers from '../../../content/_output/weapontiers.json';
 import * as weapontiersnpc from '../../../content/_output/weapontiersnpc.json';
 
+import * as achievements from '../../../content/_output/achievements.json';
 import * as droptablesMaps from '../../../content/_output/droptable-maps.json';
 import * as droptablesRegions from '../../../content/_output/droptable-regions.json';
 import * as effectData from '../../../content/_output/effect-data.json';
@@ -45,6 +46,7 @@ import {
   BaseClass,
   ClassConfig,
   Holiday,
+  IAchievement,
   IChallenge,
   IClassTraitTree,
   IDynamicEventData,
@@ -99,6 +101,7 @@ export class ContentManager extends BaseService {
   private traitTrees: Record<string, IClassTraitTree>;
   private effectData: Record<string, IStatusEffectData>;
   private spells: Record<string, ISpellData>;
+  private achievements: Record<string, IAchievement>;
 
   private customRegionDroptables: Record<string, { drops: Rollable[] }> = {};
   private customMapDroptables: Record<string, { drops: Rollable[] }> = {};
@@ -148,6 +151,10 @@ export class ContentManager extends BaseService {
   private weaponTiersNPC: Record<WeaponClass, IWeaponTier>;
   private rngDungeonConfig: IRNGDungeonConfig;
   private spriteinfo: { doorStates: any[] };
+
+  public get allAchievements(): Record<string, IAchievement> {
+    return cloneDeep(this.achievements);
+  }
 
   public get allItems(): Record<string, IItemDefinition> {
     return cloneDeep(this.items);
@@ -273,6 +280,23 @@ export class ContentManager extends BaseService {
     this.loadTraits();
     this.loadEffects();
     this.loadSpells();
+    this.loadAchievements();
+  }
+
+  public hasAchievement(achievementName: string): boolean {
+    return !!this.achievements[achievementName];
+  }
+
+  public getAchievement(achievementName: string): IAchievement {
+    const ret = this.achievements[achievementName];
+    if (!ret) {
+      this.game.logger.error(
+        'Content:Achievement',
+        new Error(`Achievement ${achievementName} does not exist.`),
+      );
+    }
+
+    return ret;
   }
 
   public hasItemDefinition(itemName: string): boolean {
@@ -606,6 +630,15 @@ export class ContentManager extends BaseService {
     this.spriteinfo = deepfreeze(
       this.chooseConfigFileOrPreset('sprite-data', realJSON(spriteinfo)),
     );
+  }
+
+  private loadAchievements() {
+    this.achievements = this.chooseConfigFileOrPreset(
+      'achievements',
+      realJSON(achievements),
+    ) as any as Record<string, IAchievement>;
+
+    deepfreeze(this.achievements);
   }
 
   private loadSpells() {

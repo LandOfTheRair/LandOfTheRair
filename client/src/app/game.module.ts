@@ -72,6 +72,7 @@ import { LobbyContainerComponent } from './containers/lobby-container/lobby-cont
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 
+import { AchievementComponent } from 'src/app/_shared/components/achievement/achievement.component';
 import {
   MdePopover,
   MdePopoverTarget,
@@ -100,6 +101,7 @@ const declarations = [
   EffectIconComponent,
   DialogComponent,
   NPCComponent,
+  AchievementComponent,
   DraggableDirective,
   DroppableDirective,
   ConfirmModalComponent,

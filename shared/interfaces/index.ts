@@ -1,13 +1,14 @@
-
 export * from './account';
 export * from './accountbank';
 export * from './accountpremium';
+export * from './achievements';
 export * from './action';
 export * from './ai';
 export * from './behaviors';
 export * from './building-blocks';
 export * from './character';
 export * from './characteritems';
+export * from './characterlockers';
 export * from './characterquests';
 export * from './charactertraits';
 export * from './combat';
@@ -22,7 +23,6 @@ export * from './item';
 export * from './itemtypes';
 export * from './journal';
 export * from './lobby';
-export * from './characterlockers';
 export * from './macro';
 export * from './map';
 export * from './market';

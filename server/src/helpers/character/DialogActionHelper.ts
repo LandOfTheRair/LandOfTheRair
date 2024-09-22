@@ -1,20 +1,50 @@
 import { Injectable } from 'injection-js';
 import { get, sample, template, uniq } from 'lodash';
 
-import { DialogActionType, GameServerResponse, IDialogAction,
+import {
+  DialogActionType,
+  Direction,
+  distanceFrom,
+  GameServerResponse,
+  Hostility,
+  IDialogAction,
   IDialogAddItemUpgradeAction,
-  IDialogChatAction, IDialogChatActionOption, IDialogCheckAlignmentAction,
-  IDialogCheckItemAction, IDialogCheckDailyQuestAction,
-  IDialogCheckItemCanUpgradeAction, IDialogCheckNoItemAction,
-  IDialogCheckLevelAction, IDialogGiveDailyQuestAction,
-  IDialogCheckQuestAction, IDialogGiveEffectAction, IDialogGiveItemAction,
-  IDialogGiveQuestAction, IDialogModifyItemAction, IDialogRequirement,
-  IDialogSetAlignmentAction, IDialogTakeItemAction, INPC,
-  IPlayer, ItemSlot, MessageType, Stat, TrackedStatistic,
-  IDialogCheckNPCsAndDropItemsAction, ISimpleItem,
-  Direction, distanceFrom, IDialogCheckHolidayAction,
-  IDialogGiveCurrencyAction, IDialogUpdateQuestAction, IDialogHasQuestAction,
-  IDialogCheckNearbyHostilesAction, IDropItemsAction, IKillSelfSilentlyAction, MonsterClass, Hostility } from '../../interfaces';
+  IDialogChatAction,
+  IDialogChatActionOption,
+  IDialogCheckAlignmentAction,
+  IDialogCheckDailyQuestAction,
+  IDialogCheckHolidayAction,
+  IDialogCheckItemAction,
+  IDialogCheckItemCanUpgradeAction,
+  IDialogCheckLevelAction,
+  IDialogCheckNearbyHostilesAction,
+  IDialogCheckNoItemAction,
+  IDialogCheckNPCsAndDropItemsAction,
+  IDialogCheckQuestAction,
+  IDialogGiveCurrencyAction,
+  IDialogGiveDailyQuestAction,
+  IDialogGiveEffectAction,
+  IDialogGiveItemAction,
+  IDialogGiveQuestAction,
+  IDialogHasQuestAction,
+  IDialogModifyItemAction,
+  IDialogRequirement,
+  IDialogSetAlignmentAction,
+  IDialogTakeItemAction,
+  IDialogUpdateQuestAction,
+  IDropItemsAction,
+  IGrantAchievementAction,
+  IKillSelfSilentlyAction,
+  INPC,
+  IPlayer,
+  ISimpleItem,
+  ItemSlot,
+  MessageType,
+  MonsterClass,
+  Stat,
+  TrackedStatistic,
+} from '../../interfaces';
+import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 interface IActionResult {
@@ -24,78 +54,110 @@ interface IActionResult {
 
 @Injectable()
 export class DialogActionHelper extends BaseService {
-
   public init() {}
 
-  public async handleDialog(player: IPlayer, npc: INPC, command: string, callbacks): Promise<void> {
+  public async handleDialog(
+    player: IPlayer,
+    npc: INPC,
+    command: string,
+    callbacks,
+  ): Promise<void> {
     if (command === 'hello') {
-      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.NPCsGreeted);
+      this.game.statisticsHelper.addStatistic(
+        player,
+        TrackedStatistic.NPCsGreeted,
+      );
     }
 
-    const messages = await (npc as any).dialogParser.parse(command, { player, callbacks }) || [];
+    const messages =
+      (await (npc as any).dialogParser.parse(command, { player, callbacks })) ||
+      [];
     if ((messages || []).length === 0) {
       messages.push(this.getDefaultMessage(npc));
     }
 
-    (messages || []).forEach(message => {
-      this.game.messageHelper.sendLogMessageToPlayer(player, { message, from: npc.name }, [MessageType.NPCChatter]);
+    (messages || []).forEach((message) => {
+      this.game.messageHelper.sendLogMessageToPlayer(
+        player,
+        { message, from: npc.name },
+        [MessageType.NPCChatter],
+      );
     });
   }
 
-  public handleAction(action: IDialogAction, npc: INPC, player: IPlayer): IActionResult {
-
-    const actions: Record<DialogActionType, (act, npc, player) => IActionResult> = {
-      [DialogActionType.Chat]:                    this.handleChatAction,
-      [DialogActionType.CheckItem]:               this.handleCheckItemAction,
-      [DialogActionType.CheckNoItem]:             this.handleCheckNoItemAction,
-      [DialogActionType.TakeItem]:                this.handleTakeItemAction,
-      [DialogActionType.GiveItem]:                this.handleGiveItemAction,
-      [DialogActionType.MergeAndGiveItem]:        this.handleMergeGiveItemAction,
-      [DialogActionType.ModifyItem]:              this.handleModifyItemAction,
-      [DialogActionType.CheckItemCanUpgrade]:     this.handleItemCanUpgradeAction,
-      [DialogActionType.AddUpgradeItem]:          this.handleAddItemUpgradeAction,
-      [DialogActionType.GiveEffect]:              this.handleGiveEffectAction,
-      [DialogActionType.GiveCurrency]:            this.handleGiveCurrencyAction,
-      [DialogActionType.CheckQuest]:              this.handleCheckQuestAction,
-      [DialogActionType.HasQuest]:                this.handleHasQuestAction,
-      [DialogActionType.UpdateQuest]:             this.handleUpdateQuestAction,
-      [DialogActionType.CheckHoliday]:            this.handleCheckHolidayAction,
-      [DialogActionType.CheckDailyQuest]:         this.handleCheckDailyQuestAction,
-      [DialogActionType.GiveQuest]:               this.handleGiveQuestAction,
-      [DialogActionType.GiveDailyQuest]:          this.handleGiveDailyQuestAction,
-      [DialogActionType.CheckLevel]:              this.handleCheckLevelAction,
-      [DialogActionType.CheckAlignment]:          this.handleCheckAlignmentAction,
-      [DialogActionType.SetAlignment]:            this.handleSetAlignmentAction,
-      [DialogActionType.CheckNPCsAndDropItems]:   this.handleCheckNPCAction,
-      [DialogActionType.CheckAnyHostilesNearby]:  this.handleCheckAnyHostilesNearbyAction,
-      [DialogActionType.KillSelfSilently]:        this.handleKillSelfSilentlyAction,
-      [DialogActionType.DropItems]:               this.handleDropItemsAction
+  public handleAction(
+    action: IDialogAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
+    const actions: Record<
+      DialogActionType,
+      (act, npc, player) => IActionResult
+    > = {
+      [DialogActionType.Chat]: this.handleChatAction,
+      [DialogActionType.CheckItem]: this.handleCheckItemAction,
+      [DialogActionType.CheckNoItem]: this.handleCheckNoItemAction,
+      [DialogActionType.TakeItem]: this.handleTakeItemAction,
+      [DialogActionType.GiveItem]: this.handleGiveItemAction,
+      [DialogActionType.MergeAndGiveItem]: this.handleMergeGiveItemAction,
+      [DialogActionType.ModifyItem]: this.handleModifyItemAction,
+      [DialogActionType.CheckItemCanUpgrade]: this.handleItemCanUpgradeAction,
+      [DialogActionType.AddUpgradeItem]: this.handleAddItemUpgradeAction,
+      [DialogActionType.GiveEffect]: this.handleGiveEffectAction,
+      [DialogActionType.GiveCurrency]: this.handleGiveCurrencyAction,
+      [DialogActionType.CheckQuest]: this.handleCheckQuestAction,
+      [DialogActionType.HasQuest]: this.handleHasQuestAction,
+      [DialogActionType.UpdateQuest]: this.handleUpdateQuestAction,
+      [DialogActionType.CheckHoliday]: this.handleCheckHolidayAction,
+      [DialogActionType.CheckDailyQuest]: this.handleCheckDailyQuestAction,
+      [DialogActionType.GiveQuest]: this.handleGiveQuestAction,
+      [DialogActionType.GiveDailyQuest]: this.handleGiveDailyQuestAction,
+      [DialogActionType.CheckLevel]: this.handleCheckLevelAction,
+      [DialogActionType.CheckAlignment]: this.handleCheckAlignmentAction,
+      [DialogActionType.SetAlignment]: this.handleSetAlignmentAction,
+      [DialogActionType.CheckNPCsAndDropItems]: this.handleCheckNPCAction,
+      [DialogActionType.CheckAnyHostilesNearby]:
+        this.handleCheckAnyHostilesNearbyAction,
+      [DialogActionType.KillSelfSilently]: this.handleKillSelfSilentlyAction,
+      [DialogActionType.DropItems]: this.handleDropItemsAction,
+      [DialogActionType.GrantAchievement]: this.handleGrantAchievementAction,
     };
+    if (!actions[action.type]) {
+      this.game.logger.error(
+        `[Dialog:HandleAction]`,
+        new Error(
+          `Could not find action ${action.type} on NPC ${npc.npcId || npc.name}.`,
+        ),
+      );
+      return { messages: [], shouldContinue: false };
+    }
 
     return actions[action.type].bind(this)(action, npc, player);
   }
 
   private getDefaultMessage(npc: INPC) {
     if (npc.hostility === Hostility.Always) {
-      const hostileMessages = this.game.contentManager.getGameSetting('npc', 'messages.hostile') ?? [
-        'Die!',
-        'Begone!',
-        'Leave this place!'
-      ];
+      const hostileMessages = this.game.contentManager.getGameSetting(
+        'npc',
+        'messages.hostile',
+      ) ?? ['Die!', 'Begone!', 'Leave this place!'];
 
       return sample(hostileMessages);
     }
 
     if (npc.monsterClass === MonsterClass.Beast) {
-      const defaultBeastMessages = this.game.contentManager.getGameSetting('npc', 'messages.beast') ?? [
-        '_growl_',
-        '_snarl_'
-      ];
+      const defaultBeastMessages = this.game.contentManager.getGameSetting(
+        'npc',
+        'messages.beast',
+      ) ?? ['_growl_', '_snarl_'];
 
       return sample(defaultBeastMessages);
     }
 
-    const defaultMessages = this.game.contentManager.getGameSetting('npc', 'messages.friendly') ?? [
+    const defaultMessages = this.game.contentManager.getGameSetting(
+      'npc',
+      'messages.friendly',
+    ) ?? [
       'Hmm?',
       'What do you mean?',
       'Hello, are you looking for me?',
@@ -103,16 +165,19 @@ export class DialogActionHelper extends BaseService {
       'Did you mean to say something else?',
       'What did you just call me?',
       'Can you get to the point of the matter?',
-      'I\'m very busy, can you hurry it up?',
-      'Can you be more clear?'
+      "I'm very busy, can you hurry it up?",
+      'Can you be more clear?',
     ];
 
     return sample(defaultMessages);
   }
 
   // DO a generic chat w/ modal
-  private handleChatAction(action: IDialogChatAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleChatAction(
+    action: IDialogChatAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -125,23 +190,34 @@ export class DialogActionHelper extends BaseService {
       displayNPCSprite: npc.sprite,
       displayNPCUUID: npc.uuid,
       options: (action.options || [])
-        .map(x => {
-          if (x.requirement && !this.meetsRequirement(player, x.requirement)) return null;
+        .map((x) => {
+          if (x.requirement && !this.meetsRequirement(player, x.requirement)) {
+            return null;
+          }
+
           return {
             text: template(x.text)(player),
-            action: x.action
+            action: x.action,
           };
         })
-        .filter(Boolean) as IDialogChatActionOption[]
+        .filter(Boolean) as IDialogChatActionOption[],
     };
 
-    this.game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+    this.game.transmissionHelper.sendResponseToAccount(
+      player.username,
+      GameServerResponse.DialogChat,
+      formattedChat,
+    );
 
     return { messages: [formattedChat.message], shouldContinue: true };
   }
 
   // SET alignment via an action
-  private handleSetAlignmentAction(action: IDialogSetAlignmentAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleSetAlignmentAction(
+    action: IDialogSetAlignmentAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { alignment } = action;
 
     player.alignment = alignment;
@@ -150,7 +226,11 @@ export class DialogActionHelper extends BaseService {
   }
 
   // CHECK alignment
-  private handleCheckAlignmentAction(action: IDialogCheckAlignmentAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckAlignmentAction(
+    action: IDialogCheckAlignmentAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { alignment, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
@@ -160,37 +240,60 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK if any hostiles are nearby
-  private handleCheckAnyHostilesNearbyAction(action: IDialogCheckNearbyHostilesAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckAnyHostilesNearbyAction(
+    action: IDialogCheckNearbyHostilesAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { range, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
-    const didSucceed = this.game.worldManager.getMapStateForCharacter(npc)?.getAllHostilesInRange(npc, range ?? 4).length === 0;
+    const didSucceed =
+      this.game.worldManager
+        .getMapStateForCharacter(npc)
+        ?.getAllHostilesInRange(npc, range ?? 4).length === 0;
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK the current holiday
-  private handleCheckHolidayAction(action: IDialogCheckHolidayAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckHolidayAction(
+    action: IDialogCheckHolidayAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { holiday, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
@@ -200,17 +303,27 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK the player level
-  private handleCheckLevelAction(action: IDialogCheckLevelAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckLevelAction(
+    action: IDialogCheckLevelAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { level, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
@@ -220,18 +333,36 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK the item(s) the player is holding
-  private handleCheckItemAction(action: IDialogCheckItemAction, npc: INPC, player: IPlayer): IActionResult {
-    const { slot, item, fromHands, checkProperty, checkValue, checkPassActions, checkFailActions } = action;
+  private handleCheckItemAction(
+    action: IDialogCheckItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
+    const {
+      slot,
+      item,
+      fromHands,
+      checkProperty,
+      checkValue,
+      checkPassActions,
+      checkFailActions,
+    } = action;
 
     const retMessages: string[] = [];
 
@@ -240,7 +371,10 @@ export class DialogActionHelper extends BaseService {
     const { name } = item;
     const formattedName = template(name)(player);
 
-    const matches = (itemName: string) => item.exact ? itemName === formattedName : itemName.includes(formattedName);
+    const matches = (itemName: string) =>
+      item.exact
+        ? itemName === formattedName
+        : itemName.includes(formattedName);
 
     // check name, check property if set
     const meetsCheck = (checkItem: ISimpleItem) => {
@@ -255,7 +389,7 @@ export class DialogActionHelper extends BaseService {
 
     // if we check hands
     if (fromHands) {
-      (slot || []).forEach(checkSlot => {
+      (slot || []).forEach((checkSlot) => {
         if (didSucceed) return;
 
         const slotItem = player.items.equipment[checkSlot];
@@ -273,7 +407,9 @@ export class DialogActionHelper extends BaseService {
 
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
-      const matchingItems = player.items.sack.items.filter(x => meetsCheck(x) && this.game.itemHelper.isOwnedBy(player, x));
+      const matchingItems = player.items.sack.items.filter(
+        (x) => meetsCheck(x) && this.game.itemHelper.isOwnedBy(player, x),
+      );
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
       }
@@ -282,24 +418,37 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK for nearby npcs and drop items
-  private handleCheckNPCAction(action: IDialogCheckNPCsAndDropItemsAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckNPCAction(
+    action: IDialogCheckNPCsAndDropItemsAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { npcs, item, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
     let npcCount = 0;
-    const npcsInView = this.game.worldManager.getMapStateForCharacter(npc)?.getAllInRange(npc, 4, [], false) ?? [];
-    npcsInView.forEach(npcRef => {
+    const npcsInView =
+      this.game.worldManager
+        .getMapStateForCharacter(npc)
+        ?.getAllInRange(npc, 4, [], false) ?? [];
+    npcsInView.forEach((npcRef) => {
       const npcId = (npcRef as INPC).npcId;
       if (!npcs.includes(npcId)) return;
 
@@ -318,23 +467,35 @@ export class DialogActionHelper extends BaseService {
         items.push(itemRef);
       }
 
-      this.game.worldManager.getMapStateForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
+      this.game.worldManager
+        .getMapStateForCharacter(npc)
+        ?.addItemsToGround(npc.x, npc.y, items);
     }
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK for no item in player hand
-  private handleCheckNoItemAction(action: IDialogCheckNoItemAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleCheckNoItemAction(
+    action: IDialogCheckNoItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, fromHands, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
@@ -343,7 +504,7 @@ export class DialogActionHelper extends BaseService {
 
     // if we check hands
     if (fromHands) {
-      (slot || []).forEach(checkSlot => {
+      (slot || []).forEach((checkSlot) => {
         if (didSucceed) return;
 
         const slotItem = player.items.equipment[checkSlot];
@@ -356,17 +517,27 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // TAKE an item from the player
-  private handleTakeItemAction(action: IDialogTakeItemAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleTakeItemAction(
+    action: IDialogTakeItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, item } = action;
 
     const messages: string[] = [];
@@ -374,15 +545,22 @@ export class DialogActionHelper extends BaseService {
     let didSucceed = false;
     const formattedName = template(item.name)(player);
 
-    const matches = (itemName: string) => item.exact ? itemName === formattedName : itemName.includes(formattedName);
+    const matches = (itemName: string) =>
+      item.exact
+        ? itemName === formattedName
+        : itemName.includes(formattedName);
 
-    (slot || []).forEach(checkSlot => {
+    (slot || []).forEach((checkSlot) => {
       if (didSucceed) return;
 
       // we do something different to take from sack
       if (checkSlot === 'sack') {
-        const matchingItems = player.items.sack.items.filter(x => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x));
-        const itemUUIDS = matchingItems.slice(0, item.amount ?? 1).map(x => x.uuid);
+        const matchingItems = player.items.sack.items.filter(
+          (x) => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x),
+        );
+        const itemUUIDS = matchingItems
+          .slice(0, item.amount ?? 1)
+          .map((x) => x.uuid);
         this.game.inventoryHelper.removeItemsFromSackByUUID(player, itemUUIDS);
         didSucceed = true;
         return;
@@ -397,7 +575,11 @@ export class DialogActionHelper extends BaseService {
         return;
       }
 
-      this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, undefined);
+      this.game.characterHelper.setEquipmentSlot(
+        player,
+        checkSlot as ItemSlot,
+        undefined,
+      );
 
       didSucceed = true;
     });
@@ -406,12 +588,16 @@ export class DialogActionHelper extends BaseService {
   }
 
   // MODIFY an item held by the player
-  private handleModifyItemAction(action: IDialogModifyItemAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleModifyItemAction(
+    action: IDialogModifyItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, mods } = action;
 
     let didSucceed = false;
 
-    (slot || []).forEach(checkSlot => {
+    (slot || []).forEach((checkSlot) => {
       if (didSucceed) return;
 
       const slotItem = player.items.equipment[checkSlot];
@@ -426,19 +612,29 @@ export class DialogActionHelper extends BaseService {
   }
 
   // GIVE an item to the player
-  private handleGiveItemAction(action: IDialogGiveItemAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleGiveItemAction(
+    action: IDialogGiveItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, item } = action;
 
     let didSucceed = false;
 
-    (slot || []).forEach(checkSlot => {
+    (slot || []).forEach((checkSlot) => {
       if (didSucceed) return;
 
       const slotItem = player.items.equipment[checkSlot];
       if (slotItem) return;
 
-      const simpleItem = this.game.itemCreator.getSimpleItem(template(item.name)(player));
-      this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, simpleItem);
+      const simpleItem = this.game.itemCreator.getSimpleItem(
+        template(item.name)(player),
+      );
+      this.game.characterHelper.setEquipmentSlot(
+        player,
+        checkSlot as ItemSlot,
+        simpleItem,
+      );
 
       didSucceed = true;
     });
@@ -447,24 +643,39 @@ export class DialogActionHelper extends BaseService {
   }
 
   // DROP an item on the ground
-  private handleDropItemsAction(action: IDropItemsAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleDropItemsAction(
+    action: IDropItemsAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { item, amount } = action;
 
-    const items = Array(amount ?? 1).fill(null).map(x => this.game.itemCreator.getSimpleItem(item));
-    this.game.worldManager.getMapStateForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
+    const items = Array(amount ?? 1)
+      .fill(null)
+      .map((x) => this.game.itemCreator.getSimpleItem(item));
+    this.game.worldManager
+      .getMapStateForCharacter(npc)
+      ?.addItemsToGround(npc.x, npc.y, items);
 
     return { messages: [], shouldContinue: true };
   }
 
   // KILL self, silently, as if moving to another location
-  private handleKillSelfSilentlyAction(action: IKillSelfSilentlyAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleKillSelfSilentlyAction(
+    action: IKillSelfSilentlyAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     let returnMessage = 'Bye!';
 
     const { leaveMessage } = action;
     if (leaveMessage) {
       returnMessage = template(leaveMessage)(player);
-      this.game.messageHelper.sendLogMessageToRadius(npc, 4, { from: npc.name, message: returnMessage, except: [player.uuid] });
+      this.game.messageHelper.sendLogMessageToRadius(npc, 4, {
+        from: npc.name,
+        message: returnMessage,
+        except: [player.uuid],
+      });
     }
 
     this.game.deathHelper.fakeNPCDie(npc);
@@ -473,19 +684,29 @@ export class DialogActionHelper extends BaseService {
   }
 
   // GIVE an item to the player after merging the stats with their existing item
-  private handleMergeGiveItemAction(action: IDialogGiveItemAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleMergeGiveItemAction(
+    action: IDialogGiveItemAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, item } = action;
 
     let didSucceed = false;
 
-    (slot || []).forEach(checkSlot => {
+    (slot || []).forEach((checkSlot) => {
       if (didSucceed) return;
 
       const slotItem = player.items.equipment[checkSlot];
       if (!slotItem) return;
 
-      const simpleItem = this.game.itemCreator.getSimpleItem(template(item.name)(player));
-      this.game.characterHelper.setEquipmentSlot(player, checkSlot as ItemSlot, simpleItem);
+      const simpleItem = this.game.itemCreator.getSimpleItem(
+        template(item.name)(player),
+      );
+      this.game.characterHelper.setEquipmentSlot(
+        player,
+        checkSlot as ItemSlot,
+        simpleItem,
+      );
 
       const oldStats = this.game.itemHelper.getItemProperty(slotItem, 'stats');
 
@@ -498,13 +719,20 @@ export class DialogActionHelper extends BaseService {
   }
 
   // CHECK if an item can be upgraded
-  private handleItemCanUpgradeAction(action: IDialogCheckItemCanUpgradeAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleItemCanUpgradeAction(
+    action: IDialogCheckItemCanUpgradeAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, upgrade, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
 
     const checkItem = player.items.equipment[slot];
-    let didSucceed = checkItem && this.game.itemHelper.isOwnedBy(player, checkItem) && this.game.itemHelper.canUpgradeItem(checkItem);
+    let didSucceed =
+      checkItem &&
+      this.game.itemHelper.isOwnedBy(player, checkItem) &&
+      this.game.itemHelper.canUpgradeItem(checkItem);
     if (upgrade && checkItem?.mods.upgrades?.includes(upgrade)) {
       didSucceed = false;
     }
@@ -512,17 +740,27 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK if a player has a quest
-  private handleHasQuestAction(action: IDialogHasQuestAction, npc: INPC, player: IPlayer): IActionResult {
+  private handleHasQuestAction(
+    action: IDialogHasQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { quest, checkPassActions, checkFailActions } = action;
 
     const retMessages: string[] = [];
@@ -532,21 +770,32 @@ export class DialogActionHelper extends BaseService {
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
     for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
       retMessages.push(...messages);
 
-      if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
     }
 
     return { messages: retMessages, shouldContinue: true };
   }
 
   // GIVE an upgrade to a particular item
-  private handleAddItemUpgradeAction(action: IDialogAddItemUpgradeAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleAddItemUpgradeAction(
+    action: IDialogAddItemUpgradeAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { slot, upgrade } = action;
     const checkItem = player.items.equipment[slot];
-    if (!checkItem) return { messages: ['Nothing to upgrade?'], shouldContinue: false };
+    if (!checkItem) {
+      return { messages: ['Nothing to upgrade?'], shouldContinue: false };
+    }
 
     this.game.itemHelper.upgradeItem(checkItem, template(upgrade)(player));
 
@@ -554,30 +803,43 @@ export class DialogActionHelper extends BaseService {
   }
 
   // GIVE an effect to the player
-  private handleGiveEffectAction(action: IDialogGiveEffectAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleGiveEffectAction(
+    action: IDialogGiveEffectAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { effect, duration } = action;
 
-    this.game.effectHelper.addEffect(player, npc, effect, { effect: { duration } });
+    this.game.effectHelper.addEffect(player, npc, effect, {
+      effect: { duration },
+    });
 
     return { messages: [], shouldContinue: true };
   }
 
   // GIVE currency to the player
-  private handleGiveCurrencyAction(action: IDialogGiveCurrencyAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleGiveCurrencyAction(
+    action: IDialogGiveCurrencyAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const { currency, amount } = action;
 
     this.game.currencyHelper.gainCurrency(player, amount, currency);
 
-    this.game.messageHelper.sendLogMessageToPlayer(player, { message: `${npc.name} hands you ${amount} ${currency}!` });
+    this.game.messageHelper.sendLogMessageToPlayer(player, {
+      message: `${npc.name} hands you ${amount} ${currency}!`,
+    });
 
     return { messages: [], shouldContinue: true };
   }
 
   // CHECK if the player has a quest complete (and complete it if they do)
-  private handleCheckDailyQuestAction(action: IDialogCheckDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleCheckDailyQuestAction(
+    action: IDialogCheckDailyQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -587,46 +849,70 @@ export class DialogActionHelper extends BaseService {
 
     if (!this.game.dailyHelper.canDoDailyQuest(player, npcName)) {
       return {
-        messages: ['Thanks, but you\'ve done all you can today. Come back tomorrow - I\'m sure there\'ll be work for you.'],
-        shouldContinue: false
+        messages: [
+          "Thanks, but you've done all you can today. Come back tomorrow - I'm sure there'll be work for you.",
+        ],
+        shouldContinue: false,
       };
     }
 
-    const questTodayIndex = this.game.calculatorHelper.getCurrentDailyDayOfYear(player) % quests.length;
+    const questTodayIndex =
+      this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
+      quests.length;
     const quest = quests[questTodayIndex];
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:CheckDailyQuest', `Quest ${quest} does not exist.`);
-      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+      this.game.logger.error(
+        'DialogActionHelper:CheckDailyQuest',
+        `Quest ${quest} does not exist.`,
+      );
+      return {
+        messages: ['That quest does not exist at this time.'],
+        shouldContinue: true,
+      };
     }
 
     // if we don't have the quest, we skip - dialog continues
-    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+    if (!this.game.questHelper.hasQuest(player, quest)) {
+      return { messages: [], shouldContinue: true };
+    }
 
     // if we have the quest and it's complete, we send completion, and give rewards
     if (this.game.questHelper.isQuestComplete(player, quest)) {
       const compMsg = this.game.questHelper.formatQuestMessage(
-        player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`
+        player,
+        quest,
+        questRef.messages.complete || `You've completed the quest "${quest}".`,
       );
       this.game.questHelper.completeQuest(player, quest, npcName);
 
       return { messages: [compMsg], shouldContinue: false };
     }
 
-
     // should continue is false if we have the quest and it's incomplete
     // check if quest not complete, if not, send incomplete message
     // if complete, do complete
 
-    return { messages: [
-      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
-    ], shouldContinue: false };
+    return {
+      messages: [
+        this.game.questHelper.formatQuestMessage(
+          player,
+          quest,
+          questRef.messages.incomplete ||
+            "You're not done with this quest yet.",
+        ),
+      ],
+      shouldContinue: false,
+    };
   }
 
   // CHECK if the player has a quest complete (and complete it if they do)
-  private handleCheckQuestAction(action: IDialogCheckQuestAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleCheckQuestAction(
+    action: IDialogCheckQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -636,45 +922,71 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:CheckQuest', `Quest ${quest} does not exist.`);
-      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+      this.game.logger.error(
+        'DialogActionHelper:CheckQuest',
+        `Quest ${quest} does not exist.`,
+      );
+      return {
+        messages: ['That quest does not exist at this time.'],
+        shouldContinue: true,
+      };
     }
 
     // if we don't have the quest, we skip - dialog continues
-    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+    if (!this.game.questHelper.hasQuest(player, quest)) {
+      return { messages: [], shouldContinue: true };
+    }
 
     // if we have the quest and it's complete, we send completion, and give rewards
     if (this.game.questHelper.isQuestComplete(player, quest)) {
       const compMsg = this.game.questHelper.formatQuestMessage(
-        player, quest, questRef.messages.complete || `You've completed the quest "${quest}".`
+        player,
+        quest,
+        questRef.messages.complete || `You've completed the quest "${quest}".`,
       );
       this.game.questHelper.completeQuest(player, quest);
 
       const retMessages: string[] = [];
       const actions = questCompleteActions ?? [];
       for (const subAction of actions) {
-        const { messages, shouldContinue } = this.handleAction(subAction, npc, player);
+        const { messages, shouldContinue } = this.handleAction(
+          subAction,
+          npc,
+          player,
+        );
         retMessages.push(...messages);
 
-        if (!shouldContinue) return { messages: retMessages, shouldContinue: false };
+        if (!shouldContinue) {
+          return { messages: retMessages, shouldContinue: false };
+        }
       }
 
       return { messages: [compMsg], shouldContinue: false };
     }
 
-
     // should continue is false if we have the quest and it's incomplete
     // check if quest not complete, if not, send incomplete message
     // if complete, do complete
 
-    return { messages: [
-      this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.incomplete || 'You\'re not done with this quest yet.')
-    ], shouldContinue: false };
+    return {
+      messages: [
+        this.game.questHelper.formatQuestMessage(
+          player,
+          quest,
+          questRef.messages.incomplete ||
+            "You're not done with this quest yet.",
+        ),
+      ],
+      shouldContinue: false,
+    };
   }
 
   // UPDATE the quest for the player
-  private handleUpdateQuestAction(action: IDialogUpdateQuestAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleUpdateQuestAction(
+    action: IDialogUpdateQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -684,12 +996,20 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:CheckQuest', `Quest ${quest} does not exist.`);
-      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+      this.game.logger.error(
+        'DialogActionHelper:CheckQuest',
+        `Quest ${quest} does not exist.`,
+      );
+      return {
+        messages: ['That quest does not exist at this time.'],
+        shouldContinue: true,
+      };
     }
 
     // if we don't have the quest, we skip - dialog continues
-    if (!this.game.questHelper.hasQuest(player, quest)) return { messages: [], shouldContinue: true };
+    if (!this.game.questHelper.hasQuest(player, quest)) {
+      return { messages: [], shouldContinue: true };
+    }
 
     if (arrayItem) {
       const questData = this.game.questHelper.getQuestProgress(player, quest);
@@ -703,8 +1023,11 @@ export class DialogActionHelper extends BaseService {
   }
 
   // GIVE the player a daily quest
-  private handleGiveDailyQuestAction(action: IDialogGiveDailyQuestAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleGiveDailyQuestAction(
+    action: IDialogGiveDailyQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -712,35 +1035,64 @@ export class DialogActionHelper extends BaseService {
 
     const { quests } = action;
 
-    const questTodayIndex = this.game.calculatorHelper.getCurrentDailyDayOfYear(player) % quests.length;
+    const questTodayIndex =
+      this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
+      quests.length;
     const quest = quests[questTodayIndex];
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:GiveDailyQuest', `Quest ${quest} does not exist.`);
-      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+      this.game.logger.error(
+        'DialogActionHelper:GiveDailyQuest',
+        `Quest ${quest} does not exist.`,
+      );
+      return {
+        messages: ['That quest does not exist at this time.'],
+        shouldContinue: true,
+      };
     }
 
     if (!this.game.questHelper.canStartQuest(player, quest)) {
-      return { messages: [
-        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.permComplete || 'You already completed that quest!')
-      ], shouldContinue: false };
+      return {
+        messages: [
+          this.game.questHelper.formatQuestMessage(
+            player,
+            quest,
+            questRef.messages.permComplete ||
+              'You already completed that quest!',
+          ),
+        ],
+        shouldContinue: false,
+      };
     }
 
     if (this.game.questHelper.hasQuest(player, quest)) {
-      return { messages: [
-        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.alreadyHas || 'You are already on that quest!')
-      ], shouldContinue: true };
+      return {
+        messages: [
+          this.game.questHelper.formatQuestMessage(
+            player,
+            quest,
+            questRef.messages.alreadyHas || 'You are already on that quest!',
+          ),
+        ],
+        shouldContinue: true,
+      };
     }
 
     this.game.questHelper.startQuest(player, quest);
 
-    return { messages: [`You've accepted the quest "${quest}".`], shouldContinue: true };
+    return {
+      messages: [`You've accepted the quest "${quest}".`],
+      shouldContinue: true,
+    };
   }
 
   // GIVE the player a quest
-  private handleGiveQuestAction(action: IDialogGiveQuestAction, npc: INPC, player: IPlayer): IActionResult {
-
+  private handleGiveQuestAction(
+    action: IDialogGiveQuestAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
     const maxDistance = action.maxDistance ?? 3;
     if (distanceFrom(player, npc) > maxDistance) {
       return { messages: ['Please come closer.'], shouldContinue: false };
@@ -750,31 +1102,77 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error('DialogActionHelper:GiveQuest', `Quest ${quest} does not exist.`);
-      return { messages: ['That quest does not exist at this time.'], shouldContinue: true };
+      this.game.logger.error(
+        'DialogActionHelper:GiveQuest',
+        `Quest ${quest} does not exist.`,
+      );
+      return {
+        messages: ['That quest does not exist at this time.'],
+        shouldContinue: true,
+      };
     }
 
     if (!this.game.questHelper.canStartQuest(player, quest)) {
-      return { messages: [
-        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.permComplete || 'You already completed that quest!')
-      ], shouldContinue: false };
+      return {
+        messages: [
+          this.game.questHelper.formatQuestMessage(
+            player,
+            quest,
+            questRef.messages.permComplete ||
+              'You already completed that quest!',
+          ),
+        ],
+        shouldContinue: false,
+      };
     }
 
     if (this.game.questHelper.hasQuest(player, quest)) {
-      return { messages: [
-        this.game.questHelper.formatQuestMessage(player, quest, questRef.messages.alreadyHas || 'You are already on that quest!')
-      ], shouldContinue: true };
+      return {
+        messages: [
+          this.game.questHelper.formatQuestMessage(
+            player,
+            quest,
+            questRef.messages.alreadyHas || 'You are already on that quest!',
+          ),
+        ],
+        shouldContinue: true,
+      };
     }
 
     this.game.questHelper.startQuest(player, quest);
 
-    return { messages: [`You've accepted the quest "${quest}".`], shouldContinue: true };
+    return {
+      messages: [`You've accepted the quest "${quest}".`],
+      shouldContinue: true,
+    };
+  }
+
+  // GIVE the player an achievement
+  private handleGrantAchievementAction(
+    action: IGrantAchievementAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
+    const { achievementName } = action;
+
+    this.game.achievementsHelper.earnAchievement(
+      player as Player,
+      achievementName,
+    );
+
+    return { messages: [], shouldContinue: true };
   }
 
   // check if the player meets the requirement for the dialog option
-  private meetsRequirement(player: IPlayer, requirement: IDialogRequirement): boolean {
+  private meetsRequirement(
+    player: IPlayer,
+    requirement: IDialogRequirement,
+  ): boolean {
     if (requirement.stat && requirement.statValue) {
-      const stat = this.game.characterHelper.getStat(player, requirement.stat as Stat);
+      const stat = this.game.characterHelper.getStat(
+        player,
+        requirement.stat as Stat,
+      );
       if (stat < requirement.statValue) return false;
     }
 

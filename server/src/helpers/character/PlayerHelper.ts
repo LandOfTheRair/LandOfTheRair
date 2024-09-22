@@ -151,6 +151,8 @@ export class PlayerHelper extends BaseService {
     this.reformatPlayerAfterLoad(player);
 
     this.game.questHelper.recalculateQuestKillsAndStatRewards(player);
+
+    this.game.achievementsHelper.checkAllAchievements(player);
   }
 
   private cleanUpInvalidItems(player: IPlayer): void {
@@ -674,6 +676,11 @@ export class PlayerHelper extends BaseService {
     skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
+    const oldSkillValue = this.game.calculatorHelper.calcSkillLevelForCharacter(
+      player,
+      skill,
+    );
+
     player.skills[skill.toLowerCase()] = Math.max(
       (player.skills[skill.toLowerCase()] ?? 0) + skillGained,
       0,
@@ -682,6 +689,19 @@ export class PlayerHelper extends BaseService {
       player.skills[skill.toLowerCase()],
       this.game.configManager.MAX_SKILL_EXP,
     );
+
+    const newSkillValue = this.game.calculatorHelper.calcSkillLevelForCharacter(
+      player,
+      skill,
+    );
+
+    if (
+      oldSkillValue !== newSkillValue &&
+      newSkillValue % 5 === 0 &&
+      this.game.characterHelper.isPlayer(player)
+    ) {
+      this.game.achievementsHelper.checkAllAchievements(player as Player);
+    }
   }
 
   // gain tradeskill skill for a character
@@ -694,10 +714,20 @@ export class PlayerHelper extends BaseService {
 
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
 
+    const oldSkillValue =
+      this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, skill);
+
     player.tradeskills[skill.toLowerCase()] = Math.max(
       (player.tradeskills[skill.toLowerCase()] ?? 0) + skillGained,
       0,
     );
+
+    const newSkillValue =
+      this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, skill);
+
+    if (oldSkillValue !== newSkillValue && newSkillValue % 5 === 0) {
+      this.game.achievementsHelper.checkAllAchievements(player as Player);
+    }
   }
 
   // gain all currently flagged skills
@@ -831,6 +861,8 @@ export class PlayerHelper extends BaseService {
         break;
       }
     } while (player.level < maxLevel);
+
+    this.game.achievementsHelper.checkAllAchievements(player as Player);
   }
 
   public tryAncientLevelUp(player: IPlayer): void {

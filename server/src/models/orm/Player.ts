@@ -8,6 +8,7 @@ import {
   BoundedNumber,
   CharacterCurrency,
   Direction,
+  IAccountAchievements,
   IAccountBank,
   ICharacter,
   ICharacterItems,
@@ -56,6 +57,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) accountLockers: ICharacterLockers &
     IMaterialStorage &
     ICharacterPouch;
+  @Property(PROP_UNSAVED_SHARED()) achievements: IAccountAchievements;
 
   // client-useful props
   @Property(PROP_UNSAVED_SHARED()) dir = Direction.South;

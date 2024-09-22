@@ -1,9 +1,16 @@
-
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { initializeCharacter, IPlayer } from '../../../interfaces';
-import { Account, AccountBank, AccountDaily, AccountLockers, Player, PlayerQuests } from '../../../models';
+import {
+  Account,
+  AccountAchievements,
+  AccountBank,
+  AccountDaily,
+  AccountLockers,
+  Player,
+  PlayerQuests,
+} from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { PlayerItems } from '../../../models/orm/PlayerItems';
 import { PlayerLockers } from '../../../models/orm/PlayerLockers';
@@ -14,10 +21,9 @@ import { Database } from '../Database';
 
 @Injectable()
 export class CharacterDB extends BaseService {
-
   constructor(
     private db: Database,
-    private characterRoller: CharacterRoller
+    private characterRoller: CharacterRoller,
   ) {
     super();
   }
@@ -30,12 +36,16 @@ export class CharacterDB extends BaseService {
     stats.createIndex({ name: 1 });
   }
 
-  public async createCharacter(account: Account, { slot, name, allegiance, baseclass, gender, weapons }): Promise<IPlayer> {
+  public async createCharacter(
+    account: Account,
+    { slot, name, allegiance, baseclass, gender, weapons },
+  ): Promise<IPlayer> {
+    const oldPlayerSlot = account.players.findIndex(
+      (char) => char?.charSlot === slot,
+    );
 
-    const oldPlayerSlot = account.players.findIndex(char => char?.charSlot === slot);
-
-    const { baseXP, baseRep } = this.game.contentManager.getGameSetting('character');
-
+    const { baseXP, baseRep } =
+      this.game.contentManager.getGameSetting('character');
 
     let lockers = new PlayerLockers();
     lockers._id = new ObjectId();
@@ -45,7 +55,10 @@ export class CharacterDB extends BaseService {
 
     if (oldPlayerSlot !== -1) {
       const oldPlayer = account.players[oldPlayerSlot];
-      startingXP = Math.max(baseXP ?? 1000, Math.floor(account.players[oldPlayerSlot].exp / 2));
+      startingXP = Math.max(
+        baseXP ?? 1000,
+        Math.floor(account.players[oldPlayerSlot].exp / 2),
+      );
       lockers = oldPlayer.lockers as PlayerLockers;
       startingSkills = oldPlayer.skills;
 
@@ -53,7 +66,11 @@ export class CharacterDB extends BaseService {
       account.players.splice(oldPlayerSlot, 1);
     }
 
-    const characterDetails = this.characterRoller.rollCharacter({ allegiance, baseclass, weapons });
+    const characterDetails = this.characterRoller.rollCharacter({
+      allegiance,
+      baseclass,
+      weapons,
+    });
 
     const player = new Player();
     Object.assign(player, initializeCharacter());
@@ -63,7 +80,7 @@ export class CharacterDB extends BaseService {
 
     await this.game.characterDB.populatePlayer(player, account);
 
-    Object.keys(characterDetails.items).forEach(itemSlot => {
+    Object.keys(characterDetails.items).forEach((itemSlot) => {
       player.items.equipment[itemSlot] = characterDetails.items[itemSlot];
     });
 
@@ -88,7 +105,9 @@ export class CharacterDB extends BaseService {
     this.game.playerHelper.becomeClass(player, player.baseClass);
     this.game.characterHelper.healToFull(player);
 
-    player.items.sack.items = [this.game.itemCreator.getSimpleItem('Newbie Book')];
+    player.items.sack.items = [
+      this.game.itemCreator.getSimpleItem('Newbie Book'),
+    ];
 
     account.players.push(player);
     await this.savePlayer(player);
@@ -97,7 +116,9 @@ export class CharacterDB extends BaseService {
   }
 
   public async loadPlayers(account: Account): Promise<Player[]> {
-    const players = await this.db.findMany<Player>(Player, { _account: account._id });
+    const players = await this.db.findMany<Player>(Player, {
+      _account: account._id,
+    });
 
     for (const player of players) {
       await this.populatePlayer(player, account);
@@ -106,13 +127,21 @@ export class CharacterDB extends BaseService {
     return players;
   }
 
-  public async reloadPlayerAccountInfo(player: Player, account: Account): Promise<void> {
+  public async reloadPlayerAccountInfo(
+    player: Player,
+    account: Account,
+  ): Promise<void> {
     const results = await Promise.all([
       this.db.findSingle<AccountBank>(AccountBank, { _account: account._id }),
-      this.db.findSingle<AccountLockers>(AccountLockers, { _account: account._id }),
+      this.db.findSingle<AccountLockers>(AccountLockers, {
+        _account: account._id,
+      }),
+      this.db.findSingle<AccountAchievements>(AccountAchievements, {
+        _account: account._id,
+      }),
     ]);
 
-    let [bank, acctLockers] = results;
+    let [bank, acctLockers, achievements] = results;
 
     if (!bank) {
       const newBank = new AccountBank();
@@ -130,13 +159,26 @@ export class CharacterDB extends BaseService {
       acctLockers = newAcctLockers;
     }
 
+    if (!achievements) {
+      const newAchivements = new AccountAchievements();
+      newAchivements._id = new ObjectId();
+      newAchivements._account = account._id;
+
+      achievements = newAchivements;
+    }
+
     player.bank = bank;
     player.accountLockers = acctLockers;
+    player.achievements = achievements;
   }
 
-  public async loadPlayerDailyInfo(player: Player, account: Account): Promise<void> {
-
-    const daily = await this.db.findSingle<AccountDaily>(AccountDaily, { _account: account._id });
+  public async loadPlayerDailyInfo(
+    player: Player,
+    account: Account,
+  ): Promise<void> {
+    const daily = await this.db.findSingle<AccountDaily>(AccountDaily, {
+      _account: account._id,
+    });
     if (!daily) {
       const newDaily = new AccountDaily();
       newDaily._id = new ObjectId();
@@ -145,7 +187,8 @@ export class CharacterDB extends BaseService {
     }
 
     player.dailyItems = daily?.daily?.[player.charSlot]?.items ?? {};
-    player.quests.npcDailyQuests = daily?.daily?.[player.charSlot]?.quests ?? {};
+    player.quests.npcDailyQuests =
+      daily?.daily?.[player.charSlot]?.quests ?? {};
   }
 
   public async populatePlayer(player: Player, account: Account): Promise<void> {
@@ -153,8 +196,12 @@ export class CharacterDB extends BaseService {
       this.db.findSingle<PlayerItems>(PlayerItems, { _id: player._items }),
       this.db.findSingle<PlayerTraits>(PlayerTraits, { _id: player._traits }),
       this.db.findSingle<PlayerQuests>(PlayerQuests, { _id: player._quests }),
-      this.db.findSingle<PlayerStatistics>(PlayerStatistics, { _id: player._statistics }),
-      this.db.findSingle<PlayerLockers>(PlayerLockers, { _id: player._lockers })
+      this.db.findSingle<PlayerStatistics>(PlayerStatistics, {
+        _id: player._statistics,
+      }),
+      this.db.findSingle<PlayerLockers>(PlayerLockers, {
+        _id: player._lockers,
+      }),
     ]);
 
     let [items, traits, quests, statistics, lockers] = results;
@@ -213,7 +260,7 @@ export class CharacterDB extends BaseService {
       this.db.delete(player.traits as PlayerTraits),
       this.db.delete(player.quests as PlayerQuests),
       this.db.delete(player.statistics as PlayerStatistics),
-      this.db.delete(player.lockers as PlayerLockers)
+      this.db.delete(player.lockers as PlayerLockers),
     ]);
   }
 
@@ -229,6 +276,7 @@ export class CharacterDB extends BaseService {
     const bankColl = this.db.getCollection(AccountBank);
     const acctLockerColl = this.db.getCollection(AccountLockers);
     const acctDailyColl = this.db.getCollection(AccountDaily);
+    const achievementsColl = this.db.getCollection(AccountAchievements);
 
     const playerOp = playerColl.initializeUnorderedBulkOp();
     const itemOp = itemsColl.initializeUnorderedBulkOp();
@@ -239,8 +287,9 @@ export class CharacterDB extends BaseService {
     const bankOp = bankColl.initializeUnorderedBulkOp();
     const acctLockerOp = acctLockerColl.initializeUnorderedBulkOp();
     const acctDailyOp = acctDailyColl.initializeUnorderedBulkOp();
+    const achievementsOp = achievementsColl.initializeUnorderedBulkOp();
 
-    players.forEach(player => {
+    players.forEach((player) => {
       playerOp
         .find({ _id: player._id })
         .upsert()
@@ -264,7 +313,9 @@ export class CharacterDB extends BaseService {
       statsOp
         .find({ _id: (player.statistics as PlayerStatistics)._id })
         .upsert()
-        .replaceOne(this.db.getPersistObject(player.statistics as PlayerStatistics));
+        .replaceOne(
+          this.db.getPersistObject(player.statistics as PlayerStatistics),
+        );
 
       lockersOp
         .find({ _id: (player.lockers as PlayerLockers)._id })
@@ -279,12 +330,28 @@ export class CharacterDB extends BaseService {
       acctLockerOp
         .find({ _account: player._account })
         .upsert()
-        .replaceOne(this.db.getPersistObject(player.accountLockers as AccountLockers));
+        .replaceOne(
+          this.db.getPersistObject(player.accountLockers as AccountLockers),
+        );
 
       acctDailyOp
         .find({ _account: player._account })
         .upsert()
-        .updateOne({ $set: { [`daily.${player.charSlot}`]: { quests: player.quests.npcDailyQuests, items: player.dailyItems } } });
+        .updateOne({
+          $set: {
+            [`daily.${player.charSlot}`]: {
+              quests: player.quests.npcDailyQuests,
+              items: player.dailyItems,
+            },
+          },
+        });
+
+      achievementsOp
+        .find({ _account: player._account })
+        .upsert()
+        .replaceOne(
+          this.db.getPersistObject(player.achievements as AccountAchievements),
+        );
     });
 
     return Promise.all([
@@ -296,7 +363,8 @@ export class CharacterDB extends BaseService {
       lockersOp.execute(),
       bankOp.execute(),
       acctLockerOp.execute(),
-      acctDailyOp.execute()
+      acctDailyOp.execute(),
+      achievementsOp.execute(),
     ]);
   }
 
@@ -313,14 +381,27 @@ export class CharacterDB extends BaseService {
       this.db.save(player.lockers as PlayerLockers),
       this.db.getCollection(AccountDaily).updateOne(
         { _account: player._account },
-        { $set: { [`daily.${player.charSlot}`]: { quests: player.quests.npcDailyQuests, items: player.dailyItems } } }
-      )
+        {
+          $set: {
+            [`daily.${player.charSlot}`]: {
+              quests: player.quests.npcDailyQuests,
+              items: player.dailyItems,
+            },
+          },
+        },
+      ),
     ];
 
-    if (player.bank)           saves.push(this.db.save(player.bank as AccountBank));
-    if (player.accountLockers) saves.push(this.db.save(player.accountLockers as AccountLockers));
+    if (player.bank) saves.push(this.db.save(player.bank as AccountBank));
+
+    if (player.accountLockers) {
+      saves.push(this.db.save(player.accountLockers as AccountLockers));
+    }
+
+    if (player.achievements) {
+      saves.push(this.db.save(player.achievements as AccountAchievements));
+    }
 
     await Promise.all(saves);
   }
-
 }

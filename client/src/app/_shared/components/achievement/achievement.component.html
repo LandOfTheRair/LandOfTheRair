@@ -1,0 +1,28 @@
+@let achievementData = realAchievement();
+
+<div class="achievement-container" [class.achievement-popup]="isUnlock()">
+  <div class="icon-container">
+    <app-icon
+      [size]="'large'"
+      [name]="achievementData.icon"
+      [fgColor]="achievementData.iconColor"
+      [bgColor]="achievementData.iconBgColor"
+      class="icon"
+      [style.outline-color]="achievementData.iconBorderColor"
+    ></app-icon>
+  </div>
+
+  <div class="text">
+    @if(isUnlock()) {
+    <div class="notification">Achievement Unlocked!</div>
+    }
+
+    <div class="title">
+      {{ achievementData?.name }}
+    </div>
+
+    <div class="desc">
+      {{ achievementData?.desc }}
+    </div>
+  </div>
+</div>

@@ -260,6 +260,7 @@ export class MovementHelper extends BaseService {
       applyEffect,
       requireClass,
       requireTester,
+      giveAchievement,
     } = obj.properties;
 
     if (requireTester && !isAtLeastTester(player)) {
@@ -394,6 +395,10 @@ export class MovementHelper extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: teleportMessage ?? 'Your surroundings shift.',
       });
+    }
+
+    if (giveAchievement) {
+      this.game.achievementsHelper.earnAchievement(player, giveAchievement);
     }
   }
 

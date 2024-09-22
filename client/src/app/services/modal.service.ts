@@ -6,12 +6,14 @@ import { select } from '@ngxs/store';
 import {
   GameServerEvent,
   GameServerResponse,
+  IAchievement,
   IDialogChatAction,
   IMacro,
   IMacroBar,
 } from '../../interfaces';
 import { GameState } from '../../stores';
 
+import { AchievementComponent } from 'src/app/_shared/components/achievement/achievement.component';
 import { AboutComponent } from '../_shared/modals/about/about.component';
 import { AccountComponent } from '../_shared/modals/account/account.component';
 import { AlertComponent } from '../_shared/modals/alert/alert.component';
@@ -79,6 +81,12 @@ export class ModalService {
 
     this.socketService.registerComponentCallback(
       'Modal',
+      GameServerResponse.SendAchievement,
+      (data) => this.notifyAchievement(data.achievement),
+    );
+
+    this.socketService.registerComponentCallback(
+      'Modal',
       GameServerResponse.SendAlert,
       (data) => this.alert(data.title, data.content, data.extraData),
     );
@@ -123,6 +131,15 @@ export class ModalService {
   public notifyImportant(text: string) {
     return this.snackbar.open(text, 'Close', {
       panelClass: ['fancy', 'normal'],
+    });
+  }
+
+  public notifyAchievement(achievement: IAchievement) {
+    return this.snackbar.openFromComponent(AchievementComponent, {
+      data: {
+        achievement,
+      },
+      duration: 5000,
     });
   }
 
