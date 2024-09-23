@@ -759,9 +759,10 @@ export class MapScene extends Phaser.Scene {
         });
       };
       const interactTile =
-        this.allMapData.layerData[this.getLayer(MapLayer.Interactables)]?.[
+        this.allMapData.layerData[this.getLayer(MapLayer.Interactables) - 1]?.[
           clickedTilePostion.x
         ]?.[clickedTilePostion.y];
+
       if (interactTile) {
         switch (interactTile.type as ObjectType) {
           case 'Fall':
