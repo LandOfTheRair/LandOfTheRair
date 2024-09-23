@@ -393,10 +393,19 @@ export class GameState {
     // can't get patches if we're not in game
     if (!copyState.player || !statePatches) return;
 
-    ctx.patchState({
-      mapInfo: applyPatch(cloneDeep(copyState.mapInfo), statePatches)
-        .newDocument,
-    });
+    try {
+      const newMapInfo = applyPatch(
+        cloneDeep(copyState.mapInfo),
+        statePatches,
+      ).newDocument;
+
+      ctx.patchState({
+        mapInfo: newMapInfo,
+      });
+    } catch (e) {
+      console.error({ statePatches });
+      console.error('FAILED PATCHES', e);
+    }
   }
 
   @Action(PatchPlayerPosition)

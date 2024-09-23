@@ -75,10 +75,18 @@ export const shouldSendPlayerPatch = (patch: Operation): boolean => {
   }
 
   if (
-    (patch.op === 'replace' || patch.op === 'add') &&
+    patch.op === 'replace' &&
     patch.path.includes('/ground') &&
-    ['/searchItems', '/tansFor', '/corpseLevel', '/playersHeardDeath'].some(
-      (p) => patch.path.includes(p),
+    ['/searchItems'].some((p) => patch.path.includes(p))
+  ) {
+    return false;
+  }
+
+  if (
+    (patch.op === 'replace' || patch.op === 'add' || patch.op === 'remove') &&
+    patch.path.includes('/ground') &&
+    ['/tansFor', '/corpseLevel', '/playersHeardDeath', '/expiresAt'].some((p) =>
+      patch.path.includes(p),
     )
   ) {
     return false;
