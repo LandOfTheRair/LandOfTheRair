@@ -256,8 +256,6 @@ export class MessageHelper extends BaseService {
   public getMergeObjectFromArgs(args: string): any {
     const matches = args.match(/(?:[^\s"']+|['"][^'"]*["'])+/g) || [];
 
-    console.log({ matches });
-
     const mergeObj = matches.reduce((obj, prop) => {
       const propData = prop.split('=');
       const key = propData[0];
@@ -279,8 +277,6 @@ export class MessageHelper extends BaseService {
       set(obj, key.trim(), val);
       return obj;
     }, {});
-
-    console.log({ mergeObj });
 
     return mergeObj;
   }
