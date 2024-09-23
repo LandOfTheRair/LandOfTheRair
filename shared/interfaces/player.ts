@@ -1,5 +1,6 @@
 import { IAccountBank } from './accountbank';
 import { SubscriptionTier } from './accountpremium';
+import { IAccountAchievements } from './achievements';
 import {
   DamageClass,
   Skill,
@@ -33,6 +34,7 @@ export interface IPlayer extends ICharacter {
   statistics: ICharacterStatistics;
   lockers: ICharacterLockers;
   accountLockers: ICharacterLockers & IMaterialStorage & ICharacterPouch;
+  achievements: IAccountAchievements;
 
   z: number;
 

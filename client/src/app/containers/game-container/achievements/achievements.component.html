@@ -1,0 +1,69 @@
+<app-window
+  windowName="achievements"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [alwaysOnTop]="true"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="550"
+  [defaultHeight]="650"
+></app-window>
+
+<ng-template #headTemplate>Achievements</ng-template>
+
+<ng-template #bodyTemplate>
+  @let playerAchievements = completedAchievements();
+  <!-- -->
+  @let locked = lockedAchievements();
+  <!-- -->
+  @let hidden = hiddenAchievements();
+
+  <mat-tab-group
+    mat-align-tabs="center"
+    class="bring-to-top"
+    [selectedIndex]="0"
+    animationDuration="0ms"
+  >
+    <mat-tab
+      [label]="'Earned Achievements (' + playerAchievements.length + ')'"
+    >
+      @if(playerAchievements.length === 0) {
+      <div class="vertical-center full-width full-height background-text">
+        You don't have any achievements yet
+      </div>
+      }
+
+      <mat-list>
+        @for(ach of playerAchievements; track ach.name) {
+        <mat-list-item>
+          <app-earned-achievement
+            [achievement]="ach"
+            [earnedAt]="ach.earnedAt"
+          ></app-earned-achievement>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-tab>
+
+    <mat-tab
+      [label]="'Other Achievements (' + (locked.length + hidden.length) + ')'"
+    >
+      <mat-list>
+        @for(ach of locked; track ach.name) {
+        <mat-list-item>
+          <app-earned-achievement [achievement]="ach"></app-earned-achievement>
+        </mat-list-item>
+        }
+
+        <!---->
+        @if(hidden.length > 0) {
+        <mat-list-item>
+          ... and {{ hidden.length | number }} hidden achievements!
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-tab>
+  </mat-tab-group>
+</ng-template>

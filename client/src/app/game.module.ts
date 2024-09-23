@@ -73,6 +73,8 @@ import { LobbyComponent } from './containers/lobby-container/lobby/lobby.compone
 import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 
 import { AchievementComponent } from 'src/app/_shared/components/achievement/achievement.component';
+import { EarnedAchievementComponent } from 'src/app/_shared/components/earned-achievement/earned-achievement.component';
+import { AchievementsComponent } from 'src/app/containers/game-container/achievements/achievements.component';
 import {
   MdePopover,
   MdePopoverTarget,
@@ -102,6 +104,7 @@ const declarations = [
   DialogComponent,
   NPCComponent,
   AchievementComponent,
+  EarnedAchievementComponent,
   DraggableDirective,
   DroppableDirective,
   ConfirmModalComponent,
@@ -167,6 +170,8 @@ const gameComponents = [
   EquipmentViewTargetComponent,
   RuneCodexComponent,
   PartyComponent,
+
+  AchievementsComponent,
 
   CombatDebugComponent,
 ];

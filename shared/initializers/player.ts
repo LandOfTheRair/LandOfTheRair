@@ -74,5 +74,6 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     },
     isGM: false,
     isTester: false,
+    achievements: { achievements: {} },
   };
 };

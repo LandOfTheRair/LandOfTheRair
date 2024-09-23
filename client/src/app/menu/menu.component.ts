@@ -199,6 +199,11 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('traits')),
         },
         {
+          name: 'Achievements',
+          visibleIf: toObservable(this.inGame),
+          handler: () => this.store.dispatch(new ShowWindow('achievements')),
+        },
+        {
           name: 'Reset Window Positions',
           borderTop: true,
           handler: () => {

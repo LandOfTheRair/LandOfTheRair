@@ -1,0 +1,13 @@
+mat-tab-group {
+  height: 100%;
+}
+
+mat-list {
+  min-height: 573px;
+  max-height: 573px;
+  overflow-y: auto;
+}
+
+mat-list-item {
+  height: 80px !important;
+}

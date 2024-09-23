@@ -1,0 +1,35 @@
+.achievement-container {
+  padding: 16px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .icon-container {
+    width: 84px;
+
+    .icon {
+      display: inline-block;
+      outline-width: 3px;
+      outline-style: solid;
+    }
+  }
+
+  .text {
+    flex: 1;
+    margin-left: 24px;
+
+    .notification {
+      font-size: 0.75rem;
+      font-weight: italic;
+    }
+
+    .title {
+      font-size: 1.5rem;
+    }
+
+    .desc {
+      font-size: 1rem;
+    }
+  }
+}

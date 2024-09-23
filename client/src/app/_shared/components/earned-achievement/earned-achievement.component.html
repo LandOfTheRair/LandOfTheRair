@@ -1,0 +1,30 @@
+@let achievementData = achievement();
+
+<div class="achievement-container">
+  <div class="icon-container">
+    <app-icon
+      [size]="'large'"
+      [name]="achievementData.icon"
+      [fgColor]="earnedAt() ? achievementData.iconColor : '#ddd'"
+      [bgColor]="earnedAt() ? achievementData.iconBgColor : '#999'"
+      class="icon"
+      [style.outline-color]="
+        earnedAt() ? achievementData.iconBorderColor : '#999'
+      "
+    ></app-icon>
+  </div>
+
+  <div class="text">
+    @if(earnedAt()) {
+    <div class="notification">Earned on {{ earnedAt() | date : 'medium' }}</div>
+    }
+
+    <div class="title">
+      {{ achievementData.name }}
+    </div>
+
+    <div class="desc">
+      {{ achievementData.desc }}
+    </div>
+  </div>
+</div>
