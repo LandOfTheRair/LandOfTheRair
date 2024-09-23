@@ -242,7 +242,7 @@ export class MapComponent {
   private initMap() {
     const config = {
       type: Phaser.WEBGL,
-      backgroundColor: '#000000',
+      backgroundColor: '#6ba3ee',
       parent: document.querySelectorAll('.map')[0] as HTMLElement,
       scale: {
         mode: Phaser.Scale.NONE,

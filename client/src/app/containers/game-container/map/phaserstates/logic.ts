@@ -272,7 +272,7 @@ export class MapScene extends Phaser.Scene {
 
     // doors can only be fov blockers if they're horizontal doors, ie, top/bottom opening
     const potentialDoor = get(
-      this.allMapData.layerData[MapLayer.Interactables],
+      this.allMapData.layerData[this.getLayer(MapLayer.Interactables)],
       [totalX, totalY],
     );
     if (potentialDoor?.type === ObjectType.Door) {
@@ -282,11 +282,12 @@ export class MapScene extends Phaser.Scene {
     }
 
     const potentialSecretWall = get(
-      this.allMapData.layerData[MapLayer.OpaqueDecor],
+      this.allMapData.layerData[this.getLayer(MapLayer.OpaqueDecor)],
       [totalX, totalY],
     );
     const wallList =
-      layers[MapLayer.Walls].data || layers[MapLayer.Walls].tileIds;
+      layers[this.getLayer(MapLayer.Walls)].data ||
+      layers[this.getLayer(MapLayer.Walls)].tileIds;
     const wallLayerTile = wallList[width * totalY + totalX];
 
     return (
@@ -642,7 +643,11 @@ export class MapScene extends Phaser.Scene {
     layer.data.forEach((tile, i) => {
       if (!terrainAnimations[tile]) return;
 
-      if (this.allMapData.tiledJSON.layers[MapLayer.Walls].data[i]) return;
+      if (
+        this.allMapData.tiledJSON.layers[this.getLayer(MapLayer.Walls)].data[i]
+      ) {
+        return;
+      }
 
       const x = Math.floor(i % layer.width);
       const y = Math.floor((i - x) / layer.width);
@@ -754,7 +759,7 @@ export class MapScene extends Phaser.Scene {
         });
       };
       const interactTile =
-        this.allMapData.layerData[MapLayer.Interactables]?.[
+        this.allMapData.layerData[this.getLayer(MapLayer.Interactables)]?.[
           clickedTilePostion.x
         ]?.[clickedTilePostion.y];
       if (interactTile) {
@@ -809,6 +814,9 @@ export class MapScene extends Phaser.Scene {
     tiledJSON.tileWidth = tiledJSON.tilewidth;
     tiledJSON.tileHeight = tiledJSON.tileheight;
 
+    this.backfillAirUnderEverything(tiledJSON);
+
+    mapData.tiledJSON = tiledJSON;
     this.allMapData = mapData;
 
     // create some phaser data
@@ -833,6 +841,7 @@ export class MapScene extends Phaser.Scene {
     map.addTilesetImage('Decor', 'Decor');
 
     // create the base 5 layers
+    map.createLayer('Air', ['Decor']);
     map.createLayer('Terrain', ['Decor', 'Terrain']);
     map.createLayer('Floors', ['Decor', 'Terrain']);
     map.createLayer('Fluids', ['Decor', 'Terrain']);
@@ -844,7 +853,9 @@ export class MapScene extends Phaser.Scene {
     this.loadAnimations();
 
     // load terrain animations before everything else
-    this.loadTerrainAnimations(tiledJSON.layers[MapLayer.Fluids]);
+    this.loadTerrainAnimations(
+      tiledJSON.layers[this.getLayer(MapLayer.Fluids)],
+    );
 
     // decor, densedecor, opaquedecor, interactables
     this.loadObjectLayer(map.objects[0], this.layers.decor);
@@ -885,6 +896,14 @@ export class MapScene extends Phaser.Scene {
     }, 1000);
     this.updateGroundSprites();
     this.firstCreate = false;
+  }
+
+  private backfillAirUnderEverything(tiledJSON) {
+    const newLayer = structuredClone(tiledJSON.layers[0]);
+    newLayer.id = 0;
+    newLayer.name = 'Air';
+    newLayer.data = newLayer.data.map(() => 2386);
+    tiledJSON.layers.unshift(newLayer);
   }
 
   private registerEvents() {
@@ -980,6 +999,10 @@ export class MapScene extends Phaser.Scene {
     if (this.vfxUpdate$) this.vfxUpdate$.unsubscribe();
   }
 
+  private getLayer(layer: MapLayer) {
+    return layer + 1;
+  }
+
   // set stealth on a character. if we can see it and they have stealth set they're hiding, but not well
   private stealthUpdate(sprite: Sprite, character: ICharacter) {
     if (character.hp.current <= 0) return;
@@ -1016,7 +1039,8 @@ export class MapScene extends Phaser.Scene {
 
   private updateSpriteSwimData(sprite: Sprite, char: ICharacter) {
     const tileCheck = char.y * this.allMapData.tiledJSON.width + char.x;
-    const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
+    const fluid =
+      this.allMapData.tiledJSON.layers[this.getLayer(MapLayer.Fluids)].data;
     const isSwimming = !!fluid[tileCheck];
     OutlinePipeline.setSwimming(sprite, isSwimming);
   }
@@ -1073,8 +1097,10 @@ export class MapScene extends Phaser.Scene {
   // item-render functions
   private canCreateItemSpriteAt(x: number, y: number): boolean {
     const tileCheck = y * this.allMapData.tiledJSON.width + x;
-    const fluid = this.allMapData.tiledJSON.layers[MapLayer.Fluids].data;
-    const foliage = this.allMapData.tiledJSON.layers[MapLayer.Foliage].data;
+    const fluid =
+      this.allMapData.tiledJSON.layers[this.getLayer(MapLayer.Fluids)].data;
+    const foliage =
+      this.allMapData.tiledJSON.layers[this.getLayer(MapLayer.Foliage)].data;
     return (
       this.specialRenders.eagleeye || (!fluid[tileCheck] && !foliage[tileCheck])
     );
