@@ -62,6 +62,15 @@ export class DialogActionHelper extends BaseService {
     command: string,
     callbacks,
   ): Promise<void> {
+    if (!this.game.visibilityHelper.canSeeThroughStealthOf(npc, player)) {
+      this.game.messageHelper.sendLogMessageToPlayer(
+        player,
+        { message: 'Where is that voice coming from?', from: npc.name },
+        [MessageType.NPCChatter],
+      );
+      return;
+    }
+
     if (command === 'hello') {
       this.game.statisticsHelper.addStatistic(
         player,
