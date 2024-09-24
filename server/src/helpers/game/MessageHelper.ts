@@ -28,6 +28,22 @@ export class MessageHelper extends BaseService {
     const ref: ICharacter = this.game.worldManager.getCharacter(uuid);
     if (!ref) return;
 
+    if (ref.takenOverBy) {
+      this.sendLogMessageToPlayer(
+        ref.takenOverBy,
+        {
+          message,
+          sfx,
+          from,
+          setTarget,
+          overrideIfOnly,
+          logInfo,
+        },
+        messageTypes,
+        formatArgs,
+      );
+    }
+
     const account = this.game.lobbyManager.getAccount((ref as Player).username);
     if (!account) return;
 
