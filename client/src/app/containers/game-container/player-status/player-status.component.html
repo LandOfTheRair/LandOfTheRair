@@ -72,7 +72,7 @@
       @for (effect of effects(); track effect.uuid) {
       <app-effect-icon
         [effect]="effect"
-        [defaultTransparent]="true"
+        [defaultTransparent]="false"
         (contextmenu)="unapply($event, effect)"
       ></app-effect-icon>
       } }

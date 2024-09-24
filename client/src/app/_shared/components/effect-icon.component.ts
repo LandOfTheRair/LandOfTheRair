@@ -109,7 +109,7 @@ export class EffectIconComponent {
   );
 
   public bgColor = computed(
-    () => this.iconData()?.bgColor ?? (this.defaultTransparent() ? '' : '#ccc'),
+    () => this.iconData()?.bgColor || (this.defaultTransparent() ? '' : '#ccc'),
   );
 
   public color = computed(
