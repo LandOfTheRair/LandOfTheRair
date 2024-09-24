@@ -1,20 +1,16 @@
-
 import bcrypt from 'bcrypt';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, pick } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { IAccount } from '../../../interfaces';
+import { IAccount, SubscriptionTier } from '../../../interfaces';
 import { Account, AccountPremium } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 import { Database } from '../Database';
 
 @Injectable()
 export class AccountDB extends BaseService {
-
-  constructor(
-    private db: Database
-  ) {
+  constructor(private db: Database) {
     super();
   }
 
@@ -25,21 +21,36 @@ export class AccountDB extends BaseService {
   }
 
   public async doesAccountExist(username: string): Promise<Account | null> {
-    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1 } });
+    return this.db
+      .getCollection(Account)
+      .findOne({ username }, { projection: { username: 1 } });
   }
 
   public async doesAccountExistEmail(email: string): Promise<Account | null> {
-    return this.db.getCollection(Account).findOne({ email }, { projection: { email: 1 } });
+    return this.db
+      .getCollection(Account)
+      .findOne({ email }, { projection: { email: 1 } });
   }
 
-  public async doesDiscordTagExist(discordTag: string): Promise<Account | null> {
-    return this.db.getCollection(Account).findOne({ discordTag }, { projection: { username: 1 } });
+  public async doesDiscordTagExist(
+    discordTag: string,
+  ): Promise<Account | null> {
+    return this.db
+      .getCollection(Account)
+      .findOne({ discordTag }, { projection: { username: 1 } });
   }
 
   // get an unpopulated account for login purposes
   // possibly this should take in a password and query the db instead of doing the checks later
-  public async getAccountForLoggingIn(username: string): Promise<Account | null> {
-    return this.db.getCollection(Account).findOne({ username }, { projection: { username: 1, password: 1, temporaryPassword: 1 } });
+  public async getAccountForLoggingIn(
+    username: string,
+  ): Promise<Account | null> {
+    return this.db
+      .getCollection(Account)
+      .findOne(
+        { username },
+        { projection: { username: 1, password: 1, temporaryPassword: 1 } },
+      );
   }
 
   public async getAccountUsernameForEmail(email: string): Promise<string> {
@@ -60,13 +71,18 @@ export class AccountDB extends BaseService {
     if (!account.originalEmail) account.originalEmail = account.email;
 
     let [premium] = await Promise.all([
-      this.db.findSingle<AccountPremium>(AccountPremium, { _account: account._id })
+      this.db.findSingle<AccountPremium>(AccountPremium, {
+        _account: account._id,
+      }),
     ]);
 
     if (!premium) {
       const newPrem = new AccountPremium();
       newPrem._id = new ObjectId();
       newPrem._account = account._id;
+      newPrem.subscriptionTier = SubscriptionTier.None;
+      newPrem.silver = 0;
+      newPrem.silverPurchases = {};
 
       premium = newPrem;
     }
@@ -75,26 +91,29 @@ export class AccountDB extends BaseService {
 
     // post-load setup
     const maxPlayers = this.game.subscriptionHelper.maxCharacters(account, 4);
-    if (account.players.length < maxPlayers) account.players.length = maxPlayers;
+    if (account.players.length < maxPlayers) {
+      account.players.length = maxPlayers;
+    }
 
     return account;
   }
 
   // register an IP with an account
   public async registerIP(username: string, ip: string): Promise<any> {
-    return this.db.getCollection(Account).updateOne({ username }, { $addToSet: { ips: ip } });
+    return this.db
+      .getCollection(Account)
+      .updateOne({ username }, { $addToSet: { ips: ip } });
   }
 
   // create a new account from the info given
   public async createAccount(accountInfo: IAccount): Promise<Account | null> {
-
     const account = new Account();
     account._id = new ObjectId();
 
     merge(account, {
       username: accountInfo.username,
       email: accountInfo.email,
-      password: this.bcryptPassword(accountInfo.password as string)
+      password: this.bcryptPassword(accountInfo.password as string),
     });
 
     await this.saveAccount(account);
@@ -104,7 +123,14 @@ export class AccountDB extends BaseService {
 
   public simpleAccount(account: Account): Partial<Account> {
     const accountObj = cloneDeep(account);
-    return pick(accountObj, ['alwaysOnline', 'eventWatcher', 'isGameMaster', 'premium.subscriptionTier', 'isTester', 'username']);
+    return pick(accountObj, [
+      'alwaysOnline',
+      'eventWatcher',
+      'isGameMaster',
+      'premium.subscriptionTier',
+      'isTester',
+      'username',
+    ]);
   }
 
   private bcryptPassword(password: string): string {
@@ -112,8 +138,13 @@ export class AccountDB extends BaseService {
   }
 
   public checkPassword(accountInfo: IAccount, account: Account): boolean {
-    return this.checkPasswordString(account, accountInfo.password as string)
-        || !!(account.temporaryPassword && accountInfo.password === account.temporaryPassword);
+    return (
+      this.checkPasswordString(account, accountInfo.password as string) ||
+      !!(
+        account.temporaryPassword &&
+        accountInfo.password === account.temporaryPassword
+      )
+    );
   }
 
   public checkPasswordString(account: Account, passwordCheck: string): boolean {
@@ -121,7 +152,6 @@ export class AccountDB extends BaseService {
   }
 
   public async saveAccount(account: Account): Promise<void> {
-
     const promises = [this.db.save(account)];
 
     if (account.premium) {
@@ -131,7 +161,10 @@ export class AccountDB extends BaseService {
     await Promise.all(promises);
   }
 
-  public async changePassword(account: Account, newPassword: string): Promise<void> {
+  public async changePassword(
+    account: Account,
+    newPassword: string,
+  ): Promise<void> {
     account.password = this.bcryptPassword(newPassword);
     await this.saveAccount(account);
   }
@@ -147,12 +180,18 @@ export class AccountDB extends BaseService {
     await this.saveAccount(account);
   }
 
-  public async changeAlwaysOnline(account: Account, alwaysOnline: boolean): Promise<void> {
+  public async changeAlwaysOnline(
+    account: Account,
+    alwaysOnline: boolean,
+  ): Promise<void> {
     account.alwaysOnline = alwaysOnline;
     await this.saveAccount(account);
   }
 
-  public async changeEventWatcher(account: Account, eventWatcher: boolean): Promise<void> {
+  public async changeEventWatcher(
+    account: Account,
+    eventWatcher: boolean,
+  ): Promise<void> {
     account.eventWatcher = eventWatcher;
     await this.saveAccount(account);
   }
@@ -177,8 +216,10 @@ export class AccountDB extends BaseService {
     await this.saveAccount(account);
   }
 
-  public async changeDiscordTag(account: Account, discordTag: string): Promise<void> {
-
+  public async changeDiscordTag(
+    account: Account,
+    discordTag: string,
+  ): Promise<void> {
     if (discordTag) {
       const doesTagExist = await this.doesDiscordTagExist(discordTag);
       if (doesTagExist) throw new Error('Discord tag already taken.');
@@ -188,8 +229,12 @@ export class AccountDB extends BaseService {
     await this.saveAccount(account);
   }
 
-  public async setTemporaryPassword(email: string, password: string): Promise<any> {
-    return this.db.getCollection(Account).updateOne({ email }, { $set: { temporaryPassword: password } });
+  public async setTemporaryPassword(
+    email: string,
+    password: string,
+  ): Promise<any> {
+    return this.db
+      .getCollection(Account)
+      .updateOne({ email }, { $set: { temporaryPassword: password } });
   }
-
 }
