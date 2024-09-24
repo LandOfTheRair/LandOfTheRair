@@ -31,7 +31,7 @@ export class SubscriptionHelper extends BaseService {
   public getSubscriptionTier(account: IAccount): SubscriptionTier {
     if (account.isGameMaster) return SubscriptionTier.GM;
     if (account.isTester) return SubscriptionTier.Tester;
-    return account.premium.subscriptionTier;
+    return account.premium.subscriptionTier ?? 0;
   }
 
   public getSilverCosmetics(account: IAccount) {
