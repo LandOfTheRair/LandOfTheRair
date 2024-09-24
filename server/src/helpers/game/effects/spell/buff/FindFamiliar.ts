@@ -49,18 +49,6 @@ export class FindFamiliar extends Effect {
       });
 
       // buff based on traits
-      npc.stats[Stat.HP] =
-        (npc.stats[Stat.HP] ?? 20000) * 1 +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
-      npc.stats[Stat.STR] =
-        (npc.stats[Stat.STR] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
-      npc.stats[Stat.INT] =
-        (npc.stats[Stat.INT] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
-      npc.stats[Stat.WIS] =
-        (npc.stats[Stat.WIS] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
 
       if (this.game.traitHelper.traitLevel(char, 'FamiliarFists')) {
         npc.usableSkills.push({ result: 'Rapidpunch', chance: 1 } as any);
@@ -82,6 +70,20 @@ export class FindFamiliar extends Effect {
         );
         npc.stats[statMod] += boost;
       });
+
+      // familiar stat buffs
+      npc.stats[Stat.HP] =
+        (npc.stats[Stat.HP] ?? 20000) * 1 +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
+      npc.stats[Stat.STR] =
+        (npc.stats[Stat.STR] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.INT] =
+        (npc.stats[Stat.INT] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.WIS] =
+        (npc.stats[Stat.WIS] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
 
       // buff the npc back to full
       this.game.characterHelper.recalculateEverything(npc);
