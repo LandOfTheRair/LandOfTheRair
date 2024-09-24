@@ -534,6 +534,19 @@ export class WorldMap {
 
   // build a path between x/y->x/y
   public findPath(startX: number, startY: number, endX: number, endY: number) {
+    if (
+      startX >= this.width ||
+      startX <= 0 ||
+      startY >= this.height ||
+      startY <= 0 ||
+      endX >= this.width ||
+      endX <= 0 ||
+      endY >= this.height ||
+      endY <= 0
+    ) {
+      return;
+    }
+
     const grid = this.densityMap.clone();
 
     // doing this allows us to click on walls and move towards them
