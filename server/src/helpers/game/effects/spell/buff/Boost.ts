@@ -17,7 +17,5 @@ export class Boost extends Effect {
         extra: { disableMessages: true, disableRecently: true },
       },
     });
-
-    effect.effectInfo.tooltip = `+${effect.effectInfo.potency} STR/DEX/AGI`;
   }
 }

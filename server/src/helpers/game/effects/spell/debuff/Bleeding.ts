@@ -1,12 +1,11 @@
-import { DamageClass, ICharacter, IStatusEffect } from '../../../../../interfaces';
+import {
+  DamageClass,
+  ICharacter,
+  IStatusEffect,
+} from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Bleeding extends Effect {
-
-  public override create(char: ICharacter, effect: IStatusEffect) {
-    effect.effectInfo.tooltip = `Bleeding and taking ${effect.effectInfo.potency} physical damage per tick.`;
-  }
-
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
@@ -19,8 +18,7 @@ export class Bleeding extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Physical,
-      defMsg: 'You are bleeding!'
+      defMsg: 'You are bleeding!',
     });
   }
-
 }

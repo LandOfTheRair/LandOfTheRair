@@ -1,16 +1,24 @@
-import { DamageArgs, DamageClass, ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
+import {
+  DamageArgs,
+  DamageClass,
+  ICharacter,
+  IStatusEffect,
+  Stat,
+} from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class Overcharged extends Effect {
-
   public override create(char: ICharacter, effect: IStatusEffect) {
-
     const potency = effect.effectInfo.potency ?? 50;
-    effect.effectInfo.tooltip = `Stunned. AC/WIL lowered by ${potency}%. Incoming magical damage increased by 10%.`;
 
     effect.effectInfo.statChanges = {
-      [Stat.ArmorClass]: Math.floor(this.game.characterHelper.getStat(char, Stat.ArmorClass) * (potency / 100)),
-      [Stat.WIL]: Math.floor(this.game.characterHelper.getStat(char, Stat.WIL) * (potency / 100)),
+      [Stat.ArmorClass]: Math.floor(
+        this.game.characterHelper.getStat(char, Stat.ArmorClass) *
+          (potency / 100),
+      ),
+      [Stat.WIL]: Math.floor(
+        this.game.characterHelper.getStat(char, Stat.WIL) * (potency / 100),
+      ),
     };
   }
 
@@ -38,11 +46,10 @@ export class Overcharged extends Effect {
     char: ICharacter,
     attacker: ICharacter | null,
     damageArgs: DamageArgs,
-    currentDamage: number
+    currentDamage: number,
   ): number {
     if (damageArgs.damageClass === DamageClass.Physical) return currentDamage;
 
     return Math.floor(currentDamage * 1.1);
   }
-
 }

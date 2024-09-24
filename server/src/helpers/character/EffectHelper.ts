@@ -182,6 +182,14 @@ export class EffectHelper extends BaseService {
 
     // effect apply hook is for after create
     this.game.effectManager.effectApply(effectName, character, effect);
+
+    const defaultTooltip = this.formatEffectMessage(
+      effectData.tooltip?.desc ?? '',
+      effectData,
+    );
+    if (defaultTooltip) {
+      effect.tooltip = defaultTooltip;
+    }
   }
 
   // remove a stale or removed effect
