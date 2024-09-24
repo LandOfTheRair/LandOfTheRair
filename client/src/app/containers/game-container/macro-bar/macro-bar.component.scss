@@ -1,12 +1,14 @@
-
 .macro-body-container {
   min-height: 64px;
 }
 
-.macro-group-container {
-  display: flex;
-  flex-wrap: wrap;
+.macro-group-body {
   min-height: 64px;
+  .macro-group-container {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 64px;
+  }
 }
 
 .macro-group {
