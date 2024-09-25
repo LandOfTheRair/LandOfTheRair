@@ -560,7 +560,7 @@ export class SpellCommand extends SkillCommand {
 
     if (caster && spellData.castTime) {
       this.game.messageHelper.sendLogMessageToRadius(caster, 4, {
-        message: `**${caster.name}** begins channeling ${this.spellRef || 'a spell'}...`,
+        message: `**${caster.name}** begins channeling ${spellData.spellName || 'a spell'}...`,
       });
       caster.spellChannel = {
         ticks: spellData.castTime,
