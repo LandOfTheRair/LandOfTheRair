@@ -49,6 +49,7 @@ export class DefaultAIBehavior implements IAI {
   private currentTarget: ICharacter | null | undefined;
 
   private ticksSinceSeen: Record<string, number> = {};
+  private chillTicks = 0;
 
   public get dialogParser() {
     return this.npc.dialogParser;
@@ -170,6 +171,11 @@ export class DefaultAIBehavior implements IAI {
   }
 
   private adjustTargetting() {
+    if (this.chillTicks > 0) {
+      this.chillTicks--;
+      return;
+    }
+
     const npc = this.npc;
     const possibleAgro = npc.agro;
     const amINearAPlayer = this.mapState.isThereAnyKnowledgeForXY(npc.x, npc.y);
@@ -604,6 +610,8 @@ export class DefaultAIBehavior implements IAI {
   }
 
   public resetAgro(full = false) {
+    this.chillTicks = 3;
+
     if (full) {
       this.npc.agro = {};
       return;

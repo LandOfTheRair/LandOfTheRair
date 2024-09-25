@@ -17,7 +17,7 @@ export class PetTarget extends MacroCommand {
       args.stringArgs,
     );
 
-    if (!target) {
+    if (!target || target === player) {
       player.pets.forEach((pet) => {
         const ai = this.game.worldManager
           .getMap(pet.map)
