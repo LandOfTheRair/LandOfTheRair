@@ -31,8 +31,9 @@ export class TrapHelper extends BaseService {
     if (
       trap.item.mods.trapSetBy === target.uuid &&
       !trapEffect.extra?.isPositive
-    )
+    ) {
       return;
+    }
 
     this.game.messageHelper.sendLogMessageToPlayer(target, {
       message: 'You triggered a trap!',
@@ -42,8 +43,9 @@ export class TrapHelper extends BaseService {
     const trapUses = trap.item.mods.trapUses ?? 1;
     if (trapUses > 0) {
       this.game.itemHelper.setItemProperty(trap.item, 'trapUses', trapUses - 1);
-      if (trapUses - 1 <= 0)
+      if (trapUses - 1 <= 0) {
         this.removeTrap(target.map, target.x, target.y, trap);
+      }
     }
   }
 
@@ -61,16 +63,14 @@ export class TrapHelper extends BaseService {
 
     const isAOE = (trapEffect.range ?? 0) > 0;
     if (isAOE) {
-      this.game.commandHandler
-        .getSkillRef(trapEffect.name)
-        .use(
-          caster,
-          null,
-          {
-            overrideEffect: { range: trapEffect.range, name: trapEffect.name },
-          },
-          { x: target.x, y: target.y, map: target.map },
-        );
+      this.game.commandHandler.getSkillRef(trapEffect.name).use(
+        caster,
+        null,
+        {
+          overrideEffect: { range: trapEffect.range, name: trapEffect.name },
+        },
+        { x: target.x, y: target.y, map: target.map },
+      );
     } else {
       this.game.spellManager.castSpell(
         trapEffect.name,
@@ -105,11 +105,12 @@ export class TrapHelper extends BaseService {
     trapEffect.range = trapEffect.range ?? 0;
     trap.mods.trapEffect = trapEffect;
 
-    if (trapEffect.range > 0)
+    if (trapEffect.range > 0) {
       trapEffect.range += this.game.traitHelper.traitLevelValue(
         placer,
         'WiderTraps',
       );
+    }
 
     this.setTrap(placer.map, x, y, trap);
   }
