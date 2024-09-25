@@ -1,3 +1,4 @@
+import { sampleSize } from 'lodash';
 import { ICharacter, IStatusEffect, Stat } from '../../../../../interfaces';
 import { Song } from './Song';
 
@@ -15,33 +16,35 @@ export class AriaOfRefugeSong extends Song {
     super.tick(char, effect);
 
     if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.getAllAlliesInRange(char, 4)
-        .forEach((ally) => {
-          if (char === ally) return;
+      sampleSize(
+        this.game.worldManager
+          .getMapStateForCharacter(char)
+          ?.getAllAlliesInRange(char, 4),
+        12,
+      ).forEach((ally) => {
+        if (char === ally) return;
 
-          if (!this.game.effectHelper.hasEffect(ally, 'TargetSong')) {
-            this.sendMessage(ally, { message: 'You hear an aria of refuge!' });
-          }
+        if (!this.game.effectHelper.hasEffect(ally, 'TargetSong')) {
+          this.sendMessage(ally, { message: 'You hear an aria of refuge!' });
+        }
 
-          this.game.effectHelper.addEffect(ally, char, 'TargetSong', {
-            effect: {
-              duration: 10,
-              extra: {
-                hideTicks: true,
-                effectIcon: 'music-spell',
-                tooltipName: 'Song',
-                tooltipColor: '#aa0',
-                tooltip: `+${effect.effectInfo.potency} Physical/Magical Resist`,
-                statChanges: {
-                  [Stat.PhysicalResist]: effect.effectInfo.potency,
-                  [Stat.MagicalResist]: effect.effectInfo.potency,
-                },
+        this.game.effectHelper.addEffect(ally, char, 'TargetSong', {
+          effect: {
+            duration: 10,
+            extra: {
+              hideTicks: true,
+              effectIcon: 'music-spell',
+              tooltipName: 'Song',
+              tooltipColor: '#aa0',
+              tooltip: `+${effect.effectInfo.potency} Physical/Magical Resist`,
+              statChanges: {
+                [Stat.PhysicalResist]: effect.effectInfo.potency,
+                [Stat.MagicalResist]: effect.effectInfo.potency,
               },
             },
-          });
+          },
         });
+      });
     }
   }
 }

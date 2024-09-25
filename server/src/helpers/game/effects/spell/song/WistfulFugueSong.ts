@@ -1,3 +1,4 @@
+import { sampleSize } from 'lodash';
 import {
   ICharacter,
   IStatusEffect,
@@ -22,34 +23,36 @@ export class WistfulFugueSong extends Song {
     super.tick(char, effect);
 
     if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.getAllHostilesWithoutVisibilityTo(char, 4)
-        .forEach((enemy) => {
-          if (!this.game.effectHelper.hasEffect(enemy, 'TargetSong')) {
-            this.sendMessage(enemy, {
-              message: 'You are hit with a wistful fugue!',
-            });
-          }
+      sampleSize(
+        this.game.worldManager
+          .getMapStateForCharacter(char)
+          ?.getAllHostilesWithoutVisibilityTo(char, 4),
+        12,
+      ).forEach((enemy) => {
+        if (!this.game.effectHelper.hasEffect(enemy, 'TargetSong')) {
+          this.sendMessage(enemy, {
+            message: 'You are hit with a wistful fugue!',
+          });
+        }
 
-          this.game.effectHelper.addEffect(enemy, char, 'TargetSong', {
-            effect: {
-              duration: 10,
-              extra: {
-                hideTicks: true,
-                effectIcon: 'music-spell',
-                tooltipName: 'Song',
-                tooltipColor: '#00f',
-                tooltip: `-${effect.effectInfo.potency} DEX/AGI/WIL`,
-                statChanges: {
-                  [Stat.DEX]: -effect.effectInfo.potency,
-                  [Stat.AGI]: -effect.effectInfo.potency,
-                  [Stat.WIL]: -effect.effectInfo.potency,
-                },
+        this.game.effectHelper.addEffect(enemy, char, 'TargetSong', {
+          effect: {
+            duration: 10,
+            extra: {
+              hideTicks: true,
+              effectIcon: 'music-spell',
+              tooltipName: 'Song',
+              tooltipColor: '#00f',
+              tooltip: `-${effect.effectInfo.potency} DEX/AGI/WIL`,
+              statChanges: {
+                [Stat.DEX]: -effect.effectInfo.potency,
+                [Stat.AGI]: -effect.effectInfo.potency,
+                [Stat.WIL]: -effect.effectInfo.potency,
               },
             },
-          });
+          },
         });
+      });
     }
   }
 }
