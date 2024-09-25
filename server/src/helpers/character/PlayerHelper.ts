@@ -84,10 +84,12 @@ export class PlayerHelper extends BaseService {
       delete (player.hp as any).__current;
     }
 
+    // fix traits if needed
     if (!player.traits.tp && size(player.traits.traitsLearned) === 0) {
       this.game.traitHelper.resetTraits(player);
     }
 
+    // clean up invalid learned runes
     if (player.learnedRunes.length > 0) {
       const remove: string[] = [];
 
@@ -103,6 +105,7 @@ export class PlayerHelper extends BaseService {
       );
     }
 
+    // clean up invalid runes
     if (player.runes.length > 0) {
       const remove: string[] = [];
 
@@ -116,6 +119,23 @@ export class PlayerHelper extends BaseService {
       player.runes = player.runes.filter((x) => !remove.includes(x));
     }
 
+    // clean up invalid effects
+    Object.keys(player.effects).forEach((buffType) => {
+      if (buffType === '_hash') return;
+
+      player.effects[buffType] = player.effects[buffType].filter((f) =>
+        this.game.contentManager.hasEffect(f.effectName),
+      );
+    });
+
+    Object.keys(player.effects._hash).forEach((key) => {
+      const doesEffectExist = this.game.contentManager.hasEffect(key);
+      if (doesEffectExist) return;
+
+      delete player.effects._hash[key];
+    });
+
+    // basic resets
     player.agro = {};
 
     player.isGM = playerAccount.isGameMaster;

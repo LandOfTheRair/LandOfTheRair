@@ -425,6 +425,10 @@ export class ContentManager extends BaseService {
     return ret;
   }
 
+  public hasEffect(name: string): boolean {
+    return !!this.effectData[name];
+  }
+
   public getEffect(name: string, context: string): IStatusEffectData {
     const ret = this.effectData[name];
     if (!ret) {
