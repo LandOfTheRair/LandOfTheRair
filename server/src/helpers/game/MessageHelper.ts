@@ -32,7 +32,7 @@ export class MessageHelper extends BaseService {
       this.sendLogMessageToPlayer(
         ref.takenOverBy,
         {
-          message,
+          message: `[as **${ref.name}**] ${message}`,
           sfx,
           from,
           setTarget,
@@ -42,6 +42,10 @@ export class MessageHelper extends BaseService {
         messageTypes,
         formatArgs,
       );
+    }
+
+    if (ref.takingOver && !message.includes('[as')) {
+      messageTypes.push(MessageType.Muted);
     }
 
     const account = this.game.lobbyManager.getAccount((ref as Player).username);
@@ -139,13 +143,6 @@ export class MessageHelper extends BaseService {
     message: string,
     sfx?: SoundEffect,
   ): void {
-    if (character.takenOverBy) {
-      this.sendLogMessageToPlayer(character.takenOverBy, {
-        message: `[${character.name}]: ${message}`,
-        sfx,
-      });
-    }
-
     this.sendLogMessageToPlayer(character, { message, sfx });
   }
 

@@ -1,4 +1,3 @@
-
 .buttons {
   display: flex;
   justify-content: space-around;
@@ -63,12 +62,17 @@
       word-break: break-all;
     }
 
+    &.muted {
+      opacity: 0.5;
+    }
+
     &.combat {
       &.self {
         color: #0f0;
       }
 
-      &.other.miss, &.other.block {
+      &.other.miss,
+      &.other.block {
         color: #ccc;
         font-style: italic;
       }

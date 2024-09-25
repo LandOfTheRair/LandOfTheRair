@@ -19,6 +19,7 @@ export enum MessageType {
   Player = 'player',
   NPC = 'npc',
   Quest = 'quest',
+  Muted = 'muted',
 
   // combat subtypes
   Combat = 'combat',
@@ -33,7 +34,7 @@ export enum MessageType {
   OutOvertime = 'out-overtime',
   InOvertime = 'in-overtime',
   Melee = 'melee',
-  Magic = 'magic'
+  Magic = 'magic',
 }
 
 export interface LogInfo {
