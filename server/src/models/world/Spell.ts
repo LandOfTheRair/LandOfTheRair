@@ -53,6 +53,13 @@ export class Spell implements BaseSpell {
       desc: this.getUnformattedTooltipDesc(caster, target, spellData),
     };
 
+    if (caster) {
+      this.game.crashContext.logContextEntry(
+        caster,
+        `${caster.name}:GOEI -> ${spellData.spellName} -> ${target?.name || 'unknown'}`,
+      );
+    }
+
     if (spellData.spellMeta.linkedEffectName) {
       const effectInfo = this.game.contentManager.getEffect(
         spellData.spellMeta.linkedEffectName,

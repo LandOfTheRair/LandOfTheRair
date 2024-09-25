@@ -1,13 +1,18 @@
-
 import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
-import { ICharacter, IGroundItem, IItemEffect, ISimpleItem, ItemClass, Skill } from '../../interfaces';
+import {
+  ICharacter,
+  IGroundItem,
+  IItemEffect,
+  ISimpleItem,
+  ItemClass,
+  Skill,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class TrapHelper extends BaseService {
-
   public init() {}
 
   public canPlaceTrap(map: string, x: number, y: number): boolean {
@@ -19,21 +24,34 @@ export class TrapHelper extends BaseService {
   }
 
   public triggerTrap(target: ICharacter, trap: IGroundItem) {
-    const trapEffect = this.game.itemHelper.getItemProperty(trap.item, 'trapEffect');
-    if (trap.item.mods.trapSetBy === target.uuid && !trapEffect.extra?.isPositive) return;
+    const trapEffect = this.game.itemHelper.getItemProperty(
+      trap.item,
+      'trapEffect',
+    );
+    if (
+      trap.item.mods.trapSetBy === target.uuid &&
+      !trapEffect.extra?.isPositive
+    )
+      return;
 
-    this.game.messageHelper.sendLogMessageToPlayer(target, { message: 'You triggered a trap!' });
+    this.game.messageHelper.sendLogMessageToPlayer(target, {
+      message: 'You triggered a trap!',
+    });
     this.castEffectFromTrap(target, trap);
 
     const trapUses = trap.item.mods.trapUses ?? 1;
     if (trapUses > 0) {
       this.game.itemHelper.setItemProperty(trap.item, 'trapUses', trapUses - 1);
-      if (trapUses - 1 <= 0) this.removeTrap(target.map, target.x, target.y, trap);
+      if (trapUses - 1 <= 0)
+        this.removeTrap(target.map, target.x, target.y, trap);
     }
   }
 
   public castEffectFromTrap(target: ICharacter, trap: IGroundItem) {
-    const trapEffect: IItemEffect = this.game.itemHelper.getItemProperty(trap.item, 'trapEffect');
+    const trapEffect: IItemEffect = this.game.itemHelper.getItemProperty(
+      trap.item,
+      'trapEffect',
+    );
     if (!trapEffect) return;
 
     const mapState = this.game.worldManager.getMap(target.map)?.state;
@@ -43,35 +61,64 @@ export class TrapHelper extends BaseService {
 
     const isAOE = (trapEffect.range ?? 0) > 0;
     if (isAOE) {
-      this.game.commandHandler.getSkillRef(trapEffect.name)
-        .use(caster, null,
-          { overrideEffect: { range: trapEffect.range, name: trapEffect.name } },
-          { x: target.x, y: target.y, map: target.map }
+      this.game.commandHandler
+        .getSkillRef(trapEffect.name)
+        .use(
+          caster,
+          null,
+          {
+            overrideEffect: { range: trapEffect.range, name: trapEffect.name },
+          },
+          { x: target.x, y: target.y, map: target.map },
         );
     } else {
-      this.game.spellManager.castSpell(trapEffect.name, caster, target, trapEffect);
+      this.game.spellManager.castSpell(
+        trapEffect.name,
+        caster,
+        target,
+        cloneDeep(trapEffect),
+      );
     }
   }
 
-  public placeTrap(x: number, y: number, placer: ICharacter, trap: ISimpleItem) {
+  public placeTrap(
+    x: number,
+    y: number,
+    placer: ICharacter,
+    trap: ISimpleItem,
+  ) {
     trap = this.game.itemCreator.rerollItem(trap, false);
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
-    trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(placer, Skill.Thievery);
-    trap.mods.trapUses = 1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
+    trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(
+      placer,
+      Skill.Thievery,
+    );
+    trap.mods.trapUses =
+      1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
 
-    const trapEffect: IItemEffect = cloneDeep(this.game.itemHelper.getItemProperty(trap, 'trapEffect'));
-    trapEffect.potency *= (1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps'));
-    trapEffect.range = (trapEffect.range ?? 0);
+    const trapEffect: IItemEffect = cloneDeep(
+      this.game.itemHelper.getItemProperty(trap, 'trapEffect'),
+    );
+    trapEffect.potency *=
+      1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps');
+    trapEffect.range = trapEffect.range ?? 0;
     trap.mods.trapEffect = trapEffect;
 
-    if (trapEffect.range > 0) trapEffect.range += this.game.traitHelper.traitLevelValue(placer, 'WiderTraps');
+    if (trapEffect.range > 0)
+      trapEffect.range += this.game.traitHelper.traitLevelValue(
+        placer,
+        'WiderTraps',
+      );
 
     this.setTrap(placer.map, x, y, trap);
   }
 
   public canDisarmTrap(user: ICharacter, trap: ISimpleItem): boolean {
-    return this.game.characterHelper.getSkillLevel(user, Skill.Thievery) > (trap.mods.trapSetSkill ?? 1);
+    return (
+      this.game.characterHelper.getSkillLevel(user, Skill.Thievery) >
+      (trap.mods.trapSetSkill ?? 1)
+    );
   }
 
   private setTrap(map: string, x: number, y: number, trap: ISimpleItem) {
@@ -79,7 +126,8 @@ export class TrapHelper extends BaseService {
   }
 
   public removeTrap(map: string, x: number, y: number, trap: IGroundItem) {
-    this.game.worldManager.getMap(map)?.state.removeItemsFromGround(x, y, [trap]);
+    this.game.worldManager
+      .getMap(map)
+      ?.state.removeItemsFromGround(x, y, [trap]);
   }
-
 }
