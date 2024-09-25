@@ -42,29 +42,30 @@ export class EffectManager extends BaseService {
     effect: IStatusEffect,
   ) {
     const effectRef = this.getEffectRef(effect.effectRef || effectName);
-    if (effectRef) {
-      if (isString(effect.effectInfo.unique)) {
-        // effects like imbue that can be applied multiple separate times if some of them are equipped
-        if (effect.effectInfo.canOverlapUniqueIfEquipped) {
-          this.game.effectHelper.removeSimilarEffects(
-            character,
-            effect.effectInfo.unique as string,
-            effectName,
-            false,
-            !effect.effectInfo.canOverlapUniqueIfEquipped,
-          );
 
-          // other effects, like stances
-        } else {
-          this.game.effectHelper.removeSimilarEffects(
-            character,
-            effect.effectInfo.unique as string,
-            effectName,
-            true,
-          );
-        }
+    if (isString(effect.effectInfo.unique)) {
+      // effects like imbue that can be applied multiple separate times if some of them are equipped
+      if (effect.effectInfo.canOverlapUniqueIfEquipped) {
+        this.game.effectHelper.removeSimilarEffects(
+          character,
+          effect.effectInfo.unique as string,
+          effectName,
+          false,
+          !effect.effectInfo.canOverlapUniqueIfEquipped,
+        );
+
+        // other effects, like stances
+      } else {
+        this.game.effectHelper.removeSimilarEffects(
+          character,
+          effect.effectInfo.unique as string,
+          effectName,
+          true,
+        );
       }
+    }
 
+    if (effectRef) {
       effectRef.create(character, effect);
     }
 
