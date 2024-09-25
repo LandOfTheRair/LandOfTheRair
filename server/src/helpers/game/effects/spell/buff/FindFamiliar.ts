@@ -5,7 +5,6 @@ import {
   INPC,
   IStatusEffect,
   ItemSlot,
-  Skill,
   Stat,
 } from '../../../../../interfaces';
 import { Effect, Spawner } from '../../../../../models';
@@ -35,14 +34,19 @@ export class FindFamiliar extends Effect {
         npc.hostility = (char as INPC).hostility;
       }
 
-      npc.name = `pet ${npc.name}`;
+      if (npc.npcId !== 'Thief Shadow Clone') {
+        npc.name = `pet ${npc.name}`;
+      }
+
       npc.affiliation = `${char.name}'s Pet`;
 
-      const skillBoost = Math.floor(
-        ((char.skills[Skill.Restoration] ?? 0) +
-          (char.skills[Skill.Conjuration] ?? 0)) /
-          2,
-      );
+      const castSkill =
+        this.game.contentManager.getClassConfigSetting<'castSkill'>(
+          char.baseClass,
+          'castSkill',
+        );
+
+      const skillBoost = char.skills[castSkill];
 
       Object.keys(npc.skills).forEach((skillName) => {
         npc.skills[skillName] += skillBoost;
@@ -71,16 +75,20 @@ export class FindFamiliar extends Effect {
         npc.stats[statMod] += boost;
       });
 
-      Object.keys(npc.items.equipment).forEach((itemSlot) => {
-        const item = npc.items.equipment[itemSlot];
-        item.mods.tier = Math.max(1, Math.floor(potency / 3) - 1);
-      });
+      // shadow clones just copy
+      if (npc.npcId !== 'Thief Shadow Clone') {
+        Object.keys(npc.items.equipment).forEach((itemSlot) => {
+          const item = npc.items.equipment[itemSlot];
+          item.mods.tier = Math.max(1, Math.floor(potency / 3) - 1);
+        });
+      }
 
       // familiar stat buffs
       npc.stats[Stat.HP] =
         (npc.stats[Stat.HP] ?? 20000) * 1 +
         this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
       npc.stats[Stat.MP] = npc.stats[Stat.HP];
+
       npc.stats[Stat.STR] =
         (npc.stats[Stat.STR] ?? 5) +
         this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
