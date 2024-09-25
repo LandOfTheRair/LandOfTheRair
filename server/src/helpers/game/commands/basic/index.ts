@@ -8,6 +8,7 @@ export * from './fill';
 export * from './hide';
 export * from './lookat';
 export * from './nextpage';
+export * from './pettarget';
 export * from './place';
 export * from './prevpage';
 export * from './quaff';

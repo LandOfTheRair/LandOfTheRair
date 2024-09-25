@@ -88,7 +88,7 @@ export class TargettingHelper extends BaseService {
     if (target.allegiance === Allegiance.GM) return false;
 
     // if both of the creatures are NPCs, and one of the monsters has a grouping of NeverAttack, don't do it
-    if (!targetAsPlayer && !targetAsNPC) {
+    if (!targetAsPlayer && !targetAsNPC && !isMePet) {
       if (
         (me as INPC).monsterGroup === 'NeverAttack' ||
         (target as INPC).monsterGroup === 'NeverAttack'
@@ -106,7 +106,7 @@ export class TargettingHelper extends BaseService {
     }
 
     // pets will not care about people who aren't their owner
-    if (isMePet && target !== (me as INPC).owner) return true;
+    if (targetOpts.pet && isMePet && target !== (me as INPC).owner) return true;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
     if (

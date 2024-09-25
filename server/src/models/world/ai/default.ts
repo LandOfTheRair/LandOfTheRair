@@ -612,6 +612,10 @@ export class DefaultAIBehavior implements IAI {
     Object.keys(this.npc.agro).forEach((uuid) => (this.npc.agro[uuid] = 1));
   }
 
+  public focusTarget(character: ICharacter): void {
+    this.npc.agro[character.uuid] = 10000000;
+  }
+
   protected moveRandomly(numSteps: number) {
     this.game.movementHelper.moveRandomly(this.npc, numSteps);
   }
