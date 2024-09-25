@@ -266,10 +266,6 @@ export class TargettingHelper extends BaseService {
     if (!state) return [];
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);
-    console.log(
-      'all',
-      allTargets.map((t) => t.name),
-    );
     const possTargets = allTargets.filter((target) => {
       if (this.characterHelper.isDead(target)) return false;
 

@@ -25,8 +25,6 @@ export class CreateRedeemable implements ILobbyCommand {
       }
     }
 
-    console.log(redeemableArgs);
-
     try {
       const redeemable = await game.redeemableDB.addRedeemable(redeemableArgs);
       if (!redeemable) {
