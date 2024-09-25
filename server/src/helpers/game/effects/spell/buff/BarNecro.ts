@@ -3,8 +3,17 @@ import { Effect } from '../../../../../models';
 
 export class BarNecro extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
-    const boost =
-      1 + this.game.traitHelper.traitLevelValue(char, 'NecroticWard');
+    let boost = 1;
+
+    if (effect.sourceUUID) {
+      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
+
+      if (caster) {
+        boost += this.game.traitHelper.traitLevelValue(caster, 'NecroticWard');
+      }
+    }
+
     effect.effectInfo.potency = Math.floor(boost * effect.effectInfo.potency);
 
     effect.effectInfo.statChanges = {
