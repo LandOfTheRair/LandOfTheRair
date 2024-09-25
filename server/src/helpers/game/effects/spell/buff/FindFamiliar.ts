@@ -71,10 +71,16 @@ export class FindFamiliar extends Effect {
         npc.stats[statMod] += boost;
       });
 
+      Object.keys(npc.items.equipment).forEach((itemSlot) => {
+        const item = npc.items.equipment[itemSlot];
+        item.mods.tier = Math.max(1, Math.floor(potency / 3) - 1);
+      });
+
       // familiar stat buffs
       npc.stats[Stat.HP] =
         (npc.stats[Stat.HP] ?? 20000) * 1 +
         this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
+      npc.stats[Stat.MP] = npc.stats[Stat.HP];
       npc.stats[Stat.STR] =
         (npc.stats[Stat.STR] ?? 5) +
         this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');

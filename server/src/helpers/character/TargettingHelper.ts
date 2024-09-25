@@ -76,6 +76,11 @@ export class TargettingHelper extends BaseService {
     const isMePlayer = this.game.characterHelper.isPlayer(me);
     const isTargetPlayer = this.game.characterHelper.isPlayer(target);
 
+    const targetAsPlayer = isMePlayer;
+    const targetAsNPC = isTargetPlayer;
+
+    const isMePet = !!(me as INPC).owner;
+
     // I can never be hostile to myself
     if (targetOpts.self && me === target) return false;
 
@@ -83,7 +88,7 @@ export class TargettingHelper extends BaseService {
     if (target.allegiance === Allegiance.GM) return false;
 
     // if both of the creatures are NPCs, and one of the monsters has a grouping of NeverAttack, don't do it
-    if (!isMePlayer && !isTargetPlayer) {
+    if (!targetAsPlayer && !targetAsNPC) {
       if (
         (me as INPC).monsterGroup === 'NeverAttack' ||
         (target as INPC).monsterGroup === 'NeverAttack'
@@ -94,11 +99,14 @@ export class TargettingHelper extends BaseService {
 
     // players and enemies are always hostile
     if (
-      (isMePlayer && target.allegiance === Allegiance.Enemy) ||
-      (isTargetPlayer && me.allegiance === Allegiance.Enemy)
+      (targetAsPlayer && target.allegiance === Allegiance.Enemy) ||
+      (targetAsNPC && me.allegiance === Allegiance.Enemy)
     ) {
       return true;
     }
+
+    // pets will not care about people who aren't their owner
+    if (isMePet && target !== (me as INPC).owner) return true;
 
     // natural resources are only hostile if I have a reputation modifier for them (positive or negative)
     if (
@@ -118,7 +126,7 @@ export class TargettingHelper extends BaseService {
     }
 
     // if I am a pet (owned by a player), and my prospective target is a player, we won't do this
-    if (targetOpts.pet && (me as INPC).owner && isTargetPlayer) {
+    if (targetOpts.pet && (me as INPC).owner && targetAsNPC) {
       return targetOpts.def;
     }
 
@@ -258,6 +266,10 @@ export class TargettingHelper extends BaseService {
     if (!state) return [];
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);
+    console.log(
+      'all',
+      allTargets.map((t) => t.name),
+    );
     const possTargets = allTargets.filter((target) => {
       if (this.characterHelper.isDead(target)) return false;
 
