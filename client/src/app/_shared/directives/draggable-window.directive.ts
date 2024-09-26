@@ -8,8 +8,8 @@ import {
   OnInit,
 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { fromEvent, merge, Subject } from 'rxjs';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { combineLatest, fromEvent, merge, Subject } from 'rxjs';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 import { UpdateWindowPosition } from '../../../stores';
 import { OptionsService } from '../../services/options.service';
 
@@ -92,50 +92,90 @@ export class DraggableDirective implements OnInit, OnDestroy {
       map(touchToMoveData),
     );
 
+    const arrow$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(
+      filter((arr) =>
+        ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(arr.code),
+      ),
+    );
+
     const startmove$ = merge(mousedown$, touchstart$);
     const movemove$ = merge(mousemove$, touchmove$);
     const endmove$ = merge(mouseup$, touchend$, mouseleave$);
 
-    startmove$.pipe(takeUntil(this.destroy$)).subscribe((startMove) => {
-      if (this.optionsService.lockWindows) return;
-      if (!this.isDragAllowed()) return;
-      if (
-        startMove.button === 2 ||
-        (this.windowHandle() !== undefined &&
-          startMove.target !== this.windowHandle())
-      ) {
-        return;
-      }
+    combineLatest({ start: startmove$, arrow: arrow$ })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ start, arrow }) => {
+        if (this.optionsService.lockWindows) return;
+        if (!this.isDragAllowed()) return;
+        if (
+          start.button === 2 ||
+          (this.windowHandle() !== undefined &&
+            start.target !== this.windowHandle())
+        ) {
+          return;
+        }
 
-      startMove.event.preventDefault();
-      startMove.event.stopPropagation();
+        if (arrow) {
+          const mod = { x: 0, y: 0 };
+          switch (arrow.code) {
+            case 'ArrowUp': {
+              mod.y = -1;
+              break;
+            }
+            case 'ArrowDown': {
+              mod.y = 1;
+              break;
+            }
+            case 'ArrowLeft': {
+              mod.x = -1;
+              break;
+            }
+            case 'ArrowRight': {
+              mod.x = 1;
+              break;
+            }
+          }
 
-      const windowCoords = this.getNativeCoords();
-      const startCoord = this.diff(windowCoords, startMove);
-      endmove$.pipe(takeUntil(this.destroy$)).subscribe((endmove) => {
-        endmove.event.preventDefault();
-        endmove.event.stopPropagation();
-      });
-      const pospipe$ = movemove$.pipe(
-        takeUntil(endmove$),
-        takeUntil(this.destroy$),
-        map((moveMove) => {
-          moveMove.event.preventDefault();
-          moveMove.event.stopPropagation();
-          return this.clampWindow(this.diff(startCoord, moveMove));
-        }),
-      );
+          const position = this.getNativeCoords();
+          position.x = +position.x + mod.x;
+          position.y = +position.y + mod.y;
 
-      pospipe$.subscribe((position) => {
-        this.setNativeCoords(position);
-      });
+          this.store.dispatch(
+            new UpdateWindowPosition(this.windowName(), position, true),
+          );
+        }
 
-      pospipe$.pipe(debounceTime(200)).subscribe((position) => {
-        this.store.dispatch(
-          new UpdateWindowPosition(this.windowName(), position, true),
+        start.event.preventDefault();
+        start.event.stopPropagation();
+
+        const windowCoords = this.getNativeCoords();
+        const startCoord = this.diff(windowCoords, start);
+
+        endmove$.pipe(takeUntil(this.destroy$)).subscribe((endmove) => {
+          endmove.event.preventDefault();
+          endmove.event.stopPropagation();
+        });
+
+        const pospipe$ = movemove$.pipe(
+          takeUntil(endmove$),
+          takeUntil(this.destroy$),
+          map((moveMove) => {
+            moveMove.event.preventDefault();
+            moveMove.event.stopPropagation();
+            return this.clampWindow(this.diff(startCoord, moveMove));
+          }),
         );
+
+        pospipe$.subscribe((position) => {
+          this.setNativeCoords(position);
+        });
+
+        pospipe$.pipe(debounceTime(200)).subscribe((position) => {
+          this.store.dispatch(
+            new UpdateWindowPosition(this.windowName(), position, true),
+          );
+        });
       });
-    });
   }
 
   private clampWindow(pos: Position) {
