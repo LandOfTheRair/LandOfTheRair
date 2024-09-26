@@ -1,9 +1,7 @@
 <h1 mat-dialog-title>Options</h1>
 
 <div mat-dialog-content>
-
   <mat-tab-group mat-align-tabs="center">
-
     <!--
     <mat-tab label="Windows">
 
@@ -12,18 +10,19 @@
 
     <mat-tab label="Interface">
       <form class="option-container">
-
         <fieldset>
           <legend>Interaction Options</legend>
 
           @for (option of interactionOptions; track option) {
-            <div class="m-t-5">
-              <mat-checkbox [(ngModel)]="options[option.option]"
-                (change)="updateOption(option.option)"
-                [ngModelOptions]="{ standalone: true }">
-                {{ option.text }}
-              </mat-checkbox>
-            </div>
+          <div class="m-t-5">
+            <mat-checkbox
+              [(ngModel)]="options[option.option]"
+              (change)="updateOption(option.option)"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
           }
         </fieldset>
 
@@ -31,13 +30,15 @@
           <legend>Message Options</legend>
 
           @for (option of messageOptions; track option) {
-            <div class="m-t-5">
-              <mat-checkbox [(ngModel)]="options[option.option]"
-                (change)="updateOption(option.option)"
-                [ngModelOptions]="{ standalone: true }">
-                {{ option.text }}
-              </mat-checkbox>
-            </div>
+          <div class="m-t-5">
+            <mat-checkbox
+              [(ngModel)]="options[option.option]"
+              (change)="updateOption(option.option)"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
           }
         </fieldset>
 
@@ -45,39 +46,44 @@
           <legend>Interface Options</legend>
 
           @for (option of uiOptions; track option) {
-            <div class="m-t-5">
-              <mat-checkbox [(ngModel)]="options[option.option]"
-                (change)="updateOption(option.option)"
-                [ngModelOptions]="{ standalone: true }">
-                {{ option.text }}
-              </mat-checkbox>
-            </div>
+          <div class="m-t-5">
+            <mat-checkbox
+              [(ngModel)]="options[option.option]"
+              (change)="updateOption(option.option)"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
           }
 
           <div class="slider-option-row">
             <div class="slider-label">Dying Border Width</div>
-            <mat-slider [min]="0"
+            <mat-slider
+              [min]="0"
               [max]="300"
               [step]="5"
               [(ngModel)]="options.dyingBorderWidth"
               [ngModelOptions]="{ standalone: true }"
               (change)="updateOption('dyingBorderWidth')"
-            thumbLabel="true"></mat-slider>
+              thumbLabel="true"
+            ></mat-slider>
             <div>{{ options.dyingBorderWidth }}px</div>
           </div>
 
           <div class="slider-option-row">
             <div class="slider-label">Dying Border Trigger %</div>
-            <mat-slider [min]="5"
+            <mat-slider
+              [min]="5"
               [max]="95"
               [step]="5"
               [(ngModel)]="options.dyingBorderPercent"
               [ngModelOptions]="{ standalone: true }"
               (change)="updateOption('dyingBorderPercent')"
-            thumbLabel="true"></mat-slider>
+              thumbLabel="true"
+            ></mat-slider>
             <div>{{ options.dyingBorderPercent }}%</div>
           </div>
-
         </fieldset>
 
         <fieldset>
@@ -85,7 +91,11 @@
 
           <div class="radio-row m-t-5">
             <div class="radio-label">Sort friendlies</div>
-            <mat-radio-group [(ngModel)]="options.shouldSortFriendly" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortFriendly')">
+            <mat-radio-group
+              [(ngModel)]="options.shouldSortFriendly"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="updateOption('shouldSortFriendly')"
+            >
               <mat-radio-button [value]="null">none</mat-radio-button>
               <mat-radio-button [value]="true">first</mat-radio-button>
               <mat-radio-button [value]="false">last</mat-radio-button>
@@ -94,7 +104,11 @@
 
           <div class="radio-row m-t-5">
             <div class="radio-label">Sort by distance</div>
-            <mat-radio-group [(ngModel)]="options.shouldSortDistance" [ngModelOptions]="{ standalone: true }" (change)="updateOption('shouldSortDistance')">
+            <mat-radio-group
+              [(ngModel)]="options.shouldSortDistance"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="updateOption('shouldSortDistance')"
+            >
               <mat-radio-button [value]="null">none</mat-radio-button>
               <mat-radio-button [value]="true">closest</mat-radio-button>
               <mat-radio-button [value]="false">farthest</mat-radio-button>
@@ -102,89 +116,99 @@
           </div>
         </fieldset>
 
-
         <fieldset>
           <legend>UI Debug Options</legend>
           @for (option of debugOptions; track option) {
-            <div class="m-t-5">
-              <mat-checkbox [(ngModel)]="options[option.option]"
-                (change)="updateOption(option.option)"
-                [ngModelOptions]="{ standalone: true }">
-                {{ option.text }}
-              </mat-checkbox>
-            </div>
+          <div class="m-t-5">
+            <mat-checkbox
+              [(ngModel)]="options[option.option]"
+              (change)="updateOption(option.option)"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              {{ option.text }}
+            </mat-checkbox>
+          </div>
           }
         </fieldset>
-
       </form>
-
     </mat-tab>
 
     <mat-tab label="Audio">
       <form class="option-container">
         <div>
-          <mat-checkbox [(ngModel)]="options.playBGM"
+          <mat-checkbox
+            [(ngModel)]="options.playBGM"
             (change)="updateOption('playBGM')"
-            [ngModelOptions]="{ standalone: true }">
+            [ngModelOptions]="{ standalone: true }"
+          >
             Play Background Music
           </mat-checkbox>
         </div>
 
         <div>
-          <mat-checkbox [(ngModel)]="options.playSFX"
+          <mat-checkbox
+            [(ngModel)]="options.playSFX"
             (change)="updateOption('playSFX')"
-            [ngModelOptions]="{ standalone: true }">
+            [ngModelOptions]="{ standalone: true }"
+          >
             Play Sound Effects
           </mat-checkbox>
         </div>
 
         <div>
-          <mat-checkbox [(ngModel)]="options.playNostalgia"
+          <mat-checkbox
+            [(ngModel)]="options.playNostalgia"
             (change)="updateOption('playNostalgia')"
-            [ngModelOptions]="{ standalone: true }">
+            [ngModelOptions]="{ standalone: true }"
+          >
             Play Nostalgia Background Music & Sound Effects
           </mat-checkbox>
         </div>
 
         <div class="slider-option-row">
           <div class="slider-label">Music Volume</div>
-          <mat-slider [min]="0"
+          <mat-slider
+            [min]="0"
             [max]="100"
             [step]="5"
             [(ngModel)]="options.volumeMusic"
             [ngModelOptions]="{ standalone: true }"
             (change)="updateOption('volumeMusic')"
-          thumbLabel="true"></mat-slider>
+            thumbLabel="true"
+          ></mat-slider>
           <div>{{ options.volumeMusic }}%</div>
         </div>
 
         <div class="slider-option-row">
           <div class="slider-label">SFX Volume</div>
-          <mat-slider [min]="0"
+          <mat-slider
+            [min]="0"
             [max]="100"
             [step]="5"
             [(ngModel)]="options.volumeSFX"
             [ngModelOptions]="{ standalone: true }"
             (change)="updateOption('volumeSFX')"
-          thumbLabel="true"></mat-slider>
+            thumbLabel="true"
+          ></mat-slider>
           <div>{{ options.volumeSFX }}%</div>
         </div>
       </form>
-
     </mat-tab>
 
     <mat-tab label="Other">
       <form autocomplete="off" class="option-container">
         <mat-form-field class="full-width">
           <mat-label>Auto Exec</mat-label>
-          <textarea matInput
+          <textarea
+            matInput
             type="text"
             placeholder="Auto-Exec Commands (separate multiple commands with semicolons)"
             maxlength="300"
             rows="5"
             [(ngModel)]="options.otherAutoExec"
             (change)="updateOption('otherAutoExec')"
-          [ngModelOptions]="{ standalone: true }"></textarea>
+            [ngModelOptions]="{ standalone: true }"
+          ></textarea>
         </mat-form-field>
       </form>
     </mat-tab>
@@ -192,45 +216,73 @@
     <mat-tab label="Debug">
       <form autocomplete="off" class="option-container">
         <p>
-          <em>Warning, these options may break your game and/or slow it down. They will only take effect with your next restart of the game. Use with caution.</em>
+          <em>
+            Warning, these options may break your game and/or slow it down. They
+            will only take effect with your next restart of the game. Use with
+            caution.
+          </em>
         </p>
 
         @for (spritesheet of spritesheets; track spritesheet) {
-          <mat-form-field class="full-width" appearance="outline">
-            <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
-            <input matInput
-              type="text"
-              [id]="spritesheet"
-              [name]="spritesheet"
-              [placeholder]="'https://play.rair.land/assets/spritesheets/' + spritesheet.toLowerCase() + '.webp'"
-              [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
-              autocomplete="off"
-              (change)="updateOption('spritesheet' + spritesheet + 'Url')"
-              [ngModelOptions]="{ standalone: true }" />
-            </mat-form-field>
-          }
-        </form>
-      </mat-tab>
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>{{ spritesheet }} Custom Spritesheet URL</mat-label>
+          <input
+            matInput
+            type="text"
+            [id]="spritesheet"
+            [name]="spritesheet"
+            [placeholder]="
+              'https://play.rair.land/assets/spritesheets/' +
+              spritesheet.toLowerCase() +
+              '.webp'
+            "
+            [(ngModel)]="options['spritesheet' + spritesheet + 'Url']"
+            autocomplete="off"
+            (change)="updateOption('spritesheet' + spritesheet + 'Url')"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        }
+      </form>
+    </mat-tab>
 
-      <mat-tab label="Custom">
-        <form autocomplete="off" class="option-container">
-          <mat-form-field class="full-width">
-            <mat-label>Custom CSS</mat-label>
-            <textarea matInput
-              type="text"
-              placeholder="Custom CSS"
-              rows="10"
-              [(ngModel)]="options.customCSS"
-              (change)="updateOption('customCSS')"
-            [ngModelOptions]="{ standalone: true }"></textarea>
-          </mat-form-field>
-        </form>
-      </mat-tab>
+    <mat-tab label="Custom">
+      <form autocomplete="off" class="option-container">
+        <mat-form-field class="full-width">
+          <mat-label>Custom CSS</mat-label>
+          <textarea
+            matInput
+            type="text"
+            placeholder="Custom CSS"
+            rows="10"
+            [(ngModel)]="options.customCSS"
+            (change)="updateOption('customCSS')"
+            [ngModelOptions]="{ standalone: true }"
+          ></textarea>
+        </mat-form-field>
+      </form>
+    </mat-tab>
+  </mat-tab-group>
+</div>
 
-    </mat-tab-group>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
 
-  </div>
+  <div class="spacer"></div>
 
-  <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Close</button>
-  </div>
+  <input
+    type="file"
+    #uploadWindows
+    class="hidden"
+    accept=".json"
+    (change)="import($event, uploadWindows)"
+  />
+
+  <button mat-button (click)="export()" color="accent">
+    Export Window Positions
+  </button>
+
+  <button mat-button (click)="uploadWindows.click()" color="accent">
+    Import Window Positions
+  </button>
+</div>

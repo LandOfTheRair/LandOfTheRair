@@ -1,10 +1,13 @@
 import { ChatMode, GameAction, GameOption } from '../../interfaces';
 
-
 // dispatched when an account is added to the quick login selector
 export class AddAccount {
   static type = GameAction.SettingsAddAccount;
-  constructor(public username: string, public password: string, public autologin?: boolean) {}
+  constructor(
+    public username: string,
+    public password: string,
+    public autologin?: boolean,
+  ) {}
 }
 
 // dispatched when an account is removed from the quick login selector
@@ -19,8 +22,14 @@ export class UpdateWindowPosition {
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
-    public windowProps: { x?: number; y?: number; width?: number; height?: number; hidden?: boolean },
-    public overwrite?: boolean
+    public windowProps: {
+      x?: number;
+      y?: number;
+      width?: number;
+      height?: number;
+      hidden?: boolean;
+    },
+    public overwrite?: boolean,
   ) {}
 }
 
@@ -30,7 +39,7 @@ export class SetDefaultWindowPosition {
   filterOutFromLogs = true;
   constructor(
     public windowName: string,
-    public windowProps: { x?: number; y?: number  }
+    public windowProps: { x?: number; y?: number },
   ) {}
 }
 
@@ -88,7 +97,7 @@ export class SetChatMode {
 // dispatched when the user changes their in game log mode
 export class SetLogMode {
   static type = GameAction.SettingsSetLogMode;
-  constructor(public logMode: 'All'|'General'|'Combat'|'NPC') {}
+  constructor(public logMode: 'All' | 'General' | 'Combat' | 'NPC') {}
 }
 
 // dispatched when a command happens, and is logged in history
@@ -108,17 +117,27 @@ export class SetCurrentCommand {
 // dispatched to set any client game option
 export class SetOption {
   static type = GameAction.SetOption;
-  constructor(public option: GameOption, public value: boolean|number|string) {}
+  constructor(
+    public option: GameOption,
+    public value: boolean | number | string,
+  ) {}
 }
 
 // dispatched when the user changes their character view
 export class SetCharacterView {
   static type = GameAction.SettingsSetCharacterView;
-  constructor(public charMode: 'Equipment'|'Stats'|'Skills'|'Reputation') {}
+  constructor(
+    public charMode: 'Equipment' | 'Stats' | 'Skills' | 'Reputation',
+  ) {}
 }
 
 // dispatched when the user hits play game
 export class SetLastCharSlotPlayed {
   static type = GameAction.SettingsLastPlayedCharSlot;
   constructor(public charSlot: number) {}
+}
+
+export class SetAllWindowPositions {
+  static type = GameAction.SettingsSetAllWindowPositions;
+  constructor(public settings: any) {}
 }

@@ -405,9 +405,13 @@
 
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>Close</button>
+
   @if (currentTab === 0) {
   <button mat-button (click)="create()" color="primary">New Macro</button>
-  } @if (currentTab === 0 && showMacroEditor) {
+  }
+
+  <!---->
+  @if (currentTab === 0 && showMacroEditor) {
   <button
     mat-button
     (click)="save()"
@@ -416,7 +420,10 @@
   >
     Save Macro
   </button>
-  } @if (currentTab === 0) {
+  }
+
+  <!---->
+  @if (currentTab === 0) {
   <div class="spacer"></div>
   }
 
@@ -427,13 +434,20 @@
     accept=".json"
     (change)="import($event, uploadMacros)"
   />
+
   @if (currentTab === 0) {
   <button mat-button (click)="export()" color="accent">Export Macros</button>
-  } @if (currentTab === 0) {
+  }
+
+  <!---->
+  @if (currentTab === 0) {
   <button mat-button (click)="uploadMacros.click()" color="accent">
     Import Macros
   </button>
-  } @if (currentTab === 1) {
+  }
+
+  <!---->
+  @if (currentTab === 1) {
   <button mat-button (click)="createMacroGroup()" color="primary">
     New Macro Group
   </button>

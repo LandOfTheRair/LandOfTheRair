@@ -7,7 +7,11 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngxs/store';
 import { GameOption } from '../../../../interfaces';
-import { SetOption, SettingsState } from '../../../../stores';
+import {
+  SetAllWindowPositions,
+  SetOption,
+  SettingsState,
+} from '../../../../stores';
 import { OptionsService } from '../../../services/options.service';
 
 @Component({
@@ -17,6 +21,8 @@ import { OptionsService } from '../../../services/options.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OptionsComponent {
+  public allWindowPositions = select(SettingsState.allWindowPositions);
+
   private store = inject(Store);
   private optionsService = inject(OptionsService);
   public dialogRef = inject(MatDialogRef<OptionsComponent>);
@@ -120,5 +126,36 @@ export class OptionsComponent {
     if (option === GameOption.CustomCSS) {
       this.optionsService.updateCustomCSS();
     }
+  }
+
+  export() {
+    const fileName = `lotr-windows.json`;
+    const dataStr =
+      'data:text/json;charset=utf-8,' +
+      encodeURIComponent(JSON.stringify(this.allWindowPositions(), null, 4));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute('href', dataStr);
+    downloadAnchorNode.setAttribute('download', fileName);
+    downloadAnchorNode.click();
+  }
+
+  import(e, inputEl) {
+    if (!e || !e.target || !e.target.files) return;
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const windowFile = JSON.parse((ev.target as FileReader).result as string);
+
+      const finish = () => {
+        this.store.dispatch(new SetAllWindowPositions(windowFile));
+        inputEl.value = null;
+      };
+
+      finish();
+    };
+
+    reader.readAsText(file);
   }
 }

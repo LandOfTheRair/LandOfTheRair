@@ -10,6 +10,7 @@ import {
   RemoveAccount,
   ResetWindowPositions,
   SetActiveWindow,
+  SetAllWindowPositions,
   SetAssetHash,
   SetCharacterView,
   SetCharSlot,
@@ -124,6 +125,11 @@ export class SettingsState implements NgxsOnInit {
         height: 0,
         hidden: true,
       };
+  }
+
+  @Selector()
+  static allWindowPositions(state: ISettings) {
+    return state.windows;
   }
 
   @Selector()
@@ -357,5 +363,13 @@ export class SettingsState implements NgxsOnInit {
     { charSlot }: SetLastCharSlotPlayed,
   ) {
     ctx.patchState({ lastCharSlot: charSlot });
+  }
+
+  @Action(SetAllWindowPositions)
+  setWindowPositions(
+    ctx: StateContext<ISettings>,
+    { settings }: SetAllWindowPositions,
+  ) {
+    ctx.patchState({ windows: settings });
   }
 }
