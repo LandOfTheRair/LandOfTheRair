@@ -308,6 +308,8 @@ export class CombatHelper extends BaseService {
         },
         [MessageType.Combat, MessageType.Self, MessageType.Blocked],
       );
+
+      this.game.characterHelper.addAgro(defender, attacker, 1);
     }
 
     const absDmg = Math.round(Math.abs(damage));

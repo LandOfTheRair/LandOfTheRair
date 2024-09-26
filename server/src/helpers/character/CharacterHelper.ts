@@ -319,6 +319,13 @@ export class CharacterHelper extends BaseService {
           modifyAgro(otherPlayer, char, 1);
         });
     }
+
+    if (this.isPet(char)) {
+      const owner = (char as INPC).owner;
+      if (owner) {
+        this.addAgro(owner, target, amount);
+      }
+    }
   }
 
   // clear agro for a particular char
@@ -342,6 +349,11 @@ export class CharacterHelper extends BaseService {
   // check if a character is a player
   public isPlayer(character: ICharacter): boolean {
     return !!(character as IPlayer).username;
+  }
+
+  // check if a character is a pet
+  public isPet(character: ICharacter): boolean {
+    return !!(character as INPC).owner;
   }
 
   // check if we can gain skill from this target
