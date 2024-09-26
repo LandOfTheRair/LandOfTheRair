@@ -22,6 +22,7 @@ import {
   Currency,
   Hostility,
   IAIBehavior,
+  IChallengeMeta,
   initializeNPC,
   INPC,
   INPCDefinition,
@@ -31,6 +32,7 @@ import {
   Rollable,
   Skill,
   Stat,
+  StatBlock,
 } from '../../interfaces';
 import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { CharacterHelper } from '../character/CharacterHelper';
@@ -77,6 +79,53 @@ export class NPCCreator extends BaseService {
     }
 
     return this.createCharacterFromNPCDefinition(npc);
+  }
+
+  private coalesceChallengeDataForCR(
+    npcDef: INPCDefinition,
+  ): Partial<StatBlock> {
+    const challengeData = this.content.challengeData;
+    const cr = clamp(npcDef.cr ?? 0, -10, 10);
+    const base = challengeData.global.cr[cr] ?? {};
+
+    if (npcDef.baseClass) {
+      const classData = challengeData.byClass[npcDef.baseClass]?.cr[cr] ?? {};
+      Object.keys(classData).forEach((key) => {
+        base[key] ??= 0;
+        base[key] += classData[key];
+      });
+    }
+
+    if (npcDef.monsterClass) {
+      const monsterClassData =
+        challengeData.byType[npcDef.monsterClass]?.cr[cr] ?? {};
+      Object.keys(monsterClassData).forEach((key) => {
+        base[key] ??= 0;
+        base[key] += monsterClassData[key];
+      });
+    }
+
+    return base;
+  }
+
+  private coalesceChallengeDataForMultiplier(
+    npcDef: INPCDefinition,
+    multKey: keyof IChallengeMeta,
+  ): number {
+    const challengeData = this.content.challengeData;
+
+    let classMult = 1;
+    let typeMult = 1;
+
+    if (npcDef.baseClass) {
+      classMult = challengeData.byClass[npcDef.baseClass]?.meta[multKey] ?? 1;
+    }
+
+    if (npcDef.monsterClass) {
+      typeMult = challengeData.byType[npcDef.monsterClass]?.meta[multKey] ?? 1;
+    }
+
+    return classMult * typeMult;
   }
 
   // create character from npc def - also useful for greens
@@ -191,6 +240,11 @@ export class NPCCreator extends BaseService {
 
     // set base from global if needed (stats)
     if (baseChar.stats[Stat.STR] === 0) {
+      const statMult = this.coalesceChallengeDataForMultiplier(
+        npcDef,
+        'allStatsMult',
+      );
+
       const setStats: Stat[] = [
         Stat.STR,
         Stat.AGI,
@@ -206,7 +260,7 @@ export class NPCCreator extends BaseService {
       setStats.forEach((stat) => {
         const globalSetStat =
           this.content.challengeData.global.stats.allStats[baseChar.level];
-        baseChar.stats[stat] = globalSetStat;
+        baseChar.stats[stat] = Math.floor(globalSetStat * statMult);
       });
     }
 
@@ -214,11 +268,16 @@ export class NPCCreator extends BaseService {
     // martial is set to 1 (or the correct number) if any skills are set
     if (baseChar.skills[Skill.Martial] === 0) {
       Object.values(Skill).forEach((skill) => {
+        const skillMult = this.coalesceChallengeDataForMultiplier(
+          npcDef,
+          'allSkillsMult',
+        );
+
         const globalSetSkill =
           this.content.challengeData.global.stats.allSkills[baseChar.level];
         baseChar.skills[skill] =
           this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-            globalSetSkill,
+            Math.floor(globalSetSkill * skillMult),
           );
       });
     }
@@ -259,17 +318,18 @@ export class NPCCreator extends BaseService {
       baseChar.monsterClass ??= MonsterClass.Humanoid;
     }
 
-    const challengeRating = clamp(npcDef.cr ?? 0, -10, 10);
     const crLevel = clamp(baseChar.level, 1, this.game.configManager.MAX_LEVEL);
 
-    const globalCRDF =
-      this.game.contentManager.challengeData.global.cr[challengeRating]
-        ?.damageFactor ?? 1;
-    const globalLvlDF =
-      this.game.contentManager.challengeData.global.stats.damageFactor[
-        crLevel
-      ] ?? 1;
-    baseChar.stats[Stat.DamageFactor] = globalCRDF * globalLvlDF;
+    const statOverrides = this.coalesceChallengeDataForCR(npcDef);
+
+    baseChar.stats[Stat.DamageFactor] = statOverrides.damageFactor ?? 1;
+
+    Object.keys(statOverrides).forEach((stat) => {
+      if (stat === 'damageFactor') return;
+
+      baseChar.stats[stat] ??= 0;
+      baseChar.stats[stat] += statOverrides[stat];
+    });
 
     if (baseChar.skills[Skill.Thievery] === 0) {
       baseChar.skills[Skill.Thievery] =
@@ -280,10 +340,16 @@ export class NPCCreator extends BaseService {
 
     if (npcDef.giveXp) {
       if (npcDef.giveXp.min === -1 || npcDef.giveXp.max === -1) {
+        const giveXpMult = this.coalesceChallengeDataForMultiplier(
+          npcDef,
+          'giveXpMult',
+        );
+
         const { min: lvlMin, max: lvlMax } =
           this.game.contentManager.challengeData.global.stats.giveXp[crLevel];
-        baseChar.giveXp.min = lvlMin;
-        baseChar.giveXp.max = lvlMax;
+
+        baseChar.giveXp.min = Math.floor(lvlMin * giveXpMult);
+        baseChar.giveXp.max = Math.floor(lvlMax * giveXpMult);
       }
     }
 
@@ -291,10 +357,15 @@ export class NPCCreator extends BaseService {
       let { min, max } = npcDef.gold;
 
       if (npcDef.gold.min === -1 || npcDef.gold.max === -1) {
+        const goldMult = this.coalesceChallengeDataForMultiplier(
+          npcDef,
+          'goldMult',
+        );
+
         const { min: lvlMin, max: lvlMax } =
           this.game.contentManager.challengeData.global.stats.gold[crLevel];
-        min = lvlMin;
-        max = lvlMax;
+        min = Math.floor(lvlMin * goldMult);
+        max = Math.floor(lvlMax * goldMult);
       }
 
       baseChar.currency[Currency.Gold] = random(min, max);
@@ -305,11 +376,16 @@ export class NPCCreator extends BaseService {
 
       // build based on the level
       if (npcDef.hp.min === -1 || npcDef.hp.max === -1) {
+        const hpMult = this.coalesceChallengeDataForMultiplier(
+          npcDef,
+          'hpMult',
+        );
+
         const { min: lvlMin, max: lvlMax } =
           this.game.contentManager.challengeData.global.stats.hp[crLevel];
-        const hpMult = npcDef.hpMult ?? 1;
-        min = lvlMin * hpMult;
-        max = lvlMax * hpMult;
+        const hpMultNPC = npcDef.hpMult ?? 1;
+        min = Math.floor(lvlMin * hpMultNPC * hpMult);
+        max = Math.floor(lvlMax * hpMultNPC * hpMult);
       }
 
       baseChar.hp.maximum = random(min, max);
@@ -317,7 +393,11 @@ export class NPCCreator extends BaseService {
     }
 
     if (npcDef.mp) {
-      baseChar.mp.maximum = random(npcDef.mp.min, npcDef.mp.max);
+      const mpMult = this.coalesceChallengeDataForMultiplier(npcDef, 'mpMult');
+
+      baseChar.mp.maximum = Math.floor(
+        random(npcDef.mp.min, npcDef.mp.max) * mpMult,
+      );
       baseChar.stats[Stat.MP] = baseChar.mp.maximum;
     }
 

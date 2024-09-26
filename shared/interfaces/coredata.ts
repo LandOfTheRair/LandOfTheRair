@@ -3,6 +3,7 @@ import {
   Allegiance,
   BaseClass,
   Currency,
+  MonsterClass,
   Skill,
   Stat,
 } from './building-blocks';
@@ -29,6 +30,20 @@ export interface IMaterialSlotLayout {
   layouts: Array<{ category: string; items: Array<string | null> }>;
 }
 
+export interface IChallengeMeta {
+  hpMult: number;
+  mpMult: number;
+  goldMult: number;
+  giveXpMult: number;
+  allSkillsMult: number;
+  allStatsMult: number;
+}
+
+export interface IChallengeSubType {
+  cr: Record<number, { damageFactor: number }>;
+  meta: IChallengeMeta;
+}
+
 export interface IChallenge {
   global: {
     cr: Record<number, { damageFactor: number }>;
@@ -37,11 +52,14 @@ export interface IChallenge {
       mp: Record<number, { min: number; max: number }>;
       gold: Record<number, { min: number; max: number }>;
       giveXp: Record<number, { min: number; max: number }>;
-      damageFactor: Record<number, number>;
       allStats: Record<number, number>;
       allSkills: Record<number, number>;
     };
   };
+
+  byClass: Record<BaseClass, IChallengeSubType>;
+
+  byType: Record<MonsterClass, IChallengeSubType>;
 }
 
 export interface IFate {
