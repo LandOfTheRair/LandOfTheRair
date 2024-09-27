@@ -7,6 +7,7 @@ import {
   ICharacter,
   IItemEffect,
   IMacroCommandArgs,
+  IPlayer,
   ISpellData,
   IStatusEffectData,
   ItemSlot,
@@ -257,6 +258,16 @@ export class SpellManager extends BaseService {
 
     if (caster) {
       override = this.seekSpellOverrides(caster, spellData, override);
+    }
+
+    if (caster && this.game.characterHelper.isPlayer(caster)) {
+      const castSkill =
+        this.game.contentManager.getClassConfigSetting<'castSkill'>(
+          caster.baseClass,
+          'castSkill',
+        );
+
+      this.game.playerHelper.flagSkill(caster as IPlayer, castSkill);
     }
 
     // send messages to caster/target where applicable

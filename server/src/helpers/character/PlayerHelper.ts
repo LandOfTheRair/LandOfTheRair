@@ -574,6 +574,8 @@ export class PlayerHelper extends BaseService {
 
   // flag a certain skill for a player
   public flagSkill(player: IPlayer, skill: Skill | Skill[]): void {
+    if (!this.game.characterHelper.isPlayer(player)) return;
+
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
 
     if (skill.length !== 0) {
@@ -663,6 +665,8 @@ export class PlayerHelper extends BaseService {
     skill: Skill,
     skillGained: number,
   ): void {
+    if (this.game.characterHelper.isPlayer(player)) {
+    }
     if (!this.canGainSkillOnMap(player, skill)) {
       this.gainSkill(player, skill, 1);
       return;
