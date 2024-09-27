@@ -1,69 +1,34 @@
 import { Stat } from '../interfaces';
 
 const statValues = {
-  [Stat.STR]: [
-    'Puny',
-    'Weak',
-    'Average',
-    'Strong',
-    'Muscular',
-    'Extremely Strong'
-  ],
+  [Stat.STR]: ['Puny', 'Weak', 'Average', 'Strong', 'Muscular', 'Herculean'],
   [Stat.DEX]: [
     'Uncoordinated',
     'Clumsy',
     'Average',
     'Handy',
     'Deft',
-    'Extremely Dextrous'
+    'Artemesian',
   ],
-  [Stat.AGI]: [
-    'Slow',
-    'Stiff',
-    'Average',
-    'Spry',
-    'Nimble',
-    'Fleet-footed'
-  ],
-  [Stat.INT]: [
-    'Brainless',
-    'Dense',
-    'Average',
-    'Sharp',
-    'Smart',
-    'Extremely Intelligent'
-  ],
-  [Stat.WIS]: [
-    'Foolish',
-    'Silly',
-    'Average',
-    'Shrewd',
-    'Wise',
-    'Sagacious'
-  ],
+  [Stat.AGI]: ['Slow', 'Stiff', 'Average', 'Spry', 'Nimble', 'Hermesian'],
+  [Stat.INT]: ['Brainless', 'Dense', 'Average', 'Sharp', 'Smart', 'Aethene'],
+  [Stat.WIS]: ['Foolish', 'Silly', 'Average', 'Shrewd', 'Wise', 'Sagacious'],
   [Stat.WIL]: [
     'Infirmed',
     'Easily-shaken',
     'Average',
     'Determined',
     'Resolved',
-    'Resolute'
+    'Resolute',
   ],
-  [Stat.CON]: [
-    'Frail',
-    'Weakened',
-    'Average',
-    'Fit',
-    'Well-built',
-    'Robust'
-  ],
+  [Stat.CON]: ['Frail', 'Weakened', 'Average', 'Fit', 'Well-built', 'Robust'],
   [Stat.LUK]: [
     'Ill-fated',
     'Unlucky',
     'Average',
     'Favorable',
     'Fortunate',
-    'Extremely Lucky'
+    'Erna',
   ],
   [Stat.CHA]: [
     'Abhorrent',
@@ -71,8 +36,8 @@ const statValues = {
     'Average',
     'Pleasant',
     'Attractive',
-    'Extremely Charismatic'
-  ]
+    'Bardacious',
+  ],
 };
 
 export function getStatDescription(stat: Stat, value = 1): string {
