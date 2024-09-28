@@ -13,6 +13,7 @@ import {
 } from '../../interfaces';
 import { GameState } from '../../stores';
 
+import { hostilityLevelFor } from 'src/app/_shared/helpers';
 import { VisibleCharactersService } from '../../app/services/visiblecharacters.service';
 import { ModalService } from './modal.service';
 import { OptionsService } from './options.service';
@@ -125,7 +126,10 @@ export class GameService {
 
     const allChars = this.visibleCharactersService.allVisibleCharacters();
 
-    const allNPCs = () => allChars.filter((c) => !(c as any).username);
+    const allNPCs = () =>
+      allChars
+        .filter((c) => !(c as any).username)
+        .filter((c) => hostilityLevelFor(this.player(), c) === 'hostile');
     const allPlayers = () => allChars.filter((c) => (c as any).username);
 
     const weakest = (list: ICharacter[]) =>
@@ -141,16 +145,10 @@ export class GameService {
     let newArgs = args;
 
     if (args.includes('$firstnpc')) {
-      newArgs = newArgs.replace(
-        '$firstnpc',
-        allChars.find((c) => !(c as any).username)?.uuid ?? '',
-      );
+      newArgs = newArgs.replace('$firstnpc', allNPCs()[0]?.uuid ?? '');
     }
     if (args.includes('$firstplayer')) {
-      newArgs = newArgs.replace(
-        '$firstplayer',
-        allChars.find((c) => (c as any).username)?.uuid ?? '',
-      );
+      newArgs = newArgs.replace('$firstplayer', allPlayers()[0]?.uuid ?? '');
     }
     if (args.includes('$first')) {
       newArgs = newArgs.replace('$first', allChars[0]?.uuid ?? '');
