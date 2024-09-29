@@ -45,6 +45,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(WindowComponent, { read: ElementRef }) public window: ElementRef;
 
   private allMessages: LogMessage[] = [];
+  private hasNewMessages = false;
 
   public messages = signal<LogMessage[]>([]);
 
@@ -73,6 +74,9 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     timer(0, 100)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
+        if (!this.hasNewMessages) return;
+        this.hasNewMessages = false;
+
         this.messages.set(this.allMessages.slice());
 
         setTimeout(() => {
@@ -216,6 +220,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
         this.optionsService.sendBannerMessagesToChat)
     ) {
       this.allMessages.push(message);
+      this.hasNewMessages = true;
     }
 
     if (this.allMessages.length > 500) {
