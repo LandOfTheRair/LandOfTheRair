@@ -142,14 +142,18 @@ export class GameService {
     const farthest = (list: ICharacter[]) =>
       sortBy(list, (c) => -distanceFrom(this.player(), c))[0];
 
+    console.log(allChars);
+
     let newArgs = args;
 
     if (args.includes('$firstnpc')) {
       newArgs = newArgs.replace('$firstnpc', allNPCs()[0]?.uuid ?? '');
     }
+
     if (args.includes('$firstplayer')) {
       newArgs = newArgs.replace('$firstplayer', allPlayers()[0]?.uuid ?? '');
     }
+
     if (args.includes('$first')) {
       newArgs = newArgs.replace('$first', allChars[0]?.uuid ?? '');
     }
@@ -157,12 +161,14 @@ export class GameService {
     if (args.includes('$randomnpc')) {
       newArgs = newArgs.replace('$randomnpc', sample(allNPCs())?.uuid ?? '');
     }
+
     if (args.includes('$randomplayer')) {
       newArgs = newArgs.replace(
         '$randomplayer',
         sample(allPlayers())?.uuid ?? '',
       );
     }
+
     if (args.includes('$random')) {
       newArgs = newArgs.replace('$random', sample(allChars)?.uuid ?? '');
     }
@@ -173,12 +179,14 @@ export class GameService {
         strongest(allNPCs())?.uuid ?? '',
       );
     }
+
     if (args.includes('$strongestplayer')) {
       newArgs = newArgs.replace(
         '$strongestplayer',
         strongest(allPlayers())?.uuid ?? '',
       );
     }
+
     if (args.includes('$strongest')) {
       newArgs = newArgs.replace('$strongest', strongest(allChars)?.uuid ?? '');
     }
@@ -186,12 +194,14 @@ export class GameService {
     if (args.includes('$weakestnpc')) {
       newArgs = newArgs.replace('$weakestnpc', weakest(allNPCs())?.uuid ?? '');
     }
+
     if (args.includes('$weakestplayer')) {
       newArgs = newArgs.replace(
         '$weakestplayer',
         weakest(allPlayers())?.uuid ?? '',
       );
     }
+
     if (args.includes('$weakest')) {
       newArgs = newArgs.replace('$weakest', weakest(allChars)?.uuid ?? '');
     }
@@ -202,12 +212,14 @@ export class GameService {
         farthest(allNPCs())?.uuid ?? '',
       );
     }
+
     if (args.includes('$farthestplayer')) {
       newArgs = newArgs.replace(
         '$farthestplayer',
         farthest(allPlayers())?.uuid ?? '',
       );
     }
+
     if (args.includes('$farthest')) {
       newArgs = newArgs.replace('$farthest', farthest(allChars)?.uuid ?? '');
     }
@@ -215,14 +227,23 @@ export class GameService {
     if (args.includes('$closestnpc')) {
       newArgs = newArgs.replace('$closestnpc', closest(allNPCs())?.uuid ?? '');
     }
+
     if (args.includes('$closestplayer')) {
       newArgs = newArgs.replace(
         '$closestplayer',
         closest(allPlayers())?.uuid ?? '',
       );
     }
+
     if (args.includes('$closest')) {
       newArgs = newArgs.replace('$closest', closest(allChars)?.uuid ?? '');
+    }
+
+    if (args.includes('$pet')) {
+      const pet = allChars.find(
+        (f) => f.effects._hash.SummonedPet?.sourceUUID === this.player().uuid,
+      );
+      newArgs = newArgs.replace('$pet', pet?.uuid ?? '');
     }
 
     this.sendAction(GameServerEvent.DoCommand, { command, args: newArgs });
