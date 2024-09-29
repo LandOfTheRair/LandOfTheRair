@@ -162,6 +162,8 @@ export class AssetService {
   // this is unique, and called on login to ensure the resources are gotten every time a login happens
   // rather than when the app inits. this will hopefully prevent weird errors
   public loadAssets() {
+    if (this.loadingAssets()) return;
+
     this.loadingAssets.set(true);
 
     const spritesheetUrls = {

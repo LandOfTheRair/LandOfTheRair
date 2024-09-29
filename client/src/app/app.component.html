@@ -1,22 +1,22 @@
 <app-menu></app-menu>
 
-@if (!socketService.isConnected || loggedIn() === false) {
+@if (!socketService.isConnected() || loggedIn() === false) {
 <app-login></app-login>
 }
 
 <!-- -->
-@if (socketService.isConnected && loggedIn()) {
+@if (socketService.isConnected() && loggedIn()) {
 <app-lobby-container></app-lobby-container>
 }
 
 <app-game-container></app-game-container>
 
-@if (socketService.isConnected && loggedIn()) {
+@if (socketService.isConnected() && loggedIn()) {
 <app-journal></app-journal>
 }
 
 <!-- If we are logged in and not subscribed, suggest checking out a subscription -->
-@if (socketService.isConnected && loggedIn()) {
+@if (socketService.isConnected() && loggedIn()) {
 <div>
   @if (account(); as account) {
   <div class="subscribe-banner">

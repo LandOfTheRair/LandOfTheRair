@@ -19,7 +19,7 @@
 }
 
 <div class="status-indicator">
-  @if (!socketService.isConnected) {
+  @if (!socketService.isConnected()) {
   <mat-chip-list>
     <mat-chip color="warn" selected>
       <mat-icon class="m-r-10">offline_bolt</mat-icon>
@@ -39,7 +39,7 @@
   }
 
   <!-- -->
-  @if (socketService.isConnected && serverMismatchWarning) {
+  @if (socketService.isConnected() && serverMismatchWarning) {
   <mat-chip-list>
     <mat-chip color="accent" selected>
       <mat-icon class="m-r-10">info</mat-icon>

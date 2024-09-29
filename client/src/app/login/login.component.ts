@@ -85,7 +85,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.socketService.registerComponentCallback(
       'Login',
       GameServerResponse.Login,
-      (data) => this.setAccount(data),
+      (data) => {
+        this.setAccount(data);
+        this.assetService.loadAssets();
+      },
     );
 
     this.loadURLAccount();
@@ -135,7 +138,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe(
         () => {
           this.socketService.emit(GameServerEvent.Login, this.newAccount);
-          this.assetService.loadAssets();
         },
         (err) => {
           this.setErrorMessage(

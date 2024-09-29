@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 
 import { QueueingSubject } from 'queueing-subject';
 
@@ -32,10 +32,7 @@ type WebsocketExtraMessage = WebsocketMessage & any;
   providedIn: 'root',
 })
 export class SocketService {
-  private isWSConnected: boolean;
-  public get isConnected() {
-    return this.isWSConnected;
-  }
+  public isConnected = signal<boolean>(false);
 
   private wsConnected: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false,
@@ -80,7 +77,7 @@ export class SocketService {
   }
 
   private connectStatus(isConnected: boolean) {
-    this.isWSConnected = isConnected;
+    this.isConnected.set(isConnected);
 
     this.wsConnected.next(isConnected);
 
