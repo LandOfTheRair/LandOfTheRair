@@ -54,6 +54,7 @@ export interface IChallenge {
       giveXp: Record<number, { min: number; max: number }>;
       allStats: Record<number, number>;
       allSkills: Record<number, number>;
+      otherStats: Record<number, Record<Stat, number>>;
     };
   };
 

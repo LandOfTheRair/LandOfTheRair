@@ -287,6 +287,17 @@ export class NPCCreator extends BaseService {
       baseChar.stats[stat] = npcDef.otherStats?.[stat] ?? 0;
     });
 
+    // further boost by challenge rating stats
+    Object.keys(
+      this.content.challengeData.global.stats.otherStats[baseChar.level] ?? {},
+    ).forEach((boostStat) => {
+      baseChar.stats[boostStat] ??= 0;
+      baseChar.stats[boostStat] +=
+        this.content.challengeData.global.stats.otherStats[baseChar.level][
+          boostStat
+        ] ?? 0;
+    });
+
     if (baseChar.hostility === Hostility.Never) {
       const statSet = Math.max(5, (baseChar.level || 1) / 3);
 
