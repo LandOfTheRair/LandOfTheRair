@@ -657,8 +657,6 @@ export class DamageHelperPhysical extends BaseService {
     if (!this.game.characterHelper.isPlayer(attacker) && levelDifference > 0) {
       offense += Math.floor(levelDifference / 2);
       accuracy += Math.floor(levelDifference / 2);
-
-      console.log(offense, accuracy);
     }
 
     return {
