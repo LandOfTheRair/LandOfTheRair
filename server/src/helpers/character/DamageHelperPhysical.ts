@@ -573,6 +573,7 @@ export class DamageHelperPhysical extends BaseService {
     attacker: ICharacter,
     weapon: ISimpleItem,
     args: PhysicalAttackArgs,
+    levelDifference: number,
   ): AttackerScope {
     const { isThrow } = args;
     let { offhandMultiplier, accuracyLoss } = args;
@@ -641,18 +642,30 @@ export class DamageHelperPhysical extends BaseService {
       bonusAttackRolls,
     );
 
+    let offense = Math.floor(
+      this.game.characterHelper.getStat(attacker, Stat.Offense) *
+        offhandMultiplier,
+    );
+
+    let accuracy =
+      Math.floor(
+        this.game.characterHelper.getStat(attacker, Stat.DEX) *
+          offhandMultiplier,
+      ) - accuracyLoss;
+
+    // if an NPC is higher level than their target, we give them some sizable buffing
+    if (!this.game.characterHelper.isPlayer(attacker) && levelDifference > 0) {
+      offense += Math.floor(levelDifference / 2);
+      accuracy += Math.floor(levelDifference / 2);
+
+      console.log(offense, accuracy);
+    }
+
     return {
       skill: attackerSkill,
       skill4: Math.floor(attackerSkill / this.skillDivisor),
-      offense: Math.floor(
-        this.game.characterHelper.getStat(attacker, Stat.Offense) *
-          offhandMultiplier,
-      ),
-      accuracy:
-        Math.floor(
-          this.game.characterHelper.getStat(attacker, Stat.DEX) *
-            offhandMultiplier,
-        ) - accuracyLoss,
+      offense,
+      accuracy,
       dex:
         Math.floor(
           this.game.characterHelper.getStat(attacker, Stat.DEX) *
@@ -1535,7 +1548,14 @@ export class DamageHelperPhysical extends BaseService {
       args.damageClass = ammoDamageClass;
     }
 
-    const attackerScope = this.getAttackerScope(attacker, attackerWeapon, args);
+    const levelDifference = attacker.level - defender.level;
+
+    const attackerScope = this.getAttackerScope(
+      attacker,
+      attackerWeapon,
+      args,
+      levelDifference,
+    );
     const defenderScope = this.getDefenderScope(defender);
 
     this.game.characterHelper.addAgro(attacker, defender, 1);
