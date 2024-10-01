@@ -666,19 +666,17 @@ export class MapScene extends Phaser.Scene {
   }
 
   private loadObjectLayer(layer, layerGroup) {
-    const decorFirstGid = this.allMapData.tiledJSON.tilesets[2].firstgid;
-    const wallFirstGid = this.allMapData.tiledJSON.tilesets[1].firstgid;
-
     const isSubscribed = this.player.subscriptionTier > 0;
 
     layer.objects.forEach((obj) => {
       // hide fillables, since they have the correct thing beneath
       if (obj.type === 'Fillable') return;
 
-      const isWall = obj.gid < decorFirstGid;
-      const firstGid = isWall ? wallFirstGid : decorFirstGid;
-      const tileSet = isWall ? 'Walls' : 'Decor';
-      const frame = obj.gid - firstGid;
+      const tileSet = this.allMapData.tiledJSON.tilesets.find(
+        (tileset) => obj.gid >= tileset.firstgid && obj.gid <= tileset.lastgid,
+      );
+
+      const frame = obj.gid - tileSet.firstgid;
       const tilePos = positionWorldToTile(obj);
       tilePos.y -= 1;
       if (obj.type === 'Door') {
@@ -700,8 +698,13 @@ export class MapScene extends Phaser.Scene {
         }
       }
 
-      const sprite = this.add.sprite(obj.x + 32, obj.y - 32, tileSet, frame);
-      const anim = decorAnimations[obj.gid - firstGid];
+      const sprite = this.add.sprite(
+        obj.x + 32,
+        obj.y - 32,
+        tileSet.name,
+        frame,
+      );
+      const anim = decorAnimations[frame];
       if (anim) {
         sprite.play('decor-' + anim.frame.toString());
       }
@@ -846,7 +849,7 @@ export class MapScene extends Phaser.Scene {
     map.createLayer('Terrain', ['Decor', 'Terrain']);
     map.createLayer('Floors', ['Decor', 'Terrain']);
     map.createLayer('Fluids', ['Decor', 'Terrain']);
-    map.createLayer('Foliage', 'Decor');
+    map.createLayer('Foliage', ['Decor', 'Terrain']);
     map.createLayer('Walls', ['Walls', 'Decor']);
 
     this.fixWallFloors(map);
