@@ -6,6 +6,7 @@ import {
   Allegiance,
   BaseClass,
   BGM,
+  DamageClass,
   Direction,
   Holiday,
   initializePlayer,
@@ -457,6 +458,43 @@ export class PlayerHelper extends BaseService {
     player.actionQueue = { fast: [], slow: [] };
   }
 
+  private handleSwimming(
+    player: Player,
+    element: DamageClass,
+    swimLevel: number,
+  ): void {
+    player.swimElement = element;
+    player.swimLevel = swimLevel;
+
+    if (
+      !this.game.effectHelper.hasEffect(player, 'Swimming') &&
+      !this.game.effectHelper.hasEffect(player, 'Drowning')
+    ) {
+      if (element === DamageClass.Water) {
+        if (this.game.effectHelper.hasEffect(player, 'WaterBreathing')) return;
+
+        const swimDuration = this.game.characterHelper.getStat(
+          player,
+          Stat.STR,
+        );
+        this.game.effectHelper.addEffect(player, '', 'Swimming', {
+          effect: { duration: swimDuration },
+        });
+
+        return;
+      }
+
+      if (element === DamageClass.Fire) {
+        if (this.game.effectHelper.hasEffect(player, 'LavaBreathing')) return;
+
+        this.game.effectHelper.addEffect(player, '', 'Drowning', {
+          effect: { duration: -1 },
+        });
+        return;
+      }
+    }
+  }
+
   // reset swim level, fov, region desc
   public resetStatus(
     player: Player,
@@ -474,22 +512,7 @@ export class PlayerHelper extends BaseService {
     const swimInfo = GetSwimLevel(swimTile);
 
     if (swimInfo) {
-      const { element, swimLevel } = swimInfo;
-      player.swimElement = element;
-      player.swimLevel = swimLevel;
-
-      if (
-        !this.game.effectHelper.hasEffect(player, 'Swimming') &&
-        !this.game.effectHelper.hasEffect(player, 'Drowning')
-      ) {
-        const swimDuration = this.game.characterHelper.getStat(
-          player,
-          Stat.STR,
-        );
-        this.game.effectHelper.addEffect(player, '', 'Swimming', {
-          effect: { duration: swimDuration },
-        });
-      }
+      this.handleSwimming(player, swimInfo.element, swimInfo.swimLevel);
     } else {
       player.swimElement = '';
       player.swimLevel = 0;
