@@ -9,7 +9,13 @@ import {
 } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { combineLatest, fromEvent, merge, Subject } from 'rxjs';
-import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
+import {
+  debounceTime,
+  filter,
+  map,
+  startWith,
+  takeUntil,
+} from 'rxjs/operators';
 import { UpdateWindowPosition } from '../../../stores';
 import { OptionsService } from '../../services/options.service';
 
@@ -102,7 +108,10 @@ export class DraggableDirective implements OnInit, OnDestroy {
     const movemove$ = merge(mousemove$, touchmove$);
     const endmove$ = merge(mouseup$, touchend$, mouseleave$);
 
-    combineLatest({ start: startmove$, arrow: arrow$ })
+    combineLatest({
+      start: startmove$,
+      arrow: arrow$.pipe(startWith(undefined)),
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ start, arrow }) => {
         if (this.optionsService.lockWindows) return;
