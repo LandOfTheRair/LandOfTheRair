@@ -6,17 +6,12 @@ import {
   input,
   OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
-import { combineLatest, fromEvent, merge, Subject } from 'rxjs';
-import {
-  debounceTime,
-  filter,
-  map,
-  startWith,
-  takeUntil,
-} from 'rxjs/operators';
-import { UpdateWindowPosition } from '../../../stores';
+import { select, Store } from '@ngxs/store';
+import { fromEvent, merge, Subject } from 'rxjs';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
+import { SettingsState, UpdateWindowPosition } from '../../../stores';
 import { OptionsService } from '../../services/options.service';
 
 @Directive({
@@ -27,7 +22,10 @@ export class DraggableDirective implements OnInit, OnDestroy {
   public store = inject(Store);
   public element = inject(ElementRef);
 
+  private isMouseDown = signal<boolean>(false);
   private destroy$ = new Subject<void>();
+
+  public activeWindow = select(SettingsState.activeWindow);
 
   public isDragAllowed = input<boolean>(true, { alias: 'appDraggableWindow' });
   public windowHandle = input<HTMLElement>();
@@ -108,83 +106,88 @@ export class DraggableDirective implements OnInit, OnDestroy {
     const movemove$ = merge(mousemove$, touchmove$);
     const endmove$ = merge(mouseup$, touchend$, mouseleave$);
 
-    combineLatest({
-      start: startmove$,
-      arrow: arrow$.pipe(startWith(undefined)),
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(({ start, arrow }) => {
-        if (this.optionsService.lockWindows) return;
-        if (!this.isDragAllowed()) return;
-        if (
-          start.button === 2 ||
-          (this.windowHandle() !== undefined &&
-            start.target !== this.windowHandle())
-        ) {
-          return;
+    arrow$.pipe(takeUntil(this.destroy$)).subscribe((arrow) => {
+      if (this.optionsService.lockWindows) return;
+      if (!this.isDragAllowed()) return;
+      if (this.windowName() !== this.activeWindow()) return;
+      if (!this.isMouseDown()) return;
+
+      const mod = { x: 0, y: 0 };
+      switch (arrow.code) {
+        case 'ArrowUp': {
+          mod.y = -1;
+          break;
         }
-
-        if (arrow) {
-          const mod = { x: 0, y: 0 };
-          switch (arrow.code) {
-            case 'ArrowUp': {
-              mod.y = -1;
-              break;
-            }
-            case 'ArrowDown': {
-              mod.y = 1;
-              break;
-            }
-            case 'ArrowLeft': {
-              mod.x = -1;
-              break;
-            }
-            case 'ArrowRight': {
-              mod.x = 1;
-              break;
-            }
-          }
-
-          const position = this.getNativeCoords();
-          position.x = +position.x + mod.x;
-          position.y = +position.y + mod.y;
-
-          this.store.dispatch(
-            new UpdateWindowPosition(this.windowName(), position, true),
-          );
+        case 'ArrowDown': {
+          mod.y = 1;
+          break;
         }
+        case 'ArrowLeft': {
+          mod.x = -1;
+          break;
+        }
+        case 'ArrowRight': {
+          mod.x = 1;
+          break;
+        }
+      }
 
-        start.event.preventDefault();
-        start.event.stopPropagation();
+      const position = this.getNativeCoords();
+      position.x = +position.x + mod.x;
+      position.y = +position.y + mod.y;
 
-        const windowCoords = this.getNativeCoords();
-        const startCoord = this.diff(windowCoords, start);
+      this.store.dispatch(
+        new UpdateWindowPosition(this.windowName(), position, true),
+      );
+    });
 
-        endmove$.pipe(takeUntil(this.destroy$)).subscribe((endmove) => {
-          endmove.event.preventDefault();
-          endmove.event.stopPropagation();
-        });
+    startmove$.pipe(takeUntil(this.destroy$)).subscribe((start) => {
+      const handle = this.windowHandle();
+      if (this.optionsService.lockWindows) return;
+      if (!this.isDragAllowed()) return;
+      if (
+        start.button === 2 ||
+        (handle !== undefined && start.target !== handle)
+      ) {
+        return;
+      }
 
-        const pospipe$ = movemove$.pipe(
-          takeUntil(endmove$),
-          takeUntil(this.destroy$),
-          map((moveMove) => {
-            moveMove.event.preventDefault();
-            moveMove.event.stopPropagation();
-            return this.clampWindow(this.diff(startCoord, moveMove));
-          }),
-        );
+      if (this.windowName() !== this.activeWindow()) return;
 
-        pospipe$.subscribe((position) => {
-          this.setNativeCoords(position);
-        });
+      this.isMouseDown.set(true);
 
-        pospipe$.pipe(debounceTime(200)).subscribe((position) => {
-          this.store.dispatch(
-            new UpdateWindowPosition(this.windowName(), position, true),
-          );
-        });
+      start.event.preventDefault();
+      start.event.stopPropagation();
+
+      const windowCoords = this.getNativeCoords();
+      const startCoord = this.diff(windowCoords, start);
+
+      endmove$.pipe(takeUntil(this.destroy$)).subscribe((endmove) => {
+        this.isMouseDown.set(false);
+        endmove.event.preventDefault();
+        endmove.event.stopPropagation();
       });
+
+      const pospipe$ = movemove$.pipe(
+        takeUntil(endmove$),
+        takeUntil(this.destroy$),
+        map((moveMove) => {
+          moveMove.event.preventDefault();
+          moveMove.event.stopPropagation();
+          return this.clampWindow(this.diff(startCoord, moveMove));
+        }),
+      );
+
+      pospipe$.subscribe((position) => {
+        this.setNativeCoords(position);
+      });
+
+      pospipe$.pipe(debounceTime(200)).subscribe((position) => {
+        this.store.dispatch(
+          new UpdateWindowPosition(this.windowName(), position, true),
+        );
+      });
+    });
   }
 
   private clampWindow(pos: Position) {
