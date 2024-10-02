@@ -14,6 +14,7 @@ export * from './gaintradeskill';
 export * from './gg';
 export * from './item';
 export * from './kill';
+export * from './listplayers';
 export * from './modcreature';
 export * from './modground';
 export * from './moditem';
