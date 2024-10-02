@@ -77,12 +77,13 @@ export class MovementHelper extends BaseService {
     const map = this.worldManager.getMap(character.map)?.map;
     if (!map) return false;
 
-    const steps = map.findPath(
-      character.x,
-      character.y,
-      character.x + xDiff,
-      character.y + yDiff,
-    );
+    const steps =
+      map.findPath(
+        character.x,
+        character.y,
+        character.x + xDiff,
+        character.y + yDiff,
+      ) ?? [];
 
     if (steps.length > maxMoveRate) {
       steps.length = maxMoveRate;
