@@ -2,11 +2,17 @@
 <div mat-dialog-content>
   @if (data.extraData?.npcSprite >= 0) {
   <app-npc [sprite]="data.extraData.npcSprite"></app-npc>
-  } @if (data.extraData?.itemName && !data.extraData.displayItemSprite) {
+  }
+
+  <!---->
+  @if (data.extraData?.itemName && !data.extraData.displayItemSprite) {
   <app-item
     [item]="{ name: data.extraData.itemName, mods: {}, uuid: '' }"
   ></app-item>
-  } @if (data.extraData?.itemName && data.extraData.displayItemSprite) {
+  }
+
+  <!---->
+  @if (data.extraData?.itemName && data.extraData.displayItemSprite) {
   <app-item
     [item]="{
       name: data.extraData.itemName,

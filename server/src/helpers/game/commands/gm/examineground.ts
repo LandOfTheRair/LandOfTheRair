@@ -1,6 +1,10 @@
 import { get, isNumber } from 'lodash';
 
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import {
+  GameServerResponse,
+  IMacroCommandArgs,
+  IPlayer,
+} from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMExamineGround extends MacroCommand {
@@ -41,5 +45,11 @@ export class GMExamineGround extends MacroCommand {
     this.sendMessage(player, '===');
     this.sendMessage(player, `\`${JSON.stringify(examineTarget, null, 2)}\``);
     this.sendMessage(player, '===');
+
+    args.callbacks.emit({
+      type: GameServerResponse.SendAlert,
+      title: `Examine Ground: ${itemClass}[${arraySlot}] (${drill || 'all'}):`,
+      content: JSON.stringify(examineTarget, null, 2),
+    });
   }
 }

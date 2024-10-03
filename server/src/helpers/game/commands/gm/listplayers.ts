@@ -1,4 +1,8 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import {
+  GameServerResponse,
+  IMacroCommandArgs,
+  IPlayer,
+} from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMListPlayers extends MacroCommand {
@@ -15,5 +19,11 @@ export class GMListPlayers extends MacroCommand {
     const message = `**All Players**: <br><br>${allPlayers.join('<br>')}`;
 
     this.sendMessage(player, message);
+
+    args.callbacks.emit({
+      type: GameServerResponse.SendAlert,
+      title: `Player List`,
+      content: message,
+    });
   }
 }

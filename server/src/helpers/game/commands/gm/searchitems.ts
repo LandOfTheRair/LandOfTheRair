@@ -1,15 +1,17 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import {
+  GameServerResponse,
+  IMacroCommandArgs,
+  IPlayer,
+} from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMSearchItems extends MacroCommand {
-
   override aliases = ['@searchitems', '@si'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-
     let itemName = '';
     let limit = 5;
 
@@ -33,16 +35,33 @@ export class GMSearchItems extends MacroCommand {
       return;
     }
 
-    if (!items.length) return this.sendMessage(player, `No items matching "${itemName}" were found.`);
-
-    this.sendMessage(player, `Search results for item with name "${itemName}":`);
-    for (let i = 0; i < items.length; i++) {
-      if (i >= limit) {
-        this.sendMessage(player, `... and ${items.length - limit} more.`);
-        return;
-      }
-      this.sendMessage(player, `${i + 1}: ${items[i]}`);
+    if (!items.length) {
+      return this.sendMessage(
+        player,
+        `No items matching "${itemName}" were found.`,
+      );
     }
 
+    const introMessage = `Search results for item with name "${itemName}":`;
+
+    const messages: string[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      if (i >= limit) {
+        messages.push(`... and ${items.length - limit} more.`);
+        break;
+      }
+      messages.push(`${i + 1}: ${items[i]}`);
+    }
+
+    const finalMessage = `${introMessage}<br><br>${messages.join('<br>')}`;
+
+    this.sendMessage(player, finalMessage);
+
+    args.callbacks.emit({
+      type: GameServerResponse.SendAlert,
+      title: introMessage,
+      content: messages.join('<br>'),
+    });
   }
 }

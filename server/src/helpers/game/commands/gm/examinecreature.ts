@@ -1,21 +1,25 @@
-
 import { get } from 'lodash';
 
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
+import {
+  GameServerResponse,
+  IMacroCommandArgs,
+  IPlayer,
+} from '../../../../interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMExamineCreature extends MacroCommand {
-
   override aliases = ['@examinecreature', '@excreature', '@exc'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-
     const [creature, drill] = args.arrayArgs;
 
-    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(player, creature);
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
+      player,
+      creature,
+    );
     if (!target) return this.youDontSeeThatPerson(player, creature);
 
     let displayValue = target;
@@ -27,5 +31,11 @@ export class GMExamineCreature extends MacroCommand {
     this.sendMessage(player, '===');
     this.sendMessage(player, `\`${JSON.stringify(displayValue, null, 2)}\``);
     this.sendMessage(player, '===');
+
+    args.callbacks.emit({
+      type: GameServerResponse.SendAlert,
+      title: `Examine ${target.name} (${drill || 'all'}):`,
+      content: JSON.stringify(displayValue, null, 2),
+    });
   }
 }
