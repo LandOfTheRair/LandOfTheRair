@@ -1,18 +1,22 @@
-
-import { ICharacter, IStatusEffect, Stat, DamageArgs, DamageClass } from '../../../../../interfaces';
+import {
+  DamageArgs,
+  DamageClass,
+  ICharacter,
+  IStatusEffect,
+  Stat,
+} from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class VitalEssence extends Effect {
-
   public override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = effect.effectInfo.potency ?? 0;
 
     const hpBoost = effect.effectInfo.potency * 25;
-    const acBoost = effect.effectInfo.potency;
+    const acBoost = Math.floor(effect.effectInfo.potency / 2);
 
     effect.effectInfo.statChanges = {
       [Stat.HP]: hpBoost,
-      [Stat.ArmorClass]: acBoost
+      [Stat.ArmorClass]: acBoost,
     };
 
     effect.effectInfo.tooltip = `Increase HP by ${hpBoost} and AC by ${acBoost}.`;
@@ -23,9 +27,8 @@ export class VitalEssence extends Effect {
     char: ICharacter,
     attacker: ICharacter | null,
     damageArgs: DamageArgs,
-    currentDamage: number
+    currentDamage: number,
   ): number {
-
     if (damageArgs.damageClass === DamageClass.Heal) return currentDamage;
 
     if (effect.effectInfo.charges) {
@@ -37,5 +40,4 @@ export class VitalEssence extends Effect {
 
     return currentDamage;
   }
-
 }
