@@ -406,8 +406,9 @@ export class MapGenerator {
       if (
         this.tiledJSON.layers[MapLayer.Walls].data[idx] ||
         this.tiledJSON.layers[MapLayer.Fluids].data[idx]
-      )
+      ) {
         return 0;
+      }
       if (!this.rng.getItem([true, ...Array(9).fill(false)])) return 0;
 
       return this.rng.getItem(treeChoices) ?? 0;
@@ -439,8 +440,9 @@ export class MapGenerator {
       if (
         this.mapTheme.wall.allowEmptyWalls &&
         this.tiledJSON.layers[MapLayer.Walls].data[pos]
-      )
+      ) {
         return;
+      }
 
       this.tiledJSON.layers[MapLayer.Fluids].data[pos] =
         firstGid + fluidChoice.spriteStart;
@@ -460,8 +462,9 @@ export class MapGenerator {
         this.tiledJSON.layers[MapLayer.Walls].data[i] ||
         this.tiledJSON.layers[MapLayer.Foliage].data[i] ||
         this.tiledJSON.layers[MapLayer.Fluids].data[i]
-      )
+      ) {
         continue;
+      }
 
       if (this.rng.getItem([false, ...Array(chances).fill(true)])) continue;
 
@@ -612,8 +615,9 @@ export class MapGenerator {
           this.tiledJSON.layers[MapLayer.Walls].data[i] ||
           this.tiledJSON.layers[MapLayer.Foliage].data[i] ||
           this.tiledJSON.layers[MapLayer.Fluids].data[i]
-        )
+        ) {
           continue;
+        }
 
         coords.push({ x: x + this.gutter, y: y + this.gutter });
       }
