@@ -1321,8 +1321,12 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     // if we can prone a target, we prone a target
-    if (!hasFleetOfFoot && proneChance > 0) {
-      this.game.spellManager.castSpell('Push', attacker, defender, {
+    if (
+      !hasFleetOfFoot &&
+      proneChance > 0 &&
+      this.game.diceRollerHelper.XInOneHundred(proneChance)
+    ) {
+      this.game.spellManager.castSpell('Push', undefined, defender, {
         potency: 999,
         chance: proneChance,
       });
