@@ -198,6 +198,8 @@ export class AssetService {
 
       this.setItems((items as IItemDefinition[]).concat(modItems));
       this.setNPCs((npcs as INPCDefinition[]).concat(modNPCs));
+
+      this.loadingAssets.set(false);
     });
   }
 
