@@ -73,7 +73,12 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
     if (action.requiresLoggedIn && !action.canBeUnattended) {
       const account = this.game.lobbyManager.getAccount(data.username);
       if (!account) {
-        this.game.logger.error('WSCmdHandler', new Error('Not logged in.'));
+        this.game.logger.error(
+          'WSCmdHandler',
+          new Error(
+            `Not logged in and trying to do ${type} with ${JSON.stringify(data)}.`,
+          ),
+        );
         return;
       }
 
