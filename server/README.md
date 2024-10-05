@@ -46,6 +46,7 @@ Put any environment variables in a [`.env`](https://github.com/motdotla/dotenv) 
 
 - `DISCORD_SECRET` - (optional) set this to the Discord API secret for the Discord bot
 - `DISCORD_GUILD_ID` - (optional) set this to the Discord Guild ID you want the bot to listen to
+- `DISCORD_APPLICATION_ID` - (optional) set this to the application id of the client bot if you want slash command support
 - `DISCORD_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to bridge messages between
 - `DISCORD_BOT_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to handle commands in
 - `DISCORD_MARKET_CHANNEL_ID` - (optional) set this to the Discord Channel you want the bot to post marketplace updates in

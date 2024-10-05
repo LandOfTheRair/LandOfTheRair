@@ -4,17 +4,27 @@ import { IDiscordCommand } from '../../../interfaces';
 import { Game } from '../../core';
 
 export class SearchItemsCommand implements IDiscordCommand {
-  name = '!item';
+  command = new Discord.SlashCommandBuilder()
+    .setName('item')
+    .setDescription('Search for an item.')
+    .addStringOption((option) =>
+      option
+        .setName('itemname')
+        .setDescription('The name of the item to search for.')
+        .setRequired(true),
+    );
 
-  do(message: Discord.Message, game: Game) {
-    if (!message.member) return;
+  do(interaction: Discord.CommandInteraction, game: Game) {
+    if (!interaction.member) return;
 
-    const query = message.content.split(this.name).join('').trim();
+    const query = interaction.options.get('itemname')?.value as string;
 
     const items = game.itemHelper.searchItems(query);
     const item = items[0];
 
-    if (!item) return message.reply(`No item matches the query "${query}".`);
+    if (!item) {
+      return interaction.reply(`No item matches the query "${query}".`);
+    }
 
     const fullItem = game.itemHelper.getItemDefinition(item);
     const embed = game.discordHelper.createItemEmbed({
@@ -23,10 +33,6 @@ export class SearchItemsCommand implements IDiscordCommand {
       uuid: '',
     });
 
-    return (
-      message.client.channels.cache.get(
-        message.channelId,
-      ) as Discord.TextChannel
-    ).send({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed] });
   }
 }

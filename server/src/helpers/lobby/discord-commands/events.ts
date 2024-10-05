@@ -1,26 +1,32 @@
-
 import * as Discord from 'discord.js';
 import { IDiscordCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
 export class EventsCommand implements IDiscordCommand {
-  name = '!events';
+  command = new Discord.SlashCommandBuilder()
+    .setName('events')
+    .setDescription('Toggle having the Event Watcher role.');
 
-  do(message: Discord.Message, game: Game) {
-    if (!message.member) return;
+  do(interaction: Discord.CommandInteraction, game: Game) {
+    const member = interaction.member as Discord.GuildMember;
+    if (!member) return;
 
     const watcherRole = game.discordHelper.getRole('Event Watcher');
-    const hasRole = (message.member?.roles.cache as any).find(x => x.name === 'Event Watcher');
+    if (!watcherRole) return;
 
-    if (watcherRole) {
-      if (hasRole) {
-        game.discordHelper.removeRole(message.member, watcherRole);
-        message.reply('you are **no longer watching** events. You will no longer receive event notifications.');
-      } else {
-        game.discordHelper.addRole(message.member, watcherRole);
-        message.reply('you have been assigned the role "Event Watcher". You will be notified when something cool happens.');
-      }
+    const hasRole = member.roles.cache.has(watcherRole.id);
+
+    if (hasRole) {
+      game.discordHelper.removeRole(member, watcherRole);
+      interaction.reply(
+        'You are **no longer watching** events. You will no longer receive event notifications.',
+      );
+    } else {
+      game.discordHelper.addRole(member, watcherRole);
+      interaction.reply(
+        'You have been assigned the role "Event Watcher". You will be notified when something cool happens.',
+      );
     }
   }
 }

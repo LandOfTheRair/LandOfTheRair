@@ -23,41 +23,64 @@ export class DiscordHelper extends BaseService {
   private discordMarketplaceChannel: Discord.TextChannel | undefined;
   private discordBugReportsChannel: Discord.TextChannel | undefined;
 
-  private discordCommands: Record<string, IDiscordCommand> = {};
+  private commands = new Discord.Collection<string, IDiscordCommand>();
+
+  private get discordSecret(): string {
+    return process.env.DISCORD_SECRET as string;
+  }
+
+  private get discordServer(): string {
+    return process.env.DISCORD_GUILD_ID as string;
+  }
+
+  private get discordApplication(): string {
+    return process.env.DISCORD_APPLICATION_ID as string;
+  }
 
   public get canSendBugReports() {
     return !!this.discordBugReportsChannel;
   }
 
   public async init() {
-    if (!process.env.DISCORD_SECRET || !process.env.DISCORD_GUILD_ID) return;
+    if (!this.discordSecret || !this.discordServer) return;
 
     this.discord = new Discord.Client({
       intents: [Discord.GatewayIntentBits.Guilds],
     });
 
+    this.discord.on(Discord.Events.ClientReady, async () => {
+      this.game.logger.log('Discord', 'Ready!');
+
+      this.discordGuild = await this.discord.guilds.fetch(this.discordServer);
+      if (!this.discordGuild) {
+        this.game.logger.error(
+          'Discord',
+          `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
+        );
+        return;
+      }
+
+      await this.extractChannels();
+      this.updateLobbyChannel();
+      this.watchChat();
+      this.initCommands();
+    });
+
     try {
-      await this.discord.login(process.env.DISCORD_SECRET);
+      await this.discord.login(this.discordSecret);
       this.game.logger.log('Discord', 'Connected!');
     } catch (e) {
       this.game.logger.error('Discord', (e as Error).message);
       return;
     }
 
-    this.discord.on('error', (error) => {
+    this.discord.on(Discord.Events.Error, (error) => {
       this.game.logger.error('Discord', error);
     });
+  }
 
-    this.discordGuild = await this.discord.guilds.fetch(
-      process.env.DISCORD_GUILD_ID,
-    );
-    if (!this.discordGuild) {
-      this.game.logger.error(
-        'Discord',
-        `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
-      );
-      return;
-    }
+  private async extractChannels() {
+    if (!this.discordGuild) return;
 
     await this.discordGuild.fetch();
 
@@ -116,10 +139,6 @@ export class DiscordHelper extends BaseService {
         return;
       }
     }
-
-    this.updateLobbyChannel();
-    this.watchChat();
-    this.initCommands();
   }
 
   // get the discord user by the tag for use in this service
@@ -449,13 +468,6 @@ export class DiscordHelper extends BaseService {
           !!username,
         );
       }
-
-      if (channel.id === this.discordBotCommandChannel.id) {
-        const cmd = cleanContent.split(' ')[0];
-        if (this.discordCommands[cmd]) {
-          this.discordCommands[cmd].do(message, this.game);
-        }
-      }
     });
 
     this.discord.on('presenceUpdate', () => {
@@ -466,11 +478,82 @@ export class DiscordHelper extends BaseService {
     });
   }
 
-  // watch for commands and do stuff
-  private initCommands() {
+  private async createAndDeployCommands() {
+    const commandList: Discord.RESTPostAPIChatInputApplicationCommandsJSONBody[] =
+      [];
+
     Object.values(commands).forEach((command) => {
-      const cmdInst = new command();
-      this.discordCommands[cmdInst.name] = cmdInst;
+      const commandData: IDiscordCommand = new command() as IDiscordCommand;
+      this.commands.set(commandData.command.name, commandData);
+      commandList.push(commandData.command.toJSON());
+    });
+
+    const rest = new Discord.REST().setToken(this.discordSecret);
+    this.game.logger.log(
+      'Discord',
+      `Started refreshing application (/) commands.`,
+    );
+
+    this.game.logger.log('Discord', 'Registering global (/) commands...');
+
+    try {
+      await rest.put(
+        Discord.Routes.applicationCommands(this.discordApplication),
+        {
+          body: commandList,
+        },
+      );
+
+      this.game.logger.log(
+        'Discord',
+        `Successfully reloaded application (/) commands.`,
+      );
+    } catch (e) {
+      this.game.logger.error('Discord', e);
+    }
+  }
+
+  // watch for commands and do stuff
+  private async initCommands() {
+    if (!this.discordApplication) {
+      this.game.logger.log(
+        'Discord',
+        `No application ID, skipping (/) command registration...`,
+      );
+      return;
+    }
+
+    await this.createAndDeployCommands();
+
+    this.discord.on(Discord.Events.InteractionCreate, async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
+
+      const command = this.commands.get(interaction.commandName);
+
+      if (!command) {
+        console.error(
+          `No command matching ${interaction.commandName} was found.`,
+        );
+        return;
+      }
+
+      try {
+        await command.do(interaction, this.game);
+      } catch (error) {
+        this.game.logger.error('Discord:Interaction', error);
+
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({
+            content: 'There was an error while executing this command!',
+            ephemeral: true,
+          });
+        } else {
+          await interaction.reply({
+            content: 'There was an error while executing this command!',
+            ephemeral: true,
+          });
+        }
+      }
     });
   }
 }

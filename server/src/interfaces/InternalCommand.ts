@@ -1,8 +1,11 @@
+import { SlashCommandOptionsOnlyBuilder } from 'discord.js';
+
 export interface IInternalCommand {
   name: string;
 }
 
-export interface IDiscordCommand extends IInternalCommand {
+export interface IDiscordCommand {
+  command: SlashCommandOptionsOnlyBuilder;
   do(message, game): void;
 }
 

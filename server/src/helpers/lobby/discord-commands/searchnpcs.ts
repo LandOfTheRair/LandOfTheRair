@@ -4,25 +4,29 @@ import { IDiscordCommand } from '../../../interfaces';
 import { Game } from '../../core';
 
 export class SearchNPCsCommand implements IDiscordCommand {
-  name = '!npc';
+  command = new Discord.SlashCommandBuilder()
+    .setName('npc')
+    .setDescription('Search for an NPC.')
+    .addStringOption((option) =>
+      option
+        .setName('npcid')
+        .setDescription('The name of the NPC to search for.')
+        .setRequired(true),
+    );
 
-  do(message: Discord.Message, game: Game) {
-    if (!message.member) return;
+  do(interaction: Discord.CommandInteraction, game: Game) {
+    if (!interaction.member) return;
 
-    const query = message.content.split(this.name).join('').trim();
+    const query = interaction.options.get('npcid')?.value as string;
 
     const npcs = game.npcHelper.searchNPCs(query);
     const npc = npcs[0];
 
-    if (!npc) return message.reply(`No npc matches the query "${query}".`);
+    if (!npc) return interaction.reply(`No NPC matches the query "${query}".`);
 
     const fullCreature = game.npcHelper.getNPCDefinition(npc);
     const embed = game.discordHelper.createNPCEmbed(fullCreature);
 
-    return (
-      message.client.channels.cache.get(
-        message.channelId,
-      ) as Discord.TextChannel
-    ).send({ embeds: [embed] });
+    return interaction.reply({ embeds: [embed] });
   }
 }
