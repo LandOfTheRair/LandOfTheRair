@@ -21,13 +21,20 @@ export class DiscordHelper extends BaseService {
   private discordChannel: Discord.TextChannel | undefined;
   private discordBotCommandChannel: Discord.TextChannel | undefined;
   private discordMarketplaceChannel: Discord.TextChannel | undefined;
+  private discordBugReportsChannel: Discord.TextChannel | undefined;
 
   private discordCommands: Record<string, IDiscordCommand> = {};
+
+  public get canSendBugReports() {
+    return !!this.discordBugReportsChannel;
+  }
 
   public async init() {
     if (!process.env.DISCORD_SECRET || !process.env.DISCORD_GUILD_ID) return;
 
-    this.discord = new Discord.Client();
+    this.discord = new Discord.Client({
+      intents: [Discord.GatewayIntentBits.Guilds],
+    });
 
     try {
       await this.discord.login(process.env.DISCORD_SECRET);
@@ -91,6 +98,20 @@ export class DiscordHelper extends BaseService {
         this.game.logger.error(
           'Discord',
           `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`,
+        );
+        return;
+      }
+    }
+
+    // try to load the bug report channel
+    if (process.env.DISCORD_BUGREPORT_CHANNEL_ID) {
+      this.discordBugReportsChannel = (
+        this.discordGuild.channels.cache as any
+      ).get(process.env.DISCORD_BUGREPORT_CHANNEL_ID);
+      if (!this.discordBugReportsChannel) {
+        this.game.logger.error(
+          'Discord',
+          `Could not find bug report channel with ID ${process.env.DISCORD_BUGREPORT_CHANNEL_ID}.`,
         );
         return;
       }
@@ -231,7 +252,7 @@ export class DiscordHelper extends BaseService {
     price: number,
   ) {
     this.discordMarketplaceChannel?.send({
-      embed: this.createMarketplaceEmbed(player, sellItem, price),
+      embeds: [this.createMarketplaceEmbed(player, sellItem, price)],
     });
   }
 
@@ -239,36 +260,40 @@ export class DiscordHelper extends BaseService {
     player: IPlayer,
     sellItem: ISimpleItem,
     price: number,
-  ): Discord.MessageEmbed {
+  ): Discord.EmbedBuilder {
     const embed = this.createItemEmbed(sellItem);
     embed
-      .setAuthor(player.name)
+      .setAuthor({ name: player.name })
       .setTitle('View this seller on Rair Global')
       .setURL(
         `https://global.rair.land/character/?username=${player.username}&charSlot=${player.charSlot}`,
       )
-      .addField('Price', price.toLocaleString() + ' gold');
+      .addFields([{ name: 'Price', value: price.toLocaleString() + ' gold' }]);
 
     return embed;
   }
 
   // create an item embed for !item
-  public createItemEmbed(sellItem: ISimpleItem): Discord.MessageEmbed {
+  public createItemEmbed(sellItem: ISimpleItem): Discord.EmbedBuilder {
     const fullItem = this.game.itemHelper.getItemDefinition(sellItem.name);
 
     const sprite = sellItem.mods.sprite ?? fullItem.sprite;
 
-    const embed = new Discord.MessageEmbed();
+    const embed = new Discord.EmbedBuilder();
     embed
-      .setAuthor(fullItem.name)
+      .setAuthor({ name: fullItem.name })
       .setThumbnail(
         `https://play.rair.land/assets/spritesheets/items/${sprite.toString().padStart(4, '0')}.png`,
       )
-      .addField('Description', fullItem.desc)
-      .addField('Item Type', fullItem.itemClass, true);
+      .addFields([
+        { name: 'Description', value: fullItem.desc },
+        { name: 'Item Type', value: fullItem.itemClass, inline: true },
+      ]);
 
     if (WeaponClasses.includes(fullItem.itemClass as any)) {
-      embed.addField('Attack Skill', fullItem.type, true);
+      embed.addFields([
+        { name: 'Attack Skill', value: fullItem.type, inline: true },
+      ]);
     }
 
     if (fullItem.requirements) {
@@ -280,37 +305,46 @@ export class DiscordHelper extends BaseService {
         requirements.push(`Level: ${fullItem.requirements.level}`);
       }
 
-      embed.addField('Requirements', requirements.join(', '), true);
+      embed.addFields([
+        { name: 'Requirements', value: requirements.join(', '), inline: true },
+      ]);
     }
 
     return embed;
   }
 
   // create an npc embed for !npc
-  public createNPCEmbed(fullCreature: INPCDefinition): Discord.MessageEmbed {
+  public createNPCEmbed(fullCreature: INPCDefinition): Discord.EmbedBuilder {
     const hp =
       fullCreature.hp.min === fullCreature.hp.max
         ? fullCreature.hp.max.toLocaleString()
         : `${fullCreature.hp.min.toLocaleString()}~${fullCreature.hp.max.toLocaleString()}`;
 
-    const embed = new Discord.MessageEmbed();
+    const embed = new Discord.EmbedBuilder();
     embed
-      .setAuthor(fullCreature.name)
+      .setAuthor({ name: fullCreature.name?.[0] ?? 'Unknown Name' })
       .setThumbnail(
         `https://play.rair.land/assets/spritesheets/creatures/${fullCreature.sprite.toString().padStart(4, '0')}.png`,
       );
 
-    embed
-      .addField('Level', fullCreature.level, true)
-      .addField('HP', hp, true)
-      .addField('Allegiance', fullCreature.allegiance, true);
+    embed.addFields([
+      { name: 'Level', value: fullCreature.level.toString(), inline: true },
+      { name: 'HP', value: hp.toString(), inline: true },
+      {
+        name: 'Allegiance',
+        value: fullCreature.allegiance as string,
+        inline: true,
+      },
+    ]);
 
     if (fullCreature.tansFor) {
-      embed.addField('Tannable', 'Yes', true);
+      embed.addFields([{ name: 'Tannable', value: 'Yes', inline: true }]);
     }
 
     if (fullCreature.affiliation) {
-      embed.addField('Affiliation', fullCreature.affiliation, true);
+      embed.addFields([
+        { name: 'Affiliation', value: fullCreature.affiliation, inline: true },
+      ]);
     }
 
     const importantStats = [
@@ -324,14 +358,69 @@ export class DiscordHelper extends BaseService {
       Stat.CHA,
       Stat.LUK,
     ];
-    embed.addField(
-      'Stats',
-      importantStats
-        .map((x) => `**${x.toUpperCase()}**: ${fullCreature.stats[x]}`)
-        .join(', '),
-    );
+    embed.addFields([
+      {
+        name: 'Stats',
+        value: importantStats
+          .map((x) => `**${x.toUpperCase()}**: ${fullCreature.stats[x]}`)
+          .join(', '),
+      },
+    ]);
 
     return embed;
+  }
+
+  public getBugReportEmbed(
+    player: IPlayer,
+    { report, userAgent },
+  ): Discord.EmbedBuilder {
+    const embed = new Discord.EmbedBuilder();
+
+    embed
+      .setAuthor({
+        name: player.name,
+        url: `https://global.rair.land/character/?username=${player.username}&charSlot=${player.charSlot}`,
+      })
+      .setTimestamp()
+      .setDescription(`Report: ${report}`)
+      .addFields([
+        { name: 'User Agent', value: userAgent },
+        { name: 'Location', value: `${player.map}:${player.x},${player.y}` },
+      ]);
+
+    return embed;
+  }
+
+  public async sendBugReport(player: IPlayer, embedData) {
+    const embed = this.getBugReportEmbed(player, embedData);
+
+    const pJsonAttachment = new Discord.AttachmentBuilder(
+      Buffer.from(JSON.stringify(player, null, 2)),
+      {
+        name: `${player.name}.json`,
+        description: `${player.name}'s current status`,
+      },
+    );
+
+    const pStateJsonAttachment = new Discord.AttachmentBuilder(
+      Buffer.from(
+        JSON.stringify(this.game.playerManager.getPlayerState(player), null, 2),
+      ),
+      {
+        name: `${player.name}-state.json`,
+        description: `${player.name}'s current game state`,
+      },
+    );
+
+    const newMessage = await this.discordBugReportsChannel?.send({
+      content: '**New Bug Report!**',
+      embeds: [embed],
+      files: [pJsonAttachment, pStateJsonAttachment],
+    });
+
+    newMessage?.startThread({
+      name: `Bug Discussion: ${player.name} - ${embedData.report}`,
+    });
   }
 
   // watch for incoming chat messages

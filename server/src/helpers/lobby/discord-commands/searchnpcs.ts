@@ -1,4 +1,3 @@
-
 import * as Discord from 'discord.js';
 import { IDiscordCommand } from '../../../interfaces';
 
@@ -20,6 +19,10 @@ export class SearchNPCsCommand implements IDiscordCommand {
     const fullCreature = game.npcHelper.getNPCDefinition(npc);
     const embed = game.discordHelper.createNPCEmbed(fullCreature);
 
-    return message.channel.send({ embed });
+    return (
+      message.client.channels.cache.get(
+        message.channelId,
+      ) as Discord.TextChannel
+    ).send({ embeds: [embed] });
   }
 }

@@ -1,4 +1,3 @@
-
 import 'reflect-metadata';
 
 import { parentPort } from 'worker_threads';
@@ -10,12 +9,11 @@ import rateLimit from 'fastify-rate-limit';
 import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
+import { Database } from '../helpers';
 import * as HTTPRoutes from '../http';
 import { GameAction, GameServerEvent } from '../interfaces';
-import { Database } from '../helpers';
 
 export class WebsocketWorker {
-
   private sockets: Record<string, any> = {};
 
   private wsServer: WebSocket.Server;
@@ -24,7 +22,7 @@ export class WebsocketWorker {
     console.info('NET', 'Starting network handler...');
 
     // set up IPC
-    parentPort?.on('message', msg => {
+    parentPort?.on('message', (msg) => {
       if (msg.__ready) {
         console.info('NET', 'Starting API server...');
         this.setup();
@@ -41,11 +39,9 @@ export class WebsocketWorker {
     process.on('uncaughtException', (error) => {
       console.error('NET', 'Uncaught Exception', error);
     });
-
   }
 
   public async setup() {
-
     // set up DB
     const database = new Database();
     await database.tryConnect('NET');
@@ -55,35 +51,43 @@ export class WebsocketWorker {
     if (process.env.NODE_ENV === 'production') {
       app.register(rateLimit, {
         max: 10,
-        timeWindow: 15 * 1000
+        timeWindow: 15 * 1000,
       });
 
       app.register(cors, {
-        origin: [/\.rair\.land$/]
+        origin: [/\.rair\.land$/],
       });
-
     } else {
       app.register(cors);
-
     }
 
-    const promises = Object.values(HTTPRoutes).map(async (route) => await route.setup(app, {
-      database,
-      broadcast: (data) => this.broadcast(data),
-      sendToGame: (data) => this.sendInternalToGame(data)
-    }));
+    const promises = Object.values(HTTPRoutes).map(
+      async (route) =>
+        await route.setup(app, {
+          database,
+          broadcast: (data) => this.broadcast(data),
+          sendToGame: (data) => this.sendInternalToGame(data),
+        }),
+    );
 
     await Promise.all(promises);
 
-    app.listen(process.env.PORT ? +process.env.PORT : 6975, process.env.BIND_ADDR || '127.0.0.1', (err: any) => {
-      if (err) throw err;
+    app.listen(
+      process.env.PORT ? +process.env.PORT : 6975,
+      process.env.BIND_ADDR || '127.0.0.1',
+      (err: any) => {
+        if (err) throw err;
 
-      console.info('NET', `Started HTTP server on port ${process.env.PORT || 6975}.`);
-    });
+        console.info(
+          'NET',
+          `Started HTTP server on port ${process.env.PORT || 6975}.`,
+        );
+      },
+    );
 
     // set up WS
     const wsServer = new WebSocket.Server({
-      server: app.server
+      server: app.server,
     });
     app.ready().then(() => {
       console.info('NET', 'Server is ready for connections.');
@@ -98,7 +102,9 @@ export class WebsocketWorker {
       socket.uuid = uuid();
       socket.isAlive = true;
 
-      const ip = req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'].split(/\s*,\s*/)[0] : req.socket.remoteAddress;
+      const ip = req.headers['x-forwarded-for']
+        ? req.headers['x-forwarded-for'].split(/\s*,\s*/)[0]
+        : req.socket.remoteAddress;
       socket.ip = ip;
 
       this.sockets[socket.uuid] = socket;
@@ -120,8 +126,14 @@ export class WebsocketWorker {
         delete this.sockets[socket.uuid];
 
         if (socket.username) {
-          this.emit(socket, { type: GameServerEvent.Logout, username: socket.username });
-          this.emit(socket, { type: GameServerEvent.QuitGame, username: socket.username });
+          this.emit(socket, {
+            type: GameServerEvent.Logout,
+            username: socket.username,
+          });
+          this.emit(socket, {
+            type: GameServerEvent.QuitGame,
+            username: socket.username,
+          });
         }
 
         /* not sure if I care about any of these at all, really
@@ -162,14 +174,15 @@ export class WebsocketWorker {
 
   // send to game loop
   private emit(socket, data) {
-
     if (data.type === GameServerEvent.Register && socket.username) {
       return;
     }
 
     // do some rate limiting so people don't spam the server
-    if (data.type === GameServerEvent.DoCommand) {
-
+    if (
+      data.type === GameServerEvent.DoCommand ||
+      data.type === GameServerEvent.BugReport
+    ) {
       if (!socket.cooldown) socket.cooldown = Date.now() + 100;
       if (!socket.sends) socket.sends = 0;
 
@@ -185,7 +198,10 @@ export class WebsocketWorker {
     }
 
     if (data.type === GameServerEvent.Logout) {
-      this.sendToGame(socket, { type: GameServerEvent.Logout, username: socket.username });
+      this.sendToGame(socket, {
+        type: GameServerEvent.Logout,
+        username: socket.username,
+      });
       delete this.sockets[socket.username];
       delete socket.username;
       return;
@@ -196,14 +212,20 @@ export class WebsocketWorker {
     }
 
     if (data.type === GameServerEvent.Login && data.username) {
-
       if (socket.username) return;
 
       // if we are already logged in somewhere else, we kick them
       const oldSocket = this.sockets[data.username];
       if (oldSocket) {
-        this.sendToSocket(oldSocket, { action: GameAction.Logout, manualDisconnect: true, kick: true });
-        this.sendToGame(oldSocket, { type: GameServerEvent.Logout, username: data.username });
+        this.sendToSocket(oldSocket, {
+          action: GameAction.Logout,
+          manualDisconnect: true,
+          kick: true,
+        });
+        this.sendToGame(oldSocket, {
+          type: GameServerEvent.Logout,
+          username: data.username,
+        });
 
         oldSocket.username = null;
         delete this.sockets[data.username];
@@ -216,15 +238,26 @@ export class WebsocketWorker {
     }
 
     this.sendToGame(socket, data);
-
   }
 
   private sendInternalToGame(data) {
-    parentPort?.postMessage({ target: 'gameloop', socketId: '★System', socketIp: '★System', username: '★System', ...data });
+    parentPort?.postMessage({
+      target: 'gameloop',
+      socketId: '★System',
+      socketIp: '★System',
+      username: '★System',
+      ...data,
+    });
   }
 
   private sendToGame(socket, data) {
-    parentPort?.postMessage({ target: 'gameloop', socketId: socket.uuid, socketIp: socket.ip, username: socket.username, ...data });
+    parentPort?.postMessage({
+      target: 'gameloop',
+      socketId: socket.uuid,
+      socketIp: socket.ip,
+      username: socket.username,
+      ...data,
+    });
   }
 
   private transformData(data) {
@@ -242,14 +275,18 @@ export class WebsocketWorker {
     if (!this.wsServer) return;
 
     const sendMessage = this.transformData(data);
-    this.wsServer.clients.forEach(socket => {
-      if (socket === (this.wsServer as any) || socket.readyState !== WebSocket.OPEN) return;
+    this.wsServer.clients.forEach((socket) => {
+      if (
+        socket === (this.wsServer as any) ||
+        socket.readyState !== WebSocket.OPEN
+      ) {
+        return;
+      }
       socket.send(sendMessage);
     });
   }
 
   private handleMessage({ socketId, ...data }) {
-
     // if there is no id specified, we broadcast the data to everyone
     if (!socketId) {
       this.broadcast(data);
@@ -262,5 +299,4 @@ export class WebsocketWorker {
 
     this.sendToSocket(socket, data);
   }
-
 }

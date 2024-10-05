@@ -23,6 +23,7 @@
     "forceConsistentCasingInFileNames": true,
     "strictPropertyInitialization": false,
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019"]
+    "lib": ["es2019"],
+    "skipLibCheck": true
   }
 }

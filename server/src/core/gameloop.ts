@@ -15,7 +15,12 @@ export class GameloopWorker {
       this.handleMessage(message);
     });
 
-    process.on('unhandledRejection', (error) => {
+    process.on('unhandledRejection', (error: any) => {
+      const blacklistedErrors = ['ConnectTimeoutError'];
+      if (blacklistedErrors.some((b) => error.name?.includes(b))) {
+        return;
+      }
+
       console.error('GAME', 'Unhandled Rejection', error);
     });
 

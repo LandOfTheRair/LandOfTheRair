@@ -63,6 +63,8 @@ export enum GameServerEvent {
   PremiumSilverBuy = 'Premium:SilverBuy:Item',
 
   CodeRedeem = 'Code:Redeem:Single',
+
+  BugReport = 'BugReport:Emit:InGame',
 }
 
 export enum GameServerResponse {

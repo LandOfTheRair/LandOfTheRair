@@ -1,4 +1,3 @@
-
 import * as Discord from 'discord.js';
 import { IDiscordCommand } from '../../../interfaces';
 
@@ -18,8 +17,16 @@ export class SearchItemsCommand implements IDiscordCommand {
     if (!item) return message.reply(`No item matches the query "${query}".`);
 
     const fullItem = game.itemHelper.getItemDefinition(item);
-    const embed = game.discordHelper.createItemEmbed({ name: fullItem.name, mods: {}, uuid: '' });
+    const embed = game.discordHelper.createItemEmbed({
+      name: fullItem.name,
+      mods: {},
+      uuid: '',
+    });
 
-    return message.channel.send({ embed });
+    return (
+      message.client.channels.cache.get(
+        message.channelId,
+      ) as Discord.TextChannel
+    ).send({ embeds: [embed] });
   }
 }

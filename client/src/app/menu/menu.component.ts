@@ -235,6 +235,28 @@ export class MenuComponent implements OnInit {
       handler: () => this.modalService.showErrorLog(),
     },
     {
+      name: 'Report a Bug...',
+      visibleIf: toObservable(this.inGame),
+      handler: () => {
+        this.modalService
+          .input(
+            'Report Bug',
+            `Be as specific as possible:
+                What exactly are you doing?
+                What alternatives have you tried?
+                What specific items (if relevant) are you using?`,
+          )
+          .subscribe((res) => {
+            if (!res) return;
+
+            this.socketService.emit(GameServerEvent.BugReport, {
+              report: res,
+              userAgent: navigator.userAgent,
+            });
+          });
+      },
+    },
+    {
       name: 'Exit To Lobby',
       visibleIf: toObservable(this.inGame),
       handler: () => {
