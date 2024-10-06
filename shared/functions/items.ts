@@ -1,8 +1,16 @@
-import { IItem, IPlayer, ISimpleItem, ItemClass, Skill, Stat } from '../interfaces';
+import {
+  IItem,
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  Skill,
+  Stat,
+} from '../interfaces';
 
 const formatStatForDisplay = (stat: Stat, statValue: number) => {
   const sign = statValue > 0 ? '+' : '';
-  const displayValue = statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
+  const displayValue =
+    statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
   const statName = statValue % 1 === 0 ? stat : stat.split('Percent')[0];
 
   return `${sign}${displayValue} ${statName.toUpperCase()}`;
@@ -14,9 +22,9 @@ function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
 
 function conditionString(item: ISimpleItem): string {
   const condition = item.mods.condition ?? 20000;
-  if (condition <= 0)     return 'broken';
-  if (condition <= 2500)  return 'rough';
-  if (condition <= 5000)  return 'tattered';
+  if (condition <= 0) return 'broken';
+  if (condition <= 2500) return 'rough';
+  if (condition <= 5000) return 'tattered';
   if (condition <= 10000) return 'below average';
   if (condition <= 20000) return 'average';
   if (condition <= 30000) return 'above average';
@@ -31,11 +39,11 @@ function usesString(item: ISimpleItem, itemDef: IItem): string {
   if (!effect || !effect.uses || effect.uses < 0) return '';
   const uses = effect.uses;
 
-  if (uses < 3)    return 'looks brittle';
-  if (uses < 9)    return 'looks cracked';
-  if (uses < 20)   return 'looks normal';
-  if (uses < 50)   return 'surges with energy';
-  if (uses < 100)  return 'crackles with power';
+  if (uses < 3) return 'looks brittle';
+  if (uses < 9) return 'looks cracked';
+  if (uses < 20) return 'looks normal';
+  if (uses < 50) return 'surges with energy';
+  if (uses < 100) return 'crackles with power';
 
   return 'is flawlessly vibrant';
 
@@ -46,8 +54,11 @@ export function isOwnedBy(player: IPlayer, item: ISimpleItem): boolean {
   return !item.mods || !item.mods.owner || item.mods.owner === player.username;
 }
 
-export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): boolean {
-
+export function canUseItem(
+  player: IPlayer,
+  item: ISimpleItem,
+  itemDef: IItem,
+): boolean {
   const itemClass = getProp(item, itemDef, 'itemClass');
   const useEffect = getProp(item, itemDef, 'useEffect');
   const ounces = getProp(item, itemDef, 'ounces');
@@ -60,7 +71,9 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
   if (itemClass === ItemClass.Trap) return false;
   if (!isOwnedBy(player, item)) return false;
 
-  if (item.name.includes('Rune Scroll') || item.name.includes('Recipe Book')) return true;
+  if (item.name.includes('Rune Scroll') || item.name.includes('Recipe Book')) {
+    return true;
+  }
 
   if (itemClass === ItemClass.Box) return true;
   if (itemClass === ItemClass.Book) return true;
@@ -72,43 +85,30 @@ export function canUseItem(player: IPlayer, item: ISimpleItem, itemDef: IItem): 
 }
 
 export function descTextFor(
-  player: IPlayer, item: ISimpleItem, itemDef: IItem, encrustDef?: IItem, castIdentifyTier = 0, thiefTier = 0
+  player: IPlayer,
+  item: ISimpleItem,
+  itemDef: IItem,
+  encrustDef?: IItem,
+  castIdentifyTier = 0,
+  thiefTier = 0,
 ): string {
-  if (!item || !itemDef) return 'This description cannot be generated at this time.';
-
-  const identifyTier = Math.max(castIdentifyTier, item.mods.identifyTier ?? 0);
-  const itemClass = getProp(item, itemDef, 'itemClass');
-
-  // get the number of stars before the desc
-  const quality = getProp(item, itemDef, 'quality') ?? 0;
-  const starText = quality - 2 > 0 ? Array(quality - 2).fill('★').join('') : '';
-
-  // whether the item has an implicit sell price or not
-  const isValuableText = itemDef.sellValue ? 'It looks valuable. ' : '';
-
-  const trapSetText = itemClass === ItemClass.TrapSet ? 'This trap is live. ' : '';
-
-  // the owner text
-  let ownedText = '';
-  if (item.mods.owner) {
-    if (item.mods.owner === player.username) ownedText = 'This item belongs to you. ';
-    else                                     ownedText = 'This item does NOT belong to you. ';
+  if (!item || !itemDef) {
+    return 'This description cannot be generated at this time.';
   }
 
-  // the crafter
-  const craftedText = item.mods.craftedBy ? `This item was made by ${item.mods.craftedBy}. ` : '';
-
-  // how full it is, if at all
-  const ounces = item.mods.ounces ?? itemDef.ounces ?? 0;
-  let fluidText = itemClass === ItemClass.Bottle && ounces > 0 ? `It is filled with ${ounces} oz of fluid. ` : '';
-  if (itemClass === ItemClass.Bottle && ounces === 0) fluidText = 'It is empty.';
-
-  // the items 'use' effect situation
-  let usesText = usesString(item, itemDef);
-  usesText = usesText ? `The item ${usesText}. ` : '';
-
+  const quality = getProp(item, itemDef, 'quality') ?? 0;
+  const value = getProp(item, itemDef, 'value');
   const extendedDesc = getProp(item, itemDef, 'extendedDesc');
-  const sense1Text = identifyTier > 0 && extendedDesc ? `This item is ${extendedDesc}. ` : '';
+  const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
+  const upgrades = getProp(item, itemDef, 'upgrades');
+  const isOffhand = getProp(item, itemDef, 'offhand');
+  const useEffect = getProp(item, itemDef, 'useEffect');
+  const strikeEffect = getProp(item, itemDef, 'strikeEffect');
+  const tier = getProp(item, itemDef, 'tier');
+  const trait = getProp(item, itemDef, 'trait');
+  const requirements = getProp(item, itemDef, 'requirements');
+  const pages = getProp(item, itemDef, 'bookPages');
+  const usesText = usesString(item, itemDef);
 
   // calculating stats is more than getting a prop unfortunately
   const baseStats = itemDef.stats ?? {};
@@ -129,97 +129,218 @@ export function descTextFor(
     stats[stat] += baseStat;
   }
 
-  const sense1AfterText = identifyTier > 0 && (stats.offense || stats.defense)
-    ? `The combat adds are ${stats.offense || 0}/${stats.defense || 0}. ` : '';
-
   const allStats = [
-    Stat.STR, Stat.DEX, Stat.AGI, Stat.WIS, Stat.INT, Stat.WIL, Stat.CHA, Stat.CON, Stat.LUK, Stat.HP, Stat.MP
+    Stat.STR,
+    Stat.DEX,
+    Stat.AGI,
+    Stat.WIS,
+    Stat.INT,
+    Stat.WIL,
+    Stat.CHA,
+    Stat.CON,
+    Stat.LUK,
+    Stat.HP,
+    Stat.MP,
   ];
-  const affectsAttributes = allStats.some(x => stats?.[x]);
 
-  const statsText = identifyTier > 0 && affectsAttributes
-    ? 'This item affects physical attributes! ' : '';
+  const affectsAttributes = allStats.some((x) => stats?.[x]);
+  const affectedStats = Object.values(Stat).filter((x) => stats?.[x]);
 
-  const affectedStats = Object.values(Stat).filter(x => stats?.[x]);
-  const statSpecificText = identifyTier > 2 && affectedStats.length > 0
-    ? `This item affects your stats! ${affectedStats.map(x => `${formatStatForDisplay(x, stats[x] ?? 0)}`).join(', ')}. ` : '';
+  const levelStrings = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
 
-  const tier = getProp(item, itemDef, 'tier');
-  const tierText = identifyTier > 2 && tier > 0 ? `This item is tier ${tier}. ` : '';
+  const allTexts: string[] = [];
 
-  const useEffect = getProp(item, itemDef, 'useEffect');
-  const strikeEffect = getProp(item, itemDef, 'strikeEffect');
+  const identifyTier = Math.max(castIdentifyTier, item.mods.identifyTier ?? 0);
+  const itemClass = getProp(item, itemDef, 'itemClass');
 
-  let sense2Text = '';
-  if (identifyTier > 1 && itemClass !== ItemClass.Bottle && (useEffect || strikeEffect)) {
-    sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${(useEffect || strikeEffect).name}.`;
-    sense2Text = (useEffect || strikeEffect).potency
-      ? `${sense2Text} with a potency of ${(useEffect || strikeEffect).potency}. ` : `${sense2Text}. `;
+  // get the number of stars before the desc
+  if (quality - 2 > 0) {
+    allTexts.push(
+      Array(quality - 2)
+        .fill('★')
+        .join(''),
+    );
   }
 
-  // display the number of upgrades an item has/available
-  const maxUpgrades = getProp(item, itemDef, 'maxUpgrades');
-  const upgrades = getProp(item, itemDef, 'upgrades');
-
-  const upgradeText = (maxUpgrades > 0 || upgrades?.length > 0)
-    ? `It has ${maxUpgrades} magical slot(s), ${upgrades?.length ?? 0} of which are taken. ` : '';
-
-  // various requirements for the item
-  const requirements = getProp(item, itemDef, 'requirements');
-  const levelText = requirements && requirements.level ? `You must be level ${requirements.level} to use this item. ` : '';
-
-  const alignmentText = requirements && requirements.alignment ? `This item is ${requirements.alignment}. ` : '';
-
-  const formattedSkill = requirements?.skill?.name === Skill.Wand ? 'Magical Weapons' : requirements?.skill?.name;
-  const skillText = requirements && requirements.skill ? `This item requires ${formattedSkill} skill ${requirements.skill.level}. ` : '';
-
+  // the base text of the item
+  const ounces = item.mods.ounces ?? itemDef.ounces ?? 0;
   const encrustText = encrustDef ? ` set with ${encrustDef.desc}` : '';
 
   let desc = getProp(item, itemDef, 'desc');
 
-  const value = getProp(item, itemDef, 'value');
   if (itemClass === ItemClass.Coin) {
     desc = `${value.toLocaleString()} ${desc}`;
   }
 
-  const ozText = itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
-  const baseText = `You are looking at ${ozText}${desc}${encrustText}. `;
+  const ozText =
+    itemClass !== ItemClass.Bottle && ounces > 0 ? `${ounces} oz of ` : '';
+  allTexts.push(`You are looking at ${ozText}${desc}${encrustText}.`);
 
-  const pages = getProp(item, itemDef, 'bookPages');
-  let pagesText = '';
-  if (itemClass === ItemClass.Book) {
-    pagesText = `The book has ${pages?.length ?? 0} page(s) in it. `;
+  // display the number of upgrades an item has/available
+
+  if (maxUpgrades > 0 || upgrades?.length > 0) {
+    allTexts.push(
+      `It has ${maxUpgrades} magical slot(s), ${
+        upgrades?.length ?? 0
+      } of which are taken.`,
+    );
   }
 
-  const trait = getProp(item, itemDef, 'trait');
-  const levelStrings = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
-  const traitText = identifyTier > 0 && trait ? `This item is inscribed with the rune "${trait.name} ${levelStrings[trait.level]}". ` : '';
+  // whether the item has an implicit sell price or not
+  if (itemDef.sellValue || thiefTier > 0) {
+    if (thiefTier > 0) {
+      allTexts.push(`The item is worth ${value.toLocaleString()} gold.`);
+    } else {
+      allTexts.push('It looks valuable.');
+    }
+  }
 
-  const appraiseText = thiefTier > 0 ? `The item is worth ${value.toLocaleString()} gold. ` : '';
+  if (identifyTier > 0 && extendedDesc) {
+    allTexts.push(`This item is ${extendedDesc}.`);
+  }
 
-  const conditionText = `The item is in ${conditionString(item)} condition. `;
+  if (identifyTier > 0 && (stats.offense || stats.defense)) {
+    allTexts.push(
+      `The combat adds are ${stats.offense || 0}/${stats.defense || 0}.`,
+    );
+  }
+
+  if (
+    identifyTier > 1 &&
+    itemClass !== ItemClass.Bottle &&
+    (useEffect || strikeEffect)
+  ) {
+    let sense2Text = '';
+
+    sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${
+      (useEffect || strikeEffect).name
+    }.`;
+
+    if ((useEffect || strikeEffect).potency) {
+      sense2Text = `${sense2Text} with a potency of ${
+        (useEffect || strikeEffect).potency
+      }.`;
+    } else {
+      sense2Text = `${sense2Text}.`;
+    }
+    allTexts.push(sense2Text);
+  }
+  if (identifyTier > 2 && tier > 0) {
+    allTexts.push(`This item is tier ${tier}.`);
+  }
+
+  if (identifyTier > 0 && affectsAttributes) {
+    allTexts.push('This item affects physical attributes!');
+  }
+
+  if (identifyTier > 2 && affectedStats.length > 0) {
+    allTexts.push(
+      `This item affects your stats! ${affectedStats
+        .map((x) => `${formatStatForDisplay(x, stats[x] ?? 0)}`)
+        .join(', ')}. `,
+    );
+  }
 
   // whether it can be used in either hand
-  const dualWieldText = getProp(item, itemDef, 'offhand') ? 'The item is lightweight enough to use in either hand. ' : '';
+  if (isOffhand) {
+    allTexts.push('The item is lightweight enough to use in either hand.');
+  }
 
-  return `${starText} ${baseText}${upgradeText}${isValuableText}${sense1Text}${sense1AfterText}${sense2Text}${tierText}${statsText}
-  ${statSpecificText}${dualWieldText}${traitText}${usesText}${fluidText}${levelText}${alignmentText}${skillText}${appraiseText}
-  ${pagesText}${trapSetText}${craftedText}${conditionText}${ownedText}`;
+  // trait text
+  const traitLevelText = `${trait?.name}${
+    levelStrings[trait?.level] ? levelStrings[trait?.level] + ' ' : ''
+  }`;
+
+  if (identifyTier > 0 && trait?.name) {
+    allTexts.push(`This item is inscribed with the rune "${traitLevelText}".`);
+  }
+
+  // the items 'use' effect situation
+  if (usesText) {
+    allTexts.push(`The item ${usesText}.`);
+  }
+
+  // how full it is, if at all
+  if (itemClass === ItemClass.Bottle && ounces > 0) {
+    allTexts.push(`It is filled with ${ounces} oz of fluid.`);
+  }
+
+  if (itemClass === ItemClass.Bottle && ounces === 0) {
+    allTexts.push('It is empty.');
+  }
+
+  if (itemClass === ItemClass.Bottle && ounces === -1) {
+    allTexts.push('It replenishes itself infinitely.');
+  }
+
+  // various requirements for the item
+  if (requirements && requirements.level) {
+    allTexts.push(`You must be level ${requirements.level} to use this item.`);
+  }
+
+  if (requirements && requirements.skill) {
+    const formattedSkill =
+      requirements?.skill?.name === Skill.Wand
+        ? 'Magical Weapons'
+        : requirements?.skill?.name;
+
+    allTexts.push(
+      `This item requires ${formattedSkill} skill ${requirements.skill.level}.`,
+    );
+  }
+
+  // book stuffs
+  if (itemClass === ItemClass.Book) {
+    allTexts.push(`The book has ${pages?.length ?? 0} page(s) in it.`);
+  }
+
+  // trap stuffs
+  if (itemClass === ItemClass.TrapSet) {
+    allTexts.push('This trap is live.');
+  }
+
+  // the crafter
+  if (item.mods.craftedBy) {
+    allTexts.push(`This item was made by ${item.mods.craftedBy}.`);
+  }
+
+  // the owner text
+  if (item.mods.owner) {
+    if (item.mods.owner === player.username) {
+      allTexts.push('This item belongs to you.');
+    } else {
+      allTexts.push('This item does NOT belong to you.');
+    }
+  }
+
+  allTexts.push(`The item is in ${conditionString(item)} condition.`);
+
+  return allTexts.join(' ');
 }
 
-export const foodTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) => {
+export const foodTextFor = (
+  player: IPlayer,
+  item: ISimpleItem,
+  itemDef: IItem,
+) => {
   const desc = getProp(item, itemDef, 'desc');
 
   const useEffect = getProp(item, itemDef, 'useEffect');
   if (!useEffect) return '';
 
   const baseText = `You are looking at ${desc}.`;
-  const statText = `This food changes the following stats: ${useEffect.extra?.tooltip ?? 'None'}`;
+  const statText = `This food changes the following stats: ${
+    useEffect.extra?.tooltip ?? 'None'
+  }`;
 
   return `${baseText} ${statText}`;
 };
 
-export const gemTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) => {
+export const gemTextFor = (
+  player: IPlayer,
+  item: ISimpleItem,
+  itemDef: IItem,
+) => {
   const desc = getProp(item, itemDef, 'desc');
 
   const encrustGive = getProp(item, itemDef, 'encrustGive');
@@ -229,15 +350,22 @@ export const gemTextFor = (player: IPlayer, item: ISimpleItem, itemDef: IItem) =
 
   const baseText = `You are looking at ${desc}. `;
 
-  const slotText = `This gem goes in the following slots: ${encrustGive.slots.map(x => x.toUpperCase()).join(', ')}. `;
+  const slotText = `This gem goes in the following slots: ${encrustGive.slots
+    .map((x) => x.toUpperCase())
+    .join(', ')}. `;
 
-  const affectedStatsText = affectedStats.map(x => `${formatStatForDisplay(x, encrustGive.stats[x])}`).join(', ');
-  const statText = affectedStats.length > 0
-    ? `This gem changes the following stats: ${affectedStatsText}. `
-    : '';
+  const affectedStatsText = affectedStats
+    .map((x) => `${formatStatForDisplay(x, encrustGive.stats[x])}`)
+    .join(', ');
+  const statText =
+    affectedStats.length > 0
+      ? `This gem changes the following stats: ${affectedStatsText}. `
+      : '';
 
   const strikeEffect = encrustGive.strikeEffect;
-  const effectText = strikeEffect ? `This gem confers the on-hit effect ${strikeEffect.name} at potency ${strikeEffect.potency}. ` : '';
+  const effectText = strikeEffect
+    ? `This gem confers the on-hit effect ${strikeEffect.name} at potency ${strikeEffect.potency}. `
+    : '';
 
   return `${baseText}${slotText}${statText}${effectText}`;
 };
