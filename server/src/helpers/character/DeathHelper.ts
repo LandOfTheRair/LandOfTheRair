@@ -269,6 +269,8 @@ export class DeathHelper extends BaseService {
       ?.getNPCAI(dead.uuid);
     ai?.death(killer);
 
+    this.game.dynamicEventHelper.trackNPCKill(dead.npcId);
+
     const ach = this.game.achievementsHelper.getNPCForAchievementUse(
       dead.npcId,
     );

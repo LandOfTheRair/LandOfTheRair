@@ -17,6 +17,16 @@ export interface IDynamicEvent {
   extraData?: any;
 }
 
+export enum DynamicEventSuccessType {
+  Kills = 'kills',
+}
+
+export interface IDynamicEventMetaMetrics {
+  count: number;
+  type: DynamicEventSuccessType;
+  killNPCs: string[];
+}
+
 export interface IDynamicEventMeta {
   name: string;
   duration: number;
@@ -29,4 +39,10 @@ export interface IDynamicEventMeta {
   map?: string;
   npc?: string;
   extraData?: any;
+
+  requiresPreviousEvent?: boolean;
+  spawnEventOnFailure?: string;
+  spawnEventOnSuccess?: string;
+
+  successMetrics: IDynamicEventMetaMetrics;
 }

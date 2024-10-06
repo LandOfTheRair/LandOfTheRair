@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, merge, random, sample } from 'lodash';
 
 import {
+  DynamicEventSuccessType,
   GameAction,
   IDynamicEvent,
   IDynamicEventMeta,
@@ -97,6 +98,8 @@ export class DynamicEventHelper extends BaseService {
 
     this.handleSpecialEventsEnd(event);
     this.recalculateStatTotals();
+
+    this.tryToStartFollowUpEvent(event);
   }
 
   // update an event to have new props (extending a festival f.ex)
@@ -163,7 +166,7 @@ export class DynamicEventHelper extends BaseService {
       name: newEvent.name,
       eventRef: newEvent.name,
       eventData: newEvent,
-      extraData: newEvent.extraData,
+      extraData: newEvent.extraData ?? {},
     });
   }
 
@@ -208,6 +211,10 @@ export class DynamicEventHelper extends BaseService {
       if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) {
         return;
       }
+
+      // if it requires a previous event, bail.
+      // this is triggered on event end
+      if (event.requiresPreviousEvent) return;
 
       // if the map isn't active, bail
       if (
@@ -472,5 +479,49 @@ export class DynamicEventHelper extends BaseService {
     } as Partial<Spawner>);
 
     state.addSpawner(spawner);
+  }
+
+  private tryToStartFollowUpEvent(event: IDynamicEvent): void {
+    const eventBase = event.eventData;
+    if (!eventBase) return;
+
+    const { spawnEventOnFailure, spawnEventOnSuccess, successMetrics } =
+      eventBase;
+    let startRef: IDynamicEventMeta | undefined;
+
+    if (successMetrics.type === DynamicEventSuccessType.Kills) {
+      if (
+        (event.extraData?.totalKills ?? 0) >= successMetrics.count &&
+        spawnEventOnSuccess
+      ) {
+        startRef = this.getEventRef(spawnEventOnSuccess);
+      }
+
+      if (
+        (event.extraData?.totalKills ?? 0) < successMetrics.count &&
+        spawnEventOnFailure
+      ) {
+        startRef = this.getEventRef(spawnEventOnFailure);
+      }
+    }
+
+    if (startRef) {
+      this.startDynamicEvent(startRef);
+    }
+  }
+
+  public trackNPCKill(npcId: string): void {
+    this.activeEvents.forEach((event) => {
+      const eventBase = event.eventData;
+      if (!eventBase) return;
+
+      if (eventBase.successMetrics.type === DynamicEventSuccessType.Kills) {
+        if (eventBase.successMetrics.killNPCs.includes(npcId)) {
+          event.extraData ??= {};
+          event.extraData.totalKills ??= 0;
+          event.extraData.totalKills += 1;
+        }
+      }
+    });
   }
 }
