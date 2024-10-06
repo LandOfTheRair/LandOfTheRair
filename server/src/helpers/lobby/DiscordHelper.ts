@@ -438,7 +438,7 @@ export class DiscordHelper extends BaseService {
     });
 
     newMessage?.startThread({
-      name: `Bug Discussion: ${player.name} - ${embedData.report}`,
+      name: `Bug Discussion: ${player.name} - ${embedData.report.substring(0, 50)}`,
     });
   }
 
