@@ -49,7 +49,7 @@ import {
   IAchievement,
   IChallenge,
   IClassTraitTree,
-  IDynamicEventData,
+  IDynamicEventMeta,
   IFate,
   IGameSettings,
   IItemDefinition,
@@ -132,7 +132,7 @@ export class ContentManager extends BaseService {
     classes: any[];
     weapons: any[];
   };
-  private events: Record<string, IDynamicEventData>;
+  private events: Record<string, IDynamicEventMeta>;
   private fate: IFate;
   private hideReductions: Record<WeaponClass, number>;
   private holidayDescs: Record<
@@ -186,7 +186,7 @@ export class ContentManager extends BaseService {
     return cloneDeep(this.charSelect);
   }
 
-  public get eventsData(): Record<string, IDynamicEventData> {
+  public get eventsData(): Record<string, IDynamicEventMeta> {
     return cloneDeep(this.events);
   }
 
@@ -457,7 +457,7 @@ export class ContentManager extends BaseService {
     return ret;
   }
 
-  public getEvent(name: string): IDynamicEventData {
+  public getEvent(name: string): IDynamicEventMeta {
     const ret = this.events[name];
     if (!ret) {
       this.game.logger.error(

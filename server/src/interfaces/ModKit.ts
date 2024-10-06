@@ -1,4 +1,13 @@
-import { IItemDefinition, INPCDefinition, INPCScript, IQuest, IRecipe, ISpawnerData, Rollable } from '../../../shared/interfaces';
+import {
+  IDynamicEventMeta,
+  IItemDefinition,
+  INPCDefinition,
+  INPCScript,
+  IQuest,
+  IRecipe,
+  ISpawnerData,
+  Rollable,
+} from '../../../shared/interfaces';
 
 export interface IModKit {
   meta: {
@@ -16,4 +25,5 @@ export interface IModKit {
   maps: any[];
   quests: IQuest[];
   dialogs: INPCScript[];
+  events: IDynamicEventMeta[];
 }

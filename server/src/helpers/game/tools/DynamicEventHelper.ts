@@ -5,7 +5,7 @@ import { cloneDeep, merge, random, sample } from 'lodash';
 import {
   GameAction,
   IDynamicEvent,
-  IDynamicEventData,
+  IDynamicEventMeta,
   INPC,
   Stat,
 } from '../../../interfaces';
@@ -142,7 +142,7 @@ export class DynamicEventHelper extends BaseService {
   }
 
   // start a dynamic event
-  public startDynamicEvent(event: IDynamicEventData): void {
+  public startDynamicEvent(event: IDynamicEventMeta): void {
     if (!event.name) {
       this.game.logger.error(
         'DynamicEventHelper',
@@ -168,7 +168,7 @@ export class DynamicEventHelper extends BaseService {
   }
 
   // get a dynamic event ref
-  public getEventRef(ref: string): IDynamicEventData | undefined {
+  public getEventRef(ref: string): IDynamicEventMeta | undefined {
     return this.game.contentManager.getEvent(ref);
   }
 
@@ -246,7 +246,7 @@ export class DynamicEventHelper extends BaseService {
     });
   }
 
-  private handleSpecialEventsStart(event: IDynamicEventData): void {
+  private handleSpecialEventsStart(event: IDynamicEventMeta): void {
     if (event.name === 'Avatar Spawn') return this.doRareSpawn();
     if (event.name === 'Double Trouble') return this.doDoubleTrouble(event);
   }
@@ -255,7 +255,7 @@ export class DynamicEventHelper extends BaseService {
     if (event.name === 'Double Trouble') return this.undoDoubleTrouble(event);
   }
 
-  private canDoEvent(event: IDynamicEventData): boolean {
+  private canDoEvent(event: IDynamicEventMeta): boolean {
     if (event.name === 'Avatar Spawn') return this.canDoRareSpawn();
     if (event.name === 'Double Trouble') return this.canDoDoubleTrouble();
     return true;
@@ -296,7 +296,7 @@ export class DynamicEventHelper extends BaseService {
     return hasTarget;
   }
 
-  private doDoubleTrouble(event: IDynamicEventData): void {
+  private doDoubleTrouble(event: IDynamicEventMeta): void {
     const targets: INPC[] = [];
 
     this.game.worldManager.allMapNames.forEach((map) => {

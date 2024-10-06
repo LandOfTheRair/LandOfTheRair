@@ -4,20 +4,20 @@ export enum DynamicEventRarity {
   Common = 'common',
   Uncommon = 'uncommon',
   Rare = 'rare',
-  Legendary = 'legendary'
+  Legendary = 'legendary',
 }
 
 export interface IDynamicEvent {
   name: string;
   description: string;
   endsAt: number;
-  eventData?: IDynamicEventData;
+  eventData?: IDynamicEventMeta;
   eventRef?: string;
   statBoost?: Partial<Record<Stat, number>>;
   extraData?: any;
 }
 
-export interface IDynamicEventData {
+export interface IDynamicEventMeta {
   name: string;
   duration: number;
   cooldown: number;
