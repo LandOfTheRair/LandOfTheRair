@@ -95,10 +95,23 @@ export class PlayerHelper extends BaseService {
       const remove: string[] = [];
 
       player.learnedRunes.forEach((rune) => {
-        const runeItem = this.game.contentManager.hasItemDefinition(rune);
-        if (runeItem) return;
+        const runeItem = this.game.contentManager.getItemDefinition(rune);
+        if (!runeItem) {
+          remove.push(rune);
+          return;
+        }
 
-        remove.push(rune);
+        const trait = runeItem.trait;
+        if (trait?.restrict && !trait.restrict.includes(player.baseClass)) {
+          remove.push(rune);
+          return;
+        }
+
+        const requirements = runeItem.requirements;
+        if (requirements?.level && player.level < requirements.level) {
+          remove.push(rune);
+          return;
+        }
       });
 
       player.learnedRunes = player.learnedRunes.filter(
