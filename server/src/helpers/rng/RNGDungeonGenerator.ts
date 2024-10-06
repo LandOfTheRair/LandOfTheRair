@@ -46,6 +46,17 @@ export class RNGDungeonGenerator extends BaseService {
       `Today's seed for ${map.name}: "${seed}"`,
     );
 
+    const validRuneScrolls = this.game.contentManager
+      .getItemsMatchingName('Rune Scroll -')
+
+      // filter out holiday scrolls
+      .filter((f) => !f.binds)
+      .filter((f) => (f.trait?.level ?? 0) <= map.itemProps.maxTraitLevel)
+      .filter(
+        (f) =>
+          (f.requirements?.level ?? 0) >= map.itemProps.minTraitScrollLevel &&
+          (f.requirements?.level ?? 0) <= map.itemProps.maxTraitScrollLevel,
+      );
     const generator = new MapGenerator(
       map,
       defaultDungeon.map.tiledJSON,
@@ -55,7 +66,7 @@ export class RNGDungeonGenerator extends BaseService {
       this.game.contentManager.spriteData,
       this.game.contentManager
         .getItemsMatchingName(map.name)
-        .concat(this.game.contentManager.getItemsMatchingName('Rune Scroll -')),
+        .concat(validRuneScrolls),
     );
 
     const { mapJSON, creatures, spawners, items, mapDroptable } =

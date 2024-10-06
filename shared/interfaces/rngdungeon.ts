@@ -1,4 +1,10 @@
-import { Allegiance, BaseClass, MonsterClass, Rollable, Stat } from './building-blocks';
+import {
+  Allegiance,
+  BaseClass,
+  MonsterClass,
+  Rollable,
+  Stat,
+} from './building-blocks';
 import { IItemDefinition } from './item';
 import { ArmorClass, DamageType, ItemClass, WeaponClass } from './itemtypes';
 
@@ -53,7 +59,7 @@ export interface IRNGDungeonConfigWall {
 
 export interface IRNGDungeonMapGenConfig {
   name: string;
-  algo: 'Digger'|'Uniform'|'Cellular';
+  algo: 'Digger' | 'Uniform' | 'Cellular';
   algoArgs: any[];
   iterations?: number;
   randomize?: number;
@@ -69,7 +75,7 @@ export interface IRNGDungeonRoomDecorConfig {
 export interface IRNGDungeonNPC {
   name?: string;
   gid: number;
-  props: Record<string, string|number>;
+  props: Record<string, string | number>;
 }
 
 export interface IRNGDungeonResource {
@@ -119,7 +125,10 @@ export interface IRNGDungeonCreatureAttribute {
 
 export interface IRNGDungeonScenario {
   name: string;
-  creatureSets: Array<{ group: string; options: { creatures: IRNGDungeonCreature[] } }>;
+  creatureSets: Array<{
+    group: string;
+    options: { creatures: IRNGDungeonCreature[] };
+  }>;
 }
 
 export interface IRNGItem {
@@ -196,6 +205,9 @@ export interface IRNGDungeonMetaConfig {
   };
 
   itemProps: {
+    minTraitScrollLevel: number;
+    maxTraitScrollLevel: number;
+    maxTraitLevel: number;
     baseTier: number;
     baseArrowTier: number;
     baseSpecificResist: number;
@@ -204,7 +216,6 @@ export interface IRNGDungeonMetaConfig {
     baseArmorClass: number;
     baseShieldArmorClass: number;
     baseWeaponArmorClass: number;
-    traitLevel: number;
     tanSkillRequired: number;
     numScenarios: number;
     mapDropItems: number;
@@ -219,6 +230,11 @@ export interface IRNGDungeonMetaConfig {
   };
 }
 
+export interface IRNGDungeonConfigThemeBase {
+  floor: IRNGDungeonConfigFloor;
+  wall: IRNGDungeonConfigWall;
+}
+
 export interface IRNGDungeonConfig {
   fluids: Record<string, IRNGDungeonConfigFluid>;
 
@@ -231,7 +247,7 @@ export interface IRNGDungeonConfig {
   walls: Record<string, IRNGDungeonConfigWall>;
 
   configs: {
-    themes: Record<string, { floor: IRNGDungeonConfigFloor; wall: IRNGDungeonConfigWall }>;
+    themes: Record<string, IRNGDungeonConfigThemeBase>;
 
     mapGen: IRNGDungeonMapGenConfig[];
 
