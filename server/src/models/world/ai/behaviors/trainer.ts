@@ -502,6 +502,14 @@ export class TrainerBehavior implements IAIBehavior {
       );
       if (!player) return;
 
+      game.groundManager.removeItemFromGround(
+        npc.map,
+        npc.x,
+        npc.y,
+        ItemClass.Corpse,
+        corpse.item.uuid,
+      );
+
       game.messageHelper.sendSimpleMessage(player, `${npc.name} revived you!`);
 
       game.deathHelper.restore(player, { map: npc.map, x: npc.x, y: npc.y });
