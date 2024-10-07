@@ -1,0 +1,30 @@
+<app-window
+  windowName="guild"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="850"
+  [defaultHeight]="650"
+></app-window>
+
+<ng-template #headTemplate>Guild</ng-template>
+
+<ng-template #bodyTemplate>
+  <mat-tab-group
+    mat-align-tabs="center"
+    class="bring-to-top"
+    [selectedIndex]="0"
+    animationDuration="0ms"
+  >
+    <mat-tab label="About"></mat-tab>
+
+    <mat-tab label="Members"></mat-tab>
+
+    <mat-tab label="Manage"></mat-tab>
+
+    <mat-tab label="Audit Log"></mat-tab>
+  </mat-tab-group>
+</ng-template>

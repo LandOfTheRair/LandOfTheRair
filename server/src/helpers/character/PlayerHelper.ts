@@ -187,6 +187,20 @@ export class PlayerHelper extends BaseService {
     this.game.questHelper.recalculateQuestKillsAndStatRewards(player);
 
     this.game.achievementsHelper.checkAllAchievements(player);
+
+    this.game.guildManager.setGuildForPlayer(player);
+    this.game.guildManager.syncPlayerWithGuild(player);
+
+    if (player.guildId) {
+      const guild = this.game.guildManager.getGuildById(player.guildId);
+      if (guild?.motd) {
+        setTimeout(() => {
+          this.game.messageHelper.sendLogMessageToPlayer(player, {
+            message: `Guild MOTD: ${guild.motd}`,
+          });
+        }, 50);
+      }
+    }
   }
 
   private cleanUpInvalidItems(player: IPlayer): void {
@@ -300,6 +314,9 @@ export class PlayerHelper extends BaseService {
       player.skills[Skill.Conjuration] =
         this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
     }
+
+    this.game.guildManager.setGuildForPlayer(player as Player);
+    this.game.guildManager.syncPlayerWithGuild(player as Player);
   }
 
   public reformatPlayerBeforeSave(player: Player): void {
@@ -923,6 +940,7 @@ export class PlayerHelper extends BaseService {
     } while (player.level < maxLevel);
 
     this.game.achievementsHelper.checkAllAchievements(player as Player);
+    this.game.guildManager.syncPlayerWithGuild(player as Player);
   }
 
   public tryAncientLevelUp(player: IPlayer): void {

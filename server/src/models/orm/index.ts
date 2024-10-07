@@ -6,6 +6,8 @@ export * from './AccountLockers';
 export * from './AccountPremium';
 export * from './DynamicEvent';
 export * from './Ground';
+export * from './Guild';
+export * from './GuildLogEntry';
 export * from './LogEntry';
 export * from './MarketListing';
 export * from './MarketPickup';

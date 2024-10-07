@@ -379,6 +379,15 @@ export interface IGameSettings {
   tradeskill: {
     validTradeskills: string[];
   };
+
+  guild: {
+    creation: {
+      maxTagSize: number;
+      maxNameSize: number;
+      creationCost: number;
+      guildHallCost: number;
+    };
+  };
 }
 
 export interface IStripePurchase {

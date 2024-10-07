@@ -19,6 +19,7 @@ export * from './dynamicevent';
 export * from './effect';
 export * from './game';
 export * from './ground';
+export * from './guild';
 export * from './item';
 export * from './itemtypes';
 export * from './journal';

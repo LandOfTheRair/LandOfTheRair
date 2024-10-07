@@ -35,6 +35,8 @@ export enum BehaviorType {
   Resetter = 'resetter',
   AXPSwapper = 'axpswapper',
   FurUpgrader = 'furupgrader',
+  Guildmaster = 'guildmaster',
+  GuildClerk = 'guildclerk',
   ExitWarper = 'exitwarper',
   SpoilerLogger = 'spoilerlogger',
   RNGArtificer = 'rngartificer',

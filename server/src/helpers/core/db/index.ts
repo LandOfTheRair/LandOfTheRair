@@ -2,6 +2,8 @@ export * from './AccountDB';
 export * from './CharacterDB';
 export * from './EventsDB';
 export * from './GroundDB';
+export * from './GuildLogsDB';
+export * from './GuildsDB';
 export * from './LogsDB';
 export * from './MarketDB';
 export * from './RedeemableDB';

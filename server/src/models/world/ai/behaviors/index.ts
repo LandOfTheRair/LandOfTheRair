@@ -1,4 +1,3 @@
-
 export * from './holiday/christmas-santa';
 export * from './holiday/halloween-candy';
 export * from './holiday/thanksgiving-food';
@@ -16,11 +15,13 @@ export * from './culinarian';
 export * from './encruster';
 export * from './exitwarper';
 export * from './furupgrader';
+export * from './guildclerk';
+export * from './guildmaster';
 export * from './hallofheroes';
 export * from './hpdoc';
 export * from './identifier';
-export * from './magician';
 export * from './itemmodder';
+export * from './magician';
 export * from './mpdoc';
 export * from './peddler';
 export * from './resetter';

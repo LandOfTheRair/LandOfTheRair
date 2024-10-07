@@ -113,7 +113,7 @@ export class ModalService {
 
           const args = data.okAction?.args.split('$value').join(value);
           this.socketService.emit(GameServerEvent.DoCommand, {
-            command: 'memorize',
+            command: data.okAction.command,
             args,
           });
         });

@@ -265,6 +265,7 @@ export class GameService {
       'cast',
       'stance',
       'powerword',
+      'guild',
       'art',
       'findfamiliar',
       'song',

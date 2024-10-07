@@ -75,6 +75,7 @@ import { SessionStatsComponent } from './containers/lobby-container/session-stat
 import { AchievementComponent } from 'src/app/_shared/components/achievement/achievement.component';
 import { EarnedAchievementComponent } from 'src/app/_shared/components/earned-achievement/earned-achievement.component';
 import { AchievementsComponent } from 'src/app/containers/game-container/achievements/achievements.component';
+import { GuildComponent } from 'src/app/containers/game-container/guild/guild.component';
 import {
   MdePopover,
   MdePopoverTarget,
@@ -172,6 +173,8 @@ const gameComponents = [
   PartyComponent,
 
   AchievementsComponent,
+
+  GuildComponent,
 
   CombatDebugComponent,
 ];
