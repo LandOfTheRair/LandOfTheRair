@@ -11,6 +11,7 @@ export * from './examineitem';
 export * from './freezeai';
 export * from './gainskill';
 export * from './gaintradeskill';
+export * from './gearup';
 export * from './gg';
 export * from './item';
 export * from './kill';
