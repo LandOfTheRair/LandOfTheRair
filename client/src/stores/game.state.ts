@@ -36,6 +36,7 @@ import {
   SetMap,
   SetPlayer,
   ShowWindow,
+  UpdateGuildInfo,
   UpdateParty,
   ViewCharacterEquipment,
 } from './actions';
@@ -98,6 +99,9 @@ const defaultGame: () => IGame = () => ({
   tradeskillInfo: {
     tradeskill: null,
   },
+  guildInfo: {
+    guild: null,
+  },
   inspectingCharacter: null,
 });
 
@@ -129,6 +133,11 @@ export class GameState {
   @Selector()
   static itemTooltip(state: IGame) {
     return state.itemTooltip;
+  }
+
+  @Selector()
+  static guild(state: IGame) {
+    return state.guildInfo.guild;
   }
 
   @Selector()
@@ -252,6 +261,7 @@ export class GameState {
 
     const state = ctx.getState();
     baseState.currentHoliday = state.currentHoliday;
+    baseState.guildInfo = state.guildInfo;
 
     ctx.patchState(baseState);
   }
@@ -591,5 +601,10 @@ export class GameState {
   @Action(UpdateParty)
   updateParty(ctx: StateContext<IGame>, { party, partyMembers }: UpdateParty) {
     ctx.patchState({ partyInfo: { party, partyMembers } });
+  }
+
+  @Action(UpdateGuildInfo)
+  updateGuildInfo(ctx: StateContext<IGame>, { guild }: UpdateGuildInfo) {
+    ctx.patchState({ guildInfo: { guild } });
   }
 }

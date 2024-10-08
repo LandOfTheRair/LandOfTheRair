@@ -1,10 +1,12 @@
-import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
-import { MacroCommand } from '../../../../models';
+import { IPlayer } from '../../../../interfaces';
+import { MacroCommand, Player } from '../../../../models';
 
 export class GuildLeave extends MacroCommand {
   override aliases = ['guild leave'];
   override canBeInstant = false;
   override canBeFast = false;
 
-  override execute(player: IPlayer, args: IMacroCommandArgs) {}
+  override execute(player: IPlayer) {
+    this.game.guildManager.leaveGuild(player as Player);
+  }
 }

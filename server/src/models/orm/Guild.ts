@@ -4,6 +4,8 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class Guild extends BaseEntity implements IGuild {
+  @Property() timestamp: number;
+
   @Property() name: string;
   @Property() tag: string;
 

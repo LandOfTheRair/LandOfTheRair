@@ -3,6 +3,8 @@ import { BaseEntity } from '../BaseEntity';
 
 @Entity()
 export class Redeemable extends BaseEntity {
+  @Property() timestamp: number;
+
   @Property() code: string;
   @Property() forAccountName: string;
   @Property() maxUses: number;

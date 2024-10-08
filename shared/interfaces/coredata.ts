@@ -387,6 +387,10 @@ export interface IGameSettings {
       creationCost: number;
       guildHallCost: number;
     };
+
+    specs: {
+      maxMembers: number;
+    };
   };
 }
 

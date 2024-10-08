@@ -13,15 +13,18 @@ export enum GuildLevel {
 }
 
 export interface IGuildMember {
-  playerId: string | any;
+  playerId: string;
   playerName: string;
   playerUsername: string;
   playerLevel: number;
   playerClass: BaseClass;
   playerRole: GuildRole;
+  joinedAt: Date;
 }
 
 export interface IGuild {
+  timestamp: number;
+
   name: string;
   tag: string;
 

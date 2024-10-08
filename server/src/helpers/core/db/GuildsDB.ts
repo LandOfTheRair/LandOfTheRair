@@ -29,7 +29,7 @@ export class GuildsDB extends BaseService {
   ): Promise<Guild | undefined> {
     const entry = new Guild();
     entry._id = new ObjectId();
-    entry.createdAt = new Date();
+    entry.timestamp = Date.now();
 
     entry.name = name;
     entry.tag = tag;

@@ -142,8 +142,12 @@ export class GuildmasterBehavior implements IAIBehavior {
           return 'It looks like you already have a guild!';
         }
 
-        const tag = args.guildtag.replace(/[^A-Za-z]/g, '');
-        const name = args['guildname*'].replace(/[^A-Za-z ]/g, '');
+        const tag = args.guildtag
+          .replace(/[^A-Za-z]/g, '')
+          .slice(0, maxTagSize);
+        const name = args['guildname*']
+          .replace(/[^A-Za-z ]/g, '')
+          .slice(0, maxNameSize);
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
@@ -185,13 +189,10 @@ export class GuildmasterBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
         const message = `Yes, ${player.name}!
-        For the low price of ${creationCost.toLocaleString()} gold, I can set you up with a guild!
-        You just need to give me some INFORMATION first, as well as sign on the dotted line.`;
+        For the low price of ${guildHallCost.toLocaleString()} gold, I can add a guild hall to your guild.
+        Inside a guild hall, you can recruit your own merchants and assistants, and more!`;
 
-        const options = [
-          { text: 'What information?', action: 'information' },
-          { text: 'Leave', action: 'noop' },
-        ];
+        const options = [{ text: 'Leave', action: 'noop' }];
 
         const formattedChat: IDialogChatAction = {
           message,

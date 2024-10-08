@@ -8,6 +8,7 @@ import {
   BGM,
   DamageClass,
   Direction,
+  GameAction,
   Holiday,
   initializePlayer,
   IPlayer,
@@ -191,8 +192,17 @@ export class PlayerHelper extends BaseService {
     this.game.guildManager.setGuildForPlayer(player);
     this.game.guildManager.syncPlayerWithGuild(player);
 
+    this.game.wsCmdHandler.sendToSocket(player.username, {
+      action: GameAction.UpdateGuild,
+      guild: null,
+    });
+
     if (player.guildId) {
       const guild = this.game.guildManager.getGuildById(player.guildId);
+      if (guild) {
+        this.game.guildManager.sendGuildUpdateToPlayer(player);
+      }
+
       if (guild?.motd) {
         setTimeout(() => {
           this.game.messageHelper.sendLogMessageToPlayer(player, {

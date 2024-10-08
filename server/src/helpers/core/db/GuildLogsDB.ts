@@ -16,9 +16,11 @@ export class GuildLogsDB extends BaseService {
   public async addLogEntry(guild: Guild, action: string, actor: string) {
     const entry = new GuildLogEntry();
     entry._id = new ObjectId();
-    entry.createdAt = new Date();
+    entry.timestamp = Date.now();
 
     entry.guildId = guild._id;
+    entry.guildName = guild.name;
+    entry.guildTag = guild.tag;
     entry.action = action;
     entry.actor = actor;
 

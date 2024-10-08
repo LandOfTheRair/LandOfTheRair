@@ -2,12 +2,61 @@ mat-tab-group {
   height: 100%;
 }
 
-mat-list {
+.motd {
   min-height: 573px;
   max-height: 573px;
-  overflow-y: auto;
+
+  color: #fff;
+
+  padding: 8px;
 }
 
-mat-list-item {
-  height: 80px !important;
+.treasury {
+  color: #fff;
+}
+
+.about-actions {
+  display: flex;
+  justify-content: space-between;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  padding: 8px;
+}
+
+.member {
+  display: flex;
+  width: 100%;
+
+  .member-left {
+    max-width: 64px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .member-right {
+    flex: 1;
+
+    padding-left: 8px;
+
+    .member-name {
+      font-weight: bold;
+    }
+
+    .member-designation {
+      font-style: italic;
+    }
+  }
+
+  .member-actions {
+    width: 120px;
+
+    display: flex;
+    justify-content: flex-end;
+  }
 }

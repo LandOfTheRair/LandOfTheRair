@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 
 import {
   Currency,
+  GameAction,
   GuildRole,
   IGuildMember,
 } from '../../../../shared/interfaces';
@@ -14,6 +15,10 @@ export class GuildManager extends BaseService {
 
   public async init() {
     await this.loadGuilds();
+  }
+
+  private isAutoGuild(guild: Guild): boolean {
+    return ['TEST', 'GM'].includes(guild.tag);
   }
 
   // set the guild id for a player
@@ -75,7 +80,7 @@ export class GuildManager extends BaseService {
     guild: Guild,
     player: Player,
   ): IGuildMember | undefined {
-    return this.getGuildMemberForPlayerById(guild, player._id.toHexString());
+    return this.getGuildMemberForPlayerById(guild, player.uuid);
   }
 
   // get a guild member ref for a specific player by id
@@ -91,12 +96,62 @@ export class GuildManager extends BaseService {
     if (!guild) return;
 
     this.game.guildsDB.saveGuild(guild);
+
+    this.sendGuildUpdateToGuild(guild);
   }
 
+  // update all guild members guild info
+  private sendGuildUpdateToGuild(guild: Guild) {
+    this.getGuildMembers(guild).forEach((member) => {
+      const onlinePlayer = this.game.playerManager.getPlayerByUsername(
+        member.playerUsername,
+      );
+      if (!onlinePlayer) return;
+
+      this.sendGuildUpdateToPlayer(onlinePlayer);
+    });
+  }
+
+  // update a specific players guild info
+  public sendGuildUpdateToPlayer(player: Player) {
+    const guild = this.getGuildForPlayer(player);
+    if (!guild) return;
+
+    this.game.wsCmdHandler.sendToSocket(player.username, {
+      action: GameAction.UpdateGuild,
+      guild,
+    });
+  }
+
+  // update a players props, usually after joining/leaving
   private updatePlayerProps(player: Player) {
     this.game.playerHelper.refreshPlayerMapState(player);
   }
 
+  // send empty guild / reset to player
+  private emptyGuildForPlayer(player: Player) {
+    player.affiliation = '';
+    player.guildId = '';
+
+    this.game.wsCmdHandler.sendToSocket(player.username, {
+      action: GameAction.UpdateGuild,
+      guild: null,
+    });
+  }
+
+  private emptyGuildForPlayerByUsername(username: string) {
+    const onlinePlayer = this.game.playerManager.getPlayerByUsername(username);
+    if (!onlinePlayer) return;
+
+    this.emptyGuildForPlayer(onlinePlayer);
+  }
+
+  // check if a member is the same as a player
+  private isTargetSameAsMember(check: Player, member: IGuildMember): boolean {
+    return check.username === member.playerUsername;
+  }
+
+  // load all of the guilds
   public async loadGuilds() {
     const allGuilds = await this.game.guildsDB.loadAllGuilds();
     allGuilds.forEach((guild) => {
@@ -133,6 +188,7 @@ export class GuildManager extends BaseService {
     );
   }
 
+  // disband a guild
   public async disbandGuild(actor: Player) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) {
@@ -163,9 +219,9 @@ export class GuildManager extends BaseService {
     );
   }
 
-  // delete the guild
+  // delete the guild (called by disband)
   public async deleteGuild(guild: Guild) {
-    if (['GM', 'TEST'].includes(guild.tag)) return;
+    if (this.isAutoGuild(guild)) return;
 
     this.getGuildMembers(guild).forEach((member) => {
       const onlinePlayer = this.game.playerManager.getPlayerByUsername(
@@ -177,6 +233,11 @@ export class GuildManager extends BaseService {
       onlinePlayer.affiliation = '';
 
       this.updatePlayerProps(onlinePlayer);
+
+      this.game.wsCmdHandler.sendToSocket(onlinePlayer.username, {
+        action: GameAction.UpdateGuild,
+        guild: null,
+      });
     });
 
     delete this.guilds[guild._id.toHexString()];
@@ -222,7 +283,12 @@ export class GuildManager extends BaseService {
 
   // remove a guild member
   private removeGuildMember(guild: Guild, member: Player) {
-    delete guild.members[member._id.toHexString()];
+    this.removeGuildMemberById(guild, member.uuid);
+  }
+
+  // remove a guild member by id rather than player ref
+  private removeGuildMemberById(guild: Guild, uuid: string) {
+    delete guild.members[uuid];
   }
 
   public addGuildMember(
@@ -230,13 +296,14 @@ export class GuildManager extends BaseService {
     member: Player,
     role = GuildRole.Invited,
   ) {
-    guild.members[member._id.toHexString()] = {
+    guild.members[member.uuid] = {
       playerClass: member.baseClass,
-      playerId: member._id.toHexString(),
+      playerId: member.uuid,
       playerLevel: member.level,
       playerName: member.name,
       playerUsername: member.username,
       playerRole: role,
+      joinedAt: new Date(),
     };
   }
 
@@ -244,6 +311,8 @@ export class GuildManager extends BaseService {
   public async inviteMember(actor: Player, target: Player) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
+
+    if (this.isAutoGuild(guild)) return;
 
     const targetGuild = this.getGuildForPlayer(target);
     if (targetGuild) {
@@ -262,15 +331,42 @@ export class GuildManager extends BaseService {
       return;
     }
 
+    const existingMember = this.getGuildMemberForPlayer(guild, target);
+    if (existingMember) {
+      this.game.messageHelper.sendSimpleMessage(
+        actor,
+        'You already invited that player!',
+      );
+      return;
+    }
+
+    const totalMembers = this.getGuildMembers(guild).length;
+    const memberCap =
+      this.game.contentManager.settingsData.guild.specs.maxMembers;
+    if (totalMembers >= memberCap) {
+      this.game.messageHelper.sendSimpleMessage(
+        actor,
+        `You have reached the member cap (${memberCap}) and can't invite any more members!`,
+      );
+      return;
+    }
+
     this.addGuildMember(guild, target);
-    this.setGuildForPlayer(actor);
+    this.setGuildForPlayer(target);
     this.logMemberAction(actor, `Invited ${target.name} to guild.`);
     this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You invited ${target.name} to join your guild!`,
+    );
 
     this.game.messageHelper.sendSimpleMessage(
       target,
       `You've been invited to a guild by ${actor.name}: ${guild.name} [${guild.tag}]!`,
     );
+
+    this.sendGuildUpdateToPlayer(target);
   }
 
   // accept a guild invite
@@ -278,6 +374,8 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
+    if (this.isAutoGuild(guild)) return;
+
     if (!this.canMemberDoAction(actor, GuildRole.Invited)) {
       this.game.messageHelper.sendSimpleMessage(
         actor,
@@ -286,8 +384,22 @@ export class GuildManager extends BaseService {
       return;
     }
 
+    const member = this.getGuildMemberForPlayer(guild, actor);
+    if (!member) return;
+
+    if (member.playerRole !== GuildRole.Invited) return;
+
     this.changeMemberPermissionLevel(actor, GuildRole.Member);
+    this.setGuildForPlayer(actor);
     this.logMemberAction(actor, `Accepted guild invite.`);
+    this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You've accepted the invite to the guild: ${guild.name} [${guild.tag}]!`,
+    );
+
+    this.sendGuildUpdateToPlayer(actor);
   }
 
   // deny a guild invite
@@ -295,6 +407,8 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
+    if (this.isAutoGuild(guild)) return;
+
     if (!this.canMemberDoAction(actor, GuildRole.Invited)) {
       this.game.messageHelper.sendSimpleMessage(
         actor,
@@ -303,15 +417,59 @@ export class GuildManager extends BaseService {
       return;
     }
 
+    const member = this.getGuildMemberForPlayer(guild, actor);
+    if (!member) return;
+
+    if (member.playerRole !== GuildRole.Invited) return;
+
     this.removeGuildMember(guild, actor);
     this.logMemberAction(actor, `Denied guild invite.`);
     this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You've rejected the invite to the guild: ${guild.name} [${guild.tag}]!`,
+    );
+
+    this.emptyGuildForPlayer(actor);
+  }
+
+  // leave the guild
+  public async leaveGuild(actor: Player) {
+    const guild = this.getGuildForPlayer(actor);
+    if (!guild) return;
+
+    if (this.isAutoGuild(guild)) return;
+
+    const member = this.getGuildMemberForPlayer(guild, actor);
+    if (!member) return;
+
+    const numOwners = this.getGuildMembers(guild).filter(
+      (m) => m.playerRole >= GuildRole.Owner,
+    ).length;
+    if (numOwners === 1 && member.playerRole >= GuildRole.Owner) {
+      this.game.messageHelper.sendSimpleMessage(
+        actor,
+        'You cannot leave as the only owner. You must disband or make someone else an owner, first!',
+      );
+      return;
+    }
+
+    this.removeGuildMember(guild, actor);
+    this.logMemberAction(actor, `Left guild.`);
+    this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(actor, `You left your guild.`);
+
+    this.emptyGuildForPlayer(actor);
   }
 
   // remove a member from the guild (eg, kick)
   public async removeMember(actor: Player, target: string) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
+
+    if (this.isAutoGuild(guild)) return;
 
     if (!this.canMemberDoAction(actor, GuildRole.Administrator)) {
       this.game.messageHelper.sendSimpleMessage(
@@ -324,15 +482,26 @@ export class GuildManager extends BaseService {
     const member = this.getGuildMemberForPlayerById(guild, target);
     if (!member) return;
 
-    this.removeGuildMember(guild, actor);
+    if (this.isTargetSameAsMember(actor, member)) return;
+
+    this.removeGuildMemberById(guild, member.playerId);
     this.logMemberAction(actor, `Removed ${member.playerName} from guild.`);
     this.saveGuild(guild);
+
+    this.emptyGuildForPlayerByUsername(member.playerUsername);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You kicked ${member.playerName}!`,
+    );
   }
 
   // promote a guild member
   public async promoteMember(actor: Player, target: string) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
+
+    if (this.isAutoGuild(guild)) return;
 
     if (!this.canMemberDoAction(actor, GuildRole.Owner)) {
       this.game.messageHelper.sendSimpleMessage(
@@ -344,6 +513,16 @@ export class GuildManager extends BaseService {
 
     const member = this.getGuildMemberForPlayerById(guild, target);
     if (!member) return;
+
+    if (this.isTargetSameAsMember(actor, member)) return;
+
+    if (member.playerRole === GuildRole.Invited) {
+      this.game.messageHelper.sendSimpleMessage(
+        actor,
+        'They need to join first!',
+      );
+      return;
+    }
 
     if (member.playerRole === GuildRole.Administrator) {
       member.playerRole = GuildRole.Owner;
@@ -355,12 +534,19 @@ export class GuildManager extends BaseService {
 
     this.logMemberAction(actor, `Promoted ${member.playerName}.`);
     this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You promoted ${member.playerName}!`,
+    );
   }
 
   // demote a guild member
   public async demoteMember(actor: Player, target: string) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
+
+    if (this.isAutoGuild(guild)) return;
 
     if (!this.canMemberDoAction(actor, GuildRole.Owner)) {
       this.game.messageHelper.sendSimpleMessage(
@@ -373,6 +559,16 @@ export class GuildManager extends BaseService {
     const member = this.getGuildMemberForPlayerById(guild, target);
     if (!member) return;
 
+    if (member.playerRole === GuildRole.Invited) {
+      this.game.messageHelper.sendSimpleMessage(
+        actor,
+        'They need to join first!',
+      );
+      return;
+    }
+
+    if (this.isTargetSameAsMember(actor, member)) return;
+
     if (member.playerRole === GuildRole.Administrator) {
       member.playerRole = GuildRole.Member;
     }
@@ -383,9 +579,14 @@ export class GuildManager extends BaseService {
 
     this.logMemberAction(actor, `Demoted ${member.playerName}.`);
     this.saveGuild(guild);
+
+    this.game.messageHelper.sendSimpleMessage(
+      actor,
+      `You demoted ${member.playerName}!`,
+    );
   }
 
-  // add coins to the guild treasury
+  // add gold to the guild treasury
   public async addToTreasury(actor: Player, amount: number) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
@@ -421,6 +622,7 @@ export class GuildManager extends BaseService {
     this.saveGuild(guild);
   }
 
+  // remove gold from the treasury
   public async removeFromTreasury(actor: Player, amount: number) {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
@@ -461,7 +663,7 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
-    newMOTD = newMOTD.substring(0, 100);
+    newMOTD = newMOTD.substring(0, 250);
 
     if (!this.canMemberDoAction(actor, GuildRole.Administrator)) {
       this.game.messageHelper.sendSimpleMessage(

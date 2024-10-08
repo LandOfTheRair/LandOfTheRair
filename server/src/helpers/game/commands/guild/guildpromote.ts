@@ -1,10 +1,12 @@
 import { IMacroCommandArgs, IPlayer } from '../../../../interfaces';
-import { MacroCommand } from '../../../../models';
+import { MacroCommand, Player } from '../../../../models';
 
 export class GuildPromote extends MacroCommand {
   override aliases = ['guild promote'];
   override canBeInstant = false;
   override canBeFast = false;
 
-  override execute(player: IPlayer, args: IMacroCommandArgs) {}
+  override execute(player: IPlayer, args: IMacroCommandArgs) {
+    this.game.guildManager.promoteMember(player as Player, args.stringArgs);
+  }
 }
