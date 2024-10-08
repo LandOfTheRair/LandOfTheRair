@@ -30,6 +30,7 @@ export class MassTeleport extends Spell {
 
     const location = spellCastArgs.originalArgs?.stringArgs;
     if (!location) {
+      this.game.characterHelper.mana(caster, 100);
       this.game.teleportHelper.showTeleports(caster as IPlayer, 'massteleport');
       this.game.spellManager.resetCooldown(caster, 'MassTeleport');
       return;
