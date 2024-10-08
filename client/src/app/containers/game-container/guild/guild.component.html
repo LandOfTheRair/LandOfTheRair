@@ -62,6 +62,22 @@
         <div [innerHTML]="guildInfo.motd | linkify"></div>
       </div>
 
+      <div class="treasury">
+        <app-item
+          matTooltip="Guild Treasury"
+          [showValue]="true"
+          [item]="{
+            name: 'Gold Coin',
+            mods: {
+              currency: 'gold',
+              itemClass: 'Coin',
+              value: guildInfo.treasury
+            },
+            uuid: ''
+          }"
+        ></app-item>
+      </div>
+
       <div class="about-actions">
         <button
           mat-raised-button
@@ -93,26 +109,7 @@
         >
           Change MOTD
         </button>
-        }
-
-        <div class="treasury">
-          <app-item
-            matTooltip="Guild Treasury"
-            size="small"
-            [showValue]="true"
-            [item]="{
-              name: 'Gold Coin',
-              mods: {
-                currency: 'gold',
-                itemClass: 'Coin',
-                value: guildInfo.treasury
-              },
-              uuid: ''
-            }"
-          ></app-item>
-        </div>
-
-        @if(!canDoAdministratorActions()) {
+        } @if(!canDoAdministratorActions()) {
         <div></div>
         }
 
