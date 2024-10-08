@@ -9,6 +9,7 @@ import {
   DamageClass,
   Direction,
   GameAction,
+  GuildRole,
   Holiday,
   initializePlayer,
   IPlayer,
@@ -196,6 +197,26 @@ export class PlayerHelper extends BaseService {
       action: GameAction.UpdateGuild,
       guild: null,
     });
+
+    if (player.isGM) {
+      const gmGuild = this.game.guildManager.getGuildByTag('GM');
+      if (gmGuild) {
+        player.guildId = gmGuild._id.toHexString();
+        this.game.guildManager.addGuildMember(gmGuild, player, GuildRole.Owner);
+      }
+    }
+
+    if (player.isTester) {
+      const testGuild = this.game.guildManager.getGuildByTag('TEST');
+      if (testGuild) {
+        player.guildId = testGuild._id.toHexString();
+        this.game.guildManager.addGuildMember(
+          testGuild,
+          player,
+          GuildRole.Owner,
+        );
+      }
+    }
 
     if (player.guildId) {
       const guild = this.game.guildManager.getGuildById(player.guildId);

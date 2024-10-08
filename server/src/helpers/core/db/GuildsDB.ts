@@ -23,7 +23,7 @@ export class GuildsDB extends BaseService {
   }
 
   public async createGuild(
-    owner: Player,
+    owner: Player | undefined,
     name: string,
     tag: string,
   ): Promise<Guild | undefined> {
@@ -38,7 +38,9 @@ export class GuildsDB extends BaseService {
     entry.level = GuildLevel.Basic;
     entry.members = {};
 
-    this.game.guildManager.addGuildMember(entry, owner, GuildRole.Owner);
+    if (owner) {
+      this.game.guildManager.addGuildMember(entry, owner, GuildRole.Owner);
+    }
 
     await this.db.save(entry);
 

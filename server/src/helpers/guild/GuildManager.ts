@@ -5,10 +5,32 @@ import {
   Currency,
   GameAction,
   GuildRole,
+  IGuild,
   IGuildMember,
 } from '../../../../shared/interfaces';
 import { Guild, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
+
+const autoGuilds: IGuild[] = [
+  {
+    level: 0,
+    members: {},
+    motd: '',
+    name: 'Game Masters',
+    tag: 'GM',
+    timestamp: 0,
+    treasury: 0,
+  },
+  {
+    level: 0,
+    members: {},
+    motd: '',
+    name: 'Testers',
+    tag: 'TEST',
+    timestamp: 0,
+    treasury: 0,
+  },
+];
 
 @Injectable()
 export class GuildManager extends BaseService {
@@ -16,6 +38,15 @@ export class GuildManager extends BaseService {
 
   public async init() {
     await this.loadGuilds();
+    this.createAutoGuilds();
+  }
+
+  private createAutoGuilds() {
+    autoGuilds.forEach((guild) => {
+      if (this.getGuildByTag(guild.tag)) return;
+
+      this.game.guildsDB.createGuild(undefined, guild.name, guild.tag);
+    });
   }
 
   private isAutoGuild(guild: Guild): boolean {
@@ -69,6 +100,11 @@ export class GuildManager extends BaseService {
   // get a guild by id (if possible)
   public getGuildById(id: string): Guild | undefined {
     return this.guilds[id];
+  }
+
+  // get a guild by id (if possible)
+  public getGuildByTag(tag: string): Guild | undefined {
+    return Object.values(this.guilds).find((g) => g.tag === tag);
   }
 
   // get the members for a guild in an iterable form
@@ -158,9 +194,6 @@ export class GuildManager extends BaseService {
     allGuilds.forEach((guild) => {
       this.guilds[guild._id.toHexString()] = guild;
     });
-
-    // TODO: if no gm guild, make one
-    // TODO: if no tester guild, make one
   }
 
   // create the guild
