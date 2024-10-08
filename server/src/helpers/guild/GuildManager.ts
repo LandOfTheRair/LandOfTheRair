@@ -686,4 +686,15 @@ export class GuildManager extends BaseService {
 
     return this.game.guildLogsDB.getEntriesForGuild(guild);
   }
+
+  public guildMessage(guild: Guild, message: string) {
+    this.getGuildMembers(guild).forEach((member) => {
+      const onlinePlayer = this.game.playerManager.getPlayerByUsername(
+        member.playerUsername,
+      );
+      if (!onlinePlayer) return;
+
+      this.game.messageHelper.sendSimpleMessage(onlinePlayer, message);
+    });
+  }
 }
