@@ -22,6 +22,7 @@ import {
   InventoryHelper,
   ItemHelper,
   LockerHelper,
+  MigrationHelper,
   MovementHelper,
   NPCHelper,
   PlayerHelper,
@@ -117,6 +118,7 @@ export class Game {
     public emailHelper: EmailHelper,
     public profanityHelper: ProfanityHelper,
 
+    public migrationHelper: MigrationHelper,
     public effectManager: EffectManager,
     public corpseManager: CorpseManager,
     public lobbyManager: LobbyManager,
@@ -206,6 +208,7 @@ export class Game {
       'guildsDB',
       'emailHelper',
       'profanityHelper',
+      'migrationHelper',
       'effectManager',
       'corpseManager',
       'lobbyManager',

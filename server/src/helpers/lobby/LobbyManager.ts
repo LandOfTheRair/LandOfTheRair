@@ -80,7 +80,7 @@ export class LobbyManager extends BaseService {
 
   public async joinGame(account: Account, player: Player): Promise<void> {
     await this.game.characterDB.reloadPlayerAccountInfo(player, account);
-    this.game.playerHelper.migrate(player, account);
+    this.game.migrationHelper.migrate(player, account);
     await this.game.characterDB.loadPlayerDailyInfo(player, account);
     this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
     this.playerManager.addPlayerToGame(player);

@@ -14,6 +14,7 @@ export * from './InteractionHelper';
 export * from './InventoryHelper';
 export * from './ItemHelper';
 export * from './LockerHelper';
+export * from './MigrationHelper';
 export * from './MovementHelper';
 export * from './NPCHelper';
 export * from './PlayerHelper';
