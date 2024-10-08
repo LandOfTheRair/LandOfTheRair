@@ -22,6 +22,7 @@ import { GameService } from '../../../services/game.service';
 export class GuildComponent {
   public player = select(GameState.player);
   public guild = select(GameState.guild);
+  public auditLog = select(GameState.guildAuditLog);
 
   private gameService = inject(GameService);
   private modalService = inject(ModalService);
@@ -124,5 +125,10 @@ export class GuildComponent {
 
   public kickMember(memberId: string) {
     this.gameService.sendCommandString(`guild kick ${memberId}`);
+  }
+
+  public getAuditLog($event) {
+    if ($event !== 2) return;
+    this.gameService.sendCommandString(`guild auditlog`);
   }
 }

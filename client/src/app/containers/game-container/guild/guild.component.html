@@ -55,6 +55,7 @@
     class="bring-to-top"
     [selectedIndex]="0"
     animationDuration="0ms"
+    (selectedIndexChange)="getAuditLog($event)"
   >
     <mat-tab label="About">
       <div class="motd">
@@ -209,7 +210,24 @@
 
     @if(canDoAdministratorActions()) {
 
-    <mat-tab label="Audit Log"></mat-tab>
+    <mat-tab label="Audit Log">
+      <mat-list class="audit-log">
+        @for(entry of auditLog(); track $index) {
+        <mat-list-item>
+          <div class="entry-container">
+            <div class="timestamp">
+              {{ entry.timestamp | date : 'short' }}
+            </div>
+
+            <div class="log-entry">
+              <strong>[{{ entry.actor }}]</strong>
+              {{ entry.action }}
+            </div>
+          </div>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-tab>
     }
   </mat-tab-group>
   }

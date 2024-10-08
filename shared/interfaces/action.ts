@@ -183,4 +183,5 @@ export enum GameAction {
   SetSessionStatistics = '[Session] Set Statistics',
 
   UpdateGuild = '[Guild] Update Guild',
+  UpdateGuildAuditLog = '[Guild] Update Audit Log',
 }

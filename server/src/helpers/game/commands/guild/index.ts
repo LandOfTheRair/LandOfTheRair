@@ -1,3 +1,4 @@
+export * from './guildauditlog';
 export * from './guilddemote';
 export * from './guilddisband';
 export * from './guildinvite';

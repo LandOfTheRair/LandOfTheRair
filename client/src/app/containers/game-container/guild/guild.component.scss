@@ -64,3 +64,20 @@ mat-tab-group {
     justify-content: flex-end;
   }
 }
+
+.audit-log {
+  height: calc(650px - 36px);
+  overflow-y: auto;
+
+  .entry-container {
+    display: flex;
+    flex-direction: column;
+
+    .timestamp {
+      font-style: italic;
+    }
+
+    .log-entry {
+    }
+  }
+}

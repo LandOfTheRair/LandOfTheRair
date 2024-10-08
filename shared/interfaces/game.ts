@@ -72,6 +72,7 @@ export interface IGame {
 
   guildInfo: {
     guild: IGuild | null;
+    auditLog: any[];
   };
 
   inspectingCharacter: IPlayer | null;

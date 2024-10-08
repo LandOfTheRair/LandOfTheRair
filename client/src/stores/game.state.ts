@@ -36,6 +36,7 @@ import {
   SetMap,
   SetPlayer,
   ShowWindow,
+  UpdateGuildAuditLog,
   UpdateGuildInfo,
   UpdateParty,
   ViewCharacterEquipment,
@@ -101,6 +102,7 @@ const defaultGame: () => IGame = () => ({
   },
   guildInfo: {
     guild: null,
+    auditLog: [],
   },
   inspectingCharacter: null,
 });
@@ -138,6 +140,11 @@ export class GameState {
   @Selector()
   static guild(state: IGame) {
     return state.guildInfo.guild;
+  }
+
+  @Selector()
+  static guildAuditLog(state: IGame) {
+    return state.guildInfo.auditLog;
   }
 
   @Selector()
@@ -605,6 +612,16 @@ export class GameState {
 
   @Action(UpdateGuildInfo)
   updateGuildInfo(ctx: StateContext<IGame>, { guild }: UpdateGuildInfo) {
-    ctx.patchState({ guildInfo: { guild } });
+    const state = ctx.getState();
+    ctx.patchState({ guildInfo: { ...state.guildInfo, guild } });
+  }
+
+  @Action(UpdateGuildAuditLog)
+  updateGuildAuditLog(
+    ctx: StateContext<IGame>,
+    { auditLog }: UpdateGuildAuditLog,
+  ) {
+    const state = ctx.getState();
+    ctx.patchState({ guildInfo: { ...state.guildInfo, auditLog } });
   }
 }

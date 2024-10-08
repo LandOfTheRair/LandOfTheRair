@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { sortBy } from 'lodash';
 import {
   Currency,
   GameAction,
@@ -684,7 +685,17 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
-    return this.game.guildLogsDB.getEntriesForGuild(guild);
+    const logEntries = await this.game.guildLogsDB.getEntriesForGuild(guild);
+
+    const entriesToSend = sortBy(logEntries, (entry) => -entry.timestamp).slice(
+      0,
+      30,
+    );
+
+    this.game.wsCmdHandler.sendToSocket(actor.username, {
+      action: GameAction.UpdateGuildAuditLog,
+      auditLog: entriesToSend,
+    });
   }
 
   public guildMessage(guild: Guild, message: string) {

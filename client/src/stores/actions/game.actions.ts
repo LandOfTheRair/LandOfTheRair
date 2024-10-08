@@ -191,3 +191,10 @@ export class UpdateGuildInfo {
 
   constructor(public guild: IGuild | null) {}
 }
+
+// dispatched when the server wants to send a guild update
+export class UpdateGuildAuditLog {
+  static type = GameAction.UpdateGuildAuditLog;
+
+  constructor(public auditLog: any[]) {}
+}
