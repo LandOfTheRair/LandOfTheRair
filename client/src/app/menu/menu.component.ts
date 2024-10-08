@@ -155,18 +155,9 @@ export class MenuComponent implements OnInit {
       handler: () => {},
       children: [
         {
-          name: 'Journal',
-          handler: () => this.store.dispatch(new ShowWindow('journal')),
-        },
-        {
-          name: 'Command Line',
+          name: 'Achievements',
           visibleIf: toObservable(this.inGame),
-          handler: () => this.store.dispatch(new ShowWindow('commandLine')),
-        },
-        {
-          name: 'Character',
-          visibleIf: toObservable(this.inGame),
-          handler: () => this.store.dispatch(new ShowWindow('equipmentMain')),
+          handler: () => this.store.dispatch(new ShowWindow('achievements')),
         },
         {
           name: 'Belt',
@@ -174,14 +165,28 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('inventoryBelt')),
         },
         {
-          name: 'Sack',
+          name: 'Character',
           visibleIf: toObservable(this.inGame),
-          handler: () => this.store.dispatch(new ShowWindow('inventorySack')),
+          handler: () => this.store.dispatch(new ShowWindow('equipmentMain')),
+        },
+        {
+          name: 'Command Line',
+          visibleIf: toObservable(this.inGame),
+          handler: () => this.store.dispatch(new ShowWindow('commandLine')),
         },
         {
           name: 'Ground',
           visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('ground')),
+        },
+        {
+          name: 'Guild',
+          visibleIf: toObservable(this.inGame),
+          handler: () => this.store.dispatch(new ShowWindow('guild')),
+        },
+        {
+          name: 'Journal',
+          handler: () => this.store.dispatch(new ShowWindow('journal')),
         },
         {
           name: 'Party',
@@ -194,14 +199,14 @@ export class MenuComponent implements OnInit {
           handler: () => this.store.dispatch(new ShowWindow('quests')),
         },
         {
+          name: 'Sack',
+          visibleIf: toObservable(this.inGame),
+          handler: () => this.store.dispatch(new ShowWindow('inventorySack')),
+        },
+        {
           name: 'Talents',
           visibleIf: toObservable(this.inGame),
           handler: () => this.store.dispatch(new ShowWindow('traits')),
-        },
-        {
-          name: 'Achievements',
-          visibleIf: toObservable(this.inGame),
-          handler: () => this.store.dispatch(new ShowWindow('achievements')),
         },
         {
           name: 'Reset Window Positions',

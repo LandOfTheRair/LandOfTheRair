@@ -36,6 +36,8 @@ import {
   SetMap,
   SetPlayer,
   ShowWindow,
+  UpdateGuildAuditLog,
+  UpdateGuildInfo,
   UpdateParty,
   ViewCharacterEquipment,
 } from './actions';
@@ -98,6 +100,10 @@ const defaultGame: () => IGame = () => ({
   tradeskillInfo: {
     tradeskill: null,
   },
+  guildInfo: {
+    guild: null,
+    auditLog: [],
+  },
   inspectingCharacter: null,
 });
 
@@ -129,6 +135,16 @@ export class GameState {
   @Selector()
   static itemTooltip(state: IGame) {
     return state.itemTooltip;
+  }
+
+  @Selector()
+  static guild(state: IGame) {
+    return state.guildInfo.guild;
+  }
+
+  @Selector()
+  static guildAuditLog(state: IGame) {
+    return state.guildInfo.auditLog;
   }
 
   @Selector()
@@ -252,6 +268,7 @@ export class GameState {
 
     const state = ctx.getState();
     baseState.currentHoliday = state.currentHoliday;
+    baseState.guildInfo = state.guildInfo;
 
     ctx.patchState(baseState);
   }
@@ -591,5 +608,20 @@ export class GameState {
   @Action(UpdateParty)
   updateParty(ctx: StateContext<IGame>, { party, partyMembers }: UpdateParty) {
     ctx.patchState({ partyInfo: { party, partyMembers } });
+  }
+
+  @Action(UpdateGuildInfo)
+  updateGuildInfo(ctx: StateContext<IGame>, { guild }: UpdateGuildInfo) {
+    const state = ctx.getState();
+    ctx.patchState({ guildInfo: { ...state.guildInfo, guild } });
+  }
+
+  @Action(UpdateGuildAuditLog)
+  updateGuildAuditLog(
+    ctx: StateContext<IGame>,
+    { auditLog }: UpdateGuildAuditLog,
+  ) {
+    const state = ctx.getState();
+    ctx.patchState({ guildInfo: { ...state.guildInfo, auditLog } });
   }
 }

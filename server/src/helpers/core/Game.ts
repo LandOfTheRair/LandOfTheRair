@@ -3,6 +3,7 @@ import { LoggerTimer } from 'logger-timer';
 import { GameEvent, IWebsocketCommandHandler } from '../../interfaces';
 
 import { EventEmitter } from 'events';
+import { BaseService } from '../../models/BaseService';
 import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import {
   AchievementsHelper,
@@ -59,6 +60,7 @@ import {
   HolidayHelper,
   LootHelper,
 } from '../game/tools';
+import { GuildManager } from '../guild';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { RNGDungeonGenerator, RNGDungeonManager } from '../rng';
 import { Database } from './Database';
@@ -67,6 +69,8 @@ import {
   CharacterDB,
   EventsDB,
   GroundDB,
+  GuildLogsDB,
+  GuildsDB,
   LogsDB,
   MarketDB,
   RedeemableDB,
@@ -107,6 +111,8 @@ export class Game {
     public groundDB: GroundDB,
     public eventsDB: EventsDB,
     public redeemableDB: RedeemableDB,
+    public guildLogsDB: GuildLogsDB,
+    public guildsDB: GuildsDB,
 
     public emailHelper: EmailHelper,
     public profanityHelper: ProfanityHelper,
@@ -169,6 +175,8 @@ export class Game {
     public rngDungeonGenerator: RNGDungeonGenerator,
     public rngDungeonManager: RNGDungeonManager,
 
+    public guildManager: GuildManager,
+
     public testHelper: TestHelper,
   ) {}
 
@@ -179,7 +187,7 @@ export class Game {
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 
-    const initOrder = [
+    const initOrder: (keyof Game)[] = [
       'crashContext',
       'logger',
       'transmissionHelper',
@@ -194,6 +202,8 @@ export class Game {
       'groundDB',
       'eventsDB',
       'redeemableDB',
+      'guildLogsDB',
+      'guildsDB',
       'emailHelper',
       'profanityHelper',
       'effectManager',
@@ -250,6 +260,7 @@ export class Game {
       'discordHelper',
       'rngDungeonGenerator',
       'rngDungeonManager',
+      'guildManager',
       'testHelper',
     ];
 
@@ -260,10 +271,12 @@ export class Game {
     for (const i of initOrder) {
       this.logger.log('Game:Init', `Initializing ${i}...`);
 
-      this[i].game = this;
+      const service = this[i] as BaseService;
+
+      service.game = this;
 
       timer.startTimer(`init-${i}`);
-      await this[i].init();
+      await service.init();
       timer.stopTimer(`init-${i}`);
     }
 

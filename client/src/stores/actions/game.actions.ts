@@ -1,6 +1,7 @@
 import {
   Currency,
   GameAction,
+  IGuild,
   IItemContainer,
   IParty,
   IPartyMember,
@@ -182,4 +183,18 @@ export class OpenTradeskillWindow {
 // dispatched when closing the game
 export class HideTradeskillWindow {
   static type = GameAction.HideTradeskill;
+}
+
+// dispatched when the server wants to send a guild update
+export class UpdateGuildInfo {
+  static type = GameAction.UpdateGuild;
+
+  constructor(public guild: IGuild | null) {}
+}
+
+// dispatched when the server wants to send a guild update
+export class UpdateGuildAuditLog {
+  static type = GameAction.UpdateGuildAuditLog;
+
+  constructor(public auditLog: any[]) {}
 }

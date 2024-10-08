@@ -48,6 +48,8 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_SERVER_ONLY()) _statistics: ObjectId;
   @Property(PROP_SERVER_ONLY()) _lockers: ObjectId;
 
+  @Property(PROP_UNSAVED_SHARED()) guildId: string;
+
   @Property(PROP_UNSAVED_SHARED()) items: ICharacterItems;
   @Property(PROP_UNSAVED_SHARED()) traits: ICharacterTraits;
   @Property(PROP_UNSAVED_SHARED()) quests: ICharacterQuests;

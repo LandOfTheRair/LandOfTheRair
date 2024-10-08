@@ -1,4 +1,3 @@
-
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
@@ -8,10 +7,7 @@ import { Database } from '../Database';
 
 @Injectable()
 export class LogsDB extends BaseService {
-
-  constructor(
-    private db: Database
-  ) {
+  constructor(private db: Database) {
     super();
   }
 
@@ -25,11 +21,10 @@ export class LogsDB extends BaseService {
   public async addLogEntry(message: string, extraData = {}) {
     const entry = new LogEntry();
     entry._id = new ObjectId();
-    entry.createdAt = new Date();
+    entry.timestamp = Date.now();
     entry.message = message;
     entry.extraData = extraData;
 
     await this.db.save(entry);
   }
-
 }

@@ -1,0 +1,244 @@
+@let guildInfo = guild();
+
+<app-window
+  windowName="guild"
+  [head]="headTemplate"
+  [body]="bodyTemplate"
+  [canHide]="true"
+  [initialHide]="true"
+  [defaultX]="450"
+  [defaultY]="100"
+  [defaultWidth]="650"
+  [defaultHeight]="650"
+></app-window>
+
+<ng-template #headTemplate>
+  Guild @if(guildInfo) { - {{ guildInfo.name }} [{{ guildInfo.tag }}] &middot;
+  <em>Established {{ guildInfo.timestamp | date : 'mediumDate' }}</em>
+  }
+</ng-template>
+
+<ng-template #bodyTemplate>
+  @if(isInvitee() && guildInfo) {
+  <div
+    class="vertical-center full-width full-height background-text text-center"
+  >
+    You have been invited to {{ guildInfo.name }} [{{ guildInfo.tag }}]. Would
+    you like to join?
+  </div>
+
+  <div class="about-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      class="form-inline-button"
+      (click)="acceptInvite()"
+    >
+      Accept Invite
+    </button>
+
+    <button
+      mat-raised-button
+      color="warn"
+      class="form-inline-button"
+      (click)="denyInvite()"
+    >
+      Deny Invite
+    </button>
+  </div>
+  }
+
+  <!---->
+  @if(!isInvitee() && guildInfo) {
+  <mat-tab-group
+    mat-align-tabs="center"
+    class="bring-to-top"
+    [selectedIndex]="0"
+    animationDuration="0ms"
+    (selectedIndexChange)="getAuditLog($event)"
+  >
+    <mat-tab label="About">
+      <div class="motd">
+        <h2 class="text-center">Message of the Day</h2>
+        <div [innerHTML]="guildInfo.motd | linkify"></div>
+      </div>
+
+      <div class="treasury">
+        <app-item
+          matTooltip="Guild Treasury"
+          [showValue]="true"
+          [item]="{
+            name: 'Gold Coin',
+            mods: {
+              currency: 'gold',
+              itemClass: 'Coin',
+              value: guildInfo.treasury
+            },
+            uuid: ''
+          }"
+        ></app-item>
+      </div>
+
+      <div class="about-actions">
+        <button
+          mat-raised-button
+          color="warn"
+          class="form-inline-button"
+          (click)="leaveGuild()"
+        >
+          Leave Guild
+        </button>
+
+        @if(canDoOwnerActions()) {
+        <button
+          mat-raised-button
+          color="warn"
+          class="form-inline-button"
+          (click)="disbandGuild()"
+        >
+          Disband Guild
+        </button>
+        }
+
+        <!-- -->
+        @if(canDoAdministratorActions()) {
+        <button
+          mat-raised-button
+          color="primary"
+          class="form-inline-button"
+          (click)="changeMOTD()"
+        >
+          Change MOTD
+        </button>
+        } @if(!canDoAdministratorActions()) {
+        <div></div>
+        }
+
+        <button
+          [class.hidden]="!canDoAdministratorActions()"
+          mat-raised-button
+          color="primary"
+          class="form-inline-button"
+          (click)="inviteMember()"
+        >
+          Invite Member
+        </button>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Members">
+      <mat-list>
+        @for(member of guildMembers(); track member.playerId) {
+        <mat-list-item>
+          <div class="member">
+            <div class="member-left">
+              <div class="member-icon">
+                <app-icon size="small" [name]="memberIcon(member)"></app-icon>
+              </div>
+            </div>
+
+            <div class="member-right">
+              <div class="member-name">
+                {{ member.playerName }}
+              </div>
+
+              <div class="member-designation">
+                Level {{ member.playerLevel }} {{ member.playerClass }}
+              </div>
+            </div>
+
+            <div class="member-actions">
+              @if(canDoOwnerActions()) {
+
+              <button
+                [disabled]="
+                  member.playerRole > myPowerLevel() ||
+                  member.playerId === player()?.uuid ||
+                  member.playerRole === 0 ||
+                  member.playerRole === 10
+                "
+                class="change-icon-color"
+                mat-icon-button
+                color="accent"
+                matTooltip="Promote Member"
+                (click)="promoteMember(member.playerId)"
+              >
+                <mat-icon>arrow_upward</mat-icon>
+              </button>
+
+              <button
+                [disabled]="
+                  member.playerRole > myPowerLevel() ||
+                  member.playerId === player()?.uuid ||
+                  member.playerRole === 0 ||
+                  member.playerRole === 3
+                "
+                class="change-icon-color"
+                mat-icon-button
+                color="accent"
+                matTooltip="Demote Member"
+                (click)="demoteMember(member.playerId)"
+              >
+                <mat-icon>arrow_downward</mat-icon>
+              </button>
+              }
+
+              <!-- -->
+              @if(canDoAdministratorActions()) {
+
+              <button
+                [disabled]="
+                  member.playerRole > myPowerLevel() ||
+                  member.playerId === player()?.uuid ||
+                  member.playerRole === 0
+                "
+                class="change-icon-color"
+                mat-icon-button
+                color="warn"
+                matTooltip="Kick Member"
+                (click)="kickMember(member.playerId)"
+              >
+                <mat-icon>logout</mat-icon>
+              </button>
+              }
+            </div>
+          </div>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-tab>
+
+    @if(canDoAdministratorActions()) {
+
+    <mat-tab label="Audit Log">
+      <mat-list class="audit-log">
+        @for(entry of auditLog(); track $index) {
+        <mat-list-item>
+          <div class="entry-container">
+            <div class="timestamp">
+              {{ entry.timestamp | date : 'short' }}
+            </div>
+
+            <div class="log-entry">
+              <strong>[{{ entry.actor }}]</strong>
+              {{ entry.action }}
+            </div>
+          </div>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-tab>
+    }
+  </mat-tab-group>
+  }
+
+  <!-- -->
+  @else {
+  <div
+    class="vertical-center full-width full-height background-text text-center"
+  >
+    You aren't a part of a guild. Visit the Guildmaster in Frostlands to make
+    one!
+  </div>
+  }
+</ng-template>

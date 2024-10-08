@@ -28,7 +28,7 @@ export class RedeemableDB extends BaseService {
   public async addRedeemable(opts: Partial<Redeemable>): Promise<Redeemable> {
     const entry = new Redeemable();
     entry._id = new ObjectId();
-    entry.createdAt = new Date();
+    entry.timestamp = Date.now();
     entry.code = this.generateCode();
     entry.claimedBy = [];
 

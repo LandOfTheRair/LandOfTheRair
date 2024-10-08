@@ -43,13 +43,15 @@ export class CommandLineComponent implements OnInit, OnDestroy {
     cmd: 'Enter your command here...',
     say: 'Talk to local players here...',
     party: 'Talk to your party here...',
+    guild: 'Talk to your guild here...',
     global: 'Talk to the lobby here...',
   };
 
   public nextModes: Record<ChatMode, ChatMode> = {
     cmd: 'say',
     say: 'party',
-    party: 'global',
+    party: 'guild',
+    guild: 'global',
     global: 'cmd',
   };
 
@@ -202,6 +204,12 @@ export class CommandLineComponent implements OnInit, OnDestroy {
 
         if (!shouldBypassOthers && chatMode === 'party') {
           this.gameService.sendCommandString(`!partysay ${currentCommand}`);
+          reset();
+          return;
+        }
+
+        if (!shouldBypassOthers && chatMode === 'guild') {
+          this.gameService.sendCommandString(`!guildsay ${currentCommand}`);
           reset();
           return;
         }

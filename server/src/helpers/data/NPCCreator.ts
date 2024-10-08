@@ -721,6 +721,8 @@ export class NPCCreator extends BaseService {
       [BehaviorType.Resetter]: AllBehaviors.ResetterBehavior,
       [BehaviorType.AXPSwapper]: AllBehaviors.AXPSwapperBehavior,
       [BehaviorType.FurUpgrader]: AllBehaviors.FurUpgraderBehavior,
+      [BehaviorType.GuildClerk]: AllBehaviors.GuildClerkBehavior,
+      [BehaviorType.Guildmaster]: AllBehaviors.GuildmasterBehavior,
       [BehaviorType.ExitWarper]: AllBehaviors.ExitWarperBehavior,
       [BehaviorType.SpoilerLogger]: AllBehaviors.SpoilerLoggerBehavior,
       [BehaviorType.RNGArtificer]: AllBehaviors.RNGArtificerBehavior,

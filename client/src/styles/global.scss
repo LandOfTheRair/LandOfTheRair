@@ -245,3 +245,9 @@ mat-tab-group.bring-to-top .mat-tab-header {
 .text-success {
   color: #0a0 !important;
 }
+
+.mat-icon-button.change-icon-color {
+  mat-icon {
+    color: inherit;
+  }
+}

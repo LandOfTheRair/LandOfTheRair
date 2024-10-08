@@ -1,5 +1,6 @@
 import { Currency, Holiday } from './building-blocks';
 import { IItemContainer } from './character';
+import { IGuild } from './guild';
 import { ISimpleItem } from './item';
 import { INPC } from './npc';
 import { IParty, IPartyMember } from './party';
@@ -67,6 +68,11 @@ export interface IGame {
 
   tradeskillInfo: {
     tradeskill: string;
+  };
+
+  guildInfo: {
+    guild: IGuild | null;
+    auditLog: any[];
   };
 
   inspectingCharacter: IPlayer | null;

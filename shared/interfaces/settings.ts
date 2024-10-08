@@ -4,7 +4,7 @@ export interface IAccountSettings {
   autologin?: boolean;
 }
 
-export type ChatMode = 'cmd' | 'say' | 'global' | 'party';
+export type ChatMode = 'cmd' | 'say' | 'global' | 'party' | 'guild';
 
 export enum GameOption {
   // interface options
