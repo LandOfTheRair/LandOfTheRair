@@ -83,7 +83,7 @@ import { UserInputHelper } from './UserInputHelper';
 
 @Injectable()
 export class Game {
-  private ticksElapsed = 0;
+  private ticksElapsed = 1;
   private isReady = false;
 
   public get isGameReady() {
@@ -189,118 +189,190 @@ export class Game {
     this.logger.log('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 
-    const initOrder: (keyof Game)[] = [
-      'crashContext',
-      'logger',
-      'transmissionHelper',
-      'modkitManager',
-      'contentManager',
-      'db',
-      'logsDB',
-      'worldDB',
-      'marketDB',
-      'characterDB',
-      'accountDB',
-      'groundDB',
-      'eventsDB',
-      'redeemableDB',
-      'guildLogsDB',
-      'guildsDB',
-      'emailHelper',
-      'profanityHelper',
-      'migrationHelper',
-      'effectManager',
-      'corpseManager',
-      'lobbyManager',
-      'subscriptionHelper',
-      'characterRoller',
-      'currencyHelper',
-      'itemCreator',
-      'dialogActionHelper',
-      'npcCreator',
-      'deathHelper',
-      'targettingHelper',
-      'teleportHelper',
-      'damageHelperOnesided',
-      'damageHelperMagic',
-      'damageHelperPhysical',
-      'combatHelper',
-      'questHelper',
-      'diceRollerHelper',
-      'lootHelper',
-      'holidayHelper',
-      'movementHelper',
-      'visibilityHelper',
-      'staticTextHelper',
-      'interactionHelper',
-      'calculatorHelper',
-      'characterHelper',
-      'itemHelper',
-      'npcHelper',
-      'playerHelper',
-      'inventoryHelper',
-      'effectHelper',
-      'groundManager',
-      'spellManager',
-      'dailyHelper',
-      'bankHelper',
-      'lockerHelper',
-      'statisticsHelper',
-      'partyHelper',
-      'partyManager',
-      'darknessHelper',
-      'trapHelper',
-      'achievementsHelper',
-      'commandHandler',
-      'messageHelper',
-      'dynamicEventHelper',
-      'traitHelper',
-      'stealHelper',
-      'playerManager',
-      'worldManager',
-      'configManager',
-      'userInputHelper',
-      'discordHelper',
-      'rngDungeonGenerator',
-      'rngDungeonManager',
-      'guildManager',
-      'testHelper',
-    ];
+    const servicesByPriority: Partial<Record<GameEvent, (keyof Game)[]>> = {
+      // these must come first, they are too widely-utilized
+      [GameEvent.InitCritical]: [
+        'logger',
+        'modkitManager',
+        'contentManager',
+        'db',
+      ],
+
+      // these come second, and are fairly important. right now, that is relegated to databases
+      [GameEvent.InitImportant]: [
+        'logsDB',
+        'worldDB',
+        'marketDB',
+        'characterDB',
+        'accountDB',
+        'groundDB',
+        'eventsDB',
+        'redeemableDB',
+        'guildLogsDB',
+        'guildsDB',
+      ],
+
+      // these have init functions that have promises in them, or other big blobs of logic
+      [GameEvent.InitModerate]: [
+        'emailHelper',
+        'lobbyManager',
+        'subscriptionHelper',
+        'groundManager',
+        'dynamicEventHelper',
+        'darknessHelper',
+        'worldManager',
+        'discordHelper',
+        'guildManager',
+      ],
+
+      // these have init functions that do something, but nothing awaitable
+      [GameEvent.InitNormal]: [
+        'effectManager',
+        'holidayHelper',
+        'staticTextHelper',
+        'playerHelper',
+        'inventoryHelper',
+        'spellManager',
+        'achievementsHelper',
+        'commandHandler',
+        'playerManager',
+        'configManager',
+        'rngDungeonGenerator',
+        'rngDungeonManager',
+      ],
+
+      // these don't really have anything special, and can be initialized whenever, as their value is mostly at runtime
+      [GameEvent.InitChill]: [
+        'crashContext',
+        'transmissionHelper',
+        'profanityHelper',
+        'migrationHelper',
+        'corpseManager',
+        'characterRoller',
+        'currencyHelper',
+        'itemCreator',
+        'dialogActionHelper',
+        'npcCreator',
+        'deathHelper',
+        'targettingHelper',
+        'teleportHelper',
+        'damageHelperOnesided',
+        'damageHelperMagic',
+        'damageHelperPhysical',
+        'combatHelper',
+        'questHelper',
+        'diceRollerHelper',
+        'lootHelper',
+        'movementHelper',
+        'visibilityHelper',
+        'interactionHelper',
+        'calculatorHelper',
+        'characterHelper',
+        'itemHelper',
+        'npcHelper',
+        'effectHelper',
+        'dailyHelper',
+        'bankHelper',
+        'lockerHelper',
+        'statisticsHelper',
+        'partyHelper',
+        'partyManager',
+        'trapHelper',
+        'messageHelper',
+        'traitHelper',
+        'stealHelper',
+        'userInputHelper',
+        'testHelper',
+      ],
+    };
 
     const timer = new LoggerTimer({
       isActive: !process.env.DISABLE_TIMERS,
       dumpThreshold: 100,
     });
-    for (const i of initOrder) {
-      this.logger.log('Game:Init', `Initializing ${i}...`);
 
-      const service = this[i] as BaseService;
+    const initService = async (severity: string, serviceKey: string) => {
+      this.logger.log(`Game:Init:${severity}`, `Initializing ${serviceKey}...`);
+
+      const service = this[serviceKey] as BaseService;
 
       service.game = this;
 
-      timer.startTimer(`init-${i}`);
+      timer.startTimer(`init-${serviceKey}`);
       await service.init();
-      timer.stopTimer(`init-${i}`);
-    }
+      timer.stopTimer(`init-${serviceKey}`);
+    };
 
-    timer.dumpTimers();
+    this.gameEvents.once(GameEvent.GameStarted, () => {
+      timer.dumpTimers();
 
-    if (this.worldDB.running) {
-      this.logger.error(
-        'Game:Init',
-        'Warning: the last shutdown was unsafe. Data may have been lost.',
+      if (this.worldDB.running) {
+        this.logger.error(
+          'Game:Init',
+          'Warning: the last shutdown was unsafe. Data may have been lost.',
+        );
+      }
+
+      this.worldDB.saveRunning();
+
+      this.setupEmergencyHandlers();
+
+      this.isReady = true;
+
+      this.loop();
+    });
+
+    this.gameEvents.once(GameEvent.InitCritical, async () => {
+      const allPromises = (
+        servicesByPriority[GameEvent.InitCritical] ?? []
+      ).map((service) => initService('Critical', service));
+
+      await Promise.all(allPromises);
+
+      this.emit(GameEvent.InitImportant);
+    });
+
+    this.gameEvents.once(GameEvent.InitImportant, async () => {
+      const allPromises = (
+        servicesByPriority[GameEvent.InitImportant] ?? []
+      ).map((service) => initService('Important', service));
+
+      await Promise.all(allPromises);
+
+      this.emit(GameEvent.InitModerate);
+    });
+
+    this.gameEvents.once(GameEvent.InitModerate, async () => {
+      const allPromises = (
+        servicesByPriority[GameEvent.InitModerate] ?? []
+      ).map((service) => initService('Moderate', service));
+
+      await Promise.all(allPromises);
+
+      this.emit(GameEvent.InitNormal);
+    });
+
+    this.gameEvents.once(GameEvent.InitNormal, async () => {
+      const allPromises = (servicesByPriority[GameEvent.InitNormal] ?? []).map(
+        (service) => initService('Normal', service),
       );
-    }
 
-    this.worldDB.saveRunning();
+      await Promise.all(allPromises);
 
-    this.setupEmergencyHandlers();
+      this.emit(GameEvent.InitChill);
+    });
 
-    this.emit(GameEvent.GameStarted);
+    this.gameEvents.once(GameEvent.InitChill, async () => {
+      const allPromises = (servicesByPriority[GameEvent.InitChill] ?? []).map(
+        (service) => initService('Chill', service),
+      );
 
-    this.isReady = true;
+      await Promise.all(allPromises);
 
-    this.loop();
+      this.emit(GameEvent.GameStarted);
+    });
+
+    this.emit(GameEvent.InitCritical);
   }
 
   private emit(event: GameEvent): void {

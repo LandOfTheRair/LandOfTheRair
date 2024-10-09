@@ -1,4 +1,3 @@
-
 import { Injectable } from 'injection-js';
 import Rollbar from 'rollbar';
 
@@ -6,10 +5,10 @@ import Winston from 'winston';
 import 'winston-syslog';
 
 import { BaseService } from '../../models/BaseService';
+import { _logWithTs } from './logger/console';
 
 @Injectable()
 export class Logger extends BaseService {
-
   private rollbar: Rollbar;
   private winston: Winston.Logger;
 
@@ -18,7 +17,7 @@ export class Logger extends BaseService {
       this.rollbar = new Rollbar({
         accessToken: process.env.ROLLBAR_TOKEN,
         captureUncaught: true,
-        captureUnhandledRejections: true
+        captureUnhandledRejections: true,
       });
     }
 
@@ -35,34 +34,38 @@ export class Logger extends BaseService {
         format: Winston.format.simple(),
         levels: Winston.config.syslog.levels,
         transports: [papertrail],
-        exitOnError: (err) => err.code !== 'EPIPE'
+        exitOnError: (err) => err.code !== 'EPIPE',
       });
     }
   }
 
-  private _logWithTs(type: 'info'|'warn'|'error', tag, ...args) {
-
-    // eslint-disable-next-line no-console
-    console[type](new Date().toISOString(), `[${tag}]`, ...args);
+  private _logWithTs(type: 'info' | 'warn' | 'error' | 'debug', tag, ...args) {
+    _logWithTs(type, tag, ...args);
 
     try {
       this.winston?.[type]?.(`[${tag}] ${args}`);
 
-    // who logs the logger?
+      // who logs the logger?
     } catch {}
   }
 
-  public log(tag: string, args) {
-    this._logWithTs('info', tag, args);
+  public log(tag: string, ...args) {
+    this._logWithTs('info', tag, ...args);
   }
 
-  public warn(tag: string, args) {
-    this._logWithTs('warn', tag, args);
+  public debug(tag: string, ...args) {
+    this._logWithTs('debug', tag, ...args);
   }
 
-  public error(tag: string, args) {
-    this._logWithTs('error', tag, args);
-    this.rollbar?.error(tag, args, { context: this.game.crashContext.getCurrentContext() });
+  public warn(tag: string, ...args) {
+    this._logWithTs('warn', tag, ...args);
   }
 
+  public error(tag: string, ...args) {
+    this._logWithTs('error', tag, ...args);
+
+    this.rollbar?.error(tag, args, {
+      context: this.game.crashContext.getCurrentContext(),
+    });
+  }
 }

@@ -103,7 +103,7 @@ export class RNGDungeonManager extends BaseService {
     );
   }
 
-  // set the rest timestamp
+  // set the reset timestamp
   private setLastDungeonReset(): void {
     const resetTime = this.game.dailyHelper.resetTime;
     this.lastDungeonReset = resetTime.toFormat('yyyy-MM-dd');

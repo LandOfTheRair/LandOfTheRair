@@ -3,6 +3,7 @@ require('source-map-support').install();
 
 import path from 'path';
 import { isMainThread, Worker } from 'worker_threads';
+import { consoleError, consoleLog } from '../helpers/core/logger/console';
 import { GameServerEvent } from '../interfaces';
 
 const kill = () => process.exit(0);
@@ -25,7 +26,7 @@ if (isMainThread) {
 
     createdWorker.on('message', (msg) => {
       if (msg.type === GameServerEvent.ForceReboot) {
-        console.log(
+        consoleLog(
           'Master:ForceReboot',
           'Killing game... hopefully the server restarts!',
         );
@@ -34,7 +35,7 @@ if (isMainThread) {
 
       const target = msg.target;
       if (!target) {
-        console.error(
+        consoleError(
           `Worker:${worker}:TargetCheck`,
           `Message ${JSON.stringify(msg)} has no target.`,
         );
@@ -46,15 +47,15 @@ if (isMainThread) {
     });
 
     createdWorker.on('messageerror', (err) => {
-      console.error(`Worker:${worker}:MessageError`, err);
+      consoleError(`Worker:${worker}:MessageError`, err);
     });
 
     createdWorker.on('error', (err) => {
-      console.error(`Worker:${worker}:Error`, err);
+      consoleError(`Worker:${worker}:Error`, err);
     });
 
     createdWorker.on('exit', (code) => {
-      console.error(`Worker:${worker}:Exit`, code);
+      consoleError(`Worker:${worker}:Exit`, code);
 
       setTimeout(() => {
         createWorker(worker, name);

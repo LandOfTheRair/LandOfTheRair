@@ -10,6 +10,7 @@ import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
 import { Database } from '../helpers';
+import { consoleError, consoleLog } from '../helpers/core/logger/console';
 import * as HTTPRoutes from '../http';
 import { GameAction, GameServerEvent } from '../interfaces';
 
@@ -19,12 +20,12 @@ export class WebsocketWorker {
   private wsServer: WebSocket.Server;
 
   async start() {
-    console.info('NET', 'Starting network handler...');
+    consoleLog('NET:Init', 'Starting network handler...');
 
     // set up IPC
     parentPort?.on('message', (msg) => {
       if (msg.__ready) {
-        console.info('NET', 'Starting API server...');
+        consoleLog('NET:Init', 'Starting API server...');
         this.setup();
         return;
       }
@@ -33,11 +34,11 @@ export class WebsocketWorker {
     });
 
     process.on('unhandledRejection', (error) => {
-      console.error('NET', 'Unhandled Rejection', error);
+      consoleError('NET:UR', error);
     });
 
     process.on('uncaughtException', (error) => {
-      console.error('NET', 'Uncaught Exception', error);
+      consoleError('NET:UE', error);
     });
   }
 
@@ -61,6 +62,7 @@ export class WebsocketWorker {
       app.register(cors);
     }
 
+    consoleLog('NET:Setup', 'Initializing API routes...');
     const promises = Object.values(HTTPRoutes).map(
       async (route) =>
         await route.setup(app, {
@@ -78,8 +80,8 @@ export class WebsocketWorker {
       (err: any) => {
         if (err) throw err;
 
-        console.info(
-          'NET',
+        consoleLog(
+          'NET:Ready',
           `Started HTTP server on port ${process.env.PORT || 6975}.`,
         );
       },
@@ -90,7 +92,7 @@ export class WebsocketWorker {
       server: app.server,
     });
     app.ready().then(() => {
-      console.info('NET', 'Server is ready for connections.');
+      consoleLog('NET:Ready', 'WS server is ready for connections.');
     });
 
     this.wsServer = wsServer;
@@ -117,8 +119,8 @@ export class WebsocketWorker {
         try {
           this.emit(socket, JSON.parse(msg as string));
         } catch (e) {
-          console.error('NET', 'Invalid message (cannot parse to JSON)', msg);
-          console.error('NET', e);
+          consoleError('NET:JSONParse', msg);
+          consoleError('NET:JSONParse', e);
         }
       });
 
@@ -148,12 +150,12 @@ export class WebsocketWorker {
 
         if (ignoredMessages.includes(err.message)) return;
 
-        console.error('NET', '[Socket Error]', err);
+        consoleError('NET:Socket', err);
       });
     });
 
     wsServer.on('error', (err) => {
-      console.error('NET', '[WS Server Error]', err);
+      consoleError('NET:WSServer', err);
     });
 
     this.watchForDeadConnections();

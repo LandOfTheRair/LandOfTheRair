@@ -3,13 +3,14 @@ import 'reflect-metadata';
 import { parentPort } from 'worker_threads';
 
 import { WebsocketCommandHandler } from '../helpers';
-import { GameServerResponse } from '../interfaces';
+import { consoleError, consoleLog } from '../helpers/core/logger/console';
+import { GameEvent, GameServerResponse } from '../interfaces';
 
 export class GameloopWorker {
   private wsCommands: WebsocketCommandHandler;
 
   async start() {
-    console.info('GAME', 'Starting game loop...');
+    consoleLog('GAME:Init', 'Starting game loop...');
 
     parentPort?.on('message', (message) => {
       this.handleMessage(message);
@@ -21,20 +22,20 @@ export class GameloopWorker {
         return;
       }
 
-      console.error('GAME', 'Unhandled Rejection', error);
+      consoleError('GAME:UR', error);
     });
 
     process.on('uncaughtException', (error) => {
-      console.error('GAME', 'Uncaught Exception', error);
+      consoleError('GAME:UE', error);
     });
 
-    console.info('GAME', 'Creating WSCMD...');
+    consoleLog('GAME:Init', 'Creating WSCMD...');
     this.wsCommands = new WebsocketCommandHandler();
-    await this.wsCommands.init((id, data) => this.emit(id, data));
+    this.wsCommands.init((id, data) => this.emit(id, data));
 
-    console.info('GAME', 'Sending ready signal...');
-
-    parentPort?.postMessage({ target: 'networking', __ready: true });
+    this.wsCommands.game.gameEvents.once(GameEvent.GameStarted, () => {
+      parentPort?.postMessage({ target: 'networking', __ready: true });
+    });
   }
 
   // parse / send to the appropriate API command
@@ -54,8 +55,8 @@ export class GameloopWorker {
       const blacklistedErrors = ['Not logged in.', 'Not in game.'];
 
       if (!blacklistedErrors.includes((e as Error).message)) {
-        console.error('ERROR: CMD', e);
-        console.error('ERROR: DATA', msg);
+        consoleError('GAME:ERROR:CMD', e);
+        consoleError('GAME:ERROR:DATA', msg);
 
         if (process.env.NODE_ENV !== 'production') {
           this.emit(socketId, {

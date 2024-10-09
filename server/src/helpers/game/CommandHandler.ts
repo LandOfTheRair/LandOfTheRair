@@ -64,7 +64,7 @@ export class CommandHandler extends BaseService {
         spellCommand.noPlayerArgs = true;
       }
 
-      this.game.logger.log(
+      this.game.logger.debug(
         `CommandHandler:SpellInit`,
         `Initializing autospell ${spellName} (${message})...`,
       );

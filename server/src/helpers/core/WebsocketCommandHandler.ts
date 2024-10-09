@@ -1,5 +1,6 @@
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
+import { consoleLog } from '../../helpers/core/logger/console';
 import {
   GameServerEvent,
   GameServerResponse,
@@ -9,7 +10,7 @@ import { IWebsocketCommandHandler } from '../../interfaces/internal';
 import { Game } from './Game';
 
 export class WebsocketCommandHandler implements IWebsocketCommandHandler {
-  private game: Game;
+  public game: Game;
 
   constructor() {}
 
@@ -19,24 +20,24 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
   private emitCallback: (id, data) => void;
 
   public async init(emitCallback: (id, data) => void) {
-    console.info('WSCMD', 'Initialzing WSCMD...');
+    consoleLog('WSCMD', 'Initialzing WSCMD...');
 
     this.emitCallback = emitCallback;
 
-    console.info('WSCMD', 'Loading WS actions...');
+    consoleLog('WSCMD', 'Loading WS actions...');
     Object.keys(Actions).forEach((actionKey) => {
       const action: IServerAction = new Actions[actionKey]();
 
       this.actions[action.type] = action;
     });
 
-    console.info('WSCMD', 'Initializing injector...');
+    consoleLog('WSCMD', 'Initializing injector...');
     const injector = ReflectiveInjector.resolveAndCreate(
       resolveDependencies(Game),
     );
     this.game = injector.get(Game);
 
-    console.info('WSCMD', 'Starting game...');
+    consoleLog('WSCMD', 'Starting game...');
     await this.game.init(this);
   }
 
