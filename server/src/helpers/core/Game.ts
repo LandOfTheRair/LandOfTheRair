@@ -304,6 +304,7 @@ export class Game {
     };
 
     this.gameEvents.once(GameEvent.GameStarted, () => {
+      console.log('wat');
       timer.dumpTimers();
 
       if (this.worldDB.running) {

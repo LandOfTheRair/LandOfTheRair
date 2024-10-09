@@ -34,6 +34,7 @@ export class GameloopWorker {
     this.wsCommands.init((id, data) => this.emit(id, data));
 
     this.wsCommands.game.gameEvents.once(GameEvent.GameStarted, () => {
+      console.log('runs late');
       parentPort?.postMessage({ target: 'networking', __ready: true });
     });
   }
