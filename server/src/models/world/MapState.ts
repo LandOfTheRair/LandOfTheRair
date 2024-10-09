@@ -9,7 +9,6 @@ import {
   Alignment,
   Allegiance,
   FOVVisibility,
-  GameEvent,
   Hostility,
   ICharacter,
   IGround,
@@ -116,31 +115,29 @@ export class MapState {
     return this.spawners;
   }
 
+  private hasCreatedSpawners = false;
   private timer: LoggerTimer;
 
   constructor(
     private game: Game,
     private map: WorldMap,
-  ) {
+  ) {}
+
+  public init() {
     this.timer = new LoggerTimer({
       isActive: !process.env.DISABLE_TIMERS,
-      dumpThreshold: 500,
+      dumpThreshold: 100,
     });
 
-    // for when the world is still loading
-    this.game.gameEvents.once(GameEvent.GameStarted, () => {
-      this.createSpawners();
-    });
-
-    // if the world is already loaded
-    if (this.game.isGameReady) {
-      this.createSpawners();
-    }
+    this.createSpawners();
 
     this.timer.dumpTimers();
   }
 
   private createSpawners() {
+    if (this.hasCreatedSpawners) return;
+    this.hasCreatedSpawners = true;
+
     this.timer.startTimer(`default-${this.map.name}`);
     this.createDefaultSpawner();
     this.timer.stopTimer(`default-${this.map.name}`);
@@ -152,6 +149,8 @@ export class MapState {
 
   // create green spawner
   private createDefaultSpawner() {
+    if (this.map.allDefaultNPCs.length === 0) return;
+
     const npcDefs = this.map.allDefaultNPCs
       .map((npc) => {
         if (!npc.properties || !npc.properties.tag) {
@@ -186,12 +185,12 @@ export class MapState {
       })
       .filter(Boolean);
 
-    npcDefs.forEach((def) => {
+    npcDefs.forEach((def, i) => {
       const spawner = new Spawner(this.game, this.map, this, {
-        x: 0,
-        y: 0,
+        x: def.x,
+        y: def.y,
         map: this.map.name,
-        name: `${this.map.name} Green NPC Spawner (${def.tag})`,
+        name: `${this.map.name} Green NPC Spawner (${def.name || def.extraProps?.tag || 'Unknown'}|${i})`,
         leashRadius: -1,
         randomWalkRadius: 0,
         initialSpawn: 0,

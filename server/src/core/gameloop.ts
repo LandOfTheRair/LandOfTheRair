@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 import { parentPort } from 'worker_threads';
 
+import { once } from 'events';
 import { WebsocketCommandHandler } from '../helpers';
 import { consoleError, consoleLog } from '../helpers/core/logger/console';
 import { GameEvent, GameServerResponse } from '../interfaces';
@@ -33,10 +34,8 @@ export class GameloopWorker {
     this.wsCommands = new WebsocketCommandHandler();
     this.wsCommands.init((id, data) => this.emit(id, data));
 
-    this.wsCommands.game.gameEvents.once(GameEvent.GameStarted, () => {
-      console.log('runs late');
-      parentPort?.postMessage({ target: 'networking', __ready: true });
-    });
+    await once(this.wsCommands.game.gameEvents, GameEvent.GameStarted);
+    parentPort?.postMessage({ target: 'networking', __ready: true });
   }
 
   // parse / send to the appropriate API command

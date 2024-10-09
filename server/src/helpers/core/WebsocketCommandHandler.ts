@@ -1,6 +1,6 @@
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
-import { consoleLog } from '../../helpers/core/logger/console';
+import { consoleError, consoleLog } from '../../helpers/core/logger/console';
 import {
   GameServerEvent,
   GameServerResponse,
@@ -74,9 +74,12 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
     if (action.requiresLoggedIn && !action.canBeUnattended) {
       const account = this.game.lobbyManager.getAccount(data.username);
       if (!account) {
-        const blacklistedActionsForLogging = [GameServerEvent.QuitGame];
+        const blacklistedActionsForLogging = [
+          GameServerEvent.QuitGame,
+          GameServerEvent.Logout,
+        ];
         if (!blacklistedActionsForLogging.includes(action.type)) {
-          console.error(
+          consoleError(
             'WSCmdHandler',
             new Error(
               `Not logged in and trying to do ${type} with ${JSON.stringify(data)}.`,

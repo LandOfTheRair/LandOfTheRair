@@ -164,6 +164,9 @@ export class Spawner {
     extend(this, spawnOpts);
 
     if (this.mapRef.disableCreatureRespawn) this.currentTick = 0;
+  }
+
+  public tryInitialSpawn() {
     if (this.doInitialSpawnImmediately && this.currentTick === 0) {
       this.doInitialSpawn();
     }
@@ -318,6 +321,11 @@ export class Spawner {
       if (chosenNPCId) {
         chosenNPCDef = this.game.npcHelper.getNPCDefinition(chosenNPCId);
       }
+    }
+
+    // if we don't have anything, we grab a random npc def rather than picking by id
+    if (!chosenNPCDef) {
+      chosenNPCDef = sample(this.npcDefs);
     }
 
     if (!chosenNPCDef) {

@@ -3,11 +3,17 @@ import { LoggerTimer } from 'logger-timer';
 import path from 'path';
 
 import fs from 'fs-extra';
-import { cloneDeep, zipObject } from 'lodash';
+import { chunk, cloneDeep, sortBy, zipObject } from 'lodash';
 import readdir from 'recursive-readdir';
 
 import { ICharacter, IMapScript, IPlayer, ObjectType } from '../../interfaces';
-import { InstancedWorldMap, MapState, Player, WorldMap } from '../../models';
+import {
+  InstancedWorldMap,
+  MapState,
+  Player,
+  Spawner,
+  WorldMap,
+} from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import * as MapScripts from '../../models/world/mapscripts';
@@ -118,6 +124,36 @@ export class WorldManager extends BaseService {
     timer.stopTimer('loadmaps');
 
     timer.dumpTimers();
+  }
+
+  public initAllMaps() {
+    const allSpawners: Spawner[] = [];
+    Object.values(this.mapStates).forEach((state) => {
+      state.init();
+      allSpawners.push(...state.allSpawners);
+    });
+
+    const sortedSpawners = sortBy(allSpawners, (spawner) =>
+      spawner.spawnerName.includes('Green NPC') ? -1 : 1,
+    );
+
+    const spawnerChunks = chunk(sortedSpawners, 25);
+
+    this.game.logger.debug(
+      'WorldManager:SpawnerInit',
+      `Initializing ${allSpawners.length} spawners in chunks of 25 every 250ms (${spawnerChunks.length} total)...`,
+    );
+
+    spawnerChunks.forEach((spawnerChunk, i) => {
+      setTimeout(() => {
+        this.game.logger.debug(
+          'WorldManager:SpawnerInit',
+          `Initializing spawner chunk ${i}...`,
+        );
+
+        spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
+      }, i * 250);
+    });
   }
 
   public createOrReplaceMap(mapName: string, mapJson: any) {

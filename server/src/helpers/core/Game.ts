@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 import { GameEvent, IWebsocketCommandHandler } from '../../interfaces';
 
-import { EventEmitter } from 'events';
+import { EventEmitter, once } from 'events';
 import { BaseService } from '../../models/BaseService';
 import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
 import {
@@ -183,7 +183,7 @@ export class Game {
   ) {}
 
   public async init(wsCmdHandler: IWebsocketCommandHandler) {
-    this.gameEvents.setMaxListeners(100);
+    // this.gameEvents.setMaxListeners(100);
 
     await this.db.tryConnect('GAME');
     this.logger.log('Game:Init', 'Initializing game...');
@@ -303,26 +303,6 @@ export class Game {
       timer.stopTimer(`init-${serviceKey}`);
     };
 
-    this.gameEvents.once(GameEvent.GameStarted, () => {
-      console.log('wat');
-      timer.dumpTimers();
-
-      if (this.worldDB.running) {
-        this.logger.error(
-          'Game:Init',
-          'Warning: the last shutdown was unsafe. Data may have been lost.',
-        );
-      }
-
-      this.worldDB.saveRunning();
-
-      this.setupEmergencyHandlers();
-
-      this.isReady = true;
-
-      this.loop();
-    });
-
     this.gameEvents.once(GameEvent.InitCritical, async () => {
       const allPromises = (
         servicesByPriority[GameEvent.InitCritical] ?? []
@@ -374,6 +354,26 @@ export class Game {
     });
 
     this.emit(GameEvent.InitCritical);
+
+    await once(this.gameEvents, GameEvent.GameStarted);
+
+    timer.dumpTimers();
+
+    if (this.worldDB.running) {
+      this.logger.error(
+        'Game:Init',
+        'Warning: the last shutdown was unsafe. Data may have been lost.',
+      );
+    }
+
+    this.worldDB.saveRunning();
+
+    this.setupEmergencyHandlers();
+
+    this.isReady = true;
+
+    this.worldManager.initAllMaps();
+    this.loop();
   }
 
   private emit(event: GameEvent): void {
