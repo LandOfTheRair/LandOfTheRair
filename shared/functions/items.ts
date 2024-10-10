@@ -9,9 +9,9 @@ import {
 
 const formatStatForDisplay = (stat: Stat, statValue: number) => {
   const sign = statValue > 0 ? '+' : '';
-  const displayValue =
-    statValue % 1 === 0 ? statValue : `${(statValue * 100).toFixed(0)}%`;
-  const statName = statValue % 1 === 0 ? stat : stat.split('Percent')[0];
+  const isPercent = stat.includes('Percent');
+  const displayValue = isPercent ? `${statValue}%` : statValue;
+  const statName = stat.replace('Percent', '');
 
   return `${sign}${displayValue} ${statName.toUpperCase()}`;
 };
