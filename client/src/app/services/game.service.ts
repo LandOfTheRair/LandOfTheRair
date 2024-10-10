@@ -142,8 +142,6 @@ export class GameService {
     const farthest = (list: ICharacter[]) =>
       sortBy(list, (c) => -distanceFrom(this.player(), c))[0];
 
-    console.log(allChars);
-
     let newArgs = args;
 
     if (args.includes('$firstnpc')) {
