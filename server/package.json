@@ -87,7 +87,7 @@
   },
   "pkg": {
     "targets": [
-      "node14-win"
+      "node16-win"
     ],
     "assets": [
       "dist/**/*.js",
