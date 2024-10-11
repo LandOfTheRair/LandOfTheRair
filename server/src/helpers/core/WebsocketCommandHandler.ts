@@ -20,7 +20,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
   private emitCallback: (id, data) => void;
 
   public async init(emitCallback: (id, data) => void) {
-    consoleLog('WSCMD', 'Initialzing WSCMD...');
+    consoleLog('WSCMD', 'Initializing WSCMD...');
 
     this.emitCallback = emitCallback;
 

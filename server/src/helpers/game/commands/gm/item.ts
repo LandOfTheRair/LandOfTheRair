@@ -22,21 +22,22 @@ export class GMCreateItem extends MacroCommand {
     if (player.items.equipment[hand]) hand = ItemSlot.LeftHand;
     if (player.items.equipment[hand]) hand = null;
 
-    try {
-      const item = this.game.itemCreator.getSimpleItem(itemName);
+    if (!this.game.contentManager.hasItemDefinition(itemName)) {
+      this.sendMessage(player, 'That item does not exist.');
+      return;
+    }
 
-      if (hand) {
-        this.game.characterHelper.setEquipmentSlot(player, hand, item);
-      } else {
-        this.game.groundManager.addItemToGround(
-          player.map,
-          player.x,
-          player.y,
-          item,
-        );
-      }
-    } catch (e) {
-      return this.sendMessage(player, 'That item does not exist.');
+    const item = this.game.itemCreator.getSimpleItem(itemName);
+
+    if (hand) {
+      this.game.characterHelper.setEquipmentSlot(player, hand, item);
+    } else {
+      this.game.groundManager.addItemToGround(
+        player.map,
+        player.x,
+        player.y,
+        item,
+      );
     }
 
     this.sendMessage(player, `You created ${args.stringArgs}.`);
