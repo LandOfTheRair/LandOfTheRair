@@ -150,6 +150,8 @@ export class FindFamiliar extends Effect {
       } as Partial<Spawner>);
 
       mapData.state.addSpawner(spawner);
+
+      spawner.tryInitialSpawn();
     });
   }
 

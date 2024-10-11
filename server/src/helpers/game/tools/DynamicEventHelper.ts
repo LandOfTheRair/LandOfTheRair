@@ -479,6 +479,8 @@ export class DynamicEventHelper extends BaseService {
     } as Partial<Spawner>);
 
     state.addSpawner(spawner);
+
+    spawner.tryInitialSpawn();
   }
 
   private tryToStartFollowUpEvent(event: IDynamicEvent): void {
