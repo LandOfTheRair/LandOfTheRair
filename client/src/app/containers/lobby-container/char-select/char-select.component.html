@@ -29,12 +29,16 @@
         <br />
         <small>Level {{ player.level }} {{ player.baseClass }}</small>
       </div>
-      } @if (!player) {
+      }
+
+      <!---->
+      @if (!player) {
       <div>Slot {{ i + 1 }}</div>
       }
     </button>
     }
   </div>
+
   @if (!account.players[charSlot]) {
   <div
     class="create-area vertical-center full-width full-height background-text"
@@ -51,13 +55,17 @@
     </button>
     }
   </div>
-  } @if (account.players[charSlot]; as player) {
+  }
+
+  <!---->
+  @if (account.players[charSlot]; as player) {
   <div class="char-viewer">
     <div class="left-side">
       <div class="about-player">
         <div class="sprite">
           <app-npc [sprite]="spriteForPlayer(player)"></app-npc>
         </div>
+
         <div class="about">
           <strong class="name">{{ player.name }}</strong>
           <br />
@@ -67,6 +75,11 @@
           <br />
           In {{ gameService.reformatMapName(player.map) }}
           <br />
+          <br />
+
+          @if(player.affiliation) {
+          <small>{{ player.affiliation }}</small>
+          }
           <br />
           <a
             target="_blank"
@@ -78,6 +91,7 @@
           </a>
         </div>
       </div>
+
       @if (charCreateData(); as charCreateData) {
       <div class="actions">
         <button
@@ -88,6 +102,7 @@
         >
           {{ account.players[charSlot] ? 'Reroll' : 'Create' }}
         </button>
+
         @if (assetService.assetsLoaded()) {
         <button
           mat-flat-button
@@ -98,7 +113,9 @@
         >
           Play
         </button>
-        } @else {
+        }
+        <!---->
+        @else {
         <button
           mat-flat-button
           color="primary"
