@@ -156,6 +156,29 @@ export class WorldManager extends BaseService {
     });
   }
 
+  private initSpeciflcMapState(mapName: string): void {
+    const state = this.mapStates[mapName];
+    state.init();
+
+    const spawnerChunks = chunk(state.allSpawners, 25);
+
+    this.game.logger.debug(
+      `WorldManager:SpawnerInit:${mapName}`,
+      `Initializing ${state.allSpawners.length} spawners in chunks of 25 every 250ms (${spawnerChunks.length} total)...`,
+    );
+
+    spawnerChunks.forEach((spawnerChunk, i) => {
+      setTimeout(() => {
+        this.game.logger.debug(
+          `WorldManager:SpawnerInit:${mapName}`,
+          `Initializing spawner chunk ${i}...`,
+        );
+
+        spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
+      }, i * 250);
+    });
+  }
+
   public createOrReplaceMap(mapName: string, mapJson: any) {
     this.mapsInactiveSince[mapName] = Date.now();
     if (!this.mapNames.includes(mapName)) this.mapNames.push(mapName);
@@ -164,6 +187,7 @@ export class WorldManager extends BaseService {
     delete this.mapStates[mapName];
 
     this.createMap(mapName, mapJson);
+    this.initSpeciflcMapState(mapName);
   }
 
   private createMap(mapName: string, mapJson: any) {
@@ -191,6 +215,7 @@ export class WorldManager extends BaseService {
     );
     this.mapStates[mapName] = new MapState(this.game, this.instances[mapName]);
     this.handleMapSetup(this.instances[mapName], this.mapStates[mapName]);
+    this.initSpeciflcMapState(mapName);
   }
 
   private cleanUpInstancedMap(mapName: string) {
