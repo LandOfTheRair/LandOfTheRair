@@ -250,7 +250,7 @@ export class RNGDungeonNPCGenerator {
       const skillLevel = def.isLegendary
         ? this.mapMeta.creatureProps.legendaryBaseSkill
         : this.mapMeta.creatureProps.baseSkill;
-      npc.skills![skill] = calculateSkillXPRequiredForLevel(skillLevel);
+      npc.skills![skill] = calculateSkillXPRequiredForLevel(skillLevel + 1);
     });
 
     // set other calculable properties
@@ -264,7 +264,7 @@ export class RNGDungeonNPCGenerator {
       npc.hp.max = this.challengeData.global.stats.hp[level].max * multiplier;
     }
 
-    if (npc.mp && def.baseClass && npc.mp.min > 0) {
+    if (npc.mp && def.baseClass) {
       // we can use hp mult here because it is so invisible, it doesn't really matter
       const multiplier = def.isLegendary
         ? this.mapMeta.creatureProps.hpMultiplierLegendary

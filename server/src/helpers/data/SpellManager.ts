@@ -114,6 +114,8 @@ export class SpellManager extends BaseService {
       ) / skillsToAverage.length,
     );
 
+    console.log({ castSkill, skillsToAverage, baseSkillValue });
+
     if (spellData.spellMeta.useSkillAsPotency) {
       return Math.floor(baseSkillValue * this.getPotencyMultiplier(spellData));
     }
