@@ -48,8 +48,12 @@ export class AssetService {
       this.spritesheets.every((s) => s()) && !!this.items() && !!this.npcs(),
   );
 
+  get assetBaseUrl(): string {
+    return `${environment.client.protocol}://${environment.client.domain}:${environment.client.port}`;
+  }
+
   get assetUrl(): string {
-    return `${environment.client.protocol}://${environment.client.domain}:${environment.client.port}/assets`;
+    return `${this.assetBaseUrl}/assets`;
   }
 
   get terrainUrl(): string {
@@ -191,8 +195,12 @@ export class AssetService {
     });
 
     forkJoin({
-      items: this.http.get('assets/content/_output/items.json'),
-      npcs: this.http.get('assets/content/_output/npcs.json'),
+      items: this.http.get(
+        `${this.assetBaseUrl}/assets/content/_output/items.json`,
+      ),
+      npcs: this.http.get(
+        `${this.assetBaseUrl}/assets/content/_output/npcs.json`,
+      ),
       mods: this.http.get(`${this.api.finalHTTPURL}/mod/all`),
     }).subscribe(({ items, npcs, mods }) => {
       const modItems = (mods as any).items as IItemDefinition[];
