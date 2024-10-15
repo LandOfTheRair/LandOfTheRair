@@ -146,8 +146,6 @@ export function descTextFor(
   const affectsAttributes = allStats.some((x) => stats?.[x]);
   const affectedStats = Object.values(Stat).filter((x) => stats?.[x]);
 
-  const levelStrings = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V' };
-
   const allTexts: string[] = [];
 
   const identifyTier = Math.max(castIdentifyTier, item.mods.identifyTier ?? 0);
@@ -247,12 +245,10 @@ export function descTextFor(
   }
 
   // trait text
-  const traitLevelText = `${trait?.name}${
-    levelStrings[trait?.level] ? levelStrings[trait?.level] + ' ' : ''
-  }`;
-
-  if (identifyTier > 0 && trait?.name) {
-    allTexts.push(`This item is inscribed with the rune "${traitLevelText}".`);
+  if (identifyTier > 0 && trait?.restrict?.length > 0) {
+    allTexts.push(
+      `This rune can be learned by ${trait.restrict.join(' and ')}.`,
+    );
   }
 
   // the items 'use' effect situation
