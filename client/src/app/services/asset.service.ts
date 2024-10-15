@@ -138,6 +138,8 @@ export class AssetService {
           opts[`spritesheet${ss}Url`];
       });
     });
+
+    (window as any).__assets = this;
   }
 
   public init() {
