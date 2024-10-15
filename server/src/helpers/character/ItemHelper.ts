@@ -464,7 +464,8 @@ export class ItemHelper extends BaseService {
       if (skill < recipeRef.requireSkill) {
         return this.game.messageHelper.sendSimpleMessage(
           player,
-          'You are not skilled enough for that!',
+          `You are not skilled enough for that!
+          You must be at least skill ${recipeRef.requireSkill} in ${recipeRef.recipeType} to learn this!`,
         );
       }
 
