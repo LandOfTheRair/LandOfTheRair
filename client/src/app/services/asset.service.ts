@@ -196,10 +196,12 @@ export class AssetService {
 
     forkJoin({
       items: this.http.get(
-        `${this.assetBaseUrl}/assets/content/_output/items.json`,
+        `${
+          this.assetBaseUrl
+        }/assets/content/_output/items.json?t=${Date.now()}`,
       ),
       npcs: this.http.get(
-        `${this.assetBaseUrl}/assets/content/_output/npcs.json`,
+        `${this.assetBaseUrl}/assets/content/_output/npcs.json?t=${Date.now()}`,
       ),
       mods: this.http.get(`${this.api.finalHTTPURL}/mod/all`),
     }).subscribe(({ items, npcs, mods }) => {
