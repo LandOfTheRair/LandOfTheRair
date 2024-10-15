@@ -202,6 +202,7 @@ export interface IRNGDungeonMetaConfig {
     goldMultiplierLegendary: number;
     xpMultiplierNormal: number;
     xpMultiplierLegendary: number;
+    otherBaseStats: Partial<Record<Stat, number>>;
   };
 
   itemProps: {

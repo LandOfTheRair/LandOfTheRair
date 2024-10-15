@@ -250,7 +250,9 @@ export class RNGDungeonNPCGenerator {
       const skillLevel = def.isLegendary
         ? this.mapMeta.creatureProps.legendaryBaseSkill
         : this.mapMeta.creatureProps.baseSkill;
-      npc.skills![skill] = calculateSkillXPRequiredForLevel(skillLevel + 1);
+      npc.skills![skill.toLowerCase()] = calculateSkillXPRequiredForLevel(
+        (skillLevel ?? 1) + 1,
+      );
     });
 
     // set other calculable properties
@@ -301,6 +303,13 @@ export class RNGDungeonNPCGenerator {
       npc.stats![statChange] +=
         def.statChanges[statChange] * this.mapMeta.creatureProps.statScale;
     });
+
+    Object.keys(this.mapMeta.creatureProps.otherBaseStats ?? {}).forEach(
+      (stat) => {
+        npc.stats![stat] ??= 0;
+        npc.stats![stat] += this.mapMeta.creatureProps.otherBaseStats[stat];
+      },
+    );
 
     // add skills
     const potentialSkills = ['Attack', 'Charge'];
