@@ -25,6 +25,10 @@ export class CreateEventCommand implements ILobbyCommand {
 
     game.dynamicEventHelper.startEvent(formattedArgs);
 
+    game.messageHelper.broadcastSystemMessage(
+      `A new event "${formattedArgs.name}" has been started!`,
+    );
+
     return true;
   }
 }

@@ -129,7 +129,9 @@ export class GameService {
     const allNPCs = () =>
       allChars
         .filter((c) => !(c as any).username)
-        .filter((c) => hostilityLevelFor(this.player(), c) === 'hostile');
+        .filter((c) =>
+          ['stealth', 'hostile'].includes(hostilityLevelFor(this.player(), c)),
+        );
     const allPlayers = () => allChars.filter((c) => (c as any).username);
 
     const weakest = (list: ICharacter[]) =>
