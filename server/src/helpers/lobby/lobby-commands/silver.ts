@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -16,12 +16,11 @@ export class GiveSilverCommand implements ILobbyCommand {
 
     game.subscriptionHelper.modifyAccountSilver(account, +silver);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} was given ${silver} silver.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} was given ${silver} silver.`,
+      ),
+    );
 
     return true;
   }

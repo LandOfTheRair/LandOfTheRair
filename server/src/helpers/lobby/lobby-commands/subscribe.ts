@@ -1,8 +1,4 @@
-import {
-  GameAction,
-  ILobbyCommand,
-  SubscriptionTier,
-} from '../../../interfaces';
+import { ILobbyCommand, SubscriptionTier } from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -20,12 +16,11 @@ export class SubscribeCommand implements ILobbyCommand {
 
     game.subscriptionHelper.startTrial(account, +days, SubscriptionTier.Trial);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} was given a ${days}-day subscription.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} was given a ${days}-day subscription.`,
+      ),
+    );
 
     return true;
   }

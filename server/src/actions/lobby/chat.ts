@@ -1,5 +1,5 @@
 import { Game } from '../../helpers';
-import { GameAction, GameServerEvent } from '../../interfaces';
+import { GameServerEvent } from '../../interfaces';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
@@ -8,13 +8,11 @@ export class ChatAction extends ServerAction {
 
   override async act(game: Game, { emit }, data) {
     if (data.account.isMuted || data.account.isBanned) {
-      emit({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message:
+      emit(
+        game.messageHelper.getSystemMessageObject(
           'You are not able to chat at this time. Contact a GM or email help@rair.land if you believe this is in error.',
-        from: '★System',
-      });
+        ),
+      );
 
       return {};
     }
@@ -33,28 +31,25 @@ export class ChatAction extends ServerAction {
           );
           if (!res) {
             const syntax = game.lobbyManager.getCommandSyntax(cmd);
-            emit({
-              action: GameAction.ChatAddMessage,
-              timestamp: Date.now(),
-              message: `Invalid usage. Syntax: ${syntax}`,
-              from: '★System',
-            });
+            emit(
+              game.messageHelper.getSystemMessageObject(
+                `Invalid usage. Syntax: ${syntax}`,
+              ),
+            );
           }
         } else {
-          emit({
-            action: GameAction.ChatAddMessage,
-            timestamp: Date.now(),
-            message: 'Only GMs can use slash commands.',
-            from: '★System',
-          });
+          emit(
+            game.messageHelper.getSystemMessageObject(
+              'Only GMs can use slash commands.',
+            ),
+          );
         }
       } else {
-        emit({
-          action: GameAction.ChatAddMessage,
-          timestamp: Date.now(),
-          message: 'That slash command does not exist.',
-          from: '★System',
-        });
+        emit(
+          game.messageHelper.getSystemMessageObject(
+            'That slash command does not exist.',
+          ),
+        );
       }
 
       return {};

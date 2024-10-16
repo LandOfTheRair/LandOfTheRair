@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -15,12 +15,11 @@ export class KickCommand implements ILobbyCommand {
 
     game.lobbyManager.forceLeaveGame(rest);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${rest} was kicked from game.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${rest} was kicked from game.`,
+      ),
+    );
 
     return true;
   }

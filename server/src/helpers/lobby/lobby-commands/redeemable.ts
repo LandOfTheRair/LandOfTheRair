@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -14,12 +14,11 @@ export class CreateRedeemable implements ILobbyCommand {
 
     if (redeemableArgs.item) {
       if (!game.contentManager.hasItemDefinition(redeemableArgs.item)) {
-        emit({
-          action: GameAction.ChatAddMessage,
-          timestamp: Date.now(),
-          message: `Item ${redeemableArgs.item} does not exist.`,
-          from: '★System',
-        });
+        emit(
+          game.messageHelper.getSystemMessageObject(
+            `Item ${redeemableArgs.item} does not exist.`,
+          ),
+        );
 
         return true;
       }
@@ -28,29 +27,22 @@ export class CreateRedeemable implements ILobbyCommand {
     try {
       const redeemable = await game.redeemableDB.addRedeemable(redeemableArgs);
       if (!redeemable) {
-        emit({
-          action: GameAction.ChatAddMessage,
-          timestamp: Date.now(),
-          message: `Could not create redeemable with args: "${redeemish}". Try again.`,
-          from: '★System',
-        });
+        emit(
+          game.messageHelper.getSystemMessageObject(
+            `Could not create redeemable with args: "${redeemish}". Try again.`,
+          ),
+        );
 
         return true;
       }
 
-      emit({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: `Created redeemable with the code: ${redeemable.code} - for "${redeemish}"`,
-        from: '★System',
-      });
+      emit(
+        game.messageHelper.getSystemMessageObject(
+          `Created redeemable with the code: ${redeemable.code} - for "${redeemish}"`,
+        ),
+      );
     } catch (e: any) {
-      emit({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: e.message,
-        from: '★System',
-      });
+      emit(game.messageHelper.getSystemMessageObject(e.message));
 
       return true;
     }

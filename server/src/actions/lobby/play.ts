@@ -1,4 +1,3 @@
-
 import { merge } from 'lodash';
 
 import { Game } from '../../helpers';
@@ -12,29 +11,28 @@ export class PlayAction extends ServerAction {
 
   override async act(game: Game, { broadcast, emit }, data) {
     if (data.account.isBanned) {
-      emit({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: 'You are not able to enter the game at this time. Contact a GM or email help@rair.land if you believe this is in error.',
-        from: '★System'
-      });
+      emit(
+        game.messageHelper.getSystemMessageObject(
+          'You are not able to enter the game at this time. Contact a GM or email help@rair.land if you believe this is in error.',
+        ),
+      );
 
       return {};
     }
 
     if (game.lobbyManager.isBlocked()) {
-      emit({
-        action: GameAction.ChatAddMessage,
-        timestamp: Date.now(),
-        message: `The game is currently updating, so play is disabled for a few minutes.
-        If this persists for too long, contact a GM or email help@rair.land.`,
-        from: '★System'
-      });
+      emit(
+        game.messageHelper
+          .getSystemMessageObject(`The game is currently updating, so play is disabled for a few minutes.
+        If this persists for too long, contact a GM or email help@rair.land.`),
+      );
 
       return {};
     }
 
-    if (game.lobbyManager.hasJoinedGame(data.username))  return { message: 'Already in game.' };
+    if (game.lobbyManager.hasJoinedGame(data.username)) {
+      return { message: 'Already in game.' };
+    }
 
     const charSlot = data.charSlot;
 
@@ -44,7 +42,7 @@ export class PlayAction extends ServerAction {
       player = checkPlayer;
     }
 
-    if (!player)                                          return { message: `No character in slot ${charSlot}.` };
+    if (!player) return { message: `No character in slot ${charSlot}.` };
 
     const autoApplyUserData = game.testHelper.autoApplyUserData;
     merge(player, autoApplyUserData);
@@ -61,7 +59,13 @@ export class PlayAction extends ServerAction {
     }
 
     // if they're out of bounds, drop them on the respawn point
-    if (map && (player.x > map.width - 4 || player.y > map.height - 4 || player.x <= 4 || player.y <= 4)) {
+    if (
+      map &&
+      (player.x > map.width - 4 ||
+        player.y > map.height - 4 ||
+        player.x <= 4 ||
+        player.y <= 4)
+    ) {
       player.x = map.respawnPoint.x;
       player.y = map.respawnPoint.y;
     }
@@ -81,22 +85,22 @@ export class PlayAction extends ServerAction {
     await game.lobbyManager.joinGame(data.account, player);
 
     emit({
-      action: GameAction.GamePlay
+      action: GameAction.GamePlay,
     });
 
     emit({
       action: GameAction.GameSetPlayer,
-      player: game.db.prepareForTransmission(player)
+      player: game.db.prepareForTransmission(player),
     });
 
     emit({
       action: GameAction.GameSetMap,
-      map: map!.mapData
+      map: map!.mapData,
     });
 
     broadcast({
       action: GameAction.ChatUserEnterGame,
-      username: data.username
+      username: data.username,
     });
 
     game.playerHelper.refreshPlayerMapState(player);

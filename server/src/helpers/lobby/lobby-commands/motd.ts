@@ -12,12 +12,9 @@ export class MOTDCommand implements ILobbyCommand {
     const motd = rest.join(' ') || 'Welcome to Land of the Rair!';
     game.worldDB.setMOTD(motd);
 
-    game.wsCmdHandler.broadcast({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: motd,
-      from: '★System',
-    });
+    game.wsCmdHandler.broadcast(
+      game.messageHelper.getSystemMessageObject(motd),
+    );
 
     game.wsCmdHandler.broadcast({
       action: GameAction.ChatSetMOTD,

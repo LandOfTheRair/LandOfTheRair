@@ -198,6 +198,15 @@ export class MessageHelper extends BaseService {
     this.sendMessage(username, message);
   }
 
+  public getSystemMessageObject(message: string) {
+    return {
+      action: GameAction.ChatAddMessage,
+      timestamp: Date.now(),
+      from: '★System',
+      message,
+    };
+  }
+
   public sendMessage(
     from: string,
     message: string,

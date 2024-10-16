@@ -1,8 +1,4 @@
-import {
-  GameAction,
-  GameServerResponse,
-  ILobbyCommand,
-} from '../../../interfaces';
+import { GameServerResponse, ILobbyCommand } from '../../../interfaces';
 
 import { Game } from '../../core';
 
@@ -15,12 +11,9 @@ export class AlertCommand implements ILobbyCommand {
 
     const alertText = rest.join(' ');
 
-    game.wsCmdHandler.broadcast({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: alertText,
-      from: '★System',
-    });
+    game.wsCmdHandler.broadcast(
+      game.messageHelper.getSystemMessageObject(alertText),
+    );
 
     game.wsCmdHandler.broadcast({
       type: GameServerResponse.SendAlert,

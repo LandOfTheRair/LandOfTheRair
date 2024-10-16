@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
 import { Game } from '../../core';
@@ -17,12 +17,11 @@ export class BanCommand implements ILobbyCommand {
 
     game.accountDB.ban(account as Account);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} is banned.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} is banned.`,
+      ),
+    );
 
     return true;
   }

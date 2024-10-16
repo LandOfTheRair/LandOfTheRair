@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
 import { Game } from '../../core';
@@ -17,12 +17,11 @@ export class CreateGMCommand implements ILobbyCommand {
 
     game.accountDB.toggleGM(account as Account);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} is ${account.isGameMaster ? 'now' : 'no longer'} a GM.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} is ${account.isGameMaster ? 'now' : 'no longer'} a GM.`,
+      ),
+    );
 
     return true;
   }

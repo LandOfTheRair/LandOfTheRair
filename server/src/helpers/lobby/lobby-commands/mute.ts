@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
 import { Game } from '../../core';
@@ -17,12 +17,11 @@ export class MuteCommand implements ILobbyCommand {
 
     game.accountDB.toggleMute(account as Account);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} is ${account.isMuted ? 'now' : 'no longer'} muted.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} is ${account.isMuted ? 'now' : 'no longer'} muted.`,
+      ),
+    );
 
     return true;
   }

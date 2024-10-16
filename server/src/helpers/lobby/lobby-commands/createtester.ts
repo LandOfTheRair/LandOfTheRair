@@ -1,4 +1,4 @@
-import { GameAction, ILobbyCommand } from '../../../interfaces';
+import { ILobbyCommand } from '../../../interfaces';
 import { Account } from '../../../models';
 
 import { Game } from '../../core';
@@ -17,12 +17,11 @@ export class CreateTesterCommand implements ILobbyCommand {
 
     game.accountDB.toggleTester(account as Account);
 
-    emit({
-      action: GameAction.ChatAddMessage,
-      timestamp: Date.now(),
-      message: `${account.username} is ${account.isTester ? 'now' : 'no longer'} a tester.`,
-      from: '★System',
-    });
+    emit(
+      game.messageHelper.getSystemMessageObject(
+        `${account.username} is ${account.isTester ? 'now' : 'no longer'} a tester.`,
+      ),
+    );
 
     return true;
   }
