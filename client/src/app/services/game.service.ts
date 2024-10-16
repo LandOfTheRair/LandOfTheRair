@@ -107,7 +107,11 @@ export class GameService {
       }
 
       if (target) {
-        args = `${args} ${target}`.trim();
+        if (args.includes('$target')) {
+          args = args.replace('$target', target).trim();
+        } else {
+          args = `${args} ${target}`.trim();
+        }
       }
 
       this.checkCommandForSpecialReplacementsAndSend(command, args);
