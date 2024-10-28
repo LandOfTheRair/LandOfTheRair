@@ -123,6 +123,8 @@ export class RNGDungeonItemGenerator {
 
       const allThemes: Set<string> = new Set();
 
+      const scenarioThemeMult = this.mapMeta.itemProps.scenarioMultiplier;
+
       // apply stats: global and otherwise
       ['All', ...itemDefConfig.type].forEach((type) => {
         if (!themes[type]) return;
@@ -145,13 +147,17 @@ export class RNGDungeonItemGenerator {
           }
 
           itemDef.baseMods!.stats![mod] = itemDef.baseMods!.stats![mod] ?? 0;
-          itemDef.baseMods!.stats![mod] += theme.statChanges[originMod];
+          itemDef.baseMods!.stats![mod] +=
+            theme.statChanges[originMod] * scenarioThemeMult;
         });
 
         // apply returning etc
         if (theme.topLevelChanges) {
           Object.keys(theme.topLevelChanges).forEach((mod) => {
-            itemDef.baseMods![mod] = theme.topLevelChanges[mod];
+            const change = isNumber(theme.topLevelChanges[mod])
+              ? theme.topLevelChanges[mod] * scenarioThemeMult
+              : theme.topLevelChanges[mod];
+            itemDef.baseMods![mod] = change;
           });
         }
       });

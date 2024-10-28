@@ -219,6 +219,7 @@ export interface IRNGDungeonMetaConfig {
     baseWeaponArmorClass: number;
     tanSkillRequired: number;
     numScenarios: number;
+    scenarioMultiplier: number;
     mapDropItems: number;
     npcPunchItem: string;
     basicWeight: number;
