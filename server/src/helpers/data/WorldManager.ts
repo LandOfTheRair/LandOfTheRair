@@ -152,7 +152,7 @@ export class WorldManager extends BaseService {
         );
 
         spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
-      }, i * 250);
+      }, i * 500);
     });
   }
 
@@ -175,7 +175,7 @@ export class WorldManager extends BaseService {
         );
 
         spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
-      }, i * 250);
+      }, i * 500);
     });
   }
 
