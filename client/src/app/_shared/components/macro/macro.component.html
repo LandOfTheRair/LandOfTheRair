@@ -14,7 +14,10 @@
 
     @if (cooldownDisplay(); as cooldown) {
     <div class="cooldown">{{ cooldown }} s</div>
-    } @if (macroKeybind(); as macroKey) {
+    }
+
+    <!---->
+    @if (macroKeybind(); as macroKey) {
     <div class="keybind">
       {{ macroKey }}
     </div>

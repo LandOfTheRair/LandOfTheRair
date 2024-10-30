@@ -10,6 +10,7 @@ import {
   GameServerEvent,
   ICharacter,
   IDialogChatAction,
+  ItemSlot,
 } from '../../interfaces';
 import { GameState } from '../../stores';
 
@@ -124,7 +125,7 @@ export class GameService {
   ) {
     // if there are no special replacements, just send the command
     if (!args.includes('$')) {
-      this.sendAction(GameServerEvent.DoCommand, { command, args });
+      this.sendCommandAction(command, args);
       return;
     }
 
@@ -250,7 +251,55 @@ export class GameService {
       newArgs = newArgs.replace('$pet', pet?.uuid ?? '');
     }
 
-    this.sendAction(GameServerEvent.DoCommand, { command, args: newArgs });
+    this.sendCommandAction(command, newArgs);
+  }
+
+  private shouldConfirmAction(command: string): boolean {
+    return ['shatter', 'tear', 'disenchant'].some((c) => command.includes(c));
+  }
+
+  // try to let players know they might break their items
+  private attemptToConfirmActionBeforeSending(
+    command: string,
+    args: string,
+  ): void {
+    let shouldWarn = false;
+
+    const rightHandItem = this.player().items.equipment[ItemSlot.RightHand];
+    if (rightHandItem?.mods.owner === this.player().username) {
+      shouldWarn = true;
+    }
+
+    if (
+      !rightHandItem &&
+      this.player().items.sack.items.some(
+        (i) => i.mods.owner === this.player().username,
+      )
+    ) {
+      shouldWarn = true;
+    }
+
+    if (shouldWarn) {
+      this.modalService
+        .confirm('Really Do This?', 'You might break an important item!')
+        .subscribe((d) => {
+          if (!d) return;
+
+          this.sendAction(GameServerEvent.DoCommand, { command, args });
+        });
+      return;
+    }
+
+    this.sendAction(GameServerEvent.DoCommand, { command, args });
+  }
+
+  private sendCommandAction(command: string, args: string) {
+    if (this.shouldConfirmAction(command)) {
+      this.attemptToConfirmActionBeforeSending(command, args);
+      return;
+    }
+
+    this.sendAction(GameServerEvent.DoCommand, { command, args });
   }
 
   public sendAction(action: GameServerEvent, args: any) {
