@@ -155,6 +155,10 @@ export class Spawner {
     return true;
   }
 
+  public get mapName() {
+    return this.mapRef.name;
+  }
+
   constructor(
     private game: Game,
     private mapRef: WorldMap,

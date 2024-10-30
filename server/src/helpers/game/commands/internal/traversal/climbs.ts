@@ -39,6 +39,7 @@ export class Climbs extends MacroCommand {
       requireHoliday,
       requireClass,
       requireTester,
+      requireWorldInit,
     } = interactable.properties;
 
     if (requireTester && !isAtLeastTester(player)) {
@@ -77,6 +78,16 @@ export class Climbs extends MacroCommand {
       return this.sendMessage(
         player,
         'You must gather your party before venturing forth.',
+      );
+    }
+
+    if (
+      requireWorldInit &&
+      !this.game.worldManager.shouldAllowNewSpawnersToBeInitializedFromDungeons
+    ) {
+      return this.sendMessage(
+        player,
+        `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
       );
     }
 

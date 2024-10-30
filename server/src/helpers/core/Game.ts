@@ -446,6 +446,13 @@ export class Game {
       timer.stopTimer(`slowTick-${now}`);
     }
 
+    // spawner tick - manage/generate spawners
+    if (this.ticksElapsed % 5 === 0) {
+      timer.startTimer(`spawnerTick-${now}`);
+      this.worldManager.spawnerTick(timer);
+      timer.stopTimer(`spawnerTick-${now}`);
+    }
+
     // world steady tick actions
     if (this.ticksElapsed % 10 === 0) {
       timer.startTimer(`steadyTick-${now}`);

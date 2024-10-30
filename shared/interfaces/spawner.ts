@@ -5,6 +5,7 @@ export interface ISerializableSpawner {
   y: number;
   name: string;
   currentTick: number;
+  areCreaturesDangerous: boolean;
 }
 
 export interface ISpawnerData {

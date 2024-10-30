@@ -289,13 +289,13 @@ export class MapState {
   // get all possible serializable spawners for quit
   public getSerializableSpawners(): ISerializableSpawner[] {
     return this.spawners
-      .filter((x) => x.canBeSaved)
+      .filter((s) => s.canBeSaved)
       .map((s) => ({
         ...s.pos,
         name: s.spawnerName,
         currentTick: s.currentTickForSave,
-      }))
-      .filter((s) => s.currentTick > 0);
+        areCreaturesDangerous: s.areCreaturesDangerous,
+      }));
   }
 
   // check if door is open

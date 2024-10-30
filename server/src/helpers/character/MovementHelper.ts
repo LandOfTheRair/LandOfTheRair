@@ -255,6 +255,7 @@ export class MovementHelper extends BaseService {
       requireQuest,
       requireQuestProgress,
       requireQuestComplete,
+      requireWorldInit,
       damagePercent,
       teleportTagMap,
       teleportTag,
@@ -274,6 +275,16 @@ export class MovementHelper extends BaseService {
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: 'You must gather your party before venturing forth.',
+      });
+      return;
+    }
+
+    if (
+      requireWorldInit &&
+      !this.game.worldManager.shouldAllowNewSpawnersToBeInitializedFromDungeons
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
       });
       return;
     }

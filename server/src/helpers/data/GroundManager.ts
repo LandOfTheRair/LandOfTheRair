@@ -1,17 +1,21 @@
-
 import { Injectable } from 'injection-js';
-import { cloneDeep, get, setWith, isEqual, updateWith } from 'lodash';
+import { cloneDeep, get, isEqual, setWith, sortBy, updateWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { IGround, IGroundItem, ISerializableSpawner, ISimpleItem, ItemClass } from '../../interfaces';
+import {
+  IGround,
+  IGroundItem,
+  ISerializableSpawner,
+  ISimpleItem,
+  ItemClass,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 import { Ground } from '../../models/orm/Ground';
 
 @Injectable()
 export class GroundManager extends BaseService {
-
-  private saveTicks = 150;      // save the ground every 5 minutes
-  private expireTicks = 1800;   // expire the ground every 30 minutes
+  private saveTicks = 150; // save the ground every 5 minutes
+  private expireTicks = 1800; // expire the ground every 30 minutes
   private currentTick = 0;
 
   private groundEntities: Record<string, Ground> = {};
@@ -24,7 +28,8 @@ export class GroundManager extends BaseService {
   public async init() {
     await this.loadGround();
 
-    const { saveTicks, expireTicks } = this.game.contentManager.getGameSetting('ground');
+    const { saveTicks, expireTicks } =
+      this.game.contentManager.getGameSetting('ground');
     this.saveTicks = saveTicks ?? 150;
     this.expireTicks = expireTicks ?? 1800;
   }
@@ -43,10 +48,9 @@ export class GroundManager extends BaseService {
   }
 
   public async removeGroundsForParties(partyName: string): Promise<void> {
-
     await this.game.groundDB.removeAllGroundsByParty(partyName);
 
-    Object.keys(this.groundEntities).forEach(groundName => {
+    Object.keys(this.groundEntities).forEach((groundName) => {
       if (this.groundEntities[groundName].partyName !== partyName) return;
 
       delete this.groundEntities[groundName];
@@ -67,24 +71,30 @@ export class GroundManager extends BaseService {
   // load the ground from the db and sort it out
   public async loadGround() {
     const grounds = await this.game.groundDB.loadAllGrounds();
-    grounds.forEach(groundEntity => {
-
-      if (groundEntity.savedAt) return;
-
+    grounds.forEach((groundEntity) => {
       // instances older than 24h will not be loaded on next reboot
-      if (this.game.worldManager.isDungeon(groundEntity.map) && Date.now() > groundEntity.savedAt + (3600 * 1000 * 24)) {
+      if (
+        this.game.worldManager.isDungeon(groundEntity.map) &&
+        Date.now() > groundEntity.savedAt + 3600 * 1000 * 24
+      ) {
         return;
       }
 
       // if it has a time it was saved, boost it on next reboot
       if (groundEntity.savedAt) {
-        this.boostSpawnersInMapBasedOnTimestamp(groundEntity.map, groundEntity.savedAt, groundEntity);
+        this.boostSpawnersInMapBasedOnTimestamp(
+          groundEntity.map,
+          groundEntity.savedAt,
+          groundEntity,
+        );
       }
 
       this.groundEntities[groundEntity.map] = new Ground();
       this.groundEntities[groundEntity.map]._id = groundEntity._id;
-      this.groundEntities[groundEntity.map].partyName = groundEntity.partyName || '';
-      this.groundEntities[groundEntity.map].treasureChests = groundEntity.treasureChests || {};
+      this.groundEntities[groundEntity.map].partyName =
+        groundEntity.partyName || '';
+      this.groundEntities[groundEntity.map].treasureChests =
+        groundEntity.treasureChests || {};
 
       this.saveableGround[groundEntity.map] = cloneDeep(groundEntity.ground);
       this.ground[groundEntity.map] = cloneDeep(groundEntity.ground);
@@ -110,7 +120,9 @@ export class GroundManager extends BaseService {
   private async saveGround(maps?: string[]): Promise<any> {
     if (!maps || maps.length === 0) return;
 
-    const allSaves = maps.map(map => this.getSaveGround(map)).filter(Boolean) as Ground[];
+    const allSaves = maps
+      .map((map) => this.getSaveGround(map))
+      .filter(Boolean) as Ground[];
     return this.game.groundDB.saveAllGrounds(allSaves);
   }
 
@@ -124,7 +136,11 @@ export class GroundManager extends BaseService {
     return entity;
   }
 
-  public boostSpawnersInMapBasedOnTimestamp(map: string, inactiveSince: number, groundEntity?: Ground): void {
+  public boostSpawnersInMapBasedOnTimestamp(
+    map: string,
+    inactiveSince: number,
+    groundEntity?: Ground,
+  ): void {
     if (!inactiveSince) return;
 
     const now = Date.now();
@@ -132,8 +148,10 @@ export class GroundManager extends BaseService {
 
     // if we pass an entity, it has not been loaded yet
     if (groundEntity) {
-      groundEntity.spawners?.forEach(spawner => {
+      groundEntity.spawners?.forEach((spawner) => {
         spawner.currentTick = spawner.currentTick ?? 0;
+        if (spawner.currentTick === 0) return;
+
         spawner.currentTick += tickIncrease;
       });
     }
@@ -142,7 +160,7 @@ export class GroundManager extends BaseService {
     if (!groundEntity) {
       const mapData = this.game.worldManager.getMap(map);
       if (mapData?.state) {
-        mapData.state.allSpawners.forEach(spawner => {
+        mapData.state.allSpawners.forEach((spawner) => {
           if (spawner.areAnyNPCsAlive || !spawner.areCreaturesDangerous) return;
 
           spawner.increaseTick(tickIncrease);
@@ -157,14 +175,13 @@ export class GroundManager extends BaseService {
     timer.startTimer(`ground-${now}`);
 
     this.currentTick++;
-    if ((this.currentTick % this.saveTicks) === 0) {
-
+    if (this.currentTick % this.saveTicks === 0) {
       // save only the maps that are running - others are saved when they're emptied
       this.saveGround(this.game.worldManager.currentlyActiveMaps);
     }
 
     // expire the ground every so often
-    if ((this.currentTick % this.expireTicks) === 0) {
+    if (this.currentTick % this.expireTicks === 0) {
       timer.startTimer(`groundexpire-${now}`);
       this.checkGroundExpire(this.game.worldManager.currentlyActiveMaps);
       timer.stopTimer(`groundexpire-${now}`);
@@ -174,7 +191,11 @@ export class GroundManager extends BaseService {
   }
 
   public getMapSpawners(mapName: string): ISerializableSpawner[] {
-    return this.loadedSpawners[mapName] || this.groundEntities[mapName]?.spawners || [];
+    return (
+      this.loadedSpawners[mapName] ||
+      this.groundEntities[mapName]?.spawners ||
+      []
+    );
   }
 
   // get all serializable spawners for a map for their current state
@@ -182,10 +203,20 @@ export class GroundManager extends BaseService {
     const state = this.game.worldManager.getMap(mapName)?.state;
     if (!state) return [];
 
-    return state.getSerializableSpawners() ?? [];
+    const spawners = sortBy(
+      state.getSerializableSpawners() ?? [],
+      (s) => !s.areCreaturesDangerous,
+    );
+
+    return spawners;
   }
 
-  public getGroundAround(mapName: string, x: number, y: number, radius = 4): IGround {
+  public getGroundAround(
+    mapName: string,
+    x: number,
+    y: number,
+    radius = 4,
+  ): IGround {
     const baseGround = this.getGround(mapName);
 
     const ground: IGround = {};
@@ -206,10 +237,17 @@ export class GroundManager extends BaseService {
     return this.ground[mapName];
   }
 
-  public addItemToGround(mapName: string, x: number, y: number, item: ISimpleItem, forceSave?: boolean): void {
+  public addItemToGround(
+    mapName: string,
+    x: number,
+    y: number,
+    item: ISimpleItem,
+    forceSave?: boolean,
+  ): void {
     if (!item) return;
 
-    const { itemClass: itemItemClass, sprite } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'sprite']);
+    const { itemClass: itemItemClass, sprite } =
+      this.game.itemHelper.getItemProperties(item, ['itemClass', 'sprite']);
 
     const itemClass = itemItemClass ?? ItemClass.Box;
 
@@ -217,12 +255,13 @@ export class GroundManager extends BaseService {
     if (sprite === -1) return;
 
     // if the item has an owner, it expires in 24h. else, 3h.
-    const expiresAt = Date.now() + (1000 * ((item.mods.owner || forceSave) ? 86400 : 10800));
+    const expiresAt =
+      Date.now() + 1000 * (item.mods.owner || forceSave ? 86400 : 10800);
 
     const potentialGroundItem: IGroundItem = {
       item,
       count: 1,
-      expiresAt
+      expiresAt,
     };
 
     const cloneGroundItem = cloneDeep(potentialGroundItem);
@@ -232,19 +271,30 @@ export class GroundManager extends BaseService {
       this.game.corpseManager.addCorpse(mapName, cloneGroundItem.item, x, y);
     }
 
-    updateWith(this.ground, [mapName, x, y, itemClass], (old) => old ?? [], Object);
+    updateWith(
+      this.ground,
+      [mapName, x, y, itemClass],
+      (old) => old ?? [],
+      Object,
+    );
     const container = this.ground[mapName][x][y][itemClass];
 
     const matchingItem = container.find((gItem: IGroundItem) => {
       if (gItem.item.name !== item.name) return false;
-      if (itemClass !== ItemClass.Coin && !isEqual(item.mods, gItem.item.mods)) return false;
+      if (
+        itemClass !== ItemClass.Coin &&
+        !isEqual(item.mods, gItem.item.mods)
+      ) {
+        return false;
+      }
       return true;
     });
 
     if (matchingItem) {
       // if we have a coin, we add to the value, instead of count
       if (itemClass === ItemClass.Coin) {
-        matchingItem.item.mods.value = (matchingItem.item.mods.value || 0) + (item.mods.value || 0);
+        matchingItem.item.mods.value =
+          (matchingItem.item.mods.value || 0) + (item.mods.value || 0);
       } else {
         matchingItem.count++;
 
@@ -255,30 +305,61 @@ export class GroundManager extends BaseService {
       container.push(cloneGroundItem);
       if (itemClass === ItemClass.Corpse) return;
       if (item.mods.owner || forceSave) {
-        updateWith(this.saveableGround, [mapName, x, y, itemClass], (old) => (old ?? [cloneGroundItem]), Object);
+        updateWith(
+          this.saveableGround,
+          [mapName, x, y, itemClass],
+          (old) => old ?? [cloneGroundItem],
+          Object,
+        );
       }
     }
   }
 
-  public getEntireGround(mapName: string, x: number, y: number): Record<ItemClass, IGroundItem[]> {
+  public getEntireGround(
+    mapName: string,
+    x: number,
+    y: number,
+  ): Record<ItemClass, IGroundItem[]> {
     return get(this.ground, [mapName, x, y], {} as any);
   }
 
-  public getTrapsFromGround(mapName: string, x: number, y: number, uuid = ''): IGroundItem[] {
-    return this.getItemsFromGround(mapName, x, y, ItemClass.TrapSet, uuid, true);
+  public getTrapsFromGround(
+    mapName: string,
+    x: number,
+    y: number,
+    uuid = '',
+  ): IGroundItem[] {
+    return this.getItemsFromGround(
+      mapName,
+      x,
+      y,
+      ItemClass.TrapSet,
+      uuid,
+      true,
+    );
   }
 
-  public getItemsFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid = '', allowTraps = false): IGroundItem[] {
+  public getItemsFromGround(
+    mapName: string,
+    x: number,
+    y: number,
+    itemClass: ItemClass,
+    uuid = '',
+    allowTraps = false,
+  ): IGroundItem[] {
     if (itemClass === ItemClass.TrapSet && !allowTraps) return [];
 
-    const ground = get(this.ground, [mapName, x, y], {}) as Record<ItemClass, IGroundItem[]>;
+    const ground = get(this.ground, [mapName, x, y], {}) as Record<
+      ItemClass,
+      IGroundItem[]
+    >;
     if (!ground) return [];
 
     let potentialItems: IGroundItem[] = [];
     if (itemClass) {
       potentialItems = ground[itemClass] ?? [];
     } else {
-      Object.keys(ground).forEach(itemClassKey => {
+      Object.keys(ground).forEach((itemClassKey) => {
         (ground[itemClassKey] || []).forEach((item: IGroundItem) => {
           potentialItems.push(item);
         });
@@ -288,7 +369,7 @@ export class GroundManager extends BaseService {
     // no uuid means grab the entire group
     if (!uuid) return potentialItems;
 
-    const itemStack = potentialItems.find(i => i.item.uuid === uuid);
+    const itemStack = potentialItems.find((i) => i.item.uuid === uuid);
     if (!itemStack) return [];
 
     return [itemStack];
@@ -296,12 +377,14 @@ export class GroundManager extends BaseService {
 
   public getAllItemsFromGround(mapName: string): IGroundItem[] {
     const items: IGroundItem[] = [];
-    Object.keys(this.ground[mapName] || {}).forEach(x => {
-      Object.keys(this.ground[mapName][x] || {}).forEach(y => {
-        Object.keys(this.ground[mapName][x][y] || {}).forEach(itemClass => {
-          (this.ground[mapName][x][y][itemClass] || []).forEach((item: IGroundItem) => {
-            items.push(item);
-          });
+    Object.keys(this.ground[mapName] || {}).forEach((x) => {
+      Object.keys(this.ground[mapName][x] || {}).forEach((y) => {
+        Object.keys(this.ground[mapName][x][y] || {}).forEach((itemClass) => {
+          (this.ground[mapName][x][y][itemClass] || []).forEach(
+            (item: IGroundItem) => {
+              items.push(item);
+            },
+          );
         });
       });
     });
@@ -310,7 +393,9 @@ export class GroundManager extends BaseService {
   }
 
   public convertItemStackToList(item: IGroundItem, count = 1): ISimpleItem[] {
-    return Array(count).fill(null).map(() => this.game.itemCreator.rerollItem(item.item, false));
+    return Array(count)
+      .fill(null)
+      .map(() => this.game.itemCreator.rerollItem(item.item, false));
   }
 
   // used to remove RNG dungeon grounds - not for anywhere else
@@ -326,16 +411,48 @@ export class GroundManager extends BaseService {
     this.groundEntities[mapName].treasureChests = {};
   }
 
-  public removeItemFromGround(mapName: string, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
-    this.removeItemFromSpecificGround(this.ground[mapName] || {}, x, y, itemClass, uuid, count);
-    this.removeItemFromSpecificGround(this.saveableGround[mapName] || {}, x, y, itemClass, uuid, count);
+  public removeItemFromGround(
+    mapName: string,
+    x: number,
+    y: number,
+    itemClass: ItemClass,
+    uuid: string,
+    count = 1,
+  ): void {
+    this.removeItemFromSpecificGround(
+      this.ground[mapName] || {},
+      x,
+      y,
+      itemClass,
+      uuid,
+      count,
+    );
+    this.removeItemFromSpecificGround(
+      this.saveableGround[mapName] || {},
+      x,
+      y,
+      itemClass,
+      uuid,
+      count,
+    );
   }
 
-  private removeItemFromSpecificGround(ground: IGround, x: number, y: number, itemClass: ItemClass, uuid: string, count = 1): void {
-    const groundItems = get(ground, [x, y, itemClass], []) as Array<IGroundItem>;
+  private removeItemFromSpecificGround(
+    ground: IGround,
+    x: number,
+    y: number,
+    itemClass: ItemClass,
+    uuid: string,
+    count = 1,
+  ): void {
+    const groundItems = get(
+      ground,
+      [x, y, itemClass],
+      [],
+    ) as Array<IGroundItem>;
 
     // find a ground item with the specified uuid
-    const groundItem = groundItems.find(i => i.item.uuid === uuid);
+    const groundItem = groundItems.find((i) => i.item.uuid === uuid);
     if (!groundItem) return;
 
     // make sure we don't remove too much
@@ -355,20 +472,28 @@ export class GroundManager extends BaseService {
     if (itemClass === ItemClass.Corpse) {
       this.game.corpseManager.removeCorpse(groundItem.item);
     }
-
   }
 
   // check these maps for expiration!
   private checkGroundExpire(maps: string[]): void {
-    maps.forEach(map => {
-      Object.keys(this.ground[map] || {}).forEach(x => {
-        Object.keys(this.ground[map][x] || {}).forEach(y => {
-          Object.keys(this.ground[map][x][y] || {}).forEach(itemClass => {
-            (this.ground[map][x][y][itemClass] || []).forEach((item: IGroundItem) => {
-              if (Date.now() < item.expiresAt) return;
+    maps.forEach((map) => {
+      Object.keys(this.ground[map] || {}).forEach((x) => {
+        Object.keys(this.ground[map][x] || {}).forEach((y) => {
+          Object.keys(this.ground[map][x][y] || {}).forEach((itemClass) => {
+            (this.ground[map][x][y][itemClass] || []).forEach(
+              (item: IGroundItem) => {
+                if (Date.now() < item.expiresAt) return;
 
-              this.removeItemFromGround(map, +x, +y, itemClass as ItemClass, item.item.uuid, item.count);
-            });
+                this.removeItemFromGround(
+                  map,
+                  +x,
+                  +y,
+                  itemClass as ItemClass,
+                  item.item.uuid,
+                  item.count,
+                );
+              },
+            );
           });
         });
       });

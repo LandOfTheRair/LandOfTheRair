@@ -3,7 +3,7 @@ import { LoggerTimer } from 'logger-timer';
 import path from 'path';
 
 import fs from 'fs-extra';
-import { chunk, cloneDeep, sortBy, zipObject } from 'lodash';
+import { cloneDeep, zipObject } from 'lodash';
 import readdir from 'recursive-readdir';
 
 import { ICharacter, IMapScript, IPlayer, ObjectType } from '../../interfaces';
@@ -53,7 +53,12 @@ export class WorldManager extends BaseService {
   // the mapping of every npc/player by their uuid for lookup
   private characterUUIDHash: Record<string, ICharacter> = {};
 
+  // players leaving the current map
   private isLeavingMap: Record<string, boolean> = {};
+
+  // uninitialized spawners
+  private totalSpawnersFromStart = 0;
+  private uninitializedSpawners: Spawner[] = [];
 
   public get currentlyActiveMaps(): string[] {
     return [...this.activeMaps];
@@ -63,6 +68,21 @@ export class WorldManager extends BaseService {
     return zipObject(
       [...this.activeMaps],
       Array(this.activeMaps.size).fill(true),
+    );
+  }
+
+  // whether or not you should be able to enter a dungeon
+  public get shouldAllowNewSpawnersToBeInitializedFromDungeons(): boolean {
+    return this.uninitializedSpawners.length < 50;
+  }
+
+  public get loadPercentage(): string {
+    return (
+      (
+        (100 *
+          (this.totalSpawnersFromStart - this.uninitializedSpawners.length)) /
+        this.totalSpawnersFromStart
+      ).toFixed(1) + '%'
     );
   }
 
@@ -126,6 +146,20 @@ export class WorldManager extends BaseService {
     timer.dumpTimers();
   }
 
+  private addUninitializedSpawners(spawners: Spawner[]): void {
+    this.totalSpawnersFromStart += spawners.length;
+
+    const isSpawnerImportant = (spawner: Spawner) =>
+      spawner.spawnerName.includes('Green NPC') ||
+      spawner.areCreaturesDangerous;
+
+    const importantSpawners = spawners.filter((s) => isSpawnerImportant(s));
+    const unimportantSpawners = spawners.filter((s) => !isSpawnerImportant(s));
+
+    this.uninitializedSpawners.unshift(...importantSpawners);
+    this.uninitializedSpawners.push(...unimportantSpawners);
+  }
+
   public initAllMaps() {
     const allSpawners: Spawner[] = [];
     Object.values(this.mapStates).forEach((state) => {
@@ -133,50 +167,14 @@ export class WorldManager extends BaseService {
       allSpawners.push(...state.allSpawners);
     });
 
-    const sortedSpawners = sortBy(allSpawners, (spawner) =>
-      spawner.spawnerName.includes('Green NPC') ? -1 : 1,
-    );
-
-    const spawnerChunks = chunk(sortedSpawners, 25);
-
-    this.game.logger.debug(
-      'WorldManager:SpawnerInit',
-      `Initializing ${allSpawners.length} spawners in chunks of 25 every 250ms (${spawnerChunks.length} total)...`,
-    );
-
-    spawnerChunks.forEach((spawnerChunk, i) => {
-      setTimeout(() => {
-        this.game.logger.debug(
-          'WorldManager:SpawnerInit',
-          `Initializing spawner chunk ${i}...`,
-        );
-
-        spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
-      }, i * 500);
-    });
+    this.addUninitializedSpawners(allSpawners);
   }
 
   private initSpeciflcMapState(mapName: string): void {
     const state = this.mapStates[mapName];
     state.init();
 
-    const spawnerChunks = chunk(state.allSpawners, 25);
-
-    this.game.logger.debug(
-      `WorldManager:SpawnerInit:${mapName}`,
-      `Initializing ${state.allSpawners.length} spawners in chunks of 25 every 250ms (${spawnerChunks.length} total)...`,
-    );
-
-    spawnerChunks.forEach((spawnerChunk, i) => {
-      setTimeout(() => {
-        this.game.logger.debug(
-          `WorldManager:SpawnerInit:${mapName}`,
-          `Initializing spawner chunk ${i}...`,
-        );
-
-        spawnerChunk.forEach((spawner) => spawner.tryInitialSpawn());
-      }, i * 500);
-    });
+    this.addUninitializedSpawners(state.allSpawners);
   }
 
   public createOrReplaceMap(mapName: string, mapJson: any) {
@@ -454,6 +452,33 @@ export class WorldManager extends BaseService {
     );
 
     this.isLeavingMap[player.username] = false;
+  }
+
+  public spawnerTick(timer) {
+    const nextSpawners = this.uninitializedSpawners.slice(0, 25);
+    if (nextSpawners.length === 0) return;
+
+    this.game.logger.debug(
+      'WorldManager:SpawnerInit',
+      `Initializing ${nextSpawners.length} spawners (${this.uninitializedSpawners.length} remain)...`,
+    );
+
+    nextSpawners.forEach((spawner) => {
+      const oldSpawners = this.game.groundManager.getMapSpawners(
+        spawner.mapName,
+      );
+      const spawnerRef = oldSpawners.find(
+        (s) =>
+          spawner.pos.x === s.x &&
+          spawner.pos.y === s.y &&
+          spawner.spawnerName === s.name,
+      );
+
+      spawner.setTick(spawnerRef?.currentTick ?? 0);
+      spawner.tryInitialSpawn();
+    });
+
+    this.uninitializedSpawners = this.uninitializedSpawners.slice(25);
   }
 
   public steadyTick(timer) {

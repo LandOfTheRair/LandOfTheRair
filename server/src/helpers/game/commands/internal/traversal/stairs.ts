@@ -41,6 +41,7 @@ export class Stairs extends MacroCommand {
       requireClass,
       teleportTag,
       teleportTagMap,
+      requireWorldInit,
     } = interactable.properties;
 
     if (
@@ -79,6 +80,16 @@ export class Stairs extends MacroCommand {
       return this.sendMessage(
         player,
         'You must gather your party before venturing forth.',
+      );
+    }
+
+    if (
+      requireWorldInit &&
+      !this.game.worldManager.shouldAllowNewSpawnersToBeInitializedFromDungeons
+    ) {
+      return this.sendMessage(
+        player,
+        `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
       );
     }
 
