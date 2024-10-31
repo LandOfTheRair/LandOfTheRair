@@ -603,11 +603,8 @@ export class CombatHelper extends BaseService {
     }
 
     // bouncing arrows
-    const state = this.game.worldManager.getMapStateForCharacter(attacker);
-    if (!state) return;
-
-    const nearby = state
-      .getAllHostilesInRange(attacker, 4)
+    const nearby = this.game.targettingHelper
+      .getPossibleAOETargets(attacker, attacker, 4)
       .filter((x) => x !== defender);
 
     const bounceTo = sample(nearby);

@@ -15,11 +15,8 @@ export class MagicMissile extends Spell {
       target &&
       this.game.traitHelper.rollTraitValue(caster, 'BouncingMissiles')
     ) {
-      const state = this.game.worldManager.getMapStateForCharacter(caster);
-      if (!state) return;
-
-      const nearby = state
-        .getAllHostilesInRange(caster, 4)
+      const nearby = this.game.targettingHelper
+        .getPossibleAOETargets(caster, caster, 4)
         .filter((x) => x !== target);
 
       const bounceTo = sample(nearby);
