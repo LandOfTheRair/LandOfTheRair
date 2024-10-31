@@ -243,12 +243,18 @@ export class MovementHelper extends BaseService {
     }
   }
 
-  private handleTeleport(player: Player, obj, isFall = false): void {
+  public postTeleportInteractableActions(player: Player, obj): void {
+    const { teleportMessage } = obj.properties;
+
+    if (teleportMessage) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: teleportMessage,
+      });
+    }
+  }
+
+  public canUseTeleportInteractable(player: Player, obj): boolean {
     const {
-      teleportX,
-      teleportY,
-      teleportMap,
-      teleportMessage,
       requireHeld,
       requireParty,
       requireHoliday,
@@ -256,27 +262,44 @@ export class MovementHelper extends BaseService {
       requireQuestProgress,
       requireQuestComplete,
       requireWorldInit,
-      damagePercent,
-      teleportTagMap,
-      teleportTag,
-      applyEffect,
       requireClass,
       requireTester,
-      giveAchievement,
+      subscriberOnly,
+      teleportMap,
     } = obj.properties;
+
+    if (
+      teleportMap &&
+      !this.game.teleportHelper.canEnterMap(player, teleportMap)
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You cannot enter this area!',
+      });
+      return false;
+    }
 
     if (requireTester && !isAtLeastTester(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: 'This area is under construction!',
       });
-      return;
+      return false;
+    }
+
+    if (
+      subscriberOnly &&
+      !this.game.subscriptionHelper.isPlayerSubscribed(player)
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: "You found an easter egg! Sadly, it's spoiled.",
+      });
+      return false;
     }
 
     if (requireParty && !this.game.partyHelper.isInParty(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: 'You must gather your party before venturing forth.',
       });
-      return;
+      return false;
     }
 
     if (
@@ -286,14 +309,14 @@ export class MovementHelper extends BaseService {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
       });
-      return;
+      return false;
     }
 
     if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: `That location is only seasonally open during "${requireHoliday}"!`,
       });
-      return;
+      return false;
     }
 
     // check if player has a held item
@@ -302,7 +325,7 @@ export class MovementHelper extends BaseService {
       !this.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
       !this.characterHelper.hasHeldItem(player, requireHeld, 'right')
     ) {
-      return;
+      return false;
     }
 
     // check if player has a quest (and the corresponding quest progress, if necessary)
@@ -317,11 +340,11 @@ export class MovementHelper extends BaseService {
             player,
             requireQuest,
           );
-          if (!questData || !questData[requireQuestProgress]) return;
+          if (!questData || !questData[requireQuestProgress]) return false;
         }
 
         // then we check if they have the quest
-        if (!this.game.questHelper.hasQuest(player, requireQuest)) return;
+        if (!this.game.questHelper.hasQuest(player, requireQuest)) return false;
       }
     }
 
@@ -333,46 +356,68 @@ export class MovementHelper extends BaseService {
           requireQuestComplete,
         )
       ) {
-        return;
+        return false;
       }
     }
 
-    if (requireClass) {
-      if (player.baseClass !== requireClass) return;
+    if (requireClass && player.baseClass !== requireClass) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: "You can't quite figure out how to navigate this.",
+      });
+
+      return false;
     }
 
-    let didTeleport = false;
+    return true;
+  }
 
-    // if we have a teleport tag to look up, we start there
+  public getDestinationForTeleportInteractable(
+    obj,
+  ): undefined | { x: number; y: number; map: string } {
+    const { teleportX, teleportY, teleportMap, teleportTagMap, teleportTag } =
+      obj.properties;
+
     if (teleportTag && teleportTagMap) {
       const mapData = this.game.worldManager.getMap(teleportTagMap);
       const tagData = mapData?.map?.getTeleportTagRef(teleportTag);
       if (!tagData) {
-        this.game.messageHelper.sendLogMessageToPlayer(player, {
-          message:
-            'It seems this portal is active, but the connection is severed.',
-        });
-
-        return;
+        return undefined;
       }
 
-      didTeleport = this.game.teleportHelper.teleport(player, {
-        x: tagData.x,
-        y: tagData.y,
-        map: teleportTagMap,
-      });
+      return { x: tagData.x, y: tagData.y, map: teleportTagMap };
     } else if (teleportX && teleportY && teleportMap) {
-      didTeleport = this.game.teleportHelper.teleport(player, {
+      return {
         x: teleportX,
         y: teleportY,
         map: teleportMap,
-      });
-    } else {
+      };
+    }
+
+    return undefined;
+  }
+
+  private handleTeleport(player: Player, obj, isFall = false): void {
+    const { teleportMessage, damagePercent, applyEffect, giveAchievement } =
+      obj.properties;
+
+    if (!this.canUseTeleportInteractable(player, obj)) return;
+
+    let didTeleport = false;
+
+    const teleportDestination = this.getDestinationForTeleportInteractable(obj);
+    if (!teleportDestination) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: 'It seems this portal is active, but leads nowhere.',
+        message:
+          'It seems this portal is active, but the connection is severed.',
       });
       return;
     }
+
+    didTeleport = this.game.teleportHelper.teleport(player, {
+      x: teleportDestination.x,
+      y: teleportDestination.y,
+      map: teleportDestination.map,
+    });
 
     if (!didTeleport) return;
 
@@ -412,6 +457,8 @@ export class MovementHelper extends BaseService {
     if (giveAchievement) {
       this.game.achievementsHelper.earnAchievement(player, giveAchievement);
     }
+
+    this.game.movementHelper.postTeleportInteractableActions(player, obj);
   }
 
   private handleLocker(player: Player, lockerName: string) {

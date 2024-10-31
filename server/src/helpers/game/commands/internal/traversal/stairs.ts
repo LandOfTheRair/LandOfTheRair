@@ -1,8 +1,4 @@
-import {
-  IMacroCommandArgs,
-  isAtLeastTester,
-  SoundEffect,
-} from '../../../../../interfaces';
+import { IMacroCommandArgs, SoundEffect } from '../../../../../interfaces';
 import { Player } from '../../../../../models';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -28,83 +24,10 @@ export class Stairs extends MacroCommand {
       return;
     }
 
-    const {
-      teleportMap,
-      teleportX,
-      teleportY,
-      teleportMessage,
-      requireHeld,
-      requireParty,
-      requireTester,
-      subscriberOnly,
-      requireHoliday,
-      requireClass,
-      teleportTag,
-      teleportTagMap,
-      requireWorldInit,
-    } = interactable.properties;
-
     if (
-      requireHeld &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'right')
+      !this.game.movementHelper.canUseTeleportInteractable(player, interactable)
     ) {
       return;
-    }
-
-    if (requireTester && !isAtLeastTester(player)) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: 'This area is under construction!',
-      });
-      return;
-    }
-
-    if (
-      subscriberOnly &&
-      !this.game.subscriptionHelper.isPlayerSubscribed(player)
-    ) {
-      return this.sendMessage(
-        player,
-        "You found an easter egg! Sadly, it's spoiled.",
-      );
-    }
-
-    if (requireClass && player.baseClass !== requireClass) {
-      return this.sendMessage(
-        player,
-        "You can't quite figure out how to navigate this.",
-      );
-    }
-
-    if (requireParty && !this.game.partyHelper.isInParty(player)) {
-      return this.sendMessage(
-        player,
-        'You must gather your party before venturing forth.',
-      );
-    }
-
-    if (
-      requireWorldInit &&
-      !this.game.worldManager.shouldAllowNewSpawnersToBeInitializedFromDungeons
-    ) {
-      return this.sendMessage(
-        player,
-        `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
-      );
-    }
-
-    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
-      return this.sendMessage(
-        player,
-        `That location is only seasonally open during "${requireHoliday}"!`,
-      );
-    }
-
-    if (
-      teleportMap &&
-      !this.game.teleportHelper.canTeleport(player, teleportMap)
-    ) {
-      return this.sendMessage(player, 'You cannot enter this area.');
     }
 
     this.sendMessage(
@@ -113,36 +36,27 @@ export class Stairs extends MacroCommand {
       SoundEffect.EnvStairs,
     );
 
-    // teleport-tag (solokar, etc)
-    if (teleportTag && teleportTagMap) {
-      const mapData = this.game.worldManager.getMap(teleportTagMap);
-      const tagData = mapData?.map.getTeleportTagRef(teleportTag);
-      if (!tagData) {
-        this.game.messageHelper.sendLogMessageToPlayer(player, {
-          message: 'Hmmm, it seems this portal is active, but leads nowhere.',
-        });
-        return;
-      }
-
-      this.game.teleportHelper.teleport(player, {
-        x: tagData.x,
-        y: tagData.y,
-        map: teleportTagMap,
+    const teleportDestination =
+      this.game.movementHelper.getDestinationForTeleportInteractable(
+        interactable,
+      );
+    if (!teleportDestination) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message:
+          'It seems this portal is active, but the connection is severed.',
       });
-
-      // normal stairs
-    } else {
-      this.game.teleportHelper.teleport(player, {
-        x: teleportX,
-        y: teleportY,
-        map: teleportMap,
-      });
-
-      if (teleportMessage) {
-        this.game.messageHelper.sendLogMessageToPlayer(player, {
-          message: teleportMessage,
-        });
-      }
+      return;
     }
+
+    this.game.teleportHelper.teleport(player, {
+      x: teleportDestination.x,
+      y: teleportDestination.y,
+      map: teleportDestination.map,
+    });
+
+    this.game.movementHelper.postTeleportInteractableActions(
+      player,
+      interactable,
+    );
   }
 }

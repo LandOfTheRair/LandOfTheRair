@@ -1,8 +1,4 @@
-import {
-  IMacroCommandArgs,
-  isAtLeastTester,
-  SoundEffect,
-} from '../../../../../interfaces';
+import { IMacroCommandArgs, SoundEffect } from '../../../../../interfaces';
 import { Player } from '../../../../../models';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -28,79 +24,29 @@ export class Climbs extends MacroCommand {
       return;
     }
 
-    const {
-      teleportMap,
-      teleportX,
-      teleportY,
-      requireHeld,
-      teleportMessage,
-      requireParty,
-      subscriberOnly,
-      requireHoliday,
-      requireClass,
-      requireTester,
-      requireWorldInit,
-    } = interactable.properties;
+    if (
+      !this.game.movementHelper.canUseTeleportInteractable(player, interactable)
+    ) {
+      return;
+    }
 
-    if (requireTester && !isAtLeastTester(player)) {
+    const teleportDestination =
+      this.game.movementHelper.getDestinationForTeleportInteractable(
+        interactable,
+      );
+    if (!teleportDestination) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: 'This area is under construction!',
+        message:
+          'It seems this portal is active, but the connection is severed.',
       });
       return;
     }
 
-    if (
-      subscriberOnly &&
-      !this.game.subscriptionHelper.isPlayerSubscribed(player)
-    ) {
-      return this.sendMessage(
-        player,
-        "You found an easter egg! Sadly, it's spoiled.",
-      );
-    }
-
-    if (requireClass && player.baseClass !== requireClass) {
-      return this.sendMessage(
-        player,
-        "You can't quite figure out how to navigate this.",
-      );
-    }
-
-    if (
-      requireHeld &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'right')
-    ) {
-      return;
-    }
-
-    if (requireParty && !this.game.partyHelper.isInParty(player)) {
-      return this.sendMessage(
-        player,
-        'You must gather your party before venturing forth.',
-      );
-    }
-
-    if (
-      requireWorldInit &&
-      !this.game.worldManager.shouldAllowNewSpawnersToBeInitializedFromDungeons
-    ) {
-      return this.sendMessage(
-        player,
-        `The ether is not yet ready to receive you! (${this.game.worldManager.loadPercentage})`,
-      );
-    }
-
-    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
-      return this.sendMessage(
-        player,
-        `That location is only seasonally open during "${requireHoliday}"!`,
-      );
-    }
-
-    if (!this.game.teleportHelper.canTeleport(player, teleportMap)) {
-      return this.sendMessage(player, 'You cannot enter this area.');
-    }
+    this.game.teleportHelper.teleport(player, {
+      x: teleportDestination.x,
+      y: teleportDestination.y,
+      map: teleportDestination.map,
+    });
 
     this.sendMessage(
       player,
@@ -108,16 +54,9 @@ export class Climbs extends MacroCommand {
       SoundEffect.EnvStairs,
     );
 
-    if (teleportMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: teleportMessage,
-      });
-    }
-
-    this.game.teleportHelper.teleport(player, {
-      x: teleportX,
-      y: teleportY,
-      map: teleportMap,
-    });
+    this.game.movementHelper.postTeleportInteractableActions(
+      player,
+      interactable,
+    );
   }
 }
