@@ -781,7 +781,10 @@ export class MapScene extends Phaser.Scene {
             return doCommand('~climbup');
         }
         // Check if tile is next to, or under the player
-        if (positionDistanceFromZero(playerToClickedOffset) <= 1) {
+        if (
+          positionDistanceFromZero(playerToClickedOffset) <= 1 &&
+          interactTile.type !== 'Door'
+        ) {
           doCommand('!interact');
         }
       }
