@@ -16,13 +16,13 @@
   <div class="p-bottom-20 p-left-5 p-right-25 char-container">
     @if (visibleCharactersService.allVisibleCharacters().length === 0) {
     <div class="vertical-center full-width full-height background-text">
-      You don't see anyone nearby
+      You don't see anyone nearby.
     </div>
     }
 
     <!-- -->
     @for (character of visibleCharactersService.allVisibleCharacters(); track
-    character.uuid; let i = $index) {
+    $index) {
     <div class="char-card-container">
       @if (character) {
       <app-character-card

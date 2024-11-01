@@ -30,7 +30,7 @@ export class VisibleCharactersService {
   private optionsService = inject(OptionsService);
 
   private previousPlacements: Record<string, number> = {};
-  public allVisibleCharacters = signal<ICharacter[]>([]);
+  public allVisibleCharacters = signal<Array<ICharacter | null>>([]);
 
   constructor() {
     const visibleCharacterUpdateTimer = toSignal(timer(0, 200));
@@ -39,9 +39,7 @@ export class VisibleCharactersService {
         visibleCharacterUpdateTimer();
         this.curPos();
 
-        this.allVisibleCharacters.set(
-          this.visibleCharacters(this.player()).filter(Boolean),
-        );
+        this.allVisibleCharacters.set(this.visibleCharacters(this.player()));
       },
       { allowSignalWrites: true },
     );
