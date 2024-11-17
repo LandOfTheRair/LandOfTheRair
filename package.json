@@ -42,7 +42,7 @@
   "private": true,
   "devDependencies": {
     "conventional-changelog-cli": "2.1.1",
-    "lerna": "^3.22.1",
+    "lerna": "^8.1.9",
     "tslib": "^1.10.0"
   }
 }
