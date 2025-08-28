@@ -291,7 +291,7 @@ export class ContentManager extends BaseService {
     const ret = this.achievements[achievementName];
     if (!ret) {
       this.game.logger.error(
-        'Content:Achievement',
+        `Content:Achievement:${achievementName}`,
         new Error(`Achievement ${achievementName} does not exist.`),
       );
     }
@@ -321,7 +321,7 @@ export class ContentManager extends BaseService {
     const ret = this.customItems[itemName] || this.items[itemName];
     if (!ret) {
       this.game.logger.error(
-        'Content:Item',
+        `Content:Item:${itemName}`,
         new Error(`Item ${itemName} does not exist.`),
       );
     }
@@ -333,7 +333,7 @@ export class ContentManager extends BaseService {
     const ret = this.customNPCs[npcId] || this.npcs[npcId];
     if (!ret) {
       this.game.logger.error(
-        'Content:NPC',
+        `Content:NPC:${npcId}`,
         new Error(`NPC ${npcId} does not exist.`),
       );
     }
@@ -345,7 +345,7 @@ export class ContentManager extends BaseService {
     const ret = this.npcScripts[npcTag];
     if (!ret) {
       this.game.logger.error(
-        'Content:NPCScript',
+        `Content:NPCScript:${npcTag}`,
         new Error(`NPC Script ${npcTag} does not exist.`),
       );
     }
@@ -357,7 +357,7 @@ export class ContentManager extends BaseService {
     const ret = this.recipes[tradeskill] || [];
     if (!ret || ret.length === 0) {
       this.game.logger.error(
-        'Content:TradeskillRecipes',
+        `Content:TradeskillRecipes:${tradeskill}`,
         new Error(`Recipe tradeskill ${tradeskill} does not exist.`),
       );
     }
@@ -369,7 +369,7 @@ export class ContentManager extends BaseService {
     const ret = this.allRecipes[name];
     if (!ret) {
       this.game.logger.error(
-        'Content:Recipe',
+        `Content:Recipe:${name}`,
         new Error(`Recipe ${name} does not exist.`),
       );
     }
@@ -381,7 +381,7 @@ export class ContentManager extends BaseService {
     const ret = this.customSpawners[spawnerTag] || this.spawners[spawnerTag];
     if (!ret) {
       this.game.logger.error(
-        'Content:Spawner',
+        `Content:Spawner:${spawnerTag}`,
         new Error(`Spawner ${spawnerTag} does not exist.`),
       );
     }
@@ -393,7 +393,7 @@ export class ContentManager extends BaseService {
     const ret = this.quests[quest];
     if (!ret) {
       this.game.logger.error(
-        'Content:Quest',
+        `Content:Quest:${quest}`,
         new Error(`Quest ${quest} does not exist.`),
       );
     }
@@ -405,7 +405,7 @@ export class ContentManager extends BaseService {
     const ret = this.traits[trait];
     if (!ret) {
       this.game.logger.error(
-        'Content:Trait',
+        `Content:Trait:${trait}`,
         new Error(`Trait ${trait} does not exist (ctx: ${context}).`),
       );
     }
@@ -417,7 +417,7 @@ export class ContentManager extends BaseService {
     const ret = this.traitTrees[tree];
     if (!ret) {
       this.game.logger.error(
-        'Content:TraitTree',
+        `Content:TraitTree:${tree}`,
         new Error(`Trait Tree ${tree} does not exist.`),
       );
     }
@@ -433,7 +433,7 @@ export class ContentManager extends BaseService {
     const ret = this.effectData[name];
     if (!ret) {
       this.game.logger.error(
-        'Content:Effect',
+        `Content:Effect:${name}`,
         new Error(`Effect ${name} does not exist (ctx: ${context}).`),
       );
     }
@@ -449,7 +449,7 @@ export class ContentManager extends BaseService {
     const ret = this.spells[name];
     if (!ret) {
       this.game.logger.error(
-        'Content:Spell',
+        `Content:Spell:${name}`,
         new Error(`Spell ${name} does not exist (ctx: ${context}).`),
       );
     }
@@ -461,7 +461,7 @@ export class ContentManager extends BaseService {
     const ret = this.events[name];
     if (!ret) {
       this.game.logger.error(
-        'Content:Event',
+        `Content:Event:${name}`,
         new Error(`Event ${name} does not exist.`),
       );
     }
