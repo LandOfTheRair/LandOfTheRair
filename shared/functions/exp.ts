@@ -5,17 +5,27 @@ const SKILL_COEFFICIENT = 1.55;
 const TRADESKILL_COEFFICIENT = 1.35;
 
 export function calculateXPRequiredForLevel(level: number): number {
-  const pre20XP = Math.pow(2, Math.min(FIRST_LEVEL_CONSTANT_CHANGER, level - 1)) * 1000;
+  const pre20XP =
+    Math.pow(2, Math.min(FIRST_LEVEL_CONSTANT_CHANGER, level - 1)) * 1000;
 
   if (level <= FIRST_LEVEL_CONSTANT_CHANGER) {
     return pre20XP;
   }
 
+  const xpBoostForLevels50OrLess = 25_000_000 * Math.min(level, 50);
+
   if (level <= 50) {
-    return (5_000_000 * (level - FIRST_LEVEL_CONSTANT_CHANGER)) + (pre20XP * (Math.max(1, level - FIRST_LEVEL_CONSTANT_CHANGER)));
+    return (
+      5_000_000 * (level - FIRST_LEVEL_CONSTANT_CHANGER) +
+      pre20XP * Math.max(1, level - FIRST_LEVEL_CONSTANT_CHANGER) +
+      xpBoostForLevels50OrLess
+    );
   }
 
-  const level50XP = (5_000_000 * (50 - FIRST_LEVEL_CONSTANT_CHANGER)) + (pre20XP * (Math.max(1, 50 - FIRST_LEVEL_CONSTANT_CHANGER)));
+  const level50XP =
+    5_000_000 * (50 - FIRST_LEVEL_CONSTANT_CHANGER) +
+    pre20XP * Math.max(1, 50 - FIRST_LEVEL_CONSTANT_CHANGER) +
+    xpBoostForLevels50OrLess;
 
   if (level === 51) return Math.floor(level50XP * 1.5);
   if (level === 52) return Math.floor(level50XP * 3);
@@ -60,13 +70,18 @@ export function percentCompleteSkill(player: IPlayer, skill: Skill): string {
   const skillValue = player.skills[skill] || 0;
   const skillLevel = calculateSkillLevelFromXP(skillValue);
 
-  const nextLevel = skillLevel === 0 ? 100 : calculateSkillXPRequiredForLevel(skillLevel);
-  const prevLevel = skillLevel === 0 ? 0 : calculateSkillXPRequiredForLevel(skillLevel - 1);
+  const nextLevel =
+    skillLevel === 0 ? 100 : calculateSkillXPRequiredForLevel(skillLevel);
+  const prevLevel =
+    skillLevel === 0 ? 0 : calculateSkillXPRequiredForLevel(skillLevel - 1);
 
   const normalizedCurrent = skillValue - prevLevel;
   const normalizedMax = nextLevel - prevLevel;
 
-  const percentWay = Math.max(0, (normalizedCurrent / normalizedMax * 100)).toFixed(3);
+  const percentWay = Math.max(
+    0,
+    (normalizedCurrent / normalizedMax) * 100,
+  ).toFixed(3);
 
   return percentWay;
 }
