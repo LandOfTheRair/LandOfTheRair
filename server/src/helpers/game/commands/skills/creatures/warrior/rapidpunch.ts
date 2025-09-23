@@ -1,4 +1,5 @@
 import {
+  distanceFrom,
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
@@ -42,6 +43,10 @@ export class Rapidpunch extends SpellCommand {
     if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
     if (target === player) return;
+
+    if (distanceFrom(player, target) > this.range(player)) {
+      return this.sendMessage(player, 'That target is too far away!');
+    }
 
     this.use(player, target, { attackRange: 0 });
   }
