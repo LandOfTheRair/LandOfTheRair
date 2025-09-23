@@ -83,7 +83,7 @@ describe('Tradeskill Functions', () => {
       expect(calculateTradeskillLevelFromXP(6)).toBe(0); // At level 1 XP requirement but still level 0
       expect(calculateTradeskillLevelFromXP(7)).toBe(1); // Just above, reaches level 1
       expect(calculateTradeskillLevelFromXP(9)).toBe(1); // At level 2 XP requirement but still level 1
-      expect(calculateTradeskillLevelFromXP(10)).toBe(1); // Just above level 2 threshold
+      expect(calculateTradeskillLevelFromXP(10)).toBe(2); // Just above level 2 threshold
       expect(calculateTradeskillLevelFromXP(12)).toBe(2); // At level 3 XP requirement
     });
 
@@ -146,8 +146,8 @@ describe('Tradeskill Functions', () => {
       expect(calculateTradeskillLevelFromXP(7)).toBe(1); // Now level 1
       expect(calculateTradeskillLevelFromXP(8)).toBe(1); // Still level 1
       expect(calculateTradeskillLevelFromXP(9)).toBe(1); // Still level 1
-      expect(calculateTradeskillLevelFromXP(10)).toBe(1); // Still level 1
-      expect(calculateTradeskillLevelFromXP(11)).toBe(1); // Still level 1
+      expect(calculateTradeskillLevelFromXP(10)).toBe(2); // Now level 2
+      expect(calculateTradeskillLevelFromXP(11)).toBe(2); // Still level 2
       expect(calculateTradeskillLevelFromXP(12)).toBe(2); // Now level 2
     });
   });
