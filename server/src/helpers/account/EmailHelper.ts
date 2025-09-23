@@ -20,10 +20,14 @@ export class EmailHelper extends BaseService {
     }
 
     this.transport = nodemailer.createTransport({
-      service: process.env.SMTP_SERVICE || 'gmail',
+      host: process.env.SMTP_HOST || undefined,
+      secure: true,
       auth: {
         user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASSWORD,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
   }
@@ -42,7 +46,7 @@ export class EmailHelper extends BaseService {
     account.verificationExpiration = Date.now() + 3600 * hours * 1000;
 
     const mail = {
-      from: 'help@rair.land',
+      from: process.env.SMTP_EMAIL,
       replyTo: 'support@rair.land',
       to: account.email,
       subject: 'Your Land of the Rair Account Verification Code',
@@ -97,7 +101,7 @@ export class EmailHelper extends BaseService {
     }
 
     const mail = {
-      from: 'help@rair.land',
+      from: process.env.SMTP_EMAIL,
       replyTo: 'support@rair.land',
       to: email,
       subject: 'Your Land of the Rair Temporary Password',
