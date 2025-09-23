@@ -70,7 +70,11 @@ export class MigrationHelper extends BaseService {
         }
 
         const trait = runeItem.trait;
-        if (trait?.restrict && !trait.restrict.includes(player.baseClass)) {
+        if (
+          trait?.restrict &&
+          trait.restrict.length > 0 &&
+          !trait.restrict.includes(player.baseClass)
+        ) {
           remove.push(rune);
           return;
         }
