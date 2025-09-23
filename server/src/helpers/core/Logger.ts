@@ -64,7 +64,7 @@ export class Logger extends BaseService {
   public error(tag: string, ...args) {
     this._logWithTs('error', tag, ...args);
 
-    this.rollbar?.error(tag, args, {
+    this.rollbar?.error(args, {
       context: this.game.crashContext.getCurrentContext(),
     });
   }
