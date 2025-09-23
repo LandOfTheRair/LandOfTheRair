@@ -110,6 +110,16 @@ export class AccountDB extends BaseService {
     const account = new Account();
     account._id = new ObjectId();
 
+    const checkUsernameAccount = await this.db.findSingle<Account>(Account, {
+      username: { $regex: `^${accountInfo.username}$`, $options: 'i' },
+    });
+    if (checkUsernameAccount) return null;
+
+    const checkEmailAccount = await this.db.findSingle<Account>(Account, {
+      email: { $regex: `^${accountInfo.email}$`, $options: 'i' },
+    });
+    if (checkEmailAccount) return null;
+
     merge(account, {
       username: accountInfo.username,
       email: accountInfo.email,
