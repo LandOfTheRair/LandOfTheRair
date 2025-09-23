@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sample, sum } from 'lodash';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 import {
   Currency,
