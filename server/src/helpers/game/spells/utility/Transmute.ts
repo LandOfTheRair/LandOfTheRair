@@ -44,6 +44,8 @@ export class Transmute extends Spell {
     let totalGold = 0;
 
     Object.keys(items).forEach((itemClass) => {
+      if (removeItems.length > 100) return;
+
       if (itemClass === ItemClass.Coin || itemClass === ItemClass.Corpse) {
         return;
       }
