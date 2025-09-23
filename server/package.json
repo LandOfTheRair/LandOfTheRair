@@ -82,8 +82,8 @@
     "prettier": "^3.3.3",
     "source-map-support": "^0.5.19",
     "symlink-dir": "4.1.0",
-    "ts-node": "9.1.0",
-    "tsc-watch": "^4.2.9",
+    "ts-node": "^10.9.2",
+    "tsc-watch": "^7.1.1",
     "typescript": "^5.9.2"
   },
   "pkg": {
