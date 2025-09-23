@@ -48,6 +48,16 @@ export class MigrationHelper extends BaseService {
       this.game.traitHelper.resetTraits(player);
     }
 
+    Object.keys(player.traits.traitsLearned ?? {}).forEach((trait) => {
+      const def = this.game.contentManager.getTrait(
+        trait,
+        `Migrate:Trait:${player.name}`,
+      );
+      if (!def) {
+        delete player.traits.traitsLearned[trait];
+      }
+    });
+
     // clean up invalid learned runes
     if (player.learnedRunes.length > 0) {
       const remove: string[] = [];
