@@ -30,7 +30,7 @@
     "bufferutil": "^4.0.2",
     "censor-sensor": "1.0.5",
     "deep-freeze": "0.0.1",
-    "didyoumean2": "3.1.2",
+    "didyoumean2": "^7.0.4",
     "discord.js": "^14.16.3",
     "dotenv": "8.1.0",
     "download-github-repo": "0.1.4",
