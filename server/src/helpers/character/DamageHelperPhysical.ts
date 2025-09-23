@@ -533,7 +533,8 @@ export class DamageHelperPhysical extends BaseService {
     const rightHand = defender.items.equipment[ItemSlot.RightHand];
 
     const defenderBlocker =
-      rightHand && this.game.itemHelper.isOwnedBy(defender, rightHand)
+      rightHand &&
+      this.game.itemHelper.canGetBenefitsFromItem(defender, rightHand)
         ? rightHand
         : {
             name: 'hands',
@@ -550,14 +551,14 @@ export class DamageHelperPhysical extends BaseService {
     const defenderShield =
       leftHand &&
       this.isShield(leftHand) &&
-      this.game.itemHelper.isOwnedBy(defender, leftHand)
+      this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
         ? leftHand
         : undefined;
     const defenderOffhand =
       leftHand &&
       (this.game.itemHelper.getItemProperty(leftHand, 'offhand') ||
         this.game.traitHelper.traitLevel(defender, 'BalancedGrip')) &&
-      this.game.itemHelper.isOwnedBy(defender, leftHand)
+      this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
         ? leftHand
         : undefined;
 
