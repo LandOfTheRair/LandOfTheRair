@@ -38,6 +38,7 @@ export class Stairs extends MacroCommand {
 
     const teleportDestination =
       this.game.movementHelper.getDestinationForTeleportInteractable(
+        player,
         interactable,
       );
     if (!teleportDestination) {

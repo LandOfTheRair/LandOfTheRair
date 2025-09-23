@@ -268,16 +268,6 @@ export class MovementHelper extends BaseService {
       teleportMap,
     } = obj.properties;
 
-    if (
-      teleportMap &&
-      !this.game.teleportHelper.canEnterMap(player, teleportMap)
-    ) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: 'You cannot enter this area!',
-      });
-      return false;
-    }
-
     if (requireTester && !isAtLeastTester(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: 'This area is under construction!',
@@ -315,6 +305,16 @@ export class MovementHelper extends BaseService {
     if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: `That location is only seasonally open during "${requireHoliday}"!`,
+      });
+      return false;
+    }
+
+    if (
+      teleportMap &&
+      !this.game.teleportHelper.canEnterMap(player, teleportMap)
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(player, {
+        message: 'You cannot enter this area!',
       });
       return false;
     }
@@ -372,6 +372,7 @@ export class MovementHelper extends BaseService {
   }
 
   public getDestinationForTeleportInteractable(
+    player: Player,
     obj,
   ): undefined | { x: number; y: number; map: string } {
     const { teleportX, teleportY, teleportMap, teleportTagMap, teleportTag } =
@@ -391,6 +392,12 @@ export class MovementHelper extends BaseService {
         y: teleportY,
         map: teleportMap,
       };
+    } else if (teleportX && teleportY) {
+      return {
+        x: teleportX,
+        y: teleportY,
+        map: player.map,
+      };
     }
 
     return undefined;
@@ -404,7 +411,10 @@ export class MovementHelper extends BaseService {
 
     let didTeleport = false;
 
-    const teleportDestination = this.getDestinationForTeleportInteractable(obj);
+    const teleportDestination = this.getDestinationForTeleportInteractable(
+      player,
+      obj,
+    );
     if (!teleportDestination) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message:

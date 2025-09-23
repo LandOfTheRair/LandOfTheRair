@@ -32,6 +32,7 @@ export class Climbs extends MacroCommand {
 
     const teleportDestination =
       this.game.movementHelper.getDestinationForTeleportInteractable(
+        player,
         interactable,
       );
     if (!teleportDestination) {
