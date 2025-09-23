@@ -14,7 +14,9 @@
     "tsc:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/server/src/core/index.js\"",
     "content:dev": "cd content && npm run watch",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
-    "test": "npm run lint",
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest --ui --api 9899",
     "build": "tsc",
     "build:package": "pkg . --public --out-path=build",
     "build:package:all": "npm run build && npm run build:package"
@@ -66,7 +68,7 @@
     "@sytten/ts-node-dev": "^1.0.3",
     "@types/lodash": "^4.14.168",
     "@types/mongodb": "3.3.13",
-    "@types/node": "12.7.11",
+    "@types/node": "^20.19.17",
     "@types/ws": "^7.4.0",
     "@typescript-eslint/eslint-plugin": "^6",
     "@typescript-eslint/parser": "^6",
@@ -84,7 +86,8 @@
     "symlink-dir": "4.1.0",
     "ts-node": "^10.9.2",
     "tsc-watch": "^7.1.1",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "pkg": {
     "targets": [
