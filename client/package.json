@@ -42,7 +42,7 @@
     "fast-json-patch": "3.0.0-1",
     "howler": "^2.2.1",
     "immer": "^9.0.6",
-    "linkifyjs": "^2.1.8",
+    "linkifyjs": "^4.3.2",
     "luxon": "^1.25.0",
     "marked": "^1.2.5",
     "ngx-color-picker": "~17",
