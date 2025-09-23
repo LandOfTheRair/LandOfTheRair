@@ -84,7 +84,7 @@
     "symlink-dir": "4.1.0",
     "ts-node": "9.1.0",
     "tsc-watch": "^4.2.9",
-    "typescript": "5.3"
+    "typescript": "^5.9.2"
   },
   "pkg": {
     "targets": [
