@@ -230,7 +230,7 @@ export const spriteTerrainForDirection = (
       return baseIndex + 2;
     case 0b111_1_1_110:
       return baseIndex + 3;
-    case 0b111_1_1_011:
+    case 0b111_1_1_101:
       return baseIndex + 4;
     case 0b010_1_1_111:
       return baseIndex + 5;
