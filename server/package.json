@@ -60,7 +60,7 @@
     "uuid": "^13.0.0",
     "winston": "^3.6.0",
     "winston-syslog": "^2.5.0",
-    "ws": "^7.4.6"
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@sytten/ts-node-dev": "^1.0.3",
