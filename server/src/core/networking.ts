@@ -2,9 +2,9 @@ import 'reflect-metadata';
 
 import { parentPort } from 'worker_threads';
 
+import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import fastify from 'fastify';
-import cors from 'fastify-cors';
-import rateLimit from 'fastify-rate-limit';
 
 import uuid from 'uuid/v4';
 
@@ -75,8 +75,10 @@ export class WebsocketWorker {
     await Promise.all(promises);
 
     app.listen(
-      process.env.PORT ? +process.env.PORT : 6975,
-      process.env.BIND_ADDR || '127.0.0.1',
+      {
+        port: process.env.PORT ? +process.env.PORT : 6975,
+        host: process.env.BIND_ADDR || '127.0.0.1',
+      },
       (err: any) => {
         if (err) throw err;
 
