@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { v4 as uuid } from 'uuid';
 
-import { species } from 'fantastical';
+import { Gender, species } from 'fantastical';
 import {
   clamp,
   cloneDeep,
@@ -493,9 +493,11 @@ export class NPCCreator extends BaseService {
       return sample(npc.name) ?? 'unknown';
     }
 
+    const gender = sample(['male', 'female']) as Gender;
+
     switch (npc.monsterClass) {
       case MonsterClass.Dragon:
-        return species.dragon();
+        return species.dragon(gender);
       case MonsterClass.Beast:
         return species.ogre();
       case MonsterClass.Undead:
@@ -504,17 +506,17 @@ export class NPCCreator extends BaseService {
 
     switch (npc.allegiance) {
       case Allegiance.Pirates:
-        return species.dwarf();
+        return species.dwarf(gender);
       case Allegiance.Royalty:
-        return species.highelf();
+        return species.highelf(gender);
       case Allegiance.Townsfolk:
         return species.human();
       case Allegiance.Underground:
-        return species.cavePerson();
+        return species.cavePerson(gender);
       case Allegiance.Wilderness:
-        return species.fairy();
+        return species.fairy(gender);
       case Allegiance.Adventurers:
-        return species.gnome();
+        return species.gnome(gender);
     }
 
     if (this.game.diceRollerHelper.XInOneHundred(1)) {
