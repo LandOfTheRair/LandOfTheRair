@@ -1,5 +1,5 @@
 import { extend, isArray, random, sample } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import uuid from 'uuid/v4';
 import { Game } from '../../helpers';
 
 import {

@@ -1,6 +1,6 @@
 import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
-import { v4 as uuid } from 'uuid';
+import uuid from 'uuid/v4';
 
 import {
   Allegiance,

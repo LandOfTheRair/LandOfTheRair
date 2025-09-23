@@ -6,7 +6,7 @@ import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import fastify from 'fastify';
 
-import { v4 as uuid } from 'uuid';
+import uuid from 'uuid/v4';
 
 import * as WebSocket from 'ws';
 import { Database } from '../helpers';

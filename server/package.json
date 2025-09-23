@@ -59,7 +59,7 @@
     "rot-js": "^2.2.1",
     "stripe": "^8.138.0",
     "utf-8-validate": "^5.0.3",
-    "uuid": "^13.0.0",
+    "uuid": "^3.3.3",
     "winston": "^3.6.0",
     "winston-syslog": "^2.5.0",
     "ws": "^8.18.3"

@@ -1,5 +1,5 @@
 import { Injectable } from 'injection-js';
-import { v4 as uuid } from 'uuid';
+import uuid from 'uuid/v4';
 
 import { Gender, species } from 'fantastical';
 import {
