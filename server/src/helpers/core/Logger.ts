@@ -61,10 +61,11 @@ export class Logger extends BaseService {
     this._logWithTs('warn', tag, ...args);
   }
 
-  public error(tag: string, ...args) {
-    this._logWithTs('error', tag, ...args);
+  public error(tag: string, error: Error, ...args) {
+    this._logWithTs('error', tag, error, ...args);
 
-    this.rollbar?.error(args, {
+    this.rollbar?.error(error, {
+      args,
       context: this.game.crashContext.getCurrentContext(),
     });
   }

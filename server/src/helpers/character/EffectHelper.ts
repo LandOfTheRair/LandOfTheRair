@@ -90,7 +90,7 @@ export class EffectHelper extends BaseService {
     if (!rawEffectData) {
       this.game.logger.error(
         'EffectHelper:AddEffect',
-        `Could not find an effect ${effectName}.`,
+        new Error(`Could not find an effect ${effectName}.`),
       );
       return;
     }

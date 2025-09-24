@@ -29,7 +29,7 @@ export class RNGDungeonGenerator extends BaseService {
     if (!defaultDungeon || !defaultDungeon.map) {
       this.game.logger.error(
         'RNGDungeonGenerator',
-        'Could not find default dungeon template.',
+        new Error('Could not find default dungeon template.'),
       );
       return;
     }

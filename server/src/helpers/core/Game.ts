@@ -360,7 +360,7 @@ export class Game {
     timer.dumpTimers();
 
     if (this.worldDB.running) {
-      this.logger.error(
+      this.logger.warn(
         'Game:Init',
         'Warning: the last shutdown was unsafe. Data may have been lost.',
       );
@@ -496,7 +496,7 @@ export class Game {
       try {
         this.loop();
       } catch (e) {
-        this.logger.error('CrashRecovery', e);
+        this.logger.error('CrashRecovery', e as Error);
         this.loop();
       }
     }, 100);

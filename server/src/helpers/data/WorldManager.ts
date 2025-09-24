@@ -198,7 +198,7 @@ export class WorldManager extends BaseService {
     } catch (e) {
       this.game.logger.error(
         'WorldManager',
-        `Could not create map ${mapName}`,
+        new Error(`Could not create map ${mapName}`),
         e,
       );
     }

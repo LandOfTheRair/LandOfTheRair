@@ -468,7 +468,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleC ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleC ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -686,7 +688,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleL ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleL ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -911,7 +915,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleR ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleR ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -1082,7 +1088,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -1292,7 +1300,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -1541,7 +1551,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -1992,7 +2004,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -2194,7 +2208,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -2306,7 +2322,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -2505,7 +2523,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleW ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleW ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -2620,7 +2640,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleK ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleK ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,
@@ -2868,7 +2890,9 @@ export class MoveItems extends MacroCommand {
       default: {
         this.game.logger.error(
           'MoveItems',
-          `handleD ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          new Error(
+            `handleD ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
+          ),
         );
         return this.sendMessage(
           player,

@@ -63,7 +63,7 @@ export class EmailHelper extends BaseService {
     try {
       await this.transport.sendMail(mail);
     } catch (e) {
-      this.game.logger.error('Email:RequestVerify', e);
+      this.game.logger.error('Email:RequestVerify', e as Error);
       throw e;
     }
   }
@@ -120,7 +120,7 @@ export class EmailHelper extends BaseService {
     try {
       await this.transport.sendMail(mail);
     } catch (e) {
-      this.game.logger.error('Email:RequestTempPassword', e);
+      this.game.logger.error('Email:RequestTempPassword', e as Error);
       throw e;
     }
   }

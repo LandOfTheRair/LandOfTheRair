@@ -7,21 +7,23 @@ export class SetMOTDAction extends ServerAction {
   override requiredKeys = ['motd'];
 
   override async act(game: Game, { broadcast }, data) {
-
-    if (!game.lobbyManager.isConnectedGm(data.username)) return { message: 'Not a GM.' };
+    if (!game.lobbyManager.isConnectedGm(data.username)) {
+      return { message: 'Not a GM.' };
+    }
 
     try {
-
       game.worldDB.setMOTD(data.motd || '');
 
       broadcast({
         action: GameAction.ChatSetMOTD,
-        motd: data.motd
+        motd: data.motd,
       });
-
     } catch (e) {
-      game.logger.error('SetMOTDAction', e);
-      return { message: 'Could not set MOTD? I would normally say to contact a GM, but this is probably your fault.' };
+      game.logger.error('SetMOTDAction', e as Error);
+      return {
+        message:
+          'Could not set MOTD? I would normally say to contact a GM, but this is probably your fault.',
+      };
     }
 
     return {};

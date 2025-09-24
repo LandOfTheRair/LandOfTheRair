@@ -50,7 +50,10 @@ export class TestHelper extends BaseService {
     } as IAccount);
 
     if (!account) {
-      this.game.logger.error('Game:TestMode', 'Unable to create test user.');
+      this.game.logger.error(
+        'Game:TestMode',
+        new Error('Unable to create test user.'),
+      );
       return;
     }
 
@@ -116,7 +119,7 @@ export class TestHelper extends BaseService {
     } catch {
       this.game.logger.error(
         'Game:TestMode',
-        'Unable to parse TEST_USER_PROPS.',
+        new Error('Unable to parse TEST_USER_PROPS.'),
       );
     }
   }

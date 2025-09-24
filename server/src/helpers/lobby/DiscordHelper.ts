@@ -55,7 +55,9 @@ export class DiscordHelper extends BaseService {
       if (!this.discordGuild) {
         this.game.logger.error(
           'Discord',
-          `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
+          new Error(
+            `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
+          ),
         );
         return;
       }
@@ -70,7 +72,7 @@ export class DiscordHelper extends BaseService {
       await this.discord.login(this.discordSecret);
       this.game.logger.log('Discord', 'Connected!');
     } catch (e) {
-      this.game.logger.error('Discord', (e as Error).message);
+      this.game.logger.error('Discord', e as Error);
       return;
     }
 
@@ -92,7 +94,9 @@ export class DiscordHelper extends BaseService {
       if (!this.discordChannel) {
         this.game.logger.error(
           'Discord',
-          `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`,
+          new Error(
+            `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`,
+          ),
         );
         return;
       }
@@ -106,7 +110,9 @@ export class DiscordHelper extends BaseService {
       if (!this.discordBotCommandChannel) {
         this.game.logger.error(
           'Discord',
-          `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`,
+          new Error(
+            `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`,
+          ),
         );
         return;
       }
@@ -120,7 +126,9 @@ export class DiscordHelper extends BaseService {
       if (!this.discordMarketplaceChannel) {
         this.game.logger.error(
           'Discord',
-          `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`,
+          new Error(
+            `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`,
+          ),
         );
         return;
       }
@@ -134,7 +142,9 @@ export class DiscordHelper extends BaseService {
       if (!this.discordBugReportsChannel) {
         this.game.logger.error(
           'Discord',
-          `Could not find bug report channel with ID ${process.env.DISCORD_BUGREPORT_CHANNEL_ID}.`,
+          new Error(
+            `Could not find bug report channel with ID ${process.env.DISCORD_BUGREPORT_CHANNEL_ID}.`,
+          ),
         );
         return;
       }
@@ -509,7 +519,7 @@ export class DiscordHelper extends BaseService {
         `Successfully reloaded application (/) commands.`,
       );
     } catch (e) {
-      this.game.logger.error('Discord', e);
+      this.game.logger.error('Discord', e as Error);
     }
   }
 
@@ -540,7 +550,7 @@ export class DiscordHelper extends BaseService {
       try {
         await command.do(interaction, this.game);
       } catch (error) {
-        this.game.logger.error('Discord:Interaction', error);
+        this.game.logger.error('Discord:Interaction', error as Error);
 
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({

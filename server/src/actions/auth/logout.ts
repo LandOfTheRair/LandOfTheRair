@@ -8,10 +8,9 @@ export class LogoutAction extends ServerAction {
 
   override async act(game: Game, { broadcast, unregister }, data) {
     try {
-
       broadcast({
         action: GameAction.ChatRemoveUser,
-        username: data.username
+        username: data.username,
       });
 
       unregister(data.username);
@@ -26,7 +25,7 @@ export class LogoutAction extends ServerAction {
 
       game.logger.log('Auth:Logout', `${data.username} logged out.`);
     } catch (e) {
-      game.logger.error('LogoutAction', e);
+      game.logger.error('LogoutAction', e as Error);
       throw new Error('Could not logout username?');
     }
 

@@ -304,7 +304,9 @@ export class Spawner {
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
       this.game.logger.error(
         'Spawner',
-        `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`,
+        new Error(
+          `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`,
+        ),
       );
       this.removeSelf();
       return null;
@@ -335,7 +337,7 @@ export class Spawner {
     if (!chosenNPCDef) {
       this.game.logger.error(
         'Spawner',
-        `Could not get NPC definition for ${this.name}.`,
+        new Error(`Could not get NPC definition for ${this.name}.`),
       );
       return null;
     }
@@ -369,7 +371,9 @@ export class Spawner {
       if (attempts++ > 100) {
         this.game.logger.error(
           'Spawner',
-          `Could not place a creature at ${this.x}, ${this.y} - ${this.mapRef.name}`,
+          new Error(
+            `Could not place a creature at ${this.x}, ${this.y} - ${this.mapRef.name}`,
+          ),
         );
         break;
       }
@@ -391,7 +395,10 @@ export class Spawner {
     }
 
     if (!AllAIBehaviors[ai]) {
-      this.game.logger.error('Spawner', `AI setting ${ai} does not exist.`);
+      this.game.logger.error(
+        'Spawner',
+        new Error(`AI setting ${ai} does not exist.`),
+      );
       return null;
     }
 

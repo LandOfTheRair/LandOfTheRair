@@ -1,13 +1,20 @@
-
-import { Injectable } from 'injection-js';
 import fs from 'fs-extra';
+import { Injectable } from 'injection-js';
 
+import {
+  IItemDefinition,
+  IModKit,
+  INPCDefinition,
+  INPCScript,
+  IQuest,
+  IRecipe,
+  ISpawnerData,
+  Rollable,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
-import { IItemDefinition, IModKit, INPCDefinition, INPCScript, IQuest, IRecipe, ISpawnerData, Rollable } from '../../interfaces';
 
 @Injectable()
 export class ModKitManager extends BaseService {
-
   private itemsLoadedHash: Record<string, Record<string, boolean>> = {};
 
   private npcs: INPCDefinition[] = [];
@@ -35,7 +42,10 @@ export class ModKitManager extends BaseService {
     return this.mapDrops;
   }
 
-  public get modRegionDrops(): Array<{ regionName: string; drops: Rollable[] }> {
+  public get modRegionDrops(): Array<{
+    regionName: string;
+    drops: Rollable[];
+  }> {
     return this.regionDrops;
   }
 
@@ -52,7 +62,9 @@ export class ModKitManager extends BaseService {
   }
 
   public get loadMods(): string[] {
-    return process.env.MODS_TO_LOAD ? (process.env.MODS_TO_LOAD || '').split(',').map(x => x.trim()) : [];
+    return process.env.MODS_TO_LOAD
+      ? (process.env.MODS_TO_LOAD || '').split(',').map((x) => x.trim())
+      : [];
   }
 
   public async init() {
@@ -73,13 +85,21 @@ export class ModKitManager extends BaseService {
   private copyModsFromList() {
     const mods = this.loadMods;
 
-    mods.forEach(mod => {
+    mods.forEach((mod) => {
       if (!fs.existsSync(`CommunityMods/mods/${mod}.rairmod`)) {
-        this.game.logger.error('ModKit:CopyModsFromList', `Mod "${mod}" does not exist, skipping copy step from CommunityMods...`);
+        this.game.logger.error(
+          'ModKit:CopyModsFromList',
+          new Error(
+            `Mod "${mod}" does not exist, skipping copy step from CommunityMods...`,
+          ),
+        );
         return;
       }
 
-      fs.copySync(`CommunityMods/mods/${mod}.rairmod`, `content/mods/${mod}.rairmod`);
+      fs.copySync(
+        `CommunityMods/mods/${mod}.rairmod`,
+        `content/mods/${mod}.rairmod`,
+      );
     });
   }
 
@@ -88,9 +108,14 @@ export class ModKitManager extends BaseService {
 
     this.game.logger.log('ModKit:Init', `Loading ${mods.length} mods...`);
 
-    mods.forEach(mod => {
+    mods.forEach((mod) => {
       if (!fs.existsSync(`content/mods/${mod}.rairmod`)) {
-        this.game.logger.error('ModKit:LoadModsFromList', `Mod "${mod}" does not exist, skipping load step from content...`);
+        this.game.logger.error(
+          'ModKit:LoadModsFromList',
+          new Error(
+            `Mod "${mod}" does not exist, skipping load step from content...`,
+          ),
+        );
         return;
       }
 
@@ -100,7 +125,10 @@ export class ModKitManager extends BaseService {
   }
 
   private loadMod(mod: IModKit) {
-    this.game.logger.log('ModKit:Loader', `Loading ${mod.meta.name} by ${mod.meta.author}...`);
+    this.game.logger.log(
+      'ModKit:Loader',
+      `Loading ${mod.meta.name} by ${mod.meta.author}...`,
+    );
 
     let failedLoad = false;
 
@@ -108,15 +136,22 @@ export class ModKitManager extends BaseService {
     const loadNPCs: INPCDefinition[] = [];
     const loadSpawners: ISpawnerData[] = [];
     const loadItems: IItemDefinition[] = [];
-    const loadDrops: Array<{ mapName?: string; regionName?: string; drops: Rollable[] }> = [];
+    const loadDrops: Array<{
+      mapName?: string;
+      regionName?: string;
+      drops: Rollable[];
+    }> = [];
     const loadDialogs: INPCScript[] = [];
     const loadQuests: IQuest[] = [];
     const loadRecipes: IRecipe[] = [];
 
     // items that can and must be deduped (if any of these fail, the mod will NOT load, and they will check again in the content manager)
-    mod.maps.forEach(map => {
+    mod.maps.forEach((map) => {
       if (this.isLoaded('map', map.name)) {
-        this.game.logger.warn('ModKit:Loader', `Map ${map.name} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `Map ${map.name} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -126,9 +161,12 @@ export class ModKitManager extends BaseService {
       loadMaps.push(map);
     });
 
-    mod.npcs.forEach(npc => {
+    mod.npcs.forEach((npc) => {
       if (this.isLoaded('npc', npc.npcId)) {
-        this.game.logger.warn('ModKit:Loader', `NPC ${npc.npcId} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `NPC ${npc.npcId} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -138,9 +176,12 @@ export class ModKitManager extends BaseService {
       loadNPCs.push(npc);
     });
 
-    mod.spawners.forEach(spawner => {
+    mod.spawners.forEach((spawner) => {
       if (this.isLoaded('spawner', spawner.tag)) {
-        this.game.logger.warn('ModKit:Loader', `Spawner ${spawner.tag} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `Spawner ${spawner.tag} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -150,9 +191,12 @@ export class ModKitManager extends BaseService {
       loadSpawners.push(spawner);
     });
 
-    mod.items.forEach(item => {
+    mod.items.forEach((item) => {
       if (this.isLoaded('item', item.name)) {
-        this.game.logger.warn('ModKit:Loader', `Item ${item.name} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `Item ${item.name} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -162,9 +206,12 @@ export class ModKitManager extends BaseService {
       loadItems.push(item);
     });
 
-    mod.quests.forEach(quest => {
+    mod.quests.forEach((quest) => {
       if (this.isLoaded('quest', quest.name)) {
-        this.game.logger.warn('ModKit:Loader', `Quest ${quest.name} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `Quest ${quest.name} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -174,9 +221,12 @@ export class ModKitManager extends BaseService {
       loadQuests.push(quest);
     });
 
-    mod.dialogs.forEach(dialog => {
+    mod.dialogs.forEach((dialog) => {
       if (this.isLoaded('dialog', dialog.tag)) {
-        this.game.logger.warn('ModKit:Loader', `NPC Script ${dialog.tag} already exists, skipping...`);
+        this.game.logger.warn(
+          'ModKit:Loader',
+          `NPC Script ${dialog.tag} already exists, skipping...`,
+        );
         failedLoad = true;
         return;
       }
@@ -187,28 +237,41 @@ export class ModKitManager extends BaseService {
     });
 
     // items that cannot be deduped
-    mod.drops.forEach(drop => {
+    mod.drops.forEach((drop) => {
       loadDrops.push(drop);
     });
 
-    mod.recipes.forEach(recipe => {
+    mod.recipes.forEach((recipe) => {
       loadRecipes.push(recipe);
     });
 
     // if we fail, we bail
     if (failedLoad) {
-      this.game.logger.warn('ModKit:Loader', `Failed to load mod "${mod.meta.name}" by ${mod.meta.author}, skipping...`);
+      this.game.logger.warn(
+        'ModKit:Loader',
+        `Failed to load mod "${mod.meta.name}" by ${mod.meta.author}, skipping...`,
+      );
       return;
     }
 
     // otherwise, we load everything how it needs to be
-    loadMaps.forEach(map => {
+    loadMaps.forEach((map) => {
       fs.writeJSONSync(`content/maps/custom/${map.name}.json`, map.map);
     });
 
     // drops are handled differently
-    this.mapDrops.push(...loadDrops.filter(x => x.mapName) as Array<{ mapName: string; drops: Rollable[] }>);
-    this.regionDrops.push(...loadDrops.filter(x => x.regionName) as Array<{ regionName: string; drops: Rollable[] }>);
+    this.mapDrops.push(
+      ...(loadDrops.filter((x) => x.mapName) as Array<{
+        mapName: string;
+        drops: Rollable[];
+      }>),
+    );
+    this.regionDrops.push(
+      ...(loadDrops.filter((x) => x.regionName) as Array<{
+        regionName: string;
+        drops: Rollable[];
+      }>),
+    );
 
     this.npcs.push(...loadNPCs);
     this.spawners.push(...loadSpawners);
@@ -226,5 +289,4 @@ export class ModKitManager extends BaseService {
     this.itemsLoadedHash[type] = this.itemsLoadedHash[type] || {};
     this.itemsLoadedHash[type][key] = true;
   }
-
 }

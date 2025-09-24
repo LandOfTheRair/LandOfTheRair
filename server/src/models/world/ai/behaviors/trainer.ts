@@ -30,7 +30,9 @@ export class TrainerBehavior implements IAIBehavior {
     if (!maxLevelUpLevel || !maxSkillTrain) {
       game.logger.error(
         'Behavior:Trainer',
-        `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`,
+        new Error(
+          `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`,
+        ),
       );
       return;
     }

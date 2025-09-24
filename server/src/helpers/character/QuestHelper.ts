@@ -1,14 +1,26 @@
-
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
-import { Allegiance, Currency, IPlayer, IQuest, IQuestRequirement, IQuestRequirementArray, IQuestRequirementCount, IQuestRequirementItem,
-  IQuestRequirementKill, MessageType, QuestRequirementType, QuestRewardType, Stat, TrackedStatistic } from '../../interfaces';
+import {
+  Allegiance,
+  Currency,
+  IPlayer,
+  IQuest,
+  IQuestRequirement,
+  IQuestRequirementArray,
+  IQuestRequirementCount,
+  IQuestRequirementItem,
+  IQuestRequirementKill,
+  MessageType,
+  QuestRequirementType,
+  QuestRewardType,
+  Stat,
+  TrackedStatistic,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class QuestHelper extends BaseService {
-
   public init() {}
 
   // get a full quest object
@@ -33,8 +45,11 @@ export class QuestHelper extends BaseService {
   }
 
   // check if the player has completed a particular requirement (item or kill)
-  public isRequirementComplete(player: IPlayer, quest: string, requirement: IQuestRequirement): boolean {
-
+  public isRequirementComplete(
+    player: IPlayer,
+    quest: string,
+    requirement: IQuestRequirement,
+  ): boolean {
     // quests with no requirements are instantly completable, but _must_ exist in permanentQuestCompletion
     if (requirement.type === QuestRequirementType.None) {
       return true;
@@ -43,7 +58,12 @@ export class QuestHelper extends BaseService {
     // items only require being held
     if (requirement.type === QuestRequirementType.Item) {
       const req = requirement as IQuestRequirementItem;
-      if (req.fromHands && this.game.characterHelper.hasHeldItemInEitherHand(player, req.item)) return true;
+      if (
+        req.fromHands &&
+        this.game.characterHelper.hasHeldItemInEitherHand(player, req.item)
+      ) {
+        return true;
+      }
 
       return false;
     }
@@ -95,8 +115,16 @@ export class QuestHelper extends BaseService {
   }
 
   // add arbitrary data to the quest
-  public updateQuestData(player: IPlayer, quest: string, newData: any = {}): void {
-    player.quests.activeQuestProgress[quest] = Object.assign({}, player.quests.activeQuestProgress[quest], newData);
+  public updateQuestData(
+    player: IPlayer,
+    quest: string,
+    newData: any = {},
+  ): void {
+    player.quests.activeQuestProgress[quest] = Object.assign(
+      {},
+      player.quests.activeQuestProgress[quest],
+      newData,
+    );
   }
 
   public getQuestProgress(player: IPlayer, quest: string): any {
@@ -118,10 +146,21 @@ export class QuestHelper extends BaseService {
 
     this.updateQuestData(player, quest, data);
 
-    if (questRef.messages.kill && data.kills <= questRef.requirements.killsRequired) {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: this.formatQuestMessage(player, quest, `>>> ${questRef.messages.kill}`),
-      }, [MessageType.Quest]);
+    if (
+      questRef.messages.kill &&
+      data.kills <= questRef.requirements.killsRequired
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(
+        player,
+        {
+          message: this.formatQuestMessage(
+            player,
+            quest,
+            `>>> ${questRef.messages.kill}`,
+          ),
+        },
+        [MessageType.Quest],
+      );
     }
   }
 
@@ -132,39 +171,57 @@ export class QuestHelper extends BaseService {
     const updateQuests = player.quests.questKillWatches[npcId];
     if (!updateQuests || updateQuests.length === 0) return;
 
-    updateQuests.forEach(quest => {
+    updateQuests.forEach((quest) => {
       this.updateQuestProgressKill(player, quest);
     });
   }
 
   // complete the quest, cleaning up old data & giving rewards
-  public completeQuest(player: IPlayer, quest: string, questGiver?: string): void {
+  public completeQuest(
+    player: IPlayer,
+    quest: string,
+    questGiver?: string,
+  ): void {
     const questRef = this.getQuest(quest);
     if (!questRef) return;
 
     // daily quests get a few things sorted - statistic & extra logic for finishing
     if (questRef.isDaily) {
       if (!questGiver) {
-        this.game.logger.error('Quest:Daily', `Quest ${quest} does not have a quest giver associated.`);
+        this.game.logger.error(
+          'Quest:Daily',
+          new Error(`Quest ${quest} does not have a quest giver associated.`),
+        );
         return;
       }
 
-      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.DailyQuests);
+      this.game.statisticsHelper.addStatistic(
+        player,
+        TrackedStatistic.DailyQuests,
+      );
       this.game.dailyHelper.finishDailyQuest(player, questGiver);
     }
 
     // non-repeatable quests are marked off forever
-    if (!questRef.isRepeatable) player.quests.permanentQuestCompletion[quest] = true;
+    if (!questRef.isRepeatable) {
+      player.quests.permanentQuestCompletion[quest] = true;
+    }
 
     // repeatable non-daily quests get a statistic tracked
     if (questRef.isRepeatable && !questRef.isDaily) {
-      this.game.statisticsHelper.addStatistic(player, TrackedStatistic.RepeatableQuests);
+      this.game.statisticsHelper.addStatistic(
+        player,
+        TrackedStatistic.RepeatableQuests,
+      );
     }
 
     // if the quest required a held item, we take it
     if (questRef.requirements.type === QuestRequirementType.Item) {
       if (questRef.requirements.fromHands) {
-        this.game.characterHelper.takeItemFromEitherHand(player, questRef.requirements.item);
+        this.game.characterHelper.takeItemFromEitherHand(
+          player,
+          questRef.requirements.item,
+        );
       }
     }
 
@@ -181,32 +238,50 @@ export class QuestHelper extends BaseService {
     const questRef = this.getQuest(quest);
     if (!questRef) return;
 
-    (questRef.rewards || []).forEach(reward => {
-
+    (questRef.rewards || []).forEach((reward) => {
       if (reward.type === QuestRewardType.XP) {
         this.game.playerHelper.gainExp(player, reward.value);
-        this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} XP!`);
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${reward.value.toLocaleString()} XP!`,
+        );
       }
 
       if (reward.type === QuestRewardType.Gold) {
-        this.game.currencyHelper.gainCurrency(player, reward.value, Currency.Gold);
-        this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} gold!`);
+        this.game.currencyHelper.gainCurrency(
+          player,
+          reward.value,
+          Currency.Gold,
+        );
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${reward.value.toLocaleString()} gold!`,
+        );
       }
 
       if (reward.type === QuestRewardType.Silver) {
         this.game.subscriptionHelper.gainSilver(player, reward.value);
-        this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} silver!`);
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${reward.value.toLocaleString()} silver!`,
+        );
       }
 
       if (reward.type === QuestRewardType.Reputation) {
-        this.game.playerHelper.modifyReputationForAllegiance(player, reward.statName as Allegiance, reward.value);
-        this.game.messageHelper.sendSimpleMessage(player, `You gained ${reward.value.toLocaleString()} ${reward.statName} reputation!`);
+        this.game.playerHelper.modifyReputationForAllegiance(
+          player,
+          reward.statName as Allegiance,
+          reward.value,
+        );
+        this.game.messageHelper.sendSimpleMessage(
+          player,
+          `You gained ${reward.value.toLocaleString()} ${reward.statName} reputation!`,
+        );
       }
 
       if (reward.type === QuestRewardType.HolidayTokens) {
         this.game.holidayHelper.tryGrantHolidayTokens(player, reward.value);
       }
-
     });
   }
 
@@ -222,14 +297,14 @@ export class QuestHelper extends BaseService {
   public calculateKillHash(player: IPlayer): Record<string, string[]> {
     const questKills = {};
 
-    Object.keys(player.quests.activeQuestProgress).forEach(quest => {
+    Object.keys(player.quests.activeQuestProgress).forEach((quest) => {
       const questRef = this.getQuest(quest);
       if (!questRef) return;
 
       const req = questRef.requirements;
       if (!req.npcIds || !req.killsRequired) return;
 
-      req.npcIds.forEach(npcId => {
+      req.npcIds.forEach((npcId) => {
         questKills[npcId] = questKills[npcId] || [];
         questKills[npcId].push(quest);
       });
@@ -244,11 +319,11 @@ export class QuestHelper extends BaseService {
   public calulateStatHash(player: IPlayer): Partial<Record<Stat, number>> {
     const stats = {};
 
-    Object.keys(player.quests.permanentQuestCompletion).forEach(quest => {
+    Object.keys(player.quests.permanentQuestCompletion).forEach((quest) => {
       const questRef = this.getQuest(quest);
       if (!questRef) return;
 
-      questRef.rewards.forEach(reward => {
+      questRef.rewards.forEach((reward) => {
         if (reward.type !== QuestRewardType.Stat) return;
         const statName = reward.statName as Stat;
 
@@ -261,7 +336,11 @@ export class QuestHelper extends BaseService {
   }
 
   // format a quest message based on whatever variables it needs
-  public formatQuestMessage(player: IPlayer, quest: string, message: string): string {
+  public formatQuestMessage(
+    player: IPlayer,
+    quest: string,
+    message: string,
+  ): string {
     if (!message) return '';
 
     const scope: any = { player, current: 0, total: 0, remaining: 0 };
@@ -278,5 +357,4 @@ export class QuestHelper extends BaseService {
 
     return template(message)(scope);
   }
-
 }

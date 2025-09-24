@@ -97,7 +97,7 @@ export class RegisterAction extends ServerAction {
         `Welcome ${account.username} to Land of the Rair!`,
       );
     } catch (e) {
-      game.logger.error('RegisterAction', e);
+      game.logger.error('RegisterAction', e as Error);
       throw new Error('Could not register username?');
     }
 

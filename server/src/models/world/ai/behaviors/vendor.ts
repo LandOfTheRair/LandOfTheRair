@@ -1,13 +1,23 @@
-
 import { uniq } from 'lodash';
 
 import { Parser } from 'muud';
 import { Game } from '../../../../helpers';
-import { Currency, GameAction, GameServerResponse, IAIBehavior, IDialogChatAction, INPC,
-  IPlayer, ISimpleItem, ItemSlot, IVendorBehavior, IVendorItem, distanceFrom } from '../../../../interfaces';
+import {
+  Currency,
+  distanceFrom,
+  GameAction,
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  INPC,
+  IPlayer,
+  ISimpleItem,
+  ItemSlot,
+  IVendorBehavior,
+  IVendorItem,
+} from '../../../../interfaces';
 
 export class VendorBehavior implements IAIBehavior {
-
   private formattedVendorItems: ISimpleItem[] = [];
   private formattedVendorDailyItems: ISimpleItem[] = [];
   private finalizedVendorCurrency: Currency;
@@ -25,9 +35,12 @@ export class VendorBehavior implements IAIBehavior {
   }
 
   init(game: Game, npc: INPC, parser: Parser, behavior: IVendorBehavior) {
-
-    const npcVendorItems = (behavior.vendorItems || []).map(i => this.reformatItem(game, npc, i, -1)).filter(Boolean);
-    const npcVendorDailyItems = (behavior.dailyVendorItems || []).map((i, idx) => this.reformatItem(game, npc, i, idx)).filter(Boolean);
+    const npcVendorItems = (behavior.vendorItems || [])
+      .map((i) => this.reformatItem(game, npc, i, -1))
+      .filter(Boolean);
+    const npcVendorDailyItems = (behavior.dailyVendorItems || [])
+      .map((i, idx) => this.reformatItem(game, npc, i, idx))
+      .filter(Boolean);
     const npcVendorCurrency = behavior.vendorCurrency || Currency.Gold;
 
     this.finalizedVendorCurrency = npcVendorCurrency;
@@ -36,10 +49,14 @@ export class VendorBehavior implements IAIBehavior {
     this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];
 
     if (npcVendorDailyItems.length === 0 && npcVendorItems.length === 0) {
-      game.logger.error('Behavior:Vendor', `NPC at ${npc.map}-${npc.x},${npc.y} has no items to sell.`);
+      game.logger.error(
+        'Behavior:Vendor',
+        new Error(`NPC at ${npc.map}-${npc.x},${npc.y} has no items to sell.`),
+      );
     }
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -54,13 +71,14 @@ export class VendorBehavior implements IAIBehavior {
           npcSprite: npc.sprite,
           npcVendorCurrency,
           npcVendorItems,
-          npcVendorDailyItems
+          npcVendorDailyItems,
         });
 
         return `Hello, ${env?.player.name}!`;
       });
 
-    parser.addCommand('assess')
+    parser
+      .addCommand('assess')
       .setSyntax(['assess'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -74,29 +92,33 @@ export class VendorBehavior implements IAIBehavior {
         const canSellItem = game.inventoryHelper.canSellItem(player, rightHand);
 
         if (!canSellItem) {
-
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,
             title: 'Assess Item',
-            content: 'I won\'t buy that item from you.',
-            extraData: { npcSprite: npc.sprite }
+            content: "I won't buy that item from you.",
+            extraData: { npcSprite: npc.sprite },
           });
 
-          return 'I won\'t buy that item from you.';
+          return "I won't buy that item from you.";
         }
 
         env?.callbacks.emit({
           type: GameServerResponse.SendConfirm,
           title: 'Assess Item',
           content: `I would pay ${game.inventoryHelper.itemValue(player, rightHand).toLocaleString()} gold for that item. Want to sell it?`,
-          extraData: { npcSprite: npc.sprite, okText: 'Yes, buy it from me!', cancelText: 'No thanks' },
-          okAction: { command: '!RtM', args: `_ ${npc.uuid}` }
+          extraData: {
+            npcSprite: npc.sprite,
+            okText: 'Yes, buy it from me!',
+            cancelText: 'No thanks',
+          },
+          okAction: { command: '!RtM', args: `_ ${npc.uuid}` },
         });
 
         return `I would pay ${game.inventoryHelper.itemValue(player, rightHand).toLocaleString()} for that item.`;
       });
 
-    parser.addCommand('sellall')
+    parser
+      .addCommand('sellall')
       .setSyntax(['sellall <string:itemclass*>'])
       .setLogic(async ({ env, args }) => {
         const player: IPlayer = env?.player;
@@ -107,10 +129,14 @@ export class VendorBehavior implements IAIBehavior {
         const itemClass = args['itemclass*'];
 
         if (!itemClass) {
+          const message =
+            'What would you like to sell me all of (from your sack)?';
 
-          const message = 'What would you like to sell me all of (from your sack)?';
-
-          const options = uniq(player.items.sack.items.map(x => game.itemHelper.getItemProperty(x, 'itemClass'))).sort();
+          const options = uniq(
+            player.items.sack.items.map((x) =>
+              game.itemHelper.getItemProperty(x, 'itemClass'),
+            ),
+          ).sort();
 
           const formattedChat: IDialogChatAction = {
             message,
@@ -119,24 +145,34 @@ export class VendorBehavior implements IAIBehavior {
             displayNPCSprite: npc.sprite,
             displayNPCUUID: npc.uuid,
             options: [
-              ...options.map(x => ({ text: x, action: `sellall ${x}` })),
+              ...options.map((x) => ({ text: x, action: `sellall ${x}` })),
               { text: 'Nothing', action: 'noop' },
-            ]
+            ],
           };
 
-          game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+          game.transmissionHelper.sendResponseToAccount(
+            player.username,
+            GameServerResponse.DialogChat,
+            formattedChat,
+          );
 
           return message;
         }
 
-        const validSackItemsForSale = player.items.sack.items
-          .filter(x => game.itemHelper.getItemProperty(x, 'itemClass') === itemClass && game.inventoryHelper.canSellItem(player, x));
+        const validSackItemsForSale = player.items.sack.items.filter(
+          (x) =>
+            game.itemHelper.getItemProperty(x, 'itemClass') === itemClass &&
+            game.inventoryHelper.canSellItem(player, x),
+        );
 
-        validSackItemsForSale.forEach(item => {
+        validSackItemsForSale.forEach((item) => {
           game.inventoryHelper.sellItem(player, item);
         });
 
-        game.inventoryHelper.removeItemsFromSackByUUID(player, validSackItemsForSale.map(x => x.uuid));
+        game.inventoryHelper.removeItemsFromSackByUUID(
+          player,
+          validSackItemsForSale.map((x) => x.uuid),
+        );
 
         return `Done! I've sold all of your ${itemClass}.`;
       });
@@ -144,7 +180,12 @@ export class VendorBehavior implements IAIBehavior {
 
   tick() {}
 
-  private reformatItem(game: Game, npc: INPC, vItem: IVendorItem, dailySlot: number): ISimpleItem | null {
+  private reformatItem(
+    game: Game,
+    npc: INPC,
+    vItem: IVendorItem,
+    dailySlot: number,
+  ): ISimpleItem | null {
     const base: any = { name: vItem.item, mods: {} };
     if (dailySlot >= 0) {
       base.uuid = `daily-${npc.map}-${npc.name}-${dailySlot}-${vItem.item}`;
@@ -152,7 +193,10 @@ export class VendorBehavior implements IAIBehavior {
 
     const baseItem = game.itemHelper.getItemDefinition(vItem.item);
     if (!baseItem) {
-      game.logger.error(`Vendor:${npc.name}`, `Could not get item definition for ${vItem.item}.`);
+      game.logger.error(
+        `Vendor:${npc.name}`,
+        new Error(`Could not get item definition for ${vItem.item}.`),
+      );
       return null;
     }
 

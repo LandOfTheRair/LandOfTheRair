@@ -874,7 +874,7 @@ export class DialogActionHelper extends BaseService {
     if (!questRef) {
       this.game.logger.error(
         'DialogActionHelper:CheckDailyQuest',
-        `Quest ${quest} does not exist.`,
+        new Error(`Quest ${quest} does not exist.`),
       );
       return {
         messages: ['That quest does not exist at this time.'],
@@ -933,7 +933,7 @@ export class DialogActionHelper extends BaseService {
     if (!questRef) {
       this.game.logger.error(
         'DialogActionHelper:CheckQuest',
-        `Quest ${quest} does not exist.`,
+        new Error(`Quest ${quest} does not exist.`),
       );
       return {
         messages: ['That quest does not exist at this time.'],
@@ -1007,7 +1007,7 @@ export class DialogActionHelper extends BaseService {
     if (!questRef) {
       this.game.logger.error(
         'DialogActionHelper:CheckQuest',
-        `Quest ${quest} does not exist.`,
+        new Error(`Quest ${quest} does not exist.`),
       );
       return {
         messages: ['That quest does not exist at this time.'],
@@ -1053,7 +1053,7 @@ export class DialogActionHelper extends BaseService {
     if (!questRef) {
       this.game.logger.error(
         'DialogActionHelper:GiveDailyQuest',
-        `Quest ${quest} does not exist.`,
+        new Error(`Quest ${quest} does not exist.`),
       );
       return {
         messages: ['That quest does not exist at this time.'],
@@ -1113,7 +1113,7 @@ export class DialogActionHelper extends BaseService {
     if (!questRef) {
       this.game.logger.error(
         'DialogActionHelper:GiveQuest',
-        `Quest ${quest} does not exist.`,
+        new Error(`Quest ${quest} does not exist.`),
       );
       return {
         messages: ['That quest does not exist at this time.'],

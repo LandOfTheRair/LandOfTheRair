@@ -8,15 +8,18 @@ export class AnnounceAction extends ServerAction {
   override requiredKeys = ['message'];
 
   override async act(game: Game, {}, data) {
-
-    if (!game.lobbyManager.isConnectedGm(data.username)) return { message: 'Not a GM.' };
+    if (!game.lobbyManager.isConnectedGm(data.username)) {
+      return { message: 'Not a GM.' };
+    }
 
     try {
       game.messageHelper.broadcastSystemMessage(data.message);
-
     } catch (e) {
-      game.logger.error('AnnounceAction', e);
-      return { message: 'Could not announce? I would normally say to contact a GM, but this is probably your fault.' };
+      game.logger.error('AnnounceAction', e as Error);
+      return {
+        message:
+          'Could not announce? I would normally say to contact a GM, but this is probably your fault.',
+      };
     }
 
     return {};

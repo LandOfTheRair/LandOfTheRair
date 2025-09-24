@@ -11,16 +11,21 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
     try {
       await game.accountDB.changeAlwaysOnline(data.account, data.alwaysOnline);
       await game.discordHelper.updateDiscordRoles(data.account);
-      game.logger.log('Auth:ChangeAlwaysOnline', `${data.username} changed always online.`);
-
+      game.logger.log(
+        'Auth:ChangeAlwaysOnline',
+        `${data.username} changed always online.`,
+      );
     } catch (e) {
-      game.logger.error('ChangeAlwaysOnline', e);
-      return { message: 'Could not change online status? Try again, or contact a GM if this persists.' };
+      game.logger.error('ChangeAlwaysOnline', e as Error);
+      return {
+        message:
+          'Could not change online status? Try again, or contact a GM if this persists.',
+      };
     }
 
     return {
       wasSuccess: true,
-      message: 'Successfully changed your always online status.'
+      message: 'Successfully changed your always online status.',
     };
   }
 }
