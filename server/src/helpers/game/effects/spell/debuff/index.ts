@@ -4,6 +4,7 @@ export * from './BlurredVision';
 export * from './BuildupChill';
 export * from './BuildupEnergy';
 export * from './BuildupHeat';
+export * from './BuildupWater';
 export * from './Burning';
 export * from './ChainKunai';
 export * from './Chilled';

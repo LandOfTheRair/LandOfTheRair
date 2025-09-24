@@ -551,6 +551,8 @@ export class CombatHelper extends BaseService {
         return ['BuildupHeat', 'Burning', 'RecentlyBurned'];
       case DamageClass.Ice:
         return ['BuildupChill', 'Chilled', 'RecentlyChilled'];
+      case DamageClass.Water:
+        return ['BuildupWater', 'Suffocating', 'RecentlySuffocated'];
     }
 
     return ['', '', ''];
@@ -580,11 +582,12 @@ export class CombatHelper extends BaseService {
     if (!buildupEffect) {
       const { buildUpDecay, buildUpCurrent, buildUpMax, buildUpScale } =
         this.game.contentManager.getGameSetting('combat');
+
       this.game.effectHelper.addEffect(defender, source ?? '', buildup, {
         effect: {
           extra: {
             buildUpDecay: buildUpDecay ?? 3,
-            buildUpCurrent: buildUpCurrent ?? 5,
+            buildUpCurrent: 25 + (buildUpCurrent ?? 5),
             buildUpMax:
               (buildUpMax ?? 200) + defender.level * (buildUpScale ?? 10),
           },
