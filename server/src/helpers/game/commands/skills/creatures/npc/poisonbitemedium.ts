@@ -44,7 +44,7 @@ export class PoisonBiteMedium extends SpellCommand {
         extra: {
           disableMessages: true,
           disableRecently: true,
-          potency: random(5, 10),
+          potency: random(5, 7) * executor.level,
         },
       },
     });

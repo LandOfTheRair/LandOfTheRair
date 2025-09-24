@@ -44,7 +44,7 @@ export class DiseaseBiteWeak extends SpellCommand {
         extra: {
           disableMessages: true,
           disableRecently: true,
-          potency: random(1, 3),
+          potency: random(1, 3) * executor.level,
         },
       },
     });

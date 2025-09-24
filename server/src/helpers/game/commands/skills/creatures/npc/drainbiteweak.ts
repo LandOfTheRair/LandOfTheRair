@@ -1,3 +1,4 @@
+import { random } from 'lodash';
 import {
   DamageClass,
   distanceFrom,
@@ -34,7 +35,7 @@ export class DrainBiteWeak extends SpellCommand {
     });
 
     this.game.spellManager.castSpell('Drain', executor, target, {
-      potency: 25,
+      potency: random(1, 3) * executor.level,
       chance: 100,
     });
   }
