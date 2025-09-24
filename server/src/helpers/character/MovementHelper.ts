@@ -404,6 +404,8 @@ export class MovementHelper extends BaseService {
   }
 
   private handleTeleport(player: Player, obj, isFall = false): void {
+    if (!obj.properties) return;
+
     const { teleportMessage, damagePercent, applyEffect, giveAchievement } =
       obj.properties;
 

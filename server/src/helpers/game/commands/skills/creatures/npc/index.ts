@@ -1,4 +1,3 @@
-
 export * from './specific';
 
 export * from './chillbitemedium';
@@ -8,6 +7,9 @@ export * from './diseasebitemedium';
 export * from './diseasebitestrong';
 export * from './diseasebiteweak';
 export * from './doubleattack';
+export * from './drainbitemedium';
+export * from './drainbitestrong';
+export * from './drainbiteweak';
 export * from './heatbitemedium';
 export * from './heatbitestrong';
 export * from './heatbiteweak';
