@@ -25,6 +25,7 @@ export * from './respawnnpc';
 export * from './saveplayers';
 export * from './searchitems';
 export * from './send';
+export * from './setbonusmod';
 export * from './spellmod';
 export * from './startevent';
 export * from './summon';

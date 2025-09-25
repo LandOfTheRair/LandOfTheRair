@@ -1,4 +1,5 @@
 export * from './AethericForce';
+export * from './BonusGains';
 export * from './Dead';
 export * from './Drowning';
 export * from './EtherManipulation';

@@ -151,6 +151,10 @@ export class TeleportHelper extends BaseService {
       if (this.game.worldManager.isDungeon(player.map)) {
         this.game.effectHelper.addEffect(player, '', 'EtherManipulation');
       }
+
+      if (this.game.worldDB.isMapBonusXPSkillGain(player.map)) {
+        this.game.effectHelper.addEffect(player, '', 'BonusGains');
+      }
     }
 
     return true;

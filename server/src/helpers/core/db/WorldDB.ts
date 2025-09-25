@@ -1,4 +1,3 @@
-
 import { Injectable } from 'injection-js';
 
 import { WorldSettings } from '../../../models';
@@ -7,10 +6,7 @@ import { Database } from '../Database';
 
 @Injectable()
 export class WorldDB extends BaseService {
-
-  constructor(
-    private db: Database
-  ) {
+  constructor(private db: Database) {
     super();
   }
 
@@ -29,7 +25,9 @@ export class WorldDB extends BaseService {
   }
 
   public async loadSettings() {
-    this.settings = await this.db.findSingle<WorldSettings>(WorldSettings, { _id: { $exists: true } }) as WorldSettings;
+    this.settings = (await this.db.findSingle<WorldSettings>(WorldSettings, {
+      _id: { $exists: true },
+    })) as WorldSettings;
 
     if (!this.settings) {
       this.settings = new WorldSettings();
@@ -57,8 +55,10 @@ export class WorldDB extends BaseService {
     this.saveSettings();
   }
 
-  public setSpellMultiplierOverride(spell: string, override: number): Promise<void> {
-
+  public setSpellMultiplierOverride(
+    spell: string,
+    override: number,
+  ): Promise<void> {
     if (override === 0) {
       delete this.settings.spellPotencyMultiplierOverrides[spell];
     } else {
@@ -76,4 +76,13 @@ export class WorldDB extends BaseService {
     return this.settings.spellPotencyMultiplierOverrides;
   }
 
+  public setMapBonusXPSkillGain(map: string): Promise<void> {
+    this.settings.bonusXPSkillGainMaps[map] =
+      !this.settings.bonusXPSkillGainMaps[map];
+    return this.saveSettings();
+  }
+
+  public isMapBonusXPSkillGain(map: string): boolean {
+    return !!this.settings.bonusXPSkillGainMaps[map];
+  }
 }
