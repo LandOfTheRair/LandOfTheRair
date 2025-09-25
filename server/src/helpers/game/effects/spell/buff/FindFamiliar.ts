@@ -5,6 +5,7 @@ import {
   INPC,
   IStatusEffect,
   ItemSlot,
+  Skill,
   Stat,
 } from '../../../../../interfaces';
 import { Effect, Spawner } from '../../../../../models';
@@ -15,6 +16,20 @@ export class FindFamiliar extends Effect {
     if (!mapData) return;
 
     const potency = effect.effectInfo.potency ?? 1;
+
+    const addSkillLevelToNPC = (npc: INPC, skill: Skill, levels: number) => {
+      const curLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
+        npc,
+        skill,
+      );
+      const targetLevel = curLevel + levels;
+      const targetXP =
+        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
+          targetLevel,
+        );
+
+      npc.skills[skill] = Math.max(npc.skills[skill] ?? 0, targetXP);
+    };
 
     const npcCreateCallback = (npc: INPC) => {
       npc.allegianceReputation = char.allegianceReputation;
@@ -65,6 +80,7 @@ export class FindFamiliar extends Effect {
         const boost =
           this.game.calculatorHelper.calculateSkillXPRequiredForLevel(potency) *
           (def.summonSkillModifiers?.[skillMod] ?? 0);
+
         npc.skills[skillMod] += boost;
       });
 
@@ -74,6 +90,17 @@ export class FindFamiliar extends Effect {
         );
         npc.stats[statMod] += boost;
       });
+
+      // boost all skills by FamiliarSkill level
+      const allSkillBoost = this.game.traitHelper.traitLevelValue(
+        char,
+        'FamiliarSkill',
+      );
+      if (allSkillBoost > 0) {
+        Object.keys(npc.skills || {}).forEach((skillName) => {
+          addSkillLevelToNPC(npc, skillName as Skill, allSkillBoost);
+        });
+      }
 
       // shadow clones just copy
       if (npc.npcId !== 'Thief Shadow Clone') {
