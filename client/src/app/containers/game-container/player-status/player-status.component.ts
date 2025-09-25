@@ -37,12 +37,9 @@ export class PlayerStatusComponent {
   getEffects(player: IPlayer): IStatusEffect[] {
     if (!player) return [];
 
-    const base = [
-      ...player.effects.buff,
-      ...player.effects.debuff,
-      ...player.effects.incoming,
-      ...player.effects.outgoing,
-    ].filter((x) => !x.effectInfo.hidden);
+    const base = Object.values(player.effects._hash).filter(
+      (x) => !x.effectInfo.hidden,
+    );
 
     if (player.spellChannel) {
       base.unshift({

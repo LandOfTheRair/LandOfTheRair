@@ -83,11 +83,6 @@ export class ActiveTargetComponent {
 
     if (!target) return [];
 
-    return [
-      ...target.effects.buff,
-      ...target.effects.debuff,
-      ...target.effects.incoming,
-      ...target.effects.outgoing,
-    ];
+    return Object.values(target.effects._hash);
   });
 }

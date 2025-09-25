@@ -57,6 +57,19 @@ export const shouldSendPatch = (patch: Operation): boolean => {
     return false;
   }
 
+  if (patch.op === 'replace' && patch.path.includes('/effects/debuff')) {
+    return false;
+  }
+  if (patch.op === 'replace' && patch.path.includes('/effects/buff')) {
+    return false;
+  }
+  if (patch.op === 'replace' && patch.path.includes('/effects/outgoing')) {
+    return false;
+  }
+  if (patch.op === 'replace' && patch.path.includes('/effects/incoming')) {
+    return false;
+  }
+
   if (patch.op === 'replace' && patch.path.includes('/agro')) return false;
 
   // ideally, it would not generate these patches, but we take what we can
