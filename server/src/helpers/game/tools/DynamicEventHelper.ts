@@ -254,7 +254,7 @@ export class DynamicEventHelper extends BaseService {
   }
 
   private handleSpecialEventsStart(event: IDynamicEventMeta): void {
-    if (event.name === 'Avatar Spawn') return this.doRareSpawn();
+    if (event.name === 'Avatar Spawn') return this.doRareSpawn(event);
     if (event.name === 'Double Trouble') return this.doDoubleTrouble(event);
   }
 
@@ -376,7 +376,7 @@ export class DynamicEventHelper extends BaseService {
     );
   }
 
-  private doRareSpawn(): void {
+  private doRareSpawn(event: IDynamicEventMeta): void {
     const allSpawns = this.game.contentManager.rarespawnsData;
 
     let spawnMap;
@@ -385,7 +385,7 @@ export class DynamicEventHelper extends BaseService {
     let y;
 
     do {
-      spawnMap = sample(Object.keys(allSpawns));
+      spawnMap = event.extraData.map ?? sample(Object.keys(allSpawns));
       spawnMonster = sample(allSpawns[spawnMap as string].spawns);
 
       const mapRef = this.game.worldManager.getMap(spawnMap);
