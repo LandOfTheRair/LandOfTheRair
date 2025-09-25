@@ -1,6 +1,7 @@
 import {
   IMacroCommandArgs,
   IPlayer,
+  ItemClass,
   ItemSlot,
 } from '../../../../../interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -18,6 +19,19 @@ export class TradeCommand extends MacroCommand {
     const slot = hand === 'right' ? ItemSlot.RightHand : ItemSlot.LeftHand;
     const item = player.items.equipment[slot];
     if (!item) return this.sendMessage(player, 'No item in that hand.');
+
+    const invalidItemClasses: ItemClass[] = [ItemClass.Corpse];
+    const { itemClass, succorInfo } = this.game.itemHelper.getItemProperties(
+      item,
+      ['itemClass', 'succorInfo'],
+    );
+    if (invalidItemClasses.includes(itemClass as ItemClass)) {
+      return this.sendMessage(player, 'You cannot trade that item.');
+    }
+
+    if (succorInfo) {
+      return this.sendMessage(player, 'You cannot trade that item.');
+    }
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
       player,
