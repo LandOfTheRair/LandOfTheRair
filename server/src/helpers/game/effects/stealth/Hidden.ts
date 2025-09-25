@@ -52,6 +52,7 @@ export class Hidden extends Effect {
           char,
           4,
         );
+
         if (numHostile.length === 0) {
           this.game.characterHelper.mana(char, 1);
           return;
@@ -61,9 +62,12 @@ export class Hidden extends Effect {
           char,
           'ImprovedHide',
         );
+
+        const hostileStealthLoss = numHostile.length * 2;
+
         const totalReduction = Math.max(
           1,
-          numHostile.length - hostileReduction,
+          hostileStealthLoss - hostileReduction,
         );
 
         if (this.game.characterHelper.isPlayer(char)) {
