@@ -262,6 +262,13 @@ export class TargettingHelper extends BaseService {
         return false;
       }
 
+      if (
+        caster &&
+        this.game.movementHelper.numStepsTo(caster, target) > radius
+      ) {
+        return false;
+      }
+
       return true;
     });
 

@@ -58,6 +58,20 @@ export class MovementHelper extends BaseService {
     });
   }
 
+  numStepsTo(source: ICharacter, target: { x: number; y: number }): number {
+    const xDiff = target.x - source.x;
+    const yDiff = target.y - source.y;
+
+    const map = this.worldManager.getMap(source.map)?.map;
+    if (!map) return 0;
+
+    const steps =
+      map.findPath(source.x, source.y, source.x + xDiff, source.y + yDiff) ??
+      [];
+
+    return steps.length;
+  }
+
   moveWithPathfinding(character: ICharacter, { xDiff, yDiff }): boolean {
     if (
       isUndefined(xDiff) ||
