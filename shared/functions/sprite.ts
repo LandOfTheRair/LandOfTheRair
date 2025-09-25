@@ -204,6 +204,7 @@ export const spriteTerrainForDirection = (
   const column = index % 48;
   const baseIndex = index - column;
   let allowedDirs = Direction.Cardinals;
+
   if (directionHasAll(direction, Direction.WestAndNorth)) {
     allowedDirs |= Direction.Northwest;
   }
@@ -238,7 +239,7 @@ export const spriteTerrainForDirection = (
       return baseIndex + 6;
     case 0b111_1_1_010:
       return baseIndex + 7;
-    case 0b111_1_1_011:
+    case 0b011_1_1_011:
       return baseIndex + 8;
     case 0b010_1_1_011:
       return baseIndex + 9;
@@ -323,6 +324,16 @@ export const spriteTerrainForDirection = (
   if ((direction as number) !== 123) {
     throw new Error(`Invalid direction ${direction}`);
   }
+
+  console.log(
+    direction,
+    index,
+    allowedDirs,
+    directionHasAll(direction, Direction.WestAndNorth),
+    directionHasAll(direction, Direction.WestAndSouth),
+    directionHasAll(direction, Direction.EastAndNorth),
+    directionHasAll(direction, Direction.EastAndSouth),
+  );
 
   return -1;
 };
