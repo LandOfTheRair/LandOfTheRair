@@ -477,6 +477,7 @@ export class PlayerHelper extends BaseService {
   // gain axp for a player
   public gainAxp(player: IPlayer, axpGained: number): void {
     if (!player.gainingAXP && axpGained > 0) return;
+    if (this.game.characterHelper.isDead(player) && axpGained > 0) return;
 
     axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
     axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, {
@@ -491,8 +492,6 @@ export class PlayerHelper extends BaseService {
     skill: Skill,
     skillGained: number,
   ): void {
-    if (this.game.characterHelper.isPlayer(player)) {
-    }
     if (!this.canGainSkillOnMap(player, skill)) {
       this.gainSkill(player, skill, 1);
       return;
@@ -508,6 +507,8 @@ export class PlayerHelper extends BaseService {
 
   // gain skill for a character
   public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
+    if (this.game.characterHelper.isDead(player)) return;
+
     if (!skill) skill = Skill.Martial;
 
     const skillGainBoostPercent =
@@ -560,6 +561,7 @@ export class PlayerHelper extends BaseService {
     skill: Tradeskill,
     skillGained: number,
   ): void {
+    if (this.game.characterHelper.isDead(player)) return;
     if (!skill) return;
 
     skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
