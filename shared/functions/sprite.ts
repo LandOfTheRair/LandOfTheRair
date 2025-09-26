@@ -319,9 +319,9 @@ export const spriteTerrainForDirection = (
       return baseIndex + 46;
   }
 
-  // this throws a bunch of errors for "123"
+  // this throws a bunch of errors for "251"
   // I have no idea how to decipher it, but it seems to be the only "bad" direction
-  if ((direction as number) !== 123) {
+  if ((direction as number) !== 251) {
     throw new Error(`Invalid direction ${direction}`);
   }
 
