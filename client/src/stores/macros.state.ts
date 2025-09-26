@@ -209,6 +209,7 @@ export class MacrosState {
           [BaseClass.Mage]: ['MagicMissile'],
           [BaseClass.Healer]: ['Afflict'],
           [BaseClass.Warrior]: ['Cleave'],
+          [BaseClass.Barbarian]: ['Berserk'],
           [BaseClass.Traveller]: [],
           [BaseClass.Arcanist]: [],
         };

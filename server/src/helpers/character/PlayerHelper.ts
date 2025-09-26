@@ -60,7 +60,7 @@ export class PlayerHelper extends BaseService {
     recalculateAfterTrait = true,
   ) {
     const maxMP = this.game.contentManager.getClassConfigSetting<'baseMP'>(
-      player.baseClass,
+      baseClass,
       'baseMP',
     );
 

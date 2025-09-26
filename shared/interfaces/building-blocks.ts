@@ -57,6 +57,7 @@ export enum BaseClass {
   Healer = 'Healer',
   Warrior = 'Warrior',
   Arcanist = 'Arcanist',
+  Barbarian = 'Barbarian',
 }
 
 export enum ItemSlot {
