@@ -133,6 +133,7 @@ export class GameService {
 
     const allNPCs = () =>
       allChars
+        .filter(Boolean)
         .filter((c) => !(c as any).username)
         .filter((c) =>
           ['stealth', 'hostile'].includes(hostilityLevelFor(this.player(), c)),
