@@ -457,6 +457,7 @@ export class PlayerHelper extends BaseService {
   // gain exp for a player
   public gainExp(player: IPlayer, xpGained: number): void {
     if (player.gainingAXP && xpGained > 0) return;
+    if (this.game.characterHelper.isDead(player) && xpGained > 0) return;
 
     if (xpGained > 0) {
       const xpGainBoostPercent =
