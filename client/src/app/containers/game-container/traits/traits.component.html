@@ -73,7 +73,11 @@
         </div>
       </div>
       <div class="build-viewer">
-        <mat-tab-group mat-align-tabs="center" [selectedIndex]="0">
+        <mat-tab-group
+          mat-align-tabs="center"
+          [selectedIndex]="0"
+          class="bring-to-top"
+        >
           <mat-tab label="Traits">
             <mat-tab-group mat-align-tabs="center" [selectedIndex]="1">
               @for (tree of traitTree.treeOrder; track tree) {
