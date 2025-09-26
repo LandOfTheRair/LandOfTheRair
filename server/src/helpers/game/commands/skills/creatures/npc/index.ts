@@ -17,6 +17,7 @@ export * from './leash';
 export * from './poisonbitemedium';
 export * from './poisonbitestrong';
 export * from './poisonbiteweak';
+export * from './pounce';
 export * from './pullone';
 export * from './settrap';
 export * from './shredfivepercent';
