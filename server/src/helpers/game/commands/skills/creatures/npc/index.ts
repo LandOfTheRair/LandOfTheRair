@@ -27,3 +27,4 @@ export * from './shredtwentypercent';
 export * from './skillsuckmedium';
 export * from './skillsuckstrong';
 export * from './skillsuckweak';
+export * from './sonicscream';
