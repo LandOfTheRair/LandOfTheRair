@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import { sampleSize } from 'lodash';
 import {
   Allegiance,
+  distanceFrom,
   Hostility,
   ICharacter,
   INPC,
@@ -264,7 +265,8 @@ export class TargettingHelper extends BaseService {
 
       if (
         caster &&
-        this.game.movementHelper.numStepsTo(caster, target) > radius
+        this.game.movementHelper.numStepsTo(caster, target) !==
+          distanceFrom(caster, target)
       ) {
         return false;
       }
