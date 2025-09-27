@@ -19,39 +19,36 @@
 
 <ng-template #bodyTemplate>
   @if (player()) {
-  <div>
-    <mat-toolbar>
-      @for (tab of tabs; track tab) {
-      <span
-        class="nav-item"
-        [class.current]="currentTab === tab"
-        (click)="switchTab(tab)"
-      >
-        {{ tab }}
-      </span>
-      }
-    </mat-toolbar>
-    <div class="content">
-      @if (currentTab === 'Buy') {
-      <ng-template [ngTemplateOutlet]="marketBuy"></ng-template>
-      }
+    <div>
+      <mat-toolbar>
+        @for (tab of tabs; track tab) {
+          <span
+            class="nav-item"
+            [class.current]="currentTab === tab"
+            (click)="switchTab(tab)"
+          >
+            {{ tab }}
+          </span>
+        }
+      </mat-toolbar>
+      <div class="content">
+        @if (currentTab === 'Buy') {
+          <ng-template [ngTemplateOutlet]="marketBuy"></ng-template>
+        }
 
-      <!-- -->
-      @if (currentTab === 'Sell') {
-      <ng-template [ngTemplateOutlet]="marketSell"></ng-template>
-      }
+        @if (currentTab === 'Sell') {
+          <ng-template [ngTemplateOutlet]="marketSell"></ng-template>
+        }
 
-      <!-- -->
-      @if (currentTab === 'My Listings') {
-      <ng-template [ngTemplateOutlet]="marketListings"></ng-template>
-      }
+        @if (currentTab === 'My Listings') {
+          <ng-template [ngTemplateOutlet]="marketListings"></ng-template>
+        }
 
-      <!-- -->
-      @if (currentTab === 'Pick Up') {
-      <ng-template [ngTemplateOutlet]="marketPickup"></ng-template>
-      }
+        @if (currentTab === 'Pick Up') {
+          <ng-template [ngTemplateOutlet]="marketPickup"></ng-template>
+        }
+      </div>
     </div>
-  </div>
   }
 </ng-template>
 
@@ -79,21 +76,21 @@
 
         <div class="p-5">
           @for (sortType of sortOptions; track sortType) {
-          <div>
-            <button
-              mat-button
-              [ngClass]="
-                currentSort === sortType.sort
-                  ? 'mat-flat-button'
-                  : 'mat-stroked-button'
-              "
-              class="sort-button"
-              color="primary"
-              (click)="changeSort(sortType.sort)"
-            >
-              {{ sortType.name }}
-            </button>
-          </div>
+            <div>
+              <button
+                mat-button
+                [ngClass]="
+                  currentSort === sortType.sort
+                    ? 'mat-flat-button'
+                    : 'mat-stroked-button'
+                "
+                class="sort-button"
+                color="primary"
+                (click)="changeSort(sortType.sort)"
+              >
+                {{ sortType.name }}
+              </button>
+            </div>
           }
         </div>
       </div>
@@ -103,17 +100,17 @@
 
         <div class="p-5">
           @for (filter of filterTags; track filter) {
-          <button
-            mat-button
-            class="m-r-5 m-b-5 filter-button"
-            [ngClass]="
-              filter.isIncluded ? 'mat-flat-button' : 'mat-stroked-button'
-            "
-            color="primary"
-            (click)="toggleFilter(filter)"
-          >
-            {{ filter.name }}
-          </button>
+            <button
+              mat-button
+              class="m-r-5 m-b-5 filter-button"
+              [ngClass]="
+                filter.isIncluded ? 'mat-flat-button' : 'mat-stroked-button'
+              "
+              color="primary"
+              (click)="toggleFilter(filter)"
+            >
+              {{ filter.name }}
+            </button>
           }
         </div>
       </div>
@@ -121,79 +118,77 @@
 
     <div class="right-side listings">
       @if (isLoading) {
-      <div class="vertical-center spinning-loader">
-        <app-icon
-          name="spinning-blades"
-          bgColor="transparent"
-          fgColor="#aaa"
-        ></app-icon>
-        Loading...
-      </div>
-      }
-
-      <!-- -->
-      @if (!isLoading && buyableListings?.length === 0) {
-      <div
-        class="background-text text-center content full-width full-height true-center big-text"
-      >
-        There are no items here, or none match your search criteria.
-      </div>
-      }
-
-      <!-- -->
-      @if (!isLoading && buyableListings?.length > 0) {
-      <div class="content scrollable">
-        @for (listing of buyableListings; track listing) {
-        <div class="spacing">
-          <div class="col">
-            <div class="item-slot item-background">
-              <app-item
-                [item]="listing.itemInfo.itemOverride"
-                [showDesc]="false"
-                [showOunces]="true"
-                [showCount]="true"
-                [matTooltip]="requirementTooltipFor(listing)"
-              ></app-item>
-            </div>
-          </div>
-          <div class="col listing-info">
-            <div>
-              <strong>{{ listing.itemInfo.itemOverride.name }}</strong>
-              {{ starTextFor(listing.itemInfo) }}
-            </div>
-            <div class="thin-line">
-              <small>
-                {{ statStringFor(listing.itemInfo) || 'no stats' }} /
-                {{ traitStringFor(listing.itemInfo) || 'no trait' }} /
-                {{ effectStringFor(listing.itemInfo) || 'no effect' }}
-              </small>
-            </div>
-            <div class="thin-line">
-              <small
-                [class.text-danger]="
-                  listing.listingInfo.price > player().currency.gold
-                "
-              >
-                <em>{{ listing.listingInfo.price | number }} gold</em>
-              </small>
-            </div>
-          </div>
-          <div class="col vertical-center actions">
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="buy(listing)"
-              [disabled]="
-                player().username === listing.listingInfo.seller ||
-                player().currency.gold < listing.listingInfo.price
-              "
-            >
-              Buy
-            </button>
-          </div>
+        <div class="vertical-center spinning-loader">
+          <app-icon
+            name="spinning-blades"
+            bgColor="transparent"
+            fgColor="#aaa"
+          ></app-icon>
+          Loading...
         </div>
-        }
-      </div>
+      }
+
+      @if (!isLoading && buyableListings?.length === 0) {
+        <div
+          class="background-text text-center content full-width full-height true-center big-text"
+        >
+          There are no items here, or none match your search criteria.
+        </div>
+      }
+
+      @if (!isLoading && buyableListings?.length > 0) {
+        <div class="content scrollable">
+          @for (listing of buyableListings; track listing) {
+            <div class="spacing">
+              <div class="col">
+                <div class="item-slot item-background">
+                  <app-item
+                    [item]="listing.itemInfo.itemOverride"
+                    [showDesc]="false"
+                    [showOunces]="true"
+                    [showCount]="true"
+                    [matTooltip]="requirementTooltipFor(listing)"
+                  ></app-item>
+                </div>
+              </div>
+              <div class="col listing-info">
+                <div>
+                  <strong>{{ listing.itemInfo.itemOverride.name }}</strong>
+                  {{ starTextFor(listing.itemInfo) }}
+                </div>
+                <div class="thin-line">
+                  <small>
+                    {{ statStringFor(listing.itemInfo) || 'no stats' }} /
+                    {{ traitStringFor(listing.itemInfo) || 'no trait' }} /
+                    {{ effectStringFor(listing.itemInfo) || 'no effect' }}
+                  </small>
+                </div>
+                <div class="thin-line">
+                  <small
+                    [class.text-danger]="
+                      listing.listingInfo.price > player().currency.gold
+                    "
+                  >
+                    <em>{{ listing.listingInfo.price | number }} gold</em>
+                  </small>
+                </div>
+              </div>
+              <div class="col vertical-center actions">
+                <button
+                  mat-flat-button
+                  color="primary"
+                  (click)="buy(listing)"
+                  [disabled]="
+                    player().username === listing.listingInfo.seller ||
+                    player().currency.gold < listing.listingInfo.price
+                  "
+                >
+                  Buy
+                </button>
+              </div>
+            </div>
+          }
+        </div>
       }
 
       <div class="page-actions">
@@ -238,21 +233,20 @@
         <div>
           <div class="item-slot item-background">
             @if (player().items.equipment.rightHand; as rightHand) {
-            <app-item [item]="rightHand" [showOunces]="true"></app-item>
+              <app-item [item]="rightHand" [showOunces]="true"></app-item>
             }
           </div>
         </div>
       </div>
 
       @if (sellError) {
-      <div class="col text-danger text-center">
-        {{ sellError }}
-      </div>
+        <div class="col text-danger text-center">
+          {{ sellError }}
+        </div>
       }
 
-      <!-- -->
       @if (!sellError) {
-      <div class="col text-success text-center">Ready to sell!</div>
+        <div class="col text-success text-center">Ready to sell!</div>
       }
 
       <div class="col"></div>
@@ -311,62 +305,60 @@
 <ng-template #marketListings>
   <div class="right-side listings">
     @if (!myListings) {
-    <div class="background-text content">
-      @if (isLoading) {
-      <div class="vertical-center spinning-loader">
-        <app-icon
-          name="spinning-blades"
-          bgColor="transparent"
-          fgColor="#aaa"
-        ></app-icon>
-        Loading...
+      <div class="background-text content">
+        @if (isLoading) {
+          <div class="vertical-center spinning-loader">
+            <app-icon
+              name="spinning-blades"
+              bgColor="transparent"
+              fgColor="#aaa"
+            ></app-icon>
+            Loading...
+          </div>
+        }
       </div>
-      }
-    </div>
     }
 
-    <!-- -->
     @if (myListings?.length === 0) {
-    <div
-      class="background-text text-center content full-width full-height true-center big-text"
-    >
-      You do not have any items listed on the market.
-    </div>
+      <div
+        class="background-text text-center content full-width full-height true-center big-text"
+      >
+        You do not have any items listed on the market.
+      </div>
     }
 
-    <!-- -->
     @if (myListings?.length > 0) {
-    <div class="content scrollable">
-      @for (listing of myListings; track listing) {
-      <div class="spacing">
-        <div class="col">
-          <div class="item-slot item-background">
-            <app-item
-              [item]="listing.itemInfo.itemOverride"
-              [showOunces]="true"
-              [showDesc]="false"
-            ></app-item>
+      <div class="content scrollable">
+        @for (listing of myListings; track listing) {
+          <div class="spacing">
+            <div class="col">
+              <div class="item-slot item-background">
+                <app-item
+                  [item]="listing.itemInfo.itemOverride"
+                  [showOunces]="true"
+                  [showDesc]="false"
+                ></app-item>
+              </div>
+            </div>
+            <div class="col listing-info">
+              <div>
+                <strong>{{ listing.itemId }}</strong>
+                {{ starTextFor(listing.itemInfo) }}
+              </div>
+              <div>
+                <small>
+                  <em>{{ listing.listingInfo.price | number }} gold</em>
+                </small>
+              </div>
+            </div>
+            <div class="col vertical-center actions">
+              <button mat-flat-button color="warn" (click)="cancel(listing)">
+                Cancel
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="col listing-info">
-          <div>
-            <strong>{{ listing.itemId }}</strong>
-            {{ starTextFor(listing.itemInfo) }}
-          </div>
-          <div>
-            <small>
-              <em>{{ listing.listingInfo.price | number }} gold</em>
-            </small>
-          </div>
-        </div>
-        <div class="col vertical-center actions">
-          <button mat-flat-button color="warn" (click)="cancel(listing)">
-            Cancel
-          </button>
-        </div>
+        }
       </div>
-      }
-    </div>
     }
   </div>
 </ng-template>
@@ -374,89 +366,87 @@
 <ng-template #marketPickup>
   <div class="right-side receive">
     @if (!myPickups) {
-    <div class="background-text content">
-      @if (isLoading) {
-      <div class="vertical-center spinning-loader">
-        <app-icon
-          name="spinning-blades"
-          bgColor="transparent"
-          fgColor="#aaa"
-        ></app-icon>
-        Loading...
+      <div class="background-text content">
+        @if (isLoading) {
+          <div class="vertical-center spinning-loader">
+            <app-icon
+              name="spinning-blades"
+              bgColor="transparent"
+              fgColor="#aaa"
+            ></app-icon>
+            Loading...
+          </div>
+        }
       </div>
-      }
-    </div>
     }
 
-    <!-- -->
     @if (myPickups?.length === 0) {
-    <div
-      class="background-text text-center content full-width full-height true-center big-text"
-    >
-      You do not have anything to pick up.
-    </div>
+      <div
+        class="background-text text-center content full-width full-height true-center big-text"
+      >
+        You do not have anything to pick up.
+      </div>
     }
 
-    <!-- -->
     @if (myPickups?.length > 0) {
-    <div class="content scrollable">
-      @for (pickup of myPickups; track $index) {
-      <div class="spacing">
-        <div class="col">
-          <div class="item-slot item-background">
-            @if (pickup.itemInfo) {
-            <app-item
-              [item]="pickup.itemInfo.itemOverride"
-              [showDesc]="false"
-              [showOunces]="true"
-            ></app-item>
-            }
+      <div class="content scrollable">
+        @for (pickup of myPickups; track $index) {
+          <div class="spacing">
+            <div class="col">
+              <div class="item-slot item-background">
+                @if (pickup.itemInfo) {
+                  <app-item
+                    [item]="pickup.itemInfo.itemOverride"
+                    [showDesc]="false"
+                    [showOunces]="true"
+                  ></app-item>
+                }
 
-            <!-- -->
-            @if (!pickup.itemInfo) {
-            <app-item
-              [showValue]="true"
-              [item]="{
-                name: 'Gold Coin',
-                mods: {
-                  currency: 'gold',
-                  itemClass: 'Coin',
-                  value: pickup.gold
-                },
-                uuid: ''
-              }"
-            ></app-item>
-            }
-          </div>
-        </div>
-        <div class="col listing-info">
-          @if (pickup.itemInfo) {
-          <div>
-            <strong>{{ pickup.itemInfo.itemOverride.name }}</strong>
-            {{ starTextFor(pickup.itemInfo) }}
-          </div>
-          }
+                @if (!pickup.itemInfo) {
+                  <app-item
+                    [showValue]="true"
+                    [item]="{
+                      name: 'Gold Coin',
+                      mods: {
+                        currency: 'gold',
+                        itemClass: 'Coin',
+                        value: pickup.gold,
+                      },
+                      uuid: '',
+                    }"
+                  ></app-item>
+                }
+              </div>
+            </div>
+            <div class="col listing-info">
+              @if (pickup.itemInfo) {
+                <div>
+                  <strong>{{ pickup.itemInfo.itemOverride.name }}</strong>
+                  {{ starTextFor(pickup.itemInfo) }}
+                </div>
+              }
 
-          <!-- -->
-          @if (!pickup.itemInfo) {
-          <div>
-            <strong>{{ pickup.gold | number }} Gold</strong>
+              @if (!pickup.itemInfo) {
+                <div>
+                  <strong>{{ pickup.gold | number }} Gold</strong>
+                </div>
+              }
+            </div>
+            <div class="col vertical-center actions">
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="take(pickup)"
+                [disabled]="
+                  pickup.itemInfo && player().items.equipment.rightHand
+                "
+              >
+                Take
+              </button>
+            </div>
           </div>
-          }
-        </div>
-        <div class="col vertical-center actions">
-          <button
-            mat-flat-button
-            color="primary"
-            (click)="take(pickup)"
-            [disabled]="pickup.itemInfo && player().items.equipment.rightHand"
-          >
-            Take
-          </button>
-        </div>
+        }
       </div>
-      }
-    </div>
     }
   </div>
 </ng-template>

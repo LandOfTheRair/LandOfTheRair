@@ -13,149 +13,158 @@
 <ng-template #headTemplate>
   <span class="window-has-more-buttons">
     <span>
-      Party@if (party(); as partyInfo) {
-      <!-- -->
-      @if (partyInfo.party) {
-      <span>: {{ partyInfo.party.name }} ({{ partyXPMult() }}% XP Share)</span>
-      } }
+      Party
+      @if (party(); as partyInfo) {
+        @if (partyInfo.party) {
+          <span>
+            : {{ partyInfo.party.name }} ({{ partyXPMult() }}% XP Share)
+          </span>
+        }
+      }
     </span>
 
     <span class="window-extra-buttons">
       @if (player(); as player) {
-      <!-- -->
-      @if (party(); as partyInfo) {
+        @if (party(); as partyInfo) {
+          @if (player.username === partyInfo.party?.members[0]) {
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="reset()"
+              matTooltip="Reset Party Instances"
+            >
+              <app-icon name="boss-key" size="xsmall"></app-icon>
+            </button>
+          }
 
-      <!-- -->
-      @if (player.username === partyInfo.party?.members[0]) {
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="reset()"
-        matTooltip="Reset Party Instances"
-      >
-        <app-icon name="boss-key" size="xsmall"></app-icon>
-      </button>
+          @if (partyInfo.party) {
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="leave()"
+              matTooltip="Leave Party"
+            >
+              <app-icon name="invisible" size="xsmall"></app-icon>
+            </button>
+          }
+
+          @if (player.username === partyInfo.party?.members[0]) {
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="break()"
+              matTooltip="Disband Party"
+            >
+              <app-icon name="minions" size="xsmall"></app-icon>
+            </button>
+          }
+        }
       }
-
-      <!-- -->
-      @if (partyInfo.party) {
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="leave()"
-        matTooltip="Leave Party"
-      >
-        <app-icon name="invisible" size="xsmall"></app-icon>
-      </button>
-      }
-
-      <!-- -->
-      @if (player.username === partyInfo.party?.members[0]) {
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="break()"
-        matTooltip="Disband Party"
-      >
-        <app-icon name="minions" size="xsmall"></app-icon>
-      </button>
-      } } }
     </span>
   </span>
 </ng-template>
 
 <ng-template #bodyTemplate>
   @if (player(); as player) {
+    @if (party(); as partyInfo) {
+      @if (partyInfo.party) {
+        <div class="party">
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Class</th>
+              <th class="text-center">Level</th>
+              <th class="text-center">HP</th>
+              <th class="text-center">MP</th>
+              <th class="text-center">Location</th>
+              <th class="actions"></th>
+            </tr>
+            @for (member of partyInfo.party.members; track member) {
+              <tr>
+                <td>{{ partyInfo.partyMembers[member].name }}</td>
+                <td>{{ partyInfo.partyMembers[member].baseClass }}</td>
+                <td class="text-center">
+                  {{ partyInfo.partyMembers[member].level }}
+                </td>
+                <td class="text-center">
+                  {{
+                    partyInfo.partyMembers[member].hpPercent * 100
+                      | number: '1.0-0'
+                  }}%
+                </td>
+                <td class="text-center">
+                  {{
+                    partyInfo.partyMembers[member].mpPercent * 100
+                      | number: '1.0-0'
+                  }}%
+                </td>
+                <td class="text-center">
+                  {{ directionTo(player, partyInfo.partyMembers[member]) }}
+                </td>
+                <td class="actions">
+                  @if (
+                    member !== player.username &&
+                    player.username === partyInfo.party?.members[0]
+                  ) {
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="kick(member)"
+                      matTooltip="Kick From Party"
+                    >
+                      <app-icon name="barefoot" size="xsmall"></app-icon>
+                    </button>
+                  }
 
-  <!-- -->
-  @if (party(); as partyInfo) {
-
-  <!-- -->
-  @if (partyInfo.party) {
-  <div class="party">
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Class</th>
-        <th class="text-center">Level</th>
-        <th class="text-center">HP</th>
-        <th class="text-center">MP</th>
-        <th class="text-center">Location</th>
-        <th class="actions"></th>
-      </tr>
-      @for (member of partyInfo.party.members; track member) {
-      <tr>
-        <td>{{ partyInfo.partyMembers[member].name }}</td>
-        <td>{{ partyInfo.partyMembers[member].baseClass }}</td>
-        <td class="text-center">{{ partyInfo.partyMembers[member].level }}</td>
-        <td class="text-center">
-          {{
-            partyInfo.partyMembers[member].hpPercent * 100 | number : '1.0-0'
-          }}%
-        </td>
-        <td class="text-center">
-          {{
-            partyInfo.partyMembers[member].mpPercent * 100 | number : '1.0-0'
-          }}%
-        </td>
-        <td class="text-center">
-          {{ directionTo(player, partyInfo.partyMembers[member]) }}
-        </td>
-        <td class="actions">
-          @if (member !== player.username && player.username ===
-          partyInfo.party?.members[0]) {
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="kick(member)"
-            matTooltip="Kick From Party"
-          >
-            <app-icon name="barefoot" size="xsmall"></app-icon>
-          </button>
-          }
-
-          <!-- -->
-          @if (member !== player.username && player.username ===
-          partyInfo.party?.members[0]) {
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="give(member)"
-            matTooltip="Give Party Leader"
-          >
-            <app-icon name="crown" size="xsmall"></app-icon>
-          </button>
-          }
-        </td>
-      </tr>
+                  @if (
+                    member !== player.username &&
+                    player.username === partyInfo.party?.members[0]
+                  ) {
+                    <button
+                      mat-icon-button
+                      color="warn"
+                      (click)="give(member)"
+                      matTooltip="Give Party Leader"
+                    >
+                      <app-icon name="crown" size="xsmall"></app-icon>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </table>
+        </div>
       }
-    </table>
-  </div>
-  }
 
-  <!-- -->
-  @if (!partyInfo.party) {
-  <div class="no-party">
-    <div class="input">
-      <mat-form-field class="show-underline full-width" floatLabel="never">
-        <input
-          matInput
-          [(ngModel)]="createOrJoinParty"
-          [ngModelOptions]="{ standalone: true }"
-          placeholder="Create or join a party"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="off"
-        />
-      </mat-form-field>
-    </div>
-    <div class="buttons">
-      <button mat-raised-button color="primary" (click)="create()">
-        Create
-      </button>
-      <button mat-raised-button color="accent" (click)="join()">Join</button>
-    </div>
-  </div>
-  } } }
+      @if (!partyInfo.party) {
+        <div class="no-party">
+          <div class="input">
+            <mat-form-field
+              class="show-underline full-width"
+              floatLabel="never"
+            >
+              <input
+                matInput
+                [(ngModel)]="createOrJoinParty"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Create or join a party"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="off"
+              />
+            </mat-form-field>
+          </div>
+          <div class="buttons">
+            <button mat-raised-button color="primary" (click)="create()">
+              Create
+            </button>
+            <button mat-raised-button color="accent" (click)="join()">
+              Join
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
 </ng-template>

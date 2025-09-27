@@ -14,9 +14,9 @@
 
 <ng-template #bodyTemplate>
   @let playerAchievements = completedAchievements();
-  <!-- -->
+
   @let locked = lockedAchievements();
-  <!-- -->
+
   @let hidden = hiddenAchievements();
 
   <mat-tab-group
@@ -28,20 +28,20 @@
     <mat-tab
       [label]="'Earned Achievements (' + playerAchievements.length + ')'"
     >
-      @if(playerAchievements.length === 0) {
-      <div class="vertical-center full-width full-height background-text">
-        You don't have any achievements yet
-      </div>
+      @if (playerAchievements.length === 0) {
+        <div class="vertical-center full-width full-height background-text">
+          You don't have any achievements yet
+        </div>
       }
 
       <mat-list>
-        @for(ach of playerAchievements; track ach.name) {
-        <mat-list-item>
-          <app-earned-achievement
-            [achievement]="ach"
-            [earnedAt]="ach.earnedAt"
-          ></app-earned-achievement>
-        </mat-list-item>
+        @for (ach of playerAchievements; track ach.name) {
+          <mat-list-item>
+            <app-earned-achievement
+              [achievement]="ach"
+              [earnedAt]="ach.earnedAt"
+            ></app-earned-achievement>
+          </mat-list-item>
         }
       </mat-list>
     </mat-tab>
@@ -50,17 +50,19 @@
       [label]="'Other Achievements (' + (locked.length + hidden.length) + ')'"
     >
       <mat-list>
-        @for(ach of locked; track ach.name) {
-        <mat-list-item>
-          <app-earned-achievement [achievement]="ach"></app-earned-achievement>
-        </mat-list-item>
+        @for (ach of locked; track ach.name) {
+          <mat-list-item>
+            <app-earned-achievement
+              [achievement]="ach"
+            ></app-earned-achievement>
+          </mat-list-item>
         }
 
         <!---->
-        @if(hidden.length > 0) {
-        <mat-list-item>
-          ... and {{ hidden.length | number }} hidden achievements!
-        </mat-list-item>
+        @if (hidden.length > 0) {
+          <mat-list-item>
+            ... and {{ hidden.length | number }} hidden achievements!
+          </mat-list-item>
         }
       </mat-list>
     </mat-tab>

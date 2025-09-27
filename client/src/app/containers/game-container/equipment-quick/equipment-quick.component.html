@@ -14,80 +14,79 @@
 
 <ng-template #bodyTemplate>
   @if (player(); as player) {
-  <div class="item-container">
-    @for (slot of slots; track slot) {
-    <div
-      class="item-slot"
-      [class.item-background]="slot.template || slot.slot"
-      [class.selected]="uiService.selected.equipment[slot.slot]"
-      [dropScope]="slot.scope || slot.slot"
-      (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)"
-      droppable
-    >
-      @if (!slot.template) {
-      <ng-container
-        *ngTemplateOutlet="
-          itemGenericTemplate;
-          context: createContext(slot, player)
-        "
-      ></ng-container>
-      }
-      <!-- -->
-      @if (slot.template === 'coin') {
-      <ng-container
-        *ngTemplateOutlet="
-          itemCoinTemplate;
-          context: createContext(slot, player)
-        "
-      ></ng-container>
-      }
-      <!-- -->
-      @if (slot.template === 'hand') {
-      <ng-container
-        *ngTemplateOutlet="
-          itemHandTemplate;
-          context: createContext(slot, player)
-        "
-      ></ng-container>
+    <div class="item-container">
+      @for (slot of slots; track slot) {
+        <div
+          class="item-slot"
+          [class.item-background]="slot.template || slot.slot"
+          [class.selected]="uiService.selected.equipment[slot.slot]"
+          [dropScope]="slot.scope || slot.slot"
+          (onDrop)="uiService.buildAndDoDropAction($event, slot.dropScope)"
+          droppable
+        >
+          @if (!slot.template) {
+            <ng-container
+              *ngTemplateOutlet="
+                itemGenericTemplate;
+                context: createContext(slot, player)
+              "
+            ></ng-container>
+          }
+
+          @if (slot.template === 'coin') {
+            <ng-container
+              *ngTemplateOutlet="
+                itemCoinTemplate;
+                context: createContext(slot, player)
+              "
+            ></ng-container>
+          }
+
+          @if (slot.template === 'hand') {
+            <ng-container
+              *ngTemplateOutlet="
+                itemHandTemplate;
+                context: createContext(slot, player)
+              "
+            ></ng-container>
+          }
+        </div>
       }
     </div>
-    }
-  </div>
   }
 </ng-template>
 
 <ng-template #itemGenericTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
-  <span class="item-slot-bg-text">{{ slot.name }}</span>
+    <span class="item-slot-bg-text">{{ slot.name }}</span>
   }
-  <!-- -->
+
   @if ((player.items.equipment || {})[slot.slot]) {
-  <app-item
-    [context]="'Equipment'"
-    [contextSlot]="slot.slot"
-    [viewingPlayer]="player"
-    [showCount]="slot.slot === 'ammo'"
-    [showOunces]="slot.slot === 'potion'"
-    [item]="player.items.equipment[slot.slot]"
-  ></app-item>
+    <app-item
+      [context]="'Equipment'"
+      [contextSlot]="slot.slot"
+      [viewingPlayer]="player"
+      [showCount]="slot.slot === 'ammo'"
+      [showOunces]="slot.slot === 'potion'"
+      [item]="player.items.equipment[slot.slot]"
+    ></app-item>
   }
 </ng-template>
 
 <ng-template #itemHandTemplate let-slot="slot" let-player="player">
   @if (!(player.items.equipment || {})[slot.slot]) {
-  <span class="item-slot-bg-text">{{ slot.name }}</span>
+    <span class="item-slot-bg-text">{{ slot.name }}</span>
   }
 
-  <!-- -->
   @if ((player.items.equipment || {})[slot.slot]) {
-  <app-item
-    [context]="slot.hand"
-    contextSlot="_"
-    [showOunces]="true"
-    [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
-    [viewingPlayer]="player"
-    [item]="player.items.equipment[slot.slot]"
-  ></app-item>
+    <app-item
+      [context]="slot.hand"
+      contextSlot="_"
+      [showOunces]="true"
+      [showValue]="canShowValue(slot.slot, player.items.equipment[slot.slot])"
+      [viewingPlayer]="player"
+      [item]="player.items.equipment[slot.slot]"
+    ></app-item>
   }
 </ng-template>
 
@@ -102,9 +101,9 @@
       mods: {
         currency: 'gold',
         itemClass: 'Coin',
-        value: player.currency.gold
+        value: player.currency.gold,
       },
-      uuid: ''
+      uuid: '',
     }"
   ></app-item>
 </ng-template>

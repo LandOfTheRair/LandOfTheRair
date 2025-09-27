@@ -43,22 +43,23 @@ import {
             <ng-template [ngTemplateOutlet]="head()"></ng-template>
           </span>
           @if (canMinimize()) {
-          <app-button-minimize (click)="minimizeWindow()"></app-button-minimize>
+            <app-button-minimize
+              (click)="minimizeWindow()"
+            ></app-button-minimize>
           }
 
-          <!-- -->
           @if (canHide()) {
-          <app-button-close (click)="hideWindow()"></app-button-close>
+            <app-button-close (click)="hideWindow()"></app-button-close>
           }
         </mat-toolbar>
         @if (!windowProps.hidden) {
-        <div
-          class="window-body"
-          [class.hidden]="minimized()"
-          [class.can-scroll]="canScroll()"
-        >
-          <ng-template [ngTemplateOutlet]="body()"></ng-template>
-        </div>
+          <div
+            class="window-body"
+            [class.hidden]="minimized()"
+            [class.can-scroll]="canScroll()"
+          >
+            <ng-template [ngTemplateOutlet]="body()"></ng-template>
+          </div>
         }
       </div>
     </div>

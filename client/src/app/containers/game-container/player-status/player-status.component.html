@@ -11,121 +11,123 @@
 
 <ng-template #headTemplate>
   @if (player(); as player) {
-  <span class="window-has-more-buttons">
-    <span>
-      {{ player.name }} the level {{ player.level }} {{ player.baseClass }}
+    <span class="window-has-more-buttons">
+      <span>
+        {{ player.name }} the level {{ player.level }} {{ player.baseClass }}
+      </span>
+      <span class="window-extra-buttons">
+        <button
+          mat-icon-button
+          (click)="showWindow('equipmentMain')"
+          matTooltip="Toggle Equipment"
+        >
+          <app-icon name="battle-gear" size="xsmall"></app-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="showWindow('equipmentQuick')"
+          matTooltip="Toggle Quick Gear"
+        >
+          <app-icon name="hand" size="xsmall"></app-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="showWindow('inventorySack')"
+          matTooltip="Toggle Sack"
+        >
+          <app-icon name="swap-bag" size="xsmall"></app-icon>
+        </button>
+        @if (showPouch) {
+          <button
+            mat-icon-button
+            (click)="showWindow('inventoryPouch')"
+            matTooltip="Toggle Pouch"
+          >
+            <app-icon name="knapsack" size="xsmall"></app-icon>
+          </button>
+        }
+        <button
+          mat-icon-button
+          (click)="showWindow('inventoryBelt')"
+          matTooltip="Toggle Belt"
+        >
+          <app-icon name="belt" size="xsmall"></app-icon>
+        </button>
+      </span>
     </span>
-    <span class="window-extra-buttons">
-      <button
-        mat-icon-button
-        (click)="showWindow('equipmentMain')"
-        matTooltip="Toggle Equipment"
-      >
-        <app-icon name="battle-gear" size="xsmall"></app-icon>
-      </button>
-      <button
-        mat-icon-button
-        (click)="showWindow('equipmentQuick')"
-        matTooltip="Toggle Quick Gear"
-      >
-        <app-icon name="hand" size="xsmall"></app-icon>
-      </button>
-      <button
-        mat-icon-button
-        (click)="showWindow('inventorySack')"
-        matTooltip="Toggle Sack"
-      >
-        <app-icon name="swap-bag" size="xsmall"></app-icon>
-      </button>
-      @if (showPouch) {
-      <button
-        mat-icon-button
-        (click)="showWindow('inventoryPouch')"
-        matTooltip="Toggle Pouch"
-      >
-        <app-icon name="knapsack" size="xsmall"></app-icon>
-      </button>
-      }
-      <button
-        mat-icon-button
-        (click)="showWindow('inventoryBelt')"
-        matTooltip="Toggle Belt"
-      >
-        <app-icon name="belt" size="xsmall"></app-icon>
-      </button>
-    </span>
-  </span>
   }
 </ng-template>
 
 <ng-template #bodyTemplate>
   @if (player(); as player) {
-  <div class="container">
-    <div
-      class="buffs"
-      droppable
-      (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
-      dropScope="use"
-    >
-      @if (effects().length > 0) {
-      <!---->
-      @for (effect of effects(); track effect.uuid) {
-      <app-effect-icon
-        [effect]="effect"
-        [defaultTransparent]="false"
-        (contextmenu)="unapply($event, effect)"
-      ></app-effect-icon>
-      } }
-      <!---->
-      @else {
-      <div class="true-center background-text full-height full-width">
-        Drop a potion or food here to consume it
-      </div>
-      }
-    </div>
-    <div class="bars">
-      <div class="top-bars">
-        <div class="bar-container hp">
-          @if (player.hp.current !== -1) {
-          <span
-            class="bar"
-            [style.width]="(player.hp.current / player.hp.maximum) * 100 + '%'"
-          ></span>
+    <div class="container">
+      <div
+        class="buffs"
+        droppable
+        (onDrop)="uiService.buildAndDoDropAction($event, 'use')"
+        dropScope="use"
+      >
+        @if (effects().length > 0) {
+          @for (effect of effects(); track effect.uuid) {
+            <app-effect-icon
+              [effect]="effect"
+              [defaultTransparent]="false"
+              (contextmenu)="unapply($event, effect)"
+            ></app-effect-icon>
           }
-          <span class="bar-text">
-            {{ player.hp.current }}/{{ player.hp.maximum }}
-          </span>
-        </div>
-        <div class="bar-container energy {{ player.baseClass }}">
-          <span
-            class="bar"
-            [style.width]="(player.mp.current / player.mp.maximum) * 100 + '%'"
-          ></span>
-          <span class="bar-text">
-            {{ player.mp.current }}/{{ player.mp.maximum }}
-          </span>
-        </div>
+        } @else {
+          <div class="true-center background-text full-height full-width">
+            Drop a potion or food here to consume it
+          </div>
+        }
       </div>
-      <div class="bottom-bars">
-        @if (!player.gainingAXP) {
-        <div class="bar-container exp" [matTooltip]="xpString(player)">
-          <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
-          <span class="bar-text">
-            {{ player.exp | number }} ({{ xpPercent(player) }}%)
-          </span>
+      <div class="bars">
+        <div class="top-bars">
+          <div class="bar-container hp">
+            @if (player.hp.current !== -1) {
+              <span
+                class="bar"
+                [style.width]="
+                  (player.hp.current / player.hp.maximum) * 100 + '%'
+                "
+              ></span>
+            }
+            <span class="bar-text">
+              {{ player.hp.current }}/{{ player.hp.maximum }}
+            </span>
+          </div>
+          <div class="bar-container energy {{ player.baseClass }}">
+            <span
+              class="bar"
+              [style.width]="
+                (player.mp.current / player.mp.maximum) * 100 + '%'
+              "
+            ></span>
+            <span class="bar-text">
+              {{ player.mp.current }}/{{ player.mp.maximum }}
+            </span>
+          </div>
         </div>
-        }
-        <!---->
-        @if (player.gainingAXP) {
-        <div class="bar-container axp">
-          <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
-          <span class="bar-text">
-            {{ player.axp | number }} ({{ axpPercent(player) }}%)
-          </span>
+        <div class="bottom-bars">
+          @if (!player.gainingAXP) {
+            <div class="bar-container exp" [matTooltip]="xpString(player)">
+              <span class="bar" [style.width]="xpPercent(player) + '%'"></span>
+              <span class="bar-text">
+                {{ player.exp | number }} ({{ xpPercent(player) }}%)
+              </span>
+            </div>
+          }
+          <!---->
+          @if (player.gainingAXP) {
+            <div class="bar-container axp">
+              <span class="bar" [style.width]="axpPercent(player) + '%'"></span>
+              <span class="bar-text">
+                {{ player.axp | number }} ({{ axpPercent(player) }}%)
+              </span>
+            </div>
+          }
         </div>
-        }
       </div>
     </div>
-  </div>
   }
 </ng-template>

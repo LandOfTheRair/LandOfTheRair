@@ -82,6 +82,7 @@
     "imagemin-webp": "^6.0.0",
     "jimp": "^0.16.1",
     "md5-file": "^4.0.0",
+    "prettier": "^3.6.2",
     "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
     "typescript": "5.4",

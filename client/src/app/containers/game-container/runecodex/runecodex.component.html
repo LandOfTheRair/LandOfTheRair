@@ -1,76 +1,76 @@
 @if (player(); as player) {
-<div class="codex-container">
-  <div class="left-side">
-    @for (slot of slots; track slot) {
-    <div
-      class="item-slot"
-      [class.selected]="slot.slot >= 0 && slot.slot === activeSlot"
-      (click)="selectSlot(slot.slot)"
-      [class.item-background]="slot.display"
-    >
-      @if (!(player.runes || [])[slot.slot]) {
-      <span class="item-slot-bg-text">{{ slot.display }}</span>
-      }
-
-      <!-- -->
-      @if ((player.runes || [])[slot.slot]) {
-      <div class="scroll-container">
-        <span class="tier">{{ getTraitLevel(player.runes[slot.slot]) }}</span>
-        <app-icon
-          size="large"
-          [name]="getTraitIcon(player.runes[slot.slot])"
-          [matTooltip]="getTraitName(player.runes[slot.slot])"
-          bgColor="transparent"
-        ></app-icon>
-      </div>
-      }
-    </div>
-    }
-  </div>
-
-  <div class="right-side">
-    @if (player.learnedRunes.length === 0) {
-    <div
-      class="vertical-center full-width full-height background-text text-center"
-    >
-      You don't currently know any ancient runes.
-    </div>
-    }
-
-    <!-- -->
-    @if (player.learnedRunes.length > 0) {
-    <div class="rune-selector">
-      <div>
-        @for (rune of orderedRunes; track rune) {
+  <div class="codex-container">
+    <div class="left-side">
+      @for (slot of slots; track slot) {
         <div
-          class="select-rune"
-          [class.selected]="activeRune === rune"
-          [class.text-success]="player.runes.includes(rune)"
-          (click)="selectRune(rune)"
+          class="item-slot"
+          [class.selected]="slot.slot >= 0 && slot.slot === activeSlot"
+          (click)="selectSlot(slot.slot)"
+          [class.item-background]="slot.display"
         >
-          <app-icon
-            size="xsmall"
-            [name]="getTraitIcon(rune)"
-            bgColor="transparent"
-            fgColor="#fff"
-          ></app-icon>
-          {{ getTraitName(rune) }}
+          @if (!(player.runes || [])[slot.slot]) {
+            <span class="item-slot-bg-text">{{ slot.display }}</span>
+          }
+
+          @if ((player.runes || [])[slot.slot]) {
+            <div class="scroll-container">
+              <span class="tier">
+                {{ getTraitLevel(player.runes[slot.slot]) }}
+              </span>
+              <app-icon
+                size="large"
+                [name]="getTraitIcon(player.runes[slot.slot])"
+                [matTooltip]="getTraitName(player.runes[slot.slot])"
+                bgColor="transparent"
+              ></app-icon>
+            </div>
+          }
         </div>
-        }
-      </div>
+      }
     </div>
 
-    <div class="selection">
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="inscribe()"
-        [disabled]="!activeRune || activeSlot < 0"
-      >
-        Inscribe
-      </button>
+    <div class="right-side">
+      @if (player.learnedRunes.length === 0) {
+        <div
+          class="vertical-center full-width full-height background-text text-center"
+        >
+          You don't currently know any ancient runes.
+        </div>
+      }
+
+      @if (player.learnedRunes.length > 0) {
+        <div class="rune-selector">
+          <div>
+            @for (rune of orderedRunes; track rune) {
+              <div
+                class="select-rune"
+                [class.selected]="activeRune === rune"
+                [class.text-success]="player.runes.includes(rune)"
+                (click)="selectRune(rune)"
+              >
+                <app-icon
+                  size="xsmall"
+                  [name]="getTraitIcon(rune)"
+                  bgColor="transparent"
+                  fgColor="#fff"
+                ></app-icon>
+                {{ getTraitName(rune) }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="selection">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="inscribe()"
+            [disabled]="!activeRune || activeSlot < 0"
+          >
+            Inscribe
+          </button>
+        </div>
+      }
     </div>
-    }
   </div>
-</div>
 }

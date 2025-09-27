@@ -15,60 +15,64 @@
 
 <ng-template #bodyTemplate>
   @if (player() && lockerNames.length > 0) {
-  <div>
-    @if (!optionsService.lockerTabs) {
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-select [(ngModel)]="currentLocker" (wheel)="changeLocker($event)">
-        @for (lockerName of lockerNames; track lockerName) {
-        <mat-option [value]="lockerName">{{ lockerName }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    @if (currentLocker === 'Materials') {
-    <ng-container
-      *ngTemplateOutlet="materialStorage; context: { player: player() }"
-    ></ng-container>
-    }
-
-    <!-- -->
-    @if (currentLocker !== 'Materials') {
-    <ng-container
-      *ngTemplateOutlet="
-        lockerStorage;
-        context: { player: player(), lockerName: currentLocker }
-      "
-    ></ng-container>
-    } }
-
-    <!-- -->
-    @if (optionsService.lockerTabs) {
-    <mat-tab-group
-      mat-align-tabs="center"
-      [selectedIndex]="activeLockerSlot"
-      (wheel)="changeLocker($event)"
-    >
-      @for (lockerName of lockerNames; track lockerName) {
-      <mat-tab [label]="lockerName">
-        @if (lockerName === 'Materials') {
-        <ng-container
-          *ngTemplateOutlet="materialStorage; context: { player: player() }"
-        ></ng-container>
+    <div>
+      @if (!optionsService.lockerTabs) {
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-select
+            [(ngModel)]="currentLocker"
+            (wheel)="changeLocker($event)"
+          >
+            @for (lockerName of lockerNames; track lockerName) {
+              <mat-option [value]="lockerName">{{ lockerName }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (currentLocker === 'Materials') {
+          <ng-container
+            *ngTemplateOutlet="materialStorage; context: { player: player() }"
+          ></ng-container>
         }
 
-        <!-- -->
-        @if (lockerName !== 'Materials') {
-        <ng-container
-          *ngTemplateOutlet="
-            lockerStorage;
-            context: { player: player(), lockerName: lockerName }
-          "
-        ></ng-container>
+        @if (currentLocker !== 'Materials') {
+          <ng-container
+            *ngTemplateOutlet="
+              lockerStorage;
+              context: { player: player(), lockerName: currentLocker }
+            "
+          ></ng-container>
         }
-      </mat-tab>
       }
-    </mat-tab-group>
-    }
-  </div>
+
+      @if (optionsService.lockerTabs) {
+        <mat-tab-group
+          mat-align-tabs="center"
+          [selectedIndex]="activeLockerSlot"
+          (wheel)="changeLocker($event)"
+        >
+          @for (lockerName of lockerNames; track lockerName) {
+            <mat-tab [label]="lockerName">
+              @if (lockerName === 'Materials') {
+                <ng-container
+                  *ngTemplateOutlet="
+                    materialStorage;
+                    context: { player: player() }
+                  "
+                ></ng-container>
+              }
+
+              @if (lockerName !== 'Materials') {
+                <ng-container
+                  *ngTemplateOutlet="
+                    lockerStorage;
+                    context: { player: player(), lockerName: lockerName }
+                  "
+                ></ng-container>
+              }
+            </mat-tab>
+          }
+        </mat-tab-group>
+      }
+    </div>
   }
 </ng-template>
 
@@ -80,35 +84,41 @@
     (onDrop)="uiService.buildAndDoDropAction($event, 'Kollection')"
   >
     @for (group of materialData.layouts; track group.category) {
-    <div>
-      <div class="header">{{ group.category }}</div>
-      <div class="items">
-        @for (itemSlot of group.items; track $index) {
-        <div class="item-slot" [class.item-background]="itemSlot">
-          @if (itemSlot && materialData.slots[itemSlot]) {
-          <app-item
-            [showDesc]="false"
-            [showCount]="true"
-            context="Kollection"
-            [contextSlot]="itemSlot"
-            [viewingPlayer]="player"
-            [count]="(player.accountLockers.materials || {})[itemSlot] || 0"
-            [transparent]="!(player.accountLockers.materials || {})[itemSlot]"
-            [withdrawInStacks]="materialData.slots[itemSlot].withdrawInOunces"
-            [canDrag]="
-              ((player.accountLockers.materials || {})[itemSlot] || 0) > 0
-            "
-            [item]="{
-              name: materialData.slots[itemSlot].items[0],
-              mods: {},
-              uuid: ''
-            }"
-          ></app-item>
+      <div>
+        <div class="header">{{ group.category }}</div>
+        <div class="items">
+          @for (itemSlot of group.items; track $index) {
+            <div class="item-slot" [class.item-background]="itemSlot">
+              @if (itemSlot && materialData.slots[itemSlot]) {
+                <app-item
+                  [showDesc]="false"
+                  [showCount]="true"
+                  context="Kollection"
+                  [contextSlot]="itemSlot"
+                  [viewingPlayer]="player"
+                  [count]="
+                    (player.accountLockers.materials || {})[itemSlot] || 0
+                  "
+                  [transparent]="
+                    !(player.accountLockers.materials || {})[itemSlot]
+                  "
+                  [withdrawInStacks]="
+                    materialData.slots[itemSlot].withdrawInOunces
+                  "
+                  [canDrag]="
+                    ((player.accountLockers.materials || {})[itemSlot] || 0) > 0
+                  "
+                  [item]="{
+                    name: materialData.slots[itemSlot].items[0],
+                    mods: {},
+                    uuid: '',
+                  }"
+                ></app-item>
+              }
+            </div>
           }
         </div>
-        }
       </div>
-    </div>
     }
   </div>
 </ng-template>

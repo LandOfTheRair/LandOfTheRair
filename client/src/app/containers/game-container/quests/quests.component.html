@@ -15,72 +15,74 @@
 
 <ng-template #bodyTemplate>
   @if (player(); as player) {
-  <mat-tab-group
-    mat-align-tabs="center"
-    class="bring-to-top"
-    [selectedIndex]="0"
-    animationDuration="0ms"
-  >
-    <mat-tab label="Active Quests">
-      @if ((player.quests.activeQuestProgress | keyvalue).length === 0) {
-      <div class="vertical-center full-width full-height background-text">
-        You don't have any active quests
-      </div>
-      }
-      <mat-list>
-        @for (playerQuest of player.quests.activeQuestProgress | keyvalue; track
-        $index) {
-
-        <!-- -->
-        @if (getQuest(playerQuest.key); as quest) {
-        <mat-list-item>
-          <h2 matLine>
-            <strong>{{ quest.name }}</strong>
-          </h2>
-          @if (playerQuest.value.percentComplete) {
-          <div class="progress-container" matLine>
-            <span class="progress-value">
-              {{ playerQuest.value.rawValue }} /
-              {{ playerQuest.value.rawValueMax }}
-            </span>
-            <mat-progress-bar
-              mode="determinate"
-              [value]="playerQuest.value.percentComplete * 100"
-            ></mat-progress-bar>
+    <mat-tab-group
+      mat-align-tabs="center"
+      class="bring-to-top"
+      [selectedIndex]="0"
+      animationDuration="0ms"
+    >
+      <mat-tab label="Active Quests">
+        @if ((player.quests.activeQuestProgress | keyvalue).length === 0) {
+          <div class="vertical-center full-width full-height background-text">
+            You don't have any active quests
           </div>
+        }
+        <mat-list>
+          @for (
+            playerQuest of player.quests.activeQuestProgress | keyvalue;
+            track $index
+          ) {
+            @if (getQuest(playerQuest.key); as quest) {
+              <mat-list-item>
+                <h2 matLine>
+                  <strong>{{ quest.name }}</strong>
+                </h2>
+                @if (playerQuest.value.percentComplete) {
+                  <div class="progress-container" matLine>
+                    <span class="progress-value">
+                      {{ playerQuest.value.rawValue }} /
+                      {{ playerQuest.value.rawValueMax }}
+                    </span>
+                    <mat-progress-bar
+                      mode="determinate"
+                      [value]="playerQuest.value.percentComplete * 100"
+                    ></mat-progress-bar>
+                  </div>
+                }
+                <h5 matLine>
+                  <em>Given By: {{ quest.giver }}</em>
+                </h5>
+                <p matLine>
+                  {{ quest.desc }}
+                </p>
+              </mat-list-item>
+            }
           }
-          <h5 matLine>
-            <em>Given By: {{ quest.giver }}</em>
-          </h5>
-          <p matLine>
-            {{ quest.desc }}
-          </p>
-        </mat-list-item>
-        } }
-      </mat-list>
-    </mat-tab>
-    <mat-tab label="Completed Quests">
-      @if ((player.quests.permanentQuestCompletion | keyvalue).length === 0) {
-      <div class="vertical-center full-width full-height background-text">
-        You don't have any completed quests
-      </div>
-      }
-      <mat-list>
-        @for (playerQuest of player.quests.permanentQuestCompletion | keyvalue;
-        track $index) {
-
-        <!-- -->
-        @if (getQuest(playerQuest.key); as quest) {
-        <mat-list-item>
-          <h2 matLine>{{ quest.name }}</h2>
-          <h5 matLine>Given By: {{ quest.giver }}</h5>
-          <p matLine>
-            {{ quest.desc }}
-          </p>
-        </mat-list-item>
-        } }
-      </mat-list>
-    </mat-tab>
-  </mat-tab-group>
+        </mat-list>
+      </mat-tab>
+      <mat-tab label="Completed Quests">
+        @if ((player.quests.permanentQuestCompletion | keyvalue).length === 0) {
+          <div class="vertical-center full-width full-height background-text">
+            You don't have any completed quests
+          </div>
+        }
+        <mat-list>
+          @for (
+            playerQuest of player.quests.permanentQuestCompletion | keyvalue;
+            track $index
+          ) {
+            @if (getQuest(playerQuest.key); as quest) {
+              <mat-list-item>
+                <h2 matLine>{{ quest.name }}</h2>
+                <h5 matLine>Given By: {{ quest.giver }}</h5>
+                <p matLine>
+                  {{ quest.desc }}
+                </p>
+              </mat-list-item>
+            }
+          }
+        </mat-list>
+      </mat-tab>
+    </mat-tab-group>
   }
 </ng-template>

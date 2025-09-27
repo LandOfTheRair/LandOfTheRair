@@ -28,19 +28,18 @@
 
     <div class="buttons">
       @if (player(); as player) {
-      <!-- -->
-      @if (!player.gainingAXP) {
-      <button mat-raised-button color="primary" (click)="train()">
-        Level Up
-      </button>
-      }
+        @if (!player.gainingAXP) {
+          <button mat-raised-button color="primary" (click)="train()">
+            Level Up
+          </button>
+        }
 
-      <!-- -->
-      @if (player.gainingAXP) {
-      <button mat-raised-button color="primary" (click)="ancient()">
-        Ancient
-      </button>
-      } }
+        @if (player.gainingAXP) {
+          <button mat-raised-button color="primary" (click)="ancient()">
+            Ancient
+          </button>
+        }
+      }
       <button
         mat-raised-button
         color="secondary"
@@ -61,35 +60,34 @@
         Reset Traits
       </button>
       @if (trainerInfo.npcCanRevive) {
-      <button mat-raised-button color="secondary" (click)="recall()">
-        Recall Me
-      </button>
-      <button mat-raised-button color="secondary" (click)="cleanse()">
-        Cleanse Me
-      </button>
+        <button mat-raised-button color="secondary" (click)="recall()">
+          Recall Me
+        </button>
+        <button mat-raised-button color="secondary" (click)="cleanse()">
+          Cleanse Me
+        </button>
       }
 
-      <!-- -->
       @if (trainerInfo.npcGuildTeleport) {
-      <button mat-raised-button color="secondary" (click)="warp()">
-        Warp Me
-      </button>
+        <button mat-raised-button color="secondary" (click)="warp()">
+          Warp Me
+        </button>
       }
     </div>
 
     <div class="skills">
       @for (skill of skills; track skill) {
-      <div
-        class="skill"
-        (click)="activeSkill = skill"
-        [class.active]="activeSkill === skill"
-      >
-        <app-skill-icon
-          [skill]="skill"
-          size="large"
-          [round]="true"
-        ></app-skill-icon>
-      </div>
+        <div
+          class="skill"
+          (click)="activeSkill = skill"
+          [class.active]="activeSkill === skill"
+        >
+          <app-skill-icon
+            [skill]="skill"
+            size="large"
+            [round]="true"
+          ></app-skill-icon>
+        </div>
       }
     </div>
   </div>
