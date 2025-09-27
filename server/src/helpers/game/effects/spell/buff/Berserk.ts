@@ -3,6 +3,7 @@ import {
   DamageClass,
   ICharacter,
   IStatusEffect,
+  SoundEffect,
   Stat,
 } from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
@@ -202,6 +203,7 @@ export class Berserk extends Effect {
   private sendBerserkTierMessage(char: ICharacter, tier: number) {
     this.sendMessage(char, {
       message: this.berserkTierMessage(tier),
+      sfx: SoundEffect.SpellSpecialBerserk,
     });
   }
 

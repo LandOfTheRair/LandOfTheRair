@@ -1,5 +1,3 @@
-
-
 export enum SoundEffect {
   CombatBlockArmor = 'combat-block-armor',
   CombatBlockWeapon = 'combat-block-weapon',
@@ -35,6 +33,7 @@ export enum SoundEffect {
   SpellDebuffReceive = 'spell-debuff-receive',
   SpellHeal = 'spell-heal',
   SpellSightEffect = 'spell-sight-effect',
+  SpellSpecialBerserk = 'spell-special-berserk',
   SpellSpecialRevive = 'spell-special-revive',
-  SpellSpecialTeleport = 'spell-special-teleport'
+  SpellSpecialTeleport = 'spell-special-teleport',
 }
