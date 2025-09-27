@@ -199,6 +199,16 @@ export class TargettingHelper extends BaseService {
     return this.getPossibleTargetsInViewRange(player, findStr, useSight)[0];
   }
 
+  public getFirstPossibleTargetInViewRangeThatIsntSelf(
+    player: ICharacter,
+    findStr: string,
+    useSight = true,
+  ): ICharacter {
+    return this.getPossibleTargetsInViewRange(player, findStr, useSight).filter(
+      (target) => target !== player,
+    )[0];
+  }
+
   public getPossibleTargetsInViewRange(
     player: ICharacter,
     findStr: string,

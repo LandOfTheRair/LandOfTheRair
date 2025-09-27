@@ -1,3 +1,4 @@
+export * from './barbarian';
 export * from './buffs';
 export * from './damage';
 export * from './heals';

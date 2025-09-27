@@ -18,6 +18,9 @@ export class AttackCommand extends SkillCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return false;
 
+    const isBerserked = this.game.effectHelper.getEffect(player, 'Berserk');
+    if (isBerserked) return;
+
     const range = this.range(player);
     if (range === -1) {
       return this.sendMessage(

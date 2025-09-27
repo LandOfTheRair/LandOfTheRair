@@ -43,6 +43,9 @@ export interface IStatusEffectInfo {
   summonCreatures?: string[]; // the creature summoned by this effect (FindFamiliar)
   unableToShred?: boolean; // whether or not the effect can be shredded (Attribute)
   usedWeapon?: string; // the weapon used for this effect (Warrior Stance)
+  ticksWithoutBerserking?: number; // the number of ticks without berserking (Berserk)
+  currentBerserkTier?: number; // the current berserk tier (Berserk)
+  currentBerserkApplications?: number; // the current number of berserk applications before tiering up (Berserk)
 }
 
 export interface IStatusEffect {

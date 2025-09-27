@@ -8,6 +8,7 @@ export * from './BarFrost';
 export * from './Barkskin';
 export * from './BarNecro';
 export * from './BarWater';
+export * from './Berserk';
 export * from './Boost';
 export * from './BulgingMuscles';
 export * from './CombatPower';

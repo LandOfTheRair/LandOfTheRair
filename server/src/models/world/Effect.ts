@@ -1,14 +1,21 @@
-import { DamageArgs, ICharacter, IStatusEffect, MessageInfo, MessageType } from '../../interfaces';
+import {
+  DamageArgs,
+  ICharacter,
+  IStatusEffect,
+  MessageInfo,
+  MessageType,
+} from '../../interfaces';
 
 import { Game } from '../../helpers';
 import { BaseEffect } from '../BaseEffect';
 
 export class Effect implements BaseEffect {
-
   constructor(protected game: Game) {}
 
-  public sendMessage(character: ICharacter|string, message: MessageInfo) {
-    this.game.messageHelper.sendLogMessageToPlayer(character, message, [MessageType.Miscellaneous]);
+  public sendMessage(character: ICharacter | string, message: MessageInfo) {
+    this.game.messageHelper.sendLogMessageToPlayer(character, message, [
+      MessageType.Miscellaneous,
+    ]);
   }
 
   public formatEffectName(char: ICharacter, effect: IStatusEffect): string {
@@ -28,10 +35,22 @@ export class Effect implements BaseEffect {
 
   public expire(char: ICharacter, effect: IStatusEffect) {}
 
-  public incoming(effect: IStatusEffect, char: ICharacter, attacker: ICharacter | null, args: DamageArgs, currentDamage: number): number {
+  public incoming(
+    effect: IStatusEffect,
+    char: ICharacter,
+    attacker: ICharacter | null,
+    args: DamageArgs,
+    currentDamage: number,
+  ): number {
     return currentDamage;
   }
 
-  public outgoing(effect: IStatusEffect, char: ICharacter, target: ICharacter, args: DamageArgs): void {}
+  public outgoing(
+    effect: IStatusEffect,
+    char: ICharacter,
+    target: ICharacter,
+    args: DamageArgs,
+  ): void {}
 
+  public recast(effect: IStatusEffect, char: ICharacter, target: ICharacter) {}
 }

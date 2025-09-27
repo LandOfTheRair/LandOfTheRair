@@ -79,4 +79,5 @@ export interface ICharacter {
   takenOverBy?: IPlayer;
 
   isTradeEnabled?: boolean;
+  lastTargetUUID?: string;
 }

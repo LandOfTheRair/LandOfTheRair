@@ -385,7 +385,7 @@ export class EffectHelper extends BaseService {
   ): number {
     let currentDamage = Math.floor(damageArgs.damage);
 
-    char.effects.incoming.forEach((eff) => {
+    Object.values(char.effects._hash).forEach((eff) => {
       const ref = this.game.effectManager.getEffectRef(
         eff.effectRef || eff.effectName,
       );
@@ -407,13 +407,12 @@ export class EffectHelper extends BaseService {
     attacker: ICharacter,
     damageArgs: DamageArgs,
   ): void {
-    char.effects.outgoing.forEach((eff) => {
+    Object.values(char.effects._hash).forEach((eff) => {
       const ref = this.game.effectManager.getEffectRef(
         eff.effectRef || eff.effectName,
       );
-      if (!ref || !ref.outgoing) return;
 
-      ref.outgoing(eff, char, attacker, damageArgs);
+      ref?.outgoing?.(eff, char, attacker, damageArgs);
     });
   }
 

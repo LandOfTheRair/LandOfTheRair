@@ -106,23 +106,11 @@ export class MovementHelper extends BaseService {
     const didFinish = this.takeSequenceOfSteps(character, steps);
 
     if (this.characterHelper.isPlayer(character)) {
-      this.playerHelper.resetStatus(character as Player, { sendFOV: false });
       this.game.statisticsHelper.addStatistic(
         character as Player,
         TrackedStatistic.Steps,
         steps.length,
       );
-      this.game.transmissionHelper.sendMovementPatch(character as Player);
-
-      const mapData = this.game.worldManager.getMap(character.map);
-      const interactable = mapData?.map.getInteractableAt(
-        character.x,
-        character.y,
-      );
-
-      if (interactable) {
-        this.handleInteractable(character as Player, interactable);
-      }
     }
 
     return didFinish;
@@ -231,6 +219,20 @@ export class MovementHelper extends BaseService {
           ?.handleEvent(newEventSource.properties.onEvent, character);
       }
     });
+
+    if (this.characterHelper.isPlayer(character)) {
+      this.playerHelper.resetStatus(character as Player, { sendFOV: false });
+      this.game.transmissionHelper.sendMovementPatch(character as Player);
+
+      const interactable = mapData?.map.getInteractableAt(
+        character.x,
+        character.y,
+      );
+
+      if (interactable) {
+        this.handleInteractable(character as Player, interactable);
+      }
+    }
 
     const trap = this.game.trapHelper.getTrapAt(
       character.map,

@@ -78,6 +78,7 @@ export class Player extends BaseEntity implements IPlayer {
   @Property(PROP_UNSAVED_SHARED()) dailyItems: Record<string, number>;
 
   // temporary props
+  @Property(PROP_TEMPORARY()) lastTargetUUID = ''; // currently only maintained by berserk; a general solution is not needed at this time
   @Property(PROP_TEMPORARY()) swimElement = '';
   @Property(PROP_TEMPORARY()) flaggedSkills = [];
   @Property(PROP_TEMPORARY()) actionQueue: {
