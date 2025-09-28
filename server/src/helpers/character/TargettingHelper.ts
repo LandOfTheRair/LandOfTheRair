@@ -287,6 +287,50 @@ export class TargettingHelper extends BaseService {
     return sampleSize(possTargets, maxTargets);
   }
 
+  public getPossibleFriendlyAOETargets(
+    caster: ICharacter | null,
+    center: ICharacter | { x: number; y: number; map: string },
+    radius = 0,
+    maxTargets = 12,
+  ): ICharacter[] {
+    if (!center) return [];
+    if (
+      (center as ICharacter).name &&
+      this.game.characterHelper.isDead(center as ICharacter)
+    ) {
+      return [];
+    }
+
+    const state = this.worldManager.getMap(center.map)?.state;
+    if (!state) return [];
+
+    const allTargets = state.getAllInRangeForAOE(center, radius, []);
+    const possTargets = allTargets.filter((target) => {
+      if (this.characterHelper.isDead(target)) return false;
+
+      if (
+        caster &&
+        this.checkTargetForHostility(caster, target, {
+          allowTargettingNonHostile: false,
+        })
+      ) {
+        return false;
+      }
+
+      if (
+        caster &&
+        this.game.movementHelper.numStepsTo(caster, target) !==
+          distanceFrom(caster, target)
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+
+    return sampleSize(possTargets, maxTargets);
+  }
+
   public doesTargetMatchSearch(
     target: ICharacter,
     findStr: string,

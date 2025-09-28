@@ -103,6 +103,8 @@ export class CombatHelper extends BaseService {
       this.game.spellManager.castSpell('Asper', attacker, defender);
     }
 
+    attacker.lastTargetUUID = defender.uuid;
+
     return res;
   }
 

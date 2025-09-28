@@ -333,15 +333,11 @@ export class EffectHelper extends BaseService {
   ): Partial<Record<Stat, number>> {
     const stats: Partial<Record<Stat, number>> = {};
 
-    Object.values(character.effects).forEach((effectContainer) => {
-      if (!isArray(effectContainer)) return;
-
-      effectContainer.forEach((checkEffect: IStatusEffect) => {
-        const statBoosts = checkEffect.effectInfo.statChanges;
-        Object.keys(statBoosts || {}).forEach((stat) => {
-          stats[stat] = stats[stat] || 0;
-          stats[stat] += statBoosts?.[stat] ?? 0;
-        });
+    Object.values(character.effects._hash).forEach((effect) => {
+      const statBoosts = effect.effectInfo.statChanges;
+      Object.keys(statBoosts || {}).forEach((stat) => {
+        stats[stat] = stats[stat] || 0;
+        stats[stat] += statBoosts?.[stat] ?? 0;
       });
     });
 

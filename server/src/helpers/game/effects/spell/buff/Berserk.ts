@@ -76,11 +76,8 @@ export class Berserk extends Effect {
 
     let targetUUID = char.lastTargetUUID;
     if (!targetUUID) {
-      const target =
-        this.game.targettingHelper.getFirstPossibleTargetInViewRangeThatIsntSelf(
-          char,
-          '',
-        );
+      const target = this.acquireHeadToSmash(char);
+
       if (target) {
         targetUUID = target.uuid;
       }
@@ -92,12 +89,10 @@ export class Berserk extends Effect {
     }
 
     if (targetUUID) {
-      const target =
-        this.game.targettingHelper.getFirstPossibleTargetInViewRangeThatIsntSelf(
-          char,
-          targetUUID,
-        );
+      const target = this.acquireHeadToSmash(char, targetUUID);
+
       if (!target) {
+        char.lastTargetUUID = '';
         this.searchForAnotherHeadToSmash(char, effect);
         return;
       }
@@ -112,6 +107,8 @@ export class Berserk extends Effect {
         this.game.combatHelper.physicalAttack(char, target);
       }
     }
+
+    char.lastTargetUUID = targetUUID;
   }
 
   public override recast(effect: IStatusEffect, char: ICharacter) {
@@ -143,6 +140,18 @@ export class Berserk extends Effect {
   }
 
   // reusable actions
+  private acquireHeadToSmash(
+    char: ICharacter,
+    targetUUID = '',
+  ): ICharacter | null {
+    return this.game.targettingHelper
+      .getPossibleTargetsInViewRange(char, targetUUID)
+      .filter(
+        (target) =>
+          target !== char && !this.game.characterHelper.isPlayer(target),
+      )[0];
+  }
+
   private searchForAnotherHeadToSmash(char: ICharacter, effect: IStatusEffect) {
     if ((effect.effectInfo.currentTick ?? 0) % 5 !== 0) return;
     if ((effect.effectInfo.currentBerserkTier ?? 0) < 2) return;
@@ -151,6 +160,7 @@ export class Berserk extends Effect {
       message: 'You search for another head to smash!',
     });
     this.game.movementHelper.moveRandomly(char, 3);
+    this.game.characterHelper.manaDamage(char, 3);
   }
 
   // tier actions
@@ -162,7 +172,7 @@ export class Berserk extends Effect {
 
     effect.effectInfo.statChanges = stats;
 
-    this.game.characterHelper.recalculateEverything(char);
+    this.game.characterHelper.calculateStatTotals(char);
 
     this.updateDescription(effect);
   }
@@ -204,6 +214,11 @@ export class Berserk extends Effect {
     this.sendMessage(char, {
       message: this.berserkTierMessage(tier),
       sfx: SoundEffect.SpellSpecialBerserk,
+    });
+
+    this.game.messageHelper.sendLogMessageToRadius(char, 8, {
+      message: 'Aaaaayyyyyyeeeeeearghhhhhhhh!',
+      from: char.name,
     });
   }
 
