@@ -12,7 +12,10 @@ export function calculateXPRequiredForLevel(level: number): number {
     return pre20XP;
   }
 
-  const xpBoostForLevels50OrLess = 25_000_000 * Math.min(level, 50);
+  const xpBoostForLevels50OrLess = Math.max(
+    0,
+    25_000_000 * Math.min(level - 20, 50),
+  );
 
   if (level <= 50) {
     return (
