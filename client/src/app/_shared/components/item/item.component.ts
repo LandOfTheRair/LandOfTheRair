@@ -321,11 +321,14 @@ export class ItemComponent implements OnDestroy {
 
   public descText = computed(() => {
     if (!this.item()) return '';
+    const encrustItem = this.item().mods?.encrustItem
+      ? this.assetService.getItem(this.item().mods.encrustItem)
+      : null;
     return descTextFor(
       this.viewingPlayer(),
       this.item(),
       this.realItem(),
-      null,
+      encrustItem,
       0,
       this.viewingPlayer()?.traits?.traitsLearned?.Appraise ? 1 : 0,
     );
