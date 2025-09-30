@@ -123,6 +123,6 @@ export class IconComponent {
     () =>
       `${environment.client.protocol}://${environment.client.domain}:${
         environment.client.port
-      }/assets/macicons/${this.name() || 'undecided'}.svg`,
+      }/assets/macicons/${this.name() || 'undecided'}.svg?t=${Date.now()}`,
   );
 }
