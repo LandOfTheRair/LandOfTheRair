@@ -196,7 +196,6 @@ export class CharacterHelper extends BaseService {
 
       if (itemClass === ItemClass.Corpse) {
         if (corpseUsername) {
-          console.log(item, 'MARK', char.uuid);
           this.game.corpseManager.markPlayerCorpseHeld(item, char);
         }
         return;
