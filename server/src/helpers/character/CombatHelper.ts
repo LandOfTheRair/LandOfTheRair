@@ -435,7 +435,7 @@ export class CombatHelper extends BaseService {
         let verb = 'killed';
         if (defender.allegiance === Allegiance.NaturalResource) {
           verb = 'shredded';
-          if (defender.name.includes('tree')) verb = 'taken down';
+          if (defender.name.includes('tree')) verb = 'took down';
           if (defender.name.includes('vein')) verb = 'smashed';
         }
 
