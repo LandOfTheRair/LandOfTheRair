@@ -42,10 +42,18 @@ export class GMExamineItem extends MacroCommand {
     this.sendMessage(player, `\`${JSON.stringify(displayValue, null, 2)}\``);
     this.sendMessage(player, '===');
 
+    const baseItem = this.game.itemHelper.getItemDefinition(rightHand.name);
+    const string = `
+      This Item:<br>
+      ${JSON.stringify(displayValue, null, 2)}<br><br>
+      Base Item Definition:<br>
+      ${JSON.stringify(baseItem, null, 2)}
+    `;
+
     args.callbacks.emit({
       type: GameServerResponse.SendAlert,
       title: `Examine ${rightHand.name} (${args.stringArgs || 'all'}):`,
-      content: JSON.stringify(displayValue, null, 2),
+      content: string,
     });
   }
 }
