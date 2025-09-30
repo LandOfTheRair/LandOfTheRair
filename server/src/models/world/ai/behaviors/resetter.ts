@@ -2,14 +2,19 @@ import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
-  INPC, IResetterBehavior, ItemSlot } from '../../../../interfaces';
+  distanceFrom,
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  INPC,
+  IResetterBehavior,
+  ItemSlot,
+} from '../../../../interfaces';
 
 export class ResetterBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IResetterBehavior) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -17,7 +22,7 @@ export class ResetterBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Closer move.';
 
-        const message = `Greetings, ${player.name}! Can RESET weapons! Back to brand new.
+        const message = `Greetings, ${player.name}! Can RESET items! Back to brand new.
         Irreversible. All upgrades gone.`;
 
         const formattedChat: IDialogChatAction = {
@@ -29,15 +34,20 @@ export class ResetterBehavior implements IAIBehavior {
           options: [
             { text: 'Reset my item', action: 'reset' },
             { text: 'Leave', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('reset')
+    parser
+      .addCommand('reset')
       .setSyntax(['reset'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -56,15 +66,20 @@ export class ResetterBehavior implements IAIBehavior {
           options: [
             { text: 'Yes, reset my item', action: 'yes' },
             { text: 'Leave', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('yes')
+    parser
+      .addCommand('yes')
       .setSyntax(['yes'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
