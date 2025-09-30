@@ -21,8 +21,15 @@ export class GMTeleportTo extends MacroCommand {
       const validNPCs = mapData.state.allNPCS.filter((npc) =>
         this.game.targettingHelper.doesTargetMatchSearch(npc, search, true),
       );
+
       allPossibleTargets.push(...validNPCs);
     });
+
+    const allPlayers = this.game.playerManager.getAllPlayers();
+    const matchingPlayers = allPlayers.filter((p) =>
+      this.game.targettingHelper.doesTargetMatchSearch(p, search, true),
+    );
+    allPossibleTargets.push(...matchingPlayers);
 
     const targetIndex = isUndefined(index) ? 0 : +index;
     const target = allPossibleTargets[targetIndex];
