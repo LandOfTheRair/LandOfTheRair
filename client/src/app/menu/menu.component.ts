@@ -10,7 +10,7 @@ import { DateTime } from 'luxon';
 import { Observable, of, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { GameServerEvent } from '../../interfaces';
+import { GameOption, GameServerEvent } from '../../interfaces';
 import {
   AccountState,
   GameState,
@@ -56,6 +56,7 @@ export class MenuComponent implements OnInit {
 
   public inGame = select(GameState.inGame);
   public loggedIn = select(AccountState.loggedIn);
+  public debugMode = select((state) => state.options[GameOption.DebugUI]);
 
   private serverAssetHash: string;
 
@@ -262,6 +263,11 @@ export class MenuComponent implements OnInit {
       },
     },
     {
+      name: 'Clear Cache & Reload',
+      visibleIf: toObservable(this.inGame).pipe(map((x) => !x)),
+      handler: () => this.resetAndClearCache(),
+    },
+    {
       name: 'Exit To Lobby',
       visibleIf: toObservable(this.inGame),
       handler: () => {
@@ -358,5 +364,10 @@ export class MenuComponent implements OnInit {
 
   public hideMismatch() {
     this.showMismatchWarning = false;
+  }
+
+  public resetAndClearCache() {
+    window.location =
+      `${window.location.pathname}?clearCache=${Date.now()}` as any;
   }
 }
