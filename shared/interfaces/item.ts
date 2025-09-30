@@ -189,6 +189,14 @@ export interface IRecipeScroll {
   recipe?: string;
 }
 
+export interface ICorpse {
+  lastHeldBy?: string;
+
+  lastX?: number;
+  lastY?: number;
+  lastMap?: string;
+}
+
 export type IItem = IConsumable &
   IGear &
   IWeapon &
@@ -202,7 +210,8 @@ export type IItem = IConsumable &
   IUsable &
   IUpgradeable &
   IUpgradeMaterial &
-  IRecipeScroll & {
+  IRecipeScroll &
+  ICorpse & {
     // the name of the item
     name: string;
 

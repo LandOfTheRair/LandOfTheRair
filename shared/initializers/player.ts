@@ -16,7 +16,6 @@ export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {
     highestLevel: char.highestLevel ?? 1,
     swimLevel: char.swimLevel ?? 0,
     swimElement: char.swimElement ?? '',
-    corpseRef: char.corpseRef ?? undefined,
     flaggedSkills: char.flaggedSkills ?? [Skill.Martial],
     skillTicks: 0,
     lastTileDesc: '',

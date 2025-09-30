@@ -16,7 +16,6 @@ import {
 } from './characterlockers';
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
-import { ISimpleItem } from './item';
 import { ICharacterStatistics, ISessionStatistics } from './statistics';
 
 export type BGM = 'town' | 'dungeon' | 'wilderness';
@@ -52,8 +51,6 @@ export interface IPlayer extends ICharacter {
   flaggedSkills: Skill[];
   skillTicks: number;
   paidSkills: SkillBlock;
-
-  corpseRef?: ISimpleItem;
 
   lastTileDesc: string;
   lastRegionDesc: string;

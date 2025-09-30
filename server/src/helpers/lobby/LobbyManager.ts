@@ -85,6 +85,7 @@ export class LobbyManager extends BaseService {
     this.worldManager.checkPlayerForDoorsBeforeJoiningGame(player);
     this.playerManager.addPlayerToGame(player);
     this.worldManager.joinMap(player);
+    this.game.corpseManager.deleteCorpsesFromHandsOfPlayer(player);
     account.inGame = true;
     this.state.gamePlayerCount += 1;
     this.game.discordHelper.updateLobbyChannel();
@@ -102,6 +103,7 @@ export class LobbyManager extends BaseService {
     this.worldManager.leaveMap(player, true);
     this.playerManager.savePlayer(player);
     this.playerManager.removePlayerFromGame(player);
+    this.game.corpseManager.forciblyDropCorpsesHeldByPlayer(player);
 
     const user = this.state.userHash[username];
     if (user) {

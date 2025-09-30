@@ -38,14 +38,16 @@ export class DeathHelper extends BaseService {
     const oldY = player.y;
     const oldMap = player.map;
 
+    const corpseRef = this.game.corpseManager.getCorpseRef(player.username);
+
     // remove our corpse if we have one
-    if (player.corpseRef) {
+    if (corpseRef) {
       const oldMapState = this.game.worldManager.getMap(oldMap)?.state;
       oldMapState?.removeItemFromGround(
         oldX,
         oldY,
         ItemClass.Corpse,
-        player.corpseRef.uuid,
+        corpseRef.uuid,
       );
 
       if (x && y && map) {
@@ -54,16 +56,14 @@ export class DeathHelper extends BaseService {
           x,
           y,
           ItemClass.Corpse,
-          player.corpseRef.uuid,
+          corpseRef.uuid,
         );
       }
 
-      this.game.corpseManager.removeCorpse(player.corpseRef);
-      this.game.corpseManager.removeCorpseFromAnyonesHands(
-        player.corpseRef.uuid,
-      );
-      delete player.corpseRef;
+      this.game.corpseManager.removeCorpse(corpseRef);
     }
+
+    this.game.corpseManager.removePlayerCorpse(player.username);
 
     if (!this.game.characterHelper.isDead(player)) return;
 
@@ -212,8 +212,6 @@ export class DeathHelper extends BaseService {
     dead.dir = Direction.Center;
 
     if (corpse) {
-      dead.corpseRef = corpse;
-
       const state = this.game.worldManager.getMap(dead.map)?.state;
       state?.addItemToGround(dead.x, dead.y, corpse);
     } else {

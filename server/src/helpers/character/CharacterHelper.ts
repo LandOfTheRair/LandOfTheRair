@@ -162,26 +162,45 @@ export class CharacterHelper extends BaseService {
     const oldItem = char.items.equipment[slot];
 
     if (oldItem) {
-      const wearEffect = this.game.itemHelper.getItemProperty(
-        oldItem,
-        'equipEffect',
-      );
-      if (wearEffect) {
-        const oldEffectCount = this.equipmentEffectCount(char, wearEffect.name);
+      const { equipEffect, itemClass, corpseUsername } =
+        this.game.itemHelper.getItemProperties(oldItem, [
+          'equipEffect',
+          'itemClass',
+          'corpseUsername',
+        ]);
+
+      if (equipEffect) {
+        const oldEffectCount = this.equipmentEffectCount(
+          char,
+          equipEffect.name,
+        );
         if (oldEffectCount <= 1) {
-          this.game.effectHelper.removeEffectByName(char, wearEffect.name);
+          this.game.effectHelper.removeEffectByName(char, equipEffect.name);
         }
+      }
+
+      if (corpseUsername && itemClass === ItemClass.Corpse) {
+        this.game.corpseManager.movePlayerCorpseOntoMap(oldItem, char);
       }
     }
 
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { itemClass, equipEffect } = this.game.itemHelper.getItemProperties(
-        item,
-        ['itemClass', 'equipEffect'],
-      );
-      if (itemClass === ItemClass.Corpse) return;
+      const { itemClass, equipEffect, corpseUsername } =
+        this.game.itemHelper.getItemProperties(item, [
+          'itemClass',
+          'equipEffect',
+          'corpseUsername',
+        ]);
+
+      if (itemClass === ItemClass.Corpse) {
+        if (corpseUsername) {
+          console.log(item, 'MARK', char.uuid);
+          this.game.corpseManager.markPlayerCorpseHeld(item, char);
+        }
+        return;
+      }
 
       if (equipEffect) {
         this.tryToCastEquipmentEffects(char);
@@ -206,14 +225,9 @@ export class CharacterHelper extends BaseService {
     });
   }
 
-  // drop your hands on the ground
-  public dropHands(char: ICharacter): void {
-    if (this.isPlayer(char)) {
-      const value =
-        this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
-        this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
-      if (this.game.diceRollerHelper.XInOneHundred(value)) return;
-    }
+  public dropHand(char: ICharacter, hand: 'left' | 'right'): void {
+    const item = char.items.equipment[`${hand}Hand`];
+    if (!item) return;
 
     const {
       state,
@@ -225,23 +239,26 @@ export class CharacterHelper extends BaseService {
       char.y,
     );
 
-    if (char.items.equipment[ItemSlot.RightHand]) {
-      state.addItemToGround(
-        dropX,
-        dropY,
-        char.items.equipment[ItemSlot.RightHand] as ISimpleItem,
-      );
+    state.addItemToGround(dropX, dropY, item);
+
+    if (hand === 'left') {
+      this.setLeftHand(char, undefined);
+    } else if (hand === 'right') {
       this.setRightHand(char, undefined);
     }
+  }
 
-    if (char.items.equipment[ItemSlot.LeftHand]) {
-      state.addItemToGround(
-        dropX,
-        dropY,
-        char.items.equipment[ItemSlot.LeftHand] as ISimpleItem,
-      );
-      this.setLeftHand(char, undefined);
+  // drop your hands on the ground
+  public dropHands(char: ICharacter): void {
+    if (this.isPlayer(char)) {
+      const value =
+        this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
+        this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
+      if (this.game.diceRollerHelper.XInOneHundred(value)) return;
     }
+
+    this.dropHand(char, 'left');
+    this.dropHand(char, 'right');
   }
 
   // set right hand to something
