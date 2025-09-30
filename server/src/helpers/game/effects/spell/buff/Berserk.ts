@@ -2,6 +2,7 @@ import {
   DamageArgs,
   DamageClass,
   ICharacter,
+  INPC,
   IStatusEffect,
   SoundEffect,
   Stat,
@@ -146,10 +147,18 @@ export class Berserk extends Effect {
   ): ICharacter | null {
     return this.game.targettingHelper
       .getPossibleTargetsInViewRange(char, targetUUID)
-      .filter(
-        (target) =>
-          target !== char && !this.game.characterHelper.isPlayer(target),
-      )[0];
+      .filter((target) => {
+        if (target === char) return false;
+        if (this.game.characterHelper.isPlayer(target)) return false;
+        if (
+          (target as INPC).owner &&
+          this.game.characterHelper.isPlayer((target as INPC).owner!)
+        ) {
+          return false;
+        }
+
+        return true;
+      })[0];
   }
 
   private searchForAnotherHeadToSmash(char: ICharacter, effect: IStatusEffect) {
