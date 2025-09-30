@@ -231,7 +231,7 @@ export const spriteTerrainForDirection = (
       return baseIndex + 2;
     case 0b111_1_1_110:
       return baseIndex + 3;
-    case 0b111_1_1_101:
+    case 0b111_1_1_011:
       return baseIndex + 4;
     case 0b010_1_1_111:
       return baseIndex + 5;
@@ -317,23 +317,7 @@ export const spriteTerrainForDirection = (
       return baseIndex + 45;
     case 0b111_1_1_111:
       return baseIndex + 46;
+    default:
+      throw new Error(`Invalid direction ${direction}`);
   }
-
-  // this throws a bunch of errors for "251"
-  // I have no idea how to decipher it, but it seems to be the only "bad" direction
-  if ((direction as number) !== 251) {
-    throw new Error(`Invalid direction ${direction}`);
-  }
-
-  console.log(
-    direction,
-    index,
-    allowedDirs,
-    directionHasAll(direction, Direction.WestAndNorth),
-    directionHasAll(direction, Direction.WestAndSouth),
-    directionHasAll(direction, Direction.EastAndNorth),
-    directionHasAll(direction, Direction.EastAndSouth),
-  );
-
-  return -1;
 };
