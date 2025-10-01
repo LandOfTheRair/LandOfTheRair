@@ -10,6 +10,7 @@ import {
 
 import { select } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
+import { ElectronService } from 'src/app/services/electron.service';
 import meta from '../../assets/content/_output/meta.json';
 import { environment } from '../../environments/environment';
 import { IItemDefinition, INPCDefinition } from '../../interfaces';
@@ -32,6 +33,8 @@ const spritesheets = [
   providedIn: 'root',
 })
 export class AssetService {
+  private electronService = inject(ElectronService);
+
   private spritesheets: WritableSignal<boolean>[] = [];
   private items = signal<Record<string, IItemDefinition>>(undefined);
   private npcs = signal<Record<string, INPCDefinition>>(undefined);
@@ -49,7 +52,10 @@ export class AssetService {
   );
 
   get assetBaseUrl(): string {
-    return `${environment.client.protocol}://${environment.client.domain}:${environment.client.port}`;
+    const protocol = this.electronService.isInElectron()
+      ? 'rairasset://'
+      : environment.client.protocol;
+    return `${protocol}://${environment.client.domain}:${environment.client.port}`;
   }
 
   get assetUrl(): string {

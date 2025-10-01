@@ -2,9 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
 } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { AssetService } from '../../services/asset.service';
 
 export type IconSize =
   | 'xsmall'
@@ -112,6 +113,8 @@ export type IconSize =
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconComponent {
+  private assetService = inject(AssetService);
+
   public round = input<boolean>(false);
   public name = input<string>('undecided');
   public bgColor = input<string>('white');
@@ -121,8 +124,6 @@ export class IconComponent {
 
   public imgUrl = computed(
     () =>
-      `${environment.client.protocol}://${environment.client.domain}:${
-        environment.client.port
-      }/assets/macicons/${this.name() || 'undecided'}.svg?t=${Date.now()}`,
+      `${this.assetService.assetBaseUrl}/assets/macicons/${this.name() || 'undecided'}.svg?t=${Date.now()}`,
   );
 }

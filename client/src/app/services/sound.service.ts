@@ -4,6 +4,7 @@ import { Howl } from 'howler';
 
 import { GameOption, GameServerResponse } from '../../interfaces';
 import { GameState, SettingsState } from '../../stores';
+import { AssetService } from './asset.service';
 import { OptionsService } from './options.service';
 import { SocketService } from './socket.service';
 
@@ -18,6 +19,7 @@ export class SoundService {
   public bgm = select(GameState.currentBGM);
   public options = select(SettingsState.options);
 
+  private assetService = inject(AssetService);
   private optionsService = inject(OptionsService);
   private socketService = inject(SocketService);
 
@@ -95,6 +97,6 @@ export class SoundService {
   }
 
   private getAudio(path: string): string {
-    return `assets/${path}`;
+    return `${this.assetService.assetBaseUrl}/assets/${path}`;
   }
 }
