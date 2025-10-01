@@ -53,7 +53,7 @@ export class AssetService {
 
   get assetBaseUrl(): string {
     const protocol = this.electronService.isInElectron()
-      ? 'rairasset://'
+      ? 'rairasset'
       : environment.client.protocol;
     return `${protocol}://${environment.client.domain}:${environment.client.port}`;
   }
