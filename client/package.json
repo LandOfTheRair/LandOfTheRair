@@ -14,11 +14,10 @@
     "lint": "ng lint",
     "test": "npm run lint && npm run build",
     "setup": "npm i && npm run prebuild",
-    "prebuild": "npm run prebuild:assets:all && npm run prebuild:assets:hashes && npm run prebuild:macicon:json && npm run prebuild:macicon:font && npm run prebuild:assets:hashes:all",
+    "prebuild": "npm run prebuild:assets:all && npm run prebuild:assets:hashes && npm run prebuild:macicon:json && npm run prebuild:assets:hashes:all",
     "prebuild:assets:all": "ts-node scripts/prebuild-assets-all",
     "prebuild:assets:hashes": "ts-node scripts/prebuild-assets-hashes",
     "prebuild:macicon:json": "ts-node scripts/prebuild-macicon-json",
-    "prebuild:macicon:font": "ts-node scripts/prebuild-macicon-font",
     "prebuild:assets:hashes:all": "ts-node scripts/prebuild-assets-hashes-all"
   },
   "private": true,
