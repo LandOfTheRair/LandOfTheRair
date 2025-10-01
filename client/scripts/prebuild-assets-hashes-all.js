@@ -22,11 +22,17 @@ readdir(`./src/assets`, (err, files) => {
   files.forEach((file) => {
     if (
       !filetypes.includes(path.extname(file)) ||
-      file.includes('node_modules')
+      file.includes('node_modules') ||
+      file.includes('favicon')
     )
       return;
 
-    allHashes[path.basename(file)] = md5.sync(file);
+    const cleanName = path
+      .normalize(file)
+      .replace(/\\/g, '/')
+      .replace('src/assets/', '')
+      .replace('content/__assets/', '');
+    allHashes[cleanName] = md5.sync(file);
   });
 
   fs.writeFileSync(
