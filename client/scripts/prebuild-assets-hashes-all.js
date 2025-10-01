@@ -10,7 +10,16 @@ if (!fs.existsSync(dir2)) {
   fs.mkdirSync(dir2);
 }
 
-const filetypes = ['.mp3', '.webp', '.svg', '.ttf', '.woff', '.woff2', '.eot'];
+const filetypes = [
+  '.mp3',
+  '.webp',
+  '.svg',
+  '.ttf',
+  '.woff',
+  '.woff2',
+  '.eot',
+  '.json',
+];
 const allHashes = {};
 
 readdir(`./src/assets`, (err, files) => {
@@ -20,18 +29,24 @@ readdir(`./src/assets`, (err, files) => {
   }
 
   files.forEach((file) => {
-    if (
-      !filetypes.includes(path.extname(file)) ||
-      file.includes('node_modules') ||
-      file.includes('favicon')
-    )
-      return;
-
     const cleanName = path
       .normalize(file)
       .replace(/\\/g, '/')
       .replace('src/assets/', '')
       .replace('content/__assets/', '');
+
+    if (
+      !filetypes.includes(path.extname(file)) ||
+      cleanName.includes('node_modules') ||
+      cleanName.includes('favicon') ||
+      cleanName.includes('generated/') ||
+      cleanName.includes('package') ||
+      cleanName.includes('content/maps') ||
+      cleanName.includes('content/_output/maps/') ||
+      cleanName.includes('simplemods/')
+    )
+      return;
+
     allHashes[cleanName] = md5.sync(file);
   });
 
