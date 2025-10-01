@@ -213,6 +213,8 @@ export class MigrationHelper extends BaseService {
         if (!eff._ticksLeft) return;
         eff.endsAt = Date.now() + eff._ticksLeft * 1000;
         delete eff._ticksLeft;
+
+        player.effects._hash[eff.effectName] = eff;
       });
     });
   }
