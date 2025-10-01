@@ -28,6 +28,7 @@ export class MacroComponent {
 
   public size = input('normal');
   public macroRef = input<IMacro>();
+  public macroRefFor = input<IMacro>();
   public isActive = input<boolean>(false);
   public disableEffects = input<boolean>(false);
   public showTooltip = input<boolean>(true);
@@ -38,7 +39,9 @@ export class MacroComponent {
   public foreground = computed(() => this.macroRef()?.color ?? '');
   public iconName = computed(() => this.macroRef()?.icon ?? '');
   public macroName = computed(() => this.macroRef()?.name ?? '');
-  public macroTooltip = computed(() => this.macroRef()?.tooltipDesc ?? '');
+  public macroTooltip = computed(
+    () => this.macroRefFor()?.tooltipDesc ?? this.macroRef()?.tooltipDesc ?? '',
+  );
   public macroKeybind = computed(() => {
     if (!this.macroRef()) {
       return '';

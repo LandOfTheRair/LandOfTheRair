@@ -33,6 +33,10 @@
     <mat-card class="tooltip-card">
       <mat-card-title>
         <strong>{{ macroName() || 'Empty' }}</strong>
+
+        @if (macroRefFor(); as forMacro) {
+          <span class="for-macro">(for {{ forMacro.name }})</span>
+        }
       </mat-card-title>
 
       <mat-card-content>

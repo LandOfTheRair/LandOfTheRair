@@ -63,6 +63,12 @@
                       [macroRef]="
                         allMacros[macros.macroBars[group].macros[macroIdx]]
                       "
+                      [macroRefFor]="
+                        allMacros[
+                          allMacros[macros.macroBars[group].macros[macroIdx]]
+                            ?.for
+                        ]
+                      "
                       [isActive]="
                         macros.macroBars[group].macros[macroIdx] ===
                         macros.activeMacro
