@@ -10,7 +10,7 @@ if (!fs.existsSync(dir2)) {
   fs.mkdirSync(dir2);
 }
 
-const filetypes = ['.mp3', '.webp', '.svg'];
+const filetypes = ['.mp3', '.webp', '.svg', '.ttf', '.woff', '.woff2', '.eot'];
 const allHashes = {};
 
 readdir(`./src/assets`, (err, files) => {
