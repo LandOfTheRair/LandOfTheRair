@@ -52,7 +52,7 @@
     "queueing-subject": "^0.3.4",
     "rollbar": "^2.24.1",
     "rss-parser": "^3.9.0",
-    "rxjs": "^7.5.4",
+    "rxjs": "^7.4.0",
     "rxjs-websockets": "^7.0.2",
     "zone.js": "^0.14.8"
   },
