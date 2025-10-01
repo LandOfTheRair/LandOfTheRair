@@ -9,9 +9,11 @@ import {
 } from '@angular/core';
 
 import { select } from '@ngxs/store';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 import { forkJoin } from 'rxjs';
 import { ElectronService } from 'src/app/services/electron.service';
 import meta from '../../assets/content/_output/meta.json';
+import macicons from '../../assets/generated/macicons.json';
 import { environment } from '../../environments/environment';
 import { IItemDefinition, INPCDefinition } from '../../interfaces';
 import { SettingsState } from '../../stores';
@@ -33,6 +35,7 @@ const spritesheets = [
   providedIn: 'root',
 })
 export class AssetService {
+  private svgIconRegistryService = inject(SvgIconRegistryService);
   private electronService = inject(ElectronService);
 
   private spritesheets: WritableSignal<boolean>[] = [];
@@ -158,6 +161,16 @@ export class AssetService {
     });
 
     this.markAssetsUnloaded();
+
+    this.loadIcons();
+  }
+
+  private loadIcons() {
+    const allIcons = macicons.macroNames;
+    allIcons.forEach((icon) => {
+      const url = `${this.assetBaseUrl}/assets/macicons/${icon}.svg`;
+      this.svgIconRegistryService.loadSvg(url, icon).subscribe(() => {});
+    });
   }
 
   public markAssetsUnloaded() {

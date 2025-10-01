@@ -13,14 +13,14 @@
     ></app-icon>
 
     @if (cooldownDisplay(); as cooldown) {
-    <div class="cooldown">{{ cooldown }} s</div>
+      <div class="cooldown">{{ cooldown }} s</div>
     }
 
-    <!---->
     @if (macroKeybind(); as macroKey) {
-    <div class="keybind">
-      {{ macroKey }}
-    </div>
+      ass
+      <div class="keybind">
+        {{ macroKey }}
+      </div>
     }
   </div>
 
@@ -35,9 +35,10 @@
       <mat-card-title>
         <strong>{{ macroName() || 'Empty' }}</strong>
       </mat-card-title>
+
       <mat-card-content>
-        @if(player(); as player) {
-        {{ reformatTooltipTextForPlayer(player, macroTooltip()) }}
+        @if (player(); as player) {
+          {{ reformatTooltipTextForPlayer(player, macroTooltip()) }}
         }
       </mat-card-content>
     </mat-card>

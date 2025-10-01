@@ -109,15 +109,17 @@ export type IconSize =
       [class.disabled]="disabled()"
       [style.background-color]="bgColor()"
     >
-      <svg-icon
-        class="macicon"
-        [src]="imgUrl()"
-        [svgStyle]="{
-          'width.px': dimensions(),
-          'height.px': dimensions(),
-          fill: fgColor(),
-        }"
-      ></svg-icon>
+      @if (name()) {
+        <svg-icon
+          class="macicon"
+          [name]="name()"
+          [svgStyle]="{
+            'width.px': dimensions(),
+            'height.px': dimensions(),
+            fill: fgColor(),
+          }"
+        ></svg-icon>
+      }
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -126,7 +128,7 @@ export class IconComponent {
   private assetService = inject(AssetService);
 
   public round = input<boolean>(false);
-  public name = input.required<string>();
+  public name = input<string>();
   public bgColor = input<string>('white');
   public fgColor = input<string>('#000');
   public size = input<IconSize>('normal');
