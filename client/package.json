@@ -88,8 +88,7 @@
     "recursive-readdir": "^2.2.3",
     "symlink-dir": "^4.1.0",
     "ts-node": "~7.0.0",
-    "typescript": "5.4",
-    "webfont": "^7.1.4"
+    "typescript": "5.4"
   },
   "overrides": {
     "@angular/cdk": {

@@ -72,6 +72,7 @@ import { LobbyContainerComponent } from './containers/lobby-container/lobby-cont
 import { LobbyComponent } from './containers/lobby-container/lobby/lobby.component';
 import { SessionStatsComponent } from './containers/lobby-container/session-stats/session-stats.component';
 
+import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AchievementComponent } from 'src/app/_shared/components/achievement/achievement.component';
 import { EarnedAchievementComponent } from 'src/app/_shared/components/earned-achievement/earned-achievement.component';
 import { AchievementsComponent } from 'src/app/containers/game-container/achievements/achievements.component';
@@ -182,7 +183,12 @@ const gameComponents = [
 @NgModule({
   declarations: [...declarations, ...gameComponents],
   providers: [DiscordEmojiPipe, GoldifyPipe, LinkifyPipe],
-  imports: [CommonModule, FormsModule, UIModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    UIModule,
+    AngularSvgIconModule.forRoot(),
+  ],
   exports: [...declarations, ...gameComponents],
 })
 export class GameModule {}
