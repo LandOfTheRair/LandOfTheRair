@@ -54,6 +54,8 @@ export class WizardStance extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (damageArgs.damage <= 0) return currentDamage;
+
     if (!attacker || damageArgs.damageClass === DamageClass.Physical) {
       return currentDamage;
     }
