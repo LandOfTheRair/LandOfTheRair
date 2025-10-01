@@ -10,9 +10,11 @@
 ></app-window>
 
 <ng-template #headTemplate>
-  Global Chat [{{ users().length }} online@if (discordCount) {
-  <span>, {{ discordCount }} Discord Player(s)</span>
-  }]
+  Global Chat [{{ users().length }} online
+  @if (discordCount) {
+    <span>, {{ discordCount }} Discord Player(s)</span>
+  }
+  ]
 </ng-template>
 
 <ng-template #bodyTemplate>
@@ -21,20 +23,20 @@
       <div class="user-list">
         <ul>
           @for (user of users(); track user.username) {
-          <li class="user">
-            @if (user.tier) {
-            <span class="user-marking tier-{{ user.tier }}"></span>
-            }
-            <span class="user-name">{{ user.username }}</span>
-            @if (user.inGame) {
-            <img
-              src="assets/extra/in-game.png"
-              height="16"
-              width="16"
-              class="in-game"
-            />
-            }
-          </li>
+            <li class="user">
+              @if (user.tier) {
+                <span class="user-marking tier-{{ user.tier }}"></span>
+              }
+              <span class="user-name">{{ user.username }}</span>
+              @if (user.inGame) {
+                <img
+                  src="assets/extra/in-game.webp"
+                  height="16"
+                  width="16"
+                  class="in-game"
+                />
+              }
+            </li>
           }
         </ul>
       </div>
@@ -48,20 +50,22 @@
 
       <div class="output-area">
         @for (message of messages(); track $index) {
-        <div class="message">
-          <span class="timestamp">
-            [{{ message.timestamp | date : 'hh:mm' }}]
-          </span>
-          <span class="username">
-            {{ message.from }}@if (message.source) {
-            <span>[{{ message.source }}]</span>
-            }:
-          </span>
-          <span
-            class="usermessage"
-            [innerHTML]="message.message | linkify | replaceDiscordEmoji : 16"
-          ></span>
-        </div>
+          <div class="message">
+            <span class="timestamp">
+              [{{ message.timestamp | date: 'hh:mm' }}]
+            </span>
+            <span class="username">
+              {{ message.from }}
+              @if (message.source) {
+                <span>[{{ message.source }}]</span>
+              }
+              :
+            </span>
+            <span
+              class="usermessage"
+              [innerHTML]="message.message | linkify | replaceDiscordEmoji: 16"
+            ></span>
+          </div>
         }
       </div>
 
