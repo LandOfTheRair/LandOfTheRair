@@ -1,5 +1,6 @@
 export * from './Antipode';
 export * from './Asper';
+export * from './ChromaticBolt';
 export * from './Drain';
 export * from './EnergyWave';
 export * from './FireMist';
