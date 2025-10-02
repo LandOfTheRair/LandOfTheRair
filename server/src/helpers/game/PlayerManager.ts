@@ -89,14 +89,15 @@ export class PlayerManager extends BaseService {
     const now = Date.now();
 
     Object.values(this.inGamePlayers).forEach((player) => {
-      this.game.playerHelper.tick(player, type, tick);
-
       // effects tick at most once per second
       if (type === 'slow') {
         timer.startTimer(`slow-- ${player.username}/${player.name} --${now}`);
         this.game.effectHelper.tickEffects(player);
         timer.stopTimer(`slow-- ${player.username}/${player.name} --${now}`);
       }
+
+      // tick the rest of the player aspects
+      this.game.playerHelper.tick(player, type, tick);
 
       // not sure if this will be a good idea or not, we'll see
       if (type === 'fast') {
