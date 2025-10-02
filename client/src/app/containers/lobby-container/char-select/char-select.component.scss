@@ -1,4 +1,3 @@
-
 .char-buttons {
   display: flex;
   justify-content: space-around;
@@ -12,6 +11,8 @@
     line-height: 22px;
     height: 45px;
     border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
     outline: 1px solid #212121;
   }
 }
@@ -21,14 +22,14 @@ mat-button-toggle-group {
   flex-direction: column;
 }
 
-.create-button, .play-button {
+.create-button,
+.play-button {
   width: 50%;
   border-radius: 0;
 }
 
 .character-slot {
   border-bottom: 1px solid #000;
-
 
   &:nth-child(odd) .char-container {
     text-align: left;
@@ -45,7 +46,6 @@ mat-button-toggle-group {
 }
 
 .char-viewer {
-
   display: flex;
   padding-top: 20px;
 
