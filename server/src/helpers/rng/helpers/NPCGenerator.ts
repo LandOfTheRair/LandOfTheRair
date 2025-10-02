@@ -73,8 +73,7 @@ export class RNGDungeonNPCGenerator {
         },
       },
       level,
-      hostility:
-        faction === Allegiance.Enemy ? Hostility.Always : Hostility.Faction,
+      hostility: Hostility.Always,
       hp: { min: 0, max: 0 },
       mp: { min: 0, max: 0 },
       gold: { min: 100, max: 100 },

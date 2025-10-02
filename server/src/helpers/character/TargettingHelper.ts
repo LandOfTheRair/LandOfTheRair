@@ -131,6 +131,9 @@ export class TargettingHelper extends BaseService {
 
       // if they're an enemy, simply yes
       if (target.allegiance === Allegiance.Enemy) return true;
+
+      // if they're always hostile, simply yes
+      if (targetHostility === Hostility.Always) return true;
     }
 
     // npc logic
@@ -311,7 +314,7 @@ export class TargettingHelper extends BaseService {
       if (
         caster &&
         this.checkTargetForHostility(caster, target, {
-          allowTargettingNonHostile: false,
+          allowTargettingNonHostile: true,
         })
       ) {
         return false;
