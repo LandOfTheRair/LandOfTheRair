@@ -898,37 +898,49 @@ export class CharacterHelper extends BaseService {
 
     // thieves not in combat regen faster
     if (regensLikeThief) {
-      boost = Math.max(
-        0,
-        Math.floor(
-          base *
-            this.game.traitHelper.traitLevelValue(
-              character,
-              'ReplenishingShadows',
-            ),
-        ),
-      );
-
       // hidden thieves can regen stealth slightly faster based on their mpregen
-      if (this.game.effectHelper.hasEffect(character, 'Hidden')) return boost;
+      if (this.game.effectHelper.hasEffect(character, 'Hidden')) {
+        const hiddenRegen = Math.max(
+          0,
+          Math.floor(
+            base *
+              this.game.traitHelper.traitLevelValue(
+                character,
+                'ReplenishingShadows',
+              ),
+          ),
+        );
+
+        return hiddenRegen;
+      }
 
       // singing thieves have a way to get their stealth back
       if (this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
 
-      // thieves in combat get less regen than out of
+      // thieves in combat get 10 base regen + 20% of their mp regen for every RR level
       if (character.combatTicks <= 0) {
-        return (
-          boost +
+        const regenStealth =
+          Math.max(
+            0,
+            Math.floor(
+              base *
+                this.game.traitHelper.traitLevelValue(
+                  character,
+                  'ReplenishingReverberation',
+                ),
+            ),
+          ) +
           (this.game.contentManager.getGameSetting(
             'character',
             'thiefOOCRegen',
-          ) ?? 10)
-        );
+          ) ?? 10);
+
+        return regenStealth;
       }
+
       return (
-        boost +
-        (this.game.contentManager.getGameSetting('character', 'thiefICRegen') ??
-          1)
+        this.game.contentManager.getGameSetting('character', 'thiefICRegen') ??
+        1
       );
     }
 
