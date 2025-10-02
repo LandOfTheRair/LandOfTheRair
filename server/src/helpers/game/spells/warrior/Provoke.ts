@@ -23,6 +23,8 @@ export class Provoke extends Spell {
       [MessageType.Miscellaneous],
     );
 
+    target.lastTargetUUID = caster.uuid;
+
     this.game.characterHelper.addAgro(
       caster,
       target,
