@@ -105,7 +105,28 @@ export class Berserk extends Effect {
       );
 
       for (let i = 0; i < numAttacks; i++) {
-        this.game.combatHelper.physicalAttack(char, target);
+        this.game.combatHelper.physicalAttack(char, target, {
+          numAttacks,
+          attackNum: i,
+        });
+      }
+
+      const thunderingStrikeChance = this.game.traitHelper.traitLevelValue(
+        char,
+        'ThunderingStrike',
+      );
+
+      if (this.game.diceRollerHelper.XInOneHundred(thunderingStrikeChance)) {
+        const bonusTarget = this.validBerserkTargets(char).filter(
+          (c) => c.uuid !== target.uuid,
+        )[0];
+        if (bonusTarget) {
+          this.sendMessage(char, {
+            message: `A thundering strike hits ${bonusTarget.name}!`,
+          });
+
+          this.game.combatHelper.physicalAttack(char, bonusTarget);
+        }
       }
     }
 
@@ -141,12 +162,12 @@ export class Berserk extends Effect {
   }
 
   // reusable actions
-  private acquireHeadToSmash(
+  private validBerserkTargets(
     char: ICharacter,
-    targetUUID = '',
-  ): ICharacter | null {
+    targetString = '',
+  ): ICharacter[] {
     return this.game.targettingHelper
-      .getPossibleTargetsInViewRange(char, targetUUID)
+      .getPossibleTargetsInViewRange(char, targetString)
       .filter((target) => {
         if (target === char) return false;
         if (this.game.characterHelper.isPlayer(target)) return false;
@@ -158,7 +179,14 @@ export class Berserk extends Effect {
         }
 
         return true;
-      })[0];
+      });
+  }
+
+  private acquireHeadToSmash(
+    char: ICharacter,
+    targetUUID = '',
+  ): ICharacter | null {
+    return this.validBerserkTargets(char, targetUUID)[0];
   }
 
   private searchForAnotherHeadToSmash(char: ICharacter, effect: IStatusEffect) {
