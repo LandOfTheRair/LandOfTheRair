@@ -1,3 +1,4 @@
+import { sample } from 'lodash';
 import {
   DamageArgs,
   DamageClass,
@@ -84,17 +85,19 @@ export class Berserk extends Effect {
       }
 
       if (!targetUUID) {
-        this.searchForAnotherHeadToSmash(char, effect);
+        this.tickSearchForAnotherHeadToSmash(char, effect);
         return;
       }
     }
+
+    const dodgeResults: boolean[] = [];
 
     if (targetUUID) {
       const target = this.acquireHeadToSmash(char, targetUUID);
 
       if (!target) {
         char.lastTargetUUID = '';
-        this.searchForAnotherHeadToSmash(char, effect);
+        this.tickSearchForAnotherHeadToSmash(char, effect);
         return;
       }
 
@@ -105,10 +108,12 @@ export class Berserk extends Effect {
       );
 
       for (let i = 0; i < numAttacks; i++) {
-        this.game.combatHelper.physicalAttack(char, target, {
+        const ret = this.game.combatHelper.physicalAttack(char, target, {
           numAttacks,
           attackNum: i,
         });
+
+        dodgeResults.push(ret.dodge ?? false);
       }
 
       const thunderingStrikeChance = this.game.traitHelper.traitLevelValue(
@@ -125,12 +130,18 @@ export class Berserk extends Effect {
             message: `A thundering strike hits ${bonusTarget.name}!`,
           });
 
-          this.game.combatHelper.physicalAttack(char, bonusTarget);
+          this.game.combatHelper.physicalAttack(char, bonusTarget, {
+            attackRange: 2,
+          });
         }
       }
     }
 
     char.lastTargetUUID = targetUUID;
+
+    if (dodgeResults.every(Boolean)) {
+      char.lastTargetUUID = '';
+    }
   }
 
   public override recast(effect: IStatusEffect, char: ICharacter) {
@@ -185,14 +196,21 @@ export class Berserk extends Effect {
   private acquireHeadToSmash(
     char: ICharacter,
     targetUUID = '',
-  ): ICharacter | null {
-    return this.validBerserkTargets(char, targetUUID)[0];
+  ): ICharacter | undefined {
+    return sample(this.validBerserkTargets(char, targetUUID));
   }
 
-  private searchForAnotherHeadToSmash(char: ICharacter, effect: IStatusEffect) {
+  private tickSearchForAnotherHeadToSmash(
+    char: ICharacter,
+    effect: IStatusEffect,
+  ): void {
     if ((effect.effectInfo.currentTick ?? 0) % 5 !== 0) return;
     if ((effect.effectInfo.currentBerserkTier ?? 0) < 2) return;
 
+    this.searchForAnotherHeadToSmash(char, effect);
+  }
+
+  private searchForAnotherHeadToSmash(char: ICharacter, effect: IStatusEffect) {
     this.sendMessage(char, {
       message: 'You search for another head to smash!',
     });
