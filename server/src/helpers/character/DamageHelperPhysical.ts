@@ -238,12 +238,21 @@ export class DamageHelperPhysical extends BaseService {
     isWeak: boolean;
     isStrong: boolean;
   } {
-    const { itemClass, tier, attackRange } =
+    const { itemClass, tier, attackRange, twoHanded } =
       this.game.itemHelper.getItemProperties(weapon, [
         'itemClass',
         'tier',
         'attackRange',
+        'twoHanded',
       ]);
+
+    let totalAttackRange = attackRange ?? 0;
+    if (twoHanded) {
+      totalAttackRange = Math.max(
+        totalAttackRange,
+        this.game.traitHelper.traitLevelValue(attacker, 'ExtendedReach'),
+      );
+    }
 
     let totalTier = tier ?? 1;
     if (
@@ -261,7 +270,7 @@ export class DamageHelperPhysical extends BaseService {
       this.game.contentManager.statDamageMultipliersData;
     const weaponTiers = this.getTierDataForAttacker(attacker);
 
-    const scaleStat = (attackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
+    const scaleStat = (totalAttackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
     const statMultipliers: number[] = allStatMultipliers[scaleStat];
     let weaponStats: WeaponAttackStats =
       weaponTiers[itemClass ?? ItemClass.Mace];

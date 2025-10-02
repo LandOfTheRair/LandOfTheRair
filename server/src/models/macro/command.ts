@@ -230,7 +230,15 @@ export abstract class SkillCommand extends MacroCommand {
       return -1;
     }
 
-    return attackRange || defaultRange;
+    let totalAttackRange = attackRange ?? 0;
+    if (twoHanded) {
+      totalAttackRange = Math.max(
+        totalAttackRange,
+        this.game.traitHelper.traitLevelValue(attacker, 'ExtendedReach'),
+      );
+    }
+
+    return totalAttackRange || defaultRange;
   }
 }
 
