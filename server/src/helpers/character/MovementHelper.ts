@@ -476,10 +476,6 @@ export class MovementHelper extends BaseService {
         suppressIfNegative: true,
         overrideSfx: SoundEffect.CombatHitMelee,
       });
-    } else {
-      this.game.messageHelper.sendLogMessageToPlayer(player, {
-        message: teleportMessage ?? 'Your surroundings shift.',
-      });
     }
 
     if (giveAchievement) {
