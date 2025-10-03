@@ -2,10 +2,14 @@ import { random, sample } from 'lodash';
 import { Parser } from 'muud';
 
 import { Game } from '../../../../helpers';
-import { IAIBehavior, ICrierBehavior, INPC, MessageType } from '../../../../interfaces';
+import {
+  IAIBehavior,
+  ICrierBehavior,
+  INPC,
+  MessageType,
+} from '../../../../interfaces';
 
 export class CrierBehavior implements IAIBehavior {
-
   private messages: string[] = [];
   private lastMessageShouted = '';
   private ticksForNextMessage = 0;
@@ -13,9 +17,16 @@ export class CrierBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ICrierBehavior) {
     this.messages = behavior.messages;
 
-    parser.addCommand('hello')
-      .setSyntax(['hello'])
-      .setLogic(async () => 'Hello, adventurer! I love yelling out helpful things, feel free to stick around!');
+    // add hello, if it's not added by the npc dialog
+    try {
+      parser
+        .addCommand('hello')
+        .setSyntax(['hello'])
+        .setLogic(
+          async () =>
+            'Hello, adventurer! I love yelling out helpful things, feel free to stick around!',
+        );
+    } catch {}
   }
 
   tick(game: Game, npc: INPC) {
@@ -25,9 +36,16 @@ export class CrierBehavior implements IAIBehavior {
     }
 
     this.ticksForNextMessage = random(5, 10);
-    const nextMessage = sample(this.messages.filter(x => x !== this.lastMessageShouted)) as string;
+    const nextMessage = sample(
+      this.messages.filter((x) => x !== this.lastMessageShouted),
+    ) as string;
     this.lastMessageShouted = nextMessage;
 
-    game.messageHelper.sendLogMessageToRadius(npc, 8, { message: nextMessage, from: npc.name }, [MessageType.NPCChatter]);
+    game.messageHelper.sendLogMessageToRadius(
+      npc,
+      8,
+      { message: nextMessage, from: npc.name },
+      [MessageType.NPCChatter],
+    );
   }
 }
