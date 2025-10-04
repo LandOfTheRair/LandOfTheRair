@@ -433,7 +433,7 @@ export class NPCCreator extends BaseService {
       baseChar.learnedSpells[result.toLowerCase()] = LearnedSpell.FromTraits;
     });
 
-    baseChar.traitLevels = npcDef.traitLevels || {};
+    baseChar.traitLevels = cloneDeep(npcDef.traitLevels || {});
 
     // green npcs never drop items
     if (baseChar.hostility === Hostility.Never) {
