@@ -166,7 +166,11 @@ export class BanditWaves extends Effect {
     return (
       this.game.worldManager
         .getMapStateForCharacter(char)
-        ?.allSpawners.filter((s) => s.spawnerName.includes('Child')) || []
+        ?.allSpawners.filter(
+          (s) =>
+            s.spawnerName.includes('Bandit Cave') &&
+            s.spawnerName.includes('Child'),
+        ) || []
     );
   }
 
@@ -176,6 +180,7 @@ export class BanditWaves extends Effect {
         .getMapStateForCharacter(char)
         ?.allSpawners.filter(
           (s) =>
+            s.spawnerName.includes('Bandit Cave') &&
             !s.spawnerName.includes('Child') &&
             !s.spawnerName.includes('Green'),
         ) || []
