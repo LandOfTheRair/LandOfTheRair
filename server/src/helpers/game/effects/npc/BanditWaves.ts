@@ -56,6 +56,7 @@ export class BanditWaves extends Effect {
         'BanditWavesPlayerInfo',
       );
       if (playerEffect) {
+        playerEffect.endsAt = effect.endsAt;
         playerEffect.tooltip = this.descriptionForPlayers(char, effect);
       }
     });
@@ -79,7 +80,10 @@ export class BanditWaves extends Effect {
     const wave = effect.effectInfo.damage ?? 0;
     const childrenAlive = this.childrenAlive(char);
     const banditsAlive = this.banditsAlive(char);
-    return `Difficulty ${difficulty} | Wave ${wave}/5 | Children alive: ${childrenAlive}/3 | Bandits remaining: ${banditsAlive}`;
+
+    return `Difficulty ${difficulty} | Wave ${wave}/5
+    | Children alive: ${childrenAlive}/3
+    | Bandits remaining: ${banditsAlive}`;
   }
 
   private getTier(effect: IStatusEffect): LootTier {
@@ -166,11 +170,7 @@ export class BanditWaves extends Effect {
     return (
       this.game.worldManager
         .getMapStateForCharacter(char)
-        ?.allSpawners.filter(
-          (s) =>
-            s.spawnerName.includes('Bandit Cave') &&
-            s.spawnerName.includes('Child'),
-        ) || []
+        ?.allSpawners.filter((s) => s.spawnerName.includes('Child')) || []
     );
   }
 
@@ -181,8 +181,7 @@ export class BanditWaves extends Effect {
         ?.allSpawners.filter(
           (s) =>
             s.spawnerName.includes('Bandit Cave') &&
-            !s.spawnerName.includes('Child') &&
-            !s.spawnerName.includes('Green'),
+            !s.spawnerName.includes('Child'),
         ) || []
     );
   }
