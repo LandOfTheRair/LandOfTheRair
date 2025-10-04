@@ -187,6 +187,11 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public sendMessageBannerAndChatToMap(map: string, msgInfo: MessageInfo) {
+    this.sendBannerMessageToMap(map, msgInfo);
+    this.sendMessageToMap(map, msgInfo);
+  }
+
   public broadcastChatMessage(player: ICharacter, message: string): void {
     const account = this.game.lobbyManager.getAccount(
       (player as Player).username,

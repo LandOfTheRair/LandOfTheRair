@@ -5,6 +5,9 @@ export class BanditWavesPlayerInfo extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    // TODO: if left map, remove effect
+    if (!char.map.includes('BanditCave-Dungeon')) {
+      this.game.effectHelper.removeEffect(char, effect);
+      return;
+    }
   }
 }
