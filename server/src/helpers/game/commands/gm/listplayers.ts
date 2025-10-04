@@ -6,7 +6,7 @@ import {
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMListPlayers extends MacroCommand {
-  override aliases = ['@listplayers', '@lp'];
+  override aliases = ['@listplayers', '@lp', '@whois'];
   override isGMCommand = true;
   override canBeInstant = false;
   override canBeFast = false;
