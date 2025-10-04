@@ -17,6 +17,10 @@ export class BanditWaves extends Effect {
     const childSpawners = this.getAllChildSpawners(char);
 
     childSpawners.forEach((spawner) => {
+      spawner.allNPCS.forEach((n) => {
+        this.game.deathHelper.fakeNPCDie(n);
+      });
+
       spawner.forceSpawnNPC({
         npcId: `Bandit Cave Child`,
       });
@@ -204,7 +208,11 @@ export class BanditWaves extends Effect {
   }
 
   private hasLost(char: ICharacter, effect: IStatusEffect): boolean {
-    return this.childrenAlive(char) === 0;
+    return (
+      this.childrenAlive(char) === 0 ||
+      this.allPlayers(char).length === 0 ||
+      this.allPlayers(char).every((p) => p.hp.current <= 0)
+    );
   }
 
   private removeAllNPCs(char: ICharacter) {
