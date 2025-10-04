@@ -1,6 +1,7 @@
-
 export * from './AcolyteOverseer';
 export * from './Attribute';
+export * from './BanditWaves';
+export * from './BanditWavesPlayerInfo';
 export * from './Dangerous';
 export * from './DecayingCorpse';
 export * from './Invulnerable';

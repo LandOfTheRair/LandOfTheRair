@@ -341,9 +341,9 @@ export class TargettingHelper extends BaseService {
   ): boolean {
     return (
       target.uuid === findStr ||
-      target.name.toLowerCase().startsWith((findStr || '').toLowerCase()) ||
+      target.name?.toLowerCase().startsWith((findStr || '').toLowerCase()) ||
       (includes &&
-        target.name.toLowerCase().includes((findStr || '').toLowerCase()))
+        target.name?.toLowerCase().includes((findStr || '').toLowerCase()))
     );
   }
 }

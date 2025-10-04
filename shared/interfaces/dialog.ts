@@ -13,6 +13,8 @@ export enum DialogActionType {
   CheckItemCanUpgrade = 'checkItemCanUpgrade',
   AddUpgradeItem = 'addItemUpgrade',
   GiveEffect = 'giveEffect',
+  GiveSelfEffect = 'giveSelfEffect',
+  CheckEffect = 'checkEffect',
   GiveCurrency = 'giveCurrency',
   CheckQuest = 'checkQuest',
   UpdateQuest = 'updateQuest',
@@ -84,6 +86,20 @@ export interface IDialogGiveDailyQuestAction {
 export interface IDialogGiveEffectAction {
   effect: string;
   duration: number;
+  potency?: number;
+}
+
+export interface IDialogGiveSelfEffectAction {
+  effect: string;
+  duration: number;
+  potency?: number;
+}
+
+export interface IDialogCheckEffectAction {
+  effect: string;
+  maxDistance?: number;
+  checkPassActions: IDialogAction[];
+  checkFailActions: IDialogAction[];
 }
 
 export interface IDialogGiveCurrencyAction {

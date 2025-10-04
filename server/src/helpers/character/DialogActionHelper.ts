@@ -13,6 +13,7 @@ import {
   IDialogChatActionOption,
   IDialogCheckAlignmentAction,
   IDialogCheckDailyQuestAction,
+  IDialogCheckEffectAction,
   IDialogCheckHolidayAction,
   IDialogCheckItemAction,
   IDialogCheckItemCanUpgradeAction,
@@ -26,6 +27,7 @@ import {
   IDialogGiveEffectAction,
   IDialogGiveItemAction,
   IDialogGiveQuestAction,
+  IDialogGiveSelfEffectAction,
   IDialogHasQuestAction,
   IDialogModifyItemAction,
   IDialogRequirement,
@@ -113,6 +115,8 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.CheckItemCanUpgrade]: this.handleItemCanUpgradeAction,
       [DialogActionType.AddUpgradeItem]: this.handleAddItemUpgradeAction,
       [DialogActionType.GiveEffect]: this.handleGiveEffectAction,
+      [DialogActionType.GiveSelfEffect]: this.handleGiveSelfEffectAction,
+      [DialogActionType.CheckEffect]: this.handleCheckEffectAction,
       [DialogActionType.GiveCurrency]: this.handleGiveCurrencyAction,
       [DialogActionType.CheckQuest]: this.handleCheckQuestAction,
       [DialogActionType.HasQuest]: this.handleHasQuestAction,
@@ -794,6 +798,36 @@ export class DialogActionHelper extends BaseService {
     return { messages: retMessages, shouldContinue: true };
   }
 
+  // CHECK if a player has an effect
+  private handleCheckEffectAction(
+    action: IDialogCheckEffectAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
+    const { effect, checkPassActions, checkFailActions } = action;
+
+    const retMessages: string[] = [];
+
+    const didSucceed = this.game.effectHelper.hasEffect(player, effect);
+
+    const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
+
+    for (const subAction of actions) {
+      const { messages, shouldContinue } = this.handleAction(
+        subAction,
+        npc,
+        player,
+      );
+      retMessages.push(...messages);
+
+      if (!shouldContinue) {
+        return { messages: retMessages, shouldContinue: false };
+      }
+    }
+
+    return { messages: retMessages, shouldContinue: true };
+  }
+
   // GIVE an upgrade to a particular item
   private handleAddItemUpgradeAction(
     action: IDialogAddItemUpgradeAction,
@@ -817,10 +851,25 @@ export class DialogActionHelper extends BaseService {
     npc: INPC,
     player: IPlayer,
   ): IActionResult {
-    const { effect, duration } = action;
+    const { effect, duration, potency } = action;
 
     this.game.effectHelper.addEffect(player, npc, effect, {
-      effect: { duration },
+      effect: { duration, extra: { potency } },
+    });
+
+    return { messages: [], shouldContinue: true };
+  }
+
+  // GIVE an effect to the NPC talking to the player
+  private handleGiveSelfEffectAction(
+    action: IDialogGiveSelfEffectAction,
+    npc: INPC,
+    player: IPlayer,
+  ): IActionResult {
+    const { effect, duration, potency } = action;
+
+    this.game.effectHelper.addEffect(npc, player, effect, {
+      effect: { duration, extra: { potency } },
     });
 
     return { messages: [], shouldContinue: true };

@@ -111,6 +111,10 @@ export class MapState {
     return Object.values(this.npcsByUUID);
   }
 
+  public get allPlayers(): IPlayer[] {
+    return Object.values(this.playersByUUID);
+  }
+
   public get allSpawners(): Spawner[] {
     return this.spawners;
   }

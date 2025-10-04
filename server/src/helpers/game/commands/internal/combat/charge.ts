@@ -1,4 +1,5 @@
 import {
+  distanceFrom,
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
@@ -65,6 +66,10 @@ export class ChargeCommand extends SkillCommand {
     opts: PhysicalAttackArgs = {},
   ): void {
     this.game.movementHelper.moveTowards(user, target);
+
+    if (distanceFrom(user, target) > this.range(user)) {
+      return this.sendMessage(user, 'That target is too far away!');
+    }
 
     this.game.combatHelper.physicalAttack(user, target, opts);
   }
