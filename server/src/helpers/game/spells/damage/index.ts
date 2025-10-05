@@ -5,6 +5,7 @@ export * from './Drain';
 export * from './EnergyWave';
 export * from './FireMist';
 export * from './IceMist';
+export * from './Lightning';
 export * from './MagicBolt';
 export * from './MagicMissile';
 export * from './RiftSlash';

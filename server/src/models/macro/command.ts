@@ -363,6 +363,14 @@ export class SpellCommand extends SkillCommand {
       `CS:${caster?.name}`,
     );
 
+    if (!spellData) {
+      this.game.logger.warn(
+        'SpellCommand',
+        `No spellData found for ${this.spellRef}.`,
+      );
+      return false;
+    }
+
     // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
       caster &&

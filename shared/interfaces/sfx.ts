@@ -24,6 +24,7 @@ export enum SoundEffect {
 
   SpellAOEFire = 'spell-aoe-fire',
   SpellAOEFrost = 'spell-aoe-frost',
+  SpellAOELightning = 'spell-aoe-lightning',
   SpellBuffMagical = 'spell-buff-magical',
   SpellBuff = 'spell-buff',
   SpellBuffPhysical = 'spell-buff-physical',

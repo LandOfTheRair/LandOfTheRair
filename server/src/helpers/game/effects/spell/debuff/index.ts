@@ -1,6 +1,7 @@
 export * from './Blind';
 export * from './BlurredVision';
 export * from './BuildupChill';
+export * from './BuildupElectricity';
 export * from './BuildupEnergy';
 export * from './BuildupHeat';
 export * from './BuildupWater';
@@ -22,4 +23,5 @@ export * from './Plague';
 export * from './Poison';
 export * from './Snare';
 export * from './Stun';
+export * from './TeslaCoil';
 export * from './Venom';
