@@ -740,7 +740,13 @@ export class DamageHelperPhysical extends BaseService {
       this.game.itemHelper.getItemProperties(defenderOffhand, [
         'type',
         'stats',
+        'itemClass',
       ]);
+
+    const offhandACBoost =
+      defenderOffhand && this.game.itemHelper.isWeapon(defenderOffhand)
+        ? this.game.traitHelper.traitLevelValue(defender, 'MainGauche')
+        : 0;
 
     return {
       skill:
@@ -761,7 +767,7 @@ export class DamageHelperPhysical extends BaseService {
       weaponAC: blockerStats?.[Stat.WeaponArmorClass] ?? 0,
       shieldAC: shieldStats?.[Stat.ArmorClass] ?? 0,
       shieldDefense: shieldStats?.[Stat.Defense] ?? 0,
-      offhandAC: offhandStats?.[Stat.WeaponArmorClass] ?? 0,
+      offhandAC: offhandACBoost + (offhandStats?.[Stat.WeaponArmorClass] ?? 0),
       offhandDefense: offhandStats?.[Stat.Defense] ?? 0,
       offhandSkill: defenderOffhand
         ? Math.floor(

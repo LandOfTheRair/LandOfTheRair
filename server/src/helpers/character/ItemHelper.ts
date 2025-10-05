@@ -16,6 +16,8 @@ import {
   ItemClass,
   ItemSlot,
   Stat,
+  WeaponClass,
+  WeaponClasses,
 } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -775,5 +777,10 @@ export class ItemHelper extends BaseService {
 
   public markIdentified(item: ISimpleItem, tier: number): void {
     item.mods.identifyTier = Math.max(item.mods.identifyTier ?? 0, tier);
+  }
+
+  public isWeapon(item: ISimpleItem): boolean {
+    const { itemClass } = this.getItemProperties(item, ['itemClass']);
+    return WeaponClasses.includes(itemClass as WeaponClass);
   }
 }
