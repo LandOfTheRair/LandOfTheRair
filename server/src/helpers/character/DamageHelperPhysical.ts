@@ -266,6 +266,15 @@ export class DamageHelperPhysical extends BaseService {
       );
     }
 
+    const hasOffhand = attacker.items.equipment[ItemSlot.LeftHand];
+    if (
+      !hasOffhand &&
+      !twoHanded &&
+      this.game.traitHelper.traitLevelValue(attacker, 'FirmGrip')
+    ) {
+      totalTier += 1;
+    }
+
     const allStatMultipliers =
       this.game.contentManager.statDamageMultipliersData;
     const weaponTiers = this.getTierDataForAttacker(attacker);
