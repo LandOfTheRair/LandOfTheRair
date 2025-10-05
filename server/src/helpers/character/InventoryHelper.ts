@@ -1,10 +1,17 @@
 import { Injectable } from 'injection-js';
-import { Currency, ICharacter, IItemContainer, IPlayer, ISimpleItem, ItemClass, Stat } from '../../interfaces';
+import {
+  Currency,
+  ICharacter,
+  IItemContainer,
+  IPlayer,
+  ISimpleItem,
+  ItemClass,
+  Stat,
+} from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class InventoryHelper extends BaseService {
-
   private sackSize = 25;
   private beltSize = 5;
   private pouchSize = 5;
@@ -12,11 +19,17 @@ export class InventoryHelper extends BaseService {
   private materialSize = 200;
 
   init() {
-    this.sackSize = this.game.contentManager.getGameSetting('inventory', 'sackSize') ?? 25;
-    this.beltSize = this.game.contentManager.getGameSetting('inventory', 'beltSize') ?? 5;
-    this.pouchSize = this.game.contentManager.getGameSetting('inventory', 'pouchSize') ?? 5;
-    this.lockerSize = this.game.contentManager.getGameSetting('inventory', 'lockerSize') ?? 25;
-    this.materialSize = this.game.contentManager.getGameSetting('inventory', 'materialSize') ?? 200;
+    this.sackSize =
+      this.game.contentManager.getGameSetting('inventory', 'sackSize') ?? 25;
+    this.beltSize =
+      this.game.contentManager.getGameSetting('inventory', 'beltSize') ?? 5;
+    this.pouchSize =
+      this.game.contentManager.getGameSetting('inventory', 'pouchSize') ?? 5;
+    this.lockerSize =
+      this.game.contentManager.getGameSetting('inventory', 'lockerSize') ?? 25;
+    this.materialSize =
+      this.game.contentManager.getGameSetting('inventory', 'materialSize') ??
+      200;
   }
 
   // sack functions
@@ -25,7 +38,10 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToSack(player: ICharacter, item: ISimpleItem): boolean {
-    const { isSackable, itemClass } = this.game.itemHelper.getItemProperties(item, ['isSackable', 'itemClass']);
+    const { isSackable, itemClass } = this.game.itemHelper.getItemProperties(
+      item,
+      ['isSackable', 'itemClass'],
+    );
     if (itemClass === ItemClass.Coin) return true;
     if (!isSackable) return false;
 
@@ -37,7 +53,12 @@ export class InventoryHelper extends BaseService {
   public addItemToSack(player: ICharacter, item: ISimpleItem): boolean {
     if (!this.canAddItemToSack(player, item)) return false;
 
-    const { itemClass, currency, value } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'currency', 'value']);
+    const { itemClass, currency, value } =
+      this.game.itemHelper.getItemProperties(item, [
+        'itemClass',
+        'currency',
+        'value',
+      ]);
     if (itemClass === ItemClass.Coin) {
       this.game.currencyHelper.gainCurrency(player, value ?? 0, currency);
       return true;
@@ -58,14 +79,22 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemsFromSackByUUID(player: ICharacter, uuids: string[]): boolean {
-    player.items.sack.items = player.items.sack.items.filter(x => !uuids.includes(x.uuid));
+  public removeItemsFromSackByUUID(
+    player: ICharacter,
+    uuids: string[],
+  ): boolean {
+    player.items.sack.items = player.items.sack.items.filter(
+      (x) => !uuids.includes(x.uuid),
+    );
 
     return true;
   }
 
-  public getItemsFromSackByName(player: ICharacter, filter: string): ISimpleItem[] {
-    return player.items.sack.items.filter(x => x.name.includes(filter));
+  public getItemsFromSackByName(
+    player: ICharacter,
+    filter: string,
+  ): ISimpleItem[] {
+    return player.items.sack.items.filter((x) => x.name.includes(filter));
   }
 
   // belt functions
@@ -74,8 +103,15 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
-    const { isBeltable, itemClass } = this.game.itemHelper.getItemProperties(item, ['isBeltable', 'itemClass']);
-    if (itemClass === ItemClass.Halberd && this.game.traitHelper.hasLearnedTrait(player as IPlayer, 'BigBelt')) return true;
+    const { isBeltable, itemClass } = this.game.itemHelper.getItemProperties(
+      item,
+      ['isBeltable', 'itemClass'],
+    );
+    if (
+      itemClass === ItemClass.Halberd &&
+      this.game.traitHelper.hasLearnedTrait(player as IPlayer, 'BigBelt')
+    )
+      return true;
     if (!isBeltable) return false;
 
     if (player.items.belt.items.length >= this.beltSize) return false;
@@ -101,8 +137,13 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemsFromBeltByUUID(player: ICharacter, uuids: string[]): boolean {
-    player.items.belt.items = player.items.belt.items.filter(x => !uuids.includes(x.uuid));
+  public removeItemsFromBeltByUUID(
+    player: ICharacter,
+    uuids: string[],
+  ): boolean {
+    player.items.belt.items = player.items.belt.items.filter(
+      (x) => !uuids.includes(x.uuid),
+    );
 
     return true;
   }
@@ -114,9 +155,11 @@ export class InventoryHelper extends BaseService {
 
   public canAddItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
-    if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin) return false;
+    if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin)
+      return false;
 
-    if (player.accountLockers.pouch.items.length >= this.pouchSize) return false;
+    if (player.accountLockers.pouch.items.length >= this.pouchSize)
+      return false;
 
     return true;
   }
@@ -125,7 +168,8 @@ export class InventoryHelper extends BaseService {
     if (!this.canAddItemToPouch(player, item)) return false;
 
     player.accountLockers.pouch.items.push(item);
-    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(Boolean);
+    player.accountLockers.pouch.items =
+      player.accountLockers.pouch.items.filter(Boolean);
 
     this.game.itemHelper.tryToBindItem(player, item);
 
@@ -134,13 +178,15 @@ export class InventoryHelper extends BaseService {
 
   public removeItemFromPouch(player: IPlayer, slot: number): boolean {
     player.accountLockers.pouch.items.splice(slot, 1);
-    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(Boolean);
+    player.accountLockers.pouch.items =
+      player.accountLockers.pouch.items.filter(Boolean);
 
     return true;
   }
 
   public removeItemsFromPouchByUUID(player: IPlayer, uuids: string[]): boolean {
-    player.accountLockers.pouch.items = player.accountLockers.pouch.items.filter(x => !uuids.includes(x.uuid));
+    player.accountLockers.pouch.items =
+      player.accountLockers.pouch.items.filter((x) => !uuids.includes(x.uuid));
 
     return true;
   }
@@ -150,21 +196,32 @@ export class InventoryHelper extends BaseService {
     return this.lockerSize - locker.items.length;
   }
 
-  public canAddItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
+  public canAddItemToLocker(
+    player: IPlayer,
+    item: ISimpleItem,
+    locker: IItemContainer,
+  ): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
     const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
 
-    if (itemClass === ItemClass.Coin
-    || itemClass === ItemClass.Corpse
-    || item.name.includes('Conjured')
-    || succorInfo) return false;
+    if (
+      itemClass === ItemClass.Coin ||
+      itemClass === ItemClass.Corpse ||
+      item.name.includes('Conjured') ||
+      succorInfo
+    )
+      return false;
 
     if (locker.items.length >= this.lockerSize) return false;
 
     return true;
   }
 
-  public addItemToLocker(player: IPlayer, item: ISimpleItem, locker: IItemContainer): boolean {
+  public addItemToLocker(
+    player: IPlayer,
+    item: ISimpleItem,
+    locker: IItemContainer,
+  ): boolean {
     locker.items.push(item);
     locker.items = locker.items.filter(Boolean);
 
@@ -173,15 +230,23 @@ export class InventoryHelper extends BaseService {
     return true;
   }
 
-  public removeItemFromLocker(player: IPlayer, slot: number, locker: IItemContainer): boolean {
+  public removeItemFromLocker(
+    player: IPlayer,
+    slot: number,
+    locker: IItemContainer,
+  ): boolean {
     locker.items.splice(slot, 1);
     locker.items = locker.items.filter(Boolean);
 
     return true;
   }
 
-  public removeItemsFromLockerByUUID(player: IPlayer, uuids: string[], locker: IItemContainer): boolean {
-    locker.items = locker.items.filter(x => !uuids.includes(x.uuid));
+  public removeItemsFromLockerByUUID(
+    player: IPlayer,
+    uuids: string[],
+    locker: IItemContainer,
+  ): boolean {
+    locker.items = locker.items.filter((x) => !uuids.includes(x.uuid));
     locker.items = locker.items.filter(Boolean);
 
     return true;
@@ -189,8 +254,12 @@ export class InventoryHelper extends BaseService {
 
   // material functions
   public materialSpaceLeft(player: IPlayer, material: string): number {
-    return this.game.subscriptionHelper.maxMaterialStorageSpace(player, this.materialSize)
-         - (player.accountLockers.materials[material] ?? 0);
+    return (
+      this.game.subscriptionHelper.maxMaterialStorageSpace(
+        player,
+        this.materialSize,
+      ) - (player.accountLockers.materials[material] ?? 0)
+    );
   }
 
   public canAddMaterial(player: IPlayer, material: string): boolean {
@@ -200,14 +269,20 @@ export class InventoryHelper extends BaseService {
 
   public addMaterial(player: IPlayer, material: string, number = 1): void {
     if (isNaN(number)) {
-      this.game.logger.error('MaterialStorage', new Error(`Adding NaN to materials: ${player.name} (${player.username})/${material}!`));
+      this.game.logger.error(
+        'MaterialStorage',
+        new Error(
+          `Adding NaN to materials: ${player.name} (${player.username})/${material}!`,
+        ),
+      );
       return;
     }
 
     player.accountLockers.materials[material] ??= 0;
     player.accountLockers.materials[material] += number;
 
-    if (player.accountLockers.materials[material] <= 0) player.accountLockers.materials[material] = 0;
+    if (player.accountLockers.materials[material] <= 0)
+      player.accountLockers.materials[material] = 0;
   }
 
   public removeMaterial(player: IPlayer, material: string, number = 1): void {
@@ -215,40 +290,52 @@ export class InventoryHelper extends BaseService {
   }
 
   public itemValue(check: ICharacter | null, item: ISimpleItem): number {
-    const { ounces: baseOunces, sellValue: baseSellValue } = this.game.itemHelper.getItemDefinition(item.name);
-    const {
-      itemClass,
-      value,
-      sellValue,
-      ounces
-    } = this.game.itemHelper.getItemProperties(item, ['itemClass', 'value', 'sellValue', 'ounces']);
+    const { ounces: baseOunces, sellValue: baseSellValue } =
+      this.game.itemHelper.getItemDefinition(item.name);
+    const { itemClass, value, sellValue, ounces } =
+      this.game.itemHelper.getItemProperties(item, [
+        'itemClass',
+        'value',
+        'sellValue',
+        'ounces',
+      ]);
     const baseItemValue = sellValue || value || 1;
 
     if (itemClass === ItemClass.Bottle && ounces === 0) return 100;
 
-    const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } = this.game.contentManager.getGameSetting('character');
+    const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } =
+      this.game.contentManager.getGameSetting('character');
 
     // default sell percent is 25% of value if it doesn't have a set sellValue
     let sellPercent = baseSellValue ? 100 : (sellValuePercent ?? 25);
 
     // items that do not have a modded sellvalue (ie, rare gems) can get modified
     if (check && !item.mods.sellValue) {
-
       // sliding scale % based on CHA
       const cha = this.game.characterHelper.getStat(check, Stat.CHA);
 
       // at a base of 10, you get +0.2% value per CHA
-      const sellPercentMod = (cha - (sellChaBaseBoost ?? 10)) / (sellChaBaseDivisor ?? 5);
+      const sellPercentMod =
+        (cha - (sellChaBaseBoost ?? 10)) / (sellChaBaseDivisor ?? 5);
       sellPercent += sellPercentMod;
     }
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
-    let totalSellValue = Math.max(1, Math.floor(baseItemValue * (sellPercent / 100)));
+    let totalSellValue = Math.max(
+      1,
+      Math.floor(baseItemValue * (sellPercent / 100)),
+    );
+
+    if (check) {
+      const ancientMult =
+        1 + this.game.traitHelper.traitLevelValue(check, 'AncientBartering');
+      totalSellValue *= ancientMult;
+    }
 
     const baseOz = baseOunces ?? 0;
     const checkOz = ounces ?? 0;
     if (baseOz > 0 && checkOz > 0) {
-      totalSellValue = Math.round(totalSellValue * checkOz / baseOz);
+      totalSellValue = Math.round((totalSellValue * checkOz) / baseOz);
     }
 
     return totalSellValue;
@@ -262,9 +349,10 @@ export class InventoryHelper extends BaseService {
 
   // sell items / deal with buyback
   public sellItem(player: IPlayer, item: ISimpleItem): void {
-
     // some items have a raw value they sell for
-    const { itemClass } = this.game.itemHelper.getItemProperties(item, ['itemClass']);
+    const { itemClass } = this.game.itemHelper.getItemProperties(item, [
+      'itemClass',
+    ]);
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
     const totalSellValue = this.itemValue(player, item);
@@ -273,10 +361,14 @@ export class InventoryHelper extends BaseService {
     this.addItemToBuyback(player, item);
 
     // tell them they sold the item and give em the money
-    this.game.currencyHelper.gainCurrency(player, totalSellValue, Currency.Gold);
+    this.game.currencyHelper.gainCurrency(
+      player,
+      totalSellValue,
+      Currency.Gold,
+    );
     this.game.messageHelper.sendSimpleMessage(
       player,
-      `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`
+      `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`,
     );
   }
 
