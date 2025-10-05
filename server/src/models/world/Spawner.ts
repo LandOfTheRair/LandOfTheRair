@@ -278,12 +278,14 @@ export class Spawner {
 
   private spawnInitialNPCs() {
     for (let i = 0; i < this.initialSpawn; i++) {
+      if (!this.isUnderNPCCap) continue;
       this.createNPC();
     }
 
     // npcDefs means we have to maintain these and spawn them all at once
     // primarily this exists for the green spawner
     (this.npcDefs || []).forEach((npcDef) => {
+      if (!this.isUnderNPCCap) return;
       this.createNPC({ npcDef });
     });
   }
