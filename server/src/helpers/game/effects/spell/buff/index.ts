@@ -35,6 +35,7 @@ export * from './NecroticAura';
 export * from './PhysicalToEnergy';
 export * from './PhysicalToFire';
 export * from './PhysicalToIce';
+export * from './PhysicalToLightning';
 export * from './PhysicalToNecrotic';
 export * from './PhysicalToWater';
 export * from './Protection';
