@@ -1,19 +1,25 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../helpers';
+import { distanceFrom, Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, IAlchemistBehavior,
-  IDialogChatAction, INPC, IPlayer, ItemSlot, LearnedSpell } from '../../../../interfaces';
+  GameServerResponse,
+  IAIBehavior,
+  IAlchemistBehavior,
+  IDialogChatAction,
+  INPC,
+  IPlayer,
+  ItemSlot,
+  LearnedSpell,
+} from '../../../../interfaces';
 
 export class AlchemistBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IAlchemistBehavior) {
-
     let { alchCost, alchOz } = behavior;
     alchCost ??= 1000;
     alchOz ??= 10;
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -43,15 +49,20 @@ export class AlchemistBehavior implements IAIBehavior {
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,
-          options
+          options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('combine')
+    parser
+      .addCommand('combine')
       .setSyntax(['combine'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -63,26 +74,36 @@ export class AlchemistBehavior implements IAIBehavior {
         if (!rightHand) return 'You need to hold something in your right hand!';
 
         const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
-        const { itemClass, ounces, useEffect } = game.itemHelper.getItemProperties(rightHand, ['itemClass', 'ounces', 'useEffect']);
+        const { itemClass, ounces, useEffect } =
+          game.itemHelper.getItemProperties(rightHand, [
+            'itemClass',
+            'ounces',
+            'useEffect',
+          ]);
 
         const itemOunces = ounces ?? 0;
 
         if (itemClass !== 'Bottle') return 'You are not holding a bottle.';
-        if (itemOunces >= maxOz) return 'That bottle is already too full for me.';
+        if (itemOunces >= maxOz) {
+          return 'That bottle is already too full for me.';
+        }
         if (!useEffect) return 'That bottle cannot be combined!';
 
         let itemsRemoved = 0;
         const removeUUIDs: string[] = [];
 
         player.items.sack.items.forEach((item) => {
-          const { useEffect: checkEffect, ounces: checkOunces } = game.itemHelper.getItemProperties(item, ['useEffect', 'ounces']);
+          const { useEffect: checkEffect, ounces: checkOunces } =
+            game.itemHelper.getItemProperties(item, ['useEffect', 'ounces']);
           const checkItemOunces = checkOunces ?? 0;
 
           if (rightHand.name !== item.name) return;
           if (!checkEffect) return;
           if (checkEffect.name !== useEffect.name) return;
           if (checkEffect.potency !== useEffect.potency) return;
-          if ((rightHand.mods.ounces || itemOunces) + checkItemOunces > maxOz) return;
+          if ((rightHand.mods.ounces || itemOunces) + checkItemOunces > maxOz) {
+            return;
+          }
           if (checkOunces === 0) return;
 
           const cost = checkItemOunces * (alchCost ?? 1);
@@ -90,7 +111,8 @@ export class AlchemistBehavior implements IAIBehavior {
           game.currencyHelper.loseCurrency(player, cost);
 
           removeUUIDs.push(item.uuid);
-          rightHand.mods.ounces = (rightHand.mods.ounces ?? itemOunces) + checkItemOunces;
+          rightHand.mods.ounces =
+            (rightHand.mods.ounces ?? itemOunces) + checkItemOunces;
           itemsRemoved++;
         });
 
@@ -103,7 +125,8 @@ export class AlchemistBehavior implements IAIBehavior {
         return `I've combined ${itemsRemoved} bottles from your sack and combined them with the one in your hand, enjoy!`;
       });
 
-    parser.addCommand('teach')
+    parser
+      .addCommand('teach')
       .setSyntax(['teach'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -111,9 +134,15 @@ export class AlchemistBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Alchemy')) return 'You already know Alchemy!';
+        if (game.characterHelper.hasLearned(player, 'Alchemy')) {
+          return 'You already know Alchemy!';
+        }
 
-        game.characterHelper.forceSpellLearnStatus(player, 'Alchemy', LearnedSpell.FromFate);
+        game.characterHelper.forceSpellLearnStatus(
+          player,
+          'Alchemy',
+          LearnedSpell.FromFate,
+        );
 
         return 'Go forth and make potions!';
       });

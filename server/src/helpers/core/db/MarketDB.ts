@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
+import { calculateListingFee } from '../../../helpers';
 import {
-  calculateListingFee,
   Currency,
   IItem,
   IItemDefinition,

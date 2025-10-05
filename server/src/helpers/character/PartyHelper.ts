@@ -1,12 +1,14 @@
-
 import { Injectable } from 'injection-js';
-import { distanceFrom, getMultiplierBasedOnLevelDifference, getMultiplierBasedOnPartySize,
-  IParty, IPartyMember, IPlayer } from '../../interfaces';
+import {
+  distanceFrom,
+  getMultiplierBasedOnLevelDifference,
+  getMultiplierBasedOnPartySize,
+} from '../../helpers';
+import { IParty, IPartyMember, IPlayer } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class PartyHelper extends BaseService {
-
   public init() {}
 
   public isInParty(player: IPlayer): boolean {
@@ -37,7 +39,10 @@ export class PartyHelper extends BaseService {
     return partyMember.partyName;
   }
 
-  public reformatAsPartyMember(player: IPlayer, partyName: string): IPartyMember {
+  public reformatAsPartyMember(
+    player: IPlayer,
+    partyName: string,
+  ): IPartyMember {
     return {
       baseClass: player.baseClass,
       hpPercent: player.hp.current / player.hp.maximum,
@@ -49,7 +54,7 @@ export class PartyHelper extends BaseService {
       username: player.username,
       x: player.x,
       y: player.y,
-      z: player.z
+      z: player.z,
     };
   }
 
@@ -59,7 +64,7 @@ export class PartyHelper extends BaseService {
       members: [leader.username],
       highestLevel: leader.level,
       lowestLevel: leader.level,
-      levelDifference: 0
+      levelDifference: 0,
     };
 
     const leaderMember = this.reformatAsPartyMember(leader, partyName);
@@ -93,7 +98,7 @@ export class PartyHelper extends BaseService {
     const party = this.game.partyManager.getParty(partyMember.partyName);
     if (!party) return;
 
-    party.members = party.members.filter(x => x !== leaver.username);
+    party.members = party.members.filter((x) => x !== leaver.username);
     this.game.partyManager.removePartyMember(partyMember);
 
     leaver.partyName = '';
@@ -116,7 +121,7 @@ export class PartyHelper extends BaseService {
     const party = this.game.partyManager.getParty(partyMember.partyName);
     if (!party) return;
 
-    party.members = party.members.filter(x => x !== kicked.username);
+    party.members = party.members.filter((x) => x !== kicked.username);
     this.game.partyManager.removePartyMember(partyMember);
 
     kicked.partyName = '';
@@ -126,13 +131,15 @@ export class PartyHelper extends BaseService {
   }
 
   public giveParty(newLeader: IPlayer): void {
-    const partyMember = this.game.partyManager.getPartyMember(newLeader.username);
+    const partyMember = this.game.partyManager.getPartyMember(
+      newLeader.username,
+    );
     if (!partyMember) return;
 
     const party = this.game.partyManager.getParty(partyMember.partyName);
     if (!party) return;
 
-    party.members = party.members.filter(x => x !== newLeader.username);
+    party.members = party.members.filter((x) => x !== newLeader.username);
     party.members.unshift(newLeader.username);
   }
 
@@ -145,7 +152,7 @@ export class PartyHelper extends BaseService {
 
     this.partyMessage(party, `${party.name} was broken up.`);
 
-    party.members.forEach(member => {
+    party.members.forEach((member) => {
       const playerRef = this.game.playerManager.getPlayerByUsername(member);
       if (!playerRef) return;
 
@@ -154,7 +161,7 @@ export class PartyHelper extends BaseService {
   }
 
   public partyMessage(party: IParty, message: string): void {
-    party.members.forEach(member => {
+    party.members.forEach((member) => {
       const playerRef = this.game.playerManager.getPlayerByUsername(member);
       if (!playerRef) return;
 
@@ -170,8 +177,10 @@ export class PartyHelper extends BaseService {
     if (!party) return [];
 
     return party.members
-      .map(partyMemberUsername => this.game.playerManager.getPlayerByUsername(partyMemberUsername))
-      .filter(partyPlayer => {
+      .map((partyMemberUsername) =>
+        this.game.playerManager.getPlayerByUsername(partyMemberUsername),
+      )
+      .filter((partyPlayer) => {
         if (!partyPlayer) return false;
         if (player.map !== partyPlayer.map) return false;
         if (player.username === partyPlayer.username) return false;
@@ -187,7 +196,10 @@ export class PartyHelper extends BaseService {
     const party = this.game.partyManager.getParty(partyMember.partyName);
     if (!party) return 1;
 
-    return this.getMultiplierBasedOnLevelDifference(party.levelDifference) * this.getMultiplierBasedOnPartySize(party.members.length);
+    return (
+      this.getMultiplierBasedOnLevelDifference(party.levelDifference) *
+      this.getMultiplierBasedOnPartySize(party.members.length)
+    );
   }
 
   public getMultiplierBasedOnPartySize(partySize: number): number {
@@ -199,7 +211,9 @@ export class PartyHelper extends BaseService {
   }
 
   public recalculatePartyLevels(party: IParty): void {
-    const partyLevels = party.members.map(x => this.game.partyManager.getPartyMember(x)?.level ?? 1);
+    const partyLevels = party.members.map(
+      (x) => this.game.partyManager.getPartyMember(x)?.level ?? 1,
+    );
 
     party.lowestLevel = Math.min(...partyLevels);
     party.highestLevel = Math.max(...partyLevels);
@@ -207,13 +221,15 @@ export class PartyHelper extends BaseService {
   }
 
   private clearAgroForAllPartyMembers(newJoiner: IPlayer): void {
-    const partyMember = this.game.partyManager.getPartyMember(newJoiner.username);
+    const partyMember = this.game.partyManager.getPartyMember(
+      newJoiner.username,
+    );
     if (!partyMember) return;
 
     const party = this.game.partyManager.getParty(partyMember.partyName);
     if (!party) return;
 
-    party.members.forEach(member => {
+    party.members.forEach((member) => {
       const playerRef = this.game.playerManager.getPlayerByUsername(member);
       if (!playerRef) return;
 
@@ -221,5 +237,4 @@ export class PartyHelper extends BaseService {
       this.game.characterHelper.clearAgro(playerRef, newJoiner);
     });
   }
-
 }

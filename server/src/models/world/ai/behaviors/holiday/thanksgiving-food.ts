@@ -1,14 +1,19 @@
-import { Parser } from 'muud';
 import { sample } from 'lodash';
+import { Parser } from 'muud';
 
-import { Game } from '../../../../../helpers';
-import { distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction, INPC, ItemSlot } from '../../../../../interfaces';
+import { distanceFrom, Game } from '../../../../../helpers';
+import {
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  INPC,
+  ItemSlot,
+} from '../../../../../interfaces';
 
 export class ThanksgivingFoodBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -29,15 +34,20 @@ export class ThanksgivingFoodBehavior implements IAIBehavior {
           options: [
             { text: 'A cornucopia?', action: 'cornucopia' },
             { text: 'Nope', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('cornucopia')
+    parser
+      .addCommand('cornucopia')
       .setSyntax(['cornucopia'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -45,30 +55,45 @@ export class ThanksgivingFoodBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
-        if (player.items.equipment[ItemSlot.RightHand]) return 'Please empty your right hand first.';
+        if (player.items.equipment[ItemSlot.RightHand]) {
+          return 'Please empty your right hand first.';
+        }
 
-        const leafIndexes = player.items.sack.items.filter(x => x.name === 'Thanksgiving Leaf');
-        const cornIndexes = player.items.sack.items.filter(x => x.name === 'Thanksgiving Corn');
-        const appleIndexes = player.items.sack.items.filter(x => x.name === 'Yzalt Steffen Apple');
+        const leafIndexes = player.items.sack.items.filter(
+          (x) => x.name === 'Thanksgiving Leaf',
+        );
+        const cornIndexes = player.items.sack.items.filter(
+          (x) => x.name === 'Thanksgiving Corn',
+        );
+        const appleIndexes = player.items.sack.items.filter(
+          (x) => x.name === 'Yzalt Steffen Apple',
+        );
 
-        if (leafIndexes.length < 4) return 'It seems like you need a few more leaves?';
-        if (cornIndexes.length < 5) return 'You might need to bring a few more ears of corn!';
+        if (leafIndexes.length < 4) {
+          return 'It seems like you need a few more leaves?';
+        }
+        if (cornIndexes.length < 5) {
+          return 'You might need to bring a few more ears of corn!';
+        }
         if (appleIndexes.length < 6) return 'Can you bring some more apples?';
 
         game.inventoryHelper.removeItemsFromSackByUUID(player, [
-          ...leafIndexes.slice(0, 4).map(x => x.uuid),
-          ...cornIndexes.slice(0, 5).map(x => x.uuid),
-          ...appleIndexes.slice(0, 6).map(x => x.uuid)
+          ...leafIndexes.slice(0, 4).map((x) => x.uuid),
+          ...cornIndexes.slice(0, 5).map((x) => x.uuid),
+          ...appleIndexes.slice(0, 6).map((x) => x.uuid),
         ]);
 
         const item = sample([
           'Thanksgiving Heal Bottle (XS)',
           'Thanksgiving Heal Bottle (SM)',
           'Thanksgiving Heal Bottle (MD)',
-          'Thanksgiving Heal Bottle'
+          'Thanksgiving Heal Bottle',
         ]);
 
-        game.characterHelper.setRightHand(player, game.itemCreator.getSimpleItem(item as string));
+        game.characterHelper.setRightHand(
+          player,
+          game.itemCreator.getSimpleItem(item as string),
+        );
 
         return `Thank you for making our feast a success, ${player.name}!`;
       });

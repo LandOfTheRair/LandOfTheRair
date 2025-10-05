@@ -1,17 +1,18 @@
-
 import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
-import { calculateSkillLevelFromXP, calculateSkillXPRequiredForLevel,
-  calculateTradeskillLevelFromXP,
-  calculateTradeskillXPRequiredForLevel,
-  calculateXPRequiredForLevel, ICharacter, IPlayer, Skill, Stat, Tradeskill } from '../../interfaces';
+import { ICharacter, IPlayer, Skill, Stat, Tradeskill } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import {
+  calculateSkillXPRequiredForLevel,
+  calculateTradeskillLevelFromXP,
+  calculateTradeskillXPRequiredForLevel,
+  calculateXPRequiredForLevel,
+} from '../../helpers';
 
 @Injectable()
 export class CalculatorHelper extends BaseService {
-
   public init() {}
 
   // xp required for a particular level
@@ -30,20 +31,32 @@ export class CalculatorHelper extends BaseService {
   }
 
   // skill level for a certain skill for a character
-  public calcSkillLevelForCharacter(character: ICharacter, skill: Skill): number {
+  public calcSkillLevelForCharacter(
+    character: ICharacter,
+    skill: Skill,
+  ): number {
     if (!skill) {
-      this.game.logger.error('SkillCalc', new Error('Trying to calculate skill of undefined'));
+      this.game.logger.error(
+        'SkillCalc',
+        new Error('Trying to calculate skill of undefined'),
+      );
       return 0;
     }
 
     const skillValue = character.skills[skill.toLowerCase()] ?? 0;
-    return calculateSkillLevelFromXP(skillValue);
+    return calculateTradeskillLevelFromXP(skillValue);
   }
 
   // tradeskill level for a certain skill for a character
-  public calcTradeskillLevelForCharacter(character: IPlayer, skill: Tradeskill): number {
+  public calcTradeskillLevelForCharacter(
+    character: IPlayer,
+    skill: Tradeskill,
+  ): number {
     if (!skill) {
-      this.game.logger.error('SkillCalc', new Error('Trying to calculate skill of undefined'));
+      this.game.logger.error(
+        'SkillCalc',
+        new Error('Trying to calculate skill of undefined'),
+      );
       return 0;
     }
 
@@ -56,13 +69,22 @@ export class CalculatorHelper extends BaseService {
     const skillValue = character.skills[skill] ?? 0;
     const skillLevel = this.calcSkillLevelForCharacter(character, skill);
 
-    const nextLevel = skillLevel === 0 ? 100 : this.calculateSkillXPRequiredForLevel(skillLevel);
-    const prevLevel = skillLevel === 0 ? 0 : this.calculateSkillXPRequiredForLevel(skillLevel - 1);
+    const nextLevel =
+      skillLevel === 0
+        ? 100
+        : this.calculateSkillXPRequiredForLevel(skillLevel);
+    const prevLevel =
+      skillLevel === 0
+        ? 0
+        : this.calculateSkillXPRequiredForLevel(skillLevel - 1);
 
     const normalizedCurrent = skillValue - prevLevel;
     const normalizedMax = nextLevel - prevLevel;
 
-    const percentWay = Math.min(99.999, Math.max(0, (normalizedCurrent / normalizedMax * 100))).toFixed(3);
+    const percentWay = Math.min(
+      99.999,
+      Math.max(0, (normalizedCurrent / normalizedMax) * 100),
+    ).toFixed(3);
 
     return percentWay;
   }
@@ -74,9 +96,13 @@ export class CalculatorHelper extends BaseService {
 
   // get the day of year
   public getCurrentDailyDayOfYear(player: IPlayer): number {
-
     const now = DateTime.fromObject({ zone: 'utc' });
-    const start = DateTime.fromObject({ zone: 'utc', year: now.year, month: 1, day: 1 });
+    const start = DateTime.fromObject({
+      zone: 'utc',
+      year: now.year,
+      month: 1,
+      day: 1,
+    });
     const diff = +now - +start;
     const oneDay = 1000 * 60 * 60 * 24;
     const day = Math.floor(diff / oneDay);
@@ -90,27 +116,43 @@ export class CalculatorHelper extends BaseService {
     stat: Stat,
     maxForTier: number,
     normalizer: number,
-    costsAtTier: { min: number; max: number }
+    costsAtTier: { min: number; max: number },
   ) {
-
     const normal = normalizer;
 
     const curHp = this.game.characterHelper.getBaseStat(player, stat);
     const cha = this.game.characterHelper.getStat(player, Stat.CHA);
 
     // every cha past 7 is +1% discount
-    const chaSlidingDiscount = this.game.contentManager.getGameSetting('character', 'chaSlidingDiscount') ?? 7;
-    const chaMaxForDiscount = this.game.contentManager.getGameSetting('character', 'chaMaxForDiscount') ?? 50;
-    const discountPercent = Math.min(chaMaxForDiscount, cha - chaSlidingDiscount);
-    const percentThere = Math.max(0.01, (curHp - normal) / (maxForTier - normal));
+    const chaSlidingDiscount =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'chaSlidingDiscount',
+      ) ?? 7;
+    const chaMaxForDiscount =
+      this.game.contentManager.getGameSetting(
+        'character',
+        'chaMaxForDiscount',
+      ) ?? 50;
+    const discountPercent = Math.min(
+      chaMaxForDiscount,
+      cha - chaSlidingDiscount,
+    );
+    const percentThere = Math.max(
+      0.01,
+      (curHp - normal) / (maxForTier - normal),
+    );
 
     const { min, max } = costsAtTier;
 
-    const totalCost = min + ((max - min) * percentThere);
-    const totalDiscount = (totalCost * discountPercent / 100);
+    const totalCost = min + (max - min) * percentThere;
+    const totalDiscount = (totalCost * discountPercent) / 100;
 
-    return this.game.subscriptionHelper.docReduction(player, Math.max(min, Math.round(totalCost - totalDiscount)));
-  };
+    return this.game.subscriptionHelper.docReduction(
+      player,
+      Math.max(min, Math.round(totalCost - totalDiscount)),
+    );
+  }
 
   // calculate axp reward for a creature
   public calcAXPRewardFor(char: ICharacter): number {

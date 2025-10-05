@@ -1,8 +1,5 @@
-import {
-  distanceFrom,
-  ICharacter,
-  Stat,
-} from '../../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../../helpers';
+import { ICharacter, Stat } from '../../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../../models/macro';
 
 export class DedlaenSpiderImmobilize extends SpellCommand {

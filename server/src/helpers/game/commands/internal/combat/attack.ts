@@ -1,5 +1,5 @@
+import { distanceFrom } from '../../../../../helpers';
 import {
-  distanceFrom,
   ICharacter,
   IMacroCommandArgs,
   IPlayer,

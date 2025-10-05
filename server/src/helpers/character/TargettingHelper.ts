@@ -1,14 +1,13 @@
 import { Injectable } from 'injection-js';
 
 import { sampleSize } from 'lodash';
+import { distanceFrom, isHostileTo } from '../../helpers';
 import {
   Allegiance,
-  distanceFrom,
   Hostility,
   ICharacter,
   INPC,
   IPlayer,
-  isHostileTo,
   Stat,
 } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';

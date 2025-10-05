@@ -1,10 +1,6 @@
 import { random } from 'lodash';
-import {
-  DamageClass,
-  distanceFrom,
-  ICharacter,
-  Stat,
-} from '../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../helpers';
+import { DamageClass, ICharacter, Stat } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class DrainBiteStrong extends SpellCommand {

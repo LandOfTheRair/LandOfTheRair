@@ -1,5 +1,3 @@
-export * from '../../../shared/functions';
-export * from '../../../shared/initializers';
 export * from '../../../shared/interfaces';
 
 export * from './BaseSpell';

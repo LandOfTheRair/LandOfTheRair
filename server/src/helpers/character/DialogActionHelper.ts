@@ -4,7 +4,6 @@ import { get, sample, template, uniq } from 'lodash';
 import {
   DialogActionType,
   Direction,
-  distanceFrom,
   GameServerResponse,
   Hostility,
   IDialogAction,
@@ -48,6 +47,8 @@ import {
 } from '../../interfaces';
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
+
+import { distanceFrom } from '../external';
 
 interface IActionResult {
   messages: string[];

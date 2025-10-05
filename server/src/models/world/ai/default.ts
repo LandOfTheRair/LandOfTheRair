@@ -13,9 +13,6 @@ import { Game } from '../../../helpers';
 import {
   Allegiance,
   Direction,
-  directionFromText,
-  directionToOffset,
-  distanceFrom,
   GameAction,
   Hostility,
   IAI,
@@ -33,6 +30,11 @@ import { WorldMap } from '../Map';
 import { MapState } from '../MapState';
 import { Spawner } from '../Spawner';
 
+import {
+  directionFromText,
+  directionToOffset,
+  distanceFrom,
+} from '../../../helpers/external';
 export class DefaultAIBehavior implements IAI {
   private path: Array<{ x: number; y: number }>;
   private randomWalkRadius: number;

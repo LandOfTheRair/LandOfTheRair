@@ -1,5 +1,5 @@
+import { descTextFor } from '../../../../helpers';
 import {
-  descTextFor,
   GameServerResponse,
   ICharacter,
   IPlayer,

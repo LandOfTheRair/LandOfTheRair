@@ -1,7 +1,8 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
-import { initializeCharacter, IPlayer } from '../../../interfaces';
+import { initializeCharacter } from '../../../helpers';
+import { IPlayer } from '../../../interfaces';
 import {
   Account,
   AccountAchievements,

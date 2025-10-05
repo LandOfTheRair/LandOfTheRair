@@ -1,14 +1,22 @@
-import { DamageArgs, DamageClass, distanceFrom, ICharacter, IStatusEffect, ItemSlot, Stat } from '../../../../../interfaces';
+import { distanceFrom } from '../../../../../helpers';
+import {
+  DamageArgs,
+  DamageClass,
+  ICharacter,
+  IStatusEffect,
+  ItemSlot,
+  Stat,
+} from '../../../../../interfaces';
 import { Effect } from '../../../../../models';
 
 export class RageStance extends Effect {
-
   public override create(char: ICharacter, effect: IStatusEffect) {
-
     const rightHand = char.items.equipment[ItemSlot.RightHand];
     if (!rightHand) return;
 
-    this.game.messageHelper.sendLogMessageToRadius(char, 4, { message: `${char.name} takes on a offensive stance.` });
+    this.game.messageHelper.sendLogMessageToRadius(char, 4, {
+      message: `${char.name} takes on a offensive stance.`,
+    });
 
     effect.effectInfo.usedWeapon = rightHand.uuid;
 
@@ -21,7 +29,7 @@ export class RageStance extends Effect {
       [Stat.WeaponDamageRolls]: Math.floor(skill / 5),
       [Stat.WeaponArmorClass]: -skill,
       [Stat.Defense]: -skill,
-      [Stat.Mitigation]: -skill
+      [Stat.Mitigation]: -skill,
     };
   }
 
@@ -32,7 +40,10 @@ export class RageStance extends Effect {
       this.game.characterHelper.mana(char, 1);
     }
 
-    if (effect.effectInfo.usedWeapon !== char.items.equipment[ItemSlot.RightHand]?.uuid) {
+    if (
+      effect.effectInfo.usedWeapon !==
+      char.items.equipment[ItemSlot.RightHand]?.uuid
+    ) {
       this.game.effectHelper.removeEffect(char, effect);
     }
   }
@@ -41,17 +52,18 @@ export class RageStance extends Effect {
     effect: IStatusEffect,
     char: ICharacter,
     target: ICharacter,
-    damageArgs: DamageArgs
+    damageArgs: DamageArgs,
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
     this.game.characterHelper.mana(char, 1);
 
     // if we're on someone and we can viciously assault, give it a try
-    if (this.game.traitHelper.rollTraitValue(char, 'ViciousAssault')
-    && distanceFrom(char, target) === 0) {
+    if (
+      this.game.traitHelper.rollTraitValue(char, 'ViciousAssault') &&
+      distanceFrom(char, target) === 0
+    ) {
       this.game.spellManager.castSpell('Cleave', char, target);
     }
   }
-
 }

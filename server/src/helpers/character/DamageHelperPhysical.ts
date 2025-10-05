@@ -7,7 +7,6 @@ import {
   CombatEffect,
   DamageArgs,
   DamageClass,
-  distanceFrom,
   HandsClasses,
   ICharacter,
   IItemEffect,
@@ -27,6 +26,7 @@ import {
 } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { distanceFrom } from '../external';
 interface WeaponAttackStats {
   damage: number[];
   variance: { min: number; max: number };

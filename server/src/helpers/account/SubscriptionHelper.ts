@@ -1,12 +1,12 @@
 import { Injectable } from 'injection-js';
 import stripe from 'stripe';
 
+import { isSubscribed } from '../../helpers';
 import {
   GameServerResponse,
   IAccount,
   IPlayer,
   ISilverPerk,
-  isSubscribed,
   SilverPurchase,
   SubscriptionTier,
 } from '../../interfaces';

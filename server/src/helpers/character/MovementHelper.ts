@@ -3,11 +3,8 @@ import { clamp, isUndefined, random } from 'lodash';
 
 import {
   DamageClass,
-  directionDiagonalToWestEast,
-  directionFromOffset,
   ICharacter,
   INPC,
-  isAtLeastTester,
   ObjectType,
   SoundEffect,
   Stat,
@@ -20,6 +17,12 @@ import { CharacterHelper } from './CharacterHelper';
 import { CombatHelper } from './CombatHelper';
 import { InteractionHelper } from './InteractionHelper';
 import { PlayerHelper } from './PlayerHelper';
+
+import {
+  directionDiagonalToWestEast,
+  directionFromOffset,
+  isAtLeastTester,
+} from '../../helpers';
 
 @Injectable()
 export class MovementHelper extends BaseService {

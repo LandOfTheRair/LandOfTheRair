@@ -1,9 +1,9 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
+import { basePlayerSprite } from '../../helpers';
 import {
   Allegiance,
-  basePlayerSprite,
   Currency,
   Direction,
   ICharacter,

@@ -1,15 +1,20 @@
-import { Parser } from 'muud';
 import { isNumber, random } from 'lodash';
+import { Parser } from 'muud';
 
-import { Game } from '../../../../../helpers';
-import { Currency, distanceFrom,
+import { distanceFrom, Game } from '../../../../../helpers';
+import {
+  Currency,
   GameServerResponse,
-  IAIBehavior, ICharacter, IDialogChatAction, INPC, IPlayer, ItemSlot } from '../../../../../interfaces';
+  IAIBehavior,
+  ICharacter,
+  IDialogChatAction,
+  INPC,
+  IPlayer,
+  ItemSlot,
+} from '../../../../../interfaces';
 
 export class ThanksgivingGunsBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser) {
-
     const currentNPCRefs: Record<string, INPC[]> = {};
     const currentTargets: Record<string, string> = {};
     const scores: Record<string, number> = {};
@@ -17,7 +22,11 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
     const clearTimers = {};
 
     const cleanUpPlayerData = (uuid: string) => {
-      if (currentNPCRefs[uuid]) currentNPCRefs[uuid].forEach(targ => game.deathHelper.fakeNPCDie(targ));
+      if (currentNPCRefs[uuid]) {
+        currentNPCRefs[uuid].forEach((targ) =>
+          game.deathHelper.fakeNPCDie(targ),
+        );
+      }
 
       if (clearTimers[uuid]) clearTimeout(clearTimers[uuid]);
 
@@ -29,14 +38,14 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
     };
 
     const startTargetPractice = (player: IPlayer) => {
-
       const uuid = player.uuid;
 
       const spawnNPCS = async () => {
-
         const mapRef = game.worldManager.getMap(npc.map);
 
-        const doesPlayerExistStill = game.playerManager.getPlayerByUsername(player.username);
+        const doesPlayerExistStill = game.playerManager.getPlayerByUsername(
+          player.username,
+        );
 
         if (!player || !doesPlayerExistStill || player.map !== npc.map) {
           cleanUpPlayerData(uuid);
@@ -51,7 +60,11 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         currentNPCRefs[uuid] = [];
 
         if (rounds[uuid] > 10) {
-          game.messageHelper.sendPrivateMessage(npc, player, 'Well done! Come see me for your reward!');
+          game.messageHelper.sendPrivateMessage(
+            npc,
+            player,
+            'Well done! Come see me for your reward!',
+          );
 
           clearTimers[uuid] = setTimeout(() => {
             cleanUpPlayerData(uuid);
@@ -62,15 +75,19 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         const realTargetNumber = random(1, 4);
 
         for (let i = 1; i <= 4; i++) {
-          const npcSpawner = mapRef?.state.getNPCSpawnerByName(`Target Spawner ${i}`);
-          const target = npcSpawner?.forceSpawnNPC({ createCallback: (targetNPC) => {
-            targetNPC.name = `target ${i}`;
-            targetNPC.affiliation = realTargetNumber === i ? 'Real Target' : 'Turkey Target';
-            targetNPC.onlyVisibleTo = uuid;
-          } });
+          const npcSpawner = mapRef?.state.getNPCSpawnerByName(
+            `Target Spawner ${i}`,
+          );
+          const target = npcSpawner?.forceSpawnNPC({
+            createCallback: (targetNPC) => {
+              targetNPC.name = `target ${i}`;
+              targetNPC.affiliation =
+                realTargetNumber === i ? 'Real Target' : 'Turkey Target';
+              targetNPC.onlyVisibleTo = uuid;
+            },
+          });
 
           if (target) {
-
             currentNPCRefs[uuid].push(target);
 
             const ai = npcSpawner?.getNPCAI(target.uuid);
@@ -94,10 +111,18 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         }
 
         currentTargets[uuid] = `target ${realTargetNumber}`;
-        game.messageHelper.sendPrivateMessage(npc, player, `Round ${rounds[uuid]}: Hit **target ${realTargetNumber}**!`);
+        game.messageHelper.sendPrivateMessage(
+          npc,
+          player,
+          `Round ${rounds[uuid]}: Hit **target ${realTargetNumber}**!`,
+        );
 
         setTimeout(() => {
-          if (currentNPCRefs[uuid]) currentNPCRefs[uuid].forEach(targ => game.deathHelper.fakeNPCDie(targ));
+          if (currentNPCRefs[uuid]) {
+            currentNPCRefs[uuid].forEach((targ) =>
+              game.deathHelper.fakeNPCDie(targ),
+            );
+          }
 
           setTimeout(() => {
             spawnNPCS();
@@ -108,7 +133,8 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
       spawnNPCS();
     };
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -119,12 +145,24 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         if (isNumber(scores[player.uuid]) || isNumber(rounds[player.uuid])) {
           if (rounds[player.uuid] > 10) {
             const tokens = Math.max(10, scores[player.uuid] * 10);
-            game.messageHelper.sendLogMessageToPlayer(player, { message: `Planst hands you ${tokens} turkey coins!` });
-            game.currencyHelper.gainCurrency(player, tokens, Currency.Thanksgiving);
+            game.messageHelper.sendLogMessageToPlayer(player, {
+              message: `Planst hands you ${tokens} turkey coins!`,
+            });
+            game.currencyHelper.gainCurrency(
+              player,
+              tokens,
+              Currency.Thanksgiving,
+            );
 
             const rightHand = player.items.equipment[ItemSlot.RightHand];
-            if (scores[player.uuid] === 10 && rightHand && rightHand.name === 'Thanksgiving Blunderbuss') {
-              const item = game.itemCreator.getSimpleItem('Thanksgiving Blunderbuss (Improved)');
+            if (
+              scores[player.uuid] === 10 &&
+              rightHand &&
+              rightHand.name === 'Thanksgiving Blunderbuss'
+            ) {
+              const item = game.itemCreator.getSimpleItem(
+                'Thanksgiving Blunderbuss (Improved)',
+              );
               game.characterHelper.setRightHand(player, item);
             }
 
@@ -149,15 +187,20 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
           options: [
             { text: 'I can be a blunder boss?', action: 'target practice' },
             { text: 'Nope', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('target practice')
+    parser
+      .addCommand('target practice')
       .setSyntax(['target practice'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -177,15 +220,20 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
           options: [
             { text: 'Start!', action: 'start' },
             { text: 'Nope', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('start')
+    parser
+      .addCommand('start')
       .setSyntax(['start'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -193,14 +241,21 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 0) return 'Please move closer.';
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
-        if (!rightHand
-        || (rightHand.name !== 'Thanksgiving Blunderbuss' && rightHand.name !== 'Thanksgiving Blunderbuss (Improved)')) {
+        if (
+          !rightHand ||
+          (rightHand.name !== 'Thanksgiving Blunderbuss' &&
+            rightHand.name !== 'Thanksgiving Blunderbuss (Improved)')
+        ) {
           return 'You might want to hold a Blunderbuss Mark-I or Mark-II for this.';
         }
 
-        if (isNumber(scores[player.uuid])) return 'You are already doing this event! Wait until it is over.';
+        if (isNumber(scores[player.uuid])) {
+          return 'You are already doing this event! Wait until it is over.';
+        }
 
-        if (Object.keys(currentTargets).length >= 20) return 'Too many players are doing this event, please come back later!';
+        if (Object.keys(currentTargets).length >= 20) {
+          return 'Too many players are doing this event, please come back later!';
+        }
 
         startTargetPractice(player);
         return 'Good luck!';

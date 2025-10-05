@@ -1,15 +1,19 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../helpers';
+import { distanceFrom, Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
-  IItemModderBehavior, INPC, ItemSlot } from '../../../../interfaces';
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  IItemModderBehavior,
+  INPC,
+  ItemSlot,
+} from '../../../../interfaces';
 
 export class ItemModderBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IItemModderBehavior) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -29,15 +33,20 @@ export class ItemModderBehavior implements IAIBehavior {
           options: [
             { text: 'Prone?', action: 'prone' },
             { text: 'Leave', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('prone')
+    parser
+      .addCommand('prone')
       .setSyntax(['prone'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -49,11 +58,20 @@ export class ItemModderBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
 
         if (rightHand && leftHand && rightHand.name === leftHand.name) {
-          if (!game.itemHelper.isOwnedBy(player, leftHand)
-          || !game.itemHelper.isOwnedBy(player, rightHand)) return 'You must own both of those items!';
+          if (
+            !game.itemHelper.isOwnedBy(player, leftHand) ||
+            !game.itemHelper.isOwnedBy(player, rightHand)
+          ) {
+            return 'You must own both of those items!';
+          }
 
-          const proneChance = game.itemHelper.getItemProperty(rightHand, 'proneChance');
-          if (!proneChance || proneChance <= 0) return 'That item does not prone!';
+          const proneChance = game.itemHelper.getItemProperty(
+            rightHand,
+            'proneChance',
+          );
+          if (!proneChance || proneChance <= 0) {
+            return 'That item does not prone!';
+          }
 
           rightHand.mods.proneChance = 0;
           game.characterHelper.setLeftHand(player, undefined);
@@ -69,12 +87,14 @@ export class ItemModderBehavior implements IAIBehavior {
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,
-          options: [
-            { text: 'Got it', action: 'noop' },
-          ]
+          options: [{ text: 'Got it', action: 'noop' }],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });

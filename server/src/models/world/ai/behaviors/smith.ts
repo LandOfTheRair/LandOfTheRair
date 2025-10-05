@@ -1,19 +1,25 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../helpers';
+import { distanceFrom, Game } from '../../../../helpers';
 import {
-  distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction,
-  INPC, IPlayer, ISmithBehavior, ItemSlot, LearnedSpell } from '../../../../interfaces';
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  INPC,
+  IPlayer,
+  ISmithBehavior,
+  ItemSlot,
+  LearnedSpell,
+} from '../../../../interfaces';
 
 export class SmithBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: ISmithBehavior) {
-
     let { costPerThousand, repairsUpToCondition } = behavior;
     costPerThousand ??= 10;
     repairsUpToCondition ??= 20000;
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -33,7 +39,10 @@ export class SmithBehavior implements IAIBehavior {
         ];
 
         if (!game.characterHelper.hasLearned(player, 'Metalworking')) {
-          options.unshift({ text: 'Teach me about Metalworking', action: 'teach' });
+          options.unshift({
+            text: 'Teach me about Metalworking',
+            action: 'teach',
+          });
         }
 
         const formattedChat: IDialogChatAction = {
@@ -42,15 +51,20 @@ export class SmithBehavior implements IAIBehavior {
           displayNPCName: npc.name,
           displayNPCSprite: npc.sprite,
           displayNPCUUID: npc.uuid,
-          options
+          options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return text;
       });
 
-    parser.addCommand('repair')
+    parser
+      .addCommand('repair')
       .setSyntax(['repair'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -61,16 +75,24 @@ export class SmithBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold something in your right hand!';
 
-        const maxCondition = game.subscriptionHelper.maxSmithRepair(player, repairsUpToCondition);
-        const missingCondition = maxCondition - (rightHand.mods.condition ?? 20000);
-        if (missingCondition <= 0) return 'That item is as good as it\'s gonna get \'round here!';
+        const maxCondition = game.subscriptionHelper.maxSmithRepair(
+          player,
+          repairsUpToCondition,
+        );
+        const missingCondition =
+          maxCondition - (rightHand.mods.condition ?? 20000);
+        if (missingCondition <= 0) {
+          return "That item is as good as it's gonna get 'round here!";
+        }
 
         const cpt = costPerThousand ?? 100;
 
         const cost = Math.floor(cpt * (missingCondition / 1000));
         if (cost < 0) return 'That item is not in need of repair!';
 
-        if (!game.currencyHelper.hasCurrency(player, cost)) return `You need ${cost.toLocaleString()} gold to repair that item!`;
+        if (!game.currencyHelper.hasCurrency(player, cost)) {
+          return `You need ${cost.toLocaleString()} gold to repair that item!`;
+        }
 
         game.currencyHelper.loseCurrency(player, cost);
         rightHand.mods.condition = maxCondition;
@@ -78,7 +100,8 @@ export class SmithBehavior implements IAIBehavior {
         return 'Done!';
       });
 
-    parser.addCommand('repairall')
+    parser
+      .addCommand('repairall')
       .setSyntax(['repairall'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -86,15 +109,19 @@ export class SmithBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const maxCondition = game.subscriptionHelper.maxSmithRepair(player, repairsUpToCondition);
+        const maxCondition = game.subscriptionHelper.maxSmithRepair(
+          player,
+          repairsUpToCondition,
+        );
         const cpt = costPerThousand ?? 100;
 
         let totalSpend = 0;
 
-        Object.values(player.items.equipment).forEach(item => {
+        Object.values(player.items.equipment).forEach((item) => {
           if (!item) return;
 
-          const missingCondition = maxCondition - (item.mods.condition ?? 20000);
+          const missingCondition =
+            maxCondition - (item.mods.condition ?? 20000);
           if (missingCondition <= 0) return;
 
           const cost = Math.floor(cpt * (missingCondition / 1000));
@@ -108,12 +135,13 @@ export class SmithBehavior implements IAIBehavior {
           item.mods.condition = maxCondition;
         });
 
-        if (totalSpend === 0) return 'You aren\'t wearing anythin\' I can fix.';
+        if (totalSpend === 0) return "You aren't wearing anythin' I can fix.";
 
         return 'Did what I could.';
       });
 
-    parser.addCommand('teach')
+    parser
+      .addCommand('teach')
       .setSyntax(['teach'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -121,9 +149,15 @@ export class SmithBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Metalworking')) return 'You already know Metalworking!';
+        if (game.characterHelper.hasLearned(player, 'Metalworking')) {
+          return 'You already know Metalworking!';
+        }
 
-        game.characterHelper.forceSpellLearnStatus(player, 'Metalworking', LearnedSpell.FromFate);
+        game.characterHelper.forceSpellLearnStatus(
+          player,
+          'Metalworking',
+          LearnedSpell.FromFate,
+        );
 
         return 'Go forth and craft gear!';
       });

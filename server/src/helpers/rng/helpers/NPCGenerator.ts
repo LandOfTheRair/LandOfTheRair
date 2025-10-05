@@ -1,9 +1,9 @@
 import { Rollable } from 'lootastic';
 import { RNG } from 'rot-js/dist/rot';
+import { calculateSkillXPRequiredForLevel } from '../../../helpers';
 import {
   Allegiance,
   BaseClass,
-  calculateSkillXPRequiredForLevel,
   Hostility,
   IChallenge,
   IItemDefinition,

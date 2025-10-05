@@ -1,6 +1,6 @@
+import { gemTextFor } from '../../../../helpers';
 import {
   GameServerResponse,
-  gemTextFor,
   ICharacter,
   IPlayer,
   ItemClass,

@@ -1,8 +1,5 @@
-import {
-  DamageClass,
-  distanceFrom,
-  ICharacter,
-} from '../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../helpers';
+import { DamageClass, ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ShredTenPercent extends SpellCommand {

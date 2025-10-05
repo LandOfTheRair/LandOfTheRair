@@ -1,8 +1,8 @@
 import { sample } from 'lodash';
 
+import { distanceFrom } from '../../../../../helpers';
 import {
   DamageClass,
-  distanceFrom,
   ICharacter,
   IStatusEffect,
 } from '../../../../../interfaces';

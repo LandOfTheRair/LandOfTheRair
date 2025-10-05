@@ -1,11 +1,13 @@
 import { isNumber, uniq } from 'lodash';
 
-import { Game } from '../../helpers';
 import {
-  Direction,
   directionFromText,
   directionToOffset,
   distanceFrom,
+  Game,
+} from '../../helpers';
+import {
+  Direction,
   ICharacter,
   IItemEffect,
   IMacroCommand,

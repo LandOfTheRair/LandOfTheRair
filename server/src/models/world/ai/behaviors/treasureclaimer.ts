@@ -1,8 +1,7 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../helpers';
+import { distanceFrom, Game } from '../../../../helpers';
 import {
-  distanceFrom,
   GameServerResponse,
   IAIBehavior,
   IDialogChatAction,

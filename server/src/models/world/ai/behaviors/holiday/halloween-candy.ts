@@ -1,13 +1,19 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../../helpers';
-import { Currency, distanceFrom, GameServerResponse, IAIBehavior, IDialogChatAction, INPC, ItemSlot } from '../../../../../interfaces';
+import { distanceFrom, Game } from '../../../../../helpers';
+import {
+  Currency,
+  GameServerResponse,
+  IAIBehavior,
+  IDialogChatAction,
+  INPC,
+  ItemSlot,
+} from '../../../../../interfaces';
 
 export class HalloweenCandyBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser) {
-
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -17,28 +23,30 @@ export class HalloweenCandyBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
 
-        let message = 'Sorry man, I only deal in brains and candy. Maybe you got a SACK full of \'em?';
+        let message =
+          "Sorry man, I only deal in brains and candy. Maybe you got a SACK full of 'em?";
         if (!rightHand) {
-          message = 'If you want tokens, bring me brains and candy. I can also check your SACK, if you have \'em there.';
+          message =
+            "If you want tokens, bring me brains and candy. I can also check your SACK, if you have 'em there.";
         }
 
         if (rightHand) {
           if (rightHand.name === 'Halloween Zombie Brain') {
             game.characterHelper.setRightHand(player, undefined);
             game.currencyHelper.gainCurrency(player, 5, Currency.Halloween);
-            return 'Thanks for the brains, chum. Here\'s 5 tokens, knock yourself out.';
+            return "Thanks for the brains, chum. Here's 5 tokens, knock yourself out.";
           }
 
           if (rightHand.name === 'Halloween Candy Pile') {
             game.characterHelper.setRightHand(player, undefined);
             game.currencyHelper.gainCurrency(player, 10, Currency.Halloween);
-            return 'Thanks for the candy, chum. Here\'s 10 tokens, knock yourself out.';
+            return "Thanks for the candy, chum. Here's 10 tokens, knock yourself out.";
           }
 
           if (rightHand.name.includes('Halloween Candy - ')) {
             game.characterHelper.setRightHand(player, undefined);
             game.currencyHelper.gainCurrency(player, 1, Currency.Halloween);
-            return 'Thanks for the candy, chum. Here\'s a token, don\'t spend it all in one place.';
+            return "Thanks for the candy, chum. Here's a token, don't spend it all in one place.";
           }
         }
 
@@ -51,15 +59,20 @@ export class HalloweenCandyBehavior implements IAIBehavior {
           options: [
             { text: 'Yeah, check it out', action: 'sack' },
             { text: 'Nope', action: 'noop' },
-          ]
+          ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(player.username, GameServerResponse.DialogChat, formattedChat);
+        game.transmissionHelper.sendResponseToAccount(
+          player.username,
+          GameServerResponse.DialogChat,
+          formattedChat,
+        );
 
         return message;
       });
 
-    parser.addCommand('sack')
+    parser
+      .addCommand('sack')
       .setSyntax(['sack'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -67,21 +80,34 @@ export class HalloweenCandyBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const brainIndexes = player.items.sack.items.filter(x => x.name === 'Halloween Zombie Brain');
-        const pileIndexes = player.items.sack.items.filter(x => x.name === 'Halloween Candy Pile');
-        const candyIndexes = player.items.sack.items.filter(x => x.name.includes('Halloween Candy -'));
+        const brainIndexes = player.items.sack.items.filter(
+          (x) => x.name === 'Halloween Zombie Brain',
+        );
+        const pileIndexes = player.items.sack.items.filter(
+          (x) => x.name === 'Halloween Candy Pile',
+        );
+        const candyIndexes = player.items.sack.items.filter((x) =>
+          x.name.includes('Halloween Candy -'),
+        );
 
         game.inventoryHelper.removeItemsFromSackByUUID(player, [
-          ...brainIndexes.map(x => x.uuid),
-          ...pileIndexes.map(x => x.uuid),
-          ...candyIndexes.map(x => x.uuid)
+          ...brainIndexes.map((x) => x.uuid),
+          ...pileIndexes.map((x) => x.uuid),
+          ...candyIndexes.map((x) => x.uuid),
         ]);
 
-        const tokensGained = (brainIndexes.length * 5) + (pileIndexes.length * 10) + candyIndexes.length;
+        const tokensGained =
+          brainIndexes.length * 5 +
+          pileIndexes.length * 10 +
+          candyIndexes.length;
 
-        if (tokensGained === 0) return 'Hey, I can\'t find anything in here.';
+        if (tokensGained === 0) return "Hey, I can't find anything in here.";
 
-        game.currencyHelper.gainCurrency(player, tokensGained, Currency.Halloween);
+        game.currencyHelper.gainCurrency(
+          player,
+          tokensGained,
+          Currency.Halloween,
+        );
 
         return `Woah dude, thanks! Here's ${tokensGained.toLocaleString()} pumpkin coins for your trouble.`;
       });

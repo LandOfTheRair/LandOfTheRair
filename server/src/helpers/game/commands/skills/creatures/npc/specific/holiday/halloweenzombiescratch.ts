@@ -1,8 +1,5 @@
-import {
-  distanceFrom,
-  ICharacter,
-  INPC,
-} from '../../../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../../../helpers';
+import { ICharacter, INPC } from '../../../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../../../models/macro';
 
 export class HalloweenZombieScratch extends SpellCommand {

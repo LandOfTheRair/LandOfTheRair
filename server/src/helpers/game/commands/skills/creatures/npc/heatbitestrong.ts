@@ -1,9 +1,6 @@
-import {
-  DamageClass,
-  distanceFrom,
-  ICharacter,
-  Stat,
-} from '../../../../../../interfaces';
+import { DamageClass, ICharacter, Stat } from '../../../../../../interfaces';
+
+import { distanceFrom } from '../../../../../../helpers';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class HeatBiteStrong extends SpellCommand {

@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
-import { distanceFrom, ICharacter } from '../../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../../helpers';
+import { ICharacter } from '../../../../../../../interfaces';
 import { Player } from '../../../../../../../models';
 import { SpellCommand } from '../../../../../../../models/macro';
 

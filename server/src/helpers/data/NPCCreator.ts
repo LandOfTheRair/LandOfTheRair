@@ -23,7 +23,6 @@ import {
   Hostility,
   IAIBehavior,
   IChallengeMeta,
-  initializeNPC,
   INPC,
   INPCDefinition,
   ItemSlot,
@@ -44,6 +43,8 @@ import { BaseService } from '../../models/BaseService';
 import { trickOrTreat } from '../../models/world/ai/ai-commands';
 import { ContentManager } from './ContentManager';
 import { ItemCreator } from './ItemCreator';
+
+import { initializeNPC } from '../../helpers';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs

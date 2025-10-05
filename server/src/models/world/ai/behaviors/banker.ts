@@ -1,15 +1,21 @@
 import { Parser } from 'muud';
 
-import { Game } from '../../../../helpers';
-import { Currency, distanceFrom, GameAction, IAIBehavior, IBankerBehavior, INPC, IPlayer } from '../../../../interfaces';
+import { distanceFrom, Game } from '../../../../helpers';
+import {
+  Currency,
+  GameAction,
+  IAIBehavior,
+  IBankerBehavior,
+  INPC,
+  IPlayer,
+} from '../../../../interfaces';
 
 export class BankerBehavior implements IAIBehavior {
-
   init(game: Game, npc: INPC, parser: Parser, behavior: IBankerBehavior) {
-
     const { bankId, branchId } = behavior;
 
-    parser.addCommand('hello')
+    parser
+      .addCommand('hello')
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player: IPlayer = env?.player;
@@ -23,13 +29,14 @@ export class BankerBehavior implements IAIBehavior {
           npcName: npc.name,
           npcSprite: npc.sprite,
           npcBank: bankId,
-          npcBranch: branchId
+          npcBranch: branchId,
         });
 
         return `Hello, ${player.name}! Welcome to the ${bankId} Bank, ${branchId} branch.`;
       });
 
-    parser.addCommand('deposit')
+    parser
+      .addCommand('deposit')
       .setSyntax(['deposit <string:amount*>'])
       .setLogic(async ({ env, args }) => {
         const player: IPlayer = env?.player;
@@ -37,8 +44,13 @@ export class BankerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, { floor: true });
-        amount = Math.min(amount, game.currencyHelper.getCurrency(player, Currency.Gold));
+        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+          floor: true,
+        });
+        amount = Math.min(
+          amount,
+          game.currencyHelper.getCurrency(player, Currency.Gold),
+        );
         if (amount <= 0) return 'You cannot deposit that much.';
 
         game.bankHelper.deposit(player, amount);
@@ -46,7 +58,8 @@ export class BankerBehavior implements IAIBehavior {
         return `You've deposited ${amount.toLocaleString()} coins. Thanks for your business!`;
       });
 
-    parser.addCommand('withdraw')
+    parser
+      .addCommand('withdraw')
       .setSyntax(['withdraw <string:amount*>'])
       .setLogic(async ({ env, args }) => {
         const player: IPlayer = env?.player;
@@ -54,7 +67,9 @@ export class BankerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, { floor: true });
+        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+          floor: true,
+        });
         amount = Math.min(amount, player.bank.deposits[Currency.Gold] ?? 0);
         if (amount <= 0) return 'You cannot withdraw that much.';
 

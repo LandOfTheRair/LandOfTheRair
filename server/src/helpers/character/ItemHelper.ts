@@ -3,7 +3,6 @@ import { cloneDeep, isNumber, isUndefined } from 'lodash';
 
 import {
   Allegiance,
-  canUseItem,
   GameServerResponse,
   ICharacter,
   IDialogChatAction,
@@ -12,7 +11,6 @@ import {
   IItemRequirements,
   IPlayer,
   ISimpleItem,
-  isOwnedBy,
   ItemClass,
   ItemSlot,
   Stat,
@@ -22,6 +20,8 @@ import {
 import { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { ContentManager } from '../data/ContentManager';
+
+import { canUseItem, isOwnedBy } from '../external';
 
 // functions related to MODIFYING an item
 // not to be confused with ItemCreator which is for HELPER FUNCTIONS that CREATE ITEMS

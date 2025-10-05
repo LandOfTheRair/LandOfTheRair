@@ -1,8 +1,8 @@
 import { random, sample } from 'lodash';
 
+import { distanceFrom } from '../../../../../../helpers';
 import {
   DamageClass,
-  distanceFrom,
   ICharacter,
   IPlayer,
   Skill,

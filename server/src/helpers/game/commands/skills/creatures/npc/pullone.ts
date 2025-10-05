@@ -1,4 +1,5 @@
-import { distanceFrom, ICharacter } from '../../../../../../interfaces';
+import { distanceFrom } from '../../../../../../helpers';
+import { ICharacter } from '../../../../../../interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class PullOne extends SpellCommand {
