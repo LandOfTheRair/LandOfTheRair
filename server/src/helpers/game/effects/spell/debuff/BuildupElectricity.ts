@@ -30,6 +30,9 @@ export class BuildupElectricity extends Effect {
     currentDamage: number,
   ): number {
     if (damageArgs.damageClass === DamageClass.Lightning) {
+      effect.effectInfo.potency =
+        (effect.effectInfo.potency ?? 0) + currentDamage;
+
       effect.effectInfo.buildUpCurrent ??= 0;
       effect.effectInfo.buildUpCurrent += random(10, 25);
 
@@ -44,7 +47,7 @@ export class BuildupElectricity extends Effect {
           char,
           { name: effect.sourceName, uuid: effect.sourceUUID ?? '' },
           'TeslaCoil',
-          { effect: { extra: { potency: shockTotal } } },
+          { effect: { extra: { potency: shockTotal / 15 } } },
         );
       }
     }
