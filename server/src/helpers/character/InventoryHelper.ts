@@ -110,8 +110,9 @@ export class InventoryHelper extends BaseService {
     if (
       itemClass === ItemClass.Halberd &&
       this.game.traitHelper.hasLearnedTrait(player as IPlayer, 'BigBelt')
-    )
+    ) {
       return true;
+    }
     if (!isBeltable) return false;
 
     if (player.items.belt.items.length >= this.beltSize) return false;
@@ -155,11 +156,13 @@ export class InventoryHelper extends BaseService {
 
   public canAddItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
     const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
-    if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin)
+    if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin) {
       return false;
+    }
 
-    if (player.accountLockers.pouch.items.length >= this.pouchSize)
+    if (player.accountLockers.pouch.items.length >= this.pouchSize) {
       return false;
+    }
 
     return true;
   }
@@ -209,8 +212,9 @@ export class InventoryHelper extends BaseService {
       itemClass === ItemClass.Corpse ||
       item.name.includes('Conjured') ||
       succorInfo
-    )
+    ) {
       return false;
+    }
 
     if (locker.items.length >= this.lockerSize) return false;
 
@@ -281,8 +285,9 @@ export class InventoryHelper extends BaseService {
     player.accountLockers.materials[material] ??= 0;
     player.accountLockers.materials[material] += number;
 
-    if (player.accountLockers.materials[material] <= 0)
+    if (player.accountLockers.materials[material] <= 0) {
       player.accountLockers.materials[material] = 0;
+    }
   }
 
   public removeMaterial(player: IPlayer, material: string, number = 1): void {
