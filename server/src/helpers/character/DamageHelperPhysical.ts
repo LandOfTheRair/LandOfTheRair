@@ -293,6 +293,13 @@ export class DamageHelperPhysical extends BaseService {
       weaponStats = weaponTiers[ItemClass.Longsword];
     }
 
+    if (
+      this.game.traitHelper.traitLevel(attacker, 'SmashingBoard') &&
+      [ItemClass.Shield].includes(itemClass as WeaponClass)
+    ) {
+      weaponStats = weaponTiers[ItemClass.Mace];
+    }
+
     if (!weaponStats) {
       return { damage: 0, isWeak: false, isStrong: false };
     }
