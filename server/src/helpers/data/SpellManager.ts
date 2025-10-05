@@ -368,14 +368,6 @@ export class SpellManager extends BaseService {
       }
     }
 
-    // send a message to the caster if they're not the target
-    if ((targetsCaster || caster !== target) && caster && casterMessage) {
-      this.game.messageHelper.sendLogMessageToPlayer(caster, {
-        message: casterMessage,
-        sfx: casterSfx as SoundEffect,
-      });
-    }
-
     // send a message to the target
     if (target && targetMessage) {
       this.game.messageHelper.sendLogMessageToPlayer(target, {

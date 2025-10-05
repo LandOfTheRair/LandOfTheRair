@@ -389,6 +389,19 @@ export class SpellCommand extends SkillCommand {
       }
     }
 
+    // send a message to the caster if they're not the target
+    const { targetsCaster, casterMessage, casterSfx } = spellData.spellMeta;
+    if (
+      (targetsCaster || caster !== primaryTarget) &&
+      caster &&
+      casterMessage
+    ) {
+      this.game.messageHelper.sendLogMessageToPlayer(caster, {
+        message: casterMessage,
+        sfx: casterSfx as SoundEffect,
+      });
+    }
+
     // if we have a primary target and we have an aoe spell
     if (primaryTarget && spellData.spellMeta.aoe) {
       // attempt to boost the range of the spell
