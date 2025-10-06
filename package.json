@@ -3,7 +3,7 @@
   "version": "2.8.1",
   "private": true,
   "scripts": {
-    "build": "turbo run build --affected",
+    "build": "turbo run build",
     "start:dev": "turbo run start:dev",
     "lint": "turbo run lint --affected",
     "test": "vitest --run",
