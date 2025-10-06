@@ -24,6 +24,8 @@ jobs:
 
       - run: npm install
 
+      - run: npm run setup:buildprereqs
+
       - run: cd apps/client && npm run setup
 
       - run: cd apps/client && npm run lint
