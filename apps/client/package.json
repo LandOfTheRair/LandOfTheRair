@@ -11,7 +11,7 @@
     "build": "npm run build:app",
     "build:app": "ng build --configuration production",
     "build:netlify": "npm run prebuild && npm run build:app",
-    "lint": "ng lint",
+    "lint": "eslint -c .eslintrc.json --ext .ts,.html src",
     "setup": "npm i && npm run prebuild",
     "prebuild": "npm run prebuild:assets:all && npm run prebuild:assets:hashes && npm run prebuild:macicon:json && npm run prebuild:assets:hashes:all && npm run prebuild:modkit",
     "prebuild:assets:all": "ts-node scripts/prebuild-assets-all",
