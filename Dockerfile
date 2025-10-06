@@ -3,6 +3,7 @@ RUN apk add --no-cache libc6-compat
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 ADD https://www.google.com /time.now
+COPY ./turbo.json /usr/src/app
 COPY ./package.json /usr/src/app
 COPY ./package-lock.json /usr/src/app
 COPY ./packages /usr/src/app/packages
