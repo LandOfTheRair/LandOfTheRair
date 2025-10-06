@@ -1,3 +1,4 @@
+import { loseCurrency } from '@lotr/currency';
 import type {
   IItem,
   IItemDefinition,
@@ -61,7 +62,7 @@ export class MarketDB extends BaseService {
   ): Promise<any> {
     const itemDefinition = this.game.itemHelper.getItemDefinition(item.name);
     const listingFee = calculateListingFee(itemDefinition, price);
-    this.game.currencyHelper.loseCurrency(player, listingFee, Currency.Gold);
+    loseCurrency(player, listingFee, Currency.Gold);
 
     this.game.messageHelper.sendSimpleMessage(
       player,

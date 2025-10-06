@@ -11,7 +11,8 @@ import { GameServerResponse, ItemSlot, LearnedSpell } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class SmithBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ISmithBehavior) {
@@ -91,11 +92,11 @@ export class SmithBehavior implements IAIBehavior {
         const cost = Math.floor(cpt * (missingCondition / 1000));
         if (cost < 0) return 'That item is not in need of repair!';
 
-        if (!game.currencyHelper.hasCurrency(player, cost)) {
+        if (!hasCurrency(player, cost)) {
           return `You need ${cost.toLocaleString()} gold to repair that item!`;
         }
 
-        game.currencyHelper.loseCurrency(player, cost);
+        loseCurrency(player, cost);
         rightHand.mods.condition = maxCondition;
 
         return 'Done!';
@@ -130,9 +131,9 @@ export class SmithBehavior implements IAIBehavior {
 
           totalSpend += cost;
 
-          if (!game.currencyHelper.hasCurrency(player, cost)) return;
+          if (!hasCurrency(player, cost)) return;
 
-          game.currencyHelper.loseCurrency(player, cost);
+          loseCurrency(player, cost);
           item.mods.condition = maxCondition;
         });
 

@@ -7,10 +7,11 @@ import type {
   IPlayer,
 } from '@lotr/interfaces';
 import { Currency, GameAction } from '@lotr/interfaces';
-import { distanceFrom } from '@lotr/shared';
+import { cleanNumber, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { getCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class BankerBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IBankerBehavior) {
@@ -46,13 +47,10 @@ export class BankerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+        let amount = cleanNumber(args['amount*'], 0, {
           floor: true,
         });
-        amount = Math.min(
-          amount,
-          game.currencyHelper.getCurrency(player, Currency.Gold),
-        );
+        amount = Math.min(amount, getCurrency(player, Currency.Gold));
         if (amount <= 0) return 'You cannot deposit that much.';
 
         game.bankHelper.deposit(player, amount);
@@ -69,7 +67,7 @@ export class BankerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+        let amount = cleanNumber(args['amount*'], 0, {
           floor: true,
         });
         amount = Math.min(amount, player.bank.deposits[Currency.Gold] ?? 0);

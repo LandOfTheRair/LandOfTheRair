@@ -13,7 +13,6 @@ import {
   CalculatorHelper,
   CharacterHelper,
   CombatHelper,
-  CurrencyHelper,
   DailyHelper,
   DamageHelperMagic,
   DamageHelperOnesided,
@@ -82,7 +81,6 @@ import {
 } from './db';
 import { Logger } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
-import { UserInputHelper } from './UserInputHelper';
 
 @Injectable()
 export class Game {
@@ -127,7 +125,6 @@ export class Game {
     public lobbyManager: LobbyManager,
     public subscriptionHelper: SubscriptionHelper,
     public characterRoller: CharacterRoller,
-    public currencyHelper: CurrencyHelper,
     public itemCreator: ItemCreator,
     public dialogActionHelper: DialogActionHelper,
     public npcCreator: NPCCreator,
@@ -175,7 +172,6 @@ export class Game {
     public playerManager: PlayerManager,
     public worldManager: WorldManager,
     public configManager: ConfigManager,
-    public userInputHelper: UserInputHelper,
     public discordHelper: DiscordHelper,
     public rngDungeonGenerator: RNGDungeonGenerator,
     public rngDungeonManager: RNGDungeonManager,
@@ -252,7 +248,6 @@ export class Game {
         'migrationHelper',
         'corpseManager',
         'characterRoller',
-        'currencyHelper',
         'itemCreator',
         'dialogActionHelper',
         'npcCreator',
@@ -284,7 +279,6 @@ export class Game {
         'messageHelper',
         'traitHelper',
         'stealHelper',
-        'userInputHelper',
         'testHelper',
       ],
     };

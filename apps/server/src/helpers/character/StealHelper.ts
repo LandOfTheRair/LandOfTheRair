@@ -1,14 +1,9 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import type {
-  ICharacter,
-  IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { getCurrency, loseCurrency } from '@lotr/currency';
+import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
+import { Skill, Stat } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -63,7 +58,7 @@ export class StealHelper extends BaseService {
         'stealLevelRangeForSkillGain',
       ) ?? 3;
 
-    const targetGold = this.game.currencyHelper.getCurrency(target);
+    const targetGold = getCurrency(target);
 
     // if they have nothing to steal, we bail
     if (target.items.sack.items.length === 0 && targetGold <= 0) {
@@ -153,7 +148,7 @@ export class StealHelper extends BaseService {
       const handName = this.game.characterHelper.getEmptyHand(char);
       if (!handName) return;
 
-      this.game.currencyHelper.loseCurrency(target, stolenGold);
+      loseCurrency(target, stolenGold);
       const item = this.game.itemCreator.getGold(stolenGold);
 
       this.game.characterHelper.setEquipmentSlot(char, handName, item);

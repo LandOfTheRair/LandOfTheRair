@@ -16,7 +16,8 @@ import {
 import { descTextFor, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class IdentifierBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -55,6 +56,7 @@ export class IdentifierBehavior implements IAIBehavior {
             okText: 'Yes, identify!',
             cancelText: 'No, not now',
           },
+
           okAction: { command: '!privatesay', args: `${npc.uuid}, identify` },
         });
 
@@ -73,21 +75,11 @@ export class IdentifierBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
-        if (
-          !game.currencyHelper.hasCurrency(
-            player,
-            identifyCost,
-            identifyCurrency,
-          )
-        ) {
+        if (!hasCurrency(player, identifyCost, identifyCurrency)) {
           return `You do not have enough ${identifyCurrency} for that!`;
         }
 
-        game.currencyHelper.loseCurrency(
-          player,
-          identifyCost,
-          identifyCurrency,
-        );
+        loseCurrency(player, identifyCost, identifyCurrency);
 
         const identMsg = descTextFor(
           player,

@@ -1,5 +1,6 @@
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
+import { cleanNumber } from '@lotr/shared';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateGold extends MacroCommand {
@@ -9,7 +10,7 @@ export class GMCreateGold extends MacroCommand {
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const value = this.game.userInputHelper.cleanNumber(args.arrayArgs[0], 0, {
+    const value = cleanNumber(args.arrayArgs[0], 0, {
       floor: true,
       abs: true,
     });

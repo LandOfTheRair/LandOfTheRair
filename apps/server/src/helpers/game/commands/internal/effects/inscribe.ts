@@ -1,4 +1,5 @@
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { cleanNumber } from '@lotr/shared';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class InscribeCommand extends MacroCommand {
@@ -12,7 +13,7 @@ export class InscribeCommand extends MacroCommand {
 
     const [slot, ...scroll] = args.arrayArgs;
 
-    const slotNum = this.game.userInputHelper.cleanNumber(+slot);
+    const slotNum = cleanNumber(+slot);
     const scrollName = scroll.join(' ');
 
     const levelReq = 5 + 5 * slotNum;

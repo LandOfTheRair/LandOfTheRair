@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { gainCurrency } from '@lotr/currency';
 import type { Holiday, IPlayer } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
 import { BaseService } from '../../../models/BaseService';
@@ -43,11 +44,7 @@ export class HolidayHelper extends BaseService {
       amt,
     );
 
-    this.game.currencyHelper.gainCurrency(
-      player,
-      tokensGained,
-      Currency[this.currentHoliday()],
-    );
+    gainCurrency(player, tokensGained, Currency[this.currentHoliday()]);
     this.game.messageHelper.sendSimpleMessage(
       player,
       `You also earned ${tokensGained} ${Currency[this.currentHoliday()]}!`,

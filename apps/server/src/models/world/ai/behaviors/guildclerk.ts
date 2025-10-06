@@ -7,10 +7,11 @@ import type {
   IUpgraderBehavior,
 } from '@lotr/interfaces';
 import { Currency, GameServerResponse } from '@lotr/interfaces';
-import { distanceFrom } from '@lotr/shared';
+import { cleanNumber, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { gainCurrency, getCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class GuildClerkBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IUpgraderBehavior) {
@@ -136,17 +137,14 @@ export class GuildClerkBehavior implements IAIBehavior {
           return 'Come back when you have a guild!';
         }
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+        let amount = cleanNumber(args['amount*'], 0, {
           floor: true,
         });
-        amount = Math.min(
-          amount,
-          game.currencyHelper.getCurrency(player, Currency.Gold),
-        );
+        amount = Math.min(amount, getCurrency(player, Currency.Gold));
         if (amount <= 0) return 'You cannot deposit that much.';
 
         game.guildManager.addToTreasury(player, amount);
-        game.currencyHelper.loseCurrency(player, amount, Currency.Gold);
+        loseCurrency(player, amount, Currency.Gold);
 
         return `I've added ${amount.toLocaleString()} gold to your guild treasury!`;
       });
@@ -199,14 +197,14 @@ export class GuildClerkBehavior implements IAIBehavior {
           return 'Your guild does not exist?';
         }
 
-        let amount = game.userInputHelper.cleanNumber(args['amount*'], 0, {
+        let amount = cleanNumber(args['amount*'], 0, {
           floor: true,
         });
         amount = Math.min(amount, guildRef.treasury);
         if (amount <= 0) return 'You cannot take that much.';
 
         game.guildManager.removeFromTreasury(player, amount);
-        game.currencyHelper.gainCurrency(player, amount, Currency.Gold);
+        gainCurrency(player, amount, Currency.Gold);
 
         return `I've given ${amount.toLocaleString()} to you from your treasury!`;
       });

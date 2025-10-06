@@ -1,13 +1,9 @@
 import { Injectable } from 'injection-js';
 
-import type {
-  IGuild,
-  IGuildMember } from '@lotr/interfaces';
-import {
-  Currency,
-  GameAction,
-  GuildRole
-} from '@lotr/interfaces';
+import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
+import type { IGuild, IGuildMember } from '@lotr/interfaces';
+import { Currency, GameAction, GuildRole } from '@lotr/interfaces';
+import { cleanNumber } from '@lotr/shared';
 import { sortBy } from 'lodash';
 import type { Guild, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -626,7 +622,7 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
-    amount = this.game.userInputHelper.cleanNumber(amount, 0, {
+    amount = cleanNumber(amount, 0, {
       floor: true,
       abs: true,
     });
@@ -638,7 +634,7 @@ export class GuildManager extends BaseService {
       return;
     }
 
-    if (!this.game.currencyHelper.hasCurrency(actor, amount, Currency.Gold)) {
+    if (!hasCurrency(actor, amount, Currency.Gold)) {
       this.game.messageHelper.sendSimpleMessage(
         actor,
         'Not enough to add to treasury!',
@@ -646,7 +642,7 @@ export class GuildManager extends BaseService {
       return;
     }
 
-    this.game.currencyHelper.loseCurrency(actor, amount, Currency.Gold);
+    loseCurrency(actor, amount, Currency.Gold);
     guild.treasury += amount;
 
     this.logMemberAction(
@@ -662,7 +658,7 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(actor);
     if (!guild) return;
 
-    amount = this.game.userInputHelper.cleanNumber(amount, 0, {
+    amount = cleanNumber(amount, 0, {
       floor: true,
       abs: true,
     });
@@ -682,7 +678,7 @@ export class GuildManager extends BaseService {
       return;
     }
 
-    this.game.currencyHelper.gainCurrency(actor, amount, Currency.Gold);
+    gainCurrency(actor, amount, Currency.Gold);
     guild.treasury -= amount;
 
     this.logMemberAction(

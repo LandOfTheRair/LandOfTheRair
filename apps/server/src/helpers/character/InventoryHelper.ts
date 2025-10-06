@@ -1,13 +1,11 @@
+import { gainCurrency } from '@lotr/currency';
 import type {
   ICharacter,
   IItemContainer,
   IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  Currency,
-  ItemClass,
-  Stat,
+  ISimpleItem,
 } from '@lotr/interfaces';
+import { Currency, ItemClass, Stat } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -61,7 +59,7 @@ export class InventoryHelper extends BaseService {
         'value',
       ]);
     if (itemClass === ItemClass.Coin) {
-      this.game.currencyHelper.gainCurrency(player, value ?? 0, currency);
+      gainCurrency(player, value ?? 0, currency);
       return true;
     }
 
@@ -367,11 +365,7 @@ export class InventoryHelper extends BaseService {
     this.addItemToBuyback(player, item);
 
     // tell them they sold the item and give em the money
-    this.game.currencyHelper.gainCurrency(
-      player,
-      totalSellValue,
-      Currency.Gold,
-    );
+    gainCurrency(player, totalSellValue, Currency.Gold);
     this.game.messageHelper.sendSimpleMessage(
       player,
       `You sold the ${(itemClass || 'item').toLowerCase()} for ${totalSellValue.toLocaleString()} gold.`,

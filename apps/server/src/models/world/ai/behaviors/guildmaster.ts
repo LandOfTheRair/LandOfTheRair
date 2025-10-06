@@ -10,7 +10,8 @@ import { Currency, GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 import type { Player } from '../../../../models/orm';
 
 export class GuildmasterBehavior implements IAIBehavior {
@@ -112,9 +113,7 @@ export class GuildmasterBehavior implements IAIBehavior {
           return 'It looks like you already have a guild!';
         }
 
-        if (
-          !game.currencyHelper.hasCurrency(player, creationCost, Currency.Gold)
-        ) {
+        if (!hasCurrency(player, creationCost, Currency.Gold)) {
           return 'You do not have enough gold to create a guild!';
         }
 
@@ -162,13 +161,11 @@ export class GuildmasterBehavior implements IAIBehavior {
           Please re-submit your paperwork if this is acceptable!`;
         }
 
-        if (
-          !game.currencyHelper.hasCurrency(player, creationCost, Currency.Gold)
-        ) {
+        if (!hasCurrency(player, creationCost, Currency.Gold)) {
           return 'You do not have enough gold to create a guild!';
         }
 
-        game.currencyHelper.loseCurrency(player, creationCost, Currency.Gold);
+        loseCurrency(player, creationCost, Currency.Gold);
 
         try {
           await game.guildManager.createGuild(player as Player, name, tag);

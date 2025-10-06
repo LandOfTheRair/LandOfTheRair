@@ -8,10 +8,11 @@ import type {
   ISteelroseBehavior,
 } from '@lotr/interfaces';
 import { Currency, GameAction, ItemSlot } from '@lotr/interfaces';
-import { distanceFrom, itemListError } from '@lotr/shared';
+import { cleanNumber, distanceFrom, itemListError } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class SteelroseBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ISteelroseBehavior) {
@@ -57,20 +58,10 @@ export class SteelroseBehavior implements IAIBehavior {
           return "I've cancelled your listing!";
         }
 
-        if (
-          !game.currencyHelper.hasCurrency(
-            player,
-            listingRef.listingInfo.price,
-            Currency.Gold,
-          )
-        ) {
+        if (!hasCurrency(player, listingRef.listingInfo.price, Currency.Gold)) {
           return 'You do not have enough gold!';
         }
-        game.currencyHelper.loseCurrency(
-          player,
-          listingRef.listingInfo.price,
-          Currency.Gold,
-        );
+        loseCurrency(player, listingRef.listingInfo.price, Currency.Gold);
 
         await game.marketDB.createPickupFromItemInfo(
           player.username,
@@ -92,7 +83,7 @@ export class SteelroseBehavior implements IAIBehavior {
         const player: IPlayer = env?.player;
         if (!player) return 'You do not exist.';
 
-        const price = game.userInputHelper.cleanNumber(args['price*'], 0, {
+        const price = cleanNumber(args['price*'], 0, {
           round: true,
           floor: true,
         });
@@ -163,11 +154,7 @@ export class SteelroseBehavior implements IAIBehavior {
         }
         await game.marketDB.removePickupById(pickup);
 
-        game.currencyHelper.gainCurrency(
-          player,
-          pickupRef.gold ?? 0,
-          Currency.Gold,
-        );
+        gainCurrency(player, pickupRef.gold ?? 0, Currency.Gold);
 
         if (pickupRef.itemInfo) {
           const item = game.itemCreator.getSimpleItem(

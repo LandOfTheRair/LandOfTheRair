@@ -1,3 +1,4 @@
+import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -29,8 +30,7 @@ export class Mug extends SpellCommand {
 
     return (
       distanceFrom(char, target) > 0 &&
-      (this.game.currencyHelper.getCurrency(char) > 0 ||
-        target.items.sack.items.length > 0)
+      (getCurrency(char) > 0 || target.items.sack.items.length > 0)
     );
   }
 

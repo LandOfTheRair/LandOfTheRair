@@ -11,7 +11,8 @@ import { GameServerResponse, ItemSlot, LearnedSpell } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class AlchemistBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IAlchemistBehavior) {
@@ -108,8 +109,8 @@ export class AlchemistBehavior implements IAIBehavior {
           if (checkOunces === 0) return;
 
           const cost = checkItemOunces * (alchCost ?? 1);
-          if (!game.currencyHelper.hasCurrency(player, cost)) return;
-          game.currencyHelper.loseCurrency(player, cost);
+          if (!hasCurrency(player, cost)) return;
+          loseCurrency(player, cost);
 
           removeUUIDs.push(item.uuid);
           rightHand.mods.ounces =

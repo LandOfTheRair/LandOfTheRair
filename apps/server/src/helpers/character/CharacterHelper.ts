@@ -6,7 +6,8 @@ import type {
   IItemEffect,
   INPC,
   IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
+  ISimpleItem,
+} from '@lotr/interfaces';
 import {
   Allegiance,
   EquipHash,
@@ -20,6 +21,7 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 
 @Injectable()
@@ -67,11 +69,7 @@ export class CharacterHelper extends BaseService {
       char.hp.minimum,
       char.hp.maximum,
     );
-    char.hp.current = this.game.userInputHelper.cleanNumber(
-      char.hp.current,
-      1,
-      { floor: true },
-    );
+    char.hp.current = cleanNumber(char.hp.current, 1, { floor: true });
   }
 
   public manaDamage(char: ICharacter, mp: number): void {
@@ -84,11 +82,7 @@ export class CharacterHelper extends BaseService {
       char.mp.minimum,
       char.mp.maximum,
     );
-    char.mp.current = this.game.userInputHelper.cleanNumber(
-      char.mp.current,
-      1,
-      { floor: true },
-    );
+    char.mp.current = cleanNumber(char.mp.current, 1, { floor: true });
   }
 
   // get the primary spell casting stat for a character
@@ -387,7 +381,7 @@ export class CharacterHelper extends BaseService {
     stat: Stat,
     value = 1,
   ): boolean {
-    const cleanValue = this.game.userInputHelper.cleanNumber(value, 0);
+    const cleanValue = cleanNumber(value, 0);
 
     // hp/mp always go up with no limit
     if (stat === Stat.HP || stat === Stat.MP) {

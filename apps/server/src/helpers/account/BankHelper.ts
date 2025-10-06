@@ -1,3 +1,4 @@
+import { gainCurrency, loseCurrency } from '@lotr/currency';
 import type { IPlayer } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -21,7 +22,7 @@ export class BankHelper extends BaseService {
       0,
     );
 
-    this.game.currencyHelper.loseCurrency(player, amount, currency);
+    loseCurrency(player, amount, currency);
   }
 
   // withdraw coins
@@ -38,6 +39,6 @@ export class BankHelper extends BaseService {
       0,
     );
 
-    this.game.currencyHelper.gainCurrency(player, amount, currency);
+    gainCurrency(player, amount, currency);
   }
 }

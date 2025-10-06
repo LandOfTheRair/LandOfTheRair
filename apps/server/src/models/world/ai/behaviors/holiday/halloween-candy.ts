@@ -5,7 +5,8 @@ import { Currency, GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../../helpers';
+import { gainCurrency } from '@lotr/currency';
+import type { Game } from '../../../../../helpers';
 
 export class HalloweenCandyBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser) {
@@ -30,19 +31,19 @@ export class HalloweenCandyBehavior implements IAIBehavior {
         if (rightHand) {
           if (rightHand.name === 'Halloween Zombie Brain') {
             game.characterHelper.setRightHand(player, undefined);
-            game.currencyHelper.gainCurrency(player, 5, Currency.Halloween);
+            gainCurrency(player, 5, Currency.Halloween);
             return "Thanks for the brains, chum. Here's 5 tokens, knock yourself out.";
           }
 
           if (rightHand.name === 'Halloween Candy Pile') {
             game.characterHelper.setRightHand(player, undefined);
-            game.currencyHelper.gainCurrency(player, 10, Currency.Halloween);
+            gainCurrency(player, 10, Currency.Halloween);
             return "Thanks for the candy, chum. Here's 10 tokens, knock yourself out.";
           }
 
           if (rightHand.name.includes('Halloween Candy - ')) {
             game.characterHelper.setRightHand(player, undefined);
-            game.currencyHelper.gainCurrency(player, 1, Currency.Halloween);
+            gainCurrency(player, 1, Currency.Halloween);
             return "Thanks for the candy, chum. Here's a token, don't spend it all in one place.";
           }
         }
@@ -100,11 +101,7 @@ export class HalloweenCandyBehavior implements IAIBehavior {
 
         if (tokensGained === 0) return "Hey, I can't find anything in here.";
 
-        game.currencyHelper.gainCurrency(
-          player,
-          tokensGained,
-          Currency.Halloween,
-        );
+        gainCurrency(player, tokensGained, Currency.Halloween);
 
         return `Woah dude, thanks! Here's ${tokensGained.toLocaleString()} pumpkin coins for your trouble.`;
       });

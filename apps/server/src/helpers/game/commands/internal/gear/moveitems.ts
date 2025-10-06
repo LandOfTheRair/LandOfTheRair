@@ -1,3 +1,4 @@
+import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
   IMacroCommandArgs,
@@ -12,7 +13,7 @@ import {
   ItemSlot,
   ObjectType,
 } from '@lotr/interfaces';
-import { distanceFrom } from '@lotr/shared';
+import { cleanNumber, distanceFrom } from '@lotr/shared';
 import { MacroCommand } from '../../../../../models/macro';
 import type { VendorBehavior } from '../../../../../models/world/ai/behaviors';
 
@@ -251,11 +252,7 @@ export class MoveItems extends MacroCommand {
       }
 
       if (
-        !this.game.currencyHelper.hasCurrency(
-          player,
-          buybackItem.mods.buybackValue ?? 0,
-          Currency.Gold,
-        )
+        !hasCurrency(player, buybackItem.mods.buybackValue ?? 0, Currency.Gold)
       ) {
         this.sendMessage(player, 'You cannot afford to buy that item back!');
         return false;
@@ -404,17 +401,14 @@ export class MoveItems extends MacroCommand {
       return this.sendMessage(player, 'Invalid item move destination.');
     }
 
-    const value = this.game.userInputHelper.cleanNumber(origSlot, 0, {
+    const value = cleanNumber(origSlot, 0, {
       floor: true,
     });
-    const amount = Math.min(
-      this.game.currencyHelper.getCurrency(player),
-      value,
-    );
+    const amount = Math.min(getCurrency(player), value);
     if (amount <= 0) return;
 
     const srcItem = this.game.itemCreator.getGold(amount);
-    this.game.currencyHelper.loseCurrency(player, amount, Currency.Gold);
+    loseCurrency(player, amount, Currency.Gold);
 
     switch (dest) {
       case 'R': {
@@ -2079,7 +2073,7 @@ export class MoveItems extends MacroCommand {
       case 'R': {
         // MtR
 
-        if (!this.game.currencyHelper.hasCurrency(player, cost, currency)) {
+        if (!hasCurrency(player, cost, currency)) {
           this.sendMessage(player, 'You do not have enough to buy that!');
           return false;
         }
@@ -2101,14 +2095,14 @@ export class MoveItems extends MacroCommand {
           this.game.characterHelper.setRightHand(player, createdItem);
         }
 
-        this.game.currencyHelper.loseCurrency(player, cost, currency);
+        loseCurrency(player, cost, currency);
 
         break;
       }
 
       case 'L': {
         // MtL
-        if (!this.game.currencyHelper.hasCurrency(player, cost, currency)) {
+        if (!hasCurrency(player, cost, currency)) {
           this.sendMessage(player, 'You do not have enough to buy that!');
           return;
         }
@@ -2130,7 +2124,7 @@ export class MoveItems extends MacroCommand {
           this.game.characterHelper.setLeftHand(player, createdItem);
         }
 
-        this.game.currencyHelper.loseCurrency(player, cost, currency);
+        loseCurrency(player, cost, currency);
 
         break;
       }
@@ -2148,13 +2142,13 @@ export class MoveItems extends MacroCommand {
           createdItem.mods.sellValue = cost;
 
           if (
-            !this.game.currencyHelper.hasCurrency(player, cost, currency) ||
+            !hasCurrency(player, cost, currency) ||
             !this.game.inventoryHelper.canAddItemToBelt(player, createdItem)
           ) {
             return;
           }
 
-          this.game.currencyHelper.loseCurrency(player, cost, currency);
+          loseCurrency(player, cost, currency);
           this.game.inventoryHelper.addItemToBelt(player, createdItem);
         }
 
@@ -2173,13 +2167,13 @@ export class MoveItems extends MacroCommand {
           createdItem.mods.sellValue = cost;
 
           if (
-            !this.game.currencyHelper.hasCurrency(player, cost, currency) ||
+            !hasCurrency(player, cost, currency) ||
             !this.game.inventoryHelper.canAddItemToSack(player, createdItem)
           ) {
             return;
           }
 
-          this.game.currencyHelper.loseCurrency(player, cost, currency);
+          loseCurrency(player, cost, currency);
           this.game.inventoryHelper.addItemToSack(player, createdItem);
         }
 
@@ -2198,13 +2192,13 @@ export class MoveItems extends MacroCommand {
           createdItem.mods.sellValue = cost;
 
           if (
-            !this.game.currencyHelper.hasCurrency(player, cost, currency) ||
+            !hasCurrency(player, cost, currency) ||
             !this.game.inventoryHelper.canAddItemToPouch(player, createdItem)
           ) {
             return;
           }
 
-          this.game.currencyHelper.loseCurrency(player, cost, currency);
+          loseCurrency(player, cost, currency);
           this.game.inventoryHelper.addItemToPouch(player, createdItem);
         }
 
@@ -2243,11 +2237,7 @@ export class MoveItems extends MacroCommand {
       return;
     }
 
-    this.game.currencyHelper.loseCurrency(
-      player,
-      srcItem.mods.buybackValue ?? 0,
-      Currency.Gold,
-    );
+    loseCurrency(player, srcItem.mods.buybackValue ?? 0, Currency.Gold);
 
     switch (dest) {
       case 'R': {
@@ -2552,7 +2542,7 @@ export class MoveItems extends MacroCommand {
       this.game.lockerHelper.getMaterialData(source);
 
     const numTaken = withdrawInOunces
-      ? this.game.userInputHelper.cleanNumber(destSlot, 0, { floor: true })
+      ? cleanNumber(destSlot, 0, { floor: true })
       : 1;
     const totalTakeable = player.accountLockers.materials[source] ?? 0;
 

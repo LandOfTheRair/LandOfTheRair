@@ -16,7 +16,8 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class PeddlerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -87,13 +88,12 @@ export class PeddlerBehavior implements IAIBehavior {
         if (player.items.equipment[ItemSlot.RightHand]) {
           return 'Empty your right hand first!';
         }
-        if (
-          !game.currencyHelper.hasCurrency(player, peddleCost, peddleCurrency)
-        ) {
+
+        if (!hasCurrency(player, peddleCost, peddleCurrency)) {
           return `You do not have enough ${peddleCurrency} for that!`;
         }
 
-        game.currencyHelper.loseCurrency(player, peddleCost, peddleCurrency);
+        loseCurrency(player, peddleCost, peddleCurrency);
 
         const item = game.itemCreator.getSimpleItem(peddleItem);
         game.characterHelper.setRightHand(player, item);

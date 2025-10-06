@@ -11,6 +11,7 @@ import type {
   Tradeskill,
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
+import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { GetSwimLevel } from '../data';
@@ -449,7 +450,7 @@ export class PlayerHelper extends BaseService {
         this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
       xpGained += Math.floor((xpGainBoostPercent / 100) * xpGained);
       xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
-      xpGained = this.game.userInputHelper.cleanNumber(xpGained, 0, {
+      xpGained = cleanNumber(xpGained, 0, {
         floor: true,
       });
     }
@@ -464,7 +465,7 @@ export class PlayerHelper extends BaseService {
     if (this.game.characterHelper.isDead(player) && axpGained > 0) return;
 
     axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
-    axpGained = this.game.userInputHelper.cleanNumber(axpGained, 0, {
+    axpGained = cleanNumber(axpGained, 0, {
       floor: true,
     });
     player.axp = Math.max(Math.floor(player.axp + axpGained), 0);
@@ -509,7 +510,7 @@ export class PlayerHelper extends BaseService {
     }
 
     skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
-    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
+    skillGained = cleanNumber(skillGained, 0);
 
     const oldSkillValue = this.game.calculatorHelper.calcSkillLevelForCharacter(
       player,
@@ -548,7 +549,7 @@ export class PlayerHelper extends BaseService {
     if (this.game.characterHelper.isDead(player)) return;
     if (!skill) return;
 
-    skillGained = this.game.userInputHelper.cleanNumber(skillGained, 0);
+    skillGained = cleanNumber(skillGained, 0);
 
     const oldSkillValue =
       this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, skill);

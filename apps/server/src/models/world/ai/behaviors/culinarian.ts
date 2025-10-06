@@ -17,7 +17,8 @@ import {
 import { distanceFrom, foodTextFor } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class CulinarianBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ICulinarianBehavior) {
@@ -104,13 +105,7 @@ export class CulinarianBehavior implements IAIBehavior {
 
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You do not have anything in your right hand!';
-        if (
-          !game.currencyHelper.hasCurrency(
-            player,
-            identifyCost,
-            identifyCurrency,
-          )
-        ) {
+        if (!hasCurrency(player, identifyCost, identifyCurrency)) {
           return `You do not have enough ${identifyCurrency} for that!`;
         }
 
@@ -127,11 +122,7 @@ export class CulinarianBehavior implements IAIBehavior {
           return 'You do not have a food item in your right hand!';
         }
 
-        game.currencyHelper.loseCurrency(
-          player,
-          identifyCost,
-          identifyCurrency,
-        );
+        loseCurrency(player, identifyCost, identifyCurrency);
 
         const identMsg = foodTextFor(
           player,

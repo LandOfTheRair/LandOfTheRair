@@ -12,7 +12,8 @@ import { Currency, GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../../helpers';
+import { gainCurrency } from '@lotr/currency';
+import type { Game } from '../../../../../helpers';
 
 export class ThanksgivingGunsBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser) {
@@ -149,11 +150,7 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
             game.messageHelper.sendLogMessageToPlayer(player, {
               message: `Planst hands you ${tokens} turkey coins!`,
             });
-            game.currencyHelper.gainCurrency(
-              player,
-              tokens,
-              Currency.Thanksgiving,
-            );
+            gainCurrency(player, tokens, Currency.Thanksgiving);
 
             const rightHand = player.items.equipment[ItemSlot.RightHand];
             if (

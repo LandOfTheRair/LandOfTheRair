@@ -50,6 +50,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { gainCurrency } from '@lotr/currency';
 import { distanceFrom } from '@lotr/shared';
 
 interface IActionResult {
@@ -886,7 +887,7 @@ export class DialogActionHelper extends BaseService {
   ): IActionResult {
     const { currency, amount } = action;
 
-    this.game.currencyHelper.gainCurrency(player, amount, currency);
+    gainCurrency(player, amount, currency);
 
     this.game.messageHelper.sendLogMessageToPlayer(player, {
       message: `${npc.name} hands you ${amount} ${currency}!`,

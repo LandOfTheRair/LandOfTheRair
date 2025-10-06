@@ -18,7 +18,8 @@ import { distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 import type { Player } from '../../../orm';
 
 export class TrainerBehavior implements IAIBehavior {
@@ -185,11 +186,11 @@ export class TrainerBehavior implements IAIBehavior {
             'npcscript',
             'trainer.assessCost',
           ) ?? 50;
-        if (!game.currencyHelper.hasCurrency(player, assessCost)) {
+        if (!hasCurrency(player, assessCost)) {
           return `You do need to pay for this, you know. ${assessCost} gold is not a lot!`;
         }
 
-        game.currencyHelper.loseCurrency(player, assessCost);
+        loseCurrency(player, assessCost);
 
         const percentWay = game.calculatorHelper.assessPercentToNextSkill(
           player,
@@ -303,7 +304,7 @@ export class TrainerBehavior implements IAIBehavior {
             'npcscript',
             'trainer.trainCost',
           ) ?? 200;
-        if (!game.currencyHelper.hasCurrency(player, trainCost)) {
+        if (!hasCurrency(player, trainCost)) {
           return `You do need to pay for this, you know. ${trainCost} gold is not a lot!`;
         }
 
@@ -319,7 +320,7 @@ export class TrainerBehavior implements IAIBehavior {
           return 'You are not experienced enough to train with me.';
         }
 
-        game.currencyHelper.loseCurrency(player, trainCost);
+        loseCurrency(player, trainCost);
 
         return `You've gained ${newLevel - oldLevel} experience levels, and ${(newLevel - oldLevel) * 1} trait point(s).`;
       });
@@ -341,7 +342,7 @@ export class TrainerBehavior implements IAIBehavior {
           return 'You do not seem to be training with the ancient arts at present.';
         }
 
-        if (!game.currencyHelper.hasCurrency(player, 50000)) {
+        if (!hasCurrency(player, 50000)) {
           return 'You do need to pay for this, you know. 50,000 gold is not a lot!';
         }
 
@@ -355,7 +356,7 @@ export class TrainerBehavior implements IAIBehavior {
           return 'You are not experienced enough to train with me.';
         }
 
-        game.currencyHelper.loseCurrency(player, 50000);
+        loseCurrency(player, 50000);
 
         return `You've gained ${newLevel - oldLevel} ancient level(s).`;
       });
@@ -475,10 +476,10 @@ export class TrainerBehavior implements IAIBehavior {
               'npcscript',
               'trainer.resetCost',
             ) ?? 10000;
-          if (!game.currencyHelper.hasCurrency(player, resetCost)) {
+          if (!hasCurrency(player, resetCost)) {
             return `You do need to pay for this, you know. ${resetCost} gold is not a lot!`;
           }
-          game.currencyHelper.loseCurrency(player, resetCost);
+          loseCurrency(player, resetCost);
         }
 
         game.traitHelper.resetTraits(player);

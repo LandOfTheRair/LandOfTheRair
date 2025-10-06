@@ -20,7 +20,8 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { hasCurrency, loseCurrency } from '@lotr/currency';
+import type { Game } from '../../../../helpers';
 
 export class EncrusterBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IEncrusterBehavior) {
@@ -264,7 +265,7 @@ export class EncrusterBehavior implements IAIBehavior {
           1000,
           encrustGemLevel * encrustCostPerlevel,
         );
-        if (!game.currencyHelper.hasCurrency(player, encrustCost)) {
+        if (!hasCurrency(player, encrustCost)) {
           return `You do need to pay for this, you know. ${encrustCost.toLocaleString()} gold is not a lot!`;
         }
 
@@ -309,7 +310,7 @@ export class EncrusterBehavior implements IAIBehavior {
           ),
         );
 
-        game.currencyHelper.loseCurrency(player, encrustCost);
+        loseCurrency(player, encrustCost);
         game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
         game.characterHelper.setLeftHand(player, undefined);
 

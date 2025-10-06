@@ -10,7 +10,8 @@ import { Currency, GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../../helpers';
+import { gainCurrency } from '@lotr/currency';
+import type { Game } from '../../../../../helpers';
 
 export class ChristmasSantaBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser) {
@@ -61,7 +62,7 @@ export class ChristmasSantaBehavior implements IAIBehavior {
           )
         ) {
           game.characterHelper.setRightHand(player, undefined);
-          game.currencyHelper.gainCurrency(player, 15, Currency.Christmas);
+          gainCurrency(player, 15, Currency.Christmas);
           updateGiftsCount(player, 1);
           return 'Thanks for the gift!';
         }
@@ -121,11 +122,7 @@ export class ChristmasSantaBehavior implements IAIBehavior {
 
         if (tokensGained === 0) return "Hey, I can't find anything in here.";
 
-        game.currencyHelper.gainCurrency(
-          player,
-          tokensGained,
-          Currency.Christmas,
-        );
+        gainCurrency(player, tokensGained, Currency.Christmas);
 
         return `Ho ho ho, thank you, adventurer! Here's ${tokensGained.toLocaleString()} snowflake coins for your trouble.`;
       });

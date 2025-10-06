@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
+import { getCurrency, loseCurrency } from '@lotr/currency';
 import type {
   ICharacter,
   INPC,
@@ -509,16 +510,9 @@ export class DeathHelper extends BaseService {
     const allItemDrops: Array<{ x: number; y: number; item: ISimpleItem }> = [];
 
     // take the gold
-    const goldTotal = this.game.currencyHelper.getCurrency(
-      character,
-      Currency.Gold,
-    );
+    const goldTotal = getCurrency(character, Currency.Gold);
     if (goldTotal > 0) {
-      this.game.currencyHelper.loseCurrency(
-        character,
-        goldTotal,
-        Currency.Gold,
-      );
+      loseCurrency(character, goldTotal, Currency.Gold);
 
       const goldItem = this.game.itemCreator.getGold(goldTotal);
       allItemDrops.push({ ...pickSlot(), item: goldItem });

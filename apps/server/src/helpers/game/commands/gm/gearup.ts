@@ -1,11 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  EquipHash,
-  ItemSlot,
-  Stat,
-} from '@lotr/interfaces';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { EquipHash, ItemSlot, Stat } from '@lotr/interfaces';
+import { cleanNumber } from '@lotr/shared';
 import { sortBy } from 'lodash';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -18,7 +13,7 @@ export class GMGearUp extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [stat, level] = args.arrayArgs;
 
-    const cleanLevel = this.game.userInputHelper.cleanNumber(level, 1, {
+    const cleanLevel = cleanNumber(level, 1, {
       floor: true,
       abs: true,
     });

@@ -6,7 +6,8 @@ import { Currency, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../../helpers';
+import { gainCurrency } from '@lotr/currency';
+import type { Game } from '../../../../../helpers';
 
 const tokenTable = [
   { result: 2, chance: 15 },
@@ -49,6 +50,7 @@ export class ThanksgivingTurkeyBehavior implements IAIBehavior {
     parser
 
       .addCommand('hello')
+
       .setSyntax(['hello'])
       .setLogic(async ({ env }) => {
         const player = env?.player;
@@ -71,11 +73,7 @@ export class ThanksgivingTurkeyBehavior implements IAIBehavior {
               game.messageHelper.sendLogMessageToPlayer(player, {
                 message: `Koda hands you ${tokens} turkey coins!`,
               });
-              game.currencyHelper.gainCurrency(
-                player,
-                tokens,
-                Currency.Thanksgiving,
-              );
+              gainCurrency(player, tokens, Currency.Thanksgiving);
             } else {
               const results =
                 game.lootHelper.chooseWithoutReplacement(itemTable);

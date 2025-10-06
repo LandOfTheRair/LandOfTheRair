@@ -1,12 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  Currency,
-  LearnedSpell,
-  Stat,
-} from '@lotr/interfaces';
+import { gainCurrency } from '@lotr/currency';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { Currency, LearnedSpell, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Fate extends Spell {
@@ -79,11 +73,7 @@ export class Fate extends Spell {
 
     if (currency) {
       Object.keys(currency || {}).forEach((currencyType) => {
-        this.game.currencyHelper.gainCurrency(
-          caster,
-          currency[currencyType],
-          currencyType as Currency,
-        );
+        gainCurrency(caster, currency[currencyType], currencyType as Currency);
       });
     }
 
@@ -213,7 +203,7 @@ export class Fate extends Spell {
       }
     }
 
-    this.game.currencyHelper.gainCurrency(caster, 1, Currency.Fate);
+    gainCurrency(caster, 1, Currency.Fate);
 
     this.sendMessage(caster, { message });
   }

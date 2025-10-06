@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
+import { gainCurrency } from '@lotr/currency';
 import type {
   Allegiance,
   IPlayer,
@@ -10,7 +11,8 @@ import type {
   IQuestRequirementCount,
   IQuestRequirementItem,
   IQuestRequirementKill,
-  Stat } from '@lotr/interfaces';
+  Stat,
+} from '@lotr/interfaces';
 import {
   Currency,
   MessageType,
@@ -249,11 +251,7 @@ export class QuestHelper extends BaseService {
       }
 
       if (reward.type === QuestRewardType.Gold) {
-        this.game.currencyHelper.gainCurrency(
-          player,
-          reward.value,
-          Currency.Gold,
-        );
+        gainCurrency(player, reward.value, Currency.Gold);
         this.game.messageHelper.sendSimpleMessage(
           player,
           `You gained ${reward.value.toLocaleString()} gold!`,
