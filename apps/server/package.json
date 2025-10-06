@@ -18,7 +18,7 @@
     "build:package:all": "npm run build && npm run build:package"
   },
   "engines": {
-    "node": ">= 18",
+    "node": ">= 20",
     "npm": ">= 8"
   },
   "dependencies": {

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "turbo run build --affected",
     "start:dev": "turbo run start:dev",
-    "lint": "turbo run lint --affected -vvv",
+    "lint": "turbo run lint --filter @lotr/shared --filter server",
     "test": "vitest --run",
     "setup": "turbo run setup && npm run setup:buildprereqs",
     "setup:buildprereqs": "turbo run build --filter=@lotr/interfaces",
