@@ -1,12 +1,6 @@
 import type { ICharacter } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  gainCurrency,
-  getCurrency,
-  hasCurrency,
-  loseCurrency,
-} from './currency';
 
 vi.mock('@lotr/shared', () => ({
   cleanNumber: (num: string | number, defaultValue: number) => {
@@ -17,6 +11,13 @@ vi.mock('@lotr/shared', () => ({
     return num;
   },
 }));
+
+import {
+  gainCurrency,
+  getCurrency,
+  hasCurrency,
+  loseCurrency,
+} from './currency';
 
 describe('Currency Functions', () => {
   describe('getCurrency', () => {
