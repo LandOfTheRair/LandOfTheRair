@@ -23,6 +23,8 @@ jobs:
 
       - run: npm install
 
+      - run: turbo run build --filter='!client' --filter='!server'
+
       - run: npm run setup
 
       - run: npm run lint
