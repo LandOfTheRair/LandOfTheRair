@@ -10,8 +10,8 @@ COPY ./packages /usr/src/app/packages
 COPY ./apps/server /usr/src/app/apps/server
 RUN npm i -g turbo
 RUN npm install
-RUN turbo run build --filter='!client' --filter='!server'
-RUN turbo run setup --filter='!client'
+RUN turbo run build --filter='!server'
+RUN turbo run setup
 RUN cd server/content && npm install --unsafe-perm
 RUN turbo run build --filter='server'
 ENV NODE_ENV production
