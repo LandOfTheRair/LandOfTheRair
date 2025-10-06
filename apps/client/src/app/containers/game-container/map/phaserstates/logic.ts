@@ -540,23 +540,23 @@ export class MapScene extends Phaser.Scene {
       if (!directionHasAny(wallDir, Direction.NorthAndSouth)) return;
       const floor = map.getTileAt(wall.x, wall.y, false, 'Floors');
 
-      //If this wall has no floor we can cut...then... no cut
+      // If this wall has no floor we can cut...then... no cut
       if (!floor) return;
 
       const floorC = getFloorSet(floor);
       const floorL = getFloorSetAt(wall.x - 1, wall.y);
       const floorR = getFloorSetAt(wall.x + 1, wall.y);
 
-      //If we are between two identical floors, no cut
+      // If we are between two identical floors, no cut
       if (floorL === floorR) return;
 
-      //If this floor matches the floor to the right, cut it
+      // If this floor matches the floor to the right, cut it
       if (floorC === floorR) {
         cutLeft(floor);
         return;
       }
 
-      //If this floor matches the floor to the left, cut it
+      // If this floor matches the floor to the left, cut it
       if (floorC === floorL) {
         cutRight(floor);
         return;
@@ -564,14 +564,14 @@ export class MapScene extends Phaser.Scene {
 
       const wallLeft = getWallIndexAt(wall.x - 1, wall.y);
 
-      //If the left wall is trying to connect to us, we can cut the right
+      // If the left wall is trying to connect to us, we can cut the right
       if (directionHasAny(spriteDirectionForWall(wallLeft), Direction.East)) {
         cutRight(floor);
       }
 
       const wallRight = getWallIndexAt(wall.x - 1, wall.y);
 
-      //If the right wall is trying to connect to us, we can cut the left
+      // If the right wall is trying to connect to us, we can cut the left
       if (directionHasAny(spriteDirectionForWall(wallRight), Direction.West)) {
         cutLeft(floor);
       }

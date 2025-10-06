@@ -1,13 +1,12 @@
-export default class GrayPostFXPipeline extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline
-{
-    constructor(game)
-    {
-        super({
-            game:game as any,
-            // eslint-disable-next-line @typescript-eslint/no-use-before-define
-            fragShader
-        } as any);
-    }
+export default class GrayPostFXPipeline extends Phaser.Renderer.WebGL.Pipelines
+  .PostFXPipeline {
+  constructor(game) {
+    super({
+      game: game as any,
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      fragShader,
+    } as any);
+  }
 }
 
 const fragShader = `

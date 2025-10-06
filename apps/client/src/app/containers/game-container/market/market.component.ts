@@ -307,22 +307,22 @@ export class MarketComponent {
   }
 
   public effectStringFor(itemInfo: IMarketItemInfo) {
-    const effect =
+    const itemEffect =
       itemInfo.itemOverride.useEffect ||
       itemInfo.itemOverride.trapEffect ||
       itemInfo.itemOverride.equipEffect ||
       itemInfo.itemOverride.strikeEffect;
 
-    if (!effect || !effect.name || !effect.potency) return '';
+    if (!itemEffect || !itemEffect.name || !itemEffect.potency) return '';
     if (
-      effect.name.includes('Permanent') ||
-      effect.name.includes('Fill') ||
-      effect.name.includes('Nourishment')
+      itemEffect.name.includes('Permanent') ||
+      itemEffect.name.includes('Fill') ||
+      itemEffect.name.includes('Nourishment')
     ) {
       return '';
     }
 
-    return `${startCase(effect.name)} (Str. ${effect.potency})`;
+    return `${startCase(itemEffect.name)} (Str. ${itemEffect.potency})`;
   }
 
   public requirementTooltipFor(listing: IMarketListing) {

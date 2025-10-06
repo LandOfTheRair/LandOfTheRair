@@ -79,15 +79,13 @@ export class MapComponent {
 
   private game: MapRenderGame;
 
-  public canSeeLowHealthBorder = computed(() => {
-    return (
+  public canSeeLowHealthBorder = computed(() => (
       this.player() &&
       this.player().hp.current <=
         this.player().hp.maximum *
           ((this.optionsService.dyingBorderPercent ?? 25) / 100) &&
       this.optionsService.canShowDyingBorder
-    );
-  });
+    ));
 
   constructor() {
     effect(() => {

@@ -61,9 +61,7 @@ export class LifeHeartComponent {
 
   public target = input<ICharacter>();
 
-  public hpPercent = computed(() => {
-    return 100 - (this.target().hp.current / this.target().hp.maximum) * 100;
-  });
+  public hpPercent = computed(() => 100 - (this.target().hp.current / this.target().hp.maximum) * 100);
 
   public hpPercentGradient = computed(() => {
     let hpp = this.hpPercent();

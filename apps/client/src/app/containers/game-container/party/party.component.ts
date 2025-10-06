@@ -20,9 +20,7 @@ export class PartyComponent {
   public party = select(GameState.party);
   public player = select(GameState.player);
 
-  public partyXPMult = computed(() => {
-    return this.multiplier(this.party()?.party) ?? 100;
-  });
+  public partyXPMult = computed(() => this.multiplier(this.party()?.party) ?? 100);
 
   public createOrJoinParty = '';
 

@@ -60,9 +60,7 @@ export class ActiveTargetComponent {
     return this.targetHealth() + '%';
   });
 
-  public hostility = computed(() => {
-    return hostilityLevelFor(this.player(), this.target() as ICharacter);
-  });
+  public hostility = computed(() => hostilityLevelFor(this.player(), this.target() as ICharacter));
 
   public level = computed(() => this.target().level);
 

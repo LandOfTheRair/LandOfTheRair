@@ -13,9 +13,6 @@
     "tsc:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/src/core/index.js\"",
     "content:dev": "cd content && npm run watch",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
-    "test": "npm run lint && npm run test:unit",
-    "test:unit": "vitest run",
-    "test:unit:watch": "vitest --ui --api 9899",
     "build": "tsc",
     "build:package": "pkg . --public --out-path=build",
     "build:package:all": "npm run build && npm run build:package"

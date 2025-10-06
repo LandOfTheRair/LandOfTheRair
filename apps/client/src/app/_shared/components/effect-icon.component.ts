@@ -143,13 +143,11 @@ export class EffectIconComponent {
 
   public charges = computed(() => this.effect().effectInfo.charges ?? 0);
 
-  public buildUpPercent = computed(() => {
-    return Math.floor(
+  public buildUpPercent = computed(() => Math.floor(
       (this.effect().effectInfo.buildUpCurrent /
         this.effect().effectInfo.buildUpMax) *
         100,
-    );
-  });
+    ));
 
   public getRemainingTicks() {
     const eff = this.effect();
