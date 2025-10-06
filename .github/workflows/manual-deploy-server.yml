@@ -36,9 +36,9 @@ jobs:
 
       - run: npm install
 
-      - run: turbo run setup --filter='!client'
+      - run: turbo run build --filter='!client' --filter='!server'
 
-      - run: cd apps/server && npm run setup
+      - run: turbo run setup --filter='!client'
 
       - run: cd apps/server && npm run lint
 
