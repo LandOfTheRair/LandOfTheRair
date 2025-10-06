@@ -14,7 +14,7 @@
     "content:dev": "cd content && npm run watch",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
     "build": "tsc",
-    "build:package": "pkg . --public --out-path=build",
+    "build:package": "pkg . --public --output=build/lotr-server.exe",
     "build:package:all": "npm run build && npm run build:package"
   },
   "engines": {
