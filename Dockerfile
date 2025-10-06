@@ -5,7 +5,8 @@ WORKDIR /usr/src/app
 ADD https://www.google.com /time.now
 COPY ./package.json /usr/src/app
 COPY ./package-lock.json /usr/src/app
-COPY ./apps/server /usr/src/app/server
+COPY ./packages /usr/src/app/packages
+COPY ./apps/server /usr/src/app/apps/server
 RUN npm i -g turbo
 RUN npm install
 RUN turbo run build --filter='!client' --filter='!server'
