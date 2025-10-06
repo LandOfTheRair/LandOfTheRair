@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Install global deps
+        run: npm install -g turbo
+
       - run: npm install
 
       - run: turbo run build --filter='!client' --filter='!server'

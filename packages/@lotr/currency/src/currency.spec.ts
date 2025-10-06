@@ -1,16 +1,6 @@
 import type { ICharacter } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
-import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('@lotr/shared', () => ({
-  cleanNumber: (num: string | number, defaultValue: number) => {
-    num = +num;
-    if (isNaN(num)) return defaultValue;
-    if (!isFinite(num)) return defaultValue;
-
-    return num;
-  },
-}));
+import { describe, expect, it } from 'vitest';
 
 import {
   gainCurrency,
