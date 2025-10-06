@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -12,7 +13,7 @@ export class Autoheal extends SpellCommand {
     return (
       caster === target &&
       super.canUse(caster, target) &&
-      !this.game.effectHelper.hasEffect(target, 'Autoheal')
+      !hasEffect(target, 'Autoheal')
     );
   }
 }

@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -11,8 +12,8 @@ export class Protection extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       super.canUse(caster, target) &&
-      !this.game.effectHelper.hasEffect(target, 'Protection') &&
-      !this.game.effectHelper.hasEffect(target, 'WizardStance')
+      !hasEffect(target, 'Protection') &&
+      !hasEffect(target, 'WizardStance')
     );
   }
 }

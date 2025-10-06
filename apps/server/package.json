@@ -25,6 +25,7 @@
     "@fastify/cors": "^11.1.0",
     "@fastify/rate-limit": "^10.3.0",
     "@lotr/currency": "*",
+    "@lotr/effects": "*",
     "@lotr/exp": "*",
     "bcrypt": "^5.0.0",
     "bufferutil": "^4.0.2",

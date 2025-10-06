@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
 
@@ -57,10 +58,7 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
       this.spawnBrother();
     }
 
-    if (
-      this.game.effectHelper.hasEffect(npc, 'Invulnerable') &&
-      this.livingBrothers.length === 0
-    ) {
+    if (hasEffect(npc, 'Invulnerable') && this.livingBrothers.length === 0) {
       this.game.effectHelper.removeEffectByName(npc, 'Invulnerable');
     }
   }
@@ -98,10 +96,10 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
 
     const spawnObj = sample(this.brotherSpawns);
     if (!spawnObj) {
-throw new Error(
+      throw new Error(
         `Invalid spawn obj, ${JSON.stringify(this.brotherSpawns)} is left`,
       );
-}
+    }
 
     const { spawnLoc, id, effect, message } = spawnObj;
 

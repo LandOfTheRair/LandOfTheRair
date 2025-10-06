@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -10,10 +11,7 @@ export class PiercingScream extends SpellCommand {
   override spellRef = 'PiercingScream';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return (
-      super.canUse(caster, target) &&
-      !this.game.effectHelper.hasEffect(target, 'PiercingScream')
-    );
+    return super.canUse(caster, target) && !hasEffect(target, 'PiercingScream');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

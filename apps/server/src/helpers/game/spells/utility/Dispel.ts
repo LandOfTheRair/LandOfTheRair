@@ -1,6 +1,11 @@
 import { sample } from 'lodash';
 
-import type { ICharacter, IStatusEffect, SpellCastArgs } from '@lotr/interfaces';
+import { dispellableEffects } from '@lotr/effects';
+import type {
+  ICharacter,
+  IStatusEffect,
+  SpellCastArgs,
+} from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Dispel extends Spell {
@@ -11,7 +16,7 @@ export class Dispel extends Spell {
   ): void {
     if (!target) return;
 
-    const effects = this.game.effectHelper.dispellableEffects(target);
+    const effects = dispellableEffects(target);
     if (effects.length === 0) {
       if (caster) {
         this.sendMessage(caster, {

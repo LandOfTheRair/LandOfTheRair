@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -11,7 +12,7 @@ export class ShredFivePercent extends SpellCommand {
     return (
       distanceFrom(caster, target) <= 0 &&
       target.hp.current > target.hp.maximum * 0.4 &&
-      !this.game.effectHelper.hasEffect(target, 'Dangerous')
+      !hasEffect(target, 'Dangerous')
     );
   }
 

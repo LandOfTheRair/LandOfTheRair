@@ -1,11 +1,11 @@
+import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   INPC,
   IPlayer,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  ItemClass,
+  IStatusEffect,
 } from '@lotr/interfaces';
+import { ItemClass } from '@lotr/interfaces';
 import { sample, sampleSize, sumBy } from 'lodash';
 import type { Player, Spawner } from '../../../../models';
 import { Effect } from '../../../../models';
@@ -45,7 +45,7 @@ export class BanditWaves extends Effect {
     }
 
     this.allPlayers(char).forEach((p) => {
-      if (!this.game.effectHelper.hasEffect(p, 'BanditWavesPlayerInfo')) {
+      if (!hasEffect(p, 'BanditWavesPlayerInfo')) {
         this.game.effectHelper.addEffect(p, char, 'BanditWavesPlayerInfo', {
           effect: {
             duration: 1800,
@@ -53,10 +53,7 @@ export class BanditWaves extends Effect {
         });
       }
 
-      const playerEffect = this.game.effectHelper.getEffect(
-        p,
-        'BanditWavesPlayerInfo',
-      );
+      const playerEffect = getEffect(p, 'BanditWavesPlayerInfo');
       if (playerEffect) {
         playerEffect.endsAt = effect.endsAt;
         playerEffect.tooltip = this.descriptionForPlayers(char, effect);

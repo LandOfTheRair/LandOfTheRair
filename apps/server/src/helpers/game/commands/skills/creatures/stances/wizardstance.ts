@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -13,7 +14,7 @@ export class WizardStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'WizardStance')) {
+    if (hasEffect(player, 'WizardStance')) {
       this.game.effectHelper.removeEffectByName(player, 'WizardStance');
       this.sendMessage(player, 'You return to a normal stance.');
       return;

@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class TurtleStance extends SpellCommand {
@@ -23,18 +19,18 @@ export class TurtleStance extends SpellCommand {
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'TurtleStance')) {
+    if (hasEffect(player, 'TurtleStance')) {
       this.game.effectHelper.removeEffectByName(player, 'TurtleStance');
       this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 
     if (player.items.equipment[ItemSlot.RightHand]) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need an empty right hand to take a stance!',
       );
-}
+    }
 
     this.castSpellAt(player, player, args);
   }

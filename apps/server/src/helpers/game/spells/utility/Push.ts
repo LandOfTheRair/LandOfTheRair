@@ -1,13 +1,8 @@
 import { random } from 'lodash';
 
-import type {
-  ICharacter,
-  INPC,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  Allegiance,
-  Hostility
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
+import { Allegiance, Hostility } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Push extends Spell {
@@ -21,10 +16,7 @@ export class Push extends Spell {
     if ((target as INPC).hostility === Hostility.Never) return;
     if ((target as INPC).allegiance === Allegiance.NaturalResource) return;
 
-    const hasUnshakeable = this.game.effectHelper.hasEffect(
-      target,
-      'Unshakeable',
-    );
+    const hasUnshakeable = hasEffect(target, 'Unshakeable');
     if (hasUnshakeable) return;
 
     let x = 0;

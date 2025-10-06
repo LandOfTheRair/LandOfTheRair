@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -11,8 +12,8 @@ export class DedlaenSpiderImmobilize extends SpellCommand {
     return (
       distanceFrom(caster, target) === 0 &&
       this.game.characterHelper.getStat(target, Stat.STR) < 25 &&
-      !this.game.effectHelper.hasEffect(target, 'Immobilized') &&
-      !this.game.effectHelper.hasEffect(target, 'RecentlyImmobilized')
+      !hasEffect(target, 'Immobilized') &&
+      !hasEffect(target, 'RecentlyImmobilized')
     );
   }
 

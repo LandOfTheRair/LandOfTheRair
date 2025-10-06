@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isUndefined, random } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import {
   DamageClass,
@@ -159,10 +160,7 @@ export class MovementHelper extends BaseService {
       }
 
       const nextTileWall = map.getWallAt(nextX, nextY);
-      const canWallWalk = this.game.effectHelper.hasEffect(
-        character,
-        'WallWalk',
-      );
+      const canWallWalk = hasEffect(character, 'WallWalk');
       if (!nextTileWall || canWallWalk) {
         const possibleDenseObj = map.getInteractableOrDenseObject(nextX, nextY);
 
@@ -456,7 +454,7 @@ export class MovementHelper extends BaseService {
       );
 
       // Fleet Of Foot reduces fall damage to 1
-      if (this.game.effectHelper.hasEffect(player, 'FleetOfFoot')) {
+      if (hasEffect(player, 'FleetOfFoot')) {
         hpLost = 1;
       }
 

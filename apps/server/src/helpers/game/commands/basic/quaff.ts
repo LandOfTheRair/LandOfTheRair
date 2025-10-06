@@ -1,10 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ObjectType,
-  SwimLevel,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ObjectType, SwimLevel } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Quaff extends MacroCommand {
@@ -13,7 +9,7 @@ export class Quaff extends MacroCommand {
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'Drowning')) {
+    if (hasEffect(player, 'Drowning')) {
       this.sendMessage(
         player,
         'You have a bit too much going on for that right now!',

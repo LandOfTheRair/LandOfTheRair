@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -10,8 +11,8 @@ export class HeatBiteWeak extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       distanceFrom(caster, target) === 0 &&
-      !this.game.effectHelper.hasEffect(target, 'Burning') &&
-      !this.game.effectHelper.hasEffect(target, 'RecentlyBurned')
+      !hasEffect(target, 'Burning') &&
+      !hasEffect(target, 'RecentlyBurned')
     );
   }
 

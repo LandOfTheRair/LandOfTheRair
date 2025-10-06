@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -76,7 +77,7 @@ export class CalculatorHelper extends BaseService {
 
   // calculate axp reward for a creature
   public calcAXPRewardFor(char: ICharacter): number {
-    if (this.game.effectHelper.hasEffect(char, 'Dangerous')) return 10;
+    if (hasEffect(char, 'Dangerous')) return 10;
     if (char.name.includes('elite ')) return 5;
     return 1;
   }

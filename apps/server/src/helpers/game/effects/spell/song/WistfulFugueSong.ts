@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { sampleSize } from 'lodash';
@@ -25,7 +26,7 @@ export class WistfulFugueSong extends Song {
           ?.getAllHostilesWithoutVisibilityTo(char, 4),
         12,
       ).forEach((enemy) => {
-        if (!this.game.effectHelper.hasEffect(enemy, 'TargetSong')) {
+        if (!hasEffect(enemy, 'TargetSong')) {
           this.sendMessage(enemy, {
             message: 'You are hit with a wistful fugue!',
           });

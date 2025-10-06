@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import { Injectable } from 'injection-js';
 import { get, sample, template, uniq } from 'lodash';
 
@@ -812,7 +813,7 @@ export class DialogActionHelper extends BaseService {
 
     const retMessages: string[] = [];
 
-    const didSucceed = this.game.effectHelper.hasEffect(player, effect);
+    const didSucceed = hasEffect(player, effect);
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 

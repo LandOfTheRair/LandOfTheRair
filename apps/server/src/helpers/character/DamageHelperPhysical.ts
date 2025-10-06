@@ -28,6 +28,7 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { distanceFrom } from '@lotr/shared';
 
@@ -1333,17 +1334,11 @@ export class DamageHelperPhysical extends BaseService {
     defender: ICharacter,
     attackerWeapon: ISimpleItem,
   ): void {
-    if (
-      this.game.effectHelper.hasEffect(defender, 'Stun') ||
-      this.game.effectHelper.hasEffect(defender, 'RecentlyStunned')
-    ) {
+    if (hasEffect(defender, 'Stun') || hasEffect(defender, 'RecentlyStunned')) {
       return;
     }
 
-    const hasFleetOfFoot = this.game.effectHelper.hasEffect(
-      defender,
-      'FleetOfFoot',
-    );
+    const hasFleetOfFoot = hasEffect(defender, 'FleetOfFoot');
     const proneChance = this.game.itemHelper.getItemProperty(
       attackerWeapon,
       'proneChance',
@@ -1384,7 +1379,7 @@ export class DamageHelperPhysical extends BaseService {
 
     if (
       this.game.diceRollerHelper.OneInX(defCon * conMultiplier) &&
-      !this.game.effectHelper.hasEffect(defender, 'Stun')
+      !hasEffect(defender, 'Stun')
     ) {
       this.game.messageHelper.sendLogMessageToPlayer(
         defender,
@@ -1433,15 +1428,12 @@ export class DamageHelperPhysical extends BaseService {
         defender.x,
         defender.y,
       ) &&
-      !this.game.effectHelper.hasEffect(defender, 'DarkVision')
+      !hasEffect(defender, 'DarkVision')
     ) {
       isAttackerVisible = false;
     }
 
-    if (
-      !isAttackerVisible &&
-      this.game.effectHelper.hasEffect(defender, 'Debilitate')
-    ) {
+    if (!isAttackerVisible && hasEffect(defender, 'Debilitate')) {
       isBackstab = true;
     }
 
@@ -1523,11 +1515,7 @@ export class DamageHelperPhysical extends BaseService {
       const flagSkills = [type ?? Skill.Martial];
       if (secondaryType) flagSkills.push(secondaryType);
       if (isThrow) flagSkills.push(Skill.Throwing);
-      if (
-        !isAttackerVisible ||
-        isBackstab ||
-        this.game.effectHelper.hasEffect(attacker, 'Hidden')
-      ) {
+      if (!isAttackerVisible || isBackstab || hasEffect(attacker, 'Hidden')) {
         flagSkills.push(Skill.Thievery);
       }
 
@@ -1820,7 +1808,7 @@ export class DamageHelperPhysical extends BaseService {
     this.game.combatHelper.dealDamage(attacker, defender, damageArgs);
 
     // if we're singing, try to do offensive encore
-    if (this.game.effectHelper.hasEffect(attacker, 'Singing')) {
+    if (hasEffect(attacker, 'Singing')) {
       const encoreBoost = this.game.traitHelper.traitLevelValue(
         attacker,
         'OffensiveEncore',

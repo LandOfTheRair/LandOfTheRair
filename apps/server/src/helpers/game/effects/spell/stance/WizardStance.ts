@@ -1,12 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class WizardStance extends Effect {
@@ -63,7 +57,7 @@ export class WizardStance extends Effect {
     if (this.game.characterHelper.isDead(attacker)) return currentDamage;
 
     if (
-      this.game.effectHelper.hasEffect(char, 'ImbueEnergy') &&
+      hasEffect(char, 'ImbueEnergy') &&
       this.game.characterHelper.hasLearned(char, 'MagicMissile')
     ) {
       this.game.commandHandler.getSkillRef('MagicMissile').use(char, attacker);

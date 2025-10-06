@@ -1,11 +1,11 @@
+import { getEffect } from '@lotr/effects';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  PhysicalAttackArgs } from '@lotr/interfaces';
-import {
-  ItemSlot
+  PhysicalAttackArgs,
 } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 import { SkillCommand } from '../../../../../models/macro';
 
@@ -19,7 +19,7 @@ export class AttackCommand extends SkillCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return false;
 
-    const isBerserked = this.game.effectHelper.getEffect(player, 'Berserk');
+    const isBerserked = getEffect(player, 'Berserk');
     if (isBerserked) return;
 
     const range = this.range(player);

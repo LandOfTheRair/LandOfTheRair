@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -8,7 +9,7 @@ export class GMWallWalk extends MacroCommand {
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'WallWalk')) {
+    if (hasEffect(player, 'WallWalk')) {
       this.game.effectHelper.removeEffectByName(player, 'WallWalk');
       return;
     }

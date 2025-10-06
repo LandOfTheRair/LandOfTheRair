@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
@@ -22,7 +23,7 @@ export class Song extends Effect {
     }
 
     if (
-      this.game.effectHelper.hasEffect(char, 'Hidden') &&
+      hasEffect(char, 'Hidden') &&
       !this.game.traitHelper.traitLevel(char, 'Shadowsong')
     ) {
       this.sendMessage(char, {

@@ -1,12 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class GlacierStance extends Effect {
@@ -35,12 +29,12 @@ export class GlacierStance extends Effect {
     currentDamage: number,
   ): number {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) {
-return currentDamage;
-}
+      return currentDamage;
+    }
     if (this.game.characterHelper.isDead(attacker)) return currentDamage;
 
     if (
-      this.game.effectHelper.hasEffect(char, 'ImbueFrost') &&
+      hasEffect(char, 'ImbueFrost') &&
       this.game.characterHelper.hasLearned(char, 'Hail')
     ) {
       this.game.commandHandler.getSkillRef('Hail').use(char, attacker);

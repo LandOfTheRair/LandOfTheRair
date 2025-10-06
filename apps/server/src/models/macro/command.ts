@@ -23,6 +23,8 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../helpers';
+
+import { getEffect, hasEffect } from '@lotr/effects';
 import type { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
@@ -276,10 +278,7 @@ export class SpellCommand extends SkillCommand {
 
     // try to do arcane hunger
     if (caster && spellData.spellMeta.doesAttack) {
-      const arcaneHunger = this.game.effectHelper.getEffect(
-        caster,
-        'ArcaneHunger',
-      );
+      const arcaneHunger = getEffect(caster, 'ArcaneHunger');
       if (arcaneHunger) {
         const charges = arcaneHunger.effectInfo.charges ?? 1;
         cost += cost * (charges / 5);
@@ -337,11 +336,8 @@ export class SpellCommand extends SkillCommand {
         const recentlyEffect = effectData.effectMeta.recentlyRef;
 
         isBlockedByEffect =
-          this.game.effectHelper.hasEffect(target, effectName) ||
-          !!(
-            recentlyEffect &&
-            this.game.effectHelper.hasEffect(target, recentlyEffect)
-          );
+          hasEffect(target, effectName) ||
+          !!(recentlyEffect && hasEffect(target, recentlyEffect));
       }
     }
 

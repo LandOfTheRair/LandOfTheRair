@@ -1,5 +1,6 @@
 import { random } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -10,10 +11,7 @@ export class PoisonBiteMedium extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return (
-      distanceFrom(caster, target) === 0 &&
-      !this.game.effectHelper.hasEffect(target, 'Poison')
-    );
+    return distanceFrom(caster, target) === 0 && !hasEffect(target, 'Poison');
   }
 
   override mpCost(): number {

@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -9,10 +10,7 @@ export class Shadowmeld extends SpellCommand {
   override spellRef = 'Shadowmeld';
 
   override canUse(caster: ICharacter): boolean {
-    return (
-      super.canUse(caster, caster) &&
-      !this.game.effectHelper.hasEffect(caster, 'Shadowmeld')
-    );
+    return super.canUse(caster, caster) && !hasEffect(caster, 'Shadowmeld');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

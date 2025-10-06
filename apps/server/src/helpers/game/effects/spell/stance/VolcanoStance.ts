@@ -1,12 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class VolcanoStance extends Effect {
@@ -37,7 +31,7 @@ export class VolcanoStance extends Effect {
     if (this.game.characterHelper.isDead(target)) return;
 
     if (
-      this.game.effectHelper.hasEffect(char, 'ImbueFlame') &&
+      hasEffect(char, 'ImbueFlame') &&
       this.game.characterHelper.hasLearned(char, 'Combust')
     ) {
       this.game.commandHandler.getSkillRef('Combust').use(char, target);

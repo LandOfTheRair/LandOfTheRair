@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../models/macro';
 
@@ -11,10 +12,7 @@ export class Reveal extends SkillCommand {
   }
 
   override use(char: ICharacter) {
-    if (
-      !this.game.effectHelper.hasEffect(char, 'Hidden') &&
-      !this.game.effectHelper.hasEffect(char, 'Shadowmeld')
-    ) {
+    if (!hasEffect(char, 'Hidden') && !hasEffect(char, 'Shadowmeld')) {
       this.sendMessage(char, 'You are not hidden!');
       return;
     }

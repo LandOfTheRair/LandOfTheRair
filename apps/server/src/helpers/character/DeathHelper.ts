@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { getCurrency, loseCurrency } from '@lotr/currency';
+import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type {
   ICharacter,
@@ -373,7 +374,7 @@ export class DeathHelper extends BaseService {
 
     this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.Kills);
 
-    if (this.game.effectHelper.hasEffect(dead, 'Dangerous')) {
+    if (hasEffect(dead, 'Dangerous')) {
       this.game.statisticsHelper.addStatistic(
         killer,
         TrackedStatistic.KillsLair,
@@ -475,7 +476,7 @@ export class DeathHelper extends BaseService {
 
   // strip a character to a location w/ a radius
   private strip(character: ICharacter, x: number, y: number, radius = 0): void {
-    if (this.game.effectHelper.hasEffect(character, 'SecondWind')) return;
+    if (hasEffect(character, 'SecondWind')) return;
 
     if (this.game.characterHelper.isPlayer(character)) {
       this.game.statisticsHelper.addStatistic(

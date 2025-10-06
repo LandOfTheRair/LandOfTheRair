@@ -2,15 +2,14 @@ import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, random, sample } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type {
   IDynamicEvent,
   IDynamicEventMeta,
   INPC,
-  Stat } from '@lotr/interfaces';
-import {
-  DynamicEventSuccessType,
-  GameAction
+  Stat,
 } from '@lotr/interfaces';
+import { DynamicEventSuccessType, GameAction } from '@lotr/interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
 import { BaseService } from '../../../models/BaseService';
@@ -285,7 +284,7 @@ export class DynamicEventHelper extends BaseService {
       mapData.state.allNPCS.forEach((npc) => {
         if (hasTarget) return;
 
-        if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
+        if (!hasEffect(npc, 'Dangerous')) return;
         if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
         const checkSpawner = this.game.worldManager
           .getMap(npc.map)
@@ -312,7 +311,7 @@ export class DynamicEventHelper extends BaseService {
       if (!mapData) return;
 
       mapData.state.allNPCS.forEach((npc) => {
-        if (!this.game.effectHelper.hasEffect(npc, 'Dangerous')) return;
+        if (!hasEffect(npc, 'Dangerous')) return;
         if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
         const checkSpawner = this.game.worldManager
           .getMap(npc.map)

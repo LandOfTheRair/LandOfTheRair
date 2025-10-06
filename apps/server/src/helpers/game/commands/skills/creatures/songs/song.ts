@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -13,7 +14,7 @@ export class Song extends SpellCommand {
   }
 
   override canUse(char: ICharacter): boolean {
-    return !this.game.effectHelper.hasEffect(char, 'Song');
+    return !hasEffect(char, 'Song');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

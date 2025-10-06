@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, Hostility, Stat } from '@lotr/interfaces';
 import { distanceFrom, isHostileTo } from '@lotr/shared';
@@ -146,7 +147,7 @@ export class TargettingHelper extends BaseService {
 
     // if the target is disguised, I'm not going to be hostile if it's good enough
     if (
-      this.game.effectHelper.hasEffect(target, 'Disguise') &&
+      hasEffect(target, 'Disguise') &&
       this.game.characterHelper.getStat(me, Stat.WIL) <
         this.game.characterHelper.getStat(target, Stat.CHA)
     ) {

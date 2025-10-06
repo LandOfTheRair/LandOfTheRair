@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Song } from './song';
 
@@ -6,7 +7,7 @@ export class NightmareSerenadeSong extends Song {
   override spellRef = 'NightmareSerenadeSong';
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'NightmareSerenadeSong')) {
+    if (hasEffect(player, 'NightmareSerenadeSong')) {
       this.game.effectHelper.removeEffectByName(
         player,
         'NightmareSerenadeSong',

@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
 
@@ -68,8 +69,8 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
       this.acolytes[spawnId] &&
       !this.game.characterHelper.isDead(this.acolytes[spawnId])
     ) {
-return;
-}
+      return;
+    }
 
     const msgObject = {
       from: npc.name,
@@ -104,7 +105,7 @@ return;
       message: 'Kill the acolyte before it heals Saraxa!',
     });
 
-    if (!this.game.effectHelper.hasEffect(npc, 'AcolyteOverseer')) {
+    if (!hasEffect(npc, 'AcolyteOverseer')) {
       this.game.effectHelper.addEffect(npc, npc, 'AcolyteOverseer');
     }
   }

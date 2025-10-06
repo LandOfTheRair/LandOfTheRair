@@ -1,6 +1,8 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
+import { getEffect, getEffectPotency, hasEffect } from '@lotr/effects';
+import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type {
   BaseSpell,
   ICharacter,
@@ -18,8 +20,6 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
-
-import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { Spell } from '../../models/world/Spell';
@@ -147,10 +147,7 @@ export class SpellManager extends BaseService {
     retPotency *= this.getPotencyMultiplier(spellData);
 
     if (spellData.spellMeta.doesAttack) {
-      const arcaneHunger = this.game.effectHelper.getEffect(
-        caster,
-        'ArcaneHunger',
-      );
+      const arcaneHunger = getEffect(caster, 'ArcaneHunger');
       if (arcaneHunger) {
         const charges = arcaneHunger.effectInfo.charges ?? 0;
         retPotency += retPotency * (charges / 10);
@@ -158,14 +155,14 @@ export class SpellManager extends BaseService {
     }
 
     // encumberance cuts potency exactly in half
-    if (this.game.effectHelper.hasEffect(caster, 'Encumbered')) {
+    if (hasEffect(caster, 'Encumbered')) {
       retPotency /= this.encumberedDivisor;
     }
 
     if (
-      this.game.effectHelper.hasEffect(caster, 'Dazed') &&
+      hasEffect(caster, 'Dazed') &&
       this.game.diceRollerHelper.XInOneHundred(
-        this.game.effectHelper.getEffectPotency(caster, 'Dazed'),
+        getEffectPotency(caster, 'Dazed'),
       )
     ) {
       retPotency /= this.dazedDivisor;
@@ -192,8 +189,7 @@ export class SpellManager extends BaseService {
     if (skillLevel > (spellData.maxSkillForGain ?? 0)) return;
 
     const skillsFlagged =
-      this.game.effectHelper.hasEffect(caster, 'Hidden') &&
-      skillGain !== Skill.Thievery
+      hasEffect(caster, 'Hidden') && skillGain !== Skill.Thievery
         ? [skillGain, Skill.Thievery]
         : [skillGain];
 
@@ -293,7 +289,7 @@ export class SpellManager extends BaseService {
     if (target && fizzledBy && fizzledBy.length > 0) {
       if (
         fizzledBy.some((effectToFizzleOn) =>
-          this.game.effectHelper.hasEffect(target, effectToFizzleOn),
+          hasEffect(target, effectToFizzleOn),
         )
       ) {
         if (caster) {
@@ -518,10 +514,7 @@ export class SpellManager extends BaseService {
     );
 
     if (arcaneHungerSet > 0) {
-      const existingEffect = this.game.effectHelper.getEffect(
-        caster,
-        'ArcaneHunger',
-      );
+      const existingEffect = getEffect(caster, 'ArcaneHunger');
 
       const arcaneHungerMax = 3 + Math.floor(caster.level / 4);
 

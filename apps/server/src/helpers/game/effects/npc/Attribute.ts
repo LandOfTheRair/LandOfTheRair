@@ -1,10 +1,12 @@
 import { capitalize } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type {
   DamageArgs,
   ICharacter,
   INPC,
-  IStatusEffect } from '@lotr/interfaces';
+  IStatusEffect,
+} from '@lotr/interfaces';
 import {
   ItemClass,
   MagicClasses,
@@ -112,10 +114,7 @@ export class Attribute extends Effect {
       monsterClass &&
       !effect.effectInfo.unableToShred &&
       ResistanceShredders[monsterClass] &&
-      this.game.effectHelper.hasEffect(
-        attacker,
-        ResistanceShredders[monsterClass],
-      ) &&
+      hasEffect(attacker, ResistanceShredders[monsterClass]) &&
       effect.effectInfo.potency < 1
     ) {
       return currentDamage;

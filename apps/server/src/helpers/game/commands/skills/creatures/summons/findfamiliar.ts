@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -12,10 +13,7 @@ export class FindFamiliar extends SpellCommand {
   }
 
   override canUse(char: ICharacter): boolean {
-    return (
-      !this.game.effectHelper.hasEffect(char, 'FindFamiliar') &&
-      !char.spellChannel
-    );
+    return !hasEffect(char, 'FindFamiliar') && !char.spellChannel;
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

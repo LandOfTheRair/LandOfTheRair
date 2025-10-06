@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -11,8 +12,7 @@ export class Antidote extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       super.canUse(caster, target) &&
-      (this.game.effectHelper.hasEffect(target, 'Poison') ||
-        this.game.effectHelper.hasEffect(target, 'Disease'))
+      (hasEffect(target, 'Poison') || hasEffect(target, 'Disease'))
     );
   }
 }

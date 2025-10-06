@@ -1,8 +1,8 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 import { SpellCommand } from '../../../../../../models/macro';
-
 export class HeatBiteMedium extends SpellCommand {
   override aliases = ['heatbitemedium'];
   override requiresLearn = true;
@@ -10,8 +10,8 @@ export class HeatBiteMedium extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       distanceFrom(caster, target) === 0 &&
-      !this.game.effectHelper.hasEffect(target, 'Burning') &&
-      !this.game.effectHelper.hasEffect(target, 'RecentlyBurned')
+      !hasEffect(target, 'Burning') &&
+      !hasEffect(target, 'RecentlyBurned')
     );
   }
 

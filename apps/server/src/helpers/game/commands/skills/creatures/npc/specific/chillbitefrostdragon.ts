@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -10,8 +11,8 @@ export class ChillBiteFrostDragon extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       distanceFrom(caster, target) === 0 &&
-      !this.game.effectHelper.hasEffect(target, 'Frosted') &&
-      !this.game.effectHelper.hasEffect(target, 'RecentlyFrosted')
+      !hasEffect(target, 'Frosted') &&
+      !hasEffect(target, 'RecentlyFrosted')
     );
   }
 

@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -10,9 +11,6 @@ export class PowerwordBarFire extends SpellCommand {
   override spellRef = 'BarFire';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return (
-      super.canUse(caster, target) &&
-      !this.game.effectHelper.hasEffect(target, 'BarFire')
-    );
+    return super.canUse(caster, target) && !hasEffect(target, 'BarFire');
   }
 }

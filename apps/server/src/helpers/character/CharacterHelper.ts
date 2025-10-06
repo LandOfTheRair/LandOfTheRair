@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { clamp, isString, random } from 'lodash';
 
+import { effectStatBonuses, getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   IItemEffect,
@@ -31,15 +32,13 @@ export class CharacterHelper extends BaseService {
 
   // check if the character is dead
   public isDead(char: ICharacter): boolean {
-    return (
-      char.hp.current <= 0 || this.game.effectHelper.hasEffect(char, 'Dead')
-    );
+    return char.hp.current <= 0 || hasEffect(char, 'Dead');
   }
 
   // check if the character can currently act
   public canAct(char: ICharacter): boolean {
-    const stunned = this.game.effectHelper.getEffect(char, 'Stun');
-    const chilled = this.game.effectHelper.getEffect(char, 'Chilled');
+    const stunned = getEffect(char, 'Stun');
+    const chilled = getEffect(char, 'Chilled');
 
     const isStunned = stunned?.effectInfo.isFrozen;
     const isChilled = chilled?.effectInfo.isFrozen;
@@ -290,11 +289,11 @@ export class CharacterHelper extends BaseService {
       this.getStat(target, Stat.ThreatMultiplier);
     amount *= amountMult;
 
-    if (this.game.effectHelper.hasEffect(char, 'Invisibility')) {
+    if (hasEffect(char, 'Invisibility')) {
       this.game.effectHelper.removeEffectByName(char, 'Invisibility');
     }
 
-    if (this.game.effectHelper.hasEffect(char, 'Shadowmeld')) {
+    if (hasEffect(char, 'Shadowmeld')) {
       this.game.effectHelper.removeEffectByName(char, 'Shadowmeld');
     }
 
@@ -487,7 +486,7 @@ export class CharacterHelper extends BaseService {
 
     if (castEncumber) {
       this.game.effectHelper.addEffect(character, '', 'Encumbered');
-    } else if (this.game.effectHelper.hasEffect(character, 'Encumbered')) {
+    } else if (hasEffect(character, 'Encumbered')) {
       this.game.effectHelper.removeEffectByName(character, 'Encumbered');
     }
   }
@@ -771,8 +770,7 @@ export class CharacterHelper extends BaseService {
 
     // get trait/effect stats
     const traitStatBoosts = this.getStatValueAddFromTraits(character);
-    const effectStatBoosts =
-      this.game.effectHelper.effectStatBonuses(character);
+    const effectStatBoosts = effectStatBonuses(character);
 
     const addStatsFromHash = (hash) => {
       Object.keys(hash).forEach((stat) => {
@@ -895,7 +893,7 @@ export class CharacterHelper extends BaseService {
     // thieves not in combat regen faster
     if (regensLikeThief) {
       // hidden thieves can regen stealth slightly faster based on their mpregen
-      if (this.game.effectHelper.hasEffect(character, 'Hidden')) {
+      if (hasEffect(character, 'Hidden')) {
         const hiddenRegen = Math.max(
           0,
           Math.floor(
@@ -911,7 +909,7 @@ export class CharacterHelper extends BaseService {
       }
 
       // singing thieves have a way to get their stealth back
-      if (this.game.effectHelper.hasEffect(character, 'Singing')) return 0;
+      if (hasEffect(character, 'Singing')) return 0;
 
       // thieves in combat get 10 base regen + 20% of their mp regen for every RR level
       if (character.combatTicks <= 0) {
@@ -988,7 +986,7 @@ export class CharacterHelper extends BaseService {
         ) ?? 1.5;
     }
 
-    if (this.game.effectHelper.hasEffect(char, 'Encumbered')) {
+    if (hasEffect(char, 'Encumbered')) {
       stealth /=
         this.game.contentManager.getGameSetting(
           'character',
@@ -1114,10 +1112,7 @@ export class CharacterHelper extends BaseService {
 
       if (!this.game.itemHelper.canGetBenefitsFromItem(character, item)) return;
 
-      const existingEffect = this.game.effectHelper.getEffect(
-        character,
-        equipEffect.name,
-      );
+      const existingEffect = getEffect(character, equipEffect.name);
       if (existingEffect && existingEffect.endsAt === -1) return;
 
       const effectData = this.game.effectManager.getEffectData(

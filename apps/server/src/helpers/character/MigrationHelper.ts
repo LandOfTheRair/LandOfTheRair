@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import { initializePlayer } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
 import { Direction, GameAction, GuildRole } from '@lotr/interfaces';
@@ -139,9 +140,9 @@ export class MigrationHelper extends BaseService {
 
     // add sated if nothing else exists
     if (
-      !this.game.effectHelper.hasEffect(player, 'Sated') &&
-      !this.game.effectHelper.hasEffect(player, 'Nourished') &&
-      !this.game.effectHelper.hasEffect(player, 'Malnourished')
+      !hasEffect(player, 'Sated') &&
+      !hasEffect(player, 'Nourished') &&
+      !hasEffect(player, 'Malnourished')
     ) {
       this.game.effectHelper.addEffect(player, '', 'Sated', {
         effect: { duration: 21600 },

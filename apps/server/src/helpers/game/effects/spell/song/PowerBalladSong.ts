@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { sampleSize } from 'lodash';
@@ -32,7 +33,7 @@ export class PowerBalladSong extends Song {
       ).forEach((ally) => {
         if (char === ally) return;
 
-        if (!this.game.effectHelper.hasEffect(ally, 'TargetSong')) {
+        if (!hasEffect(ally, 'TargetSong')) {
           this.sendMessage(ally, { message: 'You hear a ballad of power!' });
         }
 

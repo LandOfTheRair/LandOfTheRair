@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../../../models/macro';
 
@@ -6,7 +7,7 @@ export class HalloweenNecromancerSpawnUndead extends SpellCommand {
   override requiresLearn = true;
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return !this.game.effectHelper.hasEffect(caster, 'FindFamiliar');
+    return !hasEffect(caster, 'FindFamiliar');
   }
 
   override mpCost(): number {

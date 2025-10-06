@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { sampleSize } from 'lodash';
@@ -25,7 +26,7 @@ export class AriaOfRefugeSong extends Song {
       ).forEach((ally) => {
         if (char === ally) return;
 
-        if (!this.game.effectHelper.hasEffect(ally, 'TargetSong')) {
+        if (!hasEffect(ally, 'TargetSong')) {
           this.sendMessage(ally, { message: 'You hear an aria of refuge!' });
         }
 

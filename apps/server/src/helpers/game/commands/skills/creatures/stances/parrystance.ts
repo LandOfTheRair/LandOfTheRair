@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class ParryStance extends SpellCommand {
@@ -18,24 +14,24 @@ export class ParryStance extends SpellCommand {
     return (
       super.canUse(caster, target) &&
       !caster.effects.incoming.length &&
-      !this.game.effectHelper.hasEffect(caster, 'RageStance') &&
+      !hasEffect(caster, 'RageStance') &&
       !!caster.items.equipment[ItemSlot.RightHand]
     );
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'ParryStance')) {
+    if (hasEffect(player, 'ParryStance')) {
       this.game.effectHelper.removeEffectByName(player, 'ParryStance');
       this.sendMessage(player, 'You return to a normal stance.');
       return;
     }
 
     if (!player.items.equipment[ItemSlot.RightHand]) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need a weapon in your hands to take a stance!',
       );
-}
+    }
 
     this.castSpellAt(player, player, args);
   }

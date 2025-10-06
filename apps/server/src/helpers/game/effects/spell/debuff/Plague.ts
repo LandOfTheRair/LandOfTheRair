@@ -1,12 +1,8 @@
 import { sample } from 'lodash';
 
-import type {
-  ICharacter,
-  IPlayer,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class Plague extends Effect {
@@ -70,7 +66,7 @@ export class Plague extends Effect {
       .filter((x) =>
         x !== char && caster
           ? this.game.targettingHelper.checkTargetForHostility(caster, x)
-          : true && !this.game.effectHelper.hasEffect(x, 'Plague'),
+          : true && !hasEffect(x, 'Plague'),
       );
 
     if (nearby.length === 0) return;

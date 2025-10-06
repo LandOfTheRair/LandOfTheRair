@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { isNumber, sample } from 'lodash';
 
+import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
   DamageArgs,
@@ -569,15 +570,14 @@ export class CombatHelper extends BaseService {
     if (!buildup || !burst || !recently) return;
 
     if (
-      this.game.effectHelper.hasEffect(defender, burst) ||
-      this.game.effectHelper.hasEffect(defender, recently) ||
-      (burst === 'Chilled' &&
-        this.game.effectHelper.hasEffect(defender, 'Frozen'))
+      hasEffect(defender, burst) ||
+      hasEffect(defender, recently) ||
+      (burst === 'Chilled' && hasEffect(defender, 'Frozen'))
     ) {
       return;
     }
 
-    const buildupEffect = this.game.effectHelper.getEffect(defender, buildup);
+    const buildupEffect = getEffect(defender, buildup);
     if (!buildupEffect) {
       const { buildUpDecay, buildUpCurrent, buildUpMax, buildUpScale } =
         this.game.contentManager.getGameSetting('combat');

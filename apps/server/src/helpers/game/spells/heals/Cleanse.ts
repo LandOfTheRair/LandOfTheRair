@@ -1,3 +1,4 @@
+import { getEffectLike, hasEffectLike } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -8,7 +9,7 @@ export class Cleanse extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!target) return;
-    const hasCurse = this.game.effectHelper.hasEffectLike(target, 'Curse');
+    const hasCurse = hasEffectLike(target, 'Curse');
 
     if (caster) {
       if (hasCurse) {
@@ -21,7 +22,7 @@ export class Cleanse extends Spell {
     }
 
     if (hasCurse) {
-      const curses = this.game.effectHelper.getEffectLike(target, 'Curse');
+      const curses = getEffectLike(target, 'Curse');
       curses.forEach((c) => {
         this.game.effectHelper.removeEffectByName(target, c.effectName);
       });

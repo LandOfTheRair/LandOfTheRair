@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import { hasEffect } from '@lotr/effects';
+import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
 export class Swimming extends Effect {
@@ -17,7 +13,7 @@ export class Swimming extends Effect {
   override unapply(char: ICharacter, effect: IStatusEffect) {
     if (
       (char as IPlayer).swimElement === DamageClass.Water &&
-      this.game.effectHelper.hasEffect(char, 'WaterBreathing')
+      hasEffect(char, 'WaterBreathing')
     ) {
       return;
     }

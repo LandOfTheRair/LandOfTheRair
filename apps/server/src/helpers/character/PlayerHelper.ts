@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { isArray, random } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import {
   calcSkillLevelForCharacter,
   calcTradeskillLevelForCharacter,
@@ -196,7 +197,7 @@ export class PlayerHelper extends BaseService {
     // if we're on a dense tile, "respawn"
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (
-      !this.game.effectHelper.hasEffect(player, 'WallWalk') &&
+      !hasEffect(player, 'WallWalk') &&
       (map?.getWallAt(player.x, player.y) ||
         map?.getDenseDecorAt(player.x, player.y))
     ) {
@@ -257,12 +258,9 @@ export class PlayerHelper extends BaseService {
     player.swimElement = element;
     player.swimLevel = swimLevel;
 
-    if (
-      !this.game.effectHelper.hasEffect(player, 'Swimming') &&
-      !this.game.effectHelper.hasEffect(player, 'Drowning')
-    ) {
+    if (!hasEffect(player, 'Swimming') && !hasEffect(player, 'Drowning')) {
       if (element === DamageClass.Water) {
-        if (this.game.effectHelper.hasEffect(player, 'WaterBreathing')) return;
+        if (hasEffect(player, 'WaterBreathing')) return;
 
         const swimDuration = this.game.characterHelper.getStat(
           player,
@@ -276,7 +274,7 @@ export class PlayerHelper extends BaseService {
       }
 
       if (element === DamageClass.Fire) {
-        if (this.game.effectHelper.hasEffect(player, 'LavaBreathing')) return;
+        if (hasEffect(player, 'LavaBreathing')) return;
 
         this.game.effectHelper.addEffect(player, '', 'Drowning', {
           effect: { duration: -1 },

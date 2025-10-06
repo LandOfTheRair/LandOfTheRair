@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -9,7 +10,7 @@ export class Shred extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!target) return;
-    if (this.game.effectHelper.hasEffect(target, 'Dangerous')) return;
+    if (hasEffect(target, 'Dangerous')) return;
 
     const damage = Math.floor(target.hp.maximum / (spellCastArgs.potency ?? 1));
 

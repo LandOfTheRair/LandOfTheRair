@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -11,11 +12,7 @@ export class ChainKunai extends Spell {
     target: ICharacter | null,
     spellCastArgs: SpellCastArgs,
   ): void {
-    if (
-      caster &&
-      target &&
-      !this.game.effectHelper.hasEffect(target, 'Unshakeable')
-    ) {
+    if (caster && target && !hasEffect(target, 'Unshakeable')) {
       this.game.teleportHelper.setCharXY(target, caster.x, caster.y);
     }
   }

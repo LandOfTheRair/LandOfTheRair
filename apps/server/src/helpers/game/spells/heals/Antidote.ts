@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -8,9 +9,9 @@ export class Antidote extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!target) return;
-    const hasPoison = this.game.effectHelper.hasEffect(target, 'Poison');
-    const hasDisease = this.game.effectHelper.hasEffect(target, 'Disease');
-    const hasVenom = this.game.effectHelper.hasEffect(target, 'Venom');
+    const hasPoison = hasEffect(target, 'Poison');
+    const hasDisease = hasEffect(target, 'Disease');
+    const hasVenom = hasEffect(target, 'Venom');
 
     if (!hasPoison && !hasDisease && !hasVenom && caster) {
       this.sendMessage(caster, {

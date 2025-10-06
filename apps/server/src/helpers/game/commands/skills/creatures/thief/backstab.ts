@@ -1,12 +1,11 @@
+import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  PhysicalAttackArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  WeaponClasses,
+  PhysicalAttackArgs,
 } from '@lotr/interfaces';
+import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../../../models/macro';
 
 export class Backstab extends SkillCommand {
@@ -17,47 +16,44 @@ export class Backstab extends SkillCommand {
   }
 
   override canUse(char: ICharacter) {
-    return (
-      this.game.effectHelper.hasEffect(char, 'Hidden') ||
-      this.game.effectHelper.hasEffect(char, 'Shadowmeld')
-    );
+    return hasEffect(char, 'Hidden') || hasEffect(char, 'Shadowmeld');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!args.stringArgs) return false;
 
-    const hidden = this.game.effectHelper.hasEffect(player, 'Hidden');
-    const shadowMeld = this.game.effectHelper.hasEffect(player, 'Shadowmeld');
+    const hidden = hasEffect(player, 'Hidden');
+    const shadowMeld = hasEffect(player, 'Shadowmeld');
     if (!hidden && !shadowMeld) {
-return this.sendMessage(player, 'You are not hidden!');
-}
+      return this.sendMessage(player, 'You are not hidden!');
+    }
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
     if (!weapon) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need a weapon in your hand to backstab!',
       );
-}
+    }
 
     const weaponClass = this.game.itemHelper.getItemProperty(
       weapon,
       'itemClass',
     );
     if (!WeaponClasses.includes(weaponClass)) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need a weapon in your hand to backstab!',
       );
-}
+    }
 
     const range = this.range(player);
     if (range === -1) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need to have your left hand empty to use that weapon!',
       );
-}
+    }
 
     const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
       player,

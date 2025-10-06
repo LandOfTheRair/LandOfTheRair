@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models/macro';
@@ -9,7 +10,7 @@ export class GMWallSight extends MacroCommand {
   override canBeFast = false;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'WallSight')) {
+    if (hasEffect(player, 'WallSight')) {
       this.game.effectHelper.removeEffectByName(player, 'WallSight');
       this.game.visibilityHelper.calculatePlayerFOV(player as Player);
       return;

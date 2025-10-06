@@ -6,16 +6,11 @@ import fs from 'fs-extra';
 import { cloneDeep, zipObject } from 'lodash';
 import readdir from 'recursive-readdir';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMapScript, IPlayer } from '@lotr/interfaces';
 import { ObjectType } from '@lotr/interfaces';
-import type {
-  Player,
-  Spawner } from '../../models';
-import {
-  InstancedWorldMap,
-  MapState,
-  WorldMap,
-} from '../../models';
+import type { Player, Spawner } from '../../models';
+import { InstancedWorldMap, MapState, WorldMap } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import * as MapScripts from '../../models/world/mapscripts';
@@ -413,7 +408,7 @@ export class WorldManager extends BaseService {
     }
 
     // cannot keep summons when going between maps
-    if (this.game.effectHelper.hasEffect(player, 'FindFamiliar')) {
+    if (hasEffect(player, 'FindFamiliar')) {
       this.game.effectHelper.removeEffectByName(player, 'FindFamiliar');
     }
 

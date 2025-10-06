@@ -1,3 +1,4 @@
+import { getEffect } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -9,7 +10,7 @@ export class Berserk extends Spell {
   ): void {
     if (!caster) return;
 
-    const existingBerserk = this.game.effectHelper.getEffect(caster, 'Berserk');
+    const existingBerserk = getEffect(caster, 'Berserk');
 
     if (!existingBerserk) {
       this.game.effectHelper.addEffect(caster, caster, 'Berserk', {

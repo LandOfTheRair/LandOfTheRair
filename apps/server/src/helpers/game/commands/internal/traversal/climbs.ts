@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
@@ -8,7 +9,7 @@ export class Climbs extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: Player, args: IMacroCommandArgs) {
-    if (this.game.effectHelper.hasEffect(player, 'Snare')) {
+    if (hasEffect(player, 'Snare')) {
       return this.sendMessage(player, 'You are snared!');
     }
 

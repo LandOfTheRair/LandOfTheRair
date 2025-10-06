@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -10,9 +11,6 @@ export class DeliriousShout extends SpellCommand {
   override spellRef = 'DeliriousShout';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return (
-      super.canUse(caster, target) &&
-      !this.game.effectHelper.hasEffect(target, 'DeliriousShout')
-    );
+    return super.canUse(caster, target) && !hasEffect(target, 'DeliriousShout');
   }
 }

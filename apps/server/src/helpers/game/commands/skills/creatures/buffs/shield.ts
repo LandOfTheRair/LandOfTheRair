@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -9,10 +10,7 @@ export class Shield extends SpellCommand {
   override spellRef = 'Shield';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return (
-      super.canUse(caster, caster) &&
-      !this.game.effectHelper.hasEffect(caster, 'Shield')
-    );
+    return super.canUse(caster, caster) && !hasEffect(caster, 'Shield');
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

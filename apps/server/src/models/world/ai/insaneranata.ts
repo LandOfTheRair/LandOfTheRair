@@ -1,3 +1,4 @@
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { sample } from 'lodash';
 
@@ -37,10 +38,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
       }
     }
 
-    if (
-      this.game.effectHelper.hasEffect(npc, 'Invulnerable') &&
-      this.livingInsanes.length === 0
-    ) {
+    if (hasEffect(npc, 'Invulnerable') && this.livingInsanes.length === 0) {
       this.game.effectHelper.removeEffectByName(npc, 'Invulnerable');
     }
   }

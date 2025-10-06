@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
+import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
 import type { Player } from '../../models';
@@ -31,9 +32,9 @@ export class VisibilityHelper extends BaseService {
 
     // blind OR dark and no darkvision
     if (
-      this.game.effectHelper.hasEffect(character, 'Blind') ||
+      hasEffect(character, 'Blind') ||
       (this.isDarkAt(character.map, character.x, character.y) &&
-        !this.game.effectHelper.hasEffect(character, 'DarkVision'))
+        !hasEffect(character, 'DarkVision'))
     ) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
         for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
@@ -58,7 +59,7 @@ export class VisibilityHelper extends BaseService {
         (x, y) => {
           if (
             this.isDarkAt(character.map, x, y) &&
-            this.game.effectHelper.hasEffect(character, 'DarkVision')
+            hasEffect(character, 'DarkVision')
           ) {
             setWith(
               affected,
@@ -77,7 +78,7 @@ export class VisibilityHelper extends BaseService {
         },
       );
 
-      if (!this.game.effectHelper.hasEffect(character, 'DarkVision')) {
+      if (!hasEffect(character, 'DarkVision')) {
         for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
           for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
             if (!this.isDarkAt(character.map, xx, yy)) continue;
@@ -92,7 +93,7 @@ export class VisibilityHelper extends BaseService {
       }
     }
 
-    if (this.game.effectHelper.hasEffect(character, 'WallSight')) {
+    if (hasEffect(character, 'WallSight')) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
         for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
           setWith(
@@ -130,10 +131,10 @@ export class VisibilityHelper extends BaseService {
 
   // whether or not someone can hide
   public canHide(char: ICharacter): boolean {
-    if (this.game.effectHelper.hasEffect(char, 'Revealed')) return false;
-    if (this.game.effectHelper.hasEffect(char, 'Hidden')) return false;
+    if (hasEffect(char, 'Revealed')) return false;
+    if (hasEffect(char, 'Hidden')) return false;
     if (
-      this.game.effectHelper.hasEffect(char, 'Singing') &&
+      hasEffect(char, 'Singing') &&
       !this.game.traitHelper.traitLevel(char, 'Shadowsong')
     ) {
       return false;
@@ -154,10 +155,10 @@ export class VisibilityHelper extends BaseService {
 
   // the reason you can't hide
   public reasonUnableToHide(char: ICharacter): string {
-    if (this.game.effectHelper.hasEffect(char, 'Revealed')) {
+    if (hasEffect(char, 'Revealed')) {
       return 'You cannot hide right now!';
     }
-    if (this.game.effectHelper.hasEffect(char, 'Hidden')) {
+    if (hasEffect(char, 'Hidden')) {
       return 'You are already hidden!';
     }
 
@@ -200,18 +201,15 @@ export class VisibilityHelper extends BaseService {
     }
 
     // if the hider is invisible and the seer does not have truesight, they are not visible
-    if (
-      this.game.effectHelper.hasEffect(hiding, 'Invisibility') &&
-      !this.game.effectHelper.hasEffect(char, 'TrueSight')
-    ) {
+    if (hasEffect(hiding, 'Invisibility') && !hasEffect(char, 'TrueSight')) {
       return false;
     }
 
     // nothing can see shadowmeld
-    if (this.game.effectHelper.hasEffect(hiding, 'Shadowmeld')) return false;
+    if (hasEffect(hiding, 'Shadowmeld')) return false;
 
     // last are stealth checks, if you have hidden it triggers the perception/stealth checks
-    if (this.game.effectHelper.hasEffect(hiding, 'Hidden')) {
+    if (hasEffect(hiding, 'Hidden')) {
       // perception is simple: stats + level. thieves get a multiplier
       const perception = this.game.characterHelper.getPerception(char);
 

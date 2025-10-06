@@ -2,38 +2,20 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
+import { formatEffectMessage, hasEffect } from '@lotr/effects';
 import type {
   DamageArgs,
   DeepPartial,
   ICharacter,
   IStatusEffect,
   IStatusEffectData,
-  Stat } from '@lotr/interfaces';
-import {
-  Allegiance,
-  BuffType
 } from '@lotr/interfaces';
+import { Allegiance } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class EffectHelper extends BaseService {
   public init() {}
-
-  private formatEffectMessage(
-    message: string,
-    effectData: IStatusEffectData,
-  ): string {
-    const potency = Math.floor(effectData.effect.extra.potency ?? 0);
-    const potency5 = Math.floor(potency / 5);
-    const potency10 = Math.floor(potency / 10);
-    return (message || '')
-      .split('%potency10')
-      .join(potency10.toLocaleString())
-      .split('%potency5')
-      .join(potency5.toLocaleString())
-      .split('%potency')
-      .join(potency.toLocaleString());
-  }
 
   // do whatever the effect does by ticking it
   public tickEffect(character: ICharacter, effect: IStatusEffect): void {
@@ -105,18 +87,18 @@ export class EffectHelper extends BaseService {
     const { recentlyRef, noStack } = effectData.effectMeta;
 
     // if the effect can't stack we won't let it (prevents things like chain stun)
-    if (noStack && this.hasEffect(character, effectName)) {
+    if (noStack && hasEffect(character, effectName)) {
       return;
     }
 
     // if this effect has a recently associated with it, we do not apply if they have that
-    if (recentlyRef && this.hasEffect(character, recentlyRef)) {
+    if (recentlyRef && hasEffect(character, recentlyRef)) {
       return;
     }
 
     const effect: IStatusEffect = {
       uuid: uuid(),
-      tooltip: this.formatEffectMessage(
+      tooltip: formatEffectMessage(
         effectData.tooltip.desc ?? 'No info.',
         effectData,
       ),
@@ -184,7 +166,7 @@ export class EffectHelper extends BaseService {
     // effect apply hook is for after create
     this.game.effectManager.effectApply(effectName, character, effect);
 
-    const defaultTooltip = this.formatEffectMessage(
+    const defaultTooltip = formatEffectMessage(
       effectData.tooltip?.desc ?? '',
       effectData,
     );
@@ -328,52 +310,6 @@ export class EffectHelper extends BaseService {
     });
   }
 
-  // get total effect stat bonuses
-  public effectStatBonuses(
-    character: ICharacter,
-  ): Partial<Record<Stat, number>> {
-    const stats: Partial<Record<Stat, number>> = {};
-
-    Object.values(character.effects._hash).forEach((effect) => {
-      const statBoosts = effect.effectInfo.statChanges;
-      Object.keys(statBoosts || {}).forEach((stat) => {
-        stats[stat] = stats[stat] || 0;
-        stats[stat] += statBoosts?.[stat] ?? 0;
-      });
-    });
-
-    return stats;
-  }
-
-  // check if someone has an effect
-  public hasEffect(char: ICharacter, effName: string): boolean {
-    return !!char.effects?._hash?.[effName];
-  }
-
-  // check if someone has an effect based on a string-ish
-  public hasEffectLike(char: ICharacter, effIsh: string): boolean {
-    const keys = Object.keys(char.effects?._hash ?? {});
-    return keys.some((k) => k.includes(effIsh));
-  }
-
-  // get an effect from someone
-  public getEffect(char: ICharacter, effName: string): IStatusEffect {
-    return char.effects?._hash?.[effName];
-  }
-
-  // get effects from someone based on an ish
-  public getEffectLike(char: ICharacter, effIsh: string): IStatusEffect[] {
-    const keys = Object.keys(char.effects?._hash ?? {});
-    return keys
-      .filter((k) => k.includes(effIsh))
-      .map((k) => char.effects._hash[k]);
-  }
-
-  // get the potency of an effect
-  public getEffectPotency(char: ICharacter, effName: string): number {
-    return char.effects?._hash?.[effName]?.effectInfo.potency ?? 0;
-  }
-
   // modify incoming damage based on incoming effects
   public modifyIncomingDamage(
     char: ICharacter,
@@ -410,16 +346,6 @@ export class EffectHelper extends BaseService {
       );
 
       ref?.outgoing?.(eff, char, attacker, damageArgs);
-    });
-  }
-
-  // dispellable effects are only in buff (not incoming or outgoing), and they must be self-removable
-  public dispellableEffects(char: ICharacter): IStatusEffect[] {
-    return char.effects[BuffType.Buff].filter((x) => {
-      if (x.endsAt === -1) return false;
-      if (!x.effectInfo.canRemove) return false;
-
-      return true;
     });
   }
 
