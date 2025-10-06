@@ -7,7 +7,7 @@
     "start:dev": "turbo run start:dev",
     "lint": "turbo run lint",
     "test": "vitest --run",
-    "setup": "turbo run setup && npm run setup:buildprereqs && npm run setup:buildpackages",
+    "setup": "turbo run setup && npm run setup:buildprereqs",
     "setup:buildprereqs": "turbo run build --filter=@lotr/interfaces",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "setup:full": "npm run setup && turbo run setup",
