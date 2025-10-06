@@ -1,3 +1,4 @@
+import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type {
   IChallenge,
   IItemDefinition,
@@ -16,7 +17,6 @@ import {
   Skill,
   Stat,
 } from '@lotr/interfaces';
-import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import type { Rollable } from 'lootastic';
 import type { RNG } from 'rot-js/dist/rot';
 

@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { calcSkillLevelForCharacter } from '@lotr/exp';
+import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class Poison extends Effect {
@@ -18,10 +13,7 @@ export class Poison extends Effect {
         caster &&
         this.game.traitHelper.traitLevel(caster, 'CorrosivePoison')
       ) {
-        const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(
-          caster,
-          Skill.Thievery,
-        );
+        const skill = calcSkillLevelForCharacter(caster, Skill.Thievery);
         const reduction = Math.floor(skill / 3) + 1;
         effect.effectInfo.statChanges = {
           [Stat.Mitigation]: -reduction,

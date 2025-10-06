@@ -33,6 +33,7 @@
     "@angular/pwa": "^0.803.4",
     "@angular/router": "^18.1.2",
     "@angular/service-worker": "^18.1.2",
+    "@lotr/exp": "*",
     "@lotr/initializers": "*",
     "@lotr/interfaces": "*",
     "@lotr/shared": "*",

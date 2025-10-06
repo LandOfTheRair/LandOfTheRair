@@ -1,3 +1,8 @@
+import {
+  assessPercentToNextSkill,
+  calcSkillLevelForCharacter,
+  calculateSkillXPRequiredForLevel,
+} from '@lotr/exp';
 import type {
   IAIBehavior,
   IDialogChatAction,
@@ -14,11 +19,11 @@ import {
   Skill,
   Stat,
 } from '@lotr/interfaces';
-import { calculateSkillXPRequiredForLevel, distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { distanceFrom } from '@lotr/shared';
 import type { Game } from '../../../../helpers';
 import type { Player } from '../../../orm';
 
@@ -173,10 +178,7 @@ export class TrainerBehavior implements IAIBehavior {
           return "I'm afraid I can't help you with that skill.";
         }
 
-        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
-          player,
-          skill,
-        );
+        const skillLevel = calcSkillLevelForCharacter(player, skill);
         if (skillLevel > maxSkillTrain) {
           return "You're way beyond my comprehension.";
         }
@@ -192,10 +194,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         loseCurrency(player, assessCost);
 
-        const percentWay = game.calculatorHelper.assessPercentToNextSkill(
-          player,
-          skill,
-        );
+        const percentWay = assessPercentToNextSkill(player, skill);
 
         return `You're ${percentWay}% of the way to your next ${skill.toUpperCase()} skill level.`;
       });
@@ -220,10 +219,7 @@ export class TrainerBehavior implements IAIBehavior {
           return "I'm afraid I can't help you with that skill.";
         }
 
-        const skillLevel = game.calculatorHelper.calcSkillLevelForCharacter(
-          player,
-          skill,
-        );
+        const skillLevel = calcSkillLevelForCharacter(player, skill);
         if (skillLevel > maxSkillTrain) {
           return "You're way beyond my comprehension.";
         }

@@ -1,7 +1,7 @@
 import {
   calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel,
-} from '@lotr/shared';
+} from '@lotr/exp';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 

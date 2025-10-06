@@ -1,11 +1,13 @@
 import { uniq } from 'lodash';
 
+import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
   IPlayer,
   ISimpleItem,
-  MiscClass } from '@lotr/interfaces';
+  MiscClass,
+} from '@lotr/interfaces';
 import {
   GameServerResponse,
   ItemClass,
@@ -144,11 +146,10 @@ export class Tear extends MacroCommand {
           string,
         );
 
-        const skill =
-          this.game.calculatorHelper.calcTradeskillLevelForCharacter(
-            player,
-            Tradeskill.Weavefabricating,
-          );
+        const skill = calcTradeskillLevelForCharacter(
+          player,
+          Tradeskill.Weavefabricating,
+        );
         if (skill < 10) {
           this.game.playerHelper.gainTradeskill(
             player,
@@ -199,7 +200,7 @@ export class Tear extends MacroCommand {
         string,
       );
 
-      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
+      const skill = calcTradeskillLevelForCharacter(
         player,
         Tradeskill.Weavefabricating,
       );

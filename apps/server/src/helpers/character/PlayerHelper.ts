@@ -1,6 +1,12 @@
 import { Injectable } from 'injection-js';
 import { isArray, random } from 'lodash';
 
+import {
+  calcSkillLevelForCharacter,
+  calcTradeskillLevelForCharacter,
+  calculateSkillXPRequiredForLevel,
+  calculateXPRequiredForLevel,
+} from '@lotr/exp';
 import type {
   Allegiance,
   BaseClass,
@@ -11,11 +17,7 @@ import type {
   Tradeskill,
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
-import {
-  calculateSkillXPRequiredForLevel,
-  calculateXPRequiredForLevel,
-  cleanNumber,
-} from '@lotr/shared';
+import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { GetSwimLevel } from '../data';
@@ -514,10 +516,7 @@ export class PlayerHelper extends BaseService {
     skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
     skillGained = cleanNumber(skillGained, 0);
 
-    const oldSkillValue = this.game.calculatorHelper.calcSkillLevelForCharacter(
-      player,
-      skill,
-    );
+    const oldSkillValue = calcSkillLevelForCharacter(player, skill);
 
     player.skills[skill.toLowerCase()] = Math.max(
       (player.skills[skill.toLowerCase()] ?? 0) + skillGained,
@@ -528,10 +527,7 @@ export class PlayerHelper extends BaseService {
       this.game.configManager.MAX_SKILL_EXP,
     );
 
-    const newSkillValue = this.game.calculatorHelper.calcSkillLevelForCharacter(
-      player,
-      skill,
-    );
+    const newSkillValue = calcSkillLevelForCharacter(player, skill);
 
     if (
       oldSkillValue !== newSkillValue &&
@@ -553,16 +549,14 @@ export class PlayerHelper extends BaseService {
 
     skillGained = cleanNumber(skillGained, 0);
 
-    const oldSkillValue =
-      this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, skill);
+    const oldSkillValue = calcTradeskillLevelForCharacter(player, skill);
 
     player.tradeskills[skill.toLowerCase()] = Math.max(
       (player.tradeskills[skill.toLowerCase()] ?? 0) + skillGained,
       0,
     );
 
-    const newSkillValue =
-      this.game.calculatorHelper.calcTradeskillLevelForCharacter(player, skill);
+    const newSkillValue = calcTradeskillLevelForCharacter(player, skill);
 
     if (oldSkillValue !== newSkillValue && newSkillValue % 5 === 0) {
       this.game.achievementsHelper.checkAllAchievements(player as Player);

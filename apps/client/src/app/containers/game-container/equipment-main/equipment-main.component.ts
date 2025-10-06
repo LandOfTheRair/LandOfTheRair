@@ -16,7 +16,8 @@ import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-import { calculateSkillLevelFromXP, getStatDescription } from '@lotr/shared';
+import { calculateSkillLevelFromXP } from '@lotr/exp';
+import { getStatDescription } from '@lotr/shared';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 
 @Component({

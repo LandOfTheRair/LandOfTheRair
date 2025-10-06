@@ -12,7 +12,7 @@ import { AccountState, GameState, ToggleWindow } from '../../../../stores';
 
 import { GameService } from '../../../services/game.service';
 
-import { calculateXPRequiredForLevel } from '@lotr/shared';
+import { calculateXPRequiredForLevel } from '@lotr/exp';
 import { UIService } from '../../../services/ui.service';
 
 @Component({

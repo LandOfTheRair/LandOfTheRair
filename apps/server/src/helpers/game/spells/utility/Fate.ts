@@ -1,7 +1,7 @@
 import { gainCurrency } from '@lotr/currency';
+import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Currency, LearnedSpell, Stat } from '@lotr/interfaces';
-import { calculateXPRequiredForLevel } from '@lotr/shared';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Fate extends Spell {

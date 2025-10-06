@@ -1,13 +1,13 @@
 import { clamp } from 'lodash';
 
+import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
   IPlayer,
   ISimpleItem,
-  TrackedStatistic } from '@lotr/interfaces';
-import {
-  ItemSlot
+  TrackedStatistic,
 } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Craft extends MacroCommand {
@@ -21,10 +21,7 @@ export class Craft extends MacroCommand {
       return this.sendMessage(player, 'You do not know that recipe!');
     }
 
-    const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
-      player,
-      recipe.recipeType,
-    );
+    const skill = calcTradeskillLevelForCharacter(player, recipe.recipeType);
 
     const {
       requireSkill,

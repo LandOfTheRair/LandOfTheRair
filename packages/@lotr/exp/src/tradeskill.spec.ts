@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateTradeskillLevelFromXP,
   calculateTradeskillXPRequiredForLevel,
-} from './exp';
+} from './tradeskill';
 
 describe('Tradeskill Functions', () => {
   describe('calculateTradeskillXPRequiredForLevel', () => {

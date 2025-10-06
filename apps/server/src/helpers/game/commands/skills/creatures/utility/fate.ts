@@ -1,5 +1,5 @@
+import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { calculateXPRequiredForLevel } from '@lotr/shared';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Fate extends SpellCommand {

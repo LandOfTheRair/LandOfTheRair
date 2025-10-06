@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { getCurrency, loseCurrency } from '@lotr/currency';
+import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type {
   ICharacter,
   INPC,
@@ -18,7 +19,7 @@ import {
   Stat,
   TrackedStatistic,
 } from '@lotr/interfaces';
-import { basePlayerSprite, calculateXPRequiredForLevel } from '@lotr/shared';
+import { basePlayerSprite } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 

@@ -1,6 +1,9 @@
+import {
+  calcSkillLevelForCharacter,
+  calculateSkillXPRequiredForLevel,
+} from '@lotr/exp';
 import type { ICharacter, INPC, IStatusEffect, Skill } from '@lotr/interfaces';
 import { Hostility, ItemSlot, Stat } from '@lotr/interfaces';
-import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { isArray } from 'lodash';
 import { Effect, Spawner } from '../../../../../models';
 
@@ -12,10 +15,7 @@ export class FindFamiliar extends Effect {
     const potency = effect.effectInfo.potency ?? 1;
 
     const addSkillLevelToNPC = (npc: INPC, skill: Skill, levels: number) => {
-      const curLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
-        npc,
-        skill,
-      );
+      const curLevel = calcSkillLevelForCharacter(npc, skill);
       const targetLevel = curLevel + levels;
       const targetXP = calculateSkillXPRequiredForLevel(targetLevel);
 

@@ -1,10 +1,12 @@
 import { uniq } from 'lodash';
 
+import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
   IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
+  ISimpleItem,
+} from '@lotr/interfaces';
 import {
   GameServerResponse,
   ItemClass,
@@ -117,11 +119,10 @@ export class Shatter extends MacroCommand {
           gemDust,
         );
 
-        const skill =
-          this.game.calculatorHelper.calcTradeskillLevelForCharacter(
-            player,
-            Tradeskill.Gemcrafting,
-          );
+        const skill = calcTradeskillLevelForCharacter(
+          player,
+          Tradeskill.Gemcrafting,
+        );
         if (skill < 10) {
           this.game.playerHelper.gainTradeskill(
             player,
@@ -162,7 +163,7 @@ export class Shatter extends MacroCommand {
         gemDust,
       );
 
-      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
+      const skill = calcTradeskillLevelForCharacter(
         player,
         Tradeskill.Gemcrafting,
       );

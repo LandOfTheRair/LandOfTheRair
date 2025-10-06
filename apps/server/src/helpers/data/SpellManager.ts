@@ -8,7 +8,8 @@ import type {
   IMacroCommandArgs,
   IPlayer,
   ISpellData,
-  IStatusEffectData } from '@lotr/interfaces';
+  IStatusEffectData,
+} from '@lotr/interfaces';
 import {
   DamageClass,
   ItemSlot,
@@ -18,6 +19,7 @@ import {
   Stat,
 } from '@lotr/interfaces';
 
+import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { Spell } from '../../models/world/Spell';
@@ -186,10 +188,7 @@ export class SpellManager extends BaseService {
       );
     if (!skillGain) return;
 
-    const skillLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
-      caster,
-      skillGain,
-    );
+    const skillLevel = calcSkillLevelForCharacter(caster, skillGain);
     if (skillLevel > (spellData.maxSkillForGain ?? 0)) return;
 
     const skillsFlagged =

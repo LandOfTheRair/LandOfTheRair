@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   calculateSkillLevelFromXP,
   calculateSkillXPRequiredForLevel,
-} from './exp';
+} from './skill';
 
 describe('Skill Functions', () => {
   describe('calculateSkillXPRequiredForLevel', () => {

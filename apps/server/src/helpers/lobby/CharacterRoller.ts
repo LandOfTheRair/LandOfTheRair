@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 
+import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacterItems, SkillBlock, StatBlock } from '@lotr/interfaces';
-import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()

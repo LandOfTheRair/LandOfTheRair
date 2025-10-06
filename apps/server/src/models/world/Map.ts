@@ -7,12 +7,12 @@ import * as Pathfinder from 'pathfinding';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../helpers';
 
-import type { IMapData, IMapProperties, IPlayer } from '@lotr/interfaces';
-import { MapLayer, ObjectType, TilesWithNoFOVUpdate } from '@lotr/interfaces';
 import {
   calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel,
-} from '@lotr/shared';
+} from '@lotr/exp';
+import type { IMapData, IMapProperties, IPlayer } from '@lotr/interfaces';
+import { MapLayer, ObjectType, TilesWithNoFOVUpdate } from '@lotr/interfaces';
 
 export class WorldMap {
   private densityMap: Pathfinder.Grid;

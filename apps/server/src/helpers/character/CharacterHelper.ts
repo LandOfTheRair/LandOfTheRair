@@ -21,6 +21,7 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 
@@ -1071,7 +1072,7 @@ export class CharacterHelper extends BaseService {
   // get the skill level for the character
   public getSkillLevel(character: ICharacter, skill: Skill) {
     return (
-      this.game.calculatorHelper.calcSkillLevelForCharacter(character, skill) +
+      calcSkillLevelForCharacter(character, skill) +
       this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat)
     );
   }

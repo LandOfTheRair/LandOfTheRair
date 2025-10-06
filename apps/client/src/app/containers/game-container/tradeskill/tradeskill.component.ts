@@ -16,7 +16,7 @@ import { UIService } from '../../../services/ui.service';
 import {
   calculateTradeskillLevelFromXP,
   calculateTradeskillXPRequiredForLevel,
-} from '@lotr/shared';
+} from '@lotr/exp';
 import * as allRecipes from '../../../../assets/content/_output/recipes.json';
 import * as skillDescs from '../../../../assets/content/_output/skilldescs.json';
 import { AssetService } from '../../../services/asset.service';

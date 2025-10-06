@@ -1,3 +1,7 @@
+import {
+  calcSkillLevelForCharacter,
+  calcTradeskillLevelForCharacter,
+} from '@lotr/exp';
 import type { IAchievement } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -50,7 +54,7 @@ export class AchievementsHelper extends BaseService {
     }
 
     if (achievement.requirements.skill.skill) {
-      const curLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
+      const curLevel = calcSkillLevelForCharacter(
         player,
         achievement.requirements.skill.skill,
       );
@@ -59,11 +63,10 @@ export class AchievementsHelper extends BaseService {
     }
 
     if (achievement.requirements.tradeskill.tradeskill) {
-      const curLevel =
-        this.game.calculatorHelper.calcTradeskillLevelForCharacter(
-          player,
-          achievement.requirements.tradeskill.tradeskill,
-        );
+      const curLevel = calcTradeskillLevelForCharacter(
+        player,
+        achievement.requirements.tradeskill.tradeskill,
+      );
 
       return curLevel >= achievement.requirements.tradeskill.level;
     }

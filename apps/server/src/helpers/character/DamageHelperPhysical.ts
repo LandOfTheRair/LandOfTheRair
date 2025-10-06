@@ -28,6 +28,7 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { distanceFrom } from '@lotr/shared';
 
 interface WeaponAttackStats {
@@ -614,17 +615,14 @@ export class DamageHelperPhysical extends BaseService {
 
     // get relevant skill info for attacker
     let attackerSkill =
-      this.game.calculatorHelper.calcSkillLevelForCharacter(
+      calcSkillLevelForCharacter(
         attacker,
         isThrow ? Skill.Throwing : (type as Skill),
       ) + 1;
     if (secondaryType) {
       attackerSkill = Math.floor(
         (attackerSkill +
-          this.game.calculatorHelper.calcSkillLevelForCharacter(
-            attacker,
-            secondaryType as Skill,
-          )) /
+          calcSkillLevelForCharacter(attacker, secondaryType as Skill)) /
           2,
       );
     }

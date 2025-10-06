@@ -1,6 +1,6 @@
+import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
-import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { Spawner } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
 

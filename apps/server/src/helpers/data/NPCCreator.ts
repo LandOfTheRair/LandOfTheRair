@@ -41,8 +41,8 @@ import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { BaseService } from '../../models/BaseService';
 import { trickOrTreat } from '../../models/world/ai/ai-commands';
 
+import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import { initializeNPC } from '@lotr/initializers';
-import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs

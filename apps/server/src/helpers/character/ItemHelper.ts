@@ -22,6 +22,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem, isOwnedBy } from '@lotr/shared';
 
 // functions related to MODIFYING an item
@@ -456,7 +457,7 @@ export class ItemHelper extends BaseService {
         );
       }
 
-      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
+      const skill = calcTradeskillLevelForCharacter(
         player,
         recipeRef.recipeType,
       );

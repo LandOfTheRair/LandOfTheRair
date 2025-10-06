@@ -1,9 +1,11 @@
 import { uniq } from 'lodash';
 
+import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
+  IPlayer,
+} from '@lotr/interfaces';
 import {
   GameServerResponse,
   ItemSlot,
@@ -106,11 +108,10 @@ export class Disenchant extends MacroCommand {
           enosDust,
         );
 
-        const skill =
-          this.game.calculatorHelper.calcTradeskillLevelForCharacter(
-            player,
-            Tradeskill.Spellforging,
-          );
+        const skill = calcTradeskillLevelForCharacter(
+          player,
+          Tradeskill.Spellforging,
+        );
         if (skill < 10) {
           this.game.playerHelper.gainTradeskill(
             player,
@@ -154,7 +155,7 @@ export class Disenchant extends MacroCommand {
         enosDust,
       );
 
-      const skill = this.game.calculatorHelper.calcTradeskillLevelForCharacter(
+      const skill = calcTradeskillLevelForCharacter(
         player,
         Tradeskill.Spellforging,
       );

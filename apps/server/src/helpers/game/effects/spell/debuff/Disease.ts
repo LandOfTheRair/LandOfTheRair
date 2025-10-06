@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { calcSkillLevelForCharacter } from '@lotr/exp';
+import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class Disease extends Effect {
@@ -19,10 +14,7 @@ export class Disease extends Effect {
           caster,
           'DebilitatingDisease',
         );
-        const skill = this.game.calculatorHelper.calcSkillLevelForCharacter(
-          caster,
-          Skill.Restoration,
-        );
+        const skill = calcSkillLevelForCharacter(caster, Skill.Restoration);
         const statReduction = -Math.floor(skill * mult);
 
         if (statReduction > 0) {

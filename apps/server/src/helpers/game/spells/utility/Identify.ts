@@ -1,3 +1,4 @@
+import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot, Skill } from '@lotr/interfaces';
 import { descTextFor } from '@lotr/shared';
@@ -19,11 +20,10 @@ export class Identify extends Spell {
       return;
     }
 
-    const conjSkillLevel =
-      this.game.calculatorHelper.calcSkillLevelForCharacter(
-        caster,
-        Skill.Conjuration,
-      );
+    const conjSkillLevel = calcSkillLevelForCharacter(
+      caster,
+      Skill.Conjuration,
+    );
     let castTier = 0;
     if (conjSkillLevel >= 10) castTier = 1;
     if (conjSkillLevel >= 20) castTier = 2;
