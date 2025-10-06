@@ -9,6 +9,10 @@ import { Game } from '../../helpers';
 
 import type { IMapData, IMapProperties, IPlayer } from '@lotr/interfaces';
 import { MapLayer, ObjectType, TilesWithNoFOVUpdate } from '@lotr/interfaces';
+import {
+  calculateSkillXPRequiredForLevel,
+  calculateXPRequiredForLevel,
+} from '@lotr/shared';
 
 export class WorldMap {
   private densityMap: Pathfinder.Grid;
@@ -215,16 +219,12 @@ export class WorldMap {
   private setMaxes() {
     const settings = this.game.contentManager.settingsData;
     const { maxSkill } = settings.character;
-    this.firstCutExpValue =
-      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 2);
-    this.secondCutExpValue =
-      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 5);
-    this.maxLevelExpPossible =
-      this.game.calculatorHelper.calculateXPRequiredForLevel(this.maxLevel + 6);
-    this.maxSkillExpPossible =
-      this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-        Math.min(maxSkill, this.maxSkill),
-      );
+    this.firstCutExpValue = calculateXPRequiredForLevel(this.maxLevel + 2);
+    this.secondCutExpValue = calculateXPRequiredForLevel(this.maxLevel + 5);
+    this.maxLevelExpPossible = calculateXPRequiredForLevel(this.maxLevel + 6);
+    this.maxSkillExpPossible = calculateSkillXPRequiredForLevel(
+      Math.min(maxSkill, this.maxSkill),
+    );
   }
 
   private createPlanner() {

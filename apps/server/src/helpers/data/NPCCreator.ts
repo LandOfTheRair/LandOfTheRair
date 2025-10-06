@@ -42,6 +42,7 @@ import { BaseService } from '../../models/BaseService';
 import { trickOrTreat } from '../../models/world/ai/ai-commands';
 
 import { initializeNPC } from '@lotr/initializers';
+import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs
@@ -265,10 +266,9 @@ export class NPCCreator extends BaseService {
           this.game.contentManager.challengeData.global.stats.allSkills[
             baseChar.level
           ];
-        baseChar.skills[skill] =
-          this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-            Math.floor(globalSetSkill * skillMult),
-          );
+        baseChar.skills[skill] = calculateSkillXPRequiredForLevel(
+          Math.floor(globalSetSkill * skillMult),
+        );
       });
     }
 
@@ -314,8 +314,7 @@ export class NPCCreator extends BaseService {
       });
 
       Object.values(Skill).forEach((skill) => {
-        baseChar.skills[skill] =
-          this.game.calculatorHelper.calculateSkillXPRequiredForLevel(statSet);
+        baseChar.skills[skill] = calculateSkillXPRequiredForLevel(statSet);
       });
 
       baseChar.monsterClass ??= MonsterClass.Humanoid;
@@ -335,10 +334,9 @@ export class NPCCreator extends BaseService {
     });
 
     if (baseChar.skills[Skill.Thievery] === 0) {
-      baseChar.skills[Skill.Thievery] =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-          Math.floor(baseChar.level / 2),
-        );
+      baseChar.skills[Skill.Thievery] = calculateSkillXPRequiredForLevel(
+        Math.floor(baseChar.level / 2),
+      );
     }
 
     if (npcDef.giveXp) {

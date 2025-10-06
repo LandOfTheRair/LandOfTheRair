@@ -1,4 +1,5 @@
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { calculateXPRequiredForLevel } from '@lotr/shared';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Fate extends SpellCommand {
@@ -8,10 +9,7 @@ export class Fate extends SpellCommand {
   override canTargetSelf = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (
-      player.exp < this.game.calculatorHelper.calculateXPRequiredForLevel(15) ||
-      player.level < 15
-    ) {
+    if (player.exp < calculateXPRequiredForLevel(15) || player.level < 15) {
       return this.sendMessage(
         player,
         'Hmmm... you feel too inexperienced for this.',

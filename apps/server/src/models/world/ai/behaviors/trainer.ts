@@ -14,7 +14,7 @@ import {
   Skill,
   Stat,
 } from '@lotr/interfaces';
-import { distanceFrom } from '@lotr/shared';
+import { calculateSkillXPRequiredForLevel, distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -236,8 +236,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         // you can only spend as much as the trainer can train to
         const heldValue = rightHand.mods.value || 1;
-        const maxCoins =
-          game.calculatorHelper.calculateSkillXPRequiredForLevel(maxSkillTrain);
+        const maxCoins = calculateSkillXPRequiredForLevel(maxSkillTrain);
         const curValue = player.skills[skill] || 0;
         const curTrain = player.paidSkills[skill] || 0;
 

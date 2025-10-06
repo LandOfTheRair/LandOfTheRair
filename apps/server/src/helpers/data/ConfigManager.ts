@@ -1,16 +1,19 @@
+import {
+  calculateSkillXPRequiredForLevel,
+  calculateXPRequiredForLevel,
+} from '@lotr/shared';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class ConfigManager extends BaseService {
-
   private maxLevel = 50;
   private maxSkill = 30;
   private maxStats = 25;
   private potionStats = {};
 
   private gameOptions = {
-    frozenAI: false
+    frozenAI: false,
   };
 
   private maxExp = 0;
@@ -45,13 +48,22 @@ export class ConfigManager extends BaseService {
   }
 
   async init() {
-    this.maxLevel = this.game.contentManager.getGameSetting('character', 'maxLevel');
-    this.maxSkill = this.game.contentManager.getGameSetting('character', 'maxSkill');
-    this.maxStats = this.game.contentManager.getGameSetting('character', 'maxStats');
+    this.maxLevel = this.game.contentManager.getGameSetting(
+      'character',
+      'maxLevel',
+    );
+    this.maxSkill = this.game.contentManager.getGameSetting(
+      'character',
+      'maxSkill',
+    );
+    this.maxStats = this.game.contentManager.getGameSetting(
+      'character',
+      'maxStats',
+    );
     this.potionStats = this.game.contentManager.getGameSetting('potion');
 
-    this.maxExp = this.game.calculatorHelper.calculateXPRequiredForLevel(this.MAX_LEVEL);
-    this.maxSkillExp = this.game.calculatorHelper.calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);
+    this.maxExp = calculateXPRequiredForLevel(this.MAX_LEVEL);
+    this.maxSkillExp = calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);
   }
 
   public toggleAIFreeze() {

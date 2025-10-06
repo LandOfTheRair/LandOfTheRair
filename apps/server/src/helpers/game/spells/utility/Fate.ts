@@ -1,6 +1,7 @@
 import { gainCurrency } from '@lotr/currency';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Currency, LearnedSpell, Stat } from '@lotr/interfaces';
+import { calculateXPRequiredForLevel } from '@lotr/shared';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Fate extends Spell {
@@ -14,10 +15,7 @@ export class Fate extends Spell {
 
     const player = caster as IPlayer;
 
-    if (
-      player.exp < this.game.calculatorHelper.calculateXPRequiredForLevel(15) ||
-      player.level < 15
-    ) {
+    if (player.exp < calculateXPRequiredForLevel(15) || player.level < 15) {
       return this.sendMessage(player, { message: 'There was no effect.' });
     }
 
@@ -99,20 +97,11 @@ export class Fate extends Spell {
           xpChange = Math.floor(player.exp * (xp / 100));
         } else {
           if (xp > 0) {
-            const baseXp =
-              this.game.calculatorHelper.calculateXPRequiredForLevel(
-                player.level,
-              );
-            const neededXp =
-              this.game.calculatorHelper.calculateXPRequiredForLevel(
-                player.level + 1,
-              );
+            const baseXp = calculateXPRequiredForLevel(player.level);
+            const neededXp = calculateXPRequiredForLevel(player.level + 1);
             xpChange = Math.floor((neededXp - baseXp) * (xp / 100));
           } else {
-            const baseXp =
-              this.game.calculatorHelper.calculateXPRequiredForLevel(
-                player.level,
-              );
+            const baseXp = calculateXPRequiredForLevel(player.level);
             xpChange = Math.floor(baseXp * (xp / 100));
           }
         }

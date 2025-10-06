@@ -1,13 +1,6 @@
-import type {
-  ICharacter,
-  INPC,
-  IStatusEffect,
-  Skill } from '@lotr/interfaces';
-import {
-  Hostility,
-  ItemSlot,
-  Stat,
-} from '@lotr/interfaces';
+import type { ICharacter, INPC, IStatusEffect, Skill } from '@lotr/interfaces';
+import { Hostility, ItemSlot, Stat } from '@lotr/interfaces';
+import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { isArray } from 'lodash';
 import { Effect, Spawner } from '../../../../../models';
 
@@ -24,10 +17,7 @@ export class FindFamiliar extends Effect {
         skill,
       );
       const targetLevel = curLevel + levels;
-      const targetXP =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-          targetLevel,
-        );
+      const targetXP = calculateSkillXPRequiredForLevel(targetLevel);
 
       npc.skills[skill] = Math.max(npc.skills[skill] ?? 0, targetXP);
     };
@@ -79,7 +69,7 @@ export class FindFamiliar extends Effect {
 
       Object.keys(def?.summonSkillModifiers || {}).forEach((skillMod) => {
         const boost =
-          this.game.calculatorHelper.calculateSkillXPRequiredForLevel(potency) *
+          calculateSkillXPRequiredForLevel(potency) *
           (def.summonSkillModifiers?.[skillMod] ?? 0);
 
         npc.skills[skillMod] += boost;

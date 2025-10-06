@@ -18,7 +18,7 @@ import {
   Stat,
   TrackedStatistic,
 } from '@lotr/interfaces';
-import { basePlayerSprite } from '@lotr/shared';
+import { basePlayerSprite, calculateXPRequiredForLevel } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -456,9 +456,7 @@ export class DeathHelper extends BaseService {
         this.game.contentManager.getGameSetting('corpse');
 
       const lostXP = Math.floor(
-        this.game.calculatorHelper.calculateXPRequiredForLevel(dead.level) *
-          eatXpLossMultiplier *
-          eatTier,
+        calculateXPRequiredForLevel(dead.level) * eatXpLossMultiplier * eatTier,
       );
       const lostSkill = Math.floor(eatSkillLossMultiplier * eatTier);
       const randomSkill = sample(Object.keys(dead.skills)) as Skill;

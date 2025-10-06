@@ -11,7 +11,11 @@ import type {
   Tradeskill,
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
-import { cleanNumber } from '@lotr/shared';
+import {
+  calculateSkillXPRequiredForLevel,
+  calculateXPRequiredForLevel,
+  cleanNumber,
+} from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { GetSwimLevel } from '../data';
@@ -76,13 +80,11 @@ export class PlayerHelper extends BaseService {
       );
 
     if (castSkill === Skill.Restoration) {
-      player.skills[Skill.Restoration] =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+      player.skills[Skill.Restoration] = calculateSkillXPRequiredForLevel(1);
     }
 
     if (castSkill === Skill.Conjuration) {
-      player.skills[Skill.Conjuration] =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(1);
+      player.skills[Skill.Conjuration] = calculateSkillXPRequiredForLevel(1);
     }
 
     this.game.guildManager.setGuildForPlayer(player as Player);
@@ -683,9 +685,7 @@ export class PlayerHelper extends BaseService {
     do {
       if (player.level >= maxLevel) break;
 
-      const neededXp = this.game.calculatorHelper.calculateXPRequiredForLevel(
-        player.level + 1,
-      );
+      const neededXp = calculateXPRequiredForLevel(player.level + 1);
       if (player.exp >= neededXp) {
         player.level += 1;
         if (player.level > player.highestLevel) {

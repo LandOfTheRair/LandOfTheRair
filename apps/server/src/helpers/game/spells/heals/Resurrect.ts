@@ -1,12 +1,6 @@
-import type {
-  ICharacter,
-  INPC,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  Hostility,
-  ItemClass,
-  Stat,
-} from '@lotr/interfaces';
+import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
+import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
+import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { Spawner } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -75,10 +69,9 @@ export class Resurrect extends Spell {
       npc.skillOnKill = 0;
       npc.giveXp = { min: 1, max: 1 };
 
-      const skillBoost =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-          Math.floor(level / 2),
-        );
+      const skillBoost = calculateSkillXPRequiredForLevel(
+        Math.floor(level / 2),
+      );
       Object.keys(npc.skills).forEach((skillName) => {
         npc.skills[skillName] += skillBoost;
       });

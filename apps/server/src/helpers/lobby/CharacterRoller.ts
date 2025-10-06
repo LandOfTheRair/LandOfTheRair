@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 
 import type { ICharacterItems, SkillBlock, StatBlock } from '@lotr/interfaces';
+import { calculateSkillXPRequiredForLevel } from '@lotr/shared';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -35,10 +36,9 @@ export class CharacterRoller extends BaseService {
 
     const skills = {};
     Object.keys(foundWeapons?.baseSkills || {}).forEach((skill) => {
-      skills[skill] =
-        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
-          foundWeapons.baseSkills[skill],
-        );
+      skills[skill] = calculateSkillXPRequiredForLevel(
+        foundWeapons.baseSkills[skill],
+      );
     });
 
     const items = {};

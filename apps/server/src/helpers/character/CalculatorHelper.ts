@@ -8,28 +8,11 @@ import { BaseService } from '../../models/BaseService';
 import {
   calculateSkillXPRequiredForLevel,
   calculateTradeskillLevelFromXP,
-  calculateTradeskillXPRequiredForLevel,
-  calculateXPRequiredForLevel,
 } from '@lotr/shared';
 
 @Injectable()
 export class CalculatorHelper extends BaseService {
   public init() {}
-
-  // xp required for a particular level
-  public calculateXPRequiredForLevel(level: number): number {
-    return calculateXPRequiredForLevel(level);
-  }
-
-  // skill XP needed for a particular skill level
-  public calculateSkillXPRequiredForLevel(level: number): number {
-    return calculateSkillXPRequiredForLevel(level);
-  }
-
-  // tradeskill XP needed for a particular skill level
-  public calculateTradeskillXPRequiredForLevel(level: number): number {
-    return calculateTradeskillXPRequiredForLevel(level);
-  }
 
   // skill level for a certain skill for a character
   public calcSkillLevelForCharacter(
@@ -71,13 +54,9 @@ export class CalculatorHelper extends BaseService {
     const skillLevel = this.calcSkillLevelForCharacter(character, skill);
 
     const nextLevel =
-      skillLevel === 0
-        ? 100
-        : this.calculateSkillXPRequiredForLevel(skillLevel);
+      skillLevel === 0 ? 100 : calculateSkillXPRequiredForLevel(skillLevel);
     const prevLevel =
-      skillLevel === 0
-        ? 0
-        : this.calculateSkillXPRequiredForLevel(skillLevel - 1);
+      skillLevel === 0 ? 0 : calculateSkillXPRequiredForLevel(skillLevel - 1);
 
     const normalizedCurrent = skillValue - prevLevel;
     const normalizedMax = nextLevel - prevLevel;
