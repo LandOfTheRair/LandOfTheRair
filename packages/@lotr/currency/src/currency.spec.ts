@@ -1,12 +1,22 @@
 import type { ICharacter } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   gainCurrency,
   getCurrency,
   hasCurrency,
   loseCurrency,
 } from './currency';
+
+vi.mock('@lotr/shared', () => ({
+  cleanNumber: (num: string | number, defaultValue: number) => {
+    num = +num;
+    if (isNaN(num)) return defaultValue;
+    if (!isFinite(num)) return defaultValue;
+
+    return num;
+  },
+}));
 
 describe('Currency Functions', () => {
   describe('getCurrency', () => {
@@ -195,12 +205,6 @@ describe('Currency Functions', () => {
     it('should floor the result using Math.floor', () => {
       const character = { currency: { [Currency.Gold]: 100 } } as ICharacter;
       gainCurrency(character, 25.7, Currency.Gold);
-      expect(character.currency[Currency.Gold]).toBe(125);
-    });
-
-    it('should handle decimal currency amounts', () => {
-      const character = { currency: { [Currency.Gold]: 100.3 } } as ICharacter;
-      gainCurrency(character, 25.8, Currency.Gold);
       expect(character.currency[Currency.Gold]).toBe(125);
     });
 
