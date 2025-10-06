@@ -1,7 +1,11 @@
+import type { ICharacter, IPlayer, Skill } from '@lotr/interfaces';
 import { describe, expect, it } from 'vitest';
 import {
+  assessPercentToNextSkill,
+  calcSkillLevelForCharacter,
   calculateSkillLevelFromXP,
   calculateSkillXPRequiredForLevel,
+  percentCompleteSkill,
 } from './skill';
 
 describe('Skill Functions', () => {
@@ -114,6 +118,209 @@ describe('Skill Functions', () => {
     it('should handle null/undefined XP values', () => {
       expect(calculateSkillLevelFromXP(null as any)).toBe(0);
       expect(calculateSkillLevelFromXP(undefined as any)).toBe(0);
+    });
+  });
+
+  describe('percentCompleteSkill', () => {
+    const createMockPlayer = (skillValue: number): IPlayer =>
+      ({
+        skills: {
+          sword: skillValue,
+        },
+      }) as IPlayer;
+
+    it('should handle skill level 0', () => {
+      const player = createMockPlayer(50);
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(result).toBe('50.000');
+    });
+
+    it('should handle exact level boundaries', () => {
+      const player = createMockPlayer(155); // Exact level 1
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(result).toBe('100.000'); // 100% complete with level 1
+    });
+
+    it('should calculate percentage progress correctly', () => {
+      const player = createMockPlayer(200); // Level 2, some progress toward level 3
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      const expected = (((200 - 155) / (240 - 155)) * 100).toFixed(3);
+      expect(result).toBe(expected);
+    });
+
+    it('should handle missing skill (undefined)', () => {
+      const player = { skills: {} } as IPlayer;
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(result).toBe('0.000');
+    });
+
+    it('should handle skill value of 0', () => {
+      const player = createMockPlayer(0);
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(result).toBe('0.000');
+    });
+
+    it('should handle level 0 skills correctly', () => {
+      const player = createMockPlayer(50); // Below level 1 threshold
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(result).toBe('50.000'); // 50/100 * 100 = 50%
+    });
+
+    it('should handle high skill values', () => {
+      const player = createMockPlayer(1000); // High skill value
+      const result = percentCompleteSkill(player, 'sword' as Skill);
+      expect(parseFloat(result)).toBeGreaterThanOrEqual(0);
+      expect(parseFloat(result)).toBeLessThanOrEqual(100);
+    });
+  });
+
+  describe('calcSkillLevelForCharacter', () => {
+    const createMockCharacter = (skillValue: number): ICharacter =>
+      ({
+        skills: {
+          sword: skillValue,
+        },
+      }) as ICharacter;
+
+    it('should calculate skill level correctly', () => {
+      const character = createMockCharacter(200);
+      const result = calcSkillLevelForCharacter(character, 'sword' as Skill);
+      expect(result).toBe(2);
+    });
+
+    it('should handle lowercase skill names', () => {
+      const character = {
+        skills: {
+          sword: 200,
+        },
+      } as ICharacter;
+      const result = calcSkillLevelForCharacter(character, 'SWORD' as Skill);
+      expect(result).toBe(2);
+    });
+
+    it('should handle missing skills', () => {
+      const character = { skills: {} } as ICharacter;
+      const result = calcSkillLevelForCharacter(character, 'sword' as Skill);
+      expect(result).toBe(0);
+    });
+
+    it('should throw error for null skill parameter', () => {
+      const character = createMockCharacter(200);
+      expect(() => {
+        calcSkillLevelForCharacter(character, null as any);
+      }).toThrow('Trying to calculate skill of undefined');
+    });
+
+    it('should throw error for undefined skill parameter', () => {
+      const character = createMockCharacter(200);
+      expect(() => {
+        calcSkillLevelForCharacter(character, undefined as any);
+      }).toThrow('Trying to calculate skill of undefined');
+    });
+
+    it('should handle zero skill value', () => {
+      const character = createMockCharacter(0);
+      const result = calcSkillLevelForCharacter(character, 'sword' as Skill);
+      expect(result).toBe(0);
+    });
+
+    it('should handle high skill values', () => {
+      const character = createMockCharacter(10000);
+      const result = calcSkillLevelForCharacter(character, 'sword' as Skill);
+      expect(result).toBe(11); // Based on calculateSkillLevelFromXP(10000)
+    });
+  });
+
+  describe('assessPercentToNextSkill', () => {
+    const createMockCharacter = (skillValue: number): ICharacter =>
+      ({
+        skills: {
+          sword: skillValue,
+        },
+      }) as ICharacter;
+
+    it('should calculate percentage to next skill level', () => {
+      const character = createMockCharacter(200); // Level 2, progress toward level 3
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      const expected = Math.min(
+        99.999,
+        ((200 - 155) / (240 - 155)) * 100,
+      ).toFixed(3);
+      expect(result).toBe(expected);
+    });
+
+    it('should handle skill level 0', () => {
+      const character = createMockCharacter(50);
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      const expected = Math.min(99.999, (50 / 100) * 100).toFixed(3);
+      expect(result).toBe(expected);
+    });
+
+    it('should cap at 99.999%', () => {
+      const character = createMockCharacter(239); // Very close to level 3
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(parseFloat(result)).toBeLessThanOrEqual(99.999);
+    });
+
+    it('should handle exact level boundaries and cap at 99.999%', () => {
+      const character = createMockCharacter(155); // Exact level 1
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(result).toBe('99.999'); // Caps at 99.999% at level boundary
+    });
+
+    it('should handle missing skills', () => {
+      const character = { skills: {} } as ICharacter;
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(result).toBe('0.000');
+    });
+
+    it('should handle very high skill values', () => {
+      const character = createMockCharacter(100000);
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(parseFloat(result)).toBeGreaterThanOrEqual(0);
+      expect(parseFloat(result)).toBeLessThanOrEqual(99.999);
+    });
+
+    it('should not return negative percentages', () => {
+      const character = createMockCharacter(0);
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(parseFloat(result)).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should handle skill value with null coalescing', () => {
+      const character = { skills: { sword: null } } as any;
+      const result = assessPercentToNextSkill(character, 'sword' as Skill);
+      expect(result).toBe('0.000');
+    });
+  });
+
+  describe('Integration Tests', () => {
+    it('should have consistent behavior between skill calculation functions', () => {
+      // Test with exact level boundary XP
+      const testXP = 240; // Exact XP for level 2
+      const level = calculateSkillLevelFromXP(testXP);
+      const requiredXP = calculateSkillXPRequiredForLevel(level);
+      const nextLevelXP = calculateSkillXPRequiredForLevel(level + 1);
+
+      // Current XP should equal the required XP for current level (at exact boundary)
+      expect(testXP).toBe(requiredXP);
+      // Current XP should be less than required XP for next level
+      expect(testXP).toBeLessThan(nextLevelXP);
+    });
+
+    it('should have consistent percentage calculations between player and character functions', () => {
+      const skillValue = 200;
+      const player = { skills: { sword: skillValue } } as IPlayer;
+      const character = { skills: { sword: skillValue } } as ICharacter;
+
+      const playerPercent = percentCompleteSkill(player, 'sword' as Skill);
+      const characterPercent = assessPercentToNextSkill(
+        character,
+        'sword' as Skill,
+      );
+
+      // Both should calculate the same percentage for non-boundary values
+      expect(playerPercent).toBe(characterPercent);
     });
   });
 });

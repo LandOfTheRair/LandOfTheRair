@@ -41,11 +41,7 @@ export function calcSkillLevelForCharacter(
   skill: Skill,
 ): number {
   if (!skill) {
-    this.game.logger.error(
-      'SkillCalc',
-      new Error('Trying to calculate skill of undefined'),
-    );
-    return 0;
+    throw new Error('Trying to calculate skill of undefined');
   }
 
   const skillValue = character.skills[skill.toLowerCase()] ?? 0;

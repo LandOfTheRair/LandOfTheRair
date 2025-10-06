@@ -22,11 +22,7 @@ export function calcTradeskillLevelForCharacter(
   skill: Tradeskill,
 ): number {
   if (!skill) {
-    this.game.logger.error(
-      'SkillCalc',
-      new Error('Trying to calculate skill of undefined'),
-    );
-    return 0;
+    throw new Error('Trying to calculate skill of undefined');
   }
 
   const skillValue = character.tradeskills[skill.toLowerCase()] ?? 0;

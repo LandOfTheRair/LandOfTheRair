@@ -1,5 +1,7 @@
+import type { IPlayer, Tradeskill } from '@lotr/interfaces';
 import { describe, expect, it } from 'vitest';
 import {
+  calcTradeskillLevelForCharacter,
   calculateTradeskillLevelFromXP,
   calculateTradeskillXPRequiredForLevel,
 } from './tradeskill';
@@ -149,6 +151,164 @@ describe('Tradeskill Functions', () => {
       expect(calculateTradeskillLevelFromXP(10)).toBe(2); // Now level 2
       expect(calculateTradeskillLevelFromXP(11)).toBe(2); // Still level 2
       expect(calculateTradeskillLevelFromXP(12)).toBe(2); // Now level 2
+    });
+  });
+
+  describe('calcTradeskillLevelForCharacter', () => {
+    const createMockPlayer = (skillValue: number): IPlayer =>
+      ({
+        tradeskills: {
+          alchemy: skillValue,
+        },
+      }) as IPlayer;
+
+    it('should calculate tradeskill level correctly', () => {
+      const character = createMockPlayer(30);
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(5);
+    });
+
+    it('should handle lowercase tradeskill names', () => {
+      const character = {
+        tradeskills: {
+          alchemy: 30,
+        },
+      } as IPlayer;
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'ALCHEMY' as Tradeskill,
+      );
+      expect(result).toBe(5);
+    });
+
+    it('should handle missing tradeskills (returns 0)', () => {
+      const character = { tradeskills: {} } as IPlayer;
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(0);
+    });
+
+    it('should throw error for null tradeskill parameter', () => {
+      const character = createMockPlayer(30);
+      expect(() => {
+        calcTradeskillLevelForCharacter(character, null as any);
+      }).toThrow('Trying to calculate skill of undefined');
+    });
+
+    it('should throw error for undefined tradeskill parameter', () => {
+      const character = createMockPlayer(30);
+      expect(() => {
+        calcTradeskillLevelForCharacter(character, undefined as any);
+      }).toThrow('Trying to calculate skill of undefined');
+    });
+
+    it('should handle tradeskill value of 0', () => {
+      const character = createMockPlayer(0);
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(0);
+    });
+
+    it('should handle low tradeskill values (below 5)', () => {
+      const character = createMockPlayer(3);
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(0);
+    });
+
+    it('should handle high tradeskill values', () => {
+      const character = createMockPlayer(1000);
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(17); // Based on calculateTradeskillLevelFromXP(1000)
+    });
+
+    it('should handle null coalescing for missing tradeskill values', () => {
+      const character = { tradeskills: { alchemy: null } } as any;
+      const result = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+      expect(result).toBe(0);
+    });
+
+    it('should work with all tradeskill types', () => {
+      const tradeskillTypes: Tradeskill[] = [
+        'alchemy' as Tradeskill,
+        'spellforging' as Tradeskill,
+        'metalworking' as Tradeskill,
+        'gemcrafting' as Tradeskill,
+        'weavefabricating' as Tradeskill,
+        'foodmaking' as Tradeskill,
+      ];
+
+      tradeskillTypes.forEach((tradeskill) => {
+        const character = {
+          tradeskills: {
+            [tradeskill.toLowerCase()]: 50,
+          },
+        } as IPlayer;
+
+        const result = calcTradeskillLevelForCharacter(character, tradeskill);
+        expect(result).toBe(7); // Level for 50 XP
+      });
+    });
+  });
+
+  describe('Integration Tests', () => {
+    it('should have consistent behavior between tradeskill calculation functions', () => {
+      // Test with exact level boundary XP
+      const testXP = 22; // Exact XP for level 5
+      const level = calculateTradeskillLevelFromXP(testXP);
+      const requiredXP = calculateTradeskillXPRequiredForLevel(level + 1);
+      const nextLevelXP = calculateTradeskillXPRequiredForLevel(level + 2);
+
+      // Current XP should equal the required XP for the next level (since tradeskill gives level - 1)
+      expect(testXP).toBe(requiredXP);
+      // Current XP should be less than required XP for level after next
+      expect(testXP).toBeLessThan(nextLevelXP);
+    });
+
+    it('should have consistent results between direct calculation and character function', () => {
+      const tradeskillValue = 100;
+      const character = {
+        tradeskills: { alchemy: tradeskillValue },
+      } as IPlayer;
+
+      const directLevel = calculateTradeskillLevelFromXP(tradeskillValue);
+      const characterLevel = calcTradeskillLevelForCharacter(
+        character,
+        'alchemy' as Tradeskill,
+      );
+
+      expect(directLevel).toBe(characterLevel);
+    });
+
+    it('should handle edge cases consistently', () => {
+      // Test boundary values
+      const boundaryValues = [4, 5, 6, 21, 22, 23, 99, 100, 101];
+
+      boundaryValues.forEach((value) => {
+        const character = { tradeskills: { alchemy: value } } as IPlayer;
+        const directLevel = calculateTradeskillLevelFromXP(value);
+        const characterLevel = calcTradeskillLevelForCharacter(
+          character,
+          'alchemy' as Tradeskill,
+        );
+
+        expect(directLevel).toBe(characterLevel);
+      });
     });
   });
 });
