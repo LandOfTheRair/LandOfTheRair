@@ -31,8 +31,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install caprover
-        run: npm install -g caprover
+      - name: Install global deps
+        run: npm install -g caprover turbo
 
       - run: npm install
 
