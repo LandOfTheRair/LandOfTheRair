@@ -1,0 +1,20 @@
+{
+  "name": "@lotr/shared",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "build": "tsc",
+    "start:dev": "tsc --watch",
+    "lint": "eslint -c .eslintrc.json --ext .ts src"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.168",
+    "lodash": "^4.17.21",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@lotr/eslint-config": "*",
+    "@lotr/interfaces": "*"
+  }
+}

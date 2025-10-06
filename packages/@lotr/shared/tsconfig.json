@@ -1,0 +1,9 @@
+{
+  "extends": "@lotr/typescript-config/tsconfig.json",
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.spec.ts*"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  }
+}

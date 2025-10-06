@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "lib": ["ES2022"],
+    "module": "node16",
+    "moduleResolution": "node16"
+  }
+}

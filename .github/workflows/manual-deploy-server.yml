@@ -18,11 +18,11 @@ jobs:
       - name: Reboot Notification
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/start'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/start"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
-          ignoreStatusCodes: '404,502'
+          preventFailureOnNoResponse: "true"
+          ignoreStatusCodes: "404,502"
 
       - uses: actions/checkout@v2
 
@@ -36,25 +36,27 @@ jobs:
 
       - run: npm install
 
-      - run: cd server && npm run setup
+      - run: cd apps/server && npm run setup
 
-      - run: cd server && npm run lint
+      - run: cd apps/server && npm run lint
 
-      - run: cd server && npm run build
+      - run: npm run test
+
+      - run: cd apps/server && npm run build
 
       - name: Kick And Save Players
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/lockgame'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/lockgame"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
-          ignoreStatusCodes: '404,502'
+          preventFailureOnNoResponse: "true"
+          ignoreStatusCodes: "404,502"
 
       - name: Wait 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: "30s"
 
       - name: Caprover Deploy
         run: caprover deploy -h 'https://captain.server.rair.land' -p '${{ secrets.CAPROVER_PASSWORD }}' -b 'master' -a 'game'
@@ -62,12 +64,12 @@ jobs:
       - name: Wait 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: "30s"
 
       - name: Reboot Done
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/done'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/done"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
+          preventFailureOnNoResponse: "true"

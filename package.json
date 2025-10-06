@@ -1,31 +1,18 @@
 {
   "name": "landoftherair",
   "version": "2.8.1",
-  "engines": {
-    "node": ">= 18",
-    "npm": ">= 8"
-  },
-  "author": "Kyle Kemp <kyle@seiyria.com>",
-  "homepage": "https://github.com/landoftherair/landoftherair#readme",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/landoftherair/landoftherair/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/landoftherair/landoftherair.git"
-  },
+  "private": true,
   "scripts": {
-    "setup": "lerna exec -- npm install",
-    "setup:full": "npm run setup && lerna exec -- npm run setup",
-    "start": "lerna exec --parallel -- npm run start:dev",
-    "start:client": "cd client && npm run start:dev",
-    "start:server": "cd server && npm run start:dev",
-    "start:server:content": "cd server && npm run content:dev",
-    "lint": "lerna exec --parallel -- npm run lint",
-    "test": "lerna exec --parallel -- npm run test",
-    "build": "lerna exec --parallel -- npm run build",
-    "build:netlify": "cd client && npm run build:netlify",
+    "build": "turbo run build",
+    "start:dev": "turbo run start:dev",
+    "lint": "turbo run lint",
+    "test": "vitest --run",
+    "setup": "turbo run setup && npm run setup:buildprereqs && npm run setup:buildpackages",
+    "setup:buildprereqs": "turbo run build --filter=@lotr/interfaces",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "setup:full": "npm run setup && turbo run setup",
+    "start:server:content": "cd apps/server && npm run content:dev",
+    "build:netlify": "cd apps/client && npm run build:netlify",
     "changelog:generate": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "changelog:generate:current": "conventional-changelog -p angular -o CHANGELOG-current.md -r 2",
     "changelog:commit": "git commit CHANGELOG.md CHANGELOG-current.md -m \"Update changelog\" || true",
@@ -35,14 +22,21 @@
     "push": "git push && git push --tags",
     "bump:patch": "npm version patch -m \"chore(release): Patch %s\"",
     "bump:minor": "npm version minor -m \"chore(release): Minor %s\"",
-    "bump:major": "npm version major -m \"chore(release): Major %s\"",
-    "content:watch": "cd server/content && npm run watch",
-    "content:build": "cd server/content && npm run build:all"
+    "bump:major": "npm version major -m \"chore(release): Major %s\""
   },
-  "private": true,
   "devDependencies": {
-    "conventional-changelog-cli": "2.1.1",
-    "lerna": "^3.22.1",
-    "tslib": "^1.10.0"
-  }
+    "conventional-changelog-cli": "^2.1.1",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.8",
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "npm@11.5.1",
+  "workspaces": [
+    "apps/*",
+    "packages/**/*"
+  ]
 }

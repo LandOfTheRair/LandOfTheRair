@@ -1,0 +1,7 @@
+{
+  "name": "@lotr/typescript-config",
+  "private": true,
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

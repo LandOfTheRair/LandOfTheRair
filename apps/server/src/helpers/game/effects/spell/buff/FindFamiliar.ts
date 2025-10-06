@@ -1,0 +1,238 @@
+import type {
+  ICharacter,
+  INPC,
+  IStatusEffect,
+  Skill } from '@lotr/interfaces';
+import {
+  Hostility,
+  ItemSlot,
+  Stat,
+} from '@lotr/interfaces';
+import { isArray } from 'lodash';
+import { Effect, Spawner } from '../../../../../models';
+
+export class FindFamiliar extends Effect {
+  public override create(char: ICharacter, effect: IStatusEffect) {
+    const mapData = this.game.worldManager.getMap(char.map);
+    if (!mapData) return;
+
+    const potency = effect.effectInfo.potency ?? 1;
+
+    const addSkillLevelToNPC = (npc: INPC, skill: Skill, levels: number) => {
+      const curLevel = this.game.calculatorHelper.calcSkillLevelForCharacter(
+        npc,
+        skill,
+      );
+      const targetLevel = curLevel + levels;
+      const targetXP =
+        this.game.calculatorHelper.calculateSkillXPRequiredForLevel(
+          targetLevel,
+        );
+
+      npc.skills[skill] = Math.max(npc.skills[skill] ?? 0, targetXP);
+    };
+
+    const npcCreateCallback = (npc: INPC) => {
+      npc.allegianceReputation = char.allegianceReputation;
+      npc.allegiance = char.allegiance;
+      npc.alignment = char.alignment;
+      npc.level = char.level;
+
+      if ((char as INPC).monsterGroup) {
+        npc.monsterGroup = (char as INPC).monsterGroup;
+      }
+
+      // match the player
+      if (this.game.characterHelper.isPlayer(char)) {
+        npc.allegianceReputation.Enemy = -100000;
+        npc.hostility = Hostility.Faction;
+      } else {
+        npc.hostility = (char as INPC).hostility;
+      }
+
+      if (npc.npcId !== 'Thief Shadow Clone') {
+        npc.name = `pet ${npc.name}`;
+      }
+
+      npc.affiliation = `${char.name}'s Pet`;
+
+      const castSkill =
+        this.game.contentManager.getClassConfigSetting<'castSkill'>(
+          char.baseClass,
+          'castSkill',
+        );
+
+      const skillBoost = char.skills[castSkill];
+
+      Object.keys(npc.skills).forEach((skillName) => {
+        npc.skills[skillName] += skillBoost;
+      });
+
+      // buff based on traits
+
+      if (this.game.traitHelper.traitLevel(char, 'FamiliarFists')) {
+        npc.usableSkills.push({ result: 'Rapidpunch', chance: 1 } as any);
+      }
+
+      // boost stats and skills for npcs
+      const def = this.game.npcHelper.getNPCDefinition(npc.npcId);
+
+      Object.keys(def?.summonSkillModifiers || {}).forEach((skillMod) => {
+        const boost =
+          this.game.calculatorHelper.calculateSkillXPRequiredForLevel(potency) *
+          (def.summonSkillModifiers?.[skillMod] ?? 0);
+
+        npc.skills[skillMod] += boost;
+      });
+
+      Object.keys(def?.summonStatModifiers || {}).forEach((statMod) => {
+        const boost = Math.floor(
+          potency * (def.summonStatModifiers?.[statMod] ?? 0),
+        );
+        npc.stats[statMod] += boost;
+      });
+
+      // boost all skills by FamiliarSkill level
+      const allSkillBoost = this.game.traitHelper.traitLevelValue(
+        char,
+        'FamiliarSkill',
+      );
+      if (allSkillBoost > 0) {
+        Object.keys(npc.skills || {}).forEach((skillName) => {
+          addSkillLevelToNPC(npc, skillName as Skill, allSkillBoost);
+        });
+      }
+
+      // shadow clones just copy
+      if (npc.npcId !== 'Thief Shadow Clone') {
+        Object.keys(npc.items.equipment).forEach((itemSlot) => {
+          const item = npc.items.equipment[itemSlot];
+          item.mods.tier = Math.max(1, Math.floor(potency / 3) - 1);
+        });
+      }
+
+      // familiar stat buffs
+      npc.stats[Stat.HP] =
+        (npc.stats[Stat.HP] ?? 20000) * 1 +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
+      npc.stats[Stat.MP] = npc.stats[Stat.HP];
+
+      npc.stats[Stat.STR] =
+        (npc.stats[Stat.STR] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.INT] =
+        (npc.stats[Stat.INT] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+      npc.stats[Stat.WIS] =
+        (npc.stats[Stat.WIS] ?? 5) +
+        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+
+      // buff the npc back to full
+      this.game.characterHelper.recalculateEverything(npc);
+      this.game.characterHelper.healToFull(npc);
+      this.game.characterHelper.manaToFull(npc);
+
+      // mark it as a pet
+      this.game.characterHelper.addPet(char, npc);
+
+      // give it an effect to mark it as a pet
+      this.game.effectHelper.addEffect(npc, char, 'SummonedPet', {
+        tooltip: { desc: `Summoned by ${char.name}.` },
+      });
+      this.game.effectHelper.addEffect(npc, char, 'DarkVision', {
+        effect: { duration: -1 },
+      });
+    };
+
+    // create a fake spawner that allows infinite range walking that deletes itself
+    const spawnerOpts = {
+      name: `FindFamiliar ${char.name}`,
+      x: char.x,
+      y: char.y,
+      maxCreatures: 1,
+      respawnRate: 0,
+      initialSpawn: 1,
+      spawnRadius: 0,
+      randomWalkRadius: -1,
+      leashRadius: -1,
+      shouldStrip: false,
+      removeWhenNoNPCs: true,
+      removeDeadNPCs: true,
+      respectKnowledge: false,
+      doInitialSpawnImmediately: true,
+      npcCreateCallback,
+    } as Partial<Spawner>;
+
+    // if we don't have an array, make one
+    if (!isArray(effect.effectInfo.summonCreatures)) {
+      effect.effectInfo.summonCreatures = [
+        effect.effectInfo.summonCreatures as unknown as string,
+      ];
+    }
+
+    // summon all creatures individually
+    (effect.effectInfo.summonCreatures ?? []).forEach((creatureId) => {
+      const spawner = new Spawner(this.game, mapData.map, mapData.state, {
+        npcIds: [creatureId ?? 'Mage Summon Deer'],
+        ...spawnerOpts,
+      } as Partial<Spawner>);
+
+      mapData.state.addSpawner(spawner);
+
+      spawner.tryInitialSpawn();
+    });
+  }
+
+  public override tick(char: ICharacter, effect: IStatusEffect) {
+    super.tick(char, effect);
+
+    const pets = char.pets;
+
+    if (
+      !pets ||
+      !pets.length ||
+      pets.every((x) => this.game.characterHelper.isDead(x))
+    ) {
+      this.game.effectHelper.removeEffect(char, effect);
+      return;
+    }
+
+    // shadow clones do something special
+    pets.forEach((pet) => {
+      if (pet.npcId !== 'Thief Shadow Clone') return;
+
+      const tryToCloneItem = (itemSlot: ItemSlot) => {
+        const itemRef = char.items.equipment[itemSlot];
+
+        // don't do anything if it's the same item
+        if (pet.items.equipment[itemSlot]?.name === itemRef?.name) return;
+
+        // try to copy the item
+        if (
+          itemRef &&
+          this.game.itemHelper.canGetBenefitsFromItem(char, itemRef)
+        ) {
+          const copyItem = this.game.itemCreator.rerollItem(itemRef, false);
+          copyItem.mods.destroyOnDrop = true;
+          copyItem.mods.owner = '';
+          copyItem.mods.requirements = {};
+
+          this.game.characterHelper.setEquipmentSlot(pet, itemSlot, copyItem);
+        } else if (!itemRef) {
+          this.game.characterHelper.setEquipmentSlot(pet, itemSlot, undefined);
+        }
+      };
+
+      tryToCloneItem(ItemSlot.RightHand);
+      tryToCloneItem(ItemSlot.LeftHand);
+    });
+  }
+
+  public override unapply(char: ICharacter, effect: IStatusEffect) {
+    char.pets?.forEach((pet) => {
+      pet.hp.current = 0;
+    });
+
+    char.pets = [];
+  }
+}

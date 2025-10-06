@@ -23,7 +23,9 @@ jobs:
 
       - run: npm install
 
-      - run: npm run setup:full
+      - run: npm run setup
+
+      - run: npm run lint
 
       - run: npm run test
 

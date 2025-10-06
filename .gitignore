@@ -1,5 +1,9 @@
-.vscode
 node_modules
 .env
 *.http
 build
+dist/
+.turbo/
+
+packages/**/*.js
+.ignored*

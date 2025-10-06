@@ -3,7 +3,7 @@ name: Release New Tags
 on:
   push:
     tags:
-      - 'v*' # Any pushed tag
+      - "v*" # Any pushed tag
 
 jobs:
   build:
@@ -27,13 +27,15 @@ jobs:
 
       - run: npm install
 
-      - run: npm run setup:full
+      - run: npm run setup
 
       - run: npm run lint
 
+      - run: npm run test
+
       - run: npm run build
 
-      - run: cd server && npm run build:package
+      - run: cd apps/server && npm run build:package
 
       - uses: little-core-labs/get-git-tag@v3.0.1
         id: loadTagName
@@ -62,7 +64,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.createRelease.outputs.upload_url }}
-          asset_path: ./server/build/lotr-server.exe
+          asset_path: ./apps/server/build/lotr-server.exe
           asset_name: lotr-server.exe
           asset_content_type: application/vnd.microsoft.portable-executable
 

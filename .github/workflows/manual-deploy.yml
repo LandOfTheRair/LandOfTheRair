@@ -18,11 +18,11 @@ jobs:
       - name: Reboot Notification
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/start'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/start"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
-          ignoreStatusCodes: '404,502'
+          preventFailureOnNoResponse: "true"
+          ignoreStatusCodes: "404,502"
 
       - uses: actions/checkout@v2
 
@@ -36,7 +36,9 @@ jobs:
 
       - run: npm install
 
-      - run: npm run setup:full
+      - run: npm run test
+
+      - run: npm run setup
 
       - run: npm run lint
 
@@ -45,16 +47,16 @@ jobs:
       - name: Kick And Save Players
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/lockgame'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/lockgame"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
-          ignoreStatusCodes: '404,502'
+          preventFailureOnNoResponse: "true"
+          ignoreStatusCodes: "404,502"
 
       - name: Wait 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: "30s"
 
       - name: Caprover Deploy
         run: caprover deploy -h 'https://captain.server.rair.land' -p '${{ secrets.CAPROVER_PASSWORD }}' -b 'master' -a 'game'
@@ -62,10 +64,10 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.1
         with:
-          publish-dir: './client/dist/browser'
+          publish-dir: "./client/dist/browser"
           production-branch: master
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Deploy from GitHub Actions'
+          deploy-message: "Deploy from GitHub Actions"
           enable-pull-request-comment: false
           enable-commit-comment: true
           overwrites-pull-request-comment: true
@@ -76,12 +78,12 @@ jobs:
       - name: Wait 30 seconds
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: "30s"
 
       - name: Reboot Done
         uses: fjogeleit/http-request-action@master
         with:
-          url: 'https://server.rair.land/reboot/done'
-          method: 'POST'
+          url: "https://server.rair.land/reboot/done"
+          method: "POST"
           data: '{ "secret": "${{ secrets.WEBHOOK_SECRET }}" }'
-          preventFailureOnNoResponse: 'true'
+          preventFailureOnNoResponse: "true"

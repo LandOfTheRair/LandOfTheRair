@@ -1,0 +1,10 @@
+{
+  "name": "@lotr/content",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "lint": "",
+    "build": "",
+    "start:dev": "cd ../../../apps/server/content && npm run watch:mods"
+  }
+}

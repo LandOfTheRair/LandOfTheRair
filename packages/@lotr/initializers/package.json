@@ -1,0 +1,17 @@
+{
+  "name": "@lotr/initializers",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "lint": "",
+    "build": "tsc",
+    "start:dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@lotr/shared": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}
