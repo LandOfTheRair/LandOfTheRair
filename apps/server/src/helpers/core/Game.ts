@@ -7,7 +7,7 @@ import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
 import { GameEvent } from '../../interfaces';
 import type { BaseService } from '../../models/BaseService';
-import { BankHelper, EmailHelper, SubscriptionHelper } from '../account';
+import { EmailHelper, SubscriptionHelper } from '../account';
 import {
   AchievementsHelper,
   CalculatorHelper,
@@ -154,7 +154,6 @@ export class Game {
     public groundManager: GroundManager,
     public spellManager: SpellManager,
     public dailyHelper: DailyHelper,
-    public bankHelper: BankHelper,
     public lockerHelper: LockerHelper,
     public statisticsHelper: StatisticsHelper,
     public partyHelper: PartyHelper,
@@ -270,7 +269,6 @@ export class Game {
         'npcHelper',
         'effectHelper',
         'dailyHelper',
-        'bankHelper',
         'lockerHelper',
         'statisticsHelper',
         'partyHelper',

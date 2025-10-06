@@ -10,7 +10,7 @@ import { Currency, GameAction } from '@lotr/interfaces';
 import { cleanNumber, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { getCurrency } from '@lotr/currency';
+import { bankDeposit, bankWithdraw, getCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
 export class BankerBehavior implements IAIBehavior {
@@ -53,7 +53,7 @@ export class BankerBehavior implements IAIBehavior {
         amount = Math.min(amount, getCurrency(player, Currency.Gold));
         if (amount <= 0) return 'You cannot deposit that much.';
 
-        game.bankHelper.deposit(player, amount);
+        bankDeposit(player, amount);
 
         return `You've deposited ${amount.toLocaleString()} coins. Thanks for your business!`;
       });
@@ -73,7 +73,7 @@ export class BankerBehavior implements IAIBehavior {
         amount = Math.min(amount, player.bank.deposits[Currency.Gold] ?? 0);
         if (amount <= 0) return 'You cannot withdraw that much.';
 
-        game.bankHelper.withdraw(player, amount);
+        bankWithdraw(player, amount);
 
         return `You've withdrawn ${amount.toLocaleString()} coins. Thanks for your business!`;
       });
