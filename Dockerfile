@@ -12,9 +12,9 @@ RUN npm i -g turbo
 RUN npm install
 RUN turbo run build --filter='!server'
 RUN turbo run setup
-RUN cd server/content && npm install --unsafe-perm
+RUN cd apps/server/content && npm install --unsafe-perm
 RUN turbo run build --filter='server'
 ENV NODE_ENV production
 ENV PORT 80
 EXPOSE 80
-CMD cd server && npm start
+CMD cd apps/server && npm start
