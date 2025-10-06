@@ -6,6 +6,7 @@ import { Stat } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import {
+  calculateSkillLevelFromXP,
   calculateSkillXPRequiredForLevel,
   calculateTradeskillLevelFromXP,
 } from '@lotr/shared';
@@ -28,7 +29,7 @@ export class CalculatorHelper extends BaseService {
     }
 
     const skillValue = character.skills[skill.toLowerCase()] ?? 0;
-    return calculateTradeskillLevelFromXP(skillValue);
+    return calculateSkillLevelFromXP(skillValue);
   }
 
   // tradeskill level for a certain skill for a character
