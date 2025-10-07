@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@lotr/content": "*",
+    "@lotr/eslint-config": "*",
     "@lotr/initializers": "*",
     "@lotr/interfaces": "*",
     "@lotr/shared": "*",

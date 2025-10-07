@@ -11,6 +11,7 @@ import type { MacroCommand, SkillCommand } from '../../models/macro';
 import { SpellCommand } from '../../models/macro';
 import * as Commands from './commands';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const didYouMean = require('didyoumean2').default;
 
 @Injectable()
