@@ -18,7 +18,7 @@ export function recipeGet(name: string) {
 export function recipeGetForTradeskill(tradeskill: string): IRecipe[] {
   const ret = getContentKey('tradeskillRecipes')[tradeskill];
   if (!ret || ret.length === 0) {
-    this.logErrorWithContext(
+    logErrorWithContext(
       `Content:TradeskillRecipes:${tradeskill}`,
       new Error(`Recipe tradeskill ${tradeskill} does not exist.`),
     );

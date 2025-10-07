@@ -43,14 +43,6 @@ export const __AllContentDontUse: {
   effectData: Record<string, IStatusEffectData>;
   spells: Record<string, ISpellData>;
   achievements: Record<string, IAchievement>;
-  customRegionDroptables: Record<string, { drops: Rollable[] }>;
-  customMapDroptables: Record<string, { drops: Rollable[] }>;
-  customNPCs: Record<string, INPCDefinition>;
-  customNPCsByMap: Record<string, Record<string, INPCDefinition>>;
-  customSpawners: Record<string, ISpawnerData>;
-  customSpawnersByMap: Record<string, Record<string, ISpawnerData>>;
-  customItems: Record<string, IItemDefinition>;
-  customItemsByMap: Record<string, Record<string, IItemDefinition>>;
   allegianceStats: Record<Allegiance, Array<{ stat: Stat; value: number }>>;
   attributeStats: Array<{
     attribute: string;
@@ -97,14 +89,6 @@ export const __AllContentDontUse: {
   effectData: {},
   spells: {},
   achievements: {},
-  customRegionDroptables: {},
-  customMapDroptables: {},
-  customNPCs: {},
-  customNPCsByMap: {},
-  customSpawners: {},
-  customSpawnersByMap: {},
-  customItems: {},
-  customItemsByMap: {},
   allegianceStats: {} as Record<
     Allegiance,
     Array<{ stat: Stat; value: number }>
