@@ -8,5 +8,6 @@ export * from './mana';
 export * from './pet';
 export * from './player';
 export * from './skills';
+export * from './statistics';
 export * from './stats';
 export * from './status';

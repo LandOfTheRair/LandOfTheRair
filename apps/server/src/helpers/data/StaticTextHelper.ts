@@ -19,8 +19,8 @@ export const GetSwimLevel = (gid) => {
     gid === 2216 ||
     (gid >= 2304 && gid <= 2312)
   ) {
-return SwimInfo[1];
-}
+    return SwimInfo[1];
+  }
   return SwimInfo[Math.floor((gid - 1) / 48)];
 };
 
@@ -43,8 +43,8 @@ export class StaticTextHelper extends BaseService {
 
     // terrain
     if (gid <= GID_TERRAIN_END) {
-return this.terrainText[Math.floor((gid - 1) / 48)];
-}
+      return this.terrainText[Math.floor((gid - 1) / 48)];
+    }
 
     // decor
     if (gid > GID_DECOR_START) {

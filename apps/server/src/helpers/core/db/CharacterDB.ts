@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
-import { healToFull } from '@lotr/characters';
+import { healToFull, syncBaseStatistics } from '@lotr/characters';
 import { initializeCharacter } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
 import type { Account } from '../../../models';
@@ -379,7 +379,7 @@ export class CharacterDB extends BaseService {
 
   public async savePlayer(player: Player): Promise<void> {
     this.game.playerHelper.reformatPlayerBeforeSave(player);
-    this.game.statisticsHelper.syncBaseStatistics(player);
+    syncBaseStatistics(player);
 
     const saves = [
       this.game.db.save(player),

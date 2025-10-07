@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { getBaseStat, isDead, isPlayer } from '@lotr/characters';
+import { addStatistic, getBaseStat, isDead, isPlayer } from '@lotr/characters';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -207,7 +207,7 @@ export class DeathHelper extends BaseService {
   ): void {
     this.game.playerHelper.clearActionQueue(dead as Player);
 
-    this.game.statisticsHelper.addStatistic(dead, TrackedStatistic.Deaths);
+    addStatistic(dead, TrackedStatistic.Deaths);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
     const deathTimer =
@@ -365,13 +365,10 @@ export class DeathHelper extends BaseService {
     this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
     if (isPlayer(dead)) return;
 
-    this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.Kills);
+    addStatistic(killer, TrackedStatistic.Kills);
 
     if (hasEffect(dead, 'Dangerous')) {
-      this.game.statisticsHelper.addStatistic(
-        killer,
-        TrackedStatistic.KillsLair,
-      );
+      addStatistic(killer, TrackedStatistic.KillsLair);
     }
 
     const npc: INPC = dead as INPC;
@@ -472,10 +469,7 @@ export class DeathHelper extends BaseService {
     if (hasEffect(character, 'SecondWind')) return;
 
     if (isPlayer(character)) {
-      this.game.statisticsHelper.addStatistic(
-        character as IPlayer,
-        TrackedStatistic.Strips,
-      );
+      addStatistic(character as IPlayer, TrackedStatistic.Strips);
     }
 
     this.game.messageHelper.sendLogMessageToPlayer(character, {

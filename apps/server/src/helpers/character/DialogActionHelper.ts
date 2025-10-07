@@ -51,7 +51,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
-import { getStat } from '@lotr/characters';
+import { addStatistic, getStat } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import { distanceFrom } from '@lotr/shared';
 
@@ -80,10 +80,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     if (command === 'hello') {
-      this.game.statisticsHelper.addStatistic(
-        player,
-        TrackedStatistic.NPCsGreeted,
-      );
+      addStatistic(player, TrackedStatistic.NPCsGreeted);
     }
 
     const messages =

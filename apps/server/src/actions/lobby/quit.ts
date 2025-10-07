@@ -1,7 +1,7 @@
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { syncSessionStatistics } from '@lotr/characters';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class QuitAction extends ServerAction {
@@ -16,7 +16,7 @@ export class QuitAction extends ServerAction {
     game.lobbyManager.leaveGame(data.username);
 
     if (player) {
-      game.statisticsHelper.syncSessionStatistics(player);
+      syncSessionStatistics(player);
 
       emit({
         action: GameAction.SetCharacterSlotInformation,

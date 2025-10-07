@@ -1,7 +1,7 @@
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
-import { hasHeldItemInEitherHand } from '@lotr/characters';
+import { addStatistic, hasHeldItemInEitherHand } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import type {
   Allegiance,
@@ -196,10 +196,7 @@ export class QuestHelper extends BaseService {
         return;
       }
 
-      this.game.statisticsHelper.addStatistic(
-        player,
-        TrackedStatistic.DailyQuests,
-      );
+      addStatistic(player, TrackedStatistic.DailyQuests);
       this.game.dailyHelper.finishDailyQuest(player, questGiver);
     }
 
@@ -210,10 +207,7 @@ export class QuestHelper extends BaseService {
 
     // repeatable non-daily quests get a statistic tracked
     if (questRef.isRepeatable && !questRef.isDaily) {
-      this.game.statisticsHelper.addStatistic(
-        player,
-        TrackedStatistic.RepeatableQuests,
-      );
+      addStatistic(player, TrackedStatistic.RepeatableQuests);
     }
 
     // if the quest required a held item, we take it

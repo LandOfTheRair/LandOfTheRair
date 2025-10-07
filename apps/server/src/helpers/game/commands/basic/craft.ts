@@ -1,6 +1,6 @@
 import { clamp } from 'lodash';
 
-import { hasLearned } from '@lotr/characters';
+import { addStatistic, hasLearned } from '@lotr/characters';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -304,10 +304,6 @@ export class Craft extends MacroCommand {
       this.game.characterHelper.setRightHand(player, item);
     }
 
-    this.game.statisticsHelper.addStatistic(
-      player,
-      `${recipe.recipeType}crafts` as TrackedStatistic,
-      1,
-    );
+    addStatistic(player, `${recipe.recipeType}crafts` as TrackedStatistic, 1);
   }
 }

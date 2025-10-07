@@ -13,7 +13,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
-import { getStat, hasHeldItem, isPlayer } from '@lotr/characters';
+import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -95,11 +95,7 @@ export class MovementHelper extends BaseService {
     const didFinish = this.takeSequenceOfSteps(character, steps);
 
     if (isPlayer(character)) {
-      this.game.statisticsHelper.addStatistic(
-        character as Player,
-        TrackedStatistic.Steps,
-        steps.length,
-      );
+      addStatistic(character as Player, TrackedStatistic.Steps, steps.length);
     }
 
     return didFinish;
