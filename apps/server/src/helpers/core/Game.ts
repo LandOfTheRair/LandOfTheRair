@@ -92,7 +92,7 @@ export class Game {
 
   constructor(
     public crashContext: CrashContextManager,
-    public logger: LoggerInitializer,
+    public loggerInitializer: LoggerInitializer,
     public transmissionHelper: TransmissionHelper,
 
     public modkitManager: ModKitManager,
@@ -183,7 +183,7 @@ export class Game {
     const servicesByPriority: Partial<Record<GameEvent, (keyof Game)[]>> = {
       // these must come first, they are too widely-utilized
       [GameEvent.InitCritical]: [
-        'logger',
+        'loggerInitializer',
         'modkitManager',
         'contentManager',
         'db',
