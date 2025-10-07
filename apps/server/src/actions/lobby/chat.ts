@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
@@ -60,7 +60,7 @@ export class ChatAction extends ServerAction {
     try {
       game.messageHelper.sendMessage(data.username, data.content);
     } catch (e) {
-      game.logger.error('ChatAction', e as Error);
+      consoleError('ChatAction', e as Error);
       return {
         message:
           'Could not send chat message? Try again, or if this persists contact a GM.',

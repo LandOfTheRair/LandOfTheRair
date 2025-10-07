@@ -159,10 +159,6 @@ describe('LoginAction', () => {
         message:
           'Could not get account; try again or contact a GM if this persists.',
       });
-      expect(mockGame.logger.error).toHaveBeenCalledWith(
-        'LoginAction#getAccount',
-        expect.any(Error),
-      );
     });
 
     it('should return error when account does not exist', async () => {
@@ -270,10 +266,6 @@ describe('LoginAction', () => {
       ).toHaveBeenCalledWith(mockRealAccount);
       expect(mockGame.lobbyManager.joinLobby).toHaveBeenCalledWith(
         mockRealAccount,
-      );
-      expect(mockGame.logger.log).toHaveBeenCalledWith(
-        'Auth:Login',
-        'testuser logged in (127.0.0.1).',
       );
     });
 
@@ -441,10 +433,6 @@ describe('LoginAction', () => {
       await expect(
         loginAction.act(mockGame as any, mockCallbacks, data),
       ).rejects.toThrow('Could not login username?');
-      expect(mockGame.logger.error).toHaveBeenCalledWith(
-        'LoginAction',
-        expect.any(Error),
-      );
     });
   });
 

@@ -14,6 +14,7 @@ import { InstancedWorldMap, MapState, WorldMap } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isDead } from '@lotr/characters';
+import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
 
 @Injectable()
@@ -131,7 +132,7 @@ export class WorldManager extends BaseService {
       this.mapNames.push(name);
 
       if (map.properties.script && !this.mapScripts[map.properties.script]) {
-        this.game.logger.error(
+        consoleError(
           'MapLoading',
           new Error(
             `Map ${name} references script ${map.properties.script} which does not exist!`,
@@ -187,14 +188,14 @@ export class WorldManager extends BaseService {
   }
 
   private createMap(mapName: string, mapJson: any) {
-    this.game.logger.debug('WorldManager', `Creating map ${mapName}`);
+    consoleDebug('WorldManager', `Creating map ${mapName}`);
 
     try {
       this.maps[mapName] = new WorldMap(this.game, mapName, mapJson);
       this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
       this.handleMapSetup(this.maps[mapName], this.mapStates[mapName]);
     } catch (e) {
-      this.game.logger.error(
+      consoleError(
         'WorldManager',
         new Error(`Could not create map ${mapName}`),
         e,
@@ -369,7 +370,7 @@ export class WorldManager extends BaseService {
     this.addCharacter(player);
     this.mapStates[mapName].addPlayer(player);
 
-    this.game.logger.log(
+    consoleLog(
       'Map:Join',
       `${player.name} (${player.username}) joining map ${mapName} (${this.mapPlayerCounts[mapName]} players).`,
     );
@@ -437,14 +438,11 @@ export class WorldManager extends BaseService {
       if (this.isDungeon(oldMap)) {
         this.cleanUpInstancedMap(oldMap);
 
-        this.game.logger.log(
-          'Map:Recycle',
-          `Recycling instance map ${oldMap}.`,
-        );
+        consoleLog('Map:Recycle', `Recycling instance map ${oldMap}.`);
       }
     }
 
-    this.game.logger.log(
+    consoleLog(
       'Map:Leave',
       `${player.name} (${player.username}) leaving map ${oldMap} (${this.mapPlayerCounts[oldMap]} players).`,
     );
@@ -456,7 +454,7 @@ export class WorldManager extends BaseService {
     const nextSpawners = this.uninitializedSpawners.slice(0, 25);
     if (nextSpawners.length === 0) return;
 
-    this.game.logger.debug(
+    consoleDebug(
       'WorldManager:SpawnerInit',
       `Initializing ${nextSpawners.length} spawners (${this.uninitializedSpawners.length} remain)...`,
     );
@@ -485,7 +483,7 @@ export class WorldManager extends BaseService {
     this.activeMaps.forEach((activeMap) => {
       const state = this.mapStates[activeMap];
       if (!state) {
-        this.game.logger.error(
+        consoleError(
           'WorldManager:MapTick',
           new Error(`Map ${activeMap} does not have state.`),
         );
@@ -502,7 +500,7 @@ export class WorldManager extends BaseService {
     this.activeMaps.forEach((activeMap) => {
       const state = this.mapStates[activeMap];
       if (!state) {
-        this.game.logger.error(
+        consoleError(
           'WorldManager:MapTick',
           new Error(`Map ${activeMap} does not have state.`),
         );

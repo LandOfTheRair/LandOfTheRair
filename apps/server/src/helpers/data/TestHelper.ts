@@ -1,5 +1,6 @@
 import type { IAccount, ICharacter } from '@lotr/interfaces';
 import { Allegiance, BaseClass } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -14,10 +15,7 @@ export class TestHelper extends BaseService {
   async init() {
     if (!process.env.TEST_MODE) return;
 
-    this.game.logger.log(
-      'Game:TestMode',
-      'Running in test mode. No data will be saved.',
-    );
+    consoleLog('Game:TestMode', 'Running in test mode. No data will be saved.');
 
     this.createTestAccount();
     this.extractTestProps();
@@ -28,7 +26,7 @@ export class TestHelper extends BaseService {
     const password = process.env.TEST_USER_PASSWORD || '';
 
     if (!username || !password) {
-      this.game.logger.log(
+      consoleLog(
         'Game:TestMode',
         'Username or password not specified; skipping test user creation.',
       );
@@ -37,7 +35,7 @@ export class TestHelper extends BaseService {
 
     const prevAccount = await this.game.accountDB.getAccount(username);
     if (prevAccount) {
-      this.game.logger.log(
+      consoleLog(
         'Game:TestMode',
         `Username ${username} already exists; skipping test user creation.`,
       );
@@ -51,16 +49,13 @@ export class TestHelper extends BaseService {
     } as IAccount);
 
     if (!account) {
-      this.game.logger.error(
-        'Game:TestMode',
-        new Error('Unable to create test user.'),
-      );
+      consoleError('Game:TestMode', new Error('Unable to create test user.'));
       return;
     }
 
     await this.game.accountDB.toggleGM(account);
 
-    this.game.logger.log(
+    consoleLog(
       'Game:TestMode',
       `Created account ${username} with password ${password}.`,
     );
@@ -101,7 +96,7 @@ export class TestHelper extends BaseService {
       weapons: 'Swords',
     });
 
-    this.game.logger.log(
+    consoleLog(
       'Game:TestMode',
       'Created 4 characters: Testmage, Testthief, Testhealer, Testwarrior.',
     );
@@ -112,13 +107,13 @@ export class TestHelper extends BaseService {
       const props = process.env.TEST_USER_PROPS || '{}';
       this.overrideUserData = JSON.parse(props)?.settings;
 
-      this.game.logger.log(
+      consoleLog(
         'Game:TestMode',
         'Overriding all characters with props: ' +
           JSON.stringify(this.overrideUserData),
       );
     } catch {
-      this.game.logger.error(
+      consoleError(
         'Game:TestMode',
         new Error('Unable to parse TEST_USER_PROPS.'),
       );

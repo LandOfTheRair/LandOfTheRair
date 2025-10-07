@@ -18,8 +18,8 @@ import {
 import { distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { consoleError } from '@lotr/logger';
+import type { Game } from '../../../../helpers';
 
 export class VendorBehavior implements IAIBehavior {
   private formattedVendorItems: ISimpleItem[] = [];
@@ -53,7 +53,7 @@ export class VendorBehavior implements IAIBehavior {
     this.formattedVendorDailyItems = npcVendorDailyItems as ISimpleItem[];
 
     if (npcVendorDailyItems.length === 0 && npcVendorItems.length === 0) {
-      game.logger.error(
+      consoleError(
         'Behavior:Vendor',
         new Error(`NPC at ${npc.map}-${npc.x},${npc.y} has no items to sell.`),
       );
@@ -197,7 +197,7 @@ export class VendorBehavior implements IAIBehavior {
 
     const baseItem = game.itemHelper.getItemDefinition(vItem.item);
     if (!baseItem) {
-      game.logger.error(
+      consoleError(
         `Vendor:${npc.name}`,
         new Error(`Could not get item definition for ${vItem.item}.`),
       );

@@ -1,7 +1,7 @@
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class SetMOTDAction extends ServerAction {
@@ -21,7 +21,7 @@ export class SetMOTDAction extends ServerAction {
         motd: data.motd,
       });
     } catch (e) {
-      game.logger.error('SetMOTDAction', e as Error);
+      consoleError('SetMOTDAction', e as Error);
       return {
         message:
           'Could not set MOTD? I would normally say to contact a GM, but this is probably your fault.',

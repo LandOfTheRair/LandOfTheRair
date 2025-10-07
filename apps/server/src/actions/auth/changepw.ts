@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError, consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangePasswordAction extends ServerAction {
@@ -30,12 +30,9 @@ export class ChangePasswordAction extends ServerAction {
 
     try {
       await game.accountDB.changePassword(data.account, data.newPassword);
-      game.logger.log(
-        'Auth:ChangePassword',
-        `${data.username} changed password.`,
-      );
+      consoleLog('Auth:ChangePassword', `${data.username} changed password.`);
     } catch (e) {
-      game.logger.error('ChangePasswordAction', e as Error);
+      consoleError('ChangePasswordAction', e as Error);
       return {
         message:
           'Could not change password? Try again, or contact a GM if this persists.',

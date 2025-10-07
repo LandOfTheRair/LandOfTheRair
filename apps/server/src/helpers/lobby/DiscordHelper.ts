@@ -10,6 +10,7 @@ import type {
 import { Stat, WeaponClasses } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { consoleError, consoleLog } from '@lotr/logger';
 import type { IDiscordCommand } from '../../interfaces';
 import * as commands from './discord-commands';
 
@@ -48,11 +49,11 @@ export class DiscordHelper extends BaseService {
     });
 
     this.discord.on(Discord.Events.ClientReady, async () => {
-      this.game.logger.log('Discord', 'Ready!');
+      consoleLog('Discord', 'Ready!');
 
       this.discordGuild = await this.discord.guilds.fetch(this.discordServer);
       if (!this.discordGuild) {
-        this.game.logger.error(
+        consoleError(
           'Discord',
           new Error(
             `Could not find guild with ID ${process.env.DISCORD_GUILD_ID}.`,
@@ -69,14 +70,14 @@ export class DiscordHelper extends BaseService {
 
     try {
       await this.discord.login(this.discordSecret);
-      this.game.logger.log('Discord', 'Connected!');
+      consoleLog('Discord', 'Connected!');
     } catch (e) {
-      this.game.logger.error('Discord', e as Error);
+      consoleError('Discord', e as Error);
       return;
     }
 
     this.discord.on(Discord.Events.Error, (error) => {
-      this.game.logger.error('Discord', error);
+      consoleError('Discord', error);
     });
   }
 
@@ -91,7 +92,7 @@ export class DiscordHelper extends BaseService {
         process.env.DISCORD_CHANNEL_ID,
       );
       if (!this.discordChannel) {
-        this.game.logger.error(
+        consoleError(
           'Discord',
           new Error(
             `Could not find channel with ID ${process.env.DISCORD_CHANNEL_ID}.`,
@@ -107,7 +108,7 @@ export class DiscordHelper extends BaseService {
         this.discordGuild.channels.cache as any
       ).get(process.env.DISCORD_BOT_CHANNEL_ID);
       if (!this.discordBotCommandChannel) {
-        this.game.logger.error(
+        consoleError(
           'Discord',
           new Error(
             `Could not find bot channel with ID ${process.env.DISCORD_BOT_CHANNEL_ID}.`,
@@ -123,7 +124,7 @@ export class DiscordHelper extends BaseService {
         this.discordGuild.channels.cache as any
       ).get(process.env.DISCORD_MARKET_CHANNEL_ID);
       if (!this.discordMarketplaceChannel) {
-        this.game.logger.error(
+        consoleError(
           'Discord',
           new Error(
             `Could not find market channel with ID ${process.env.DISCORD_MARKET_CHANNEL_ID}.`,
@@ -139,7 +140,7 @@ export class DiscordHelper extends BaseService {
         this.discordGuild.channels.cache as any
       ).get(process.env.DISCORD_BUGREPORT_CHANNEL_ID);
       if (!this.discordBugReportsChannel) {
-        this.game.logger.error(
+        consoleError(
           'Discord',
           new Error(
             `Could not find bug report channel with ID ${process.env.DISCORD_BUGREPORT_CHANNEL_ID}.`,
@@ -498,12 +499,9 @@ export class DiscordHelper extends BaseService {
     });
 
     const rest = new Discord.REST().setToken(this.discordSecret);
-    this.game.logger.log(
-      'Discord',
-      `Started refreshing application (/) commands.`,
-    );
+    consoleLog('Discord', `Started refreshing application (/) commands.`);
 
-    this.game.logger.log('Discord', 'Registering global (/) commands...');
+    consoleLog('Discord', 'Registering global (/) commands...');
 
     try {
       await rest.put(
@@ -513,19 +511,16 @@ export class DiscordHelper extends BaseService {
         },
       );
 
-      this.game.logger.log(
-        'Discord',
-        `Successfully reloaded application (/) commands.`,
-      );
+      consoleLog('Discord', `Successfully reloaded application (/) commands.`);
     } catch (e) {
-      this.game.logger.error('Discord', e as Error);
+      consoleError('Discord', e as Error);
     }
   }
 
   // watch for commands and do stuff
   private async initCommands() {
     if (!this.discordApplication) {
-      this.game.logger.log(
+      consoleLog(
         'Discord',
         `No application ID, skipping (/) command registration...`,
       );
@@ -549,7 +544,7 @@ export class DiscordHelper extends BaseService {
       try {
         await command.do(interaction, this.game);
       } catch (error) {
-        this.game.logger.error('Discord:Interaction', error as Error);
+        consoleError('Discord:Interaction', error as Error);
 
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp({

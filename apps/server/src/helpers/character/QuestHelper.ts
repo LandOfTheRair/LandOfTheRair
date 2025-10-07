@@ -21,6 +21,7 @@ import {
   QuestRewardType,
   TrackedStatistic,
 } from '@lotr/interfaces';
+import { consoleError } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -189,7 +190,7 @@ export class QuestHelper extends BaseService {
     // daily quests get a few things sorted - statistic & extra logic for finishing
     if (questRef.isDaily) {
       if (!questGiver) {
-        this.game.logger.error(
+        consoleError(
           'Quest:Daily',
           new Error(`Quest ${quest} does not have a quest giver associated.`),
         );

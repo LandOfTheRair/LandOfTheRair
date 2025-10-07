@@ -1,7 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import type { Game } from '../../helpers';
 
 import { GameServerEvent } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeDiscordTagAction extends ServerAction {
@@ -34,12 +34,12 @@ export class ChangeDiscordTagAction extends ServerAction {
         };
       }
 
-      game.logger.log(
+      consoleLog(
         'Auth:ChangeDiscordTag',
         `${data.username} changed Discord user ID to ${data.discordTag}.`,
       );
     } catch (e) {
-      game.logger.error('ChangeDiscordTag', e as Error);
+      consoleError('ChangeDiscordTag', e as Error);
       return {
         message:
           'Could not change Discord user ID? Try again, or contact a GM if this persists.',

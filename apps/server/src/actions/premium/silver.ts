@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models';
 
 export class BuyPremiumWithSilverAction extends ServerAction {
@@ -21,7 +21,7 @@ export class BuyPremiumWithSilverAction extends ServerAction {
       return { wasSuccess: false, message: 'You cannot buy that perk.' };
     }
 
-    game.logger.log(
+    consoleLog(
       'Premium:BuyWithSilver',
       `${data.username} buying ${data.item}.`,
     );

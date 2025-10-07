@@ -53,6 +53,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
+import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
 
 interface IActionResult {
@@ -139,7 +140,7 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.GrantAchievement]: this.handleGrantAchievementAction,
     };
     if (!actions[action.type]) {
-      this.game.logger.error(
+      consoleError(
         `[Dialog:HandleAction]`,
         new Error(
           `Could not find action ${action.type} on NPC ${npc.npcId || npc.name}.`,
@@ -924,7 +925,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error(
+      consoleError(
         'DialogActionHelper:CheckDailyQuest',
         new Error(`Quest ${quest} does not exist.`),
       );
@@ -983,7 +984,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error(
+      consoleError(
         'DialogActionHelper:CheckQuest',
         new Error(`Quest ${quest} does not exist.`),
       );
@@ -1057,7 +1058,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error(
+      consoleError(
         'DialogActionHelper:CheckQuest',
         new Error(`Quest ${quest} does not exist.`),
       );
@@ -1103,7 +1104,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error(
+      consoleError(
         'DialogActionHelper:GiveDailyQuest',
         new Error(`Quest ${quest} does not exist.`),
       );
@@ -1163,7 +1164,7 @@ export class DialogActionHelper extends BaseService {
     const questRef = this.game.questHelper.getQuest(quest);
 
     if (!questRef) {
-      this.game.logger.error(
+      consoleError(
         'DialogActionHelper:GiveQuest',
         new Error(`Quest ${quest} does not exist.`),
       );

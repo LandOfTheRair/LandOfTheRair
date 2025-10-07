@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models';
 
 export class RedeemCodeAction extends ServerAction {
@@ -9,7 +9,7 @@ export class RedeemCodeAction extends ServerAction {
   override requiredKeys = ['code'];
 
   override async act(game: Game, { emit }, data) {
-    game.logger.log('Code:Redeem', `${data.username} redeeming ${data.code}.`);
+    consoleLog('Code:Redeem', `${data.username} redeeming ${data.code}.`);
 
     try {
       await game.redeemableDB.claimRedeemable(data.code, data.username);

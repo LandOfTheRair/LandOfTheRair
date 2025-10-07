@@ -11,6 +11,7 @@ import type {
   IStatusEffectData,
 } from '@lotr/interfaces';
 import { Allegiance } from '@lotr/interfaces';
+import { consoleError } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -59,7 +60,7 @@ export class EffectHelper extends BaseService {
     }
 
     if (!effectName) {
-      this.game.logger.error(
+      consoleError(
         'EffectHelper:AddEffect',
         new Error('Attempting to create an undefined effect'),
       );
@@ -71,7 +72,7 @@ export class EffectHelper extends BaseService {
       `AE:${character.name}`,
     );
     if (!rawEffectData) {
-      this.game.logger.error(
+      consoleError(
         'EffectHelper:AddEffect',
         new Error(`Could not find an effect ${effectName}.`),
       );
@@ -182,7 +183,7 @@ export class EffectHelper extends BaseService {
       `REBN:${character.name}`,
     );
     if (!effectData) {
-      this.game.logger.error(
+      consoleError(
         'EffectHelper',
         new Error(
           `Effect ${effectName} cannot be removed as no data could be found.`,
@@ -212,7 +213,7 @@ export class EffectHelper extends BaseService {
       `RE:${character.name}`,
     );
     if (!effectData) {
-      this.game.logger.error(
+      consoleError(
         'EffectHelper',
         new Error(
           `Effect ${JSON.stringify(effect)} cannot be removed as no data could be found.`,

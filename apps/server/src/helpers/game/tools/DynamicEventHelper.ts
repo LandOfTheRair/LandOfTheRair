@@ -12,6 +12,7 @@ import type {
 import { DynamicEventSuccessType, GameAction } from '@lotr/interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
+import { consoleError } from '@lotr/logger';
 import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
 
@@ -148,7 +149,7 @@ export class DynamicEventHelper extends BaseService {
   // start a dynamic event
   public startDynamicEvent(event: IDynamicEventMeta): void {
     if (!event.name) {
-      this.game.logger.error(
+      consoleError(
         'DynamicEventHelper',
         new Error(`Event ${JSON.stringify(event)} does not have a name!`),
       );

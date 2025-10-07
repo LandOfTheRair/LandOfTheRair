@@ -7,6 +7,7 @@ import type {
   ISimpleItem,
 } from '@lotr/interfaces';
 import { Currency, ItemClass, Stat } from '@lotr/interfaces';
+import { consoleError } from '@lotr/logger';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -273,7 +274,7 @@ export class InventoryHelper extends BaseService {
 
   public addMaterial(player: IPlayer, material: string, number = 1): void {
     if (isNaN(number)) {
-      this.game.logger.error(
+      consoleError(
         'MaterialStorage',
         new Error(
           `Adding NaN to materials: ${player.name} (${player.username})/${material}!`,

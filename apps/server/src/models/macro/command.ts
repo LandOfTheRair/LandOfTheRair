@@ -32,6 +32,7 @@ import {
   takeDamage,
 } from '@lotr/characters';
 import { getEffect, hasEffect } from '@lotr/effects';
+import { consoleWarn } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import type { Player } from '../orm';
 
@@ -374,10 +375,7 @@ export class SpellCommand extends SkillCommand {
     );
 
     if (!spellData) {
-      this.game.logger.warn(
-        'SpellCommand',
-        `No spellData found for ${this.spellRef}.`,
-      );
+      consoleWarn('SpellCommand', `No spellData found for ${this.spellRef}.`);
       return false;
     }
 
@@ -518,10 +516,7 @@ export class SpellCommand extends SkillCommand {
       `CSA:${caster?.name}`,
     );
     if (!spellData) {
-      this.game.logger.warn(
-        'SpellCommand',
-        `No spellData found for ${this.spellRef}.`,
-      );
+      consoleWarn('SpellCommand', `No spellData found for ${this.spellRef}.`);
 
       if (caster) {
         this.game.messageHelper.sendSimpleMessage(

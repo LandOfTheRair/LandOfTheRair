@@ -11,6 +11,7 @@ import type {
   ISpawnerData,
   Rollable,
 } from '@lotr/interfaces';
+import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -87,7 +88,7 @@ export class ModKitManager extends BaseService {
 
     mods.forEach((mod) => {
       if (!fs.existsSync(`CommunityMods/mods/${mod}.rairmod`)) {
-        this.game.logger.error(
+        consoleError(
           'ModKit:CopyModsFromList',
           new Error(
             `Mod "${mod}" does not exist, skipping copy step from CommunityMods...`,
@@ -106,11 +107,11 @@ export class ModKitManager extends BaseService {
   private loadModsFromList() {
     const mods = this.loadMods;
 
-    this.game.logger.log('ModKit:Init', `Loading ${mods.length} mods...`);
+    consoleLog('ModKit:Init', `Loading ${mods.length} mods...`);
 
     mods.forEach((mod) => {
       if (!fs.existsSync(`content/mods/${mod}.rairmod`)) {
-        this.game.logger.error(
+        consoleError(
           'ModKit:LoadModsFromList',
           new Error(
             `Mod "${mod}" does not exist, skipping load step from content...`,
@@ -125,7 +126,7 @@ export class ModKitManager extends BaseService {
   }
 
   private loadMod(mod: IModKit) {
-    this.game.logger.log(
+    consoleLog(
       'ModKit:Loader',
       `Loading ${mod.meta.name} by ${mod.meta.author}...`,
     );
@@ -148,7 +149,7 @@ export class ModKitManager extends BaseService {
     // items that can and must be deduped (if any of these fail, the mod will NOT load, and they will check again in the content manager)
     mod.maps.forEach((map) => {
       if (this.isLoaded('map', map.name)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `Map ${map.name} already exists, skipping...`,
         );
@@ -163,7 +164,7 @@ export class ModKitManager extends BaseService {
 
     mod.npcs.forEach((npc) => {
       if (this.isLoaded('npc', npc.npcId)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `NPC ${npc.npcId} already exists, skipping...`,
         );
@@ -178,7 +179,7 @@ export class ModKitManager extends BaseService {
 
     mod.spawners.forEach((spawner) => {
       if (this.isLoaded('spawner', spawner.tag)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `Spawner ${spawner.tag} already exists, skipping...`,
         );
@@ -193,7 +194,7 @@ export class ModKitManager extends BaseService {
 
     mod.items.forEach((item) => {
       if (this.isLoaded('item', item.name)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `Item ${item.name} already exists, skipping...`,
         );
@@ -208,7 +209,7 @@ export class ModKitManager extends BaseService {
 
     mod.quests.forEach((quest) => {
       if (this.isLoaded('quest', quest.name)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `Quest ${quest.name} already exists, skipping...`,
         );
@@ -223,7 +224,7 @@ export class ModKitManager extends BaseService {
 
     mod.dialogs.forEach((dialog) => {
       if (this.isLoaded('dialog', dialog.tag)) {
-        this.game.logger.warn(
+        consoleWarn(
           'ModKit:Loader',
           `NPC Script ${dialog.tag} already exists, skipping...`,
         );
@@ -247,7 +248,7 @@ export class ModKitManager extends BaseService {
 
     // if we fail, we bail
     if (failedLoad) {
-      this.game.logger.warn(
+      consoleWarn(
         'ModKit:Loader',
         `Failed to load mod "${mod.meta.name}" by ${mod.meta.author}, skipping...`,
       );

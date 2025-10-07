@@ -67,11 +67,10 @@ import type {
   IWeaponTier,
   Rollable,
   Stat,
-  WeaponClass } from '@lotr/interfaces';
-import {
-  ItemClass,
-  Skill
+  WeaponClass,
 } from '@lotr/interfaces';
+import { ItemClass, Skill } from '@lotr/interfaces';
+import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 const realJSON = (json) => json.default || json;
@@ -286,7 +285,7 @@ export class ContentManager extends BaseService {
 
   private logErrorWithContext(tag: string, err: Error) {
     if (tag.includes('Migrate')) return;
-    this.game.logger.error(`${tag}`, err);
+    consoleError(`${tag}`, err);
   }
 
   public hasAchievement(achievementName: string): boolean {
@@ -557,10 +556,7 @@ export class ContentManager extends BaseService {
 
   private chooseConfigFileOrPreset(file: string, preset: any) {
     if (fs.existsSync(`config/${file}.json`)) {
-      this.game.logger.log(
-        'ContentManager',
-        `Using custom config file for ${file}...`,
-      );
+      consoleLog('ContentManager', `Using custom config file for ${file}...`);
       return fs.readJsonSync(`config/${file}.json`);
     }
 
@@ -693,7 +689,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modQuests.forEach((quest) => {
       if (this.quests[quest.name]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadQuestsMod',
           `Duplicate quest name (mod) ${quest.name}, skipping...`,
         );
@@ -712,7 +708,7 @@ export class ContentManager extends BaseService {
       realJSON(droptablesMaps),
     ).reduce((prev, cur) => {
       if (prev[cur.mapName]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadMapDroptables',
           `Duplicate map droptable for ${cur.mapName}, skipping...`,
         );
@@ -725,7 +721,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modMapDrops.forEach((dt) => {
       if (this.mapDroptables[dt.mapName]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadMapDroptablesMod',
           `Duplicate map droptable (mod) ${dt.mapName}, skipping...`,
         );
@@ -744,7 +740,7 @@ export class ContentManager extends BaseService {
       realJSON(droptablesRegions),
     ).reduce((prev, cur) => {
       if (prev[cur.regionName]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadRegionDroptables',
           `Duplicate region droptable for ${cur.regionName}, skipping...`,
         );
@@ -757,7 +753,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modRegionDrops.forEach((dt) => {
       if (this.regionDroptables[dt.regionName]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadRegionDroptablesMod',
           `Duplicate region droptable (mod) ${dt.regionName}, skipping...`,
         );
@@ -774,7 +770,7 @@ export class ContentManager extends BaseService {
     this.items = this.chooseConfigFileOrPreset('items', realJSON(items)).reduce(
       (prev, cur) => {
         if (prev[cur.name]) {
-          this.game.logger.warn(
+          consoleWarn(
             'ContentManager:LoadItems',
             `Duplicate item ${cur.name}, skipping...`,
           );
@@ -789,7 +785,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modItems.forEach((item) => {
       if (this.items[item.name]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadItemsMod',
           `Duplicate item (mod) ${item.name}, skipping...`,
         );
@@ -806,7 +802,7 @@ export class ContentManager extends BaseService {
     this.npcs = this.chooseConfigFileOrPreset('npcs', realJSON(npcs)).reduce(
       (prev, cur) => {
         if (prev[cur.npcId]) {
-          this.game.logger.warn(
+          consoleWarn(
             'ContentManager:LoadNPCs',
             `Duplicate NPC ${cur.npcId}, skipping...`,
           );
@@ -821,7 +817,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modNPCs.forEach((npc) => {
       if (this.npcs[npc.npcId]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadNPCsMod',
           `Duplicate NPC (mod) ${npc.npcId}, skipping...`,
         );
@@ -840,7 +836,7 @@ export class ContentManager extends BaseService {
       realJSON(npcScripts),
     ).reduce((prev, cur) => {
       if (prev[cur.tag]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadNPCScripts',
           `Duplicate NPC Script ${cur.tag}, skipping...`,
         );
@@ -853,7 +849,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modNPCScripts.forEach((script) => {
       if (this.npcScripts[script.tag]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadNPCScriptsMod',
           `Duplicate NPC Script (mod) ${script.tag}, skipping...`,
         );
@@ -873,7 +869,7 @@ export class ContentManager extends BaseService {
     this.chooseConfigFileOrPreset('recipes', realJSON(recipes)).forEach(
       (recipe) => {
         if (this.allRecipes[recipe.name]) {
-          this.game.logger.warn(
+          consoleWarn(
             'ContentManager:LoadRecipes',
             `Duplicate recipe ${recipe.name}, skipping...`,
           );
@@ -889,7 +885,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modRecipes.forEach((recipe) => {
       if (this.allRecipes[recipe.name]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadRecipesMod',
           `Duplicate recipe (mod) ${recipe.name}, skipping...`,
         );
@@ -912,7 +908,7 @@ export class ContentManager extends BaseService {
       realJSON(spawners),
     ).reduce((prev, cur) => {
       if (prev[cur.tag]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadSpawners',
           `Duplicate spawner ${cur.tag}, skipping...`,
         );
@@ -925,7 +921,7 @@ export class ContentManager extends BaseService {
 
     this.game.modkitManager.modSpawners.forEach((spawner) => {
       if (this.spawners[spawner.tag]) {
-        this.game.logger.warn(
+        consoleWarn(
           'ContentManager:LoadSpawnersMod',
           `Duplicate spawner (mod) ${spawner.tag}, skipping...`,
         );

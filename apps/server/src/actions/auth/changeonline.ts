@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError, consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeAlwaysOnlineAction extends ServerAction {
@@ -13,12 +13,12 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
     try {
       await game.accountDB.changeAlwaysOnline(data.account, data.alwaysOnline);
       await game.discordHelper.updateDiscordRoles(data.account);
-      game.logger.log(
+      consoleLog(
         'Auth:ChangeAlwaysOnline',
         `${data.username} changed always online.`,
       );
     } catch (e) {
-      game.logger.error('ChangeAlwaysOnline', e as Error);
+      consoleError('ChangeAlwaysOnline', e as Error);
       return {
         message:
           'Could not change online status? Try again, or contact a GM if this persists.',

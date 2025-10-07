@@ -1,3 +1,4 @@
+import { consoleError } from '@lotr/logger';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../../models/BaseService';
 import { Ground } from '../../../models/orm/Ground';
@@ -55,7 +56,7 @@ export class GroundDB extends BaseService {
     try {
       return await massOp.execute();
     } catch (e) {
-      this.game.logger.error(
+      consoleError(
         'GroundSave',
         e as Error,
         `There was an error saving the ground. Typically, this is some awkward error with Solokar and not having a party name.`,

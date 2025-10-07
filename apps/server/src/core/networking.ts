@@ -9,9 +9,9 @@ import fastify from 'fastify';
 import uuid from 'uuid/v4';
 
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import * as WebSocket from 'ws';
 import { Database } from '../helpers';
-import { consoleError, consoleLog } from '../helpers/core/logger/console';
 import * as HTTPRoutes from '../http';
 
 export class WebsocketWorker {
@@ -34,7 +34,7 @@ export class WebsocketWorker {
     });
 
     process.on('unhandledRejection', (error) => {
-      consoleError('NET:UR', error);
+      consoleError('NET:UR', error as Error);
     });
 
     process.on('uncaughtException', (error) => {
@@ -122,7 +122,7 @@ export class WebsocketWorker {
           this.emit(socket, JSON.parse(msg as string));
         } catch (e) {
           consoleError('NET:JSONParse', msg);
-          consoleError('NET:JSONParse', e);
+          consoleError('NET:JSONParse', e as Error);
         }
       });
 

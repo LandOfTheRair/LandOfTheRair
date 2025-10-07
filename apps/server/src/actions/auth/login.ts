@@ -5,8 +5,8 @@ import {
 } from '@lotr/interfaces';
 import * as meta from '../../../content/_output/meta.json';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError, consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LoginAction extends ServerAction {
@@ -26,7 +26,7 @@ export class LoginAction extends ServerAction {
     try {
       account = await game.accountDB.getAccountForLoggingIn(data.username);
     } catch (e) {
-      game.logger.error('LoginAction#getAccount', e as Error);
+      consoleError('LoginAction#getAccount', e as Error);
       return {
         message:
           'Could not get account; try again or contact a GM if this persists.',
@@ -70,7 +70,7 @@ export class LoginAction extends ServerAction {
 
       game.lobbyManager.joinLobby(realAccount);
 
-      game.logger.log(
+      consoleLog(
         'Auth:Login',
         `${data.username} logged in (${data.socketIp}).`,
       );
@@ -111,7 +111,7 @@ export class LoginAction extends ServerAction {
         game.accountDB.changePassword(realAccount, account.temporaryPassword);
       }
     } catch (e) {
-      game.logger.error('LoginAction', e as Error);
+      consoleError('LoginAction', e as Error);
       throw new Error('Could not login username?');
     }
 

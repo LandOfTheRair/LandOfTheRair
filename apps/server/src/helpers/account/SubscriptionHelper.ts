@@ -7,6 +7,7 @@ import {
   SilverPurchase,
   SubscriptionTier,
 } from '@lotr/interfaces';
+import { consoleLog } from '@lotr/logger';
 import { isSubscribed } from '@lotr/shared';
 import type { Account } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -208,7 +209,7 @@ export class SubscriptionHelper extends BaseService {
       }
     }
 
-    this.game.logger.log(
+    consoleLog(
       'Subscription:SilverPurchaseTotal',
       `${account.username} has bought ${purchase}.`,
     );
@@ -244,7 +245,7 @@ export class SubscriptionHelper extends BaseService {
     account.premium.hasDoneTrial = tier <= 1;
     account.premium.subscriptionTier = tier;
 
-    this.game.logger.log(
+    consoleLog(
       'Subscription:SubscriptionStart',
       `${account.username} has started a tier ${tier} trial.`,
     );
@@ -261,7 +262,7 @@ export class SubscriptionHelper extends BaseService {
     account.premium.silver += amount;
 
     const message = amount > 0 ? 'was given' : 'has spent';
-    this.game.logger.log(
+    consoleLog(
       'Subscription:SilverChange',
       `${account.username} ${message} ${amount} silver.`,
     );

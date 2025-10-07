@@ -2,9 +2,9 @@ require('dotenv').config();
 require('source-map-support').install();
 
 import { GameServerEvent } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import path from 'path';
 import { isMainThread, Worker } from 'worker_threads';
-import { consoleError, consoleLog } from '../helpers/core/logger/console';
 
 const kill = () => process.exit(0);
 
@@ -37,7 +37,7 @@ if (isMainThread) {
       if (!target) {
         consoleError(
           `Worker:${worker}:TargetCheck`,
-          `Message ${JSON.stringify(msg)} has no target.`,
+          new Error(`Message ${JSON.stringify(msg)} has no target.`),
         );
       }
 
@@ -55,7 +55,10 @@ if (isMainThread) {
     });
 
     createdWorker.on('exit', (code) => {
-      consoleError(`Worker:${worker}:Exit`, code);
+      consoleError(
+        `Worker:${worker}:Exit`,
+        new Error(`Worker exited with code ${code}`),
+      );
 
       setTimeout(() => {
         createWorker(worker, name);

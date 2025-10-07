@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import uuid from 'uuid/v4';
 import type { Account } from '../../models';
 
+import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -12,10 +13,7 @@ export class EmailHelper extends BaseService {
 
   public init() {
     if (!process.env.SMTP_EMAIL || !process.env.SMTP_PASSWORD) {
-      this.game.logger.log(
-        'Email',
-        'No email or password set, skipping SMTP...',
-      );
+      consoleLog('Email', 'No email or password set, skipping SMTP...');
       return;
     }
 
@@ -63,7 +61,7 @@ export class EmailHelper extends BaseService {
     try {
       await this.transport.sendMail(mail);
     } catch (e) {
-      this.game.logger.error('Email:RequestVerify', e as Error);
+      consoleError('Email:RequestVerify', e as Error);
       throw e;
     }
   }
@@ -120,7 +118,7 @@ export class EmailHelper extends BaseService {
     try {
       await this.transport.sendMail(mail);
     } catch (e) {
-      this.game.logger.error('Email:RequestTempPassword', e as Error);
+      consoleError('Email:RequestTempPassword', e as Error);
       throw e;
     }
   }

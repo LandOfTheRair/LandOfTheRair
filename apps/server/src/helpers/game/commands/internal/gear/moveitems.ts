@@ -14,6 +14,7 @@ import {
   ItemSlot,
   ObjectType,
 } from '@lotr/interfaces';
+import { consoleError } from '@lotr/logger';
 import { cleanNumber, distanceFrom } from '@lotr/shared';
 import { MacroCommand } from '../../../../../models/macro';
 import type { VendorBehavior } from '../../../../../models/world/ai/behaviors';
@@ -467,7 +468,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleC ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -687,7 +688,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleL ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -914,7 +915,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleR ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -1087,7 +1088,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -1299,7 +1300,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -1550,7 +1551,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleE ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2003,7 +2004,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleG ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2207,7 +2208,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleM ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2317,7 +2318,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleO ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2518,7 +2519,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleW ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2635,7 +2636,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleK ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,
@@ -2885,7 +2886,7 @@ export class MoveItems extends MacroCommand {
       }
 
       default: {
-        this.game.logger.error(
+        consoleError(
           'MoveItems',
           new Error(
             `handleD ${player.name} ${dest} ${origSlot} ${destSlot} went to default.`,

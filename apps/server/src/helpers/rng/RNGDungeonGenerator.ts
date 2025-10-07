@@ -4,13 +4,13 @@ import type {
   IRNGDungeonMetaConfig,
   ISpawnerData,
   ItemClassType,
-  Rollable } from '@lotr/interfaces';
-import {
-  ItemClass
+  Rollable,
 } from '@lotr/interfaces';
+import { ItemClass } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import { sample } from 'lodash';
 
+import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 import type { ISpoilerLog } from './helpers/MapGenerator';
 import { MapGenerator } from './helpers/MapGenerator';
@@ -29,7 +29,7 @@ export class RNGDungeonGenerator extends BaseService {
     const defaultDungeon = this.game.worldManager.getMap('RNGTemplate100');
 
     if (!defaultDungeon || !defaultDungeon.map) {
-      this.game.logger.error(
+      consoleError(
         'RNGDungeonGenerator',
         new Error('Could not find default dungeon template.'),
       );
@@ -43,7 +43,7 @@ export class RNGDungeonGenerator extends BaseService {
         .reduce((a, b) => a + b, 0) + +this.game.dailyHelper.resetTime;
     seed ??= defaultSeed;
 
-    this.game.logger.log(
+    consoleLog(
       'RNGDungeonGenerator',
       `Today's seed for ${map.name}: "${seed}"`,
     );

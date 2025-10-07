@@ -2,6 +2,7 @@ import type { IRNGDungeonMetaConfig } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import type { Player } from '../../models';
 
+import { consoleLog } from '@lotr/logger';
 import { GameEvent } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -29,7 +30,7 @@ export class RNGDungeonManager extends BaseService {
   }
 
   public generateDungeons(): void {
-    this.game.logger.log('RNGDungeonManager', 'Generating dungeons...');
+    consoleLog('RNGDungeonManager', 'Generating dungeons...');
 
     // reset the timestamp first, just in case the tick comes around again too quickly
     this.setLastDungeonReset();

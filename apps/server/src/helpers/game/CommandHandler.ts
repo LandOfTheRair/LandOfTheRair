@@ -3,6 +3,7 @@ import { isObject, isString } from 'lodash';
 
 import { canAct, isDead } from '@lotr/characters';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
+import { consoleDebug, consoleLog } from '@lotr/logger';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import type { MacroCommand, SkillCommand } from '../../models/macro';
@@ -62,7 +63,7 @@ export class CommandHandler extends BaseService {
         spellCommand.noPlayerArgs = true;
       }
 
-      this.game.logger.debug(
+      consoleDebug(
         `CommandHandler:SpellInit`,
         `Initializing autospell ${spellName} (${message})...`,
       );
@@ -177,7 +178,7 @@ export class CommandHandler extends BaseService {
     }
 
     if (commandRef.isGMCommand) {
-      this.game.logger.log(
+      consoleLog(
         'GMCommand',
         `${player.name} running ${commandRef.aliases[0]} w/ "${args.stringArgs}".`,
       );

@@ -3,6 +3,7 @@
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 
+import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
 import { GameEvent } from '../../interfaces';
@@ -73,7 +74,7 @@ import {
   RedeemableDB,
   WorldDB,
 } from './db';
-import { Logger } from './Logger';
+import { LoggerInitializer } from './Logger';
 import { TransmissionHelper } from './TransmissionHelper';
 
 @Injectable()
@@ -91,7 +92,7 @@ export class Game {
 
   constructor(
     public crashContext: CrashContextManager,
-    public logger: Logger,
+    public logger: LoggerInitializer,
     public transmissionHelper: TransmissionHelper,
 
     public modkitManager: ModKitManager,
@@ -176,7 +177,7 @@ export class Game {
     // this.gameEvents.setMaxListeners(100);
 
     await this.db.tryConnect('GAME');
-    this.logger.log('Game:Init', 'Initializing game...');
+    consoleLog('Game:Init', 'Initializing game...');
     this.wsCmdHandler = wsCmdHandler;
 
     const servicesByPriority: Partial<Record<GameEvent, (keyof Game)[]>> = {
@@ -277,7 +278,7 @@ export class Game {
     });
 
     const initService = async (severity: string, serviceKey: string) => {
-      this.logger.log(`Game:Init:${severity}`, `Initializing ${serviceKey}...`);
+      consoleLog(`Game:Init:${severity}`, `Initializing ${serviceKey}...`);
 
       const service = this[serviceKey] as BaseService;
 
@@ -345,7 +346,7 @@ export class Game {
     timer.dumpTimers();
 
     if (this.worldDB.running) {
-      this.logger.warn(
+      consoleWarn(
         'Game:Init',
         'Warning: the last shutdown was unsafe. Data may have been lost.',
       );
@@ -362,14 +363,14 @@ export class Game {
   }
 
   private emit(event: GameEvent): void {
-    this.logger.log('Game:Event', `Emitting: ${event}`);
+    consoleLog('Game:Event', `Emitting: ${event}`);
     this.gameEvents.emit(event);
   }
 
   private setupEmergencyHandlers() {
-    this.logger.log('Game:Failsafe', 'Emergency handler registered.');
+    consoleLog('Game:Failsafe', 'Emergency handler registered.');
     process.on('exit', (code) => {
-      this.logger.log('Game:Exit', 'Game is dying');
+      consoleLog('Game:Exit', 'Game is dying');
       console.log(`About to exit with code: ${code}`);
     });
 
@@ -387,7 +388,7 @@ export class Game {
       'SIGTERM',
     ].forEach((sig) => {
       process.on(sig as any, async () => {
-        this.logger.log(
+        consoleLog(
           `Game:Exit:${sig}`,
           'Beginning save of players and ground...',
         );
@@ -396,7 +397,7 @@ export class Game {
           this.groundManager.saveAllGround(),
           this.worldDB.saveStopped(),
         ]).then(() => {
-          this.logger.log('Game:Exit', 'Finished save of players and ground.');
+          consoleLog('Game:Exit', 'Finished save of players and ground.');
           process.exit(0);
         });
       });
@@ -481,7 +482,7 @@ export class Game {
       try {
         this.loop();
       } catch (e) {
-        this.logger.error('CrashRecovery', e as Error);
+        consoleError('CrashRecovery', e as Error);
         this.loop();
       }
     }, 100);

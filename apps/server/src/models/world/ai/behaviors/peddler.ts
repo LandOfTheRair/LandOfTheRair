@@ -15,8 +15,8 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
 
 export class PeddlerBehavior implements IAIBehavior {
@@ -29,7 +29,7 @@ export class PeddlerBehavior implements IAIBehavior {
     const { peddleItem, peddleCost, peddleDesc } = behavior;
 
     if (!peddleItem || !peddleCost || !peddleDesc) {
-      game.logger.error(
+      consoleError(
         'Behavior:Peddle',
         new Error(
           `NPC at ${npc.map}-${npc.x},${npc.y} has invalid peddle item settings.`,

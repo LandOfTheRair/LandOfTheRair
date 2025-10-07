@@ -11,6 +11,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
 import type { Player } from '../../../../models/orm';
 
@@ -170,7 +171,7 @@ export class GuildmasterBehavior implements IAIBehavior {
         try {
           await game.guildManager.createGuild(player as Player, name, tag);
         } catch (e) {
-          game.logger.error('GuildCreate', e as Error);
+          consoleError('GuildCreate', e as Error);
           return 'Hmm. I could not create your guild for some reason. You should try again with a new name and/or tag.';
         }
 

@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BlockGameAndKickAllAction extends ServerAction {
@@ -26,7 +26,7 @@ export class BlockGameAndKickAllAction extends ServerAction {
         }
       });
     } catch (e) {
-      game.logger.error('BlockGameAndKickAllAction', e as Error);
+      consoleError('BlockGameAndKickAllAction', e as Error);
       return {
         message:
           'Could not kick all/block? I would normally say to contact a GM, but this is probably your fault.',

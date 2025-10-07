@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleLog } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models';
 
 export class BuyPremiumAction extends ServerAction {
@@ -9,7 +9,7 @@ export class BuyPremiumAction extends ServerAction {
   override requiredKeys = ['token', 'item'];
 
   override async act(game: Game, { emit }, data) {
-    game.logger.log(
+    consoleLog(
       'Premium:Buy',
       `${data.username} buying ${data.item.key} (${data.token.id}).`,
     );

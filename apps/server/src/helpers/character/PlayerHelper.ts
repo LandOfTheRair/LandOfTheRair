@@ -26,6 +26,7 @@ import type {
   Tradeskill,
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
+import { consoleLog } from '@lotr/logger';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -726,7 +727,7 @@ export class PlayerHelper extends BaseService {
         player,
         'Your succor is not valid.',
       );
-      this.game.logger.log(
+      consoleLog(
         'PlayerHelper:DoSuccor',
         `Bad Succor: ${JSON.stringify(succorInfo)}`,
       );

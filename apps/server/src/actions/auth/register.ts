@@ -8,6 +8,7 @@ import {
 import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
+import { consoleError, consoleLog } from '@lotr/logger';
 import * as meta from '../../../content/_output/meta.json';
 
 export class RegisterAction extends ServerAction {
@@ -66,7 +67,7 @@ export class RegisterAction extends ServerAction {
         };
       }
 
-      game.logger.log('Auth:Register', `${data.username} registered.`);
+      consoleLog('Auth:Register', `${data.username} registered.`);
 
       const simpleAccount = await game.accountDB.simpleAccount(account);
 
@@ -99,7 +100,7 @@ export class RegisterAction extends ServerAction {
         `Welcome ${account.username} to Land of the Rair!`,
       );
     } catch (e) {
-      game.logger.error('RegisterAction', e as Error);
+      consoleError('RegisterAction', e as Error);
       throw new Error('Could not register username?');
     }
 

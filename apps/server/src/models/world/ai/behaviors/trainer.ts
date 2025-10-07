@@ -23,6 +23,7 @@ import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
 import type { Game } from '../../../../helpers';
 import type { Player } from '../../../orm';
@@ -38,7 +39,7 @@ export class TrainerBehavior implements IAIBehavior {
     const { maxLevelUpLevel, maxSkillTrain } = behavior;
 
     if (!maxLevelUpLevel || !maxSkillTrain) {
-      game.logger.error(
+      consoleError(
         'Behavior:Trainer',
         new Error(
           `NPC at ${npc.map}-${npc.x},${npc.y} has invalid levelup/skillup settings.`,

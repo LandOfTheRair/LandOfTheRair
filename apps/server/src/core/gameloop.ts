@@ -3,9 +3,9 @@ import 'reflect-metadata';
 import { parentPort } from 'worker_threads';
 
 import { GameServerResponse } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import { once } from 'events';
 import { WebsocketCommandHandler } from '../helpers';
-import { consoleError, consoleLog } from '../helpers/core/logger/console';
 import { GameEvent } from '../interfaces';
 
 export class GameloopWorker {
@@ -56,7 +56,7 @@ export class GameloopWorker {
       const blacklistedErrors = ['Not logged in.', 'Not in game.'];
 
       if (!blacklistedErrors.includes((e as Error).message)) {
-        consoleError('GAME:ERROR:CMD', e);
+        consoleError('GAME:ERROR:CMD', e as Error);
         consoleError('GAME:ERROR:DATA', msg);
 
         if (process.env.NODE_ENV !== 'production') {

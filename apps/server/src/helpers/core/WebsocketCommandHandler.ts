@@ -1,8 +1,8 @@
 import type { IServerAction } from '@lotr/interfaces';
 import { GameServerEvent, GameServerResponse } from '@lotr/interfaces';
+import { consoleError, consoleLog } from '@lotr/logger';
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';
-import { consoleError, consoleLog } from '../../helpers/core/logger/console';
 import type { IWebsocketCommandHandler } from '../../interfaces';
 import { Game } from './Game';
 
@@ -43,7 +43,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
   ): Promise<void> {
     const action = this.actions[type];
     if (!action) {
-      this.game.logger.error(
+      consoleError(
         'WSCmdHandler',
         new Error(`Action type ${type} does not exist.`),
       );
@@ -51,7 +51,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
     }
 
     if (!action.validate(data)) {
-      this.game.logger.error(
+      consoleError(
         'WSCmdHandler',
         new Error(
           `Action type ${type} is not valid with keys ${JSON.stringify(data)}.`,

@@ -3,10 +3,10 @@ import type { Collection, Db } from 'mongodb';
 import { MongoClient } from 'mongodb';
 import { BaseService } from '../../models/BaseService';
 
+import { consoleError, consoleLog } from '@lotr/logger';
 import type { BaseEntity } from '../../models/BaseEntity';
 import type { Account } from '../../models/orm/Account';
 import { MetadataStorage } from './db/base';
-import { consoleError, consoleLog } from './logger/console';
 
 @Injectable()
 export class Database extends BaseService {
@@ -44,7 +44,9 @@ export class Database extends BaseService {
       } catch (e) {
         consoleError(
           `${source}:DB`,
-          `Database connection failed ${(e as Error).message}, retrying in 3 seconds...`,
+          new Error(
+            `Database connection failed ${(e as Error).message}, retrying in 3 seconds...`,
+          ),
         );
 
         await this.client.close();

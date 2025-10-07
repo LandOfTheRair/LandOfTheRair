@@ -1,7 +1,7 @@
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { consoleError } from '@lotr/logger';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class AnnounceAction extends ServerAction {
@@ -18,7 +18,7 @@ export class AnnounceAction extends ServerAction {
     try {
       game.messageHelper.broadcastSystemMessage(data.message);
     } catch (e) {
-      game.logger.error('AnnounceAction', e as Error);
+      consoleError('AnnounceAction', e as Error);
       return {
         message:
           'Could not announce? I would normally say to contact a GM, but this is probably your fault.',

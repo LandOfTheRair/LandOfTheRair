@@ -1,4 +1,5 @@
 import type { ICharacter } from '@lotr/interfaces';
+import { consoleLog } from '@lotr/logger';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -18,7 +19,7 @@ export class CrashContextManager extends BaseService {
     if (this.context.length > 300) this.context.shift();
 
     if (process.env.LOG_CRASH_CONTEXT) {
-      this.game.logger.log('CrashContext', message);
+      consoleLog('CrashContext', message);
     }
   }
 }

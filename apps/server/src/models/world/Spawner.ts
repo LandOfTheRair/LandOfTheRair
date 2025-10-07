@@ -10,6 +10,7 @@ import type { WorldMap } from './Map';
 import type { MapState } from './MapState';
 
 import { isDead } from '@lotr/characters';
+import { consoleError } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';
 
@@ -303,7 +304,7 @@ export class Spawner {
       (this.npcIds && this.npcIds.length === 0) ||
       (this.npcDefs && this.npcDefs.length === 0);
     if (!hasOwnId && !opts.npcId && this.x === 0 && this.y === 0) {
-      this.game.logger.error(
+      consoleError(
         'Spawner',
         new Error(
           `No valid npcIds for spawner ${this.name} at ${this.x}, ${this.y} on ${this.map}`,
@@ -336,7 +337,7 @@ export class Spawner {
     }
 
     if (!chosenNPCDef) {
-      this.game.logger.error(
+      consoleError(
         'Spawner',
         new Error(`Could not get NPC definition for ${this.name}.`),
       );
@@ -370,7 +371,7 @@ export class Spawner {
       }
 
       if (attempts++ > 100) {
-        this.game.logger.error(
+        consoleError(
           'Spawner',
           new Error(
             `Could not place a creature at ${this.x}, ${this.y} - ${this.mapRef.name}`,
@@ -396,10 +397,7 @@ export class Spawner {
     }
 
     if (!AllAIBehaviors[ai]) {
-      this.game.logger.error(
-        'Spawner',
-        new Error(`AI setting ${ai} does not exist.`),
-      );
+      consoleError('Spawner', new Error(`AI setting ${ai} does not exist.`));
       return null;
     }
 

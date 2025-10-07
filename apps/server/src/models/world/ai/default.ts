@@ -43,6 +43,7 @@ import {
   manaDamage,
   manaToFull,
 } from '@lotr/characters';
+import { consoleWarn } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
   directionFromText,
@@ -595,10 +596,7 @@ export class DefaultAIBehavior implements IAI {
 
     const skillRef = this.game.commandHandler.getSkillRef(skillName);
     if (!skillRef) {
-      this.game.logger.warn(
-        `NPC:${npc.name}`,
-        `NPC using unknown skill ${skillName}.`,
-      );
+      consoleWarn(`NPC:${npc.name}`, `NPC using unknown skill ${skillName}.`);
       return null;
     }
     if (!skillRef.canUse(npc, target)) return null;

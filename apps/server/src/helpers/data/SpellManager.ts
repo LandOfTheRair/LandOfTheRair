@@ -21,6 +21,7 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
+import { consoleError } from '@lotr/logger';
 import { diceRoll, oneToStat, rollInOneHundred } from '@lotr/rng';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -230,7 +231,7 @@ export class SpellManager extends BaseService {
 
     const spellData = this.getSpellData(spell, `CS:${caster?.name}`);
     if (!spellData) {
-      this.game.logger.error(
+      consoleError(
         'SpellManager',
         new Error(`Tried to cast invalid spell ${spell}.`),
       );
@@ -239,7 +240,7 @@ export class SpellManager extends BaseService {
 
     const spellRef = this.getSpell(spell);
     if (!spellRef) {
-      this.game.logger.error(
+      consoleError(
         'SpellManager',
         new Error(`Tried to ref invalid spell ${spell}.`),
       );
