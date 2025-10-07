@@ -7,6 +7,7 @@ import {
   getStat,
   isPlayer,
 } from '@lotr/characters';
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
@@ -38,31 +39,15 @@ export class StealHelper extends BaseService {
 
   public async trySteal(char: ICharacter, target: ICharacter): Promise<void> {
     const thiefBonusMultiplier =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'thiefBonusMultiplier',
-      ) ?? 1.5;
+      settingGameGet('character', 'thiefBonusMultiplier') ?? 1.5;
     const goldStealDifficulty =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'goldStealDifficulty',
-      ) ?? 3;
+      settingGameGet('character', 'goldStealDifficulty') ?? 3;
     const itemStealDifficulty =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'itemStealDifficulty',
-      ) ?? 10;
-    const stealSkillLower =
-      this.game.contentManager.getGameSetting('character', 'stealSkillLower') ??
-      3;
-    const stealSkillUpper =
-      this.game.contentManager.getGameSetting('character', 'stealSkillUpper') ??
-      5;
+      settingGameGet('character', 'itemStealDifficulty') ?? 10;
+    const stealSkillLower = settingGameGet('character', 'stealSkillLower') ?? 3;
+    const stealSkillUpper = settingGameGet('character', 'stealSkillUpper') ?? 5;
     const stealLevelRangeForSkillGain =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'stealLevelRangeForSkillGain',
-      ) ?? 3;
+      settingGameGet('character', 'stealLevelRangeForSkillGain') ?? 3;
 
     const targetGold = getCurrency(target);
 
@@ -81,17 +66,15 @@ export class StealHelper extends BaseService {
     const myStealth = getStat(char, Stat.Stealth);
     const yourPerception = getStat(target, Stat.Perception);
 
-    const myHasStealBonus =
-      this.game.contentManager.getClassConfigSetting<'hasStealBonus'>(
-        char.baseClass,
-        'hasStealBonus',
-      );
+    const myHasStealBonus = settingClassConfigGet<'hasStealBonus'>(
+      char.baseClass,
+      'hasStealBonus',
+    );
 
-    const targetHasStealBonus =
-      this.game.contentManager.getClassConfigSetting<'hasStealBonus'>(
-        target.baseClass,
-        'hasStealBonus',
-      );
+    const targetHasStealBonus = settingClassConfigGet<'hasStealBonus'>(
+      target.baseClass,
+      'hasStealBonus',
+    );
 
     const mySkill =
       getSkillLevel(char, Skill.Thievery) *

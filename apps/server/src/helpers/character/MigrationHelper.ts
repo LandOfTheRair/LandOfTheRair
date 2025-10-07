@@ -1,3 +1,4 @@
+import { effectExists, itemExists, itemGet, traitGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import { initializePlayer } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
@@ -46,10 +47,7 @@ export class MigrationHelper extends BaseService {
     }
 
     Object.keys(player.traits.traitsLearned ?? {}).forEach((trait) => {
-      const def = this.game.contentManager.getTrait(
-        trait,
-        `Migrate:Trait:${player.name}`,
-      );
+      const def = traitGet(trait, `Migrate:Trait:${player.name}`);
       if (!def) {
         delete player.traits.traitsLearned[trait];
       }
@@ -60,7 +58,7 @@ export class MigrationHelper extends BaseService {
       const remove: string[] = [];
 
       player.learnedRunes.forEach((rune) => {
-        const runeItem = this.game.contentManager.getItemDefinition(rune);
+        const runeItem = itemGet(rune);
         if (!runeItem) {
           remove.push(rune);
           return;
@@ -93,7 +91,7 @@ export class MigrationHelper extends BaseService {
       const remove: string[] = [];
 
       player.runes.forEach((rune) => {
-        const runeItem = this.game.contentManager.hasItemDefinition(rune);
+        const runeItem = itemExists(rune);
         if (runeItem) return;
 
         remove.push(rune);
@@ -107,12 +105,12 @@ export class MigrationHelper extends BaseService {
       if (buffType === '_hash') return;
 
       player.effects[buffType] = player.effects[buffType].filter((f) =>
-        this.game.contentManager.hasEffect(f.effectName),
+        effectExists(f.effectName),
       );
     });
 
     Object.keys(player.effects._hash).forEach((key) => {
-      const doesEffectExist = this.game.contentManager.hasEffect(key);
+      const doesEffectExist = effectExists(key);
       if (doesEffectExist) return;
 
       delete player.effects._hash[key];
@@ -217,8 +215,7 @@ export class MigrationHelper extends BaseService {
   }
 
   private cleanUpInvalidItems(player: IPlayer): void {
-    const isValidItem = (itemName) =>
-      this.game.contentManager.getItemDefinition(itemName);
+    const isValidItem = (itemName) => itemGet(itemName);
 
     // clean invalid equipment
     Object.keys(player.items.equipment).forEach((slot) => {

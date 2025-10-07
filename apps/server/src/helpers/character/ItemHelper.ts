@@ -23,6 +23,13 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isPlayer } from '@lotr/characters';
+import {
+  coreRNGDungeonConfig,
+  itemAllGet,
+  itemGet,
+  recipeGet,
+  settingGameGet,
+} from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem, isOwnedBy } from '@lotr/shared';
 
@@ -58,7 +65,7 @@ export class ItemHelper extends BaseService {
   };
 
   public init() {
-    this.conditionThresholds = this.game.contentManager.getGameSetting(
+    this.conditionThresholds = settingGameGet(
       'item',
       'conditionThresholds',
     ) ?? {
@@ -74,10 +81,7 @@ export class ItemHelper extends BaseService {
       heavenly: 999999,
     };
 
-    this.conditionACMods = this.game.contentManager.getGameSetting(
-      'item',
-      'conditionACMods',
-    ) ?? {
+    this.conditionACMods = settingGameGet('item', 'conditionACMods') ?? {
       broken: -4,
       rough: -3,
       tattered: -2,
@@ -93,7 +97,7 @@ export class ItemHelper extends BaseService {
 
   // get the real item for base information lookup
   public getItemDefinition(itemName: string): IItemDefinition {
-    return this.game.contentManager.getItemDefinition(itemName);
+    return itemGet(itemName)!;
   }
 
   public getItemProperty(
@@ -172,7 +176,9 @@ export class ItemHelper extends BaseService {
     let encrustStat = 0;
     if (item.mods.encrustItem) {
       const encrustItem = this.getItemDefinition(item.mods.encrustItem);
-      encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
+      if (encrustItem) {
+        encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
+      }
     }
 
     let upgradeStat = 0;
@@ -369,7 +375,7 @@ export class ItemHelper extends BaseService {
     return canUseItem(
       player,
       item,
-      this.game.itemHelper.getItemDefinition(item.name),
+      this.game.itemHelper.getItemDefinition(item.name)!,
     );
   }
 
@@ -450,7 +456,7 @@ export class ItemHelper extends BaseService {
         );
       }
 
-      const recipeRef = this.game.contentManager.getRecipe(recipe);
+      const recipeRef = recipeGet(recipe);
       if (!recipeRef) {
         return this.game.messageHelper.sendSimpleMessage(
           player,
@@ -762,15 +768,15 @@ export class ItemHelper extends BaseService {
 
   // search all items for similar things
   public searchItems(search: string): string[] {
-    return Object.keys(this.game.contentManager.allItems).filter((x) =>
+    return Object.keys(itemAllGet()).filter((x) =>
       new RegExp(`.*${search}.*`, 'i').test(x),
     );
   }
 
   // check if the item comes from an "ether force" map
   public isEtherForceItem(itemName: string): boolean {
-    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs
-      .map((x) => x.name)
+    return coreRNGDungeonConfig()
+      .dungeonConfigs.map((x) => x.name)
       .some((name) => itemName.includes(name));
   }
 

@@ -31,6 +31,7 @@ import {
   manaDamage,
   takeDamage,
 } from '@lotr/characters';
+import { effectGet, settingClassConfigGet } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import { consoleWarn } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
@@ -197,13 +198,12 @@ export abstract class SkillCommand extends MacroCommand {
 
     const mpCost = this.mpCost(user, targets, overrideEffect);
 
-    const extraMsg =
-      this.game.contentManager.getClassConfigSetting<'castResource'>(
-        user.baseClass,
-        'castResource',
-      );
+    const extraMsg = settingClassConfigGet<'castResource'>(
+      user.baseClass,
+      'castResource',
+    );
 
-    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+    const usesMana = settingClassConfigGet<'usesMana'>(
       user.baseClass,
       'usesMana',
     );
@@ -338,10 +338,7 @@ export class SpellCommand extends SkillCommand {
       const effectName = spellData.spellMeta.linkedEffectName;
 
       if (effectName) {
-        const effectData = this.game.contentManager.getEffect(
-          effectName,
-          `CU:${char?.name}`,
-        );
+        const effectData = effectGet(effectName, `CU:${char?.name}`);
         const recentlyEffect = effectData.effectMeta.recentlyRef;
 
         isBlockedByEffect =

@@ -14,6 +14,7 @@ import { InstancedWorldMap, MapState, WorldMap } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isDead } from '@lotr/characters';
+import { coreRNGDungeonConfig } from '@lotr/content';
 import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
 
@@ -274,8 +275,8 @@ export class WorldManager extends BaseService {
   }
 
   public isEtherForceMap(mapName: string): boolean {
-    return this.game.contentManager.rngDungeonConfigData.dungeonConfigs
-      .map((x) => x.name)
+    return coreRNGDungeonConfig()
+      .dungeonConfigs.map((x) => x.name)
       .includes(mapName);
   }
 

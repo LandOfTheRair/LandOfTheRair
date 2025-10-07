@@ -1,3 +1,4 @@
+import { itemAllGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { EquipHash, ItemSlot, Stat } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
@@ -23,7 +24,7 @@ export class GMGearUp extends MacroCommand {
       return;
     }
 
-    const validItems = Object.values(this.game.contentManager.allItems).filter(
+    const validItems = Object.values(itemAllGet()).filter(
       (i) => (i.requirements?.level ?? 0) <= cleanLevel,
     );
 

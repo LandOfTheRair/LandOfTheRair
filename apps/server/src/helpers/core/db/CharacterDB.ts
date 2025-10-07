@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
 import { healToFull, syncBaseStatistics } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import { initializeCharacter } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
 import type { Account } from '../../../models';
@@ -37,8 +38,7 @@ export class CharacterDB extends BaseService {
       (char) => char?.charSlot === slot,
     );
 
-    const { baseXP, baseRep } =
-      this.game.contentManager.getGameSetting('character');
+    const { baseXP, baseRep } = settingGameGet('character');
 
     let lockers = new PlayerLockers();
     lockers._id = new ObjectId();

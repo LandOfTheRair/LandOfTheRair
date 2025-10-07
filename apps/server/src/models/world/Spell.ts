@@ -13,6 +13,7 @@ import type {
 import { MessageType } from '@lotr/interfaces';
 
 import { getStat } from '@lotr/characters';
+import { effectGet } from '@lotr/content';
 import { logCrashContextEntry } from '@lotr/logger';
 
 export class Spell implements BaseSpell {
@@ -65,7 +66,7 @@ export class Spell implements BaseSpell {
     }
 
     if (spellData.spellMeta.linkedEffectName) {
-      const effectInfo = this.game.contentManager.getEffect(
+      const effectInfo = effectGet(
         spellData.spellMeta.linkedEffectName,
         `GOEI:${caster?.name}:${spellData.spellName}`,
       );

@@ -2,14 +2,14 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, get, isEqual, setWith, sortBy, updateWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
+import { settingGameGet } from '@lotr/content';
 import type {
   IGround,
   IGroundItem,
   ISerializableSpawner,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemClass,
+  ISimpleItem,
 } from '@lotr/interfaces';
+import { ItemClass } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 import { Ground } from '../../models/orm/Ground';
 
@@ -29,8 +29,7 @@ export class GroundManager extends BaseService {
   public async init() {
     await this.loadGround();
 
-    const { saveTicks, expireTicks } =
-      this.game.contentManager.getGameSetting('ground');
+    const { saveTicks, expireTicks } = settingGameGet('ground');
     this.saveTicks = saveTicks ?? 150;
     this.expireTicks = expireTicks ?? 1800;
   }

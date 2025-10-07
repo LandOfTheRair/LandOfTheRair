@@ -1,6 +1,7 @@
 import { clamp } from 'lodash';
 
 import { addStatistic, hasLearned } from '@lotr/characters';
+import { coreMaterialStorage, recipeGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -18,7 +19,7 @@ export class Craft extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const recipe = this.game.contentManager.getRecipe(args.stringArgs);
+    const recipe = recipeGet(args.stringArgs);
     if (!recipe) {
       return this.sendMessage(player, 'You do not know that recipe!');
     }
@@ -55,8 +56,7 @@ export class Craft extends MacroCommand {
       );
     }
 
-    const materialStorageSlots =
-      this.game.contentManager.materialStorageData.slots;
+    const materialStorageSlots = coreMaterialStorage().slots;
 
     let newOwner = '';
 

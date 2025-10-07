@@ -64,7 +64,7 @@ export function consoleWarn(tag: string, ...args) {
 }
 
 export function consoleError(tag: string, error: Error, ...args) {
-  _logWithTs('error', tag, error, ...args);
+  _logWithTs('error', tag, error.stack, ...args);
 
   rollbar?.error(error, {
     args,

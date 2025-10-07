@@ -1,3 +1,4 @@
+import { itemExists } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -23,7 +24,7 @@ export class GMCreateItem extends MacroCommand {
     if (player.items.equipment[hand]) hand = ItemSlot.LeftHand;
     if (player.items.equipment[hand]) hand = null;
 
-    if (!this.game.contentManager.hasItemDefinition(itemName)) {
+    if (!itemExists(itemName)) {
       this.sendMessage(player, 'That item does not exist.');
       return;
     }

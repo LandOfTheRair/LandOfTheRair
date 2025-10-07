@@ -8,6 +8,11 @@ import * as Pathfinder from 'pathfinding';
 import { Game } from '../../helpers';
 
 import {
+  coreSettings,
+  droptableMapGet,
+  droptableRegionGet,
+} from '@lotr/content';
+import {
   calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel,
 } from '@lotr/exp';
@@ -141,11 +146,11 @@ export class WorldMap {
   }
 
   public get mapDroptables() {
-    return this.game.contentManager.getDroptablesForMap(this.mapName) || [];
+    return droptableMapGet(this.mapName) || [];
   }
 
   public get regionDroptables() {
-    return this.game.contentManager.getDropablesForRegion(this.region) || [];
+    return droptableRegionGet(this.region) || [];
   }
 
   public get allSpawners() {
@@ -217,7 +222,7 @@ export class WorldMap {
   }
 
   private setMaxes() {
-    const settings = this.game.contentManager.settingsData;
+    const settings = coreSettings();
     const { maxSkill } = settings.character;
     this.firstCutExpValue = calculateXPRequiredForLevel(this.maxLevel + 2);
     this.secondCutExpValue = calculateXPRequiredForLevel(this.maxLevel + 5);

@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { coreHolidayDescs } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type { Holiday, IPlayer } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
@@ -10,7 +11,7 @@ export class HolidayHelper extends BaseService {
   private holidayHash;
 
   public init() {
-    this.holidayHash = this.game.contentManager.holidayDescsData;
+    this.holidayHash = coreHolidayDescs();
   }
 
   isHoliday(hol: Holiday): boolean {

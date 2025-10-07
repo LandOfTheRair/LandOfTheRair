@@ -7,6 +7,7 @@ import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 import { Game } from '../../helpers';
 
 import { isDead, isPlayer } from '@lotr/characters';
+import { npcScriptGet, spawnerGet } from '@lotr/content';
 import type {
   ICharacter,
   IGround,
@@ -167,9 +168,7 @@ export class MapState {
           );
         }
 
-        const npcDefF = this.game.contentManager.getNPCScript(
-          npc.properties.tag,
-        );
+        const npcDefF = npcScriptGet(npc.properties.tag);
         if (!npcDefF) {
           throw new Error(
             `Script ${npc.properties.tag} does not exist for NPC ${npc.name}`,
@@ -232,7 +231,7 @@ export class MapState {
         );
       }
 
-      const spawnerDataF = this.game.contentManager.getSpawnerByTag(tag);
+      const spawnerDataF = spawnerGet(tag);
       if (!spawnerDataF) {
         throw new Error(
           `Tagged spawner ${tag} does not exist (if this is an NPC, it's on the wrong layer).`,

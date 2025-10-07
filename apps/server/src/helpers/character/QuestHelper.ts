@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
 import { addStatistic, hasHeldItemInEitherHand } from '@lotr/characters';
+import { questGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type {
   Allegiance,
@@ -30,7 +31,7 @@ export class QuestHelper extends BaseService {
 
   // get a full quest object
   public getQuest(quest: string): IQuest {
-    return this.game.contentManager.getQuest(quest);
+    return questGet(quest);
   }
 
   // check if the player has the specified quest

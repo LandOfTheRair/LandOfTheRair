@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import uuid from 'uuid/v4';
 import type { Account } from '../../models';
 
+import { settingGameGet } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
@@ -33,11 +34,7 @@ export class EmailHelper extends BaseService {
   public async requestVerificationCode(account: Account): Promise<void> {
     if (!this.transport) throw new Error('SMTP not configured.');
 
-    const hours =
-      this.game.contentManager.getGameSetting(
-        'auth',
-        'verificationHourExpiration',
-      ) ?? 1;
+    const hours = settingGameGet('auth', 'verificationHourExpiration') ?? 1;
 
     const code = `${random(100000, 999999)}`;
     account.verificationCode = code;

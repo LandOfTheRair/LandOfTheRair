@@ -10,6 +10,7 @@ import { Currency, GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { coreSettings } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
@@ -18,7 +19,7 @@ import type { Player } from '../../../../models/orm';
 export class GuildmasterBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IUpgraderBehavior) {
     const { creationCost, guildHallCost, maxNameSize, maxTagSize } =
-      game.contentManager.settingsData.guild.creation;
+      coreSettings().guild.creation;
 
     parser
       .addCommand('hello')

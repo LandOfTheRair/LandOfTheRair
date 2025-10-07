@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
 import { getBaseStat, getStat } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
@@ -47,15 +48,9 @@ export class CalculatorHelper extends BaseService {
 
     // every cha past 7 is +1% discount
     const chaSlidingDiscount =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'chaSlidingDiscount',
-      ) ?? 7;
+      settingGameGet('character', 'chaSlidingDiscount') ?? 7;
     const chaMaxForDiscount =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'chaMaxForDiscount',
-      ) ?? 50;
+      settingGameGet('character', 'chaMaxForDiscount') ?? 50;
     const discountPercent = Math.min(
       chaMaxForDiscount,
       cha - chaSlidingDiscount,

@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemClass,
-  ItemSlot,
-} from '@lotr/interfaces';
+import { settingGameGet } from '@lotr/content';
+import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
+import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -58,8 +53,7 @@ export class CorpseManager extends BaseService {
     const uuid = corpse.uuid;
     const corpseUsername = corpse.mods.corpseUsername;
 
-    const { playerExpire, npcExpire } =
-      this.game.contentManager.getGameSetting('corpse');
+    const { playerExpire, npcExpire } = settingGameGet('corpse');
 
     this.corpseExpiration[uuid] =
       Date.now() +

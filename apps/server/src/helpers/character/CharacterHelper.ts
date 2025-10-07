@@ -30,6 +30,12 @@ import {
   isPlayer,
   mana,
 } from '@lotr/characters';
+import {
+  coreAllegianceStats,
+  coreHideReductions,
+  settingClassConfigGet,
+  settingGameGet,
+} from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
@@ -40,10 +46,7 @@ export class CharacterHelper extends BaseService {
 
   // get the primary spell casting stat for a character
   public castStat(char: ICharacter): Stat {
-    return this.game.contentManager.getClassConfigSetting<'castStat'>(
-      char.baseClass,
-      'castStat',
-    );
+    return settingClassConfigGet<'castStat'>(char.baseClass, 'castStat');
   }
 
   // take an item from either hand
@@ -339,11 +342,10 @@ export class CharacterHelper extends BaseService {
     // only players can be encumbered
     if (!isPlayer(character)) return;
 
-    const canBeEncumbered =
-      this.game.contentManager.getClassConfigSetting<'canBeEncumbered'>(
-        character.baseClass,
-        'canBeEncumbered',
-      );
+    const canBeEncumbered = settingClassConfigGet<'canBeEncumbered'>(
+      character.baseClass,
+      'canBeEncumbered',
+    );
 
     // some classes can wear heavy armor
     if (!canBeEncumbered) {
@@ -584,8 +586,7 @@ export class CharacterHelper extends BaseService {
       bonusStats = (character as IPlayer).quests.questStats;
     }
 
-    const defaultMove =
-      this.game.contentManager.getGameSetting('character', 'defaultMove') ?? 3;
+    const defaultMove = settingGameGet('character', 'defaultMove') ?? 3;
 
     // reset stats to the base values
     character.totalStats = Object.assign({}, character.stats);
@@ -604,7 +605,7 @@ export class CharacterHelper extends BaseService {
     });
 
     // add hidden allegiance bonuses
-    const allegianceStats = this.game.contentManager.allegianceStatsData;
+    const allegianceStats = coreAllegianceStats();
     (allegianceStats[character.allegiance] || []).forEach(({ stat, value }) => {
       addStat(stat, value);
     });
@@ -680,8 +681,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // can't move more than one screen at a time
-    const maxMove =
-      this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
+    const maxMove = settingGameGet('character', 'maxMove') ?? 4;
     character.totalStats[Stat.Move] = clamp(
       character.totalStats[Stat.Move] ?? 0,
       0,
@@ -718,10 +718,7 @@ export class CharacterHelper extends BaseService {
   public getHPRegen(character: ICharacter): number {
     const baseHPRegen = 1 + getStat(character, Stat.HPRegen);
     const hpRegenSlidingCon =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'hpRegenSlidingCon',
-      ) ?? 21;
+      settingGameGet('character', 'hpRegenSlidingCon') ?? 21;
     return Math.max(
       baseHPRegen,
       baseHPRegen +
@@ -734,25 +731,20 @@ export class CharacterHelper extends BaseService {
     const base = getStat(character, Stat.MPRegen);
     let boost = 0;
 
-    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+    const usesMana = settingClassConfigGet<'usesMana'>(
       character.baseClass,
       'usesMana',
     );
 
     // healers and mages get a boost because their primary function is spellcasting
     if (usesMana) {
-      boost =
-        this.game.contentManager.getGameSetting(
-          'character',
-          'defaultCasterMPRegen',
-        ) ?? 10;
+      boost = settingGameGet('character', 'defaultCasterMPRegen') ?? 10;
     }
 
-    const regensLikeThief =
-      this.game.contentManager.getClassConfigSetting<'regensLikeThief'>(
-        character.baseClass,
-        'regensLikeThief',
-      );
+    const regensLikeThief = settingClassConfigGet<'regensLikeThief'>(
+      character.baseClass,
+      'regensLikeThief',
+    );
 
     // thieves not in combat regen faster
     if (regensLikeThief) {
@@ -787,43 +779,25 @@ export class CharacterHelper extends BaseService {
                   'ReplenishingReverberation',
                 ),
             ),
-          ) +
-          (this.game.contentManager.getGameSetting(
-            'character',
-            'thiefOOCRegen',
-          ) ?? 10);
+          ) + (settingGameGet('character', 'thiefOOCRegen') ?? 10);
 
         return regenStealth;
       }
 
-      return (
-        this.game.contentManager.getGameSetting('character', 'thiefICRegen') ??
-        1
-      );
+      return settingGameGet('character', 'thiefICRegen') ?? 1;
     }
 
-    const regensLikeWarrior =
-      this.game.contentManager.getClassConfigSetting<'regensLikeWarrior'>(
-        character.baseClass,
-        'regensLikeWarrior',
-      );
+    const regensLikeWarrior = settingClassConfigGet<'regensLikeWarrior'>(
+      character.baseClass,
+      'regensLikeWarrior',
+    );
 
     // warriors are the inverse of thieves
     if (regensLikeWarrior) {
       if (character.combatTicks <= 0) {
-        return (
-          this.game.contentManager.getGameSetting(
-            'character',
-            'warriorOOCRegen',
-          ) ?? -3
-        );
+        return settingGameGet('character', 'warriorOOCRegen') ?? -3;
       }
-      return (
-        this.game.contentManager.getGameSetting(
-          'character',
-          'warriorICRegen',
-        ) ?? 3
-      );
+      return settingGameGet('character', 'warriorICRegen') ?? 3;
     }
 
     return base + boost;
@@ -836,26 +810,17 @@ export class CharacterHelper extends BaseService {
       char.level +
       getStat(char, Stat.AGI);
 
-    const hasStealthBonus =
-      this.game.contentManager.getClassConfigSetting<'hasStealthBonus'>(
-        char.baseClass,
-        'hasStealthBonus',
-      );
+    const hasStealthBonus = settingClassConfigGet<'hasStealthBonus'>(
+      char.baseClass,
+      'hasStealthBonus',
+    );
 
     if (hasStealthBonus) {
-      stealth *=
-        this.game.contentManager.getGameSetting(
-          'character',
-          'thiefStealthMultiplier',
-        ) ?? 1.5;
+      stealth *= settingGameGet('character', 'thiefStealthMultiplier') ?? 1.5;
     }
 
     if (hasEffect(char, 'Encumbered')) {
-      stealth /=
-        this.game.contentManager.getGameSetting(
-          'character',
-          'stealthEncumberDivisor',
-        ) ?? 2;
+      stealth /= settingGameGet('character', 'stealthEncumberDivisor') ?? 2;
     }
 
     return Math.floor(stealth);
@@ -876,7 +841,7 @@ export class CharacterHelper extends BaseService {
         )
       : null;
 
-    const hideReductions = this.game.contentManager.hideReductionsData;
+    const hideReductions = coreHideReductions();
     const totalReduction =
       hideReductions[leftHandClass] ||
       0 + (hideReductions[rightHandClass] || 0);
@@ -893,11 +858,10 @@ export class CharacterHelper extends BaseService {
     let perception =
       getStat(char, Stat.Perception) + char.level + getStat(char, Stat.WIS);
 
-    const hasPerceptionBonus =
-      this.game.contentManager.getClassConfigSetting<'hasPerceptionBonus'>(
-        char.baseClass,
-        'hasPerceptionBonus',
-      );
+    const hasPerceptionBonus = settingClassConfigGet<'hasPerceptionBonus'>(
+      char.baseClass,
+      'hasPerceptionBonus',
+    );
 
     if (hasPerceptionBonus) perception *= 1.5;
 

@@ -5,6 +5,7 @@ import {
   isPlayer,
   manaToFull,
 } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import {
   calcSkillLevelForCharacter,
   calculateSkillXPRequiredForLevel,
@@ -53,11 +54,10 @@ export class FindFamiliar extends Effect {
 
       npc.affiliation = `${char.name}'s Pet`;
 
-      const castSkill =
-        this.game.contentManager.getClassConfigSetting<'castSkill'>(
-          char.baseClass,
-          'castSkill',
-        );
+      const castSkill = settingClassConfigGet<'castSkill'>(
+        char.baseClass,
+        'castSkill',
+      );
 
       const skillBoost = char.skills[castSkill];
 

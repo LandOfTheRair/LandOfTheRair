@@ -1,3 +1,4 @@
+import { coreRNGDungeonConfig } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -22,10 +23,9 @@ export class GMResetDungeon extends MacroCommand {
       return;
     }
 
-    const mapConfig =
-      this.game.contentManager.rngDungeonConfigData.dungeonConfigs.find(
-        (x) => x.name === map,
-      );
+    const mapConfig = coreRNGDungeonConfig().dungeonConfigs.find(
+      (x) => x.name === map,
+    );
     if (!mapConfig) {
       this.sendMessage(player, 'There is not a valid map config for that map.');
       return;

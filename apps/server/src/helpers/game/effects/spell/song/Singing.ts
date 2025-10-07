@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -27,7 +28,7 @@ export class Singing extends Effect {
 
   override tick(char: ICharacter) {
     const gainsSkillFromSinging =
-      this.game.contentManager.getClassConfigSetting<'gainsSkillFromSinging'>(
+      settingClassConfigGet<'gainsSkillFromSinging'>(
         char.baseClass,
         'gainsSkillFromSinging',
       );

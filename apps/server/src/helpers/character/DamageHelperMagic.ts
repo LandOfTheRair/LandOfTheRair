@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
 import { engageInCombat, getStat, isDead } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import type {
   CombatEffect,
   ICharacter,
@@ -19,20 +20,11 @@ export class DamageHelperMagic extends BaseService {
 
   public init() {
     this.magicCriticalMultiplier =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'magicCriticalMultiplier',
-      ) ?? 2;
+      settingGameGet('combat', 'magicCriticalMultiplier') ?? 2;
     this.willSaveThresholdDefault =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'willSaveThresholdDefault',
-      ) ?? 20;
+      settingGameGet('combat', 'willSaveThresholdDefault') ?? 20;
     this.willSavePercentDefault =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'willSavePercentDefault',
-      ) ?? 30;
+      settingGameGet('combat', 'willSavePercentDefault') ?? 30;
   }
 
   magicalAttack(

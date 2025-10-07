@@ -1,7 +1,8 @@
 import { Injectable } from 'injection-js';
-import { isObject, isString } from 'lodash';
+import { cloneDeep, isObject, isString } from 'lodash';
 
 import { canAct, isDead } from '@lotr/characters';
+import { spellGetAll } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import { consoleDebug, consoleLog } from '@lotr/logger';
 import type { Player } from '../../models';
@@ -23,7 +24,7 @@ export class CommandHandler extends BaseService {
 
   // load all skills
   public init() {
-    const baseSpellList = this.game.contentManager.getSpells();
+    const baseSpellList = cloneDeep(spellGetAll());
 
     Object.values(Commands)
       .map((x) => new x(this.game))

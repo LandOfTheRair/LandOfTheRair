@@ -1,3 +1,4 @@
+import { itemGetMatchingName } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -295,13 +296,11 @@ export class BanditWaves extends Effect {
   }
 
   private getLootItemsForTier(tier: LootTier): string[] {
-    const items = this.game.contentManager
-      .getItemsMatchingName('Bandit Cave')
-      .filter((item) => {
-        const itemName = item.name.split(' ');
-        const itemTier = itemName[itemName.length - 1];
-        return itemTier === tier && item.itemClass !== ItemClass.Scroll;
-      });
+    const items = itemGetMatchingName('Bandit Cave').filter((item) => {
+      const itemName = item.name.split(' ');
+      const itemTier = itemName[itemName.length - 1];
+      return itemTier === tier && item.itemClass !== ItemClass.Scroll;
+    });
 
     return items.map((item) => item.name);
   }

@@ -64,6 +64,7 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
+    "@lotr/content": "*",
     "@lotr/initializers": "*",
     "@lotr/interfaces": "*",
     "@lotr/shared": "*",

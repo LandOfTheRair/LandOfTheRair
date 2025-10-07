@@ -10,6 +10,19 @@ import { ItemClass } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import { sample } from 'lodash';
 
+import {
+  coreChallenge,
+  coreRNGDungeonConfig,
+  coreSpriteInfo,
+  droptableCustomMapAdd,
+  itemCustomAdd,
+  itemCustomClearMap,
+  itemGetMatchingName,
+  npcCustomAdd,
+  npcCustomClearMap,
+  spawnerCustomAdd,
+  spawnerCustomClearMap,
+} from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 import type { ISpoilerLog } from './helpers/MapGenerator';
@@ -24,7 +37,7 @@ export class RNGDungeonGenerator extends BaseService {
 
   // generate the whole-ass dungeon!
   public generateDungeon(map: IRNGDungeonMetaConfig, seed?: number) {
-    const config = this.game.contentManager.rngDungeonConfigData;
+    const config = coreRNGDungeonConfig();
 
     const defaultDungeon = this.game.worldManager.getMap('RNGTemplate100');
 
@@ -48,9 +61,7 @@ export class RNGDungeonGenerator extends BaseService {
       `Today's seed for ${map.name}: "${seed}"`,
     );
 
-    const validRuneScrolls = this.game.contentManager
-      .getItemsMatchingName('Rune Scroll -')
-
+    const validRuneScrolls = itemGetMatchingName('Rune Scroll -')
       // filter out holiday scrolls
       .filter((f) => !f.binds)
       .filter((f) => (f.trait?.level ?? 0) <= map.itemProps.maxTraitLevel)
@@ -64,11 +75,9 @@ export class RNGDungeonGenerator extends BaseService {
       defaultDungeon.map.tiledJSON,
       seed,
       config,
-      this.game.contentManager.challengeData,
-      this.game.contentManager.spriteData,
-      this.game.contentManager
-        .getItemsMatchingName(map.name)
-        .concat(validRuneScrolls),
+      coreChallenge(),
+      coreSpriteInfo(),
+      itemGetMatchingName(map.name).concat(validRuneScrolls),
     );
 
     const { mapJSON, creatures, spawners, items, mapDroptable } =
@@ -96,27 +105,23 @@ export class RNGDungeonGenerator extends BaseService {
   }
 
   private updateMapDroptable(mapName: string, droptable: Rollable[]) {
-    this.game.contentManager.updateCustomMapDroptable(mapName, droptable);
+    droptableCustomMapAdd(mapName, droptable);
   }
 
   private updateItems(mapName: string, items: IItemDefinition[]) {
-    this.game.contentManager.clearCustomItems(mapName);
-    items.forEach((item) =>
-      this.game.contentManager.addCustomItem(mapName, item),
-    );
+    itemCustomClearMap(mapName);
+    items.forEach((item) => itemCustomAdd(mapName, item));
   }
 
   private updateCreatures(mapName: string, creatures: INPCDefinition[]) {
-    this.game.contentManager.clearCustomNPCs(mapName);
-    creatures.forEach((creature) =>
-      this.game.contentManager.addCustomNPC(mapName, creature),
-    );
+    npcCustomClearMap(mapName);
+    creatures.forEach((creature) => npcCustomAdd(mapName, creature));
   }
 
   private updateSpawners(mapName: string, spawners: ISpawnerData[]) {
-    this.game.contentManager.clearCustomSpawners(mapName);
+    spawnerCustomClearMap(mapName);
     spawners.forEach((spawner) =>
-      this.game.contentManager.addCustomSpawner(mapName, spawner.tag, spawner),
+      spawnerCustomAdd(mapName, spawner.tag, spawner),
     );
   }
 
@@ -202,8 +207,7 @@ export class RNGDungeonGenerator extends BaseService {
 
     if (type === 'gem') itemClasses = [ItemClass.Gem];
 
-    const validItems = this.game.contentManager
-      .getItemsMatchingName(mapName)
+    const validItems = itemGetMatchingName(mapName)
       .filter((x) =>
         keywordMatches.length > 0
           ? keywordMatches.some((k) => x.name.includes(k))

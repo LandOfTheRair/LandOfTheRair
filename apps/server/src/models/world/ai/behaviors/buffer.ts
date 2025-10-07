@@ -9,17 +9,16 @@ import type {
 import { GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { settingGameGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class BufferBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IBufferBehavior) {
-    const buffs = game.contentManager.getGameSetting(
-      'npcscript',
-      'buffer.buffs',
-    ) ?? ['Invisibility', 'DarkVision'];
-    const duration =
-      game.contentManager.getGameSetting('npcscript', 'buffer.duration') ?? 900;
+    const buffs = settingGameGet('npcscript', 'buffer.buffs') ?? [
+      'Invisibility',
+      'DarkVision',
+    ];
+    const duration = settingGameGet('npcscript', 'buffer.duration') ?? 900;
 
     parser
       .addCommand('hello')

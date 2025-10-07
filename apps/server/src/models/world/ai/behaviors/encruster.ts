@@ -21,6 +21,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -257,10 +258,7 @@ export class EncrusterBehavior implements IAIBehavior {
 
         const encrustGemLevel = leftRequirements?.level ?? 0;
         const encrustCostPerlevel =
-          game.contentManager.getGameSetting(
-            'npcscript',
-            'encruster.encrustCostPerLevel',
-          ) ?? 1000;
+          settingGameGet('npcscript', 'encruster.encrustCostPerLevel') ?? 1000;
 
         const encrustCost = Math.max(
           1000,

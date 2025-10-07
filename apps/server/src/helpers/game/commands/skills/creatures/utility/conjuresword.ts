@@ -1,9 +1,11 @@
+import { itemGetMatchingName } from '@lotr/content';
 import type {
   ICharacter,
   IDialogChatAction,
   IMacroCommandArgs,
   IPlayer,
-  WeaponClass } from '@lotr/interfaces';
+  WeaponClass,
+} from '@lotr/interfaces';
 import {
   GameServerResponse,
   ItemClass,
@@ -32,8 +34,7 @@ export class ConjureSword extends SpellCommand {
 
       let msg = 'Choose a weapon:';
 
-      const weaponChoices =
-        this.game.contentManager.getItemsMatchingName('Conjured');
+      const weaponChoices = itemGetMatchingName('Conjured');
       weaponChoices.forEach((weapon, i) => {
         if (!WeaponClasses.includes(weapon.itemClass as WeaponClass)) return;
         if (weapon.itemClass === ItemClass.Shield) return;

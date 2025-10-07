@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { coreStaticText } from '@lotr/content';
 import { DamageClass, SwimLevel } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
@@ -33,7 +34,7 @@ export class StaticTextHelper extends BaseService {
   private terrainText: string[] = [];
 
   public init() {
-    const allText = this.game.contentManager.staticTextData;
+    const allText = coreStaticText();
     this.decorText = allText.decor || {};
     this.terrainText = allText.terrain || [];
   }

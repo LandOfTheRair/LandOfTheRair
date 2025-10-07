@@ -1,3 +1,4 @@
+import { itemExists } from '@lotr/content';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -14,7 +15,7 @@ export class CreateRedeemable implements ILobbyCommand {
     const redeemableArgs = game.messageHelper.getMergeObjectFromArgs(redeemish);
 
     if (redeemableArgs.item) {
-      if (!game.contentManager.hasItemDefinition(redeemableArgs.item)) {
+      if (!itemExists(redeemableArgs.item)) {
         emit(
           game.messageHelper.getSystemMessageObject(
             `Item ${redeemableArgs.item} does not exist.`,

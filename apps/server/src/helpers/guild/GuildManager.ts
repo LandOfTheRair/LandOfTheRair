@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { coreSettings } from '@lotr/content';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type { IGuild, IGuildMember } from '@lotr/interfaces';
 import { Currency, GameAction, GuildRole } from '@lotr/interfaces';
@@ -372,8 +373,7 @@ export class GuildManager extends BaseService {
     }
 
     const totalMembers = this.getGuildMembers(guild).length;
-    const memberCap =
-      this.game.contentManager.settingsData.guild.specs.maxMembers;
+    const memberCap = coreSettings().guild.specs.maxMembers;
     if (totalMembers >= memberCap) {
       this.game.messageHelper.sendSimpleMessage(
         actor,

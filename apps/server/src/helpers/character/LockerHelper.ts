@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { coreMaterialStorage } from '@lotr/content';
 import type { IItemContainer, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -44,14 +45,14 @@ export class LockerHelper extends BaseService {
   }
 
   public getMaterialRef(itemName: string): string | undefined {
-    const materialData = this.game.contentManager.materialStorageData;
+    const materialData = coreMaterialStorage();
     return Object.keys(materialData.slots).find((x) =>
       materialData.slots[x].items.includes(itemName),
     );
   }
 
   public getMaterialData(material: string) {
-    const materialData = this.game.contentManager.materialStorageData;
+    const materialData = coreMaterialStorage();
     return materialData.slots[material];
   }
 
@@ -65,19 +66,19 @@ export class LockerHelper extends BaseService {
   ): IItemContainer {
     const [w, locker] = lockerString.split(':');
     if (locker.includes('Shared')) {
-return player.accountLockers.lockers?.[locker];
-}
+      return player.accountLockers.lockers?.[locker];
+    }
     return player.lockers.lockers?.[locker];
   }
 
   private ensureLockerExists(player: IPlayer, lockerId: string): void {
     if (lockerId.includes('Shared')) {
-throw new Error('Trying to ensure a shared locker exists');
-}
+      throw new Error('Trying to ensure a shared locker exists');
+    }
 
     if (!player.lockers.lockers) player.lockers.lockers = {};
     if (!player.lockers.lockers[lockerId]) {
-player.lockers.lockers[lockerId] = { items: [] };
-}
+      player.lockers.lockers[lockerId] = { items: [] };
+    }
   }
 }

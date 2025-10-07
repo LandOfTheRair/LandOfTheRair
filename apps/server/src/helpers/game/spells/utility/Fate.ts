@@ -4,6 +4,7 @@ import {
   isPlayer,
   learnedState,
 } from '@lotr/characters';
+import { coreFate, settingClassConfigGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
@@ -26,7 +27,7 @@ export class Fate extends Spell {
       return this.sendMessage(player, { message: 'There was no effect.' });
     }
 
-    const fateData = this.game.contentManager.fateData;
+    const fateData = coreFate();
     const res: any = this.game.lootHelper.chooseWithoutReplacement(
       fateData.event,
     );
@@ -155,11 +156,10 @@ export class Fate extends Spell {
     if (learnSpell) {
       const learnState = learnedState(caster, learnSpell);
 
-      const noFateTraits =
-        this.game.contentManager.getClassConfigSetting<'noFateTraits'>(
-          player.baseClass,
-          'noFateTraits',
-        );
+      const noFateTraits = settingClassConfigGet<'noFateTraits'>(
+        player.baseClass,
+        'noFateTraits',
+      );
 
       if (
         learnState === LearnedSpell.FromFate ||

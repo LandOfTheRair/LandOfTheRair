@@ -1,4 +1,5 @@
 import { isPlayer, mana, manaDamage } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -31,11 +32,10 @@ export class Hidden extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    const requiresMPToHide =
-      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
-        char.baseClass,
-        'requiresMPToHide',
-      );
+    const requiresMPToHide = settingClassConfigGet<'requiresMPToHide'>(
+      char.baseClass,
+      'requiresMPToHide',
+    );
 
     // thieves have to use their stealth bar
     if (requiresMPToHide) {

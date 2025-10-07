@@ -11,24 +11,20 @@ import { GameServerResponse, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 import { getBaseStat } from '@lotr/characters';
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class MPDocBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IMPDocBehavior) {
-    const levelTiers = game.contentManager.getGameSetting(
-      'npcscript',
-      'mpdoc.levels',
-    ) ?? [0, 13, 25, 50];
+    const levelTiers = settingGameGet('npcscript', 'mpdoc.levels') ?? [
+      0, 13, 25, 50,
+    ];
 
-    const mpNormalizers = game.contentManager.getGameSetting(
-      'npcscript',
-      'mpdoc.normalizers',
-    ) ?? [100, 200, 300, 1500];
+    const mpNormalizers = settingGameGet('npcscript', 'mpdoc.normalizers') ?? [
+      100, 200, 300, 1500,
+    ];
 
-    const mpCosts = game.contentManager.getGameSetting(
-      'npcscript',
-      'mpdoc.costs',
-    ) ?? [
+    const mpCosts = settingGameGet('npcscript', 'mpdoc.costs') ?? [
       { min: 100, max: 500 },
       { min: 10000, max: 30000 },
       { min: 200000, max: 2000000 },
@@ -83,7 +79,7 @@ export class MPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
-        const mpTiers = game.contentManager.getClassConfigSetting<'mpMaxes'>(
+        const mpTiers = settingClassConfigGet<'mpMaxes'>(
           player.baseClass,
           'mpMaxes',
         );

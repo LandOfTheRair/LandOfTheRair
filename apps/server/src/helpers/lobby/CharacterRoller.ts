@@ -1,7 +1,9 @@
 import { Injectable } from 'injection-js';
 
+import { coreCharSelect } from '@lotr/content';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacterItems, SkillBlock, StatBlock } from '@lotr/interfaces';
+import { cloneDeep } from 'lodash';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -14,7 +16,7 @@ export class CharacterRoller extends BaseService {
     gold: number;
     items: Partial<ICharacterItems>;
   } {
-    const charSelectData = this.game.contentManager.charSelectData;
+    const charSelectData = cloneDeep(coreCharSelect());
 
     const coreStats = charSelectData.baseStats;
 

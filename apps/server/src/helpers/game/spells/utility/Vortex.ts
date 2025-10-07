@@ -1,3 +1,4 @@
+import { settingGameGet } from '@lotr/content';
 import type {
   ICharacter,
   IGroundItem,
@@ -19,9 +20,7 @@ export class Vortex extends Spell {
 
     const addItems: ISimpleItem[] = [];
 
-    const maxItems =
-      this.game.contentManager.getGameSetting('character', 'vortexMaxItems') ??
-      50;
+    const maxItems = settingGameGet('character', 'vortexMaxItems') ?? 50;
 
     const radius =
       1 + this.game.traitHelper.traitLevelValue(caster, 'VortexWiden');

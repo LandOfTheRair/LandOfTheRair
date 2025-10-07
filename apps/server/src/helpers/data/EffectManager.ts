@@ -2,8 +2,13 @@ import { Injectable } from 'injection-js';
 
 import { isString } from 'lodash';
 
-import type { ICharacter, IStatusEffect, IStatusEffectData } from '@lotr/interfaces';
+import type {
+  ICharacter,
+  IStatusEffect,
+  IStatusEffectData,
+} from '@lotr/interfaces';
 
+import { effectGet } from '@lotr/content';
 import type { Effect } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import * as allEffectRefs from '../game/effects';
@@ -21,7 +26,7 @@ export class EffectManager extends BaseService {
 
   // get the metadata for an effect
   public getEffectData(effectName: string, context: string): IStatusEffectData {
-    return this.game.contentManager.getEffect(effectName, context);
+    return effectGet(effectName, context);
   }
 
   // get a ref to an effect

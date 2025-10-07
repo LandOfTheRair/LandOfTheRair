@@ -1,4 +1,9 @@
 import {
+  achievementAll,
+  achievementExists,
+  achievementGet,
+} from '@lotr/content';
+import {
   calcSkillLevelForCharacter,
   calcTradeskillLevelForCharacter,
 } from '@lotr/exp';
@@ -14,7 +19,7 @@ export class AchievementsHelper extends BaseService {
   private itemHash: Record<string, IAchievement> = {};
 
   public init() {
-    Object.values(this.game.contentManager.allAchievements).forEach((ach) => {
+    Object.values(achievementAll()).forEach((ach) => {
       if (ach.requirements.kill.npc) {
         this.npcIdHash[ach.requirements.kill.npc] = ach;
       }
@@ -34,7 +39,7 @@ export class AchievementsHelper extends BaseService {
   }
 
   public checkAllAchievements(player: Player): void {
-    Object.values(this.game.contentManager.allAchievements).forEach((ach) => {
+    Object.values(achievementAll()).forEach((ach) => {
       if (this.hasAchievement(player, ach.name)) return;
       if (!this.hasEarnedAchievement(player, ach)) return;
 
@@ -75,7 +80,7 @@ export class AchievementsHelper extends BaseService {
   }
 
   public doesAchievementExist(achievement: string): boolean {
-    return this.game.contentManager.hasAchievement(achievement);
+    return achievementExists(achievement);
   }
 
   public hasAchievement(player: Player, achievement: string): boolean {
@@ -87,8 +92,7 @@ export class AchievementsHelper extends BaseService {
   }
 
   public earnAchievement(player: Player, achievement: string) {
-    const achievementData =
-      this.game.contentManager.getAchievement(achievement);
+    const achievementData = achievementGet(achievement);
     if (!achievementData) return;
 
     if (this.hasAchievement(player, achievement)) return;

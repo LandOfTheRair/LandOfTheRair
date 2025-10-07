@@ -9,6 +9,7 @@ import {
   mana,
   takeDamage,
 } from '@lotr/characters';
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
@@ -57,30 +58,18 @@ export class CombatHelper extends BaseService {
     );
 
     const gainsManaOnHitOrDodge =
-      this.game.contentManager.getClassConfigSetting<'gainsManaOnHitOrDodge'>(
+      settingClassConfigGet<'gainsManaOnHitOrDodge'>(
         attacker.baseClass,
         'gainsManaOnHitOrDodge',
       );
 
     if (gainsManaOnHitOrDodge) {
       if (res.block || res.dodge) {
-        mana(
-          attacker,
-          this.game.contentManager.getGameSetting(
-            'character',
-            'warriorDodgeRegen',
-          ) ?? 5,
-        );
+        mana(attacker, settingGameGet('character', 'warriorDodgeRegen') ?? 5);
       }
 
       if (res.hit) {
-        mana(
-          attacker,
-          this.game.contentManager.getGameSetting(
-            'character',
-            'warriorHitRegen',
-          ) ?? 3,
-        );
+        mana(attacker, settingGameGet('character', 'warriorHitRegen') ?? 3);
       }
     }
 
@@ -214,10 +203,7 @@ export class CombatHelper extends BaseService {
     // npc on npc violence improvements
     if (attacker && defender && !isPlayer(attacker) && !isPlayer(defender)) {
       const npcViolenceMultiplier =
-        this.game.contentManager.getGameSetting(
-          'combat',
-          'npcViolenceMultiplier',
-        ) ?? 5;
+        settingGameGet('combat', 'npcViolenceMultiplier') ?? 5;
       args.damage *= npcViolenceMultiplier;
     }
 
@@ -557,7 +543,7 @@ export class CombatHelper extends BaseService {
     const buildupEffect = getEffect(defender, buildup);
     if (!buildupEffect) {
       const { buildUpDecay, buildUpCurrent, buildUpMax, buildUpScale } =
-        this.game.contentManager.getGameSetting('combat');
+        settingGameGet('combat');
 
       this.game.effectHelper.addEffect(defender, source ?? '', buildup, {
         effect: {

@@ -11,24 +11,20 @@ import { GameServerResponse, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 import { getBaseStat } from '@lotr/characters';
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class HPDocBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
-    const levelTiers = game.contentManager.getGameSetting(
-      'npcscript',
-      'hpdoc.levels',
-    ) ?? [0, 13, 25, 50];
+    const levelTiers = settingGameGet('npcscript', 'hpdoc.levels') ?? [
+      0, 13, 25, 50,
+    ];
 
-    const hpNormalizers = game.contentManager.getGameSetting(
-      'npcscript',
-      'hpdoc.normalizers',
-    ) ?? [100, 200, 300, 1500];
+    const hpNormalizers = settingGameGet('npcscript', 'hpdoc.normalizers') ?? [
+      100, 200, 300, 1500,
+    ];
 
-    const hpCosts = game.contentManager.getGameSetting(
-      'npcscript',
-      'hpdoc.costs',
-    ) ?? [
+    const hpCosts = settingGameGet('npcscript', 'hpdoc.costs') ?? [
       { min: 100, max: 500 },
       { min: 5000, max: 15000 },
       { min: 100000, max: 1000000 },
@@ -83,7 +79,7 @@ export class HPDocBehavior implements IAIBehavior {
         const levelTier = levelTiers[tier];
         if (player.level < levelTier) return 'Not experience enough for teach!';
 
-        const hpTiers = game.contentManager.getClassConfigSetting<'hpMaxes'>(
+        const hpTiers = settingClassConfigGet<'hpMaxes'>(
           player.baseClass,
           'hpMaxes',
         );

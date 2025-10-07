@@ -1,4 +1,5 @@
 import { getStat } from '@lotr/characters';
+import { coreMaterialStorage, settingGameGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type {
   ICharacter,
@@ -20,17 +21,11 @@ export class InventoryHelper extends BaseService {
   private materialSize = 200;
 
   init() {
-    this.sackSize =
-      this.game.contentManager.getGameSetting('inventory', 'sackSize') ?? 25;
-    this.beltSize =
-      this.game.contentManager.getGameSetting('inventory', 'beltSize') ?? 5;
-    this.pouchSize =
-      this.game.contentManager.getGameSetting('inventory', 'pouchSize') ?? 5;
-    this.lockerSize =
-      this.game.contentManager.getGameSetting('inventory', 'lockerSize') ?? 25;
-    this.materialSize =
-      this.game.contentManager.getGameSetting('inventory', 'materialSize') ??
-      200;
+    this.sackSize = settingGameGet('inventory', 'sackSize') ?? 25;
+    this.beltSize = settingGameGet('inventory', 'beltSize') ?? 5;
+    this.pouchSize = settingGameGet('inventory', 'pouchSize') ?? 5;
+    this.lockerSize = settingGameGet('inventory', 'lockerSize') ?? 25;
+    this.materialSize = settingGameGet('inventory', 'materialSize') ?? 200;
   }
 
   // sack functions
@@ -268,7 +263,7 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddMaterial(player: IPlayer, material: string): boolean {
-    const materialData = this.game.contentManager.materialStorageData;
+    const materialData = coreMaterialStorage();
     return !!materialData.slots[material];
   }
 
@@ -310,7 +305,7 @@ export class InventoryHelper extends BaseService {
     if (itemClass === ItemClass.Bottle && ounces === 0) return 100;
 
     const { sellValuePercent, sellChaBaseBoost, sellChaBaseDivisor } =
-      this.game.contentManager.getGameSetting('character');
+      settingGameGet('character');
 
     // default sell percent is 25% of value if it doesn't have a set sellValue
     let sellPercent = baseSellValue ? 100 : (sellValuePercent ?? 25);

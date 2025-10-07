@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { settingGameGet } from '@lotr/content';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import type { Account, Player } from '../../models';
@@ -15,8 +16,7 @@ export class PlayerManager extends BaseService {
   private playerStates: Record<string, PlayerState> = {};
 
   public init() {
-    this.saveTicks =
-      this.game.contentManager.getGameSetting('timers', 'saveTicks') ?? 150;
+    this.saveTicks = settingGameGet('timers', 'saveTicks') ?? 150;
   }
 
   // get the number of players online. pretty sparingly used.

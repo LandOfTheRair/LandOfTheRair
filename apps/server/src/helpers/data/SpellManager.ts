@@ -2,6 +2,12 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
 import { getSkillLevel, getStat, isDead, isPlayer } from '@lotr/characters';
+import {
+  settingClassConfigGet,
+  settingGameGet,
+  spellGet,
+  spellGetAll,
+} from '@lotr/content';
 import { getEffect, getEffectPotency, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type {
@@ -39,7 +45,7 @@ export class SpellManager extends BaseService {
 
   // initialize all of the spells that exist
   public init() {
-    const baseSpellList = this.game.contentManager.getSpells();
+    const baseSpellList = cloneDeep(spellGetAll());
 
     Object.keys(allSpellRefs).forEach((spell) => {
       this.spells[spell] = new allSpellRefs[spell](this.game);
@@ -50,22 +56,16 @@ export class SpellManager extends BaseService {
       this.spells[otherSpellName] = new Spell(this.game);
     });
 
-    this.dazedDivisor =
-      this.game.contentManager.getGameSetting('spell', 'dazedDivisor') ?? 2;
-    this.encumberedDivisor =
-      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
-      2;
-    this.skillGainedPerCast =
-      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
-      1;
+    this.dazedDivisor = settingGameGet('spell', 'dazedDivisor') ?? 2;
+    this.encumberedDivisor = settingGameGet('spell', 'encumberedDivisor') ?? 2;
+    this.skillGainedPerCast = settingGameGet('spell', 'encumberedDivisor') ?? 1;
     this.skillGainedPerAOECast =
-      this.game.contentManager.getGameSetting('spell', 'encumberedDivisor') ??
-      0.01;
+      settingGameGet('spell', 'encumberedDivisor') ?? 0.01;
   }
 
   // get the raw YML spell data
   public getSpellData(key: string, context: string): ISpellData {
-    return this.game.contentManager.getSpell(key, context);
+    return spellGet(key, context);
   }
 
   // get the ref to the spell for casting
@@ -89,11 +89,10 @@ export class SpellManager extends BaseService {
   ): number {
     if (!caster) return 1;
 
-    const castSkill =
-      this.game.contentManager.getClassConfigSetting<'castSkill'>(
-        caster.baseClass,
-        'castSkill',
-      );
+    const castSkill = settingClassConfigGet<'castSkill'>(
+      caster.baseClass,
+      'castSkill',
+    );
 
     const isStatic = spellData.spellMeta?.staticPotency;
 
@@ -173,11 +172,10 @@ export class SpellManager extends BaseService {
 
   // gain skill for casting a spell
   private gainSkill(caster: ICharacter, spellData: ISpellData): void {
-    const skillGain =
-      this.game.contentManager.getClassConfigSetting<'castSkill'>(
-        caster.baseClass,
-        'castSkill',
-      );
+    const skillGain = settingClassConfigGet<'castSkill'>(
+      caster.baseClass,
+      'castSkill',
+    );
     if (!skillGain) return;
 
     const skillLevel = calcSkillLevelForCharacter(caster, skillGain);
@@ -252,11 +250,10 @@ export class SpellManager extends BaseService {
     }
 
     if (caster && isPlayer(caster)) {
-      const castSkill =
-        this.game.contentManager.getClassConfigSetting<'castSkill'>(
-          caster.baseClass,
-          'castSkill',
-        );
+      const castSkill = settingClassConfigGet<'castSkill'>(
+        caster.baseClass,
+        'castSkill',
+      );
 
       this.game.playerHelper.flagSkill(caster as IPlayer, castSkill);
     }

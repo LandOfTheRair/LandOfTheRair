@@ -42,7 +42,7 @@ import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import {
   ConfigManager,
-  ContentManager,
+  ContentLoader,
   CorpseManager,
   DarknessHelper,
   EffectManager,
@@ -94,7 +94,7 @@ export class Game {
     public transmissionHelper: TransmissionHelper,
 
     public modkitManager: ModKitManager,
-    public contentManager: ContentManager,
+    public contentLoader: ContentLoader,
 
     public db: Database,
 
@@ -183,7 +183,7 @@ export class Game {
       [GameEvent.InitCritical]: [
         'loggerInitializer',
         'modkitManager',
-        'contentManager',
+        'contentLoader',
         'db',
       ],
 

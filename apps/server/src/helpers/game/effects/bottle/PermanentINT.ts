@@ -1,15 +1,15 @@
 import { getBaseStat } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
 export class PermanentINT extends Effect {
   override apply(char: ICharacter, effect: IStatusEffect) {
-    const canGainMPFromIntPots =
-      this.game.contentManager.getClassConfigSetting<'canGainMPFromIntPots'>(
-        char.baseClass,
-        'canGainMPFromIntPots',
-      );
+    const canGainMPFromIntPots = settingClassConfigGet<'canGainMPFromIntPots'>(
+      char.baseClass,
+      'canGainMPFromIntPots',
+    );
 
     const canGainMP = canGainMPFromIntPots && getBaseStat(char, Stat.MP) < 200;
     if (canGainMP) {

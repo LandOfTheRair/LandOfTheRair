@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import stripe from 'stripe';
 
+import { corePremium, settingGameGet } from '@lotr/content';
 import type { IAccount, IPlayer, ISilverPerk } from '@lotr/interfaces';
 import {
   GameServerResponse,
@@ -72,7 +73,7 @@ export class SubscriptionHelper extends BaseService {
     if (!process.env.STRIPE_TOKEN) throw new Error('Stripe is not configured');
     if (!item || !token) throw new Error('No item or no valid token');
 
-    const silverTiers = this.game.contentManager.premiumData.silverTiers;
+    const silverTiers = corePremium().silverTiers;
 
     // subscription
     if (item.key.includes('sub')) {
@@ -146,8 +147,7 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public getSilverItem(purchaseKey: string): ISilverPerk | undefined {
-    const silverPurchases =
-      this.game.contentManager.premiumData.silverPurchases;
+    const silverPurchases = corePremium().silverPurchases;
     return silverPurchases.find((x) => x.key === purchaseKey);
   }
 
@@ -281,8 +281,7 @@ export class SubscriptionHelper extends BaseService {
 
   // subscription perks
   public maxCharacters(account: IAccount, baseValue = 4): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'characters') ?? 1;
+    const mult = settingGameGet('subscriber', 'characters') ?? 1;
     return (
       baseValue +
       mult *
@@ -291,23 +290,18 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public maxSmithRepair(player: IPlayer, baseValue = 20000): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'smithRepair') ??
-      1000;
+    const mult = settingGameGet('subscriber', 'smithRepair') ?? 1000;
     return baseValue + player.subscriptionTier * mult;
   }
 
   public smithRepairCost(player: IPlayer, repairCost: number): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'smithCost') ??
-      0.05;
+    const mult = settingGameGet('subscriber', 'smithCost') ?? 0.05;
     return Math.floor(repairCost - repairCost * mult * player.subscriptionTier);
   }
 
   public maxAlchemistOz(player: IPlayer, baseValue = 10): number {
     const account = this.game.lobbyManager.getAccount(player.username);
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'alchemistOz') ?? 5;
+    const mult = settingGameGet('subscriber', 'alchemistOz') ?? 5;
     return (
       baseValue +
       (account?.premium.silverPurchases?.[SilverPurchase.MorePotions] ?? 0) *
@@ -316,8 +310,7 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public docReduction(player: IPlayer, baseValue = 10): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'statDoc') ?? 0.05;
+    const mult = settingGameGet('subscriber', 'statDoc') ?? 0.05;
     return Math.max(
       1,
       Math.floor(baseValue - baseValue * mult * player.subscriptionTier),
@@ -325,23 +318,18 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public maxSuccorOz(player: IPlayer, baseValue = 1): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'succorOz') ?? 1;
+    const mult = settingGameGet('subscriber', 'succorOz') ?? 1;
     return baseValue + player.subscriptionTier * mult;
   }
 
   public maxMarketListings(player: IPlayer, baseValue = 25): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'marketListings') ??
-      5;
+    const mult = settingGameGet('subscriber', 'marketListings') ?? 5;
     return baseValue + player.subscriptionTier * mult;
   }
 
   public maxMaterialStorageSpace(player: IPlayer, baseValue = 200): number {
     const account = this.game.lobbyManager.getAccount(player.username);
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'storageSpace') ??
-      200;
+    const mult = settingGameGet('subscriber', 'storageSpace') ?? 200;
     return (
       baseValue +
       (account?.premium.silverPurchases?.[
@@ -352,36 +340,27 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public axpGained(player: IPlayer, baseValue = 1): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'axpGain') ?? 1;
+    const mult = settingGameGet('subscriber', 'axpGain') ?? 1;
     return baseValue * (player.subscriptionTier > 0 ? 1 + mult : 1);
   }
 
   public xpGained(player: IPlayer, baseValue = 1): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'xpGain') ?? 0.05;
+    const mult = settingGameGet('subscriber', 'xpGain') ?? 0.05;
     return baseValue + (1 + player.subscriptionTier * mult);
   }
 
   public skillGained(player: IPlayer, baseValue = 1): number {
-    const mult =
-      this.game.contentManager.getGameSetting('subscriber', 'skillGain') ??
-      0.05;
+    const mult = settingGameGet('subscriber', 'skillGain') ?? 0.05;
     return baseValue + (1 + player.subscriptionTier * mult);
   }
 
   public buildSlots(player: IPlayer, baseValue = 3): number {
-    const bonusSlots =
-      this.game.contentManager.getGameSetting('subscriber', 'buildSlots') ?? 3;
+    const bonusSlots = settingGameGet('subscriber', 'buildSlots') ?? 3;
     return baseValue + bonusSlots;
   }
 
   public holidayTokensGained(player: IPlayer, baseValue = 1): number {
-    const mult =
-      this.game.contentManager.getGameSetting(
-        'subscriber',
-        'holidayTokenGain',
-      ) ?? 2;
+    const mult = settingGameGet('subscriber', 'holidayTokenGain') ?? 2;
     return baseValue * (player.subscriptionTier > 0 ? mult : 1);
   }
 

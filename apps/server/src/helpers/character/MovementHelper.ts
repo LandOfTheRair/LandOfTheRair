@@ -14,6 +14,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -25,8 +26,7 @@ export class MovementHelper extends BaseService {
   private maxMove = 4;
 
   init() {
-    this.maxMove =
-      this.game.contentManager.getGameSetting('character', 'maxMove') ?? 4;
+    this.maxMove = settingGameGet('character', 'maxMove') ?? 4;
   }
 
   faceTowards(source: ICharacter, target: { x: number; y: number }) {
@@ -442,10 +442,7 @@ export class MovementHelper extends BaseService {
 
     if (isFall) {
       const fallDamagePercent =
-        this.game.contentManager.getGameSetting(
-          'character',
-          'fallDamagePercent',
-        ) ?? 15;
+        settingGameGet('character', 'fallDamagePercent') ?? 15;
       let hpLost = Math.floor(
         player.hp.maximum * ((damagePercent || fallDamagePercent) / 100),
       );

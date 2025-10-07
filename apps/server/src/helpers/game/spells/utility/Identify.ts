@@ -1,3 +1,4 @@
+import { settingClassConfigGet } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot, Skill } from '@lotr/interfaces';
@@ -37,7 +38,7 @@ export class Identify extends Spell {
       : 0;
 
     const canAppraiseWhileIdentifying =
-      this.game.contentManager.getClassConfigSetting<'canAppraiseWhileIdentifying'>(
+      settingClassConfigGet<'canAppraiseWhileIdentifying'>(
         caster.baseClass,
         'canAppraiseWhileIdentifying',
       );

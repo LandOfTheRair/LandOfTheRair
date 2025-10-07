@@ -8,6 +8,7 @@ import {
 import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
+import { coreCharSelect } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import * as meta from '../../../content/_output/meta.json';
 
@@ -88,7 +89,7 @@ export class RegisterAction extends ServerAction {
 
       emit({
         action: GameAction.SetCharacterCreateInformation,
-        charCreateInfo: game.contentManager.charSelectData,
+        charCreateInfo: coreCharSelect(),
       });
 
       emit({

@@ -9,6 +9,7 @@ import {
   isDead,
   isPlayer,
 } from '@lotr/characters';
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import {
   calcSkillLevelForCharacter,
@@ -43,10 +44,7 @@ export class PlayerHelper extends BaseService {
   };
 
   public init() {
-    this.mapXPMultiplier = this.game.contentManager.getGameSetting(
-      'map',
-      'xpMultiplier',
-    ) ?? {
+    this.mapXPMultiplier = settingGameGet('map', 'xpMultiplier') ?? {
       uncut: 1,
       firstSoftCut: 0.9,
       secondSoftCut: 0.75,
@@ -60,10 +58,7 @@ export class PlayerHelper extends BaseService {
     baseClass: BaseClass,
     recalculateAfterTrait = true,
   ) {
-    const maxMP = this.game.contentManager.getClassConfigSetting<'baseMP'>(
-      baseClass,
-      'baseMP',
-    );
+    const maxMP = settingClassConfigGet<'baseMP'>(baseClass, 'baseMP');
 
     player.baseClass = baseClass;
     player.mp.maximum = maxMP;
@@ -71,11 +66,10 @@ export class PlayerHelper extends BaseService {
 
     player.mp.current = 0;
 
-    const learnTrait =
-      this.game.contentManager.getClassConfigSetting<'learnedTrait'>(
-        player.baseClass,
-        'learnedTrait',
-      );
+    const learnTrait = settingClassConfigGet<'learnedTrait'>(
+      player.baseClass,
+      'learnedTrait',
+    );
 
     if (learnTrait) {
       this.game.traitHelper.learnTrait(
@@ -85,11 +79,10 @@ export class PlayerHelper extends BaseService {
       );
     }
 
-    const castSkill =
-      this.game.contentManager.getClassConfigSetting<'castSkill'>(
-        player.baseClass,
-        'castSkill',
-      );
+    const castSkill = settingClassConfigGet<'castSkill'>(
+      player.baseClass,
+      'castSkill',
+    );
 
     if (castSkill === Skill.Restoration) {
       player.skills[Skill.Restoration] = calculateSkillXPRequiredForLevel(1);
@@ -391,11 +384,7 @@ export class PlayerHelper extends BaseService {
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
 
     if (skill.length !== 0) {
-      player.skillTicks =
-        this.game.contentManager.getGameSetting(
-          'character',
-          'skillActiveTicks',
-        ) ?? 30;
+      player.skillTicks = settingGameGet('character', 'skillActiveTicks') ?? 30;
     }
   }
 
@@ -568,8 +557,7 @@ export class PlayerHelper extends BaseService {
     const [primary, secondary, tertiary, quaternary] = player.flaggedSkills;
 
     if (quaternary) {
-      const skillgain =
-        this.game.contentManager.getGameSetting('skillgain', 'four') ?? [];
+      const skillgain = settingGameGet('skillgain', 'four') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.45));
       this.tryGainSkill(
         player,
@@ -583,8 +571,7 @@ export class PlayerHelper extends BaseService {
         skillGained * (skillgain[3] ?? 0.15),
       );
     } else if (tertiary) {
-      const skillgain =
-        this.game.contentManager.getGameSetting('skillgain', 'three') ?? [];
+      const skillgain = settingGameGet('skillgain', 'three') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.55));
       this.tryGainSkill(
         player,
@@ -593,8 +580,7 @@ export class PlayerHelper extends BaseService {
       );
       this.tryGainSkill(player, tertiary, skillGained * (skillgain[2] ?? 0.2));
     } else if (secondary) {
-      const skillgain =
-        this.game.contentManager.getGameSetting('skillgain', 'two') ?? [];
+      const skillgain = settingGameGet('skillgain', 'two') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 0.75));
       this.tryGainSkill(
         player,
@@ -602,8 +588,7 @@ export class PlayerHelper extends BaseService {
         skillGained * (skillgain[1] ?? 0.25),
       );
     } else {
-      const skillgain =
-        this.game.contentManager.getGameSetting('skillgain', 'one') ?? [];
+      const skillgain = settingGameGet('skillgain', 'one') ?? [];
       this.tryGainSkill(player, primary, skillGained * (skillgain[0] ?? 1));
     }
   }
@@ -630,11 +615,10 @@ export class PlayerHelper extends BaseService {
   public gainLevelStats(player: IPlayer): void {
     const con = getStat(player, Stat.CON);
 
-    const { hp, mp } =
-      this.game.contentManager.getClassConfigSetting<'levelup'>(
-        player.baseClass,
-        'levelup',
-      );
+    const { hp, mp } = settingClassConfigGet<'levelup'>(
+      player.baseClass,
+      'levelup',
+    );
 
     const hpGained = Math.floor(
       random(
@@ -696,9 +680,7 @@ export class PlayerHelper extends BaseService {
   }
 
   public tryAncientLevelUp(player: IPlayer): void {
-    const maxPerLevel =
-      this.game.contentManager.getGameSetting('character', 'axpPerLevel') ??
-      500;
+    const maxPerLevel = settingGameGet('character', 'axpPerLevel') ?? 500;
 
     while (player.axp > maxPerLevel) {
       player.axp -= maxPerLevel;
@@ -752,10 +734,7 @@ export class PlayerHelper extends BaseService {
 
   // reset the players respawn to the default
   public resetSpawnPointToDefault(player: Player): void {
-    player.respawnPoint = this.game.contentManager.getGameSetting(
-      'map',
-      'defaultRespawnPoint',
-    ) ?? {
+    player.respawnPoint = settingGameGet('map', 'defaultRespawnPoint') ?? {
       map: 'Rylt',
       x: 68,
       y: 13,

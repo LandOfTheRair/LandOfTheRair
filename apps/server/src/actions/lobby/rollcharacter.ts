@@ -1,7 +1,7 @@
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { coreCharSelect } from '@lotr/content';
+import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RollCharacterAction extends ServerAction {
@@ -14,7 +14,7 @@ export class RollCharacterAction extends ServerAction {
 
     slot = Math.round(slot);
 
-    const charCreateData = game.contentManager.charSelectData;
+    const charCreateData = coreCharSelect();
 
     const maxCharacters = game.subscriptionHelper.maxCharacters(account);
 

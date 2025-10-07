@@ -1,11 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameAction,
-  ItemClass,
-  Skill,
-} from '@lotr/interfaces';
+import { skillGetDescription } from '@lotr/content';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { GameAction, ItemClass, Skill } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class LookCommand extends MacroCommand {
@@ -137,7 +132,7 @@ export class LookCommand extends MacroCommand {
 
         if (requireLockpick) {
           unlockMethods.push(
-            `could be lockpicked by a ${this.game.contentManager.getSkillDescription(Skill.Thievery, skillRequired ?? 1)} thief`,
+            `could be lockpicked by a ${skillGetDescription(Skill.Thievery, skillRequired ?? 1)} thief`,
           );
         }
 

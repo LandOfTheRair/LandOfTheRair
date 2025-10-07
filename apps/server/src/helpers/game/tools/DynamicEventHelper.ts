@@ -12,6 +12,12 @@ import type {
 import { DynamicEventSuccessType, GameAction } from '@lotr/interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
+import {
+  coreEvents,
+  coreRareSpawns,
+  coreSettings,
+  eventGet,
+} from '@lotr/content';
 import { consoleError } from '@lotr/logger';
 import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
@@ -174,7 +180,7 @@ export class DynamicEventHelper extends BaseService {
 
   // get a dynamic event ref
   public getEventRef(ref: string): IDynamicEventMeta | undefined {
-    return this.game.contentManager.getEvent(ref);
+    return eventGet(ref);
   }
 
   // recalculate all the stat totals for the events
@@ -200,8 +206,8 @@ export class DynamicEventHelper extends BaseService {
 
   // check for other events and start them possibly
   private checkOtherEvents(): void {
-    const events = this.game.contentManager.eventsData;
-    const settings = this.game.contentManager.settingsData;
+    const events = coreEvents();
+    const settings = coreSettings();
 
     const rarity = settings.event;
 
@@ -367,7 +373,7 @@ export class DynamicEventHelper extends BaseService {
   }
 
   private canDoRareSpawn(): boolean {
-    const allSpawns = this.game.contentManager.rarespawnsData;
+    const allSpawns = coreRareSpawns();
     return Object.keys(allSpawns).some((map) =>
       allSpawns[map].spawns.some(
         (mon) =>
@@ -379,7 +385,7 @@ export class DynamicEventHelper extends BaseService {
   }
 
   private doRareSpawn(event: IDynamicEventMeta): void {
-    const allSpawns = this.game.contentManager.rarespawnsData;
+    const allSpawns = coreRareSpawns();
 
     let spawnMap;
     let spawnMonster;

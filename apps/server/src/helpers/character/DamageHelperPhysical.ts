@@ -38,6 +38,14 @@ import {
   mana,
   manaDamage,
 } from '@lotr/characters';
+import {
+  coreStatDamageMultipliers,
+  coreWeaponTiers,
+  coreWeaponTiersNPC,
+  getHandsItem,
+  settingClassConfigGet,
+  settingGameGet,
+} from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { oneInX, oneToLUK, rollInOneHundred, uniformRoll } from '@lotr/rng';
@@ -113,75 +121,36 @@ export class DamageHelperPhysical extends BaseService {
 
   public init() {
     this.strongAttackBaseChance =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'strongAttackBaseChance',
-      ) ?? 50;
+      settingGameGet('combat', 'strongAttackBaseChance') ?? 50;
     this.weakAttackLuckReduction =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'weakAttackLuckReduction',
-      ) ?? 10;
+      settingGameGet('combat', 'weakAttackLuckReduction') ?? 10;
     this.attackVarianceBaseBonusRolls =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'attackVarianceBaseBonusRolls',
-      ) ?? 1;
+      settingGameGet('combat', 'attackVarianceBaseBonusRolls') ?? 1;
     this.attackVarianceStrongBonusRolls =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'attackVarianceStrongBonusRolls',
-      ) ?? 2;
-    this.skillDivisor =
-      this.game.contentManager.getGameSetting('combat', 'skillDivisor') ?? 4;
-    this.damageStatDivisor =
-      this.game.contentManager.getGameSetting('combat', 'damageStatDivisor') ??
-      4;
-    this.defenseDexDivisor =
-      this.game.contentManager.getGameSetting('combat', 'defenseDexDivisor') ??
-      4;
+      settingGameGet('combat', 'attackVarianceStrongBonusRolls') ?? 2;
+    this.skillDivisor = settingGameGet('combat', 'skillDivisor') ?? 4;
+    this.damageStatDivisor = settingGameGet('combat', 'damageStatDivisor') ?? 4;
+    this.defenseDexDivisor = settingGameGet('combat', 'defenseDexDivisor') ?? 4;
     this.defenseOffhandSkillDivisor =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'defenseOffhandSkillDivisor',
-      ) ?? 4;
+      settingGameGet('combat', 'defenseOffhandSkillDivisor') ?? 4;
     this.dodgeBonusDivisor =
-      this.game.contentManager.getGameSetting('combat', 'dodgeBonusDivisor') ??
-      10;
+      settingGameGet('combat', 'dodgeBonusDivisor') ?? 10;
     this.defenderBlockBonus =
-      this.game.contentManager.getGameSetting('combat', 'defenderBlockBonus') ??
-      1;
+      settingGameGet('combat', 'defenderBlockBonus') ?? 1;
     this.attackerAttackBonus =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'attackerAttackBonus',
-      ) ?? 10;
+      settingGameGet('combat', 'attackerAttackBonus') ?? 10;
     this.levelDifferenceRange =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'levelDifferenceRange',
-      ) ?? 10;
+      settingGameGet('combat', 'levelDifferenceRange') ?? 10;
     this.levelDifferenceMultiplier =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'levelDifferenceMultiplier',
-      ) ?? 5;
-    this.mitigationMax =
-      this.game.contentManager.getGameSetting('combat', 'mitigationMax') ?? 75;
+      settingGameGet('combat', 'levelDifferenceMultiplier') ?? 5;
+    this.mitigationMax = settingGameGet('combat', 'mitigationMax') ?? 75;
 
     this.offhandDamageReduction =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'offhandDamageReduction',
-      ) ?? 0.8;
+      settingGameGet('character', 'offhandDamageReduction') ?? 0.8;
     this.cstunConMultiplier =
-      this.game.contentManager.getGameSetting('combat', 'cstunConMultiplier') ??
-      21;
+      settingGameGet('combat', 'cstunConMultiplier') ?? 21;
     this.resourceConditionDamage =
-      this.game.contentManager.getGameSetting(
-        'combat',
-        'resourceConditionDamage',
-      ) ?? 50;
+      settingGameGet('combat', 'resourceConditionDamage') ?? 50;
   }
 
   // do a physical attack, and if possible, do it from the offhand too
@@ -224,8 +193,8 @@ export class DamageHelperPhysical extends BaseService {
   }
 
   private getTierDataForAttacker(attacker: ICharacter) {
-    const playerTiers = this.game.contentManager.weaponTiersData;
-    const npcTiers = this.game.contentManager.weaponTiersNPCData;
+    const playerTiers = coreWeaponTiers();
+    const npcTiers = coreWeaponTiersNPC();
 
     // player
     if (isPlayer(attacker)) return playerTiers;
@@ -287,8 +256,7 @@ export class DamageHelperPhysical extends BaseService {
       totalTier += 1;
     }
 
-    const allStatMultipliers =
-      this.game.contentManager.statDamageMultipliersData;
+    const allStatMultipliers = coreStatDamageMultipliers();
     const weaponTiers = this.getTierDataForAttacker(attacker);
 
     const scaleStat = (totalAttackRange ?? 0) > 2 ? Stat.DEX : Stat.STR;
@@ -497,16 +465,8 @@ export class DamageHelperPhysical extends BaseService {
       attackerWeapon = attacker.items.equipment[ItemSlot.RightHand];
 
       if (isPunch || !attackerWeapon) {
-        attackerWeapon = attacker.items.equipment[ItemSlot.Hands] || {
-          name: 'hands',
-          uuid: 'hands',
-          mods: {
-            itemClass: ItemClass.Hands,
-            type: Skill.Martial,
-            tier: 1,
-            condition: 20000,
-          },
-        };
+        attackerWeapon =
+          attacker.items.equipment[ItemSlot.Hands] || getHandsItem();
       }
     }
 
@@ -567,16 +527,7 @@ export class DamageHelperPhysical extends BaseService {
       rightHand &&
       this.game.itemHelper.canGetBenefitsFromItem(defender, rightHand)
         ? rightHand
-        : {
-            name: 'hands',
-            uuid: 'hands',
-            mods: {
-              itemClass: ItemClass.Hands,
-              type: Skill.Martial,
-              tier: 1,
-              condition: 20000,
-            },
-          };
+        : getHandsItem();
 
     const leftHand = defender.items.equipment[ItemSlot.LeftHand];
     const defenderShield =
@@ -1692,7 +1643,7 @@ export class DamageHelperPhysical extends BaseService {
     damageMult ??= 1;
 
     const attackerUsesRage =
-      this.game.contentManager.getClassConfigSetting<'castResource'>(
+      settingClassConfigGet<'castResource'>(
         attacker.baseClass,
         'castResource',
       ) === 'Rage';

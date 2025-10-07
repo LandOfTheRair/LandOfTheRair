@@ -10,6 +10,7 @@ import type {
   ITraitTreeTrait,
 } from '@lotr/interfaces';
 
+import { traitGet, traitTreeGet } from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
@@ -19,12 +20,12 @@ export class TraitHelper extends BaseService {
 
   // get the trait data raw from the trait info hash
   public getTraitData(traitName: string, context: string): ITrait {
-    return this.game.contentManager.getTrait(traitName, context);
+    return traitGet(traitName, context);
   }
 
   // get the raw trait tree from the trait info hash
   public getTraitTree(baseClass: BaseClass): IClassTraitTree {
-    return this.game.contentManager.getTraitTree(baseClass);
+    return traitTreeGet(baseClass);
   }
 
   // get the specific trait in the tree

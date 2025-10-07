@@ -10,13 +10,12 @@ import type {
 import { GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { settingGameGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class AXPSwapperBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IAXPSwapper) {
-    const level =
-      game.contentManager.getGameSetting('npcscript', 'axpswapper.level') ?? 50;
+    const level = settingGameGet('npcscript', 'axpswapper.level') ?? 50;
 
     parser
       .addCommand('hello')

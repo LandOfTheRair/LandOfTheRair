@@ -11,6 +11,7 @@ import { Currency, GameAction, ItemSlot } from '@lotr/interfaces';
 import { cleanNumber, distanceFrom, itemListError } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { settingGameGet } from '@lotr/content';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -109,10 +110,7 @@ export class SteelroseBehavior implements IAIBehavior {
         if (listingError) return listingError;
 
         const maxListingSetting =
-          game.contentManager.getGameSetting(
-            'npcscript',
-            'steelrose.maxListings',
-          ) ?? 25;
+          settingGameGet('npcscript', 'steelrose.maxListings') ?? 25;
 
         const curListings = await game.marketDB.numberOfListings(
           player.username,

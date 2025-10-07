@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import { get, setWith } from 'lodash';
 
 import { getStat } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
@@ -141,11 +142,10 @@ export class VisibilityHelper extends BaseService {
       return false;
     }
 
-    const requiresMPToHide =
-      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
-        char.baseClass,
-        'requiresMPToHide',
-      );
+    const requiresMPToHide = settingClassConfigGet<'requiresMPToHide'>(
+      char.baseClass,
+      'requiresMPToHide',
+    );
 
     if (requiresMPToHide && char.mp.current <= 0) return false;
 
@@ -163,11 +163,10 @@ export class VisibilityHelper extends BaseService {
       return 'You are already hidden!';
     }
 
-    const requiresMPToHide =
-      this.game.contentManager.getClassConfigSetting<'requiresMPToHide'>(
-        char.baseClass,
-        'requiresMPToHide',
-      );
+    const requiresMPToHide = settingClassConfigGet<'requiresMPToHide'>(
+      char.baseClass,
+      'requiresMPToHide',
+    );
 
     if (requiresMPToHide && char.mp.current <= 0) {
       return 'You do not have the energy to hide!';

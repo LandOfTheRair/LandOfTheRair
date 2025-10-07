@@ -1,15 +1,15 @@
 import { getBaseStat } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
 export class PermanentWIS extends Effect {
   override apply(char: ICharacter, effect: IStatusEffect) {
-    const canGainMPFromWisPots =
-      this.game.contentManager.getClassConfigSetting<'canGainMPFromWisPots'>(
-        char.baseClass,
-        'canGainMPFromWisPots',
-      );
+    const canGainMPFromWisPots = settingClassConfigGet<'canGainMPFromWisPots'>(
+      char.baseClass,
+      'canGainMPFromWisPots',
+    );
 
     const canGainMP = canGainMPFromWisPots && getBaseStat(char, Stat.MP) < 200;
     if (canGainMP) {

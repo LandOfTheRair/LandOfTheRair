@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { addStatistic, getBaseStat, isDead, isPlayer } from '@lotr/characters';
+import { settingGameGet } from '@lotr/content';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -124,10 +125,7 @@ export class DeathHelper extends BaseService {
     this.game.characterHelper.tryToCastEquipmentEffects(player);
 
     const defaultInvulnDuration =
-      this.game.contentManager.getGameSetting(
-        'character',
-        'defaultInvulnDuration',
-      ) ?? 3;
+      settingGameGet('character', 'defaultInvulnDuration') ?? 3;
     const invulnDuration =
       defaultInvulnDuration +
       this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
@@ -142,12 +140,9 @@ export class DeathHelper extends BaseService {
       });
 
       const rotStatThreshold =
-        this.game.contentManager.getGameSetting('corpse', 'rotStatThreshold') ??
-        5;
+        settingGameGet('corpse', 'rotStatThreshold') ?? 5;
 
-      const strLossChance =
-        this.game.contentManager.getGameSetting('corpse', 'rotStrLossChance') ??
-        5;
+      const strLossChance = settingGameGet('corpse', 'rotStrLossChance') ?? 5;
 
       if (
         (player.stats?.[Stat.STR] ?? 0) > rotStatThreshold &&
@@ -156,9 +151,7 @@ export class DeathHelper extends BaseService {
         this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
       }
 
-      const agiLossChance =
-        this.game.contentManager.getGameSetting('corpse', 'rotAgiLossChance') ??
-        5;
+      const agiLossChance = settingGameGet('corpse', 'rotAgiLossChance') ?? 5;
 
       if (
         (player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold &&
@@ -211,8 +204,7 @@ export class DeathHelper extends BaseService {
     addStatistic(dead, TrackedStatistic.Deaths);
 
     dead.lastDeathLocation = { map: dead.map, x: dead.x, y: dead.y };
-    const deathTimer =
-      this.game.contentManager.getGameSetting('corpse', 'playerExpire') ?? 500;
+    const deathTimer = settingGameGet('corpse', 'playerExpire') ?? 500;
     this.game.effectHelper.addEffect(dead, killer?.name ?? '', 'Dead', {
       effect: { duration: deathTimer },
     });
@@ -235,10 +227,7 @@ export class DeathHelper extends BaseService {
 
       // and lose max hp if you keep dying
       const lowCONHPLossThreshold =
-        this.game.contentManager.getGameSetting(
-          'character',
-          'lowCONHPLossThreshold',
-        ) ?? 10;
+        settingGameGet('character', 'lowCONHPLossThreshold') ?? 10;
       if (getBaseStat(dead, Stat.HP) > lowCONHPLossThreshold) {
         this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
       }
@@ -343,15 +332,9 @@ export class DeathHelper extends BaseService {
 
   private playerKillXPMultiplierBasedOnSpawnTime(spawnTime: number): number {
     const deathXPMultiplierMaxHours =
-      this.game.contentManager.getGameSetting(
-        'npc',
-        'deathXPMultiplierMaxHours',
-      ) ?? 8;
+      settingGameGet('npc', 'deathXPMultiplierMaxHours') ?? 8;
     const deathXPMultiplierMaxXP =
-      this.game.contentManager.getGameSetting(
-        'npc',
-        'deathXPMultiplierMaxXP',
-      ) ?? 4;
+      settingGameGet('npc', 'deathXPMultiplierMaxXP') ?? 4;
 
     const maxMinutesElapsed = deathXPMultiplierMaxHours * 60;
     const minutesElapsed = Math.floor((Date.now() - spawnTime) / 1000 / 60);
@@ -382,10 +365,7 @@ export class DeathHelper extends BaseService {
 
     const gainKillRewards = (rewarded: IPlayer, multiplier = 1) => {
       const axpRewardThreshold =
-        this.game.contentManager.getGameSetting(
-          'character',
-          'axpRewardThreshold',
-        ) ?? 5;
+        settingGameGet('character', 'axpRewardThreshold') ?? 5;
       if (rewarded.level - npc.level <= axpRewardThreshold) {
         this.game.playerHelper.gainAxp(
           rewarded,
@@ -446,7 +426,7 @@ export class DeathHelper extends BaseService {
       });
 
       const { eatXpLossMultiplier, eatSkillLossMultiplier } =
-        this.game.contentManager.getGameSetting('corpse');
+        settingGameGet('corpse');
 
       const lostXP = Math.floor(
         calculateXPRequiredForLevel(dead.level) * eatXpLossMultiplier * eatTier,

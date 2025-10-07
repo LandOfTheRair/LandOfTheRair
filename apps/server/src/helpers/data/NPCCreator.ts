@@ -42,6 +42,13 @@ import { BaseService } from '../../models/BaseService';
 import { trickOrTreat } from '../../models/world/ai/ai-commands';
 
 import { getBaseStat, healToFull, manaToFull } from '@lotr/characters';
+import {
+  coreAttributeStats,
+  coreChallenge,
+  coreNPCNames,
+  npcGet,
+  settingGameGet,
+} from '@lotr/content';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import { initializeNPC } from '@lotr/initializers';
 import { rollInOneHundred } from '@lotr/rng';
@@ -55,7 +62,7 @@ export class NPCCreator extends BaseService {
 
   // get the real item for base information lookup
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.game.contentManager.getNPCDefinition(npcId);
+    return npcGet(npcId)!;
   }
 
   // actually make a character from an npc id
@@ -73,7 +80,7 @@ export class NPCCreator extends BaseService {
   private coalesceChallengeDataForCR(
     npcDef: INPCDefinition,
   ): Partial<StatBlock> {
-    const challengeData = this.game.contentManager.challengeData;
+    const challengeData = cloneDeep(coreChallenge());
     const cr = clamp(npcDef.cr ?? 0, -10, 10);
     const base = challengeData.global.cr[cr] ?? {};
 
@@ -101,7 +108,7 @@ export class NPCCreator extends BaseService {
     npcDef: INPCDefinition,
     multKey: keyof IChallengeMeta,
   ): number {
-    const challengeData = this.game.contentManager.challengeData;
+    const challengeData = cloneDeep(coreChallenge());
 
     let classMult = 1;
     let typeMult = 1;
@@ -121,6 +128,8 @@ export class NPCCreator extends BaseService {
   public createCharacterFromNPCDefinition(
     npcDef: INPCDefinition,
   ): INPC & { dialogParser?: Parser } {
+    const challengeData = coreChallenge();
+
     const baseChar: INPC & { dialogParser?: Parser } = initializeNPC({});
     baseChar.uuid = uuid();
     baseChar.name = this.getNPCName(npcDef);
@@ -248,9 +257,7 @@ export class NPCCreator extends BaseService {
 
       setStats.forEach((stat) => {
         const globalSetStat =
-          this.game.contentManager.challengeData.global.stats.allStats[
-            baseChar.level
-          ];
+          challengeData.global.stats.allStats[baseChar.level];
         baseChar.stats[stat] = Math.floor(globalSetStat * statMult);
       });
     }
@@ -265,9 +272,7 @@ export class NPCCreator extends BaseService {
         );
 
         const globalSetSkill =
-          this.game.contentManager.challengeData.global.stats.allSkills[
-            baseChar.level
-          ];
+          challengeData.global.stats.allSkills[baseChar.level];
         baseChar.skills[skill] = calculateSkillXPRequiredForLevel(
           Math.floor(globalSetSkill * skillMult),
         );
@@ -281,15 +286,11 @@ export class NPCCreator extends BaseService {
 
     // further boost by challenge rating stats
     Object.keys(
-      this.game.contentManager.challengeData.global.stats.otherStats[
-        baseChar.level
-      ] ?? {},
+      challengeData.global.stats.otherStats[baseChar.level] ?? {},
     ).forEach((boostStat) => {
       baseChar.stats[boostStat] ??= 0;
       baseChar.stats[boostStat] +=
-        this.game.contentManager.challengeData.global.stats.otherStats[
-          baseChar.level
-        ][boostStat] ?? 0;
+        challengeData.global.stats.otherStats[baseChar.level][boostStat] ?? 0;
     });
 
     if (baseChar.hostility === Hostility.Never) {
@@ -349,7 +350,7 @@ export class NPCCreator extends BaseService {
         );
 
         const { min: lvlMin, max: lvlMax } =
-          this.game.contentManager.challengeData.global.stats.giveXp[crLevel];
+          challengeData.global.stats.giveXp[crLevel];
 
         baseChar.giveXp.min = Math.floor(lvlMin * giveXpMult);
         baseChar.giveXp.max = Math.floor(lvlMax * giveXpMult);
@@ -366,7 +367,7 @@ export class NPCCreator extends BaseService {
         );
 
         const { min: lvlMin, max: lvlMax } =
-          this.game.contentManager.challengeData.global.stats.gold[crLevel];
+          challengeData.global.stats.gold[crLevel];
         min = Math.floor(lvlMin * goldMult);
         max = Math.floor(lvlMax * goldMult);
       }
@@ -385,7 +386,7 @@ export class NPCCreator extends BaseService {
         );
 
         const { min: lvlMin, max: lvlMax } =
-          this.game.contentManager.challengeData.global.stats.hp[crLevel];
+          challengeData.global.stats.hp[crLevel];
         const hpMultNPC = npcDef.hpMult ?? 1;
         min = Math.floor(lvlMin * hpMultNPC * hpMult);
         max = Math.floor(lvlMax * hpMultNPC * hpMult);
@@ -512,7 +513,7 @@ export class NPCCreator extends BaseService {
     }
 
     if (rollInOneHundred(1)) {
-      return sample(this.game.contentManager.npcNamesData) as string;
+      return sample(coreNPCNames()) as string;
     }
 
     return species.human();
@@ -520,13 +521,10 @@ export class NPCCreator extends BaseService {
 
   // attributes buff npcs in random ways
   public addAttribute(npc: INPC): void {
-    const { attribute, stats, effects } = sample(
-      this.game.contentManager.attributeStatsData,
-    ) as any;
+    const { attribute, stats, effects } = sample(coreAttributeStats()) as any;
     npc.name = `${attribute} ${npc.name}`;
 
-    const attrMult =
-      this.game.contentManager.getGameSetting('npcgen', 'attrMult') ?? 2;
+    const attrMult = settingGameGet('npcgen', 'attrMult') ?? 2;
 
     npc.level += attrMult;
     npc.skillOnKill *= attrMult;
@@ -578,12 +576,8 @@ export class NPCCreator extends BaseService {
     });
 
     const eliteLevelBonusDivisor =
-      this.game.contentManager.getGameSetting(
-        'npcgen',
-        'eliteLevelBonusDivisor',
-      ) ?? 10;
-    const eliteMult =
-      this.game.contentManager.getGameSetting('npcgen', 'eliteMult') ?? 4;
+      settingGameGet('npcgen', 'eliteLevelBonusDivisor') ?? 10;
+    const eliteMult = settingGameGet('npcgen', 'eliteMult') ?? 4;
 
     npc.level += Math.min(1, Math.floor(npc.level / eliteLevelBonusDivisor));
     npc.skillOnKill *= eliteMult;
@@ -597,10 +591,8 @@ export class NPCCreator extends BaseService {
     npc.level = npcDef.level || 1;
 
     const levelFuzzMinLevel =
-      this.game.contentManager.getGameSetting('npcgen', 'levelFuzzMinLevel') ??
-      10;
-    const levelFuzz =
-      this.game.contentManager.getGameSetting('npcgen', 'levelFuzz') ?? 2;
+      settingGameGet('npcgen', 'levelFuzzMinLevel') ?? 10;
+    const levelFuzz = settingGameGet('npcgen', 'levelFuzz') ?? 2;
 
     // npcs that are > lv 10 can have their level fuzzed a bit
     if (npc.level > levelFuzzMinLevel) {

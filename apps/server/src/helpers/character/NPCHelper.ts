@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { get, set } from 'lodash';
 
+import { npcAllGet, npcGet } from '@lotr/content';
 import type { ICharacter, INPC, INPCDefinition } from '@lotr/interfaces';
 import { Allegiance } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -14,7 +15,7 @@ export class NPCHelper extends BaseService {
 
   // get the real npc definition for a named npc id
   public getNPCDefinition(npcId: string): INPCDefinition {
-    return this.game.contentManager.getNPCDefinition(npcId);
+    return npcGet(npcId)!;
   }
 
   public isNaturalResource(npc: INPC): boolean {
@@ -69,7 +70,7 @@ export class NPCHelper extends BaseService {
 
   // search all npcs for similar things
   public searchNPCs(search: string): string[] {
-    return Object.keys(this.game.contentManager.allNPCs).filter((x) =>
+    return Object.keys(npcAllGet()).filter((x) =>
       new RegExp(`.*${search}.*`, 'i').test(x),
     );
   }

@@ -22,6 +22,7 @@ import {
 import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -169,11 +170,10 @@ export class TrainerBehavior implements IAIBehavior {
         const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
-        const ignores =
-          game.contentManager.getClassConfigSetting<'noTrainSkills'>(
-            player.baseClass,
-            'noTrainSkills',
-          );
+        const ignores = settingClassConfigGet<'noTrainSkills'>(
+          player.baseClass,
+          'noTrainSkills',
+        );
 
         if ((ignores || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
@@ -185,10 +185,7 @@ export class TrainerBehavior implements IAIBehavior {
         }
 
         const assessCost =
-          game.contentManager.getGameSetting(
-            'npcscript',
-            'trainer.assessCost',
-          ) ?? 50;
+          settingGameGet('npcscript', 'trainer.assessCost') ?? 50;
         if (!hasCurrency(player, assessCost)) {
           return `You do need to pay for this, you know. ${assessCost} gold is not a lot!`;
         }
@@ -210,11 +207,10 @@ export class TrainerBehavior implements IAIBehavior {
         const checkSkill = Object.values(Skill).includes(skill);
         if (!checkSkill) return 'Hmm, what is that? A new kind of skill?';
 
-        const ignores =
-          game.contentManager.getClassConfigSetting<'noTrainSkills'>(
-            player.baseClass,
-            'noTrainSkills',
-          );
+        const ignores = settingClassConfigGet<'noTrainSkills'>(
+          player.baseClass,
+          'noTrainSkills',
+        );
 
         if ((ignores || []).includes(skill)) {
           return "I'm afraid I can't help you with that skill.";
@@ -239,10 +235,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         const totalCost = maxCoins - curValue - curTrain;
         const costMult =
-          game.contentManager.getGameSetting(
-            'character',
-            'trainingCostGoldMultiplier',
-          ) ?? 1;
+          settingGameGet('character', 'trainingCostGoldMultiplier') ?? 1;
         const totalCostWithMult = Math.floor(totalCost * costMult);
 
         const coinsTaken = Math.floor(
@@ -296,10 +289,7 @@ export class TrainerBehavior implements IAIBehavior {
         }
 
         const trainCost =
-          game.contentManager.getGameSetting(
-            'npcscript',
-            'trainer.trainCost',
-          ) ?? 200;
+          settingGameGet('npcscript', 'trainer.trainCost') ?? 200;
         if (!hasCurrency(player, trainCost)) {
           return `You do need to pay for this, you know. ${trainCost} gold is not a lot!`;
         }
@@ -430,7 +420,7 @@ export class TrainerBehavior implements IAIBehavior {
             return `I cannot teleport you from here, ${player.name}, the ether is too twisting.`;
           }
 
-          const teleportPoint = game.contentManager.getGameSetting(
+          const teleportPoint = settingGameGet(
             'map',
             'defaultThievesGuild',
           ) ?? {
@@ -468,10 +458,7 @@ export class TrainerBehavior implements IAIBehavior {
 
         if (player.level >= 30 && !player.subscriptionTier) {
           const resetCost =
-            game.contentManager.getGameSetting(
-              'npcscript',
-              'trainer.resetCost',
-            ) ?? 10000;
+            settingGameGet('npcscript', 'trainer.resetCost') ?? 10000;
           if (!hasCurrency(player, resetCost)) {
             return `You do need to pay for this, you know. ${resetCost} gold is not a lot!`;
           }

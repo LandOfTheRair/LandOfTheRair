@@ -1,14 +1,14 @@
 import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
+import { settingGameGet } from '@lotr/content';
 import type { IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
 export class DailyHelper extends BaseService {
   public get resetTime(): DateTime {
-    const dailyResetHour =
-      this.game.contentManager.getGameSetting('timers', 'dailyResetHour') ?? 12;
+    const dailyResetHour = settingGameGet('timers', 'dailyResetHour') ?? 12;
     let theoreticalResetTime = DateTime.fromObject({
       zone: 'utc',
       hour: dailyResetHour,
@@ -23,8 +23,7 @@ export class DailyHelper extends BaseService {
   public init() {}
 
   private canDailyActivate(checkTimestamp: number): boolean {
-    const dailyResetHour =
-      this.game.contentManager.getGameSetting('timers', 'dailyResetHour') ?? 12;
+    const dailyResetHour = settingGameGet('timers', 'dailyResetHour') ?? 12;
     let theoreticalResetTime = DateTime.fromObject({
       zone: 'utc',
       hour: dailyResetHour,

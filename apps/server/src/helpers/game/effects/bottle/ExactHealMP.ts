@@ -1,10 +1,11 @@
 import { mana } from '@lotr/characters';
+import { settingClassConfigGet } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
 export class ExactHealMP extends Effect {
   override apply(char: ICharacter, effect: IStatusEffect) {
-    const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
+    const usesMana = settingClassConfigGet<'usesMana'>(
       char.baseClass,
       'usesMana',
     );

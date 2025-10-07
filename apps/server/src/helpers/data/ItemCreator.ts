@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
+import { itemGet } from '@lotr/content';
 import type { IItemDefinition, ISimpleItem } from '@lotr/interfaces';
 import { Currency, ItemClass, ItemQuality } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -14,7 +15,7 @@ export class ItemCreator extends BaseService {
 
   // get an item that can be equipped
   public getSimpleItem(itemName: string): ISimpleItem {
-    const itemDefinition = this.game.contentManager.getItemDefinition(itemName);
+    const itemDefinition = itemGet(itemName);
     if (!itemDefinition) {
       throw new Error(`Item ${itemName} does not exist and cannot be created.`);
     }
@@ -77,9 +78,7 @@ export class ItemCreator extends BaseService {
     const newItem = cloneDeep(item);
     this.resetUUID(newItem);
 
-    const itemDefinition = this.game.contentManager.getItemDefinition(
-      item.name,
-    );
+    const itemDefinition = itemGet(item.name);
     if (rerollStats && itemDefinition) {
       this.rollStats(item, itemDefinition);
     }

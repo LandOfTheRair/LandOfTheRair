@@ -2,14 +2,9 @@ import { Injectable } from 'injection-js';
 import { get, isString, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
-import type {
-  INPC,
-  ISimpleItem,
-  Rollable } from '@lotr/interfaces';
-import {
-  Allegiance,
-  ItemSlot
-} from '@lotr/interfaces';
+import { settingGameGet } from '@lotr/content';
+import type { INPC, ISimpleItem, Rollable } from '@lotr/interfaces';
+import { Allegiance, ItemSlot } from '@lotr/interfaces';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -77,8 +72,7 @@ export class LootHelper extends BaseService {
 
   // depending on the npc, they may boost their drop rates
   private getNPCBonusMultiplier(npc: INPC): number {
-    const { eliteLootMult, normalLootMult } =
-      this.game.contentManager.getGameSetting('npcgen');
+    const { eliteLootMult, normalLootMult } = settingGameGet('npcgen');
     if (npc.name.includes('elite')) return eliteLootMult ?? 2;
     return normalLootMult ?? 2;
   }

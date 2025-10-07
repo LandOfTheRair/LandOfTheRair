@@ -52,6 +52,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat } from '@lotr/characters';
+import { questGet, settingGameGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -154,27 +155,25 @@ export class DialogActionHelper extends BaseService {
 
   private getDefaultMessage(npc: INPC) {
     if (npc.hostility === Hostility.Always) {
-      const hostileMessages = this.game.contentManager.getGameSetting(
-        'npc',
-        'messages.hostile',
-      ) ?? ['Die!', 'Begone!', 'Leave this place!'];
+      const hostileMessages = settingGameGet('npc', 'messages.hostile') ?? [
+        'Die!',
+        'Begone!',
+        'Leave this place!',
+      ];
 
       return sample(hostileMessages);
     }
 
     if (npc.monsterClass === MonsterClass.Beast) {
-      const defaultBeastMessages = this.game.contentManager.getGameSetting(
-        'npc',
-        'messages.beast',
-      ) ?? ['_growl_', '_snarl_'];
+      const defaultBeastMessages = settingGameGet('npc', 'messages.beast') ?? [
+        '_growl_',
+        '_snarl_',
+      ];
 
       return sample(defaultBeastMessages);
     }
 
-    const defaultMessages = this.game.contentManager.getGameSetting(
-      'npc',
-      'messages.friendly',
-    ) ?? [
+    const defaultMessages = settingGameGet('npc', 'messages.friendly') ?? [
       'Hmm?',
       'What do you mean?',
       'Hello, are you looking for me?',
@@ -922,7 +921,7 @@ export class DialogActionHelper extends BaseService {
       this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
       quests.length;
     const quest = quests[questTodayIndex];
-    const questRef = this.game.questHelper.getQuest(quest);
+    const questRef = questGet(quest);
 
     if (!questRef) {
       consoleError(
@@ -981,7 +980,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     const { quest, questCompleteActions } = action;
-    const questRef = this.game.questHelper.getQuest(quest);
+    const questRef = questGet(quest);
 
     if (!questRef) {
       consoleError(
@@ -1055,7 +1054,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     const { quest, arrayItem } = action;
-    const questRef = this.game.questHelper.getQuest(quest);
+    const questRef = questGet(quest);
 
     if (!questRef) {
       consoleError(
@@ -1101,7 +1100,7 @@ export class DialogActionHelper extends BaseService {
       this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
       quests.length;
     const quest = quests[questTodayIndex];
-    const questRef = this.game.questHelper.getQuest(quest);
+    const questRef = questGet(quest);
 
     if (!questRef) {
       consoleError(
@@ -1161,7 +1160,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     const { quest } = action;
-    const questRef = this.game.questHelper.getQuest(quest);
+    const questRef = questGet(quest);
 
     if (!questRef) {
       consoleError(

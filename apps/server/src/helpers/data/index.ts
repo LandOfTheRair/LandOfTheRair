@@ -1,5 +1,5 @@
 export * from './ConfigManager';
-export * from './ContentManager';
+export * from './ContentLoader';
 export * from './CorpseManager';
 export * from './DarknessHelper';
 export * from './EffectManager';

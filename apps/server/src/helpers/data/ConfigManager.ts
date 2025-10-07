@@ -1,3 +1,4 @@
+import { settingGameGet } from '@lotr/content';
 import {
   calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel,
@@ -48,19 +49,10 @@ export class ConfigManager extends BaseService {
   }
 
   async init() {
-    this.maxLevel = this.game.contentManager.getGameSetting(
-      'character',
-      'maxLevel',
-    );
-    this.maxSkill = this.game.contentManager.getGameSetting(
-      'character',
-      'maxSkill',
-    );
-    this.maxStats = this.game.contentManager.getGameSetting(
-      'character',
-      'maxStats',
-    );
-    this.potionStats = this.game.contentManager.getGameSetting('potion');
+    this.maxLevel = settingGameGet('character', 'maxLevel');
+    this.maxSkill = settingGameGet('character', 'maxSkill');
+    this.maxStats = settingGameGet('character', 'maxStats');
+    this.potionStats = settingGameGet('potion');
 
     this.maxExp = calculateXPRequiredForLevel(this.MAX_LEVEL);
     this.maxSkillExp = calculateSkillXPRequiredForLevel(this.MAX_SKILL_LEVEL);
