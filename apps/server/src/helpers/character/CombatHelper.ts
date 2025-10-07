@@ -29,6 +29,7 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -90,7 +91,7 @@ export class CombatHelper extends BaseService {
     if (
       hasLearned(attacker, 'Drain') &&
       drainChance > 0 &&
-      this.game.diceRollerHelper.XInOneHundred(drainChance)
+      rollInOneHundred(drainChance)
     ) {
       this.game.spellManager.castSpell('Drain', attacker, defender);
     }
@@ -102,7 +103,7 @@ export class CombatHelper extends BaseService {
     if (
       hasLearned(attacker, 'Asper') &&
       asperChance > 0 &&
-      this.game.diceRollerHelper.XInOneHundred(asperChance)
+      rollInOneHundred(asperChance)
     ) {
       this.game.spellManager.castSpell('Asper', attacker, defender);
     }

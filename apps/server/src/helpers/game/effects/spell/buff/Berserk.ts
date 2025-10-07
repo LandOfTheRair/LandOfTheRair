@@ -6,6 +6,7 @@ import type {
   IStatusEffect,
 } from '@lotr/interfaces';
 import { DamageClass, SoundEffect, Stat } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { sample } from 'lodash';
 import { Effect } from '../../../../../models';
 
@@ -40,7 +41,7 @@ export class Berserk extends Effect {
   ): number {
     if (
       damageArgs.damageClass !== DamageClass.Physical &&
-      this.game.diceRollerHelper.XInOneHundred(
+      rollInOneHundred(
         this.game.traitHelper.traitLevelValue(char, 'MagicalVortex'),
       )
     ) {
@@ -120,7 +121,7 @@ export class Berserk extends Effect {
         'ThunderingStrike',
       );
 
-      if (this.game.diceRollerHelper.XInOneHundred(thunderingStrikeChance)) {
+      if (rollInOneHundred(thunderingStrikeChance)) {
         const bonusTarget = this.validBerserkTargets(char).filter(
           (c) => c.uuid !== target.uuid,
         )[0];

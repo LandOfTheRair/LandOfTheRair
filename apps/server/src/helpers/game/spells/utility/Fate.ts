@@ -8,6 +8,7 @@ import { gainCurrency } from '@lotr/currency';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Currency, LearnedSpell, Stat } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Fate extends Spell {
@@ -123,7 +124,7 @@ export class Fate extends Spell {
 
       let good = false;
       let statBoosting = Math.floor(caster.level / divisor) * statBoost;
-      if (base === 0 || this.game.diceRollerHelper.XInOneHundred(35)) {
+      if (base === 0 || rollInOneHundred(35)) {
         good = true;
       }
 

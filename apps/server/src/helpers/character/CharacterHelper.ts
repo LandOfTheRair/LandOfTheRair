@@ -30,6 +30,7 @@ import {
   isPlayer,
   mana,
 } from '@lotr/characters';
+import { rollInOneHundred } from '@lotr/rng';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 
@@ -155,7 +156,7 @@ export class CharacterHelper extends BaseService {
       const value =
         this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
         this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
-      if (this.game.diceRollerHelper.XInOneHundred(value)) return;
+      if (rollInOneHundred(value)) return;
     }
 
     this.dropHand(char, 'left');

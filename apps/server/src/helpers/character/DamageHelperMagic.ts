@@ -8,6 +8,7 @@ import type {
   MagicalAttackArgs,
 } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -52,9 +53,7 @@ export class DamageHelperMagic extends BaseService {
     // try to do critical damage if possible
     if (
       attacker &&
-      this.game.diceRollerHelper.XInOneHundred(
-        getStat(attacker, Stat.SpellCriticalPercent),
-      )
+      rollInOneHundred(getStat(attacker, Stat.SpellCriticalPercent))
     ) {
       startDamage *= this.magicCriticalMultiplier;
     }

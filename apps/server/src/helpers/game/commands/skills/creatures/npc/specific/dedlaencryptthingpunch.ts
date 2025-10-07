@@ -2,6 +2,7 @@ import { sample } from 'lodash';
 
 import { engageInCombat, isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
+import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import type { Player } from '../../../../../../../models';
 import { SpellCommand } from '../../../../../../../models/macro';
@@ -20,7 +21,7 @@ export class DedlaenCryptThingPunch extends SpellCommand {
 
   override use(executor: ICharacter, target: ICharacter) {
     if (isPlayer(executor)) return;
-    if (!this.game.diceRollerHelper.OneInX(20)) return;
+    if (!oneInX(20)) return;
 
     engageInCombat(executor, 60);
 

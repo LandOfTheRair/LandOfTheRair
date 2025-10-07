@@ -9,6 +9,7 @@ import type {
   TrackedStatistic,
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Craft extends MacroCommand {
@@ -196,7 +197,7 @@ export class Craft extends MacroCommand {
     }
 
     const pointChance = 25 * clamp(recipe.maxSkillForGains - skill, 0, 4);
-    if (this.game.diceRollerHelper.XInOneHundred(pointChance)) {
+    if (rollInOneHundred(pointChance)) {
       this.game.playerHelper.gainTradeskill(
         player,
         recipe.recipeType,

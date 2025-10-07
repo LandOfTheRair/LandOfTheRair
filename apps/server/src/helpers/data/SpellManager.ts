@@ -21,6 +21,7 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
+import { diceRoll, oneToStat, rollInOneHundred } from '@lotr/rng';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 import { Spell } from '../../models/world/Spell';
@@ -129,10 +130,7 @@ export class SpellManager extends BaseService {
       ? 0
       : random(spellData.bonusRollsMin ?? 0, spellData.bonusRollsMax ?? 0);
 
-    const basePotency = this.game.diceRollerHelper.diceRoll(
-      baseSkillValue + bonusRolls,
-      statMult,
-    );
+    const basePotency = diceRoll(baseSkillValue + bonusRolls, statMult);
     let retPotency = isStatic ? baseSkillValue * statMult : basePotency;
 
     let maxMult = 1;
@@ -159,9 +157,7 @@ export class SpellManager extends BaseService {
 
     if (
       hasEffect(caster, 'Dazed') &&
-      this.game.diceRollerHelper.XInOneHundred(
-        getEffectPotency(caster, 'Dazed'),
-      )
+      rollInOneHundred(getEffectPotency(caster, 'Dazed'))
     ) {
       retPotency /= this.dazedDivisor;
       this.game.messageHelper.sendLogMessageToPlayer(
@@ -318,7 +314,7 @@ export class SpellManager extends BaseService {
 
     // spell can fail sometimes, usually this only happens when doing a melee attack w/ weapon that casts spells
     const chance = override.chance || 100;
-    if (!this.game.diceRollerHelper.XInOneHundred(chance)) return;
+    if (!rollInOneHundred(chance)) return;
 
     // gain skill for the spell cast, but only if you're actually casting it
     if (caster && chance === 100) {
@@ -342,16 +338,12 @@ export class SpellManager extends BaseService {
     // try to resist the spell
     if (caster && target && canBeResisted) {
       const casterRoll =
-        this.game.diceRollerHelper.OneToStat(
-          caster,
-          this.game.characterHelper.castStat(caster),
-        ) +
+        oneToStat(caster, this.game.characterHelper.castStat(caster)) +
         (resistLowerTrait
           ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait)
           : 0);
       const targetRoll =
-        this.game.diceRollerHelper.OneToStat(target, Stat.WIL) +
-        getStat(target, Stat.SavingThrow);
+        oneToStat(target, Stat.WIL) + getStat(target, Stat.SavingThrow);
 
       if (targetRoll > casterRoll) {
         this.game.messageHelper.sendSimpleMessage(

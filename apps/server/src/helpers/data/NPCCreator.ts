@@ -44,6 +44,7 @@ import { trickOrTreat } from '../../models/world/ai/ai-commands';
 import { getBaseStat, healToFull, manaToFull } from '@lotr/characters';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import { initializeNPC } from '@lotr/initializers';
+import { rollInOneHundred } from '@lotr/rng';
 
 // functions related to CREATING an NPC
 // not to be confused with NPCHelper which is for HELPER FUNCTIONS that MODIFY NPCs
@@ -480,7 +481,7 @@ export class NPCCreator extends BaseService {
 
     // if the npc has a static name
     if (npc.name) {
-      if (this.game.diceRollerHelper.XInOneHundred(99)) return npc.name[0];
+      if (rollInOneHundred(99)) return npc.name[0];
       return sample(npc.name) ?? 'unknown';
     }
 
@@ -510,7 +511,7 @@ export class NPCCreator extends BaseService {
         return species.gnome(gender);
     }
 
-    if (this.game.diceRollerHelper.XInOneHundred(1)) {
+    if (rollInOneHundred(1)) {
       return sample(this.game.contentManager.npcNamesData) as string;
     }
 
@@ -613,7 +614,7 @@ export class NPCCreator extends BaseService {
     if (itemName.chance && itemName.name) {
       if (itemName.chance < 0) return true;
 
-      if (this.game.diceRollerHelper.XInOneHundred(itemName.chance)) {
+      if (rollInOneHundred(itemName.chance)) {
         return true;
       }
     }

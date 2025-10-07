@@ -40,6 +40,7 @@ import {
 } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
+import { oneInX, oneToLUK, rollInOneHundred, uniformRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 
 interface WeaponAttackStats {
@@ -334,10 +335,8 @@ export class DamageHelperPhysical extends BaseService {
       0,
       1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler'),
     );
-    const didFlub = this.game.diceRollerHelper.XInOneHundred(
-      weakPercent * swashValue,
-    );
-    const didCrit = this.game.diceRollerHelper.XInOneHundred(strongPercent);
+    const didFlub = rollInOneHundred(weakPercent * swashValue);
+    const didCrit = rollInOneHundred(strongPercent);
 
     let canBeWeak = false;
     let canBeStrong = false;
@@ -345,10 +344,9 @@ export class DamageHelperPhysical extends BaseService {
     // 50/50 chance to use weak dice at 10 luk. more luk = more chance of crit
     const strongChance =
       this.strongAttackBaseChance +
-      (this.game.diceRollerHelper.OneToLUK(attacker) -
-        this.weakAttackLuckReduction);
+      (oneToLUK(attacker) - this.weakAttackLuckReduction);
 
-    if (this.game.diceRollerHelper.XInOneHundred(strongChance)) {
+    if (rollInOneHundred(strongChance)) {
       canBeStrong = true;
     } else {
       canBeWeak = true;
@@ -796,16 +794,12 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const attackerDodgeRoll =
-      this.game.diceRollerHelper.uniformRoll(
-        attackerBlockLeftSide,
-        attackerBlockRightSide,
-      ) + attackerScope.accuracy;
+      uniformRoll(attackerBlockLeftSide, attackerBlockRightSide) +
+      attackerScope.accuracy;
 
     let defenderDodgeRoll =
-      -this.game.diceRollerHelper.uniformRoll(
-        defenderDodgeLeftSide,
-        defenderDodgeRightSide,
-      ) + defenderScope.dodgeBonus;
+      -uniformRoll(defenderDodgeLeftSide, defenderDodgeRightSide) +
+      defenderScope.dodgeBonus;
 
     const defenderDodgeBoost = this.game.traitHelper.traitLevelValue(
       defender,
@@ -902,12 +896,9 @@ export class DamageHelperPhysical extends BaseService {
 
     const attackerACRoll = Math.max(
       1,
-      this.game.diceRollerHelper.uniformRoll(
-        attackerBlockLeftSide,
-        attackerBlockRightSide,
-      ),
+      uniformRoll(attackerBlockLeftSide, attackerBlockRightSide),
     );
-    const defenderACRoll = -this.game.diceRollerHelper.uniformRoll(
+    const defenderACRoll = -uniformRoll(
       defenderBlockLeftSide,
       defenderBlockRightSide,
     );
@@ -1002,11 +993,11 @@ export class DamageHelperPhysical extends BaseService {
       defenderScope.dex4 + defenderScope.skill,
     );
 
-    const attackerWeaponBlockRoll = this.game.diceRollerHelper.uniformRoll(
+    const attackerWeaponBlockRoll = uniformRoll(
       attackerBlockLeftSide,
       attackerWeaponBlockRightSide,
     );
-    const defenderWeaponBlockRoll = -this.game.diceRollerHelper.uniformRoll(
+    const defenderWeaponBlockRoll = -uniformRoll(
       defenderWeaponBlockLeftSide,
       defenderWeaponBlockRightSide,
     );
@@ -1116,12 +1107,9 @@ export class DamageHelperPhysical extends BaseService {
 
     const attackerShieldBlockRoll = Math.max(
       1,
-      this.game.diceRollerHelper.uniformRoll(
-        attackerBlockLeftSide,
-        attackerBlockRightSide,
-      ),
+      uniformRoll(attackerBlockLeftSide, attackerBlockRightSide),
     );
-    const defenderShieldBlockRoll = -this.game.diceRollerHelper.uniformRoll(
+    const defenderShieldBlockRoll = -uniformRoll(
       defenderShieldBlockLeftSide,
       defenderShieldBlockRightSide,
     );
@@ -1227,12 +1215,9 @@ export class DamageHelperPhysical extends BaseService {
 
     const attackerOffhandBlockRoll = Math.max(
       1,
-      this.game.diceRollerHelper.uniformRoll(
-        attackerBlockLeftSide,
-        attackerBlockRightSide,
-      ),
+      uniformRoll(attackerBlockLeftSide, attackerBlockRightSide),
     );
-    const defenderOffhandBlockRoll = -this.game.diceRollerHelper.uniformRoll(
+    const defenderOffhandBlockRoll = -uniformRoll(
       defenderOffhandBlockLeftSide,
       defenderOffhandBlockRightSide,
     );
@@ -1328,11 +1313,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     // if we can prone a target, we prone a target
-    if (
-      !hasFleetOfFoot &&
-      proneChance > 0 &&
-      this.game.diceRollerHelper.XInOneHundred(proneChance)
-    ) {
+    if (!hasFleetOfFoot && proneChance > 0 && rollInOneHundred(proneChance)) {
       this.game.spellManager.castSpell('Push', undefined, defender, {
         potency: 999,
         chance: proneChance,
@@ -1360,10 +1341,7 @@ export class DamageHelperPhysical extends BaseService {
     const diff = atkStr - defCon;
     conMultiplier = Math.max(1, conMultiplier - diff);
 
-    if (
-      this.game.diceRollerHelper.OneInX(defCon * conMultiplier) &&
-      !hasEffect(defender, 'Stun')
-    ) {
+    if (oneInX(defCon * conMultiplier) && !hasEffect(defender, 'Stun')) {
       this.game.messageHelper.sendLogMessageToPlayer(
         defender,
         { message: "You've been knocked flat!" },
@@ -1728,7 +1706,7 @@ export class DamageHelperPhysical extends BaseService {
       consumingRage &&
       attackerUsesRage &&
       attacker.mp.current > 30 &&
-      this.game.diceRollerHelper.XInOneHundred(30)
+      rollInOneHundred(30)
     ) {
       isEnraged = true;
       damageMult += 0.2;

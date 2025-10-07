@@ -1,4 +1,5 @@
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Cleave extends Spell {
@@ -9,7 +10,7 @@ export class Cleave extends Spell {
   ): void {
     const cleavePotency = spellCastArgs.potency;
 
-    if (caster && target && this.game.diceRollerHelper.XInOneHundred(10)) {
+    if (caster && target && rollInOneHundred(10)) {
       const bleedPercent = this.game.traitHelper.traitLevelValue(
         caster,
         'DeepCuts',

@@ -28,6 +28,7 @@
     "@lotr/currency": "*",
     "@lotr/effects": "*",
     "@lotr/exp": "*",
+    "@lotr/rng": "*",
     "bcrypt": "^5.0.0",
     "bufferutil": "^4.0.2",
     "censor-sensor": "^1.0.6",

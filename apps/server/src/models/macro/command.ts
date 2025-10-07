@@ -32,6 +32,7 @@ import {
   takeDamage,
 } from '@lotr/characters';
 import { getEffect, hasEffect } from '@lotr/effects';
+import { rollInOneHundred } from '@lotr/rng';
 import type { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
@@ -570,9 +571,7 @@ export class SpellCommand extends SkillCommand {
         target !== caster &&
         isPlayer(target) &&
         !spellData.spellMeta.noReflect &&
-        this.game.diceRollerHelper.XInOneHundred(
-          getStat(target, Stat.SpellReflectChance),
-        )
+        rollInOneHundred(getStat(target, Stat.SpellReflectChance))
       ) {
         hitTarget = caster;
       }

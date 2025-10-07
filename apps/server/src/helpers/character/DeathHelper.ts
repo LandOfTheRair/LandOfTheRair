@@ -21,6 +21,7 @@ import {
   Stat,
   TrackedStatistic,
 } from '@lotr/interfaces';
+import { oneInX, oneToLUK } from '@lotr/rng';
 import { basePlayerSprite } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -150,7 +151,7 @@ export class DeathHelper extends BaseService {
 
       if (
         (player.stats?.[Stat.STR] ?? 0) > rotStatThreshold &&
-        this.game.diceRollerHelper.OneInX(strLossChance)
+        oneInX(strLossChance)
       ) {
         this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
       }
@@ -161,7 +162,7 @@ export class DeathHelper extends BaseService {
 
       if (
         (player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold &&
-        this.game.diceRollerHelper.OneInX(agiLossChance)
+        oneInX(agiLossChance)
       ) {
         this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
       }
@@ -297,7 +298,7 @@ export class DeathHelper extends BaseService {
         allItems.push(...dead.items.sack.items);
       }
 
-      const bonus = killer ? this.game.diceRollerHelper.OneToLUK(killer) : 0;
+      const bonus = killer ? oneToLUK(killer) : 0;
 
       // roll items for the npc specifically
       const rolledItems = this.game.lootHelper.getNPCLoot(dead, bonus);

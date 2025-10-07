@@ -7,6 +7,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { gainCurrency } from '@lotr/currency';
+import { rollInOneHundred } from '@lotr/rng';
 import type { Game } from '../../../../../helpers';
 
 const tokenTable = [
@@ -65,7 +66,7 @@ export class ThanksgivingTurkeyBehavior implements IAIBehavior {
           ) {
             game.characterHelper.setRightHand(player, undefined);
 
-            if (game.diceRollerHelper.XInOneHundred(90)) {
+            if (rollInOneHundred(90)) {
               const results =
                 game.lootHelper.chooseWithoutReplacement(tokenTable);
               const tokens = results[0] as unknown as number;

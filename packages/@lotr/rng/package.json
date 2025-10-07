@@ -1,0 +1,19 @@
+{
+  "name": "@lotr/rng",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "lint": "",
+    "build": "tsc",
+    "start:dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@lotr/characters": "*",
+    "@lotr/interfaces": "*",
+    "lodash": "^4.17.21"
+  }
+}

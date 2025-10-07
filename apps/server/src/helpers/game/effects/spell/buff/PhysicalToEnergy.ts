@@ -1,10 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { Effect } from '../../../../../models';
 
 export class PhysicalToEnergy extends Effect {
@@ -16,7 +12,7 @@ export class PhysicalToEnergy extends Effect {
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
-    if (!this.game.diceRollerHelper.XInOneHundred(20)) return;
+    if (!rollInOneHundred(20)) return;
 
     this.game.combatHelper.magicalAttack(char, target, {
       damage: damageArgs.damage * (effect.effectInfo.potency ?? 1),

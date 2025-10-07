@@ -56,12 +56,7 @@ import { CrashContextManager } from '../data/CrashContextManager';
 import { ModKitManager } from '../data/ModKitManager';
 import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
-import {
-  DiceRollerHelper,
-  DynamicEventHelper,
-  HolidayHelper,
-  LootHelper,
-} from '../game/tools';
+import { DynamicEventHelper, HolidayHelper, LootHelper } from '../game/tools';
 import { GuildManager } from '../guild';
 import { CharacterRoller, DiscordHelper, LobbyManager } from '../lobby';
 import { RNGDungeonGenerator, RNGDungeonManager } from '../rng';
@@ -136,7 +131,6 @@ export class Game {
     public damageHelperPhysical: DamageHelperPhysical,
     public combatHelper: CombatHelper,
     public questHelper: QuestHelper,
-    public diceRollerHelper: DiceRollerHelper,
     public lootHelper: LootHelper,
     public holidayHelper: HolidayHelper,
     public movementHelper: MovementHelper,
@@ -256,7 +250,6 @@ export class Game {
         'damageHelperPhysical',
         'combatHelper',
         'questHelper',
-        'diceRollerHelper',
         'lootHelper',
         'movementHelper',
         'visibilityHelper',

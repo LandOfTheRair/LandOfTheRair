@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  Skill,
-} from '@lotr/interfaces';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { Skill } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { SkillCommand } from '../../../../../../models/macro';
 
 export class Disarm extends SkillCommand {
@@ -31,12 +27,12 @@ export class Disarm extends SkillCommand {
       'trapEffect',
     );
     if (trapItem.mods.trapSetBy === player.uuid) {
-return this.sendMessage(player, 'You cannot disarm your own traps!');
-}
+      return this.sendMessage(player, 'You cannot disarm your own traps!');
+    }
 
     if (!this.game.trapHelper.canDisarmTrap(player, trapItem)) {
       // if you fail to disarm, you have a chance of springing it
-      if (this.game.diceRollerHelper.XInOneHundred(10)) {
+      if (rollInOneHundred(10)) {
         this.game.trapHelper.triggerTrap(player, trap);
       }
 

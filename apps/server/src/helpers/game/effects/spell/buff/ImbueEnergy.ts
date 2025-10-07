@@ -1,10 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { Effect } from '../../../../../models';
 
 export class ImbueEnergy extends Effect {
@@ -15,7 +11,7 @@ export class ImbueEnergy extends Effect {
     damageArgs: DamageArgs,
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
-    if (!this.game.diceRollerHelper.XInOneHundred(15)) return;
+    if (!rollInOneHundred(15)) return;
 
     this.game.damageHelperMagic.magicalAttack(char, target, {
       atkMsg: 'You strike %0 for bonus energy damage!',

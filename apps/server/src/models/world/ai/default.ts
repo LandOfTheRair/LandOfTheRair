@@ -43,6 +43,7 @@ import {
   manaDamage,
   manaToFull,
 } from '@lotr/characters';
+import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
   directionFromText,
   directionToOffset,
@@ -238,7 +239,7 @@ export class DefaultAIBehavior implements IAI {
 
   private attemptUsePotion() {
     // 20% chance they'll use a potion
-    if (this.game.diceRollerHelper.XInOneHundred(80)) return;
+    if (rollInOneHundred(80)) return;
 
     // npcs will not use a potion if they have > 30% hp
     if (this.npc.hp.current > this.npc.hp.maximum * 0.3) return;
@@ -287,7 +288,7 @@ export class DefaultAIBehavior implements IAI {
     if (!this.currentTarget && !this.path) numSteps = Math.min(numSteps, 1);
     if (numSteps < 0) numSteps = 0;
 
-    if (this.game.diceRollerHelper.OneInX(100)) {
+    if (oneInX(100)) {
       this.checkGroundForItems();
     }
 
@@ -496,9 +497,7 @@ export class DefaultAIBehavior implements IAI {
 
     let chosenSfx!: SoundEffect;
     if (sfx && sfx.maxChance) {
-      chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance ?? 1)
-        ? sfx.name
-        : undefined;
+      chosenSfx = rollInOneHundred(sfx.maxChance ?? 1) ? sfx.name : undefined;
     }
 
     this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {
@@ -517,9 +516,7 @@ export class DefaultAIBehavior implements IAI {
 
     let chosenSfx!: SoundEffect;
     if (sfx && sfx.maxChance) {
-      chosenSfx = this.game.diceRollerHelper.XInOneHundred(sfx.maxChance ?? 1)
-        ? sfx.name
-        : undefined;
+      chosenSfx = rollInOneHundred(sfx.maxChance ?? 1) ? sfx.name : undefined;
     }
 
     this.game.messageHelper.sendLogMessageToRadius(this.npc, radius || 6, {

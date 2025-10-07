@@ -10,6 +10,7 @@ import type {
   ITraitTreeTrait,
 } from '@lotr/interfaces';
 
+import { rollInOneHundred } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -141,7 +142,7 @@ export class TraitHelper extends BaseService {
     if (levelValue <= 0) return false;
     if (levelValue >= 100) return true;
 
-    return this.game.diceRollerHelper.XInOneHundred(levelValue);
+    return rollInOneHundred(levelValue);
   }
 
   // build management

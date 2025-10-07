@@ -2,6 +2,7 @@ import { getStat, isPlayer } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
+import { diceRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import { SpellCommand } from '../../../../../../../models/macro';
 
@@ -24,10 +25,7 @@ export class ChillBiteFrostDragon extends SpellCommand {
   override use(executor: ICharacter, target: ICharacter) {
     if (isPlayer(executor)) return;
 
-    const damage = this.game.diceRollerHelper.diceRoll(
-      15,
-      getStat(executor, Stat.STR),
-    );
+    const damage = diceRoll(15, getStat(executor, Stat.STR));
 
     this.game.combatHelper.magicalAttack(executor, target, {
       damage,

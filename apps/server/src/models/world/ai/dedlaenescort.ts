@@ -5,6 +5,7 @@ import { Hostility, Stat } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
 
 import { getStat, isDead } from '@lotr/characters';
+import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 export class DedlaenEscortAI extends DefaultAIBehavior {
   private following: IPlayer | undefined;
@@ -52,7 +53,7 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
       );
     }
 
-    if (this.game.diceRollerHelper.OneInX(30)) {
+    if (oneInX(30)) {
       const message = sample(responses) as string;
       this.game.messageHelper.sendSimpleMessage(npc, message);
     }

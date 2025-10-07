@@ -10,6 +10,7 @@ import type { WorldMap } from './Map';
 import type { MapState } from './MapState';
 
 import { isDead } from '@lotr/characters';
+import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';
 
 export class Spawner {
@@ -489,7 +490,7 @@ export class Spawner {
 
   // add a random attribute to an npc
   private tryAttribute(npc: INPC) {
-    if (!this.game.diceRollerHelper.XInOneHundred(this.attributeAddChance)) {
+    if (!rollInOneHundred(this.attributeAddChance)) {
       return;
     }
     this.game.npcCreator.addAttribute(npc);

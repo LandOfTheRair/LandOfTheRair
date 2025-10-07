@@ -3,6 +3,7 @@ import { clamp } from 'lodash';
 import { getStat, isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { SpellCommand } from '../../../../../../../models/macro';
 
 export class GhostWail extends SpellCommand {
@@ -33,7 +34,7 @@ export class GhostWail extends SpellCommand {
       .forEach((char) => {
         const successChance =
           clamp(getStat(char, Stat.WIL) - 23 + 4, 0, 8) * 12.5;
-        if (this.game.diceRollerHelper.XInOneHundred(successChance)) {
+        if (rollInOneHundred(successChance)) {
           this.game.messageHelper.sendSimpleMessage(
             char,
             'You resisted the ghostly wail!',

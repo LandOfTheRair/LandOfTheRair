@@ -11,8 +11,8 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { rollInOneHundred } from '@lotr/rng';
+import type { Game } from '../../../../helpers';
 
 export const trickOrTreat = (game: Game, npc: INPC, parser: Parser): void => {
   const talkedTo = {};
@@ -46,8 +46,8 @@ export const trickOrTreat = (game: Game, npc: INPC, parser: Parser): void => {
 
       talkedTo[player.uuid] = true;
 
-      if (game.diceRollerHelper.XInOneHundred(20)) {
-        if (game.diceRollerHelper.XInOneHundred(30) && player.exp > 5000) {
+      if (rollInOneHundred(20)) {
+        if (rollInOneHundred(30) && player.exp > 5000) {
           game.playerHelper.loseExp(player, random(100, 1000));
         } else {
           game.combatHelper.dealOnesidedDamage(player, {
@@ -69,7 +69,7 @@ export const trickOrTreat = (game: Game, npc: INPC, parser: Parser): void => {
         'Halloween Candy - Mints',
       ]);
 
-      if (game.diceRollerHelper.XInOneHundred(10)) {
+      if (rollInOneHundred(10)) {
         item = 'Halloween Candy Pile';
       }
 

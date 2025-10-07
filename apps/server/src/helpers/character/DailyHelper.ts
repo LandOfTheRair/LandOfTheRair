@@ -42,10 +42,10 @@ export class DailyHelper extends BaseService {
 
   public canBuyDailyItem(player: IPlayer, item: ISimpleItem): boolean {
     if (!this.isDailyItem(item)) {
-throw new Error(
+      throw new Error(
         'Attempting to buy item as a daily item ' + JSON.stringify(item),
       );
-}
+    }
 
     if (!player.dailyItems[item.uuid]) return true;
     if (this.canDailyActivate(player.dailyItems[item.uuid])) return true;
@@ -57,8 +57,8 @@ throw new Error(
     player.quests.npcDailyQuests = player.quests.npcDailyQuests || {};
     if (!player.quests.npcDailyQuests[questGiverName]) return true;
     if (this.canDailyActivate(player.quests.npcDailyQuests[questGiverName])) {
-return true;
-}
+      return true;
+    }
 
     return false;
   }

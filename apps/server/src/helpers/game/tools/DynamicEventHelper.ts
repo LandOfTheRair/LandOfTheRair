@@ -12,6 +12,7 @@ import type {
 import { DynamicEventSuccessType, GameAction } from '@lotr/interfaces';
 import { DynamicEvent, Spawner } from '../../../models';
 
+import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -208,7 +209,7 @@ export class DynamicEventHelper extends BaseService {
       if (!event) return;
 
       // if it can't trigger, bail
-      if (!this.game.diceRollerHelper.OneInX(rarity[event.rarity] ?? 1000)) {
+      if (!oneInX(rarity[event.rarity] ?? 1000)) {
         return;
       }
 

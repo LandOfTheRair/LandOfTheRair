@@ -1,6 +1,7 @@
 import { getSkillLevel } from '@lotr/characters';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
+import { rollInOneHundred } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import { Effect } from '../../../../../models';
 
@@ -52,7 +53,7 @@ export class ParryStance extends Effect {
     // we can parry magic attacks if glowingweapon exists
     if (
       damageArgs.damageClass !== DamageClass.Physical &&
-      !this.game.diceRollerHelper.XInOneHundred(
+      !rollInOneHundred(
         this.game.traitHelper.traitLevelValue(char, 'GlowingWeapon'),
       )
     ) {
@@ -61,7 +62,7 @@ export class ParryStance extends Effect {
 
     // if we're on someone and we can riposte, give it a try
     if (
-      this.game.diceRollerHelper.XInOneHundred(
+      rollInOneHundred(
         this.game.traitHelper.traitLevelValue(char, 'Riposte'),
       ) &&
       distanceFrom(char, attacker) === 0
