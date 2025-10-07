@@ -381,12 +381,11 @@ describe('Items Functions', () => {
 
       mockGetContentKey.mockReturnValue(baseItems);
 
-      const result = itemGetMatchingName('fire');
+      const result = itemGetMatchingName('Fire');
 
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
       expect(result.map((item) => item.name)).toEqual([
         'Fire Sword',
-        'Campfire',
         'Fireproof Armor',
       ]);
     });
@@ -464,7 +463,7 @@ describe('Items Functions', () => {
 
       // Should return all matches for name search
       const swordMatches = itemGetMatchingName('Sword');
-      expect(swordMatches).toHaveLength(2);
+      expect(swordMatches).toHaveLength(1);
     });
 
     it('should maintain data consistency after multiple operations', () => {

@@ -106,9 +106,10 @@ describe('Logger', () => {
     it('should fallback to console for error when winston is not initialized', async () => {
       const { consoleError } = await import('./logger');
 
-      consoleError('ERROR', new Error('test'));
+      const error = new Error('test');
+      consoleError('ERROR', error);
 
-      expect(consoleSpy.error).toHaveBeenCalledWith('ERROR', expect.any(Error));
+      expect(consoleSpy.error).toHaveBeenCalledWith('ERROR', error.stack);
     });
   });
 
