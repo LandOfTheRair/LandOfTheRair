@@ -53,7 +53,6 @@ import {
   StaticTextHelper,
   WorldManager,
 } from '../data';
-import { CrashContextManager } from '../data/CrashContextManager';
 import { ModKitManager } from '../data/ModKitManager';
 import { TestHelper } from '../data/TestHelper';
 import { CommandHandler, MessageHelper, PlayerManager } from '../game';
@@ -74,7 +73,7 @@ import {
   RedeemableDB,
   WorldDB,
 } from './db';
-import { LoggerInitializer } from './Logger';
+import { LoggerInitializer } from './LoggerInitializer';
 import { TransmissionHelper } from './TransmissionHelper';
 
 @Injectable()
@@ -91,7 +90,6 @@ export class Game {
   public wsCmdHandler: IWebsocketCommandHandler;
 
   constructor(
-    public crashContext: CrashContextManager,
     public loggerInitializer: LoggerInitializer,
     public transmissionHelper: TransmissionHelper,
 
@@ -234,7 +232,6 @@ export class Game {
 
       // these don't really have anything special, and can be initialized whenever, as their value is mostly at runtime
       [GameEvent.InitChill]: [
-        'crashContext',
         'transmissionHelper',
         'profanityHelper',
         'migrationHelper',

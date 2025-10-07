@@ -43,7 +43,7 @@ import {
   manaDamage,
   manaToFull,
 } from '@lotr/characters';
-import { consoleWarn } from '@lotr/logger';
+import { consoleWarn, logCrashContextEntry } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
   directionFromText,
@@ -361,7 +361,7 @@ export class DefaultAIBehavior implements IAI {
     if (skillChosen?.targetsFriendly && this.currentTarget) {
       const skill: SkillCommand = skillChosen;
 
-      this.game.crashContext.logContextEntry(
+      logCrashContextEntry(
         npc,
         `${npc.name}:B -> ${chosenSkillName} -> ${this.currentTarget.name}`,
       );
@@ -381,7 +381,7 @@ export class DefaultAIBehavior implements IAI {
         const opts: PhysicalAttackArgs = {};
         if (isThrowing) opts.throwHand = ItemSlot.RightHand;
 
-        this.game.crashContext.logContextEntry(
+        logCrashContextEntry(
           npc,
           `${npc.name}:M -> ${chosenSkillName} -> ${this.highestAgro.name}`,
         );
@@ -390,10 +390,7 @@ export class DefaultAIBehavior implements IAI {
 
         // either move towards target
       } else {
-        this.game.crashContext.logContextEntry(
-          npc,
-          `${npc.name}:A -> ${this.highestAgro.name}`,
-        );
+        logCrashContextEntry(npc, `${npc.name}:A -> ${this.highestAgro.name}`);
         this.moveTowards(this.highestAgro, moveRate);
       }
 

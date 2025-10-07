@@ -9,10 +9,12 @@
     "start:dev": "tsc --watch"
   },
   "dependencies": {
+    "@lotr/interfaces": "*",
     "rollbar": "2.19.4",
     "winston": "^3.6.0"
   },
   "devDependencies": {
+    "@types/node": "^24.7.0",
     "typescript": "^5.9.2"
   }
 }

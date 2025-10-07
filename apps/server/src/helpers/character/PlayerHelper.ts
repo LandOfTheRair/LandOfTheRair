@@ -26,7 +26,7 @@ import type {
   Tradeskill,
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
-import { consoleLog } from '@lotr/logger';
+import { consoleLog, logCrashContextEntry } from '@lotr/logger';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -153,7 +153,7 @@ export class PlayerHelper extends BaseService {
         // check if we can actually cast this
         const args = (command as any).args;
 
-        this.game.crashContext.logContextEntry(
+        logCrashContextEntry(
           player,
           `${player.username}#${player.name}: ${args.calledAlias} ${args.stringArgs}`,
         );

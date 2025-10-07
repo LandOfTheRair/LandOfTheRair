@@ -13,6 +13,7 @@ import type {
 import { MessageType } from '@lotr/interfaces';
 
 import { getStat } from '@lotr/characters';
+import { logCrashContextEntry } from '@lotr/logger';
 
 export class Spell implements BaseSpell {
   constructor(protected game: Game) {}
@@ -57,7 +58,7 @@ export class Spell implements BaseSpell {
     };
 
     if (caster) {
-      this.game.crashContext.logContextEntry(
+      logCrashContextEntry(
         caster,
         `${caster.name}:GOEI -> ${spellData.spellName} -> ${target?.name || 'unknown'}`,
       );

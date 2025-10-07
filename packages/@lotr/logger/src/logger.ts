@@ -1,5 +1,6 @@
 import Rollbar from 'rollbar';
 import Winston from 'winston';
+import { currentCrashContext } from './crash-context';
 
 let rollbar: Rollbar | undefined;
 let winston: Winston.Logger | undefined;
@@ -67,6 +68,6 @@ export function consoleError(tag: string, error: Error, ...args) {
 
   rollbar?.error(error, {
     args,
-    context: this.game.crashContext.getCurrentContext(),
+    context: currentCrashContext(),
   });
 }
