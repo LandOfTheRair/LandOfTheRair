@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "setup": "",
-    "lint": "",
+    "lint": "eslint -c .eslintrc.json --ext .ts src",
     "build": "tsc",
     "start:dev": "tsc --watch"
   },
@@ -12,6 +12,7 @@
     "@lotr/shared": "*"
   },
   "devDependencies": {
+    "@lotr/eslint-config": "*",
     "typescript": "^5.9.2"
   }
 }

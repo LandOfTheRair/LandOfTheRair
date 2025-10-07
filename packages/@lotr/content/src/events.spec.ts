@@ -404,7 +404,7 @@ describe('Events Functions', () => {
 
     it('should handle very long event names', () => {
       const longEventName =
-        'very-long-event-name-that-exceeds-normal-limits-and-continues-for-a-very-long-time-to-test-edge-cases-with-extended-naming-conventions';
+        'very-long-event-name-that-exceeds-normal-limits-and-continues-for-a-very-long-time-to-test-edge-cases-with-extended-naming';
 
       const events = {};
       mockCoreEvents.mockReturnValue(events);

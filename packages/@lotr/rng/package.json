@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "setup": "",
-    "lint": "",
+    "lint": "eslint -c .eslintrc.json --ext .ts src",
     "build": "tsc",
     "start:dev": "tsc --watch"
   },
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lotr/characters": "*",
+    "@lotr/eslint-config": "*",
     "@lotr/interfaces": "*",
     "lodash": "^4.17.21"
   }

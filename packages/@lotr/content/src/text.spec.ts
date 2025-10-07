@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { skillGetDescription } from './text';
 import { Skill } from '@lotr/interfaces';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { skillGetDescription } from './text';
 
 // Mock dependencies
 vi.mock('./core', () => ({
@@ -13,7 +13,7 @@ describe('Text Functions', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
-    
+
     const core = await import('./core');
     mockCoreSkillDescs = vi.mocked(core.coreSkillDescs);
   });
@@ -21,7 +21,7 @@ describe('Text Functions', () => {
   describe('skillGetDescription', () => {
     it('should return correct description for valid skill and level', () => {
       const mockSkillDescs = {
-        sword: ['Sword novice', 'Sword apprentice', 'Sword master']
+        sword: ['Sword novice', 'Sword apprentice', 'Sword master'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -34,7 +34,7 @@ describe('Text Functions', () => {
 
     it('should return first description for skill level 0', () => {
       const mockSkillDescs = {
-        conjuration: ['Magic novice', 'Magic apprentice', 'Magic master']
+        conjuration: ['Magic novice', 'Magic apprentice', 'Magic master'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -46,7 +46,7 @@ describe('Text Functions', () => {
 
     it('should return highest description when level exceeds available descriptions', () => {
       const mockSkillDescs = {
-        thievery: ['Thievery novice', 'Thievery apprentice', 'Thievery master']
+        thievery: ['Thievery novice', 'Thievery apprentice', 'Thievery master'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -58,29 +58,37 @@ describe('Text Functions', () => {
 
     it('should handle null and undefined skillLevel', () => {
       const mockSkillDescs = {
-        staff: ['Staff novice', 'Staff apprentice']
+        staff: ['Staff novice', 'Staff apprentice'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
 
-      expect(skillGetDescription(Skill.Staff, null as any)).toBe('Staff novice');
-      expect(skillGetDescription(Skill.Staff, undefined as any)).toBe('Staff novice');
+      expect(skillGetDescription(Skill.Staff, null as any)).toBe(
+        'Staff novice',
+      );
+      expect(skillGetDescription(Skill.Staff, undefined as any)).toBe(
+        'Staff novice',
+      );
     });
 
     it('should handle single description arrays', () => {
       const mockSkillDescs = {
-        throwing: ['You can throw objects.']
+        throwing: ['You can throw objects.'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
 
-      expect(skillGetDescription(Skill.Throwing, 0)).toBe('You can throw objects.');
-      expect(skillGetDescription(Skill.Throwing, 100)).toBe('You can throw objects.');
+      expect(skillGetDescription(Skill.Throwing, 0)).toBe(
+        'You can throw objects.',
+      );
+      expect(skillGetDescription(Skill.Throwing, 100)).toBe(
+        'You can throw objects.',
+      );
     });
 
     it('should use Math.min to cap skill levels', () => {
       const mockSkillDescs = {
-        axe: ['Level 0', 'Level 1', 'Level 2']
+        axe: ['Level 0', 'Level 1', 'Level 2'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -93,7 +101,7 @@ describe('Text Functions', () => {
 
     it('should handle fractional skill levels', () => {
       const mockSkillDescs = {
-        dagger: ['Novice', 'Apprentice', 'Expert']
+        dagger: ['Novice', 'Apprentice', 'Expert'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -107,7 +115,7 @@ describe('Text Functions', () => {
 
     it('should call coreSkillDescs for each invocation', () => {
       const mockSkillDescs = {
-        mace: ['Mace novice']
+        mace: ['Mace novice'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -133,7 +141,7 @@ describe('Text Functions', () => {
 
     it('should handle when skill not found in descriptions', () => {
       const mockSkillDescs = {
-        ranged: ['Ranged novice']
+        ranged: ['Ranged novice'],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
@@ -142,7 +150,7 @@ describe('Text Functions', () => {
 
     it('should handle empty descriptions array', () => {
       const mockSkillDescs = {
-        axe: []
+        axe: [],
       } as any;
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);

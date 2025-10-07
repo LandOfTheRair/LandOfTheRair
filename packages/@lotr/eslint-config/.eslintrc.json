@@ -117,7 +117,7 @@
     "no-empty": "off",
     "no-eval": "error",
     "no-fallthrough": "error",
-    "no-invalid-this": "off",
+    "no-invalid-this": "error",
     "no-multiple-empty-lines": "off",
     "no-new-wrappers": "error",
     "no-restricted-imports": ["error", "rxjs/Rx"],

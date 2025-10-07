@@ -1,4 +1,4 @@
-import { Skill } from '@lotr/interfaces';
+import type { Skill } from '@lotr/interfaces';
 import { coreSkillDescs } from './core';
 
 export function skillGetDescription(skill: Skill, skillLevel: number): string {

@@ -6,6 +6,7 @@ let rollbar: Rollbar | undefined;
 let winston: Winston.Logger | undefined;
 
 function _logWithTs(type: 'info' | 'warn' | 'error' | 'debug', tag, ...args) {
+  // eslint-disable-next-line no-console
   const fallback = () => console[type](tag, ...args);
 
   if (!winston) {

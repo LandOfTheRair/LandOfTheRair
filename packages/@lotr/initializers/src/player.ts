@@ -1,4 +1,5 @@
-import { BaseClass, IPlayer, Skill } from '@lotr/interfaces';
+import type { IPlayer } from '@lotr/interfaces';
+import { BaseClass, Skill } from '@lotr/interfaces';
 import { initializeCharacter } from './character';
 
 export const initializePlayer = (char: Partial<IPlayer> = {}): IPlayer => {

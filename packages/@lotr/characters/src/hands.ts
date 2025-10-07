@@ -18,10 +18,7 @@ export function hasHeldItemInEitherHand(
   char: ICharacter,
   item: string,
 ): boolean {
-  return (
-    this.hasHeldItem(char, item, 'right') ||
-    this.hasHeldItem(char, item, 'left')
-  );
+  return hasHeldItem(char, item, 'right') || hasHeldItem(char, item, 'left');
 }
 
 export function hasHeldItems(
@@ -30,10 +27,8 @@ export function hasHeldItems(
   item2: string,
 ): boolean {
   return (
-    (this.hasHeldItem(char, item1, 'right') &&
-      this.hasHeldItem(char, item2, 'left')) ||
-    (this.hasHeldItem(char, item2, 'right') &&
-      this.hasHeldItem(char, item1, 'left'))
+    (hasHeldItem(char, item1, 'right') && hasHeldItem(char, item2, 'left')) ||
+    (hasHeldItem(char, item2, 'right') && hasHeldItem(char, item1, 'left'))
   );
 }
 

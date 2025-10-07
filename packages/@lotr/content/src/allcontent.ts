@@ -1,6 +1,6 @@
 import deepfreeze from 'deep-freeze';
 
-import {
+import type {
   Allegiance,
   Holiday,
   IAchievement,

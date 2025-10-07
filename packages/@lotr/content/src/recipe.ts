@@ -1,4 +1,4 @@
-import { IRecipe } from '@lotr/interfaces';
+import type { IRecipe } from '@lotr/interfaces';
 import { getContentKey } from './allcontent';
 import { logErrorWithContext } from './errors';
 

@@ -1,4 +1,4 @@
-import { BaseClass, ClassConfig, IGameSettings } from '@lotr/interfaces';
+import type { BaseClass, ClassConfig, IGameSettings } from '@lotr/interfaces';
 import { get, isUndefined } from 'lodash';
 import { coreSettings } from './core';
 

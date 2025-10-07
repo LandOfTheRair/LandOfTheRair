@@ -1,4 +1,4 @@
-import { ISpawnerData } from '@lotr/interfaces';
+import type { ISpawnerData } from '@lotr/interfaces';
 import { getContentKey } from './allcontent';
 import { logErrorWithContext } from './errors';
 

@@ -1,4 +1,4 @@
-import { INPC, INPCDefinition } from '@lotr/interfaces';
+import type { INPC, INPCDefinition } from '@lotr/interfaces';
 import { initializeCharacter } from './character';
 
 export const initializeNPC = (char: Partial<INPCDefinition> = {}): INPC => {

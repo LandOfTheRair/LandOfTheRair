@@ -1,10 +1,5 @@
-import {
-  Alignment,
-  Allegiance,
-  BaseClass,
-  Direction,
-  ICharacter,
-} from '@lotr/interfaces';
+import type { ICharacter } from '@lotr/interfaces';
+import { Alignment, Allegiance, BaseClass, Direction } from '@lotr/interfaces';
 
 export const initializeCharacter = (
   char: Partial<ICharacter> = {},

@@ -9,10 +9,10 @@
     "lint": "eslint -c .eslintrc.json --ext .ts src"
   },
   "devDependencies": {
+    "@lotr/eslint-config": "*",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@lotr/eslint-config": "*",
     "@lotr/interfaces": "*",
     "@lotr/shared": "*"
   }

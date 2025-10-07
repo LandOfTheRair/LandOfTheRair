@@ -1,4 +1,4 @@
-import { Rollable } from '@lotr/interfaces';
+import type { Rollable } from '@lotr/interfaces';
 import { getContentKey } from './allcontent';
 
 const customRegionDrops: Record<string, { drops: Rollable[] }> = {};

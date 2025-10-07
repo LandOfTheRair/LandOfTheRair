@@ -1,4 +1,4 @@
-import { IItemDefinition } from '@lotr/interfaces';
+import type { IItemDefinition } from '@lotr/interfaces';
 import { cloneDeep } from 'lodash';
 import { getContentKey } from './allcontent';
 import { logErrorWithContext } from './errors';

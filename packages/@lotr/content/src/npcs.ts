@@ -1,4 +1,4 @@
-import { INPCDefinition } from '@lotr/interfaces';
+import type { INPCDefinition } from '@lotr/interfaces';
 import { getContentKey } from './allcontent';
 import { logErrorWithContext } from './errors';
 

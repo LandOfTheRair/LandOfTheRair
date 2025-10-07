@@ -1,5 +1,6 @@
 import { getStat } from '@lotr/characters';
-import { ICharacter, Stat } from '@lotr/interfaces';
+import type { ICharacter } from '@lotr/interfaces';
+import { Stat } from '@lotr/interfaces';
 import { random } from 'lodash';
 
 // an X in Y chance - eg, a 5 in 100
