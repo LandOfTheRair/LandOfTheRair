@@ -1,3 +1,4 @@
+import { isDead } from '@lotr/characters';
 import { DamageClass } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
 
@@ -21,7 +22,7 @@ export class CrazedSedgwickAIBehavior extends DefaultAIBehavior {
     });
 
     setTimeout(() => {
-      if (this.game.characterHelper.isDead(npc)) return;
+      if (isDead(npc)) return;
 
       const players = this.game.worldManager.getPlayersInMap(npc.map);
       players.forEach((p) => {

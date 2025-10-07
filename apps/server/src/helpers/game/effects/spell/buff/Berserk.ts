@@ -1,13 +1,11 @@
+import { getStat, heal, isPlayer, mana, manaDamage } from '@lotr/characters';
 import type {
   DamageArgs,
   ICharacter,
   INPC,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  SoundEffect,
-  Stat,
+  IStatusEffect,
 } from '@lotr/interfaces';
+import { DamageClass, SoundEffect, Stat } from '@lotr/interfaces';
 import { sample } from 'lodash';
 import { Effect } from '../../../../../models';
 
@@ -30,7 +28,7 @@ export class Berserk extends Effect {
       char,
       'EnragingStrikes',
     );
-    this.game.characterHelper.mana(char, rageGeneratedBoost);
+    mana(char, rageGeneratedBoost);
   }
 
   public override incoming(
@@ -46,7 +44,7 @@ export class Berserk extends Effect {
         this.game.traitHelper.traitLevelValue(char, 'MagicalVortex'),
       )
     ) {
-      this.game.characterHelper.heal(char, currentDamage);
+      heal(char, currentDamage);
 
       this.sendMessage(char, {
         message: `Yummy magics!`,
@@ -182,11 +180,8 @@ export class Berserk extends Effect {
       .getPossibleTargetsInViewRange(char, targetString)
       .filter((target) => {
         if (target === char) return false;
-        if (this.game.characterHelper.isPlayer(target)) return false;
-        if (
-          (target as INPC).owner &&
-          this.game.characterHelper.isPlayer((target as INPC).owner!)
-        ) {
+        if (isPlayer(target)) return false;
+        if ((target as INPC).owner && isPlayer((target as INPC).owner!)) {
           return false;
         }
 
@@ -216,7 +211,7 @@ export class Berserk extends Effect {
       message: 'You search for another head to smash!',
     });
     this.game.movementHelper.moveRandomly(char, 3);
-    this.game.characterHelper.manaDamage(char, 3);
+    manaDamage(char, 3);
   }
 
   // tier actions
@@ -302,10 +297,7 @@ export class Berserk extends Effect {
       [Stat.PhysicalBoostPercent]: 0,
     };
 
-    const charDefense = this.game.characterHelper.getStat(
-      character,
-      Stat.Defense,
-    );
+    const charDefense = getStat(character, Stat.Defense);
 
     if (tier >= 2) {
       stats[Stat.HP] += 25 * character.level;

@@ -9,6 +9,7 @@ import { Hostility } from '@lotr/interfaces';
 import type { WorldMap } from './Map';
 import type { MapState } from './MapState';
 
+import { isDead } from '@lotr/characters';
 import { AllAIBehaviors } from './ai';
 
 export class Spawner {
@@ -66,7 +67,7 @@ export class Spawner {
   private replaceNPCDefs: Record<string, INPCDefinition> = {};
 
   public get areAnyNPCsAlive(): boolean {
-    return this.npcs.some((npc) => !this.game.characterHelper.isDead(npc));
+    return this.npcs.some((npc) => !isDead(npc));
   }
 
   public get canBeSaved(): boolean {
@@ -201,7 +202,7 @@ export class Spawner {
     this.npcs.forEach((npc) => {
       if (
         this.removeDeadNPCs &&
-        this.game.characterHelper.isDead(npc) &&
+        isDead(npc) &&
         !this.replaceNPCDefs[npc.uuid]
       ) {
         this.removeNPC(npc);
@@ -210,7 +211,7 @@ export class Spawner {
 
       if (
         !this.removeDeadNPCs &&
-        this.game.characterHelper.isDead(npc) &&
+        isDead(npc) &&
         this.replaceNPCDefs[npc.uuid]
       ) {
         if (!this.replaceNPCTicks[npc.uuid]) {

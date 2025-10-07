@@ -1,3 +1,4 @@
+import { isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
@@ -10,9 +11,7 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
   private acolytes: INPC[] = [];
 
   public get livingAcolytes(): INPC[] {
-    return this.acolytes
-      .filter((ac: INPC) => !this.game.characterHelper.isDead(ac))
-      .filter(Boolean);
+    return this.acolytes.filter((ac: INPC) => !isDead(ac)).filter(Boolean);
   }
 
   override mechanicTick(): void {
@@ -65,10 +64,7 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
   private spawnAcolyte(spawnId: number): void {
     const npc = this.npc;
 
-    if (
-      this.acolytes[spawnId] &&
-      !this.game.characterHelper.isDead(this.acolytes[spawnId])
-    ) {
+    if (this.acolytes[spawnId] && !isDead(this.acolytes[spawnId])) {
       return;
     }
 

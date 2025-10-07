@@ -1,3 +1,4 @@
+import { getStat } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import type {
   ICharacter,
@@ -316,7 +317,7 @@ export class InventoryHelper extends BaseService {
     // items that do not have a modded sellvalue (ie, rare gems) can get modified
     if (check && !item.mods.sellValue) {
       // sliding scale % based on CHA
-      const cha = this.game.characterHelper.getStat(check, Stat.CHA);
+      const cha = getStat(check, Stat.CHA);
 
       // at a base of 10, you get +0.2% value per CHA
       const sellPercentMod =

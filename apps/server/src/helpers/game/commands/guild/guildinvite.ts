@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models';
@@ -14,7 +15,7 @@ export class GuildInvite extends MacroCommand {
     );
     if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
 
-    if (!this.game.characterHelper.isPlayer(target)) {
+    if (!isPlayer(target)) {
       this.sendMessage(player, 'That is not a player!');
       return;
     }

@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { isObject, isString } from 'lodash';
 
+import { canAct, isDead } from '@lotr/characters';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -147,10 +148,7 @@ export class CommandHandler extends BaseService {
       return;
     }
 
-    if (
-      this.game.characterHelper.isDead(player) &&
-      !commandRef.canUseWhileDead
-    ) {
+    if (isDead(player) && !commandRef.canUseWhileDead) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: "You can't do that while you're dead!",
       });
@@ -195,7 +193,7 @@ export class CommandHandler extends BaseService {
     callback.args = args;
 
     if (isInstant) {
-      if (!this.game.characterHelper.canAct(player)) return;
+      if (!canAct(player)) return;
       callback();
     } else if (isFast) {
       player.actionQueue.fast.push(callback as any);

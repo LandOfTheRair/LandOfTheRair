@@ -1,14 +1,13 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
+import { engageInCombat, getStat, isDead } from '@lotr/characters';
 import type {
   CombatEffect,
   ICharacter,
-  MagicalAttackArgs } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Stat,
+  MagicalAttackArgs,
 } from '@lotr/interfaces';
+import { DamageClass, Stat } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -40,21 +39,21 @@ export class DamageHelperMagic extends BaseService {
     defender: ICharacter,
     args: MagicalAttackArgs,
   ) {
-    if (this.game.characterHelper.isDead(defender)) return;
+    if (isDead(defender)) return;
 
     let startDamage = args.damage ?? 0;
 
     // only engage in combat if damage > 0
     if (startDamage > 0) {
-      if (attacker) this.game.characterHelper.engageInCombat(attacker);
-      this.game.characterHelper.engageInCombat(defender);
+      if (attacker) engageInCombat(attacker);
+      engageInCombat(defender);
     }
 
     // try to do critical damage if possible
     if (
       attacker &&
       this.game.diceRollerHelper.XInOneHundred(
-        this.game.characterHelper.getStat(attacker, Stat.SpellCriticalPercent),
+        getStat(attacker, Stat.SpellCriticalPercent),
       )
     ) {
       startDamage *= this.magicCriticalMultiplier;
@@ -63,7 +62,7 @@ export class DamageHelperMagic extends BaseService {
     // try to do a WIL save if possible, default is a 20/30 save
     if (args.spellData) {
       const { willSaveThreshold, willSavePercent } = args.spellData;
-      const defWIL = this.game.characterHelper.getStat(defender, Stat.WIL);
+      const defWIL = getStat(defender, Stat.WIL);
 
       if (
         random(0, defWIL) >=

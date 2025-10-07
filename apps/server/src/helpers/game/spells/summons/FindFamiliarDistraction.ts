@@ -1,3 +1,4 @@
+import { getStat, healToFull, manaToFull } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -5,7 +6,7 @@ import { Spell } from '../../../../models/world/Spell';
 export class FindFamiliarDistraction extends Spell {
   override getDuration(caster: ICharacter | null) {
     if (!caster) return 0;
-    return Math.floor(this.game.characterHelper.getStat(caster, Stat.AGI) * 5);
+    return Math.floor(getStat(caster, Stat.AGI) * 5);
   }
 
   override cast(
@@ -32,8 +33,8 @@ export class FindFamiliarDistraction extends Spell {
       pet.affiliation = `${caster.name}'s Distraction`;
 
       this.game.characterHelper.recalculateEverything(pet);
-      this.game.characterHelper.healToFull(pet);
-      this.game.characterHelper.manaToFull(pet);
+      healToFull(pet);
+      manaToFull(pet);
     });
   }
 }

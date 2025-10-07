@@ -4,6 +4,7 @@ import type { IPlayer } from '@lotr/interfaces';
 import { Hostility, Stat } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
 
+import { getStat, isDead } from '@lotr/characters';
 import { distanceFrom } from '@lotr/shared';
 export class DedlaenEscortAI extends DefaultAIBehavior {
   private following: IPlayer | undefined;
@@ -12,7 +13,7 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
   override tick(): void {
     const npc = this.npc;
 
-    if (this.game.characterHelper.isDead(npc)) return;
+    if (isDead(npc)) return;
     if (npc.hostility === Hostility.Never) return;
 
     const nearbyPlayers = this.game.worldManager
@@ -23,7 +24,7 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
     this.following = target;
 
     const responses: string[] = [];
-    const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
+    const moveRate = getStat(npc, Stat.Move);
 
     if (this.following) {
       this.notFollowingTicks = 0;

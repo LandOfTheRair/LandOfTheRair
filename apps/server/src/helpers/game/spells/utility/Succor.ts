@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  Skill
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { ItemSlot, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Succor extends Spell {
@@ -36,9 +31,7 @@ export class Succor extends Spell {
 
     const maxOz = Math.max(
       1,
-      Math.floor(
-        this.game.characterHelper.getSkillLevel(caster, Skill.Restoration) / 5,
-      ),
+      Math.floor(getSkillLevel(caster, Skill.Restoration) / 5),
     );
 
     const succorItem = this.game.itemCreator.createSuccorItem(

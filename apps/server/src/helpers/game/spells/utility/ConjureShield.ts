@@ -1,12 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class ConjureShield extends Spell {
@@ -33,7 +27,7 @@ export class ConjureShield extends Spell {
 
     const skill = Math.max(
       spellCastArgs.potency,
-      this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1,
+      getSkillLevel(caster, Skill.Conjuration) + 1,
     );
 
     item.mods.destroyOnDrop = true;

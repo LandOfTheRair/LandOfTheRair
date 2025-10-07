@@ -1,4 +1,11 @@
 import {
+  addPet,
+  healToFull,
+  isDead,
+  isPlayer,
+  manaToFull,
+} from '@lotr/characters';
+import {
   calcSkillLevelForCharacter,
   calculateSkillXPRequiredForLevel,
 } from '@lotr/exp';
@@ -33,7 +40,7 @@ export class FindFamiliar extends Effect {
       }
 
       // match the player
-      if (this.game.characterHelper.isPlayer(char)) {
+      if (isPlayer(char)) {
         npc.allegianceReputation.Enemy = -100000;
         npc.hostility = Hostility.Faction;
       } else {
@@ -119,11 +126,11 @@ export class FindFamiliar extends Effect {
 
       // buff the npc back to full
       this.game.characterHelper.recalculateEverything(npc);
-      this.game.characterHelper.healToFull(npc);
-      this.game.characterHelper.manaToFull(npc);
+      healToFull(npc);
+      manaToFull(npc);
 
       // mark it as a pet
-      this.game.characterHelper.addPet(char, npc);
+      addPet(char, npc);
 
       // give it an effect to mark it as a pet
       this.game.effectHelper.addEffect(npc, char, 'SummonedPet', {
@@ -178,11 +185,7 @@ export class FindFamiliar extends Effect {
 
     const pets = char.pets;
 
-    if (
-      !pets ||
-      !pets.length ||
-      pets.every((x) => this.game.characterHelper.isDead(x))
-    ) {
+    if (!pets || !pets.length || pets.every((x) => isDead(x))) {
       this.game.effectHelper.removeEffect(char, effect);
       return;
     }

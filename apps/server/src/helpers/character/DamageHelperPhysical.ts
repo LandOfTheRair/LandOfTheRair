@@ -28,6 +28,16 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import {
+  canGainSkillFromTarget,
+  engageInCombat,
+  getSkillLevel,
+  getStat,
+  isDead,
+  isPlayer,
+  mana,
+  manaDamage,
+} from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { distanceFrom } from '@lotr/shared';
@@ -217,7 +227,7 @@ export class DamageHelperPhysical extends BaseService {
     const npcTiers = this.game.contentManager.weaponTiersNPCData;
 
     // player
-    if (this.game.characterHelper.isPlayer(attacker)) return playerTiers;
+    if (isPlayer(attacker)) return playerTiers;
 
     // player summon
     if (attacker.allegianceReputation?.[Allegiance.Enemy] < -10000) {
@@ -305,10 +315,7 @@ export class DamageHelperPhysical extends BaseService {
       return { damage: 0, isWeak: false, isStrong: false };
     }
 
-    let attackerScaleStatValue = this.game.characterHelper.getStat(
-      attacker,
-      scaleStat,
-    );
+    let attackerScaleStatValue = getStat(attacker, scaleStat);
     attackerScaleStatValue += Math.floor(
       attackerScaleStatValue *
         this.game.traitHelper.traitLevelValue(attacker, 'StrongMind'),
@@ -631,16 +638,10 @@ export class DamageHelperPhysical extends BaseService {
     // get relevant stat info for attacker
     const attackerDamageStat =
       isThrow || type === Skill.Ranged ? Stat.DEX : Stat.STR;
-    const baseDamageStat = this.game.characterHelper.getStat(
-      attacker,
-      attackerDamageStat,
-    );
+    const baseDamageStat = getStat(attacker, attackerDamageStat);
 
     // get a base number of bonus attack rolls
-    let bonusAttackRolls = this.game.characterHelper.getStat(
-      attacker,
-      Stat.WeaponDamageRolls,
-    );
+    let bonusAttackRolls = getStat(attacker, Stat.WeaponDamageRolls);
 
     // if we have ammo, we grab the bonus from that
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
@@ -667,18 +668,15 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     let offense = Math.floor(
-      this.game.characterHelper.getStat(attacker, Stat.Offense) *
-        offhandMultiplier,
+      getStat(attacker, Stat.Offense) * offhandMultiplier,
     );
 
     let accuracy =
-      Math.floor(
-        this.game.characterHelper.getStat(attacker, Stat.DEX) *
-          offhandMultiplier,
-      ) - accuracyLoss;
+      Math.floor(getStat(attacker, Stat.DEX) * offhandMultiplier) -
+      accuracyLoss;
 
     // if an NPC is higher level than their target, we give them some sizable buffing
-    if (!this.game.characterHelper.isPlayer(attacker) && levelDifference > 0) {
+    if (!isPlayer(attacker) && levelDifference > 0) {
       offense += Math.floor(levelDifference / 2);
       accuracy += Math.floor(levelDifference / 2);
     }
@@ -689,10 +687,8 @@ export class DamageHelperPhysical extends BaseService {
       offense,
       accuracy,
       dex:
-        Math.floor(
-          this.game.characterHelper.getStat(attacker, Stat.DEX) *
-            offhandMultiplier,
-        ) + this.game.traitHelper.traitLevelValue(attacker, 'MartialAcuity'),
+        Math.floor(getStat(attacker, Stat.DEX) * offhandMultiplier) +
+        this.game.traitHelper.traitLevelValue(attacker, 'MartialAcuity'),
       damageStat: Math.floor(baseDamageStat * offhandMultiplier),
       damageStat4: Math.floor(
         (baseDamageStat / this.damageStatDivisor) * offhandMultiplier,
@@ -747,36 +743,23 @@ export class DamageHelperPhysical extends BaseService {
         : 0;
 
     return {
-      skill:
-        this.game.characterHelper.getSkillLevel(
-          defender,
-          blockerType as Skill,
-        ) + 1,
-      defense: this.game.characterHelper.getStat(defender, Stat.Defense),
-      agi: this.game.characterHelper.getStat(defender, Stat.AGI),
-      dex: this.game.characterHelper.getStat(defender, Stat.DEX),
-      dex4: Math.floor(
-        this.game.characterHelper.getStat(defender, Stat.DEX) /
-          this.defenseDexDivisor,
-      ),
-      armorClass:
-        this.game.characterHelper.getStat(defender, Stat.ArmorClass) +
-        defenderACBoost,
+      skill: getSkillLevel(defender, blockerType as Skill) + 1,
+      defense: getStat(defender, Stat.Defense),
+      agi: getStat(defender, Stat.AGI),
+      dex: getStat(defender, Stat.DEX),
+      dex4: Math.floor(getStat(defender, Stat.DEX) / this.defenseDexDivisor),
+      armorClass: getStat(defender, Stat.ArmorClass) + defenderACBoost,
       weaponAC: blockerStats?.[Stat.WeaponArmorClass] ?? 0,
       shieldAC: shieldStats?.[Stat.ArmorClass] ?? 0,
       shieldDefense: shieldStats?.[Stat.Defense] ?? 0,
       offhandAC: offhandACBoost + (offhandStats?.[Stat.WeaponArmorClass] ?? 0),
       offhandDefense: offhandStats?.[Stat.Defense] ?? 0,
       offhandSkill: defenderOffhand
-        ? Math.floor(
-            this.game.characterHelper.getSkillLevel(
-              defender,
-              offhandType as Skill,
-            ) + 1,
-          ) / this.defenseOffhandSkillDivisor
+        ? Math.floor(getSkillLevel(defender, offhandType as Skill) + 1) /
+          this.defenseOffhandSkillDivisor
         : 0,
       level: defender.level,
-      mitigation: this.game.characterHelper.getStat(defender, Stat.Mitigation),
+      mitigation: getStat(defender, Stat.Mitigation),
       dodgeBonus: Math.floor(
         (100 - (armorStats?.[Stat.Mitigation] ?? 0)) / this.dodgeBonusDivisor,
       ),
@@ -1369,10 +1352,10 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     const defCon =
-      this.game.characterHelper.getStat(defender, Stat.CON) *
+      getStat(defender, Stat.CON) *
       this.game.traitHelper.traitLevelValue(defender, 'CombatFortitude');
 
-    const atkStr = this.game.characterHelper.getStat(attacker, Stat.STR);
+    const atkStr = getStat(attacker, Stat.STR);
 
     const diff = atkStr - defCon;
     conMultiplier = Math.max(1, conMultiplier - diff);
@@ -1413,7 +1396,7 @@ export class DamageHelperPhysical extends BaseService {
     defender: ICharacter,
     args: PhysicalAttackArgs,
   ): PhysicalAttackReturn {
-    if (this.game.characterHelper.isDead(defender)) return { isDead: true };
+    if (isDead(defender)) return { isDead: true };
 
     const { isThrow, throwHand, isOffhand, isKick } = args;
     let { isPunch, isBackstab, damageMult } = args;
@@ -1467,17 +1450,14 @@ export class DamageHelperPhysical extends BaseService {
       if (args.offhandMultiplier < 0.1) args.offhandMultiplier = 0.1;
     }
 
-    const isAttackerPlayer = this.game.characterHelper.isPlayer(attacker);
+    const isAttackerPlayer = isPlayer(attacker);
 
-    if (
-      this.game.characterHelper.isDead(attacker) ||
-      this.game.characterHelper.isDead(defender)
-    ) {
+    if (isDead(attacker) || isDead(defender)) {
       return { isDead: true };
     }
 
-    this.game.characterHelper.engageInCombat(attacker);
-    this.game.characterHelper.engageInCombat(defender);
+    engageInCombat(attacker);
+    engageInCombat(defender);
 
     const attackerWeapon = this.getWeaponForAttacker(attacker, args);
     const { type, secondaryType, itemClass, canShoot, damageClass } =
@@ -1662,12 +1642,7 @@ export class DamageHelperPhysical extends BaseService {
     let damage = Math.floor(attackerScope.damage);
 
     damage += Math.floor(
-      (damage *
-        this.game.characterHelper.getStat(
-          attacker,
-          Stat.PhysicalBoostPercent,
-        )) /
-        100,
+      (damage * getStat(attacker, Stat.PhysicalBoostPercent)) / 100,
     );
 
     if (isOffhand && args.offhandMultiplier) {
@@ -1757,7 +1732,7 @@ export class DamageHelperPhysical extends BaseService {
     ) {
       isEnraged = true;
       damageMult += 0.2;
-      this.game.characterHelper.manaDamage(attacker, 20);
+      manaDamage(attacker, 20);
     }
 
     if (isBackstab) {
@@ -1813,7 +1788,7 @@ export class DamageHelperPhysical extends BaseService {
         attacker,
         'OffensiveEncore',
       );
-      this.game.characterHelper.mana(attacker, encoreBoost);
+      mana(attacker, encoreBoost);
     }
 
     // if our ammo was shot and can apply an effect, we give it a spin
@@ -1883,10 +1858,7 @@ export class DamageHelperPhysical extends BaseService {
 
     if (totalDamageDealt <= 0) return { noDamage: true };
 
-    if (
-      isAttackerPlayer &&
-      this.game.characterHelper.canGainSkillFromTarget(defender)
-    ) {
+    if (isAttackerPlayer && canGainSkillFromTarget(defender)) {
       this.game.playerHelper.gainCurrentSkills(
         attacker as IPlayer,
         1 / (args.numAttacks ?? 1),

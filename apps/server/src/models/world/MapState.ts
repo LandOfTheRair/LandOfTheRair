@@ -6,6 +6,7 @@ import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../helpers';
 
+import { isDead, isPlayer } from '@lotr/characters';
 import type {
   ICharacter,
   IGround,
@@ -441,7 +442,7 @@ export class MapState {
     return this.getPlayersFromQuadtrees(ref, radius).filter(
       (char) =>
         char &&
-        !this.game.characterHelper.isDead(char) &&
+        !isDead(char) &&
         !except.includes(char.uuid) &&
         this.game.targettingHelper.isVisibleTo(ref, char, useSight),
     );
@@ -468,7 +469,7 @@ export class MapState {
     return this.getAllTargetsFromQuadtrees(ref, radius).filter(
       (char) =>
         char &&
-        !this.game.characterHelper.isDead(char) &&
+        !isDead(char) &&
         !except.includes(char.uuid) &&
         this.game.targettingHelper.isVisibleTo(ref, char, useSight),
     );
@@ -481,10 +482,7 @@ export class MapState {
     except: string[] = [],
   ): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius).filter(
-      (char) =>
-        char &&
-        !this.game.characterHelper.isDead(char) &&
-        !except.includes(char.uuid),
+      (char) => char && !isDead(char) && !except.includes(char.uuid),
     );
   }
 
@@ -495,10 +493,7 @@ export class MapState {
     except: string[] = [],
   ): ICharacter[] {
     return this.getAllTargetsFromQuadtrees(ref, radius).filter(
-      (char) =>
-        char &&
-        !this.game.characterHelper.isDead(char) &&
-        !except.includes(char.uuid),
+      (char) => char && !isDead(char) && !except.includes(char.uuid),
     );
   }
 
@@ -582,7 +577,7 @@ export class MapState {
 
   // move an NPC or a player without the caller having to figure out which func to call
   public moveNPCOrPlayer(character: ICharacter, { oldX, oldY }): void {
-    if (this.game.characterHelper.isPlayer(character)) {
+    if (isPlayer(character)) {
       this.movePlayer(character as Player, { oldX, oldY });
     } else {
       this.moveNPC(character as INPC, { oldX, oldY });

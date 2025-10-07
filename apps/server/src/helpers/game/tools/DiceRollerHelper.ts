@@ -1,3 +1,4 @@
+import { getStat } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -40,7 +41,7 @@ export class DiceRollerHelper extends BaseService {
 
   // a one-to-luk roll, which will be used for anything rolling luk
   OneToStat(char: ICharacter, stat: Stat): number {
-    return random(1, this.game.characterHelper.getStat(char, stat));
+    return random(1, getStat(char, stat));
   }
 
   OneToLUK(char: ICharacter): number {

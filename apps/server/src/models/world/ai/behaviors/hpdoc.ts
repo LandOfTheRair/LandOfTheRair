@@ -10,8 +10,8 @@ import type {
 import { GameServerResponse, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { getBaseStat } from '@lotr/characters';
+import type { Game } from '../../../../helpers';
 
 export class HPDocBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IHPDocBehavior) {
@@ -90,7 +90,7 @@ export class HPDocBehavior implements IAIBehavior {
 
         if (!hpTiers) return 'Unsure how help!';
 
-        const playerBaseHp = game.characterHelper.getBaseStat(player, Stat.HP);
+        const playerBaseHp = getBaseStat(player, Stat.HP);
         const maxHpForTier = hpTiers[tier];
         if (playerBaseHp > maxHpForTier) return 'Too powerful! No help!';
 
@@ -119,7 +119,7 @@ export class HPDocBehavior implements IAIBehavior {
           totalCost += cost;
           totalHPGained++;
           game.characterHelper.gainPermanentStat(player, Stat.HP, 1);
-          const hp = game.characterHelper.getBaseStat(player, Stat.HP);
+          const hp = getBaseStat(player, Stat.HP);
 
           if (hp >= maxHpForTier) {
             cost = -1;

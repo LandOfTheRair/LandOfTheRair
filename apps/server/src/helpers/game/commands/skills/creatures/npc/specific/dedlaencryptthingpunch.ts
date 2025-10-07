@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { engageInCombat, isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 import type { Player } from '../../../../../../../models';
@@ -18,10 +19,10 @@ export class DedlaenCryptThingPunch extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
     if (!this.game.diceRollerHelper.OneInX(20)) return;
 
-    this.game.characterHelper.engageInCombat(executor, 60);
+    engageInCombat(executor, 60);
 
     const allSpots =
       this.game.worldManager
@@ -37,7 +38,7 @@ export class DedlaenCryptThingPunch extends SpellCommand {
       const y = spot.y / 64 - 1;
       this.game.teleportHelper.setCharXY(target, x, y);
 
-      if (this.game.characterHelper.isPlayer(target)) {
+      if (isPlayer(target)) {
         this.game.playerHelper.resetStatus(target as Player, {
           sendFOV: false,
         });

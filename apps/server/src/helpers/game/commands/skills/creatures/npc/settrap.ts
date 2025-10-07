@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
@@ -18,7 +19,7 @@ export class SetTrap extends SpellCommand {
   }
 
   override use(executor: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     const trap = executor.items.sack.items.find((x) => {
       const itemClass = this.game.itemHelper.getItemProperty(x, 'itemClass');

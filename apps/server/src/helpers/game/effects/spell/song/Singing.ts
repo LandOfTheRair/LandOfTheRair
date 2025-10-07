@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { isPlayer } from '@lotr/characters';
+import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
+import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class Singing extends Effect {
@@ -39,7 +34,7 @@ export class Singing extends Effect {
 
     // thieves have to use their stealth bar
     if (gainsSkillFromSinging) {
-      if (this.game.characterHelper.isPlayer(char)) {
+      if (isPlayer(char)) {
         this.game.playerHelper.tryGainSkill(char as IPlayer, Skill.Thievery, 1);
       }
     }

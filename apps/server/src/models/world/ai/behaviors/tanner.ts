@@ -16,8 +16,9 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import type { Game } from '../../../../helpers';
+
+import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 
 export class TannerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -54,7 +55,7 @@ export class TannerBehavior implements IAIBehavior {
           { text: 'Leave', action: 'noop' },
         ];
 
-        if (!game.characterHelper.hasLearned(player, 'Weavefabricating')) {
+        if (!hasLearned(player, 'Weavefabricating')) {
           options.unshift({
             text: 'Teach me about Weavefabricating',
             action: 'teach',
@@ -157,20 +158,16 @@ export class TannerBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Weavefabricating')) {
+        if (hasLearned(player, 'Weavefabricating')) {
           return 'You already know Weavefabricating!';
         }
 
-        game.characterHelper.forceSpellLearnStatus(
+        forceSpellLearnStatus(
           player,
           'Weavefabricating',
           LearnedSpell.FromFate,
         );
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Tear',
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(player, 'Tear', LearnedSpell.FromFate);
 
         return 'Go forth and make gorgeous fabrics!';
       });

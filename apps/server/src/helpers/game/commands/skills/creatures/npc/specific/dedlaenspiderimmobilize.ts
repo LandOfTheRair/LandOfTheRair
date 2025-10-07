@@ -1,3 +1,4 @@
+import { getStat, isPlayer } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
@@ -11,7 +12,7 @@ export class DedlaenSpiderImmobilize extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       distanceFrom(caster, target) === 0 &&
-      this.game.characterHelper.getStat(target, Stat.STR) < 25 &&
+      getStat(target, Stat.STR) < 25 &&
       !hasEffect(target, 'Immobilized') &&
       !hasEffect(target, 'RecentlyImmobilized')
     );
@@ -22,11 +23,9 @@ export class DedlaenSpiderImmobilize extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
-    const duration = Math.floor(
-      Math.max(2, 20 - this.game.characterHelper.getStat(target, Stat.STR)),
-    );
+    const duration = Math.floor(Math.max(2, 20 - getStat(target, Stat.STR)));
     this.game.effectHelper.addEffect(target, executor, 'Immobilized', {
       effect: { duration },
     });

@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
@@ -12,7 +13,7 @@ export class LavaBreathing extends Effect {
   }
 
   override unapply(char: ICharacter) {
-    if (!this.game.characterHelper.isPlayer(char)) return;
+    if (!isPlayer(char)) return;
     this.game.playerHelper.resetStatus(char as Player, {
       ignoreMessages: true,
       sendFOV: false,

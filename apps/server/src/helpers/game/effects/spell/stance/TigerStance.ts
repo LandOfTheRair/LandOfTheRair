@@ -1,13 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  ItemSlot,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class TigerStance extends Effect {
@@ -19,8 +12,7 @@ export class TigerStance extends Effect {
       message: `${char.name} takes on a fierce stance.`,
     });
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Martial) + 1;
+    const skill = getSkillLevel(char, Skill.Martial) + 1;
 
     effect.effectInfo.statChanges = {
       [Stat.Defense]: -skill,

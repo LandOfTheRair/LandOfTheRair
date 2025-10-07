@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../../models/macro';
 
@@ -16,7 +17,7 @@ export class CatacombsLichSummon extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     const state = this.game.worldManager.getMap(executor.map)?.state;
     if (!state) return;

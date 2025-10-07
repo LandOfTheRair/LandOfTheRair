@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
 import { DefaultAIBehavior } from './default';
@@ -33,9 +34,7 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
   private brothers: INPC[] = [];
 
   public get livingBrothers(): INPC[] {
-    return this.brothers
-      .filter((ac: INPC) => !this.game.characterHelper.isDead(ac))
-      .filter(Boolean);
+    return this.brothers.filter((ac: INPC) => !isDead(ac)).filter(Boolean);
   }
 
   override mechanicTick(): void {

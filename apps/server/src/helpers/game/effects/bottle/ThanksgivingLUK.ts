@@ -1,3 +1,4 @@
+import { getBaseStat } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -17,7 +18,7 @@ export class ThanksgivingLUK extends Effect {
     });
 
     if (
-      this.game.characterHelper.getBaseStat(char, Stat.LUK) < 17 &&
+      getBaseStat(char, Stat.LUK) < 17 &&
       this.game.diceRollerHelper.XInOneHundred(1)
     ) {
       this.game.characterHelper.gainPermanentStat(char, Stat.LUK, 1);

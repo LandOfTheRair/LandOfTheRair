@@ -1,6 +1,14 @@
 import { Injectable } from 'injection-js';
 import { isArray, random } from 'lodash';
 
+import {
+  canAct,
+  getStat,
+  hasLearned,
+  hasLearnedFromItem,
+  isDead,
+  isPlayer,
+} from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import {
   calcSkillLevelForCharacter,
@@ -119,15 +127,15 @@ export class PlayerHelper extends BaseService {
       }
     }
 
-    const canAct = this.game.characterHelper.canAct(player);
+    const canTakeActions = canAct(player);
 
-    if (!canAct && type === 'slow') {
+    if (!canTakeActions && type === 'slow') {
       this.game.characterHelper.tryDance(player);
       return;
     }
 
     // do actions if we have any
-    if (player.actionQueue && canAct) {
+    if (player.actionQueue && canTakeActions) {
       const queue = player.actionQueue[type] || [];
 
       const actions =
@@ -152,25 +160,19 @@ export class PlayerHelper extends BaseService {
         //  if we have a spell, we gotta do a lot of checks
         if (args.spell) {
           const [prefix, spell] = args.spell.split(' ');
-          let hasLearned = this.game.characterHelper.hasLearned(
-            player,
-            spell || prefix,
-          );
+          let hasLearnedAbility = hasLearned(player, spell || prefix);
           if (
-            !hasLearned &&
+            !hasLearnedAbility &&
             (prefix === 'stance' ||
               prefix === 'powerword' ||
               prefix === 'findfamiliar' ||
               prefix === 'song')
           ) {
-            hasLearned = this.game.characterHelper.hasLearned(
-              player,
-              `${prefix}${spell}`,
-            );
+            hasLearnedAbility = hasLearned(player, `${prefix}${spell}`);
           }
 
           // if we have to bail because we dont know the spell, we let them know
-          if (!hasLearned) {
+          if (!hasLearnedAbility) {
             this.game.messageHelper.sendSimpleMessage(
               player,
               'You do not know that ability!',
@@ -179,7 +181,7 @@ export class PlayerHelper extends BaseService {
 
             // otherwise, we know it, but we'll try to abuse an item for it
           } else {
-            if (this.game.characterHelper.hasLearnedFromItem(player, spell)) {
+            if (hasLearnedFromItem(player, spell)) {
               args.overrideEffect =
                 this.game.characterHelper.abuseItemsForLearnedSkillAndGetEffect(
                   player,
@@ -262,10 +264,7 @@ export class PlayerHelper extends BaseService {
       if (element === DamageClass.Water) {
         if (hasEffect(player, 'WaterBreathing')) return;
 
-        const swimDuration = this.game.characterHelper.getStat(
-          player,
-          Stat.STR,
-        );
+        const swimDuration = getStat(player, Stat.STR);
         this.game.effectHelper.addEffect(player, '', 'Swimming', {
           effect: { duration: swimDuration },
         });
@@ -386,7 +385,7 @@ export class PlayerHelper extends BaseService {
 
   // flag a certain skill for a player
   public flagSkill(player: IPlayer, skill: Skill | Skill[]): void {
-    if (!this.game.characterHelper.isPlayer(player)) return;
+    if (!isPlayer(player)) return;
 
     player.flaggedSkills = Array.isArray(skill) ? skill : [skill];
 
@@ -444,11 +443,11 @@ export class PlayerHelper extends BaseService {
   // gain exp for a player
   public gainExp(player: IPlayer, xpGained: number): void {
     if (player.gainingAXP && xpGained > 0) return;
-    if (this.game.characterHelper.isDead(player) && xpGained > 0) return;
+    if (isDead(player) && xpGained > 0) return;
 
     if (xpGained > 0) {
       const xpGainBoostPercent =
-        this.game.characterHelper.getStat(player, Stat.XPBonusPercent) +
+        getStat(player, Stat.XPBonusPercent) +
         this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
       xpGained += Math.floor((xpGainBoostPercent / 100) * xpGained);
       xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
@@ -464,7 +463,7 @@ export class PlayerHelper extends BaseService {
   // gain axp for a player
   public gainAxp(player: IPlayer, axpGained: number): void {
     if (!player.gainingAXP && axpGained > 0) return;
-    if (this.game.characterHelper.isDead(player) && axpGained > 0) return;
+    if (isDead(player) && axpGained > 0) return;
 
     axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
     axpGained = cleanNumber(axpGained, 0, {
@@ -494,12 +493,12 @@ export class PlayerHelper extends BaseService {
 
   // gain skill for a character
   public gainSkill(player: IPlayer, skill: Skill, skillGained: number): void {
-    if (this.game.characterHelper.isDead(player)) return;
+    if (isDead(player)) return;
 
     if (!skill) skill = Skill.Martial;
 
     const skillGainBoostPercent =
-      this.game.characterHelper.getStat(player, Stat.SkillBonusPercent) +
+      getStat(player, Stat.SkillBonusPercent) +
       this.game.dynamicEventHelper.getStat(Stat.SkillBonusPercent);
 
     skillGained += Math.floor((skillGainBoostPercent / 100) * skillGained);
@@ -530,7 +529,7 @@ export class PlayerHelper extends BaseService {
     if (
       oldSkillValue !== newSkillValue &&
       newSkillValue % 5 === 0 &&
-      this.game.characterHelper.isPlayer(player)
+      isPlayer(player)
     ) {
       this.game.achievementsHelper.checkAllAchievements(player as Player);
     }
@@ -542,7 +541,7 @@ export class PlayerHelper extends BaseService {
     skill: Tradeskill,
     skillGained: number,
   ): void {
-    if (this.game.characterHelper.isDead(player)) return;
+    if (isDead(player)) return;
     if (!skill) return;
 
     skillGained = cleanNumber(skillGained, 0);
@@ -628,7 +627,7 @@ export class PlayerHelper extends BaseService {
 
   // gain stats for leveling up
   public gainLevelStats(player: IPlayer): void {
-    const con = this.game.characterHelper.getStat(player, Stat.CON);
+    const con = getStat(player, Stat.CON);
 
     const { hp, mp } =
       this.game.contentManager.getClassConfigSetting<'levelup'>(
@@ -653,7 +652,7 @@ export class PlayerHelper extends BaseService {
       );
     }
 
-    const mpGainStat = this.game.characterHelper.getStat(player, mp.statUsed);
+    const mpGainStat = getStat(player, mp.statUsed);
 
     const mpGained = Math.floor(
       random(mp.base, mpGainStat * mp.randomMultiplier) +
@@ -709,7 +708,7 @@ export class PlayerHelper extends BaseService {
 
   // teleport the player to the succor location
   public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
-    if (this.game.characterHelper.isDead(player)) return;
+    if (isDead(player)) return;
 
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (!map) return;

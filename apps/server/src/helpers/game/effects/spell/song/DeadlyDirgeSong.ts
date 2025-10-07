@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { isDead } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -42,9 +43,7 @@ export class DeadlyDirgeSong extends Song {
       );
 
       // Remove anybody who died after the last attack
-      enemies = enemies.filter(
-        (enemy) => !this.game.characterHelper.isDead(enemy),
-      );
+      enemies = enemies.filter((enemy) => !isDead(enemy));
       if (enemies.length === 0) return;
     }
   }

@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  Skill
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { ItemSlot, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class ConjureHealing extends Spell {
@@ -38,8 +33,7 @@ export class ConjureHealing extends Spell {
       'Conjured Healing Potion',
     );
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1;
+    const skill = getSkillLevel(caster, Skill.Conjuration) + 1;
 
     healingItem.mods.ounces = skill * bonusMultiplier;
     healingItem.mods.useEffect = {

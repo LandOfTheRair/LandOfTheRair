@@ -1,3 +1,4 @@
+import { getSkillLevel, hasLearned, isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -9,8 +10,7 @@ export class WizardStance extends Effect {
       message: `${char.name} takes on a wizardly stance.`,
     });
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Conjuration) + 1;
+    const skill = getSkillLevel(char, Skill.Conjuration) + 1;
 
     this.game.effectHelper.removeEffectByName(char, 'Absorption');
     this.game.effectHelper.removeEffectByName(char, 'Protection');
@@ -54,12 +54,9 @@ export class WizardStance extends Effect {
     if (!attacker || damageArgs.damageClass === DamageClass.Physical) {
       return currentDamage;
     }
-    if (this.game.characterHelper.isDead(attacker)) return currentDamage;
+    if (isDead(attacker)) return currentDamage;
 
-    if (
-      hasEffect(char, 'ImbueEnergy') &&
-      this.game.characterHelper.hasLearned(char, 'MagicMissile')
-    ) {
+    if (hasEffect(char, 'ImbueEnergy') && hasLearned(char, 'MagicMissile')) {
       this.game.commandHandler.getSkillRef('MagicMissile').use(char, attacker);
     } else {
       this.game.damageHelperMagic.magicalAttack(char, attacker, {

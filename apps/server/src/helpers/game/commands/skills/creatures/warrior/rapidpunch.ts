@@ -1,3 +1,4 @@
+import { getStat } from '@lotr/characters';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -62,7 +63,7 @@ export class Rapidpunch extends SpellCommand {
 
     const numAttacks = 3 + improvedLevel;
     const damageMult = 0.65;
-    const accuracy = this.game.characterHelper.getStat(user, Stat.Accuracy);
+    const accuracy = getStat(user, Stat.Accuracy);
     const accuracyLoss = accuracy / (10 + improvedLevel * 2);
 
     for (let i = 0; i < numAttacks; i++) {

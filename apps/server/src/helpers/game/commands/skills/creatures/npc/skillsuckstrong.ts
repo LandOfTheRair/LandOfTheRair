@@ -1,5 +1,6 @@
 import { random, sample } from 'lodash';
 
+import { getStat, isPlayer } from '@lotr/characters';
 import type { ICharacter, IPlayer, Skill } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -18,14 +19,14 @@ export class SkillSuckStrong extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     const damage = this.game.diceRollerHelper.diceRoll(
       6,
-      this.game.characterHelper.getStat(executor, Stat.STR),
+      getStat(executor, Stat.STR),
     );
 
-    if (this.game.characterHelper.isPlayer(target)) {
+    if (isPlayer(target)) {
       this.game.playerHelper.loseExp(target as IPlayer, random(35000, 52500));
       this.game.playerHelper.loseSkill(
         target as IPlayer,

@@ -1,11 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  Stat,
-} from '@lotr/interfaces';
+import { getStat } from '@lotr/characters';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class Overcharged extends Effect {
@@ -14,12 +9,9 @@ export class Overcharged extends Effect {
 
     effect.effectInfo.statChanges = {
       [Stat.ArmorClass]: Math.floor(
-        this.game.characterHelper.getStat(char, Stat.ArmorClass) *
-          (potency / 100),
+        getStat(char, Stat.ArmorClass) * (potency / 100),
       ),
-      [Stat.WIL]: Math.floor(
-        this.game.characterHelper.getStat(char, Stat.WIL) * (potency / 100),
-      ),
+      [Stat.WIL]: Math.floor(getStat(char, Stat.WIL) * (potency / 100)),
     };
   }
 

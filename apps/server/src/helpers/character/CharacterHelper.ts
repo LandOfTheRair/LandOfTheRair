@@ -10,10 +10,8 @@ import type {
   ISimpleItem,
 } from '@lotr/interfaces';
 import {
-  Allegiance,
   EquipHash,
   GivesBonusInHandItemClasses,
-  Hostility,
   ItemClass,
   ItemSlot,
   LearnedSpell,
@@ -22,68 +20,22 @@ import {
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
-import { calcSkillLevelForCharacter } from '@lotr/exp';
+import {
+  getSkillLevel,
+  getStat,
+  hasHeldItem,
+  heal,
+  isDead,
+  isPet,
+  isPlayer,
+  mana,
+} from '@lotr/characters';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 
 @Injectable()
 export class CharacterHelper extends BaseService {
   public init() {}
-
-  // check if the character is dead
-  public isDead(char: ICharacter): boolean {
-    return char.hp.current <= 0 || hasEffect(char, 'Dead');
-  }
-
-  // check if the character can currently act
-  public canAct(char: ICharacter): boolean {
-    const stunned = getEffect(char, 'Stun');
-    const chilled = getEffect(char, 'Chilled');
-
-    const isStunned = stunned?.effectInfo.isFrozen;
-    const isChilled = chilled?.effectInfo.isFrozen;
-
-    return !isStunned && !isChilled;
-  }
-
-  public healToFull(char: ICharacter): void {
-    this.heal(char, char.hp.maximum);
-  }
-
-  public manaToFull(char: ICharacter): void {
-    this.mana(char, char.mp.maximum);
-  }
-
-  public damage(char: ICharacter, hp: number): void {
-    this.heal(char, -hp);
-  }
-
-  public heal(char: ICharacter, hp: number): void {
-    if (hp === 0) return;
-
-    // natural resources cannot heal
-    if (hp > 0 && char.allegiance === Allegiance.NaturalResource) return;
-
-    char.hp.current = clamp(
-      char.hp.current + hp,
-      char.hp.minimum,
-      char.hp.maximum,
-    );
-    char.hp.current = cleanNumber(char.hp.current, 1, { floor: true });
-  }
-
-  public manaDamage(char: ICharacter, mp: number): void {
-    this.mana(char, -mp);
-  }
-
-  public mana(char: ICharacter, mp: number): void {
-    char.mp.current = clamp(
-      char.mp.current + mp,
-      char.mp.minimum,
-      char.mp.maximum,
-    );
-    char.mp.current = cleanNumber(char.mp.current, 1, { floor: true });
-  }
 
   // get the primary spell casting stat for a character
   public castStat(char: ICharacter): Stat {
@@ -93,59 +45,14 @@ export class CharacterHelper extends BaseService {
     );
   }
 
-  // check if this player is holding something
-  public hasHeldItem(
-    char: ICharacter,
-    item: string,
-    hand: 'left' | 'right' = 'right',
-  ): boolean {
-    const ref = char.items.equipment[`${hand}Hand`];
-    return !!(
-      ref &&
-      ref.name === item &&
-      (!ref.mods.owner || ref.mods.owner === (char as IPlayer).username)
-    );
-  }
-
-  public hasHeldItemInEitherHand(char: ICharacter, item: string): boolean {
-    return (
-      this.hasHeldItem(char, item, 'right') ||
-      this.hasHeldItem(char, item, 'left')
-    );
-  }
-
-  public hasHeldItems(char: ICharacter, item1: string, item2: string): boolean {
-    return (
-      (this.hasHeldItem(char, item1, 'right') &&
-        this.hasHeldItem(char, item2, 'left')) ||
-      (this.hasHeldItem(char, item2, 'right') &&
-        this.hasHeldItem(char, item1, 'left'))
-    );
-  }
-
   // take an item from either hand
   public takeItemFromEitherHand(char: ICharacter, item: string): void {
-    if (this.hasHeldItem(char, item, 'left')) {
+    if (hasHeldItem(char, item, 'left')) {
       this.setEquipmentSlot(char, ItemSlot.LeftHand, undefined);
     }
-    if (this.hasHeldItem(char, item, 'right')) {
+    if (hasHeldItem(char, item, 'right')) {
       this.setEquipmentSlot(char, ItemSlot.RightHand, undefined);
     }
-  }
-
-  // check if the person has an empty hand
-  public hasEmptyHand(char: ICharacter): boolean {
-    return !(
-      char.items.equipment[ItemSlot.RightHand] &&
-      char.items.equipment[ItemSlot.LeftHand]
-    );
-  }
-
-  // get an empty hand for the character
-  public getEmptyHand(char: ICharacter): ItemSlot | null {
-    if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
-    if (!char.items.equipment[ItemSlot.LeftHand]) return ItemSlot.LeftHand;
-    return null;
   }
 
   // set the characters equipment slot to something, undefined = unequip
@@ -244,7 +151,7 @@ export class CharacterHelper extends BaseService {
 
   // drop your hands on the ground
   public dropHands(char: ICharacter): void {
-    if (this.isPlayer(char)) {
+    if (isPlayer(char)) {
       const value =
         this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
         this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
@@ -265,11 +172,6 @@ export class CharacterHelper extends BaseService {
     this.setEquipmentSlot(char, ItemSlot.LeftHand, item);
   }
 
-  // check if a char has agro with a different char
-  public hasAgro(char: ICharacter, target: ICharacter): boolean {
-    return target.agro[char.uuid] > 0;
-  }
-
   // add agro for a different char
   public addAgro(char: ICharacter, target: ICharacter, amount: number) {
     if ((char as INPC).owner && target === (char as INPC).owner) return;
@@ -285,8 +187,8 @@ export class CharacterHelper extends BaseService {
     // boost by both sides threat multiplier
     const amountMult =
       1 +
-      this.getStat(char, Stat.ThreatMultiplier) +
-      this.getStat(target, Stat.ThreatMultiplier);
+      getStat(char, Stat.ThreatMultiplier) +
+      getStat(target, Stat.ThreatMultiplier);
     amount *= amountMult;
 
     if (hasEffect(char, 'Invisibility')) {
@@ -313,7 +215,7 @@ export class CharacterHelper extends BaseService {
     modifyAgro(char, target, amount);
     modifyAgro(target, char, amount);
 
-    if (this.isPlayer(char) && !this.isPlayer(target)) {
+    if (isPlayer(char) && !isPlayer(target)) {
       this.game.partyHelper
         .getAllPartyMembersInRange(char as IPlayer)
         .forEach((otherPlayer) => {
@@ -322,7 +224,7 @@ export class CharacterHelper extends BaseService {
         });
     }
 
-    if (this.isPlayer(target) && !this.isPlayer(char)) {
+    if (isPlayer(target) && !isPlayer(char)) {
       this.game.partyHelper
         .getAllPartyMembersInRange(target as IPlayer)
         .forEach((otherPlayer) => {
@@ -331,7 +233,7 @@ export class CharacterHelper extends BaseService {
         });
     }
 
-    if (this.isPet(char)) {
+    if (isPet(char)) {
       const owner = (char as INPC).owner;
       if (owner) {
         this.addAgro(owner, target, amount);
@@ -343,36 +245,13 @@ export class CharacterHelper extends BaseService {
   public clearAgro(char: ICharacter, target: ICharacter) {
     delete char.agro[target.uuid];
 
-    if (this.isPlayer(target) && !this.isPlayer(char)) {
+    if (isPlayer(target) && !isPlayer(char)) {
       this.game.partyHelper
         .getAllPartyMembersInRange(target as IPlayer)
         .forEach((otherPlayer) => {
           delete char.agro[otherPlayer.uuid];
         });
     }
-  }
-
-  // begin engaging in combat
-  public engageInCombat(char: ICharacter, combatTicks = 6) {
-    char.combatTicks = combatTicks;
-  }
-
-  // check if a character is a player
-  public isPlayer(character: ICharacter): boolean {
-    return !!(character as IPlayer).username;
-  }
-
-  // check if a character is a pet
-  public isPet(character: ICharacter): boolean {
-    return !!(character as INPC).owner;
-  }
-
-  // check if we can gain skill from this target
-  public canGainSkillFromTarget(target: ICharacter): boolean {
-    if (!target) return false;
-    if ((target as INPC).hostility === Hostility.Never) return false;
-    if ((target as INPC).owner) return false;
-    return true;
   }
 
   // gain a permanent stat (from a bottle, or some other source)
@@ -457,7 +336,7 @@ export class CharacterHelper extends BaseService {
   // check if this character is encumbered
   public checkEncumberance(character: ICharacter): void {
     // only players can be encumbered
-    if (!this.isPlayer(character)) return;
+    if (!isPlayer(character)) return;
 
     const canBeEncumbered =
       this.game.contentManager.getClassConfigSetting<'canBeEncumbered'>(
@@ -524,7 +403,7 @@ export class CharacterHelper extends BaseService {
 
       // no spells if we can't technically use the item
       if (
-        this.isPlayer(character) &&
+        isPlayer(character) &&
         !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
       ) {
         return;
@@ -551,7 +430,7 @@ export class CharacterHelper extends BaseService {
     let learnedTraits = {};
 
     // base traits from self/learned
-    if (this.isPlayer(character)) {
+    if (isPlayer(character)) {
       learnedTraits = this.game.traitHelper.getAllLearnedTraits(
         character as IPlayer,
       );
@@ -570,7 +449,7 @@ export class CharacterHelper extends BaseService {
 
       // no bonus if we can't technically use the item
       if (
-        this.isPlayer(character) &&
+        isPlayer(character) &&
         !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
       ) {
         return;
@@ -596,7 +475,7 @@ export class CharacterHelper extends BaseService {
     });
 
     // get benefits from inscribed rune scrolls
-    if (this.isPlayer(character)) {
+    if (isPlayer(character)) {
       (character as IPlayer).runes.forEach((rune) => {
         if (!rune) return;
 
@@ -700,7 +579,7 @@ export class CharacterHelper extends BaseService {
 
     let bonusStats = {};
 
-    if (this.isPlayer(character)) {
+    if (isPlayer(character)) {
       bonusStats = (character as IPlayer).quests.questStats;
     }
 
@@ -736,7 +615,7 @@ export class CharacterHelper extends BaseService {
 
       // no bonus if we can't technically use the item
       if (
-        this.isPlayer(character) &&
+        isPlayer(character) &&
         !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
       ) {
         return;
@@ -813,7 +692,7 @@ export class CharacterHelper extends BaseService {
     if (!state) return;
 
     if (
-      this.isPlayer(character) &&
+      isPlayer(character) &&
       oldPerception !== character.totalStats[Stat.Perception]
     ) {
       state.triggerFullUpdateForPlayer(character as Player);
@@ -834,25 +713,9 @@ export class CharacterHelper extends BaseService {
     }
   }
 
-  // get a specific stat value from a character
-  public getStat(character: ICharacter, stat: Stat): number {
-    const value = character.totalStats[stat] ?? 0;
-    if (value < 0 && stat === Stat.Mitigation) return 0;
-    if (value === 0 && stat === Stat.DamageFactor) return 1;
-    if (value !== 0 && stat === Stat.DamageFactor && this.isPlayer(character)) {
-      return 1 + value;
-    }
-    return value;
-  }
-
-  // get a specific base stat value from a character
-  public getBaseStat(character: ICharacter, stat: Stat): number {
-    return character.stats[stat] ?? 0;
-  }
-
   // hp regen is a min of 1, affected by a con modifier past 21
   public getHPRegen(character: ICharacter): number {
-    const baseHPRegen = 1 + this.getStat(character, Stat.HPRegen);
+    const baseHPRegen = 1 + getStat(character, Stat.HPRegen);
     const hpRegenSlidingCon =
       this.game.contentManager.getGameSetting(
         'character',
@@ -861,13 +724,13 @@ export class CharacterHelper extends BaseService {
     return Math.max(
       baseHPRegen,
       baseHPRegen +
-        Math.max(0, this.getStat(character, Stat.CON) - hpRegenSlidingCon),
+        Math.max(0, getStat(character, Stat.CON) - hpRegenSlidingCon),
     );
   }
 
   // thieves and warriors have different mpregen setups
   public getMPRegen(character: ICharacter): number {
-    const base = this.getStat(character, Stat.MPRegen);
+    const base = getStat(character, Stat.MPRegen);
     let boost = 0;
 
     const usesMana = this.game.contentManager.getClassConfigSetting<'usesMana'>(
@@ -968,9 +831,9 @@ export class CharacterHelper extends BaseService {
   // get the stealth value for a character
   public getStealth(char: ICharacter): number {
     let stealth =
-      this.getSkillLevel(char, Skill.Thievery) +
+      getSkillLevel(char, Skill.Thievery) +
       char.level +
-      this.getStat(char, Stat.AGI);
+      getStat(char, Stat.AGI);
 
     const hasStealthBonus =
       this.game.contentManager.getClassConfigSetting<'hasStealthBonus'>(
@@ -1027,9 +890,7 @@ export class CharacterHelper extends BaseService {
   // get perception value for a character
   public getPerception(char: ICharacter): number {
     let perception =
-      this.getStat(char, Stat.Perception) +
-      char.level +
-      this.getStat(char, Stat.WIS);
+      getStat(char, Stat.Perception) + char.level + getStat(char, Stat.WIS);
 
     const hasPerceptionBonus =
       this.game.contentManager.getClassConfigSetting<'hasPerceptionBonus'>(
@@ -1044,7 +905,7 @@ export class CharacterHelper extends BaseService {
 
   // tick the character - do regen
   public tick(character: ICharacter, tick: number): void {
-    if (this.isDead(character)) return;
+    if (isDead(character)) return;
 
     if (character.combatTicks > 0) {
       character.combatTicks--;
@@ -1062,17 +923,9 @@ export class CharacterHelper extends BaseService {
       const hpRegen = this.getHPRegen(character);
       const mpRegen = this.getMPRegen(character);
 
-      if (character.hp.current + hpRegen > 0) this.heal(character, hpRegen);
-      this.mana(character, mpRegen);
+      if (character.hp.current + hpRegen > 0) heal(character, hpRegen);
+      mana(character, mpRegen);
     }
-  }
-
-  // get the skill level for the character
-  public getSkillLevel(character: ICharacter, skill: Skill) {
-    return (
-      calcSkillLevelForCharacter(character, skill) +
-      this.getStat(character, `${skill.toLowerCase()}Bonus` as Stat)
-    );
   }
 
   // check if there exists an equipment effect on a character
@@ -1144,31 +997,6 @@ export class CharacterHelper extends BaseService {
     });
   }
 
-  // whether or not this particular character knows how to cast a spell/ability
-  public hasLearned(character: ICharacter, spell: string): boolean {
-    return this.learnedState(character, spell) !== LearnedSpell.Unlearned;
-  }
-
-  // get the specific learned state for a spell
-  public learnedState(character: ICharacter, spell: string): LearnedSpell {
-    return (
-      character.learnedSpells[spell.toLowerCase()] ?? LearnedSpell.Unlearned
-    );
-  }
-
-  // whether or not this particular character knows how to cast a spell/ability
-  public hasLearnedFromItem(character: ICharacter, spell: string): boolean {
-    return character.learnedSpells[spell] === LearnedSpell.FromItem;
-  }
-
-  public forceSpellLearnStatus(
-    character: ICharacter,
-    spell: string,
-    state: LearnedSpell,
-  ): void {
-    character.learnedSpells[spell.toLowerCase()] = state;
-  }
-
   // try to break items that have a limited number of uses
   public abuseItemsForLearnedSkillAndGetEffect(
     character: ICharacter,
@@ -1212,21 +1040,5 @@ export class CharacterHelper extends BaseService {
     }
 
     return foundEffect;
-  }
-
-  // add a pet
-  public addPet(owner: ICharacter, pet: INPC): void {
-    pet.owner = owner;
-
-    owner.pets = owner.pets || [];
-    owner.pets.push(pet);
-  }
-
-  // remove a pet
-  public removePet(owner: ICharacter, pet: INPC): void {
-    delete pet.owner;
-
-    owner.pets = owner.pets || [];
-    owner.pets = owner.pets.filter((x) => x !== pet);
   }
 }

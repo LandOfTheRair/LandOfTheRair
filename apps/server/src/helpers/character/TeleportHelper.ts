@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 
 import { truncate } from 'lodash';
 
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter, IDialogChatAction, IPlayer } from '@lotr/interfaces';
 import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Player } from '../../models';
@@ -38,7 +39,7 @@ export class TeleportHelper extends BaseService {
 
     state.moveNPCOrPlayer(char, oldPos);
 
-    if (this.game.characterHelper.isPlayer(char)) {
+    if (isPlayer(char)) {
       this.game.visibilityHelper.calculatePlayerFOV(char as Player);
     }
   }

@@ -1,3 +1,4 @@
+import { healToFull, manaToFull } from '@lotr/characters';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
@@ -91,8 +92,8 @@ export class Resurrect extends Spell {
 
       // buff the npc back to full
       this.game.characterHelper.recalculateEverything(npc);
-      this.game.characterHelper.healToFull(npc);
-      this.game.characterHelper.manaToFull(npc);
+      healToFull(npc);
+      manaToFull(npc);
     };
 
     const spawnerOpts = {

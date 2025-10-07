@@ -22,6 +22,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { isPlayer } from '@lotr/characters';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem, isOwnedBy } from '@lotr/shared';
 
@@ -750,7 +751,7 @@ export class ItemHelper extends BaseService {
       const ach = this.game.achievementsHelper.getItemForAchievementUse(
         item.name,
       );
-      if (this.game.characterHelper.isPlayer(character) && ach) {
+      if (isPlayer(character) && ach) {
         this.game.achievementsHelper.earnAchievement(
           character as Player,
           ach.name,

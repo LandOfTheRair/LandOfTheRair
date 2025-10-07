@@ -1,3 +1,4 @@
+import { heal } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -52,14 +53,14 @@ export class Mood extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     // reset when out of combat
     if (char.combatTicks <= 0) {
-      this.game.characterHelper.heal(char, Math.floor(char.hp.maximum * 0.003));
+      heal(char, Math.floor(char.hp.maximum * 0.003));
       this.changeMood(char, effect, MoodStatus.Calm);
       effect.effectInfo.startTimer = 0;
     }
 
     if (!effect.effectInfo.startTimer) {
-effect.effectInfo.startTimer = Date.now();
-}
+      effect.effectInfo.startTimer = Date.now();
+    }
 
     if (
       effect.effectInfo.enrageTimer &&

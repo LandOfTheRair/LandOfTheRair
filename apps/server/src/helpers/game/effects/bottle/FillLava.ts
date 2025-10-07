@@ -1,3 +1,4 @@
+import { isDead } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -12,7 +13,7 @@ export class FillLava extends Effect {
       damageMessage: 'The lava sears your insides!',
     });
 
-    if (!this.game.characterHelper.isDead(char)) {
+    if (!isDead(char)) {
       this.game.effectHelper.addEffect(char, char, 'BarFire', {
         effect: { duration: 7200, extra: { potency: damage } },
       });

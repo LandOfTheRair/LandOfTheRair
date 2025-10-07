@@ -13,6 +13,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -70,7 +71,7 @@ export class MovementHelper extends BaseService {
       return false;
     }
 
-    const maxMoveRate = this.game.characterHelper.getStat(character, Stat.Move);
+    const maxMoveRate = getStat(character, Stat.Move);
     if (maxMoveRate <= 0) return false;
 
     xDiff = clamp(xDiff, -this.maxMove, this.maxMove);
@@ -93,7 +94,7 @@ export class MovementHelper extends BaseService {
 
     const didFinish = this.takeSequenceOfSteps(character, steps);
 
-    if (this.game.characterHelper.isPlayer(character)) {
+    if (isPlayer(character)) {
       this.game.statisticsHelper.addStatistic(
         character as Player,
         TrackedStatistic.Steps,
@@ -151,7 +152,7 @@ export class MovementHelper extends BaseService {
       );
 
       // aquatic npcs can't leave the water
-      if (!this.game.characterHelper.isPlayer(character)) {
+      if (!isPlayer(character)) {
         const nextTileFluid = map.getFluidAt(nextX, nextY);
         if ((character as INPC).aquaticOnly && !nextTileFluid) {
           wasSuccessfulWithNoInterruptions = false;
@@ -208,7 +209,7 @@ export class MovementHelper extends BaseService {
       }
     });
 
-    if (this.game.characterHelper.isPlayer(character)) {
+    if (isPlayer(character)) {
       this.game.playerHelper.resetStatus(character as Player, {
         sendFOV: false,
       });
@@ -328,8 +329,8 @@ export class MovementHelper extends BaseService {
     // check if player has a held item
     if (
       requireHeld &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'left') &&
-      !this.game.characterHelper.hasHeldItem(player, requireHeld, 'right')
+      !hasHeldItem(player, requireHeld, 'left') &&
+      !hasHeldItem(player, requireHeld, 'right')
     ) {
       return false;
     }

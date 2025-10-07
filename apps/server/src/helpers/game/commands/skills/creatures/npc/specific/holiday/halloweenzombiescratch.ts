@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -13,7 +14,7 @@ export class HalloweenZombieScratch extends SpellCommand {
       !hasEffect(target, 'Dangerous') &&
       !hasEffect(target, 'ZombieScratch') &&
       (target as INPC).monsterClass === 'Humanoid' &&
-      !this.game.characterHelper.isPlayer(target) &&
+      !isPlayer(target) &&
       !(target as INPC).owner
     );
   }
@@ -23,7 +24,7 @@ export class HalloweenZombieScratch extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     this.game.effectHelper.addEffect(target, executor, 'ZombieScratch');
   }

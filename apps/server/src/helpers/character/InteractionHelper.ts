@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
+import { getSkillLevel, hasHeldItem } from '@lotr/characters';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill, SoundEffect } from '@lotr/interfaces';
 import { distanceFrom, positionWorldXYToTile } from '@lotr/shared';
@@ -55,10 +56,7 @@ export class InteractionHelper extends BaseService {
         }
 
         // if we have the right item, open the lock
-        if (
-          requireHeld &&
-          this.game.characterHelper.hasHeldItem(character, requireHeld)
-        ) {
+        if (requireHeld && hasHeldItem(character, requireHeld)) {
           shouldOpen = true;
           this.game.itemHelper.loseCondition(rightHand, 1000, character);
 
@@ -83,7 +81,7 @@ export class InteractionHelper extends BaseService {
         requireLockpick &&
         skillRequired &&
         canLockpick &&
-        this.game.characterHelper.hasHeldItem(character, 'Lockpick', 'right')
+        hasHeldItem(character, 'Lockpick', 'right')
       ) {
         const fuzz =
           this.game.contentManager.getGameSetting(
@@ -92,7 +90,7 @@ export class InteractionHelper extends BaseService {
           ) ?? 2;
 
         const charSkill =
-          this.game.characterHelper.getSkillLevel(character, Skill.Thievery) +
+          getSkillLevel(character, Skill.Thievery) +
           random(-fuzz, fuzz) +
           this.game.traitHelper.traitLevelValue(character, 'LockpickSpecialty');
 

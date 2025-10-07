@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameAction
-} from '@lotr/interfaces';
+import { isPlayer } from '@lotr/characters';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { GameAction } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMTakeover extends MacroCommand {
@@ -25,7 +21,7 @@ export class GMTakeover extends MacroCommand {
       if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
     }
 
-    if (target && this.game.characterHelper.isPlayer(target)) {
+    if (target && isPlayer(target)) {
       this.sendMessage(player, `You can't do that.`);
       return;
     }

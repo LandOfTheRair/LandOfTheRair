@@ -1,15 +1,14 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
+import { getSkillLevel } from '@lotr/characters';
 import type {
   ICharacter,
   IGroundItem,
   IItemEffect,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemClass,
-  Skill,
+  ISimpleItem,
 } from '@lotr/interfaces';
+import { ItemClass, Skill } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -91,10 +90,7 @@ export class TrapHelper extends BaseService {
     trap = this.game.itemCreator.rerollItem(trap, false);
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
-    trap.mods.trapSetSkill = this.game.characterHelper.getSkillLevel(
-      placer,
-      Skill.Thievery,
-    );
+    trap.mods.trapSetSkill = getSkillLevel(placer, Skill.Thievery);
     trap.mods.trapUses =
       1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
 
@@ -117,10 +113,7 @@ export class TrapHelper extends BaseService {
   }
 
   public canDisarmTrap(user: ICharacter, trap: ISimpleItem): boolean {
-    return (
-      this.game.characterHelper.getSkillLevel(user, Skill.Thievery) >
-      (trap.mods.trapSetSkill ?? 1)
-    );
+    return getSkillLevel(user, Skill.Thievery) > (trap.mods.trapSetSkill ?? 1);
   }
 
   private setTrap(map: string, x: number, y: number, trap: ISimpleItem) {

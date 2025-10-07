@@ -1,3 +1,4 @@
+import { getEmptyHand } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer, ItemClass } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -25,7 +26,7 @@ export class UseCommand extends MacroCommand {
       this.sendMessage(player, "You can't use an item from there.");
       return;
     }
-    const emptyHand = this.game.characterHelper.getEmptyHand(player);
+    const emptyHand = getEmptyHand(player);
     if (!emptyHand) {
       return this.sendMessage(player, 'Your hands are full.');
     }

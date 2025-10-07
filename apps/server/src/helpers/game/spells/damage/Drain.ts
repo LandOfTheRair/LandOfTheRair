@@ -1,3 +1,4 @@
+import { heal, takeDamage } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -25,8 +26,8 @@ export class Drain extends Spell {
       message: `You drained ${totalDrain} HP from ${target.name}!`,
     });
 
-    this.game.characterHelper.heal(caster, totalDrain);
-    this.game.characterHelper.damage(target, totalDrain);
+    heal(caster, totalDrain);
+    takeDamage(target, totalDrain);
 
     this.game.characterHelper.addAgro(caster, target, totalDrain);
   }

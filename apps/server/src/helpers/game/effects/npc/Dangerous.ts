@@ -1,3 +1,4 @@
+import { heal } from '@lotr/characters';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
@@ -12,9 +13,9 @@ export class Dangerous extends Effect {
           ?.getAllHostilesInRange(char, 4) ?? []
       ).length > 0
     ) {
-return;
-}
-    this.game.characterHelper.heal(char, Math.floor(char.hp.maximum / 20));
+      return;
+    }
+    heal(char, Math.floor(char.hp.maximum / 20));
   }
 
   override unapply(char: ICharacter) {

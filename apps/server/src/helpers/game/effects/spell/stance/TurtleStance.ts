@@ -1,12 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class TurtleStance extends Effect {
@@ -18,8 +12,7 @@ export class TurtleStance extends Effect {
       message: `${char.name} takes on a careful stance.`,
     });
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Martial) + 1;
+    const skill = getSkillLevel(char, Skill.Martial) + 1;
 
     effect.effectInfo.potency = skill;
 

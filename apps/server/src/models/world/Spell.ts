@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { Game } from '../../helpers';
+
 import type {
   BaseSpell,
   DeepPartial,
@@ -9,8 +12,7 @@ import type {
 } from '@lotr/interfaces';
 import { MessageType } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { getStat } from '@lotr/characters';
 
 export class Spell implements BaseSpell {
   constructor(protected game: Game) {}
@@ -81,8 +83,7 @@ export class Spell implements BaseSpell {
         durationScaleValue !== -1
       ) {
         override.duration =
-          this.game.characterHelper.getStat(caster, durationScaleStat) *
-          durationScaleValue;
+          getStat(caster, durationScaleStat) * durationScaleValue;
       }
 
       if (

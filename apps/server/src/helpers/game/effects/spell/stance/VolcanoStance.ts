@@ -1,3 +1,4 @@
+import { getSkillLevel, hasLearned, isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -9,8 +10,7 @@ export class VolcanoStance extends Effect {
       message: `${char.name} takes on an explosive stance.`,
     });
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Conjuration) + 1;
+    const skill = getSkillLevel(char, Skill.Conjuration) + 1;
 
     effect.effectInfo.statChanges = {
       [Stat.Offense]: skill,
@@ -28,12 +28,9 @@ export class VolcanoStance extends Effect {
     damageArgs: DamageArgs,
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
-    if (this.game.characterHelper.isDead(target)) return;
+    if (isDead(target)) return;
 
-    if (
-      hasEffect(char, 'ImbueFlame') &&
-      this.game.characterHelper.hasLearned(char, 'Combust')
-    ) {
+    if (hasEffect(char, 'ImbueFlame') && hasLearned(char, 'Combust')) {
       this.game.commandHandler.getSkillRef('Combust').use(char, target);
     } else {
       this.game.damageHelperMagic.magicalAttack(char, target, {

@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
@@ -11,7 +12,7 @@ export class RiftSlash extends Spell {
     if (!caster || !target) return;
 
     this.game.teleportHelper.setCharXY(caster, target.x, target.y);
-    if (this.game.characterHelper.isPlayer(caster)) {
+    if (isPlayer(caster)) {
       this.game.playerHelper.resetStatus(caster as Player, { sendFOV: false });
       this.game.transmissionHelper.sendMovementPatch(caster as Player);
     }

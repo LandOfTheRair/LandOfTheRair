@@ -1,3 +1,4 @@
+import { heal } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 import type { CrazedSaraxaAIBehavior } from '../../../../models/world/ai/crazedsaraxa';
@@ -23,10 +24,7 @@ export class AcolyteOverseer extends Effect {
 
     if (livingAcolytes > 0) {
       if ((effect.effectInfo.currentTick ?? 0) % 5 !== 0) return;
-      this.game.characterHelper.heal(
-        char,
-        char.hp.maximum * 0.04 * livingAcolytes,
-      );
+      heal(char, char.hp.maximum * 0.04 * livingAcolytes);
       return;
     }
 

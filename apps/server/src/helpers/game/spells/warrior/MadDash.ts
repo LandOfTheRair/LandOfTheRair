@@ -1,3 +1,4 @@
+import { mana } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -25,6 +26,6 @@ export class MadDash extends Spell {
       damageMult: maddashPotency,
     });
 
-    this.game.characterHelper.mana(caster, 30);
+    mana(caster, 30);
   }
 }

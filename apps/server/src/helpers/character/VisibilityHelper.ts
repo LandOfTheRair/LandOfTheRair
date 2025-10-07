@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
+import { getStat } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
@@ -214,7 +215,7 @@ export class VisibilityHelper extends BaseService {
       const perception = this.game.characterHelper.getPerception(char);
 
       // stealth is also simple: stats + level + skill. thieves get a multiplier
-      const stealth = this.game.characterHelper.getStat(hiding, Stat.Stealth);
+      const stealth = getStat(hiding, Stat.Stealth);
 
       const canSee = perception > stealth;
 

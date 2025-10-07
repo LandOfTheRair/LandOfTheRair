@@ -24,6 +24,13 @@ import {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../helpers';
 
+import {
+  getStat,
+  isDead,
+  isPlayer,
+  manaDamage,
+  takeDamage,
+} from '@lotr/characters';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type { Player } from '../orm';
 
@@ -205,14 +212,14 @@ export abstract class SkillCommand extends MacroCommand {
         return false;
       }
 
-      this.game.characterHelper.damage(user, mpCost);
+      takeDamage(user, mpCost);
     } else if (mpCost > 0) {
       if (user.mp.current < mpCost) {
         this.sendMessage(user, `You do not have enough ${extraMsg}!`);
         return false;
       }
 
-      this.game.characterHelper.manaDamage(user, mpCost);
+      manaDamage(user, mpCost);
     }
 
     return true;
@@ -376,7 +383,7 @@ export class SpellCommand extends SkillCommand {
     // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
       caster &&
-      this.game.characterHelper.isPlayer(caster) &&
+      isPlayer(caster) &&
       !spellData.spellMeta.targetsParty &&
       (args?.stringArgs || spellData.spellMeta.allowDirectional)
     ) {
@@ -485,10 +492,7 @@ export class SpellCommand extends SkillCommand {
     if (!spellData) return false;
 
     const { noHostileTarget } = spellData.spellMeta;
-    const areBothPlayers =
-      caster &&
-      this.game.characterHelper.isPlayer(caster) &&
-      this.game.characterHelper.isPlayer(target);
+    const areBothPlayers = caster && isPlayer(caster) && isPlayer(target);
     if (
       caster &&
       noHostileTarget &&
@@ -530,10 +534,7 @@ export class SpellCommand extends SkillCommand {
 
     const doSpellCast = (): boolean => {
       // if there's no target, we bail
-      if (
-        !targetsPosition &&
-        (!target || this.game.characterHelper.isDead(target))
-      ) {
+      if (!targetsPosition && (!target || isDead(target))) {
         this.youDontSeeThatPerson(caster as IPlayer, args?.stringArgs ?? '');
         return false;
       }
@@ -567,10 +568,10 @@ export class SpellCommand extends SkillCommand {
         caster &&
         target &&
         target !== caster &&
-        this.game.characterHelper.isPlayer(target) &&
+        isPlayer(target) &&
         !spellData.spellMeta.noReflect &&
         this.game.diceRollerHelper.XInOneHundred(
-          this.game.characterHelper.getStat(target, Stat.SpellReflectChance),
+          getStat(target, Stat.SpellReflectChance),
         )
       ) {
         hitTarget = caster;

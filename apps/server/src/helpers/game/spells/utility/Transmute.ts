@@ -1,19 +1,14 @@
-import type {
-  ICharacter,
-  IGroundItem,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  ItemClass,
-  Skill
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { ICharacter, IGroundItem, SpellCastArgs } from '@lotr/interfaces';
+import { ItemClass, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Transmute extends Spell {
   override getPotency(caster: ICharacter | null) {
     return caster
       ? Math.max(
-          this.game.characterHelper.getSkillLevel(caster, Skill.Thievery),
-          this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration),
+          getSkillLevel(caster, Skill.Thievery),
+          getSkillLevel(caster, Skill.Conjuration),
         ) + 10
       : 10;
   }

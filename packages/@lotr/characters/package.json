@@ -1,0 +1,22 @@
+{
+  "name": "@lotr/characters",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "build": "tsc",
+    "start:dev": "tsc --watch",
+    "lint": "eslint -c .eslintrc.json --ext .ts src"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@lotr/effects": "*",
+    "@lotr/eslint-config": "*",
+    "@lotr/exp": "*",
+    "@lotr/interfaces": "*",
+    "@lotr/shared": "*",
+    "lodash": "^4.17.21"
+  }
+}

@@ -1,3 +1,4 @@
+import { hasEmptyHand } from '@lotr/characters';
 import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
@@ -14,7 +15,7 @@ export class Steal extends SkillCommand {
   }
 
   override canUse(char: ICharacter, target: ICharacter): boolean {
-    if (!this.game.characterHelper.hasEmptyHand(char)) return false;
+    if (!hasEmptyHand(char)) return false;
 
     const rightHand = char.items.equipment[ItemSlot.RightHand];
 

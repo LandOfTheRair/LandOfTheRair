@@ -1,8 +1,10 @@
+import { getSkillLevel } from '@lotr/characters';
 import type {
   ICharacter,
   IPlayer,
   SpellCastArgs,
-  WeaponClass } from '@lotr/interfaces';
+  WeaponClass,
+} from '@lotr/interfaces';
 import {
   ItemClass,
   ItemSlot,
@@ -54,7 +56,7 @@ export class ConjureSword extends Spell {
 
     const skill = Math.max(
       spellCastArgs.potency,
-      this.game.characterHelper.getSkillLevel(caster, Skill.Conjuration) + 1,
+      getSkillLevel(caster, Skill.Conjuration) + 1,
     );
 
     item.mods.destroyOnDrop = true;

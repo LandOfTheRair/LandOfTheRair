@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  SoundEffect
-} from '@lotr/interfaces';
+import { mana, takeDamage } from '@lotr/characters';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -31,7 +27,7 @@ export class MassTeleport extends Spell {
 
     const location = spellCastArgs.originalArgs?.stringArgs;
     if (!location) {
-      this.game.characterHelper.mana(caster, 100);
+      mana(caster, 100);
       this.game.teleportHelper.showTeleports(caster as IPlayer, 'massteleport');
       this.game.spellManager.resetCooldown(caster, 'MassTeleport');
       return;
@@ -46,7 +42,7 @@ export class MassTeleport extends Spell {
       return;
     }
 
-    this.game.characterHelper.damage(caster, caster.hp.current - 1);
+    takeDamage(caster, caster.hp.current - 1);
 
     state.getPlayersInRange(caster, 0).forEach((teleportedTarget) => {
       this.sendMessage(teleportedTarget, {

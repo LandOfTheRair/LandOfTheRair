@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
+import { getBaseStat, isDead, isPlayer } from '@lotr/characters';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -70,7 +71,7 @@ export class DeathHelper extends BaseService {
 
     this.game.corpseManager.removePlayerCorpse(player.username);
 
-    if (!this.game.characterHelper.isDead(player)) return;
+    if (!isDead(player)) return;
 
     const bonusHP = Math.min(
       player.hp.maximum,
@@ -169,7 +170,7 @@ export class DeathHelper extends BaseService {
 
   // dying functions
   public die(dead: ICharacter, killer?: ICharacter): void {
-    if (!this.game.characterHelper.isDead(dead)) return;
+    if (!isDead(dead)) return;
     if (dead.hp.current === -1) return;
 
     dead.hp.current = -1;
@@ -186,7 +187,7 @@ export class DeathHelper extends BaseService {
 
     const corpse = this.createCorpse(dead, killer);
 
-    if (this.game.characterHelper.isPlayer(dead)) {
+    if (isPlayer(dead)) {
       const shouldMakeCorpse = ((killer as INPC)?.shouldEatTier ?? 0) <= 0;
       this.playerDie(
         dead as IPlayer,
@@ -228,7 +229,7 @@ export class DeathHelper extends BaseService {
     this.game.characterHelper.losePermanentStat(dead, Stat.CON, 1);
 
     // get a warning if your CON is too low
-    if (this.game.characterHelper.getBaseStat(dead, Stat.CON) <= 3) {
+    if (getBaseStat(dead, Stat.CON) <= 3) {
       this.game.effectHelper.addEffect(dead, '', 'LowCON');
 
       // and lose max hp if you keep dying
@@ -237,16 +238,13 @@ export class DeathHelper extends BaseService {
           'character',
           'lowCONHPLossThreshold',
         ) ?? 10;
-      if (
-        this.game.characterHelper.getBaseStat(dead, Stat.HP) >
-        lowCONHPLossThreshold
-      ) {
+      if (getBaseStat(dead, Stat.HP) > lowCONHPLossThreshold) {
         this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
       }
     }
 
     // drop your hand items
-    if (killer && !this.game.characterHelper.isPlayer(killer)) {
+    if (killer && !isPlayer(killer)) {
       this.game.characterHelper.dropHands(dead);
     }
 
@@ -277,12 +275,7 @@ export class DeathHelper extends BaseService {
     const ach = this.game.achievementsHelper.getNPCForAchievementUse(
       dead.npcId,
     );
-    if (
-      killer &&
-      dead.npcId &&
-      ach &&
-      this.game.characterHelper.isPlayer(killer)
-    ) {
+    if (killer && dead.npcId && ach && isPlayer(killer)) {
       this.game.achievementsHelper.earnAchievement(killer as Player, ach.name);
     }
 
@@ -334,9 +327,9 @@ export class DeathHelper extends BaseService {
 
   // killin'
   public kill(killer: ICharacter, dead: ICharacter): void {
-    if (!this.game.characterHelper.isDead(dead)) return;
+    if (!isDead(dead)) return;
 
-    if (this.game.characterHelper.isPlayer(killer)) {
+    if (isPlayer(killer)) {
       this.playerKill(killer as IPlayer, dead);
     } else {
       if ((killer as INPC).owner) {
@@ -370,7 +363,7 @@ export class DeathHelper extends BaseService {
   // clear action queue of the dead uuid
   private playerKill(killer: IPlayer, dead: ICharacter): void {
     this.game.playerHelper.clearActionQueue(killer as Player, dead.uuid);
-    if (this.game.characterHelper.isPlayer(dead)) return;
+    if (isPlayer(dead)) return;
 
     this.game.statisticsHelper.addStatistic(killer, TrackedStatistic.Kills);
 
@@ -478,7 +471,7 @@ export class DeathHelper extends BaseService {
   private strip(character: ICharacter, x: number, y: number, radius = 0): void {
     if (hasEffect(character, 'SecondWind')) return;
 
-    if (this.game.characterHelper.isPlayer(character)) {
+    if (isPlayer(character)) {
       this.game.statisticsHelper.addStatistic(
         character as IPlayer,
         TrackedStatistic.Strips,
@@ -573,7 +566,7 @@ export class DeathHelper extends BaseService {
     character: ICharacter,
     killer?: ICharacter,
   ): ISimpleItem | undefined {
-    if (this.game.characterHelper.isPlayer(character)) {
+    if (isPlayer(character)) {
       if (((killer as INPC)?.shouldEatTier ?? 0) > 0) return undefined;
 
       return this.createPlayerCorpse(character as IPlayer);

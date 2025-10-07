@@ -13,6 +13,7 @@ import type { Player, Spawner } from '../../models';
 import { InstancedWorldMap, MapState, WorldMap } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { isDead } from '@lotr/characters';
 import * as MapScripts from '../../models/world/mapscripts';
 
 @Injectable()
@@ -389,7 +390,7 @@ export class WorldManager extends BaseService {
     const mapData = this.game.worldManager.getMap(player.map);
 
     // dead people leaving get auto-respawned
-    if (this.game.characterHelper.isDead(player)) {
+    if (isDead(player)) {
       player.isBeingForciblyRespawned = true;
       this.game.deathHelper.restore(player);
       player.isBeingForciblyRespawned = false;

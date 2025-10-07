@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
+import { hasHeldItemInEitherHand } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import type {
   Allegiance,
@@ -61,10 +62,7 @@ export class QuestHelper extends BaseService {
     // items only require being held
     if (requirement.type === QuestRequirementType.Item) {
       const req = requirement as IQuestRequirementItem;
-      if (
-        req.fromHands &&
-        this.game.characterHelper.hasHeldItemInEitherHand(player, req.item)
-      ) {
+      if (req.fromHands && hasHeldItemInEitherHand(player, req.item)) {
         return true;
       }
 

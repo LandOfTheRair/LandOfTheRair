@@ -1,3 +1,4 @@
+import { getStat } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { SoundEffect, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -26,7 +27,7 @@ export class PiercingScream extends Spell {
     enemies.forEach((enemy) => {
       this.game.effectHelper.addEffect(enemy, caster, 'PiercingScream', {
         effect: {
-          duration: 3 + this.game.characterHelper.getStat(caster, Stat.STR),
+          duration: 3 + getStat(caster, Stat.STR),
           extra: {
             potency: spellCastArgs.potency,
           },

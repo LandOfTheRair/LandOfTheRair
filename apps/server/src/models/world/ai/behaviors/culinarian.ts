@@ -17,6 +17,7 @@ import {
 import { distanceFrom, foodTextFor } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -44,7 +45,7 @@ export class CulinarianBehavior implements IAIBehavior {
           { text: 'Leave', action: 'noop' },
         ];
 
-        if (!game.characterHelper.hasLearned(player, 'Foodmaking')) {
+        if (!hasLearned(player, 'Foodmaking')) {
           options.unshift({
             text: 'Teach me about Foodmaking',
             action: 'teach',
@@ -157,15 +158,11 @@ export class CulinarianBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Foodmaking')) {
+        if (hasLearned(player, 'Foodmaking')) {
           return 'You already know Foodmaking!';
         }
 
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Foodmaking',
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(player, 'Foodmaking', LearnedSpell.FromFate);
 
         return 'Go forth and make delicious food!';
       });

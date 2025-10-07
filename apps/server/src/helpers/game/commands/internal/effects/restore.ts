@@ -1,3 +1,4 @@
+import { isDead } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -7,7 +8,7 @@ export class RestoreCommand extends MacroCommand {
   override canUseWhileDead = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.game.characterHelper.isDead(player)) {
+    if (!isDead(player)) {
       this.sendMessage(player, "You aren't dead!");
       return;
     }

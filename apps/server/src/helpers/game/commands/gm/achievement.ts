@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models/macro';
@@ -22,7 +23,7 @@ export class GMToggleAchievement extends MacroCommand {
     ) as Player;
     if (!target) return this.youDontSeeThatPerson(player, targetName);
 
-    if (!this.game.characterHelper.isPlayer(player)) {
+    if (!isPlayer(player)) {
       return this.sendMessage(player, 'That is not a player.');
     }
 

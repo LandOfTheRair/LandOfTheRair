@@ -1,6 +1,14 @@
 import { Injectable } from 'injection-js';
 import { isNumber, sample } from 'lodash';
 
+import {
+  getStat,
+  hasLearned,
+  isDead,
+  isPlayer,
+  mana,
+  takeDamage,
+} from '@lotr/characters';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
@@ -55,7 +63,7 @@ export class CombatHelper extends BaseService {
 
     if (gainsManaOnHitOrDodge) {
       if (res.block || res.dodge) {
-        this.game.characterHelper.mana(
+        mana(
           attacker,
           this.game.contentManager.getGameSetting(
             'character',
@@ -65,7 +73,7 @@ export class CombatHelper extends BaseService {
       }
 
       if (res.hit) {
-        this.game.characterHelper.mana(
+        mana(
           attacker,
           this.game.contentManager.getGameSetting(
             'character',
@@ -80,7 +88,7 @@ export class CombatHelper extends BaseService {
       'DrainSlash',
     );
     if (
-      this.game.characterHelper.hasLearned(attacker, 'Drain') &&
+      hasLearned(attacker, 'Drain') &&
       drainChance > 0 &&
       this.game.diceRollerHelper.XInOneHundred(drainChance)
     ) {
@@ -92,7 +100,7 @@ export class CombatHelper extends BaseService {
       'AsperSlash',
     );
     if (
-      this.game.characterHelper.hasLearned(attacker, 'Asper') &&
+      hasLearned(attacker, 'Asper') &&
       asperChance > 0 &&
       this.game.diceRollerHelper.XInOneHundred(asperChance)
     ) {
@@ -133,36 +141,28 @@ export class CombatHelper extends BaseService {
     const isHeal = baseDamage < 0;
 
     // let mitigatedPercent = 0;
-    let damage = args.damage;
+    let totalDamage = args.damage;
 
     if (attacker) {
       if (!args.isMelee) {
-        damage += Math.floor(
-          (damage *
-            this.game.characterHelper.getStat(
-              attacker,
-              `${args.damageClass}BoostPercent` as Stat,
-            )) /
+        totalDamage += Math.floor(
+          (totalDamage *
+            getStat(attacker, `${args.damageClass}BoostPercent` as Stat)) /
             100,
         );
-        damage += Math.floor(
-          (damage *
-            this.game.characterHelper.getStat(
-              attacker,
-              Stat.MagicalBoostPercent,
-            )) /
-            100,
+        totalDamage += Math.floor(
+          (totalDamage * getStat(attacker, Stat.MagicalBoostPercent)) / 100,
         );
       }
     }
 
     if (!isHeal) {
       // check for resistance to the damage type
-      const damageReduced = this.game.characterHelper.getStat(
+      const damageReduced = getStat(
         defender,
         `${args.damageClass}Resist` as Stat,
       );
-      damage -= damageReduced;
+      totalDamage -= damageReduced;
 
       // non-physical attacks are magical
       if (
@@ -170,47 +170,36 @@ export class CombatHelper extends BaseService {
         args.damageClass !== DamageClass.GM &&
         args.damageClass !== DamageClass.Sonic
       ) {
-        const magicReduction = this.game.characterHelper.getStat(
-          defender,
-          Stat.MagicalResist,
-        );
-        damage -= magicReduction;
+        const magicReduction = getStat(defender, Stat.MagicalResist);
+        totalDamage -= magicReduction;
       }
 
-      if (damage < 0) damage = 0;
+      if (totalDamage < 0) totalDamage = 0;
 
       // boost healing
     } else if (attacker) {
-      damage -= Math.floor(
-        (damage *
-          this.game.characterHelper.getStat(
-            attacker,
-            Stat.HealingBoostPercent,
-          )) /
-          100,
+      totalDamage -= Math.floor(
+        (totalDamage * getStat(attacker, Stat.HealingBoostPercent)) / 100,
       );
     }
 
     if (attacker) {
-      const damageFactor = this.game.characterHelper.getStat(
-        attacker,
-        Stat.DamageFactor,
-      );
-      damage *= damageFactor;
+      const damageFactor = getStat(attacker, Stat.DamageFactor);
+      totalDamage *= damageFactor;
     }
 
     // clone the args so we dont accidentally override something
     const damageArgs = Object.assign({}, args);
-    damageArgs.damage = damage;
-    damage = this.game.effectHelper.modifyIncomingDamage(
+    damageArgs.damage = totalDamage;
+    totalDamage = this.game.effectHelper.modifyIncomingDamage(
       defender,
       attacker,
       damageArgs,
     );
 
-    if (isNaN(damage)) damage = 0;
+    if (isNaN(totalDamage)) totalDamage = 0;
 
-    return Math.floor(damage);
+    return Math.floor(totalDamage);
   }
 
   // this function directly deals damage without modifying it - the only place this should be called are the damage helpers
@@ -219,15 +208,10 @@ export class CombatHelper extends BaseService {
     defender: ICharacter,
     args: DamageArgs,
   ): void {
-    if (this.game.characterHelper.isDead(defender)) return;
+    if (isDead(defender)) return;
 
     // npc on npc violence improvements
-    if (
-      attacker &&
-      defender &&
-      !this.game.characterHelper.isPlayer(attacker) &&
-      !this.game.characterHelper.isPlayer(defender)
-    ) {
+    if (attacker && defender && !isPlayer(attacker) && !isPlayer(defender)) {
       const npcViolenceMultiplier =
         this.game.contentManager.getGameSetting(
           'combat',
@@ -251,14 +235,8 @@ export class CombatHelper extends BaseService {
 
     if (isNaN(damage)) return;
 
-    const reflectPhysical = this.game.characterHelper.getStat(
-      defender,
-      Stat.PhysicalReflect,
-    );
-    const reflectMagical = this.game.characterHelper.getStat(
-      defender,
-      Stat.MagicalReflect,
-    );
+    const reflectPhysical = getStat(defender, Stat.PhysicalReflect);
+    const reflectMagical = getStat(defender, Stat.MagicalReflect);
 
     if (
       attacker &&
@@ -398,7 +376,7 @@ export class CombatHelper extends BaseService {
     }
 
     // finally, absolutely finally, we can do some damage
-    this.game.characterHelper.damage(defender, args.damage);
+    takeDamage(defender, args.damage);
 
     // handle outgoing effects that happen post-damage
     if (attacker && !hasBeenReflected) {
@@ -414,7 +392,7 @@ export class CombatHelper extends BaseService {
     );
 
     // notify the ai if needed
-    if (!this.game.characterHelper.isPlayer(defender)) {
+    if (!isPlayer(defender)) {
       const ai = this.game.worldManager
         .getMap(defender.map)
         ?.state.getNPCSpawner(defender.uuid)
@@ -423,7 +401,7 @@ export class CombatHelper extends BaseService {
     }
 
     // lets see if they died
-    const wasFatal = this.game.characterHelper.isDead(defender);
+    const wasFatal = isDead(defender);
     if (wasFatal) {
       // if there was an attacker, we send a lot of messages
       if (attacker) {
@@ -441,7 +419,7 @@ export class CombatHelper extends BaseService {
           4,
           {
             message: `%0 was ${verb} by %1!`,
-            sfx: this.game.characterHelper.isPlayer(defender)
+            sfx: isPlayer(defender)
               ? SoundEffect.CombatDie
               : SoundEffect.CombatKill,
             except: [defender.uuid, attacker.uuid],
@@ -450,9 +428,7 @@ export class CombatHelper extends BaseService {
             MessageType.Combat,
             MessageType.NotMe,
             MessageType.Kill,
-            this.game.characterHelper.isPlayer(defender)
-              ? MessageType.Player
-              : MessageType.NPC,
+            isPlayer(defender) ? MessageType.Player : MessageType.NPC,
           ],
           [defender, attacker],
         );
@@ -468,7 +444,7 @@ export class CombatHelper extends BaseService {
         );
         this.game.messageHelper.sendLogMessageToPlayer(attacker, {
           message: killMsg,
-          sfx: this.game.characterHelper.isPlayer(defender)
+          sfx: isPlayer(defender)
             ? SoundEffect.CombatDie
             : SoundEffect.CombatKill,
           ...setTargetArgs,
@@ -503,7 +479,7 @@ export class CombatHelper extends BaseService {
           4,
           {
             message: `${defender.name} was killed!`,
-            sfx: this.game.characterHelper.isPlayer(defender)
+            sfx: isPlayer(defender)
               ? SoundEffect.CombatDie
               : SoundEffect.CombatKill,
             except: [defender.uuid],

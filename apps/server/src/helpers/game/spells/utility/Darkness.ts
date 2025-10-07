@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -8,13 +9,9 @@ export class Darkness extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     // enemies need this bypass because of how their targetting works
-    if (
-      target &&
-      caster &&
-      this.game.characterHelper.isPlayer(caster as IPlayer)
-    ) {
-return;
-}
+    if (target && caster && isPlayer(caster as IPlayer)) {
+      return;
+    }
 
     const x = spellCastArgs.x ?? target?.x ?? null;
     const y = spellCastArgs.y ?? target?.y ?? null;

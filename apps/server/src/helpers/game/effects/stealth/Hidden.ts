@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import { isPlayer, mana, manaDamage } from '@lotr/characters';
+import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
+import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
 export class Hidden extends Effect {
@@ -55,7 +50,7 @@ export class Hidden extends Effect {
         );
 
         if (numHostile.length === 0) {
-          this.game.characterHelper.mana(char, 1);
+          mana(char, 1);
           return;
         }
 
@@ -71,7 +66,7 @@ export class Hidden extends Effect {
           hostileStealthLoss - hostileReduction,
         );
 
-        if (this.game.characterHelper.isPlayer(char)) {
+        if (isPlayer(char)) {
           this.game.playerHelper.tryGainSkill(
             char as IPlayer,
             Skill.Thievery,
@@ -79,7 +74,7 @@ export class Hidden extends Effect {
           );
         }
 
-        this.game.characterHelper.manaDamage(char, totalReduction);
+        manaDamage(char, totalReduction);
 
         if (char.mp.current <= 0) {
           this.breakHide(char);

@@ -20,6 +20,7 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -47,7 +48,7 @@ export class EncrusterBehavior implements IAIBehavior {
           { text: 'Leave', action: 'noop' },
         ];
 
-        if (!game.characterHelper.hasLearned(player, 'Gemcrafting')) {
+        if (!hasLearned(player, 'Gemcrafting')) {
           options.unshift({
             text: 'Teach me about Gemcrafting',
             action: 'teach',
@@ -326,20 +327,12 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Gemcrafting')) {
+        if (hasLearned(player, 'Gemcrafting')) {
           return 'You already know Gemcrafting!';
         }
 
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Gemcrafting',
-          LearnedSpell.FromFate,
-        );
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Shatter',
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(player, 'Gemcrafting', LearnedSpell.FromFate);
+        forceSpellLearnStatus(player, 'Shatter', LearnedSpell.FromFate);
 
         return 'Go forth and make great jewelry!';
       });

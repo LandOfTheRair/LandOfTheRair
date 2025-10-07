@@ -1,5 +1,6 @@
 import { clamp } from 'lodash';
 
+import { getStat, isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../../models/macro';
@@ -21,7 +22,7 @@ export class GhostWail extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     this.game.messageHelper.sendLogMessageToRadius(executor, 10, {
       message: 'You hear a terrifying wail!',
@@ -31,11 +32,7 @@ export class GhostWail extends SpellCommand {
       ?.getAllPlayersInRange(executor, 10)
       .forEach((char) => {
         const successChance =
-          clamp(
-            this.game.characterHelper.getStat(char, Stat.WIL) - 23 + 4,
-            0,
-            8,
-          ) * 12.5;
+          clamp(getStat(char, Stat.WIL) - 23 + 4, 0, 8) * 12.5;
         if (this.game.diceRollerHelper.XInOneHundred(successChance)) {
           this.game.messageHelper.sendSimpleMessage(
             char,

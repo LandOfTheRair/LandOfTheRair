@@ -1,3 +1,4 @@
+import { getSkillLevel, mana } from '@lotr/characters';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -15,7 +16,7 @@ export class RageStance extends Effect {
     effect.effectInfo.usedWeapon = rightHand.uuid;
 
     const skillName = this.game.itemHelper.getItemProperty(rightHand, 'type');
-    const skill = this.game.characterHelper.getSkillLevel(char, skillName) + 1;
+    const skill = getSkillLevel(char, skillName) + 1;
 
     effect.effectInfo.statChanges = {
       [Stat.Offense]: skill,
@@ -31,7 +32,7 @@ export class RageStance extends Effect {
     super.tick(char, effect);
 
     if (char.combatTicks > 0) {
-      this.game.characterHelper.mana(char, 1);
+      mana(char, 1);
     }
 
     if (
@@ -50,7 +51,7 @@ export class RageStance extends Effect {
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
-    this.game.characterHelper.mana(char, 1);
+    mana(char, 1);
 
     // if we're on someone and we can viciously assault, give it a try
     if (

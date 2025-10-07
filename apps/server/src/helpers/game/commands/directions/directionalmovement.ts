@@ -1,3 +1,4 @@
+import { getStat } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Direction, Stat } from '@lotr/interfaces';
 import { directionFromText, directionToOffset } from '@lotr/shared';
@@ -16,7 +17,7 @@ export class DirectionalMovement extends MacroCommand {
         .forEach((command) => directionCommands.push(command));
     }
 
-    const maxMoves = this.game.characterHelper.getStat(player, Stat.Move);
+    const maxMoves = getStat(player, Stat.Move);
 
     const directions = directionCommands
       .map((dirText) => directionFromText(dirText) ?? Direction.Center)

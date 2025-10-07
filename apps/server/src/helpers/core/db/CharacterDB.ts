@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
 
+import { healToFull } from '@lotr/characters';
 import { initializeCharacter } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
 import type { Account } from '../../../models';
@@ -95,7 +96,7 @@ export class CharacterDB extends BaseService {
     player._lockers = lockers._id;
 
     this.game.playerHelper.becomeClass(player, player.baseClass);
-    this.game.characterHelper.healToFull(player);
+    healToFull(player);
 
     player.items.sack.items = [
       this.game.itemCreator.getSimpleItem('Newbie Book'),

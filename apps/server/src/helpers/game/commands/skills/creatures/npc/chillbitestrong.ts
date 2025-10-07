@@ -1,3 +1,4 @@
+import { getStat, isPlayer } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
@@ -21,11 +22,11 @@ export class ChillBiteStrong extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     const damage = this.game.diceRollerHelper.diceRoll(
       6,
-      this.game.characterHelper.getStat(executor, Stat.STR),
+      getStat(executor, Stat.STR),
     );
 
     this.game.combatHelper.magicalAttack(executor, target, {

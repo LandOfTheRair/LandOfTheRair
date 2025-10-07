@@ -1,12 +1,11 @@
+import { getStat } from '@lotr/characters';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  PhysicalAttackArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  Stat,
+  PhysicalAttackArgs,
 } from '@lotr/interfaces';
+import { ItemSlot, Stat } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Jumpkick extends SpellCommand {
@@ -14,7 +13,7 @@ export class Jumpkick extends SpellCommand {
   override requiresLearn = true;
 
   override range(char: ICharacter) {
-    return this.game.characterHelper.getStat(char, Stat.Move);
+    return getStat(char, Stat.Move);
   }
 
   override mpCost() {

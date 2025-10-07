@@ -1,10 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemClass,
-  ItemSlot,
-} from '@lotr/interfaces';
+import { getEmptyHand, hasEmptyHand } from '@lotr/characters';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class TradeCommand extends MacroCommand {
@@ -40,7 +36,7 @@ export class TradeCommand extends MacroCommand {
     );
     if (!target) return this.youDontSeeThatPerson(player, targetName);
 
-    const hasEmpty = this.game.characterHelper.hasEmptyHand(target);
+    const hasEmpty = hasEmptyHand(target);
     if (!hasEmpty) {
       return this.sendMessage(
         player,
@@ -56,7 +52,7 @@ export class TradeCommand extends MacroCommand {
       return this.sendMessage(player, 'They are not trade enabled.');
     }
 
-    const emptyHand = this.game.characterHelper.getEmptyHand(target);
+    const emptyHand = getEmptyHand(target);
     if (!emptyHand) return this.sendMessage(player, 'Should not happen.');
 
     this.game.characterHelper.setEquipmentSlot(target, emptyHand, item);

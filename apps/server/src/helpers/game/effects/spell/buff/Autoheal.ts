@@ -1,3 +1,4 @@
+import { healToFull } from '@lotr/characters';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
@@ -13,7 +14,7 @@ export class Autoheal extends Effect {
       this.sendMessage(char, {
         message: 'A warm surge of energy runs through your chest!',
       });
-      this.game.characterHelper.healToFull(char);
+      healToFull(char);
       effect.endsAt -= 1000 * 150;
     }
 

@@ -1,7 +1,5 @@
-import type {
-  ICharacter,
-  INPC,
-  IStatusEffect } from '@lotr/interfaces';
+import { healToFull, isDead } from '@lotr/characters';
+import type { ICharacter, INPC, IStatusEffect } from '@lotr/interfaces';
 import {
   Alignment,
   Allegiance,
@@ -19,14 +17,14 @@ export class ZombieScratch extends Effect {
   }
 
   public override unapply(char: ICharacter, effect: IStatusEffect) {
-    if (this.game.characterHelper.isDead(char)) return;
+    if (isDead(char)) return;
     const npc = char as INPC;
 
     this.game.messageHelper.sendLogMessageToRadius(char, 4, {
       message: `${char.name} undergoes a horrific transformation!`,
     });
 
-    this.game.characterHelper.healToFull(char);
+    healToFull(char);
     const ai = this.game.worldManager
       .getMap(char.map)
       ?.state.getNPCSpawner(char.uuid)

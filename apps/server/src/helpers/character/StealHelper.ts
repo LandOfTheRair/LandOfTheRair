@@ -1,6 +1,12 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
+import {
+  getEmptyHand,
+  getSkillLevel,
+  getStat,
+  isPlayer,
+} from '@lotr/characters';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
@@ -22,7 +28,7 @@ export class StealHelper extends BaseService {
   }
 
   private gainThiefSkill(gainer: ICharacter, value: number): void {
-    if (!this.game.characterHelper.isPlayer(gainer)) return;
+    if (!isPlayer(gainer)) return;
     this.game.playerHelper.tryGainSkill(
       gainer as IPlayer,
       Skill.Thievery,
@@ -72,11 +78,8 @@ export class StealHelper extends BaseService {
       return;
     }
 
-    const myStealth = this.game.characterHelper.getStat(char, Stat.Stealth);
-    const yourPerception = this.game.characterHelper.getStat(
-      target,
-      Stat.Perception,
-    );
+    const myStealth = getStat(char, Stat.Stealth);
+    const yourPerception = getStat(target, Stat.Perception);
 
     const myHasStealBonus =
       this.game.contentManager.getClassConfigSetting<'hasStealBonus'>(
@@ -91,10 +94,10 @@ export class StealHelper extends BaseService {
       );
 
     const mySkill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Thievery) *
+      getSkillLevel(char, Skill.Thievery) *
       (myHasStealBonus ? thiefBonusMultiplier : 1);
     const yourSkill =
-      this.game.characterHelper.getSkillLevel(target, Skill.Thievery) *
+      getSkillLevel(target, Skill.Thievery) *
       (targetHasStealBonus ? thiefBonusMultiplier : 1);
 
     const stealRoll = random(-yourSkill, mySkill);
@@ -145,7 +148,7 @@ export class StealHelper extends BaseService {
         ),
       );
 
-      const handName = this.game.characterHelper.getEmptyHand(char);
+      const handName = getEmptyHand(char);
       if (!handName) return;
 
       loseCurrency(target, stolenGold);
@@ -181,7 +184,7 @@ export class StealHelper extends BaseService {
         return;
       }
 
-      const handName = this.game.characterHelper.getEmptyHand(char);
+      const handName = getEmptyHand(char);
       if (!handName) return;
 
       const item = sample(target.items.sack.items) as ISimpleItem;
@@ -197,7 +200,7 @@ export class StealHelper extends BaseService {
         true,
       );
 
-      if (!this.game.characterHelper.isPlayer(char)) {
+      if (!isPlayer(char)) {
         this.game.messageHelper.sendLogMessageToRadius(char, 4, {
           message: `Thanks for the ${itemDef.itemClass.toLowerCase()}, ${target.name}!`,
         });

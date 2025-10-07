@@ -1,3 +1,4 @@
+import { getSkillLevel, hasLearned, isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -9,8 +10,7 @@ export class GlacierStance extends Effect {
       message: `${char.name} takes on an glacial stance.`,
     });
 
-    const skill =
-      this.game.characterHelper.getSkillLevel(char, Skill.Conjuration) + 1;
+    const skill = getSkillLevel(char, Skill.Conjuration) + 1;
 
     effect.effectInfo.statChanges = {
       [Stat.Offense]: -skill,
@@ -31,12 +31,9 @@ export class GlacierStance extends Effect {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) {
       return currentDamage;
     }
-    if (this.game.characterHelper.isDead(attacker)) return currentDamage;
+    if (isDead(attacker)) return currentDamage;
 
-    if (
-      hasEffect(char, 'ImbueFrost') &&
-      this.game.characterHelper.hasLearned(char, 'Hail')
-    ) {
+    if (hasEffect(char, 'ImbueFrost') && hasLearned(char, 'Hail')) {
       this.game.commandHandler.getSkillRef('Hail').use(char, attacker);
     } else {
       this.game.damageHelperMagic.magicalAttack(char, attacker, {

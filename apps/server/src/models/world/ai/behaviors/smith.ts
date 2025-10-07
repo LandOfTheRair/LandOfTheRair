@@ -10,7 +10,7 @@ import type {
 import { GameServerResponse, ItemSlot, LearnedSpell } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -40,7 +40,7 @@ export class SmithBehavior implements IAIBehavior {
           { text: 'Leave', action: 'noop' },
         ];
 
-        if (!game.characterHelper.hasLearned(player, 'Metalworking')) {
+        if (!hasLearned(player, 'Metalworking')) {
           options.unshift({
             text: 'Teach me about Metalworking',
             action: 'teach',
@@ -151,15 +151,11 @@ export class SmithBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Metalworking')) {
+        if (hasLearned(player, 'Metalworking')) {
           return 'You already know Metalworking!';
         }
 
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Metalworking',
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(player, 'Metalworking', LearnedSpell.FromFate);
 
         return 'Go forth and craft gear!';
       });

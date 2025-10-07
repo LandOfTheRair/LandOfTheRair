@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
+import { getSkillLevel, getStat, isDead, isPlayer } from '@lotr/characters';
 import { getEffect, getEffectPotency, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type {
@@ -110,18 +111,15 @@ export class SpellManager extends BaseService {
     skillsToAverage = skillsToAverage.filter(Boolean);
 
     const baseSkillValue = Math.floor(
-      sum(
-        skillsToAverage.map(
-          (skill) => this.game.characterHelper.getSkillLevel(caster, skill) + 1,
-        ),
-      ) / skillsToAverage.length,
+      sum(skillsToAverage.map((skill) => getSkillLevel(caster, skill) + 1)) /
+        skillsToAverage.length,
     );
 
     if (spellData.spellMeta.useSkillAsPotency) {
       return Math.floor(baseSkillValue * this.getPotencyMultiplier(spellData));
     }
 
-    const baseStat = this.game.characterHelper.getStat(
+    const baseStat = getStat(
       caster,
       this.game.characterHelper.castStat(caster),
     );
@@ -232,7 +230,7 @@ export class SpellManager extends BaseService {
   ): void {
     if (!caster && !target) return;
 
-    if (target && this.game.characterHelper.isDead(target)) return;
+    if (target && isDead(target)) return;
 
     const spellData = this.getSpellData(spell, `CS:${caster?.name}`);
     if (!spellData) {
@@ -256,7 +254,7 @@ export class SpellManager extends BaseService {
       override = this.seekSpellOverrides(caster, spellData, override);
     }
 
-    if (caster && this.game.characterHelper.isPlayer(caster)) {
+    if (caster && isPlayer(caster)) {
       const castSkill =
         this.game.contentManager.getClassConfigSetting<'castSkill'>(
           caster.baseClass,
@@ -309,7 +307,7 @@ export class SpellManager extends BaseService {
       target &&
       noHostileTarget &&
       this.game.targettingHelper.checkTargetForHostility(caster, target) &&
-      !this.game.characterHelper.isPlayer(target)
+      !isPlayer(target)
     ) {
       this.game.messageHelper.sendSimpleMessage(
         caster,
@@ -353,7 +351,7 @@ export class SpellManager extends BaseService {
           : 0);
       const targetRoll =
         this.game.diceRollerHelper.OneToStat(target, Stat.WIL) +
-        this.game.characterHelper.getStat(target, Stat.SavingThrow);
+        getStat(target, Stat.SavingThrow);
 
       if (targetRoll > casterRoll) {
         this.game.messageHelper.sendSimpleMessage(

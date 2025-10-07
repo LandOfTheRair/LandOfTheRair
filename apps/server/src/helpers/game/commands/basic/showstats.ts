@@ -1,11 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer,
-  Stat } from '@lotr/interfaces';
-import {
-  Allegiance,
-  MessageType
-} from '@lotr/interfaces';
+import { getStat } from '@lotr/characters';
+import type { IMacroCommandArgs, IPlayer, Stat } from '@lotr/interfaces';
+import { Allegiance, MessageType } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class ShowStats extends MacroCommand {
@@ -36,10 +31,10 @@ export class ShowStats extends MacroCommand {
     const hash = showAll ? player.totalStats : player.stats;
 
     Object.keys(hash).forEach((key) => {
-      const value = this.game.characterHelper.getStat(player, key as Stat);
+      const value = getStat(player, key as Stat);
       if (value === 0) return;
 
-      const statVal = this.game.characterHelper.getStat(player, key as Stat);
+      const statVal = getStat(player, key as Stat);
       const showBase =
         player.stats[key as Stat] && player.stats[key as Stat] !== statVal;
       message = `${message}<br>Your ${key.toUpperCase()} is ${statVal}${showBase ? ' (base: ' + player.stats[key] + ')' : ''}.`;

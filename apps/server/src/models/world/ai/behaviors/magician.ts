@@ -15,8 +15,8 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import type { Game } from '../../../../helpers';
 
 export class MagicianBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IMagicianBehavior) {
@@ -37,7 +37,7 @@ export class MagicianBehavior implements IAIBehavior {
           { text: 'Leave', action: 'noop' },
         ];
 
-        if (!game.characterHelper.hasLearned(player, 'Spellforging')) {
+        if (!hasLearned(player, 'Spellforging')) {
           options.unshift({
             text: 'Teach me about Spellforging',
             action: 'teach',
@@ -71,20 +71,12 @@ export class MagicianBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        if (game.characterHelper.hasLearned(player, 'Spellforging')) {
+        if (hasLearned(player, 'Spellforging')) {
           return 'You already know Spellforging!';
         }
 
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Spellforging',
-          LearnedSpell.FromFate,
-        );
-        game.characterHelper.forceSpellLearnStatus(
-          player,
-          'Disenchant',
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(player, 'Spellforging', LearnedSpell.FromFate);
+        forceSpellLearnStatus(player, 'Disenchant', LearnedSpell.FromFate);
 
         return 'Go forth and weave magic!';
       });

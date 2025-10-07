@@ -1,5 +1,6 @@
 import { clamp } from 'lodash';
 
+import { hasLearned } from '@lotr/characters';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -46,10 +47,7 @@ export class Craft extends MacroCommand {
       return this.sendMessage(player, 'You do not know that recipe!');
     }
 
-    if (
-      requireSpell &&
-      !this.game.characterHelper.hasLearned(player, requireSpell)
-    ) {
+    if (requireSpell && !hasLearned(player, requireSpell)) {
       return this.sendMessage(
         player,
         `You don't know ${requireSpell}, so you can't craft this!`,

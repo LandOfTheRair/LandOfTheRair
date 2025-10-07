@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { DateTime } from 'luxon';
 
+import { getBaseStat, getStat } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
@@ -41,8 +42,8 @@ export class CalculatorHelper extends BaseService {
   ) {
     const normal = normalizer;
 
-    const curHp = this.game.characterHelper.getBaseStat(player, stat);
-    const cha = this.game.characterHelper.getStat(player, Stat.CHA);
+    const curHp = getBaseStat(player, stat);
+    const cha = getStat(player, Stat.CHA);
 
     // every cha past 7 is +1% discount
     const chaSlidingDiscount =

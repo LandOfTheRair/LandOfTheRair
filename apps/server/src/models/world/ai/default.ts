@@ -35,6 +35,15 @@ import type { MapState } from '../MapState';
 import type { Spawner } from '../Spawner';
 
 import {
+  canAct,
+  getStat,
+  heal,
+  healToFull,
+  isDead,
+  manaDamage,
+  manaToFull,
+} from '@lotr/characters';
+import {
   directionFromText,
   directionToOffset,
   distanceFrom,
@@ -75,7 +84,7 @@ export class DefaultAIBehavior implements IAI {
     const npc = this.npc;
     this.currentTick++;
 
-    if (this.game.characterHelper.isDead(npc)) return;
+    if (isDead(npc)) return;
 
     this.trySendMessage();
 
@@ -87,7 +96,7 @@ export class DefaultAIBehavior implements IAI {
 
     this.game.npcHelper.tick(npc, this.currentTick);
 
-    if (this.game.characterHelper.canAct(npc)) {
+    if (canAct(npc)) {
       this.adjustTargetting();
       this.attemptMove();
     } else {
@@ -262,13 +271,13 @@ export class DefaultAIBehavior implements IAI {
     });
 
     // heal the npc
-    this.game.characterHelper.heal(this.npc, this.npc.hp.maximum * 0.3);
+    heal(this.npc, this.npc.hp.maximum * 0.3);
   }
 
   private attemptMove() {
     const npc = this.npc;
 
-    const moveRate = this.game.characterHelper.getStat(npc, Stat.Move);
+    const moveRate = getStat(npc, Stat.Move);
     let numSteps = random(
       0,
       Math.min(moveRate, this.path ? this.path.length : moveRate),
@@ -355,7 +364,7 @@ export class DefaultAIBehavior implements IAI {
         `${npc.name}:B -> ${chosenSkillName} -> ${this.currentTarget.name}`,
       );
       skill.use(npc, this.currentTarget);
-      this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
+      manaDamage(npc, skill.mpCost(npc));
 
       // move towards target w/ highest agro, or throw at them, or whatever
     } else if (this.highestAgro) {
@@ -375,7 +384,7 @@ export class DefaultAIBehavior implements IAI {
           `${npc.name}:M -> ${chosenSkillName} -> ${this.highestAgro.name}`,
         );
         skill.use(npc, this.highestAgro, opts);
-        this.game.characterHelper.manaDamage(npc, skill.mpCost(npc));
+        manaDamage(npc, skill.mpCost(npc));
 
         // either move towards target
       } else {
@@ -459,8 +468,8 @@ export class DefaultAIBehavior implements IAI {
 
         // chasing a player, probably - leash, fix hp, fix agro
         if (distFrom > this.leashRadius + 4) {
-          this.game.characterHelper.healToFull(npc);
-          this.game.characterHelper.manaToFull(npc);
+          healToFull(npc);
+          manaToFull(npc);
           this.resetAgro(true);
         }
 

@@ -1,17 +1,17 @@
+import { hasLearned } from '@lotr/characters';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameServerResponse
+  IPlayer,
 } from '@lotr/interfaces';
+import { GameServerResponse } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
 export class ForgetCommand extends MacroCommand {
   override aliases = ['forget'];
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    if (!this.game.characterHelper.hasLearned(player, 'Teleport')) {
+    if (!hasLearned(player, 'Teleport')) {
       this.sendMessage(player, 'You do not have the ability to teleport!');
       return;
     }

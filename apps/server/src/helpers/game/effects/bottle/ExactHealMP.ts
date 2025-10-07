@@ -1,3 +1,4 @@
+import { mana } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
@@ -13,7 +14,7 @@ export class ExactHealMP extends Effect {
       return;
     }
 
-    this.game.characterHelper.mana(char, effect.effectInfo.potency);
+    mana(char, effect.effectInfo.potency);
     this.sendMessage(char, { message: 'You feel a rush of magic energy.' });
   }
 }

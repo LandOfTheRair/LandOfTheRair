@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
@@ -12,7 +13,7 @@ export class Pull extends Spell {
 
     this.game.teleportHelper.setCharXY(target, caster.x, caster.y);
 
-    if (this.game.characterHelper.isPlayer(target)) {
+    if (isPlayer(target)) {
       this.game.playerHelper.resetStatus(target as Player, { sendFOV: false });
       this.game.transmissionHelper.sendMovementPatch(target as Player);
     }

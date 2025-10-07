@@ -1,3 +1,4 @@
+import { isDead } from '@lotr/characters';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -25,7 +26,7 @@ export class GMKill extends MacroCommand {
       damageClass: DamageClass.GM,
     });
 
-    if (!this.game.characterHelper.isDead(target)) {
+    if (!isDead(target)) {
       this.sendMessage(
         player,
         `I'm not sure why ${target.name} is still alive. Have some relevant stats:`,

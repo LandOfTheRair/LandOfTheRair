@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { engageInCombat, isDead, isPlayer, takeDamage } from '@lotr/characters';
 import type { ICharacter, OnesidedDamageArgs } from '@lotr/interfaces';
 import { MessageType, SoundEffect } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -18,11 +19,11 @@ export class DamageHelperOnesided extends BaseService {
       overrideSfx,
     }: OnesidedDamageArgs,
   ): void {
-    if (!defender || this.game.characterHelper.isDead(defender)) return;
+    if (!defender || isDead(defender)) return;
 
     // it _could_ be a heal...
     if (damage > 0) {
-      this.game.characterHelper.engageInCombat(defender);
+      engageInCombat(defender);
     }
 
     const modifiedDamage = this.game.combatHelper.modifyDamage(null, defender, {
@@ -30,7 +31,7 @@ export class DamageHelperOnesided extends BaseService {
       damageClass,
     });
 
-    this.game.characterHelper.damage(defender, modifiedDamage);
+    takeDamage(defender, modifiedDamage);
 
     if ((modifiedDamage <= 0 && !suppressIfNegative) || modifiedDamage > 0) {
       this.game.messageHelper.sendLogMessageToPlayer(
@@ -43,7 +44,7 @@ export class DamageHelperOnesided extends BaseService {
       );
     }
 
-    if (this.game.characterHelper.isDead(defender)) {
+    if (isDead(defender)) {
       this.game.messageHelper.sendLogMessageToPlayer(
         defender,
         { message: 'You died!', sfx: SoundEffect.CombatDie },
@@ -55,7 +56,7 @@ export class DamageHelperOnesided extends BaseService {
         5,
         {
           message: '%0 was slain!',
-          sfx: this.game.characterHelper.isPlayer(defender)
+          sfx: isPlayer(defender)
             ? SoundEffect.CombatDie
             : SoundEffect.CombatKill,
           except: [defender.uuid],
@@ -64,9 +65,7 @@ export class DamageHelperOnesided extends BaseService {
           MessageType.Combat,
           MessageType.NotMe,
           MessageType.Kill,
-          this.game.characterHelper.isPlayer(defender)
-            ? MessageType.Player
-            : MessageType.NPC,
+          isPlayer(defender) ? MessageType.Player : MessageType.NPC,
         ],
         [defender],
       );

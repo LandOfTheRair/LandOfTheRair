@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  SoundEffect
-} from '@lotr/interfaces';
+import { mana, takeDamage } from '@lotr/characters';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -30,7 +26,7 @@ export class Teleport extends Spell {
 
     const location = spellCastArgs.originalArgs?.stringArgs;
     if (!location) {
-      this.game.characterHelper.mana(caster, 100);
+      mana(caster, 100);
       this.game.teleportHelper.showTeleports(caster as IPlayer);
 
       this.game.spellManager.resetCooldown(caster, 'Teleport');
@@ -47,7 +43,7 @@ export class Teleport extends Spell {
       return;
     }
 
-    this.game.characterHelper.damage(caster, caster.hp.current - 1);
+    takeDamage(caster, caster.hp.current - 1);
     this.sendMessage(caster, {
       message: 'Your vision blurs as you travel through the rift.',
       sfx: SoundEffect.SpellSpecialTeleport,

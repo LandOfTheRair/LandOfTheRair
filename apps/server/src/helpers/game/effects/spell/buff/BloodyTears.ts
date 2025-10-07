@@ -1,10 +1,6 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import { heal } from '@lotr/characters';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class BloodyTears extends Effect {
@@ -19,7 +15,7 @@ export class BloodyTears extends Effect {
     const healAmount = Math.floor(damageArgs.damage * (1 / 100));
     if (healAmount === 0) return;
 
-    this.game.characterHelper.heal(target, healAmount);
+    heal(target, healAmount);
     this.sendMessage(char, {
       message: `You drain ${healAmount} life from your foe!`,
     });

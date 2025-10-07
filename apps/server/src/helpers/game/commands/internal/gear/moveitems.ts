@@ -1,3 +1,4 @@
+import { getEmptyHand } from '@lotr/characters';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -115,7 +116,7 @@ export class MoveItems extends MacroCommand {
       let retVal = false;
 
       if (src !== 'L' && src !== 'R') {
-        const hand = this.game.characterHelper.getEmptyHand(player);
+        const hand = getEmptyHand(player);
         if (!hand) {
           this.sendMessage(player, 'You need an empty hand to do that!');
           return false;

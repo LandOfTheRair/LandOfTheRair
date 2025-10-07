@@ -1,3 +1,4 @@
+import { getSkillLevel } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
@@ -7,10 +8,7 @@ import { Song } from './Song';
 export class PowerBalladSong extends Song {
   public override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.potency = Math.floor(
-      Math.max(
-        1,
-        this.game.characterHelper.getSkillLevel(char, Skill.Thievery) / 6,
-      ),
+      Math.max(1, getSkillLevel(char, Skill.Thievery) / 6),
     );
     effect.effectInfo.statChanges = {
       [Stat.STR]: effect.effectInfo.potency,

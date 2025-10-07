@@ -1,11 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer,
-  Skill } from '@lotr/interfaces';
-import {
-  Allegiance,
-  MessageType
-} from '@lotr/interfaces';
+import { getSkillLevel } from '@lotr/characters';
+import type { IMacroCommandArgs, IPlayer, Skill } from '@lotr/interfaces';
+import { Allegiance, MessageType } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class ShowSkills extends MacroCommand {
@@ -28,10 +23,7 @@ export class ShowSkills extends MacroCommand {
     );
 
     Object.keys(player.skills).forEach((key) => {
-      const skillLevel = this.game.characterHelper.getSkillLevel(
-        player,
-        key as Skill,
-      );
+      const skillLevel = getSkillLevel(player, key as Skill);
       const skillName = this.game.contentManager.getSkillDescription(
         key as Skill,
         skillLevel,

@@ -1,5 +1,6 @@
 import { Injectable } from 'injection-js';
 
+import { getStat, isDead, isPet, isPlayer } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, Hostility, Stat } from '@lotr/interfaces';
@@ -41,13 +42,13 @@ export class TargettingHelper extends BaseService {
     const allowTargettingNonHostile =
       targetOpts.allowTargettingNonHostile ?? false;
 
-    const amIAPlayer = this.game.characterHelper.isPlayer(me);
+    const amIAPlayer = isPlayer(me);
     const amIAnNPC = amIAPlayer === false;
 
-    const isTargetAPlayer = this.game.characterHelper.isPlayer(target);
+    const isTargetAPlayer = isPlayer(target);
     const isTargetAnNPC = isTargetAPlayer === false;
 
-    const amIAPet = this.game.characterHelper.isPet(me);
+    const amIAPet = isPet(me);
     const myOwner = (me as INPC).owner;
 
     // I cannot be hostile with myself
@@ -148,8 +149,7 @@ export class TargettingHelper extends BaseService {
     // if the target is disguised, I'm not going to be hostile if it's good enough
     if (
       hasEffect(target, 'Disguise') &&
-      this.game.characterHelper.getStat(me, Stat.WIL) <
-        this.game.characterHelper.getStat(target, Stat.CHA)
+      getStat(me, Stat.WIL) < getStat(target, Stat.CHA)
     ) {
       return false;
     }
@@ -205,7 +205,7 @@ export class TargettingHelper extends BaseService {
 
     const allTargets = state.getAllInRange(player, 4, [], useSight);
     const possTargets = allTargets.filter((target) => {
-      if (this.game.characterHelper.isDead(target)) return false;
+      if (isDead(target)) return false;
 
       const diffX = target.x - player.x;
       const diffY = target.y - player.y;
@@ -239,10 +239,7 @@ export class TargettingHelper extends BaseService {
     maxTargets = 12,
   ): ICharacter[] {
     if (!center) return [];
-    if (
-      (center as ICharacter).name &&
-      this.game.characterHelper.isDead(center as ICharacter)
-    ) {
+    if ((center as ICharacter).name && isDead(center as ICharacter)) {
       return [];
     }
 
@@ -251,7 +248,7 @@ export class TargettingHelper extends BaseService {
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);
     const possTargets = allTargets.filter((target) => {
-      if (this.game.characterHelper.isDead(target)) return false;
+      if (isDead(target)) return false;
 
       if (
         caster &&
@@ -283,10 +280,7 @@ export class TargettingHelper extends BaseService {
     maxTargets = 12,
   ): ICharacter[] {
     if (!center) return [];
-    if (
-      (center as ICharacter).name &&
-      this.game.characterHelper.isDead(center as ICharacter)
-    ) {
+    if ((center as ICharacter).name && isDead(center as ICharacter)) {
       return [];
     }
 
@@ -295,7 +289,7 @@ export class TargettingHelper extends BaseService {
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);
     const possTargets = allTargets.filter((target) => {
-      if (this.game.characterHelper.isDead(target)) return false;
+      if (isDead(target)) return false;
 
       if (
         caster &&

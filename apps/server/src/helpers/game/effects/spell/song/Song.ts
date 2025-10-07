@@ -1,3 +1,4 @@
+import { manaDamage } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -16,7 +17,7 @@ export class Song extends Effect {
   public override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    this.game.characterHelper.manaDamage(char, 5);
+    manaDamage(char, 5);
     if (char.mp.current <= 0) {
       this.sendMessage(char, { message: 'You run out of breath!' });
       this.game.effectHelper.removeEffect(char, effect);

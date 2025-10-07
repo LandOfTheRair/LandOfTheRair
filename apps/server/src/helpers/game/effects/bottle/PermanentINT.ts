@@ -1,3 +1,4 @@
+import { getBaseStat } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -10,9 +11,7 @@ export class PermanentINT extends Effect {
         'canGainMPFromIntPots',
       );
 
-    const canGainMP =
-      canGainMPFromIntPots &&
-      this.game.characterHelper.getBaseStat(char, Stat.MP) < 200;
+    const canGainMP = canGainMPFromIntPots && getBaseStat(char, Stat.MP) < 200;
     if (canGainMP) {
       this.game.characterHelper.gainPermanentStat(char, Stat.MP, 2);
     }
@@ -21,7 +20,7 @@ export class PermanentINT extends Effect {
       this.game.configManager.MAX_POTION_STAT[
         effect.effectInfo.tier as string
       ] ?? 13;
-    if (this.game.characterHelper.getBaseStat(char, Stat.INT) >= max) {
+    if (getBaseStat(char, Stat.INT) >= max) {
       return this.sendMessage(char, { message: 'The fluid was tasteless.' });
     }
 

@@ -51,6 +51,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { getStat } from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import { distanceFrom } from '@lotr/shared';
 
@@ -1232,10 +1233,7 @@ export class DialogActionHelper extends BaseService {
     requirement: IDialogRequirement,
   ): boolean {
     if (requirement.stat && requirement.statValue) {
-      const stat = this.game.characterHelper.getStat(
-        player,
-        requirement.stat as Stat,
-      );
+      const stat = getStat(player, requirement.stat as Stat);
       if (stat < requirement.statValue) return false;
     }
 

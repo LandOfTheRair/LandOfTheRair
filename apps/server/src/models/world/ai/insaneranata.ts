@@ -2,6 +2,7 @@ import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { sample } from 'lodash';
 
+import { isDead } from '@lotr/characters';
 import { DefaultAIBehavior } from './default';
 
 export class InsaneRanataAIBehavior extends DefaultAIBehavior {
@@ -10,9 +11,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
   private insanes: INPC[] = [];
 
   public get livingInsanes(): INPC[] {
-    return this.insanes
-      .filter((ac: INPC) => !this.game.characterHelper.isDead(ac))
-      .filter(Boolean);
+    return this.insanes.filter((ac: INPC) => !isDead(ac)).filter(Boolean);
   }
 
   override mechanicTick(): void {

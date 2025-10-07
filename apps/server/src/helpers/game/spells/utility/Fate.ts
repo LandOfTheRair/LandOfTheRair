@@ -1,3 +1,9 @@
+import {
+  forceSpellLearnStatus,
+  getBaseStat,
+  isPlayer,
+  learnedState,
+} from '@lotr/characters';
 import { gainCurrency } from '@lotr/currency';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
@@ -11,7 +17,7 @@ export class Fate extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!caster) return;
-    if (!this.game.characterHelper.isPlayer(caster)) return;
+    if (!isPlayer(caster)) return;
 
     const player = caster as IPlayer;
 
@@ -50,10 +56,7 @@ export class Fate extends Spell {
 
     if (stats) {
       Object.keys(stats || {}).forEach((statType) => {
-        const base = this.game.characterHelper.getBaseStat(
-          caster,
-          statType as Stat,
-        );
+        const base = getBaseStat(caster, statType as Stat);
         if (base + stats[statType] < 5 || base + stats[statType] > 25) {
           message = "Your chest feels like it's on fire!";
           return;
@@ -116,7 +119,7 @@ export class Fate extends Spell {
       );
       const { stat, divisor, goodmessage, antimessage } = boostRes[0];
 
-      const base = this.game.characterHelper.getBaseStat(caster, stat as Stat);
+      const base = getBaseStat(caster, stat as Stat);
 
       let good = false;
       let statBoosting = Math.floor(caster.level / divisor) * statBoost;
@@ -149,10 +152,7 @@ export class Fate extends Spell {
     }
 
     if (learnSpell) {
-      const learnState = this.game.characterHelper.learnedState(
-        caster,
-        learnSpell,
-      );
+      const learnState = learnedState(caster, learnSpell);
 
       const noFateTraits =
         this.game.contentManager.getClassConfigSetting<'noFateTraits'>(
@@ -169,26 +169,15 @@ export class Fate extends Spell {
         message =
           'You feel a magical energy encompass you for a moment, then it fades.';
       } else {
-        this.game.characterHelper.forceSpellLearnStatus(
-          caster,
-          learnSpell,
-          LearnedSpell.FromFate,
-        );
+        forceSpellLearnStatus(caster, learnSpell, LearnedSpell.FromFate);
         this.game.characterHelper.recalculateLearnedSpells(player);
       }
     }
 
     if (unlearnSpell) {
-      const learnState = this.game.characterHelper.learnedState(
-        caster,
-        unlearnSpell,
-      );
+      const learnState = learnedState(caster, unlearnSpell);
       if (learnState === LearnedSpell.FromFate) {
-        this.game.characterHelper.forceSpellLearnStatus(
-          caster,
-          unlearnSpell,
-          LearnedSpell.Unlearned,
-        );
+        forceSpellLearnStatus(caster, unlearnSpell, LearnedSpell.Unlearned);
       }
     }
 

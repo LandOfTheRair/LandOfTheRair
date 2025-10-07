@@ -1,3 +1,4 @@
+import { isPlayer } from '@lotr/characters';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
@@ -15,7 +16,7 @@ export class SonicScream extends SpellCommand {
   }
 
   override use(executor: ICharacter, target: ICharacter) {
-    if (this.game.characterHelper.isPlayer(executor)) return;
+    if (isPlayer(executor)) return;
 
     this.game.worldManager
       .getMapStateForCharacter(executor)

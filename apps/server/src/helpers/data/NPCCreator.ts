@@ -41,6 +41,7 @@ import * as AllBehaviors from '../../models/world/ai/behaviors';
 import { BaseService } from '../../models/BaseService';
 import { trickOrTreat } from '../../models/world/ai/ai-commands';
 
+import { getBaseStat, healToFull, manaToFull } from '@lotr/characters';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import { initializeNPC } from '@lotr/initializers';
 
@@ -443,8 +444,8 @@ export class NPCCreator extends BaseService {
 
     this.game.characterHelper.recalculateEverything(baseChar);
 
-    this.game.characterHelper.healToFull(baseChar);
-    this.game.characterHelper.manaToFull(baseChar);
+    healToFull(baseChar);
+    manaToFull(baseChar);
 
     if (baseChar.allegiance !== Allegiance.NaturalResource) {
       const parser = this.createNPCDialogParser(baseChar, npcDef);
@@ -571,7 +572,7 @@ export class NPCCreator extends BaseService {
       this.game.characterHelper.gainPermanentStat(
         npc,
         stat as Stat,
-        Math.round(this.game.characterHelper.getBaseStat(npc, stat) / 3),
+        Math.round(getBaseStat(npc, stat) / 3),
       );
     });
 

@@ -1,3 +1,4 @@
+import { mana, manaDamage } from '@lotr/characters';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -23,8 +24,8 @@ export class Asper extends Spell {
       message: `You drained ${totalDrain} MP from ${target.name}!`,
     });
 
-    this.game.characterHelper.mana(caster, totalDrain);
-    this.game.characterHelper.manaDamage(target, totalDrain);
+    mana(caster, totalDrain);
+    manaDamage(target, totalDrain);
 
     this.game.characterHelper.addAgro(caster, target, totalDrain);
   }
