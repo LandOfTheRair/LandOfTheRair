@@ -3,6 +3,7 @@ import { random } from 'lodash';
 
 import { getSkillLevel, hasHeldItem } from '@lotr/characters';
 import {
+  itemPropertyGet,
   settingClassConfigGet,
   settingGameGet,
   traitLevelValue,
@@ -49,8 +50,7 @@ export class InteractionHelper extends BaseService {
       const rightHand = character.items.equipment[ItemSlot.RightHand];
       if (
         rightHand &&
-        this.game.itemHelper.getItemProperty(rightHand, 'itemClass') ===
-          ItemClass.Key
+        itemPropertyGet(rightHand, 'itemClass') === ItemClass.Key
       ) {
         if (this.game.itemHelper.isItemBroken(rightHand)) {
           this.game.messageHelper.sendSimpleMessage(

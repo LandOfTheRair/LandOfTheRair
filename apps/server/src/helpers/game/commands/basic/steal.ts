@@ -1,5 +1,5 @@
 import { hasEmptyHand } from '@lotr/characters';
-import { traitLevel } from '@lotr/content';
+import { itemPropertyGet, traitLevel } from '@lotr/content';
 import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
@@ -21,10 +21,7 @@ export class Steal extends SkillCommand {
     const rightHand = char.items.equipment[ItemSlot.RightHand];
 
     if (rightHand) {
-      const twoHanded = this.game.itemHelper.getItemProperty(
-        rightHand,
-        'twoHanded',
-      );
+      const twoHanded = itemPropertyGet(rightHand, 'twoHanded');
       if (twoHanded && !traitLevel(char, 'TitanGrip')) {
         return false;
       }

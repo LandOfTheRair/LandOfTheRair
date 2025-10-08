@@ -52,7 +52,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat } from '@lotr/characters';
-import { questGet, settingGameGet } from '@lotr/content';
+import { itemPropertyGet, questGet, settingGameGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -724,7 +724,7 @@ export class DialogActionHelper extends BaseService {
         simpleItem,
       );
 
-      const oldStats = this.game.itemHelper.getItemProperty(slotItem, 'stats');
+      const oldStats = itemPropertyGet(slotItem, 'stats');
 
       simpleItem.mods.stats = oldStats;
 

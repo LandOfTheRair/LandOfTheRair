@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
@@ -20,10 +21,7 @@ export class MadDash extends SpellCommand {
       );
     }
 
-    const weaponClass = this.game.itemHelper.getItemProperty(
-      weapon,
-      'itemClass',
-    );
+    const weaponClass = itemPropertyGet(weapon, 'itemClass');
     if (!WeaponClasses.includes(weaponClass)) {
       return this.sendMessage(
         player,

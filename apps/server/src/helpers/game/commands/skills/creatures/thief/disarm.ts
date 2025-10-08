@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Skill } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
@@ -22,10 +23,7 @@ export class Disarm extends SkillCommand {
     }
 
     const trapItem = trap.item;
-    const trapEffect = this.game.itemHelper.getItemProperty(
-      trapItem,
-      'trapEffect',
-    );
+    const trapEffect = itemPropertyGet(trapItem, 'trapEffect');
     if (trapItem.mods.trapSetBy === player.uuid) {
       return this.sendMessage(player, 'You cannot disarm your own traps!');
     }

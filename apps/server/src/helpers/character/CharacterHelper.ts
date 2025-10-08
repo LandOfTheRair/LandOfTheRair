@@ -33,6 +33,9 @@ import {
 import {
   coreAllegianceStats,
   coreHideReductions,
+  itemGet,
+  itemPropertiesGet,
+  itemPropertyGet,
   settingClassConfigGet,
   settingGameGet,
   settingGetMaxStats,
@@ -72,12 +75,10 @@ export class CharacterHelper extends BaseService {
     const oldItem = char.items.equipment[slot];
 
     if (oldItem) {
-      const { equipEffect, itemClass, corpseUsername } =
-        this.game.itemHelper.getItemProperties(oldItem, [
-          'equipEffect',
-          'itemClass',
-          'corpseUsername',
-        ]);
+      const { equipEffect, itemClass, corpseUsername } = itemPropertiesGet(
+        oldItem,
+        ['equipEffect', 'itemClass', 'corpseUsername'],
+      );
 
       if (equipEffect) {
         const oldEffectCount = this.equipmentEffectCount(
@@ -97,12 +98,10 @@ export class CharacterHelper extends BaseService {
     char.items.equipment[slot] = item;
 
     if (item) {
-      const { itemClass, equipEffect, corpseUsername } =
-        this.game.itemHelper.getItemProperties(item, [
-          'itemClass',
-          'equipEffect',
-          'corpseUsername',
-        ]);
+      const { itemClass, equipEffect, corpseUsername } = itemPropertiesGet(
+        item,
+        ['itemClass', 'equipEffect', 'corpseUsername'],
+      );
 
       if (itemClass === ItemClass.Corpse) {
         if (corpseUsername) {
@@ -361,7 +360,7 @@ export class CharacterHelper extends BaseService {
 
     let castEncumber = false;
     Object.values(character.items.equipment).forEach((item) => {
-      const isHeavy = this.game.itemHelper.getItemProperty(item, 'isHeavy');
+      const isHeavy = itemPropertyGet(item, 'isHeavy');
       if (!isHeavy) return;
 
       castEncumber = true;
@@ -411,9 +410,7 @@ export class CharacterHelper extends BaseService {
       }
 
       // check if it has an effect, and if we can use that effect
-      const { useEffect } = this.game.itemHelper.getItemProperties(item, [
-        'useEffect',
-      ]);
+      const { useEffect } = itemPropertiesGet(item, ['useEffect']);
 
       if (useEffect && useEffect.uses) {
         learnSpell(useEffect.name, LearnedSpell.FromItem);
@@ -457,10 +454,10 @@ export class CharacterHelper extends BaseService {
       }
 
       // only some items give bonuses in hands
-      const { itemClass, trait } = this.game.itemHelper.getItemProperties(
-        item,
-        ['itemClass', 'trait'],
-      );
+      const { itemClass, trait } = itemPropertiesGet(item, [
+        'itemClass',
+        'trait',
+      ]);
       if (
         [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
           itemSlot as ItemSlot,
@@ -481,7 +478,7 @@ export class CharacterHelper extends BaseService {
         if (!rune) return;
 
         try {
-          const item = this.game.itemHelper.getItemDefinition(rune);
+          const item = itemGet(rune);
           if (!item?.trait) return;
 
           this.addTraitLevel(character, item.trait.name, item.trait.level);
@@ -520,16 +517,14 @@ export class CharacterHelper extends BaseService {
 
       if (
         leftHand &&
-        this.game.itemHelper.getItemProperty(leftHand, 'itemClass') ===
-          ItemClass.Shield
+        itemPropertyGet(leftHand, 'itemClass') === ItemClass.Shield
       ) {
         stats[Stat.SpellReflectChance] += reflectiveBoost;
       }
 
       if (
         rightHand &&
-        this.game.itemHelper.getItemProperty(rightHand, 'itemClass') ===
-          ItemClass.Shield
+        itemPropertyGet(rightHand, 'itemClass') === ItemClass.Shield
       ) {
         stats[Stat.SpellReflectChance] += reflectiveBoost;
       }
@@ -548,7 +543,7 @@ export class CharacterHelper extends BaseService {
         : 1;
 
       const item = character.items.equipment[ItemSlot.Armor];
-      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+      const itemClass = itemPropertyGet(item, 'itemClass');
 
       if (
         !item ||
@@ -613,7 +608,7 @@ export class CharacterHelper extends BaseService {
       }
 
       // only some items give bonuses in hands
-      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+      const itemClass = itemPropertyGet(item, 'itemClass');
       if (
         [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
           itemSlot as ItemSlot,
@@ -807,17 +802,11 @@ export class CharacterHelper extends BaseService {
 
   public getStealthPenalty(char: ICharacter): number {
     const leftHandClass = char.items.equipment[ItemSlot.LeftHand]
-      ? this.game.itemHelper.getItemProperty(
-          char.items.equipment[ItemSlot.LeftHand],
-          'itemClass',
-        )
+      ? itemPropertyGet(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
       : null;
 
     const rightHandClass = char.items.equipment[ItemSlot.RightHand]
-      ? this.game.itemHelper.getItemProperty(
-          char.items.equipment[ItemSlot.RightHand],
-          'itemClass',
-        )
+      ? itemPropertyGet(char.items.equipment[ItemSlot.RightHand], 'itemClass')
       : null;
 
     const hideReductions = coreHideReductions();
@@ -878,10 +867,7 @@ export class CharacterHelper extends BaseService {
       const item = character.items.equipment[itemSlot];
       if (!item) return false;
 
-      const equipEffect = this.game.itemHelper.getItemProperty(
-        item,
-        'equipEffect',
-      );
+      const equipEffect = itemPropertyGet(item, 'equipEffect');
       if (!equipEffect) return;
 
       return equipEffect.name === effect;
@@ -894,10 +880,10 @@ export class CharacterHelper extends BaseService {
       const item = character.items.equipment[itemSlot];
       if (!item) return;
 
-      const { equipEffect, itemClass } = this.game.itemHelper.getItemProperties(
-        item,
-        ['equipEffect', 'itemClass'],
-      );
+      const { equipEffect, itemClass } = itemPropertiesGet(item, [
+        'equipEffect',
+        'itemClass',
+      ]);
       if (!equipEffect) return;
 
       if (
@@ -962,10 +948,10 @@ export class CharacterHelper extends BaseService {
       const item = character.items.equipment[slot];
       if (!item) return;
 
-      const { useEffect, itemClass } = this.game.itemHelper.getItemProperties(
-        item,
-        ['useEffect', 'itemClass'],
-      );
+      const { useEffect, itemClass } = itemPropertiesGet(item, [
+        'useEffect',
+        'itemClass',
+      ]);
       if (
         !useEffect ||
         useEffect.name.toLowerCase() !== spell.toLowerCase() ||

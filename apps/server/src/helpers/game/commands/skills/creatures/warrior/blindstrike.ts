@@ -1,14 +1,13 @@
 import { sampleSize } from 'lodash';
 
+import { itemPropertyGet } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  PhysicalAttackArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  WeaponClasses,
+  PhysicalAttackArgs,
 } from '@lotr/interfaces';
+import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Blindstrike extends SpellCommand {
@@ -36,10 +35,7 @@ export class Blindstrike extends SpellCommand {
       );
     }
 
-    const weaponClass = this.game.itemHelper.getItemProperty(
-      weapon,
-      'itemClass',
-    );
+    const weaponClass = itemPropertyGet(weapon, 'itemClass');
     if (!WeaponClasses.includes(weaponClass)) {
       return this.sendMessage(
         player,

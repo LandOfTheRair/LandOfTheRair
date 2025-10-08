@@ -9,8 +9,8 @@ import type {
 import { GameServerResponse, ItemClass, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemPropertyGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class BinderBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IBinderBehavior) {
@@ -66,7 +66,7 @@ export class BinderBehavior implements IAIBehavior {
         }
 
         // Check for unbindable item classes
-        const itemClass = game.itemHelper.getItemProperty(item, 'itemClass');
+        const itemClass = itemPropertyGet(item, 'itemClass');
 
         if (itemClass === ItemClass.Corpse) return 'That is disrespectful.';
         if (itemClass === ItemClass.Coin) {

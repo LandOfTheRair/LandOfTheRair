@@ -1,5 +1,6 @@
 import { uniq } from 'lodash';
 
+import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -25,9 +26,7 @@ export class Shatter extends MacroCommand {
     const item = player.items.equipment[ItemSlot.RightHand];
 
     const getOzFromItem = (gem: ISimpleItem): number => {
-      const { requirements } = this.game.itemHelper.getItemProperties(gem, [
-        'requirements',
-      ]);
+      const { requirements } = itemPropertiesGet(gem, ['requirements']);
       return Math.max(1, Math.floor((requirements?.level ?? 1) / 5)) ?? 1;
     };
 
@@ -44,12 +43,8 @@ export class Shatter extends MacroCommand {
       if (!args.stringArgs) {
         const options: string[] = uniq(
           player.items.sack.items
-            .filter(
-              (x) =>
-                this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-                ItemClass.Gem,
-            )
-            .map((x) => this.game.itemHelper.getItemProperty(x, 'itemClass')),
+            .filter((x) => itemPropertyGet(x, 'itemClass') === ItemClass.Gem)
+            .map((x) => itemPropertyGet(x, 'itemClass')),
         ).sort();
 
         if (options.length === 0) {
@@ -83,16 +78,8 @@ export class Shatter extends MacroCommand {
       // DE all items
       if (args.stringArgs) {
         const items = player.items.sack.items
-          .filter(
-            (x) =>
-              this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-              args.stringArgs,
-          )
-          .filter(
-            (x) =>
-              this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-              ItemClass.Gem,
-          )
+          .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
+          .filter((x) => itemPropertyGet(x, 'itemClass') === ItemClass.Gem)
           .filter((x) => this.game.itemHelper.isOwnedBy(player, x));
 
         if (items.length === 0) {
@@ -142,9 +129,7 @@ export class Shatter extends MacroCommand {
 
     // right hand = single DE (we check stringArgs in case a mistake happened)
     if (item && !args.stringArgs) {
-      const { itemClass } = this.game.itemHelper.getItemProperties(item, [
-        'itemClass',
-      ]);
+      const { itemClass } = itemPropertiesGet(item, ['itemClass']);
       if (itemClass !== ItemClass.Gem) {
         return this.sendMessage(player, 'That is not shatterable!');
       }

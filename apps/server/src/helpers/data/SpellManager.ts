@@ -3,6 +3,7 @@ import { cloneDeep, random, sum } from 'lodash';
 
 import { getSkillLevel, getStat, isDead, isPlayer } from '@lotr/characters';
 import {
+  itemPropertiesGet,
   settingClassConfigGet,
   settingGameGet,
   spellGet,
@@ -100,7 +101,7 @@ export class SpellManager extends BaseService {
     let skillsToAverage: Skill[] = [castSkill] as Skill[];
     if (!castSkill) {
       if (caster.items.equipment[ItemSlot.RightHand]) {
-        const { type, secondaryType } = this.game.itemHelper.getItemProperties(
+        const { type, secondaryType } = itemPropertiesGet(
           caster.items.equipment[ItemSlot.RightHand],
           ['type', 'secondaryType'],
         );

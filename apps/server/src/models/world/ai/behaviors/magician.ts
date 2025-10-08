@@ -16,6 +16,7 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { itemPropertiesGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class MagicianBehavior implements IAIBehavior {
@@ -98,12 +99,11 @@ export class MagicianBehavior implements IAIBehavior {
         Simply hold a valid item in your right hand, and a rune scroll in your left, and I can work my magic.`;
         }
 
-        const { trait: rightTrait } = game.itemHelper.getItemProperties(
-          rightHand,
-          ['trait'],
+        const { trait: rightTrait } = itemPropertiesGet(rightHand, ['trait']);
+        const { itemClass: leftClass, trait: leftTrait } = itemPropertiesGet(
+          leftHand,
+          ['itemClass', 'trait'],
         );
-        const { itemClass: leftClass, trait: leftTrait } =
-          game.itemHelper.getItemProperties(leftHand, ['itemClass', 'trait']);
 
         if (!rightTrait || rightTrait.name !== 'Unimbued') {
           return 'The item in your right hand is not an unimbued item!';

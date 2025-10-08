@@ -1,3 +1,4 @@
+import { itemPropertiesGet } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
@@ -15,12 +16,11 @@ export class Wield extends MacroCommand {
       slot = -1;
 
       char.items.belt.items.forEach((beltItem, idx) => {
-        const { itemClass, type, name } =
-          this.game.itemHelper.getItemProperties(beltItem, [
-            'itemClass',
-            'type',
-            'name',
-          ]);
+        const { itemClass, type, name } = itemPropertiesGet(beltItem, [
+          'itemClass',
+          'type',
+          'name',
+        ]);
 
         if (
           itemClass?.toLowerCase() === args.stringArgs.toLowerCase() ||
@@ -33,8 +33,8 @@ export class Wield extends MacroCommand {
     }
 
     if (slot < 0) {
-return this.sendMessage(char, 'Could not find an item to wield.');
-}
+      return this.sendMessage(char, 'Could not find an item to wield.');
+    }
 
     if (!char.items.equipment[ItemSlot.RightHand]) {
       this.game.commandHandler.doCommand(

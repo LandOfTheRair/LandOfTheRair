@@ -1,5 +1,6 @@
 import { uniq } from 'lodash';
 
+import { itemPropertyGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -35,10 +36,8 @@ export class Disenchant extends MacroCommand {
       if (!args.stringArgs) {
         const options: string[] = uniq(
           player.items.sack.items
-            .filter(
-              (x) => this.game.itemHelper.getItemProperty(x, 'quality') >= 1,
-            )
-            .map((x) => this.game.itemHelper.getItemProperty(x, 'itemClass')),
+            .filter((x) => itemPropertyGet(x, 'quality') >= 1)
+            .map((x) => itemPropertyGet(x, 'itemClass')),
         ).sort();
 
         if (options.length === 0) {
@@ -72,14 +71,8 @@ export class Disenchant extends MacroCommand {
       // DE all items
       if (args.stringArgs) {
         const items = player.items.sack.items
-          .filter(
-            (x) =>
-              this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-              args.stringArgs,
-          )
-          .filter(
-            (x) => this.game.itemHelper.getItemProperty(x, 'quality') >= 1,
-          )
+          .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
+          .filter((x) => itemPropertyGet(x, 'quality') >= 1)
           .filter((x) => this.game.itemHelper.isOwnedBy(player, x));
 
         if (items.length === 0) {
@@ -98,8 +91,7 @@ export class Disenchant extends MacroCommand {
 
         items.forEach(
           (cItem) =>
-            (enosDust.mods.ounces +=
-              this.game.itemHelper.getItemProperty(cItem, 'quality') ?? 0),
+            (enosDust.mods.ounces += itemPropertyGet(cItem, 'quality') ?? 0),
         );
 
         this.game.characterHelper.setEquipmentSlot(
@@ -138,8 +130,7 @@ export class Disenchant extends MacroCommand {
         );
       }
 
-      const quality =
-        this.game.itemHelper.getItemProperty(item, 'quality') ?? 0;
+      const quality = itemPropertyGet(item, 'quality') ?? 0;
       if (quality < 1) {
         return this.sendMessage(player, 'That item has no magical powers!');
       }

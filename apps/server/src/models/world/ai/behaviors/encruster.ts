@@ -21,7 +21,11 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
-import { settingGameGet } from '@lotr/content';
+import {
+  itemPropertiesGet,
+  itemPropertyGet,
+  settingGameGet,
+} from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -96,7 +100,7 @@ export class EncrusterBehavior implements IAIBehavior {
           encrustGive: rightEncrustGive,
           requirements: rightRequirements,
           encrustItem: rightEncrustItem,
-        } = game.itemHelper.getItemProperties(rightHand, [
+        } = itemPropertiesGet(rightHand, [
           'itemClass',
           'encrustGive',
           'requirements',
@@ -150,7 +154,7 @@ export class EncrusterBehavior implements IAIBehavior {
           const gemItem = game.itemCreator.getSimpleItem(rightEncrustItem);
 
           const { encrustGive: encrustEncrustGive, desc: encrustEncrustDesc } =
-            game.itemHelper.getItemProperties(gemItem, ['encrustGive', 'desc']);
+            itemPropertiesGet(gemItem, ['encrustGive', 'desc']);
 
           let message = '';
 
@@ -181,10 +185,9 @@ export class EncrusterBehavior implements IAIBehavior {
           return 'You do not have anything in your left hand!';
         }
 
-        const { itemClass: leftItemClass } = game.itemHelper.getItemProperties(
-          leftHand,
-          ['itemClass'],
-        );
+        const { itemClass: leftItemClass } = itemPropertiesGet(leftHand, [
+          'itemClass',
+        ]);
 
         if (leftItemClass !== ItemClass.Gem) {
           return 'Your left hand must contain a gem!';
@@ -227,12 +230,10 @@ export class EncrusterBehavior implements IAIBehavior {
           return 'That gem belongs to someone else!';
         }
 
-        const { itemClass, destroyOnDrop, shots } =
-          game.itemHelper.getItemProperties(rightHand, [
-            'itemClass',
-            'destroyOnDrop',
-            'shots',
-          ]);
+        const { itemClass, destroyOnDrop, shots } = itemPropertiesGet(
+          rightHand,
+          ['itemClass', 'destroyOnDrop', 'shots'],
+        );
         const weaponItemClass = itemClass ?? ItemClass.Rock;
 
         if (destroyOnDrop) {
@@ -246,15 +247,12 @@ export class EncrusterBehavior implements IAIBehavior {
           itemClass: leftItemClass,
           encrustGive: leftEncrustGive,
           requirements: leftRequirements,
-        } = game.itemHelper.getItemProperties(leftHand, [
+        } = itemPropertiesGet(leftHand, [
           'itemClass',
           'encrustGive',
           'requirements',
         ]);
-        const rightRequirements = game.itemHelper.getItemProperty(
-          rightHand,
-          'requirements',
-        );
+        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
 
         const encrustGemLevel = leftRequirements?.level ?? 0;
         const encrustCostPerlevel =

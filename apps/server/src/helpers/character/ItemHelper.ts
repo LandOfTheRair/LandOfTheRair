@@ -1,11 +1,10 @@
 import { Injectable } from 'injection-js';
-import { cloneDeep, isNumber, isUndefined } from 'lodash';
+import { cloneDeep, isNumber } from 'lodash';
 
 import type {
   ICharacter,
   IDialogChatAction,
   IItem,
-  IItemDefinition,
   IItemRequirements,
   IPlayer,
   ISimpleItem,
@@ -27,6 +26,8 @@ import {
   coreRNGDungeonConfig,
   itemAllGet,
   itemGet,
+  itemPropertiesGet,
+  itemPropertyGet,
   recipeGet,
   settingGameGet,
   traitLevelValue,
@@ -96,36 +97,6 @@ export class ItemHelper extends BaseService {
     };
   }
 
-  // get the real item for base information lookup
-  public getItemDefinition(itemName: string): IItemDefinition {
-    return itemGet(itemName)!;
-  }
-
-  public getItemProperty(
-    item: ISimpleItem | undefined,
-    prop: keyof IItem,
-  ): any | undefined {
-    if (!item) return undefined;
-
-    if (!isUndefined(item.mods[prop])) return item.mods[prop];
-
-    if (item.name === 'hands' || item.name === 'feet') return undefined;
-
-    const realItem = this.getItemDefinition(item.name);
-    if (!realItem) return undefined;
-
-    return realItem[prop];
-  }
-
-  public getItemProperties(
-    item: ISimpleItem | undefined,
-    props: Array<keyof IItem>,
-  ): Partial<IItem> {
-    const hash = {};
-    props.forEach((prop) => (hash[prop] = this.getItemProperty(item, prop)));
-    return hash;
-  }
-
   public setItemProperty(
     item: ISimpleItem,
     prop: keyof IItem,
@@ -141,13 +112,13 @@ export class ItemHelper extends BaseService {
 
   // check if an item can be used as an upgrade material
   public canUseItemForUpgrade(upgradeItem: ISimpleItem): boolean {
-    return this.getItemProperty(upgradeItem, 'canUpgradeWith');
+    return itemPropertyGet(upgradeItem, 'canUpgradeWith');
   }
 
   // check if an item can be upgraded
   public canUpgradeItem(baseItem: ISimpleItem, bypassLimit = false): boolean {
     if (bypassLimit) return true;
-    const { maxUpgrades } = this.getItemProperties(baseItem, ['maxUpgrades']);
+    const { maxUpgrades } = itemPropertiesGet(baseItem, ['maxUpgrades']);
     return (baseItem.mods.upgrades?.length ?? 0) < (maxUpgrades ?? 0);
   }
 
@@ -171,12 +142,12 @@ export class ItemHelper extends BaseService {
   public getStat(item: ISimpleItem, stat: Stat): number {
     const statMod = item.mods?.stats?.[stat] ?? 0;
 
-    const baseItem = this.getItemDefinition(item.name);
+    const baseItem = itemGet(item.name);
     const baseStat = baseItem?.stats?.[stat] ?? 0;
 
     let encrustStat = 0;
     if (item.mods.encrustItem) {
-      const encrustItem = this.getItemDefinition(item.mods.encrustItem);
+      const encrustItem = itemGet(item.mods.encrustItem);
       if (encrustItem) {
         encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
       }
@@ -185,7 +156,7 @@ export class ItemHelper extends BaseService {
     let upgradeStat = 0;
     if (item.mods.upgrades) {
       item.mods.upgrades.forEach((upgrade) => {
-        const upgradeItem = this.getItemDefinition(upgrade);
+        const upgradeItem = itemGet(upgrade);
         if (!upgradeItem) return;
 
         upgradeStat += upgradeItem.stats?.[stat] ?? 0;
@@ -203,7 +174,7 @@ export class ItemHelper extends BaseService {
 
   // check if an item is broken
   public isItemBroken(item: ISimpleItem) {
-    const condition = this.getItemProperty(item, 'condition');
+    const condition = itemPropertyGet(item, 'condition');
     return condition <= 0;
   }
 
@@ -228,8 +199,10 @@ export class ItemHelper extends BaseService {
     // GMs can wear everything disregarding requirements
     if (char.allegiance === Allegiance.GM) return true;
 
-    const requirements: IItemRequirements =
-      this.game.itemHelper.getItemProperty(item, 'requirements');
+    const requirements: IItemRequirements = itemPropertyGet(
+      item,
+      'requirements',
+    );
     if (requirements) {
       if (requirements.alignment && char.alignment !== requirements.alignment) {
         return false;
@@ -281,8 +254,10 @@ export class ItemHelper extends BaseService {
     player: IPlayer,
     item: ISimpleItem,
   ): string {
-    const requirements: IItemRequirements =
-      this.game.itemHelper.getItemProperty(item, 'requirements');
+    const requirements: IItemRequirements = itemPropertyGet(
+      item,
+      'requirements',
+    );
     if (requirements) {
       if (
         requirements.alignment &&
@@ -373,11 +348,7 @@ export class ItemHelper extends BaseService {
 
   // whether or not the player can use the item
   public canUseItem(player: IPlayer, item: ISimpleItem): boolean {
-    return canUseItem(
-      player,
-      item,
-      this.game.itemHelper.getItemDefinition(item.name)!,
-    );
+    return canUseItem(player, item, itemGet(item.name)!);
   }
 
   // try to use the item in the equipment slot for the player
@@ -388,14 +359,10 @@ export class ItemHelper extends BaseService {
     const map = this.game.worldManager.getMap(player.map)?.map;
     if (!map) return;
 
-    const { succorInfo, ounces, itemClass, trait, recipe } =
-      this.getItemProperties(item, [
-        'succorInfo',
-        'ounces',
-        'itemClass',
-        'trait',
-        'recipe',
-      ]);
+    const { succorInfo, ounces, itemClass, trait, recipe } = itemPropertiesGet(
+      item,
+      ['succorInfo', 'ounces', 'itemClass', 'trait', 'recipe'],
+    );
 
     if (succorInfo && !map.canSuccor(player)) {
       this.game.messageHelper.sendSimpleMessage(
@@ -523,7 +490,7 @@ export class ItemHelper extends BaseService {
     item: ISimpleItem,
     source: ItemSlot,
   ): void {
-    const { itemClass, useEffect } = this.getItemProperties(item, [
+    const { itemClass, useEffect } = itemPropertiesGet(item, [
       'itemClass',
       'useEffect',
     ]);
@@ -555,7 +522,7 @@ export class ItemHelper extends BaseService {
   ): boolean {
     if (!this.canUseItem(player, item)) return false;
 
-    const { itemClass, useEffect, ounces } = this.getItemProperties(item, [
+    const { itemClass, useEffect, ounces } = itemPropertiesGet(item, [
       'itemClass',
       'useEffect',
       'ounces',
@@ -605,7 +572,7 @@ export class ItemHelper extends BaseService {
   }
 
   public useBook(player: IPlayer, book: ISimpleItem, source: ItemSlot): void {
-    const { bookCurrentPage, bookItemFilter } = this.getItemProperties(book, [
+    const { bookCurrentPage, bookItemFilter } = itemPropertiesGet(book, [
       'bookCurrentPage',
       'bookItemFilter',
     ]);
@@ -625,11 +592,10 @@ export class ItemHelper extends BaseService {
         pages.forEach((item) => {
           if (!this.isOwnedBy(player, item)) return;
 
-          const { bookPage, extendedDesc } =
-            this.game.itemHelper.getItemProperties(item, [
-              'bookPage',
-              'extendedDesc',
-            ]);
+          const { bookPage, extendedDesc } = itemPropertiesGet(item, [
+            'bookPage',
+            'extendedDesc',
+          ]);
 
           // if the item has a specific page and we don't have one, we set it
           if (isNumber(bookPage)) {
@@ -669,7 +635,7 @@ export class ItemHelper extends BaseService {
       }
     }
 
-    const bookPages = this.game.itemHelper.getItemProperty(book, 'bookPages');
+    const bookPages = itemPropertyGet(book, 'bookPages');
     const readPage = (bookPages || [])[page];
 
     if (!readPage) {
@@ -707,9 +673,7 @@ export class ItemHelper extends BaseService {
       return;
     }
 
-    const { containedItems } = this.game.itemHelper.getItemProperties(box, [
-      'containedItems',
-    ]);
+    const { containedItems } = itemPropertiesGet(box, ['containedItems']);
     if (!containedItems || containedItems.length === 0) {
       this.game.messageHelper.sendSimpleMessage(player, 'The box was empty!');
       return;
@@ -738,7 +702,7 @@ export class ItemHelper extends BaseService {
 
   // try to bind the item to the player, like when picking it up or equipping it
   public tryToBindItem(character: ICharacter, item: ISimpleItem): void {
-    const { binds, desc, tellsBind, itemClass, owner } = this.getItemProperties(
+    const { binds, desc, tellsBind, itemClass, owner } = itemPropertiesGet(
       item,
       ['binds', 'tellsBind', 'itemClass', 'owner', 'desc'],
     );
@@ -786,7 +750,7 @@ export class ItemHelper extends BaseService {
   }
 
   public isWeapon(item: ISimpleItem): boolean {
-    const { itemClass } = this.getItemProperties(item, ['itemClass']);
+    const { itemClass } = itemPropertiesGet(item, ['itemClass']);
     return WeaponClasses.includes(itemClass as WeaponClass);
   }
 }

@@ -1,4 +1,5 @@
 import { getEmptyHand, hasEmptyHand } from '@lotr/characters';
+import { itemPropertiesGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -18,10 +19,10 @@ export class TradeCommand extends MacroCommand {
     if (!item) return this.sendMessage(player, 'No item in that hand.');
 
     const invalidItemClasses: ItemClass[] = [ItemClass.Corpse];
-    const { itemClass, succorInfo } = this.game.itemHelper.getItemProperties(
-      item,
-      ['itemClass', 'succorInfo'],
-    );
+    const { itemClass, succorInfo } = itemPropertiesGet(item, [
+      'itemClass',
+      'succorInfo',
+    ]);
     if (invalidItemClasses.includes(itemClass as ItemClass)) {
       return this.sendMessage(player, 'You cannot trade that item.');
     }

@@ -1,3 +1,4 @@
+import { itemGet, itemPropertiesGet } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemClass, ItemSlot } from '@lotr/interfaces';
 import { gemTextFor } from '@lotr/shared';
@@ -19,10 +20,10 @@ export class Gemsense extends Spell {
       return;
     }
 
-    const { itemClass, encrustItem } = this.game.itemHelper.getItemProperties(
-      rightHand,
-      ['itemClass', 'encrustItem'],
-    );
+    const { itemClass, encrustItem } = itemPropertiesGet(rightHand, [
+      'itemClass',
+      'encrustItem',
+    ]);
 
     if (!encrustItem && itemClass !== ItemClass.Gem) {
       this.sendMessage(caster, {
@@ -31,9 +32,7 @@ export class Gemsense extends Spell {
       return;
     }
 
-    const itemDef = this.game.itemHelper.getItemDefinition(
-      encrustItem || rightHand.name,
-    );
+    const itemDef = itemGet(encrustItem || rightHand.name)!;
 
     const identMsg = gemTextFor(caster as IPlayer, rightHand, itemDef);
 

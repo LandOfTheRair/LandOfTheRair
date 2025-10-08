@@ -1,5 +1,5 @@
 import { getEmptyHand } from '@lotr/characters';
-import { traitHasLearned } from '@lotr/content';
+import { itemPropertyGet, traitHasLearned } from '@lotr/content';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -104,14 +104,8 @@ export class MoveItems extends MacroCommand {
   ): boolean {
     if (!srcItem) return true;
 
-    const itemClass = this.game.itemHelper.getItemProperty(
-      srcItem,
-      'itemClass',
-    );
-    const succorInfo = this.game.itemHelper.getItemProperty(
-      srcItem,
-      'succorInfo',
-    );
+    const itemClass = itemPropertyGet(srcItem, 'itemClass');
+    const succorInfo = itemPropertyGet(srcItem, 'succorInfo');
 
     if (dest === 'G' && succorInfo) {
       let itemSlot: ItemSlot = srcSlot as ItemSlot;
@@ -352,7 +346,7 @@ export class MoveItems extends MacroCommand {
     player: IPlayer,
     item: ISimpleItem,
   ): ItemSlot | null {
-    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    const itemClass = itemPropertyGet(item, 'itemClass');
     const slot = EquipHash[itemClass];
 
     if (slot === ItemSlot.Ring) {
@@ -670,8 +664,7 @@ export class MoveItems extends MacroCommand {
         const { withdrawInOunces } =
           this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
-          const totalOz =
-            this.game.itemHelper.getItemProperty(srcItem, 'ounces') ?? 1;
+          const totalOz = itemPropertyGet(srcItem, 'ounces') ?? 1;
           const takeOz = Math.min(materialSpaceLeft, totalOz);
 
           srcItem.mods.ounces = totalOz - takeOz;
@@ -890,8 +883,7 @@ export class MoveItems extends MacroCommand {
         const { withdrawInOunces } =
           this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
-          const totalOz =
-            this.game.itemHelper.getItemProperty(srcItem, 'ounces') ?? 1;
+          const totalOz = itemPropertyGet(srcItem, 'ounces') ?? 1;
           const takeOz = Math.min(materialSpaceLeft, totalOz);
 
           srcItem.mods.ounces = totalOz - takeOz;
@@ -1533,8 +1525,7 @@ export class MoveItems extends MacroCommand {
         const { withdrawInOunces } =
           this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
-          const totalOz =
-            this.game.itemHelper.getItemProperty(srcItem, 'ounces') ?? 1;
+          const totalOz = itemPropertyGet(srcItem, 'ounces') ?? 1;
           const takeOz = Math.min(materialSpaceLeft, totalOz);
 
           srcItem.mods.ounces = totalOz - takeOz;
@@ -1704,10 +1695,7 @@ export class MoveItems extends MacroCommand {
         const uuidRemoveCounts: Record<string, number> = {};
 
         items.forEach((item) => {
-          const checkItemClass = this.game.itemHelper.getItemProperty(
-            item.item,
-            'itemClass',
-          );
+          const checkItemClass = itemPropertyGet(item.item, 'itemClass');
           if (
             !this.doPrelimChecks(
               player,
@@ -1964,8 +1952,7 @@ export class MoveItems extends MacroCommand {
 
           if (withdrawInOunces) {
             const totalOz =
-              item.count *
-              (this.game.itemHelper.getItemProperty(item.item, 'ounces') ?? 1);
+              item.count * (itemPropertyGet(item.item, 'ounces') ?? 1);
 
             if (totalOz > materialSpaceLeft) {
               return this.sendMessage(
@@ -2868,8 +2855,7 @@ export class MoveItems extends MacroCommand {
         const { withdrawInOunces } =
           this.game.lockerHelper.getMaterialData(materialRef);
         if (withdrawInOunces) {
-          const totalOz =
-            this.game.itemHelper.getItemProperty(srcItem, 'ounces') ?? 1;
+          const totalOz = itemPropertyGet(srcItem, 'ounces') ?? 1;
           const takeOz = Math.min(materialSpaceLeft, totalOz);
 
           srcItem.mods.ounces = totalOz - takeOz;

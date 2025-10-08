@@ -1,12 +1,12 @@
 import { capitalize } from 'lodash';
 
+import { itemPropertiesGet } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemSlot,
+  ISimpleItem,
 } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models';
 
@@ -65,10 +65,10 @@ export class Take extends MacroCommand {
         const checkItem = containerItems[i];
         if (!checkItem) continue;
 
-        const { name, itemClass } = this.game.itemHelper.getItemProperties(
-          checkItem,
-          ['name', 'itemClass'],
-        );
+        const { name, itemClass } = itemPropertiesGet(checkItem, [
+          'name',
+          'itemClass',
+        ]);
 
         itemTypeOrName = itemTypeOrName.toLowerCase();
         if (itemTypeOrName === 'any') takeItemSlot = i;

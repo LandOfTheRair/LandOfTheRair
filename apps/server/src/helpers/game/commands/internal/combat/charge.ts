@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import { getEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -30,10 +31,7 @@ export class ChargeCommand extends SkillCommand {
       );
     }
 
-    const weaponClass = this.game.itemHelper.getItemProperty(
-      weapon,
-      'itemClass',
-    );
+    const weaponClass = itemPropertyGet(weapon, 'itemClass');
     if (!WeaponClasses.includes(weaponClass)) {
       return this.sendMessage(
         player,

@@ -1,4 +1,4 @@
-import { skillGetDescription } from '@lotr/content';
+import { itemPropertyGet, skillGetDescription } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction, ItemClass, Skill } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -140,7 +140,7 @@ export class LookCommand extends MacroCommand {
           const itemRef = this.game.itemCreator.getSimpleItem(requireHeld);
           if (itemRef) {
             unlockMethods.push(
-              `could be unlocked by ${this.game.itemHelper.getItemProperty(itemRef, 'desc')}`,
+              `could be unlocked by ${itemPropertyGet(itemRef, 'desc')}`,
             );
           }
         }

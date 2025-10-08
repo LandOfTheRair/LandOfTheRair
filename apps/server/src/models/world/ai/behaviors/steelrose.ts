@@ -11,7 +11,7 @@ import { Currency, GameAction, ItemSlot } from '@lotr/interfaces';
 import { cleanNumber, distanceFrom, itemListError } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { settingGameGet } from '@lotr/content';
+import { itemGet, settingGameGet } from '@lotr/content';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -104,7 +104,7 @@ export class SteelroseBehavior implements IAIBehavior {
         const listingError = itemListError(
           player,
           sellItem,
-          game.itemHelper.getItemDefinition(sellItem.name),
+          itemGet(sellItem.name)!,
           price,
         );
         if (listingError) return listingError;

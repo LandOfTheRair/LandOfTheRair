@@ -10,6 +10,7 @@ import {
   takeDamage,
 } from '@lotr/characters';
 import {
+  itemPropertyGet,
   settingClassConfigGet,
   settingGameGet,
   traitLevelValue,
@@ -279,10 +280,7 @@ export class CombatHelper extends BaseService {
     const otherClass = isHeal ? MessageType.Heal : MessageType.Hit;
     const damageType = isMelee ? MessageType.Melee : MessageType.Magic;
 
-    const itemClass = this.game.itemHelper.getItemProperty(
-      attackerWeapon,
-      'itemClass',
-    );
+    const itemClass = itemPropertyGet(attackerWeapon, 'itemClass');
 
     // tell the attacker something's going on
     if (attackerDamageMessage && attacker) {

@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -11,18 +12,18 @@ export class Write extends MacroCommand {
     const right = player.items.equipment[ItemSlot.RightHand];
     const left = player.items.equipment[ItemSlot.LeftHand];
 
-    const rightDesc = this.game.itemHelper.getItemProperty(right, 'desc');
-    const leftName = this.game.itemHelper.getItemProperty(left, 'name');
+    const rightDesc = itemPropertyGet(right, 'desc');
+    const leftName = itemPropertyGet(left, 'name');
 
     if (!right) {
-return this.sendMessage(player, 'You need an item in your right hand!');
-}
+      return this.sendMessage(player, 'You need an item in your right hand!');
+    }
     if (rightDesc.includes('written in ink')) {
-return this.sendMessage(player, 'You cannot write on that item again!');
-}
+      return this.sendMessage(player, 'You cannot write on that item again!');
+    }
     if (!left || !leftName.includes('Ink Vial')) {
-return this.sendMessage(player, 'You need an ink pot in your left hand!');
-}
+      return this.sendMessage(player, 'You need an ink pot in your left hand!');
+    }
 
     if (rightDesc === 'an empty scroll') {
       right.mods.desc = `a scroll inscribed with text written in ink: "${args.stringArgs}"`;

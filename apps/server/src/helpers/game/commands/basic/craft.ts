@@ -1,7 +1,7 @@
 import { clamp } from 'lodash';
 
 import { addStatistic, hasLearned } from '@lotr/characters';
-import { coreMaterialStorage, recipeGet } from '@lotr/content';
+import { coreMaterialStorage, itemPropertyGet, recipeGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -288,7 +288,7 @@ export class Craft extends MacroCommand {
     }
 
     if (recipe.copySkillToPotency) {
-      const effect = this.game.itemHelper.getItemProperty(item, 'useEffect');
+      const effect = itemPropertyGet(item, 'useEffect');
       if (!effect) return;
 
       item.mods.useEffect = {
@@ -298,7 +298,7 @@ export class Craft extends MacroCommand {
       };
     }
 
-    const isSackable = this.game.itemHelper.getItemProperty(item, 'isSackable');
+    const isSackable = itemPropertyGet(item, 'isSackable');
     if (isSackable && this.game.inventoryHelper.sackSpaceLeft(player) > 0) {
       this.game.inventoryHelper.addItemToSack(player, item);
     } else {

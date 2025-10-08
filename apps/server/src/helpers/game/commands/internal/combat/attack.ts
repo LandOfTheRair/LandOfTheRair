@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import { getEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -63,12 +64,12 @@ export class AttackCommand extends SkillCommand {
 
   private tryToEquipAmmoForBow(user: ICharacter) {
     const weapon = user.items.equipment[ItemSlot.RightHand];
-    if (!this.game.itemHelper.getItemProperty(weapon, 'canShoot')) return;
+    if (!itemPropertyGet(weapon, 'canShoot')) return;
     if (user.items.equipment[ItemSlot.Ammo]) return;
 
     // as a last resort, we traverse the sack, then slot the first item we find in ammo, then use it
     const firstShotIndex = user.items.sack.items.findIndex((i) => {
-      const numShots = this.game.itemHelper.getItemProperty(i, 'shots');
+      const numShots = itemPropertyGet(i, 'shots');
       return numShots > 0;
     });
 

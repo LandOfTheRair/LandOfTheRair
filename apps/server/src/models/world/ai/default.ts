@@ -43,6 +43,7 @@ import {
   manaDamage,
   manaToFull,
 } from '@lotr/characters';
+import { itemPropertyGet } from '@lotr/content';
 import { consoleWarn, logCrashContextEntry } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
@@ -250,9 +251,7 @@ export class DefaultAIBehavior implements IAI {
 
     // find a random potion in their sack
     const potion = this.npc.items.sack.items.find(
-      (x) =>
-        this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-        ItemClass.Bottle,
+      (x) => itemPropertyGet(x, 'itemClass') === ItemClass.Bottle,
     );
     if (!potion) return;
 
@@ -336,7 +335,7 @@ export class DefaultAIBehavior implements IAI {
         this.highestAgro &&
         skill === 'Attack' &&
         rightHand &&
-        this.game.itemHelper.getItemProperty(rightHand, 'returnsOnThrow')
+        itemPropertyGet(rightHand, 'returnsOnThrow')
       ) {
         isThrowing = true;
         skill = 'Throw';

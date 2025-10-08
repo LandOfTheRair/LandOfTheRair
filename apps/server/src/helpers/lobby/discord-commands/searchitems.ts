@@ -2,8 +2,8 @@ import * as Discord from 'discord.js';
 
 import type { IDiscordCommand } from '../../../interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import { itemGet } from '@lotr/content';
+import type { Game } from '../../core';
 
 export class SearchItemsCommand implements IDiscordCommand {
   command = new Discord.SlashCommandBuilder()
@@ -28,7 +28,7 @@ export class SearchItemsCommand implements IDiscordCommand {
       return interaction.reply(`No item matches the query "${query}".`);
     }
 
-    const fullItem = game.itemHelper.getItemDefinition(item);
+    const fullItem = itemGet(item)!;
     const embed = game.discordHelper.createItemEmbed({
       name: fullItem.name,
       mods: {},

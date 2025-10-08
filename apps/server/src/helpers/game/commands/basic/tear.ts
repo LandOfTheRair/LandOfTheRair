@@ -1,5 +1,6 @@
 import { uniq } from 'lodash';
 
+import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -39,9 +40,7 @@ export class Tear extends MacroCommand {
       fiberClasses.includes(itemClass) ? 'String - Fiber' : 'String - Spell';
 
     const getOzFromItem = (ozItem: ISimpleItem): number => {
-      const { requirements } = this.game.itemHelper.getItemProperties(ozItem, [
-        'requirements',
-      ]);
+      const { requirements } = itemPropertiesGet(ozItem, ['requirements']);
       return Math.max(1, Math.floor((requirements?.level ?? 1) / 5)) ?? 1;
     };
 
@@ -60,16 +59,11 @@ export class Tear extends MacroCommand {
           player.items.sack.items
             .filter(
               (x) =>
-                this.game.itemHelper.getItemProperty(x, 'quality') >= 1 ||
-                this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-                  ItemClass.Flower,
+                itemPropertyGet(x, 'quality') >= 1 ||
+                itemPropertyGet(x, 'itemClass') === ItemClass.Flower,
             )
-            .filter((x) =>
-              allClasses.includes(
-                this.game.itemHelper.getItemProperty(x, 'itemClass'),
-              ),
-            )
-            .map((x) => this.game.itemHelper.getItemProperty(x, 'itemClass')),
+            .filter((x) => allClasses.includes(itemPropertyGet(x, 'itemClass')))
+            .map((x) => itemPropertyGet(x, 'itemClass')),
         ).sort();
 
         if (options.length === 0) {
@@ -102,21 +96,12 @@ export class Tear extends MacroCommand {
       // DE all items
       if (args.stringArgs) {
         const items = player.items.sack.items
-          .filter((x) =>
-            allClasses.includes(
-              this.game.itemHelper.getItemProperty(x, 'itemClass'),
-            ),
-          )
+          .filter((x) => allClasses.includes(itemPropertyGet(x, 'itemClass')))
+          .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
           .filter(
             (x) =>
-              this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-              args.stringArgs,
-          )
-          .filter(
-            (x) =>
-              this.game.itemHelper.getItemProperty(x, 'quality') >= 1 ||
-              this.game.itemHelper.getItemProperty(x, 'itemClass') ===
-                ItemClass.Flower,
+              itemPropertyGet(x, 'quality') >= 1 ||
+              itemPropertyGet(x, 'itemClass') === ItemClass.Flower,
           )
           .filter((x) => this.game.itemHelper.isOwnedBy(player, x));
 
@@ -169,14 +154,13 @@ export class Tear extends MacroCommand {
 
     // right hand = single DE (we check stringArgs in case a mistake happened)
     if (item && !args.stringArgs) {
-      const { itemClass, quality } = this.game.itemHelper.getItemProperties(
-        item,
-        ['itemClass', 'quality'],
-      );
+      const { itemClass, quality } = itemPropertiesGet(item, [
+        'itemClass',
+        'quality',
+      ]);
       if (
         (quality ?? 0) < 1 &&
-        this.game.itemHelper.getItemProperty(item, 'itemClass') !==
-          ItemClass.Flower
+        itemPropertyGet(item, 'itemClass') !== ItemClass.Flower
       ) {
         return this.sendMessage(player, 'That item offers no threads!');
       }

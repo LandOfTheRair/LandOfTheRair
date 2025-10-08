@@ -8,6 +8,7 @@ import {
   isPlayer,
 } from '@lotr/characters';
 import {
+  itemGet,
   settingClassConfigGet,
   settingGameGet,
   traitLevelValue,
@@ -170,7 +171,7 @@ export class StealHelper extends BaseService {
       if (!handName) return;
 
       const item = sample(target.items.sack.items) as ISimpleItem;
-      const itemDef = this.game.itemHelper.getItemDefinition(item.name);
+      const itemDef = itemGet(item.name)!;
       this.game.inventoryHelper.removeItemsFromSackByUUID(target, [item.uuid]);
 
       this.game.characterHelper.setEquipmentSlot(char, handName, item);

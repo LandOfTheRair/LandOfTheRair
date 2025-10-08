@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep, get, isEqual, setWith, sortBy, updateWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
-import { settingGameGet } from '@lotr/content';
+import { itemPropertiesGet, settingGameGet } from '@lotr/content';
 import type {
   IGround,
   IGroundItem,
@@ -246,8 +246,10 @@ export class GroundManager extends BaseService {
   ): void {
     if (!item) return;
 
-    const { itemClass: itemItemClass, sprite } =
-      this.game.itemHelper.getItemProperties(item, ['itemClass', 'sprite']);
+    const { itemClass: itemItemClass, sprite } = itemPropertiesGet(item, [
+      'itemClass',
+      'sprite',
+    ]);
 
     const itemClass = itemItemClass ?? ItemClass.Box;
 

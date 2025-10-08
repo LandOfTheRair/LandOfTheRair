@@ -33,6 +33,8 @@ import {
 } from '@lotr/characters';
 import {
   effectGet,
+  itemPropertiesGet,
+  itemPropertyGet,
   settingClassConfigGet,
   traitLevel,
   traitLevelValue,
@@ -238,10 +240,10 @@ export abstract class SkillCommand extends MacroCommand {
 
     if (!rightHand) return 0;
 
-    const { attackRange, twoHanded } = this.game.itemHelper.getItemProperties(
-      rightHand,
-      ['twoHanded', 'attackRange'],
-    );
+    const { attackRange, twoHanded } = itemPropertiesGet(rightHand, [
+      'twoHanded',
+      'attackRange',
+    ]);
 
     // if you have a twohanded item and a lefthand, you can't use it
     if (twoHanded && leftHand && !traitLevel(attacker, 'TitanGrip')) {
@@ -300,10 +302,7 @@ export class SpellCommand extends SkillCommand {
       const rightHand = caster.items.equipment[ItemSlot.RightHand];
 
       if (rightHand) {
-        const itemClass = this.game.itemHelper.getItemProperty(
-          rightHand,
-          'itemClass',
-        );
+        const itemClass = itemPropertyGet(rightHand, 'itemClass');
 
         if (itemClass === ItemClass.Wand) {
           cost *= Math.max(0, 1 - traitLevelValue(caster, 'WandSpecialty'));

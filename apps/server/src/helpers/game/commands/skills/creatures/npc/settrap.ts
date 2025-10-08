@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { itemPropertyGet } from '@lotr/content';
 import type { ICharacter } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
@@ -9,7 +10,7 @@ export class SetTrap extends SpellCommand {
 
   override canUse(caster: ICharacter): boolean {
     return !!caster.items.sack.items.find((x) => {
-      const itemClass = this.game.itemHelper.getItemProperty(x, 'itemClass');
+      const itemClass = itemPropertyGet(x, 'itemClass');
       return itemClass === ItemClass.Trap;
     });
   }
@@ -22,7 +23,7 @@ export class SetTrap extends SpellCommand {
     if (isPlayer(executor)) return;
 
     const trap = executor.items.sack.items.find((x) => {
-      const itemClass = this.game.itemHelper.getItemProperty(x, 'itemClass');
+      const itemClass = itemPropertyGet(x, 'itemClass');
       return itemClass === ItemClass.Trap;
     });
 

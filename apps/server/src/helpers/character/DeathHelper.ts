@@ -2,7 +2,11 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { addStatistic, getBaseStat, isDead, isPlayer } from '@lotr/characters';
-import { settingGameGet, traitLevelValue } from '@lotr/content';
+import {
+  itemPropertyGet,
+  settingGameGet,
+  traitLevelValue,
+} from '@lotr/content';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -502,9 +506,7 @@ export class DeathHelper extends BaseService {
 
     // take the belt & sack
     const sackItems = character.items.sack.items
-      .filter(
-        (item) => !this.game.itemHelper.getItemProperty(item, 'succorInfo'),
-      )
+      .filter((item) => !itemPropertyGet(item, 'succorInfo'))
       .map((item) => ({ ...pickSlot(), item }));
 
     this.game.inventoryHelper.removeItemsFromSackByUUID(
@@ -514,9 +516,7 @@ export class DeathHelper extends BaseService {
     allItemDrops.push(...sackItems);
 
     const beltItems = character.items.belt.items
-      .filter(
-        (item) => !this.game.itemHelper.getItemProperty(item, 'succorInfo'),
-      )
+      .filter((item) => !itemPropertyGet(item, 'succorInfo'))
       .map((item) => ({ ...pickSlot(), item }));
 
     this.game.inventoryHelper.removeItemsFromBeltByUUID(

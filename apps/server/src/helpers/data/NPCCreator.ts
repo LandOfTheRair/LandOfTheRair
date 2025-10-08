@@ -46,6 +46,7 @@ import {
   coreAttributeStats,
   coreChallenge,
   coreNPCNames,
+  itemGet,
   npcGet,
   settingGameGet,
   settingGetMaxLevel,
@@ -158,7 +159,7 @@ export class NPCCreator extends BaseService {
     const rightHandItemChoice = this.chooseItem(items?.equipment?.rightHand);
 
     const rightHandItem = rightHandItemChoice
-      ? this.game.itemHelper.getItemDefinition(rightHandItemChoice)
+      ? itemGet(rightHandItemChoice)!
       : null;
 
     // set the right hand if we load one
@@ -175,8 +176,7 @@ export class NPCCreator extends BaseService {
       const potentialLeftHand = this.chooseItem(items?.equipment?.leftHand);
 
       if (potentialLeftHand) {
-        const leftHandItem =
-          this.game.itemHelper.getItemDefinition(potentialLeftHand);
+        const leftHandItem = itemGet(potentialLeftHand)!;
 
         // check if the left hand is ammo
         if (leftHandItem.shots && rightHandItem && rightHandItem.canShoot) {

@@ -1,4 +1,4 @@
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertiesGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../../../models/macro';
@@ -17,12 +17,11 @@ export class Set extends SkillCommand {
       return this.sendMessage(player, 'You are not holding a trap!');
     }
 
-    const { itemClass, trapUses, trapEffect } =
-      this.game.itemHelper.getItemProperties(rightHand, [
-        'itemClass',
-        'trapUses',
-        'trapEffect',
-      ]);
+    const { itemClass, trapUses, trapEffect } = itemPropertiesGet(rightHand, [
+      'itemClass',
+      'trapUses',
+      'trapEffect',
+    ]);
     if (itemClass !== ItemClass.Trap) {
       return this.sendMessage(player, 'You are not holding a trap!');
     }

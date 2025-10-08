@@ -1,4 +1,4 @@
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertiesGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../../../models/macro';
@@ -19,9 +19,7 @@ export class Apply extends SkillCommand {
       );
     }
 
-    const { useEffect } = this.game.itemHelper.getItemProperties(leftHand, [
-      'useEffect',
-    ]);
+    const { useEffect } = itemPropertiesGet(leftHand, ['useEffect']);
     if (!useEffect || !useEffect.canApply) {
       return this.sendMessage(
         player,

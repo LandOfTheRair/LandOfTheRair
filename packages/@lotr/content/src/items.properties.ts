@@ -1,0 +1,28 @@
+import type { IItem, ISimpleItem } from '@lotr/interfaces';
+import { isUndefined } from 'lodash';
+import { itemGet } from './items';
+
+export function itemPropertyGet(
+  item: ISimpleItem | undefined,
+  prop: keyof IItem,
+): any | undefined {
+  if (!item) return undefined;
+
+  if (!isUndefined(item.mods[prop])) return item.mods[prop];
+
+  if (item.name === 'hands' || item.name === 'feet') return undefined;
+
+  const realItem = itemGet(item.name);
+  if (!realItem) return undefined;
+
+  return realItem[prop];
+}
+
+export function itemPropertiesGet(
+  item: ISimpleItem | undefined,
+  props: Array<keyof IItem>,
+): Partial<IItem> {
+  const hash = {};
+  props.forEach((prop) => (hash[prop] = itemPropertyGet(item, prop)));
+  return hash;
+}

@@ -14,8 +14,8 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class FurUpgraderBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser) {
@@ -103,15 +103,12 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
         if (!leftHand) return 'Your left hand must have a fur!';
 
-        const rightItemClass = game.itemHelper.getItemProperty(
-          rightHand,
-          'itemClass',
-        );
+        const rightItemClass = itemPropertyGet(rightHand, 'itemClass');
 
-        const { requirements, itemClass } = game.itemHelper.getItemProperties(
-          leftHand,
-          ['itemClass', 'requirements'],
-        );
+        const { requirements, itemClass } = itemPropertiesGet(leftHand, [
+          'itemClass',
+          'requirements',
+        ]);
 
         if (!game.itemHelper.isOwnedBy(player, rightHand)) {
           return 'You do not own that item!';
@@ -136,14 +133,8 @@ export class FurUpgraderBehavior implements IAIBehavior {
           return 'You are not strong enough to use that fur!';
         }
 
-        const leftRequirements = game.itemHelper.getItemProperty(
-          leftHand,
-          'requirements',
-        );
-        const rightRequirements = game.itemHelper.getItemProperty(
-          rightHand,
-          'requirements',
-        );
+        const leftRequirements = itemPropertyGet(leftHand, 'requirements');
+        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
 
         game.itemHelper.setItemProperty(
           rightHand,

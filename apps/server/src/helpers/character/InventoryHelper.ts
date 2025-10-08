@@ -1,6 +1,9 @@
 import { getStat } from '@lotr/characters';
 import {
   coreMaterialStorage,
+  itemGet,
+  itemPropertiesGet,
+  itemPropertyGet,
   settingGameGet,
   traitHasLearned,
   traitLevelValue,
@@ -39,10 +42,10 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToSack(player: ICharacter, item: ISimpleItem): boolean {
-    const { isSackable, itemClass } = this.game.itemHelper.getItemProperties(
-      item,
-      ['isSackable', 'itemClass'],
-    );
+    const { isSackable, itemClass } = itemPropertiesGet(item, [
+      'isSackable',
+      'itemClass',
+    ]);
     if (itemClass === ItemClass.Coin) return true;
     if (!isSackable) return false;
 
@@ -54,12 +57,11 @@ export class InventoryHelper extends BaseService {
   public addItemToSack(player: ICharacter, item: ISimpleItem): boolean {
     if (!this.canAddItemToSack(player, item)) return false;
 
-    const { itemClass, currency, value } =
-      this.game.itemHelper.getItemProperties(item, [
-        'itemClass',
-        'currency',
-        'value',
-      ]);
+    const { itemClass, currency, value } = itemPropertiesGet(item, [
+      'itemClass',
+      'currency',
+      'value',
+    ]);
     if (itemClass === ItemClass.Coin) {
       gainCurrency(player, value ?? 0, currency);
       return true;
@@ -104,10 +106,10 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToBelt(player: ICharacter, item: ISimpleItem): boolean {
-    const { isBeltable, itemClass } = this.game.itemHelper.getItemProperties(
-      item,
-      ['isBeltable', 'itemClass'],
-    );
+    const { isBeltable, itemClass } = itemPropertiesGet(item, [
+      'isBeltable',
+      'itemClass',
+    ]);
     if (
       itemClass === ItemClass.Halberd &&
       traitHasLearned(player as IPlayer, 'BigBelt')
@@ -156,7 +158,7 @@ export class InventoryHelper extends BaseService {
   }
 
   public canAddItemToPouch(player: IPlayer, item: ISimpleItem): boolean {
-    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    const itemClass = itemPropertyGet(item, 'itemClass');
     if (itemClass === ItemClass.Corpse || itemClass === ItemClass.Coin) {
       return false;
     }
@@ -205,8 +207,8 @@ export class InventoryHelper extends BaseService {
     item: ISimpleItem,
     locker: IItemContainer,
   ): boolean {
-    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
-    const succorInfo = this.game.itemHelper.getItemProperty(item, 'succorInfo');
+    const itemClass = itemPropertyGet(item, 'itemClass');
+    const succorInfo = itemPropertyGet(item, 'succorInfo');
 
     if (
       itemClass === ItemClass.Coin ||
@@ -296,15 +298,15 @@ export class InventoryHelper extends BaseService {
   }
 
   public itemValue(check: ICharacter | null, item: ISimpleItem): number {
-    const { ounces: baseOunces, sellValue: baseSellValue } =
-      this.game.itemHelper.getItemDefinition(item.name);
-    const { itemClass, value, sellValue, ounces } =
-      this.game.itemHelper.getItemProperties(item, [
-        'itemClass',
-        'value',
-        'sellValue',
-        'ounces',
-      ]);
+    const { ounces: baseOunces, sellValue: baseSellValue } = itemGet(
+      item.name,
+    )!;
+    const { itemClass, value, sellValue, ounces } = itemPropertiesGet(item, [
+      'itemClass',
+      'value',
+      'sellValue',
+      'ounces',
+    ]);
     const baseItemValue = sellValue || value || 1;
 
     if (itemClass === ItemClass.Bottle && ounces === 0) return 100;
@@ -355,9 +357,7 @@ export class InventoryHelper extends BaseService {
   // sell items / deal with buyback
   public sellItem(player: IPlayer, item: ISimpleItem): void {
     // some items have a raw value they sell for
-    const { itemClass } = this.game.itemHelper.getItemProperties(item, [
-      'itemClass',
-    ]);
+    const { itemClass } = itemPropertiesGet(item, ['itemClass']);
 
     // get the total value, assign it to buyback (in case they wanna buy it back)
     const totalSellValue = this.itemValue(player, item);

@@ -19,6 +19,7 @@ import { distanceFrom } from '@lotr/shared';
 import type { Game } from '../../../../helpers';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { itemPropertiesGet } from '@lotr/content';
 
 export class TannerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -117,7 +118,7 @@ export class TannerBehavior implements IAIBehavior {
         if (!rightHand) return 'You do not have anything in your right hand!';
 
         const { playersHeardDeath, corpseLevel, tansFor, searchItems } =
-          game.itemHelper.getItemProperties(rightHand, [
+          itemPropertiesGet(rightHand, [
             'playersHeardDeath',
             'corpseLevel',
             'tansFor',

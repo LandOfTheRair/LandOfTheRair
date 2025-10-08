@@ -12,6 +12,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { itemPropertiesGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -77,12 +78,11 @@ export class AlchemistBehavior implements IAIBehavior {
         if (!rightHand) return 'You need to hold something in your right hand!';
 
         const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
-        const { itemClass, ounces, useEffect } =
-          game.itemHelper.getItemProperties(rightHand, [
-            'itemClass',
-            'ounces',
-            'useEffect',
-          ]);
+        const { itemClass, ounces, useEffect } = itemPropertiesGet(rightHand, [
+          'itemClass',
+          'ounces',
+          'useEffect',
+        ]);
 
         const itemOunces = ounces ?? 0;
 
@@ -97,7 +97,7 @@ export class AlchemistBehavior implements IAIBehavior {
 
         player.items.sack.items.forEach((item) => {
           const { useEffect: checkEffect, ounces: checkOunces } =
-            game.itemHelper.getItemProperties(item, ['useEffect', 'ounces']);
+            itemPropertiesGet(item, ['useEffect', 'ounces']);
           const checkItemOunces = checkOunces ?? 0;
 
           if (rightHand.name !== item.name) return;

@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -22,8 +23,7 @@ export class DepositAllCommand extends MacroCommand {
       const { withdrawInOunces } =
         this.game.lockerHelper.getMaterialData(materialRef);
       if (withdrawInOunces) {
-        const totalOz =
-          this.game.itemHelper.getItemProperty(item, 'ounces') ?? 1;
+        const totalOz = itemPropertyGet(item, 'ounces') ?? 1;
         const takeOz = Math.min(materialSpaceLeft, totalOz);
 
         item.mods.ounces = totalOz - takeOz;

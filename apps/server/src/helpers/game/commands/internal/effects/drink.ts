@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import type { IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -18,7 +19,7 @@ export class DrinkCommand extends MacroCommand {
 
     // then right hand
     if (player.items.equipment[ItemSlot.RightHand]) {
-      const useEffect = this.game.itemHelper.getItemProperty(
+      const useEffect = itemPropertyGet(
         player.items.equipment[ItemSlot.RightHand],
         'useEffect',
       );
@@ -30,7 +31,7 @@ export class DrinkCommand extends MacroCommand {
 
     // then left hand
     if (player.items.equipment[ItemSlot.LeftHand]) {
-      const useEffect = this.game.itemHelper.getItemProperty(
+      const useEffect = itemPropertyGet(
         player.items.equipment[ItemSlot.LeftHand],
         'useEffect',
       );
@@ -42,7 +43,7 @@ export class DrinkCommand extends MacroCommand {
 
     // as a last resort, we traverse the sack, then slot the first item we find in potion, then use it
     const firstHealIndex = player.items.sack.items.findIndex((i) => {
-      const useEffect = this.game.itemHelper.getItemProperty(i, 'useEffect');
+      const useEffect = itemPropertyGet(i, 'useEffect');
       if (!useEffect) return false;
       return allHealingEffects.includes(useEffect.name);
     });

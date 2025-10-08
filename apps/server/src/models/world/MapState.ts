@@ -7,7 +7,7 @@ import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 import { Game } from '../../helpers';
 
 import { isDead, isPlayer } from '@lotr/characters';
-import { npcScriptGet, spawnerGet } from '@lotr/content';
+import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
 import type {
   ICharacter,
   IGround,
@@ -865,10 +865,7 @@ export class MapState {
     forceSave = false,
   ): void {
     itemlocs.forEach((ref) => {
-      const destroyOnDrop = this.game.itemHelper.getItemProperty(
-        ref.item,
-        'destroyOnDrop',
-      );
+      const destroyOnDrop = itemPropertyGet(ref.item, 'destroyOnDrop');
       if (destroyOnDrop) return;
 
       this.game.groundManager.addItemToGround(
@@ -896,10 +893,7 @@ export class MapState {
     forceSave = false,
   ): void {
     items.forEach((item) => {
-      const destroyOnDrop = this.game.itemHelper.getItemProperty(
-        item,
-        'destroyOnDrop',
-      );
+      const destroyOnDrop = itemPropertyGet(item, 'destroyOnDrop');
       if (destroyOnDrop) return;
 
       this.game.groundManager.addItemToGround(
@@ -922,10 +916,7 @@ export class MapState {
     item: ISimpleItem,
     forceSave = false,
   ): void {
-    const destroyOnDrop = this.game.itemHelper.getItemProperty(
-      item,
-      'destroyOnDrop',
-    );
+    const destroyOnDrop = itemPropertyGet(item, 'destroyOnDrop');
     if (destroyOnDrop) return;
 
     this.game.groundManager.addItemToGround(
@@ -968,10 +959,7 @@ export class MapState {
     items: IGroundItem[],
   ): void {
     items.forEach((item) => {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        item.item,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(item.item, 'itemClass');
       this.game.groundManager.removeItemFromGround(
         this.map.name,
         x,

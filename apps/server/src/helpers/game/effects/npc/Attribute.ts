@@ -1,5 +1,6 @@
 import { capitalize } from 'lodash';
 
+import { itemPropertiesGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type {
   DamageArgs,
@@ -97,10 +98,7 @@ export class Attribute extends Effect {
     // special handling for turkeys because why not
     if (damageType === 'turkey') {
       if (attackerWeapon) {
-        const { itemClass } = this.game.itemHelper.getItemProperties(
-          attackerWeapon,
-          ['itemClass'],
-        );
+        const { itemClass } = itemPropertiesGet(attackerWeapon, ['itemClass']);
 
         if (itemClass === ItemClass.Blunderbuss) return currentDamage;
       }
@@ -129,10 +127,7 @@ export class Attribute extends Effect {
     if (damageClass === 'physical') {
       // we check against the weapon if we can
       if (attackerWeapon) {
-        const { itemClass } = this.game.itemHelper.getItemProperties(
-          attackerWeapon,
-          ['itemClass'],
-        );
+        const { itemClass } = itemPropertiesGet(attackerWeapon, ['itemClass']);
         if (
           damageType === 'blunt' &&
           !SharpWeaponClasses[itemClass ?? ItemClass.Hands]

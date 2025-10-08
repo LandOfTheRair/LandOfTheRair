@@ -1,3 +1,4 @@
+import { itemPropertyGet } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -36,10 +37,7 @@ export class Backstab extends SkillCommand {
       );
     }
 
-    const weaponClass = this.game.itemHelper.getItemProperty(
-      weapon,
-      'itemClass',
-    );
+    const weaponClass = itemPropertyGet(weapon, 'itemClass');
     if (!WeaponClasses.includes(weaponClass)) {
       return this.sendMessage(
         player,

@@ -15,8 +15,8 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemPropertyGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class CosmeticBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ICosmeticsBehavior) {
@@ -78,14 +78,14 @@ export class CosmeticBehavior implements IAIBehavior {
         }
 
         // Check for unimbuable item classes
-        const itemClass = game.itemHelper.getItemProperty(item, 'itemClass');
+        const itemClass = itemPropertyGet(item, 'itemClass');
 
         if (itemClass === ItemClass.Corpse) return 'That is disrespectful.';
         if (itemClass === ItemClass.Coin) {
           return "I can't engrave onto something so small.";
         }
 
-        const cosmetic = game.itemHelper.getItemProperty(scroll, 'cosmetic');
+        const cosmetic = itemPropertyGet(scroll, 'cosmetic');
 
         item.mods.cosmetic = { name: cosmetic.name };
         game.characterHelper.setLeftHand(player, undefined);
@@ -110,7 +110,7 @@ export class CosmeticBehavior implements IAIBehavior {
           return 'That item belongs to someone else!';
         }
 
-        const cosmetic = game.itemHelper.getItemProperty(item, 'cosmetic');
+        const cosmetic = itemPropertyGet(item, 'cosmetic');
         if (!cosmetic) return 'That item has no cosmetic!';
         if (cosmetic.isPermanent) return 'That cosmetic cannot be removed!';
 

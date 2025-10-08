@@ -1,5 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertyGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IGroundItem, SpellCastArgs } from '@lotr/interfaces';
 import { ItemClass, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -48,16 +48,10 @@ export class Transmute extends Spell {
       items[itemClass].forEach((groundItem: IGroundItem) => {
         if (groundItem.item.mods.owner) return;
 
-        const ounces = this.game.itemHelper.getItemProperty(
-          groundItem.item,
-          'ounces',
-        );
+        const ounces = itemPropertyGet(groundItem.item, 'ounces');
         if (itemClass === ItemClass.Bottle && ounces > 0) return;
 
-        const quality = this.game.itemHelper.getItemProperty(
-          groundItem.item,
-          'quality',
-        );
+        const quality = itemPropertyGet(groundItem.item, 'quality');
         if (quality > 0) return;
 
         removeItems.push(groundItem);

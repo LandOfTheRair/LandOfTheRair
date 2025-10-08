@@ -1,10 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  SoundEffect,
-} from '@lotr/interfaces';
+import { itemPropertyGet } from '@lotr/content';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot, SoundEffect } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
@@ -40,14 +36,14 @@ export class Break extends MacroCommand {
 
     const item = player.items.equipment[itemSlot];
     if (!item) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You are not even holding an item there!',
       );
-}
+    }
     if (!this.game.itemHelper.isOwnedBy(player, item)) {
-return this.sendMessage(player, 'That item is not yours to break!');
-}
+      return this.sendMessage(player, 'That item is not yours to break!');
+    }
 
     this.game.characterHelper.setEquipmentSlot(player, itemSlot, undefined);
 
@@ -57,7 +53,7 @@ return this.sendMessage(player, 'That item is not yours to break!');
       SoundEffect.CombatBlockArmor,
     );
 
-    const effect = this.game.itemHelper.getItemProperty(item, 'breakEffect');
+    const effect = itemPropertyGet(item, 'breakEffect');
     if (effect) {
       this.sendMessage(player, 'You unleash a powerful magical force!');
 

@@ -1,4 +1,9 @@
-import { settingClassConfigGet, traitLevel } from '@lotr/content';
+import {
+  itemGet,
+  itemPropertyGet,
+  settingClassConfigGet,
+  traitLevel,
+} from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot, Skill } from '@lotr/interfaces';
@@ -44,9 +49,9 @@ export class Identify extends Spell {
     const identMsg = descTextFor(
       caster as IPlayer,
       rightHand,
-      this.game.itemHelper.getItemDefinition(rightHand.name),
+      itemGet(rightHand.name)!,
       rightHand.mods?.encrustItem
-        ? this.game.itemHelper.getItemDefinition(rightHand.mods.encrustItem)
+        ? itemGet(rightHand.mods.encrustItem)
         : undefined,
       castTier,
       canAppraiseWhileIdentifying ? thiefTier : 0,
@@ -60,10 +65,7 @@ export class Identify extends Spell {
       content: identMsg,
       extraData: {
         itemName: rightHand.name,
-        displayItemSprite: this.game.itemHelper.getItemProperty(
-          rightHand,
-          'sprite',
-        ),
+        displayItemSprite: itemPropertyGet(rightHand, 'sprite'),
       },
     });
 

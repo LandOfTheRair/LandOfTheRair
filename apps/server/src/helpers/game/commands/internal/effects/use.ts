@@ -1,4 +1,5 @@
 import { getEmptyHand } from '@lotr/characters';
+import { itemPropertyGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer, ItemClass } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -79,10 +80,7 @@ export class UseCommand extends MacroCommand {
 
         const item = this.game.itemCreator.rerollItem(groundItem.item, false);
 
-        const itemDefType = this.game.itemHelper.getItemProperty(
-          item,
-          'itemClass',
-        );
+        const itemDefType = itemPropertyGet(item, 'itemClass');
         this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
         state.removeItemFromGround(player.x, player.y, itemDefType, oldUUID);
 

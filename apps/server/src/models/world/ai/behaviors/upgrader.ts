@@ -11,6 +11,7 @@ import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../../../helpers';
 
+import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
 import { distanceFrom } from '@lotr/shared';
 
 export class UpgraderBehavior implements IAIBehavior {
@@ -30,7 +31,7 @@ export class UpgraderBehavior implements IAIBehavior {
           canUpgradeWith,
           stats,
           requirements: rightRequirements,
-        } = game.itemHelper.getItemProperties(rightHand, [
+        } = itemPropertiesGet(rightHand, [
           'stats',
           'canUpgradeWith',
           'requirements',
@@ -114,14 +115,8 @@ export class UpgraderBehavior implements IAIBehavior {
 
         game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
 
-        const leftRequirements = game.itemHelper.getItemProperty(
-          leftHand,
-          'requirements',
-        );
-        const rightRequirements = game.itemHelper.getItemProperty(
-          rightHand,
-          'requirements',
-        );
+        const leftRequirements = itemPropertyGet(leftHand, 'requirements');
+        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
 
         if (
           leftRequirements?.baseClass &&

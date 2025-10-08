@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
 import { getSkillLevel } from '@lotr/characters';
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertyGet, traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IGroundItem,
@@ -25,10 +25,7 @@ export class TrapHelper extends BaseService {
   }
 
   public triggerTrap(target: ICharacter, trap: IGroundItem) {
-    const trapEffect = this.game.itemHelper.getItemProperty(
-      trap.item,
-      'trapEffect',
-    );
+    const trapEffect = itemPropertyGet(trap.item, 'trapEffect');
     if (
       trap.item.mods.trapSetBy === target.uuid &&
       !trapEffect.extra?.isPositive
@@ -51,10 +48,7 @@ export class TrapHelper extends BaseService {
   }
 
   public castEffectFromTrap(target: ICharacter, trap: IGroundItem) {
-    const trapEffect: IItemEffect = this.game.itemHelper.getItemProperty(
-      trap.item,
-      'trapEffect',
-    );
+    const trapEffect: IItemEffect = itemPropertyGet(trap.item, 'trapEffect');
     if (!trapEffect) return;
 
     const mapState = this.game.worldManager.getMap(target.map)?.state;
@@ -95,7 +89,7 @@ export class TrapHelper extends BaseService {
     trap.mods.trapUses = 1 + traitLevelValue(placer, 'ReusableTraps');
 
     const trapEffect: IItemEffect = cloneDeep(
-      this.game.itemHelper.getItemProperty(trap, 'trapEffect'),
+      itemPropertyGet(trap, 'trapEffect'),
     );
     trapEffect.potency *= 1 + traitLevelValue(placer, 'StrongerTraps');
     trapEffect.range = trapEffect.range ?? 0;

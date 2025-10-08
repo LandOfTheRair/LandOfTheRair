@@ -1,3 +1,4 @@
+import { itemGet, itemPropertyGet } from '@lotr/content';
 import { loseCurrency } from '@lotr/currency';
 import type {
   IItem,
@@ -60,7 +61,7 @@ export class MarketDB extends BaseService {
     item: ISimpleItem,
     price: number,
   ): Promise<any> {
-    const itemDefinition = this.game.itemHelper.getItemDefinition(item.name);
+    const itemDefinition = itemGet(item.name)!;
     const listingFee = calculateListingFee(itemDefinition, price);
     loseCurrency(player, listingFee, Currency.Gold);
 
@@ -81,12 +82,11 @@ export class MarketDB extends BaseService {
 
     listing.itemInfo = {
       uuid: item.uuid,
-      sprite: this.game.itemHelper.getItemProperty(item, 'sprite'),
-      itemClass: this.game.itemHelper.getItemProperty(item, 'itemClass'),
-      requirements: this.game.itemHelper.getItemProperty(item, 'requirements'),
-      cosmetic: this.game.itemHelper.getItemProperty(item, 'cosmetic'),
-      condition:
-        this.game.itemHelper.getItemProperty(item, 'condition') ?? 20000,
+      sprite: itemPropertyGet(item, 'sprite'),
+      itemClass: itemPropertyGet(item, 'itemClass'),
+      requirements: itemPropertyGet(item, 'requirements'),
+      cosmetic: itemPropertyGet(item, 'cosmetic'),
+      condition: itemPropertyGet(item, 'condition') ?? 20000,
       itemOverride: Object.assign({}, itemDefinition, item.mods, {
         mods: item.mods || {},
       }) as IItemDefinition & Partial<IItem> & ISimpleItem,
@@ -141,18 +141,15 @@ export class MarketDB extends BaseService {
       pickup.username = username;
 
       const item = this.game.itemCreator.getSimpleItem(redeemable.item);
-      const itemDefinition = this.game.itemHelper.getItemDefinition(item.name);
+      const itemDefinition = itemGet(item.name);
 
       pickup.itemInfo = {
         condition: 20000,
         cosmetic: '',
         uuid: item.uuid,
-        sprite: this.game.itemHelper.getItemProperty(item, 'sprite'),
-        itemClass: this.game.itemHelper.getItemProperty(item, 'itemClass'),
-        requirements: this.game.itemHelper.getItemProperty(
-          item,
-          'requirements',
-        ),
+        sprite: itemPropertyGet(item, 'sprite'),
+        itemClass: itemPropertyGet(item, 'itemClass'),
+        requirements: itemPropertyGet(item, 'requirements'),
         itemOverride: Object.assign({}, itemDefinition, item),
       };
 

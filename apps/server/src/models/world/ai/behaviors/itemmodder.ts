@@ -9,8 +9,8 @@ import type {
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemPropertyGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class ItemModderBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IItemModderBehavior) {
@@ -67,10 +67,7 @@ export class ItemModderBehavior implements IAIBehavior {
             return 'You must own both of those items!';
           }
 
-          const proneChance = game.itemHelper.getItemProperty(
-            rightHand,
-            'proneChance',
-          );
+          const proneChance = itemPropertyGet(rightHand, 'proneChance');
           if (!proneChance || proneChance <= 0) {
             return 'That item does not prone!';
           }

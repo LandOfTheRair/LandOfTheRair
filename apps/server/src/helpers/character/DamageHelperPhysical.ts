@@ -43,6 +43,8 @@ import {
   coreWeaponTiers,
   coreWeaponTiersNPC,
   getHandsItem,
+  itemPropertiesGet,
+  itemPropertyGet,
   settingClassConfigGet,
   settingGameGet,
   traitLevel,
@@ -163,7 +165,7 @@ export class DamageHelperPhysical extends BaseService {
   ): PhysicalAttackReturn {
     const res = this.handlePhysicalAttack(attacker, defender, args);
 
-    const { returnsOnThrow, offhand } = this.game.itemHelper.getItemProperties(
+    const { returnsOnThrow, offhand } = itemPropertiesGet(
       attacker.items.equipment[ItemSlot.LeftHand],
       ['returnsOnThrow', 'offhand'],
     );
@@ -219,13 +221,10 @@ export class DamageHelperPhysical extends BaseService {
     isWeak: boolean;
     isStrong: boolean;
   } {
-    const { itemClass, tier, attackRange, twoHanded } =
-      this.game.itemHelper.getItemProperties(weapon, [
-        'itemClass',
-        'tier',
-        'attackRange',
-        'twoHanded',
-      ]);
+    const { itemClass, tier, attackRange, twoHanded } = itemPropertiesGet(
+      weapon,
+      ['itemClass', 'tier', 'attackRange', 'twoHanded'],
+    );
 
     let totalAttackRange = attackRange ?? 0;
     if (twoHanded) {
@@ -350,7 +349,7 @@ export class DamageHelperPhysical extends BaseService {
 
   // check if an item is a shield
   private isShield(item: ISimpleItem): boolean {
-    const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+    const itemClass = itemPropertyGet(item, 'itemClass');
     return ShieldClasses.includes(itemClass);
   }
 
@@ -361,12 +360,11 @@ export class DamageHelperPhysical extends BaseService {
     hand: ItemSlot,
     item: ISimpleItem,
   ) {
-    const { shots, itemClass, returnsOnThrow } =
-      this.game.itemHelper.getItemProperties(item, [
-        'shots',
-        'itemClass',
-        'returnsOnThrow',
-      ]);
+    const { shots, itemClass, returnsOnThrow } = itemPropertiesGet(item, [
+      'shots',
+      'itemClass',
+      'returnsOnThrow',
+    ]);
 
     if (returnsOnThrow || traitLevel(attacker, 'BoomerangArm')) {
       return;
@@ -527,7 +525,7 @@ export class DamageHelperPhysical extends BaseService {
         : undefined;
     const defenderOffhand =
       leftHand &&
-      (this.game.itemHelper.getItemProperty(leftHand, 'offhand') ||
+      (itemPropertyGet(leftHand, 'offhand') ||
         traitLevel(defender, 'BalancedGrip')) &&
       this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
         ? leftHand
@@ -552,12 +550,11 @@ export class DamageHelperPhysical extends BaseService {
     offhandMultiplier = offhandMultiplier ?? 1;
     accuracyLoss = accuracyLoss ?? 1;
 
-    const { type, secondaryType, canShoot } =
-      this.game.itemHelper.getItemProperties(weapon, [
-        'type',
-        'secondaryType',
-        'canShoot',
-      ]);
+    const { type, secondaryType, canShoot } = itemPropertiesGet(weapon, [
+      'type',
+      'secondaryType',
+      'canShoot',
+    ]);
 
     // get relevant skill info for attacker
     let attackerSkill =
@@ -583,17 +580,17 @@ export class DamageHelperPhysical extends BaseService {
 
     // if we have ammo, we grab the bonus from that
     const ammo = attacker.items.equipment[ItemSlot.Ammo];
-    const ammoClass = this.game.itemHelper.getItemProperty(ammo, 'itemClass');
+    const ammoClass = itemPropertyGet(ammo, 'itemClass');
 
     if (canShoot && ammo && ammoClass !== ItemClass.Wand) {
-      const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
+      const { tier } = itemPropertiesGet(ammo, ['tier']);
       bonusAttackRolls +=
         (tier ?? 0) + traitLevelValue(attacker, 'StrongShots');
     }
 
     // if we have a wand, we grab the tier of it for bonus rolls
     if (ammoClass === ItemClass.Wand) {
-      const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
+      const { tier } = itemPropertiesGet(ammo, ['tier']);
       bonusAttackRolls += tier ?? 0;
     }
 
@@ -654,25 +651,19 @@ export class DamageHelperPhysical extends BaseService {
         this.game.itemHelper.conditionACModifier(defenderShield);
     }
 
-    const armorStats = this.game.itemHelper.getItemProperty(
+    const armorStats = itemPropertyGet(
       defender.items.equipment[ItemSlot.Armor],
       'stats',
     );
-    const { type: blockerType, stats: blockerStats } =
-      this.game.itemHelper.getItemProperties(defenderBlocker, [
-        'type',
-        'stats',
-      ]);
-    const { stats: shieldStats } = this.game.itemHelper.getItemProperties(
-      defenderShield,
-      ['stats'],
+    const { type: blockerType, stats: blockerStats } = itemPropertiesGet(
+      defenderBlocker,
+      ['type', 'stats'],
     );
-    const { type: offhandType, stats: offhandStats } =
-      this.game.itemHelper.getItemProperties(defenderOffhand, [
-        'type',
-        'stats',
-        'itemClass',
-      ]);
+    const { stats: shieldStats } = itemPropertiesGet(defenderShield, ['stats']);
+    const { type: offhandType, stats: offhandStats } = itemPropertiesGet(
+      defenderOffhand,
+      ['type', 'stats', 'itemClass'],
+    );
 
     const offhandACBoost =
       defenderOffhand && this.game.itemHelper.isWeapon(defenderOffhand)
@@ -758,10 +749,7 @@ export class DamageHelperPhysical extends BaseService {
     const dodgeRoll = random(defenderDodgeRoll, attackerDodgeRoll);
 
     if (dodgeRoll < 0 || attackDistance < distBetween) {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        weapon,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(weapon, 'itemClass');
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -842,10 +830,7 @@ export class DamageHelperPhysical extends BaseService {
     const acRoll = random(defenderACRoll, attackerACRoll);
 
     if (acRoll < 0) {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        weapon,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(weapon, 'itemClass');
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -945,11 +930,8 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseBlocker) {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        weapon,
-        'itemClass',
-      );
-      const defenderItemClass = this.game.itemHelper.getItemProperty(
+      const itemClass = itemPropertyGet(weapon, 'itemClass');
+      const defenderItemClass = itemPropertyGet(
         defenderScope.blocker,
         'itemClass',
       );
@@ -1057,10 +1039,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseShield) {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        weapon,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(weapon, 'itemClass');
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -1165,11 +1144,8 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseOffhand) {
-      const itemClass = this.game.itemHelper.getItemProperty(
-        weapon,
-        'itemClass',
-      );
-      const defenderItemClass = this.game.itemHelper.getItemProperty(
+      const itemClass = itemPropertyGet(weapon, 'itemClass');
+      const defenderItemClass = itemPropertyGet(
         defenderScope.offhand,
         'itemClass',
       );
@@ -1243,10 +1219,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     const hasFleetOfFoot = hasEffect(defender, 'FleetOfFoot');
-    const proneChance = this.game.itemHelper.getItemProperty(
-      attackerWeapon,
-      'proneChance',
-    );
+    const proneChance = itemPropertyGet(attackerWeapon, 'proneChance');
 
     // if we can prone a target, we prone a target
     if (!hasFleetOfFoot && proneChance > 0 && rollInOneHundred(proneChance)) {
@@ -1372,7 +1345,7 @@ export class DamageHelperPhysical extends BaseService {
 
     const attackerWeapon = this.getWeaponForAttacker(attacker, args);
     const { type, secondaryType, itemClass, canShoot, damageClass } =
-      this.game.itemHelper.getItemProperties(attackerWeapon, [
+      itemPropertiesGet(attackerWeapon, [
         'type',
         'secondaryType',
         'itemClass',
@@ -1422,11 +1395,7 @@ export class DamageHelperPhysical extends BaseService {
       shots,
       damageClass: ammoDamageClass,
       itemClass: ammoItemClass,
-    } = this.game.itemHelper.getItemProperties(ammo, [
-      'damageClass',
-      'shots',
-      'itemClass',
-    ]);
+    } = itemPropertiesGet(ammo, ['damageClass', 'shots', 'itemClass']);
 
     if (canShoot && ammo && ammoItemClass !== ItemClass.Wand) {
       // if the ammo has a custom damage class, use that over everything else
@@ -1702,8 +1671,10 @@ export class DamageHelperPhysical extends BaseService {
       (canShoot && ammo && ammoItemClass !== ItemClass.Wand) ||
       (!canShoot && ammo && ammoItemClass === ItemClass.Wand)
     ) {
-      const ammoStrikeEffect: IItemEffect =
-        this.game.itemHelper.getItemProperty(ammo, 'strikeEffect');
+      const ammoStrikeEffect: IItemEffect = itemPropertyGet(
+        ammo,
+        'strikeEffect',
+      );
 
       if (ammoStrikeEffect) {
         this.game.spellManager.castSpell(
@@ -1718,16 +1689,15 @@ export class DamageHelperPhysical extends BaseService {
       }
     }
 
-    const { strikeEffect: weaponStrikeEffect, encrustItem } =
-      this.game.itemHelper.getItemProperties(attackerWeapon, [
-        'strikeEffect',
-        'encrustItem',
-      ]);
+    const { strikeEffect: weaponStrikeEffect, encrustItem } = itemPropertiesGet(
+      attackerWeapon,
+      ['strikeEffect', 'encrustItem'],
+    );
 
     // if it has an encrust strike effect, we apply it
     if (encrustItem) {
       const realEncrustItem = this.game.itemCreator.getSimpleItem(encrustItem);
-      const encrustGive: IItemEncrust = this.game.itemHelper.getItemProperty(
+      const encrustGive: IItemEncrust = itemPropertyGet(
         realEncrustItem,
         'encrustGive',
       );
@@ -1781,12 +1751,11 @@ export class DamageHelperPhysical extends BaseService {
     defender: ICharacter,
     attackerItem: ISimpleItem,
   ): void {
-    const { itemClass, type, condition } =
-      this.game.itemHelper.getItemProperties(attackerItem, [
-        'itemClass',
-        'type',
-        'condition',
-      ]);
+    const { itemClass, type, condition } = itemPropertiesGet(attackerItem, [
+      'itemClass',
+      'type',
+      'condition',
+    ]);
 
     // I mean, don't use bottles to attack ore veins
     if (itemClass === ItemClass.Bottle) {

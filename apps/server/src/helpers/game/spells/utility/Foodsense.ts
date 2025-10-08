@@ -1,3 +1,4 @@
+import { itemGet, itemPropertiesGet, itemPropertyGet } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemClass, ItemSlot } from '@lotr/interfaces';
 import { foodTextFor } from '@lotr/shared';
@@ -19,10 +20,10 @@ export class Foodsense extends Spell {
       return;
     }
 
-    const { itemClass, useEffect } = this.game.itemHelper.getItemProperties(
-      rightHand,
-      ['itemClass', 'useEffect'],
-    );
+    const { itemClass, useEffect } = itemPropertiesGet(rightHand, [
+      'itemClass',
+      'useEffect',
+    ]);
 
     if (itemClass !== ItemClass.Food) {
       this.sendMessage(caster, {
@@ -41,7 +42,7 @@ export class Foodsense extends Spell {
     const identMsg = foodTextFor(
       caster as IPlayer,
       rightHand,
-      this.game.itemHelper.getItemDefinition(rightHand.name),
+      itemGet(rightHand.name)!,
     );
 
     spellCastArgs.callbacks?.emit({
@@ -50,10 +51,7 @@ export class Foodsense extends Spell {
       content: identMsg,
       extraData: {
         itemName: rightHand.name,
-        displayItemSprite: this.game.itemHelper.getItemProperty(
-          rightHand,
-          'sprite',
-        ),
+        displayItemSprite: itemPropertyGet(rightHand, 'sprite'),
       },
     });
 

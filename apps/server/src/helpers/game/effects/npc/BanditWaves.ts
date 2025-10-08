@@ -1,4 +1,4 @@
-import { itemGetMatchingName } from '@lotr/content';
+import { itemGetMatchingName, itemPropertyGet } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -279,7 +279,7 @@ export class BanditWaves extends Effect {
         item,
       );
 
-      const itemClass = this.game.itemHelper.getItemProperty(item, 'itemClass');
+      const itemClass = itemPropertyGet(item, 'itemClass');
 
       this.game.messageHelper.sendMessageToMap(char.map, {
         message: `Thanks for saving me! I found this ${itemClass.toLowerCase()} on one of the bandits, you can have it!`,

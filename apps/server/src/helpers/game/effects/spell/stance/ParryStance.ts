@@ -1,5 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertyGet, traitLevelValue } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
@@ -17,7 +17,7 @@ export class ParryStance extends Effect {
 
     effect.effectInfo.usedWeapon = rightHand.uuid;
 
-    const skillName = this.game.itemHelper.getItemProperty(rightHand, 'type');
+    const skillName = itemPropertyGet(rightHand, 'type');
     const skill = getSkillLevel(char, skillName) + 1;
 
     effect.effectInfo.potency = skill;

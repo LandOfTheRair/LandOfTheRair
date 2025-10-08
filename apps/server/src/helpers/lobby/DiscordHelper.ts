@@ -10,6 +10,7 @@ import type {
 import { Stat, WeaponClasses } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
+import { itemGet } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import type { IDiscordCommand } from '../../interfaces';
 import * as commands from './discord-commands';
@@ -304,7 +305,7 @@ export class DiscordHelper extends BaseService {
 
   // create an item embed for !item
   public createItemEmbed(sellItem: ISimpleItem): Discord.EmbedBuilder {
-    const fullItem = this.game.itemHelper.getItemDefinition(sellItem.name);
+    const fullItem = itemGet(sellItem.name)!;
 
     const sprite = sellItem.mods.sprite ?? fullItem.sprite;
 

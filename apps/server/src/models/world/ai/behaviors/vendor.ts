@@ -18,6 +18,7 @@ import {
 import { distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
+import { itemGet, itemPropertyGet } from '@lotr/content';
 import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
 
@@ -137,9 +138,7 @@ export class VendorBehavior implements IAIBehavior {
             'What would you like to sell me all of (from your sack)?';
 
           const options = uniq(
-            player.items.sack.items.map((x) =>
-              game.itemHelper.getItemProperty(x, 'itemClass'),
-            ),
+            player.items.sack.items.map((x) => itemPropertyGet(x, 'itemClass')),
           ).sort();
 
           const formattedChat: IDialogChatAction = {
@@ -165,7 +164,7 @@ export class VendorBehavior implements IAIBehavior {
 
         const validSackItemsForSale = player.items.sack.items.filter(
           (x) =>
-            game.itemHelper.getItemProperty(x, 'itemClass') === itemClass &&
+            itemPropertyGet(x, 'itemClass') === itemClass &&
             game.inventoryHelper.canSellItem(player, x),
         );
 
@@ -195,7 +194,7 @@ export class VendorBehavior implements IAIBehavior {
       base.uuid = `daily-${npc.map}-${npc.name}-${dailySlot}-${vItem.item}`;
     }
 
-    const baseItem = game.itemHelper.getItemDefinition(vItem.item);
+    const baseItem = itemGet(vItem.item);
     if (!baseItem) {
       consoleError(
         `Vendor:${npc.name}`,

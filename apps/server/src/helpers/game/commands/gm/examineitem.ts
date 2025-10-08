@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 
+import { itemGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -23,11 +24,7 @@ export class GMExamineItem extends MacroCommand {
     if (args.stringArgs) {
       displayValue =
         get(rightHand, args.stringArgs, null) ||
-        get(
-          this.game.itemHelper.getItemDefinition(rightHand.name),
-          args.stringArgs,
-          null,
-        );
+        get(itemGet(rightHand.name), args.stringArgs, null);
     }
 
     this.sendMessage(
@@ -38,7 +35,7 @@ export class GMExamineItem extends MacroCommand {
     this.sendMessage(player, `\`${JSON.stringify(displayValue, null, 2)}\``);
     this.sendMessage(player, '===');
 
-    const baseItem = this.game.itemHelper.getItemDefinition(rightHand.name);
+    const baseItem = itemGet(rightHand.name);
     const string = `
       This Item:<br>
       ${JSON.stringify(displayValue, null, 2)}<br><br>

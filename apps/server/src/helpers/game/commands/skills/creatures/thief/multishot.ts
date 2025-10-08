@@ -1,4 +1,4 @@
-import { traitLevelValue } from '@lotr/content';
+import { itemPropertyGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
@@ -21,7 +21,7 @@ export class Multishot extends SpellCommand {
 
   override canUse(char: ICharacter, target: ICharacter): boolean {
     const weapon = char.items.equipment[ItemSlot.RightHand];
-    const canShoot = this.game.itemHelper.getItemProperty(weapon, 'canShoot');
+    const canShoot = itemPropertyGet(weapon, 'canShoot');
     return weapon && canShoot && char.items.equipment[ItemSlot.Ammo];
   }
 
@@ -45,7 +45,7 @@ export class Multishot extends SpellCommand {
     }
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
-    const canShoot = this.game.itemHelper.getItemProperty(weapon, 'canShoot');
+    const canShoot = itemPropertyGet(weapon, 'canShoot');
     if (!weapon || !canShoot) {
       return this.sendMessage(player, 'You need a ranged weapon to shoot!');
     }

@@ -16,6 +16,7 @@ import {
 import { descTextFor, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { itemGet, itemPropertyGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -84,9 +85,9 @@ export class IdentifierBehavior implements IAIBehavior {
         const identMsg = descTextFor(
           player,
           rightHand,
-          game.itemHelper.getItemDefinition(rightHand.name),
+          itemGet(rightHand.name)!,
           rightHand.mods?.encrustItem
-            ? game.itemHelper.getItemDefinition(rightHand.mods.encrustItem)
+            ? itemGet(rightHand.mods.encrustItem)
             : undefined,
           identifyTier,
         );
@@ -97,10 +98,7 @@ export class IdentifierBehavior implements IAIBehavior {
           content: identMsg,
           extraData: {
             itemName: rightHand.name,
-            displayItemSprite: game.itemHelper.getItemProperty(
-              rightHand,
-              'sprite',
-            ),
+            displayItemSprite: itemPropertyGet(rightHand, 'sprite'),
           },
         });
 

@@ -1,4 +1,5 @@
 import { getSkillLevel, mana } from '@lotr/characters';
+import { itemPropertyGet } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -15,7 +16,7 @@ export class RageStance extends Effect {
 
     effect.effectInfo.usedWeapon = rightHand.uuid;
 
-    const skillName = this.game.itemHelper.getItemProperty(rightHand, 'type');
+    const skillName = itemPropertyGet(rightHand, 'type');
     const skill = getSkillLevel(char, skillName) + 1;
 
     effect.effectInfo.statChanges = {

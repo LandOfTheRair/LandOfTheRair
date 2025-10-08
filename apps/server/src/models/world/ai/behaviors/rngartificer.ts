@@ -10,8 +10,8 @@ import type {
 import { ItemClass, ItemSlot, WeaponClasses } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemPropertiesGet } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class RNGArtificerBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ISpoilerLogger) {
@@ -31,13 +31,10 @@ export class RNGArtificerBehavior implements IAIBehavior {
                   I find that this process lets the weapon itself last much longer!`;
         }
 
-        const { name, itemClass, tier, requirements } =
-          game.itemHelper.getItemProperties(rightHand, [
-            'name',
-            'itemClass',
-            'tier',
-            'requirements',
-          ]);
+        const { name, itemClass, tier, requirements } = itemPropertiesGet(
+          rightHand,
+          ['name', 'itemClass', 'tier', 'requirements'],
+        );
 
         const requirementsLevel = requirements?.level ?? 0;
         const isWeapon =

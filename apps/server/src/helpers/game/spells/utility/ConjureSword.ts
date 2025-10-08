@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { itemPropertiesGet } from '@lotr/content';
 import type {
   ICharacter,
   IPlayer,
@@ -33,12 +34,11 @@ export class ConjureSword extends Spell {
     const weaponType = spellCastArgs.originalArgs?.stringArgs ?? 'Longsword';
 
     const item = this.game.itemCreator.getSimpleItem(`Conjured ${weaponType}`);
-    const { itemClass, twoHanded, canShoot } =
-      this.game.itemHelper.getItemProperties(item, [
-        'itemClass',
-        'twoHanded',
-        'canShoot',
-      ]);
+    const { itemClass, twoHanded, canShoot } = itemPropertiesGet(item, [
+      'itemClass',
+      'twoHanded',
+      'canShoot',
+    ]);
     if (
       !item ||
       !WeaponClasses.includes(itemClass as WeaponClass) ||

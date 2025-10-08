@@ -18,6 +18,7 @@ import { distanceFrom, foodTextFor } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { itemGet, itemPropertiesGet, itemPropertyGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -110,10 +111,10 @@ export class CulinarianBehavior implements IAIBehavior {
           return `You do not have enough ${identifyCurrency} for that!`;
         }
 
-        const { itemClass, useEffect } = game.itemHelper.getItemProperties(
-          rightHand,
-          ['itemClass', 'useEffect'],
-        );
+        const { itemClass, useEffect } = itemPropertiesGet(rightHand, [
+          'itemClass',
+          'useEffect',
+        ]);
 
         if (itemClass !== ItemClass.Food) {
           return 'You do not have a food item in your right hand!';
@@ -128,7 +129,7 @@ export class CulinarianBehavior implements IAIBehavior {
         const identMsg = foodTextFor(
           player,
           rightHand,
-          game.itemHelper.getItemDefinition(rightHand.name),
+          itemGet(rightHand.name)!,
         );
 
         env?.callbacks.emit({
@@ -137,10 +138,7 @@ export class CulinarianBehavior implements IAIBehavior {
           content: identMsg,
           extraData: {
             itemName: rightHand.name,
-            displayItemSprite: game.itemHelper.getItemProperty(
-              rightHand,
-              'sprite',
-            ),
+            displayItemSprite: itemPropertyGet(rightHand, 'sprite'),
           },
         });
 

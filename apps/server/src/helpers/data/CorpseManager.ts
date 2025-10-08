@@ -1,4 +1,4 @@
-import { settingGameGet } from '@lotr/content';
+import { itemPropertyGet, settingGameGet } from '@lotr/content';
 import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -155,15 +155,13 @@ export class CorpseManager extends BaseService {
 
     if (
       rightHand &&
-      this.game.itemHelper.getItemProperty(rightHand, 'itemClass') ===
-        ItemClass.Corpse
+      itemPropertyGet(rightHand, 'itemClass') === ItemClass.Corpse
     ) {
       this.game.characterHelper.setRightHand(player, undefined);
     }
     if (
       leftHand &&
-      this.game.itemHelper.getItemProperty(leftHand, 'itemClass') ===
-        ItemClass.Corpse
+      itemPropertyGet(leftHand, 'itemClass') === ItemClass.Corpse
     ) {
       this.game.characterHelper.setLeftHand(player, undefined);
     }
@@ -176,8 +174,7 @@ export class CorpseManager extends BaseService {
 
     if (
       rightHand &&
-      this.game.itemHelper.getItemProperty(rightHand, 'itemClass') ===
-        ItemClass.Corpse
+      itemPropertyGet(rightHand, 'itemClass') === ItemClass.Corpse
     ) {
       this.game.corpseManager.movePlayerCorpseOntoMap(rightHand, player);
       this.game.characterHelper.dropHand(player, 'right');
@@ -185,8 +182,7 @@ export class CorpseManager extends BaseService {
 
     if (
       leftHand &&
-      this.game.itemHelper.getItemProperty(leftHand, 'itemClass') ===
-        ItemClass.Corpse
+      itemPropertyGet(leftHand, 'itemClass') === ItemClass.Corpse
     ) {
       this.game.corpseManager.movePlayerCorpseOntoMap(leftHand, player);
       this.game.characterHelper.dropHand(player, 'left');

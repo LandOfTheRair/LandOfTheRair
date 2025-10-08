@@ -1,4 +1,4 @@
-import { traitLevel } from '@lotr/content';
+import { itemPropertyGet, traitLevel } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -35,10 +35,7 @@ export class Thruststrike extends SpellCommand {
       );
     }
 
-    const weaponClass = this.game.itemHelper.getItemProperty(
-      weapon,
-      'itemClass',
-    );
+    const weaponClass = itemPropertyGet(weapon, 'itemClass');
     if (!WeaponClasses.includes(weaponClass)) {
       return this.sendMessage(
         player,

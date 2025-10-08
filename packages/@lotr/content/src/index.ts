@@ -7,6 +7,7 @@ export * from './errors';
 export * from './events';
 export * from './items';
 export * from './items.helpers';
+export * from './items.properties';
 export * from './npcs';
 export * from './npcscripts';
 export * from './quests';

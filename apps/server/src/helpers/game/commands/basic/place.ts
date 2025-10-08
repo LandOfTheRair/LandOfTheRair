@@ -1,11 +1,11 @@
+import { itemPropertiesGet } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemSlot,
+  ISimpleItem,
 } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models';
 
@@ -27,10 +27,14 @@ export class Place extends MacroCommand {
     const rightHand = char.items.equipment[ItemSlot.RightHand];
     const leftHand = char.items.equipment[ItemSlot.LeftHand];
 
-    const { name: rightName, itemClass: rightClass } =
-      this.game.itemHelper.getItemProperties(rightHand, ['name', 'itemClass']);
-    const { name: leftName, itemClass: leftClass } =
-      this.game.itemHelper.getItemProperties(leftHand, ['name', 'itemClass']);
+    const { name: rightName, itemClass: rightClass } = itemPropertiesGet(
+      rightHand,
+      ['name', 'itemClass'],
+    );
+    const { name: leftName, itemClass: leftClass } = itemPropertiesGet(
+      leftHand,
+      ['name', 'itemClass'],
+    );
 
     let item: ISimpleItem;
     let hand: 'left' | 'right';
