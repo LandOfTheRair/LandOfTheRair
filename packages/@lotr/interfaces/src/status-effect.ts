@@ -46,6 +46,7 @@ export interface IStatusEffectInfo {
   ticksWithoutBerserking?: number; // the number of ticks without berserking (Berserk)
   currentBerserkTier?: number; // the current berserk tier (Berserk)
   currentBerserkApplications?: number; // the current number of berserk applications before tiering up (Berserk)
+  linkedTo?: string; // the uuid of the target character this is linked to (Cover)
 }
 
 export interface IStatusEffect {

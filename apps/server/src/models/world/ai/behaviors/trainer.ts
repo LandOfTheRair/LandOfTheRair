@@ -354,7 +354,7 @@ export class TrainerBehavior implements IAIBehavior {
         .setLogic(async ({ env }) => {
           const player = env?.player;
 
-          game.commandHandler.getSkillRef('Cleanse').use(null, player);
+          game.commandHandler.getSkillRef('Cleanse').use(undefined, player);
 
           env?.callbacks.emit({
             type: GameServerResponse.SendAlert,

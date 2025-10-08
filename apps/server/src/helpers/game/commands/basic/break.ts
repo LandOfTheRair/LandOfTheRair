@@ -59,7 +59,7 @@ export class Break extends MacroCommand {
 
       this.game.commandHandler
         .getSkillRef(effect.name)
-        .use(null, null, { overrideEffect: effect }, player);
+        .use(undefined, undefined, { overrideEffect: effect }, player);
     }
   }
 }

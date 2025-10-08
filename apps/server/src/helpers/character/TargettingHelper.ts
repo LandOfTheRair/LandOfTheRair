@@ -233,7 +233,7 @@ export class TargettingHelper extends BaseService {
   }
 
   public getPossibleAOETargets(
-    caster: ICharacter | null,
+    caster: ICharacter | undefined,
     center: ICharacter | { x: number; y: number; map: string },
     radius = 0,
     maxTargets = 12,

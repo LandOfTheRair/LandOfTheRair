@@ -88,8 +88,8 @@ export abstract class MacroCommand implements IMacroCommand {
 
   execute(executor: IPlayer, args: IMacroCommandArgs): void {} // always used only by people who can execute commands (players)
   use(
-    executor: ICharacter | null,
-    target: ICharacter | null,
+    executor: ICharacter | undefined,
+    target: ICharacter | undefined,
     args?: any,
     targetsPosition?: { x: number; y: number; map: string },
   ): void {} // used by anyone who has access to the command (players, npcs, environment)
@@ -350,7 +350,7 @@ export class SpellCommand extends SkillCommand {
 
   // called when a player casts a spell at something
   protected castSpell(
-    caster: ICharacter | null,
+    caster: ICharacter | undefined,
     args: Partial<IMacroCommandArgs>,
   ): string | boolean {
     // if the spell is party-based, target the whole party
@@ -456,7 +456,7 @@ export class SpellCommand extends SkillCommand {
       const map = primaryTarget?.map ?? caster?.map ?? '';
 
       if (x > 0 && y > 0 && map) {
-        return this.castSpellAt(caster, null, args, { x, y, map });
+        return this.castSpellAt(caster, undefined, args, { x, y, map });
       }
     }
 
@@ -465,7 +465,7 @@ export class SpellCommand extends SkillCommand {
 
   // whether or not the spell can be cast - simple check that gets rolled into canUse
   protected canCastSpell(
-    caster: ICharacter | null,
+    caster: ICharacter | undefined,
     target: ICharacter,
   ): boolean {
     if (!this.canTargetSelf && target === caster) return false;
@@ -494,8 +494,8 @@ export class SpellCommand extends SkillCommand {
 
   // cast the spell at the target - caster optional
   protected castSpellAt(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     args?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string },
   ): boolean {
@@ -600,8 +600,8 @@ export class SpellCommand extends SkillCommand {
 
   // default use, primarily used by npcs
   override use(
-    char: ICharacter | null,
-    target: ICharacter | null,
+    char: ICharacter | undefined,
+    target: ICharacter | undefined,
     args?: any,
     targetsPosition?: { x: number; y: number; map: string },
   ) {

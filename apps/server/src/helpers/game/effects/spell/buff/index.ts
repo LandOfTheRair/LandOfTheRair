@@ -14,6 +14,8 @@ export * from './BloodyTears';
 export * from './Boost';
 export * from './BulgingMuscles';
 export * from './CombatPower';
+export * from './Cover';
+export * from './Covered';
 export * from './DarkVision';
 export * from './DeftStrikes';
 export * from './FerociousRoarVigor';

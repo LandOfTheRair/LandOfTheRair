@@ -16,12 +16,12 @@ export class GMRemoveEffect extends MacroCommand {
     );
     if (!target) return this.youDontSeeThatPerson(player, creature);
 
-    const effectData = player.effects._hash[effect];
+    const effectData = target.effects._hash[effect];
     if (!effectData) {
       return this.sendMessage(player, 'Could not find that effect.');
     }
 
-    this.game.effectHelper.removeEffect(player, effectData);
-    delete player.effects._hash[effect];
+    this.game.effectHelper.removeEffect(target, effectData);
+    delete target.effects._hash[effect];
   }
 }

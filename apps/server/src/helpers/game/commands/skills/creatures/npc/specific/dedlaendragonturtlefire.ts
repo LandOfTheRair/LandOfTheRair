@@ -21,7 +21,7 @@ export class DedlaenDragonTurtleFire extends SpellCommand {
       .getSkillRef('FireMist')
       .use(
         executor,
-        null,
+        undefined,
         { overrideEffect: { range: 3, name: 'FireMist' } },
         target,
       );

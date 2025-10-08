@@ -1,10 +1,5 @@
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class FrostspikesAura extends Effect {
@@ -16,8 +11,8 @@ export class FrostspikesAura extends Effect {
     currentDamage: number,
   ): number {
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) {
-return currentDamage;
-}
+      return currentDamage;
+    }
 
     this.game.damageHelperMagic.magicalAttack(char, attacker, {
       atkMsg: 'Your frostspikes strike %0!',

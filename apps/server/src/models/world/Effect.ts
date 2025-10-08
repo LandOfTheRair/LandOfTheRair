@@ -60,4 +60,17 @@ export class Effect implements BaseEffect {
     char: ICharacter,
     target: ICharacter,
   ) {}
+
+  protected getLinkedTarget(
+    char: ICharacter,
+    effect: IStatusEffect,
+  ): ICharacter | undefined {
+    if (!effect.effectInfo?.linkedTo) return undefined;
+
+    const linkedTarget = this.game.worldManager
+      .getMapStateForCharacter(char)
+      ?.getCharacterByUUID(effect.effectInfo?.linkedTo);
+
+    return linkedTarget;
+  }
 }

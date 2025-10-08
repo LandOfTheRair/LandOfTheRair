@@ -64,7 +64,7 @@ export class TrapHelper extends BaseService {
     if (isAOE) {
       this.game.commandHandler.getSkillRef(trapEffect.name).use(
         caster,
-        null,
+        undefined,
         {
           overrideEffect: { range: trapEffect.range, name: trapEffect.name },
         },

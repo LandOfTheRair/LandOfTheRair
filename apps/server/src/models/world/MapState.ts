@@ -836,15 +836,15 @@ export class MapState {
     this.allNPCS.forEach((npc) => this.removeNPC(npc));
   }
 
-  public getCharacterByUUID(uuid: string): ICharacter | null {
+  public getCharacterByUUID(uuid: string): ICharacter | undefined {
     return this.npcsByUUID[uuid] || this.playersByUUID[uuid];
   }
 
-  public getNPCSpawner(uuid: string): Spawner | null {
+  public getNPCSpawner(uuid: string): Spawner | undefined {
     return this.npcsBySpawner[uuid];
   }
 
-  public getNPCSpawnerByName(name: string): Spawner | null {
+  public getNPCSpawnerByName(name: string): Spawner | undefined {
     return this.spawnersByName[name];
   }
 

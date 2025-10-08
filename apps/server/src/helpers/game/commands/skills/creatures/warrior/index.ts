@@ -1,8 +1,8 @@
-
 export * from './blindstrike';
 export * from './cleave';
-export * from './maddash';
+export * from './cover';
 export * from './jumpkick';
+export * from './maddash';
 export * from './mockingshout';
 export * from './multistrike';
 export * from './provoke';
