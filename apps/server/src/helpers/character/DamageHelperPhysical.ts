@@ -170,12 +170,21 @@ export class DamageHelperPhysical extends BaseService {
   ): PhysicalAttackReturn {
     const res = this.handlePhysicalAttack(attacker, defender, args);
 
-    const { returnsOnThrow, offhand } = itemPropertiesGet(
-      attacker.items.equipment[ItemSlot.LeftHand],
-      ['returnsOnThrow', 'offhand'],
-    );
+    const {
+      returnsOnThrow,
+      offhand,
+      itemClass: offhandItemClass,
+    } = itemPropertiesGet(attacker.items.equipment[ItemSlot.LeftHand], [
+      'returnsOnThrow',
+      'offhand',
+      'itemClass',
+    ]);
 
-    const canOffhand = offhand || traitLevel(attacker, 'BalancedGrip');
+    const canOffhand =
+      offhand ||
+      traitLevel(attacker, 'BalancedGrip') ||
+      (traitLevel(attacker, 'DaggerExcellence') &&
+        offhandItemClass === ItemClass.Dagger);
 
     const shouldOffhandAttackAsWell =
       (!args.isThrow && !args.isKick && !args.isPunch) ||
