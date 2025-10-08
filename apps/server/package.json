@@ -2,9 +2,6 @@
   "name": "server",
   "description": "Backend of Land of the Rair",
   "main": "index.js",
-  "bin": {
-    "lotr-server": "dist/src/core/index.js"
-  },
   "scripts": {
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
@@ -13,9 +10,7 @@
     "tsc:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/src/core/index.js\"",
     "content:dev": "cd content && npm run watch",
     "lint": "eslint -c .eslintrc.json --ext .ts src",
-    "build": "tsc",
-    "build:package": "pkg . --public --output=build/lotr-server.exe",
-    "build:package:all": "npm run build && npm run build:package"
+    "build": "tsc"
   },
   "engines": {
     "node": ">= 20",
@@ -74,9 +69,7 @@
     "@types/mongodb": "3.3.13",
     "@types/node": "^20.19.17",
     "@types/ws": "^7.4.0",
-    "@yao-pkg/pkg": "^5.15.0",
     "nodemon": "^3.1.4",
-    "pkg": "^5.8.1",
     "prettier": "^3.3.3",
     "source-map-support": "^0.5.19",
     "symlink-dir": "4.1.0",
@@ -84,15 +77,5 @@
     "tsc-watch": "^7.1.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "pkg": {
-    "targets": [
-      "node20-win"
-    ],
-    "assets": [
-      "dist/**/*.js",
-      "dist/server/content/**/*.json",
-      "node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node"
-    ]
   }
 }

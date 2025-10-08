@@ -40,7 +40,7 @@ jobs:
 
       - run: npm run build
 
-      - run: cd apps/server && npm run build:package
+      - run: npm run build:package
 
       - uses: little-core-labs/get-git-tag@v3.0.1
         id: loadTagName
@@ -69,7 +69,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.createRelease.outputs.upload_url }}
-          asset_path: ./apps/server/build/lotr-server.exe
+          asset_path: ./build/lotr-server.exe
           asset_name: lotr-server.exe
           asset_content_type: application/vnd.microsoft.portable-executable
 

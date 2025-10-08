@@ -22,9 +22,11 @@
     "push": "git push && git push --tags",
     "bump:patch": "npm version patch -m \"chore(release): Patch %s\"",
     "bump:minor": "npm version minor -m \"chore(release): Minor %s\"",
-    "bump:major": "npm version major -m \"chore(release): Major %s\""
+    "bump:major": "npm version major -m \"chore(release): Major %s\"",
+    "build:package": "pkg . --public --output=build/lotr-server.exe"
   },
   "devDependencies": {
+    "@yao-pkg/pkg": "^6.8.0",
     "@vitest/coverage-v8": "^3.2.4",
     "conventional-changelog-cli": "^2.1.1",
     "prettier": "^3.6.2",
@@ -39,5 +41,21 @@
   "workspaces": [
     "apps/*",
     "packages/**/*"
-  ]
+  ],
+  "bin": {
+    "lotr-server": "apps/server/dist/src/core/index.js"
+  },
+  "pkg": {
+    "targets": [
+      "node20-win"
+    ],
+    "scripts": [
+      "apps/server/dist/**/*.js",
+      "packages/**/dist/*.js"
+    ],
+    "assets": [
+      "apps/server/dist/server/content/**/*.json",
+      "apps/server/node_modules/bcrypt/lib/binding/napi-v3/bcrypt_lib.node"
+    ]
+  }
 }
