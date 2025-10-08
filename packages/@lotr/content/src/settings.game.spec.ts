@@ -110,23 +110,6 @@ describe('Settings Game Functions', () => {
   });
 
   describe('AI Control Functions', () => {
-    describe('settingIsAIActive', () => {
-      it('should return true when AI is active by default', () => {
-        expect(settingIsAIActive()).toBe(true);
-      });
-
-      it('should return false when AI is frozen', () => {
-        toggleAIFreeze(); // Freeze AI
-        expect(settingIsAIActive()).toBe(false);
-      });
-
-      it('should return true when AI is unfrozen after being frozen', () => {
-        toggleAIFreeze(); // Freeze AI
-        toggleAIFreeze(); // Unfreeze AI
-        expect(settingIsAIActive()).toBe(true);
-      });
-    });
-
     describe('toggleAIFreeze', () => {
       it('should toggle AI state from active to frozen', () => {
         const initialState = settingIsAIActive();
