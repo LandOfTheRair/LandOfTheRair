@@ -21,7 +21,6 @@ import {
   ItemClass,
   ItemSlot,
   MessageType,
-  ShieldClasses,
   Skill,
   SoundEffect,
   Stat,
@@ -43,6 +42,7 @@ import {
   coreWeaponTiers,
   coreWeaponTiersNPC,
   getHandsItem,
+  isShield,
   itemPropertiesGet,
   itemPropertyGet,
   settingClassConfigGet,
@@ -347,12 +347,6 @@ export class DamageHelperPhysical extends BaseService {
     return { damage: totalDamage, isWeak, isStrong };
   }
 
-  // check if an item is a shield
-  private isShield(item: ISimpleItem): boolean {
-    const itemClass = itemPropertyGet(item, 'itemClass');
-    return ShieldClasses.includes(itemClass);
-  }
-
   // resolve throwing and possibly breaking an item
   private resolveThrow(
     attacker: ICharacter,
@@ -519,7 +513,7 @@ export class DamageHelperPhysical extends BaseService {
     const leftHand = defender.items.equipment[ItemSlot.LeftHand];
     const defenderShield =
       leftHand &&
-      this.isShield(leftHand) &&
+      isShield(leftHand) &&
       this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
         ? leftHand
         : undefined;
@@ -1615,6 +1609,11 @@ export class DamageHelperPhysical extends BaseService {
     if (isBackstab) {
       const bonusMultiplier = 1.5 + traitLevelValue(attacker, 'BetterBackstab');
       damageMult += bonusMultiplier;
+    }
+
+    const attackerOffhand = attacker.items.equipment[ItemSlot.LeftHand];
+    if (attackerOffhand && isShield(attackerOffhand)) {
+      damageMult += traitLevelValue(attacker, 'ShieldForce');
     }
 
     damage = Math.floor(damage * damageMult);
