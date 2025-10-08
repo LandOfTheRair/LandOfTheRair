@@ -42,6 +42,7 @@ export * from './PhysicalToNecrotic';
 export * from './PhysicalToWater';
 export * from './Protection';
 export * from './Regen';
+export * from './RosebushAura';
 export * from './Shadowmeld';
 export * from './Shield';
 export * from './SoroniteSweat';
