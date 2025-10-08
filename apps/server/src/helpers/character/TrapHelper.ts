@@ -2,7 +2,11 @@ import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
 import { getSkillLevel } from '@lotr/characters';
-import { itemPropertyGet, traitLevelValue } from '@lotr/content';
+import {
+  itemPropertyGet,
+  itemPropertySet,
+  traitLevelValue,
+} from '@lotr/content';
 import type {
   ICharacter,
   IGroundItem,
@@ -40,7 +44,7 @@ export class TrapHelper extends BaseService {
 
     const trapUses = trap.item.mods.trapUses ?? 1;
     if (trapUses > 0) {
-      this.game.itemHelper.setItemProperty(trap.item, 'trapUses', trapUses - 1);
+      itemPropertySet(trap.item, 'trapUses', trapUses - 1);
       if (trapUses - 1 <= 0) {
         this.removeTrap(target.map, target.x, target.y, trap);
       }

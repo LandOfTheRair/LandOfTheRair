@@ -1,6 +1,6 @@
 import { uniq } from 'lodash';
 
-import { itemPropertyGet } from '@lotr/content';
+import { itemIsOwnedBy, itemPropertyGet } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -73,7 +73,7 @@ export class Disenchant extends MacroCommand {
         const items = player.items.sack.items
           .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
           .filter((x) => itemPropertyGet(x, 'quality') >= 1)
-          .filter((x) => this.game.itemHelper.isOwnedBy(player, x));
+          .filter((x) => itemIsOwnedBy(player, x));
 
         if (items.length === 0) {
           return this.sendMessage(
@@ -123,7 +123,7 @@ export class Disenchant extends MacroCommand {
 
     // right hand = single DE (we check stringArgs in case a mistake happened)
     if (item && !args.stringArgs) {
-      if (!this.game.itemHelper.isOwnedBy(player, item)) {
+      if (!itemIsOwnedBy(player, item)) {
         return this.sendMessage(
           player,
           'That item is not yours to disenchant!',

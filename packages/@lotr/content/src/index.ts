@@ -8,6 +8,8 @@ export * from './events';
 export * from './items';
 export * from './items.helpers';
 export * from './items.properties';
+export * from './items.upgrades';
+export * from './items.usability';
 export * from './npcs';
 export * from './npcscripts';
 export * from './quests';

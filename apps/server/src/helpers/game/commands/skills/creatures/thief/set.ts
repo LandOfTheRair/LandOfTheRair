@@ -1,4 +1,8 @@
-import { itemPropertiesGet, traitLevelValue } from '@lotr/content';
+import {
+  itemCanGetBenefitsFrom,
+  itemPropertiesGet,
+  traitLevelValue,
+} from '@lotr/content';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../../../models/macro';
@@ -26,7 +30,7 @@ export class Set extends SkillCommand {
       return this.sendMessage(player, 'You are not holding a trap!');
     }
 
-    if (!this.game.itemHelper.canGetBenefitsFromItem(player, rightHand)) {
+    if (!itemCanGetBenefitsFrom(player, rightHand)) {
       return this.sendMessage(player, 'You cannot use that trap!');
     }
 

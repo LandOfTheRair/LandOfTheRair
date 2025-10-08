@@ -1,5 +1,6 @@
 import {
   itemGet,
+  itemMarkIdentified,
   itemPropertyGet,
   settingClassConfigGet,
   traitLevel,
@@ -57,7 +58,7 @@ export class Identify extends Spell {
       canAppraiseWhileIdentifying ? thiefTier : 0,
     );
 
-    this.game.itemHelper.markIdentified(rightHand, castTier);
+    itemMarkIdentified(rightHand, castTier);
 
     spellCastArgs.callbacks?.emit({
       type: GameServerResponse.SendAlert,

@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { itemSetOwner } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -39,7 +40,7 @@ export class ConjureShield extends Spell {
     item.mods.stats[Stat.MagicalResist] = skill * 2;
     item.mods.stats[Stat.PhysicalResist] = skill * 2;
 
-    this.game.itemHelper.setOwner(caster as IPlayer, item);
+    itemSetOwner(caster as IPlayer, item);
 
     this.game.characterHelper.setLeftHand(caster, item);
   }

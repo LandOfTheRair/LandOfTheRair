@@ -9,8 +9,8 @@ import type {
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { itemIsOwnedBy } from '@lotr/content';
+import type { Game } from '../../../../helpers';
 
 export class ResetterBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: IResetterBehavior) {
@@ -90,7 +90,7 @@ export class ResetterBehavior implements IAIBehavior {
 
         const item = player.items.equipment[ItemSlot.RightHand];
         if (!item) return 'Not holding anything!';
-        if (!game.itemHelper.isOwnedBy(player, item)) return 'Not yours!';
+        if (!itemIsOwnedBy(player, item)) return 'Not yours!';
 
         item.mods.upgrades = [];
 

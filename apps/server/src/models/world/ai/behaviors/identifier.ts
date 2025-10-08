@@ -16,7 +16,7 @@ import {
 import { descTextFor, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { itemGet, itemPropertyGet } from '@lotr/content';
+import { itemGet, itemMarkIdentified, itemPropertyGet } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -104,7 +104,7 @@ export class IdentifierBehavior implements IAIBehavior {
 
         game.messageHelper.sendSimpleMessage(player, identMsg);
 
-        game.itemHelper.markIdentified(rightHand, identifyTier);
+        itemMarkIdentified(rightHand, identifyTier);
 
         return `Thanks, ${player.name}!`;
       });

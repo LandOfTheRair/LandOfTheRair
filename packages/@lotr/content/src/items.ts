@@ -47,3 +47,10 @@ export function itemGetMatchingName(mapName: string): IItemDefinition[] {
     .filter((item) => item.name.includes(mapName))
     .map((x) => cloneDeep(x));
 }
+
+// search all items for similar things
+export function searchItems(search: string): string[] {
+  return Object.keys(itemAllGet()).filter((x) =>
+    new RegExp(`.*${search}.*`, 'i').test(x),
+  );
+}

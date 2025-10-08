@@ -1,5 +1,10 @@
 import { getEmptyHand } from '@lotr/characters';
-import { itemPropertyGet, traitHasLearned } from '@lotr/content';
+import {
+  itemCanGetBenefitsFrom,
+  itemIsOwnedBy,
+  itemPropertyGet,
+  traitHasLearned,
+} from '@lotr/content';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -165,10 +170,7 @@ export class MoveItems extends MacroCommand {
     }
 
     // Dest: E - Items must be able to be used by the equipper
-    if (
-      dest === 'E' &&
-      !this.game.itemHelper.canGetBenefitsFromItem(player, srcItem)
-    ) {
+    if (dest === 'E' && !itemCanGetBenefitsFrom(player, srcItem)) {
       this.sendMessage(
         player,
         this.game.itemHelper.reasonCantGetBenefitsFromItem(player, srcItem),
@@ -206,7 +208,7 @@ export class MoveItems extends MacroCommand {
         return false;
       }
 
-      if (!this.game.itemHelper.isOwnedBy(player, srcItem)) {
+      if (!itemIsOwnedBy(player, srcItem)) {
         this.sendMessage(player, 'You do not own that item!');
         return false;
       }

@@ -26,3 +26,11 @@ export function itemPropertiesGet(
   props.forEach((prop) => (hash[prop] = itemPropertyGet(item, prop)));
   return hash;
 }
+
+export function itemPropertySet<T extends keyof IItem>(
+  item: ISimpleItem,
+  prop: T,
+  value: IItem[T],
+): void {
+  item.mods[prop] = value;
+}

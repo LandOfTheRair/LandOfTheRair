@@ -1,7 +1,12 @@
 import { clamp } from 'lodash';
 
 import { addStatistic, hasLearned } from '@lotr/characters';
-import { coreMaterialStorage, itemPropertyGet, recipeGet } from '@lotr/content';
+import {
+  coreMaterialStorage,
+  itemIsOwnedBy,
+  itemPropertyGet,
+  recipeGet,
+} from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -78,7 +83,7 @@ export class Craft extends MacroCommand {
         return true;
       }
 
-      if (!this.game.itemHelper.isOwnedBy(player, recipeItem)) return false;
+      if (!itemIsOwnedBy(player, recipeItem)) return false;
 
       return true;
     };

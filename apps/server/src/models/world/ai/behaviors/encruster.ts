@@ -24,6 +24,8 @@ import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import {
   itemPropertiesGet,
   itemPropertyGet,
+  itemPropertySet,
+  itemSetEncrust,
   settingGameGet,
 } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
@@ -296,9 +298,9 @@ export class EncrusterBehavior implements IAIBehavior {
 
         if (!shouldPass) return 'You cannot encrust that gem into that item.';
 
-        rightHand.mods.encrustItem = leftHand.name;
+        itemSetEncrust(rightHand, leftHand);
 
-        game.itemHelper.setItemProperty(
+        itemPropertySet(
           rightHand,
           'requirements',
           game.itemHelper.mergeItemRequirements(
@@ -308,7 +310,7 @@ export class EncrusterBehavior implements IAIBehavior {
         );
 
         loseCurrency(player, encrustCost);
-        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
+        itemPropertySet(rightHand, 'owner', player.username);
         game.characterHelper.setLeftHand(player, undefined);
 
         return 'Enjoy your new encrusted item!';

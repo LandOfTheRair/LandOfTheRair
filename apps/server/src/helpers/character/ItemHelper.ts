@@ -4,36 +4,32 @@ import { cloneDeep, isNumber } from 'lodash';
 import type {
   ICharacter,
   IDialogChatAction,
-  IItem,
   IItemRequirements,
   IPlayer,
   ISimpleItem,
   ItemSlot,
-  Stat,
-  WeaponClass,
 } from '@lotr/interfaces';
-import {
-  Allegiance,
-  GameServerResponse,
-  ItemClass,
-  WeaponClasses,
-} from '@lotr/interfaces';
+import { GameServerResponse, ItemClass } from '@lotr/interfaces';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isPlayer } from '@lotr/characters';
 import {
   coreRNGDungeonConfig,
-  itemAllGet,
+  itemCanBeUpgraded,
+  itemCanGetBenefitsFrom,
   itemGet,
+  itemIsBroken,
+  itemIsOwnedBy,
   itemPropertiesGet,
   itemPropertyGet,
+  itemPropertySet,
   recipeGet,
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
-import { canUseItem, isOwnedBy } from '@lotr/shared';
+import { canUseItem } from '@lotr/shared';
 
 // functions related to MODIFYING an item
 // not to be confused with ItemCreator which is for HELPER FUNCTIONS that CREATE ITEMS
@@ -97,31 +93,6 @@ export class ItemHelper extends BaseService {
     };
   }
 
-  public setItemProperty(
-    item: ISimpleItem,
-    prop: keyof IItem,
-    value: any,
-  ): void {
-    item.mods[prop] = value;
-  }
-
-  // encrust an item with another item
-  public encrustItem(baseItem: ISimpleItem, encrustItem: ISimpleItem): void {
-    baseItem.mods.encrustItem = encrustItem.name;
-  }
-
-  // check if an item can be used as an upgrade material
-  public canUseItemForUpgrade(upgradeItem: ISimpleItem): boolean {
-    return itemPropertyGet(upgradeItem, 'canUpgradeWith');
-  }
-
-  // check if an item can be upgraded
-  public canUpgradeItem(baseItem: ISimpleItem, bypassLimit = false): boolean {
-    if (bypassLimit) return true;
-    const { maxUpgrades } = itemPropertiesGet(baseItem, ['maxUpgrades']);
-    return (baseItem.mods.upgrades?.length ?? 0) < (maxUpgrades ?? 0);
-  }
-
   // upgrade an item with another item
   public upgradeItem(
     baseItem: ISimpleItem,
@@ -130,88 +101,10 @@ export class ItemHelper extends BaseService {
   ): boolean {
     const upgradeRef = this.game.itemCreator.getSimpleItem(upgradeItem);
     if (!upgradeRef) return false;
-    if (!this.canUpgradeItem(baseItem, bypassLimit)) return false;
+    if (!itemCanBeUpgraded(baseItem, bypassLimit)) return false;
 
     baseItem.mods.upgrades = baseItem.mods.upgrades || [];
     baseItem.mods.upgrades.push(upgradeItem);
-
-    return true;
-  }
-
-  // get an items stat
-  public getStat(item: ISimpleItem, stat: Stat): number {
-    const statMod = item.mods?.stats?.[stat] ?? 0;
-
-    const baseItem = itemGet(item.name);
-    const baseStat = baseItem?.stats?.[stat] ?? 0;
-
-    let encrustStat = 0;
-    if (item.mods.encrustItem) {
-      const encrustItem = itemGet(item.mods.encrustItem);
-      if (encrustItem) {
-        encrustStat = encrustItem.encrustGive?.stats?.[stat] ?? 0;
-      }
-    }
-
-    let upgradeStat = 0;
-    if (item.mods.upgrades) {
-      item.mods.upgrades.forEach((upgrade) => {
-        const upgradeItem = itemGet(upgrade);
-        if (!upgradeItem) return;
-
-        upgradeStat += upgradeItem.stats?.[stat] ?? 0;
-        upgradeStat += upgradeItem.randomStats?.[stat]?.min ?? 0;
-      });
-    }
-
-    return statMod + baseStat + encrustStat + upgradeStat;
-  }
-
-  // set the owner of an item
-  public setOwner(player: IPlayer, item: ISimpleItem): void {
-    this.setItemProperty(item, 'owner', player.username);
-  }
-
-  // check if an item is broken
-  public isItemBroken(item: ISimpleItem) {
-    const condition = itemPropertyGet(item, 'condition');
-    return condition <= 0;
-  }
-
-  public isOwnedBy(character: ICharacter, item: ISimpleItem): boolean {
-    return isOwnedBy(character as IPlayer, item);
-  }
-
-  public ownsAndItemUnbroken(
-    character: ICharacter,
-    item: ISimpleItem,
-  ): boolean {
-    if (!this.isOwnedBy(character as IPlayer, item)) return false; // this is safe to coerce, because npcs never tie items
-    if (this.isItemBroken(item)) return false;
-
-    return true;
-  }
-
-  // check if an item is usable
-  public canGetBenefitsFromItem(char: ICharacter, item: ISimpleItem): boolean {
-    if (!this.ownsAndItemUnbroken(char, item)) return false;
-
-    // GMs can wear everything disregarding requirements
-    if (char.allegiance === Allegiance.GM) return true;
-
-    const requirements: IItemRequirements = itemPropertyGet(
-      item,
-      'requirements',
-    );
-    if (requirements) {
-      if (requirements.alignment && char.alignment !== requirements.alignment) {
-        return false;
-      }
-      if (requirements.baseClass && char.baseClass !== requirements.baseClass) {
-        return false;
-      }
-      if (requirements.level && char.level < requirements.level) return false;
-    }
 
     return true;
   }
@@ -298,7 +191,7 @@ export class ItemHelper extends BaseService {
     item.mods.condition += conditionLoss;
     item.mods.condition = Math.max(0, item.mods.condition);
 
-    if (this.isItemBroken(item)) {
+    if (itemIsBroken(item)) {
       this.game.characterHelper.recalculateEverything(character);
     }
   }
@@ -372,7 +265,7 @@ export class ItemHelper extends BaseService {
       return;
     }
 
-    const canGetBenefits = this.canGetBenefitsFromItem(player, item);
+    const canGetBenefits = itemCanGetBenefitsFrom(player, item);
     if (!canGetBenefits) {
       return this.game.messageHelper.sendSimpleMessage(
         player,
@@ -590,7 +483,7 @@ export class ItemHelper extends BaseService {
 
       if (pages.length > 0) {
         pages.forEach((item) => {
-          if (!this.isOwnedBy(player, item)) return;
+          if (!itemIsOwnedBy(player, item)) return;
 
           const { bookPage, extendedDesc } = itemPropertiesGet(item, [
             'bookPage',
@@ -665,7 +558,7 @@ export class ItemHelper extends BaseService {
   }
 
   public useRNGBox(player: IPlayer, box: ISimpleItem, source: ItemSlot): void {
-    if (!this.game.itemHelper.isOwnedBy(player, box)) {
+    if (!itemIsOwnedBy(player, box)) {
       this.game.messageHelper.sendSimpleMessage(
         player,
         "This box isn't yours to open!",
@@ -708,7 +601,7 @@ export class ItemHelper extends BaseService {
     );
 
     if (binds && (character as IPlayer).username && !owner) {
-      this.setItemProperty(item, 'owner', (character as IPlayer).username);
+      itemPropertySet(item, 'owner', (character as IPlayer).username);
       this.game.messageHelper.sendLogMessageToPlayer(character, {
         message: `The ${(itemClass || 'item').toLowerCase()} feels momentarily warm to the touch as it molds to fit your grasp.`,
       });
@@ -731,26 +624,10 @@ export class ItemHelper extends BaseService {
     }
   }
 
-  // search all items for similar things
-  public searchItems(search: string): string[] {
-    return Object.keys(itemAllGet()).filter((x) =>
-      new RegExp(`.*${search}.*`, 'i').test(x),
-    );
-  }
-
   // check if the item comes from an "ether force" map
   public isEtherForceItem(itemName: string): boolean {
     return coreRNGDungeonConfig()
       .dungeonConfigs.map((x) => x.name)
       .some((name) => itemName.includes(name));
-  }
-
-  public markIdentified(item: ISimpleItem, tier: number): void {
-    item.mods.identifyTier = Math.max(item.mods.identifyTier ?? 0, tier);
-  }
-
-  public isWeapon(item: ISimpleItem): boolean {
-    const { itemClass } = itemPropertiesGet(item, ['itemClass']);
-    return WeaponClasses.includes(itemClass as WeaponClass);
   }
 }

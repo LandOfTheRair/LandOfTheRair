@@ -1,4 +1,4 @@
-import { itemPropertyGet } from '@lotr/content';
+import { itemIsOwnedBy, itemPropertyGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot, SoundEffect } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -41,7 +41,7 @@ export class Break extends MacroCommand {
         'You are not even holding an item there!',
       );
     }
-    if (!this.game.itemHelper.isOwnedBy(player, item)) {
+    if (!itemIsOwnedBy(player, item)) {
       return this.sendMessage(player, 'That item is not yours to break!');
     }
 

@@ -11,7 +11,14 @@ import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../../../helpers';
 
-import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
+import {
+  itemCanBeUpgraded,
+  itemCanBeUsedForUpgrade,
+  itemIsOwnedBy,
+  itemPropertiesGet,
+  itemPropertyGet,
+  itemPropertySet,
+} from '@lotr/content';
 import { distanceFrom } from '@lotr/shared';
 
 export class UpgraderBehavior implements IAIBehavior {
@@ -100,16 +107,16 @@ export class UpgraderBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
         if (!leftHand) return 'Your left hand must have an upgrade material!';
 
-        if (!game.itemHelper.isOwnedBy(player, rightHand)) {
+        if (!itemIsOwnedBy(player, rightHand)) {
           return 'You do not own that item!';
         }
-        if (!game.itemHelper.isOwnedBy(player, leftHand)) {
+        if (!itemIsOwnedBy(player, leftHand)) {
           return 'You do not own that material!';
         }
-        if (!game.itemHelper.canUpgradeItem(rightHand)) {
+        if (!itemCanBeUpgraded(rightHand)) {
           return 'I cannot upgrade that item for you!';
         }
-        if (!game.itemHelper.canUseItemForUpgrade(leftHand)) {
+        if (!itemCanBeUsedForUpgrade(leftHand)) {
           return 'That item cannot be used as an upgrade!';
         }
 
@@ -126,7 +133,7 @@ export class UpgraderBehavior implements IAIBehavior {
           return 'These items are not compatible!';
         }
 
-        game.itemHelper.setItemProperty(
+        itemPropertySet(
           rightHand,
           'requirements',
           game.itemHelper.mergeItemRequirements(
@@ -134,7 +141,7 @@ export class UpgraderBehavior implements IAIBehavior {
             rightRequirements,
           ),
         );
-        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
+        itemPropertySet(rightHand, 'owner', player.username);
 
         game.characterHelper.setLeftHand(player, undefined);
 

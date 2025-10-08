@@ -2,7 +2,7 @@ import * as Discord from 'discord.js';
 
 import type { IDiscordCommand } from '../../../interfaces';
 
-import { itemGet } from '@lotr/content';
+import { itemGet, searchItems } from '@lotr/content';
 import type { Game } from '../../core';
 
 export class SearchItemsCommand implements IDiscordCommand {
@@ -21,7 +21,7 @@ export class SearchItemsCommand implements IDiscordCommand {
 
     const query = interaction.options.get('itemname')?.value as string;
 
-    const items = game.itemHelper.searchItems(query);
+    const items = searchItems(query);
     const item = items[0];
 
     if (!item) {

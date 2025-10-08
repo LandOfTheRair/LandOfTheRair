@@ -19,7 +19,7 @@ import { distanceFrom } from '@lotr/shared';
 import type { Game } from '../../../../helpers';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
-import { itemPropertiesGet } from '@lotr/content';
+import { itemPropertiesGet, itemSetOwner } from '@lotr/content';
 
 export class TannerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -136,7 +136,7 @@ export class TannerBehavior implements IAIBehavior {
         }
 
         const item = game.itemCreator.getSimpleItem(tansFor);
-        game.itemHelper.setOwner(player, item);
+        itemSetOwner(player, item);
         game.characterHelper.setRightHand(player, item);
 
         if (searchItems && (searchItems?.length ?? 0) > 0) {

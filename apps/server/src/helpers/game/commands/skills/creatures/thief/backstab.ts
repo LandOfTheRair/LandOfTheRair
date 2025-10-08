@@ -1,4 +1,4 @@
-import { itemPropertyGet } from '@lotr/content';
+import { isWeapon } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -6,7 +6,7 @@ import type {
   IPlayer,
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
-import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { SkillCommand } from '../../../../../../models/macro';
 
 export class Backstab extends SkillCommand {
@@ -37,8 +37,7 @@ export class Backstab extends SkillCommand {
       );
     }
 
-    const weaponClass = itemPropertyGet(weapon, 'itemClass');
-    if (!WeaponClasses.includes(weaponClass)) {
+    if (!isWeapon(weapon)) {
       return this.sendMessage(
         player,
         'You need a weapon in your hand to backstab!',

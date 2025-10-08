@@ -43,8 +43,13 @@ import {
   coreWeaponTiersNPC,
   getHandsItem,
   isShield,
+  isWeapon,
+  itemCanGetBenefitsFrom,
+  itemIsBroken,
+  itemIsOwnedAndUnbroken,
   itemPropertiesGet,
   itemPropertyGet,
+  itemPropertySet,
   settingClassConfigGet,
   settingGameGet,
   traitLevel,
@@ -378,7 +383,7 @@ export class DamageHelperPhysical extends BaseService {
         [MessageType.Combat],
       );
     } else if (shots) {
-      this.game.itemHelper.setItemProperty(item, 'shots', shots - 1);
+      itemPropertySet(item, 'shots', shots - 1);
 
       if (shots - 1 <= 0) {
         this.game.characterHelper.setEquipmentSlot(attacker, hand, undefined);
@@ -466,9 +471,7 @@ export class DamageHelperPhysical extends BaseService {
     if (
       !defenderArmor &&
       defender.items.equipment[ItemSlot.Robe2] &&
-      !this.game.itemHelper.isItemBroken(
-        defender.items.equipment[ItemSlot.Robe2]!,
-      )
+      !itemIsBroken(defender.items.equipment[ItemSlot.Robe2]!)
     ) {
       defenderArmor = defender.items.equipment[ItemSlot.Robe2];
     }
@@ -476,9 +479,7 @@ export class DamageHelperPhysical extends BaseService {
     if (
       !defenderArmor &&
       defender.items.equipment[ItemSlot.Robe1] &&
-      !this.game.itemHelper.isItemBroken(
-        defender.items.equipment[ItemSlot.Robe1]!,
-      )
+      !itemIsBroken(defender.items.equipment[ItemSlot.Robe1]!)
     ) {
       defenderArmor = defender.items.equipment[ItemSlot.Robe1];
     }
@@ -486,9 +487,7 @@ export class DamageHelperPhysical extends BaseService {
     if (
       !defenderArmor &&
       defender.items.equipment[ItemSlot.Armor] &&
-      !this.game.itemHelper.isItemBroken(
-        defender.items.equipment[ItemSlot.Armor]!,
-      )
+      !itemIsBroken(defender.items.equipment[ItemSlot.Armor]!)
     ) {
       defenderArmor = defender.items.equipment[ItemSlot.Armor];
     }
@@ -505,8 +504,7 @@ export class DamageHelperPhysical extends BaseService {
     const rightHand = defender.items.equipment[ItemSlot.RightHand];
 
     const defenderBlocker =
-      rightHand &&
-      this.game.itemHelper.canGetBenefitsFromItem(defender, rightHand)
+      rightHand && itemCanGetBenefitsFrom(defender, rightHand)
         ? rightHand
         : getHandsItem();
 
@@ -514,14 +512,14 @@ export class DamageHelperPhysical extends BaseService {
     const defenderShield =
       leftHand &&
       isShield(leftHand) &&
-      this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
+      itemCanGetBenefitsFrom(defender, leftHand)
         ? leftHand
         : undefined;
     const defenderOffhand =
       leftHand &&
       (itemPropertyGet(leftHand, 'offhand') ||
         traitLevel(defender, 'BalancedGrip')) &&
-      this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
+      itemCanGetBenefitsFrom(defender, leftHand)
         ? leftHand
         : undefined;
 
@@ -660,7 +658,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const offhandACBoost =
-      defenderOffhand && this.game.itemHelper.isWeapon(defenderOffhand)
+      defenderOffhand && isWeapon(defenderOffhand)
         ? traitLevelValue(defender, 'MainGauche')
         : 0;
 
@@ -918,7 +916,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const acRoll = random(defenderWeaponBlockRoll, attackerWeaponBlockRoll);
-    const canDefenderUseBlocker = this.game.itemHelper.ownsAndItemUnbroken(
+    const canDefenderUseBlocker = itemIsOwnedAndUnbroken(
       defender,
       defenderScope.blocker,
     );
@@ -1027,7 +1025,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const acRoll = random(attackerShieldBlockRoll, defenderShieldBlockRoll);
-    const canDefenderUseShield = this.game.itemHelper.ownsAndItemUnbroken(
+    const canDefenderUseShield = itemIsOwnedAndUnbroken(
       defender,
       defenderScope.blocker,
     );
@@ -1132,7 +1130,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     const acRoll = random(attackerOffhandBlockRoll, defenderOffhandBlockRoll);
-    const canDefenderUseOffhand = this.game.itemHelper.ownsAndItemUnbroken(
+    const canDefenderUseOffhand = itemIsOwnedAndUnbroken(
       defender,
       defenderScope.offhand,
     );
@@ -1352,10 +1350,7 @@ export class DamageHelperPhysical extends BaseService {
 
     if (
       isAttackerPlayer &&
-      !this.game.itemHelper.canGetBenefitsFromItem(
-        attacker as IPlayer,
-        attackerWeapon,
-      )
+      !itemCanGetBenefitsFrom(attacker as IPlayer, attackerWeapon)
     ) {
       this.game.messageHelper.sendLogMessageToPlayer(
         attacker,
@@ -1400,7 +1395,7 @@ export class DamageHelperPhysical extends BaseService {
       const numShots = shots ?? 0;
 
       if (!this.game.traitHelper.rollTraitValue(attacker, 'EndlessQuiver')) {
-        this.game.itemHelper.setItemProperty(ammo, 'shots', numShots - 1);
+        itemPropertySet(ammo, 'shots', numShots - 1);
         if (numShots - 1 <= 0) {
           this.game.characterHelper.setEquipmentSlot(
             attacker,

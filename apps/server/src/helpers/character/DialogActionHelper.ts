@@ -52,7 +52,13 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat } from '@lotr/characters';
-import { itemPropertyGet, questGet, settingGameGet } from '@lotr/content';
+import {
+  itemCanBeUpgraded,
+  itemIsOwnedBy,
+  itemPropertyGet,
+  questGet,
+  settingGameGet,
+} from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -412,7 +418,7 @@ export class DialogActionHelper extends BaseService {
         if (!slotItem) return;
 
         if (!meetsCheck(slotItem)) return;
-        if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
+        if (!itemIsOwnedBy(player, slotItem)) {
           retMessages.push('Hey! You need to bring me an item owned by you.');
           return;
         }
@@ -424,7 +430,7 @@ export class DialogActionHelper extends BaseService {
     // we do something different to take from sack
     if ((slot || [])[0] === 'sack') {
       const matchingItems = player.items.sack.items.filter(
-        (x) => meetsCheck(x) && this.game.itemHelper.isOwnedBy(player, x),
+        (x) => meetsCheck(x) && itemIsOwnedBy(player, x),
       );
       if (matchingItems.length >= (item.amount ?? 1)) {
         didSucceed = true;
@@ -572,7 +578,7 @@ export class DialogActionHelper extends BaseService {
       // we do something different to take from sack
       if (checkSlot === 'sack') {
         const matchingItems = player.items.sack.items.filter(
-          (x) => matches(x.name) && this.game.itemHelper.isOwnedBy(player, x),
+          (x) => matches(x.name) && itemIsOwnedBy(player, x),
         );
         const itemUUIDS = matchingItems
           .slice(0, item.amount ?? 1)
@@ -586,7 +592,7 @@ export class DialogActionHelper extends BaseService {
       if (!slotItem) return;
 
       if (!matches(slotItem.name)) return;
-      if (!this.game.itemHelper.isOwnedBy(player, slotItem)) {
+      if (!itemIsOwnedBy(player, slotItem)) {
         messages.push('Hey! You need to bring me an item owned by you.');
         return;
       }
@@ -747,8 +753,8 @@ export class DialogActionHelper extends BaseService {
     const checkItem = player.items.equipment[slot];
     let didSucceed =
       checkItem &&
-      this.game.itemHelper.isOwnedBy(player, checkItem) &&
-      this.game.itemHelper.canUpgradeItem(checkItem);
+      itemIsOwnedBy(player, checkItem) &&
+      itemCanBeUpgraded(checkItem);
     if (upgrade && checkItem?.mods.upgrades?.includes(upgrade)) {
       didSucceed = false;
     }

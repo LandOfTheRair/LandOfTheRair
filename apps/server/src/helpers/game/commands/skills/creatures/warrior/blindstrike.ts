@@ -1,13 +1,13 @@
 import { sampleSize } from 'lodash';
 
-import { itemPropertyGet } from '@lotr/content';
+import { isWeapon } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
-import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Blindstrike extends SpellCommand {
@@ -35,8 +35,7 @@ export class Blindstrike extends SpellCommand {
       );
     }
 
-    const weaponClass = itemPropertyGet(weapon, 'itemClass');
-    if (!WeaponClasses.includes(weaponClass)) {
+    if (!isWeapon(weapon)) {
       return this.sendMessage(
         player,
         'You need a weapon in your hand to blindstrike!',

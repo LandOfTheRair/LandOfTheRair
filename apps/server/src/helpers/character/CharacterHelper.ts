@@ -33,7 +33,9 @@ import {
 import {
   coreAllegianceStats,
   coreHideReductions,
+  itemCanGetBenefitsFrom,
   itemGet,
+  itemGetStat,
   itemPropertiesGet,
   itemPropertyGet,
   settingClassConfigGet,
@@ -404,7 +406,7 @@ export class CharacterHelper extends BaseService {
       // no spells if we can't technically use the item
       if (
         isPlayer(character) &&
-        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+        !itemCanGetBenefitsFrom(character as IPlayer, item)
       ) {
         return;
       }
@@ -448,7 +450,7 @@ export class CharacterHelper extends BaseService {
       // no bonus if we can't technically use the item
       if (
         isPlayer(character) &&
-        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+        !itemCanGetBenefitsFrom(character as IPlayer, item)
       ) {
         return;
       }
@@ -602,7 +604,7 @@ export class CharacterHelper extends BaseService {
       // no bonus if we can't technically use the item
       if (
         isPlayer(character) &&
-        !this.game.itemHelper.canGetBenefitsFromItem(character as IPlayer, item)
+        !itemCanGetBenefitsFrom(character as IPlayer, item)
       ) {
         return;
       }
@@ -628,7 +630,7 @@ export class CharacterHelper extends BaseService {
       }
 
       Object.values(Stat).forEach((stat) => {
-        const bonus = this.game.itemHelper.getStat(item, stat);
+        const bonus = itemGetStat(item, stat);
         addStat(stat, bonus);
       });
     });
@@ -893,7 +895,7 @@ export class CharacterHelper extends BaseService {
         return;
       }
 
-      if (!this.game.itemHelper.canGetBenefitsFromItem(character, item)) return;
+      if (!itemCanGetBenefitsFrom(character, item)) return;
 
       const existingEffect = getEffect(character, equipEffect.name);
       if (existingEffect && existingEffect.endsAt === -1) return;

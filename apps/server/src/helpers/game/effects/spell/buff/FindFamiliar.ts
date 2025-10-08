@@ -6,6 +6,7 @@ import {
   manaToFull,
 } from '@lotr/characters';
 import {
+  itemCanGetBenefitsFrom,
   settingClassConfigGet,
   traitLevel,
   traitLevelValue,
@@ -199,10 +200,7 @@ export class FindFamiliar extends Effect {
         if (pet.items.equipment[itemSlot]?.name === itemRef?.name) return;
 
         // try to copy the item
-        if (
-          itemRef &&
-          this.game.itemHelper.canGetBenefitsFromItem(char, itemRef)
-        ) {
+        if (itemRef && itemCanGetBenefitsFrom(char, itemRef)) {
           const copyItem = this.game.itemCreator.rerollItem(itemRef, false);
           copyItem.mods.destroyOnDrop = true;
           copyItem.mods.owner = '';

@@ -15,7 +15,7 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertyGet } from '@lotr/content';
+import { itemPropertyGet, itemPropertySet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class CosmeticBehavior implements IAIBehavior {
@@ -117,7 +117,7 @@ export class CosmeticBehavior implements IAIBehavior {
         const scroll = game.itemCreator.getSimpleItem(
           `Cosmetic Scroll - ${startCase(cosmetic.name)}`,
         );
-        game.itemHelper.setItemProperty(item, 'cosmetic', null);
+        itemPropertySet(item, 'cosmetic', undefined);
         game.characterHelper.setLeftHand(player, scroll);
 
         return 'Done! Beware, this scroll is not bound to you!';

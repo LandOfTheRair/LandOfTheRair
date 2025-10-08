@@ -12,7 +12,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
-import { itemPropertiesGet } from '@lotr/content';
+import { itemPropertiesGet, itemSetOwner } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -123,7 +123,7 @@ export class AlchemistBehavior implements IAIBehavior {
 
         game.inventoryHelper.removeItemsFromSackByUUID(player, removeUUIDs);
 
-        game.itemHelper.setOwner(player, rightHand);
+        itemSetOwner(player, rightHand);
 
         return `I've combined ${itemsRemoved} bottles from your sack and combined them with the one in your hand, enjoy!`;
       });

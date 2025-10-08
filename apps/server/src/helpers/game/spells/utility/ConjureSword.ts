@@ -1,18 +1,7 @@
 import { getSkillLevel } from '@lotr/characters';
-import { itemPropertiesGet } from '@lotr/content';
-import type {
-  ICharacter,
-  IPlayer,
-  SpellCastArgs,
-  WeaponClass,
-} from '@lotr/interfaces';
-import {
-  ItemClass,
-  ItemSlot,
-  Skill,
-  Stat,
-  WeaponClasses,
-} from '@lotr/interfaces';
+import { isWeapon, itemPropertiesGet, itemSetOwner } from '@lotr/content';
+import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { ItemClass, ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class ConjureSword extends Spell {
@@ -39,11 +28,7 @@ export class ConjureSword extends Spell {
       'twoHanded',
       'canShoot',
     ]);
-    if (
-      !item ||
-      !WeaponClasses.includes(itemClass as WeaponClass) ||
-      itemClass === ItemClass.Shield
-    ) {
+    if (!item || !isWeapon(item) || itemClass === ItemClass.Shield) {
       this.sendMessage(caster, {
         message: 'The ether churns at your request.',
       });
@@ -84,7 +69,7 @@ export class ConjureSword extends Spell {
       item.mods.stats[Stat.Accuracy] = Math.floor(skill / 4);
     }
 
-    this.game.itemHelper.setOwner(caster as IPlayer, item);
+    itemSetOwner(caster as IPlayer, item);
 
     if (!rightHand) {
       this.game.characterHelper.setRightHand(caster, item);

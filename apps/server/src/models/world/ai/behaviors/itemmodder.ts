@@ -9,7 +9,7 @@ import type {
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertyGet } from '@lotr/content';
+import { itemIsOwnedBy, itemPropertyGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class ItemModderBehavior implements IAIBehavior {
@@ -61,8 +61,8 @@ export class ItemModderBehavior implements IAIBehavior {
 
         if (rightHand && leftHand && rightHand.name === leftHand.name) {
           if (
-            !game.itemHelper.isOwnedBy(player, leftHand) ||
-            !game.itemHelper.isOwnedBy(player, rightHand)
+            !itemIsOwnedBy(player, leftHand) ||
+            !itemIsOwnedBy(player, rightHand)
           ) {
             return 'You must own both of those items!';
           }

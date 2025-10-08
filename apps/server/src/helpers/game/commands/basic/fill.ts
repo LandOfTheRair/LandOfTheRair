@@ -1,4 +1,4 @@
-import { itemPropertiesGet } from '@lotr/content';
+import { itemIsOwnedBy, itemPropertiesGet } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ObjectType, SwimLevel } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -33,7 +33,7 @@ export class Fill extends MacroCommand {
       return this.sendMessage(player, 'You do not have a bottle in that hand!');
     }
 
-    if (!this.game.itemHelper.isOwnedBy(player, item)) {
+    if (!itemIsOwnedBy(player, item)) {
       return this.sendMessage(player, 'That is not yours!');
     }
 

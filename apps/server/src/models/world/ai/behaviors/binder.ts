@@ -9,7 +9,7 @@ import type {
 import { GameServerResponse, ItemClass, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertyGet } from '@lotr/content';
+import { itemPropertyGet, itemPropertySet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class BinderBehavior implements IAIBehavior {
@@ -73,7 +73,7 @@ export class BinderBehavior implements IAIBehavior {
           return "I can't engrave onto something so small.";
         }
 
-        game.itemHelper.setItemProperty(item, 'owner', player.username);
+        itemPropertySet(item, 'owner', player.username);
 
         const ach = game.achievementsHelper.getItemForAchievementUse(item.name);
         if (ach) {

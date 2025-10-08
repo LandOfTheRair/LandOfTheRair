@@ -1,9 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameServerResponse
-} from '@lotr/interfaces';
+import { searchItems } from '@lotr/content';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { GameServerResponse } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 export class GMSearchItems extends MacroCommand {
@@ -31,7 +28,7 @@ export class GMSearchItems extends MacroCommand {
 
     let items;
     try {
-      items = this.game.itemHelper.searchItems(itemName);
+      items = searchItems(itemName);
     } catch (e) {
       return;
     }

@@ -14,7 +14,14 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
+import {
+  itemCanBeUpgraded,
+  itemCanGetBenefitsFrom,
+  itemIsOwnedBy,
+  itemPropertiesGet,
+  itemPropertyGet,
+  itemPropertySet,
+} from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class FurUpgraderBehavior implements IAIBehavior {
@@ -110,19 +117,19 @@ export class FurUpgraderBehavior implements IAIBehavior {
           'requirements',
         ]);
 
-        if (!game.itemHelper.isOwnedBy(player, rightHand)) {
+        if (!itemIsOwnedBy(player, rightHand)) {
           return 'You do not own that item!';
         }
-        if (!game.itemHelper.isOwnedBy(player, leftHand)) {
+        if (!itemIsOwnedBy(player, leftHand)) {
           return 'You do not own that material!';
         }
-        if (!game.itemHelper.canGetBenefitsFromItem(player, rightHand)) {
+        if (!itemCanGetBenefitsFrom(player, rightHand)) {
           return 'You cannot use that item!';
         }
-        if (!game.itemHelper.canGetBenefitsFromItem(player, leftHand)) {
+        if (!itemCanGetBenefitsFrom(player, leftHand)) {
           return 'You cannot use that material!';
         }
-        if (!game.itemHelper.canUpgradeItem(rightHand)) {
+        if (!itemCanBeUpgraded(rightHand)) {
           return 'I cannot upgrade that item for you!';
         }
         if (itemClass !== ItemClass.Fur) return 'That material is not a fur!';
@@ -136,7 +143,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const leftRequirements = itemPropertyGet(leftHand, 'requirements');
         const rightRequirements = itemPropertyGet(rightHand, 'requirements');
 
-        game.itemHelper.setItemProperty(
+        itemPropertySet(
           rightHand,
           'requirements',
           game.itemHelper.mergeItemRequirements(
@@ -144,7 +151,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
             rightRequirements,
           ),
         );
-        game.itemHelper.setItemProperty(rightHand, 'owner', player.username);
+        itemPropertySet(rightHand, 'owner', player.username);
 
         game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
         game.characterHelper.setLeftHand(player, undefined);

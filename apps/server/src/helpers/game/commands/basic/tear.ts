@@ -1,6 +1,10 @@
 import { uniq } from 'lodash';
 
-import { itemPropertiesGet, itemPropertyGet } from '@lotr/content';
+import {
+  itemIsOwnedBy,
+  itemPropertiesGet,
+  itemPropertyGet,
+} from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -103,7 +107,7 @@ export class Tear extends MacroCommand {
               itemPropertyGet(x, 'quality') >= 1 ||
               itemPropertyGet(x, 'itemClass') === ItemClass.Flower,
           )
-          .filter((x) => this.game.itemHelper.isOwnedBy(player, x));
+          .filter((x) => itemIsOwnedBy(player, x));
 
         if (items.length === 0) {
           return this.sendMessage(
@@ -167,7 +171,7 @@ export class Tear extends MacroCommand {
       if (!allClasses.includes(itemClass as MiscClass)) {
         return this.sendMessage(player, 'That is not tearable!');
       }
-      if (!this.game.itemHelper.isOwnedBy(player, item)) {
+      if (!itemIsOwnedBy(player, item)) {
         return this.sendMessage(player, 'That item is not yours to tear!');
       }
 

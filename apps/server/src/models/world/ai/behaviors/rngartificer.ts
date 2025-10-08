@@ -5,12 +5,11 @@ import type {
   INPC,
   IPlayer,
   ISpoilerLogger,
-  WeaponClass,
 } from '@lotr/interfaces';
-import { ItemClass, ItemSlot, WeaponClasses } from '@lotr/interfaces';
+import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertiesGet } from '@lotr/content';
+import { isWeapon, itemIsOwnedBy, itemPropertiesGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class RNGArtificerBehavior implements IAIBehavior {
@@ -37,8 +36,8 @@ export class RNGArtificerBehavior implements IAIBehavior {
         );
 
         const requirementsLevel = requirements?.level ?? 0;
-        const isWeapon =
-          WeaponClasses.includes(itemClass as WeaponClass) ||
+        const isItemAWeapon =
+          isWeapon(rightHand) ||
           itemClass === ItemClass.Claws ||
           itemClass === ItemClass.Gloves;
 
@@ -46,7 +45,7 @@ export class RNGArtificerBehavior implements IAIBehavior {
           return 'Unfortunately, the quantity of item here is too much to upgrade!';
         }
 
-        if (!isWeapon) {
+        if (!isItemAWeapon) {
           return 'That item is not a weapon! I thought I was very clear!';
         }
 
@@ -103,10 +102,7 @@ export class RNGArtificerBehavior implements IAIBehavior {
         }
 
         const matchingItems = player.items.sack.items
-          .filter(
-            (x) =>
-              x.name === neededItem && game.itemHelper.isOwnedBy(player, x),
-          )
+          .filter((x) => x.name === neededItem && itemIsOwnedBy(player, x))
           .slice(0, neededQty);
 
         if (matchingItems.length < neededQty) {

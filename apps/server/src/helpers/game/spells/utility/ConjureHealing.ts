@@ -1,5 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
-import { traitLevelValue } from '@lotr/content';
+import { itemSetOwner, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { ItemSlot, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -43,7 +43,7 @@ export class ConjureHealing extends Spell {
     };
     healingItem.mods.destroyOnDrop = true;
 
-    this.game.itemHelper.setOwner(caster as IPlayer, healingItem);
+    itemSetOwner(caster as IPlayer, healingItem);
 
     this.game.characterHelper.setRightHand(caster, healingItem);
   }
