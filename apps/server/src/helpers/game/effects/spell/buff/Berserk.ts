@@ -1,4 +1,5 @@
 import { getStat, heal, isPlayer, mana, manaDamage } from '@lotr/characters';
+import { traitLevel, traitLevelValue } from '@lotr/content';
 import type {
   DamageArgs,
   ICharacter,
@@ -25,10 +26,7 @@ export class Berserk extends Effect {
   ) {
     if (args.damage <= 0) return;
 
-    const rageGeneratedBoost = this.game.traitHelper.traitLevelValue(
-      char,
-      'EnragingStrikes',
-    );
+    const rageGeneratedBoost = traitLevelValue(char, 'EnragingStrikes');
     mana(char, rageGeneratedBoost);
   }
 
@@ -41,9 +39,7 @@ export class Berserk extends Effect {
   ): number {
     if (
       damageArgs.damageClass !== DamageClass.Physical &&
-      rollInOneHundred(
-        this.game.traitHelper.traitLevelValue(char, 'MagicalVortex'),
-      )
+      rollInOneHundred(traitLevelValue(char, 'MagicalVortex'))
     ) {
       heal(char, currentDamage);
 
@@ -116,10 +112,7 @@ export class Berserk extends Effect {
         dodgeResults.push(ret.dodge ?? false);
       }
 
-      const thunderingStrikeChance = this.game.traitHelper.traitLevelValue(
-        char,
-        'ThunderingStrike',
-      );
+      const thunderingStrikeChance = traitLevelValue(char, 'ThunderingStrike');
 
       if (rollInOneHundred(thunderingStrikeChance)) {
         const bonusTarget = this.validBerserkTargets(char).filter(
@@ -302,31 +295,21 @@ export class Berserk extends Effect {
 
     if (tier >= 2) {
       stats[Stat.HP] += 25 * character.level;
-      stats[Stat.MP] += this.game.traitHelper.traitLevelValue(
-        character,
-        'PooledBerserk',
-      );
-      stats[Stat.HPRegen] += this.game.traitHelper.traitLevelValue(
-        character,
-        'RegenerativeBerserk',
-      );
+      stats[Stat.MP] += traitLevelValue(character, 'PooledBerserk');
+      stats[Stat.HPRegen] += traitLevelValue(character, 'RegenerativeBerserk');
     }
 
     if (tier >= 3) {
       stats[Stat.STR] += 0.2 * character.level;
       stats[Stat.Offense] +=
-        this.game.traitHelper.traitLevelValue(character, 'OffensiveDefense') *
-        charDefense;
+        traitLevelValue(character, 'OffensiveDefense') * charDefense;
     }
 
     if (tier >= 4) {
       stats[Stat.Offense] += 0.5 * character.level;
-      stats[Stat.PhysicalReflect] = this.game.traitHelper.traitLevelValue(
-        character,
-        'MirrorSkin',
-      );
+      stats[Stat.PhysicalReflect] = traitLevelValue(character, 'MirrorSkin');
 
-      if (this.game.traitHelper.traitLevelValue(character, 'DamagingDefense')) {
+      if (traitLevelValue(character, 'DamagingDefense')) {
         stats[Stat.PhysicalBoostPercent] = charDefense;
       }
     }
@@ -363,10 +346,10 @@ export class Berserk extends Effect {
   }
 
   private maxBerserkTier(char: ICharacter): number {
-    if (this.game.traitHelper.traitLevel(char, 'Berserk:Rabid')) return 5;
-    if (this.game.traitHelper.traitLevel(char, 'Berserk:Frenzied')) return 4;
-    if (this.game.traitHelper.traitLevel(char, 'Berserk:Feral')) return 3;
-    if (this.game.traitHelper.traitLevel(char, 'Berserk:Unruly')) return 2;
+    if (traitLevel(char, 'Berserk:Rabid')) return 5;
+    if (traitLevel(char, 'Berserk:Frenzied')) return 4;
+    if (traitLevel(char, 'Berserk:Feral')) return 3;
+    if (traitLevel(char, 'Berserk:Unruly')) return 2;
     return 1;
   }
 }

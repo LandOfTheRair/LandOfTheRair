@@ -1,4 +1,5 @@
 import { healToFull, manaToFull } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
@@ -79,16 +80,16 @@ export class Resurrect extends Spell {
 
       npc.stats[Stat.HP] =
         (npc.stats[Stat.HP] ?? 20000) * 1 +
-        this.game.traitHelper.traitLevelValue(caster, 'FamiliarFortitude');
+        traitLevelValue(caster, 'FamiliarFortitude');
       npc.stats[Stat.STR] =
         (npc.stats[Stat.STR] ?? 5) +
-        this.game.traitHelper.traitLevelValue(caster, 'FamiliarStrength');
+        traitLevelValue(caster, 'FamiliarStrength');
       npc.stats[Stat.INT] =
         (npc.stats[Stat.INT] ?? 5) +
-        this.game.traitHelper.traitLevelValue(caster, 'FamiliarStrength');
+        traitLevelValue(caster, 'FamiliarStrength');
       npc.stats[Stat.WIS] =
         (npc.stats[Stat.WIS] ?? 5) +
-        this.game.traitHelper.traitLevelValue(caster, 'FamiliarStrength');
+        traitLevelValue(caster, 'FamiliarStrength');
 
       // buff the npc back to full
       this.game.characterHelper.recalculateEverything(npc);

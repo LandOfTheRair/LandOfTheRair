@@ -1,4 +1,5 @@
 import { getStat } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -56,10 +57,7 @@ export class Rapidpunch extends SpellCommand {
     target: ICharacter,
     opts: PhysicalAttackArgs = {},
   ): void {
-    const improvedLevel = this.game.traitHelper.traitLevelValue(
-      user,
-      'ImprovedRapidpunch',
-    );
+    const improvedLevel = traitLevelValue(user, 'ImprovedRapidpunch');
 
     const numAttacks = 3 + improvedLevel;
     const damageMult = 0.65;

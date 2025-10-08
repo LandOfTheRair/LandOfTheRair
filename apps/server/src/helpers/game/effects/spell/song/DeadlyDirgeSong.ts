@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import { isDead } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -26,8 +27,7 @@ export class DeadlyDirgeSong extends Song {
 
     if (enemies.length === 0) return;
 
-    const numAttacks =
-      1 + this.game.traitHelper.traitLevelValue(char, 'DirgeOfCerberus');
+    const numAttacks = 1 + traitLevelValue(char, 'DirgeOfCerberus');
 
     for (let i = 0; i < numAttacks; i++) {
       this.game.damageHelperMagic.magicalAttack(

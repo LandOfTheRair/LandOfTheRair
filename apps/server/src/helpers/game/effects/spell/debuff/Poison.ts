@@ -1,3 +1,4 @@
+import { traitLevel } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -9,10 +10,7 @@ export class Poison extends Effect {
       const mapState = this.game.worldManager.getMap(char.map)?.state;
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
-      if (
-        caster &&
-        this.game.traitHelper.traitLevel(caster, 'CorrosivePoison')
-      ) {
+      if (caster && traitLevel(caster, 'CorrosivePoison')) {
         const skill = calcSkillLevelForCharacter(caster, Skill.Thievery);
         const reduction = Math.floor(skill / 3) + 1;
         effect.effectInfo.statChanges = {

@@ -1,3 +1,4 @@
+import { traitLevelValue } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -10,10 +11,7 @@ export class Disease extends Effect {
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
-        const mult = this.game.traitHelper.traitLevelValue(
-          caster,
-          'DebilitatingDisease',
-        );
+        const mult = traitLevelValue(caster, 'DebilitatingDisease');
         const skill = calcSkillLevelForCharacter(caster, Skill.Restoration);
         const statReduction = -Math.floor(skill * mult);
 

@@ -2,7 +2,11 @@ import { Injectable } from 'injection-js';
 import { random } from 'lodash';
 
 import { getSkillLevel, hasHeldItem } from '@lotr/characters';
-import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import {
+  settingClassConfigGet,
+  settingGameGet,
+  traitLevelValue,
+} from '@lotr/content';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill, SoundEffect } from '@lotr/interfaces';
 import { distanceFrom, positionWorldXYToTile } from '@lotr/shared';
@@ -88,7 +92,7 @@ export class InteractionHelper extends BaseService {
         const charSkill =
           getSkillLevel(character, Skill.Thievery) +
           random(-fuzz, fuzz) +
-          this.game.traitHelper.traitLevelValue(character, 'LockpickSpecialty');
+          traitLevelValue(character, 'LockpickSpecialty');
 
         if (charSkill < skillRequired) {
           this.game.messageHelper.sendSimpleMessage(

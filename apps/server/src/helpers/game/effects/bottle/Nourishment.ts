@@ -1,3 +1,4 @@
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -5,10 +6,7 @@ import { Effect } from '../../../../models';
 export class Nourishment extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
     // do slow digestion
-    const slowDigestion = this.game.traitHelper.traitLevelValue(
-      char,
-      'SlowDigestion',
-    );
+    const slowDigestion = traitLevelValue(char, 'SlowDigestion');
     if (slowDigestion) {
       const duration = effect.endsAt - Date.now();
       effect.endsAt = Date.now() + duration * (1 + slowDigestion);
@@ -21,10 +19,7 @@ export class Nourishment extends Effect {
     effect.effectInfo.statChanges[Stat.MPRegen] =
       effect.effectInfo.statChanges[Stat.MPRegen] ?? 0;
 
-    const sweetTooth = this.game.traitHelper.traitLevelValue(
-      char,
-      'SweetTooth',
-    );
+    const sweetTooth = traitLevelValue(char, 'SweetTooth');
 
     effect.effectInfo.statChanges[Stat.HPRegen]! += sweetTooth;
     effect.effectInfo.statChanges[Stat.MPRegen]! += sweetTooth;

@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { cloneDeep } from 'lodash';
 
 import { getSkillLevel } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IGroundItem,
@@ -91,22 +92,17 @@ export class TrapHelper extends BaseService {
     trap.mods.itemClass = ItemClass.TrapSet;
     trap.mods.trapSetBy = placer.uuid;
     trap.mods.trapSetSkill = getSkillLevel(placer, Skill.Thievery);
-    trap.mods.trapUses =
-      1 + this.game.traitHelper.traitLevelValue(placer, 'ReusableTraps');
+    trap.mods.trapUses = 1 + traitLevelValue(placer, 'ReusableTraps');
 
     const trapEffect: IItemEffect = cloneDeep(
       this.game.itemHelper.getItemProperty(trap, 'trapEffect'),
     );
-    trapEffect.potency *=
-      1 + this.game.traitHelper.traitLevelValue(placer, 'StrongerTraps');
+    trapEffect.potency *= 1 + traitLevelValue(placer, 'StrongerTraps');
     trapEffect.range = trapEffect.range ?? 0;
     trap.mods.trapEffect = trapEffect;
 
     if (trapEffect.range > 0) {
-      trapEffect.range += this.game.traitHelper.traitLevelValue(
-        placer,
-        'WiderTraps',
-      );
+      trapEffect.range += traitLevelValue(placer, 'WiderTraps');
     }
 
     this.setTrap(placer.map, x, y, trap);

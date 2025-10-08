@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -52,8 +53,7 @@ export class ThrowCommand extends SkillCommand {
     opts.throwHand = opts.throwHand || ItemSlot.RightHand;
     opts.attackRange = this.range();
 
-    const numThrows =
-      1 + this.game.traitHelper.traitLevelValue(user, 'Multithrow');
+    const numThrows = 1 + traitLevelValue(user, 'Multithrow');
     for (let i = 0; i < numThrows; i++) {
       this.game.combatHelper.physicalAttack(user, target, opts);
 

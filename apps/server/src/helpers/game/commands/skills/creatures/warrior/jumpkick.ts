@@ -1,4 +1,5 @@
 import { getStat } from '@lotr/characters';
+import { traitLevel } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -58,7 +59,7 @@ export class Jumpkick extends SpellCommand {
       isKick: true,
     });
 
-    if (this.game.traitHelper.traitLevel(user, 'Punchkick')) {
+    if (traitLevel(user, 'Punchkick')) {
       this.game.combatHelper.physicalAttack(user, target, {
         ...opts,
         isPunch: true,

@@ -1,4 +1,5 @@
 import { getEmptyHand } from '@lotr/characters';
+import { traitHasLearned } from '@lotr/content';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -389,7 +390,7 @@ export class MoveItems extends MacroCommand {
     if (
       slot === ItemSlot.Ammo &&
       itemClass === ItemClass.Wand &&
-      !this.game.traitHelper.hasLearnedTrait(player, 'MagicalStrikes')
+      !traitHasLearned(player, 'MagicalStrikes')
     ) {
       return null;
     }

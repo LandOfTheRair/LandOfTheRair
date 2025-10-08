@@ -45,6 +45,8 @@ import {
   getHandsItem,
   settingClassConfigGet,
   settingGameGet,
+  traitLevel,
+  traitLevelValue,
 } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
@@ -166,14 +168,12 @@ export class DamageHelperPhysical extends BaseService {
       ['returnsOnThrow', 'offhand'],
     );
 
-    const canOffhand =
-      offhand || this.game.traitHelper.traitLevel(attacker, 'BalancedGrip');
+    const canOffhand = offhand || traitLevel(attacker, 'BalancedGrip');
 
     const shouldOffhandAttackAsWell =
       (!args.isThrow && !args.isKick && !args.isPunch) ||
       (args.isThrow &&
-        (returnsOnThrow ||
-          this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')));
+        (returnsOnThrow || traitLevel(attacker, 'BoomerangArm')));
 
     if (
       shouldOffhandAttackAsWell &&
@@ -231,7 +231,7 @@ export class DamageHelperPhysical extends BaseService {
     if (twoHanded) {
       totalAttackRange = Math.max(
         totalAttackRange,
-        this.game.traitHelper.traitLevelValue(attacker, 'ExtendedReach'),
+        traitLevelValue(attacker, 'ExtendedReach'),
       );
     }
 
@@ -241,18 +241,11 @@ export class DamageHelperPhysical extends BaseService {
       itemClass === ItemClass.Gloves ||
       itemClass === ItemClass.Claws
     ) {
-      totalTier += this.game.traitHelper.traitLevelValue(
-        attacker,
-        'BrassKnuckles',
-      );
+      totalTier += traitLevelValue(attacker, 'BrassKnuckles');
     }
 
     const hasOffhand = attacker.items.equipment[ItemSlot.LeftHand];
-    if (
-      !hasOffhand &&
-      !twoHanded &&
-      this.game.traitHelper.traitLevelValue(attacker, 'FirmGrip')
-    ) {
+    if (!hasOffhand && !twoHanded && traitLevelValue(attacker, 'FirmGrip')) {
       totalTier += 1;
     }
 
@@ -265,7 +258,7 @@ export class DamageHelperPhysical extends BaseService {
       weaponTiers[itemClass ?? ItemClass.Mace];
 
     if (
-      this.game.traitHelper.traitLevel(attacker, 'ThiefGrip') &&
+      traitLevel(attacker, 'ThiefGrip') &&
       [ItemClass.Shortsword, ItemClass.Dagger].includes(
         itemClass as WeaponClass,
       )
@@ -274,7 +267,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     if (
-      this.game.traitHelper.traitLevel(attacker, 'SmashingBoard') &&
+      traitLevel(attacker, 'SmashingBoard') &&
       [ItemClass.Shield].includes(itemClass as WeaponClass)
     ) {
       weaponStats = weaponTiers[ItemClass.Mace];
@@ -286,8 +279,7 @@ export class DamageHelperPhysical extends BaseService {
 
     let attackerScaleStatValue = getStat(attacker, scaleStat);
     attackerScaleStatValue += Math.floor(
-      attackerScaleStatValue *
-        this.game.traitHelper.traitLevelValue(attacker, 'StrongMind'),
+      attackerScaleStatValue * traitLevelValue(attacker, 'StrongMind'),
     );
 
     const scaleStatValue =
@@ -301,7 +293,7 @@ export class DamageHelperPhysical extends BaseService {
     // pre-calculate strong/weak hits
     const swashValue = Math.max(
       0,
-      1 - this.game.traitHelper.traitLevelValue(attacker, 'Swashbuckler'),
+      1 - traitLevelValue(attacker, 'Swashbuckler'),
     );
     const didFlub = rollInOneHundred(weakPercent * swashValue);
     const didCrit = rollInOneHundred(strongPercent);
@@ -376,10 +368,7 @@ export class DamageHelperPhysical extends BaseService {
         'returnsOnThrow',
       ]);
 
-    if (
-      returnsOnThrow ||
-      this.game.traitHelper.traitLevel(attacker, 'BoomerangArm')
-    ) {
+    if (returnsOnThrow || traitLevel(attacker, 'BoomerangArm')) {
       return;
     }
 
@@ -539,7 +528,7 @@ export class DamageHelperPhysical extends BaseService {
     const defenderOffhand =
       leftHand &&
       (this.game.itemHelper.getItemProperty(leftHand, 'offhand') ||
-        this.game.traitHelper.traitLevel(defender, 'BalancedGrip')) &&
+        traitLevel(defender, 'BalancedGrip')) &&
       this.game.itemHelper.canGetBenefitsFromItem(defender, leftHand)
         ? leftHand
         : undefined;
@@ -599,8 +588,7 @@ export class DamageHelperPhysical extends BaseService {
     if (canShoot && ammo && ammoClass !== ItemClass.Wand) {
       const { tier } = this.game.itemHelper.getItemProperties(ammo, ['tier']);
       bonusAttackRolls +=
-        (tier ?? 0) +
-        this.game.traitHelper.traitLevelValue(attacker, 'StrongShots');
+        (tier ?? 0) + traitLevelValue(attacker, 'StrongShots');
     }
 
     // if we have a wand, we grab the tier of it for bonus rolls
@@ -637,7 +625,7 @@ export class DamageHelperPhysical extends BaseService {
       accuracy,
       dex:
         Math.floor(getStat(attacker, Stat.DEX) * offhandMultiplier) +
-        this.game.traitHelper.traitLevelValue(attacker, 'MartialAcuity'),
+        traitLevelValue(attacker, 'MartialAcuity'),
       damageStat: Math.floor(baseDamageStat * offhandMultiplier),
       damageStat4: Math.floor(
         (baseDamageStat / this.damageStatDivisor) * offhandMultiplier,
@@ -688,7 +676,7 @@ export class DamageHelperPhysical extends BaseService {
 
     const offhandACBoost =
       defenderOffhand && this.game.itemHelper.isWeapon(defenderOffhand)
-        ? this.game.traitHelper.traitLevelValue(defender, 'MainGauche')
+        ? traitLevelValue(defender, 'MainGauche')
         : 0;
 
     return {
@@ -752,10 +740,7 @@ export class DamageHelperPhysical extends BaseService {
       -uniformRoll(defenderDodgeLeftSide, defenderDodgeRightSide) +
       defenderScope.dodgeBonus;
 
-    const defenderDodgeBoost = this.game.traitHelper.traitLevelValue(
-      defender,
-      'MartialAgility',
-    );
+    const defenderDodgeBoost = traitLevelValue(defender, 'MartialAgility');
     if (
       !defender.items.equipment[ItemSlot.RightHand] &&
       defenderDodgeBoost > 0
@@ -1277,15 +1262,12 @@ export class DamageHelperPhysical extends BaseService {
     // this means there's always a chance of c-stun, but high con and having higher CON than your attackers will mitigate it effectively
     let conMultiplier = this.cstunConMultiplier;
     if (!attacker.items.equipment[ItemSlot.RightHand]) {
-      conMultiplier -= this.game.traitHelper.traitLevelValue(
-        attacker,
-        'StunningFist',
-      );
+      conMultiplier -= traitLevelValue(attacker, 'StunningFist');
     }
 
     const defCon =
       getStat(defender, Stat.CON) *
-      this.game.traitHelper.traitLevelValue(defender, 'CombatFortitude');
+      traitLevelValue(defender, 'CombatFortitude');
 
     const atkStr = getStat(attacker, Stat.STR);
 
@@ -1374,7 +1356,7 @@ export class DamageHelperPhysical extends BaseService {
       args.offhandMultiplier =
         args.offhandMultiplier -
         reduction +
-        this.game.traitHelper.traitLevelValue(attacker, 'OffhandFinesse');
+        traitLevelValue(attacker, 'OffhandFinesse');
 
       if (args.offhandMultiplier < 0.1) args.offhandMultiplier = 0.1;
     }
@@ -1649,10 +1631,7 @@ export class DamageHelperPhysical extends BaseService {
       ) === 'Rage';
 
     let isEnraged = false;
-    const consumingRage = this.game.traitHelper.traitLevel(
-      attacker,
-      'ConsumingRage',
-    );
+    const consumingRage = traitLevel(attacker, 'ConsumingRage');
     if (
       consumingRage &&
       attackerUsesRage &&
@@ -1665,8 +1644,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     if (isBackstab) {
-      const bonusMultiplier =
-        1.5 + this.game.traitHelper.traitLevelValue(attacker, 'BetterBackstab');
+      const bonusMultiplier = 1.5 + traitLevelValue(attacker, 'BetterBackstab');
       damageMult += bonusMultiplier;
     }
 
@@ -1713,10 +1691,7 @@ export class DamageHelperPhysical extends BaseService {
 
     // if we're singing, try to do offensive encore
     if (hasEffect(attacker, 'Singing')) {
-      const encoreBoost = this.game.traitHelper.traitLevelValue(
-        attacker,
-        'OffensiveEncore',
-      );
+      const encoreBoost = traitLevelValue(attacker, 'OffensiveEncore');
       mana(attacker, encoreBoost);
     }
 

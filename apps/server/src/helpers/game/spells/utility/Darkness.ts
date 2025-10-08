@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -30,9 +31,7 @@ export class Darkness extends Spell {
 
     const radius =
       spellCastArgs.range +
-      (caster
-        ? this.game.traitHelper.traitLevelValue(caster, 'DarknessWiden')
-        : 0);
+      (caster ? traitLevelValue(caster, 'DarknessWiden') : 0);
     this.game.darknessHelper.createDarkness(
       map,
       x,

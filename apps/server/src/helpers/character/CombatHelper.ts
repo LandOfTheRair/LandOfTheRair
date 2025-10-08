@@ -9,7 +9,11 @@ import {
   mana,
   takeDamage,
 } from '@lotr/characters';
-import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import {
+  settingClassConfigGet,
+  settingGameGet,
+  traitLevelValue,
+} from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
@@ -73,10 +77,7 @@ export class CombatHelper extends BaseService {
       }
     }
 
-    const drainChance = this.game.traitHelper.traitLevelValue(
-      attacker,
-      'DrainSlash',
-    );
+    const drainChance = traitLevelValue(attacker, 'DrainSlash');
     if (
       hasLearned(attacker, 'Drain') &&
       drainChance > 0 &&
@@ -85,10 +86,7 @@ export class CombatHelper extends BaseService {
       this.game.spellManager.castSpell('Drain', attacker, defender);
     }
 
-    const asperChance = this.game.traitHelper.traitLevelValue(
-      attacker,
-      'AsperSlash',
-    );
+    const asperChance = traitLevelValue(attacker, 'AsperSlash');
     if (
       hasLearned(attacker, 'Asper') &&
       asperChance > 0 &&

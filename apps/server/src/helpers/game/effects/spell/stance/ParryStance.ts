@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
@@ -53,18 +54,14 @@ export class ParryStance extends Effect {
     // we can parry magic attacks if glowingweapon exists
     if (
       damageArgs.damageClass !== DamageClass.Physical &&
-      !rollInOneHundred(
-        this.game.traitHelper.traitLevelValue(char, 'GlowingWeapon'),
-      )
+      !rollInOneHundred(traitLevelValue(char, 'GlowingWeapon'))
     ) {
       return currentDamage;
     }
 
     // if we're on someone and we can riposte, give it a try
     if (
-      rollInOneHundred(
-        this.game.traitHelper.traitLevelValue(char, 'Riposte'),
-      ) &&
+      rollInOneHundred(traitLevelValue(char, 'Riposte')) &&
       distanceFrom(char, attacker) === 0
     ) {
       this.game.combatHelper.physicalAttack(char, attacker);

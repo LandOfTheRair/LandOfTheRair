@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { ItemSlot, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -26,7 +27,7 @@ export class ConjureHealing extends Spell {
 
     const bonusMultiplier = Math.max(
       1,
-      this.game.traitHelper.traitLevelValue(caster, 'BiggerBottles'),
+      traitLevelValue(caster, 'BiggerBottles'),
     );
 
     const healingItem = this.game.itemCreator.getSimpleItem(

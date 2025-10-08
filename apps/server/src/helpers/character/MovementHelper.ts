@@ -14,7 +14,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
-import { settingGameGet } from '@lotr/content';
+import { settingGameGet, traitLevel } from '@lotr/content';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -226,7 +226,7 @@ export class MovementHelper extends BaseService {
       character.x,
       character.y,
     );
-    if (trap && !this.game.traitHelper.traitLevel(character, 'GentleStep')) {
+    if (trap && !traitLevel(character, 'GentleStep')) {
       this.game.trapHelper.triggerTrap(character, trap);
     }
 

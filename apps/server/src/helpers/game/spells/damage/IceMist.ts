@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  SoundEffect,
-  VisualEffect,
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { SoundEffect, VisualEffect } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class IceMist extends Spell {
@@ -25,9 +21,7 @@ export class IceMist extends Spell {
 
     const radius =
       spellCastArgs.range +
-      (caster
-        ? this.game.traitHelper.traitLevelValue(caster, 'IceMistWiden')
-        : 0);
+      (caster ? traitLevelValue(caster, 'IceMistWiden') : 0);
 
     this.game.messageHelper.sendLogMessageToRadius(center, 8, {
       message: 'You see a dense fog form.',

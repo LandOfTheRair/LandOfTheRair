@@ -1,4 +1,5 @@
 import { hasEmptyHand } from '@lotr/characters';
+import { traitLevel } from '@lotr/content';
 import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
@@ -24,7 +25,7 @@ export class Mug extends SpellCommand {
         rightHand,
         'twoHanded',
       );
-      if (twoHanded && !this.game.traitHelper.traitLevel(char, 'TitanGrip')) {
+      if (twoHanded && !traitLevel(char, 'TitanGrip')) {
         return false;
       }
     }
@@ -60,7 +61,7 @@ export class Mug extends SpellCommand {
         rightHand,
         'twoHanded',
       );
-      if (twoHanded && !this.game.traitHelper.traitLevel(player, 'TitanGrip')) {
+      if (twoHanded && !traitLevel(player, 'TitanGrip')) {
         return this.sendMessage(
           player,
           'That weapon is too heavy to mug with!',

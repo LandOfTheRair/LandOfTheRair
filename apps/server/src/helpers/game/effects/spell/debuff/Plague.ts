@@ -1,5 +1,6 @@
 import { sample } from 'lodash';
 
+import { traitHasLearned, traitLevelValue } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
@@ -12,17 +13,14 @@ export class Plague extends Effect {
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
-        effect.effectInfo.isContagious = this.game.traitHelper.hasLearnedTrait(
+        effect.effectInfo.isContagious = traitHasLearned(
           caster as IPlayer,
           'ContagiousPlague',
         );
 
         // pandemic lets us spread immediately
         if (!effect.effectInfo.isSpreadEffect) {
-          const numSpreads = this.game.traitHelper.traitLevelValue(
-            caster,
-            'Pandemic',
-          );
+          const numSpreads = traitLevelValue(caster, 'Pandemic');
           for (let i = 0; i < numSpreads; i++) {
             this.spread(char, effect, caster);
           }

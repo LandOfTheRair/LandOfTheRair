@@ -1,3 +1,4 @@
+import { traitLevel } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -76,7 +77,7 @@ export class Thruststrike extends SpellCommand {
       damageMult: 1.25,
     });
 
-    if (this.game.traitHelper.traitLevel(user, 'DoubleThrust')) {
+    if (traitLevel(user, 'DoubleThrust')) {
       this.game.combatHelper.physicalAttack(user, target, { ...opts });
     }
   }

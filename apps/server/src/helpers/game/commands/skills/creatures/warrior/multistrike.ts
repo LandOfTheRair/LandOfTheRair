@@ -1,12 +1,11 @@
+import { traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
-  PhysicalAttackArgs } from '@lotr/interfaces';
-import {
-  ItemSlot,
-  WeaponClasses,
+  PhysicalAttackArgs,
 } from '@lotr/interfaces';
+import { ItemSlot, WeaponClasses } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Multistrike extends SpellCommand {
@@ -64,8 +63,7 @@ export class Multistrike extends SpellCommand {
     const state = this.game.worldManager.getMapStateForCharacter(user);
     if (!state) return;
 
-    const numTargets =
-      4 + this.game.traitHelper.traitLevelValue(user, 'Multitarget');
+    const numTargets = 4 + traitLevelValue(user, 'Multitarget');
 
     const foundTargets = this.game.targettingHelper.getPossibleAOETargets(
       user,
@@ -88,8 +86,7 @@ export class Multistrike extends SpellCommand {
       });
     });
 
-    const defensePenalty =
-      50 - this.game.traitHelper.traitLevelValue(user, 'Multifocus');
+    const defensePenalty = 50 - traitLevelValue(user, 'Multifocus');
     if (defensePenalty > 0) {
       this.game.effectHelper.addEffect(user, user, 'LoweredDefenses', {
         effect: { extra: { potency: defensePenalty } },

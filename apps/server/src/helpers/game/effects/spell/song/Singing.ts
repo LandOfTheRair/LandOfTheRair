@@ -1,5 +1,5 @@
 import { isPlayer } from '@lotr/characters';
-import { settingClassConfigGet } from '@lotr/content';
+import { settingClassConfigGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -7,22 +7,10 @@ import { Effect } from '../../../../../models';
 export class Singing extends Effect {
   override create(char: ICharacter, effect: IStatusEffect) {
     effect.effectInfo.statChanges = {
-      [Stat.Defense]: this.game.traitHelper.traitLevelValue(
-        char,
-        'DefensiveVoice',
-      ),
-      [Stat.PhysicalResist]: this.game.traitHelper.traitLevelValue(
-        char,
-        'ShieldingVoice',
-      ),
-      [Stat.MagicalResist]: this.game.traitHelper.traitLevelValue(
-        char,
-        'ShieldingVoice',
-      ),
-      [Stat.SpellReflectChance]: this.game.traitHelper.traitLevelValue(
-        char,
-        'ReflectingVoice',
-      ),
+      [Stat.Defense]: traitLevelValue(char, 'DefensiveVoice'),
+      [Stat.PhysicalResist]: traitLevelValue(char, 'ShieldingVoice'),
+      [Stat.MagicalResist]: traitLevelValue(char, 'ShieldingVoice'),
+      [Stat.SpellReflectChance]: traitLevelValue(char, 'ReflectingVoice'),
     };
   }
 

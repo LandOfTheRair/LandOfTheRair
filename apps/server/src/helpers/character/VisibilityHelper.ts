@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { get, setWith } from 'lodash';
 
 import { getStat } from '@lotr/characters';
-import { settingClassConfigGet } from '@lotr/content';
+import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
@@ -135,10 +135,7 @@ export class VisibilityHelper extends BaseService {
   public canHide(char: ICharacter): boolean {
     if (hasEffect(char, 'Revealed')) return false;
     if (hasEffect(char, 'Hidden')) return false;
-    if (
-      hasEffect(char, 'Singing') &&
-      !this.game.traitHelper.traitLevel(char, 'Shadowsong')
-    ) {
+    if (hasEffect(char, 'Singing') && !traitLevel(char, 'Shadowsong')) {
       return false;
     }
 

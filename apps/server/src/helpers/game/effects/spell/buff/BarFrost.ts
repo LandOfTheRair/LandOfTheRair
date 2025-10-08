@@ -1,3 +1,4 @@
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -11,10 +12,7 @@ export class BarFrost extends Effect {
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
-        boost += this.game.traitHelper.traitLevelValue(
-          caster,
-          'ThermalBarrier',
-        );
+        boost += traitLevelValue(caster, 'ThermalBarrier');
       }
     }
 

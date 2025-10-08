@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IGroundItem, SpellCastArgs } from '@lotr/interfaces';
 import { ItemClass, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -27,9 +28,7 @@ export class Transmute extends Spell {
     const center = target ? target : baseCenter;
     const potency =
       spellCastArgs.potency +
-      (caster
-        ? this.game.traitHelper.traitLevelValue(caster, 'PhilosophersStone')
-        : 0);
+      (caster ? traitLevelValue(caster, 'PhilosophersStone') : 0);
 
     const mapData = this.game.worldManager.getMap(center.map);
     if (!mapData) return;

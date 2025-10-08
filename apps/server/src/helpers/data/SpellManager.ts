@@ -7,6 +7,7 @@ import {
   settingGameGet,
   spellGet,
   spellGetAll,
+  traitLevelValue,
 } from '@lotr/content';
 import { getEffect, getEffectPotency, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
@@ -337,9 +338,7 @@ export class SpellManager extends BaseService {
     if (caster && target && canBeResisted) {
       const casterRoll =
         oneToStat(caster, this.game.characterHelper.castStat(caster)) +
-        (resistLowerTrait
-          ? this.game.traitHelper.traitLevelValue(caster, resistLowerTrait)
-          : 0);
+        (resistLowerTrait ? traitLevelValue(caster, resistLowerTrait) : 0);
       const targetRoll =
         oneToStat(target, Stat.WIL) + getStat(target, Stat.SavingThrow);
 
@@ -377,11 +376,7 @@ export class SpellManager extends BaseService {
       ) {
         spellEffInfo.effect.duration = Math.floor(
           spellEffInfo.effect.duration *
-            (1 +
-              this.game.traitHelper.traitLevelValue(
-                caster,
-                'EffectiveSupporter',
-              )),
+            (1 + traitLevelValue(caster, 'EffectiveSupporter')),
         );
       }
 
@@ -425,10 +420,7 @@ export class SpellManager extends BaseService {
     // cast the spell however many number of times
     let numCasts = 1;
     if (caster && extraAttackTrait) {
-      numCasts += this.game.traitHelper.traitLevelValue(
-        caster,
-        extraAttackTrait,
-      );
+      numCasts += traitLevelValue(caster, extraAttackTrait);
     }
 
     for (let i = 0; i < numCasts; i++) {
@@ -484,7 +476,7 @@ export class SpellManager extends BaseService {
     overrides: Partial<IItemEffect>,
   ): Partial<IItemEffect> {
     if (spellData.spellName === 'MagicMissile') {
-      if (this.game.traitHelper.traitLevelValue(caster, 'SonicMissiles')) {
+      if (traitLevelValue(caster, 'SonicMissiles')) {
         overrides.damageClass = DamageClass.Sonic;
       }
     }
@@ -496,10 +488,7 @@ export class SpellManager extends BaseService {
   private handleArcaneHunger(caster: ICharacter, spellData: ISpellData) {
     if (!spellData.spellMeta.doesAttack) return;
 
-    const arcaneHungerSet = this.game.traitHelper.traitLevelValue(
-      caster,
-      'ArcaneHunger',
-    );
+    const arcaneHungerSet = traitLevelValue(caster, 'ArcaneHunger');
 
     if (arcaneHungerSet > 0) {
       const existingEffect = getEffect(caster, 'ArcaneHunger');

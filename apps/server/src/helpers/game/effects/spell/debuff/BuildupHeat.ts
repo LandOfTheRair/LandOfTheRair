@@ -1,12 +1,8 @@
 import { random } from 'lodash';
 
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class BuildupHeat extends Effect {
@@ -30,7 +26,7 @@ export class BuildupHeat extends Effect {
   ): number {
     if (damageArgs.damageClass === DamageClass.Fire) {
       const forgedFireLevel = attacker
-        ? this.game.traitHelper.traitLevelValue(attacker, 'ForgedFire')
+        ? traitLevelValue(attacker, 'ForgedFire')
         : 0;
       effect.effectInfo.potency ??= 0;
       effect.effectInfo.buildUpCurrent ??= 0;

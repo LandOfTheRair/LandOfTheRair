@@ -1,4 +1,5 @@
 import { manaDamage } from '@lotr/characters';
+import { traitLevel } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -23,10 +24,7 @@ export class Song extends Effect {
       this.game.effectHelper.removeEffect(char, effect);
     }
 
-    if (
-      hasEffect(char, 'Hidden') &&
-      !this.game.traitHelper.traitLevel(char, 'Shadowsong')
-    ) {
+    if (hasEffect(char, 'Hidden') && !traitLevel(char, 'Shadowsong')) {
       this.sendMessage(char, {
         message: 'Your singing gives your position away!',
       });

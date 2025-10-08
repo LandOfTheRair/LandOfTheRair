@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  ItemClass,
-  SoundEffect,
-  Stat,
-} from '@lotr/interfaces';
+import { traitLevel } from '@lotr/content';
+import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { ItemClass, SoundEffect, Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Revive extends Spell {
@@ -54,10 +49,7 @@ export class Revive extends Spell {
 
       this.game.effectHelper.addEffect(player, '', 'EtherSickness');
 
-      if (
-        this.game.traitHelper.traitLevel(caster, 'SnapHeal') &&
-        this.game.traitHelper.traitLevel(caster, 'Cure')
-      ) {
+      if (traitLevel(caster, 'SnapHeal') && traitLevel(caster, 'Cure')) {
         this.game.commandHandler.getSkillRef('Cure').use(caster, player);
       }
 

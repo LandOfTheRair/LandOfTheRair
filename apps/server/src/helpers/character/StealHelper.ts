@@ -7,7 +7,11 @@ import {
   getStat,
   isPlayer,
 } from '@lotr/characters';
-import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import {
+  settingClassConfigGet,
+  settingGameGet,
+  traitLevelValue,
+} from '@lotr/content';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
@@ -87,14 +91,9 @@ export class StealHelper extends BaseService {
 
     const thiefName = yourPerception > myStealth ? char.name : 'somebody';
 
-    const nimbleFingersLevelValue = this.game.traitHelper.traitLevelValue(
-      char,
-      'NimbleFingers',
-    );
+    const nimbleFingersLevelValue = traitLevelValue(char, 'NimbleFingers');
     const stealMod =
-      1 +
-      this.game.traitHelper.traitLevelValue(char, 'ImprovedSteal') +
-      nimbleFingersLevelValue;
+      1 + traitLevelValue(char, 'ImprovedSteal') + nimbleFingersLevelValue;
 
     if (targetGold > 0) {
       const difficulty = goldStealDifficulty;

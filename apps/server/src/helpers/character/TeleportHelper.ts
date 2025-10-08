@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import { truncate } from 'lodash';
 
 import { isPlayer } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, IDialogChatAction, IPlayer } from '@lotr/interfaces';
 import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Player } from '../../models';
@@ -153,7 +154,7 @@ export class TeleportHelper extends BaseService {
 
   // these are all related to the teleport skill
   public maxLocations(player: IPlayer): number {
-    return 20 + this.game.traitHelper.traitLevelValue(player, 'ExpandedMemory');
+    return 20 + traitLevelValue(player, 'ExpandedMemory');
   }
 
   public memorizeLocation(player: IPlayer, name: string): boolean {

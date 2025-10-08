@@ -1,5 +1,5 @@
 import { isPlayer, mana, manaDamage } from '@lotr/characters';
-import { settingClassConfigGet } from '@lotr/content';
+import { settingClassConfigGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -15,7 +15,7 @@ export class Hidden extends Effect {
       [Stat.Stealth]: effect.effectInfo.potency,
     };
 
-    const mult = this.game.traitHelper.traitLevelValue(char, 'HiddenHealing');
+    const mult = traitLevelValue(char, 'HiddenHealing');
     effect.effectInfo.statChanges[Stat.HPRegen] = Math.floor(
       effect.effectInfo.potency * mult,
     );
@@ -54,10 +54,7 @@ export class Hidden extends Effect {
           return;
         }
 
-        const hostileReduction = this.game.traitHelper.traitLevelValue(
-          char,
-          'ImprovedHide',
-        );
+        const hostileReduction = traitLevelValue(char, 'ImprovedHide');
 
         const hostileStealthLoss = numHostile.length * 2;
 

@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
 import { addStatistic, getBaseStat, isDead, isPlayer } from '@lotr/characters';
-import { settingGameGet } from '@lotr/content';
+import { settingGameGet, traitLevelValue } from '@lotr/content';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -78,8 +78,7 @@ export class DeathHelper extends BaseService {
     const bonusHP = Math.min(
       player.hp.maximum,
       Math.floor(
-        player.hp.maximum *
-          this.game.traitHelper.traitLevelValue(player, 'EtherRecombobulation'),
+        player.hp.maximum * traitLevelValue(player, 'EtherRecombobulation'),
       ),
     );
 
@@ -127,8 +126,7 @@ export class DeathHelper extends BaseService {
     const defaultInvulnDuration =
       settingGameGet('character', 'defaultInvulnDuration') ?? 3;
     const invulnDuration =
-      defaultInvulnDuration +
-      this.game.traitHelper.traitLevelValue(player, 'RecombobulativeBarrier');
+      defaultInvulnDuration + traitLevelValue(player, 'RecombobulativeBarrier');
     this.game.effectHelper.addEffect(player, '', 'LimitedInvulnerability', {
       effect: { duration: invulnDuration },
     });

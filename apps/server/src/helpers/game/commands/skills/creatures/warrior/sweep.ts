@@ -1,3 +1,4 @@
+import { traitLevelValue } from '@lotr/content';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -46,8 +47,7 @@ export class Sweep extends SpellCommand {
       return;
     }
 
-    const damageMult =
-      1 + this.game.traitHelper.traitLevelValue(user, 'StrongSweep');
+    const damageMult = 1 + traitLevelValue(user, 'StrongSweep');
 
     foundTargets.forEach((chosenTarget, i) => {
       this.game.combatHelper.physicalAttack(user, chosenTarget, {

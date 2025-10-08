@@ -1,4 +1,5 @@
 import { getStat } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -8,7 +9,7 @@ export class Blind extends Spell {
     if (!caster) return 15;
     return (
       Math.floor(getStat(caster, Stat.WIS)) +
-      this.game.traitHelper.traitLevelValue(caster, 'DazingOutlook')
+      traitLevelValue(caster, 'DazingOutlook')
     );
   }
 

@@ -31,7 +31,12 @@ import {
   manaDamage,
   takeDamage,
 } from '@lotr/characters';
-import { effectGet, settingClassConfigGet } from '@lotr/content';
+import {
+  effectGet,
+  settingClassConfigGet,
+  traitLevel,
+  traitLevelValue,
+} from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import { consoleWarn } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
@@ -239,11 +244,7 @@ export abstract class SkillCommand extends MacroCommand {
     );
 
     // if you have a twohanded item and a lefthand, you can't use it
-    if (
-      twoHanded &&
-      leftHand &&
-      !this.game.traitHelper.traitLevel(attacker, 'TitanGrip')
-    ) {
+    if (twoHanded && leftHand && !traitLevel(attacker, 'TitanGrip')) {
       return -1;
     }
 
@@ -251,7 +252,7 @@ export abstract class SkillCommand extends MacroCommand {
     if (twoHanded) {
       totalAttackRange = Math.max(
         totalAttackRange,
-        this.game.traitHelper.traitLevelValue(attacker, 'ExtendedReach'),
+        traitLevelValue(attacker, 'ExtendedReach'),
       );
     }
 
@@ -305,17 +306,11 @@ export class SpellCommand extends SkillCommand {
         );
 
         if (itemClass === ItemClass.Wand) {
-          cost *= Math.max(
-            0,
-            1 - this.game.traitHelper.traitLevelValue(caster, 'WandSpecialty'),
-          );
+          cost *= Math.max(0, 1 - traitLevelValue(caster, 'WandSpecialty'));
         }
 
         if (itemClass === ItemClass.Totem) {
-          cost *= Math.max(
-            0,
-            1 - this.game.traitHelper.traitLevelValue(caster, 'TotemSpecialty'),
-          );
+          cost *= Math.max(0, 1 - traitLevelValue(caster, 'TotemSpecialty'));
         }
       }
     }
@@ -412,10 +407,7 @@ export class SpellCommand extends SkillCommand {
       // attempt to boost the range of the spell
       let rangeBoost = 0;
       if (caster && spellData.spellMeta.aoeRangeTrait) {
-        rangeBoost = this.game.traitHelper.traitLevelValue(
-          caster,
-          spellData.spellMeta.aoeRangeTrait,
-        );
+        rangeBoost = traitLevelValue(caster, spellData.spellMeta.aoeRangeTrait);
       }
 
       targets = this.game.targettingHelper.getPossibleAOETargets(

@@ -5,7 +5,11 @@ import {
   isPlayer,
   manaToFull,
 } from '@lotr/characters';
-import { settingClassConfigGet } from '@lotr/content';
+import {
+  settingClassConfigGet,
+  traitLevel,
+  traitLevelValue,
+} from '@lotr/content';
 import {
   calcSkillLevelForCharacter,
   calculateSkillXPRequiredForLevel,
@@ -67,7 +71,7 @@ export class FindFamiliar extends Effect {
 
       // buff based on traits
 
-      if (this.game.traitHelper.traitLevel(char, 'FamiliarFists')) {
+      if (traitLevel(char, 'FamiliarFists')) {
         npc.usableSkills.push({ result: 'Rapidpunch', chance: 1 } as any);
       }
 
@@ -90,10 +94,7 @@ export class FindFamiliar extends Effect {
       });
 
       // boost all skills by FamiliarSkill level
-      const allSkillBoost = this.game.traitHelper.traitLevelValue(
-        char,
-        'FamiliarSkill',
-      );
+      const allSkillBoost = traitLevelValue(char, 'FamiliarSkill');
       if (allSkillBoost > 0) {
         Object.keys(npc.skills || {}).forEach((skillName) => {
           addSkillLevelToNPC(npc, skillName as Skill, allSkillBoost);
@@ -111,18 +112,15 @@ export class FindFamiliar extends Effect {
       // familiar stat buffs
       npc.stats[Stat.HP] =
         (npc.stats[Stat.HP] ?? 20000) * 1 +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarFortitude');
+        traitLevelValue(char, 'FamiliarFortitude');
       npc.stats[Stat.MP] = npc.stats[Stat.HP];
 
       npc.stats[Stat.STR] =
-        (npc.stats[Stat.STR] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+        (npc.stats[Stat.STR] ?? 5) + traitLevelValue(char, 'FamiliarStrength');
       npc.stats[Stat.INT] =
-        (npc.stats[Stat.INT] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+        (npc.stats[Stat.INT] ?? 5) + traitLevelValue(char, 'FamiliarStrength');
       npc.stats[Stat.WIS] =
-        (npc.stats[Stat.WIS] ?? 5) +
-        this.game.traitHelper.traitLevelValue(char, 'FamiliarStrength');
+        (npc.stats[Stat.WIS] ?? 5) + traitLevelValue(char, 'FamiliarStrength');
 
       // buff the npc back to full
       this.game.characterHelper.recalculateEverything(npc);

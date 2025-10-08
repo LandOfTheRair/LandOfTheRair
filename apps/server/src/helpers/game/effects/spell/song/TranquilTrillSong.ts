@@ -1,12 +1,8 @@
 import { sample } from 'lodash';
 
-import type {
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass,
-  SoundEffect,
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass, SoundEffect } from '@lotr/interfaces';
 import { Song } from './Song';
 
 export class TranquilTrillSong extends Song {
@@ -23,8 +19,7 @@ export class TranquilTrillSong extends Song {
         ?.getAllAlliesInRange(char, 4) ?? [];
     if (allies.length === 0) return;
 
-    const numHeals =
-      1 + this.game.traitHelper.traitLevelValue(char, 'SoothingTranquility');
+    const numHeals = 1 + traitLevelValue(char, 'SoothingTranquility');
 
     for (let i = 0; i < numHeals; i++) {
       const target = sample(allies) as ICharacter;

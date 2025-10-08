@@ -36,6 +36,9 @@ import {
   settingClassConfigGet,
   settingGameGet,
   settingGetMaxStats,
+  traitGet,
+  traitLevel,
+  traitLevelValue,
 } from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
 import { cleanNumber } from '@lotr/shared';
@@ -119,10 +122,7 @@ export class CharacterHelper extends BaseService {
   }
 
   public tryDance(char: ICharacter): void {
-    const danceLevel = this.game.traitHelper.traitLevelValue(
-      char,
-      'DivineDancing',
-    );
+    const danceLevel = traitLevelValue(char, 'DivineDancing');
     if (danceLevel === 0) return;
 
     this.game.movementHelper.moveWithPathfinding(char, {
@@ -158,8 +158,8 @@ export class CharacterHelper extends BaseService {
   public dropHands(char: ICharacter): void {
     if (isPlayer(char)) {
       const value =
-        this.game.traitHelper.traitLevelValue(char, 'DeathGrip') +
-        this.game.traitHelper.traitLevelValue(char, 'AncientGrip');
+        traitLevelValue(char, 'DeathGrip') +
+        traitLevelValue(char, 'AncientGrip');
       if (rollInOneHundred(value)) return;
     }
 
@@ -322,12 +322,12 @@ export class CharacterHelper extends BaseService {
   private addTraitLevel(
     character: ICharacter,
     trait: string,
-    traitLevel: number,
+    addedTraitLevel: number,
   ): void {
     if (!trait) return;
 
     character.allTraits[trait] ??= 0;
-    character.allTraits[trait] += traitLevel;
+    character.allTraits[trait] += addedTraitLevel;
   }
 
   // recalculate everything, basically when equipment changes usually
@@ -354,7 +354,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // lightenarmor trait means no encumber as well, also clear encumber in rare cases that it matters
-    if (this.game.traitHelper.traitLevelValue(character, 'LightenArmor')) {
+    if (traitLevelValue(character, 'LightenArmor')) {
       this.game.effectHelper.removeEffectByName(character, 'Encumbered');
       return;
     }
@@ -391,10 +391,7 @@ export class CharacterHelper extends BaseService {
 
     // check all traits for spells
     Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = this.game.traitHelper.getTraitData(
-        trait,
-        `RLS:${character.name}`,
-      );
+      const traitRef = traitGet(trait, `RLS:${character.name}`);
       if (!traitRef || !traitRef.spellGiven) return;
 
       learnSpell(traitRef.spellGiven, LearnedSpell.FromTraits);
@@ -500,10 +497,7 @@ export class CharacterHelper extends BaseService {
     const stats = {};
 
     Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = this.game.traitHelper.getTraitData(
-        trait,
-        `GSVAFT:${character.name}`,
-      );
+      const traitRef = traitGet(trait, `GSVAFT:${character.name}`);
       if (!traitRef || !traitRef.statsGiven) return;
 
       Object.keys(traitRef.statsGiven).forEach((stat) => {
@@ -512,15 +506,12 @@ export class CharacterHelper extends BaseService {
         stats[stat] = stats[stat] || 0;
         stats[stat] +=
           (traitRef.statsGiven[stat] ?? 0) *
-          (this.game.traitHelper.traitLevel(character, trait) ?? 0);
+          (traitLevel(character, trait) ?? 0);
       });
     });
 
     // handle reflective coating - boost spell reflect
-    const reflectiveBoost = this.game.traitHelper.traitLevelValue(
-      character,
-      'ReflectiveCoating',
-    );
+    const reflectiveBoost = traitLevelValue(character, 'ReflectiveCoating');
     if (reflectiveBoost > 0) {
       stats[Stat.SpellReflectChance] = stats[Stat.SpellReflectChance] ?? 0;
 
@@ -545,10 +536,7 @@ export class CharacterHelper extends BaseService {
     }
 
     // handle unarmored savant - set base mitigation
-    const savantBoost = this.game.traitHelper.traitLevelValue(
-      character,
-      'UnarmoredSavant',
-    );
+    const savantBoost = traitLevelValue(character, 'UnarmoredSavant');
     if (savantBoost > 0) {
       stats[Stat.Mitigation] = stats[Stat.Mitigation] ?? 0;
 
@@ -639,7 +627,7 @@ export class CharacterHelper extends BaseService {
       if (
         itemClass === ItemClass.Shield &&
         itemSlot === ItemSlot.RightHand &&
-        !this.game.traitHelper.traitLevel(character, 'Shieldbearer')
+        !traitLevel(character, 'Shieldbearer')
       ) {
         return;
       }
@@ -753,13 +741,7 @@ export class CharacterHelper extends BaseService {
       if (hasEffect(character, 'Hidden')) {
         const hiddenRegen = Math.max(
           0,
-          Math.floor(
-            base *
-              this.game.traitHelper.traitLevelValue(
-                character,
-                'ReplenishingShadows',
-              ),
-          ),
+          Math.floor(base * traitLevelValue(character, 'ReplenishingShadows')),
         );
 
         return hiddenRegen;
@@ -774,11 +756,7 @@ export class CharacterHelper extends BaseService {
           Math.max(
             0,
             Math.floor(
-              base *
-                this.game.traitHelper.traitLevelValue(
-                  character,
-                  'ReplenishingReverberation',
-                ),
+              base * traitLevelValue(character, 'ReplenishingReverberation'),
             ),
           ) + (settingGameGet('character', 'thiefOOCRegen') ?? 10);
 
@@ -848,7 +826,7 @@ export class CharacterHelper extends BaseService {
       0 + (hideReductions[rightHandClass] || 0);
     const shadowSheathMultiplier = Math.max(
       0,
-      1 - this.game.traitHelper.traitLevelValue(char, 'ShadowSheath'),
+      1 - traitLevelValue(char, 'ShadowSheath'),
     );
 
     return Math.floor(totalReduction * shadowSheathMultiplier);

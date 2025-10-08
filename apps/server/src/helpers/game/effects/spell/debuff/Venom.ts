@@ -1,3 +1,4 @@
+import { traitLevel } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -9,10 +10,7 @@ export class Venom extends Effect {
       const mapState = this.game.worldManager.getMap(char.map)?.state;
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
-      if (
-        caster &&
-        this.game.traitHelper.traitLevel(caster, 'DegenerativeVenom')
-      ) {
+      if (caster && traitLevel(caster, 'DegenerativeVenom')) {
         const skill = calcSkillLevelForCharacter(caster, Skill.Thievery);
         const reduction = skill + 1;
         effect.effectInfo.statChanges = {

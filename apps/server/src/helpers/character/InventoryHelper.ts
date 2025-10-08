@@ -1,5 +1,10 @@
 import { getStat } from '@lotr/characters';
-import { coreMaterialStorage, settingGameGet } from '@lotr/content';
+import {
+  coreMaterialStorage,
+  settingGameGet,
+  traitHasLearned,
+  traitLevelValue,
+} from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type {
   ICharacter,
@@ -105,7 +110,7 @@ export class InventoryHelper extends BaseService {
     );
     if (
       itemClass === ItemClass.Halberd &&
-      this.game.traitHelper.hasLearnedTrait(player as IPlayer, 'BigBelt')
+      traitHasLearned(player as IPlayer, 'BigBelt')
     ) {
       return true;
     }
@@ -328,8 +333,7 @@ export class InventoryHelper extends BaseService {
     );
 
     if (check) {
-      const ancientMult =
-        1 + this.game.traitHelper.traitLevelValue(check, 'AncientBartering');
+      const ancientMult = 1 + traitLevelValue(check, 'AncientBartering');
       totalSellValue *= ancientMult;
     }
 

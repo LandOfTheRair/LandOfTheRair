@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  SoundEffect,
-  VisualEffect,
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { SoundEffect, VisualEffect } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class FireMist extends Spell {
@@ -23,9 +19,7 @@ export class FireMist extends Spell {
 
     const radius =
       spellCastArgs.range +
-      (caster
-        ? this.game.traitHelper.traitLevelValue(caster, 'FireMistWiden')
-        : 0);
+      (caster ? traitLevelValue(caster, 'FireMistWiden') : 0);
 
     this.game.messageHelper.sendLogMessageToRadius(center, 8, {
       message: 'You see a cloud of smoke form.',

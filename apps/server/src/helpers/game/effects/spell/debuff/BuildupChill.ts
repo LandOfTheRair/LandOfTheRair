@@ -1,12 +1,8 @@
 import { random } from 'lodash';
 
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class BuildupChill extends Effect {
@@ -35,9 +31,7 @@ export class BuildupChill extends Effect {
       effect.effectInfo.potency += currentDamage;
       effect.effectInfo.buildUpCurrent +=
         random(15, 25) +
-        (attacker
-          ? this.game.traitHelper.traitLevelValue(attacker, 'ChilledCore')
-          : 0);
+        (attacker ? traitLevelValue(attacker, 'ChilledCore') : 0);
 
       if (
         effect.effectInfo.buildUpCurrent >=

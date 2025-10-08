@@ -29,6 +29,7 @@ import {
   itemGet,
   recipeGet,
   settingGameGet,
+  traitLevelValue,
 } from '@lotr/content';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem, isOwnedBy } from '@lotr/shared';
@@ -313,7 +314,7 @@ export class ItemHelper extends BaseService {
 
     const conditionLossModifier =
       Math.abs(conditionLoss) *
-      (this.game.traitHelper.traitLevelValue(character, 'CarefulTouch') / 100);
+      (traitLevelValue(character, 'CarefulTouch') / 100);
     if (conditionLoss < 0) {
       conditionLoss += conditionLossModifier;
     }

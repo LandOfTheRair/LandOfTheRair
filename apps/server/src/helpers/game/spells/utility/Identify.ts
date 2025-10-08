@@ -1,4 +1,4 @@
-import { settingClassConfigGet } from '@lotr/content';
+import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot, Skill } from '@lotr/interfaces';
@@ -29,13 +29,11 @@ export class Identify extends Spell {
     if (conjSkillLevel >= 10) castTier = 1;
     if (conjSkillLevel >= 20) castTier = 2;
 
-    if (this.game.traitHelper.traitLevel(caster, 'ExpansiveKnowledge')) {
+    if (traitLevel(caster, 'ExpansiveKnowledge')) {
       castTier = 3;
     }
 
-    const thiefTier = this.game.traitHelper.traitLevel(caster, 'Appraise')
-      ? 1
-      : 0;
+    const thiefTier = traitLevel(caster, 'Appraise') ? 1 : 0;
 
     const canAppraiseWhileIdentifying =
       settingClassConfigGet<'canAppraiseWhileIdentifying'>(

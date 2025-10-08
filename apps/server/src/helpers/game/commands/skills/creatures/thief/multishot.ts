@@ -1,10 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-} from '@lotr/interfaces';
+import { traitLevelValue } from '@lotr/content';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
 export class Multishot extends SpellCommand {
@@ -65,7 +61,7 @@ export class Multishot extends SpellCommand {
     let attacks = 2;
     let damageMult = 0.8;
 
-    if (this.game.traitHelper.traitLevelValue(char, 'TripleShot')) {
+    if (traitLevelValue(char, 'TripleShot')) {
       attacks += 1;
       damageMult -= 0.1;
     }
