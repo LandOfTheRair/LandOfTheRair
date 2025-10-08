@@ -20,7 +20,7 @@ export class BuildupHeat extends Effect {
   public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {

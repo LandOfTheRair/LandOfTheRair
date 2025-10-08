@@ -4,8 +4,8 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class MadDash extends Spell {
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!caster || !target) return;

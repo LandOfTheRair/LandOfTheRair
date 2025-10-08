@@ -5,6 +5,7 @@ import { getSkillLevel } from '@lotr/characters';
 import {
   itemPropertyGet,
   itemPropertySet,
+  spellGet,
   traitLevelValue,
 } from '@lotr/content';
 import type {
@@ -98,6 +99,18 @@ export class TrapHelper extends BaseService {
     trapEffect.potency *= 1 + traitLevelValue(placer, 'StrongerTraps');
     trapEffect.range = trapEffect.range ?? 0;
     trap.mods.trapEffect = trapEffect;
+
+    const spellRef = this.game.spellManager.getSpell(trapEffect.name);
+    const calculatedValues = spellRef.getOverrideEffectInfo(
+      placer,
+      undefined,
+      spellGet(trapEffect.name, 'T:PT')!,
+      {},
+    );
+    const baseDuration = calculatedValues.effect?.duration ?? 10;
+    const modifiedDuration =
+      baseDuration * (1 + traitLevelValue(placer, 'LongerTrapEffects'));
+    trapEffect.duration = modifiedDuration;
 
     if (trapEffect.range > 0) {
       trapEffect.range += traitLevelValue(placer, 'WiderTraps');

@@ -4,7 +4,7 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class HolyAura extends Spell {
-  override getCharges(caster: ICharacter | null) {
+  override getCharges(caster: ICharacter | undefined) {
     return caster ? getStat(caster, Stat.WIS) * 100 : 10;
   }
 
@@ -13,8 +13,8 @@ export class HolyAura extends Spell {
   }
 
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {}
 }

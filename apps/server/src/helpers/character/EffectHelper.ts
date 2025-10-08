@@ -314,7 +314,7 @@ export class EffectHelper extends BaseService {
   // modify incoming damage based on incoming effects
   public modifyIncomingDamage(
     char: ICharacter,
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     damageArgs: DamageArgs,
   ): number {
     let currentDamage = Math.floor(damageArgs.damage);

@@ -106,7 +106,7 @@ export abstract class MacroCommand implements IMacroCommand {
     allowSelf = false,
     allowDirection = false,
   ): ICharacter | { x: number; y: number; map: string } | null {
-    let target: ICharacter | null = null;
+    let target: ICharacter | undefined;
     args = args.trim();
 
     const range = this.range(user);

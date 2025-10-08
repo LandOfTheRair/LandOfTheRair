@@ -19,9 +19,9 @@ export class GMExamineCreature extends MacroCommand {
     );
     if (!target) return this.youDontSeeThatPerson(player, creature);
 
-    let displayValue: ICharacter | null = target;
+    let displayValue: ICharacter | undefined = target;
     if (drill) {
-      displayValue = get(target, drill, null);
+      displayValue = get(target, drill, undefined);
     }
 
     this.sendMessage(player, `Examine ${target.name} (${drill || 'all'}):`);

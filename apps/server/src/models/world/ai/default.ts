@@ -63,8 +63,8 @@ export class DefaultAIBehavior implements IAI {
   private stanceCooldown = 0;
   private messageCooldown = 0;
 
-  private highestAgro: ICharacter | null | undefined;
-  private currentTarget: ICharacter | null | undefined;
+  private highestAgro: ICharacter | undefined | undefined;
+  private currentTarget: ICharacter | undefined | undefined;
 
   private ticksSinceSeen: Record<string, number> = {};
   private chillTicks = 0;
@@ -107,8 +107,8 @@ export class DefaultAIBehavior implements IAI {
     }
 
     if (this.stanceCooldown > 0) this.stanceCooldown--;
-    this.highestAgro = null;
-    this.currentTarget = null;
+    this.highestAgro = undefined;
+    this.currentTarget = undefined;
 
     if (npc.takenOverBy) {
       this.game.wsCmdHandler.sendToSocket(npc.takenOverBy.username, {
@@ -200,7 +200,7 @@ export class DefaultAIBehavior implements IAI {
 
     // onhit with no agro means they don't care
     if (npc.hostility === Hostility.OnHit && size(possibleAgro) === 0) {
-      this.currentTarget = null;
+      this.currentTarget = undefined;
 
       // either you have agro, or you can look for a target
     } else if (amINearAPlayer) {

@@ -8,8 +8,8 @@ export class ChainKunai extends Spell {
   }
 
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {
     if (caster && target && !hasEffect(target, 'Unshakeable')) {

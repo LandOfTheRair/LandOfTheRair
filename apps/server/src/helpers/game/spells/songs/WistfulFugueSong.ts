@@ -4,7 +4,7 @@ import { Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class WistfulFugueSong extends Spell {
-  override getPotency(caster: ICharacter | null) {
+  override getPotency(caster: ICharacter | undefined) {
     return caster ? getSkillLevel(caster, Skill.Thievery) : 10;
   }
 }

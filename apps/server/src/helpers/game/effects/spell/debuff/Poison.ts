@@ -25,10 +25,10 @@ export class Poison extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    let caster: ICharacter | null = null;
+    let caster: ICharacter | undefined;
     if (effect.sourceUUID) {
       const mapState = this.game.worldManager.getMap(char.map)?.state;
-      caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? null;
+      caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? undefined;
     }
 
     this.game.combatHelper.magicalAttack(caster, char, {

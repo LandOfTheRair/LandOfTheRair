@@ -4,7 +4,7 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class FindFamiliarShadowClones extends Spell {
-  override getDuration(caster: ICharacter | null) {
+  override getDuration(caster: ICharacter | undefined) {
     if (!caster) return 0;
     return Math.floor(getStat(caster, Stat.AGI) * 100);
   }

@@ -1,12 +1,7 @@
 import { random } from 'lodash';
 
-import type {
-  DamageArgs,
-  ICharacter,
-  IStatusEffect } from '@lotr/interfaces';
-import {
-  DamageClass
-} from '@lotr/interfaces';
+import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class BuildupWater extends Effect {
@@ -26,7 +21,7 @@ export class BuildupWater extends Effect {
   public override incoming(
     effect: IStatusEffect,
     char: ICharacter,
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {

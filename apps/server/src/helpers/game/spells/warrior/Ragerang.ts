@@ -3,7 +3,10 @@ import { ItemSlot } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Ragerang extends Spell {
-  override cast(caster: ICharacter | null, target: ICharacter | null): void {
+  override cast(
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
+  ): void {
     if (!caster || !target) return;
 
     const ragerangData = this.game.spellManager.getSpellData(

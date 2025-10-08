@@ -7,24 +7,24 @@ import { DeepPartial } from './typescript';
 
 export interface BaseSpell {
   getDuration(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number;
   getOverrideEffectInfo(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
     override: Partial<IItemEffect>,
   ): DeepPartial<IStatusEffectData>;
   getPotency(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number;
   cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void;
 }

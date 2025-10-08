@@ -28,7 +28,7 @@ export class DamageHelperMagic extends BaseService {
   }
 
   magicalAttack(
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     defender: ICharacter,
     args: MagicalAttackArgs,
   ) {

@@ -102,7 +102,7 @@ export class CombatHelper extends BaseService {
   }
 
   public magicalAttack(
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     defender: ICharacter,
     args: MagicalAttackArgs = {},
   ): void {
@@ -122,7 +122,7 @@ export class CombatHelper extends BaseService {
   }
 
   public modifyDamage(
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     defender: ICharacter,
     args: DamageArgs,
   ): number {
@@ -193,7 +193,7 @@ export class CombatHelper extends BaseService {
 
   // this function directly deals damage without modifying it - the only place this should be called are the damage helpers
   public dealDamage(
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     defender: ICharacter,
     args: DamageArgs,
   ): void {
@@ -521,7 +521,7 @@ export class CombatHelper extends BaseService {
     defender: ICharacter,
     damageClass: DamageClass,
     damage: number,
-    source?: ICharacter | null,
+    source?: ICharacter | undefined,
   ): void {
     if (damage === 0) return;
 

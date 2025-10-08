@@ -85,8 +85,8 @@ export class SpellManager extends BaseService {
 
   // get the potency for the spell based on caster/target
   public getPotency(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number {
     if (!caster) return 1;
@@ -218,8 +218,8 @@ export class SpellManager extends BaseService {
   // cast a spell!
   public castSpell(
     spell: string,
-    caster: ICharacter | null = null,
-    target: ICharacter | null = null,
+    caster: ICharacter | undefined = undefined,
+    target: ICharacter | undefined = undefined,
     override: Partial<IItemEffect> = {},
     callbacks?: any,
     originalArgs?: Partial<IMacroCommandArgs>,
@@ -262,8 +262,6 @@ export class SpellManager extends BaseService {
 
     // send messages to caster/target where applicable
     const {
-      casterMessage,
-      casterSfx,
       targetMessage,
       targetSfx,
       resistLowerTrait,
@@ -272,7 +270,6 @@ export class SpellManager extends BaseService {
       doesAttack,
       doesHeal,
       doesOvertime,
-      targetsCaster,
       noHostileTarget,
       bonusAgro,
       canBeResisted,

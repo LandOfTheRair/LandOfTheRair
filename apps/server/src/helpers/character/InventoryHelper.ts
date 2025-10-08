@@ -297,7 +297,7 @@ export class InventoryHelper extends BaseService {
     this.addMaterial(player, material, -number);
   }
 
-  public itemValue(check: ICharacter | null, item: ISimpleItem): number {
+  public itemValue(check: ICharacter | undefined, item: ISimpleItem): number {
     const { ounces: baseOunces, sellValue: baseSellValue } = itemGet(
       item.name,
     )!;

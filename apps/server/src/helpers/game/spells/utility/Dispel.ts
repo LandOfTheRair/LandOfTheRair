@@ -10,8 +10,8 @@ import { Spell } from '../../../../models/world/Spell';
 
 export class Dispel extends Spell {
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!target) return;

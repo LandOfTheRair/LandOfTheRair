@@ -1,16 +1,11 @@
-import type {
-  ICharacter,
-  SpellCastArgs } from '@lotr/interfaces';
-import {
-  DamageClass,
-  SoundEffect
-} from '@lotr/interfaces';
+import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { DamageClass, SoundEffect } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class ChromaticBolt extends Spell {
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {
     if (!caster || !target) return;

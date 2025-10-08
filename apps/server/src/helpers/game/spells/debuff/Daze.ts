@@ -5,7 +5,7 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Daze extends Spell {
-  override getDuration(caster: ICharacter | null) {
+  override getDuration(caster: ICharacter | undefined) {
     if (!caster) return 15;
     return (
       Math.floor(getStat(caster, Stat.WIS) * 2) +
@@ -13,7 +13,7 @@ export class Daze extends Spell {
     );
   }
 
-  override getPotency(caster: ICharacter | null) {
+  override getPotency(caster: ICharacter | undefined) {
     if (!caster) return 10;
     return (
       Math.floor(getStat(caster, Stat.WIS) * 2) +

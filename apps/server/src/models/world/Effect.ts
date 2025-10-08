@@ -39,7 +39,7 @@ export class Effect implements BaseEffect {
   public incoming(
     effect: IStatusEffect,
     char: ICharacter,
-    attacker: ICharacter | null,
+    attacker: ICharacter | undefined,
     args: DamageArgs,
     currentDamage: number,
   ): number {

@@ -4,7 +4,7 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Shield extends Spell {
-  override getPotency(caster: ICharacter | null) {
+  override getPotency(caster: ICharacter | undefined) {
     return caster ? getStat(caster, Stat.STR) * 10 : 150;
   }
 }

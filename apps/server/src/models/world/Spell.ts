@@ -43,17 +43,21 @@ export class Spell implements BaseSpell {
   }
 
   public cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     override: Partial<IItemEffect>,
   ): void {}
 
   public getOverrideEffectInfo(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
     override: Partial<IItemEffect> = {},
   ): DeepPartial<IStatusEffectData> {
+    let overrideCharges = override.charges || 0;
+    let overrideDuration = override.duration || 0;
+    let overridePotency = override.potency || 0;
+
     let baseTooltip: IStatusEffectData['tooltip'] = {
       desc: this.getUnformattedTooltipDesc(caster, target, spellData),
     };
@@ -74,18 +78,19 @@ export class Spell implements BaseSpell {
       const { duration, durationScaleStat, durationScaleValue } =
         effectInfo.effect;
 
-      if (duration) {
-        override.duration = effectInfo.effect.duration;
-      }
-
       if (
         caster &&
+        !overrideDuration &&
         durationScaleStat &&
         durationScaleValue &&
         durationScaleValue !== -1
       ) {
-        override.duration =
+        overrideDuration =
           getStat(caster, durationScaleStat) * durationScaleValue;
+      }
+
+      if (duration && !overrideDuration) {
+        overrideDuration = effectInfo.effect.duration;
       }
 
       if (
@@ -95,12 +100,12 @@ export class Spell implements BaseSpell {
         duration === -1 &&
         spellData.spellMeta.useDurationAsCharges
       ) {
-        override.charges = override.duration;
-        override.duration = -1;
+        overrideCharges = overrideDuration;
+        overrideDuration = -1;
       }
 
       if (effectInfo.effect.extra.potency) {
-        override.potency = effectInfo.effect.extra.potency;
+        overridePotency = effectInfo.effect.extra.potency;
       }
 
       baseTooltip = effectInfo.tooltip;
@@ -109,12 +114,12 @@ export class Spell implements BaseSpell {
     const effect = {
       effect: {
         duration:
-          override.duration ?? this.getDuration(caster, target, spellData),
+          overrideDuration || this.getDuration(caster, target, spellData),
         extra: {
           charges:
-            override.charges ?? this.getCharges(caster, target, spellData),
+            overrideCharges || this.getCharges(caster, target, spellData),
           potency:
-            override.potency ?? this.getPotency(caster, target, spellData),
+            overridePotency || this.getPotency(caster, target, spellData),
         },
       },
       tooltip: baseTooltip,
@@ -124,32 +129,32 @@ export class Spell implements BaseSpell {
   }
 
   public getUnformattedTooltipDesc(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): string {
     return '';
   }
 
   public getDuration(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number {
     return 0;
   }
 
   public getCharges(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number {
     return 0;
   }
 
   public getPotency(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellData: ISpellData,
   ): number {
     return this.game.spellManager.getPotency(caster, target, spellData);

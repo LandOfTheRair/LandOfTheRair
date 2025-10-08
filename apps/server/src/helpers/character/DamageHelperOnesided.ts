@@ -26,10 +26,14 @@ export class DamageHelperOnesided extends BaseService {
       engageInCombat(defender);
     }
 
-    const modifiedDamage = this.game.combatHelper.modifyDamage(null, defender, {
-      damage,
-      damageClass,
-    });
+    const modifiedDamage = this.game.combatHelper.modifyDamage(
+      undefined,
+      defender,
+      {
+        damage,
+        damageClass,
+      },
+    );
 
     takeDamage(defender, modifiedDamage);
 

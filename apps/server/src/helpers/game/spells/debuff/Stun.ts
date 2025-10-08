@@ -5,7 +5,7 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Stun extends Spell {
-  override getDuration(caster: ICharacter | null) {
+  override getDuration(caster: ICharacter | undefined) {
     if (!caster) return 3;
     return (
       Math.floor(getStat(caster, Stat.WIS) / 2) +
@@ -14,8 +14,8 @@ export class Stun extends Spell {
   }
 
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {}
 }

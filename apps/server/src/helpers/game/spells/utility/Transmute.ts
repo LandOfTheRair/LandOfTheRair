@@ -5,7 +5,7 @@ import { ItemClass, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Transmute extends Spell {
-  override getPotency(caster: ICharacter | null) {
+  override getPotency(caster: ICharacter | undefined) {
     return caster
       ? Math.max(
           getSkillLevel(caster, Skill.Thievery),
@@ -15,8 +15,8 @@ export class Transmute extends Spell {
   }
 
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {
     const baseCenter = {

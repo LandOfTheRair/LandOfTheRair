@@ -4,14 +4,14 @@ import { Stat } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class FindFamiliarSalamander extends Spell {
-  override getDuration(caster: ICharacter | null) {
+  override getDuration(caster: ICharacter | undefined) {
     if (!caster) return 0;
     return Math.floor(getStat(caster, Stat.INT) * 250);
   }
 
   override cast(
-    caster: ICharacter | null,
-    target: ICharacter | null,
+    caster: ICharacter | undefined,
+    target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void {}
 }
