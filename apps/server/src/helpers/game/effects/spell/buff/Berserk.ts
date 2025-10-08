@@ -165,6 +165,27 @@ export class Berserk extends Effect {
     effect.endsAt = Date.now() + newTicksLeft * 1000;
   }
 
+  public override downcast(effect: IStatusEffect, char: ICharacter) {
+    effect.effectInfo.currentBerserkTier = 1;
+    this.updateStats(char, effect);
+
+    this.sendMessage(char, {
+      message: `You de-escalate your trance!`,
+    });
+
+    const ticksLeft = Math.floor((effect.endsAt - Date.now()) / 1000);
+    const newTicksLeft = ticksLeft - 180;
+
+    effect.endsAt = Date.now() + newTicksLeft * 1000;
+
+    if (Date.now() >= effect.endsAt) {
+      this.unapply(char, effect);
+      this.sendMessage(char, {
+        message: `You break out of your trance!`,
+      });
+    }
+  }
+
   // reusable actions
   private validBerserkTargets(
     char: ICharacter,

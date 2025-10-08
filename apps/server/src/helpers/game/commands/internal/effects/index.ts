@@ -1,5 +1,5 @@
-
 export * from './clear';
+export * from './dezerk';
 export * from './drink';
 export * from './forget';
 export * from './inscribe';

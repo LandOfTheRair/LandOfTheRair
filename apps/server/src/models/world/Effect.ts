@@ -54,4 +54,10 @@ export class Effect implements BaseEffect {
   ): void {}
 
   public recast(effect: IStatusEffect, char: ICharacter, target: ICharacter) {}
+
+  public downcast(
+    effect: IStatusEffect,
+    char: ICharacter,
+    target: ICharacter,
+  ) {}
 }
