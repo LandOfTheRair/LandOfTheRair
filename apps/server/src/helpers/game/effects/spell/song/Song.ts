@@ -18,7 +18,10 @@ export class Song extends Effect {
   public override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    manaDamage(char, 5);
+    if (!this.game.traitHelper.rollTraitValue(char, 'Ventriloquism')) {
+      manaDamage(char, 5);
+    }
+
     if (char.mp.current <= 0) {
       this.sendMessage(char, { message: 'You run out of breath!' });
       this.game.effectHelper.removeEffect(char, effect);
