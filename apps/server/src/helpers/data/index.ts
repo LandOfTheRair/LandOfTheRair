@@ -1,4 +1,3 @@
-export * from './ConfigManager';
 export * from './ContentLoader';
 export * from './CorpseManager';
 export * from './DarknessHelper';

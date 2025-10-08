@@ -3,6 +3,7 @@
 import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 
+import { settingIsAIActive } from '@lotr/content';
 import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
@@ -41,7 +42,6 @@ import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
 import { ProfanityHelper } from '../chat';
 import {
-  ConfigManager,
   ContentLoader,
   CorpseManager,
   DarknessHelper,
@@ -161,7 +161,6 @@ export class Game {
 
     public playerManager: PlayerManager,
     public worldManager: WorldManager,
-    public configManager: ConfigManager,
     public discordHelper: DiscordHelper,
     public rngDungeonGenerator: RNGDungeonGenerator,
     public rngDungeonManager: RNGDungeonManager,
@@ -225,7 +224,6 @@ export class Game {
         'achievementsHelper',
         'commandHandler',
         'playerManager',
-        'configManager',
         'rngDungeonGenerator',
         'rngDungeonManager',
       ],
@@ -444,7 +442,7 @@ export class Game {
     }
 
     // map ticks (npcs)
-    if (this.ticksElapsed % 20 === 0 && this.configManager.isAIActive) {
+    if (this.ticksElapsed % 20 === 0 && settingIsAIActive()) {
       timer.startTimer(`npcTick-${now}`);
       this.worldManager.npcTick(timer);
       timer.stopTimer(`npcTick-${now}`);

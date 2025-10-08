@@ -11,6 +11,7 @@ export * from './npcscripts';
 export * from './quests';
 export * from './recipe';
 export * from './settings';
+export * from './settings.game';
 export * from './spawners';
 export * from './spells';
 export * from './text';

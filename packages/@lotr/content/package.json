@@ -9,6 +9,7 @@
     "start:dev": "tsc --watch"
   },
   "dependencies": {
+    "@lotr/exp": "*",
     "@lotr/interfaces": "*",
     "@lotr/logger": "*",
     "deep-freeze": "^0.0.1",

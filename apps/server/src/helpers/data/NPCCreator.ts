@@ -48,6 +48,7 @@ import {
   coreNPCNames,
   npcGet,
   settingGameGet,
+  settingGetMaxLevel,
 } from '@lotr/content';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import { initializeNPC } from '@lotr/initializers';
@@ -323,7 +324,7 @@ export class NPCCreator extends BaseService {
       baseChar.monsterClass ??= MonsterClass.Humanoid;
     }
 
-    const crLevel = clamp(baseChar.level, 1, this.game.configManager.MAX_LEVEL);
+    const crLevel = clamp(baseChar.level, 1, settingGetMaxLevel());
 
     const statOverrides = this.coalesceChallengeDataForCR(npcDef);
 

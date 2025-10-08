@@ -9,7 +9,12 @@ import {
   isDead,
   isPlayer,
 } from '@lotr/characters';
-import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import {
+  settingClassConfigGet,
+  settingGameGet,
+  settingGetMaxExp,
+  settingGetMaxSkillExp,
+} from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import {
   calcSkillLevelForCharacter,
@@ -447,7 +452,7 @@ export class PlayerHelper extends BaseService {
     }
 
     player.exp = Math.max(Math.floor(player.exp + xpGained), 1);
-    player.exp = Math.min(player.exp, this.game.configManager.MAX_EXP);
+    player.exp = Math.min(player.exp, settingGetMaxExp());
   }
 
   // gain axp for a player
@@ -511,7 +516,7 @@ export class PlayerHelper extends BaseService {
     );
     player.skills[skill.toLowerCase()] = Math.min(
       player.skills[skill.toLowerCase()],
-      this.game.configManager.MAX_SKILL_EXP,
+      settingGetMaxSkillExp(),
     );
 
     const newSkillValue = calcSkillLevelForCharacter(player, skill);

@@ -1,4 +1,5 @@
 import { getBaseStat } from '@lotr/characters';
+import { settingGetPotionStats } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -10,10 +11,7 @@ export class PermanentCON extends Effect {
       this.game.characterHelper.gainPermanentStat(char, Stat.HP, 3);
     }
 
-    const max =
-      this.game.configManager.MAX_POTION_STAT[
-        effect.effectInfo.tier as string
-      ] ?? 13;
+    const max = settingGetPotionStats()[effect.effectInfo.tier as string] ?? 13;
     if (getBaseStat(char, Stat.CON) >= max) {
       return this.sendMessage(char, { message: 'The fluid was tasteless.' });
     }

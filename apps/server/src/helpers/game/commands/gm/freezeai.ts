@@ -1,3 +1,4 @@
+import { settingIsAIActive, toggleAIFreeze } from '@lotr/content';
 import type { IPlayer } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
@@ -8,12 +9,10 @@ export class GMFreezeAI extends MacroCommand {
   override canBeFast = false;
 
   override execute(player: IPlayer) {
-    this.game.configManager.toggleAIFreeze();
+    toggleAIFreeze();
     this.sendMessage(
       player,
-      'AI is now ' +
-        (this.game.configManager.isAIActive ? 'active' : 'frozen') +
-        '.',
+      'AI is now ' + (settingIsAIActive() ? 'active' : 'frozen') + '.',
     );
   }
 }

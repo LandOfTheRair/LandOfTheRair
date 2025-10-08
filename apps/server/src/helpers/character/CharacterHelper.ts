@@ -35,6 +35,7 @@ import {
   coreHideReductions,
   settingClassConfigGet,
   settingGameGet,
+  settingGetMaxStats,
 } from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
 import { cleanNumber } from '@lotr/shared';
@@ -274,7 +275,7 @@ export class CharacterHelper extends BaseService {
 
     const curStat = character.stats[stat] ?? 1;
 
-    const hardBaseCap = this.game.configManager.MAX_STATS;
+    const hardBaseCap = settingGetMaxStats();
 
     // cannot exceed the hard cap
     if (curStat + cleanValue > hardBaseCap) return false;
