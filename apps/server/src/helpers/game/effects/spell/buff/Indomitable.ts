@@ -7,8 +7,9 @@ export class Indomitable extends Effect {
     effect.effectInfo.statChanges = {
       [Stat.Mitigation]: effect.effectInfo.potency,
       [Stat.Defense]: effect.effectInfo.potency,
-      [Stat.STR]: Math.floor(effect.effectInfo.potency / 2),
-      [Stat.AGI]: Math.floor(effect.effectInfo.potency / 2),
+      [Stat.AGI]: Math.floor(effect.effectInfo.potency / 5),
+      [Stat.CON]: Math.floor(effect.effectInfo.potency / 5),
+      [Stat.WIL]: Math.floor(effect.effectInfo.potency / 5),
     };
   }
 }

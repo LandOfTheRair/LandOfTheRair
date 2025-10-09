@@ -20,6 +20,8 @@ export * from './Cover';
 export * from './Covered';
 export * from './DarkVision';
 export * from './DeftStrikes';
+export * from './Excogitation';
+export * from './ExcogitativeAura';
 export * from './FerociousRoarVigor';
 export * from './FindFamiliar';
 export * from './FirethornsAura';

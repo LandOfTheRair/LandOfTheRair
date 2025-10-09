@@ -1,6 +1,7 @@
 export * from './antidote';
 export * from './cleanse';
 export * from './cure';
+export * from './excogitativeaura';
 export * from './holybath';
 export * from './indomitableaura';
 export * from './powerwordheal';
