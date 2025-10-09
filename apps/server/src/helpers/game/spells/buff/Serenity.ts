@@ -3,9 +3,11 @@ import type { ICharacter } from '@lotr/interfaces';
 import { Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
-export class MirrorImage extends Spell {
+export class Serenity extends Spell {
   override getCharges(caster: ICharacter | undefined) {
-    return caster ? getSkillLevel(caster, Skill.Conjuration) : 30;
+    return caster
+      ? Math.floor(getSkillLevel(caster, Skill.Restoration) / 3)
+      : 5;
   }
 
   override getDuration(): number {

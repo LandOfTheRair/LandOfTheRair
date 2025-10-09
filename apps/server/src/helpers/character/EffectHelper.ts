@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { isArray, isString, merge } from 'lodash';
 import uuid from 'uuid/v4';
 
-import { formatEffectMessage, hasEffect } from '@lotr/effects';
+import { formatEffectMessage, getEffect, hasEffect } from '@lotr/effects';
 import type {
   DamageArgs,
   DeepPartial,
@@ -86,6 +86,18 @@ export class EffectHelper extends BaseService {
     );
     const { type, extra, duration } = effectData.effect;
     const { recentlyRef, noStack } = effectData.effectMeta;
+
+    if (type === 'debuff') {
+      const serenityBuff = getEffect(character, 'Serenity');
+      if (serenityBuff) {
+        this.game.messageHelper.sendLogMessageToPlayer(character, {
+          message: 'Your serenity protects you!',
+        });
+        serenityBuff.effectInfo.charges =
+          (serenityBuff.effectInfo.charges || 0) - 1;
+        return;
+      }
+    }
 
     // if the effect can't stack we won't let it (prevents things like chain stun)
     if (noStack && hasEffect(character, effectName)) {
