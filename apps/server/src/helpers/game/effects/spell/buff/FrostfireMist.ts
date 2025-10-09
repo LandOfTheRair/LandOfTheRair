@@ -13,8 +13,8 @@ export class FrostfireMist extends Effect {
 
     const center = effect.effectInfo.center;
     if (center) {
-      this.game.messageHelper.sendLogMessageToRadius(center, 7, {
-        message: 'You are surrounded by a warm mist!',
+      this.game.messageHelper.sendLogMessageToRadius(center, 5, {
+        message: 'You smell a warm mist form nearby!',
       });
     }
   }

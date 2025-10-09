@@ -10,8 +10,8 @@ export class Heathaze extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
     this.sendVFX(char, effect);
 
-    this.game.messageHelper.sendLogMessageToRadius(char, 7, {
-      message: 'You are surrounded by a mind-numbing warm haze!',
+    this.game.messageHelper.sendLogMessageToRadius(char, 5, {
+      message: 'You see a mind-numbing warm haze!',
     });
   }
 

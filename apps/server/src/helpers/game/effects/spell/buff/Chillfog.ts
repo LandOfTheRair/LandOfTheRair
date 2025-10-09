@@ -13,8 +13,8 @@ export class Chillfog extends Effect {
 
     const center = effect.effectInfo.center;
     if (center) {
-      this.game.messageHelper.sendLogMessageToRadius(center, 7, {
-        message: 'You are surrounded by a bone-chilling cold fog!',
+      this.game.messageHelper.sendLogMessageToRadius(center, 5, {
+        message: 'You feel a bone-chilling cold fog!',
       });
     }
   }
