@@ -2,7 +2,7 @@ import type { ICharacter } from '@lotr/interfaces';
 import { consoleDebug } from './logger';
 
 let shouldLogCrashContext = false;
-const crashContext = [];
+const crashContext: string[] = [];
 
 export function setShouldLogCrashContext(value: boolean) {
   shouldLogCrashContext = value;

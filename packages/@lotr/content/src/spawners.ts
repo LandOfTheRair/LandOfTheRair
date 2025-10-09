@@ -19,7 +19,7 @@ export function spawnerCustomAdd(
 export function spawnerCustomClearMap(mapName: string): void {
   Object.keys(customSpawnersByMap?.[mapName] ?? {}).forEach((spawnerTag) => {
     delete customSpawners[spawnerTag];
-    delete customSpawnersByMap[mapName][spawnerTag];
+    delete customSpawnersByMap[mapName]?.[spawnerTag];
   });
 }
 

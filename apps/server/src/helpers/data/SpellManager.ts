@@ -67,7 +67,7 @@ export class SpellManager extends BaseService {
 
   // get the raw YML spell data
   public getSpellData(key: string, context: string): ISpellData {
-    return spellGet(key, context);
+    return spellGet(key, context)!;
   }
 
   // get the ref to the spell for casting

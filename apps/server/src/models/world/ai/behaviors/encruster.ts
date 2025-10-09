@@ -294,7 +294,7 @@ export class EncrusterBehavior implements IAIBehavior {
             WeaponClasses.includes(weaponItemClass as WeaponClass)) ||
           (slots.includes('shield') &&
             ShieldClasses.includes(weaponItemClass as WeaponClass)) ||
-          slots.includes(EquipHash[weaponItemClass]);
+          slots.includes(EquipHash[weaponItemClass] as ItemSlot);
 
         if (!shouldPass) return 'You cannot encrust that gem into that item.';
 

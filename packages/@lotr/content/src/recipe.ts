@@ -24,5 +24,5 @@ export function recipeGetForTradeskill(tradeskill: string): IRecipe[] {
     );
   }
 
-  return ret;
+  return ret ?? [];
 }

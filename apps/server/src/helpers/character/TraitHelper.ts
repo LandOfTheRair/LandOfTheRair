@@ -24,7 +24,7 @@ export class TraitHelper extends BaseService {
 
   // get the raw trait tree from the trait info hash
   public getTraitTree(baseClass: BaseClass): IClassTraitTree {
-    return traitTreeGet(baseClass);
+    return traitTreeGet(baseClass)!;
   }
 
   // get the specific trait in the tree

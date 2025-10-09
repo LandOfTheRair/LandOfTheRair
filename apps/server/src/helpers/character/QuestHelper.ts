@@ -31,7 +31,7 @@ export class QuestHelper extends BaseService {
 
   // get a full quest object
   public getQuest(quest: string): IQuest {
-    return questGet(quest);
+    return questGet(quest)!;
   }
 
   // check if the player has the specified quest

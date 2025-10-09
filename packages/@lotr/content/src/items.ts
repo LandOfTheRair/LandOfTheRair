@@ -16,7 +16,7 @@ export function itemCustomAdd(mapName: string, item: IItemDefinition) {
 export function itemCustomClearMap(mapName: string): void {
   Object.keys(customItemsByMap?.[mapName] ?? {}).forEach((itemName) => {
     delete customItems[itemName];
-    delete customItemsByMap[mapName][itemName];
+    delete customItemsByMap[mapName]?.[itemName];
   });
 }
 

@@ -17,7 +17,7 @@ export class RosebushAura extends Effect {
     }
 
     if (!hasEffect(attacker, 'Venom')) {
-      const spellData = spellGet('Venom', 'T:RA');
+      const spellData = spellGet('Venom', 'T:RA')!;
       this.game.effectHelper.addEffect(attacker, char, 'Venom', {
         effectMeta: {
           effectRef: 'Venom',

@@ -73,7 +73,7 @@ export class Spell implements BaseSpell {
       const effectInfo = effectGet(
         spellData.spellMeta.linkedEffectName,
         `GOEI:${caster?.name}:${spellData.spellName}`,
-      );
+      )!;
 
       const { duration, durationScaleStat, durationScaleValue } =
         effectInfo.effect;

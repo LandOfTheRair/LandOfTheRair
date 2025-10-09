@@ -1,6 +1,6 @@
 import { Stat } from '@lotr/interfaces';
 
-const statValues = {
+const statValues: Partial<Record<Stat, string[]>> = {
   [Stat.STR]: ['Puny', 'Weak', 'Average', 'Strong', 'Muscular', 'Herculean'],
   [Stat.DEX]: [
     'Uncoordinated',
@@ -42,6 +42,6 @@ const statValues = {
 
 export function getStatDescription(stat: Stat, value = 1): string {
   const value5 = Math.floor(value / 5);
-  const array = statValues[stat];
-  return array[Math.min(value5, array.length - 1)];
+  const array = statValues[stat] ?? [];
+  return array[Math.min(value5, array.length - 1)] ?? '';
 }

@@ -22,7 +22,7 @@ export function itemPropertiesGet(
   item: ISimpleItem | undefined,
   props: Array<keyof IItem>,
 ): Partial<IItem> {
-  const hash = {};
+  const hash: Partial<IItem> = {};
   props.forEach((prop) => (hash[prop] = itemPropertyGet(item, prop)));
   return hash;
 }

@@ -26,7 +26,7 @@ export class EffectManager extends BaseService {
 
   // get the metadata for an effect
   public getEffectData(effectName: string, context: string): IStatusEffectData {
-    return effectGet(effectName, context);
+    return effectGet(effectName, context)!;
   }
 
   // get a ref to an effect

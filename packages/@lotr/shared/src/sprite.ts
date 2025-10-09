@@ -177,7 +177,7 @@ export const spriteDirectionForWall = (index: number): Direction => {
       column = 9;
     }
   }
-  return wallDirectionData[column];
+  return wallDirectionData[column]!;
 };
 
 /**

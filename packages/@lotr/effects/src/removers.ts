@@ -14,8 +14,9 @@ export function effectStatBonuses(
   Object.values(character.effects._hash).forEach((effect) => {
     const statBoosts = effect.effectInfo.statChanges;
     Object.keys(statBoosts || {}).forEach((stat) => {
-      stats[stat] = stats[stat] || 0;
-      stats[stat] += statBoosts?.[stat] ?? 0;
+      const statKey = stat as Stat;
+      stats[statKey] = stats[statKey] || 0;
+      stats[statKey] += statBoosts?.[statKey] ?? 0;
     });
   });
 

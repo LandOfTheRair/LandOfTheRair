@@ -1,12 +1,5 @@
-import type {
-  IItem,
-  IPlayer,
-  ISimpleItem } from '@lotr/interfaces';
-import {
-  ItemClass,
-  Skill,
-  Stat,
-} from '@lotr/interfaces';
+import type { IItem, IPlayer, ISimpleItem } from '@lotr/interfaces';
+import { ItemClass, Skill, Stat } from '@lotr/interfaces';
 
 const formatStatForDisplay = (stat: Stat, statValue: number) => {
   const sign = statValue > 0 ? '+' : '';
@@ -117,17 +110,19 @@ export function descTextFor(
   const stats: Partial<Record<Stat, number>> = {};
 
   for (const stat of Object.keys(baseStats)) {
-    const baseStat = baseStats[stat];
+    const statKey = stat as Stat;
+    const baseStat = baseStats[statKey] ?? 0;
 
-    stats[stat] ??= 0;
-    stats[stat] += baseStat;
+    stats[statKey] ??= 0;
+    stats[statKey] += baseStat;
   }
 
   for (const stat of Object.keys(modStats)) {
-    const baseStat = modStats[stat];
+    const statKey = stat as Stat;
+    const baseStat = modStats[statKey] ?? 0;
 
-    stats[stat] ??= 0;
-    stats[stat] += baseStat;
+    stats[statKey] ??= 0;
+    stats[statKey] += baseStat;
   }
 
   const allStats = [
@@ -348,7 +343,7 @@ export const gemTextFor = (
   const baseText = `You are looking at ${desc}. `;
 
   const slotText = `This gem goes in the following slots: ${encrustGive.slots
-    .map((x) => x.toUpperCase())
+    .map((x: string) => x.toUpperCase())
     .join(', ')}. `;
 
   const affectedStatsText = affectedStats

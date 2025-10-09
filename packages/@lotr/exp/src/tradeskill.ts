@@ -25,6 +25,7 @@ export function calcTradeskillLevelForCharacter(
     throw new Error('Trying to calculate skill of undefined');
   }
 
-  const skillValue = character.tradeskills[skill.toLowerCase()] ?? 0;
+  const skillValue =
+    character.tradeskills[skill.toLowerCase() as Tradeskill] ?? 0;
   return calculateTradeskillLevelFromXP(skillValue);
 }

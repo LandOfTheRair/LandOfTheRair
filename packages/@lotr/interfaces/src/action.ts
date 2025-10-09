@@ -4,7 +4,7 @@ export interface IServerResponse {
   data?: any;
 }
 
-export type EmitterFunction = (id, args) => void;
+export type EmitterFunction = (id: string, args: any) => void;
 
 interface WebsocketCallbacks {
   broadcast: EmitterFunction;
@@ -19,11 +19,11 @@ export interface IServerAction {
   requiresLoggedIn: boolean;
   canBeUnattended: boolean;
 
-  validate(args?): boolean;
+  validate(args?: any): boolean;
   act(
-    game,
+    game: any,
     { broadcast, emit, register, unregister }: WebsocketCallbacks,
-    args?,
+    args?: any,
   ): Promise<{ wasSuccess?: boolean; message?: string }>;
 }
 

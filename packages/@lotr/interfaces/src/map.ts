@@ -1,17 +1,16 @@
 import { ICharacter } from './character';
 
-
 // tiles that show as clear and forcibly overwrite FOV when on a dense tile
 export enum TilesWithNoFOVUpdate {
   Empty = 0,
-  Air = 2386
+  Air = 2386,
 }
 
 export enum MapTilesetLayer {
   Terrain = 0,
   Walls = 1,
   Decor = 2,
-  Creatures = 3
+  Creatures = 3,
 }
 
 // layers for the map, in order
@@ -31,7 +30,7 @@ export enum MapLayer {
   BackgroundMusic = 12,
   Succorport = 13,
   SpawnerZones = 14,
-  ZLevel = 15
+  ZLevel = 15,
 }
 
 // types of interactables and other objects present on a map
@@ -47,7 +46,7 @@ export enum ObjectType {
   Teleport = 'Teleport',
   Fillable = 'Fillable',
   EventSource = 'EventSource',
-  TreasureChest = 'TreasureChest'
+  TreasureChest = 'TreasureChest',
 }
 
 export interface IMapData {
@@ -56,7 +55,6 @@ export interface IMapData {
 }
 
 export interface IMapProperties {
-
   // the region this map is in - determines things like banks, regional caps, regional drops
   region: string;
 
@@ -130,7 +128,11 @@ export interface IMapProperties {
 export interface IMapScript {
   name: string;
 
-  setup: (game, map, mapState) => void;
-  events: (game, map, mapState) => void;
-  handleEvent: (game, event: string, { trigger }: { trigger: ICharacter }) => void;
+  setup: (game: any, map: any, mapState: any) => void;
+  events: (game: any, map: any, mapState: any) => void;
+  handleEvent: (
+    game: any,
+    event: string,
+    { trigger }: { trigger: ICharacter },
+  ) => void;
 }

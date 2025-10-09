@@ -15,7 +15,7 @@ export function npcCustomAdd(mapName: string, npc: INPCDefinition) {
 export function npcCustomClearMap(mapName: string): void {
   Object.keys(customNPCsByMap?.[mapName] ?? {}).forEach((npcId) => {
     delete customNPCs[npcId];
-    delete customNPCsByMap[mapName][npcId];
+    delete customNPCsByMap[mapName]?.[npcId];
   });
 }
 

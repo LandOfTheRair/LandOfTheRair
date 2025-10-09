@@ -159,7 +159,9 @@ export const EarClasses = [ItemClass.Earring];
 
 export const PotionClasses = [ItemClass.Bottle];
 
-export const EquipHash: Partial<Record<ArmorClass, ItemSlot>> = {};
+export const EquipHash: Partial<
+  Record<ArmorClass | WeaponClass | MiscClass, ItemSlot>
+> = {};
 ArmorClasses.forEach((t) => (EquipHash[t] = ItemSlot.Armor));
 RobeClasses.forEach((t) => (EquipHash[t] = ItemSlot.Robe));
 HeadClasses.forEach((t) => (EquipHash[t] = ItemSlot.Head));

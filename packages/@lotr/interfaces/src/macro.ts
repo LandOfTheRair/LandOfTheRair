@@ -12,8 +12,8 @@ export interface IMacroCommandArgs {
   primaryTarget?: { x: number; y: number; map: string };
   targetNumber?: number;
   callbacks: {
-    broadcast: (args) => void;
-    emit: (args) => void;
+    broadcast: (args: any) => void;
+    emit: (args: any) => void;
   };
 }
 
@@ -42,11 +42,11 @@ export interface IMacroMonsterSkill extends IMacroSkill {
 }
 
 export interface IMacroContainer {
-  activeMacroBars: Record<string, Record<number, string[]>>;                    // username -> charSlot -> [group1, group2, group3]
-  activeMacros: Record<string, Record<number, string>>;                         // username -> charSlot -> macroname
+  activeMacroBars: Record<string, Record<number, string[]>>; // username -> charSlot -> [group1, group2, group3]
+  activeMacros: Record<string, Record<number, string>>; // username -> charSlot -> macroname
   customMacros: Record<string, IMacro>;
-  learnedMacros: Record<string, Record<number, Record<string, IMacro>>>;        // username -> charSlot -> macroname -> macro
-  characterMacros: Record<string, Record<number, Record<string, IMacroBar>>>;   // username -> charSlot -> macrobarname -> macrobar
+  learnedMacros: Record<string, Record<number, Record<string, IMacro>>>; // username -> charSlot -> macroname -> macro
+  characterMacros: Record<string, Record<number, Record<string, IMacroBar>>>; // username -> charSlot -> macrobarname -> macrobar
 }
 
 export interface IMacroBar {
@@ -83,4 +83,3 @@ export interface IMacro {
 
   createdCharSlot?: number;
 }
-

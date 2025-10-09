@@ -44,7 +44,7 @@ export function calcSkillLevelForCharacter(
     throw new Error('Trying to calculate skill of undefined');
   }
 
-  const skillValue = character.skills[skill.toLowerCase()] ?? 0;
+  const skillValue = character.skills[skill.toLowerCase() as Skill] ?? 0;
   return calculateSkillLevelFromXP(skillValue);
 }
 

@@ -332,7 +332,7 @@ export class SpellCommand extends SkillCommand {
       const effectName = spellData.spellMeta.linkedEffectName;
 
       if (effectName) {
-        const effectData = effectGet(effectName, `CU:${char?.name}`);
+        const effectData = effectGet(effectName, `CU:${char?.name}`)!;
         const recentlyEffect = effectData.effectMeta.recentlyRef;
 
         isBlockedByEffect =

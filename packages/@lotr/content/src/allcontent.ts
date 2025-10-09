@@ -133,7 +133,9 @@ export function setContentKey<T extends keyof typeof __AllContentDontUse>(
   key: T,
   value: (typeof __AllContentDontUse)[T],
 ) {
-  __AllContentDontUse[key] = deepfreeze(value);
+  __AllContentDontUse[key] = deepfreeze(
+    value,
+  ) as (typeof __AllContentDontUse)[T];
 }
 
 export function getContentKey<T extends keyof typeof __AllContentDontUse>(

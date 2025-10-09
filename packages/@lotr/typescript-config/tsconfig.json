@@ -2,6 +2,10 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
     "outDir": "dist",
     "rootDir": "src",
     "lib": ["ES2022"],

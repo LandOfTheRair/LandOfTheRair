@@ -12,7 +12,10 @@ export function hasEffectLike(char: ICharacter, effIsh: string): boolean {
 }
 
 // get an effect from someone
-export function getEffect(char: ICharacter, effName: string): IStatusEffect {
+export function getEffect(
+  char: ICharacter,
+  effName: string,
+): IStatusEffect | undefined {
   return char.effects?._hash?.[effName];
 }
 
@@ -24,7 +27,8 @@ export function getEffectLike(
   const keys = Object.keys(char.effects?._hash ?? {});
   return keys
     .filter((k) => k.includes(effIsh))
-    .map((k) => char.effects._hash[k]);
+    .map((k) => getEffect(char, k)!)
+    .filter(Boolean);
 }
 
 // get the potency of an effect
