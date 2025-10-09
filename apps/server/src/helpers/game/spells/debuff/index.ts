@@ -3,5 +3,6 @@ export * from './Chillfog';
 export * from './Daze';
 export * from './Debilitate';
 export * from './Fear';
+export * from './Heathaze';
 export * from './Snare';
 export * from './Stun';

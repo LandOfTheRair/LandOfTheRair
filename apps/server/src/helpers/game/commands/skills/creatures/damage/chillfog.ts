@@ -13,7 +13,8 @@ export class Chillfog extends SpellCommand {
     return (
       super.canUse(caster, target) &&
       !hasEffect(target, 'Chillfog') &&
-      !hasEffect(target, 'FrostfireMist')
+      !hasEffect(target, 'FrostfireMist') &&
+      !hasEffect(target, 'Heathaze')
     );
   }
 

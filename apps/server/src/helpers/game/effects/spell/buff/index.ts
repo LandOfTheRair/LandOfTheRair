@@ -25,6 +25,7 @@ export * from './FirethornsAura';
 export * from './FrostfireMist';
 export * from './FrostspikesAura';
 export * from './Haste';
+export * from './Heathaze';
 export * from './HolyAura';
 export * from './HolyBath';
 export * from './ImbueEnergy';
