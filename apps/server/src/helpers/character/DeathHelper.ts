@@ -300,7 +300,8 @@ export class DeathHelper extends BaseService {
         // not every NPC has an npcId (f.ex, green NPCs)
         if (dead.npcId) {
           const baseNPC = this.game.npcCreator.getNPCDefinition(dead.npcId);
-          corpse.mods.corpseLevel = baseNPC?.level ?? dead.level;
+          corpse.mods.corpseLevel =
+            baseNPC.tanSkillRequired ?? baseNPC?.level ?? dead.level;
         }
 
         corpse.mods.searchItems = allItems;
