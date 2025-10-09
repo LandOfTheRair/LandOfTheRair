@@ -21,7 +21,7 @@ export class Heathaze extends Effect {
     this.sendVFX(char, effect);
 
     this.game.targettingHelper
-      .getPossibleAOETargets(char, char, 2, 8)
+      .getPossibleAOETargets(char, char, 1, 4)
       .forEach((target) => {
         const existingEffect = getEffect(target, 'BuildupHeat');
         if (existingEffect) {
@@ -54,9 +54,7 @@ export class Heathaze extends Effect {
   private sendVFX(char: ICharacter, effect: IStatusEffect) {
     this.game.messageHelper.sendVFXMessageToRadius(char, 7, {
       vfx: VisualEffect.HeatMistFull,
-      vfxRadius: 2,
-      vfxX: char.x,
-      vfxY: char.y,
+      vfxTiles: this.game.messageHelper.getVFXTilesForTile(char, 1),
       vfxTimeout: 1500,
     });
   }

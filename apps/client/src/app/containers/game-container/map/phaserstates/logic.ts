@@ -1256,26 +1256,24 @@ export class MapScene extends Phaser.Scene {
   }
 
   private drawVFX(vfxData): void {
-    const { vfx, vfxX, vfxY, vfxRadius, vfxTimeout } = vfxData;
+    const { vfx, vfxTiles, vfxTimeout } = vfxData;
 
-    for (let x = vfxX - vfxRadius; x <= vfxX + vfxRadius; x++) {
-      for (let y = vfxY - vfxRadius; y <= vfxY + vfxRadius; y++) {
-        try {
-          const sprite = this.add.sprite(
-            32 + x * 64,
-            32 + y * 64,
-            'Effects',
-            vfx,
-          );
+    vfxTiles.forEach((tile) => {
+      try {
+        const sprite = this.add.sprite(
+          32 + tile.x * 64,
+          32 + tile.y * 64,
+          'Effects',
+          vfx,
+        );
 
-          sprite.depth = 0;
+        sprite.depth = 0;
 
-          setTimeout(() => {
-            sprite.destroy();
-          }, vfxTimeout ?? 2000);
-        } catch {}
-      }
-    }
+        setTimeout(() => {
+          sprite.destroy();
+        }, vfxTimeout ?? 2000);
+      } catch {}
+    });
   }
 
   private goldSpriteForLocation(x: number, y: number) {

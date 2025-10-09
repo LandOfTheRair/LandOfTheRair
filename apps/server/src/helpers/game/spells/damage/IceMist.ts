@@ -27,9 +27,7 @@ export class IceMist extends Spell {
       message: 'You see a dense fog form.',
       sfx: SoundEffect.SpellAOEFrost,
       vfx: VisualEffect.IceMist,
-      vfxRadius: radius,
-      vfxX: center.x,
-      vfxY: center.y,
+      vfxTiles: this.game.messageHelper.getVFXTilesForTile(center, radius),
       vfxTimeout: 2000,
     });
   }

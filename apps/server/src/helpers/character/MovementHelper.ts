@@ -47,7 +47,10 @@ export class MovementHelper extends BaseService {
     });
   }
 
-  numStepsTo(source: ICharacter, target: { x: number; y: number }): number {
+  numStepsTo(
+    source: { x: number; y: number; map: string },
+    target: { x: number; y: number },
+  ): number {
     const xDiff = target.x - source.x;
     const yDiff = target.y - source.y;
 
@@ -55,8 +58,12 @@ export class MovementHelper extends BaseService {
     if (!map) return 0;
 
     const steps =
-      map.findPath(source.x, source.y, source.x + xDiff, source.y + yDiff) ??
-      [];
+      map.findPathExcludingWalls(
+        source.x,
+        source.y,
+        source.x + xDiff,
+        source.y + yDiff,
+      ) ?? [];
 
     return steps.length;
   }

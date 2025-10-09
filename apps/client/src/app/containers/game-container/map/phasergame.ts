@@ -32,9 +32,7 @@ export class MapRenderGame extends Phaser.Game {
       windowChange: Observable<any>;
       vfx: Observable<{
         vfx: VisualEffect;
-        vfxX: number;
-        vfxY: number;
-        vfxRadius: number;
+        vfxTiles: { x: number; y: number }[];
       }>;
     },
   ) {

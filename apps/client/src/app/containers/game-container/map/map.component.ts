@@ -58,9 +58,7 @@ export class MapComponent {
   public ground = new BehaviorSubject<IGround>({});
   public vfx = new Subject<{
     vfx: VisualEffect;
-    vfxX: number;
-    vfxY: number;
-    vfxRadius: number;
+    vfxTiles: { x: number; y: number }[];
     vfxTimeout: number;
   }>();
 
@@ -79,13 +77,14 @@ export class MapComponent {
 
   private game: MapRenderGame;
 
-  public canSeeLowHealthBorder = computed(() => (
+  public canSeeLowHealthBorder = computed(
+    () =>
       this.player() &&
       this.player().hp.current <=
         this.player().hp.maximum *
           ((this.optionsService.dyingBorderPercent ?? 25) / 100) &&
-      this.optionsService.canShowDyingBorder
-    ));
+      this.optionsService.canShowDyingBorder,
+  );
 
   constructor() {
     effect(() => {
@@ -121,13 +120,11 @@ export class MapComponent {
       'VFX',
       GameServerResponse.GameLog,
       (data) => {
-        if (!data.vfx || !data.vfxX || !data.vfxY) return;
+        if (!data.vfx || !data.vfxTiles) return;
 
         this.vfx.next({
           vfx: data.vfx,
-          vfxX: data.vfxX,
-          vfxY: data.vfxY,
-          vfxRadius: data.vfxRadius ?? 0,
+          vfxTiles: data.vfxTiles,
           vfxTimeout: data.vfxTimeout,
         });
       },

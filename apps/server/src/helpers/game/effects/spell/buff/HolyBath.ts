@@ -53,9 +53,7 @@ export class HolyBath extends Effect {
 
     this.game.messageHelper.sendVFXMessageToRadius(center, 7, {
       vfx: VisualEffect.HolyMistFull,
-      vfxRadius: 2,
-      vfxX: center.x,
-      vfxY: center.y,
+      vfxTiles: this.game.messageHelper.getVFXTilesForTile(center, 2),
       vfxTimeout: 6000,
     });
   }

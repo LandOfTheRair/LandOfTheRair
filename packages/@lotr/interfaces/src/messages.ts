@@ -47,10 +47,8 @@ export interface LogInfo {
 
 export type MessageVFX = {
   vfx: VisualEffect;
-  vfxRadius: number;
   vfxTimeout: number;
-  vfxX: number;
-  vfxY: number;
+  vfxTiles: { x: number; y: number }[];
 };
 
 export type MessageSFX = {

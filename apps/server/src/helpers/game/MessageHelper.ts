@@ -8,6 +8,7 @@ import type {
   SoundEffect,
 } from '@lotr/interfaces';
 import { GameAction, GameServerResponse, MessageType } from '@lotr/interfaces';
+import { distanceFrom } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -81,9 +82,7 @@ export class MessageHelper extends BaseService {
       message,
       sfx,
       vfx,
-      vfxRadius,
-      vfxX,
-      vfxY,
+      vfxTiles,
       vfxTimeout,
       from,
       setTarget,
@@ -125,9 +124,7 @@ export class MessageHelper extends BaseService {
           message: sendMessage,
           sfx,
           vfx,
-          vfxRadius,
-          vfxX,
-          vfxY,
+          vfxTiles,
           vfxTimeout,
           setTarget,
         },
@@ -135,10 +132,31 @@ export class MessageHelper extends BaseService {
     });
   }
 
+  public getVFXTilesForTile(
+    center: { x: number; y: number; map: string },
+    radius: number,
+  ) {
+    const tiles: { x: number; y: number }[] = [];
+
+    for (let x = center.x - radius; x <= center.x + radius; x++) {
+      for (let y = center.y - radius; y <= center.y + radius; y++) {
+        const numStepsTo = this.game.movementHelper.numStepsTo(center, {
+          x,
+          y,
+        });
+        const distanceTo = distanceFrom(center, { x, y });
+
+        if (numStepsTo === distanceTo) tiles.push({ x, y });
+      }
+    }
+
+    return tiles;
+  }
+
   public sendVFXMessageToRadius(
     character: ICharacter | { x: number; y: number; map: string },
     radius: number,
-    { vfx, vfxRadius, vfxX, vfxY, vfxTimeout }: MessageVFX,
+    { vfx, vfxTiles, vfxTimeout }: MessageVFX,
   ): void {
     const state = this.game.worldManager.getMap(character.map)?.state;
     if (!state) return;
@@ -157,9 +175,7 @@ export class MessageHelper extends BaseService {
         {
           type: GameServerResponse.GameLog,
           vfx,
-          vfxRadius,
-          vfxX,
-          vfxY,
+          vfxTiles,
           vfxTimeout,
         },
       );

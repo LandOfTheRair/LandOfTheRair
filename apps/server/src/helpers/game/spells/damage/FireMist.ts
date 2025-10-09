@@ -25,9 +25,7 @@ export class FireMist extends Spell {
       message: 'You see a cloud of smoke form.',
       sfx: SoundEffect.SpellAOEFire,
       vfx: VisualEffect.FireMist,
-      vfxRadius: radius,
-      vfxX: center.x,
-      vfxY: center.y,
+      vfxTiles: this.game.messageHelper.getVFXTilesForTile(center, radius),
       vfxTimeout: 2000,
     });
   }

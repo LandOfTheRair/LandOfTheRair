@@ -568,6 +568,43 @@ export class WorldMap {
     return steps;
   }
 
+  // build a path between x/y->x/y
+  public findPathExcludingWalls(
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+  ) {
+    if (
+      startX >= this.width ||
+      startX <= 0 ||
+      startY >= this.height ||
+      startY <= 0 ||
+      endX >= this.width ||
+      endX <= 0 ||
+      endY >= this.height ||
+      endY <= 0
+    ) {
+      return;
+    }
+
+    const grid = this.densityMap.clone();
+
+    const path = this.planner.findPath(startX, startY, endX, endY, grid);
+
+    const steps = path.map(([newX, newY], idx) => {
+      if (idx === 0) return { x: 0, y: 0 };
+
+      const [prevX, prevY] = path[idx - 1];
+      return { x: newX - prevX, y: newY - prevY };
+    });
+
+    // the first step is always our tile, we should ignore it.
+    steps.shift();
+
+    return steps;
+  }
+
   // whether or not the current tile is succorable
   public canSuccor(player: IPlayer): boolean {
     return !this.getSuccorportPropertiesAt(player.x, player.y)?.restrictSuccor;
