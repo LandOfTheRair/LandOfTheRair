@@ -244,7 +244,7 @@ describe('Recipe Functions', () => {
 
       const result = recipeGetForTradeskill('NonexistentTradeskill');
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual([]);
       expect(mockLogErrorWithContext).toHaveBeenCalledWith(
         'Content:TradeskillRecipes:NonexistentTradeskill',
         expect.any(Error),

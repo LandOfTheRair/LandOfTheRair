@@ -107,8 +107,8 @@ describe('Text Functions', () => {
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
 
       // Math.min(2, 1.7) = 1.7, but array access with 1.7 is undefined
-      expect(skillGetDescription(Skill.Dagger, 1.7)).toBeUndefined();
-      expect(skillGetDescription(Skill.Dagger, 0.5)).toBeUndefined();
+      expect(skillGetDescription(Skill.Dagger, 1.7)).toBe('');
+      expect(skillGetDescription(Skill.Dagger, 0.5)).toBe('');
       // Integer indices work normally
       expect(skillGetDescription(Skill.Dagger, 1)).toBe('Apprentice');
     });
@@ -155,7 +155,7 @@ describe('Text Functions', () => {
 
       mockCoreSkillDescs.mockReturnValue(mockSkillDescs);
       // Math.min(-1, 0) = -1, so axe[-1] = undefined (no error thrown)
-      expect(skillGetDescription(Skill.Axe, 0)).toBeUndefined();
+      expect(skillGetDescription(Skill.Axe, 0)).toBe('');
     });
   });
 });
