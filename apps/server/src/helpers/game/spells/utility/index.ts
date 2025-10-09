@@ -1,4 +1,3 @@
-
 export * from './Augury';
 export * from './ConjureHealing';
 export * from './ConjureShield';
@@ -8,6 +7,7 @@ export * from './Dispel';
 export * from './Fate';
 export * from './Foodsense';
 export * from './Gemsense';
+export * from './HolyBath';
 export * from './Identify';
 export * from './Light';
 export * from './MassTeleport';

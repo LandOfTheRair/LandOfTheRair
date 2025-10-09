@@ -45,19 +45,26 @@ export interface LogInfo {
   weapon: string;
 }
 
-export interface MessageInfo {
+export type MessageVFX = {
+  vfx: VisualEffect;
+  vfxRadius: number;
+  vfxTimeout: number;
+  vfxX: number;
+  vfxY: number;
+};
+
+export type MessageSFX = {
+  sfx: SoundEffect;
+};
+
+export type MessageInfo = {
   message: string;
   fromDiscord?: string;
-  sfx?: SoundEffect | undefined;
-  vfx?: VisualEffect;
-  vfxRadius?: number;
-  vfxTimeout?: number;
-  vfxX?: number;
-  vfxY?: number;
   from?: string;
   setTarget?: string | null | undefined;
   overrideIfOnly?: string;
   logInfo?: LogInfo;
   useSight?: boolean;
   except?: string[];
-}
+} & Partial<MessageVFX> &
+  Partial<MessageSFX>;

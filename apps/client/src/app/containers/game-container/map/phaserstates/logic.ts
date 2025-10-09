@@ -1268,7 +1268,7 @@ export class MapScene extends Phaser.Scene {
             vfx,
           );
 
-          sprite.depth = 100;
+          sprite.depth = 0;
 
           setTimeout(() => {
             sprite.destroy();

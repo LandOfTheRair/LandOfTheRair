@@ -47,6 +47,7 @@ export interface IStatusEffectInfo {
   currentBerserkTier?: number; // the current berserk tier (Berserk)
   currentBerserkApplications?: number; // the current number of berserk applications before tiering up (Berserk)
   linkedTo?: string; // the uuid of the target character this is linked to (Cover)
+  center?: { x: number; y: number; map: string }; // the center of the effect (Placed AoEs)
 }
 
 export interface IStatusEffect {

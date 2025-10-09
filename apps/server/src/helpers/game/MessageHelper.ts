@@ -4,12 +4,10 @@ import { set } from 'lodash';
 import type {
   ICharacter,
   MessageInfo,
-  SoundEffect } from '@lotr/interfaces';
-import {
-  GameAction,
-  GameServerResponse,
-  MessageType
+  MessageVFX,
+  SoundEffect,
 } from '@lotr/interfaces';
+import { GameAction, GameServerResponse, MessageType } from '@lotr/interfaces';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -130,6 +128,37 @@ export class MessageHelper extends BaseService {
           vfxY,
           vfxTimeout,
           setTarget,
+        },
+      );
+    });
+  }
+
+  public sendVFXMessageToRadius(
+    character: ICharacter | { x: number; y: number; map: string },
+    radius: number,
+    { vfx, vfxRadius, vfxX, vfxY, vfxTimeout }: MessageVFX,
+  ): void {
+    const state = this.game.worldManager.getMap(character.map)?.state;
+    if (!state) return;
+
+    const allPlayers = state.getAllPlayersInRange(character, radius);
+
+    allPlayers.forEach((checkPlayer) => {
+      const account = this.game.lobbyManager.getAccount(
+        (checkPlayer as Player).username,
+      );
+      if (!account) return;
+
+      this.game.transmissionHelper.sendResponseToAccount(
+        (checkPlayer as Player).username,
+        GameServerResponse.GameLog,
+        {
+          type: GameServerResponse.GameLog,
+          vfx,
+          vfxRadius,
+          vfxX,
+          vfxY,
+          vfxTimeout,
         },
       );
     });

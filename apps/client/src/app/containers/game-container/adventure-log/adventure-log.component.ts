@@ -94,6 +94,8 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
       'AdventureLog',
       GameServerResponse.GameLog,
       (data) => {
+        if (!data.message) return;
+
         if (data.messageTypes.includes(MessageType.Chatter)) {
           data.message = `<local:${data.from}> ${data.message}`;
         }
