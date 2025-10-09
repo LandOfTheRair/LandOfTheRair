@@ -55,7 +55,7 @@ import {
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
-import { hasEffect } from '@lotr/effects';
+import { getEffect, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import { oneInX, oneToLUK, rollInOneHundred, uniformRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
@@ -749,7 +749,16 @@ export class DamageHelperPhysical extends BaseService {
 
     const dodgeRoll = random(defenderDodgeRoll, attackerDodgeRoll);
 
-    if (dodgeRoll < 0 || attackDistance < distBetween) {
+    let forceMiss = false;
+    const mirrorImageEffect = getEffect(defender, 'MirrorImage');
+    if (mirrorImageEffect) {
+      forceMiss = true;
+
+      mirrorImageEffect.effectInfo.charges ??= 0;
+      mirrorImageEffect.effectInfo.charges--;
+    }
+
+    if (forceMiss || dodgeRoll < 0 || attackDistance < distBetween) {
       const itemClass = itemPropertyGet(weapon, 'itemClass');
 
       this.game.combatHelper.combatEffect(
