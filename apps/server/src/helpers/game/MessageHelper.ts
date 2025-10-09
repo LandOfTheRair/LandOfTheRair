@@ -57,7 +57,7 @@ export class MessageHelper extends BaseService {
       sendMessage = this.formatMessage(ref, sendMessage, formatArgs);
     }
 
-    if (sfx) this.playSoundForPlayer(ref as Player, sfx);
+    if (sfx) this.playSoundForPlayer(ref as Player, sfx, messageTypes);
 
     this.game.transmissionHelper.sendResponseToAccount(
       (ref as Player).username,
@@ -112,7 +112,9 @@ export class MessageHelper extends BaseService {
         sendMessage = this.formatMessage(checkPlayer, sendMessage, formatArgs);
       }
 
-      if (sfx) this.playSoundForPlayer(checkPlayer as Player, sfx);
+      if (sfx) {
+        this.playSoundForPlayer(checkPlayer as Player, sfx, messageTypes);
+      }
 
       this.game.transmissionHelper.sendResponseToAccount(
         (checkPlayer as Player).username,
@@ -302,11 +304,15 @@ export class MessageHelper extends BaseService {
     }, message);
   }
 
-  public playSoundForPlayer(player: Player, sfx: string): void {
+  public playSoundForPlayer(
+    player: Player,
+    sfx: string,
+    messageCategories: MessageType[],
+  ): void {
     this.game.transmissionHelper.sendResponseToPlayer(
       player,
       GameServerResponse.PlaySFX,
-      { sfx },
+      { sfx, sfxTypes: messageCategories },
     );
   }
 

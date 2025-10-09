@@ -2,7 +2,7 @@ import { effect, inject, Injectable } from '@angular/core';
 import { select } from '@ngxs/store';
 import { Howl } from 'howler';
 
-import { GameOption, GameServerResponse } from '@lotr/interfaces';
+import { GameOption, GameServerResponse, MessageType } from '@lotr/interfaces';
 import { GameState, SettingsState } from '../../stores';
 import { AssetService } from './asset.service';
 import { OptionsService } from './options.service';
@@ -56,8 +56,15 @@ export class SoundService {
     this.socketService.registerComponentCallback(
       'Sound',
       GameServerResponse.PlaySFX,
-      ({ sfx }) => {
+      ({ sfx, sfxTypes }) => {
         if (!this.optionsService.playSFX) return;
+
+        if (
+          this.optionsService.suppressOutgoingDoT &&
+          sfxTypes.includes(MessageType.OutOvertime)
+        ) {
+          return;
+        }
 
         const sfxRef = new Howl({
           src: [this.getSFX(sfx)],

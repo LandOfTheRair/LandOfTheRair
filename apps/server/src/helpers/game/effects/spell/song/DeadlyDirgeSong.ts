@@ -36,6 +36,7 @@ export class DeadlyDirgeSong extends Song {
         {
           atkMsg: 'Your deadly dirge pierces %0!',
           defMsg: '%0 is singing a deadly dirge!',
+          isOverTime: true,
           damage: effect.effectInfo.potency,
           damageClass: DamageClass.Sonic,
           attackNum: i,

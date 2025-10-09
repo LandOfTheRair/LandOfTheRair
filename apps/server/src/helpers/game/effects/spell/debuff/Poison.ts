@@ -34,6 +34,8 @@ export class Poison extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Poison,
+      isOverTime: true,
+      atkMsg: 'Your poison hurts %0!',
       defMsg: 'You are poisoned!',
     });
   }

@@ -34,6 +34,8 @@ export class Venom extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Poison,
+      isOverTime: true,
+      atkMsg: 'Your venom hurts %0!',
       defMsg: 'You are suffering from venom!',
     });
   }

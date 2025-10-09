@@ -41,6 +41,8 @@ export class Plague extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Disease,
+      isOverTime: true,
+      atkMsg: 'Your plague hurts %0!',
       defMsg: 'You are plagued!',
     });
 

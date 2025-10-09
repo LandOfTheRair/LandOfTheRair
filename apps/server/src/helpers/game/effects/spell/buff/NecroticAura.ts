@@ -16,6 +16,7 @@ export class NecroticAura extends Effect {
       this.game.damageHelperMagic.magicalAttack(char, target, {
         atkMsg: 'Your aura of death damages %0!',
         defMsg: "%0's aura of death damages you!",
+        isOverTime: true,
         damage: effect.effectInfo.potency,
         damageClass: DamageClass.Necrotic,
       });

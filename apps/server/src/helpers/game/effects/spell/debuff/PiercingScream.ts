@@ -15,6 +15,8 @@ export class PiercingScream extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Sonic,
+      isOverTime: true,
+      atkMsg: 'Your piercing scream hurts %0!',
       defMsg: 'Your eardrums are bleeding!',
     });
   }

@@ -40,6 +40,8 @@ export class Disease extends Effect {
     this.game.combatHelper.magicalAttack(caster, char, {
       damage: effect.effectInfo.potency,
       damageClass: DamageClass.Disease,
+      isOverTime: true,
+      atkMsg: 'Your disease hurts %0!',
       defMsg: 'You are diseased!',
     });
   }

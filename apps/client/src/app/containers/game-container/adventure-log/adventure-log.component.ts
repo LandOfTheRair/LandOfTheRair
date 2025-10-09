@@ -194,6 +194,7 @@ export class AdventureLogComponent implements OnInit, AfterViewInit, OnDestroy {
     ) {
       return;
     }
+
     if (
       this.optionsService.suppressZeroDamage &&
       (message.message.includes('[0') ||
