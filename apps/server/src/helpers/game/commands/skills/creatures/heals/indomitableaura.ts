@@ -1,12 +1,12 @@
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class FrostfireMist extends SpellCommand {
-  override aliases = ['frostfiremist', 'cast frostfiremist'];
+export class IndomitableAura extends SpellCommand {
+  override aliases = ['indomitableaura', 'cast indomitableaura'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;
-  override spellRef = 'FrostfireMist';
+  override spellRef = 'IndomitableAura';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (

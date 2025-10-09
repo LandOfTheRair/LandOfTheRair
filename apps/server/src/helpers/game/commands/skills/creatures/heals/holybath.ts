@@ -1,4 +1,3 @@
-import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -10,7 +9,10 @@ export class HolyBath extends SpellCommand {
   override spellRef = 'HolyBath';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !hasEffect(target, 'HolyBath');
+    return (
+      super.canUse(caster, target) &&
+      !this.game.effectHelper.hasSimilarEffects(target, 'PersistentAOE')
+    );
   }
 
   override use(executor: ICharacter, target: ICharacter) {

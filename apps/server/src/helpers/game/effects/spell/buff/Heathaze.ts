@@ -1,4 +1,4 @@
-import { getEffect, hasEffect } from '@lotr/effects';
+import { getEffect } from '@lotr/effects';
 import {
   VisualEffect,
   type ICharacter,
@@ -39,7 +39,8 @@ export class Heathaze extends Effect {
           });
         }
 
-        if (!hasEffect(target, 'Braindaze')) {
+        const gotEffect = getEffect(target, 'Braindaze');
+        if (!gotEffect) {
           this.game.effectHelper.addEffect(target, char, 'Braindaze', {
             effect: {
               extra: {
@@ -47,6 +48,8 @@ export class Heathaze extends Effect {
               },
             },
           });
+        } else {
+          gotEffect.endsAt = Date.now() + 10_000;
         }
       });
   }

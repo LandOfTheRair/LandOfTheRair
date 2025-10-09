@@ -1,4 +1,3 @@
-import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
@@ -12,9 +11,7 @@ export class Heathaze extends SpellCommand {
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       super.canUse(caster, target) &&
-      !hasEffect(target, 'Heathaze') &&
-      !hasEffect(target, 'Chillfog') &&
-      !hasEffect(target, 'FrostfireMist')
+      !this.game.effectHelper.hasSimilarEffects(target, 'PersistentAOE')
     );
   }
 

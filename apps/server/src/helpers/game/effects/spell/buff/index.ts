@@ -32,6 +32,8 @@ export * from './HolyBath';
 export * from './ImbueEnergy';
 export * from './ImbueFlame';
 export * from './ImbueFrost';
+export * from './Indomitable';
+export * from './IndomitableAura';
 export * from './Invisibility';
 export * from './LavaBreathing';
 export * from './Lifepool';
