@@ -57,7 +57,7 @@ export class Heathaze extends Effect {
       vfxRadius: 2,
       vfxX: char.x,
       vfxY: char.y,
-      vfxTimeout: 6000,
+      vfxTimeout: 1500,
     });
   }
 }
