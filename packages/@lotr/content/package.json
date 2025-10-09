@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@lotr/eslint-config": "*",
+    "@types/deep-freeze": "^0.1.5",
     "typescript": "^5.9.2"
   }
 }
