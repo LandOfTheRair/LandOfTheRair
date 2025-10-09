@@ -358,7 +358,9 @@ export class EffectHelper extends BaseService {
   ): boolean {
     return Object.keys(char.effects._hash).some(
       (effectName) =>
-        effectName.includes(query) || (except ? effectName === except : false),
+        effectName.includes(query) ||
+        char.effects._hash[effectName].effectInfo.unique === query ||
+        (except ? effectName === except : false),
     );
   }
 
@@ -374,6 +376,7 @@ export class EffectHelper extends BaseService {
       if (
         effectName === except ||
         !effectName.includes(query) ||
+        char.effects._hash[effectName].effectInfo.unique !== query ||
         (!cancelPerms && char.effects._hash[effectName].endsAt === -1) ||
         force
       ) {

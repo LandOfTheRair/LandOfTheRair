@@ -196,6 +196,7 @@ export class SpellManager extends BaseService {
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {
+    if ((character as IPlayer).isGM) return true;
     return Date.now() > (character.spellCooldowns?.[spellName] ?? 0);
   }
 

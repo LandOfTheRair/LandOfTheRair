@@ -21,6 +21,7 @@ export * from './DeftStrikes';
 export * from './FerociousRoarVigor';
 export * from './FindFamiliar';
 export * from './FirethornsAura';
+export * from './FrostfireMist';
 export * from './FrostspikesAura';
 export * from './Haste';
 export * from './HolyAura';
