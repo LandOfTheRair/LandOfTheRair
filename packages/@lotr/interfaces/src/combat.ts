@@ -13,7 +13,7 @@ export enum CombatEffect {
   HitNormal = 'hit-mid',
   HitStrong = 'hit-max',
   HitHeal = 'hit-heal',
-  HitMagic = 'hit-magic'
+  HitMagic = 'hit-magic',
 }
 
 export enum VisualEffect {
@@ -24,7 +24,14 @@ export enum VisualEffect {
   DustMist = 4,
   SnowFloor = 5,
   IceStorm = 6,
-  SludgeFloor = 7
+  SludgeFloor = 7,
+  HeatMistFull = 8,
+  GrayMistFull = 9,
+  FrostMistFull = 10,
+  DullMistFull = 11,
+  HolyMistFull = 12,
+  BlueMistFull = 13,
+  GreenMistFull = 14,
 }
 
 export interface OnesidedDamageArgs {
