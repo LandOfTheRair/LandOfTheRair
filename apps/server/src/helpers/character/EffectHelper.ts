@@ -359,7 +359,7 @@ export class EffectHelper extends BaseService {
     return Object.keys(char.effects._hash).some(
       (effectName) =>
         effectName.includes(query) ||
-        char.effects._hash[effectName].effectInfo.unique === query ||
+        char.effects._hash[effectName]?.effectInfo?.unique === query ||
         (except ? effectName === except : false),
     );
   }
@@ -374,9 +374,16 @@ export class EffectHelper extends BaseService {
   ): void {
     Object.keys(char.effects._hash).forEach((effectName) => {
       if (
+        char.effects._hash[effectName]?.effectInfo?.unique === query &&
+        effectName !== except
+      ) {
+        this.removeEffect(char, char.effects._hash[effectName]);
+        return;
+      }
+
+      if (
         effectName === except ||
         !effectName.includes(query) ||
-        char.effects._hash[effectName].effectInfo.unique !== query ||
         (!cancelPerms && char.effects._hash[effectName].endsAt === -1) ||
         force
       ) {

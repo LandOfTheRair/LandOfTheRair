@@ -2,18 +2,18 @@ import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { SpellCommand } from '../../../../../../models/macro';
 
-export class FrostfireMist extends SpellCommand {
-  override aliases = ['frostfiremist', 'cast frostfiremist'];
+export class Chillfog extends SpellCommand {
+  override aliases = ['chillfog', 'cast chillfog'];
   override requiresLearn = true;
   override targetsFriendly = true;
   override canTargetSelf = true;
-  override spellRef = 'FrostfireMist';
+  override spellRef = 'Chillfog';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
     return (
       super.canUse(caster, target) &&
-      !hasEffect(target, 'FrostfireMist') &&
-      !hasEffect(target, 'Chillfog')
+      !hasEffect(target, 'Chillfog') &&
+      !hasEffect(target, 'FrostfireMist')
     );
   }
 

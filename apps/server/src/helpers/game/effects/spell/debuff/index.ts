@@ -1,5 +1,6 @@
 export * from './Blind';
 export * from './BlurredVision';
+export * from './Brainchill';
 export * from './BuildupChill';
 export * from './BuildupElectricity';
 export * from './BuildupEnergy';
