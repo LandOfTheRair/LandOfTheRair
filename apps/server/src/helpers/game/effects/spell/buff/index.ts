@@ -13,6 +13,7 @@ export * from './Berserk';
 export * from './BloodyTears';
 export * from './Boost';
 export * from './BulgingMuscles';
+export * from './Chainheal';
 export * from './Chillfog';
 export * from './CombatPower';
 export * from './Cover';

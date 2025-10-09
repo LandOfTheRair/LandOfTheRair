@@ -5,6 +5,7 @@ export * from './barfrost';
 export * from './barnecro';
 export * from './barwater';
 export * from './boost';
+export * from './chainheal';
 export * from './lifepool';
 export * from './manapool';
 export * from './mirrorimage';
