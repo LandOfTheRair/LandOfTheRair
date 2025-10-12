@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/indent */
 import { Alignment, Currency, Holiday, ItemSlot } from './building-blocks';
 import { IItem } from './item';
 
@@ -222,13 +221,30 @@ export interface IGrantAchievementAction {
 
 export type IDialogAction = IDialogChatAction &
   IDialogCheckItemAction &
+  IDialogCheckNPCsAndDropItemsAction &
   IDialogGiveItemAction &
   IDialogTakeItemAction &
+  IDialogCheckHolidayAction &
   IDialogGiveEffectAction &
   IDialogCheckLevelAction &
+  IDialogGiveCurrencyAction &
+  IDialogModifyItemAction &
+  IDialogGiveDailyQuestAction &
+  IDialogUpdateQuestAction &
+  IDialogGiveQuestAction &
+  IDialogCheckEffectAction &
+  IDialogCheckQuestAction &
+  IDialogCheckNoItemAction &
+  IDialogCheckNearbyHostilesAction &
   IDialogCheckAlignmentAction &
   IDialogSetAlignmentAction &
+  IDialogGiveSelfEffectAction &
   IDialogCheckItemCanUpgradeAction &
+  IDropItemsAction &
+  IDialogHasQuestAction &
+  IDialogCheckDailyQuestAction &
+  IKillSelfSilentlyAction &
+  IGrantAchievementAction &
   IDialogAddItemUpgradeAction & {
     type: DialogActionType;
     maxDistance?: number;
