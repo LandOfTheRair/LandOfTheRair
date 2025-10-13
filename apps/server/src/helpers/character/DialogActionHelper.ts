@@ -7,7 +7,7 @@ import type {
   IDialogAddItemUpgradeAction,
   IDialogChatAction,
   IDialogChatActionOption,
-  IDialogCheckAlignmentAction,
+  IDialogChatRequirement,
   IDialogCheckDailyQuestAction,
   IDialogCheckEffectAction,
   IDialogCheckHolidayAction,
@@ -26,8 +26,6 @@ import type {
   IDialogGiveSelfEffectAction,
   IDialogHasQuestAction,
   IDialogModifyItemAction,
-  IDialogRequirement,
-  IDialogSetAlignmentAction,
   IDialogTakeItemAction,
   IDialogUpdateQuestAction,
   IDropItemsAction,
@@ -137,8 +135,6 @@ export class DialogActionHelper extends BaseService {
       [DialogActionType.GiveQuest]: this.handleGiveQuestAction,
       [DialogActionType.GiveDailyQuest]: this.handleGiveDailyQuestAction,
       [DialogActionType.CheckLevel]: this.handleCheckLevelAction,
-      [DialogActionType.CheckAlignment]: this.handleCheckAlignmentAction,
-      [DialogActionType.SetAlignment]: this.handleSetAlignmentAction,
       [DialogActionType.CheckNPCsAndDropItems]: this.handleCheckNPCAction,
       [DialogActionType.CheckAnyHostilesNearby]:
         this.handleCheckAnyHostilesNearbyAction,
@@ -232,49 +228,6 @@ export class DialogActionHelper extends BaseService {
     );
 
     return { messages: [formattedChat.message], shouldContinue: true };
-  }
-
-  // SET alignment via an action
-  private handleSetAlignmentAction(
-    action: IDialogSetAlignmentAction,
-    npc: INPC,
-    player: IPlayer,
-  ): IActionResult {
-    const { alignment } = action;
-
-    player.alignment = alignment;
-
-    return { messages: [], shouldContinue: true };
-  }
-
-  // CHECK alignment
-  private handleCheckAlignmentAction(
-    action: IDialogCheckAlignmentAction,
-    npc: INPC,
-    player: IPlayer,
-  ): IActionResult {
-    const { alignment, checkPassActions, checkFailActions } = action;
-
-    const retMessages: string[] = [];
-
-    const didSucceed = player.alignment === alignment;
-
-    const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
-
-    for (const subAction of actions) {
-      const { messages, shouldContinue } = this.handleAction(
-        subAction,
-        npc,
-        player,
-      );
-      retMessages.push(...messages);
-
-      if (!shouldContinue) {
-        return { messages: retMessages, shouldContinue: false };
-      }
-    }
-
-    return { messages: retMessages, shouldContinue: true };
   }
 
   // CHECK if any hostiles are nearby
@@ -1233,7 +1186,7 @@ export class DialogActionHelper extends BaseService {
   // check if the player meets the requirement for the dialog option
   private meetsRequirement(
     player: IPlayer,
-    requirement: IDialogRequirement,
+    requirement: IDialogChatRequirement,
   ): boolean {
     if (requirement.stat && requirement.statValue) {
       const stat = getStat(player, requirement.stat as Stat);
