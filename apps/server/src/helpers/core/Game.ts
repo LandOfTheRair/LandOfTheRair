@@ -50,7 +50,6 @@ import {
   ItemCreator,
   NPCCreator,
   SpellManager,
-  StaticTextHelper,
   WorldManager,
 } from '../data';
 import { ModKitManager } from '../data/ModKitManager';
@@ -134,7 +133,6 @@ export class Game {
     public holidayHelper: HolidayHelper,
     public movementHelper: MovementHelper,
     public visibilityHelper: VisibilityHelper,
-    public staticTextHelper: StaticTextHelper,
     public interactionHelper: InteractionHelper,
     public calculatorHelper: CalculatorHelper,
     public itemHelper: ItemHelper,
@@ -217,7 +215,6 @@ export class Game {
       [GameEvent.InitNormal]: [
         'effectManager',
         'holidayHelper',
-        'staticTextHelper',
         'playerHelper',
         'inventoryHelper',
         'spellManager',

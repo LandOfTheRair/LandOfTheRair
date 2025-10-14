@@ -39,7 +39,11 @@ import * as spells from '../../../content/_output/spells.json';
 import * as traitTrees from '../../../content/_output/trait-trees.json';
 import * as traits from '../../../content/_output/traits.json';
 
-import { setContentKey, settingsLoadForGame } from '@lotr/content';
+import {
+  setContentKey,
+  settingsLoadForGame,
+  textLoadForGame,
+} from '@lotr/content';
 import type {
   IAchievement,
   IClassTraitTree,
@@ -84,6 +88,7 @@ export class ContentLoader extends BaseService {
     this.loadSpells();
     this.loadAchievements();
     settingsLoadForGame();
+    textLoadForGame();
   }
 
   private chooseConfigFileOrPreset(file: string, preset: any) {

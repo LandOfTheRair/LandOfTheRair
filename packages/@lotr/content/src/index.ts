@@ -18,6 +18,7 @@ export * from './settings';
 export * from './settings.game';
 export * from './spawners';
 export * from './spells';
+export * from './statictext';
 export * from './text';
 export * from './traits';
 export * from './traits.levels';

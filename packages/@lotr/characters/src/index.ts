@@ -11,3 +11,4 @@ export * from './skills';
 export * from './statistics';
 export * from './stats';
 export * from './status';
+export * from './swimming';

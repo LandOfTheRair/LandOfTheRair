@@ -8,12 +8,14 @@ import {
   hasLearnedFromItem,
   isDead,
   isPlayer,
+  swimLevelGet,
 } from '@lotr/characters';
 import {
   settingClassConfigGet,
   settingGameGet,
   settingGetMaxExp,
   settingGetMaxSkillExp,
+  textGidDescriptionGet,
 } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import {
@@ -36,7 +38,6 @@ import { consoleLog, logCrashContextEntry } from '@lotr/logger';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
-import { GetSwimLevel } from '../data';
 
 @Injectable()
 export class PlayerHelper extends BaseService {
@@ -296,7 +297,7 @@ export class PlayerHelper extends BaseService {
     player.z = z;
 
     const swimTile = map.getFluidAt(player.x, player.y);
-    const swimInfo = GetSwimLevel(swimTile);
+    const swimInfo = swimLevelGet(swimTile);
 
     if (swimInfo) {
       this.handleSwimming(player, swimInfo.element, swimInfo.swimLevel);
@@ -325,13 +326,11 @@ export class PlayerHelper extends BaseService {
       const descObj =
         map.getInteractableAt(player.x, player.y) ||
         map.getDecorAt(player.x, player.y);
-      desc = this.game.staticTextHelper.getGidDescription(descObj?.gid);
+      desc = textGidDescriptionGet(descObj?.gid);
 
       // we do this to avoid unnecessary lookups
       if (!desc) {
-        desc = this.game.staticTextHelper.getGidDescription(
-          map.getFluidAt(player.x, player.y),
-        );
+        desc = textGidDescriptionGet(map.getFluidAt(player.x, player.y));
       }
 
       if (!desc) {
@@ -341,15 +340,11 @@ export class PlayerHelper extends BaseService {
       }
 
       if (!desc) {
-        desc = this.game.staticTextHelper.getGidDescription(
-          map.getFloorAt(player.x, player.y),
-        );
+        desc = textGidDescriptionGet(map.getFloorAt(player.x, player.y));
       }
 
       if (!desc) {
-        desc = this.game.staticTextHelper.getGidDescription(
-          map.getTerrainAt(player.x, player.y),
-        );
+        desc = textGidDescriptionGet(map.getTerrainAt(player.x, player.y));
       }
 
       // send a new region desc if possible

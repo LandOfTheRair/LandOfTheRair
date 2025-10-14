@@ -1,4 +1,8 @@
-import { itemPropertyGet, skillGetDescription } from '@lotr/content';
+import {
+  itemPropertyGet,
+  skillGetDescription,
+  textGidDescriptionGet,
+} from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction, ItemClass, Skill } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../../models/macro';
@@ -182,7 +186,7 @@ export class LookCommand extends MacroCommand {
     }
 
     const newDescObj = map.getDecorAt(target.x, target.y);
-    const desc = this.game.staticTextHelper.getGidDescription(newDescObj?.gid);
+    const desc = textGidDescriptionGet(newDescObj?.gid);
     if (desc) {
       this.sendMessage(player, `In that direction: ${desc}`);
       return;
