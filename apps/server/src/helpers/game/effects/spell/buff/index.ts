@@ -56,6 +56,7 @@ export * from './Shadowmeld';
 export * from './Shield';
 export * from './SoroniteSweat';
 export * from './Spellshield';
+export * from './ThirdEye';
 export * from './ThreateningAura';
 export * from './TrueSight';
 export * from './VitalEssence';

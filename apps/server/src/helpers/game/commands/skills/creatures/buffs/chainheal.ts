@@ -10,6 +10,10 @@ export class Chainheal extends SpellCommand {
   override spellRef = 'Chainheal';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
-    return super.canUse(caster, target) && !hasEffect(target, 'Chainheal');
+    return (
+      super.canUse(caster, target) &&
+      !hasEffect(target, 'Chainheal') &&
+      target.hp.current < target.hp.maximum
+    );
   }
 }
