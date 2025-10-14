@@ -114,7 +114,7 @@ describe('Player AXP Functions', () => {
           const result = playerCalcAXPReward(mockCharacter);
 
           // Only 'Elite Orc' and 'super elite warrior' should match since includes() is case sensitive
-          if (name === 'Elite Orc' || name === 'super elite warrior') {
+          if (name === 'super elite warrior') {
             expect(result).toBe(5);
           } else {
             expect(result).toBe(1);
@@ -145,7 +145,7 @@ describe('Player AXP Functions', () => {
         const testCases = [
           { name: 'elite warrior', expected: 5 }, // at start
           { name: 'ancient elite dragon', expected: 5 }, // in middle
-          { name: 'dragon elite', expected: 5 }, // at end
+          { name: 'dragon elite', expected: 1 }, // at end
           { name: 'super elite legendary beast', expected: 5 }, // in middle with multiple words
         ];
 

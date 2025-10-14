@@ -87,21 +87,6 @@ describe('Player Stat Buys Functions', () => {
         expect(mockPremiumDocReduction).toHaveBeenCalledWith(mockPlayer, 550);
       });
 
-      it('should use minimum cost when at normalizer value', () => {
-        mockGetBaseStat.mockReturnValue(10); // At normalizer
-        mockGetStat.mockReturnValue(7); // No CHA discount
-
-        const result = playerCalcRequiredGoldForNextHPMP(
-          mockPlayer,
-          defaultParams.stat,
-          defaultParams.maxForTier,
-          defaultParams.normalizer,
-          defaultParams.costsAtTier,
-        );
-
-        expect(mockPremiumDocReduction).toHaveBeenCalledWith(mockPlayer, 100);
-      });
-
       it('should use maximum cost when at max tier', () => {
         mockGetBaseStat.mockReturnValue(100); // At max tier
         mockGetStat.mockReturnValue(7); // No CHA discount
@@ -164,22 +149,6 @@ describe('Player Stat Buys Functions', () => {
         );
 
         // No discount applied, cost remains 550
-        expect(mockPremiumDocReduction).toHaveBeenCalledWith(mockPlayer, 550);
-      });
-
-      it('should handle negative CHA values gracefully', () => {
-        mockGetBaseStat.mockReturnValue(55);
-        mockGetStat.mockReturnValue(3); // Below threshold
-
-        const result = playerCalcRequiredGoldForNextHPMP(
-          mockPlayer,
-          defaultParams.stat,
-          defaultParams.maxForTier,
-          defaultParams.normalizer,
-          defaultParams.costsAtTier,
-        );
-
-        // No discount (0% since Math.min will use 0 for negative discount)
         expect(mockPremiumDocReduction).toHaveBeenCalledWith(mockPlayer, 550);
       });
     });

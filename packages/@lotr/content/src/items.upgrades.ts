@@ -1,9 +1,5 @@
 import type { ISimpleItem } from '@lotr/interfaces';
-import {
-  itemPropertiesGet,
-  itemPropertyGet,
-  itemPropertySet,
-} from './items.properties';
+import { itemPropertyGet, itemPropertySet } from './items.properties';
 
 // encrust an item with another item
 export function itemSetEncrust(
@@ -15,7 +11,7 @@ export function itemSetEncrust(
 
 // check if an item can be used as an upgrade material
 export function itemCanBeUsedForUpgrade(upgradeItem: ISimpleItem): boolean {
-  return itemPropertyGet(upgradeItem, 'canUpgradeWith');
+  return !!itemPropertyGet(upgradeItem, 'canUpgradeWith');
 }
 
 // check if an item can be upgraded
@@ -24,7 +20,7 @@ export function itemCanBeUpgraded(
   bypassLimit = false,
 ): boolean {
   if (bypassLimit) return true;
-  const { maxUpgrades } = itemPropertiesGet(baseItem, ['maxUpgrades']);
+  const maxUpgrades = itemPropertyGet(baseItem, 'maxUpgrades');
   return (baseItem.mods.upgrades?.length ?? 0) < (maxUpgrades ?? 0);
 }
 
