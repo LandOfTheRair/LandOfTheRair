@@ -12,7 +12,6 @@ import type { BaseService } from '../../models/BaseService';
 import { EmailHelper, SubscriptionHelper } from '../account';
 import {
   AchievementsHelper,
-  CalculatorHelper,
   CharacterHelper,
   CombatHelper,
   DailyHelper,
@@ -134,7 +133,6 @@ export class Game {
     public movementHelper: MovementHelper,
     public visibilityHelper: VisibilityHelper,
     public interactionHelper: InteractionHelper,
-    public calculatorHelper: CalculatorHelper,
     public itemHelper: ItemHelper,
     public npcHelper: NPCHelper,
     public characterHelper: CharacterHelper,
@@ -247,7 +245,6 @@ export class Game {
         'movementHelper',
         'visibilityHelper',
         'interactionHelper',
-        'calculatorHelper',
         'characterHelper',
         'itemHelper',
         'npcHelper',

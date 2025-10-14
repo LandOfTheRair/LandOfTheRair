@@ -1,6 +1,7 @@
 import { getSkillLevel } from '@lotr/characters';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { ItemSlot, Skill } from '@lotr/interfaces';
+import { premiumSuccorOzMax } from '@lotr/premium';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Succor extends Spell {
@@ -38,7 +39,7 @@ export class Succor extends Spell {
       caster.map,
       caster.x,
       caster.y,
-      this.game.subscriptionHelper.maxSuccorOz(caster as IPlayer, maxOz),
+      premiumSuccorOzMax(caster as IPlayer, maxOz),
     );
 
     this.game.characterHelper.setRightHand(caster, succorItem);

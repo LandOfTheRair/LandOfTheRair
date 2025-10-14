@@ -1,5 +1,5 @@
 {
-  "name": "@lotr/characters",
+  "name": "@lotr/premium",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
@@ -9,17 +9,10 @@
     "lint": "eslint -c .eslintrc.json --ext .ts src"
   },
   "devDependencies": {
-    "@types/luxon": "^1.25.0",
+    "@lotr/eslint-config": "*",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@lotr/content": "*",
-    "@lotr/effects": "*",
-    "@lotr/eslint-config": "*",
-    "@lotr/exp": "*",
-    "@lotr/interfaces": "*",
-    "@lotr/shared": "*",
-    "lodash": "^4.17.21",
-    "luxon": "^1.25.0"
+    "@lotr/interfaces": "*"
   }
 }

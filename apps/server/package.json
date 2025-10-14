@@ -24,6 +24,7 @@
     "@lotr/effects": "*",
     "@lotr/exp": "*",
     "@lotr/logger": "*",
+    "@lotr/premium": "*",
     "@lotr/rng": "*",
     "bcrypt": "^5.0.0",
     "bufferutil": "^4.0.2",

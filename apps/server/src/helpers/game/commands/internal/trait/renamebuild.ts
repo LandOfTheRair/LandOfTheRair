@@ -1,4 +1,5 @@
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { premiumBuildSlots } from '@lotr/premium';
 import { cleanNumber } from '@lotr/shared';
 import { MacroCommand } from '../../../../../models/macro';
 
@@ -10,7 +11,7 @@ export class RenameBuild extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [baseSlot, newName] = args.arrayArgs;
     const slot = cleanNumber(+baseSlot, 0);
-    const maxSlots = this.game.subscriptionHelper.buildSlots(player);
+    const maxSlots = premiumBuildSlots(player);
 
     if (isNaN(slot) || slot < 0 || slot > maxSlots) {
       return this.sendMessage(player, 'Invalid build slot.');

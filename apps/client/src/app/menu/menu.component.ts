@@ -334,7 +334,7 @@ export class MenuComponent implements OnInit {
   private watchResetTime() {
     const setResetTimestamp = () => {
       let theoreticalResetTime = DateTime.fromObject({ zone: 'utc', hour: 12 });
-      if (+theoreticalResetTime < DateTime.fromObject({ zone: 'utc' })) {
+      if (+theoreticalResetTime < +DateTime.fromObject({ zone: 'utc' })) {
         theoreticalResetTime = theoreticalResetTime.plus({ days: 1 });
       }
 

@@ -49,7 +49,7 @@ import {
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
-import { addStatistic, getStat } from '@lotr/characters';
+import { addStatistic, getStat, playerGetCurrentDaily } from '@lotr/characters';
 import {
   itemCanBeUpgraded,
   itemIsOwnedBy,
@@ -876,9 +876,7 @@ export class DialogActionHelper extends BaseService {
       };
     }
 
-    const questTodayIndex =
-      this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
-      quests.length;
+    const questTodayIndex = playerGetCurrentDaily(player) % quests.length;
     const quest = quests[questTodayIndex];
     const questRef = questGet(quest);
 
@@ -1055,9 +1053,7 @@ export class DialogActionHelper extends BaseService {
 
     const { quests } = action;
 
-    const questTodayIndex =
-      this.game.calculatorHelper.getCurrentDailyDayOfYear(player) %
-      quests.length;
+    const questTodayIndex = playerGetCurrentDaily(player) % quests.length;
     const quest = quests[questTodayIndex];
     const questRef = questGet(quest);
 

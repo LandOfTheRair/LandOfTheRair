@@ -72,6 +72,7 @@
     "@angular/language-service": "^18.1.2",
     "@rdlabo/eslint-plugin-rules": "0.4.0",
     "@types/lodash": "^4.14.168",
+    "@types/luxon": "^1.25.0",
     "@types/node": "~8.9.4",
     "download-github-repo": "^0.1.4",
     "git-describe": "^4.0.4",

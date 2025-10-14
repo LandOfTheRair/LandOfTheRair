@@ -1,6 +1,7 @@
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import { coreCharSelect } from '@lotr/content';
+import { premiumMaxCharacters } from '@lotr/premium';
 import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -16,7 +17,7 @@ export class RollCharacterAction extends ServerAction {
 
     const charCreateData = coreCharSelect();
 
-    const maxCharacters = game.subscriptionHelper.maxCharacters(account);
+    const maxCharacters = premiumMaxCharacters(account);
 
     if (!charCreateData.allegiances.find((x) => x.name === allegiance)) {
       return { message: 'Bad allegiance.' };

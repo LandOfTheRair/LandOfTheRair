@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 
 import type { IAccount } from '@lotr/interfaces';
 import { SubscriptionTier } from '@lotr/interfaces';
+import { premiumMaxCharacters } from '@lotr/premium';
 import { Account, AccountPremium } from '../../../models';
 import { BaseService } from '../../../models/BaseService';
 
@@ -88,7 +89,7 @@ export class AccountDB extends BaseService {
     account.premium = premium;
 
     // post-load setup
-    const maxPlayers = this.game.subscriptionHelper.maxCharacters(account, 4);
+    const maxPlayers = premiumMaxCharacters(account, 4);
     if (account.players.length < maxPlayers) {
       account.players.length = maxPlayers;
     }

@@ -4,6 +4,7 @@ import { coreHolidayDescs } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type { Holiday, IPlayer } from '@lotr/interfaces';
 import { Currency } from '@lotr/interfaces';
+import { premiumHolidayTokensGained } from '@lotr/premium';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -40,10 +41,7 @@ export class HolidayHelper extends BaseService {
   tryGrantHolidayTokens(player: IPlayer, amt: number): void {
     if (!this.isAnyHoliday() || !Currency[this.currentHoliday()]) return;
 
-    const tokensGained = this.game.subscriptionHelper.holidayTokensGained(
-      player,
-      amt,
-    );
+    const tokensGained = premiumHolidayTokensGained(player, amt);
 
     gainCurrency(player, tokensGained, Currency[this.currentHoliday()]);
     this.game.messageHelper.sendSimpleMessage(

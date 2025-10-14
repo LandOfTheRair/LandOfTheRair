@@ -1,7 +1,13 @@
 import { Injectable } from 'injection-js';
 import { random, sample } from 'lodash';
 
-import { addStatistic, getBaseStat, isDead, isPlayer } from '@lotr/characters';
+import {
+  addStatistic,
+  getBaseStat,
+  isDead,
+  isPlayer,
+  playerCalcAXPReward,
+} from '@lotr/characters';
 import {
   itemPropertyGet,
   settingGameGet,
@@ -370,10 +376,7 @@ export class DeathHelper extends BaseService {
       const axpRewardThreshold =
         settingGameGet('character', 'axpRewardThreshold') ?? 5;
       if (rewarded.level - npc.level <= axpRewardThreshold) {
-        this.game.playerHelper.gainAxp(
-          rewarded,
-          this.game.calculatorHelper.calcAXPRewardFor(npc),
-        );
+        this.game.playerHelper.gainAxp(rewarded, playerCalcAXPReward(npc));
       }
 
       this.game.questHelper.tryUpdateQuestProgressForKill(rewarded, npc.npcId);

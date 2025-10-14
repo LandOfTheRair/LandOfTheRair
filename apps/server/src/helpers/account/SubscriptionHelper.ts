@@ -280,25 +280,6 @@ export class SubscriptionHelper extends BaseService {
   }
 
   // subscription perks
-  public maxCharacters(account: IAccount, baseValue = 4): number {
-    const mult = settingGameGet('subscriber', 'characters') ?? 1;
-    return (
-      baseValue +
-      mult *
-        (account?.premium.silverPurchases?.[SilverPurchase.MoreCharacters] ?? 0)
-    );
-  }
-
-  public maxSmithRepair(player: IPlayer, baseValue = 20000): number {
-    const mult = settingGameGet('subscriber', 'smithRepair') ?? 1000;
-    return baseValue + player.subscriptionTier * mult;
-  }
-
-  public smithRepairCost(player: IPlayer, repairCost: number): number {
-    const mult = settingGameGet('subscriber', 'smithCost') ?? 0.05;
-    return Math.floor(repairCost - repairCost * mult * player.subscriptionTier);
-  }
-
   public maxAlchemistOz(player: IPlayer, baseValue = 10): number {
     const account = this.game.lobbyManager.getAccount(player.username);
     const mult = settingGameGet('subscriber', 'alchemistOz') ?? 5;
@@ -307,24 +288,6 @@ export class SubscriptionHelper extends BaseService {
       (account?.premium.silverPurchases?.[SilverPurchase.MorePotions] ?? 0) *
         mult
     );
-  }
-
-  public docReduction(player: IPlayer, baseValue = 10): number {
-    const mult = settingGameGet('subscriber', 'statDoc') ?? 0.05;
-    return Math.max(
-      1,
-      Math.floor(baseValue - baseValue * mult * player.subscriptionTier),
-    );
-  }
-
-  public maxSuccorOz(player: IPlayer, baseValue = 1): number {
-    const mult = settingGameGet('subscriber', 'succorOz') ?? 1;
-    return baseValue + player.subscriptionTier * mult;
-  }
-
-  public maxMarketListings(player: IPlayer, baseValue = 25): number {
-    const mult = settingGameGet('subscriber', 'marketListings') ?? 5;
-    return baseValue + player.subscriptionTier * mult;
   }
 
   public maxMaterialStorageSpace(player: IPlayer, baseValue = 200): number {
@@ -337,31 +300,6 @@ export class SubscriptionHelper extends BaseService {
       ] ?? 0) *
         mult
     );
-  }
-
-  public axpGained(player: IPlayer, baseValue = 1): number {
-    const mult = settingGameGet('subscriber', 'axpGain') ?? 1;
-    return baseValue * (player.subscriptionTier > 0 ? 1 + mult : 1);
-  }
-
-  public xpGained(player: IPlayer, baseValue = 1): number {
-    const mult = settingGameGet('subscriber', 'xpGain') ?? 0.05;
-    return baseValue + (1 + player.subscriptionTier * mult);
-  }
-
-  public skillGained(player: IPlayer, baseValue = 1): number {
-    const mult = settingGameGet('subscriber', 'skillGain') ?? 0.05;
-    return baseValue + (1 + player.subscriptionTier * mult);
-  }
-
-  public buildSlots(player: IPlayer, baseValue = 3): number {
-    const bonusSlots = settingGameGet('subscriber', 'buildSlots') ?? 3;
-    return baseValue + bonusSlots;
-  }
-
-  public holidayTokensGained(player: IPlayer, baseValue = 1): number {
-    const mult = settingGameGet('subscriber', 'holidayTokenGain') ?? 2;
-    return baseValue * (player.subscriptionTier > 0 ? mult : 1);
   }
 
   public hasPouch(player: IPlayer): boolean {

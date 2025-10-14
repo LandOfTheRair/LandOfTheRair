@@ -12,6 +12,7 @@ import { distanceFrom } from '@lotr/shared';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { premiumSmithMaxRepair } from '@lotr/premium';
 import type { Game } from '../../../../helpers';
 
 export class SmithBehavior implements IAIBehavior {
@@ -77,7 +78,7 @@ export class SmithBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold something in your right hand!';
 
-        const maxCondition = game.subscriptionHelper.maxSmithRepair(
+        const maxCondition = premiumSmithMaxRepair(
           player,
           repairsUpToCondition,
         );
@@ -111,7 +112,7 @@ export class SmithBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const maxCondition = game.subscriptionHelper.maxSmithRepair(
+        const maxCondition = premiumSmithMaxRepair(
           player,
           repairsUpToCondition,
         );

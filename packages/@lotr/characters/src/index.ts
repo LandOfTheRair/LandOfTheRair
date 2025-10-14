@@ -7,6 +7,8 @@ export * from './learning';
 export * from './mana';
 export * from './pet';
 export * from './player';
+export * from './player.axp';
+export * from './player.statbuys';
 export * from './skills';
 export * from './statistics';
 export * from './stats';

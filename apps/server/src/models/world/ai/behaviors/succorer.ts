@@ -9,8 +9,8 @@ import type {
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { premiumSuccorOzMax } from '@lotr/premium';
+import type { Game } from '../../../../helpers';
 
 export class SuccorerBehavior implements IAIBehavior {
   init(game: Game, npc: INPC, parser: Parser, behavior: ISuccorerBehavior) {
@@ -61,7 +61,7 @@ export class SuccorerBehavior implements IAIBehavior {
           npc.map,
           npc.x,
           npc.y,
-          game.subscriptionHelper.maxSuccorOz(player, succorOz),
+          premiumSuccorOzMax(player, succorOz),
         );
         game.characterHelper.setRightHand(player, succorItem);
 

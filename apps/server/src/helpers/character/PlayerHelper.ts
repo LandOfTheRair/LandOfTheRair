@@ -35,6 +35,11 @@ import type {
 } from '@lotr/interfaces';
 import { DamageClass, MessageType, Skill, Stat } from '@lotr/interfaces';
 import { consoleLog, logCrashContextEntry } from '@lotr/logger';
+import {
+  premiumAxpGained,
+  premiumSkillGained,
+  premiumXpGained,
+} from '@lotr/premium';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -440,7 +445,7 @@ export class PlayerHelper extends BaseService {
         getStat(player, Stat.XPBonusPercent) +
         this.game.dynamicEventHelper.getStat(Stat.XPBonusPercent);
       xpGained += Math.floor((xpGainBoostPercent / 100) * xpGained);
-      xpGained = this.game.subscriptionHelper.xpGained(player, xpGained);
+      xpGained = premiumXpGained(player, xpGained);
       xpGained = cleanNumber(xpGained, 0, {
         floor: true,
       });
@@ -455,7 +460,7 @@ export class PlayerHelper extends BaseService {
     if (!player.gainingAXP && axpGained > 0) return;
     if (isDead(player) && axpGained > 0) return;
 
-    axpGained = this.game.subscriptionHelper.axpGained(player, axpGained);
+    axpGained = premiumAxpGained(player, axpGained);
     axpGained = cleanNumber(axpGained, 0, {
       floor: true,
     });
@@ -500,7 +505,7 @@ export class PlayerHelper extends BaseService {
       skillGained *= 2;
     }
 
-    skillGained = this.game.subscriptionHelper.skillGained(player, skillGained);
+    skillGained = premiumSkillGained(player, skillGained);
     skillGained = cleanNumber(skillGained, 0);
 
     const oldSkillValue = calcSkillLevelForCharacter(player, skill);

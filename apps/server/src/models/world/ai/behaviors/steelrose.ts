@@ -13,6 +13,7 @@ import { cleanNumber, distanceFrom, itemListError } from '@lotr/shared';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { itemGet, settingGameGet } from '@lotr/content';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
+import { premiumMarketListingsMax } from '@lotr/premium';
 import type { Game } from '../../../../helpers';
 
 export class SteelroseBehavior implements IAIBehavior {
@@ -115,10 +116,7 @@ export class SteelroseBehavior implements IAIBehavior {
         const curListings = await game.marketDB.numberOfListings(
           player.username,
         );
-        const maxListings = game.subscriptionHelper.maxMarketListings(
-          player,
-          maxListingSetting,
-        );
+        const maxListings = premiumMarketListingsMax(player, maxListingSetting);
 
         if (curListings >= maxListings) {
           return 'You have too many items on the market board right now!';

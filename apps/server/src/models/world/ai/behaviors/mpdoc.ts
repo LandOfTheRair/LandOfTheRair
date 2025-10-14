@@ -10,7 +10,10 @@ import type {
 import { GameServerResponse, ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { getBaseStat } from '@lotr/characters';
+import {
+  getBaseStat,
+  playerCalcRequiredGoldForNextHPMP,
+} from '@lotr/characters';
 import { settingClassConfigGet, settingGameGet } from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
@@ -95,7 +98,7 @@ export class MPDocBehavior implements IAIBehavior {
           return 'No gold! No help!';
         }
 
-        let cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+        let cost = playerCalcRequiredGoldForNextHPMP(
           player,
           Stat.MP,
           maxMpForTier,
@@ -120,7 +123,7 @@ export class MPDocBehavior implements IAIBehavior {
           if (mp >= maxMpForTier) {
             cost = -1;
           } else {
-            cost = game.calculatorHelper.calcRequiredGoldForNextHPMP(
+            cost = playerCalcRequiredGoldForNextHPMP(
               player,
               Stat.MP,
               maxMpForTier,
