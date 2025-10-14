@@ -43,6 +43,10 @@ export class AppComponent implements OnInit {
     }
   }
 
+  public isInElectron(): boolean {
+    return navigator.userAgent.includes('Electron');
+  }
+
   public isSubscribed(account: IAccount): boolean {
     return isSubscribed(account);
   }

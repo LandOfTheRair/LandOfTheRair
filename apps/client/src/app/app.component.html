@@ -19,6 +19,16 @@
   <div>
     @if (account(); as account) {
       <div class="subscribe-banner">
+        @if (!isInElectron()) {
+          <span>
+            Please consider downloading the desktop app - it helps save on
+            bandwidth costs! Click
+            <a href="https://rair.land/download" target="_blank">here</a>
+            to download it!
+          </span>
+          <br />
+        }
+
         @if (!isSubscribed(account)) {
           <span>
             You're not currently subscribed. Please consider subscribing or

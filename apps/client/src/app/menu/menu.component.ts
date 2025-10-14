@@ -138,12 +138,6 @@ export class MenuComponent implements OnInit {
           handler: () => window.location.reload(),
         },
         {
-          name: 'Download',
-          icon: 'download',
-          visibleIf: of(!navigator.userAgent.includes('Electron')),
-          handler: () => window.open('https://rair.land/download', '_blank'),
-        },
-        {
           name: 'About',
           icon: 'info',
           handler: () => this.modalService.showAbout(),
@@ -279,6 +273,13 @@ export class MenuComponent implements OnInit {
             this.socketService.emit(GameServerEvent.QuitGame);
           });
       },
+    },
+    {
+      name: 'Download',
+      borderTop: true,
+      icon: 'download',
+      visibleIf: of(!navigator.userAgent.includes('Electron')),
+      handler: () => window.open('https://rair.land/download', '_blank'),
     },
     {
       name: 'Log Out',
