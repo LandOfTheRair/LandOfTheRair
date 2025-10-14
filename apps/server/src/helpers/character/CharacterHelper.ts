@@ -205,6 +205,8 @@ export class CharacterHelper extends BaseService {
       this.game.effectHelper.removeEffectByName(char, 'Shadowmeld');
     }
 
+    if (amount < 0) return;
+
     const modifyAgro = (
       agroChar: ICharacter,
       agroTarget: ICharacter,

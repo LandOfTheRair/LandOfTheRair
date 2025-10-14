@@ -73,10 +73,11 @@ export class DamageHelperMagic extends BaseService {
 
     // and, do the damage
     this.game.combatHelper.dealDamage(attacker, defender, {
-      damage,
+      damage:
+        args.damageClass === DamageClass.Heal ? -Math.abs(damage) : damage,
       damageClass: args.damageClass || DamageClass.Physical,
       customSfx: args.sfx,
-      isHeal: damage < 0,
+      isHeal: damage < 0 || args.damageClass === DamageClass.Heal,
       isOverTime: args.isOverTime,
       attackerDamageMessage: args.atkMsg,
       defenderDamageMessage: args.defMsg,

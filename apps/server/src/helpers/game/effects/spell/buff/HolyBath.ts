@@ -34,7 +34,7 @@ export class HolyBath extends Effect {
           this.game.combatHelper.magicalAttack(char, target, {
             atkMsg: 'You bathe %0 in a warm light!',
             defMsg: 'You feel a warm light heal your wounds.',
-            damage: -effect.effectInfo.potency,
+            damage: -Math.abs(effect.effectInfo.potency),
             damageClass: DamageClass.Heal,
           });
         });
