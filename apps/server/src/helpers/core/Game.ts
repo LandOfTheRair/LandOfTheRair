@@ -387,7 +387,7 @@ export class Game {
     });
   }
 
-  public loop() {
+  private loop() {
     const trueTick = this.ticksElapsed / 10;
 
     const timer = new LoggerTimer({
