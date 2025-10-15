@@ -141,7 +141,7 @@ export class HPDocBehavior implements IAIBehavior {
 
         rightHand.mods.value = totalAvailable;
 
-        game.characterHelper.calculateStatTotals(player);
+        game.characterHelper.characterStatTotalsCalculate(player);
 
         return `Gained ${totalHPGained} life forces! Cost ${totalCost.toLocaleString()} gold!`;
       });

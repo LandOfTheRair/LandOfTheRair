@@ -1,7 +1,13 @@
 import { Injectable } from 'injection-js';
 import { cloneDeep, random, sum } from 'lodash';
 
-import { getSkillLevel, getStat, isDead, isPlayer } from '@lotr/characters';
+import {
+  castStat,
+  getSkillLevel,
+  getStat,
+  isDead,
+  isPlayer,
+} from '@lotr/characters';
 import {
   itemPropertiesGet,
   settingClassConfigGet,
@@ -122,10 +128,7 @@ export class SpellManager extends BaseService {
       return Math.floor(baseSkillValue * this.getPotencyMultiplier(spellData));
     }
 
-    const baseStat = getStat(
-      caster,
-      this.game.characterHelper.castStat(caster),
-    );
+    const baseStat = getStat(caster, castStat(caster));
     const statMult = caster ? baseStat : 1;
 
     const bonusRolls = isStatic
@@ -336,7 +339,7 @@ export class SpellManager extends BaseService {
     // try to resist the spell
     if (caster && target && canBeResisted) {
       const casterRoll =
-        oneToStat(caster, this.game.characterHelper.castStat(caster)) +
+        oneToStat(caster, castStat(caster)) +
         (resistLowerTrait ? traitLevelValue(caster, resistLowerTrait) : 0);
       const targetRoll =
         oneToStat(target, Stat.WIL) + getStat(target, Stat.SavingThrow);

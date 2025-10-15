@@ -41,11 +41,6 @@ export class TraitHelper extends BaseService {
     );
   }
 
-  // get all of the learned traits, used mostly for recalculating the trait hash
-  public getAllLearnedTraits(player: IPlayer): Record<string, number> {
-    return player.traits.traitsLearned;
-  }
-
   // learn a trait! very easy. increment a number, decrement a diff one
   public learnTrait(
     player: IPlayer,

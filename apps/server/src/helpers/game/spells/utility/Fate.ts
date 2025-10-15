@@ -3,6 +3,8 @@ import {
   getBaseStat,
   isPlayer,
   learnedState,
+  recalculateLearnedSpells,
+  statLosePermanent,
 } from '@lotr/characters';
 import { coreFate, settingClassConfigGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
@@ -143,11 +145,7 @@ export class Fate extends Spell {
           statBoosting,
         );
       } else {
-        this.game.characterHelper.losePermanentStat(
-          caster,
-          stat as Stat,
-          statBoosting,
-        );
+        statLosePermanent(caster, stat as Stat, statBoosting);
       }
 
       this.game.characterHelper.recalculateEverything(caster);
@@ -171,7 +169,7 @@ export class Fate extends Spell {
           'You feel a magical energy encompass you for a moment, then it fades.';
       } else {
         forceSpellLearnStatus(caster, learnSpell, LearnedSpell.FromFate);
-        this.game.characterHelper.recalculateLearnedSpells(player);
+        recalculateLearnedSpells(player);
       }
     }
 

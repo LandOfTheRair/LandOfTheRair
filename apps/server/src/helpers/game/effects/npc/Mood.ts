@@ -110,6 +110,6 @@ export class Mood extends Effect {
     effect.effectInfo.statChanges = effect.effectInfo.statChanges || {};
     effect.effectInfo.statChanges[Stat.DamageFactor] = moods[mood].damageFactor;
 
-    this.game.characterHelper.calculateStatTotals(char);
+    this.game.characterHelper.characterStatTotalsCalculate(char);
   }
 }

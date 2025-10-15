@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 
 import { get, setWith } from 'lodash';
 
-import { getStat } from '@lotr/characters';
+import { getStat, perceptionGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { transmissionFOVPatchSend } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
@@ -209,7 +209,7 @@ export class VisibilityHelper extends BaseService {
     // last are stealth checks, if you have hidden it triggers the perception/stealth checks
     if (hasEffect(hiding, 'Hidden')) {
       // perception is simple: stats + level. thieves get a multiplier
-      const perception = this.game.characterHelper.getPerception(char);
+      const perception = perceptionGet(char);
 
       // stealth is also simple: stats + level + skill. thieves get a multiplier
       const stealth = getStat(hiding, Stat.Stealth);

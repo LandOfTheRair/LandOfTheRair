@@ -427,7 +427,7 @@ export class Spawner {
     if (this.npcCreateCallback) this.npcCreateCallback(npc, this);
     if (createCallback) createCallback(npc);
 
-    this.game.characterHelper.calculateStatTotals(npc);
+    this.game.characterHelper.characterStatTotalsCalculate(npc);
 
     npc.spawnedAt = Date.now();
 

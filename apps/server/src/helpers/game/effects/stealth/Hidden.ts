@@ -1,4 +1,4 @@
-import { isPlayer, mana, manaDamage } from '@lotr/characters';
+import { isPlayer, mana, manaDamage, stealthGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevelValue } from '@lotr/content';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
@@ -10,7 +10,7 @@ export class Hidden extends Effect {
   }
 
   override create(char: ICharacter, effect: IStatusEffect) {
-    effect.effectInfo.potency = this.game.characterHelper.getStealth(char);
+    effect.effectInfo.potency = stealthGet(char);
     effect.effectInfo.statChanges = {
       [Stat.Stealth]: effect.effectInfo.potency,
     };

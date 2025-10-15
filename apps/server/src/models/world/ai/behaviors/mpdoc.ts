@@ -141,7 +141,7 @@ export class MPDocBehavior implements IAIBehavior {
 
         rightHand.mods.value = totalAvailable;
 
-        game.characterHelper.calculateStatTotals(player);
+        game.characterHelper.characterStatTotalsCalculate(player);
 
         return `Gained ${totalMPGained} magic forces! Cost ${totalCost.toLocaleString()} gold!`;
       });

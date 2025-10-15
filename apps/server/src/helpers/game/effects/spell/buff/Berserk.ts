@@ -240,7 +240,7 @@ export class Berserk extends Effect {
 
     effect.effectInfo.statChanges = stats;
 
-    this.game.characterHelper.calculateStatTotals(char);
+    this.game.characterHelper.characterStatTotalsCalculate(char);
 
     this.updateDescription(effect);
   }

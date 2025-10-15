@@ -1,7 +1,12 @@
 import { Injectable } from 'injection-js';
 import { clamp, isString, random } from 'lodash';
 
-import { effectStatBonuses, getEffect, hasEffect } from '@lotr/effects';
+import {
+  effectCountEquipment,
+  effectStatBonuses,
+  getEffect,
+  hasEffect,
+} from '@lotr/effects';
 import type {
   ICharacter,
   IItemEffect,
@@ -15,13 +20,12 @@ import {
   ItemClass,
   ItemSlot,
   LearnedSpell,
-  Skill,
   Stat,
 } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import {
-  getSkillLevel,
+  characterStatValueFromTraits,
   getStat,
   hasHeldItem,
   heal,
@@ -29,19 +33,21 @@ import {
   isPet,
   isPlayer,
   mana,
+  recalculateLearnedSpells,
+  recalculateTraits,
+  regenHPGet,
+  regenMPGet,
+  stealthPenaltyGet,
 } from '@lotr/characters';
 import {
   coreAllegianceStats,
-  coreHideReductions,
   itemCanGetBenefitsFrom,
-  itemGet,
   itemGetStat,
   itemPropertiesGet,
   itemPropertyGet,
   settingClassConfigGet,
   settingGameGet,
   settingGetMaxStats,
-  traitGet,
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
@@ -52,11 +58,6 @@ import type { Player } from '../../models';
 @Injectable()
 export class CharacterHelper extends BaseService {
   public init() {}
-
-  // get the primary spell casting stat for a character
-  public castStat(char: ICharacter): Stat {
-    return settingClassConfigGet<'castStat'>(char.baseClass, 'castStat');
-  }
 
   // take an item from either hand
   public takeItemFromEitherHand(char: ICharacter, item: string): void {
@@ -83,10 +84,7 @@ export class CharacterHelper extends BaseService {
       );
 
       if (equipEffect) {
-        const oldEffectCount = this.equipmentEffectCount(
-          char,
-          equipEffect.name,
-        );
+        const oldEffectCount = effectCountEquipment(char, equipEffect.name);
         if (oldEffectCount <= 1) {
           this.game.effectHelper.removeEffectByName(char, equipEffect.name);
         }
@@ -287,57 +285,16 @@ export class CharacterHelper extends BaseService {
     character.stats[stat] = (character.stats[stat] ?? 1) + cleanValue;
 
     // recalculate stats
-    this.calculateStatTotals(character);
+    this.characterStatTotalsCalculate(character);
 
     return true;
-  }
-
-  // lose a permanent stat (from any reason)
-  public losePermanentStat(
-    character: ICharacter,
-    stat: Stat,
-    value = 1,
-  ): boolean {
-    const oneStats = [
-      Stat.CHA,
-      Stat.CON,
-      Stat.DEX,
-      Stat.INT,
-      Stat.WIL,
-      Stat.WIS,
-      Stat.STR,
-      Stat.AGI,
-      Stat.LUK,
-    ];
-    const minimum = oneStats.includes(stat) ? 1 : 0;
-
-    const curStat = character.stats[stat] ?? minimum;
-
-    // cannot cannot go lower than 1
-    if (curStat - value < minimum) return false;
-
-    // lose the stat if we can
-    character.stats[stat] = (character.stats[stat] ?? minimum) - value;
-
-    return true;
-  }
-
-  private addTraitLevel(
-    character: ICharacter,
-    trait: string,
-    addedTraitLevel: number,
-  ): void {
-    if (!trait) return;
-
-    character.allTraits[trait] ??= 0;
-    character.allTraits[trait] += addedTraitLevel;
   }
 
   // recalculate everything, basically when equipment changes usually
   public recalculateEverything(character: ICharacter): void {
-    this.recalculateTraits(character);
-    this.recalculateLearnedSpells(character);
-    this.calculateStatTotals(character);
+    recalculateTraits(character);
+    recalculateLearnedSpells(character);
+    this.characterStatTotalsCalculate(character);
     this.checkEncumberance(character);
   }
 
@@ -377,194 +334,8 @@ export class CharacterHelper extends BaseService {
     }
   }
 
-  // recalculate what spells we know based on traits and items
-  public recalculateLearnedSpells(character: ICharacter): void {
-    const fromFate = Object.keys(character.learnedSpells).filter(
-      (x) => character.learnedSpells[x] === LearnedSpell.FromFate,
-    );
-
-    character.learnedSpells = {};
-
-    const learnSpell = (spell: string, learnFrom: LearnedSpell) => {
-      const curLearnedStatus = character.learnedSpells[spell.toLowerCase()];
-      if (curLearnedStatus === LearnedSpell.FromTraits) return;
-
-      character.learnedSpells[spell.toLowerCase()] = learnFrom;
-    };
-
-    // check all traits for spells
-    Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = traitGet(trait, `RLS:${character.name}`);
-      if (!traitRef || !traitRef.spellGiven) return;
-
-      learnSpell(traitRef.spellGiven, LearnedSpell.FromTraits);
-    });
-
-    // check all items
-    Object.keys(character.items.equipment).forEach((itemSlot) => {
-      const item = character.items.equipment[itemSlot];
-      if (!item) return;
-
-      // no spells if we can't technically use the item
-      if (
-        isPlayer(character) &&
-        !itemCanGetBenefitsFrom(character as IPlayer, item)
-      ) {
-        return;
-      }
-
-      // check if it has an effect, and if we can use that effect
-      const { useEffect } = itemPropertiesGet(item, ['useEffect']);
-
-      if (useEffect && useEffect.uses) {
-        learnSpell(useEffect.name, LearnedSpell.FromItem);
-      }
-    });
-
-    // re-learn fated spells last
-    fromFate.forEach((spell) => learnSpell(spell, LearnedSpell.FromFate));
-  }
-
-  // recalculate all traits that exist for this character
-  public recalculateTraits(character: ICharacter): void {
-    character.allTraits = {};
-
-    let learnedTraits = {};
-
-    // base traits from self/learned
-    if (isPlayer(character)) {
-      learnedTraits = this.game.traitHelper.getAllLearnedTraits(
-        character as IPlayer,
-      );
-    } else {
-      learnedTraits = (character as INPC).traitLevels ?? {};
-    }
-
-    Object.keys(learnedTraits).forEach((traitKey) => {
-      this.addTraitLevel(character, traitKey, learnedTraits[traitKey]);
-    });
-
-    // traits from equipment
-    Object.keys(character.items.equipment).forEach((itemSlot) => {
-      const item = character.items.equipment[itemSlot];
-      if (!item) return;
-
-      // no bonus if we can't technically use the item
-      if (
-        isPlayer(character) &&
-        !itemCanGetBenefitsFrom(character as IPlayer, item)
-      ) {
-        return;
-      }
-
-      // only some items give bonuses in hands
-      const { itemClass, trait } = itemPropertiesGet(item, [
-        'itemClass',
-        'trait',
-      ]);
-      if (
-        [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
-          itemSlot as ItemSlot,
-        ) &&
-        !GivesBonusInHandItemClasses.includes(itemClass as ItemClass)
-      ) {
-        return;
-      }
-
-      if (trait) {
-        this.addTraitLevel(character, trait.name, trait.level);
-      }
-    });
-
-    // get benefits from inscribed rune scrolls
-    if (isPlayer(character)) {
-      (character as IPlayer).runes.forEach((rune) => {
-        if (!rune) return;
-
-        try {
-          const item = itemGet(rune);
-          if (!item?.trait) return;
-
-          this.addTraitLevel(character, item.trait.name, item.trait.level);
-        } catch {}
-      });
-    }
-  }
-
-  // get the total stats from traits
-  public getStatValueAddFromTraits(
-    character: ICharacter,
-  ): Partial<Record<Stat, number>> {
-    const stats = {};
-
-    Object.keys(character.allTraits ?? {}).forEach((trait) => {
-      const traitRef = traitGet(trait, `GSVAFT:${character.name}`);
-      if (!traitRef || !traitRef.statsGiven) return;
-
-      Object.keys(traitRef.statsGiven).forEach((stat) => {
-        if (!traitRef.statsGiven?.[stat]) return;
-
-        stats[stat] = stats[stat] || 0;
-        stats[stat] +=
-          (traitRef.statsGiven[stat] ?? 0) *
-          (traitLevel(character, trait) ?? 0);
-      });
-    });
-
-    // handle reflective coating - boost spell reflect
-    const reflectiveBoost = traitLevelValue(character, 'ReflectiveCoating');
-    if (reflectiveBoost > 0) {
-      stats[Stat.SpellReflectChance] = stats[Stat.SpellReflectChance] ?? 0;
-
-      const leftHand = character.items.equipment[ItemSlot.LeftHand];
-      const rightHand = character.items.equipment[ItemSlot.RightHand];
-
-      if (
-        leftHand &&
-        itemPropertyGet(leftHand, 'itemClass') === ItemClass.Shield
-      ) {
-        stats[Stat.SpellReflectChance] += reflectiveBoost;
-      }
-
-      if (
-        rightHand &&
-        itemPropertyGet(rightHand, 'itemClass') === ItemClass.Shield
-      ) {
-        stats[Stat.SpellReflectChance] += reflectiveBoost;
-      }
-    }
-
-    // handle unarmored savant - set base mitigation
-    const savantBoost = traitLevelValue(character, 'UnarmoredSavant');
-    if (savantBoost > 0) {
-      stats[Stat.Mitigation] = stats[Stat.Mitigation] ?? 0;
-
-      // if you have a main hand item, your bonus is cut in half
-      const mainHandItemMultiplier = character.items.equipment[
-        ItemSlot.RightHand
-      ]
-        ? 0.5
-        : 1;
-
-      const item = character.items.equipment[ItemSlot.Armor];
-      const itemClass = itemPropertyGet(item, 'itemClass');
-
-      if (
-        !item ||
-        [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)
-      ) {
-        stats[Stat.Mitigation] += savantBoost * mainHandItemMultiplier;
-
-        // adjust for fur being a base 10 already
-        if (itemClass === ItemClass.Fur) stats[Stat.Mitigation] -= 10;
-      }
-    }
-
-    return stats;
-  }
-
   // calculate the total stats for a character from their current loadout
-  public calculateStatTotals(character: ICharacter): void {
+  public characterStatTotalsCalculate(character: ICharacter): void {
     const oldPerception = character.totalStats[Stat.Perception];
     const oldStealth = character.totalStats[Stat.Stealth];
 
@@ -638,7 +409,7 @@ export class CharacterHelper extends BaseService {
     });
 
     // get trait/effect stats
-    const traitStatBoosts = this.getStatValueAddFromTraits(character);
+    const traitStatBoosts = characterStatValueFromTraits(character);
     const effectStatBoosts = effectStatBonuses(character);
 
     const addStatsFromHash = (hash) => {
@@ -692,7 +463,7 @@ export class CharacterHelper extends BaseService {
       character.totalStats[Stat.Stealth] = Math.max(
         0,
         (character.totalStats[Stat.Stealth] ?? 0) -
-          this.getStealthPenalty(character),
+          stealthPenaltyGet(character),
       );
 
       // if the stealth is different we gotta trigger an update
@@ -700,144 +471,6 @@ export class CharacterHelper extends BaseService {
         state.triggerPlayerUpdateInRadius(character.x, character.y);
       }
     }
-  }
-
-  // hp regen is a min of 1, affected by a con modifier past 21
-  public getHPRegen(character: ICharacter): number {
-    const baseHPRegen = 1 + getStat(character, Stat.HPRegen);
-    const hpRegenSlidingCon =
-      settingGameGet('character', 'hpRegenSlidingCon') ?? 21;
-    return Math.max(
-      baseHPRegen,
-      baseHPRegen +
-        Math.max(0, getStat(character, Stat.CON) - hpRegenSlidingCon),
-    );
-  }
-
-  // thieves and warriors have different mpregen setups
-  public getMPRegen(character: ICharacter): number {
-    const base = getStat(character, Stat.MPRegen);
-    let boost = 0;
-
-    const usesMana = settingClassConfigGet<'usesMana'>(
-      character.baseClass,
-      'usesMana',
-    );
-
-    // healers and mages get a boost because their primary function is spellcasting
-    if (usesMana) {
-      boost = settingGameGet('character', 'defaultCasterMPRegen') ?? 10;
-    }
-
-    const regensLikeThief = settingClassConfigGet<'regensLikeThief'>(
-      character.baseClass,
-      'regensLikeThief',
-    );
-
-    // thieves not in combat regen faster
-    if (regensLikeThief) {
-      // hidden thieves can regen stealth slightly faster based on their mpregen
-      if (hasEffect(character, 'Hidden')) {
-        const hiddenRegen = Math.max(
-          0,
-          Math.floor(base * traitLevelValue(character, 'ReplenishingShadows')),
-        );
-
-        return hiddenRegen;
-      }
-
-      // singing thieves have a way to get their stealth back
-      if (hasEffect(character, 'Singing')) return 0;
-
-      // thieves in combat get 10 base regen + 20% of their mp regen for every RR level
-      if (character.combatTicks <= 0) {
-        const regenStealth =
-          Math.max(
-            0,
-            Math.floor(
-              base * traitLevelValue(character, 'ReplenishingReverberation'),
-            ),
-          ) + (settingGameGet('character', 'thiefOOCRegen') ?? 10);
-
-        return regenStealth;
-      }
-
-      return settingGameGet('character', 'thiefICRegen') ?? 1;
-    }
-
-    const regensLikeWarrior = settingClassConfigGet<'regensLikeWarrior'>(
-      character.baseClass,
-      'regensLikeWarrior',
-    );
-
-    // warriors are the inverse of thieves
-    if (regensLikeWarrior) {
-      if (character.combatTicks <= 0) {
-        return settingGameGet('character', 'warriorOOCRegen') ?? -3;
-      }
-      return settingGameGet('character', 'warriorICRegen') ?? 3;
-    }
-
-    return base + boost;
-  }
-
-  // get the stealth value for a character
-  public getStealth(char: ICharacter): number {
-    let stealth =
-      getSkillLevel(char, Skill.Thievery) +
-      char.level +
-      getStat(char, Stat.AGI);
-
-    const hasStealthBonus = settingClassConfigGet<'hasStealthBonus'>(
-      char.baseClass,
-      'hasStealthBonus',
-    );
-
-    if (hasStealthBonus) {
-      stealth *= settingGameGet('character', 'thiefStealthMultiplier') ?? 1.5;
-    }
-
-    if (hasEffect(char, 'Encumbered')) {
-      stealth /= settingGameGet('character', 'stealthEncumberDivisor') ?? 2;
-    }
-
-    return Math.floor(stealth);
-  }
-
-  public getStealthPenalty(char: ICharacter): number {
-    const leftHandClass = char.items.equipment[ItemSlot.LeftHand]
-      ? itemPropertyGet(char.items.equipment[ItemSlot.LeftHand], 'itemClass')
-      : null;
-
-    const rightHandClass = char.items.equipment[ItemSlot.RightHand]
-      ? itemPropertyGet(char.items.equipment[ItemSlot.RightHand], 'itemClass')
-      : null;
-
-    const hideReductions = coreHideReductions();
-    const totalReduction =
-      hideReductions[leftHandClass] ||
-      0 + (hideReductions[rightHandClass] || 0);
-    const shadowSheathMultiplier = Math.max(
-      0,
-      1 - traitLevelValue(char, 'ShadowSheath'),
-    );
-
-    return Math.floor(totalReduction * shadowSheathMultiplier);
-  }
-
-  // get perception value for a character
-  public getPerception(char: ICharacter): number {
-    let perception =
-      getStat(char, Stat.Perception) + char.level + getStat(char, Stat.WIS);
-
-    const hasPerceptionBonus = settingClassConfigGet<'hasPerceptionBonus'>(
-      char.baseClass,
-      'hasPerceptionBonus',
-    );
-
-    if (hasPerceptionBonus) perception *= 1.5;
-
-    return perception;
   }
 
   // tick the character - do regen
@@ -857,25 +490,12 @@ export class CharacterHelper extends BaseService {
     }
 
     if (tick % 5 === 0) {
-      const hpRegen = this.getHPRegen(character);
-      const mpRegen = this.getMPRegen(character);
+      const hpRegen = regenHPGet(character);
+      const mpRegen = regenMPGet(character);
 
       if (character.hp.current + hpRegen > 0) heal(character, hpRegen);
       mana(character, mpRegen);
     }
-  }
-
-  // check if there exists an equipment effect on a character
-  public equipmentEffectCount(character: ICharacter, effect: string): number {
-    return Object.keys(character.items.equipment).filter((itemSlot) => {
-      const item = character.items.equipment[itemSlot];
-      if (!item) return false;
-
-      const equipEffect = itemPropertyGet(item, 'equipEffect');
-      if (!equipEffect) return;
-
-      return equipEffect.name === effect;
-    }).length;
   }
 
   // check gear and try to cast effects

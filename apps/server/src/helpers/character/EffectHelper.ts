@@ -174,7 +174,7 @@ export class EffectHelper extends BaseService {
 
     // any stat changes must be added in effectCreate to be counted immediately
     this.game.effectManager.effectCreate(effectName, character, effect);
-    this.game.characterHelper.calculateStatTotals(character);
+    this.game.characterHelper.characterStatTotalsCalculate(character);
 
     // effect apply hook is for after create
     this.game.effectManager.effectApply(effectName, character, effect);
@@ -249,7 +249,7 @@ export class EffectHelper extends BaseService {
     }
 
     // recalculate stats when removed, before calling unapply or destroy
-    this.game.characterHelper.calculateStatTotals(character);
+    this.game.characterHelper.characterStatTotalsCalculate(character);
 
     this.game.effectManager.effectUnapply(effect.effectName, character, effect);
 

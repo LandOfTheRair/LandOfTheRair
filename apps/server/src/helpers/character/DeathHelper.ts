@@ -7,6 +7,7 @@ import {
   isDead,
   isPlayer,
   playerCalcAXPReward,
+  statLosePermanent,
 } from '@lotr/characters';
 import {
   achievementGetRelatedNPC,
@@ -157,7 +158,7 @@ export class DeathHelper extends BaseService {
         (player.stats?.[Stat.STR] ?? 0) > rotStatThreshold &&
         oneInX(strLossChance)
       ) {
-        this.game.characterHelper.losePermanentStat(player, Stat.STR, 1);
+        statLosePermanent(player, Stat.STR, 1);
       }
 
       const agiLossChance = settingGameGet('corpse', 'rotAgiLossChance') ?? 5;
@@ -166,7 +167,7 @@ export class DeathHelper extends BaseService {
         (player.stats?.[Stat.AGI] ?? 0) > rotStatThreshold &&
         oneInX(agiLossChance)
       ) {
-        this.game.characterHelper.losePermanentStat(player, Stat.AGI, 1);
+        statLosePermanent(player, Stat.AGI, 1);
       }
     }
   }
@@ -228,7 +229,7 @@ export class DeathHelper extends BaseService {
     }
 
     // lose a CON if you die (min of 1)
-    this.game.characterHelper.losePermanentStat(dead, Stat.CON, 1);
+    statLosePermanent(dead, Stat.CON, 1);
 
     // get a warning if your CON is too low
     if (getBaseStat(dead, Stat.CON) <= 3) {
@@ -238,7 +239,7 @@ export class DeathHelper extends BaseService {
       const lowCONHPLossThreshold =
         settingGameGet('character', 'lowCONHPLossThreshold') ?? 10;
       if (getBaseStat(dead, Stat.HP) > lowCONHPLossThreshold) {
-        this.game.characterHelper.losePermanentStat(dead, Stat.HP, 1);
+        statLosePermanent(dead, Stat.HP, 1);
       }
     }
 
@@ -247,7 +248,7 @@ export class DeathHelper extends BaseService {
       this.game.characterHelper.dropHands(dead);
     }
 
-    this.game.characterHelper.calculateStatTotals(dead);
+    this.game.characterHelper.characterStatTotalsCalculate(dead);
   }
 
   // fake kill an NPC - good for removing them with dropping no loot
@@ -439,11 +440,7 @@ export class DeathHelper extends BaseService {
       const lostSkill = Math.floor(eatSkillLossMultiplier * eatTier);
       const randomSkill = sample(Object.keys(dead.skills)) as Skill;
 
-      this.game.characterHelper.losePermanentStat(
-        dead,
-        Stat.HP,
-        Math.floor(eatTier),
-      );
+      statLosePermanent(dead, Stat.HP, Math.floor(eatTier));
 
       this.game.playerHelper.loseExp(dead as IPlayer, lostXP);
       this.game.playerHelper.loseSkill(dead as IPlayer, randomSkill, lostSkill);
