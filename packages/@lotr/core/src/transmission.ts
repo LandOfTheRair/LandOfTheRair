@@ -21,7 +21,6 @@ import { wsSendToSocket } from './ws';
 
 interface PlayerPatchSet {
   patches?: Operation[];
-  player?: Partial<IPlayer>;
 }
 
 const playerPatchWatchers: Record<string, Observer<IPlayer>> = {};
@@ -38,10 +37,6 @@ function transmissionPlayerPatchQueue(player: IPlayer, patch: PlayerPatchSet) {
 
   if (patch.patches) {
     patchQueue.patches.push(...patch.patches.filter((p) => patchShouldSend(p)));
-  }
-
-  if (patch.player) {
-    patchQueue.player = Object.assign({}, patchQueue.player, patch.player);
   }
 }
 
