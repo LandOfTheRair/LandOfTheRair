@@ -1172,7 +1172,7 @@ export class DialogActionHelper extends BaseService {
   ): IActionResult {
     const { achievementName } = action;
 
-    this.game.achievementsHelper.earnAchievement(
+    this.game.achievementsHelper.achievementEarn(
       player as Player,
       achievementName,
     );

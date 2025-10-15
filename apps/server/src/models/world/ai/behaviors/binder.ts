@@ -9,7 +9,11 @@ import type {
 import { GameServerResponse, ItemClass, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-import { itemPropertyGet, itemPropertySet } from '@lotr/content';
+import {
+  achievementGetRelatedItem,
+  itemPropertyGet,
+  itemPropertySet,
+} from '@lotr/content';
 import type { Game } from '../../../../helpers';
 
 export class BinderBehavior implements IAIBehavior {
@@ -75,9 +79,9 @@ export class BinderBehavior implements IAIBehavior {
 
         itemPropertySet(item, 'owner', player.username);
 
-        const ach = game.achievementsHelper.getItemForAchievementUse(item.name);
+        const ach = achievementGetRelatedItem(item.name);
         if (ach) {
-          game.achievementsHelper.earnAchievement(player, ach.name);
+          game.achievementsHelper.achievementEarn(player, ach.name);
         }
 
         if (item.mods.owner === player.username) {

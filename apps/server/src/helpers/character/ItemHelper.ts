@@ -15,6 +15,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { isPlayer } from '@lotr/characters';
 import {
+  achievementGetRelatedItem,
   coreRNGDungeonConfig,
   itemCanBeUpgraded,
   itemCanGetBenefitsFrom,
@@ -612,11 +613,9 @@ export class ItemHelper extends BaseService {
         });
       }
 
-      const ach = this.game.achievementsHelper.getItemForAchievementUse(
-        item.name,
-      );
+      const ach = achievementGetRelatedItem(item.name);
       if (isPlayer(character) && ach) {
-        this.game.achievementsHelper.earnAchievement(
+        this.game.achievementsHelper.achievementEarn(
           character as Player,
           ach.name,
         );

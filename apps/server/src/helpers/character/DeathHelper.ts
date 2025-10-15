@@ -9,6 +9,7 @@ import {
   playerCalcAXPReward,
 } from '@lotr/characters';
 import {
+  achievementGetRelatedNPC,
   itemPropertyGet,
   settingGameGet,
   traitLevelValue,
@@ -270,11 +271,9 @@ export class DeathHelper extends BaseService {
 
     this.game.dynamicEventHelper.trackNPCKill(dead.npcId);
 
-    const ach = this.game.achievementsHelper.getNPCForAchievementUse(
-      dead.npcId,
-    );
+    const ach = achievementGetRelatedNPC(dead.npcId);
     if (killer && dead.npcId && ach && isPlayer(killer)) {
-      this.game.achievementsHelper.earnAchievement(killer as Player, ach.name);
+      this.game.achievementsHelper.achievementEarn(killer as Player, ach.name);
     }
 
     if (!dead.noItemDrop) {

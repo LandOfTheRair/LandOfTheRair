@@ -523,7 +523,7 @@ export class PlayerHelper extends BaseService {
       newSkillValue % 5 === 0 &&
       isPlayer(player)
     ) {
-      this.game.achievementsHelper.checkAllAchievements(player as Player);
+      this.game.achievementsHelper.achievementsCheckAll(player as Player);
     }
   }
 
@@ -548,7 +548,7 @@ export class PlayerHelper extends BaseService {
     const newSkillValue = calcTradeskillLevelForCharacter(player, skill);
 
     if (oldSkillValue !== newSkillValue && newSkillValue % 5 === 0) {
-      this.game.achievementsHelper.checkAllAchievements(player as Player);
+      this.game.achievementsHelper.achievementsCheckAll(player as Player);
     }
   }
 
@@ -677,7 +677,7 @@ export class PlayerHelper extends BaseService {
       }
     } while (player.level < maxLevel);
 
-    this.game.achievementsHelper.checkAllAchievements(player as Player);
+    this.game.achievementsHelper.achievementsCheckAll(player as Player);
     this.game.guildManager.syncPlayerWithGuild(player as Player);
   }
 

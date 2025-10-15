@@ -246,7 +246,7 @@ export class BanditWaves extends Effect {
 
     if (this.hasWonPerfectly(char, effect)) {
       this.allPlayers(char).forEach((p) => {
-        this.game.achievementsHelper.earnAchievement(
+        this.game.achievementsHelper.achievementEarn(
           p as Player,
           `Perfect Pillage ${tier}`,
         );

@@ -153,7 +153,7 @@ export class MigrationHelper extends BaseService {
 
     this.game.questHelper.recalculateQuestKillsAndStatRewards(player);
 
-    this.game.achievementsHelper.checkAllAchievements(player);
+    this.game.achievementsHelper.achievementsCheckAll(player);
 
     this.game.guildManager.setGuildForPlayer(player);
     this.game.guildManager.syncPlayerWithGuild(player);

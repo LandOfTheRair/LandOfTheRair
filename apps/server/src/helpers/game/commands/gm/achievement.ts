@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { achievementExists, achievementHas } from '@lotr/content';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { MacroCommand } from '../../../../models/macro';
@@ -27,15 +28,15 @@ export class GMToggleAchievement extends MacroCommand {
       return this.sendMessage(player, 'That is not a player.');
     }
 
-    if (!this.game.achievementsHelper.doesAchievementExist(achievement)) {
+    if (!achievementExists(achievement)) {
       return this.sendMessage(player, 'That achievement does not exist.');
     }
 
-    if (this.game.achievementsHelper.hasAchievement(target, achievement)) {
-      this.game.achievementsHelper.unearnAchievement(target, achievement);
+    if (achievementHas(target, achievement)) {
+      this.game.achievementsHelper.achievementUnearn(target, achievement);
       this.sendMessage(player, 'Took that achievement away.');
     } else {
-      this.game.achievementsHelper.earnAchievement(target, achievement);
+      this.game.achievementsHelper.achievementEarn(target, achievement);
       this.sendMessage(player, 'Gave that achievement.');
     }
   }

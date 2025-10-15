@@ -115,7 +115,7 @@ export class TreasureClaimerBehavior implements IAIBehavior {
           y: teleportY,
         });
 
-        game.achievementsHelper.earnAchievement(
+        game.achievementsHelper.achievementEarn(
           player as Player,
           'Raider of the Lost Chest',
         );

@@ -470,7 +470,7 @@ export class MovementHelper extends BaseService {
     }
 
     if (giveAchievement) {
-      this.game.achievementsHelper.earnAchievement(player, giveAchievement);
+      this.game.achievementsHelper.achievementEarn(player, giveAchievement);
     }
 
     this.game.movementHelper.postTeleportInteractableActions(player, obj);
