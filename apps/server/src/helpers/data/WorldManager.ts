@@ -192,7 +192,8 @@ export class WorldManager extends BaseService {
     consoleDebug('WorldManager', `Creating map ${mapName}`);
 
     try {
-      this.maps[mapName] = new WorldMap(this.game, mapName, mapJson);
+      this.game.groundManager.initGroundForMap(mapName);
+      this.maps[mapName] = new WorldMap(mapName, mapJson);
       this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
       this.handleMapSetup(this.maps[mapName], this.mapStates[mapName]);
     } catch (e) {
@@ -205,11 +206,11 @@ export class WorldManager extends BaseService {
   }
 
   private createInstancedMap(mapName: string, mapJson: any, partyName: string) {
+    this.game.groundManager.initGroundForMap(mapName, partyName);
+
     this.instances[mapName] = new InstancedWorldMap(
-      this.game,
       mapName,
       cloneDeep(mapJson),
-      partyName,
     );
     this.mapStates[mapName] = new MapState(this.game, this.instances[mapName]);
     this.handleMapSetup(this.instances[mapName], this.mapStates[mapName]);

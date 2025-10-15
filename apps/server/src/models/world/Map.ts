@@ -5,7 +5,6 @@ import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 
 import {
   coreSettings,
@@ -170,10 +169,8 @@ export class WorldMap {
   }
 
   constructor(
-    private game: Game,
     private mapName: string,
     private json: any,
-    partyName?: string,
   ) {
     const timer = new LoggerTimer({
       isActive: !process.env.DISABLE_TIMERS,
@@ -187,10 +184,6 @@ export class WorldMap {
     timer.startTimer(`planner-${mapName}`);
     this.createPlanner();
     timer.stopTimer(`planner-${mapName}`);
-
-    timer.startTimer(`initground-${mapName}`);
-    game.groundManager.initGroundForMap(mapName, partyName);
-    timer.stopTimer(`initground-${mapName}`);
 
     timer.startTimer(`maxes-${mapName}`);
     this.setMaxes();
