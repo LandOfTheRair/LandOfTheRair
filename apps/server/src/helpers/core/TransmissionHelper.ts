@@ -1,14 +1,9 @@
 import { Injectable } from 'injection-js';
 
-import type {
-  Observer,
-  Operation } from 'fast-json-patch';
-import {
-  generate,
-  observe,
-  unobserve,
-} from 'fast-json-patch';
+import type { Observer, Operation } from 'fast-json-patch';
+import { generate, observe, unobserve } from 'fast-json-patch';
 
+import { wsSendToSocket } from '@lotr/core';
 import type { GameServerResponse, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import type { Player, PlayerState } from '../../models';
@@ -160,7 +155,7 @@ export class TransmissionHelper extends BaseService {
   public sendDataToAccount(username: string, data: any): void {
     if (!username) return;
 
-    this.game.wsCmdHandler.sendToSocket(username, data);
+    wsSendToSocket(username, data);
   }
 
   // send an action to a player. also very useful
@@ -180,7 +175,7 @@ export class TransmissionHelper extends BaseService {
   ): void {
     if (!username) return;
 
-    this.game.wsCmdHandler.sendToSocket(username, { action, ...data });
+    wsSendToSocket(username, { action, ...data });
   }
 
   // send a response to an account. very useful.
@@ -200,6 +195,6 @@ export class TransmissionHelper extends BaseService {
   ): void {
     if (!username) return;
 
-    this.game.wsCmdHandler.sendToSocket(username, { type, ...data });
+    wsSendToSocket(username, { type, ...data });
   }
 }

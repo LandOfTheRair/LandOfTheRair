@@ -46,3 +46,4 @@ export * from './status-effect';
 export * from './trait';
 export * from './traittree';
 export * from './typescript';
+export * from './websocket';

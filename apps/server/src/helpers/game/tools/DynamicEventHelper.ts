@@ -18,6 +18,7 @@ import {
   coreSettings,
   eventGet,
 } from '@lotr/content';
+import { wsBroadcast } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
@@ -67,7 +68,7 @@ export class DynamicEventHelper extends BaseService {
     this.activeEvents.push(setEvent);
     this.game.eventsDB.createEvent(setEvent);
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.EventCreate,
       event: this.game.db.prepareForTransmission(setEvent),
     });
@@ -89,7 +90,7 @@ export class DynamicEventHelper extends BaseService {
     this.activeEvents = this.activeEvents.filter((x) => x !== event);
     this.game.eventsDB.deleteEvent(event as DynamicEvent);
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.EventDelete,
       event: this.game.db.prepareForTransmission(event),
     });
@@ -119,7 +120,7 @@ export class DynamicEventHelper extends BaseService {
 
     this.game.eventsDB.createEvent(updEvent as DynamicEvent);
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.EventCreate,
       event: this.game.db.prepareForTransmission(updEvent),
     });

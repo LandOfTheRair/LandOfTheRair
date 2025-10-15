@@ -44,6 +44,7 @@ import {
   manaToFull,
 } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
+import { wsSendToSocket } from '@lotr/core';
 import { consoleWarn, logCrashContextEntry } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
@@ -111,7 +112,7 @@ export class DefaultAIBehavior implements IAI {
     this.currentTarget = undefined;
 
     if (npc.takenOverBy) {
-      this.game.wsCmdHandler.sendToSocket(npc.takenOverBy.username, {
+      wsSendToSocket(npc.takenOverBy.username, {
         action: GameAction.GamePatchPlayer,
         player: {
           name: npc.name,

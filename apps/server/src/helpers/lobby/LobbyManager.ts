@@ -5,6 +5,7 @@ import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { wsBroadcast, wsSendToSocket } from '@lotr/core';
 import type { ILobbyCommand } from '../../interfaces';
 import * as commands from './lobby-commands';
 
@@ -105,12 +106,12 @@ export class LobbyManager extends BaseService {
   public forceLeaveGame(username: string) {
     this.leaveGame(username);
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.ChatUserLeaveGame,
       username,
     });
 
-    this.game.wsCmdHandler.sendToSocket(username, {
+    wsSendToSocket(username, {
       action: GameAction.GameQuit,
     });
   }
@@ -139,7 +140,7 @@ export class LobbyManager extends BaseService {
     this.state.discordOnlineCount = count;
 
     if (count !== oldCount) {
-      this.game.wsCmdHandler.broadcast({
+      wsBroadcast({
         type: GameServerResponse.UserCountUpdate,
         count,
       });
@@ -183,7 +184,7 @@ export class LobbyManager extends BaseService {
   }
 
   public updateAccount(account: IAccount): void {
-    this.game.wsCmdHandler.sendToSocket(account.username, {
+    wsSendToSocket(account.username, {
       action: GameAction.SetAccount,
       account: this.game.db.prepareForTransmission(account),
     });

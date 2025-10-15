@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 
 import { coreMaterialStorage } from '@lotr/content';
+import { wsSendToSocket } from '@lotr/core';
 import type { IItemContainer, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -35,7 +36,7 @@ export class LockerHelper extends BaseService {
 
     showLockers.unshift('Materials');
 
-    this.game.wsCmdHandler.sendToSocket(player.username, {
+    wsSendToSocket(player.username, {
       action: GameAction.LockerActionShow,
       lockerName,
       showLockers,

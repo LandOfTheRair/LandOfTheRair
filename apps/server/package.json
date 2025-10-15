@@ -20,6 +20,7 @@
     "@fastify/cors": "^11.1.0",
     "@fastify/rate-limit": "^10.3.0",
     "@lotr/characters": "*",
+    "@lotr/core": "*",
     "@lotr/currency": "*",
     "@lotr/effects": "*",
     "@lotr/exp": "*",

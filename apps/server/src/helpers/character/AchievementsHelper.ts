@@ -5,6 +5,7 @@ import {
   achievementHasEarned,
 } from '@lotr/content';
 
+import { wsSendToSocket } from '@lotr/core';
 import { GameServerResponse } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import type { Player } from '../../models';
@@ -37,7 +38,7 @@ export class AchievementsHelper extends BaseService {
       earnedAt: Date.now(),
     };
 
-    this.game.wsCmdHandler.sendToSocket(player.username, {
+    wsSendToSocket(player.username, {
       type: GameServerResponse.SendAchievement,
       achievement: achievementData,
     });

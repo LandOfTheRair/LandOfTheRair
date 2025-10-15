@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { wsSendToSocket } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
@@ -30,7 +31,7 @@ export class GMTakeover extends MacroCommand {
       delete player.takingOver?.takenOverBy;
       player.takingOver = undefined;
 
-      this.game.wsCmdHandler.sendToSocket(player.username, {
+      wsSendToSocket(player.username, {
         action: GameAction.GamePatchPlayer,
         player,
       });

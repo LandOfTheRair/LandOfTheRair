@@ -1,4 +1,5 @@
 import { effectExists, itemExists, itemGet, traitGet } from '@lotr/content';
+import { wsSendToSocket } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import { initializePlayer } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
@@ -158,7 +159,7 @@ export class MigrationHelper extends BaseService {
     this.game.guildManager.setGuildForPlayer(player);
     this.game.guildManager.syncPlayerWithGuild(player);
 
-    this.game.wsCmdHandler.sendToSocket(player.username, {
+    wsSendToSocket(player.username, {
       action: GameAction.UpdateGuild,
       guild: null,
     });

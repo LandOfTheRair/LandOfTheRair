@@ -1,0 +1,19 @@
+{
+  "name": "@lotr/core",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "",
+    "build": "tsc",
+    "start:dev": "tsc --watch",
+    "lint": "eslint -c .eslintrc.json --ext .ts src"
+  },
+  "devDependencies": {
+    "@lotr/eslint-config": "*",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@lotr/interfaces": "*",
+    "@lotr/logger": "*"
+  }
+}

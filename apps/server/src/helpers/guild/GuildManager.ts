@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 
 import { coreSettings } from '@lotr/content';
+import { wsSendToSocket } from '@lotr/core';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type { IGuild, IGuildMember } from '@lotr/interfaces';
 import { Currency, GameAction, GuildRole } from '@lotr/interfaces';
@@ -152,7 +153,7 @@ export class GuildManager extends BaseService {
     const guild = this.getGuildForPlayer(player);
     if (!guild) return;
 
-    this.game.wsCmdHandler.sendToSocket(player.username, {
+    wsSendToSocket(player.username, {
       action: GameAction.UpdateGuild,
       guild,
     });
@@ -168,7 +169,7 @@ export class GuildManager extends BaseService {
     player.affiliation = '';
     player.guildId = '';
 
-    this.game.wsCmdHandler.sendToSocket(player.username, {
+    wsSendToSocket(player.username, {
       action: GameAction.UpdateGuild,
       guild: null,
     });
@@ -266,7 +267,7 @@ export class GuildManager extends BaseService {
 
       this.updatePlayerProps(onlinePlayer);
 
-      this.game.wsCmdHandler.sendToSocket(onlinePlayer.username, {
+      wsSendToSocket(onlinePlayer.username, {
         action: GameAction.UpdateGuild,
         guild: null,
       });
@@ -722,7 +723,7 @@ export class GuildManager extends BaseService {
       30,
     );
 
-    this.game.wsCmdHandler.sendToSocket(actor.username, {
+    wsSendToSocket(actor.username, {
       action: GameAction.UpdateGuildAuditLog,
       auditLog: entriesToSend,
     });

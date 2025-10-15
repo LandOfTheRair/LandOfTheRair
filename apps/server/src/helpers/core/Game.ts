@@ -4,6 +4,7 @@ import { Injectable } from 'injection-js';
 import { LoggerTimer } from 'logger-timer';
 
 import { settingIsAIActive } from '@lotr/content';
+import { wsSetHandler } from '@lotr/core';
 import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
@@ -84,8 +85,6 @@ export class Game {
   }
 
   public readonly gameEvents = new EventEmitter();
-
-  public wsCmdHandler: IWebsocketCommandHandler;
 
   constructor(
     public loggerInitializer: LoggerInitializer,
@@ -171,7 +170,8 @@ export class Game {
 
     await this.db.tryConnect('GAME');
     consoleLog('Game:Init', 'Initializing game...');
-    this.wsCmdHandler = wsCmdHandler;
+
+    wsSetHandler(wsCmdHandler);
 
     const servicesByPriority: Partial<Record<GameEvent, (keyof Game)[]>> = {
       // these must come first, they are too widely-utilized

@@ -2,8 +2,8 @@ import { GameAction } from '@lotr/interfaces';
 
 import type { ILobbyCommand } from '../../../interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import { wsBroadcast } from '@lotr/core';
+import type { Game } from '../../core';
 
 export class MOTDCommand implements ILobbyCommand {
   name = '/motd';
@@ -15,11 +15,9 @@ export class MOTDCommand implements ILobbyCommand {
     const motd = rest.join(' ') || 'Welcome to Land of the Rair!';
     game.worldDB.setMOTD(motd);
 
-    game.wsCmdHandler.broadcast(
-      game.messageHelper.getSystemMessageObject(motd),
-    );
+    wsBroadcast(game.messageHelper.getSystemMessageObject(motd));
 
-    game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.ChatSetMOTD,
       motd,
     });

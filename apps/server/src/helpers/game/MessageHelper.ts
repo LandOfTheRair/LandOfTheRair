@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 import { set } from 'lodash';
 
+import { wsBroadcast } from '@lotr/core';
 import type {
   ICharacter,
   MessageInfo,
@@ -272,7 +273,7 @@ export class MessageHelper extends BaseService {
     const source =
       fromDiscord && from !== '★System' ? `${verified ? 'ᐎ' : ''}Discord` : '';
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       action: GameAction.ChatAddMessage,
       timestamp: Date.now(),
       message,
@@ -280,7 +281,7 @@ export class MessageHelper extends BaseService {
       source,
     });
 
-    this.game.wsCmdHandler.broadcast({
+    wsBroadcast({
       type: GameServerResponse.Chat,
       timestamp: Date.now(),
       message,

@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import stripe from 'stripe';
 
 import { corePremium, settingGameGet } from '@lotr/content';
+import { wsSendToSocket } from '@lotr/core';
 import type { IAccount, IPlayer, ISilverPerk } from '@lotr/interfaces';
 import {
   GameServerResponse,
@@ -133,7 +134,7 @@ export class SubscriptionHelper extends BaseService {
       }
     }
 
-    this.game.wsCmdHandler.sendToSocket(account.username, {
+    wsSendToSocket(account.username, {
       type: GameServerResponse.SendAlert,
       title: 'Payment Success!',
       content: 'Your payment has gone through. Enjoy your new content!',

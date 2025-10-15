@@ -1,3 +1,4 @@
+import { wsSendToSocket } from '@lotr/core';
 import type { IParty, IPartyMember } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -38,7 +39,7 @@ export class PartyManager extends BaseService {
     }, {});
 
     party.members.forEach((member) => {
-      this.game.wsCmdHandler.sendToSocket(member, {
+      wsSendToSocket(member, {
         action: GameAction.PartyUpdate,
         party,
         partyMembers,
@@ -83,7 +84,7 @@ export class PartyManager extends BaseService {
 
   public removePartyMember(member: IPartyMember): void {
     delete this.allPartyMembers[member.username];
-    this.game.wsCmdHandler.sendToSocket(member.username, {
+    wsSendToSocket(member.username, {
       action: GameAction.PartyUpdate,
       party: null,
       partyMembers: null,
