@@ -51,6 +51,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, playerGetCurrentDaily } from '@lotr/characters';
 import {
+  dailyQuestCanDo,
   isHoliday,
   itemCanBeUpgraded,
   itemIsOwnedBy,
@@ -869,7 +870,7 @@ export class DialogActionHelper extends BaseService {
 
     const { quests, npc: npcName } = action;
 
-    if (!this.game.dailyHelper.canDoDailyQuest(player, npcName)) {
+    if (!dailyQuestCanDo(player, npcName)) {
       return {
         messages: [
           "Thanks, but you've done all you can today. Come back tomorrow - I'm sure there'll be work for you.",

@@ -2,7 +2,7 @@ import type { IRNGDungeonMetaConfig } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
 import type { Player } from '../../models';
 
-import { coreRNGDungeonConfig } from '@lotr/content';
+import { coreRNGDungeonConfig, dailyResetTime } from '@lotr/content';
 import { consoleLog } from '@lotr/logger';
 import { GameEvent } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -99,15 +99,12 @@ export class RNGDungeonManager extends BaseService {
 
   // check if we should reset (if the timestamps differ)
   private shouldReset(): boolean {
-    return (
-      this.lastDungeonReset !==
-      this.game.dailyHelper.resetTime.toFormat('yyyy-MM-dd')
-    );
+    return this.lastDungeonReset !== dailyResetTime().toFormat('yyyy-MM-dd');
   }
 
   // set the reset timestamp
   private setLastDungeonReset(): void {
-    const resetTime = this.game.dailyHelper.resetTime;
+    const resetTime = dailyResetTime();
     this.lastDungeonReset = resetTime.toFormat('yyyy-MM-dd');
   }
 }

@@ -1,5 +1,8 @@
 import { getEmptyHand } from '@lotr/characters';
 import {
+  dailyItemBuy,
+  dailyItemCanBuy,
+  dailyItemIsDaily,
   itemCanGetBenefitsFrom,
   itemIsOwnedBy,
   itemPropertyGet,
@@ -2047,9 +2050,9 @@ export class MoveItems extends MacroCommand {
         : vendorBehavior.vendorDailyItems;
     const item = vitems[+subslot];
     const cost = item.mods.value ?? 0;
-    const isDaily = this.game.dailyHelper.isDailyItem(item);
+    const isDaily = dailyItemIsDaily(item);
 
-    if (isDaily && !this.game.dailyHelper.canBuyDailyItem(player, item)) {
+    if (isDaily && !dailyItemCanBuy(player, item)) {
       this.sendMessage(
         player,
         `**${npc.name}**: Those are sold out for today, come back later!`,
@@ -2212,7 +2215,7 @@ export class MoveItems extends MacroCommand {
     }
 
     if (isDaily) {
-      this.game.dailyHelper.buyDailyItem(player, item);
+      dailyItemBuy(player, item);
     }
   }
 

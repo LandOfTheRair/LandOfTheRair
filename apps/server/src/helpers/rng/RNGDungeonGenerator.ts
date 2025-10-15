@@ -15,6 +15,7 @@ import {
   coreChallenge,
   coreRNGDungeonConfig,
   coreSpriteInfo,
+  dailyResetTime,
   droptableCustomMapAdd,
   itemCustomAdd,
   itemCustomClearMap,
@@ -53,7 +54,7 @@ export class RNGDungeonGenerator extends BaseService {
       map.name
         .split('')
         .map((c) => c.charCodeAt(0))
-        .reduce((a, b) => a + b, 0) + +this.game.dailyHelper.resetTime;
+        .reduce((a, b) => a + b, 0) + +dailyResetTime();
     seed ??= defaultSeed;
 
     consoleLog(

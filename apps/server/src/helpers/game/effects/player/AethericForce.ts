@@ -1,10 +1,11 @@
+import { dailyResetTime } from '@lotr/content';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Effect } from '../../../../models';
 
 export class AethericForce extends Effect {
   override create(char: ICharacter, effect: IStatusEffect) {
-    const resetTime = this.game.dailyHelper.resetTime;
+    const resetTime = dailyResetTime();
     effect.endsAt = +resetTime;
   }
 

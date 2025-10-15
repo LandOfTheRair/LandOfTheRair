@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { template } from 'lodash';
 
 import { addStatistic, hasHeldItemInEitherHand } from '@lotr/characters';
-import { questGet } from '@lotr/content';
+import { dailyQuestFinish, questGet } from '@lotr/content';
 import { gainCurrency } from '@lotr/currency';
 import type {
   Allegiance,
@@ -199,7 +199,7 @@ export class QuestHelper extends BaseService {
       }
 
       addStatistic(player, TrackedStatistic.DailyQuests);
-      this.game.dailyHelper.finishDailyQuest(player, questGiver);
+      dailyQuestFinish(player, questGiver);
     }
 
     // non-repeatable quests are marked off forever

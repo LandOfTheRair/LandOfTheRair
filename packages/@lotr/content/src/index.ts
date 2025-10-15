@@ -1,6 +1,7 @@
 export * from './achievements';
 export * from './allcontent';
 export * from './core';
+export * from './daily';
 export * from './drops';
 export * from './effects';
 export * from './errors';

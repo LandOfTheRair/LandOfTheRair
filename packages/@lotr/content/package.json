@@ -13,7 +13,8 @@
     "@lotr/interfaces": "*",
     "@lotr/logger": "*",
     "deep-freeze": "^0.0.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "luxon": "^1.25.0"
   },
   "devDependencies": {
     "@lotr/eslint-config": "*",
