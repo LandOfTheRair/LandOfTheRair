@@ -36,6 +36,7 @@
     "@lotr/exp": "*",
     "@lotr/initializers": "*",
     "@lotr/interfaces": "*",
+    "@lotr/premium": "*",
     "@lotr/shared": "*",
     "@ngxs-labs/immer-adapter": "^3.0.5",
     "@ngxs/devtools-plugin": "^18.0.0",

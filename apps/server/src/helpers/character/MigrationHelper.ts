@@ -4,6 +4,7 @@ import { hasEffect } from '@lotr/effects';
 import { initializePlayer } from '@lotr/initializers';
 import type { IPlayer } from '@lotr/interfaces';
 import { Direction, GameAction, GuildRole } from '@lotr/interfaces';
+import { getSubscriptionTier } from '@lotr/premium';
 import { Injectable } from 'injection-js';
 import { isArray, size } from 'lodash';
 import uuid from 'uuid/v4';
@@ -123,8 +124,7 @@ export class MigrationHelper extends BaseService {
     player.isGM = playerAccount.isGameMaster;
     player.isTester = playerAccount.isTester;
     player.username = playerAccount.username;
-    player.subscriptionTier =
-      this.game.subscriptionHelper.getSubscriptionTier(playerAccount);
+    player.subscriptionTier = getSubscriptionTier(playerAccount);
 
     player.lastRegionDesc = '';
     player.lastTileDesc = '';

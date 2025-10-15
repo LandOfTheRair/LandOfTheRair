@@ -10,7 +10,6 @@ import {
   SubscriptionTier,
 } from '@lotr/interfaces';
 import { consoleLog } from '@lotr/logger';
-import { isSubscribed } from '@lotr/shared';
 import type { Account } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
@@ -19,34 +18,6 @@ const Stripe = (stripe as any)(process.env.STRIPE_TOKEN);
 @Injectable()
 export class SubscriptionHelper extends BaseService {
   public init() {}
-
-  // subscription checks
-  public isSubscribed(account: IAccount): boolean {
-    return isSubscribed(account);
-  }
-
-  public isPlayerSubscribed(player: IPlayer): boolean {
-    return player.subscriptionTier > 0;
-  }
-
-  public getSubscriptionTier(account: IAccount): SubscriptionTier {
-    if (account.isGameMaster) return SubscriptionTier.GM;
-    if (account.isTester) return SubscriptionTier.Tester;
-    return account.premium.subscriptionTier ?? 0;
-  }
-
-  public getSilverCosmetics(account: IAccount) {
-    return {
-      inversify:
-        account.premium.silverPurchases[SilverPurchase.CosmeticInversify],
-      ancientify:
-        account.premium.silverPurchases[SilverPurchase.CosmeticAncientify],
-      etherpulse:
-        account.premium.silverPurchases[SilverPurchase.CosmeticEtherPulse],
-      ghostether:
-        account.premium.silverPurchases[SilverPurchase.CosmeticGhostEther],
-    };
-  }
 
   public takeCosmetic(account: IAccount, cosmetic: SilverPurchase) {
     if (!account.premium.silverPurchases[cosmetic]) return;

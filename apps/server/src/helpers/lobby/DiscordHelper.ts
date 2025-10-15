@@ -12,6 +12,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { itemGet } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
+import { isSubscribed } from '@lotr/premium';
 import type { IDiscordCommand } from '../../interfaces';
 import * as commands from './discord-commands';
 
@@ -190,7 +191,7 @@ export class DiscordHelper extends BaseService {
     }
 
     if (subscriber) {
-      if (this.game.subscriptionHelper.isSubscribed(account)) {
+      if (isSubscribed(account)) {
         this.addRole(user, subscriber);
       } else {
         this.removeRole(user, subscriber);

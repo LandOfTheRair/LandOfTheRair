@@ -17,6 +17,7 @@ import { distanceFrom } from '@lotr/shared';
 
 import { itemPropertyGet, itemPropertySet } from '@lotr/content';
 import { transmissionSendResponseToAccount } from '@lotr/core';
+import { getSilverCosmetics } from '@lotr/premium';
 import type { Game } from '../../../../helpers';
 
 export class CosmeticBehavior implements IAIBehavior {
@@ -134,8 +135,7 @@ export class CosmeticBehavior implements IAIBehavior {
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
         const account = game.lobbyManager.getAccount(player.username);
-        const allAvailable =
-          game.subscriptionHelper.getSilverCosmetics(account);
+        const allAvailable = getSilverCosmetics(account);
 
         if (Object.values(allAvailable).every((x) => !x)) {
           return 'You have no purchased cosmetics!';
@@ -185,8 +185,7 @@ export class CosmeticBehavior implements IAIBehavior {
 
         const cosmetic = args['cosmetic*'].toLowerCase();
         const account = game.lobbyManager.getAccount(player.username);
-        const allAvailable =
-          game.subscriptionHelper.getSilverCosmetics(account);
+        const allAvailable = getSilverCosmetics(account);
 
         if ((allAvailable[cosmetic] ?? 0) <= 0) {
           return 'You do not have any of that cosmetic!';

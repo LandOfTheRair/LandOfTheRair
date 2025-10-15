@@ -16,11 +16,8 @@ import { BaseService } from '../../models/BaseService';
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import { isHoliday, settingGameGet, traitLevel } from '@lotr/content';
 import { transmissionMovementPatchSend } from '@lotr/core';
-import {
-  directionDiagonalToWestEast,
-  directionFromOffset,
-  isAtLeastTester,
-} from '@lotr/shared';
+import { isAtLeastTester, isPlayerSubscribed } from '@lotr/premium';
+import { directionDiagonalToWestEast, directionFromOffset } from '@lotr/shared';
 
 @Injectable()
 export class MovementHelper extends BaseService {
@@ -286,10 +283,7 @@ export class MovementHelper extends BaseService {
       return false;
     }
 
-    if (
-      subscriberOnly &&
-      !this.game.subscriptionHelper.isPlayerSubscribed(player)
-    ) {
+    if (subscriberOnly && isPlayerSubscribed(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: "You found an easter egg! Sadly, it's spoiled.",
       });
