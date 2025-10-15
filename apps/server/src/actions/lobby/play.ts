@@ -2,9 +2,9 @@ import { merge } from 'lodash';
 
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
-import type { Player, WorldMap } from '../../models';
+import type { WorldMap } from '@lotr/core';
+import type { Game } from '../../helpers';
+import type { Player } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
 export class PlayAction extends ServerAction {

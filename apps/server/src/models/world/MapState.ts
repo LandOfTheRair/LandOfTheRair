@@ -3,11 +3,11 @@ import RBush from 'rbush';
 
 import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import type { Game } from '../../helpers';
 
 import { isDead, isPlayer } from '@lotr/characters';
 import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
+import type { WorldMap } from '@lotr/core';
 import { transmissionPlayerPatchGenerateQueue } from '@lotr/core';
 import type {
   ICharacter,
@@ -26,7 +26,6 @@ import {
   Hostility,
 } from '@lotr/interfaces';
 import type { Player } from '../orm';
-import type { WorldMap } from './Map';
 import { Spawner } from './Spawner';
 
 const PLAYER_KEYS = [

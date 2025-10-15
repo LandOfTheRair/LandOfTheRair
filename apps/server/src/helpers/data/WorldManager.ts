@@ -10,11 +10,12 @@ import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMapScript, IPlayer } from '@lotr/interfaces';
 import { ObjectType } from '@lotr/interfaces';
 import type { Player, Spawner } from '../../models';
-import { InstancedWorldMap, MapState, WorldMap } from '../../models';
+import { MapState } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isDead } from '@lotr/characters';
 import { coreRNGDungeonConfig } from '@lotr/content';
+import { InstancedWorldMap, WorldMap } from '@lotr/core';
 import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
 

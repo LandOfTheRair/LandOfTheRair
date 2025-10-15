@@ -1,7 +1,6 @@
 import type { IMapScript } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../helpers';
+import type { Game } from '../../../helpers';
 
 export class DedlaenMazeScript implements IMapScript {
   readonly name = 'DedlaenMaze';

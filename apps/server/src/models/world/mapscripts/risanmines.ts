@@ -1,8 +1,7 @@
 import type { ICharacter, IMapScript, INPC } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../helpers';
+import type { Game } from '../../../helpers';
 
 export class RisanMinesScript implements IMapScript {
   readonly name = 'RisanMines';

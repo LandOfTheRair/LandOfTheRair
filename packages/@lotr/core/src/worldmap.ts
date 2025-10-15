@@ -4,8 +4,6 @@ import { LoggerTimer } from 'logger-timer';
 import { Mrpas } from 'mrpas';
 import * as Pathfinder from 'pathfinding';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-
 import {
   coreSettings,
   droptableMapGet,
@@ -19,15 +17,15 @@ import type { IMapData, IMapProperties, IPlayer } from '@lotr/interfaces';
 import { MapLayer, ObjectType, TilesWithNoFOVUpdate } from '@lotr/interfaces';
 
 export class WorldMap {
-  private densityMap: Pathfinder.Grid;
+  private densityMap!: Pathfinder.Grid;
   private planner: any;
-  private fov: Mrpas;
+  private fov!: Mrpas;
   private formattedJson: any;
 
-  private firstCutExpValue: number;
-  private secondCutExpValue: number;
-  private maxLevelExpPossible: number;
-  private maxSkillExpPossible: number;
+  private firstCutExpValue!: number;
+  private secondCutExpValue!: number;
+  private maxLevelExpPossible!: number;
+  private maxSkillExpPossible!: number;
 
   private teleportTags: Record<string, { x: number; y: number }> = {};
 
@@ -200,7 +198,7 @@ export class WorldMap {
     this.formattedJson = cloneDeep(this.json);
 
     this.formattedJson.layers.length = 10;
-    this.formattedJson.tilesets.forEach((tileset) => {
+    this.formattedJson.tilesets.forEach((tileset: any) => {
       delete tileset.terrains;
     });
 
@@ -294,8 +292,8 @@ export class WorldMap {
   private parseMapTagRefs(): void {
     const objects = this.json.layers[MapLayer.Interactables].objects;
     objects
-      .filter((x) => x.properties?.teleportTagRef)
-      .forEach((obj) => {
+      .filter((x: any) => x.properties?.teleportTagRef)
+      .forEach((obj: any) => {
         this.teleportTags[obj.properties.teleportTagRef] = {
           x: obj.x / 64,
           y: obj.y / 64 - 1,
@@ -305,7 +303,7 @@ export class WorldMap {
 
   private parseObjectsIntoPositionalHash(mapLayer: MapLayer) {
     const objects = this.json.layers[mapLayer]?.objects ?? [];
-    objects.forEach((obj) => {
+    objects.forEach((obj: any) => {
       const realX = Math.floor(obj.x / 64);
       const realY = Math.floor(obj.y / 64) - 1; // -1 to adjust for Tiled
 
@@ -328,7 +326,7 @@ export class WorldMap {
 
   private parseRectangleDataIntoPositionalHash(mapLayer: MapLayer) {
     const objects = this.json.layers[mapLayer].objects;
-    objects.forEach((obj) => {
+    objects.forEach((obj: any) => {
       const realX = Math.floor(obj.x / 64);
       const realY = Math.floor(obj.y / 64); // -1 to adjust for Tiled
       const realW = Math.floor(obj.width / 64);
@@ -346,12 +344,16 @@ export class WorldMap {
     return this.json.layers[mapLayer].data[x + y * this.width];
   }
 
-  private getObjectAt(mapLayer: MapLayer, x: number, y: number): null | any {
-    return get(this.layerHashes, [mapLayer, x, y], null);
+  private getObjectAt(
+    mapLayer: MapLayer,
+    x: number,
+    y: number,
+  ): undefined | any {
+    return get(this.layerHashes, [mapLayer, x, y], undefined);
   }
 
   // get the x/y for a teleport tag (if possible)
-  public getTeleportTagRef(ref: string): { x: number; y: number } | null {
+  public getTeleportTagRef(ref: string): { x: number; y: number } | undefined {
     return this.teleportTags[ref];
   }
 
@@ -457,7 +459,7 @@ export class WorldMap {
   // find a door by a given id
   public findDoorById(id: number) {
     return this.json.layers[MapLayer.Interactables].objects.find(
-      (x) => x.id === id,
+      (x: any) => x.id === id,
     );
   }
 
@@ -475,7 +477,7 @@ export class WorldMap {
   // find an interactable by its name
   public findInteractableByName(name: string) {
     return this.json.layers[MapLayer.Interactables].objects.find(
-      (x) => x.name === name,
+      (x: any) => x.name === name,
     );
   }
 
@@ -548,7 +550,7 @@ export class WorldMap {
 
     const path = this.planner.findPath(startX, startY, endX, endY, grid);
 
-    const steps = path.map(([newX, newY], idx) => {
+    const steps = path.map(([newX, newY]: [number, number], idx: number) => {
       if (idx === 0) return { x: 0, y: 0 };
 
       const [prevX, prevY] = path[idx - 1];
@@ -585,7 +587,7 @@ export class WorldMap {
 
     const path = this.planner.findPath(startX, startY, endX, endY, grid);
 
-    const steps = path.map(([newX, newY], idx) => {
+    const steps = path.map(([newX, newY]: [number, number], idx: number) => {
       if (idx === 0) return { x: 0, y: 0 };
 
       const [prevX, prevY] = path[idx - 1];

@@ -1,8 +1,7 @@
 import type { IMapScript } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../helpers';
-import type { WorldMap } from '../Map';
+import type { WorldMap } from '@lotr/core';
+import type { Game } from '../../../helpers';
 import type { MapState } from '../MapState';
 
 export class RyltCaveUpstairsScript implements IMapScript {

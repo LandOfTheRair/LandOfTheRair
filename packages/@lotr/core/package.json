@@ -10,11 +10,15 @@
   },
   "devDependencies": {
     "@lotr/eslint-config": "*",
+    "@types/pathfinding": "^0.1.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
     "@lotr/interfaces": "*",
     "@lotr/logger": "*",
-    "fast-json-patch": "^3.1.1"
+    "fast-json-patch": "^3.1.1",
+    "logger-timer": "^1.0.7",
+    "mrpas": "^2.0.0",
+    "pathfinding": "^0.4.18"
   }
 }

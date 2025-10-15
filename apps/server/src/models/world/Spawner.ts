@@ -1,16 +1,15 @@
 import { extend, isArray, random, sample } from 'lodash';
 import uuid from 'uuid/v4';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import type { Game } from '../../helpers';
 
 import type { Holiday, IAI, INPC, INPCDefinition } from '@lotr/interfaces';
 import { Hostility } from '@lotr/interfaces';
-import type { WorldMap } from './Map';
 import type { MapState } from './MapState';
 
 import { isDead } from '@lotr/characters';
 import { isHoliday } from '@lotr/content';
+import type { WorldMap } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';

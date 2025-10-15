@@ -30,7 +30,6 @@ import {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { Game } from '../../../helpers';
 import type { SkillCommand } from '../../macro';
-import type { WorldMap } from '../Map';
 import type { MapState } from '../MapState';
 import type { Spawner } from '../Spawner';
 
@@ -44,6 +43,7 @@ import {
   manaToFull,
 } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
+import type { WorldMap } from '@lotr/core';
 import { wsSendToSocket } from '@lotr/core';
 import { consoleWarn, logCrashContextEntry } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
