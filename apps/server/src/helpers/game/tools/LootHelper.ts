@@ -5,6 +5,7 @@ import { LootTable } from 'lootastic';
 import { settingGameGet } from '@lotr/content';
 import type { INPC, ISimpleItem, Rollable } from '@lotr/interfaces';
 import { Allegiance, ItemSlot } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
@@ -170,7 +171,7 @@ export class LootHelper extends BaseService {
     );
 
     // we always drop the hands - the golden rule (except greens)
-    if (!this.game.traitHelper.rollTraitValue(npc, 'DeathGrip')) {
+    if (!rollTraitValue(npc, 'DeathGrip')) {
       if (npc.items.equipment[ItemSlot.RightHand]) {
         rolledItems.push(
           npc.items.equipment[ItemSlot.RightHand] as ISimpleItem,

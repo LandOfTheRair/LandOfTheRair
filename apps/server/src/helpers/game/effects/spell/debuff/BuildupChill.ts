@@ -3,6 +3,7 @@ import { random } from 'lodash';
 import { traitLevelValue } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { Effect } from '../../../../../models';
 
 export class BuildupChill extends Effect {
@@ -40,10 +41,7 @@ export class BuildupChill extends Effect {
         this.game.effectHelper.removeEffect(char, effect);
 
         // try to freeze them solid
-        if (
-          attacker &&
-          this.game.traitHelper.rollTraitValue(attacker, 'WintersEmbrace')
-        ) {
+        if (attacker && rollTraitValue(attacker, 'WintersEmbrace')) {
           this.sendMessage(attacker, {
             message: `You froze ${char.name} solid!`,
           });

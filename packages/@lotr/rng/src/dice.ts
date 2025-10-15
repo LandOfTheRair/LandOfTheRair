@@ -1,4 +1,5 @@
 import { getStat } from '@lotr/characters';
+import { traitLevelValue } from '@lotr/content';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { random } from 'lodash';
@@ -47,4 +48,13 @@ export function oneToStat(char: ICharacter, stat: Stat): number {
 
 export function oneToLUK(char: ICharacter): number {
   return oneToStat(char, Stat.LUK);
+}
+
+// shorthand to roll a trait
+export function rollTraitValue(char: ICharacter, trait: string): boolean {
+  const levelValue = traitLevelValue(char, trait);
+  if (levelValue <= 0) return false;
+  if (levelValue >= 100) return true;
+
+  return rollInOneHundred(levelValue);
 }

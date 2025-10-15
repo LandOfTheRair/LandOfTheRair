@@ -8,6 +8,7 @@ import type {
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import { SkillCommand } from '../../../../../models/macro';
 
@@ -57,11 +58,7 @@ export class ThrowCommand extends SkillCommand {
     for (let i = 0; i < numThrows; i++) {
       this.game.combatHelper.physicalAttack(user, target, opts);
 
-      if (
-        user &&
-        target &&
-        this.game.traitHelper.rollTraitValue(user, 'BouncingThrows')
-      ) {
+      if (user && target && rollTraitValue(user, 'BouncingThrows')) {
         const nearby = this.game.targettingHelper
           .getPossibleAOETargets(user, user, 4)
           .filter((x) => x !== target);

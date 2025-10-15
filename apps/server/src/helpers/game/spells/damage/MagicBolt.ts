@@ -1,5 +1,6 @@
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { Spell } from '../../../../models/world/Spell';
 
 export class MagicBolt extends Spell {
@@ -11,7 +12,7 @@ export class MagicBolt extends Spell {
     if (
       caster &&
       target &&
-      this.game.traitHelper.rollTraitValue(caster, 'ConcussiveBolt') &&
+      rollTraitValue(caster, 'ConcussiveBolt') &&
       !hasEffect(target, 'Stun')
     ) {
       this.game.effectHelper.addEffect(target, caster, 'Stun', {

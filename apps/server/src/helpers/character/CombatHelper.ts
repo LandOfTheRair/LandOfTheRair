@@ -35,7 +35,7 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
-import { rollInOneHundred } from '@lotr/rng';
+import { rollInOneHundred, rollTraitValue } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -559,7 +559,7 @@ export class CombatHelper extends BaseService {
     defender: ICharacter,
     args: PhysicalAttackArgs = {},
   ) {
-    if (!this.game.traitHelper.rollTraitValue(attacker, 'BouncingArrows')) {
+    if (!rollTraitValue(attacker, 'BouncingArrows')) {
       return;
     }
 

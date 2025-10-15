@@ -3,19 +3,12 @@ import { cloneDeep } from 'lodash';
 
 import type {
   BaseClass,
-  ICharacter,
   IClassTraitTree,
   IPlayer,
   ITraitTreeTrait,
 } from '@lotr/interfaces';
 
-import {
-  traitGet,
-  traitLevel,
-  traitLevelValue,
-  traitTreeGet,
-} from '@lotr/content';
-import { rollInOneHundred } from '@lotr/rng';
+import { traitGet, traitLevel, traitTreeGet } from '@lotr/content';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -116,15 +109,6 @@ export class TraitHelper extends BaseService {
 
     // last, recalculate stats because lots of traits affect stats
     this.game.characterHelper.recalculateEverything(player);
-  }
-
-  // shorthand to roll a trait
-  public rollTraitValue(char: ICharacter, trait: string): boolean {
-    const levelValue = traitLevelValue(char, trait);
-    if (levelValue <= 0) return false;
-    if (levelValue >= 100) return true;
-
-    return rollInOneHundred(levelValue);
   }
 
   // build management

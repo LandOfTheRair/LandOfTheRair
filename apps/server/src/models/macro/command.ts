@@ -41,7 +41,7 @@ import {
 } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import { consoleWarn } from '@lotr/logger';
-import { rollInOneHundred } from '@lotr/rng';
+import { rollInOneHundred, rollTraitValue } from '@lotr/rng';
 import type { Player } from '../orm';
 
 export abstract class MacroCommand implements IMacroCommand {
@@ -201,7 +201,7 @@ export abstract class SkillCommand extends MacroCommand {
     targets?: ICharacter[],
     overrideEffect?: Partial<IItemEffect>,
   ): boolean {
-    if (this.game.traitHelper.rollTraitValue(user, 'Clearcasting')) return true;
+    if (rollTraitValue(user, 'Clearcasting')) return true;
 
     const mpCost = this.mpCost(user, targets, overrideEffect);
 

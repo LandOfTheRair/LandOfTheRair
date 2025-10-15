@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { Spell } from '../../../../models/world/Spell';
 
 export class MagicMissile extends Spell {
@@ -10,11 +11,7 @@ export class MagicMissile extends Spell {
     spellCastArgs: SpellCastArgs,
   ): void {
     // try to bounce to a nearby target
-    if (
-      caster &&
-      target &&
-      this.game.traitHelper.rollTraitValue(caster, 'BouncingMissiles')
-    ) {
+    if (caster && target && rollTraitValue(caster, 'BouncingMissiles')) {
       const nearby = this.game.targettingHelper
         .getPossibleAOETargets(caster, caster, 4)
         .filter((x) => x !== target);
@@ -25,11 +22,7 @@ export class MagicMissile extends Spell {
       }
     }
 
-    if (
-      caster &&
-      target &&
-      this.game.traitHelper.rollTraitValue(caster, 'DispellingMissiles')
-    ) {
+    if (caster && target && rollTraitValue(caster, 'DispellingMissiles')) {
       this.game.spellManager.castSpell('Dispel', caster, target);
     }
   }

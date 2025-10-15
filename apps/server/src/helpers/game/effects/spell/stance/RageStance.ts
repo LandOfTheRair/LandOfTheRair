@@ -2,6 +2,7 @@ import { getSkillLevel, mana } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, ItemSlot, Stat } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import { Effect } from '../../../../../models';
 
@@ -56,7 +57,7 @@ export class RageStance extends Effect {
 
     // if we're on someone and we can viciously assault, give it a try
     if (
-      this.game.traitHelper.rollTraitValue(char, 'ViciousAssault') &&
+      rollTraitValue(char, 'ViciousAssault') &&
       distanceFrom(char, target) === 0
     ) {
       this.game.spellManager.castSpell('Cleave', char, target);

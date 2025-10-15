@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lotr/characters": "*",
+    "@lotr/content": "*",
     "@lotr/eslint-config": "*",
     "@lotr/interfaces": "*",
     "lodash": "^4.17.21"

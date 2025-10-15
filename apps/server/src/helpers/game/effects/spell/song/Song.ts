@@ -2,6 +2,7 @@ import { manaDamage } from '@lotr/characters';
 import { traitLevel } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
+import { rollTraitValue } from '@lotr/rng';
 import { Effect } from '../../../../../models';
 
 export class Song extends Effect {
@@ -18,7 +19,7 @@ export class Song extends Effect {
   public override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    if (!this.game.traitHelper.rollTraitValue(char, 'Ventriloquism')) {
+    if (!rollTraitValue(char, 'Ventriloquism')) {
       manaDamage(char, 5);
     }
 

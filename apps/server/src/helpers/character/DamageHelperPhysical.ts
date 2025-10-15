@@ -57,7 +57,13 @@ import {
 } from '@lotr/content';
 import { getEffect, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
-import { oneInX, oneToLUK, rollInOneHundred, uniformRoll } from '@lotr/rng';
+import {
+  oneInX,
+  oneToLUK,
+  rollInOneHundred,
+  rollTraitValue,
+  uniformRoll,
+} from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 
 interface WeaponAttackStats {
@@ -1275,7 +1281,7 @@ export class DamageHelperPhysical extends BaseService {
 
   private attemptToShadowSwap(attacker: ICharacter): void {
     if (!this.game.visibilityHelper.canHide(attacker)) return;
-    if (!this.game.traitHelper.rollTraitValue(attacker, 'ShadowSwap')) return;
+    if (!rollTraitValue(attacker, 'ShadowSwap')) return;
 
     this.game.messageHelper.sendLogMessageToPlayer(attacker, {
       message: 'You swap places with your shadow!',
@@ -1314,10 +1320,7 @@ export class DamageHelperPhysical extends BaseService {
       isBackstab = true;
     }
 
-    if (
-      !isBackstab &&
-      this.game.traitHelper.rollTraitValue(attacker, 'ShadowDaggers')
-    ) {
+    if (!isBackstab && rollTraitValue(attacker, 'ShadowDaggers')) {
       this.game.messageHelper.sendLogMessageToPlayer(attacker, {
         message: 'Your shadow daggers unsheathe themselves!',
       });
@@ -1412,7 +1415,7 @@ export class DamageHelperPhysical extends BaseService {
 
       const numShots = shots ?? 0;
 
-      if (!this.game.traitHelper.rollTraitValue(attacker, 'EndlessQuiver')) {
+      if (!rollTraitValue(attacker, 'EndlessQuiver')) {
         itemPropertySet(ammo, 'shots', numShots - 1);
         if (numShots - 1 <= 0) {
           this.game.characterHelper.setEquipmentSlot(
@@ -1579,7 +1582,7 @@ export class DamageHelperPhysical extends BaseService {
         CombatEffect.HitWeak,
       );
 
-      if (this.game.traitHelper.rollTraitValue(defender, 'SterlingArmor')) {
+      if (rollTraitValue(defender, 'SterlingArmor')) {
         damage = 0;
       }
     } else if (attackerScope.isStrong) {
