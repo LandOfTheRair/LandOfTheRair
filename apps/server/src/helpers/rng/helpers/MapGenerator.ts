@@ -1,5 +1,6 @@
 import type {
   IChallenge,
+  IGeneratorMapNode,
   IItemDefinition,
   INPCDefinition,
   IRNGDungeonConfig,
@@ -8,42 +9,20 @@ import type {
   IRNGDungeonMapGenConfig,
   IRNGDungeonMetaConfig,
   ISpawnerData,
-  Rollable } from '@lotr/interfaces';
-import {
-  MapLayer,
-  MapTilesetLayer
+  ISpoilerLog,
+  Rollable,
 } from '@lotr/interfaces';
+import { MapGenTile, MapLayer, MapTilesetLayer } from '@lotr/interfaces';
 import * as fs from 'fs-extra';
 import type { Room } from 'rot-js/dist/rot';
 import { Map, RNG } from 'rot-js/dist/rot';
-import { RNGDungeonItemGenerator } from './ItemGenerator';
-import { RNGDungeonNPCGenerator } from './NPCGenerator';
-import { RNGDungeonSpawnerGenerator } from './SpawnerGenerator';
-import { RNGDungeonTilemapGenerator } from './TilemapGenerator';
 
-export enum MapGenTile {
-  Empty = 0,
-  Wall = 1,
-  Door = 2,
-  DefaultWall = 3,
-}
-
-export interface IGeneratorMapNode {
-  x: number;
-  y: number;
-  idx: number;
-  hasFluid: boolean;
-  hasFoliage: boolean;
-  hasWall: boolean;
-  hasDecor: boolean;
-  hasDenseDecor: boolean;
-  hasOpaqueDecor: boolean;
-}
-
-export interface ISpoilerLog {
-  isGM?: boolean;
-  message: string;
-}
+import {
+  RNGDungeonItemGenerator,
+  RNGDungeonNPCGenerator,
+  RNGDungeonSpawnerGenerator,
+  RNGDungeonTilemapGenerator,
+} from '@lotr/procgen';
 
 export class MapGenerator {
   private itemGenerator: RNGDungeonItemGenerator;

@@ -65,11 +65,22 @@ export interface IRNGDungeonMapGenConfig {
   randomize?: number;
   doors?: boolean;
   connect?: boolean;
+  invert?: boolean;
 }
 
 export interface IRNGDungeonRoomDecorConfig {
   name: string;
   decors: Array<{ quantity: number[]; decor: number[] }>;
+  allowCustomFloor: boolean;
+  customFloors: Array<{
+    spriteStart: number;
+    decor: number[][];
+    trees: number[][];
+    placeOre: boolean;
+    allowFluids: boolean;
+    flipLR: boolean;
+    fluids: Array<{ spriteStart: number }>;
+  }>;
 }
 
 export interface IRNGDungeonNPC {
@@ -127,7 +138,7 @@ export interface IRNGDungeonScenario {
   name: string;
   creatureSets: Array<{
     group: string;
-    options: { creatures: IRNGDungeonCreature[] };
+    options: Array<{ creatures: IRNGDungeonCreatureGroup }>;
   }>;
 }
 
@@ -279,4 +290,28 @@ export interface IRNGDungeonConfig {
   itemConfigs: Record<ItemClass, IRNGItem>;
 
   itemScenarios: IRNGItemScenario[];
+}
+
+export enum MapGenTile {
+  Empty = 0,
+  Wall = 1,
+  Door = 2,
+  DefaultWall = 3,
+}
+
+export interface IGeneratorMapNode {
+  x: number;
+  y: number;
+  idx: number;
+  hasFluid: boolean;
+  hasFoliage: boolean;
+  hasWall: boolean;
+  hasDecor: boolean;
+  hasDenseDecor: boolean;
+  hasOpaqueDecor: boolean;
+}
+
+export interface ISpoilerLog {
+  isGM?: boolean;
+  message: string;
 }

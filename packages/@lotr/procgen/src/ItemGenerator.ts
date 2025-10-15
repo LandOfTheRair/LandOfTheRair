@@ -1,22 +1,21 @@
 import type {
   ArmorClass,
+  IItem,
   IItemDefinition,
   IRNGDungeonConfig,
   IRNGDungeonMetaConfig,
-  WeaponClass } from '@lotr/interfaces';
-import {
-  ItemClass,
-  RNGItemType,
-  Stat,
-  WeaponClasses,
+  IRNGItemScenario,
+  StatBlock,
+  WeaponClass,
 } from '@lotr/interfaces';
-import { isNumber } from 'lodash';
+import { ItemClass, RNGItemType, Stat, WeaponClasses } from '@lotr/interfaces';
+import { isNumber, set } from 'lodash';
 import type { Rollable } from 'lootastic';
-import type { RNG } from 'rot-js/dist/rot';
+import type { RNG } from 'rot-js';
 
 export class RNGDungeonItemGenerator {
   constructor(
-    private readonly rng: RNG,
+    private readonly rng: typeof RNG,
     private readonly mapMeta: IRNGDungeonMetaConfig,
     private readonly config: IRNGDungeonConfig,
     private readonly addSpoilerLog: (message: string) => void,
@@ -24,10 +23,10 @@ export class RNGDungeonItemGenerator {
   ) {}
 
   getItems(): IItemDefinition[] {
-    const themes = {
+    const themes: Record<string, IRNGItemScenario> = {
       All: this.rng.getItem(
         this.config.itemScenarios.filter((x) => !x.requiresTypes),
-      ),
+      ) as IRNGItemScenario,
     };
 
     // pick item themes
@@ -35,29 +34,35 @@ export class RNGDungeonItemGenerator {
       const chosenItemType = this.rng.getItem(
         Object.values(RNGItemType).filter((x) => !themes[x]),
       );
+
+      if (!chosenItemType) continue;
+
       const chosenTheme = this.rng.getItem(
         this.config.itemScenarios.filter(
           (x) =>
-            x.name !== themes.All.name &&
+            x.name !== themes.All!.name &&
             (x.requiresTypes?.includes(chosenItemType) ?? true),
         ),
       );
 
-      themes[chosenItemType] = chosenTheme;
+      if (chosenItemType && chosenTheme) {
+        themes[chosenItemType] = chosenTheme;
+      }
 
       this.addSpoilerLog(
-        `Item Scenario "${chosenTheme.name}" applied to "${chosenItemType}" items.`,
+        `Item Scenario "${chosenTheme!.name ?? 'unknown'}" applied to "${chosenItemType}" items.`,
       );
     }
 
     const takenSprites: number[] = [];
 
     // rings start with prots
-    const ringStatBoosts = {};
+    const ringStatBoosts: Partial<StatBlock> = {};
     const ringStats = [
       Stat.FireResist,
       Stat.IceResist,
       Stat.WaterResist,
+      Stat.LightningResist,
       Stat.EnergyResist,
       Stat.PoisonResist,
       Stat.PoisonResist,
@@ -72,21 +77,26 @@ export class RNGDungeonItemGenerator {
     const ringStat = isBetter
       ? this.rng.getItem(betterRingStats)
       : this.rng.getItem(ringStats);
-    ringStatBoosts[ringStat] = isBetter
-      ? this.mapMeta.itemProps.baseGeneralResist
-      : this.mapMeta.itemProps.baseSpecificResist;
+
+    if (ringStat) {
+      ringStatBoosts[ringStat] = isBetter
+        ? this.mapMeta.itemProps.baseGeneralResist
+        : this.mapMeta.itemProps.baseSpecificResist;
+    }
 
     this.addSpoilerLog(
-      `Rings (if found) will reduce incoming ${ringStat.split('Resist')[0]} damage.`,
+      `Rings (if found) will reduce incoming ${ringStat?.split('Resist')[0] ?? 'unknown'} damage.`,
     );
 
     // amulets start with boosts
-    const amuletStatBoosts = {};
+    const amuletStatBoosts: Partial<StatBlock> = {};
     const amuletStats = [
       Stat.FireBoostPercent,
       Stat.IceBoostPercent,
       Stat.NecroticBoostPercent,
       Stat.EnergyBoostPercent,
+      Stat.WaterBoostPercent,
+      Stat.LightningBoostPercent,
       Stat.PoisonBoostPercent,
       Stat.DiseaseBoostPercent,
       Stat.SonicBoostPercent,
@@ -96,11 +106,12 @@ export class RNGDungeonItemGenerator {
     ];
 
     const amuletStat = this.rng.getItem(amuletStats);
-
-    amuletStatBoosts[amuletStat] = this.mapMeta.itemProps.baseBoostPercent;
+    if (amuletStat) {
+      amuletStatBoosts[amuletStat] = this.mapMeta.itemProps.baseBoostPercent;
+    }
 
     this.addSpoilerLog(
-      `Amulets (if found) will bolster outgoing ${amuletStat.split('Boost')[0]} damage.`,
+      `Amulets (if found) will bolster outgoing ${amuletStat?.split('Boost')[0] ?? 'unknown'} damage.`,
     );
 
     // earrings spawn with a random trait at a certain level
@@ -127,12 +138,13 @@ export class RNGDungeonItemGenerator {
       const scenarioThemeMult = this.mapMeta.itemProps.scenarioMultiplier;
 
       // apply stats: global and otherwise
-      ['All', ...itemDefConfig.type].forEach((type) => {
-        if (!themes[type]) return;
+      ['All', ...(itemDefConfig.type ?? [])].forEach((type) => {
+        const theme = themes[type as keyof typeof themes];
+
+        if (!theme) return;
 
         itemDef.baseMods!.stats = itemDef.baseMods!.stats || {};
 
-        const theme = themes[type];
         allThemes.add(theme.name);
 
         // apply stats
@@ -147,18 +159,24 @@ export class RNGDungeonItemGenerator {
             mod = Stat.WeaponArmorClass;
           }
 
-          itemDef.baseMods!.stats![mod] = itemDef.baseMods!.stats![mod] ?? 0;
-          itemDef.baseMods!.stats![mod] +=
-            theme.statChanges[originMod] * scenarioThemeMult;
+          let statValue = itemDef.baseMods!.stats![mod as Stat] ?? 0;
+          statValue +=
+            (theme.statChanges[originMod as Stat] ?? 0) * scenarioThemeMult;
+
+          itemDef.baseMods!.stats![mod as Stat] = statValue;
         });
 
         // apply returning etc
         if (theme.topLevelChanges) {
           Object.keys(theme.topLevelChanges).forEach((mod) => {
-            const change = isNumber(theme.topLevelChanges[mod])
-              ? theme.topLevelChanges[mod] * scenarioThemeMult
-              : theme.topLevelChanges[mod];
-            itemDef.baseMods![mod] = change;
+            const topLevelChange = theme.topLevelChanges![mod as keyof IItem];
+            if (!topLevelChange) return;
+
+            const change = isNumber(topLevelChange)
+              ? topLevelChange * scenarioThemeMult
+              : topLevelChange;
+
+            set(itemDef.baseMods!, mod, change);
           });
         }
       });
@@ -177,14 +195,15 @@ export class RNGDungeonItemGenerator {
       // "Powerful"
       if (itemDef.quality === 3) {
         Object.keys(itemDef.baseMods.stats!).forEach((statMod) => {
-          if (!isNumber(itemDef.baseMods!.stats![statMod])) return;
-          const canFloor = itemDef.baseMods!.stats![statMod] % 1 === 0;
+          if (!isNumber(itemDef.baseMods!.stats![statMod as Stat])) return;
+          const canFloor =
+            (itemDef.baseMods!.stats![statMod as Stat] ?? 0) % 1 === 0;
 
-          itemDef.baseMods!.stats![statMod] =
-            itemDef.baseMods!.stats![statMod] * 1.5;
+          itemDef.baseMods!.stats![statMod as Stat] =
+            (itemDef.baseMods!.stats![statMod as Stat] ?? 0) * 1.5;
           if (canFloor) {
-            itemDef.baseMods!.stats![statMod] = Math.floor(
-              itemDef.baseMods!.stats![statMod],
+            itemDef.baseMods!.stats![statMod as Stat] = Math.floor(
+              itemDef.baseMods!.stats![statMod as Stat] ?? 0,
             );
           }
         });
@@ -193,14 +212,15 @@ export class RNGDungeonItemGenerator {
       // "Legendary"
       if (itemDef.quality === 5) {
         Object.keys(itemDef.baseMods.stats!).forEach((statMod) => {
-          if (!isNumber(itemDef.baseMods!.stats![statMod])) return;
-          const canFloor = itemDef.baseMods!.stats![statMod] % 1 === 0;
+          if (!isNumber(itemDef.baseMods!.stats![statMod as Stat])) return;
+          const canFloor =
+            (itemDef.baseMods!.stats![statMod as Stat] ?? 0) % 1 === 0;
 
-          itemDef.baseMods!.stats![statMod] =
-            itemDef.baseMods!.stats![statMod] * 2;
+          itemDef.baseMods!.stats![statMod as Stat] =
+            (itemDef.baseMods!.stats![statMod as Stat] ?? 0) * 2;
           if (canFloor) {
-            itemDef.baseMods!.stats![statMod] = Math.floor(
-              itemDef.baseMods!.stats![statMod],
+            itemDef.baseMods!.stats![statMod as Stat] = Math.floor(
+              itemDef.baseMods!.stats![statMod as Stat] ?? 0,
             );
           }
         });
@@ -214,9 +234,11 @@ export class RNGDungeonItemGenerator {
       const sprite = this.rng.getItem(
         itemDefConfig.sprites.filter((x) => !takenSprites.includes(x)),
       );
-      itemDef.baseMods.sprite = sprite;
+      if (sprite) {
+        itemDef.baseMods.sprite = sprite;
 
-      takenSprites.push(sprite);
+        takenSprites.push(sprite);
+      }
 
       // add item base stats
       if (
@@ -295,17 +317,21 @@ export class RNGDungeonItemGenerator {
 
       if (itemDef.itemClass === ItemClass.Ring) {
         Object.keys(ringStatBoosts).forEach(
-          (key) => (itemDef.baseMods!.stats![key] = ringStatBoosts[key]),
+          (key) =>
+            (itemDef.baseMods!.stats![key as Stat] =
+              ringStatBoosts[key as Stat]),
         );
       }
 
       if (itemDef.itemClass === ItemClass.Amulet) {
         Object.keys(amuletStatBoosts).forEach(
-          (key) => (itemDef.baseMods!.stats![key] = amuletStatBoosts[key]),
+          (key) =>
+            (itemDef.baseMods!.stats![key as Stat] =
+              amuletStatBoosts[key as Stat]),
         );
       }
 
-      if (itemDef.itemClass === ItemClass.Earring) {
+      if (itemDef.itemClass === ItemClass.Earring && chosenTrait) {
         itemDef.baseMods.trait = {
           name: chosenTrait,
           level: this.mapMeta.itemProps.maxTraitLevel,
@@ -323,6 +349,8 @@ export class RNGDungeonItemGenerator {
       if (itemDef.baseMods.sprite) return;
 
       const sprite = this.rng.getItem(itemDefConfig.sprites);
+      if (!isNumber(sprite)) return;
+
       itemDef.baseMods.sprite = sprite;
     });
 
@@ -350,6 +378,7 @@ export class RNGDungeonItemGenerator {
       }
 
       const item = this.rng.getItem(validItems);
+      if (!item) continue;
 
       let maxChance = 50;
 
@@ -375,6 +404,7 @@ export class RNGDungeonItemGenerator {
       }
 
       const item = this.rng.getItem(validItems);
+      if (!item) continue;
 
       rollables.push({ chance: 1, maxChance: 200, result: item.name });
     }
@@ -395,6 +425,7 @@ export class RNGDungeonItemGenerator {
       }
 
       const item = this.rng.getItem(validItems);
+      if (!item) continue;
 
       rollables.push({ chance: 1, maxChance: 200, result: item.name });
     }

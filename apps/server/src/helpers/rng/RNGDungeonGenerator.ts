@@ -3,6 +3,7 @@ import type {
   INPCDefinition,
   IRNGDungeonMetaConfig,
   ISpawnerData,
+  ISpoilerLog,
   ItemClassType,
   Rollable,
 } from '@lotr/interfaces';
@@ -25,7 +26,6 @@ import {
 } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
-import type { ISpoilerLog } from './helpers/MapGenerator';
 import { MapGenerator } from './helpers/MapGenerator';
 
 @Injectable()

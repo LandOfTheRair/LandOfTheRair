@@ -4,11 +4,11 @@ import type {
   IRNGDungeonMetaConfig,
   ISpawnerData,
 } from '@lotr/interfaces';
-import type { RNG } from 'rot-js/dist/rot';
+import type { RNG } from 'rot-js';
 
 export class RNGDungeonSpawnerGenerator {
   constructor(
-    private readonly rng: RNG,
+    private readonly rng: typeof RNG,
     private readonly mapMeta: IRNGDungeonMetaConfig,
     private readonly config: IRNGDungeonConfig,
     private readonly addSpoilerLog: (message: string) => void,
@@ -59,7 +59,7 @@ export class RNGDungeonSpawnerGenerator {
           result: creature.npcId,
           chance: 1,
         })),
-        tag: `${this.mapMeta.name} ${creatureGroup[0].monsterGroup} Spawner`,
+        tag: `${this.mapMeta.name} ${creatureGroup[0]?.monsterGroup} Spawner`,
       };
 
       const otherSpawners = nonLegendary.map((creature) => ({

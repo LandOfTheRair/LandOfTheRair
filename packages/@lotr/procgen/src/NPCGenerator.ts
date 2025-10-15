@@ -18,11 +18,11 @@ import {
   Stat,
 } from '@lotr/interfaces';
 import type { Rollable } from 'lootastic';
-import type { RNG } from 'rot-js/dist/rot';
+import type { RNG } from 'rot-js';
 
 export class RNGDungeonNPCGenerator {
   constructor(
-    private readonly rng: RNG,
+    private readonly rng: typeof RNG,
     private readonly mapMeta: IRNGDungeonMetaConfig,
     private readonly config: IRNGDungeonConfig,
     private readonly challengeData: IChallenge,
@@ -33,20 +33,25 @@ export class RNGDungeonNPCGenerator {
   // pick valid creature sets for this map
   pickCreatureSets(): string[] {
     const scenario = this.rng.getItem(this.config.scenarioConfigs);
+    if (!scenario) return [];
+
     const { creatureSets, name } = scenario;
 
     this.addSpoilerLog(`Monster Scenario is "${name}".`);
 
     const pickedCreatureSets: string[] = [];
-    creatureSets.forEach(({ options }) => {
+
+    creatureSets.forEach((creatureSet) => {
+      const options = creatureSet.options;
+
       const validSets = options.filter(
         (x) => !pickedCreatureSets.includes(x.creatures.name),
       );
+
       const picked = this.rng.getItem(validSets);
-
-      if (!picked) return;
-
-      pickedCreatureSets.push(picked.creatures.name);
+      if (picked) {
+        pickedCreatureSets.push(picked.creatures.name);
+      }
     });
 
     return pickedCreatureSets;
@@ -55,7 +60,11 @@ export class RNGDungeonNPCGenerator {
   // build an npc definition from a creature definition
   getNPCDefFromCreatureDef(
     def: IRNGDungeonCreature,
-    { faction, monsterGroup, isLegendary },
+    {
+      faction,
+      monsterGroup,
+      isLegendary,
+    }: { faction: Allegiance; monsterGroup: string; isLegendary: boolean },
   ): INPCDefinition {
     let level = this.mapMeta.creatureProps.level ?? 4;
     if (def.isLegendary) level = this.mapMeta.creatureProps.legendaryLevel ?? 5;
@@ -251,9 +260,8 @@ export class RNGDungeonNPCGenerator {
       const skillLevel = def.isLegendary
         ? this.mapMeta.creatureProps.legendaryBaseSkill
         : this.mapMeta.creatureProps.baseSkill;
-      npc.skills![skill.toLowerCase()] = calculateSkillXPRequiredForLevel(
-        (skillLevel ?? 1) + 1,
-      );
+      npc.skills![skill.toLowerCase() as Skill] =
+        calculateSkillXPRequiredForLevel((skillLevel ?? 1) + 1);
     });
 
     // set other calculable properties
@@ -263,8 +271,8 @@ export class RNGDungeonNPCGenerator {
       const multiplier = def.isLegendary
         ? this.mapMeta.creatureProps.hpMultiplierLegendary
         : this.mapMeta.creatureProps.hpMultiplierNormal;
-      npc.hp.min = this.challengeData.global.stats.hp[level].min * multiplier;
-      npc.hp.max = this.challengeData.global.stats.hp[level].max * multiplier;
+      npc.hp.min = this.challengeData.global.stats.hp[level]!.min * multiplier;
+      npc.hp.max = this.challengeData.global.stats.hp[level]!.max * multiplier;
     }
 
     if (npc.mp && def.baseClass) {
@@ -272,8 +280,8 @@ export class RNGDungeonNPCGenerator {
       const multiplier = def.isLegendary
         ? this.mapMeta.creatureProps.hpMultiplierLegendary
         : this.mapMeta.creatureProps.hpMultiplierNormal;
-      npc.mp.min = this.challengeData.global.stats.mp[level].min * multiplier;
-      npc.mp.max = this.challengeData.global.stats.mp[level].max * multiplier;
+      npc.mp.min = this.challengeData.global.stats.mp[level]!.min * multiplier;
+      npc.mp.max = this.challengeData.global.stats.mp[level]!.max * multiplier;
     }
 
     if (npc.giveXp) {
@@ -281,9 +289,9 @@ export class RNGDungeonNPCGenerator {
         ? this.mapMeta.creatureProps.xpMultiplierLegendary
         : this.mapMeta.creatureProps.xpMultiplierNormal;
       npc.giveXp.min =
-        this.challengeData.global.stats.giveXp[level].min * multiplier;
+        this.challengeData.global.stats.giveXp[level]!.min * multiplier;
       npc.giveXp.max =
-        this.challengeData.global.stats.giveXp[level].max * multiplier;
+        this.challengeData.global.stats.giveXp[level]!.max * multiplier;
     }
 
     if (npc.gold) {
@@ -291,24 +299,29 @@ export class RNGDungeonNPCGenerator {
         ? this.mapMeta.creatureProps.goldMultiplierLegendary
         : this.mapMeta.creatureProps.goldMultiplierNormal;
       npc.gold.min =
-        this.challengeData.global.stats.gold[level].min * multiplier;
+        this.challengeData.global.stats.gold[level]!.min * multiplier;
       npc.gold.max =
-        this.challengeData.global.stats.gold[level].max * multiplier;
+        this.challengeData.global.stats.gold[level]!.max * multiplier;
     }
 
     // further post-processing
     Object.keys(def.statChanges || {}).forEach((statChange) => {
-      if (!def.statChanges?.[statChange]) return;
+      if (!def.statChanges?.[statChange as Stat]) return;
 
-      npc.stats![statChange] = npc.stats![statChange] || 0;
-      npc.stats![statChange] +=
-        def.statChanges[statChange] * this.mapMeta.creatureProps.statScale;
+      let statValue = def.statChanges[statChange as Stat] ?? 0;
+      statValue +=
+        def.statChanges[statChange as Stat] *
+        this.mapMeta.creatureProps.statScale;
+      npc.stats![statChange as Stat] = statValue;
     });
 
     Object.keys(this.mapMeta.creatureProps.otherBaseStats ?? {}).forEach(
       (stat) => {
-        npc.stats![stat] ??= 0;
-        npc.stats![stat] += this.mapMeta.creatureProps.otherBaseStats[stat];
+        let statValue = npc.stats![stat as Stat] ?? 0;
+        statValue +=
+          this.mapMeta.creatureProps.otherBaseStats[stat as Stat] ?? 0;
+
+        npc.stats![stat as Stat] = statValue;
       },
     );
 
@@ -324,9 +337,11 @@ export class RNGDungeonNPCGenerator {
 
       if (importantChoices.length > 0) {
         const spell = this.rng.getItem(importantChoices);
-        potentialSkills.push(spell.name);
+        if (spell) {
+          potentialSkills.push(spell.name);
 
-        if (spell.grants) potentialSkills.push(spell.grants);
+          if (spell.grants) potentialSkills.push(spell.grants);
+        }
       }
 
       // choose extra skills
@@ -342,9 +357,11 @@ export class RNGDungeonNPCGenerator {
         if (validSkills.length === 0) continue;
 
         const spell = this.rng.getItem(validSkills);
-        potentialSkills.push(spell.name);
+        if (spell) {
+          potentialSkills.push(spell.name);
 
-        if (spell.grants) potentialSkills.push(spell.grants);
+          if (spell.grants) potentialSkills.push(spell.grants);
+        }
       }
     }
 
@@ -374,9 +391,11 @@ export class RNGDungeonNPCGenerator {
           if (validTraits.length === 0) continue;
 
           const trait = this.rng.getItem(validTraits);
-          bonusTraits.push(trait.name);
+          if (trait) {
+            bonusTraits.push(trait.name);
 
-          npc.traitLevels[trait.name] = 1;
+            npc.traitLevels[trait.name] = 1;
+          }
         }
       }
     }
@@ -405,7 +424,7 @@ export class RNGDungeonNPCGenerator {
     const creatureSets = this.pickCreatureSets();
 
     const res = creatureSets.map((setName) => {
-      const { creatures, factions } = this.config.creatureGroupings[setName];
+      const { creatures, factions } = this.config.creatureGroupings[setName]!;
       const faction = this.rng.getItem(factions);
 
       const legendaryCreature = this.rng.getItem(
@@ -418,7 +437,9 @@ export class RNGDungeonNPCGenerator {
           (x) => !chosenCreatures.includes(x.name),
         );
         const picked = this.rng.getItem(validCreatures);
-        chosenCreatures.push(picked.name);
+        if (picked) {
+          chosenCreatures.push(picked.name);
+        }
       }
 
       const creatureDefs = chosenCreatures
@@ -435,8 +456,8 @@ export class RNGDungeonNPCGenerator {
           const npcDef = this.getNPCDefFromCreatureDef(
             this.config.creatures[creatureName],
             {
-              faction,
-              isLegendary: this.config.creatures[creatureName].isLegendary,
+              faction: faction || Allegiance.Enemy,
+              isLegendary: !!this.config.creatures[creatureName].isLegendary,
               monsterGroup: setName,
             },
           );

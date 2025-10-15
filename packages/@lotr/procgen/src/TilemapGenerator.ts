@@ -1,17 +1,16 @@
 import type {
+  IGeneratorMapNode,
   IRNGDungeonConfig,
   IRNGDungeonConfigFloor,
   IRNGDungeonConfigWall,
-  IRNGDungeonMetaConfig } from '@lotr/interfaces';
-import {
-  MapLayer,
+  IRNGDungeonMetaConfig,
 } from '@lotr/interfaces';
-import type { RNG } from 'rot-js/dist/rot';
-import type { IGeneratorMapNode } from './MapGenerator';
+import { MapLayer } from '@lotr/interfaces';
+import type { RNG } from 'rot-js';
 
 export class RNGDungeonTilemapGenerator {
   constructor(
-    private readonly rng: RNG,
+    private readonly rng: typeof RNG,
     private readonly mapMeta: IRNGDungeonMetaConfig,
     private readonly mapTheme: {
       floor: IRNGDungeonConfigFloor;
@@ -76,8 +75,8 @@ export class RNGDungeonTilemapGenerator {
 
       // "auto tiling" lol fuck you I'm doing this manually
       if (!hasTop && !hasBottom && !hasLeft && !hasRight) {
-return allowEmptyWalls ? wall : 0;
-}
+        return allowEmptyWalls ? wall : 0;
+      }
       if (hasTop && hasBottom && hasLeft && hasRight) return wall + 1;
       if (!hasTop && hasBottom && hasLeft && hasRight) return wall + 2;
       if (hasTop && hasBottom && hasLeft && !hasRight) return wall + 3;
@@ -126,8 +125,8 @@ return allowEmptyWalls ? wall : 0;
         fluidSW &&
         fluidW
       ) {
-return value + 1;
-} // NW corner missing
+        return value + 1;
+      } // NW corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -138,8 +137,8 @@ return value + 1;
         fluidSW &&
         fluidW
       ) {
-return value + 2;
-} // NE corner missing
+        return value + 2;
+      } // NE corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -150,8 +149,8 @@ return value + 2;
         fluidSW &&
         fluidW
       ) {
-return value + 3;
-} // SE corner missing
+        return value + 3;
+      } // SE corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -162,8 +161,8 @@ return value + 3;
         !fluidSW &&
         fluidW
       ) {
-return value + 4;
-} // SW corner missing
+        return value + 4;
+      } // SW corner missing
 
       if (
         !fluidNW &&
@@ -175,8 +174,8 @@ return value + 4;
         fluidSW &&
         fluidW
       ) {
-return value + 5;
-} // NE,NW corner missing
+        return value + 5;
+      } // NE,NW corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -187,8 +186,8 @@ return value + 5;
         fluidSW &&
         fluidW
       ) {
-return value + 6;
-} // NE,SE corner missing
+        return value + 6;
+      } // NE,SE corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -199,8 +198,8 @@ return value + 6;
         !fluidSW &&
         fluidW
       ) {
-return value + 7;
-} // SE,SW corner missing
+        return value + 7;
+      } // SE,SW corner missing
       if (
         !fluidNW &&
         fluidN &&
@@ -211,8 +210,8 @@ return value + 7;
         !fluidSW &&
         fluidW
       ) {
-return value + 8;
-} // SW,NW corner missing
+        return value + 8;
+      } // SW,NW corner missing
 
       if (
         !fluidNW &&
@@ -224,8 +223,8 @@ return value + 8;
         !fluidSW &&
         fluidW
       ) {
-return value + 9;
-} // NW,NE,SW corner missing
+        return value + 9;
+      } // NW,NE,SW corner missing
       if (
         !fluidNW &&
         fluidN &&
@@ -236,8 +235,8 @@ return value + 9;
         fluidSW &&
         fluidW
       ) {
-return value + 10;
-} // NW,NE,SE corner missing
+        return value + 10;
+      } // NW,NE,SE corner missing
       if (
         fluidNW &&
         fluidN &&
@@ -248,8 +247,8 @@ return value + 10;
         !fluidSW &&
         fluidW
       ) {
-return value + 11;
-} // NE,SE,SW corner missing
+        return value + 11;
+      } // NE,SE,SW corner missing
       if (
         !fluidNW &&
         fluidN &&
@@ -260,8 +259,8 @@ return value + 11;
         !fluidSW &&
         fluidW
       ) {
-return value + 12;
-} // NW,SE,SW corner missing
+        return value + 12;
+      } // NW,SE,SW corner missing
 
       if (
         !fluidNW &&
@@ -273,60 +272,60 @@ return value + 12;
         !fluidSW &&
         fluidW
       ) {
-return value + 13;
-} // ALL corner missing
+        return value + 13;
+      } // ALL corner missing
 
       if (!fluidN && fluidE && fluidSE && fluidS && fluidSW && fluidW) {
-return value + 14;
-} // N missing NE,NW unchecked
+        return value + 14;
+      } // N missing NE,NW unchecked
       if (fluidNW && fluidN && !fluidE && fluidS && fluidSW && fluidW) {
-return value + 15;
-} // E missing NE,SE unchecked
+        return value + 15;
+      } // E missing NE,SE unchecked
       if (fluidNW && fluidN && fluidNE && fluidE && !fluidS && fluidW) {
-return value + 16;
-} // S missing SE,SW unchecked
+        return value + 16;
+      } // S missing SE,SW unchecked
       if (fluidN && fluidNE && fluidE && fluidSE && fluidS && !fluidW) {
-return value + 17;
-} // W missing SW,NW unchecked
+        return value + 17;
+      } // W missing SW,NW unchecked
 
       if (!fluidNW && fluidN && fluidNE && fluidE && !fluidS && fluidW) {
-return value + 18;
-} // NW,S missing SE,SW unchecked
+        return value + 18;
+      } // NW,S missing SE,SW unchecked
       if (fluidNW && fluidN && !fluidNE && fluidE && !fluidS && fluidW) {
-return value + 19;
-} // NE,S missing SE,SW unchecked
+        return value + 19;
+      } // NE,S missing SE,SW unchecked
       if (!fluidN && fluidE && !fluidSE && fluidS && fluidSW && fluidW) {
-return value + 20;
-} // SE,N missing NE,NW unchecked
+        return value + 20;
+      } // SE,N missing NE,NW unchecked
       if (!fluidN && fluidE && fluidSE && fluidS && !fluidSW && fluidW) {
-return value + 21;
-} // SW,N missing NE,NW unchecked
+        return value + 21;
+      } // SW,N missing NE,NW unchecked
 
       if (!fluidNW && fluidN && !fluidE && fluidS && fluidSW && fluidW) {
-return value + 22;
-} // NW,E missing NE,SE unchecked
+        return value + 22;
+      } // NW,E missing NE,SE unchecked
       if (fluidN && !fluidNE && fluidE && fluidSE && fluidS && !fluidW) {
-return value + 23;
-} // NE,W missing NW,SW unchecked
+        return value + 23;
+      } // NE,W missing NW,SW unchecked
       if (fluidN && fluidNE && fluidE && !fluidSE && fluidS && !fluidW) {
-return value + 24;
-} // SE,W missing NW,SW unchecked
+        return value + 24;
+      } // SE,W missing NW,SW unchecked
       if (fluidNW && fluidN && !fluidE && fluidS && !fluidSW && fluidW) {
-return value + 25;
-} // SW,E missing NE,SE unchecked
+        return value + 25;
+      } // SW,E missing NE,SE unchecked
 
       if (!fluidN && fluidE && !fluidSE && fluidS && !fluidSW && fluidW) {
-return value + 26;
-} // SE,SW,N missing NW,NE unchecked
+        return value + 26;
+      } // SE,SW,N missing NW,NE unchecked
       if (!fluidNW && fluidN && !fluidE && fluidS && !fluidSW && fluidW) {
-return value + 27;
-} // NW,SW,E missing SE,NE unchecked
+        return value + 27;
+      } // NW,SW,E missing SE,NE unchecked
       if (!fluidNW && fluidN && !fluidNE && fluidE && !fluidS && fluidW) {
-return value + 28;
-} // NE,NW,S missing SE,SW unchecked
+        return value + 28;
+      } // NE,NW,S missing SE,SW unchecked
       if (fluidN && !fluidNE && fluidE && !fluidSE && fluidS && !fluidW) {
-return value + 29;
-} // NE,SE,W missing NW,SW unchecked
+        return value + 29;
+      } // NE,SE,W missing NW,SW unchecked
 
       if (!fluidN && fluidE && fluidSE && fluidS && !fluidW) return value + 30; // E,SE,S present, NE,SW,NW unchecked
       if (!fluidN && !fluidE && fluidS && fluidSW && fluidW) return value + 31; // W,SW,S present, NW,SE,NE unchecked
@@ -356,8 +355,8 @@ return value + 29;
         fluidSW &&
         fluidW
       ) {
-return value + 44;
-} // NW,SE missing
+        return value + 44;
+      } // NW,SE missing
       if (
         fluidNW &&
         fluidN &&
@@ -368,8 +367,8 @@ return value + 44;
         !fluidSW &&
         fluidW
       ) {
-return value + 46;
-} // NE,SW missing
+        return value + 46;
+      } // NE,SW missing
 
       if (
         fluidNW &&
@@ -381,8 +380,8 @@ return value + 46;
         fluidSW &&
         fluidW
       ) {
-return value + 47;
-} // ALL present
+        return value + 47;
+      } // ALL present
 
       return value;
     });
@@ -391,10 +390,10 @@ return value + 47;
   addNPCs(possibleSpaces: IGeneratorMapNode[]): void {
     const addedNPCs: string[] = [];
 
-    const numNPCs = this.rng.getItem(this.mapMeta.npcProps.npcCounts);
+    const numNPCs = this.rng.getItem(this.mapMeta.npcProps.npcCounts) ?? 0;
 
     for (let i = 0; i < numNPCs; i++) {
-      if (addedNPCs.length >= numNPCs.length) continue;
+      if (addedNPCs.length >= numNPCs) continue;
 
       const validSpaces = possibleSpaces.filter(
         (check) =>
@@ -419,19 +418,22 @@ return value + 47;
           (checkNPC) => !addedNPCs.includes(checkNPC.props.tag as string),
         ),
       );
-      addedNPCs.push(npc.props.tag as string);
 
-      const obj = {
-        gid: npc.gid,
-        name: npc.name,
-        x: x * 64,
-        y: (y + 1) * 64,
-        properties: {
-          ...npc.props,
-        },
-      };
+      if (npc) {
+        addedNPCs.push(npc.props.tag as string);
 
-      this.addTiledObject(MapLayer.NPCs, obj);
+        const obj = {
+          gid: npc.gid,
+          name: npc.name,
+          x: x * 64,
+          y: (y + 1) * 64,
+          properties: {
+            ...npc.props,
+          },
+        };
+
+        this.addTiledObject(MapLayer.NPCs, obj);
+      }
     }
   }
 
@@ -439,15 +441,15 @@ return value + 47;
     const validResources: string[] = [];
 
     if (this.mapTheme.floor.placeOre) {
-validResources.push(
+      validResources.push(
         ...this.mapMeta.resourceProps.validOre.map((x) => x.id),
       );
-}
+    }
     if (this.mapTheme.floor.placeTwigs) {
-validResources.push(
+      validResources.push(
         ...this.mapMeta.resourceProps.validTrees.map((x) => x.id),
       );
-}
+    }
 
     if (validResources.length === 0) return;
 
