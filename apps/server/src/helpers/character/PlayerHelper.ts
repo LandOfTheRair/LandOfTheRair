@@ -11,6 +11,7 @@ import {
   swimLevelGet,
 } from '@lotr/characters';
 import {
+  isHoliday,
   settingClassConfigGet,
   settingGameGet,
   settingGetMaxExp,
@@ -227,11 +228,7 @@ export class PlayerHelper extends BaseService {
       this.game.teleportHelper.teleportToRespawnPoint(player);
     }
 
-    if (
-      map?.holiday &&
-      !this.game.holidayHelper.isHoliday(map.holiday as Holiday) &&
-      !player.isGM
-    ) {
+    if (map?.holiday && !isHoliday(map.holiday as Holiday) && !player.isGM) {
       this.game.messageHelper.sendSimpleMessage(
         player,
         'This location is not active during this time of year!',

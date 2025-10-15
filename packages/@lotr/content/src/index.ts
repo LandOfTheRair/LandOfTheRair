@@ -5,6 +5,7 @@ export * from './drops';
 export * from './effects';
 export * from './errors';
 export * from './events';
+export * from './holiday';
 export * from './items';
 export * from './items.helpers';
 export * from './items.properties';

@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import { get, isString, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
-import { settingGameGet } from '@lotr/content';
+import { isHoliday, settingGameGet } from '@lotr/content';
 import type { INPC, ISimpleItem, Rollable } from '@lotr/interfaces';
 import { Allegiance, ItemSlot } from '@lotr/interfaces';
 import { rollTraitValue } from '@lotr/rng';
@@ -65,9 +65,7 @@ export class LootHelper extends BaseService {
   // filter out things that can't actually drop. basically, just holiday stuff
   private filterDropTable(dropTable: Rollable[]) {
     return dropTable.filter((item) =>
-      item.requireHoliday
-        ? this.game.holidayHelper.isHoliday(item.requireHoliday)
-        : true,
+      item.requireHoliday ? isHoliday(item.requireHoliday) : true,
     );
   }
 

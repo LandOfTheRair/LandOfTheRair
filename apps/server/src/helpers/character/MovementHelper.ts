@@ -14,7 +14,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
-import { settingGameGet, traitLevel } from '@lotr/content';
+import { isHoliday, settingGameGet, traitLevel } from '@lotr/content';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -312,7 +312,7 @@ export class MovementHelper extends BaseService {
       return false;
     }
 
-    if (requireHoliday && !this.game.holidayHelper.isHoliday(requireHoliday)) {
+    if (requireHoliday && !isHoliday(requireHoliday)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: `That location is only seasonally open during "${requireHoliday}"!`,
       });

@@ -40,6 +40,7 @@ import * as traitTrees from '../../../content/_output/trait-trees.json';
 import * as traits from '../../../content/_output/traits.json';
 
 import {
+  holidaysLoadForGame,
   setContentKey,
   settingsLoadForGame,
   textLoadForGame,
@@ -89,6 +90,7 @@ export class ContentLoader extends BaseService {
     this.loadAchievements();
     settingsLoadForGame();
     textLoadForGame();
+    holidaysLoadForGame();
   }
 
   private chooseConfigFileOrPreset(file: string, preset: any) {

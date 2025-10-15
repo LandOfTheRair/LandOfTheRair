@@ -51,6 +51,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, playerGetCurrentDaily } from '@lotr/characters';
 import {
+  isHoliday,
   itemCanBeUpgraded,
   itemIsOwnedBy,
   itemPropertyGet,
@@ -273,7 +274,7 @@ export class DialogActionHelper extends BaseService {
 
     const retMessages: string[] = [];
 
-    const didSucceed = this.game.holidayHelper.isHoliday(holiday);
+    const didSucceed = isHoliday(holiday);
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) || [];
 
@@ -1190,7 +1191,7 @@ export class DialogActionHelper extends BaseService {
     }
 
     if (requirement.holiday) {
-      return this.game.holidayHelper.isHoliday(requirement.holiday);
+      return isHoliday(requirement.holiday);
     }
 
     return true;

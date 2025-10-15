@@ -11,6 +11,7 @@ import {
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
+import { isHoliday } from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
 import type { Game } from '../../../../helpers';
 
@@ -25,7 +26,7 @@ export const trickOrTreat = (game: Game, npc: INPC, parser: Parser): void => {
       if (!player) return 'You do not exist.';
 
       if (npc.hostility !== Hostility.Never) return '';
-      if (!game.holidayHelper.isHoliday(Holiday.Halloween)) {
+      if (!isHoliday(Holiday.Halloween)) {
         return 'I think you might be mistaken.';
       }
 

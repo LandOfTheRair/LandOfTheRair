@@ -5,7 +5,7 @@ import {
 } from '@lotr/interfaces';
 import * as meta from '../../../content/_output/meta.json';
 
-import { coreCharSelect } from '@lotr/content';
+import { coreCharSelect, currentHoliday } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
 import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
@@ -89,7 +89,7 @@ export class LoginAction extends ServerAction {
         },
         motd: game.worldDB.motd,
         onlineUsers: game.lobbyManager.simpleOnlineAccounts,
-        currentHoliday: game.holidayHelper.currentHoliday(),
+        currentHoliday: currentHoliday(),
       });
 
       emit({

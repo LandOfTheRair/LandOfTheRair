@@ -10,6 +10,7 @@ import type { WorldMap } from './Map';
 import type { MapState } from './MapState';
 
 import { isDead } from '@lotr/characters';
+import { isHoliday } from '@lotr/content';
 import { consoleError } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';
@@ -140,10 +141,7 @@ export class Spawner {
   }
 
   private get canBeActive(): boolean {
-    if (
-      this.requireHoliday &&
-      !this.game.holidayHelper.isHoliday(this.requireHoliday)
-    ) {
+    if (this.requireHoliday && !isHoliday(this.requireHoliday)) {
       return false;
     }
     if (
