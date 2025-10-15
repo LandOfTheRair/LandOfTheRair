@@ -12,6 +12,7 @@ import { Currency, GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { gainCurrency } from '@lotr/currency';
 import type { Game } from '../../../../../helpers';
 
@@ -188,7 +189,7 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -221,7 +222,7 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

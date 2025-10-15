@@ -14,6 +14,7 @@ import {
   itemPropertyGet,
   itemPropertySet,
 } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class BinderBehavior implements IAIBehavior {
@@ -41,7 +42,7 @@ export class BinderBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

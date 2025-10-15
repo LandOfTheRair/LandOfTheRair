@@ -20,6 +20,7 @@ import type { Game } from '../../../../helpers';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { itemPropertiesGet, itemSetOwner } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 
 export class TannerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -72,7 +73,7 @@ export class TannerBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

@@ -4,6 +4,7 @@ import { get, setWith } from 'lodash';
 
 import { getStat } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
+import { transmissionFOVPatchSend } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
@@ -19,7 +20,7 @@ export class VisibilityHelper extends BaseService {
     this.calculateFOV(player);
 
     if (sendFOV) {
-      this.game.transmissionHelper.sendFOVPatch(player);
+      transmissionFOVPatchSend(player);
     }
   }
 

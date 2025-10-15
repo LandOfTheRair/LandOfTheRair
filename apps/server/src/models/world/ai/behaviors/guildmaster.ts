@@ -11,6 +11,7 @@ import { distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { coreSettings } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
@@ -53,7 +54,7 @@ export class GuildmasterBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -93,7 +94,7 @@ export class GuildmasterBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -203,7 +204,7 @@ export class GuildmasterBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

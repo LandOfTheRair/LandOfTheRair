@@ -1,6 +1,12 @@
 import { Injectable } from 'injection-js';
 
 import { settingGameGet } from '@lotr/content';
+import {
+  transmissionActionSendAccount,
+  transmissionPlayerPatchTryAuto,
+  transmissionStartWatching,
+  transmissionStopWatching,
+} from '@lotr/core';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import type { Account, Player } from '../../models';
@@ -51,7 +57,7 @@ export class PlayerManager extends BaseService {
 
     const state = new PlayerState();
     this.playerStates[username] = state;
-    this.game.transmissionHelper.startWatching(player, state);
+    transmissionStartWatching(player, state);
 
     this.game.playerHelper.resetStatus(player);
     this.updatePlayerData(player);
@@ -62,13 +68,11 @@ export class PlayerManager extends BaseService {
     const username = player.username;
     delete this.inGamePlayers[username];
     delete this.playerStates[username];
-    this.game.transmissionHelper.stopWatching(player);
+    transmissionStopWatching(player);
 
-    this.game.transmissionHelper.sendActionToAccount(
-      username,
-      GameAction.GameSetPlayer,
-      { player: null },
-    );
+    transmissionActionSendAccount(username, GameAction.GameSetPlayer, {
+      player: null,
+    });
 
     const char = player as ICharacter;
     if (char.takingOver) {
@@ -99,7 +103,7 @@ export class PlayerManager extends BaseService {
       // not sure if this will be a good idea or not, we'll see
       if (type === 'fast') {
         timer.startTimer(`fast-- ${player.username}/${player.name}`);
-        this.game.transmissionHelper.tryAutoPatchPlayer(player);
+        transmissionPlayerPatchTryAuto(player);
         timer.stopTimer(`fast-- ${player.username}/${player.name}`);
       }
     });

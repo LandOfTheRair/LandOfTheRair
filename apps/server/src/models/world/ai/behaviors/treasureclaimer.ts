@@ -11,8 +11,8 @@ import type {
 import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { transmissionSendResponseToAccount } from '@lotr/core';
+import type { Game } from '../../../../helpers';
 import type { Player } from '../../../orm';
 
 export class TreasureClaimerBehavior implements IAIBehavior {
@@ -57,7 +57,7 @@ export class TreasureClaimerBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

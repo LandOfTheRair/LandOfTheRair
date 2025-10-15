@@ -73,7 +73,6 @@ import {
   WorldDB,
 } from './db';
 import { LoggerInitializer } from './LoggerInitializer';
-import { TransmissionHelper } from './TransmissionHelper';
 
 @Injectable()
 export class Game {
@@ -88,7 +87,6 @@ export class Game {
 
   constructor(
     public loggerInitializer: LoggerInitializer,
-    public transmissionHelper: TransmissionHelper,
 
     public modkitManager: ModKitManager,
     public contentLoader: ContentLoader,
@@ -225,7 +223,6 @@ export class Game {
 
       // these don't really have anything special, and can be initialized whenever, as their value is mostly at runtime
       [GameEvent.InitChill]: [
-        'transmissionHelper',
         'profanityHelper',
         'migrationHelper',
         'corpseManager',

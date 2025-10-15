@@ -19,6 +19,7 @@ import { distanceFrom, foodTextFor } from '@lotr/shared';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { itemGet, itemPropertiesGet, itemPropertyGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -62,7 +63,7 @@ export class CulinarianBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

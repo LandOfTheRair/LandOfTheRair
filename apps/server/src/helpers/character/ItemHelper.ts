@@ -29,6 +29,7 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem } from '@lotr/shared';
 
@@ -551,7 +552,7 @@ export class ItemHelper extends BaseService {
       ],
     };
 
-    this.game.transmissionHelper.sendResponseToAccount(
+    transmissionSendResponseToAccount(
       player.username,
       GameServerResponse.DialogChat,
       formattedChat,

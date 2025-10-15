@@ -1,6 +1,7 @@
 import { uniq } from 'lodash';
 
 import { itemIsOwnedBy, itemPropertyGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -59,7 +60,7 @@ export class Disenchant extends MacroCommand {
           ],
         };
 
-        this.game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

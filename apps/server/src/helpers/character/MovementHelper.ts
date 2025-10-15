@@ -15,6 +15,7 @@ import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import { isHoliday, settingGameGet, traitLevel } from '@lotr/content';
+import { transmissionMovementPatchSend } from '@lotr/core';
 import {
   directionDiagonalToWestEast,
   directionFromOffset,
@@ -216,7 +217,7 @@ export class MovementHelper extends BaseService {
       this.game.playerHelper.resetStatus(character as Player, {
         sendFOV: false,
       });
-      this.game.transmissionHelper.sendMovementPatch(character as Player);
+      transmissionMovementPatchSend(character as Player);
 
       const interactable = mapData?.map.getInteractableAt(
         character.x,

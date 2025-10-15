@@ -1,4 +1,5 @@
 import { isPlayer } from '@lotr/characters';
+import { transmissionMovementPatchSend } from '@lotr/core';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
@@ -15,7 +16,7 @@ export class Pull extends Spell {
 
     if (isPlayer(target)) {
       this.game.playerHelper.resetStatus(target as Player, { sendFOV: false });
-      this.game.transmissionHelper.sendMovementPatch(target as Player);
+      transmissionMovementPatchSend(target as Player);
     }
 
     this.sendMessage(target, { message: `${caster.name} pulls you closer!` });

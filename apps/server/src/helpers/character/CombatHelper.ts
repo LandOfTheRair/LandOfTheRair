@@ -15,6 +15,7 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
+import { transmissionResponseSendPlayer } from '@lotr/core';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
@@ -114,7 +115,7 @@ export class CombatHelper extends BaseService {
     defenderUUID: string,
     effect: CombatEffect,
   ): void {
-    this.game.transmissionHelper.sendResponseToPlayer(
+    transmissionResponseSendPlayer(
       target as IPlayer,
       GameServerResponse.PlayCFX,
       { defenderUUID, effect },

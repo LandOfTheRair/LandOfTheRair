@@ -23,6 +23,7 @@ import type { Parser } from 'muud';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -110,7 +111,7 @@ export class TrainerBehavior implements IAIBehavior {
             options,
           };
 
-          game.transmissionHelper.sendResponseToAccount(
+          transmissionSendResponseToAccount(
             player.username,
             GameServerResponse.DialogChat,
             formattedChat,

@@ -1,4 +1,5 @@
 import { itemGetMatchingName } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type {
   ICharacter,
   IDialogChatAction,
@@ -55,7 +56,7 @@ export class ConjureSword extends SpellCommand {
         options,
       };
 
-      this.game.transmissionHelper.sendResponseToAccount(
+      transmissionSendResponseToAccount(
         player.username,
         GameServerResponse.DialogChat,
         formattedChat,

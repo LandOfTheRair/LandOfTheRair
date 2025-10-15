@@ -1,7 +1,11 @@
 import { Injectable } from 'injection-js';
 import { set } from 'lodash';
 
-import { wsBroadcast } from '@lotr/core';
+import {
+  transmissionResponseSendPlayer,
+  transmissionSendResponseToAccount,
+  wsBroadcast,
+} from '@lotr/core';
 import type {
   ICharacter,
   MessageInfo,
@@ -61,7 +65,7 @@ export class MessageHelper extends BaseService {
 
     if (sfx) this.playSoundForPlayer(ref as Player, sfx, messageTypes);
 
-    this.game.transmissionHelper.sendResponseToAccount(
+    transmissionSendResponseToAccount(
       (ref as Player).username,
       GameServerResponse.GameLog,
       {
@@ -116,7 +120,7 @@ export class MessageHelper extends BaseService {
         this.playSoundForPlayer(checkPlayer as Player, sfx, messageTypes);
       }
 
-      this.game.transmissionHelper.sendResponseToAccount(
+      transmissionSendResponseToAccount(
         (checkPlayer as Player).username,
         GameServerResponse.GameLog,
         {
@@ -170,7 +174,7 @@ export class MessageHelper extends BaseService {
       );
       if (!account) return;
 
-      this.game.transmissionHelper.sendResponseToAccount(
+      transmissionSendResponseToAccount(
         (checkPlayer as Player).username,
         GameServerResponse.GameLog,
         {
@@ -326,11 +330,10 @@ export class MessageHelper extends BaseService {
     sfx: string,
     messageCategories: MessageType[],
   ): void {
-    this.game.transmissionHelper.sendResponseToPlayer(
-      player,
-      GameServerResponse.PlaySFX,
-      { sfx, sfxTypes: messageCategories },
-    );
+    transmissionResponseSendPlayer(player, GameServerResponse.PlaySFX, {
+      sfx,
+      sfxTypes: messageCategories,
+    });
   }
 
   public getMergeObjectFromArgs(args: string): any {

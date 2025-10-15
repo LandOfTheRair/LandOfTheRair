@@ -18,6 +18,10 @@ import {
   settingGetMaxSkillExp,
   textGidDescriptionGet,
 } from '@lotr/content';
+import {
+  transmissionMovementPatchSend,
+  transmissionPlayerPatchGenerateQueue,
+} from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import {
   calcSkillLevelForCharacter,
@@ -123,7 +127,7 @@ export class PlayerHelper extends BaseService {
   public tick(player: Player, type: 'fast' | 'slow', tick: number): void {
     if (type === 'slow') {
       this.game.characterHelper.tick(player, tick);
-      this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
+      transmissionPlayerPatchGenerateQueue(player);
 
       if (player.skillTicks > 0) {
         player.skillTicks--;
@@ -723,7 +727,7 @@ export class PlayerHelper extends BaseService {
       'You are whisked back to the place in your stored memories!',
     );
     this.game.teleportHelper.teleport(player as Player, succorInfo);
-    this.game.transmissionHelper.sendMovementPatch(player as Player);
+    transmissionMovementPatchSend(player as Player);
   }
 
   // refresh the players state based on their map, shortcut

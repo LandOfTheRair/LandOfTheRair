@@ -11,6 +11,7 @@ import { GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 import { settingGameGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class AXPSwapperBehavior implements IAIBehavior {
@@ -48,7 +49,7 @@ export class AXPSwapperBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

@@ -1,3 +1,4 @@
+import { transmissionActionSendAccount } from '@lotr/core';
 import type { Direction, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { directionFromText } from '@lotr/shared';
@@ -16,12 +17,8 @@ export class Face extends MacroCommand {
 
     player.dir = directionFromText(dir.toUpperCase()) as Direction;
 
-    this.game.transmissionHelper.sendActionToAccount(
-      player.username,
-      GameAction.GamePatchPlayer,
-      {
-        player: { dir: player.dir },
-      },
-    );
+    transmissionActionSendAccount(player.username, GameAction.GamePatchPlayer, {
+      player: { dir: player.dir },
+    });
   }
 }

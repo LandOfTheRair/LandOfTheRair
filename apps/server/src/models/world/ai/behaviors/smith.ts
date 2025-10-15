@@ -11,6 +11,7 @@ import { GameServerResponse, ItemSlot, LearnedSpell } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { premiumSmithMaxRepair } from '@lotr/premium';
 import type { Game } from '../../../../helpers';
@@ -57,7 +58,7 @@ export class SmithBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

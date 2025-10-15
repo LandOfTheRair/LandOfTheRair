@@ -10,6 +10,7 @@ import { GameServerResponse, ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
 import { itemIsOwnedBy } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class ResetterBehavior implements IAIBehavior {
@@ -38,7 +39,7 @@ export class ResetterBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -70,7 +71,7 @@ export class ResetterBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

@@ -16,6 +16,7 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 import { itemPropertyGet, itemPropertySet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class CosmeticBehavior implements IAIBehavior {
@@ -49,7 +50,7 @@ export class CosmeticBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -161,7 +162,7 @@ export class CosmeticBehavior implements IAIBehavior {
           options: [...options, { text: 'Leave', action: 'noop' }],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

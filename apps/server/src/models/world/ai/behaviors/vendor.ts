@@ -19,6 +19,7 @@ import { distanceFrom } from '@lotr/shared';
 import type { Parser } from 'muud';
 
 import { itemGet, itemPropertyGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import type { Game } from '../../../../helpers';
 
@@ -153,7 +154,7 @@ export class VendorBehavior implements IAIBehavior {
             ],
           };
 
-          game.transmissionHelper.sendResponseToAccount(
+          transmissionSendResponseToAccount(
             player.username,
             GameServerResponse.DialogChat,
             formattedChat,

@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import { engageInCombat, isPlayer } from '@lotr/characters';
+import { transmissionMovementPatchSend } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
@@ -43,7 +44,7 @@ export class DedlaenCryptThingPunch extends SpellCommand {
         this.game.playerHelper.resetStatus(target as Player, {
           sendFOV: false,
         });
-        this.game.transmissionHelper.sendMovementPatch(target as Player);
+        transmissionMovementPatchSend(target as Player);
       }
     }
   }

@@ -22,6 +22,7 @@ import {
   itemPropertyGet,
   itemPropertySet,
 } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class FurUpgraderBehavior implements IAIBehavior {
@@ -51,7 +52,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -86,7 +87,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

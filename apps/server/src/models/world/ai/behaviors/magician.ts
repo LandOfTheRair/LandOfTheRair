@@ -17,6 +17,7 @@ import { distanceFrom } from '@lotr/shared';
 
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { itemPropertiesGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class MagicianBehavior implements IAIBehavior {
@@ -54,7 +55,7 @@ export class MagicianBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

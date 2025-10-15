@@ -10,6 +10,7 @@ import { Currency, GameServerResponse } from '@lotr/interfaces';
 import { cleanNumber, distanceFrom } from '@lotr/shared';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { gainCurrency, getCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -45,7 +46,7 @@ export class GuildClerkBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,
@@ -85,7 +86,7 @@ export class GuildClerkBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

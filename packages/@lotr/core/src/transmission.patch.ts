@@ -1,6 +1,7 @@
+import type { IGroundItem, ISimpleItem } from '@lotr/interfaces';
 import type { Operation } from 'fast-json-patch';
 
-export const shouldSendPatch = (patch: Operation): boolean => {
+export function patchShouldSend(patch: Operation): boolean {
   if (patch.path.includes('/effects/_hash')) return true;
 
   // remove these patches since they're mostly superfluous
@@ -80,9 +81,9 @@ export const shouldSendPatch = (patch: Operation): boolean => {
   if (patch.path.includes('_')) return false;
 
   return true;
-};
+}
 
-export const shouldSendPlayerPatch = (patch: Operation): boolean => {
+export function playerPatchShouldSend(patch: Operation): boolean {
   if (patch.path.includes('/npcs') && patch.path.includes('condition')) {
     return false;
   }
@@ -115,9 +116,9 @@ export const shouldSendPlayerPatch = (patch: Operation): boolean => {
   if (patch.op === 'replace' && patch.path.includes('/agro')) return false;
 
   return true;
-};
+}
 
-export const modifyPlayerPatch = (patch: Operation): Operation => {
+export function playerPatchModify(patch: Operation): Operation {
   if (
     patch.op === 'add' &&
     patch.path.includes('/ground') &&
@@ -126,17 +127,17 @@ export const modifyPlayerPatch = (patch: Operation): Operation => {
     Object.keys(patch.value).forEach((key) => {
       if (!patch.value[key].Corpse) return;
 
-      patch.value[key].Corpse.forEach((corpse) => {
+      patch.value[key].Corpse.forEach((corpse: IGroundItem) => {
         delete corpse.item.mods.tansFor;
         delete corpse.item.mods.corpseLevel;
         delete corpse.item.mods.playersHeardDeath;
 
         if ((corpse.item.mods.searchItems?.length ?? 0) > 0) {
-          corpse.item.mods.searchItems = [1];
+          corpse.item.mods.searchItems = [1 as unknown as ISimpleItem];
         }
       });
     });
   }
 
   return patch;
-};
+}

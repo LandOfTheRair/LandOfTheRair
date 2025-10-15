@@ -1,4 +1,5 @@
 import { hasLearned } from '@lotr/characters';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
@@ -34,7 +35,7 @@ export class ForgetCommand extends MacroCommand {
         ],
       };
 
-      this.game.transmissionHelper.sendResponseToAccount(
+      transmissionSendResponseToAccount(
         player.username,
         GameServerResponse.DialogChat,
         formattedChat,

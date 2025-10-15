@@ -16,6 +16,8 @@ import {
 } from './characterlockers';
 import { ICharacterQuests } from './characterquests';
 import { ICharacterTraits } from './charactertraits';
+import { IGround } from './ground';
+import { INPC } from './npc';
 import { ICharacterStatistics, ISessionStatistics } from './statistics';
 
 export type BGM = 'town' | 'dungeon' | 'wilderness';
@@ -76,4 +78,11 @@ export interface IPlayer extends ICharacter {
 
   isGM: boolean;
   isTester: boolean;
+}
+
+export interface IPlayerState {
+  npcs: Record<string, Partial<INPC>>;
+  players: Record<string, Partial<IPlayer>>;
+  ground: IGround;
+  openDoors: Record<number, boolean>;
 }

@@ -28,6 +28,7 @@ import {
   itemSetEncrust,
   settingGameGet,
 } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
 import type { Game } from '../../../../helpers';
 
@@ -71,7 +72,7 @@ export class EncrusterBehavior implements IAIBehavior {
           options,
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

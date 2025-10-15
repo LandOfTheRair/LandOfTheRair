@@ -58,6 +58,7 @@ import {
   questGet,
   settingGameGet,
 } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import { gainCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -222,7 +223,7 @@ export class DialogActionHelper extends BaseService {
         .filter(Boolean) as IDialogChatActionOption[],
     };
 
-    this.game.transmissionHelper.sendResponseToAccount(
+    transmissionSendResponseToAccount(
       player.username,
       GameServerResponse.DialogChat,
       formattedChat,

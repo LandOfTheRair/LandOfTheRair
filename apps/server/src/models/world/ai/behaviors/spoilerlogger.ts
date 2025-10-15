@@ -10,8 +10,8 @@ import type {
 import { GameServerResponse } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../../helpers';
+import { transmissionSendResponseToAccount } from '@lotr/core';
+import type { Game } from '../../../../helpers';
 import type { Player } from '../../../orm';
 
 export class SpoilerLoggerBehavior implements IAIBehavior {
@@ -51,7 +51,7 @@ export class SpoilerLoggerBehavior implements IAIBehavior {
           options: [{ text: 'Thanks', action: 'noop' }],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

@@ -15,6 +15,7 @@ import {
   playerCalcRequiredGoldForNextHPMP,
 } from '@lotr/characters';
 import { settingClassConfigGet, settingGameGet } from '@lotr/content';
+import { transmissionSendResponseToAccount } from '@lotr/core';
 import type { Game } from '../../../../helpers';
 
 export class HPDocBehavior implements IAIBehavior {
@@ -61,7 +62,7 @@ export class HPDocBehavior implements IAIBehavior {
           ],
         };
 
-        game.transmissionHelper.sendResponseToAccount(
+        transmissionSendResponseToAccount(
           player.username,
           GameServerResponse.DialogChat,
           formattedChat,

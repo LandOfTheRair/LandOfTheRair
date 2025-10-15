@@ -8,6 +8,7 @@ import { Game } from '../../helpers';
 
 import { isDead, isPlayer } from '@lotr/characters';
 import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
+import { transmissionPlayerPatchGenerateQueue } from '@lotr/core';
 import type {
   ICharacter,
   IGround,
@@ -616,7 +617,7 @@ export class MapState {
 
   // update only player related stuff
   private onlyUpdatePlayer(player: Player) {
-    this.game.transmissionHelper.generateAndQueuePlayerPatches(player);
+    transmissionPlayerPatchGenerateQueue(player);
   }
 
   // update the entire gamestate for the players fov

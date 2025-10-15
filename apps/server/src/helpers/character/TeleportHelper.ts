@@ -4,6 +4,11 @@ import { truncate } from 'lodash';
 
 import { isPlayer } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
+import {
+  transmissionDataSendPlayer,
+  transmissionMovementPatchSend,
+  transmissionSendResponseToAccount,
+} from '@lotr/core';
 import type { ICharacter, IDialogChatAction, IPlayer } from '@lotr/interfaces';
 import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Player } from '../../models';
@@ -72,7 +77,7 @@ export class TeleportHelper extends BaseService {
     if (!map || player.map === map) {
       this.setCharXY(player, x, y);
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
-      this.game.transmissionHelper.sendMovementPatch(player);
+      transmissionMovementPatchSend(player);
     }
 
     // check if the new map even exists before going
@@ -123,22 +128,20 @@ export class TeleportHelper extends BaseService {
       this.game.worldManager.joinMap(player);
 
       // then we send a blank FOV patch to the player so they don't see a random spot on the map
-      this.game.transmissionHelper.sendMovementPatch(player, true);
+      transmissionMovementPatchSend(player, true);
 
       // then we update their x/y to the new x/y
       player.x = x;
       player.y = y;
 
       // then we send them the new map
-      this.game.transmissionHelper.sendActionToPlayer(
-        player,
-        GameAction.GameSetMap,
-        { map: mapData.map.mapData },
-      );
+      transmissionDataSendPlayer(player, GameAction.GameSetMap, {
+        map: mapData.map.mapData,
+      });
 
       // then we update their status based on the new map, and send them the new movement patch with their real FOV
       this.game.playerHelper.resetStatus(player, { sendFOV: false });
-      this.game.transmissionHelper.sendMovementPatch(player);
+      transmissionMovementPatchSend(player);
 
       if (this.game.worldManager.isDungeon(player.map)) {
         this.game.effectHelper.addEffect(player, '', 'EtherManipulation');
@@ -226,7 +229,7 @@ export class TeleportHelper extends BaseService {
         ],
       };
 
-      this.game.transmissionHelper.sendResponseToAccount(
+      transmissionSendResponseToAccount(
         player.username,
         GameServerResponse.DialogChat,
         memorizeChat,
@@ -261,7 +264,7 @@ export class TeleportHelper extends BaseService {
       options,
     };
 
-    this.game.transmissionHelper.sendResponseToAccount(
+    transmissionSendResponseToAccount(
       player.username,
       GameServerResponse.DialogChat,
       formattedChat,
