@@ -7,4 +7,5 @@ export * from './party';
 export * from './position';
 export * from './sprite';
 export * from './statdescs';
+export * from './sub';
 export * from './userinput';

@@ -15,7 +15,7 @@ import { AccountState, GameState } from '../../../../stores';
 import { GameService } from '../../../services/game.service';
 import { UIService } from '../../../services/ui.service';
 
-import { isSubscribed } from '@lotr/premium';
+import { isSubscribed } from '@lotr/shared';
 import * as allTraitTrees from '../../../../assets/content/_output/trait-trees.json';
 import * as allTraits from '../../../../assets/content/_output/traits.json';
 import { ModalService } from '../../../services/modal.service';

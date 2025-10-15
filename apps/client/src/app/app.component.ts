@@ -7,7 +7,7 @@ import {
 import { select } from '@ngxs/store';
 
 import { IAccount } from '@lotr/interfaces';
-import { isSubscribed } from '@lotr/premium';
+import { isSubscribed } from '@lotr/shared';
 import { environment } from '../environments/environment';
 import { AccountState } from '../stores';
 import { GameService } from './services/game.service';
