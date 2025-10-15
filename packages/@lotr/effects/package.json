@@ -12,6 +12,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@lotr/content": "*",
     "@lotr/eslint-config": "*",
     "@lotr/interfaces": "*"
   }
