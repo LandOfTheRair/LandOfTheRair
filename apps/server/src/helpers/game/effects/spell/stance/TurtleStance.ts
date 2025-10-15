@@ -42,6 +42,8 @@ export class TurtleStance extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (!attacker) return currentDamage;
 
     return currentDamage;

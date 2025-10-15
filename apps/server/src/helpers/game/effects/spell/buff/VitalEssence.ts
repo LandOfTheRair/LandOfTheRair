@@ -1,5 +1,5 @@
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
-import { DamageClass, Stat } from '@lotr/interfaces';
+import { Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class VitalEssence extends Effect {
@@ -24,7 +24,7 @@ export class VitalEssence extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
-    if (damageArgs.damageClass === DamageClass.Heal) return currentDamage;
+    if (currentDamage < 0) return currentDamage;
 
     if (effect.effectInfo.charges) {
       effect.effectInfo.charges -= 1;

@@ -28,6 +28,8 @@ export class GlacierStance extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (!attacker || damageArgs.damageClass !== DamageClass.Physical) {
       return currentDamage;
     }

@@ -37,6 +37,8 @@ export class Berserk extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (
       damageArgs.damageClass !== DamageClass.Physical &&
       rollInOneHundred(traitLevelValue(char, 'MagicalVortex'))

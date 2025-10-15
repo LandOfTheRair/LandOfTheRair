@@ -24,6 +24,8 @@ export class BuildupHeat extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (damageArgs.damageClass === DamageClass.Fire) {
       const forgedFireLevel = attacker
         ? traitLevelValue(attacker, 'ForgedFire')

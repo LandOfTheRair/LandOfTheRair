@@ -25,6 +25,8 @@ export class BuildupChill extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (damageArgs.damageClass === DamageClass.Ice) {
       effect.effectInfo.potency ??= 0;
       effect.effectInfo.buildUpCurrent ??= 0;

@@ -23,6 +23,8 @@ export class BuildupEnergy extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (damageArgs.damageClass === DamageClass.Energy) {
       effect.effectInfo.potency ??= 0;
       effect.effectInfo.buildUpCurrent ??= 0;

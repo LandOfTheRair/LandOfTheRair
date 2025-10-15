@@ -25,6 +25,8 @@ export class BuildupWater extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (damageArgs.damageClass === DamageClass.Water) {
       effect.effectInfo.buildUpCurrent ??= 0;
       effect.effectInfo.buildUpCurrent += random(10, 25);

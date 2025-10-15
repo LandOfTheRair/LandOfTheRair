@@ -49,6 +49,8 @@ export class ParryStance extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (!attacker) return currentDamage;
 
     // we can parry magic attacks if glowingweapon exists

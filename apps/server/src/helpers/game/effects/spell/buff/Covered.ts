@@ -11,6 +11,8 @@ export class Covered extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     const percentageToSend = effect.effectInfo?.potency ?? 25;
     const percentageToBlock = effect.effectInfo?.damage ?? 0;
 

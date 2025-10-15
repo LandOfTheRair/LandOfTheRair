@@ -41,6 +41,8 @@ export class Overcharged extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (currentDamage < 0) return currentDamage;
+
     if (damageArgs.damageClass === DamageClass.Physical) return currentDamage;
 
     return Math.floor(currentDamage * 1.1);
