@@ -1,7 +1,7 @@
 import { extend, isArray, random, sample } from 'lodash';
 import uuid from 'uuid/v4';
 
-import type { IServerGame } from '@lotr/interfaces';
+import type { IServerGame, ISpawner } from '@lotr/interfaces';
 
 import type { Holiday, IAI, INPC, INPCDefinition } from '@lotr/interfaces';
 import { Hostility } from '@lotr/interfaces';
@@ -14,7 +14,7 @@ import { consoleError } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';
 
-export class Spawner {
+export class Spawner implements ISpawner {
   public readonly id = uuid();
 
   private x: number;

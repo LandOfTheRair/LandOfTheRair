@@ -1,4 +1,5 @@
 import { IAccount } from './account';
+import { IAI } from './ai';
 import { BaseClass, ItemSlot, Rollable, Stat } from './building-blocks';
 import { ICharacter, IItemContainer } from './character';
 import { OnesidedDamageArgs } from './combat';
@@ -32,10 +33,10 @@ export interface IMapPosition extends IPosition {
 export interface IMapState {
   readonly allNPCS: INPC[];
   readonly allPlayers: IPlayer[];
-  readonly allSpawners: any[];
+  readonly allSpawners: ISpawner[];
   init(): void;
-  addSpawner(spawner: any): void;
-  removeSpawner(spawner: any): void;
+  addSpawner(spawner: ISpawner): void;
+  removeSpawner(spawner: ISpawner): void;
   getSerializableSpawners(): ISerializableSpawner[];
   isDoorOpen(id: number): boolean;
   openDoor(id: number): void;
@@ -107,13 +108,13 @@ export interface IMapState {
   triggerFullUpdateForPlayer(player: IPlayer): void;
   addPlayer(player: IPlayer): void;
   removePlayer(player: IPlayer): void;
-  addNPC(npc: INPC, spawner: any): void;
+  addNPC(npc: INPC, spawner: ISpawner): void;
   removeNPC(npc: INPC): void;
   removeAllNPCs(): void;
   getCharacterByUUID(uuid: string): ICharacter | undefined;
-  getNPCSpawner(uuid: string): any;
-  getNPCSpawnerByName(name: string): any;
-  getNPCSpawnersByName(name: string): any[];
+  getNPCSpawner(uuid: string): ISpawner | undefined;
+  getNPCSpawnerByName(name: string): ISpawner | undefined;
+  getNPCSpawnersByName(name: string): ISpawner[];
   getGroundVision(x: number, y: number, radius?: number): IGround;
   addItemsToGroundSpread(
     itemlocs: Array<{ x: number; y: number; item: ISimpleItem }>,
@@ -166,6 +167,38 @@ export interface IRedeemable {
   claimedBy: string[];
   gold?: number;
   item?: string;
+}
+
+// Spawner interface for world spawners
+export interface ISpawner {
+  readonly id: string;
+  readonly areAnyNPCsAlive: boolean;
+  readonly canBeSaved: boolean;
+  readonly walkingAttributes: { randomWalkRadius: number; leashRadius: number };
+  readonly hasPaths: boolean;
+  readonly pos: { x: number; y: number };
+  readonly spawnerName: string;
+  readonly currentTickForSave: number;
+  readonly areCreaturesDangerous: boolean;
+  readonly allNPCS: INPC[];
+  readonly respawnTimeSeconds: number;
+  readonly respectsKnowledge: boolean;
+  readonly allPossibleNPCSpawns: INPCDefinition[];
+  readonly mapName: string;
+
+  tryInitialSpawn(): void;
+  setTick(tick: number): void;
+  steadyTick(): void;
+  npcTick(): void;
+  getNPCAI(npcUUID: string): IAI;
+  forceSpawnNPC(opts?: {
+    npcId?: string;
+    npcDef?: INPCDefinition;
+    spawnLoc?: { x: number; y: number };
+    createCallback?: (npc: INPC) => void;
+  }): INPC | null;
+  getRandomPath(): string;
+  increaseTick(by?: number): void;
 }
 
 // Base interface for all game services
