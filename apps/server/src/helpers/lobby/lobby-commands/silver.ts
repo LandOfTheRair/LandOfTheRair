@@ -1,13 +1,13 @@
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class GiveSilverCommand implements ILobbyCommand {
   name = '/silver';
   syntax = '/silver <silver> <accountname> (account must be online)';
 
-  async do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: IServerGame, emit: (args) => void) {
     const [cmd, silver, rest] = message.split(' ');
 
     if (!rest) return false;

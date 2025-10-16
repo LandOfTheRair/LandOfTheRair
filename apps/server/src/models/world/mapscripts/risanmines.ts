@@ -1,7 +1,7 @@
 import type { ICharacter, IMapScript, INPC } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 
-import type { Game } from '../../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class RisanMinesScript implements IMapScript {
   readonly name = 'RisanMines';
@@ -12,7 +12,7 @@ export class RisanMinesScript implements IMapScript {
 
   events() {}
 
-  handleEvent(game: Game, event: string, { trigger }) {
+  handleEvent(game: IServerGame, event: string, { trigger }) {
     if (event === 'on:crazedmist') {
       if (this.ventCooldowns[trigger.x + ' ' + trigger.y] > Date.now()) return;
 
@@ -42,11 +42,11 @@ export class RisanMinesScript implements IMapScript {
     }
   }
 
-  private applyDebuff(game: Game, char: ICharacter) {
+  private applyDebuff(game: IServerGame, char: ICharacter) {
     game.effectHelper.addEffect(char, '', 'MinerFever');
   }
 
-  private transformMiner(game: Game, npc: INPC) {
+  private transformMiner(game: IServerGame, npc: INPC) {
     game.deathHelper.fakeNPCDie(npc);
     game.worldManager
       .getMap('RisanMines')

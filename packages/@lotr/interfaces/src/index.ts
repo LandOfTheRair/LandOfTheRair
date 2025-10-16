@@ -36,6 +36,7 @@ export * from './position';
 export * from './quest';
 export * from './recipe';
 export * from './rngdungeon';
+export * from './server-game';
 export * from './server-spell';
 export * from './settings';
 export * from './sfx';

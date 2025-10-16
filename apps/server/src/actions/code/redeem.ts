@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models';
 
 export class RedeemCodeAction extends ServerAction {
   override type = GameServerEvent.CodeRedeem;
   override requiredKeys = ['code'];
 
-  override async act(game: Game, { emit }, data) {
+  override async act(game: IServerGame, { emit }, data) {
     consoleLog('Code:Redeem', `${data.username} redeeming ${data.code}.`);
 
     try {

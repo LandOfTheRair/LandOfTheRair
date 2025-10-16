@@ -1,7 +1,7 @@
 import { extend, isArray, random, sample } from 'lodash';
 import uuid from 'uuid/v4';
 
-import type { Game } from '../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 
 import type { Holiday, IAI, INPC, INPCDefinition } from '@lotr/interfaces';
 import { Hostility } from '@lotr/interfaces';
@@ -157,7 +157,7 @@ export class Spawner {
   }
 
   constructor(
-    private game: Game,
+    private game: IServerGame,
     private mapRef: WorldMap,
     private mapState: MapState,
     spawnOpts: Partial<Spawner> = {},

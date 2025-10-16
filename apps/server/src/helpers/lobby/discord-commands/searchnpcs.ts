@@ -3,7 +3,7 @@ import * as Discord from 'discord.js';
 import type { IDiscordCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class SearchNPCsCommand implements IDiscordCommand {
   command = new Discord.SlashCommandBuilder()
@@ -16,7 +16,7 @@ export class SearchNPCsCommand implements IDiscordCommand {
         .setRequired(true),
     );
 
-  do(interaction: Discord.CommandInteraction, game: Game) {
+  do(interaction: Discord.CommandInteraction, game: IServerGame) {
     if (!interaction.member) return;
 
     const query = interaction.options.get('npcid')?.value as string;

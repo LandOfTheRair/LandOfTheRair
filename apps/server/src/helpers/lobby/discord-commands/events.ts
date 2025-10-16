@@ -3,14 +3,14 @@ import * as Discord from 'discord.js';
 import type { IDiscordCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class EventsCommand implements IDiscordCommand {
   command = new Discord.SlashCommandBuilder()
     .setName('events')
     .setDescription('Toggle having the Event Watcher role.');
 
-  do(interaction: Discord.CommandInteraction, game: Game) {
+  do(interaction: Discord.CommandInteraction, game: IServerGame) {
     const member = interaction.member as Discord.GuildMember;
     if (!member) return;
 

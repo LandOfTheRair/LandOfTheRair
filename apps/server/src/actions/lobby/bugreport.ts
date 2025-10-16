@@ -1,14 +1,13 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BugReportAction extends ServerAction {
   override type = GameServerEvent.BugReport;
   override requiredKeys = ['report', 'userAgent'];
 
-  override async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: IServerGame, { broadcast, emit }, data) {
     if (!game.lobbyManager.hasJoinedGame(data.username)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);

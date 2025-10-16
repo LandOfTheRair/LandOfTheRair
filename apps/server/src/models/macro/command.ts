@@ -6,6 +6,7 @@ import type {
   IMacroCommand,
   IMacroCommandArgs,
   IPlayer,
+  IServerGame,
   SoundEffect,
 } from '@lotr/interfaces';
 import {
@@ -20,9 +21,6 @@ import {
   directionToOffset,
   distanceFrom,
 } from '@lotr/shared';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 
 import {
   getStat,
@@ -52,7 +50,7 @@ export abstract class MacroCommand implements IMacroCommand {
   requiresLearn = false; // whether or not the command must be learned first
   canUseWhileDead = false; // whether or not the command can be used while dead
 
-  constructor(protected game: Game) {}
+  constructor(protected game: IServerGame) {}
 
   protected sendMessage(
     character: ICharacter,

@@ -3,7 +3,7 @@ import { Injectable } from 'injection-js';
 import { coreSettings } from '@lotr/content';
 import { wsSendToSocket } from '@lotr/core';
 import { gainCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
-import type { IGuild, IGuildMember } from '@lotr/interfaces';
+import type { IGuild, IGuildMember, IPlayer } from '@lotr/interfaces';
 import { Currency, GameAction, GuildRole } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
 import { sortBy } from 'lodash';
@@ -92,7 +92,9 @@ export class GuildManager extends BaseService {
   }
 
   // get a guild ref for a player (if possible)
-  public getGuildForPlayer(player: Player): Guild | undefined {
+  public getGuildForPlayer(player: IPlayer): Guild | undefined {
+    if (!player.guildId) return undefined;
+
     return this.guilds[player.guildId];
   }
 
@@ -114,7 +116,7 @@ export class GuildManager extends BaseService {
   // get a guild member ref for a specific player
   public getGuildMemberForPlayer(
     guild: Guild,
-    player: Player,
+    player: IPlayer,
   ): IGuildMember | undefined {
     return this.getGuildMemberForPlayerById(guild, player.uuid);
   }
@@ -144,7 +146,7 @@ export class GuildManager extends BaseService {
       );
       if (!onlinePlayer) return;
 
-      this.sendGuildUpdateToPlayer(onlinePlayer);
+      this.sendGuildUpdateToPlayer(onlinePlayer as Player);
     });
   }
 
@@ -179,11 +181,11 @@ export class GuildManager extends BaseService {
     const onlinePlayer = this.game.playerManager.getPlayerByUsername(username);
     if (!onlinePlayer) return;
 
-    this.emptyGuildForPlayer(onlinePlayer);
+    this.emptyGuildForPlayer(onlinePlayer as Player);
   }
 
   // check if a member is the same as a player
-  private isTargetSameAsMember(check: Player, member: IGuildMember): boolean {
+  private isTargetSameAsMember(check: IPlayer, member: IGuildMember): boolean {
     return check.username === member.playerUsername;
   }
 
@@ -259,7 +261,7 @@ export class GuildManager extends BaseService {
     this.getGuildMembers(guild).forEach((member) => {
       const onlinePlayer = this.game.playerManager.getPlayerByUsername(
         member.playerUsername,
-      );
+      ) as Player;
       if (!onlinePlayer) return;
 
       onlinePlayer.guildId = '';

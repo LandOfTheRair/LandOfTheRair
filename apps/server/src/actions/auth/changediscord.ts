@@ -1,5 +1,4 @@
-import type { Game } from '../../helpers';
-
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
@@ -9,7 +8,7 @@ export class ChangeDiscordTagAction extends ServerAction {
   override requiredKeys = ['discordTag'];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     try {
       try {
         await game.discordHelper.removeDiscordRoles(data.account);

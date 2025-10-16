@@ -8,6 +8,7 @@ import {
 } from '@lotr/core';
 import type {
   ICharacter,
+  IMessageHelper,
   MessageInfo,
   MessageVFX,
   SoundEffect,
@@ -18,7 +19,7 @@ import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
-export class MessageHelper extends BaseService {
+export class MessageHelper extends BaseService implements IMessageHelper {
   public init() {}
 
   public sendLogMessageToPlayer(

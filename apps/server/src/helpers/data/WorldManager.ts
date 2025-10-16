@@ -7,7 +7,12 @@ import { cloneDeep, zipObject } from 'lodash';
 import readdir from 'recursive-readdir';
 
 import { hasEffect } from '@lotr/effects';
-import type { ICharacter, IMapScript, IPlayer } from '@lotr/interfaces';
+import type {
+  ICharacter,
+  IMapScript,
+  IMapState,
+  IPlayer,
+} from '@lotr/interfaces';
 import { ObjectType } from '@lotr/interfaces';
 import type { Player, Spawner } from '../../models';
 import { MapState } from '../../models';
@@ -16,11 +21,12 @@ import { BaseService } from '../../models/BaseService';
 import { isDead } from '@lotr/characters';
 import { coreRNGDungeonConfig } from '@lotr/content';
 import { InstancedWorldMap, WorldMap } from '@lotr/core';
+import type { IWorldManager } from '@lotr/interfaces';
 import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
 
 @Injectable()
-export class WorldManager extends BaseService {
+export class WorldManager extends BaseService implements IWorldManager {
   // live maps
   private maps: Record<string, WorldMap> = {};
   private instances: Record<string, InstancedWorldMap> = {};
@@ -290,7 +296,7 @@ export class WorldManager extends BaseService {
     character: ICharacter,
     defaultX: number,
     defaultY: number,
-  ): { state: MapState; x: number; y: number } {
+  ): { state: IMapState; x: number; y: number } {
     let state = this.mapStates[character.map];
     let x = defaultX;
     let y = defaultY;

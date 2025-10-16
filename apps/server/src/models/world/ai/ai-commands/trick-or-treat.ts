@@ -1,7 +1,7 @@
 import { random, sample } from 'lodash';
 import type { Parser } from 'muud';
 
-import type { INPC, IPlayer } from '@lotr/interfaces';
+import type { INPC, IPlayer, IServerGame } from '@lotr/interfaces';
 import {
   DamageClass,
   Holiday,
@@ -13,9 +13,12 @@ import { distanceFrom } from '@lotr/shared';
 
 import { isHoliday } from '@lotr/content';
 import { rollInOneHundred } from '@lotr/rng';
-import type { Game } from '../../../../helpers';
 
-export const trickOrTreat = (game: Game, npc: INPC, parser: Parser): void => {
+export const trickOrTreat = (
+  game: IServerGame,
+  npc: INPC,
+  parser: Parser,
+): void => {
   const talkedTo = {};
 
   parser

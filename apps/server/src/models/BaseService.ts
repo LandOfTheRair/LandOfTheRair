@@ -1,8 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 
 export abstract class BaseService {
-  game: Game;
+  game: IServerGame;
 
   abstract init();
 }

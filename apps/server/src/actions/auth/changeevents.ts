@@ -1,7 +1,7 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError, consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeEventWatcherAction extends ServerAction {
@@ -9,7 +9,7 @@ export class ChangeEventWatcherAction extends ServerAction {
   override requiredKeys = ['eventWatcher'];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     try {
       await game.accountDB.changeEventWatcher(data.account, data.eventWatcher);
       await game.discordHelper.updateDiscordRoles(data.account);

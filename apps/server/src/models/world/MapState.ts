@@ -3,7 +3,7 @@ import RBush from 'rbush';
 
 import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
-import type { Game } from '../../helpers';
+import type { IMapState, IServerGame } from '@lotr/interfaces';
 
 import { isDead, isPlayer } from '@lotr/characters';
 import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
@@ -94,7 +94,7 @@ interface RBushCharacter {
   uuid: string;
 }
 
-export class MapState {
+export class MapState implements IMapState {
   private spawners: Spawner[] = [];
   private spawnersById: Record<string, Spawner> = {};
 
@@ -128,7 +128,7 @@ export class MapState {
   private timer: LoggerTimer;
 
   constructor(
-    private game: Game,
+    private game: IServerGame,
     private map: WorldMap,
   ) {}
 
