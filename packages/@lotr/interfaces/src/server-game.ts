@@ -613,7 +613,7 @@ export interface IQuestHelper extends IGameService {
   giveQuestRewards(player: IPlayer, quest: string): void;
   recalculateQuestKillsAndStatRewards(player: IPlayer): void;
   calculateKillHash(player: IPlayer): Record<string, string[]>;
-  calulateStatHash(player: IPlayer): Partial<Record<any, number>>;
+  calculateStatHash(player: IPlayer): Partial<Record<any, number>>;
   formatQuestMessage(player: IPlayer, quest: string, message: string): string;
 }
 

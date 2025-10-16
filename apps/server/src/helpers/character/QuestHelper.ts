@@ -281,7 +281,7 @@ export class QuestHelper extends BaseService {
   // called on login and when a quest is completed
   public recalculateQuestKillsAndStatRewards(player: IPlayer): void {
     player.quests.questKillWatches = this.calculateKillHash(player);
-    player.quests.questStats = this.calulateStatHash(player);
+    player.quests.questStats = this.calculateStatHash(player);
   }
 
   // used to calculate a hash of npcId:QuestName for when a player kills something, so it can easily be looked up
@@ -309,7 +309,7 @@ export class QuestHelper extends BaseService {
   // used to calculate a hash of stat:value based on quest rewards, so players can get perm stats from quests
   // should be recalculated only when a quest is completed and marked permanently complete
   // should not be persisted
-  public calulateStatHash(player: IPlayer): Partial<Record<Stat, number>> {
+  public calculateStatHash(player: IPlayer): Partial<Record<Stat, number>> {
     const stats = {};
 
     Object.keys(player.quests.permanentQuestCompletion).forEach((quest) => {
