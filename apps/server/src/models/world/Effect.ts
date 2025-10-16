@@ -7,11 +7,11 @@ import type {
 import { MessageType } from '@lotr/interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 import type { BaseEffect } from '../BaseEffect';
 
 export class Effect implements BaseEffect {
-  constructor(protected game: Game) {}
+  constructor(protected game: IServerGame) {}
 
   public sendMessage(character: ICharacter | string, message: MessageInfo) {
     this.game.messageHelper.sendLogMessageToPlayer(character, message, [

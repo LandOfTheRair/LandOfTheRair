@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 
 import type {
   BaseSpell,
@@ -17,7 +17,7 @@ import { effectGet } from '@lotr/content';
 import { logCrashContextEntry } from '@lotr/logger';
 
 export class Spell implements BaseSpell {
-  constructor(protected game: Game) {}
+  constructor(protected game: IServerGame) {}
 
   public sendMessage(
     character: ICharacter | string,

@@ -3,7 +3,7 @@ import * as Discord from 'discord.js';
 import type { IDiscordCommand } from '../../../interfaces';
 
 import { itemGet, searchItems } from '@lotr/content';
-import type { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class SearchItemsCommand implements IDiscordCommand {
   command = new Discord.SlashCommandBuilder()
@@ -16,7 +16,7 @@ export class SearchItemsCommand implements IDiscordCommand {
         .setRequired(true),
     );
 
-  do(interaction: Discord.CommandInteraction, game: Game) {
+  do(interaction: Discord.CommandInteraction, game: IServerGame) {
     if (!interaction.member) return;
 
     const query = interaction.options.get('itemname')?.value as string;

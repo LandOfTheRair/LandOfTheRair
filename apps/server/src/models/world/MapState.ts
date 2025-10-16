@@ -3,7 +3,7 @@ import RBush from 'rbush';
 
 import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
-import type { Game } from '../../helpers';
+import type { IMapState, IServerGame, ISpawner } from '@lotr/interfaces';
 
 import { isDead, isPlayer } from '@lotr/characters';
 import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
@@ -94,9 +94,9 @@ interface RBushCharacter {
   uuid: string;
 }
 
-export class MapState {
+export class MapState implements IMapState {
   private spawners: Spawner[] = [];
-  private spawnersById: Record<string, Spawner> = {};
+  private spawnersById: Record<string, ISpawner> = {};
 
   private players = new RBush();
   private npcs = new RBush();
@@ -105,8 +105,8 @@ export class MapState {
 
   private npcsByUUID: Record<string, INPC> = {};
   private playersByUUID: Record<string, IPlayer> = {};
-  private npcsBySpawner: Record<string, Spawner> = {};
-  private spawnersByName: Record<string, Spawner> = {};
+  private npcsBySpawner: Record<string, ISpawner> = {};
+  private spawnersByName: Record<string, ISpawner> = {};
 
   private playerKnowledgePositions = {};
 
@@ -128,7 +128,7 @@ export class MapState {
   private timer: LoggerTimer;
 
   constructor(
-    private game: Game,
+    private game: IServerGame,
     private map: WorldMap,
   ) {}
 
@@ -840,11 +840,11 @@ export class MapState {
     return this.npcsByUUID[uuid] || this.playersByUUID[uuid];
   }
 
-  public getNPCSpawner(uuid: string): Spawner | undefined {
+  public getNPCSpawner(uuid: string): ISpawner | undefined {
     return this.npcsBySpawner[uuid];
   }
 
-  public getNPCSpawnerByName(name: string): Spawner | undefined {
+  public getNPCSpawnerByName(name: string): ISpawner | undefined {
     return this.spawnersByName[name];
   }
 

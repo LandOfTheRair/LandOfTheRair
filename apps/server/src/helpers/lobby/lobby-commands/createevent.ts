@@ -1,14 +1,14 @@
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class CreateEventCommand implements ILobbyCommand {
   name = '/createevent';
   syntax =
     '/createevent <name="Test Event" duration=30 statBoost.skillBonusPercent=10 statBoost.xpBonusPercent=10> (duration is minutes)';
 
-  async do(message: string, game: Game) {
+  async do(message: string, game: IServerGame) {
     const rest = message.substring(message.split(' ')[0].length + 1);
 
     if (!rest) return false;

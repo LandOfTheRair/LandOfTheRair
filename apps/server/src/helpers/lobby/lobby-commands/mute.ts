@@ -2,13 +2,13 @@ import type { ILobbyCommand } from '../../../interfaces';
 import type { Account } from '../../../models';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class MuteCommand implements ILobbyCommand {
   name = '/mute';
   syntax = '/mute <accountname> (account must be online)';
 
-  async do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: IServerGame, emit: (args) => void) {
     const [cmd, rest] = message.split(' ');
 
     if (!rest) return false;

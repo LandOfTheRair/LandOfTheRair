@@ -1,6 +1,5 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeEmailAction extends ServerAction {
@@ -8,7 +7,7 @@ export class ChangeEmailAction extends ServerAction {
   override requiredKeys = ['newEmail'];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     if (!data.newEmail) return { message: 'Must specify email.' };
     if (!data.newEmail.includes('.') || !data.newEmail.includes('@')) {
       return { message: 'Email must match basic format.' };

@@ -8,7 +8,7 @@ import { getSubscriptionTier } from '@lotr/premium';
 import { Injectable } from 'injection-js';
 import { isArray, size } from 'lodash';
 import uuid from 'uuid/v4';
-import type { Account, Player } from '../../models';
+import type { Account, Guild, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -165,7 +165,7 @@ export class MigrationHelper extends BaseService {
     });
 
     if (player.isGM) {
-      const gmGuild = this.game.guildManager.getGuildByTag('GM');
+      const gmGuild = this.game.guildManager.getGuildByTag('GM') as Guild;
       if (gmGuild) {
         player.guildId = gmGuild._id.toHexString();
         this.game.guildManager.addGuildMember(gmGuild, player, GuildRole.Owner);
@@ -173,7 +173,7 @@ export class MigrationHelper extends BaseService {
     }
 
     if (player.isTester) {
-      const testGuild = this.game.guildManager.getGuildByTag('TEST');
+      const testGuild = this.game.guildManager.getGuildByTag('TEST') as Guild;
       if (testGuild) {
         player.guildId = testGuild._id.toHexString();
         this.game.guildManager.addGuildMember(

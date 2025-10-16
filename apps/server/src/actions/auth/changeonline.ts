@@ -1,7 +1,7 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError, consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangeAlwaysOnlineAction extends ServerAction {
@@ -9,7 +9,7 @@ export class ChangeAlwaysOnlineAction extends ServerAction {
   override requiredKeys = ['alwaysOnline'];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     try {
       await game.accountDB.changeAlwaysOnline(data.account, data.alwaysOnline);
       await game.discordHelper.updateDiscordRoles(data.account);

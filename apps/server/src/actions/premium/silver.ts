@@ -1,7 +1,7 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models';
 
 export class BuyPremiumWithSilverAction extends ServerAction {
@@ -9,7 +9,7 @@ export class BuyPremiumWithSilverAction extends ServerAction {
   override requiredKeys = ['item'];
 
   // eslint-disable-next-line no-empty-pattern
-  override async act(game: Game, {}, data) {
+  override async act(game: IServerGame, {}, data) {
     if (game.lobbyManager.hasJoinedGame(data.username)) {
       return {
         wasSuccess: false,

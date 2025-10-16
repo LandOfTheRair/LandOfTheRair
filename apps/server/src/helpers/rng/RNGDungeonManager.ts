@@ -13,7 +13,7 @@ export class RNGDungeonManager extends BaseService {
   private lastDungeonReset = '';
 
   public init(): void {
-    this.game.gameEvents.once(GameEvent.GameStarted, () => {
+    this.game.addGameEventOnce(GameEvent.GameStarted, () => {
       this.generateDungeons();
     });
   }

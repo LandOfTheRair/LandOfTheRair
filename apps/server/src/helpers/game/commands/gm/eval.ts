@@ -3,7 +3,7 @@ import { GameServerResponse } from '@lotr/interfaces';
 import { MacroCommand } from '../../../../models/macro';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../core/Game';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class GMEval extends MacroCommand {
   override aliases = ['@eval', '@exec', '@evalj'];
@@ -69,9 +69,10 @@ export class GMEval extends MacroCommand {
     const game = context.game;
     const json = (obj: any) => JSON.stringify(obj, null, 2);
     const props = (obj: any) => Object.getOwnPropertyNames(obj);
-    const players = () => (context.game as Game).playerManager.getAllPlayers();
+    const players = () =>
+      (context.game as IServerGame).playerManager.getAllPlayers();
     const user = (username: string) =>
-      (context.game as Game).playerManager.getPlayerByUsername(username);
+      (context.game as IServerGame).playerManager.getPlayerByUsername(username);
 
     // eslint-disable-next-line no-eval
     return eval(script);

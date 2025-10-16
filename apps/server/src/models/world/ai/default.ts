@@ -28,7 +28,7 @@ import {
 } from '@lotr/interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 import type { SkillCommand } from '../../macro';
 import type { MapState } from '../MapState';
 import type { Spawner } from '../Spawner';
@@ -75,7 +75,7 @@ export class DefaultAIBehavior implements IAI {
   }
 
   constructor(
-    protected game: Game,
+    protected game: IServerGame,
     protected map: WorldMap,
     protected mapState: MapState,
     protected spawner: Spawner,

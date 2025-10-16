@@ -35,7 +35,7 @@ export class GameloopWorker {
     this.wsCommands = new WebsocketCommandHandler();
     this.wsCommands.init((id, data) => this.emit(id, data));
 
-    await once(this.wsCommands.game.gameEvents, GameEvent.GameStarted);
+    await once((this.wsCommands.game as any).gameEvents, GameEvent.GameStarted);
     parentPort?.postMessage({ target: 'networking', __ready: true });
   }
 

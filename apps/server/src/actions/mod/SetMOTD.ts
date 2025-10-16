@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class SetMOTDAction extends ServerAction {
   override type = GameServerEvent.SetMOTD;
   override requiredKeys = ['motd'];
 
-  override async act(game: Game, { broadcast }, data) {
+  override async act(game: IServerGame, { broadcast }, data) {
     if (!game.lobbyManager.isConnectedGm(data.username)) {
       return { message: 'Not a GM.' };
     }

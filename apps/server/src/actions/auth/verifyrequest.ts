@@ -1,7 +1,6 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class VerifyRequestAction extends ServerAction {
@@ -9,7 +8,7 @@ export class VerifyRequestAction extends ServerAction {
   override requiredKeys = [];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     const account = data.account;
 
     if (account.emailVerified) {

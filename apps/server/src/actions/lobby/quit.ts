@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import { syncSessionStatistics } from '@lotr/characters';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class QuitAction extends ServerAction {
   override type = GameServerEvent.QuitGame;
   override requiredKeys = [];
 
-  override async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: IServerGame, { broadcast, emit }, data) {
     if (!game.lobbyManager.hasJoinedGame(data.username)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);

@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
   override type = GameServerEvent.Chat;
   override requiredKeys = ['content'];
 
-  override async act(game: Game, { emit }, data) {
+  override async act(game: IServerGame, { emit }, data) {
     if (data.account.isMuted || data.account.isBanned) {
       emit(
         game.messageHelper.getSystemMessageObject(

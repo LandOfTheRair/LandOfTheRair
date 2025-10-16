@@ -3,13 +3,13 @@ import { SubscriptionTier } from '@lotr/interfaces';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class SubscribeCommand implements ILobbyCommand {
   name = '/subscribe';
   syntax = '/subscribe <days> <accountname> (account must be online)';
 
-  async do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: IServerGame, emit: (args) => void) {
     const [cmd, days, rest] = message.split(' ');
 
     if (!rest) return false;

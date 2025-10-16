@@ -1,13 +1,13 @@
 import type { IMapScript } from '@lotr/interfaces';
 
 import type { WorldMap } from '@lotr/core';
-import type { Game } from '../../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 import type { MapState } from '../MapState';
 
 export class YzaltBasementScript implements IMapScript {
   readonly name = 'Yzalt Basement';
 
-  setup(game: Game, map: WorldMap, mapState: MapState) {
+  setup(game: IServerGame, map: WorldMap, mapState: MapState) {
     if (!game.groundManager.isChestLooted(map.name, 'Chest 1')) {
       const possibleItems = [
         'Steffen Offensive Sash',

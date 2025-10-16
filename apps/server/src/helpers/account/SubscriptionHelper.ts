@@ -244,6 +244,8 @@ export class SubscriptionHelper extends BaseService {
 
   public gainSilver(player: IPlayer, amount = 0): void {
     const account = this.game.lobbyManager.getAccount(player.username);
+    if (!account) return;
+
     this.modifyAccountSilver(account, amount);
   }
 

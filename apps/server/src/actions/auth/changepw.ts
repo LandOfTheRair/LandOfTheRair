@@ -1,7 +1,7 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError, consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChangePasswordAction extends ServerAction {
@@ -9,7 +9,7 @@ export class ChangePasswordAction extends ServerAction {
   override requiredKeys = ['newPassword', 'oldPassword'];
   override requiresLoggedIn = true;
 
-  override async act(game: Game, callbacks, data) {
+  override async act(game: IServerGame, callbacks, data) {
     if (data.newPassword.length < 11) {
       return { wasSuccess: false, message: 'Password must be >10 characters.' };
     }

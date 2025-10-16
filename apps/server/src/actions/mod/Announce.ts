@@ -1,7 +1,7 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class AnnounceAction extends ServerAction {
@@ -10,7 +10,7 @@ export class AnnounceAction extends ServerAction {
   override requiredKeys = ['message'];
 
   // eslint-disable-next-line no-empty-pattern
-  override async act(game: Game, {}, data) {
+  override async act(game: IServerGame, {}, data) {
     if (!game.lobbyManager.isConnectedGm(data.username)) {
       return { message: 'Not a GM.' };
     }

@@ -1,9 +1,9 @@
 import { merge } from 'lodash';
 
+import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import type { WorldMap } from '@lotr/core';
-import type { Game } from '../../helpers';
 import type { Player } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -11,7 +11,7 @@ export class PlayAction extends ServerAction {
   override type = GameServerEvent.PlayCharacter;
   override requiredKeys = ['charSlot'];
 
-  override async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: IServerGame, { broadcast, emit }, data) {
     if (data.account.isBanned) {
       emit(
         game.messageHelper.getSystemMessageObject(
