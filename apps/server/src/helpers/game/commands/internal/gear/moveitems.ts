@@ -26,6 +26,7 @@ import {
   ObjectType,
 } from '@lotr/interfaces';
 import { consoleError } from '@lotr/logger';
+import { premiumHasPouch, premiumHasSharedLocker } from '@lotr/premium';
 import { cleanNumber, distanceFrom } from '@lotr/shared';
 
 const origins = [
@@ -282,10 +283,7 @@ export class MoveItems extends MacroCommand {
         if (!this.game.lockerHelper.hasLockerFromString(player, destSlot)) {
           return false;
         }
-        if (
-          destSlot.includes('Shared') &&
-          !this.game.subscriptionHelper.hasSharedLocker(player)
-        ) {
+        if (destSlot.includes('Shared') && !premiumHasSharedLocker(player)) {
           this.sendMessage(player, 'You do not have a shared wardrobe!');
           return false;
         }
@@ -325,7 +323,7 @@ export class MoveItems extends MacroCommand {
     }
 
     if (dest === 'D') {
-      if (!this.game.subscriptionHelper.hasPouch(player)) return false;
+      if (!premiumHasPouch(player)) return false;
 
       if (srcItem.name.includes('Conjured') || succorInfo) {
         this.sendMessage(player, 'That item cannot fit in your pouch!');

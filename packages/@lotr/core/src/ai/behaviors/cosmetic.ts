@@ -139,7 +139,7 @@ export class CosmeticBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 0) return 'Please come closer.';
 
-        const account = game.lobbyManager.getAccount(player.username);
+        const account = lobbyGetAccount(player.username);
         if (!account) return 'Account not found.';
 
         const allAvailable = getSilverCosmetics(account);
@@ -193,7 +193,7 @@ export class CosmeticBehavior implements IAIBehavior {
         }
 
         const cosmetic = args['cosmetic*'].toLowerCase();
-        const account = game.lobbyManager.getAccount(player.username);
+        const account = lobbyGetAccount(player.username);
         if (!account) return 'Account not found.';
 
         const allAvailable = getSilverCosmetics(account);

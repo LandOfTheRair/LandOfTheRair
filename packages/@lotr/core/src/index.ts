@@ -2,6 +2,7 @@ export * from './ai';
 export * from './ai/ai-commands';
 export * from './ai/behaviors';
 export * from './command';
+export * from './lobbystate';
 export * from './mapstate';
 export * from './spawner';
 export * from './transmission';

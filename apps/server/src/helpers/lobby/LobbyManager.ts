@@ -5,66 +5,51 @@ import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
-import { wsBroadcast, wsSendToSocket } from '@lotr/core';
+import {
+  lobbyAddUser,
+  lobbyDiscordUserCount,
+  lobbyDiscordUserCountSet,
+  lobbyGetAccount,
+  lobbyGetOnlineUsernames,
+  lobbyPlayerJoinGame,
+  lobbyPlayerLeaveGame,
+  lobbyRemoveUser,
+  wsBroadcast,
+  wsSendToSocket,
+} from '@lotr/core';
 import type { ILobbyCommand } from '../../interfaces';
 import * as commands from './lobby-commands';
 
-class LobbyState {
-  userHash: Record<string, Account> = {};
-  discordIDToName: Record<string, string> = {};
-  discordOnlineCount = 0;
-  blockGameEnter = false;
-  lobbyPlayerCount = 0;
-  gamePlayerCount = 0;
-}
-
 @Injectable()
 export class LobbyManager extends BaseService {
-  private state: LobbyState;
   private lobbyCommands: Record<string, ILobbyCommand> = {};
 
   public get simpleOnlineAccounts() {
-    return Object.keys(this.state.userHash).map((username) => {
-      const fullAccount = this.state.userHash[username];
-      const strippedAccount = this.game.accountDB.simpleAccount(fullAccount);
-      strippedAccount.inGame = fullAccount.inGame;
-      return strippedAccount;
-    });
-  }
+    return lobbyGetOnlineUsernames()
+      .map((username) => {
+        const fullAccount = lobbyGetAccount(username);
+        if (!fullAccount) return undefined;
 
-  public get onlineUsernames() {
-    return Object.keys(this.state.userHash);
+        const strippedAccount = this.game.accountDB.simpleAccount(fullAccount);
+        strippedAccount.inGame = fullAccount.inGame;
+        return strippedAccount;
+      })
+      .filter(Boolean) as IAccount[];
   }
 
   public init() {
-    this.state = new LobbyState();
     this.initCommands();
   }
 
   public joinLobby(account: Account): void {
-    this.state.userHash[account.username] = account;
-    this.state.discordIDToName[account.discordTag] = account.username;
-
-    this.state.lobbyPlayerCount += 1;
+    lobbyAddUser(account.username, account);
     this.game.discordHelper.updateLobbyChannel();
     this.game.discordHelper.updateDiscordRoles(account);
   }
 
   public leaveLobby(username: string): void {
-    const user = this.state.userHash[username];
-    delete this.state.userHash[username];
-    delete this.state.discordIDToName[user.discordTag];
-
-    this.state.lobbyPlayerCount -= 1;
+    lobbyRemoveUser(username);
     this.game.discordHelper.updateLobbyChannel();
-  }
-
-  public hasJoinedLobby(username: string): boolean {
-    return !!this.state.userHash[username];
-  }
-
-  public usersInLobby(): number {
-    return this.state.lobbyPlayerCount;
   }
 
   public async joinGame(account: Account, player: Player): Promise<void> {
@@ -75,8 +60,8 @@ export class LobbyManager extends BaseService {
     this.game.playerManager.addPlayerToGame(player);
     this.game.worldManager.joinMap(player);
     this.game.corpseManager.deleteCorpsesFromHandsOfPlayer(player);
-    account.inGame = true;
-    this.state.gamePlayerCount += 1;
+
+    lobbyPlayerJoinGame(account.username);
     this.game.discordHelper.updateLobbyChannel();
   }
 
@@ -94,12 +79,7 @@ export class LobbyManager extends BaseService {
     this.game.playerManager.removePlayerFromGame(player);
     this.game.corpseManager.forciblyDropCorpsesHeldByPlayer(player);
 
-    const user = this.state.userHash[username];
-    if (user) {
-      user.inGame = false;
-    }
-
-    this.state.gamePlayerCount -= 1;
+    lobbyPlayerLeaveGame(username);
     this.game.discordHelper.updateLobbyChannel();
   }
 
@@ -116,11 +96,6 @@ export class LobbyManager extends BaseService {
     });
   }
 
-  // get an account
-  public getAccount(username: string): IAccount {
-    return this.state.userHash[username];
-  }
-
   // check if an account is in game
   public hasJoinedGame(username: string): boolean {
     if (this.game.playerManager.getPlayerByUsername(username)) {
@@ -130,14 +105,10 @@ export class LobbyManager extends BaseService {
     }
   }
 
-  public usersInGameCount(): number {
-    return this.state.gamePlayerCount;
-  }
-
   // set the number of online discord users with "Online In Lobby"
   public setDiscordOnlineCount(count: number) {
-    const oldCount = this.state.discordOnlineCount;
-    this.state.discordOnlineCount = count;
+    const oldCount = lobbyDiscordUserCount();
+    lobbyDiscordUserCountSet(count);
 
     if (count !== oldCount) {
       wsBroadcast({
@@ -145,10 +116,6 @@ export class LobbyManager extends BaseService {
         count,
       });
     }
-  }
-
-  public getUsernameByDiscordId(username: string) {
-    return this.state.discordIDToName[username];
   }
 
   public hasCommand(cmd: string): boolean {
@@ -175,14 +142,6 @@ export class LobbyManager extends BaseService {
     });
   }
 
-  public isBlocked(): boolean {
-    return this.state.blockGameEnter;
-  }
-
-  public toggleBlock(): void {
-    this.state.blockGameEnter = !this.state.blockGameEnter;
-  }
-
   public updateAccount(account: IAccount): void {
     wsSendToSocket(account.username, {
       action: GameAction.SetAccount,
@@ -192,7 +151,7 @@ export class LobbyManager extends BaseService {
 
   public isConnectedGm(username: string) {
     if (username === '★System') return true;
-    const account = this.getAccount(username);
+    const account = lobbyGetAccount(username);
     if (!account) return false;
     return account.isGameMaster;
   }

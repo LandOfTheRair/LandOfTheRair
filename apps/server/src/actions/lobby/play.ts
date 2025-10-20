@@ -3,6 +3,7 @@ import { merge } from 'lodash';
 import type { IServerGame, IWorldMap } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
+import { lobbyBlockingGame } from '@lotr/core';
 import type { Player } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -21,7 +22,7 @@ export class PlayAction extends ServerAction {
       return {};
     }
 
-    if (game.lobbyManager.isBlocked()) {
+    if (lobbyBlockingGame()) {
       emit(
         game.messageHelper
           .getSystemMessageObject(`The game is currently updating, so play is disabled for a few minutes.

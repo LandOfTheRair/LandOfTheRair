@@ -11,6 +11,12 @@ import { Stat, WeaponClasses } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
 
 import { itemGet } from '@lotr/content';
+import {
+  lobbyDiscordUserCountSet,
+  lobbyGetUsernameByDiscordId,
+  lobbyInGamePlayerCount,
+  lobbyUserCount,
+} from '@lotr/core';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { isSubscribed } from '@lotr/premium';
 import type { IDiscordCommand } from '../../interfaces';
@@ -258,8 +264,8 @@ export class DiscordHelper extends BaseService {
   public async updateLobbyChannel() {
     if (!this.discordChannel) return;
 
-    const online = this.game.lobbyManager.usersInLobby();
-    const inGame = this.game.lobbyManager.usersInGameCount();
+    const online = lobbyUserCount();
+    const inGame = lobbyInGamePlayerCount();
 
     await this.discordChannel.setTopic(
       `${online} user(s) connected, ${inGame} player(s) in game`,
@@ -469,8 +475,7 @@ export class DiscordHelper extends BaseService {
       }
 
       if (channel.id === this.discordChannel.id) {
-        const username =
-          this.game.lobbyManager.getUsernameByDiscordId[author.id];
+        const username = lobbyGetUsernameByDiscordId(author.id);
         const fromName =
           username ?? member?.nickname ?? member?.displayName ?? 'unknown';
         this.game.messageHelper.sendMessage(
@@ -486,7 +491,7 @@ export class DiscordHelper extends BaseService {
       const allOnline = (this.discordGuild?.members.cache as any).filter((x) =>
         x.roles.cache.some((r) => r.name === 'Online In Lobby'),
       );
-      this.game.lobbyManager.setDiscordOnlineCount(allOnline.array().length);
+      lobbyDiscordUserCountSet(allOnline.array().length);
     });
   }
 

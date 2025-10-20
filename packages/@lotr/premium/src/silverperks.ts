@@ -1,4 +1,5 @@
 import { settingGameGet } from '@lotr/content';
+import { lobbyGetAccount } from '@lotr/core';
 import { SilverPurchase, type IAccount, type IPlayer } from '@lotr/interfaces';
 
 export function premiumDocReduction(player: IPlayer, baseValue = 10): number {
@@ -73,4 +74,43 @@ export function premiumHolidayTokensGained(
 ): number {
   const mult = settingGameGet('subscriber', 'holidayTokenGain') ?? 2;
   return baseValue * (player.subscriptionTier > 0 ? mult : 1);
+}
+
+// subscription perks
+export function premiumMaxAlchemistOz(player: IPlayer, baseValue = 10): number {
+  const account = lobbyGetAccount(player.username);
+  const mult = settingGameGet('subscriber', 'alchemistOz') ?? 5;
+  return (
+    baseValue +
+    (account?.premium.silverPurchases?.[SilverPurchase.MorePotions] ?? 0) * mult
+  );
+}
+
+export function premiumMaxMaterialStorageSpace(
+  player: IPlayer,
+  baseValue = 200,
+): number {
+  const account = lobbyGetAccount(player.username);
+  const mult = settingGameGet('subscriber', 'storageSpace') ?? 200;
+  return (
+    baseValue +
+    (account?.premium.silverPurchases?.[
+      SilverPurchase.ExpandedMaterialStorage
+    ] ?? 0) *
+      mult
+  );
+}
+
+export function premiumHasPouch(player: IPlayer): boolean {
+  const account = lobbyGetAccount(player.username);
+  return (
+    (account?.premium.silverPurchases?.[SilverPurchase.MagicPouch] ?? 0) > 0
+  );
+}
+
+export function premiumHasSharedLocker(player: IPlayer): boolean {
+  const account = lobbyGetAccount(player.username);
+  return (
+    (account?.premium.silverPurchases?.[SilverPurchase.SharedLockers] ?? 0) > 0
+  );
 }

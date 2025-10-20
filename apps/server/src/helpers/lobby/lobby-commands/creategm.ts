@@ -1,3 +1,4 @@
+import { lobbyGetAccount } from '@lotr/core';
 import type { ILobbyCommand } from '../../../interfaces';
 import type { Account } from '../../../models';
 
@@ -13,7 +14,7 @@ export class CreateGMCommand implements ILobbyCommand {
 
     if (!rest) return false;
 
-    const account = game.lobbyManager.getAccount(rest);
+    const account = lobbyGetAccount(rest);
     if (!account) return false;
 
     game.accountDB.toggleGM(account as Account);

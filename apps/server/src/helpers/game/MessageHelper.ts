@@ -2,6 +2,7 @@ import { Injectable } from 'injection-js';
 import { set } from 'lodash';
 
 import {
+  lobbyGetAccount,
   transmissionResponseSendPlayer,
   transmissionSendResponseToAccount,
   wsBroadcast,
@@ -54,7 +55,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
       messageTypes.push(MessageType.Muted);
     }
 
-    const account = this.game.lobbyManager.getAccount((ref as Player).username);
+    const account = lobbyGetAccount((ref as Player).username);
     if (!account) return;
 
     if (from) message = `**${from}**: ${message}`;
@@ -105,9 +106,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
     const allPlayers = state.getAllPlayersInRange(character, radius);
 
     allPlayers.forEach((checkPlayer) => {
-      const account = this.game.lobbyManager.getAccount(
-        (checkPlayer as Player).username,
-      );
+      const account = lobbyGetAccount((checkPlayer as Player).username);
       if (!account) return;
 
       if (except && except.includes(checkPlayer.uuid)) return;
@@ -170,9 +169,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
     const allPlayers = state.getAllPlayersInRange(character, radius);
 
     allPlayers.forEach((checkPlayer) => {
-      const account = this.game.lobbyManager.getAccount(
-        (checkPlayer as Player).username,
-      );
+      const account = lobbyGetAccount((checkPlayer as Player).username);
       if (!account) return;
 
       transmissionSendResponseToAccount(
@@ -243,9 +240,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
   }
 
   public broadcastChatMessage(player: ICharacter, message: string): void {
-    const account = this.game.lobbyManager.getAccount(
-      (player as Player).username,
-    );
+    const account = lobbyGetAccount((player as Player).username);
     if (!account) return;
 
     const username = (player as Player).username;

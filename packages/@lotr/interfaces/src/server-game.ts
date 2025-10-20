@@ -514,19 +514,12 @@ export interface ICorpseManager extends IGameService {
 
 export interface ILobbyManager extends IGameService {
   readonly simpleOnlineAccounts: any[];
-  readonly onlineUsernames: string[];
   joinLobby(account: IAccount): void;
   leaveLobby(username: string): void;
-  hasJoinedLobby(username: string): boolean;
-  usersInLobby(): number;
   joinGame(account: IAccount, player: IPlayer): Promise<void>;
   leaveGame(username: string): void;
   forceLeaveGame(username: string): void;
-  getAccount(username: string): IAccount | null;
   hasJoinedGame(username: string): boolean;
-  usersInGameCount(): number;
-  setDiscordOnlineCount(count: number): void;
-  getUsernameByDiscordId(username: string): string | undefined;
   hasCommand(cmd: string): boolean;
   getCommandSyntax(cmd: string): string;
   doCommand(
@@ -534,8 +527,6 @@ export interface ILobbyManager extends IGameService {
     message: string,
     emit: (args: any) => void,
   ): Promise<boolean>;
-  isBlocked(): boolean;
-  toggleBlock(): void;
   updateAccount(account: IAccount): void;
   isConnectedGm(username: string): boolean;
 }
@@ -566,10 +557,6 @@ export interface ISubscriptionHelper extends IGameService {
   modifyAccountSilver(account: IAccount, silver: number): Promise<void>;
   gainSilver(player: IPlayer, amount?: number): void;
   loseSilver(player: IPlayer, amount?: number): void;
-  maxAlchemistOz(player: IPlayer, baseValue?: number): number;
-  maxMaterialStorageSpace(player: IPlayer, baseValue?: number): number;
-  hasPouch(player: IPlayer): boolean;
-  hasSharedLocker(player: IPlayer): boolean;
 }
 
 export interface ICharacterRoller extends IGameService {

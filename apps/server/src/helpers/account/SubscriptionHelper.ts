@@ -1,14 +1,15 @@
 import { Injectable } from 'injection-js';
 import stripe from 'stripe';
 
-import { corePremium, settingGameGet } from '@lotr/content';
-import { wsSendToSocket } from '@lotr/core';
-import type { IAccount, IPlayer, ISilverPerk } from '@lotr/interfaces';
-import {
-  GameServerResponse,
+import { corePremium } from '@lotr/content';
+import { lobbyGetAccount, wsSendToSocket } from '@lotr/core';
+import type {
+  IAccount,
+  IPlayer,
+  ISilverPerk,
   SilverPurchase,
-  SubscriptionTier,
 } from '@lotr/interfaces';
+import { GameServerResponse, SubscriptionTier } from '@lotr/interfaces';
 import { consoleLog } from '@lotr/logger';
 import type { Account } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -243,7 +244,7 @@ export class SubscriptionHelper extends BaseService {
   }
 
   public gainSilver(player: IPlayer, amount = 0): void {
-    const account = this.game.lobbyManager.getAccount(player.username);
+    const account = lobbyGetAccount(player.username);
     if (!account) return;
 
     this.modifyAccountSilver(account, amount);
@@ -251,43 +252,5 @@ export class SubscriptionHelper extends BaseService {
 
   public loseSilver(player: IPlayer, amount = 0): void {
     this.gainSilver(player, -amount);
-  }
-
-  // subscription perks
-  public maxAlchemistOz(player: IPlayer, baseValue = 10): number {
-    const account = this.game.lobbyManager.getAccount(player.username);
-    const mult = settingGameGet('subscriber', 'alchemistOz') ?? 5;
-    return (
-      baseValue +
-      (account?.premium.silverPurchases?.[SilverPurchase.MorePotions] ?? 0) *
-        mult
-    );
-  }
-
-  public maxMaterialStorageSpace(player: IPlayer, baseValue = 200): number {
-    const account = this.game.lobbyManager.getAccount(player.username);
-    const mult = settingGameGet('subscriber', 'storageSpace') ?? 200;
-    return (
-      baseValue +
-      (account?.premium.silverPurchases?.[
-        SilverPurchase.ExpandedMaterialStorage
-      ] ?? 0) *
-        mult
-    );
-  }
-
-  public hasPouch(player: IPlayer): boolean {
-    const account = this.game.lobbyManager.getAccount(player.username);
-    return (
-      (account?.premium.silverPurchases?.[SilverPurchase.MagicPouch] ?? 0) > 0
-    );
-  }
-
-  public hasSharedLocker(player: IPlayer): boolean {
-    const account = this.game.lobbyManager.getAccount(player.username);
-    return (
-      (account?.premium.silverPurchases?.[SilverPurchase.SharedLockers] ?? 0) >
-      0
-    );
   }
 }

@@ -18,6 +18,7 @@ import type {
 } from '@lotr/interfaces';
 import { Currency, ItemClass, Stat } from '@lotr/interfaces';
 import { consoleError } from '@lotr/logger';
+import { premiumMaxMaterialStorageSpace } from '@lotr/premium';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
@@ -263,10 +264,8 @@ export class InventoryHelper extends BaseService implements IInventoryHelper {
   // material functions
   public materialSpaceLeft(player: IPlayer, material: string): number {
     return (
-      this.game.subscriptionHelper.maxMaterialStorageSpace(
-        player,
-        this.materialSize,
-      ) - (player.accountLockers.materials[material] ?? 0)
+      premiumMaxMaterialStorageSpace(player, this.materialSize) -
+      (player.accountLockers.materials[material] ?? 0)
     );
   }
 

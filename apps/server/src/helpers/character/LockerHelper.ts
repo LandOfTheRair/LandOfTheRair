@@ -4,6 +4,7 @@ import { coreMaterialStorage } from '@lotr/content';
 import { wsSendToSocket } from '@lotr/core';
 import type { IItemContainer, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
+import { premiumHasSharedLocker } from '@lotr/premium';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -26,7 +27,7 @@ export class LockerHelper extends BaseService {
 
     const showLockers = lockers.slice().sort();
 
-    if (this.game.subscriptionHelper.hasSharedLocker(player)) {
+    if (premiumHasSharedLocker(player)) {
       Object.keys(player.accountLockers?.lockers ?? {}).forEach(
         (checkLockerId) => {
           showLockers.unshift(checkLockerId);

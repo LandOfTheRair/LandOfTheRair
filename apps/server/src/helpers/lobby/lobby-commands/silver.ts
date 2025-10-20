@@ -1,3 +1,4 @@
+import { lobbyGetAccount } from '@lotr/core';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -12,7 +13,7 @@ export class GiveSilverCommand implements ILobbyCommand {
 
     if (!rest) return false;
 
-    const account = game.lobbyManager.getAccount(rest);
+    const account = lobbyGetAccount(rest);
     if (!account) return false;
 
     game.subscriptionHelper.modifyAccountSilver(account, +silver);

@@ -1,3 +1,4 @@
+import { lobbyBlockingGame, lobbyToggleBlockingGame } from '@lotr/core';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -8,11 +9,11 @@ export class LockGameCommand implements ILobbyCommand {
   syntax = '/lockgame';
 
   async do(message: string, game: IServerGame, emit: (args) => void) {
-    game.lobbyManager.toggleBlock();
+    lobbyToggleBlockingGame();
 
     emit(
       game.messageHelper.getSystemMessageObject(
-        `Game entry is ${game.lobbyManager.isBlocked() ? 'BLOCKED' : 'no longer blocked'}.`,
+        `Game entry is ${lobbyBlockingGame() ? 'BLOCKED' : 'no longer blocked'}.`,
       ),
     );
 

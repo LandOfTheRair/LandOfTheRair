@@ -1,3 +1,4 @@
+import { lobbyGetAccount } from '@lotr/core';
 import type { IServerAction } from '@lotr/interfaces';
 import { GameServerEvent, GameServerResponse } from '@lotr/interfaces';
 import { consoleError, consoleLog } from '@lotr/logger';
@@ -67,7 +68,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
     const unregister = (username) => this.unregisterAccountSocket(username);
 
     if (action.requiresLoggedIn && !action.canBeUnattended) {
-      const account = this.game.lobbyManager.getAccount(data.username);
+      const account = lobbyGetAccount(data.username);
       if (!account) {
         const blacklistedActionsForLogging = [
           GameServerEvent.QuitGame,

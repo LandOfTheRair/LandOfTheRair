@@ -3,6 +3,7 @@ import { SubscriptionTier } from '@lotr/interfaces';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { lobbyGetAccount } from '@lotr/core';
 import type { IServerGame } from '@lotr/interfaces';
 
 export class SubscribeCommand implements ILobbyCommand {
@@ -14,7 +15,7 @@ export class SubscribeCommand implements ILobbyCommand {
 
     if (!rest) return false;
 
-    const account = game.lobbyManager.getAccount(rest);
+    const account = lobbyGetAccount(rest);
     if (!account) return false;
 
     game.subscriptionHelper.startTrial(account, +days, SubscriptionTier.Trial);

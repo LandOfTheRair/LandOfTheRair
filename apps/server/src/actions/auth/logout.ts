@@ -1,6 +1,7 @@
 import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
+import { lobbyGetAccount } from '@lotr/core';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -21,7 +22,7 @@ export class LogoutAction extends ServerAction {
         game.lobbyManager.leaveGame(data.username);
       }
 
-      if (game.lobbyManager.hasJoinedLobby(data.username)) {
+      if (lobbyGetAccount(data.username)) {
         game.lobbyManager.leaveLobby(data.username);
       }
 

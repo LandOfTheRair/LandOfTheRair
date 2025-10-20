@@ -1,6 +1,7 @@
 import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
+import { lobbyGetOnlineUsernames, lobbyToggleBlockingGame } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -17,10 +18,10 @@ export class BlockGameAndKickAllAction extends ServerAction {
 
     try {
       // block game entry
-      game.lobbyManager.toggleBlock();
+      lobbyToggleBlockingGame();
 
       // kick everyone
-      game.lobbyManager.onlineUsernames.forEach((username) => {
+      lobbyGetOnlineUsernames().forEach((username) => {
         if (game.lobbyManager.hasJoinedGame(username)) {
           game.lobbyManager.forceLeaveGame(username);
         }
