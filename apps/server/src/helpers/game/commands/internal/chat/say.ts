@@ -1,5 +1,6 @@
 import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { cleanMessage, truncateMessage } from '@lotr/shared';
 
 export class Say extends MacroCommand {
   override aliases = ['say'];
@@ -11,9 +12,7 @@ export class Say extends MacroCommand {
     if (!state) return;
 
     const playersInView = state.getAllPlayersInRange(player, 4);
-    const msg = this.game.messageHelper.truncateMessage(
-      this.game.profanityHelper.cleanMessage(args.stringArgs),
-    );
+    const msg = truncateMessage(cleanMessage(args.stringArgs));
 
     playersInView.forEach((p) => {
       this.sendChatMessage(p, `**${player.name}**: ${msg}`);

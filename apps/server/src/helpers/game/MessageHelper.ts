@@ -188,10 +188,6 @@ export class MessageHelper extends BaseService implements IMessageHelper {
     });
   }
 
-  public truncateMessage(message: string): string {
-    return message.substring(0, 200);
-  }
-
   public sendSimpleMessage(
     character: ICharacter,
     message: string,

@@ -40,7 +40,6 @@ import {
 } from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
-import { ProfanityHelper } from '../chat';
 import {
   ContentLoader,
   CorpseManager,
@@ -105,7 +104,6 @@ export class Game implements IServerGame {
     public guildsDB: GuildsDB,
 
     public emailHelper: EmailHelper,
-    public profanityHelper: ProfanityHelper,
 
     public migrationHelper: MigrationHelper,
     public effectManager: EffectManager,
@@ -222,7 +220,6 @@ export class Game implements IServerGame {
 
       // these don't really have anything special, and can be initialized whenever, as their value is mostly at runtime
       [GameEvent.InitChill]: [
-        'profanityHelper',
         'migrationHelper',
         'corpseManager',
         'characterRoller',

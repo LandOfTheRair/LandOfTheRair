@@ -2,6 +2,7 @@ import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError } from '@lotr/logger';
+import { cleanMessage } from '@lotr/shared';
 import { ServerAction } from '../../models/ServerAction';
 
 export class ChatAction extends ServerAction {
@@ -19,7 +20,7 @@ export class ChatAction extends ServerAction {
       return {};
     }
 
-    data.content = game.profanityHelper.cleanMessage(data.content);
+    data.content = cleanMessage(data.content);
 
     // try to do a slash command before running the chat message
     if (data.content.startsWith('/')) {

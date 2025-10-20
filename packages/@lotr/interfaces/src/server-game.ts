@@ -357,11 +357,6 @@ export interface IEmailHelper extends IGameService {
   requestTemporaryPassword(emailOrUsername: string): Promise<void>;
 }
 
-export interface IProfanityHelper extends IGameService {
-  hasProfanity(check: string): boolean;
-  cleanMessage(msg: string): string;
-}
-
 export interface IMigrationHelper extends IGameService {
   migrate(player: IPlayer, playerAccount: IAccount): void;
 }
@@ -1076,7 +1071,6 @@ export interface IMessageHelper extends IGameService {
     radius: number,
     { vfx, vfxTiles, vfxTimeout }: MessageVFX,
   ): void;
-  truncateMessage(message: string): string;
   sendSimpleMessage(
     target: ICharacter | string,
     message: string,
@@ -1315,7 +1309,6 @@ export interface IServerGame {
 
   // Helper services
   emailHelper: IEmailHelper;
-  profanityHelper: IProfanityHelper;
   migrationHelper: IMigrationHelper;
   effectManager: IEffectManager;
   corpseManager: ICorpseManager;

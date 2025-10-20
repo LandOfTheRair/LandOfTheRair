@@ -16,6 +16,7 @@
   "dependencies": {
     "@lotr/content": "*",
     "@lotr/eslint-config": "*",
-    "@lotr/interfaces": "*"
+    "@lotr/interfaces": "*",
+    "censor-sensor": "^1.0.6"
   }
 }

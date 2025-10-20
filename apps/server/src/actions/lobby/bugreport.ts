@@ -1,6 +1,7 @@
 import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
+import { cleanMessage } from '@lotr/shared';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BugReportAction extends ServerAction {
@@ -20,8 +21,8 @@ export class BugReportAction extends ServerAction {
       return { message: 'Server not configured to handle bug reports.' };
     }
 
-    data.report = game.profanityHelper.cleanMessage(data.report);
-    data.userAgent = game.profanityHelper.cleanMessage(data.userAgent);
+    data.report = cleanMessage(data.report);
+    data.userAgent = cleanMessage(data.userAgent);
 
     game.discordHelper.sendBugReport(player, data);
 

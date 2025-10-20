@@ -9,6 +9,7 @@ import { ServerAction } from '../../models/ServerAction';
 
 import { coreCharSelect } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
+import { hasProfanity } from '@lotr/shared';
 import * as meta from '../../../content/_output/meta.json';
 
 export class RegisterAction extends ServerAction {
@@ -46,7 +47,7 @@ export class RegisterAction extends ServerAction {
       return { message: 'Username must only have letters and numbers.' };
     }
 
-    if (game.profanityHelper.hasProfanity(data.username)) {
+    if (hasProfanity(data.username)) {
       return { message: 'Pick a different username.' };
     }
 
