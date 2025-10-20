@@ -1,10 +1,10 @@
 import { clamp } from 'lodash';
 
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
-import { SpellCommand } from '../../../../../../../models/macro';
 
 export class GhostWail extends SpellCommand {
   override aliases = ['ghostwail'];

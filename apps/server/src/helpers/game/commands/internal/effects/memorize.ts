@@ -1,7 +1,7 @@
 import { hasLearned } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class MemorizeCommand extends MacroCommand {
   override aliases = ['memorize'];

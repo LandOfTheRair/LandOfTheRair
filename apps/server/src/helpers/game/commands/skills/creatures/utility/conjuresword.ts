@@ -1,5 +1,5 @@
 import { itemGetMatchingName } from '@lotr/content';
-import { transmissionSendResponseToAccount } from '@lotr/core';
+import { SpellCommand, transmissionSendResponseToAccount } from '@lotr/core';
 import type {
   ICharacter,
   IDialogChatAction,
@@ -13,7 +13,6 @@ import {
   ItemSlot,
   WeaponClasses,
 } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class ConjureSword extends SpellCommand {
   override aliases = ['conjuresword', 'cast conjuresword'];

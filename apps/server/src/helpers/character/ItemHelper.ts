@@ -4,6 +4,7 @@ import { cloneDeep, isNumber } from 'lodash';
 import type {
   ICharacter,
   IDialogChatAction,
+  IItemHelper,
   IItemRequirements,
   IPlayer,
   ISimpleItem,
@@ -37,7 +38,7 @@ import { canUseItem } from '@lotr/shared';
 // not to be confused with ItemCreator which is for HELPER FUNCTIONS that CREATE ITEMS
 
 @Injectable()
-export class ItemHelper extends BaseService {
+export class ItemHelper extends BaseService implements IItemHelper {
   private conditionThresholds = {
     broken: 0,
     rough: 2500,
@@ -114,8 +115,8 @@ export class ItemHelper extends BaseService {
   public mergeItemRequirements(
     firstItemRequirements: IItemRequirements | undefined,
     secondItemRequirements: IItemRequirements,
-  ) {
-    if (!secondItemRequirements) {
+  ): IItemRequirements {
+    if (!secondItemRequirements && firstItemRequirements) {
       return firstItemRequirements;
     }
     if (!firstItemRequirements) {

@@ -2,10 +2,10 @@ import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import { diceRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class HeatBiteStrong extends SpellCommand {
   override aliases = ['heatbitestrong'];

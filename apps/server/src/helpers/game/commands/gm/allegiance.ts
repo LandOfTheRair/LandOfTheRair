@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Allegiance } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMAllegiance extends MacroCommand {
   override aliases = ['@allegiance', '@a'];
@@ -16,8 +16,8 @@ export class GMAllegiance extends MacroCommand {
 
     const allegiance = Allegiance[args.stringArgs];
     if (!allegiance) {
-return this.sendMessage(player, 'That is not a valid allegiance.');
-}
+      return this.sendMessage(player, 'That is not a valid allegiance.');
+    }
     player.allegiance = allegiance;
     this.sendMessage(player, `Your allegiance is now ${allegiance}.`);
   }

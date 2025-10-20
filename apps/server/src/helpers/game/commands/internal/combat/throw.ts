@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import { traitLevelValue } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -10,7 +11,6 @@ import type {
 import { ItemSlot } from '@lotr/interfaces';
 import { rollTraitValue } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
-import { SkillCommand } from '../../../../../models/macro';
 
 export class ThrowCommand extends SkillCommand {
   override aliases = ['t', 'throw'];

@@ -1,7 +1,7 @@
 import { settingGameGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Tradeskill extends MacroCommand {
   override aliases = ['tradeskill'];

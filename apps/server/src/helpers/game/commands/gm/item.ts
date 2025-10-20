@@ -1,7 +1,7 @@
 import { itemExists } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateItem extends MacroCommand {
   override aliases = ['@createitem', '@item', '@i'];

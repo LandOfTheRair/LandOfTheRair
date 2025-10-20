@@ -16,11 +16,12 @@ import { BaseService } from '../../models/BaseService';
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import { isHoliday, settingGameGet, traitLevel } from '@lotr/content';
 import { transmissionMovementPatchSend } from '@lotr/core';
+import type { IMovementHelper } from '@lotr/interfaces';
 import { isAtLeastTester, isPlayerSubscribed } from '@lotr/premium';
 import { directionDiagonalToWestEast, directionFromOffset } from '@lotr/shared';
 
 @Injectable()
-export class MovementHelper extends BaseService {
+export class MovementHelper extends BaseService implements IMovementHelper {
   private maxMove = 4;
 
   init() {

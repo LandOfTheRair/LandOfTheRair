@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-} from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
+import { SpellCommand } from '@lotr/core';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 
 export class MockingShout extends SpellCommand {
   override aliases = ['mockingshout', 'art mockingshout'];
@@ -16,11 +11,11 @@ export class MockingShout extends SpellCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!player.items.equipment[ItemSlot.RightHand]) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need a weapon in your hands to provoke someone!',
       );
-}
+    }
 
     this.castSpellAt(player, player, args);
   }

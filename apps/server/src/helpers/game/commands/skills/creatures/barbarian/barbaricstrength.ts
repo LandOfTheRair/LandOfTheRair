@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class BarbaricStrength extends SpellCommand {
   override aliases = ['art barbaricstrength'];

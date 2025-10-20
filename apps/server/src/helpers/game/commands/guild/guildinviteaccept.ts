@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models';
 
 export class GuildInviteAccept extends MacroCommand {
   override aliases = ['guild inviteaccept'];

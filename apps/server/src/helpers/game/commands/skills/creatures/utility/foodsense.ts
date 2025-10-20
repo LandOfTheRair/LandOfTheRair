@@ -1,5 +1,5 @@
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Foodsense extends SpellCommand {
   override aliases = ['foodsense', 'cast foodsense'];

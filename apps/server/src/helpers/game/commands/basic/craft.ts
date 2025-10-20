@@ -7,6 +7,7 @@ import {
   itemPropertyGet,
   recipeGet,
 } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IMacroCommandArgs,
@@ -16,7 +17,6 @@ import type {
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Craft extends MacroCommand {
   override aliases = ['craft'];

@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Fate extends SpellCommand {
   override aliases = ['fate', 'cast fate'];

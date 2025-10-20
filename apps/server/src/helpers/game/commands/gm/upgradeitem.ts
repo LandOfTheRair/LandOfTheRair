@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMUpgradeItem extends MacroCommand {
   override aliases = ['@upgradeitem', '@ui'];
@@ -11,19 +11,19 @@ export class GMUpgradeItem extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const rightHand = player.items.equipment[ItemSlot.RightHand];
     if (!rightHand) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need to hold something to upgrade in your right hand.',
       );
-}
+    }
 
     const leftHand = player.items.equipment[ItemSlot.LeftHand];
     if (!leftHand) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need to hold something to upgrade with in your left hand.',
       );
-}
+    }
 
     this.game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
     this.game.characterHelper.setLeftHand(player, undefined);

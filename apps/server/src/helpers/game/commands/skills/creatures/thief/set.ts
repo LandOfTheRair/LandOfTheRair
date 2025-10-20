@@ -3,9 +3,9 @@ import {
   itemPropertiesGet,
   traitLevelValue,
 } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill } from '@lotr/interfaces';
-import { SkillCommand } from '../../../../../../models/macro';
 
 export class Set extends SkillCommand {
   override aliases = ['set'];

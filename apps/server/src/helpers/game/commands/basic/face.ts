@@ -1,8 +1,7 @@
-import { transmissionActionSendAccount } from '@lotr/core';
+import { MacroCommand, transmissionActionSendAccount } from '@lotr/core';
 import type { Direction, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
 import { directionFromText } from '@lotr/shared';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Face extends MacroCommand {
   override aliases = ['face'];

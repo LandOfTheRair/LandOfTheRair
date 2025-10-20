@@ -1,8 +1,8 @@
 import { itemPropertiesGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Wield extends MacroCommand {
   override aliases = ['wield'];

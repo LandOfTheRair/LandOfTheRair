@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMModCreature extends MacroCommand {
   override aliases = ['@modcreature', '@modc'];

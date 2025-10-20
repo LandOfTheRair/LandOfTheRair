@@ -1,4 +1,3 @@
-export * from './macro';
 export * from './orm';
 export * from './world';
 

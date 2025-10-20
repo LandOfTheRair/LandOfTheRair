@@ -1,8 +1,8 @@
 import { isPlayer } from '@lotr/characters';
 import { achievementExists, achievementHas } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMToggleAchievement extends MacroCommand {
   override aliases = ['@achievement', '@ach'];

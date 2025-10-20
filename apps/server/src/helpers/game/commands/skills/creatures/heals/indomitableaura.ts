@@ -1,5 +1,5 @@
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class IndomitableAura extends SpellCommand {
   override aliases = ['indomitableaura', 'cast indomitableaura'];

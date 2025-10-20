@@ -1,8 +1,8 @@
 import { isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../../../models/macro';
 
 export class HalloweenZombieScratch extends SpellCommand {
   override aliases = ['halloweenzombiescratch'];

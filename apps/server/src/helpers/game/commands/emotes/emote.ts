@@ -1,5 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
+import { cleanMessage } from '@lotr/shared';
 
 export class Emote extends MacroCommand {
   override aliases = ['emote'];
@@ -12,9 +13,7 @@ export class Emote extends MacroCommand {
 
     const playersInView = state.getAllPlayersInRange(player, 4);
 
-    const cleanedEmote = this.game.profanityHelper.cleanMessage(
-      args.stringArgs,
-    );
+    const cleanedEmote = cleanMessage(args.stringArgs);
     if (args.stringArgs !== cleanedEmote) {
       this.sendChatMessage(player, 'Have some decency!');
       return;

@@ -1,11 +1,11 @@
 import type { IMapScript } from '@lotr/interfaces';
 
-import type { Game } from '../../../helpers';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class DedlaenMazeScript implements IMapScript {
   readonly name = 'DedlaenMaze';
 
-  setup(game: Game) {
+  setup(game: IServerGame) {
     const darkTiles = [
       [103, 184],
       [104, 184],
@@ -33,7 +33,7 @@ export class DedlaenMazeScript implements IMapScript {
 
   events() {}
 
-  handleEvent(game: Game, event: string, { trigger }) {
+  handleEvent(game: IServerGame, event: string, { trigger }) {
     if (event === 'on:swwalltile') {
       game.messageHelper.sendSimpleMessage(
         trigger,
@@ -47,7 +47,7 @@ export class DedlaenMazeScript implements IMapScript {
     }
   }
 
-  private toggleDoors(game: Game, open: boolean) {
+  private toggleDoors(game: IServerGame, open: boolean) {
     const mapRef = game.worldManager.getMap('DedlaenMaze');
 
     for (let i = 1; i <= 3; i++) {

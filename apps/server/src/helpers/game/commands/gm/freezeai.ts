@@ -1,6 +1,6 @@
 import { settingIsAIActive, toggleAIFreeze } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMFreezeAI extends MacroCommand {
   override aliases = ['@freezeai', '@fa'];

@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
+import { cleanMessage } from '@lotr/shared';
 import { ServerAction } from '../../models/ServerAction';
 
 export class BugReportAction extends ServerAction {
   override type = GameServerEvent.BugReport;
   override requiredKeys = ['report', 'userAgent'];
 
-  override async act(game: Game, { broadcast, emit }, data) {
+  override async act(game: IServerGame, { broadcast, emit }, data) {
     if (!game.lobbyManager.hasJoinedGame(data.username)) return { message: '' };
 
     const player = game.playerManager.getPlayerInGame(data.account);
@@ -21,8 +21,8 @@ export class BugReportAction extends ServerAction {
       return { message: 'Server not configured to handle bug reports.' };
     }
 
-    data.report = game.profanityHelper.cleanMessage(data.report);
-    data.userAgent = game.profanityHelper.cleanMessage(data.userAgent);
+    data.report = cleanMessage(data.report);
+    data.userAgent = cleanMessage(data.userAgent);
 
     game.discordHelper.sendBugReport(player, data);
 

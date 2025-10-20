@@ -1,8 +1,8 @@
 import { isPlayer } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class SetTrap extends SpellCommand {
   override aliases = ['settrap'];

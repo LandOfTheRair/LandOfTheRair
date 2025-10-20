@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class InscribeCommand extends MacroCommand {
   override aliases = ['inscribe'];

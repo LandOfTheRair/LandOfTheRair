@@ -1,8 +1,5 @@
-import type { IServerAction } from '@lotr/interfaces';
+import type { IServerAction, IServerGame } from '@lotr/interfaces';
 import { GameServerEvent, GameServerResponse } from '@lotr/interfaces';
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../helpers';
 
 export class ServerAction implements IServerAction {
   type = GameServerEvent.Default;
@@ -17,7 +14,7 @@ export class ServerAction implements IServerAction {
   }
 
   async act(
-    game: Game,
+    game: IServerGame,
     callbacks,
     data,
   ): Promise<{ wasSuccess?: boolean; message?: string }> {

@@ -1,3 +1,22 @@
+import { CensorSensor } from 'censor-sensor';
+
+const censorSensor = new CensorSensor();
+censorSensor.disableTier(2);
+censorSensor.disableTier(3);
+censorSensor.disableTier(4);
+
+export function hasProfanity(check: string): boolean {
+  return censorSensor.isProfane(check);
+}
+
+export function truncateMessage(message: string): string {
+  return message.substring(0, 200);
+}
+
+export function cleanMessage(msg: string): string {
+  return censorSensor.cleanProfanity(msg).trim();
+}
+
 // make sure numbers are cleaned up appropriately because js lets you do some dumb shit
 export function cleanNumber(
   num: number | string,

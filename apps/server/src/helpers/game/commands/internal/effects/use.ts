@@ -1,8 +1,8 @@
 import { getEmptyHand } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer, ItemClass } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class UseCommand extends MacroCommand {
   override aliases = ['use', 'eat', 'consume'];

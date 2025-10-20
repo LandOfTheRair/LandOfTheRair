@@ -1,5 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
+import { cleanMessage, truncateMessage } from '@lotr/shared';
 
 export class LobbySay extends MacroCommand {
   override aliases = ['lobbysay'];
@@ -7,9 +8,7 @@ export class LobbySay extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const msg = this.game.messageHelper.truncateMessage(
-      this.game.profanityHelper.cleanMessage(args.stringArgs),
-    );
+    const msg = truncateMessage(cleanMessage(args.stringArgs));
     this.game.messageHelper.broadcastChatMessage(player, msg);
   }
 }

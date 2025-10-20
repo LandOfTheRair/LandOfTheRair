@@ -1,8 +1,7 @@
 import { isPlayer } from '@lotr/characters';
-import { wsSendToSocket } from '@lotr/core';
+import { MacroCommand, wsSendToSocket } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMTakeover extends MacroCommand {
   override aliases = ['@takeover'];

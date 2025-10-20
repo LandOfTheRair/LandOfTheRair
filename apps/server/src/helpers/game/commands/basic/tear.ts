@@ -5,7 +5,7 @@ import {
   itemPropertiesGet,
   itemPropertyGet,
 } from '@lotr/content';
-import { transmissionSendResponseToAccount } from '@lotr/core';
+import { MacroCommand, transmissionSendResponseToAccount } from '@lotr/core';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import type {
   IDialogChatAction,
@@ -21,7 +21,6 @@ import {
   SoundEffect,
   Tradeskill,
 } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Tear extends MacroCommand {
   override aliases = ['tear'];

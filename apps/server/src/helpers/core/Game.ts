@@ -5,6 +5,7 @@ import { LoggerTimer } from 'logger-timer';
 
 import { settingIsAIActive } from '@lotr/content';
 import { wsSetHandler } from '@lotr/core';
+import type { IServerGame } from '@lotr/interfaces';
 import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
@@ -39,7 +40,6 @@ import {
 } from '../character';
 import { PartyHelper } from '../character/PartyHelper';
 import { PartyManager } from '../character/PartyManager';
-import { ProfanityHelper } from '../chat';
 import {
   ContentLoader,
   CorpseManager,
@@ -74,7 +74,7 @@ import {
 import { LoggerInitializer } from './LoggerInitializer';
 
 @Injectable()
-export class Game {
+export class Game implements IServerGame {
   private ticksElapsed = 1;
   private isReady = false;
 
@@ -82,7 +82,7 @@ export class Game {
     return this.isReady;
   }
 
-  public readonly gameEvents = new EventEmitter();
+  private readonly gameEvents = new EventEmitter();
 
   constructor(
     public loggerInitializer: LoggerInitializer,
@@ -104,7 +104,6 @@ export class Game {
     public guildsDB: GuildsDB,
 
     public emailHelper: EmailHelper,
-    public profanityHelper: ProfanityHelper,
 
     public migrationHelper: MigrationHelper,
     public effectManager: EffectManager,
@@ -221,7 +220,6 @@ export class Game {
 
       // these don't really have anything special, and can be initialized whenever, as their value is mostly at runtime
       [GameEvent.InitChill]: [
-        'profanityHelper',
         'migrationHelper',
         'corpseManager',
         'characterRoller',
@@ -385,6 +383,14 @@ export class Game {
         });
       });
     });
+  }
+
+  public addGameEvent(event: GameEvent, callback: () => void): void {
+    this.gameEvents.on(event, callback);
+  }
+
+  public addGameEventOnce(event: GameEvent, callback: () => void): void {
+    this.gameEvents.once(event, callback);
   }
 
   private loop() {

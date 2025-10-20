@@ -1,9 +1,9 @@
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../../models/macro';
 
 export class DedlaenSpiderImmobilize extends SpellCommand {
   override aliases = ['dedlaenspiderimmobilize'];

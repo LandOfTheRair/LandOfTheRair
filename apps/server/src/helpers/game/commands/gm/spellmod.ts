@@ -1,5 +1,5 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMSpellMod extends MacroCommand {
   override aliases = ['@spellmod', '@sm'];
@@ -15,11 +15,11 @@ export class GMSpellMod extends MacroCommand {
 
     const [name, potency] = args.arrayArgs;
     if (!name) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You must specify a spell name or "list".',
       );
-}
+    }
 
     if (name === 'list') {
       const allOverrides = this.game.worldDB.getAllSpellMultiplierOverrides();

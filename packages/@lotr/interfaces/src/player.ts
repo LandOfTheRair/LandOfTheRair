@@ -78,6 +78,8 @@ export interface IPlayer extends ICharacter {
 
   isGM: boolean;
   isTester: boolean;
+
+  guildId?: string;
 }
 
 export interface IPlayerState {

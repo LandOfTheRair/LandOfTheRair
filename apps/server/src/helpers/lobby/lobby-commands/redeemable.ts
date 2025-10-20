@@ -2,13 +2,13 @@ import { itemExists } from '@lotr/content';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../core';
+import type { IServerGame } from '@lotr/interfaces';
 
 export class CreateRedeemable implements ILobbyCommand {
   name = '/redeemable';
   syntax = '/redeemable <redeemish>';
 
-  async do(message: string, game: Game, emit: (args) => void) {
+  async do(message: string, game: IServerGame, emit: (args) => void) {
     const redeemish = message.split('/redeemable ')[1]?.trim();
     if (!redeemish) return false;
 

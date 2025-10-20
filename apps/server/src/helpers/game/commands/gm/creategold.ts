@@ -1,7 +1,7 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMCreateGold extends MacroCommand {
   override aliases = ['@creategold', '@gold', '@g'];

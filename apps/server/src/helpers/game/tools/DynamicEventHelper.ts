@@ -10,7 +10,7 @@ import type {
   Stat,
 } from '@lotr/interfaces';
 import { DynamicEventSuccessType, GameAction } from '@lotr/interfaces';
-import { DynamicEvent, Spawner } from '../../../models';
+import { DynamicEvent } from '../../../models';
 
 import {
   coreEvents,
@@ -18,7 +18,7 @@ import {
   coreSettings,
   eventGet,
 } from '@lotr/content';
-import { wsBroadcast } from '@lotr/core';
+import { Spawner, wsBroadcast } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';

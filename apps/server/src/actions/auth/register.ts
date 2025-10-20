@@ -1,15 +1,15 @@
+import type { IServerGame } from '@lotr/interfaces';
 import {
   GameAction,
   GameServerEvent,
   GameServerResponse,
 } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 import { coreCharSelect } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
+import { hasProfanity } from '@lotr/shared';
 import * as meta from '../../../content/_output/meta.json';
 
 export class RegisterAction extends ServerAction {
@@ -17,7 +17,7 @@ export class RegisterAction extends ServerAction {
   override requiredKeys = [];
   override requiresLoggedIn = false;
 
-  override async act(game: Game, { broadcast, emit, register }, data) {
+  override async act(game: IServerGame, { broadcast, emit, register }, data) {
     if (process.env.BLOCK_REGISTER) {
       return { message: 'Registrations are not enabled on this server.' };
     }
@@ -47,7 +47,7 @@ export class RegisterAction extends ServerAction {
       return { message: 'Username must only have letters and numbers.' };
     }
 
-    if (game.profanityHelper.hasProfanity(data.username)) {
+    if (hasProfanity(data.username)) {
       return { message: 'Pick a different username.' };
     }
 

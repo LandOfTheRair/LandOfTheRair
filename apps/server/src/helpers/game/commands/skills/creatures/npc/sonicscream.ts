@@ -1,7 +1,7 @@
 import { isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class SonicScream extends SpellCommand {
   override aliases = ['sonicscream'];

@@ -11,6 +11,8 @@
   "devDependencies": {
     "@lotr/eslint-config": "*",
     "@types/pathfinding": "^0.1.0",
+    "@types/rbush": "^3.0.4",
+    "@types/uuid": "^3.4.13",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -20,6 +22,9 @@
     "fast-json-patch": "^3.1.1",
     "logger-timer": "^1.0.7",
     "mrpas": "^2.0.0",
-    "pathfinding": "^0.4.18"
+    "muud": "^1.0.5",
+    "pathfinding": "^0.4.18",
+    "rbush": "^3.0.1",
+    "uuid": "^3.3.3"
   }
 }

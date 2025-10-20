@@ -1,14 +1,14 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import { consoleError, consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LogoutAction extends ServerAction {
   override type = GameServerEvent.Logout;
   override requiredKeys = ['username'];
 
-  override async act(game: Game, { broadcast, unregister }, data) {
+  override async act(game: IServerGame, { broadcast, unregister }, data) {
     try {
       broadcast({
         action: GameAction.ChatRemoveUser,

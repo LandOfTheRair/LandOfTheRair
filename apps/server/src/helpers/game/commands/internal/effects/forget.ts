@@ -1,12 +1,11 @@
 import { hasLearned } from '@lotr/characters';
-import { transmissionSendResponseToAccount } from '@lotr/core';
+import { MacroCommand, transmissionSendResponseToAccount } from '@lotr/core';
 import type {
   IDialogChatAction,
   IMacroCommandArgs,
   IPlayer,
 } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class ForgetCommand extends MacroCommand {
   override aliases = ['forget'];

@@ -1,7 +1,7 @@
 import { getStat } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer, Stat } from '@lotr/interfaces';
 import { Allegiance, MessageType } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class ShowStats extends MacroCommand {
   override aliases = ['show stats'];

@@ -1,5 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, INPC, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
+import { cleanMessage, truncateMessage } from '@lotr/shared';
 
 export class PrivateSay extends MacroCommand {
   override aliases = ['privatesay'];
@@ -26,9 +27,7 @@ export class PrivateSay extends MacroCommand {
       return;
     }
 
-    const msg = this.game.messageHelper.truncateMessage(
-      this.game.profanityHelper.cleanMessage(aargs[1]),
-    );
+    const msg = truncateMessage(cleanMessage(aargs[1]));
     this.game.messageHelper.sendPrivateMessage(player, target, msg);
   }
 }

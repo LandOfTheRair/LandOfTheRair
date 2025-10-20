@@ -8,6 +8,8 @@ import {
   itemPropertyGet,
   traitHasLearned,
 } from '@lotr/content';
+import type { VendorBehavior } from '@lotr/core';
+import { MacroCommand } from '@lotr/core';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -25,8 +27,6 @@ import {
 } from '@lotr/interfaces';
 import { consoleError } from '@lotr/logger';
 import { cleanNumber, distanceFrom } from '@lotr/shared';
-import { MacroCommand } from '../../../../../models/macro';
-import type { VendorBehavior } from '../../../../../models/world/ai/behaviors';
 
 const origins = [
   'R', // right hand

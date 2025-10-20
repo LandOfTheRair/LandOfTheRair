@@ -1,5 +1,5 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class PartyResetInstances extends MacroCommand {
   override aliases = ['party resetinstances'];
@@ -8,11 +8,11 @@ export class PartyResetInstances extends MacroCommand {
 
   override async execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) {
-return this.sendMessage(player, 'You are not in a party!');
-}
+      return this.sendMessage(player, 'You are not in a party!');
+    }
     if (!this.game.partyHelper.isLeader(player)) {
-return this.sendMessage(player, 'You are not the party leader!');
-}
+      return this.sendMessage(player, 'You are not the party leader!');
+    }
 
     const partyName = this.game.partyHelper.partyName(player);
 

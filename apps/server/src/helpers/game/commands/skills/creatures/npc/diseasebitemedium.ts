@@ -1,12 +1,12 @@
 import { random } from 'lodash';
 
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { diceRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class DiseaseBiteMedium extends SpellCommand {
   override aliases = ['diseasebitemedium'];

@@ -1,7 +1,7 @@
 import { isDead } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMKill extends MacroCommand {
   override aliases = ['@kill', '@k'];

@@ -1,8 +1,8 @@
 import { getSkillLevel } from '@lotr/characters';
 import { skillGetDescription } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer, Skill } from '@lotr/interfaces';
 import { Allegiance, MessageType } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class ShowSkills extends MacroCommand {
   override aliases = ['show skills'];

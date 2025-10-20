@@ -1,15 +1,15 @@
+import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
 import { coreCharSelect } from '@lotr/content';
 import { premiumMaxCharacters } from '@lotr/premium';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class RollCharacterAction extends ServerAction {
   override type = GameServerEvent.CreateCharacter;
   override requiredKeys = ['slot', 'name', 'gender', 'allegiance', 'baseclass'];
 
-  override async act(game: Game, { emit }, data) {
+  override async act(game: IServerGame, { emit }, data) {
     const { gender, allegiance, baseclass, weapons, account } = data;
     let { slot, name } = data;
 

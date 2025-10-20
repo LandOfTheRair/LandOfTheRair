@@ -1,3 +1,4 @@
+import type { IServerGame } from '@lotr/interfaces';
 import {
   GameAction,
   GameServerEvent,
@@ -7,7 +8,6 @@ import * as meta from '../../../content/_output/meta.json';
 
 import { coreCharSelect, currentHoliday } from '@lotr/content';
 import { consoleError, consoleLog } from '@lotr/logger';
-import type { Game } from '../../helpers';
 import { ServerAction } from '../../models/ServerAction';
 
 export class LoginAction extends ServerAction {
@@ -15,7 +15,7 @@ export class LoginAction extends ServerAction {
   override requiredKeys = ['username', 'password'];
   override requiresLoggedIn = false;
 
-  override async act(game: Game, { broadcast, emit, register }, data) {
+  override async act(game: IServerGame, { broadcast, emit, register }, data) {
     if (!data.username) {
       return { wasSuccess: false, message: 'No username specified.' };
     }

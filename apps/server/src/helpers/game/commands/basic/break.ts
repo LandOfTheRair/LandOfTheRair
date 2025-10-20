@@ -1,7 +1,7 @@
 import { itemIsOwnedBy, itemPropertyGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot, SoundEffect } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Break extends MacroCommand {
   override aliases = ['break'];

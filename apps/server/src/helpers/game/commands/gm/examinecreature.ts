@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 
+import { MacroCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMExamineCreature extends MacroCommand {
   override aliases = ['@examinecreature', '@excreature', '@exc'];

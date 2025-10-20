@@ -1,9 +1,9 @@
 import { itemAllGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { EquipHash, ItemSlot, Stat } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
 import { sortBy } from 'lodash';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMGearUp extends MacroCommand {
   override aliases = ['@gearup', '@gear', '@gu'];

@@ -1,4 +1,5 @@
 import { isWeapon, traitLevel } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -6,7 +7,6 @@ import type {
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Thruststrike extends SpellCommand {
   override aliases = ['thruststrike', 'art thruststrike'];
