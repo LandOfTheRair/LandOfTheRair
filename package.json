@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "start:dev": "turbo run start:dev --filter=client --filter=server --filter=@lotr/characters --filter=@lotr/interfaces --filter=@lotr/shared --filter=@lotr/content",
     "start:dev:all": "turbo run start:dev",
-    "lint": "turbo run lint --affected",
+    "lint": "turbo run lint",
     "test": "vitest --run",
     "setup": "turbo run setup && npm run setup:buildprereqs",
     "setup:buildprereqs": "turbo run build --filter=@lotr/interfaces",
