@@ -10,6 +10,7 @@ import { GuildRole, IGuild, IGuildMember } from './guild';
 import { IItemDefinition, IItemRequirements, ISimpleItem } from './item';
 import { ItemClass } from './itemtypes';
 import { IMacroCommandArgs } from './macro';
+import { IMapData, IMapProperties, ObjectType } from './map';
 import { IMarketItemInfo, IMarketListing, IMarketPickup } from './market';
 import { MessageInfo, MessageType, MessageVFX } from './messages';
 import { INPC, INPCDefinition, INPCScript } from './npc';
@@ -199,6 +200,111 @@ export interface ISpawner {
   }): INPC | null;
   getRandomPath(): string;
   increaseTick(by?: number): void;
+}
+
+// WorldMap interface for map management
+export interface IWorldMap {
+  // Properties
+  readonly width: number;
+  readonly height: number;
+  readonly mapData: IMapData;
+  readonly properties: IMapProperties;
+  readonly region: string;
+  readonly holiday: string | undefined;
+  readonly maxSkill: number;
+  readonly maxSkillExp: number;
+  readonly maxLevel: number;
+  readonly firstCutExp: number;
+  readonly secondCutExp: number;
+  readonly maxLevelExp: number;
+  readonly maxCreatures: number;
+  readonly disableCreatureRespawn: boolean;
+  readonly canSpawnCreatures: boolean;
+  readonly decayRateHours: number;
+  readonly decayCheckMinutes: number;
+  readonly maxItemsOnGround: number;
+  readonly subscriberOnly: boolean;
+  readonly respawnPoint: { map: string; x: number; y: number };
+  readonly exitPoint: { kickMap: string; kickX: number; kickY: number } | null;
+  readonly gearDropPoint: {
+    gearDropMap: string;
+    gearDropX: number;
+    gearDropY: number;
+  } | null;
+  readonly canMemorize: boolean;
+  readonly canPartyAction: boolean;
+  readonly script: string;
+  readonly fovCalculator: any; // Mrpas instance
+  readonly mapDroptables: any;
+  readonly regionDroptables: any;
+  readonly allSpawners: any[];
+  readonly allDefaultNPCs: any[];
+  readonly name: string;
+  readonly tiledJSON: any;
+
+  // Teleport and navigation
+  getTeleportTagRef(ref: string): { x: number; y: number } | undefined;
+
+  // Tile information methods
+  getTerrainAt(x: number, y: number): number;
+  getFloorAt(x: number, y: number): number;
+  getFluidAt(x: number, y: number): number;
+  getFoliageAt(x: number, y: number): number;
+  getWallAt(x: number, y: number): number;
+  getDecorAt(x: number, y: number): any | null;
+  getDenseDecorAt(x: number, y: number): any | null;
+  getOpaqueDecorAt(x: number, y: number): any | null;
+  getInteractableAt(x: number, y: number): any | null;
+  getNPCAt(x: number, y: number): any | null;
+  getSpawnerAt(x: number, y: number): any | null;
+  getRegionDescriptionAt(x: number, y: number): any;
+  getRegionNameAt(x: number, y: number): any;
+  getBackgroundMusicAt(x: number, y: number): string;
+  getSuccorportPropertiesAt(x: number, y: number): any | null;
+  getInteractableOfTypeAt(x: number, y: number, type: ObjectType): any | null;
+  getInteractableOrDenseObject(x: number, y: number): any;
+  getZLevelAt(x: number, y: number): number;
+
+  // Object finding methods
+  findDoorById(id: number): any;
+  findAllDecorByName(name: string): any[];
+  findInteractableByName(name: string): any;
+
+  // Collision and visibility checking
+  checkIfDenseObjectAt(x: number, y: number): boolean;
+  checkIfActualWallAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall?: boolean,
+  ): boolean;
+  checkIfHideableTileAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall?: boolean,
+  ): boolean;
+  checkIfCanHideAt(
+    x: number,
+    y: number,
+    shouldAirCountForWall?: boolean,
+  ): boolean;
+
+  // Pathfinding
+  findPath(
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+  ): Array<{ x: number; y: number }> | undefined;
+  findPathExcludingWalls(
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+  ): Array<{ x: number; y: number }> | undefined;
+
+  // Player actions
+  canSuccor(player: IPlayer): boolean;
+  canTeleport(player: IPlayer): boolean;
 }
 
 // Base interface for all game services
@@ -1167,7 +1273,10 @@ export interface IWorldManager extends IGameService {
     partyName: string,
     mapNameWithParty: string,
   ): void;
-  getMap(mapName: string, partyName?: string): any;
+  getMap(
+    mapName: string,
+    partyName?: string,
+  ): { map: IWorldMap; state: IMapState } | undefined;
   isEtherForceMap(mapName: string): boolean;
   isDungeon(mapName: string): boolean;
   getMapStateAndXYForCharacterItemDrop(

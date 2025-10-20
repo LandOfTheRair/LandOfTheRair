@@ -13,10 +13,15 @@ import {
   calculateSkillXPRequiredForLevel,
   calculateXPRequiredForLevel,
 } from '@lotr/exp';
-import type { IMapData, IMapProperties, IPlayer } from '@lotr/interfaces';
+import type {
+  IMapData,
+  IMapProperties,
+  IPlayer,
+  IWorldMap,
+} from '@lotr/interfaces';
 import { MapLayer, ObjectType, TilesWithNoFOVUpdate } from '@lotr/interfaces';
 
-export class WorldMap {
+export class WorldMap implements IWorldMap {
   private densityMap!: Pathfinder.Grid;
   private planner: any;
   private fov!: Mrpas;

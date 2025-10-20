@@ -13,6 +13,7 @@ import type {
   IMapState,
   IPlayer,
   ISpawner,
+  IWorldMap,
 } from '@lotr/interfaces';
 import { ObjectType } from '@lotr/interfaces';
 import type { Player } from '../../models';
@@ -275,7 +276,7 @@ export class WorldManager extends BaseService implements IWorldManager {
 
   public getMap(
     mapName: string,
-  ): { map: WorldMap; state: MapState } | undefined {
+  ): { map: IWorldMap; state: IMapState } | undefined {
     return {
       map: this.instances[mapName] || this.maps[mapName],
       state: this.mapStates[mapName],

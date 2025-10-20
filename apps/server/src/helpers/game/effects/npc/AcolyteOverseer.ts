@@ -14,12 +14,13 @@ export class AcolyteOverseer extends Effect {
       .getMap(char.map)
       ?.state.getNPCSpawner(char.uuid)
       ?.getNPCAI(char.uuid);
+
     if (!ai) {
       clear();
       return;
     }
 
-    const livingAcolytes = ai.livingAcolytes.length;
+    const livingAcolytes = (ai as any).livingAcolytes.length;
 
     if (livingAcolytes > 0) {
       if ((effect.effectInfo.currentTick ?? 0) % 5 !== 0) return;

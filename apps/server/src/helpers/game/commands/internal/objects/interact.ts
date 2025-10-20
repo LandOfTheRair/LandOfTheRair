@@ -1,6 +1,5 @@
-import type { MapState } from '@lotr/core';
 import { MacroCommand } from '@lotr/core';
-import type { IMacroCommandArgs } from '@lotr/interfaces';
+import type { IMacroCommandArgs, IMapState } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
 
 export class Interact extends MacroCommand {
@@ -42,7 +41,7 @@ export class Interact extends MacroCommand {
     );
   }
 
-  private doDoor(door, state: MapState) {
+  private doDoor(door, state: IMapState) {
     const isOpen = state.isDoorOpen(door.id);
     return { command: 'open', shouldContinue: !isOpen };
   }

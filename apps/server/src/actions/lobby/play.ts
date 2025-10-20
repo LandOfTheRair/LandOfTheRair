@@ -1,9 +1,8 @@
 import { merge } from 'lodash';
 
-import type { IServerGame } from '@lotr/interfaces';
+import type { IServerGame, IWorldMap } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-import type { WorldMap } from '@lotr/core';
 import type { Player } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -51,7 +50,7 @@ export class PlayAction extends ServerAction {
 
     const mapName = player.map;
 
-    let map: WorldMap | undefined = game.worldManager.getMap(mapName)?.map;
+    let map: IWorldMap | undefined = game.worldManager.getMap(mapName)?.map;
     if (!map || !player.x || !player.y || isNaN(player.x) || isNaN(player.y)) {
       map = game.worldManager.getMap('Tutorial')?.map;
 

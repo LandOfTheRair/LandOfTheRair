@@ -16,6 +16,7 @@ import type {
   INPC,
   IServerGame,
   ISpawner,
+  IWorldMap,
   PhysicalAttackArgs,
   SoundEffect,
 } from '@lotr/interfaces';
@@ -49,7 +50,6 @@ import {
   directionToOffset,
   distanceFrom,
 } from '@lotr/shared';
-import type { WorldMap } from '../worldmap';
 import { wsSendToSocket } from '../ws';
 export class DefaultAIBehavior implements IAI {
   private path!: Array<{ x: number; y: number }>;
@@ -75,7 +75,7 @@ export class DefaultAIBehavior implements IAI {
 
   constructor(
     protected game: IServerGame,
-    protected map: WorldMap,
+    protected map: IWorldMap,
     protected mapState: IMapState,
     protected spawner: ISpawner,
     protected npc: INPC & { dialogParser?: boolean },

@@ -1,7 +1,12 @@
 import { extend, isArray, random, sample } from 'lodash';
 import uuid from 'uuid/v4';
 
-import type { IMapState, IServerGame, ISpawner } from '@lotr/interfaces';
+import type {
+  IMapState,
+  IServerGame,
+  ISpawner,
+  IWorldMap,
+} from '@lotr/interfaces';
 
 import type { Holiday, IAI, INPC, INPCDefinition } from '@lotr/interfaces';
 import { Hostility } from '@lotr/interfaces';
@@ -11,7 +16,6 @@ import { isHoliday } from '@lotr/content';
 import { consoleError } from '@lotr/logger';
 import { rollInOneHundred } from '@lotr/rng';
 import { AllAIBehaviors } from './ai';
-import type { WorldMap } from './worldmap';
 
 export class Spawner implements ISpawner {
   public readonly id = uuid();
@@ -157,7 +161,7 @@ export class Spawner implements ISpawner {
 
   constructor(
     private game: IServerGame,
-    private mapRef: WorldMap,
+    private mapRef: IWorldMap,
     private mapState: IMapState,
     spawnOpts: Partial<Spawner> = {},
   ) {
