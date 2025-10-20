@@ -1,11 +1,11 @@
 import { random, sample } from 'lodash';
 
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IPlayer, Skill } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { diceRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class SkillSuckWeak extends SpellCommand {
   override aliases = ['skillsuckweak'];

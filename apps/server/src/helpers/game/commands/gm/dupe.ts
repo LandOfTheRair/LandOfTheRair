@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash';
 
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMDuplicateItem extends MacroCommand {
   override aliases = ['@duplicate', '@dupe', '@d'];
@@ -13,16 +13,16 @@ export class GMDuplicateItem extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const rightHand = player.items.equipment[ItemSlot.RightHand];
     if (!rightHand) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need to hold something in your right hand.',
       );
-}
+    }
 
     const leftHand = player.items.equipment[ItemSlot.LeftHand];
     if (leftHand) {
-return this.sendMessage(player, 'You need to empty your left hand.');
-}
+      return this.sendMessage(player, 'You need to empty your left hand.');
+    }
     const item = cloneDeep(rightHand);
     this.game.itemCreator.resetUUID(item);
 

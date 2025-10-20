@@ -1,12 +1,8 @@
 import { get, isNumber } from 'lodash';
 
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameServerResponse
-} from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
+import { MacroCommand } from '@lotr/core';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { GameServerResponse } from '@lotr/interfaces';
 
 export class GMExamineGround extends MacroCommand {
   override aliases = ['@examineground', '@exground', '@exg'];

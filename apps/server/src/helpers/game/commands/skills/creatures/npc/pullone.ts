@@ -1,7 +1,7 @@
 import { isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class PullOne extends SpellCommand {
   override aliases = ['pullone'];

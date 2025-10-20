@@ -1,4 +1,5 @@
 import { isWeapon } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -7,7 +8,6 @@ import type {
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SkillCommand } from '../../../../../../models/macro';
 
 export class Backstab extends SkillCommand {
   override aliases = ['bs', 'backstab'];

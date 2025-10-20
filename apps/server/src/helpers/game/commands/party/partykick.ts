@@ -1,5 +1,5 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class PartyKick extends MacroCommand {
   override aliases = ['party kick'];
@@ -8,25 +8,25 @@ export class PartyKick extends MacroCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!this.game.partyHelper.isInParty(player)) {
-return this.sendMessage(player, 'You are not in a party!');
-}
+      return this.sendMessage(player, 'You are not in a party!');
+    }
     if (!this.game.partyHelper.isLeader(player)) {
-return this.sendMessage(player, 'You are not the party leader!');
-}
+      return this.sendMessage(player, 'You are not the party leader!');
+    }
     if (player.username === args.stringArgs) {
-return this.sendMessage(player, 'You cannot kick yourself!');
-}
+      return this.sendMessage(player, 'You cannot kick yourself!');
+    }
 
     const kickedPlayer = this.game.playerManager.getPlayerByUsername(
       args.stringArgs,
     );
     if (!kickedPlayer) {
-return this.sendMessage(player, 'That person is not in game!');
-}
+      return this.sendMessage(player, 'That person is not in game!');
+    }
 
     if (!this.game.partyHelper.isInSameParty(player, kickedPlayer)) {
-return this.sendMessage(player, 'That person is not in your party!');
-}
+      return this.sendMessage(player, 'That person is not in your party!');
+    }
 
     this.game.partyHelper.kickPartyMember(kickedPlayer);
 

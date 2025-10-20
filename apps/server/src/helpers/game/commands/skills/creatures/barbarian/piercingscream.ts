@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class PiercingScream extends SpellCommand {
   override aliases = ['art piercingscream'];

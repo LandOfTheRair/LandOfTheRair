@@ -1,10 +1,10 @@
 import { hasEmptyHand } from '@lotr/characters';
 import { itemPropertyGet, traitLevel } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SkillCommand } from '../../../../models/macro';
 
 export class Steal extends SkillCommand {
   override aliases = ['steal'];

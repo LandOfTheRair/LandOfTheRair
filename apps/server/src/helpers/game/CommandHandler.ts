@@ -3,12 +3,12 @@ import { cloneDeep, isObject, isString } from 'lodash';
 
 import { canAct, isDead } from '@lotr/characters';
 import { spellGetAll } from '@lotr/content';
+import type { MacroCommand, SkillCommand } from '@lotr/core';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import { consoleDebug, consoleLog } from '@lotr/logger';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
-import type { MacroCommand, SkillCommand } from '../../models/macro';
-import { SpellCommand } from '../../models/macro';
 import * as Commands from './commands';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports

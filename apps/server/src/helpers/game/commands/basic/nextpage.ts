@@ -1,7 +1,7 @@
 import { itemPropertiesGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer, ItemSlot } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class NextPage extends MacroCommand {
   override aliases = ['nextpage'];

@@ -1,11 +1,11 @@
 import { traitLevelValue } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
   IPlayer,
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Sweep extends SpellCommand {
   override aliases = ['sweep', 'art sweep'];

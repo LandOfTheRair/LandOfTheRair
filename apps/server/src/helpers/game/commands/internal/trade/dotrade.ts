@@ -1,8 +1,8 @@
 import { getEmptyHand, hasEmptyHand } from '@lotr/characters';
 import { itemPropertiesGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class TradeCommand extends MacroCommand {
   override aliases = ['dotrade'];

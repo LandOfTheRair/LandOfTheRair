@@ -1,6 +1,6 @@
+import { SkillCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
-import { SkillCommand } from '../../../../models/macro';
 
 export class Reveal extends SkillCommand {
   override aliases = ['reveal'];

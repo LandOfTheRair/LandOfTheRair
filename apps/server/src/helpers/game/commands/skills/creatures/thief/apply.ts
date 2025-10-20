@@ -1,7 +1,7 @@
 import { itemPropertiesGet, traitLevelValue } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SkillCommand } from '../../../../../../models/macro';
 
 export class Apply extends SkillCommand {
   override aliases = ['apply'];

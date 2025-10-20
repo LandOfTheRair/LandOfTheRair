@@ -12,15 +12,15 @@ import type {
   IMapScript,
   IMapState,
   IPlayer,
+  ISpawner,
 } from '@lotr/interfaces';
 import { ObjectType } from '@lotr/interfaces';
-import type { Player, Spawner } from '../../models';
-import { MapState } from '../../models';
+import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 import { isDead } from '@lotr/characters';
 import { coreRNGDungeonConfig } from '@lotr/content';
-import { InstancedWorldMap, WorldMap } from '@lotr/core';
+import { InstancedWorldMap, MapState, WorldMap } from '@lotr/core';
 import type { IWorldManager } from '@lotr/interfaces';
 import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
@@ -65,7 +65,7 @@ export class WorldManager extends BaseService implements IWorldManager {
 
   // uninitialized spawners
   private totalSpawnersFromStart = 0;
-  private uninitializedSpawners: Spawner[] = [];
+  private uninitializedSpawners: ISpawner[] = [];
 
   public get currentlyActiveMaps(): string[] {
     return [...this.activeMaps];
@@ -153,10 +153,10 @@ export class WorldManager extends BaseService implements IWorldManager {
     timer.dumpTimers();
   }
 
-  private addUninitializedSpawners(spawners: Spawner[]): void {
+  private addUninitializedSpawners(spawners: ISpawner[]): void {
     this.totalSpawnersFromStart += spawners.length;
 
-    const isSpawnerImportant = (spawner: Spawner) =>
+    const isSpawnerImportant = (spawner: ISpawner) =>
       spawner.spawnerName.includes('Green NPC') ||
       spawner.areCreaturesDangerous;
 
@@ -168,7 +168,7 @@ export class WorldManager extends BaseService implements IWorldManager {
   }
 
   public initAllMaps() {
-    const allSpawners: Spawner[] = [];
+    const allSpawners: ISpawner[] = [];
     Object.values(this.mapStates).forEach((state) => {
       state.init();
       allSpawners.push(...state.allSpawners);
@@ -500,7 +500,7 @@ export class WorldManager extends BaseService implements IWorldManager {
       }
 
       timer.startTimer(`map-${activeMap}-${now}`);
-      state.steadyTick(timer);
+      state.steadyTick();
       timer.stopTimer(`map-${activeMap}-${now}`);
     });
   }

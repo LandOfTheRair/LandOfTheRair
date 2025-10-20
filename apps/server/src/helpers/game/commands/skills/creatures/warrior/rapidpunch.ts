@@ -1,5 +1,6 @@
 import { getStat } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -8,7 +9,6 @@ import type {
 } from '@lotr/interfaces';
 import { ItemSlot, Stat } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Rapidpunch extends SpellCommand {
   override aliases = ['rapidpunch', 'art rapidpunch'];

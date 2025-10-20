@@ -1,6 +1,6 @@
 import { coreRNGDungeonConfig } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMResetDungeon extends MacroCommand {
   override aliases = ['@resetdungeon', '@rd'];

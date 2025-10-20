@@ -1,8 +1,8 @@
 import { itemPropertyGet } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Skill } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
-import { SkillCommand } from '../../../../../../models/macro';
 
 export class Disarm extends SkillCommand {
   override aliases = ['disarm'];

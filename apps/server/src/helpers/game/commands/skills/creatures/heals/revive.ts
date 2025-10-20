@@ -1,5 +1,5 @@
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Revive extends SpellCommand {
   override aliases = ['revive', 'cast revive'];

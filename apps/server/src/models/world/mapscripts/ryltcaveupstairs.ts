@@ -1,8 +1,7 @@
 import type { IMapScript } from '@lotr/interfaces';
 
-import type { WorldMap } from '@lotr/core';
+import type { MapState, WorldMap } from '@lotr/core';
 import type { IServerGame } from '@lotr/interfaces';
-import type { MapState } from '../MapState';
 
 export class RyltCaveUpstairsScript implements IMapScript {
   readonly name = 'Rylt Cave Upstairs';

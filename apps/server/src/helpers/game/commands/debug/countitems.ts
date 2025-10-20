@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { MessageType } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class DebugCountItems extends MacroCommand {
   override aliases = ['&items'];

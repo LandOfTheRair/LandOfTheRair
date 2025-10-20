@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Provoke extends SpellCommand {
   override aliases = ['provoke', 'art provoke'];
@@ -9,11 +9,11 @@ export class Provoke extends SpellCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!player.items.equipment[ItemSlot.RightHand]) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You need a weapon in your hands to provoke someone!',
       );
-}
+    }
 
     super.execute(player, args);
   }

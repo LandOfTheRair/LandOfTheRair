@@ -1,5 +1,5 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class WaveEmote extends MacroCommand {
   override aliases = ['wave'];

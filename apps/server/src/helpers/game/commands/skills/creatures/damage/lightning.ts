@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Lightning extends SpellCommand {
   override aliases = ['lightning', 'cast lightning'];

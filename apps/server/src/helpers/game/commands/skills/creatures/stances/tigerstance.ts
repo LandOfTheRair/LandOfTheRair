@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 import { hasEffect } from '@lotr/effects';
 export class TigerStance extends SpellCommand {

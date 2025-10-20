@@ -1,8 +1,8 @@
 import { getStat } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Direction, Stat } from '@lotr/interfaces';
 import { directionFromText, directionToOffset } from '@lotr/shared';
-import { MacroCommand } from '../../../../models/macro';
 
 export class DirectionalMovement extends MacroCommand {
   override aliases = ['e', 'w', 's', 'n', 'nw', 'ne', 'sw', 'se'];

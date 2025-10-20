@@ -1,5 +1,5 @@
+import { SpellCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class EnergyWave extends SpellCommand {
   override aliases = ['energywave', 'cast energywave'];

@@ -1,7 +1,7 @@
+import { MacroCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { isUndefined } from 'lodash';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMTeleportTo extends MacroCommand {
   override aliases = ['@teleportto', '@tt'];

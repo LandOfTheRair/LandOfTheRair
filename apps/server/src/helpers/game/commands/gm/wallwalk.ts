@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMWallWalk extends MacroCommand {
   override aliases = ['@wallwalk', '@ww'];

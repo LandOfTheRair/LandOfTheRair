@@ -1,7 +1,7 @@
 import { isNumber, merge } from 'lodash';
 
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMModGround extends MacroCommand {
   override aliases = ['@modground', '@modg', '@mg'];

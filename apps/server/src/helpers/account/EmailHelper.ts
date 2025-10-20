@@ -5,11 +5,12 @@ import uuid from 'uuid/v4';
 import type { Account } from '../../models';
 
 import { settingGameGet } from '@lotr/content';
+import type { IEmailHelper } from '@lotr/interfaces';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
-export class EmailHelper extends BaseService {
+export class EmailHelper extends BaseService implements IEmailHelper {
   private transport;
 
   public init() {

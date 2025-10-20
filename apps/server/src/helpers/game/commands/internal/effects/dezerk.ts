@@ -1,7 +1,7 @@
 import { hasLearned } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import { getEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class DezerkCommand extends MacroCommand {
   override aliases = ['dezerk'];

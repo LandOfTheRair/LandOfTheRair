@@ -1,10 +1,10 @@
 import { getStat, isPlayer } from '@lotr/characters';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass, Stat } from '@lotr/interfaces';
 import { diceRoll } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import { random } from 'lodash';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class DrainBiteStrong extends SpellCommand {
   override aliases = ['drainbitestrong'];

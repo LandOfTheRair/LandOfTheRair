@@ -715,7 +715,7 @@ export interface IItemHelper extends IGameService {
   mergeItemRequirements(
     baseRequirements: IItemRequirements | undefined,
     newRequirements: IItemRequirements,
-  ): void;
+  ): IItemRequirements;
   reasonCantGetBenefitsFromItem(
     char: ICharacter,
     item: ISimpleItem,

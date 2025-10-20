@@ -1,7 +1,7 @@
 import { isPlayer } from '@lotr/characters';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models';
 
 export class GuildInvite extends MacroCommand {
   override aliases = ['guild invite'];

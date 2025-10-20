@@ -1,6 +1,6 @@
+import { SpellCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class BarWater extends SpellCommand {
   override aliases = ['barwater', 'cast barwater'];

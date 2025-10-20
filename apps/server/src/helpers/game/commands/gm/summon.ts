@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMSummon extends MacroCommand {
   override aliases = ['@summon', '@s'];

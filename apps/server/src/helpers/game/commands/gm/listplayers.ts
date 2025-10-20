@@ -1,10 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  GameServerResponse
-} from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
+import { MacroCommand } from '@lotr/core';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { GameServerResponse } from '@lotr/interfaces';
 
 export class GMListPlayers extends MacroCommand {
   override aliases = ['@listplayers', '@lp', '@whois'];

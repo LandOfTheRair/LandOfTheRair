@@ -1,9 +1,9 @@
 import { healToFull, manaToFull } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
+import { Spawner } from '@lotr/core';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
-import { Spawner } from '../../../../models';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Resurrect extends Spell {

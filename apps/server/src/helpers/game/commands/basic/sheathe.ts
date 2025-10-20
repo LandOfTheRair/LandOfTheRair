@@ -1,8 +1,8 @@
 import { capitalize } from 'lodash';
 
+import { MacroCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models/macro';
 
 export class Sheathe extends MacroCommand {
   override aliases = ['sheathe'];
@@ -13,8 +13,8 @@ export class Sheathe extends MacroCommand {
     const hand = args.stringArgs;
 
     if (hand !== 'left' && hand !== 'right') {
-return this.sendMessage(char, 'Invalid hand for sheathing from.');
-}
+      return this.sendMessage(char, 'Invalid hand for sheathing from.');
+    }
 
     this.game.commandHandler.doCommand(
       char as Player,

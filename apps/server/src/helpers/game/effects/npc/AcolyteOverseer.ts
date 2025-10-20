@@ -1,7 +1,6 @@
 import { heal } from '@lotr/characters';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
-import type { CrazedSaraxaAIBehavior } from '../../../../models/world/ai/crazedsaraxa';
 
 export class AcolyteOverseer extends Effect {
   override tick(char: ICharacter, effect: IStatusEffect) {
@@ -14,7 +13,7 @@ export class AcolyteOverseer extends Effect {
     const ai = this.game.worldManager
       .getMap(char.map)
       ?.state.getNPCSpawner(char.uuid)
-      ?.getNPCAI(char.uuid) as CrazedSaraxaAIBehavior;
+      ?.getNPCAI(char.uuid);
     if (!ai) {
       clear();
       return;

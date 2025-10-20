@@ -1,7 +1,7 @@
 import { isWeapon } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class RiftSlash extends SpellCommand {
   override aliases = ['riftslash', 'cast riftslash'];

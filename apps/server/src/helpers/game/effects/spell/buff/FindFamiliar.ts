@@ -11,6 +11,7 @@ import {
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
+import { Spawner } from '@lotr/core';
 import {
   calcSkillLevelForCharacter,
   calculateSkillXPRequiredForLevel,
@@ -18,7 +19,7 @@ import {
 import type { ICharacter, INPC, IStatusEffect, Skill } from '@lotr/interfaces';
 import { Hostility, ItemSlot, Stat } from '@lotr/interfaces';
 import { isArray } from 'lodash';
-import { Effect, Spawner } from '../../../../../models';
+import { Effect } from '../../../../../models';
 
 export class FindFamiliar extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {

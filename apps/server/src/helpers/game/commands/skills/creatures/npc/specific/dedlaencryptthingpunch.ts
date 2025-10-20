@@ -1,12 +1,11 @@
 import { sample } from 'lodash';
 
 import { engageInCombat, isPlayer } from '@lotr/characters';
-import { transmissionMovementPatchSend } from '@lotr/core';
+import { SpellCommand, transmissionMovementPatchSend } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
 import type { Player } from '../../../../../../../models';
-import { SpellCommand } from '../../../../../../../models/macro';
 
 export class DedlaenCryptThingPunch extends SpellCommand {
   override aliases = ['dedlaencryptthingpunch'];

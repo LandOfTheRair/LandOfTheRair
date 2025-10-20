@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { IServerGame } from '@lotr/interfaces';

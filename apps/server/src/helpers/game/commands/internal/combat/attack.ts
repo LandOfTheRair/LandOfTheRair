@@ -1,4 +1,5 @@
 import { itemPropertyGet } from '@lotr/content';
+import { SkillCommand } from '@lotr/core';
 import { getEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -8,7 +9,6 @@ import type {
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SkillCommand } from '../../../../../models/macro';
 
 export class AttackCommand extends SkillCommand {
   override aliases = ['a', 'attack'];

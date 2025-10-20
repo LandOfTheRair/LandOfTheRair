@@ -1,5 +1,5 @@
+import { SkillCommand } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
-import { SkillCommand } from '../../../../models/macro';
 
 export class Hide extends SkillCommand {
   override aliases = ['hide'];

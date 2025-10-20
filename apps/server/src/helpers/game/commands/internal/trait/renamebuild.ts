@@ -1,7 +1,7 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { premiumBuildSlots } from '@lotr/premium';
 import { cleanNumber } from '@lotr/shared';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class RenameBuild extends MacroCommand {
   override aliases = ['renamebuild'];

@@ -1,6 +1,6 @@
 import { itemPropertyGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class DepositAllCommand extends MacroCommand {
   override aliases = ['depositall'];

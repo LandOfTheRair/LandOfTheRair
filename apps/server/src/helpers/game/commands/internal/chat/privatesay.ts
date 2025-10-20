@@ -1,5 +1,5 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, INPC, IPlayer } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class PrivateSay extends MacroCommand {
   override aliases = ['privatesay'];

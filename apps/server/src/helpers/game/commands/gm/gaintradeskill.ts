@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { Tradeskill } from '@lotr/interfaces';
-import { MacroCommand } from '../../../../models/macro';
 
 export class GMGainTradeskill extends MacroCommand {
   override aliases = ['@gaintradeskill', '@tradeskill', '@ts'];
@@ -18,8 +18,8 @@ export class GMGainTradeskill extends MacroCommand {
     const value = Math.round(+args.stringArgs.split(' ')[1]);
 
     if (!skill) {
-return this.sendMessage(player, 'That is not a valid tradeskill name.');
-}
+      return this.sendMessage(player, 'That is not a valid tradeskill name.');
+    }
 
     try {
       this.game.playerHelper.gainTradeskill(player, skill, value);

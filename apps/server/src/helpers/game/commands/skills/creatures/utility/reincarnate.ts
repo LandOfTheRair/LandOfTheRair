@@ -1,5 +1,5 @@
+import { SpellCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Reincarnate extends SpellCommand {
   override aliases = ['reincarnate', 'cast reincarnate'];
@@ -13,22 +13,22 @@ export class Reincarnate extends SpellCommand {
 
     // in dungeon, fail
     if (this.game.worldManager.isDungeon(player.map)) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'The flow of ether disrupts your concentration.',
       );
-}
+    }
 
     // check for valid boss spawners
     const validSpawners = mapRef.state.allSpawners.filter(
       (spawner) => spawner.areCreaturesDangerous && !spawner.areAnyNPCsAlive,
     );
     if (validSpawners.length === 0) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'There is no lingering evil energy here.',
       );
-}
+    }
 
     this.castSpellAt(player, player, args);
   }

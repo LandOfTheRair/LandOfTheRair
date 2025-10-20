@@ -1,11 +1,6 @@
-import type {
-  ICharacter,
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemSlot,
-} from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
+import { SpellCommand } from '@lotr/core';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemSlot } from '@lotr/interfaces';
 
 export class Cleave extends SpellCommand {
   override aliases = ['cleave', 'art cleave'];
@@ -18,11 +13,11 @@ export class Cleave extends SpellCommand {
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     if (!player.items.equipment[ItemSlot.RightHand]) {
-return this.sendMessage(
+      return this.sendMessage(
         player,
         'You do not have anything in your right hand!',
       );
-}
+    }
 
     super.execute(player, args);
   }

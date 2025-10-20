@@ -1,6 +1,7 @@
 import { capitalize } from 'lodash';
 
 import { itemPropertiesGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -8,7 +9,6 @@ import type {
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models';
 
 export class Take extends MacroCommand {
   override aliases = ['take'];

@@ -1,5 +1,6 @@
 import { getStat } from '@lotr/characters';
 import { traitLevel } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -7,7 +8,6 @@ import type {
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
 import { ItemSlot, Stat } from '@lotr/interfaces';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Jumpkick extends SpellCommand {
   override aliases = ['jumpkick', 'art jumpkick'];

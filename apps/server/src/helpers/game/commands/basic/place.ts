@@ -1,4 +1,5 @@
 import { itemPropertiesGet } from '@lotr/content';
+import { MacroCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -7,7 +8,6 @@ import type {
 } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
-import { MacroCommand } from '../../../../models';
 
 export class Place extends MacroCommand {
   override aliases = ['place'];

@@ -1,6 +1,7 @@
+import type { MapState } from '@lotr/core';
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs } from '@lotr/interfaces';
-import type { MapState, Player } from '../../../../../models';
-import { MacroCommand } from '../../../../../models/macro';
+import type { Player } from '../../../../../models';
 
 export class Interact extends MacroCommand {
   override aliases = ['interact'];

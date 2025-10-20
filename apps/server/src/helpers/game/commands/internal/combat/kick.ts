@@ -1,3 +1,4 @@
+import { SkillCommand } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -5,7 +6,6 @@ import type {
   PhysicalAttackArgs,
 } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SkillCommand } from '../../../../../models/macro';
 
 export class KickCommand extends SkillCommand {
   override aliases = ['k', 'kick'];

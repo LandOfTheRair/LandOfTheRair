@@ -1,4 +1,5 @@
 import { itemGetMatchingName, itemPropertyGet } from '@lotr/content';
+import type { Spawner } from '@lotr/core';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -8,7 +9,7 @@ import type {
 } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
 import { sample, sampleSize, sumBy } from 'lodash';
-import type { Player, Spawner } from '../../../../models';
+import type { Player } from '../../../../models';
 import { Effect } from '../../../../models';
 
 type LootTier = 'I' | 'II' | 'III';

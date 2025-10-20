@@ -1,10 +1,10 @@
 import { hasEmptyHand } from '@lotr/characters';
 import { itemPropertyGet, traitLevel } from '@lotr/content';
+import { SpellCommand } from '@lotr/core';
 import { getCurrency } from '@lotr/currency';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
-import { SpellCommand } from '../../../../../../models/macro';
 
 export class Mug extends SpellCommand {
   override aliases = ['mug'];

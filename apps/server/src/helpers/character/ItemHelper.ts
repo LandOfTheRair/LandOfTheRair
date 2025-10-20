@@ -114,8 +114,8 @@ export class ItemHelper extends BaseService {
   public mergeItemRequirements(
     firstItemRequirements: IItemRequirements | undefined,
     secondItemRequirements: IItemRequirements,
-  ) {
-    if (!secondItemRequirements) {
+  ): IItemRequirements {
+    if (!secondItemRequirements && firstItemRequirements) {
       return firstItemRequirements;
     }
     if (!firstItemRequirements) {

@@ -1,6 +1,6 @@
+import { MacroCommand } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { directionFromText, directionToOffset } from '@lotr/shared';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class Door extends MacroCommand {
   override aliases = ['open', 'close'];

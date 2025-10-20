@@ -4,6 +4,7 @@ import { get, sample, template, uniq } from 'lodash';
 
 import type {
   IDialogAction,
+  IDialogActionHelper,
   IDialogAddItemUpgradeAction,
   IDialogChatAction,
   IDialogChatActionOption,
@@ -70,7 +71,7 @@ interface IActionResult {
 }
 
 @Injectable()
-export class DialogActionHelper extends BaseService {
+export class DialogActionHelper extends BaseService implements IDialogActionHelper {
   public init() {}
 
   public async handleDialog(

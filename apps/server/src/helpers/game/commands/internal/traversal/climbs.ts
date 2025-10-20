@@ -1,8 +1,8 @@
+import { MacroCommand } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
-import { MacroCommand } from '../../../../../models/macro';
 
 export class Climbs extends MacroCommand {
   override aliases = ['climbup', 'climbdown'];
