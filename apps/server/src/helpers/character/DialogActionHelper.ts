@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 import { hasEffect } from '@lotr/effects';
 import { Injectable } from 'injection-js';
 import { get, sample, template, uniq } from 'lodash';
@@ -71,7 +72,10 @@ interface IActionResult {
 }
 
 @Injectable()
-export class DialogActionHelper extends BaseService implements IDialogActionHelper {
+export class DialogActionHelper
+  extends BaseService
+  implements IDialogActionHelper
+{
   public init() {}
 
   public async handleDialog(

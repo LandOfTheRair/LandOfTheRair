@@ -9,6 +9,7 @@ import {
 } from '@lotr/effects';
 import type {
   ICharacter,
+  ICharacterHelper,
   IItemEffect,
   INPC,
   IPlayer,
@@ -56,7 +57,7 @@ import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
 
 @Injectable()
-export class CharacterHelper extends BaseService {
+export class CharacterHelper extends BaseService implements ICharacterHelper {
   public init() {}
 
   // take an item from either hand

@@ -1,11 +1,10 @@
-
+import type { IProfanityHelper } from '@lotr/interfaces';
 import { CensorSensor } from 'censor-sensor';
 import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
-export class ProfanityHelper extends BaseService {
-
+export class ProfanityHelper extends BaseService implements IProfanityHelper {
   private censorSensor: CensorSensor;
 
   public async init() {
@@ -22,5 +21,4 @@ export class ProfanityHelper extends BaseService {
   public cleanMessage(msg: string): string {
     return this.censorSensor.cleanProfanity(msg).trim();
   }
-
 }

@@ -11,6 +11,7 @@ import {
 import { gainCurrency } from '@lotr/currency';
 import type {
   ICharacter,
+  IInventoryHelper,
   IItemContainer,
   IPlayer,
   ISimpleItem,
@@ -21,7 +22,7 @@ import { Injectable } from 'injection-js';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
-export class InventoryHelper extends BaseService {
+export class InventoryHelper extends BaseService implements IInventoryHelper {
   private sackSize = 25;
   private beltSize = 5;
   private pouchSize = 5;
