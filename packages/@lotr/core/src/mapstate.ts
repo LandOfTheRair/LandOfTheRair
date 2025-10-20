@@ -3,7 +3,12 @@ import RBush from 'rbush';
 
 import { cloneDeep, extend, get, keyBy, pick, setWith, unset } from 'lodash';
 
-import type { IMapState, IServerGame, ISpawner } from '@lotr/interfaces';
+import type {
+  IMapState,
+  IServerGame,
+  ISpawner,
+  IWorldMap,
+} from '@lotr/interfaces';
 
 import { isDead, isPlayer } from '@lotr/characters';
 import { itemPropertyGet, npcScriptGet, spawnerGet } from '@lotr/content';
@@ -25,7 +30,7 @@ import {
 } from '@lotr/interfaces';
 import { Spawner } from './spawner';
 import { transmissionPlayerPatchGenerateQueue } from './transmission';
-import type { WorldMap } from './worldmap';
+import { worldCharacterAdd, worldCharacterRemove } from './worldstate';
 
 const PLAYER_KEYS = [
   'dir',
@@ -97,8 +102,8 @@ export class MapState implements IMapState {
   private spawners: ISpawner[] = [];
   private spawnersById: Record<string, ISpawner> = {};
 
-  private players = new RBush();
-  private npcs = new RBush();
+  private players = new RBush<RBushCharacter>();
+  private npcs = new RBush<RBushCharacter>();
 
   private bushStorage: Record<string, RBushCharacter> = {};
 
@@ -128,7 +133,7 @@ export class MapState implements IMapState {
 
   constructor(
     private game: IServerGame,
-    private map: WorldMap,
+    private map: IWorldMap,
   ) {}
 
   public init() {
@@ -740,7 +745,9 @@ export class MapState implements IMapState {
     const rbushPlayer = this.bushStorage[player.uuid];
     delete this.bushStorage[player.uuid];
 
-    this.players.remove(rbushPlayer);
+    if (rbushPlayer) {
+      this.players.remove(rbushPlayer);
+    }
 
     this.triggerAndSendUpdate(player.x, player.y, player);
   }
@@ -811,7 +818,7 @@ export class MapState implements IMapState {
   public addNPC(npc: INPC, spawner: Spawner) {
     this.npcsByUUID[npc.uuid] = npc;
     this.npcsBySpawner[npc.uuid] = spawner;
-    this.game.worldManager.addCharacter(npc);
+    worldCharacterAdd(npc);
 
     const rbushNPC = this.toRBushFormat(npc);
     this.bushStorage[npc.uuid] = rbushNPC;
@@ -823,12 +830,14 @@ export class MapState implements IMapState {
 
   public removeNPC(npc: INPC) {
     delete this.npcsByUUID[npc.uuid];
-    this.game.worldManager.removeCharacter(npc);
+    worldCharacterRemove(npc);
 
     const rbushNPC = this.bushStorage[npc.uuid];
     delete this.bushStorage[npc.uuid];
 
-    this.npcs.remove(rbushNPC);
+    if (rbushNPC) {
+      this.npcs.remove(rbushNPC);
+    }
 
     this.triggerAndSendUpdate(npc.x, npc.y);
   }

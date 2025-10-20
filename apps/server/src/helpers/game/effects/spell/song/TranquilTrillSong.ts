@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import { traitLevelValue } from '@lotr/content';
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, SoundEffect } from '@lotr/interfaces';
 import { Song } from './Song';
@@ -14,9 +15,7 @@ export class TranquilTrillSong extends Song {
     super.tick(char, effect);
 
     const allies =
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.getAllAlliesInRange(char, 4) ?? [];
+      worldMapStateGetForCharacter(char)?.getAllAlliesInRange(char, 4) ?? [];
     if (allies.length === 0) return;
 
     const numHeals = 1 + traitLevelValue(char, 'SoothingTranquility');

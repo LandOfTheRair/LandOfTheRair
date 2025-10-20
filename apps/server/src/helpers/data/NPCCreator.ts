@@ -75,6 +75,7 @@ import {
   trickOrTreat,
   UpgraderBehavior,
   VendorBehavior,
+  worldGetMapAndState,
 } from '@lotr/core';
 import { BaseService } from '../../models/BaseService';
 
@@ -703,9 +704,10 @@ export class NPCCreator extends BaseService {
         }
 
         this.game.movementHelper.faceTowards(npc, env.player);
-        this.game.worldManager
-          .getMap(npc.map)
-          ?.state.triggerNPCUpdateInRadius(npc.x, npc.y);
+        worldGetMapAndState(npc.map).state?.triggerNPCUpdateInRadius(
+          npc.x,
+          npc.y,
+        );
 
         return retMessages;
       };

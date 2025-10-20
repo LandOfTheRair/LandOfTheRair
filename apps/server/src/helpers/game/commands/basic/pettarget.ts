@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 
 export class PetTarget extends MacroCommand {
@@ -19,9 +19,8 @@ export class PetTarget extends MacroCommand {
 
     if (!target || target === player) {
       player.pets.forEach((pet) => {
-        const ai = this.game.worldManager
-          .getMap(pet.map)
-          ?.state.getNPCSpawner(pet.uuid)
+        const ai = worldGetMapAndState(pet.map)
+          .state?.getNPCSpawner(pet.uuid)
           ?.getNPCAI(pet.uuid);
 
         if (!ai) {
@@ -41,9 +40,8 @@ export class PetTarget extends MacroCommand {
     }
 
     player.pets.forEach((pet) => {
-      const ai = this.game.worldManager
-        .getMap(pet.map)
-        ?.state.getNPCSpawner(pet.uuid)
+      const ai = worldGetMapAndState(pet.map)
+        .state?.getNPCSpawner(pet.uuid)
         ?.getNPCAI(pet.uuid);
 
       if (!ai) {

@@ -27,6 +27,7 @@ import { hasCurrency, loseCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
 import { transmissionSendResponseToAccount } from '../../transmission';
+import { worldGetMapAndState } from '../../worldstate';
 
 export class TrainerBehavior implements IAIBehavior {
   private canRevive = false;
@@ -376,8 +377,8 @@ export class TrainerBehavior implements IAIBehavior {
         .setLogic(async ({ env }) => {
           const player = env?.player;
 
-          const mapData = game.worldManager.getMap(npc.map);
-          const recallDisabled = mapData?.map.properties.respawnKick;
+          const mapData = worldGetMapAndState(npc.map);
+          const recallDisabled = mapData.map?.properties.respawnKick;
 
           if (recallDisabled) {
             env?.callbacks.emit({
@@ -410,8 +411,8 @@ export class TrainerBehavior implements IAIBehavior {
         .setLogic(async ({ env }) => {
           const player = env?.player;
 
-          const mapData = game.worldManager.getMap(npc.map);
-          const teleDisabled = mapData?.map.properties.respawnKick;
+          const mapData = worldGetMapAndState(npc.map);
+          const teleDisabled = mapData.map?.properties.respawnKick;
 
           if (teleDisabled) {
             env?.callbacks.emit({
@@ -478,8 +479,8 @@ export class TrainerBehavior implements IAIBehavior {
   tick(game: IServerGame, npc: INPC) {
     if (!this.canRevive) return;
 
-    const mapData = game.worldManager.getMap(npc.map);
-    const recallDisabled = mapData?.map.properties.respawnKick;
+    const mapData = worldGetMapAndState(npc.map);
+    const recallDisabled = mapData.map?.properties.respawnKick;
     if (recallDisabled) return;
 
     const corpses = game.groundManager.getItemsFromGround(

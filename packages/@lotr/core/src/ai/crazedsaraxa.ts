@@ -1,6 +1,7 @@
 import { isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
+import { worldGetMapAndState } from '../worldstate';
 import { DefaultAIBehavior } from './default';
 
 export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
@@ -55,9 +56,9 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
       message: 'You hear a lock click in the distance.',
     });
 
-    const chestDoor = this.game.worldManager
-      .getMap(npc.map)
-      ?.map.findInteractableByName('Chest Door');
+    const chestDoor = worldGetMapAndState(npc.map).map?.findInteractableByName(
+      'Chest Door',
+    );
     chestDoor.properties.requireLockpick = false;
   }
 
@@ -75,18 +76,18 @@ export class CrazedSaraxaAIBehavior extends DefaultAIBehavior {
     };
     this.game.messageHelper.sendMessageToMap(npc.map, msgObject);
 
-    const npcSpawner = this.game.worldManager
-      .getMap(npc.map)
-      ?.state.getNPCSpawnerByName(`Acolyte Spawner ${spawnId}`);
+    const npcSpawner = worldGetMapAndState(npc.map).state?.getNPCSpawnerByName(
+      `Acolyte Spawner ${spawnId}`,
+    );
     if (npcSpawner) {
       npcSpawner.forceSpawnNPC({
         createCallback: (acolyte: INPC) => (this.acolytes[spawnId] = acolyte),
       });
     }
 
-    const rockySpawner = this.game.worldManager
-      .getMap(npc.map)
-      ?.state.getNPCSpawnerByName('Crazed Saraxa Rocky Spawner');
+    const rockySpawner = worldGetMapAndState(
+      npc.map,
+    ).state?.getNPCSpawnerByName('Crazed Saraxa Rocky Spawner');
     if (rockySpawner && !rockySpawner.areAnyNPCsAlive) {
       rockySpawner.forceSpawnNPC();
     }

@@ -1,3 +1,4 @@
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
@@ -16,9 +17,10 @@ export class NightmareSerenadeSong extends Song {
 
     if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
       sampleSize(
-        this.game.worldManager
-          .getMapStateForCharacter(char)
-          ?.getAllHostilesWithoutVisibilityTo(char, 4),
+        worldMapStateGetForCharacter(char)?.getAllHostilesWithoutVisibilityTo(
+          char,
+          4,
+        ),
         12,
       ).forEach((enemy) => {
         if (!hasEffect(enemy, 'TargetSong')) {

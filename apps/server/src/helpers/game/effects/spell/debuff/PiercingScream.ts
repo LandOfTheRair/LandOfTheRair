@@ -1,3 +1,4 @@
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -8,7 +9,7 @@ export class PiercingScream extends Effect {
 
     let caster: ICharacter | undefined;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? undefined;
     }
 

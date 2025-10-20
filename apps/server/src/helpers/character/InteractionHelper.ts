@@ -9,6 +9,7 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Skill, SoundEffect } from '@lotr/interfaces';
 import { distanceFrom, positionWorldXYToTile } from '@lotr/shared';
@@ -39,7 +40,7 @@ export class InteractionHelper extends BaseService {
       return false;
     }
 
-    const state = this.game.worldManager.getMap(character.map)?.state;
+    const state = worldGetMapAndState(character.map)?.state;
     if (!state) return false;
 
     const isCurrentlyOpen = state.isDoorOpen(door.id);
@@ -173,9 +174,11 @@ export class InteractionHelper extends BaseService {
     if (!chest.searchItems || chest.searchItems.length === 0) return;
 
     this.game.groundManager.lootChest(character.map, chest.name);
-    this.game.worldManager
-      .getMap(character.map)
-      ?.state.addItemsToGround(character.x, character.y, chest.searchItems);
+    worldGetMapAndState(character.map).state?.addItemsToGround(
+      character.x,
+      character.y,
+      chest.searchItems,
+    );
     chest.searchItems = [];
   }
 }

@@ -1,5 +1,5 @@
 import { isWeapon, traitLevelValue } from '@lotr/content';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldMapStateGetForCharacter } from '@lotr/core';
 import type {
   ICharacter,
   IMacroCommandArgs,
@@ -56,7 +56,7 @@ export class Multistrike extends SpellCommand {
     target: ICharacter,
     opts: PhysicalAttackArgs = {},
   ): void {
-    const state = this.game.worldManager.getMapStateForCharacter(user);
+    const state = worldMapStateGetForCharacter(user);
     if (!state) return;
 
     const numTargets = 4 + traitLevelValue(user, 'Multitarget');

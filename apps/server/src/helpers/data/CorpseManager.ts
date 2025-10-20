@@ -1,4 +1,5 @@
 import { itemPropertyGet, settingGameGet } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { ItemClass, ItemSlot } from '@lotr/interfaces';
 import { Injectable } from 'injection-js';
@@ -30,14 +31,12 @@ export class CorpseManager extends BaseService {
       if (expTime > now || !activeMaps[corpsePos.map]) return;
 
       this.searchCorpse(corpseUUID);
-      this.game.worldManager
-        .getMap(corpsePos.map)
-        ?.state.removeItemFromGround(
-          corpsePos.x,
-          corpsePos.y,
-          ItemClass.Corpse,
-          corpseUUID,
-        );
+      worldGetMapAndState(corpsePos.map).state?.removeItemFromGround(
+        corpsePos.x,
+        corpsePos.y,
+        ItemClass.Corpse,
+        corpseUUID,
+      );
     });
 
     timer.stopTimer(`corpseexpiration-${now}`);
@@ -108,14 +107,12 @@ export class CorpseManager extends BaseService {
         });
       }
     } else if (lastMap && lastX !== undefined && lastY !== undefined) {
-      this.game.worldManager
-        .getMap(lastMap)
-        ?.state.removeItemFromGround(
-          lastX,
-          lastY,
-          ItemClass.Corpse,
-          corpse.uuid,
-        );
+      worldGetMapAndState(lastMap).state?.removeItemFromGround(
+        lastX,
+        lastY,
+        ItemClass.Corpse,
+        corpse.uuid,
+      );
     }
   }
 
@@ -134,9 +131,11 @@ export class CorpseManager extends BaseService {
       corpseRef.mods.searchItems = [];
     });
 
-    this.game.worldManager
-      .getMap(firstCorpse.map)
-      ?.state.addItemsToGround(firstCorpse.x, firstCorpse.y, allItems);
+    worldGetMapAndState(firstCorpse.map).state?.addItemsToGround(
+      firstCorpse.x,
+      firstCorpse.y,
+      allItems,
+    );
   }
 
   // get a reference to a corpse, if possible
@@ -223,13 +222,11 @@ export class CorpseManager extends BaseService {
     if (!corpseRef || !corpseRef.mods.searchItems) return;
 
     const corpsePos = this.corpsePositions[uuid];
-    this.game.worldManager
-      .getMap(corpsePos.map)
-      ?.state.addItemsToGround(
-        corpsePos.x,
-        corpsePos.y,
-        corpseRef.mods.searchItems ?? [],
-      );
+    worldGetMapAndState(corpsePos.map).state?.addItemsToGround(
+      corpsePos.x,
+      corpsePos.y,
+      corpseRef.mods.searchItems ?? [],
+    );
     corpseRef.mods.searchItems = [];
   }
 }

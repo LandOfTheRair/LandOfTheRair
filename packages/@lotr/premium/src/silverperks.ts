@@ -1,6 +1,6 @@
 import { settingGameGet } from '@lotr/content';
-import { lobbyGetAccount } from '@lotr/core';
 import { SilverPurchase, type IAccount, type IPlayer } from '@lotr/interfaces';
+import { lobbyGetAccount } from '@lotr/lobby';
 
 export function premiumDocReduction(player: IPlayer, baseValue = 10): number {
   const mult = settingGameGet('subscriber', 'statDoc') ?? 0.05;

@@ -9,7 +9,7 @@ import {
   traitHasLearned,
 } from '@lotr/content';
 import type { VendorBehavior } from '@lotr/core';
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import { getCurrency, hasCurrency, loseCurrency } from '@lotr/currency';
 import type {
   IGroundItem,
@@ -88,7 +88,7 @@ export class MoveItems extends MacroCommand {
     const updateGroundSlots = { G: true };
     const updateEquipmentSlots = { R: true, L: true, E: true };
 
-    const state = this.game.worldManager.getMap(player.map)?.state;
+    const state = worldGetMapAndState(player.map)?.state;
     if (!state) return;
 
     if (updatePlayerSlots[srcSlot] || updatePlayerSlots[destSlot]) {
@@ -264,9 +264,9 @@ export class MoveItems extends MacroCommand {
 
     // src or dest is Wardrobe = make sure we're standing on a locker
     if (dest === 'W' || src === 'W') {
-      const locker = this.game.worldManager
-        .getMap(player.map)
-        ?.map.getInteractableOfTypeAt(player.x, player.y, ObjectType.Locker);
+      const locker = worldGetMapAndState(
+        player.map,
+      ).map?.getInteractableOfTypeAt(player.x, player.y, ObjectType.Locker);
       if (!locker) {
         this.sendMessage(player, 'You are not near a locker!');
         return false;
@@ -305,9 +305,9 @@ export class MoveItems extends MacroCommand {
     }
 
     if (dest === 'K' || src === 'K') {
-      const locker = this.game.worldManager
-        .getMap(player.map)
-        ?.map.getInteractableOfTypeAt(player.x, player.y, ObjectType.Locker);
+      const locker = worldGetMapAndState(
+        player.map,
+      ).map?.getInteractableOfTypeAt(player.x, player.y, ObjectType.Locker);
       if (!locker) {
         this.sendMessage(player, 'You are not near a locker!');
         return false;
@@ -1568,7 +1568,7 @@ export class MoveItems extends MacroCommand {
 
     const [itemClass, uuid] = origSlot.split(':');
 
-    const state = this.game.worldManager.getMap(player.map)?.state;
+    const state = worldGetMapAndState(player.map)?.state;
     if (!state) return;
 
     const items: IGroundItem[] = state.getItemsFromGround(

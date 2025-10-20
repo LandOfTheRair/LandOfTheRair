@@ -24,6 +24,7 @@
     "@lotr/currency": "*",
     "@lotr/effects": "*",
     "@lotr/exp": "*",
+    "@lotr/lobby": "*",
     "@lotr/logger": "*",
     "@lotr/premium": "*",
     "@lotr/rng": "*",

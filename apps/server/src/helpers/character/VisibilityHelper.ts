@@ -4,7 +4,7 @@ import { get, setWith } from 'lodash';
 
 import { getStat, perceptionGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
-import { transmissionFOVPatchSend } from '@lotr/core';
+import { transmissionFOVPatchSend, worldGetMapAndState } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -13,7 +13,6 @@ import type {
   IVisibilityHelper,
 } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
-import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
   public init() {}
 
   // specifically calculate fov for players and update it afterwards
-  calculatePlayerFOV(player: Player, sendFOV = true): void {
+  calculatePlayerFOV(player: IPlayer, sendFOV = true): void {
     this.calculateFOV(player);
 
     if (sendFOV) {
@@ -31,7 +30,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
 
   // calculate a fov for a character and set it
   calculateFOV(character: ICharacter): void {
-    const map = this.game.worldManager.getMap(character.map)?.map;
+    const map = worldGetMapAndState(character.map)?.map;
     if (!map) return;
 
     const affected = {};
@@ -128,7 +127,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
 
   // whether or not this spot is hideable (near a wall, or in dark)
   public canContinueHidingAtSpot(char: ICharacter): boolean {
-    const map = this.game.worldManager.getMap(char.map)?.map;
+    const map = worldGetMapAndState(char.map)?.map;
     if (!map) return false;
 
     if (this.isDarkAt(char.map, char.x, char.y)) return true;

@@ -18,7 +18,7 @@ import {
   coreSettings,
   eventGet,
 } from '@lotr/content';
-import { Spawner, wsBroadcast } from '@lotr/core';
+import { Spawner, worldGetMapAndState, wsBroadcast } from '@lotr/core';
 import { consoleError } from '@lotr/logger';
 import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
@@ -237,7 +237,7 @@ export class DynamicEventHelper extends BaseService {
         let isAlive = false;
 
         this.game.worldManager.allMapNames.forEach((map) => {
-          const mapData = this.game.worldManager.getMap(map);
+          const mapData = worldGetMapAndState(map);
           if (!mapData || !mapData.state) return;
 
           mapData.state.allNPCS.forEach((npc) => {
@@ -287,22 +287,22 @@ export class DynamicEventHelper extends BaseService {
     this.game.worldManager.allMapNames.forEach((map) => {
       if (hasTarget) return;
 
-      const mapData = this.game.worldManager.getMap(map);
+      const mapData = worldGetMapAndState(map);
       if (!mapData) return;
 
-      mapData.state.allNPCS.forEach((npc) => {
+      mapData.state?.allNPCS.forEach((npc) => {
         if (hasTarget) return;
 
         if (!hasEffect(npc, 'Dangerous')) return;
-        if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
-        const checkSpawner = this.game.worldManager
-          .getMap(npc.map)
-          ?.state.getNPCSpawner(npc.uuid);
+        if (worldGetMapAndState(npc.map).map?.holiday) return;
+        const checkSpawner = worldGetMapAndState(npc.map).state?.getNPCSpawner(
+          npc.uuid,
+        );
         if (!checkSpawner) return;
 
-        const checkSpawners = this.game.worldManager
-          .getMap(npc.map)
-          ?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        const checkSpawners = worldGetMapAndState(
+          npc.map,
+        ).state?.getNPCSpawnersByName(checkSpawner.spawnerName);
         if ((checkSpawners?.length ?? 0) > 1) return;
 
         hasTarget = true;
@@ -316,22 +316,22 @@ export class DynamicEventHelper extends BaseService {
     const targets: INPC[] = [];
 
     this.game.worldManager.allMapNames.forEach((map) => {
-      const mapData = this.game.worldManager.getMap(map);
+      const mapData = worldGetMapAndState(map);
       if (!mapData) return;
 
-      mapData.state.allNPCS.forEach((npc) => {
+      mapData.state?.allNPCS.forEach((npc) => {
         if (!hasEffect(npc, 'Dangerous')) return;
-        if (this.game.worldManager.getMap(npc.map)?.map.holiday) return;
-        const checkSpawner = this.game.worldManager
-          .getMap(npc.map)
-          ?.state.getNPCSpawner(npc.uuid);
+        if (worldGetMapAndState(npc.map).map?.holiday) return;
+        const checkSpawner = worldGetMapAndState(npc.map).state?.getNPCSpawner(
+          npc.uuid,
+        );
         if (!checkSpawner) return;
         if (!checkSpawner.areAnyNPCsAlive) return;
         if (checkSpawner.allNPCS.length > 1) return;
 
-        const checkSpawners = this.game.worldManager
-          .getMap(npc.map)
-          ?.state.getNPCSpawnersByName(checkSpawner.spawnerName);
+        const checkSpawners = worldGetMapAndState(
+          npc.map,
+        ).state?.getNPCSpawnersByName(checkSpawner.spawnerName);
         if ((checkSpawners?.length ?? 0) > 1) return;
 
         targets.push(npc);
@@ -341,9 +341,9 @@ export class DynamicEventHelper extends BaseService {
     const target = sample(targets);
     if (!target) return;
 
-    const spawner = this.game.worldManager
-      .getMap(target.map)
-      ?.state.getNPCSpawner(target.uuid);
+    const spawner = worldGetMapAndState(target.map).state?.getNPCSpawner(
+      target.uuid,
+    );
     if (!spawner) return;
 
     const npcDef = this.game.npcHelper.getNPCDefinition(target.npcId);
@@ -363,9 +363,8 @@ export class DynamicEventHelper extends BaseService {
     if (!event.extraData) return;
 
     const { map, spawner } = event.extraData;
-    const spawnerRef = this.game.worldManager
-      .getMap(map)
-      ?.state.getNPCSpawnerByName(spawner);
+    const spawnerRef =
+      worldGetMapAndState(map).state?.getNPCSpawnerByName(spawner);
     if (!spawnerRef) return;
 
     if (spawnerRef.allNPCS.length <= 1) return;
@@ -378,9 +377,9 @@ export class DynamicEventHelper extends BaseService {
     return Object.keys(allSpawns).some((map) =>
       allSpawns[map].spawns.some(
         (mon) =>
-          !this.game.worldManager
-            .getMap(map)
-            ?.state.getNPCSpawnerByName(`${mon} Spawner`),
+          !worldGetMapAndState(map).state?.getNPCSpawnerByName(
+            `${mon} Spawner`,
+          ),
       ),
     );
   }
@@ -397,11 +396,11 @@ export class DynamicEventHelper extends BaseService {
       spawnMap = event.extraData.map ?? sample(Object.keys(allSpawns));
       spawnMonster = sample(allSpawns[spawnMap as string].spawns);
 
-      const mapRef = this.game.worldManager.getMap(spawnMap);
+      const mapRef = worldGetMapAndState(spawnMap);
       if (mapRef) {
         const { state: checkState } = mapRef;
 
-        const checkSpawner = checkState.getNPCSpawnerByName(
+        const checkSpawner = checkState?.getNPCSpawnerByName(
           `${spawnMonster} Spawner`,
         );
         if (checkSpawner) {
@@ -412,9 +411,10 @@ export class DynamicEventHelper extends BaseService {
     } while (!spawnMap || !spawnMonster);
 
     do {
-      const mapRef = this.game.worldManager.getMap(spawnMap);
+      const mapRef = worldGetMapAndState(spawnMap);
       if (mapRef) {
         const { map: checkMap } = mapRef;
+        if (!checkMap) return;
 
         x = random(4, checkMap.width - 4);
         y = random(4, checkMap.height - 4);
@@ -478,10 +478,11 @@ export class DynamicEventHelper extends BaseService {
       },
     } as Partial<Spawner>;
 
-    const finalMapRef = this.game.worldManager.getMap(spawnMap);
+    const finalMapRef = worldGetMapAndState(spawnMap);
     if (!finalMapRef) return;
 
     const { map, state } = finalMapRef;
+    if (!map || !state) return;
 
     const spawner = new Spawner(this.game, map, state, {
       ...spawnerOpts,

@@ -21,6 +21,7 @@ import {
 import {
   transmissionMovementPatchSend,
   transmissionPlayerPatchGenerateQueue,
+  worldGetMapAndState,
 } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import {
@@ -207,7 +208,7 @@ export class PlayerHelper extends BaseService {
     }
 
     // if we're on a dense tile, "respawn"
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (
       !hasEffect(player, 'WallWalk') &&
       (map?.getWallAt(player.x, player.y) ||
@@ -296,7 +297,7 @@ export class PlayerHelper extends BaseService {
   ) {
     this.game.visibilityHelper.calculatePlayerFOV(player, opts.sendFOV);
 
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return;
 
     const z = map.getZLevelAt(player.x, player.y);
@@ -406,7 +407,7 @@ export class PlayerHelper extends BaseService {
 
   // whether or not the player can get skill on the current map
   public canGainSkillOnMap(player: IPlayer, skill: Skill): boolean {
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return false;
 
     return (player.skills[skill.toLowerCase()] ?? 0) < map.maxSkillExp;
@@ -414,14 +415,14 @@ export class PlayerHelper extends BaseService {
 
   // whether or not the player can get xp on the current map
   public canGainExpOnMap(player: IPlayer): boolean {
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return false;
 
     return player.exp < map.maxLevelExp;
   }
 
   public expMultiplierForMap(player: IPlayer): number {
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return this.mapXPMultiplier.unknown;
 
     if (player.exp < map.firstCutExp) return this.mapXPMultiplier.uncut;
@@ -699,7 +700,7 @@ export class PlayerHelper extends BaseService {
   public doSuccor(player: IPlayer, succorInfo: ISuccorInfo) {
     if (isDead(player)) return;
 
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return;
 
     if (!map.canSuccor(player)) {
@@ -732,7 +733,7 @@ export class PlayerHelper extends BaseService {
 
   // refresh the players state based on their map, shortcut
   public refreshPlayerMapState(player: Player): void {
-    const state = this.game.worldManager.getMap(player.map)?.state;
+    const state = worldGetMapAndState(player.map)?.state;
     if (!state) return;
 
     state.triggerFullUpdateForPlayer(player as Player);

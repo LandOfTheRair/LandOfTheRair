@@ -1,6 +1,7 @@
 import { Injectable } from 'injection-js';
 
 import { getStat, isDead, isPet, isPlayer } from '@lotr/characters';
+import { worldGetMapAndState, worldMapStateGetForCharacter } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, INPC, IPlayer } from '@lotr/interfaces';
 import { Allegiance, Hostility, Stat } from '@lotr/interfaces';
@@ -200,7 +201,7 @@ export class TargettingHelper extends BaseService {
     findStr: string,
     useSight = true,
   ): ICharacter[] {
-    const state = this.game.worldManager.getMapStateForCharacter(player);
+    const state = worldMapStateGetForCharacter(player);
     if (!state) return [];
 
     const allTargets = state.getAllInRange(player, 4, [], useSight);
@@ -243,7 +244,7 @@ export class TargettingHelper extends BaseService {
       return [];
     }
 
-    const state = this.game.worldManager.getMap(center.map)?.state;
+    const state = worldGetMapAndState(center.map)?.state;
     if (!state) return [];
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);
@@ -284,7 +285,7 @@ export class TargettingHelper extends BaseService {
       return [];
     }
 
-    const state = this.game.worldManager.getMap(center.map)?.state;
+    const state = worldGetMapAndState(center.map)?.state;
     if (!state) return [];
 
     const allTargets = state.getAllInRangeForAOE(center, radius, []);

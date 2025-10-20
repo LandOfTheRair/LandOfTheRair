@@ -1,6 +1,7 @@
 import { sample } from 'lodash';
 
 import { traitHasLearned, traitLevelValue } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
@@ -9,7 +10,7 @@ import { Effect } from '../../../../../models';
 export class Plague extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
@@ -34,7 +35,7 @@ export class Plague extends Effect {
 
     let caster: ICharacter | undefined;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? undefined;
     }
 
@@ -58,7 +59,7 @@ export class Plague extends Effect {
     effect: IStatusEffect,
     caster: ICharacter | undefined,
   ) {
-    const mapState = this.game.worldManager.getMap(char.map)?.state;
+    const mapState = worldGetMapAndState(char.map)?.state;
     if (!mapState) return;
 
     const nearby = mapState

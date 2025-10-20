@@ -1,3 +1,4 @@
+import { worldGetMapAndState } from '@lotr/core';
 import {
   DamageClass,
   type ICharacter,
@@ -12,7 +13,7 @@ export class Chainheal extends Effect {
 
     let caster: ICharacter | undefined;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? undefined;
     }
 

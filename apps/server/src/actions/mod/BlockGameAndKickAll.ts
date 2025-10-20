@@ -1,7 +1,7 @@
 import type { IServerGame } from '@lotr/interfaces';
 import { GameServerEvent } from '@lotr/interfaces';
 
-import { lobbyGetOnlineUsernames, lobbyToggleBlockingGame } from '@lotr/core';
+import { lobbyGetOnlineUsernames, lobbyToggleBlockingGame } from '@lotr/lobby';
 import { consoleError } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
 

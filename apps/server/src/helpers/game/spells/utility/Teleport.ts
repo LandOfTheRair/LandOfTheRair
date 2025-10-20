@@ -1,4 +1,5 @@
 import { mana, takeDamage } from '@lotr/characters';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
@@ -12,7 +13,7 @@ export class Teleport extends Spell {
   ): void {
     if (!caster) return;
 
-    const map = this.game.worldManager.getMap(caster.map)?.map;
+    const map = worldGetMapAndState(caster.map)?.map;
     if (!map) return;
 
     if (!map.canTeleport(caster as IPlayer)) {

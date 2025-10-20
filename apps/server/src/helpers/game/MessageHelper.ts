@@ -2,9 +2,10 @@ import { Injectable } from 'injection-js';
 import { set } from 'lodash';
 
 import {
-  lobbyGetAccount,
   transmissionResponseSendPlayer,
   transmissionSendResponseToAccount,
+  worldCharacterGet,
+  worldGetMapAndState,
   wsBroadcast,
 } from '@lotr/core';
 import type {
@@ -15,6 +16,7 @@ import type {
   SoundEffect,
 } from '@lotr/interfaces';
 import { GameAction, GameServerResponse, MessageType } from '@lotr/interfaces';
+import { lobbyGetAccount } from '@lotr/lobby';
 import { distanceFrom } from '@lotr/shared';
 import type { Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
@@ -32,7 +34,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
     let uuid = (charOrUUID as ICharacter).uuid;
     if (!uuid) uuid = charOrUUID as string;
 
-    const ref: ICharacter = this.game.worldManager.getCharacter(uuid);
+    const ref = worldCharacterGet(uuid);
     if (!ref) return;
 
     if (ref.takenOverBy) {
@@ -100,7 +102,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
   ): void {
     if (from) message = `**${from}**: ${message}`;
 
-    const state = this.game.worldManager.getMap(character.map)?.state;
+    const state = worldGetMapAndState(character.map)?.state;
     if (!state) return;
 
     const allPlayers = state.getAllPlayersInRange(character, radius);
@@ -163,7 +165,7 @@ export class MessageHelper extends BaseService implements IMessageHelper {
     radius: number,
     { vfx, vfxTiles, vfxTimeout }: MessageVFX,
   ): void {
-    const state = this.game.worldManager.getMap(character.map)?.state;
+    const state = worldGetMapAndState(character.map)?.state;
     if (!state) return;
 
     const allPlayers = state.getAllPlayersInRange(character, radius);

@@ -1,4 +1,5 @@
 import { settingGameGet, traitLevelValue } from '@lotr/content';
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type {
   ICharacter,
   IGroundItem,
@@ -15,7 +16,7 @@ export class Vortex extends Spell {
   ): void {
     if (!caster) return;
 
-    const map = this.game.worldManager.getMapStateForCharacter(caster);
+    const map = worldMapStateGetForCharacter(caster);
     if (!map) return;
 
     const addItems: ISimpleItem[] = [];

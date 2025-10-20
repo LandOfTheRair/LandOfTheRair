@@ -30,7 +30,10 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
-import { transmissionSendResponseToAccount } from '@lotr/core';
+import {
+  transmissionSendResponseToAccount,
+  worldGetMapAndState,
+} from '@lotr/core';
 import { calcTradeskillLevelForCharacter } from '@lotr/exp';
 import { canUseItem } from '@lotr/shared';
 
@@ -252,7 +255,7 @@ export class ItemHelper extends BaseService implements IItemHelper {
     const item = player.items.equipment[source];
     if (!item) return;
 
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return;
 
     const { succorInfo, ounces, itemClass, trait, recipe } = itemPropertiesGet(

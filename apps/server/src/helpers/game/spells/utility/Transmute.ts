@@ -1,5 +1,6 @@
 import { getSkillLevel } from '@lotr/characters';
 import { itemPropertyGet, traitLevelValue } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IGroundItem, SpellCastArgs } from '@lotr/interfaces';
 import { ItemClass, Skill } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
@@ -30,10 +31,11 @@ export class Transmute extends Spell {
       spellCastArgs.potency +
       (caster ? traitLevelValue(caster, 'PhilosophersStone') : 0);
 
-    const mapData = this.game.worldManager.getMap(center.map);
+    const mapData = worldGetMapAndState(center.map);
     if (!mapData) return;
 
-    const items = mapData.state.getEntireGround(center.x, center.y);
+    const items = mapData.state?.getEntireGround(center.x, center.y);
+    if (!items) return;
 
     const removeItems: IGroundItem[] = [];
     let totalGold = 0;
@@ -74,8 +76,8 @@ export class Transmute extends Spell {
     totalGold *= potency / 100;
 
     const goldItem = this.game.itemCreator.getGold(totalGold);
-    mapData.state.removeItemsFromGround(center.x, center.y, removeItems);
-    mapData.state.addItemToGround(center.x, center.y, goldItem);
+    mapData.state?.removeItemsFromGround(center.x, center.y, removeItems);
+    mapData.state?.addItemToGround(center.x, center.y, goldItem);
 
     this.game.messageHelper.sendLogMessageToRadius(center, 4, {
       message: 'You hear the clinking of coins.',

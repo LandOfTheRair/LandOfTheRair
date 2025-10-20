@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ObjectType, SwimLevel } from '@lotr/interfaces';
@@ -16,9 +16,9 @@ export class Quaff extends MacroCommand {
       );
     }
 
-    const fillable = this.game.worldManager
-      .getMap(player.map)
-      ?.map.getInteractableOfTypeAt(player.x, player.y, ObjectType.Fillable);
+    const fillable = worldGetMapAndState(
+      player.map,
+    ).map?.getInteractableOfTypeAt(player.x, player.y, ObjectType.Fillable);
 
     let effect = 'FillNormalWater';
 

@@ -1260,10 +1260,6 @@ export interface IWorldManager extends IGameService {
     partyName: string,
     mapNameWithParty: string,
   ): void;
-  getMap(
-    mapName: string,
-    partyName?: string,
-  ): { map: IWorldMap; state: IMapState } | undefined;
   isEtherForceMap(mapName: string): boolean;
   isDungeon(mapName: string): boolean;
   getMapStateAndXYForCharacterItemDrop(
@@ -1271,7 +1267,6 @@ export interface IWorldManager extends IGameService {
     defaultX: number,
     defaultY: number,
   ): { state: IMapState; x: number; y: number };
-  getMapStateForCharacter(character: ICharacter): any;
   checkPlayerForDoorsBeforeJoiningGame(player: IPlayer): void;
   getPlayersInMap(mapName: string): ICharacter[];
   joinMap(player: IPlayer): void;
@@ -1279,9 +1274,6 @@ export interface IWorldManager extends IGameService {
   spawnerTick(timer: any): void;
   steadyTick(timer: any): void;
   npcTick(timer: any): void;
-  addCharacter(character: ICharacter): void;
-  removeCharacter(character: ICharacter): void;
-  getCharacter(uuid: string): ICharacter;
 }
 
 export interface IDiscordHelper extends IGameService {

@@ -7,6 +7,7 @@ import { distanceFrom } from '@lotr/shared';
 
 import { gainCurrency } from '@lotr/currency';
 import { rollInOneHundred } from '@lotr/rng';
+import { worldGetMapAndState } from '../../../worldstate';
 
 const tokenTable = [
   { result: 2, chance: 15 },
@@ -105,49 +106,48 @@ export class ThanksgivingTurkeyBehavior implements IAIBehavior {
   tick() {}
 
   private move(game: IServerGame, npc: INPC) {
-    const state = game.worldManager.getMap(npc.map)?.state;
+    const state = worldGetMapAndState(npc.map)?.state;
 
     let x;
     let y;
 
     do {
-      const mapRef = game.worldManager.getMap('TurkeyForest');
-      if (mapRef) {
-        const { map: checkMap } = mapRef;
+      const mapRef = worldGetMapAndState('TurkeyForest');
+      const { map: checkMap } = mapRef;
+      if (!checkMap) break;
 
-        x = random(4, checkMap.width - 4);
-        y = random(4, checkMap.height - 4);
+      x = random(4, checkMap.width - 4);
+      y = random(4, checkMap.height - 4);
 
-        if (!checkMap.getWallAt(x, y) || checkMap.getDenseDecorAt(x, y)) {
-          let isValidSpawn = true;
-          for (let xx = x - 2; xx <= x + 2; xx++) {
-            for (let yy = y - 2; yy <= y + 2; yy++) {
-              if (
-                checkMap.getWallAt(xx, yy) ||
-                checkMap.getDenseDecorAt(x, y) ||
-                checkMap.getFluidAt(x, y)
-              ) {
-                isValidSpawn = false;
-              }
+      if (!checkMap.getWallAt(x, y) || checkMap.getDenseDecorAt(x, y)) {
+        let isValidSpawn = true;
+        for (let xx = x - 2; xx <= x + 2; xx++) {
+          for (let yy = y - 2; yy <= y + 2; yy++) {
+            if (
+              checkMap.getWallAt(xx, yy) ||
+              checkMap.getDenseDecorAt(x, y) ||
+              checkMap.getFluidAt(x, y)
+            ) {
+              isValidSpawn = false;
             }
           }
+        }
 
-          if (!isValidSpawn) {
-            x = null;
-            y = null;
-          }
-        } else {
+        if (!isValidSpawn) {
           x = null;
           y = null;
         }
+      } else {
+        x = null;
+        y = null;
       }
     } while (!x || !y);
 
     const oldX = npc.x;
     const oldY = npc.y;
 
-    npc.x = x;
-    npc.y = y;
+    npc.x = x ?? 0;
+    npc.y = y ?? 0;
 
     state?.moveNPCOrPlayer(npc, { oldX, oldY });
   }

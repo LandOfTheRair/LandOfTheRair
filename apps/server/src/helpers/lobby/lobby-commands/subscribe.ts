@@ -3,8 +3,8 @@ import { SubscriptionTier } from '@lotr/interfaces';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { lobbyGetAccount } from '@lotr/core';
 import type { IServerGame } from '@lotr/interfaces';
+import { lobbyGetAccount } from '@lotr/lobby';
 
 export class SubscribeCommand implements ILobbyCommand {
   name = '/subscribe';

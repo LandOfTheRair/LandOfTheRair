@@ -1,4 +1,5 @@
 import { traitLevelValue } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass, Skill, Stat } from '@lotr/interfaces';
@@ -7,7 +8,7 @@ import { Effect } from '../../../../../models';
 export class Disease extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {
@@ -33,7 +34,7 @@ export class Disease extends Effect {
 
     let caster: ICharacter | undefined;
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       caster = mapState?.getCharacterByUUID(effect.sourceUUID) ?? undefined;
     }
 

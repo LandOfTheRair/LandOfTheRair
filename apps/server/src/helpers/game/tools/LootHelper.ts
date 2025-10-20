@@ -3,6 +3,7 @@ import { get, isString, random } from 'lodash';
 import { LootTable } from 'lootastic';
 
 import { isHoliday, settingGameGet } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { INPC, ISimpleItem, Rollable } from '@lotr/interfaces';
 import { Allegiance, ItemSlot } from '@lotr/interfaces';
 import { rollTraitValue } from '@lotr/rng';
@@ -77,7 +78,7 @@ export class LootHelper extends BaseService {
   }
 
   public getNPCLoot(npc: INPC, bonus = 0): ISimpleItem[] {
-    const map = this.game.worldManager.getMap(npc.map)?.map;
+    const map = worldGetMapAndState(npc.map)?.map;
     if (!map) return [];
 
     const { mapDroptables, regionDroptables } = map;

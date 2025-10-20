@@ -20,6 +20,7 @@ import { distanceFrom } from '@lotr/shared';
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { itemPropertiesGet, itemSetOwner } from '@lotr/content';
 import { transmissionSendResponseToAccount } from '../../transmission';
+import { worldMapStateGetForCharacter } from '../../worldstate';
 
 export class TannerBehavior implements IAIBehavior {
   private messages: string[] = [];
@@ -145,7 +146,7 @@ export class TannerBehavior implements IAIBehavior {
         game.characterHelper.setRightHand(player, item);
 
         if (searchItems && (searchItems?.length ?? 0) > 0) {
-          const state = game.worldManager.getMapStateForCharacter(player);
+          const state = worldMapStateGetForCharacter(player);
 
           if (state) {
             state.addItemsToGround(npc.x, npc.y, searchItems);

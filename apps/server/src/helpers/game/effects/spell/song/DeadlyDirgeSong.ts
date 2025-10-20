@@ -2,6 +2,7 @@ import { sample } from 'lodash';
 
 import { isDead } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
@@ -16,9 +17,10 @@ export class DeadlyDirgeSong extends Song {
     super.tick(char, effect);
 
     let enemies = (
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.getAllHostilesWithoutVisibilityTo(char, 4) ?? []
+      worldMapStateGetForCharacter(char)?.getAllHostilesWithoutVisibilityTo(
+        char,
+        4,
+      ) ?? []
     ).filter(
       (enemy) =>
         this.game.movementHelper.numStepsTo(char, enemy) ===

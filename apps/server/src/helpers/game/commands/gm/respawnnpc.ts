@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 
 export class GMRespawnNPC extends MacroCommand {
@@ -10,7 +10,7 @@ export class GMRespawnNPC extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const respawnish = args.stringArgs;
 
-    const mapState = this.game.worldManager.getMap(player.map)?.state;
+    const mapState = worldGetMapAndState(player.map)?.state;
     if (!mapState) return;
 
     let didRespawn = false;

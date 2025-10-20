@@ -1,10 +1,6 @@
-import type {
-  IMacroCommandArgs,
-  IPlayer } from '@lotr/interfaces';
-import {
-  ItemClass,
-  ObjectType,
-} from '@lotr/interfaces';
+import { worldGetMapAndState } from '@lotr/core';
+import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import { ItemClass, ObjectType } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
 import { LookCommand } from './look';
 
@@ -13,8 +9,8 @@ export class SearchCommand extends LookCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const mapData = this.game.worldManager.getMap(player.map);
-    if (!mapData) return;
+    const mapData = worldGetMapAndState(player.map);
+    if (!mapData.map || !mapData.state) return;
 
     const corpses =
       mapData.state.getItemsFromGround(player.x, player.y, ItemClass.Corpse) ||

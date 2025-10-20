@@ -15,7 +15,11 @@ import { BaseService } from '../../models/BaseService';
 
 import { addStatistic, getStat, hasHeldItem, isPlayer } from '@lotr/characters';
 import { isHoliday, settingGameGet, traitLevel } from '@lotr/content';
-import { transmissionMovementPatchSend } from '@lotr/core';
+import {
+  transmissionMovementPatchSend,
+  worldGetMapAndState,
+  worldMapStateGetForCharacter,
+} from '@lotr/core';
 import type { IMovementHelper } from '@lotr/interfaces';
 import { isAtLeastTester, isPlayerSubscribed } from '@lotr/premium';
 import { directionDiagonalToWestEast, directionFromOffset } from '@lotr/shared';
@@ -53,7 +57,7 @@ export class MovementHelper extends BaseService implements IMovementHelper {
     const xDiff = target.x - source.x;
     const yDiff = target.y - source.y;
 
-    const map = this.game.worldManager.getMap(source.map)?.map;
+    const map = worldGetMapAndState(source.map)?.map;
     if (!map) return 0;
 
     const steps =
@@ -83,7 +87,7 @@ export class MovementHelper extends BaseService implements IMovementHelper {
     xDiff = clamp(xDiff, -this.maxMove, this.maxMove);
     yDiff = clamp(yDiff, -this.maxMove, this.maxMove);
 
-    const map = this.game.worldManager.getMap(character.map)?.map;
+    const map = worldGetMapAndState(character.map)?.map;
     if (!map) return false;
 
     const steps =
@@ -122,8 +126,8 @@ export class MovementHelper extends BaseService implements IMovementHelper {
     steps: Array<{ x: number; y: number }>,
     opts: { isChasing: boolean } = { isChasing: false },
   ): boolean {
-    const mapData = this.game.worldManager.getMap(character.map);
-    if (!mapData) return false;
+    const mapData = worldGetMapAndState(character.map);
+    if (!mapData.map || !mapData.state) return false;
 
     const { map, state } = mapData;
 
@@ -199,15 +203,17 @@ export class MovementHelper extends BaseService implements IMovementHelper {
 
       // handle step events
       if (oldEventSource && oldEventSource.properties.offEvent) {
-        this.game.worldManager
-          .getMapStateForCharacter(character)
-          ?.handleEvent(oldEventSource.properties.offEvent, character);
+        worldMapStateGetForCharacter(character)?.handleEvent(
+          oldEventSource.properties.offEvent,
+          character,
+        );
       }
 
       if (newEventSource && newEventSource.properties.onEvent) {
-        this.game.worldManager
-          .getMapStateForCharacter(character)
-          ?.handleEvent(newEventSource.properties.onEvent, character);
+        worldMapStateGetForCharacter(character)?.handleEvent(
+          newEventSource.properties.onEvent,
+          character,
+        );
       }
     });
 
@@ -385,7 +391,7 @@ export class MovementHelper extends BaseService implements IMovementHelper {
       obj.properties;
 
     if (teleportTag && teleportTagMap) {
-      const mapData = this.game.worldManager.getMap(teleportTagMap);
+      const mapData = worldGetMapAndState(teleportTagMap);
       const tagData = mapData?.map?.getTeleportTagRef(teleportTag);
       if (!tagData) {
         return undefined;

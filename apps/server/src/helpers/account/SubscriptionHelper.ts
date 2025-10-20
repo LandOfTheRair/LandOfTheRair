@@ -2,7 +2,7 @@ import { Injectable } from 'injection-js';
 import stripe from 'stripe';
 
 import { corePremium } from '@lotr/content';
-import { lobbyGetAccount, wsSendToSocket } from '@lotr/core';
+import { wsSendToSocket } from '@lotr/core';
 import type {
   IAccount,
   IPlayer,
@@ -10,6 +10,7 @@ import type {
   SilverPurchase,
 } from '@lotr/interfaces';
 import { GameServerResponse, SubscriptionTier } from '@lotr/interfaces';
+import { lobbyGetAccount } from '@lotr/lobby';
 import { consoleLog } from '@lotr/logger';
 import type { Account } from '../../models';
 import { BaseService } from '../../models/BaseService';

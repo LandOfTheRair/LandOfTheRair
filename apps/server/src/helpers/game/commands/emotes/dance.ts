@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldMapStateGetForCharacter } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 
 export class DanceEmote extends MacroCommand {
@@ -7,7 +7,7 @@ export class DanceEmote extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const state = this.game.worldManager.getMapStateForCharacter(player);
+    const state = worldMapStateGetForCharacter(player);
     if (!state) return;
 
     const playersInView = state.getAllPlayersInRange(player, 4);

@@ -1,7 +1,7 @@
 import { sample } from 'lodash';
 
 import { isPlayer } from '@lotr/characters';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldGetMapAndState } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 
 export class CatacombsLichSummon extends SpellCommand {
@@ -19,7 +19,7 @@ export class CatacombsLichSummon extends SpellCommand {
   override use(executor: ICharacter, target: ICharacter) {
     if (isPlayer(executor)) return;
 
-    const state = this.game.worldManager.getMap(executor.map)?.state;
+    const state = worldGetMapAndState(executor.map)?.state;
     if (!state) return;
 
     const lichSpawners = state.getNPCSpawnersByName('Lich Random Spawner');

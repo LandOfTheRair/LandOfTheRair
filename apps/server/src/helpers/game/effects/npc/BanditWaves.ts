@@ -1,10 +1,11 @@
 import { itemGetMatchingName, itemPropertyGet } from '@lotr/content';
-import type { Spawner } from '@lotr/core';
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   INPC,
   IPlayer,
+  ISpawner,
   IStatusEffect,
 } from '@lotr/interfaces';
 import { ItemClass } from '@lotr/interfaces';
@@ -68,9 +69,7 @@ export class BanditWaves extends Effect {
   }
 
   private allPlayers(char: ICharacter): IPlayer[] {
-    return (
-      this.game.worldManager.getMapStateForCharacter(char)?.allPlayers ?? []
-    );
+    return worldMapStateGetForCharacter(char)?.allPlayers ?? [];
   }
 
   private descriptionForPlayers(
@@ -167,23 +166,21 @@ export class BanditWaves extends Effect {
     return `Bandit Cave Leader ${tier}`;
   }
 
-  private getAllChildSpawners(char: ICharacter): Spawner[] {
+  private getAllChildSpawners(char: ICharacter): ISpawner[] {
     return (
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.allSpawners.filter((s) => s.spawnerName.includes('Child')) || []
+      worldMapStateGetForCharacter(char)?.allSpawners.filter((s) =>
+        s.spawnerName.includes('Child'),
+      ) || []
     );
   }
 
-  private getAllBanditSpawners(char: ICharacter): Spawner[] {
+  private getAllBanditSpawners(char: ICharacter): ISpawner[] {
     return (
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.allSpawners.filter(
-          (s) =>
-            s.spawnerName.includes('Bandit Cave') &&
-            !s.spawnerName.includes('Child'),
-        ) || []
+      worldMapStateGetForCharacter(char)?.allSpawners.filter(
+        (s) =>
+          s.spawnerName.includes('Bandit Cave') &&
+          !s.spawnerName.includes('Child'),
+      ) || []
     );
   }
 
@@ -221,11 +218,9 @@ export class BanditWaves extends Effect {
   }
 
   private removeAllNPCs(char: ICharacter) {
-    this.game.worldManager
-      .getMapStateForCharacter(char)
-      ?.allNPCS.forEach((target) => {
-        this.game.deathHelper.fakeNPCDie(target);
-      });
+    worldMapStateGetForCharacter(char)?.allNPCS.forEach((target) => {
+      this.game.deathHelper.fakeNPCDie(target);
+    });
   }
 
   private handleEncounterLoss(char: ICharacter, effect: IStatusEffect) {

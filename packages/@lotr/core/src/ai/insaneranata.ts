@@ -3,6 +3,10 @@ import type { ICharacter, INPC } from '@lotr/interfaces';
 import { sample } from 'lodash';
 
 import { isDead } from '@lotr/characters';
+import {
+  worldGetMapAndState,
+  worldMapStateGetForCharacter,
+} from '../worldstate';
 import { DefaultAIBehavior } from './default';
 
 export class InsaneRanataAIBehavior extends DefaultAIBehavior {
@@ -55,9 +59,9 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
       message: 'You hear a lock click in the distance.',
     });
 
-    const chestDoor = this.game.worldManager
-      .getMap(npc.map)
-      ?.map.findInteractableByName('Chest Door');
+    const chestDoor = worldGetMapAndState(npc.map).map?.findInteractableByName(
+      'Chest Door',
+    );
     chestDoor.properties.requireLockpick = false;
   }
 
@@ -67,9 +71,7 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
     this.resetAgro(true);
 
     const hostiles =
-      this.game.worldManager
-        .getMapStateForCharacter(npc)
-        ?.getAllHostilesInRange(npc, 4) ?? [];
+      worldMapStateGetForCharacter(npc)?.getAllHostilesInRange(npc, 4) ?? [];
     if (hostiles.length === 0) {
       this.game.messageHelper.sendMessageToMap(npc.map, {
         from: npc.name,
@@ -103,9 +105,9 @@ export class InsaneRanataAIBehavior extends DefaultAIBehavior {
       message: 'Kill the experiments to make Ranata vulnerable!',
     });
 
-    const spawner = this.game.worldManager
-      .getMap(npc.map)
-      ?.state.getNPCSpawnerByName('Insane Spawner');
+    const spawner = worldGetMapAndState(npc.map).state?.getNPCSpawnerByName(
+      'Insane Spawner',
+    );
     for (let i = 0; i < 5; i++) {
       const ins = spawner?.forceSpawnNPC();
       if (ins) {

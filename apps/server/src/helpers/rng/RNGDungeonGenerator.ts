@@ -25,6 +25,7 @@ import {
   spawnerCustomAdd,
   spawnerCustomClearMap,
 } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { BaseService } from '../../models/BaseService';
 import { MapGenerator } from './helpers/MapGenerator';
@@ -40,7 +41,7 @@ export class RNGDungeonGenerator extends BaseService {
   public generateDungeon(map: IRNGDungeonMetaConfig, seed?: number) {
     const config = coreRNGDungeonConfig();
 
-    const defaultDungeon = this.game.worldManager.getMap('RNGTemplate100');
+    const defaultDungeon = worldGetMapAndState('RNGTemplate100');
 
     if (!defaultDungeon || !defaultDungeon.map) {
       consoleError(
@@ -97,7 +98,7 @@ export class RNGDungeonGenerator extends BaseService {
 
   // updating the map info, file, and the content for the game
   private async updateMap(mapName: string, mapJSON: any) {
-    const mapData = this.game.worldManager.getMap(mapName);
+    const mapData = worldGetMapAndState(mapName);
     mapData?.state?.removeAllNPCs();
 
     await this.game.groundManager.removeGround(mapName);

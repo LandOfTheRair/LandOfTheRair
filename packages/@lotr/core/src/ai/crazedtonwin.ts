@@ -3,6 +3,7 @@ import { sample } from 'lodash';
 import { isDead } from '@lotr/characters';
 import { hasEffect } from '@lotr/effects';
 import type { INPC } from '@lotr/interfaces';
+import { worldGetMapAndState } from '../worldstate';
 import { DefaultAIBehavior } from './default';
 
 export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
@@ -75,9 +76,9 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
       message: 'You hear a lock click in the distance.',
     });
 
-    const chestDoor = this.game.worldManager
-      .getMap(npc.map)
-      ?.map.findInteractableByName('Chest Door');
+    const chestDoor = worldGetMapAndState(npc.map).map?.findInteractableByName(
+      'Chest Door',
+    );
     chestDoor.properties.requireLockpick = false;
   }
 
@@ -114,9 +115,9 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
 
     let brother: INPC | null;
 
-    const npcSpawner = this.game.worldManager
-      .getMap(npc.map)
-      ?.state.getNPCSpawnerByName(`Brother Spawner ${spawnLoc + 1}`);
+    const npcSpawner = worldGetMapAndState(npc.map).state?.getNPCSpawnerByName(
+      `Brother Spawner ${spawnLoc + 1}`,
+    );
     if (npcSpawner) {
       brother = npcSpawner.forceSpawnNPC({ npcId: id });
     }
@@ -128,9 +129,9 @@ export class CrazedTonwinAIBehavior extends DefaultAIBehavior {
       this.game.effectHelper.addEffect(npc, brother, effect);
       this.game.effectHelper.addEffect(npc, brother, 'Invulnerable');
 
-      const mapRef = this.game.worldManager.getMap(npc.map);
-      mapRef?.state.openDoor(
-        mapRef.map.findInteractableByName(`Tile Door ${spawnLoc + 1}`).id,
+      const mapRef = worldGetMapAndState(npc.map);
+      mapRef.state?.openDoor(
+        mapRef.map?.findInteractableByName(`Tile Door ${spawnLoc + 1}`).id,
       );
 
       const msgObject2 = { from: brother.name, message, subClass: 'chatter' };

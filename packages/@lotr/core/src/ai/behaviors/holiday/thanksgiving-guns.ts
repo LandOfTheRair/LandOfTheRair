@@ -14,6 +14,7 @@ import { distanceFrom } from '@lotr/shared';
 
 import { gainCurrency } from '@lotr/currency';
 import { transmissionSendResponseToAccount } from '../../../transmission';
+import { worldGetMapAndState } from '../../../worldstate';
 
 export class ThanksgivingGunsBehavior implements IAIBehavior {
   init(game: IServerGame, npc: INPC, parser: Parser) {
@@ -43,7 +44,7 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
       const uuid = player.uuid;
 
       const spawnNPCS = async () => {
-        const mapRef = game.worldManager.getMap(npc.map);
+        const mapRef = worldGetMapAndState(npc.map);
 
         const doesPlayerExistStill = game.playerManager.getPlayerByUsername(
           player.username,
@@ -77,7 +78,7 @@ export class ThanksgivingGunsBehavior implements IAIBehavior {
         const realTargetNumber = random(1, 4);
 
         for (let i = 1; i <= 4; i++) {
-          const npcSpawner = mapRef?.state.getNPCSpawnerByName(
+          const npcSpawner = mapRef.state?.getNPCSpawnerByName(
             `Target Spawner ${i}`,
           );
           const target = npcSpawner?.forceSpawnNPC({

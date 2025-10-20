@@ -1,6 +1,6 @@
-import { lobbyGetAccount } from '@lotr/core';
 import type { IServerAction } from '@lotr/interfaces';
 import { GameServerEvent, GameServerResponse } from '@lotr/interfaces';
+import { lobbyGetAccount } from '@lotr/lobby';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { ReflectiveInjector, resolveDependencies } from 'injection-js';
 import * as Actions from '../../actions';

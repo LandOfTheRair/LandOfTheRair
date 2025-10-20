@@ -16,7 +16,7 @@ import {
   lobbyGetUsernameByDiscordId,
   lobbyInGamePlayerCount,
   lobbyUserCount,
-} from '@lotr/core';
+} from '@lotr/lobby';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { isSubscribed } from '@lotr/premium';
 import type { IDiscordCommand } from '../../interfaces';

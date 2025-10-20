@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@lotr/content": "*",
-    "@lotr/core": "*",
-    "@lotr/interfaces": "*"
+    "@lotr/interfaces": "*",
+    "@lotr/lobby": "*"
   }
 }

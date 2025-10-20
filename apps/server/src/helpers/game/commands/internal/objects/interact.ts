@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IMapState } from '@lotr/interfaces';
 import type { Player } from '../../../../../models';
 
@@ -11,8 +11,8 @@ export class Interact extends MacroCommand {
     const [x, y] = args.arrayArgs.map((v) => +v);
     if (Math.abs(x) > 1 || Math.abs(y) > 1) return;
 
-    const mapData = this.game.worldManager.getMap(player.map);
-    if (!mapData) return;
+    const mapData = worldGetMapAndState(player.map);
+    if (!mapData.map || !mapData.state) return;
 
     const interactable = mapData.map.getInteractableAt(
       player.x + x,

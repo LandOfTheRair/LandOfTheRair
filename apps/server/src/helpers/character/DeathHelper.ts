@@ -15,6 +15,7 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { getCurrency, loseCurrency } from '@lotr/currency';
 import { hasEffect } from '@lotr/effects';
 import { calculateXPRequiredForLevel } from '@lotr/exp';
@@ -62,7 +63,7 @@ export class DeathHelper extends BaseService {
 
     // remove our corpse if we have one
     if (corpseRef) {
-      const oldMapState = this.game.worldManager.getMap(oldMap)?.state;
+      const oldMapState = worldGetMapAndState(oldMap)?.state;
       oldMapState?.removeItemFromGround(
         oldX,
         oldY,
@@ -71,7 +72,7 @@ export class DeathHelper extends BaseService {
       );
 
       if (x && y && map) {
-        const newMapState = this.game.worldManager.getMap(map)?.state;
+        const newMapState = worldGetMapAndState(map)?.state;
         newMapState?.removeItemFromGround(
           x,
           y,
@@ -107,8 +108,8 @@ export class DeathHelper extends BaseService {
       // tele to respawn point (maybe), then reset some vars
     } else {
       // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
-      const mapData = this.game.worldManager.getMap(player.map);
-      const props = mapData?.map.properties;
+      const mapData = worldGetMapAndState(player.map);
+      const props = mapData.map?.properties;
 
       if (
         props &&
@@ -221,7 +222,7 @@ export class DeathHelper extends BaseService {
     dead.dir = Direction.Center;
 
     if (corpse) {
-      const state = this.game.worldManager.getMap(dead.map)?.state;
+      const state = worldGetMapAndState(dead.map)?.state;
       state?.addItemToGround(dead.x, dead.y, corpse);
     } else {
       this.game.teleportHelper.teleportToRespawnPoint(dead as Player);
@@ -264,9 +265,8 @@ export class DeathHelper extends BaseService {
   // dispatch ai death, calculate loot drops
   // corpses are optional, since some enemies might not have any - in this case, drop loot on ground
   public npcDie(dead: INPC, corpse?: ISimpleItem, killer?: ICharacter): void {
-    const ai = this.game.worldManager
-      .getMap(dead.map)
-      ?.state.getNPCSpawner(dead.uuid)
+    const ai = worldGetMapAndState(dead.map)
+      .state?.getNPCSpawner(dead.uuid)
       ?.getNPCAI(dead.uuid);
     ai?.death(killer);
 
@@ -278,7 +278,7 @@ export class DeathHelper extends BaseService {
     }
 
     if (!dead.noItemDrop) {
-      const state = this.game.worldManager.getMap(dead.map)?.state;
+      const state = worldGetMapAndState(dead.map)?.state;
       if (!state) return;
 
       const allItems: ISimpleItem[] = [];

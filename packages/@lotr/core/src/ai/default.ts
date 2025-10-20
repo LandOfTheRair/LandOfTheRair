@@ -50,7 +50,9 @@ import {
   directionToOffset,
   distanceFrom,
 } from '@lotr/shared';
+import { worldMapStateGetForCharacter } from '../worldstate';
 import { wsSendToSocket } from '../ws';
+
 export class DefaultAIBehavior implements IAI {
   private path!: Array<{ x: number; y: number }>;
   private randomWalkRadius!: number;
@@ -526,9 +528,10 @@ export class DefaultAIBehavior implements IAI {
 
   private findValidAllyInView(skillRef: SkillCommand): ICharacter | undefined {
     const allies =
-      this.game.worldManager
-        .getMapStateForCharacter(this.npc)
-        ?.getAllAlliesInRange(this.npc, 4) ?? [];
+      worldMapStateGetForCharacter(this.npc)?.getAllAlliesInRange(
+        this.npc,
+        4,
+      ) ?? [];
     if (allies.length === 0) return;
 
     return sample(

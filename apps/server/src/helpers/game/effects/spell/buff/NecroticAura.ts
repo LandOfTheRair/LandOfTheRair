@@ -1,3 +1,4 @@
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
@@ -8,7 +9,7 @@ export class NecroticAura extends Effect {
 
     if (effect.effectInfo.potency <= 0) return;
 
-    const state = this.game.worldManager.getMapStateForCharacter(char);
+    const state = worldMapStateGetForCharacter(char);
     if (!state) return;
 
     const nearby = state.getAllHostilesInRange(char, 1);

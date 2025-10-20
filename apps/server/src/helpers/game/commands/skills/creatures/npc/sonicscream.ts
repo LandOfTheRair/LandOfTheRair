@@ -1,5 +1,5 @@
 import { isPlayer } from '@lotr/characters';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 
@@ -18,8 +18,7 @@ export class SonicScream extends SpellCommand {
   override use(executor: ICharacter, target: ICharacter) {
     if (isPlayer(executor)) return;
 
-    this.game.worldManager
-      .getMapStateForCharacter(executor)
+    worldMapStateGetForCharacter(executor)
       ?.getAllPlayersInRange(executor, 5)
       .forEach((char) => {
         this.game.effectHelper.addEffect(char, executor, 'Fear', {

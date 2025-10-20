@@ -1,4 +1,4 @@
-import { lobbyGetAccount } from '@lotr/core';
+import { lobbyGetAccount } from '@lotr/lobby';
 import type { ILobbyCommand } from '../../../interfaces';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports

@@ -1,3 +1,4 @@
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
 import { Spell } from '../../../../models/world/Spell';
@@ -17,15 +18,15 @@ export class Augury extends Spell {
       });
     }
 
-    const mapState = this.game.worldManager.getMap(caster.map);
+    const mapState = worldGetMapAndState(caster.map);
     if (!mapState) return;
 
     const targets: INPC[] = [];
     this.game.worldManager.allMapNames.forEach((checkMap) => {
-      const mapData = this.game.worldManager.getMap(checkMap);
+      const mapData = worldGetMapAndState(checkMap);
       if (!mapData) return;
 
-      mapData.state.allNPCS.forEach((npc) => {
+      mapData.state?.allNPCS.forEach((npc) => {
         if (
           !this.game.targettingHelper.doesTargetMatchSearch(
             npc,
@@ -59,7 +60,7 @@ export class Augury extends Spell {
       });
     }
 
-    const map = this.game.worldManager.getMap(caster.map)?.map;
+    const map = worldGetMapAndState(caster.map)?.map;
     if (!map) return;
 
     const dist = distanceFrom(caster, foundNPC);

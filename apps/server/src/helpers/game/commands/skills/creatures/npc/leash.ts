@@ -1,5 +1,5 @@
 import { isPlayer } from '@lotr/characters';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldGetMapAndState } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 
 export class Leash extends SpellCommand {
@@ -17,7 +17,7 @@ export class Leash extends SpellCommand {
   override use(executor: ICharacter) {
     if (isPlayer(executor)) return;
 
-    const state = this.game.worldManager.getMap(executor.map)?.state;
+    const state = worldGetMapAndState(executor.map)?.state;
     if (!state) return;
 
     const spawner = state.getNPCSpawner(executor.uuid);

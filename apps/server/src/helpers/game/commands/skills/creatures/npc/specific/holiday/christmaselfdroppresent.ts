@@ -1,7 +1,7 @@
 import { sample } from 'lodash';
 
 import { isPlayer } from '@lotr/characters';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 
 export class ChristmasPresentElfDropPresent extends SpellCommand {
@@ -33,8 +33,10 @@ export class ChristmasPresentElfDropPresent extends SpellCommand {
     ]) as string;
 
     const created = this.game.itemCreator.getSimpleItem(item);
-    this.game.worldManager
-      .getMapStateForCharacter(executor)
-      ?.addItemToGround(executor.x, executor.y, created);
+    worldMapStateGetForCharacter(executor)?.addItemToGround(
+      executor.x,
+      executor.y,
+      created,
+    );
   }
 }

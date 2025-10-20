@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { cleanNumber } from '@lotr/shared';
@@ -24,9 +24,11 @@ export class GMCreateGold extends MacroCommand {
       this.game.characterHelper.setRightHand(player, gold);
       this.sendMessage(player, `${value} gold added to your right hand.`);
     } else {
-      this.game.worldManager
-        .getMap(player.map)
-        ?.state.addItemToGround(player.x, player.y, gold);
+      worldGetMapAndState(player.map).state?.addItemToGround(
+        player.x,
+        player.y,
+        gold,
+      );
       this.sendMessage(player, `${value} gold added to ground.`);
     }
   }

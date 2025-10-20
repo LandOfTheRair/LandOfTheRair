@@ -8,6 +8,7 @@ import {
   spellGet,
   traitLevelValue,
 } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type {
   ICharacter,
   IGroundItem,
@@ -56,7 +57,7 @@ export class TrapHelper extends BaseService {
     const trapEffect: IItemEffect = itemPropertyGet(trap.item, 'trapEffect');
     if (!trapEffect) return;
 
-    const mapState = this.game.worldManager.getMap(target.map)?.state;
+    const mapState = worldGetMapAndState(target.map)?.state;
     if (!mapState) return;
 
     const caster = mapState.getCharacterByUUID(trap.item.mods.trapSetBy ?? '');
@@ -124,12 +125,10 @@ export class TrapHelper extends BaseService {
   }
 
   private setTrap(map: string, x: number, y: number, trap: ISimpleItem) {
-    this.game.worldManager.getMap(map)?.state.addItemToGround(x, y, trap);
+    worldGetMapAndState(map).state?.addItemToGround(x, y, trap);
   }
 
   public removeTrap(map: string, x: number, y: number, trap: IGroundItem) {
-    this.game.worldManager
-      .getMap(map)
-      ?.state.removeItemsFromGround(x, y, [trap]);
+    worldGetMapAndState(map).state?.removeItemsFromGround(x, y, [trap]);
   }
 }

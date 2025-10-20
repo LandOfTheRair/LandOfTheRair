@@ -1,3 +1,4 @@
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -11,7 +12,7 @@ export class MockingShout extends Spell {
 
     this.game.messageHelper.sendSimpleMessage(caster, 'You mock your foes!');
 
-    const state = this.game.worldManager.getMapStateForCharacter(caster);
+    const state = worldMapStateGetForCharacter(caster);
     if (!state) return;
 
     state

@@ -1,3 +1,4 @@
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
@@ -19,9 +20,7 @@ export class AriaOfRefugeSong extends Song {
 
     if ((effect.effectInfo.currentTick ?? 0) % 5 === 0) {
       sampleSize(
-        this.game.worldManager
-          .getMapStateForCharacter(char)
-          ?.getAllAlliesInRange(char, 4),
+        worldMapStateGetForCharacter(char)?.getAllAlliesInRange(char, 4),
         12,
       ).forEach((ally) => {
         if (char === ally) return;

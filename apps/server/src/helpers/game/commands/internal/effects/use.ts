@@ -1,6 +1,6 @@
 import { getEmptyHand } from '@lotr/characters';
 import { itemPropertyGet } from '@lotr/content';
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer, ItemClass } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 
@@ -60,7 +60,7 @@ export class UseCommand extends MacroCommand {
 
     if (place === 'ground') {
       const [itemType, uuid] = (detail ?? '').split(':');
-      const state = this.game.worldManager.getMap(player.map)?.state;
+      const state = worldGetMapAndState(player.map)?.state;
       if (!state) {
         return this.sendMessage(
           player,

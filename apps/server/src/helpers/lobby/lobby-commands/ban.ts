@@ -1,4 +1,4 @@
-import { lobbyGetAccount } from '@lotr/core';
+import { lobbyGetAccount } from '@lotr/lobby';
 import type { ILobbyCommand } from '../../../interfaces';
 import type { Account } from '../../../models';
 

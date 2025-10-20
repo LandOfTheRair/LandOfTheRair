@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { directionFromText, directionToOffset } from '@lotr/shared';
 
@@ -17,9 +17,10 @@ export class Door extends MacroCommand {
       [offset.x, offset.y] = args.arrayArgs.map((z) => +z);
     }
 
-    const door = this.game.worldManager
-      .getMap(player.map)
-      ?.map.getInteractableAt(player.x + offset.x, player.y + offset.y);
+    const door = worldGetMapAndState(player.map).map?.getInteractableAt(
+      player.x + offset.x,
+      player.y + offset.y,
+    );
     if (!door) {
       return this.sendMessage(player, 'There is no door there.');
     }

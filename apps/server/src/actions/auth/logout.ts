@@ -1,7 +1,7 @@
 import type { IServerGame } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-import { lobbyGetAccount } from '@lotr/core';
+import { lobbyGetAccount } from '@lotr/lobby';
 import { consoleError, consoleLog } from '@lotr/logger';
 import { ServerAction } from '../../models/ServerAction';
 

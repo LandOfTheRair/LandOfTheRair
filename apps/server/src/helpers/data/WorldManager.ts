@@ -21,18 +21,30 @@ import { BaseService } from '../../models/BaseService';
 
 import { isDead } from '@lotr/characters';
 import { coreRNGDungeonConfig } from '@lotr/content';
-import { InstancedWorldMap, MapState, WorldMap } from '@lotr/core';
+import {
+  MapState,
+  worldCharacterAdd,
+  worldCharacterRemove,
+  worldGetMapAndState,
+  worldMapAdd,
+  worldMapGet,
+  worldMapInstanceAdd,
+  worldMapInstanceGet,
+  worldMapInstancePrototypeAdd,
+  worldMapInstancePrototypeRemove,
+  worldMapInstanceRemove,
+  worldMapRemove,
+  worldMapStateAll,
+  worldMapStateGet,
+  worldMapStateRemove,
+  worldMapStateSet,
+} from '@lotr/core';
 import type { IWorldManager } from '@lotr/interfaces';
 import { consoleDebug, consoleError, consoleLog } from '@lotr/logger';
 import * as MapScripts from '../../models/world/mapscripts';
 
 @Injectable()
 export class WorldManager extends BaseService implements IWorldManager {
-  // live maps
-  private maps: Record<string, WorldMap> = {};
-  private instances: Record<string, InstancedWorldMap> = {};
-  private instanceNameToInstancePrototype: Record<string, string> = {};
-
   // not live maps
   private mapsInactiveSince: Record<string, number> = {};
   private instancedMapPrototypes: Record<string, any> = {};
@@ -52,14 +64,8 @@ export class WorldManager extends BaseService implements IWorldManager {
   // the maps players are currently located in
   private playersInMaps: Record<string, string> = {};
 
-  // the state for each map
-  private mapStates: Record<string, MapState> = {};
-
   // the list of active maps to run ticks on
   private activeMaps: Set<string> = new Set<string>();
-
-  // the mapping of every npc/player by their uuid for lookup
-  private characterUUIDHash: Record<string, ICharacter> = {};
 
   // players leaving the current map
   private isLeavingMap: Record<string, boolean> = {};
@@ -170,7 +176,7 @@ export class WorldManager extends BaseService implements IWorldManager {
 
   public initAllMaps() {
     const allSpawners: ISpawner[] = [];
-    Object.values(this.mapStates).forEach((state) => {
+    worldMapStateAll().forEach((state) => {
       state.init();
       allSpawners.push(...state.allSpawners);
     });
@@ -178,8 +184,10 @@ export class WorldManager extends BaseService implements IWorldManager {
     this.addUninitializedSpawners(allSpawners);
   }
 
-  private initSpeciflcMapState(mapName: string): void {
-    const state = this.mapStates[mapName];
+  private initSpecificMapState(mapName: string): void {
+    const state = worldMapStateGet(mapName);
+    if (!state) return;
+
     state.init();
 
     this.addUninitializedSpawners(state.allSpawners);
@@ -189,11 +197,11 @@ export class WorldManager extends BaseService implements IWorldManager {
     this.mapsInactiveSince[mapName] = Date.now();
     if (!this.mapNames.includes(mapName)) this.mapNames.push(mapName);
 
-    delete this.maps[mapName];
-    delete this.mapStates[mapName];
+    worldMapRemove(mapName);
+    worldMapStateRemove(mapName);
 
     this.createMap(mapName, mapJson);
-    this.initSpeciflcMapState(mapName);
+    this.initSpecificMapState(mapName);
   }
 
   private createMap(mapName: string, mapJson: any) {
@@ -201,9 +209,14 @@ export class WorldManager extends BaseService implements IWorldManager {
 
     try {
       this.game.groundManager.initGroundForMap(mapName);
-      this.maps[mapName] = new WorldMap(mapName, mapJson);
-      this.mapStates[mapName] = new MapState(this.game, this.maps[mapName]);
-      this.handleMapSetup(this.maps[mapName], this.mapStates[mapName]);
+      worldMapAdd(mapName, mapJson);
+
+      const mapRef = worldMapGet(mapName);
+      if (mapRef) {
+        const state = new MapState(this.game, mapRef);
+        worldMapStateSet(mapName, state);
+        this.handleMapSetup(mapRef, state);
+      }
     } catch (e) {
       consoleError(
         'WorldManager',
@@ -216,22 +229,24 @@ export class WorldManager extends BaseService implements IWorldManager {
   private createInstancedMap(mapName: string, mapJson: any, partyName: string) {
     this.game.groundManager.initGroundForMap(mapName, partyName);
 
-    this.instances[mapName] = new InstancedWorldMap(
-      mapName,
-      cloneDeep(mapJson),
-    );
-    this.mapStates[mapName] = new MapState(this.game, this.instances[mapName]);
-    this.handleMapSetup(this.instances[mapName], this.mapStates[mapName]);
-    this.initSpeciflcMapState(mapName);
+    worldMapInstanceAdd(mapName, cloneDeep(mapJson));
+
+    const instanceRef = worldMapInstanceGet(mapName);
+    if (!instanceRef) return;
+
+    const state = new MapState(this.game, instanceRef);
+    worldMapStateSet(mapName, state);
+    this.handleMapSetup(instanceRef, state);
+    this.initSpecificMapState(mapName);
   }
 
   private cleanUpInstancedMap(mapName: string) {
-    delete this.instances[mapName];
-    delete this.mapStates[mapName];
-    delete this.instanceNameToInstancePrototype[mapName];
+    worldMapInstanceRemove(mapName);
+    worldMapStateRemove(mapName);
+    worldMapInstancePrototypeRemove(mapName);
   }
 
-  private handleMapSetup(map: WorldMap, mapState: MapState) {
+  private handleMapSetup(map: IWorldMap, mapState: IMapState) {
     if (!map.properties.script) return;
 
     this.mapScripts[map.properties.script].setup(this.game, map, mapState);
@@ -264,23 +279,15 @@ export class WorldManager extends BaseService implements IWorldManager {
     mapNameWithParty: string,
   ): void {
     if (mapName === mapNameWithParty) return;
-    if (this.instances[mapNameWithParty]) return;
+    if (worldMapInstanceGet(mapNameWithParty)) return;
 
     this.createInstancedMap(
       mapNameWithParty,
       this.instancedMapPrototypes[mapName],
       partyName,
     );
-    this.instanceNameToInstancePrototype[mapNameWithParty] = mapName;
-  }
 
-  public getMap(
-    mapName: string,
-  ): { map: IWorldMap; state: IMapState } | undefined {
-    return {
-      map: this.instances[mapName] || this.maps[mapName],
-      state: this.mapStates[mapName],
-    };
+    worldMapInstancePrototypeAdd(mapNameWithParty, mapName);
   }
 
   public isEtherForceMap(mapName: string): boolean {
@@ -298,28 +305,34 @@ export class WorldManager extends BaseService implements IWorldManager {
     defaultX: number,
     defaultY: number,
   ): { state: IMapState; x: number; y: number } {
-    let state = this.mapStates[character.map];
+    let state = worldMapStateGet(character.map)!;
     let x = defaultX;
     let y = defaultY;
 
     if (this.isDungeon(character.map)) {
-      const newMap =
-        this.instances[character.map].properties.gearDropMap ?? character.map;
+      const instanceRef = worldMapInstanceGet(character.map);
+
+      const newMap = instanceRef?.properties.gearDropMap ?? character.map;
+
+      const instanceNewRef = worldMapInstanceGet(newMap);
+
       if (newMap !== character.map) {
-        state = this.mapStates[newMap];
+        state = worldMapStateGet(newMap)!;
         x =
-          this.instances[character.map].properties.gearDropX ??
-          this.instances[newMap].respawnPoint.x;
+          instanceRef?.properties.gearDropX ??
+          instanceNewRef?.respawnPoint.x ??
+          10;
         y =
-          this.instances[character.map].properties.gearDropY ??
-          this.instances[newMap].respawnPoint.y;
+          instanceRef?.properties.gearDropY ??
+          instanceNewRef?.respawnPoint.y ??
+          10;
       }
     }
 
     // special case for non-dungeon, volatile maps (solokar, etc)
-    const mapData = this.getMap(character.map);
-    if (mapData?.map.properties.gearDropMap) {
-      state = this.mapStates[mapData.map.properties.gearDropMap];
+    const mapData = worldGetMapAndState(character.map);
+    if (mapData.map?.properties.gearDropMap) {
+      state = worldMapStateGet(mapData.map.properties.gearDropMap)!;
       if (state) {
         x = mapData.map.properties.gearDropX ?? mapData.map.respawnPoint.x;
         y = mapData.map.properties.gearDropY ?? mapData.map.respawnPoint.y;
@@ -329,18 +342,15 @@ export class WorldManager extends BaseService implements IWorldManager {
     return { state, x, y };
   }
 
-  public getMapStateForCharacter(character: ICharacter): MapState | undefined {
-    return this.mapStates[character.map];
-  }
-
   // if a player logs into a closed door, send them to the respawn point
   public checkPlayerForDoorsBeforeJoiningGame(player: Player): void {
     const { x, y } = player;
 
-    const mapData = this.getMap(player.map);
+    const mapData = worldGetMapAndState(player.map);
     if (!mapData) return;
 
     const { map, state } = mapData;
+    if (!map || !state) return;
 
     const door = map.getInteractableOfTypeAt(x, y, ObjectType.Door);
 
@@ -377,8 +387,8 @@ export class WorldManager extends BaseService implements IWorldManager {
       delete this.mapsInactiveSince[mapName];
     }
 
-    this.addCharacter(player);
-    this.mapStates[mapName].addPlayer(player);
+    worldCharacterAdd(player);
+    worldMapStateGet(mapName)?.addPlayer(player);
 
     consoleLog(
       'Map:Join',
@@ -398,7 +408,7 @@ export class WorldManager extends BaseService implements IWorldManager {
       this.game.playerHelper.resetSpawnPointToDefault(player);
     }
 
-    const mapData = this.game.worldManager.getMap(player.map);
+    const mapData = worldGetMapAndState(player.map);
 
     // dead people leaving get auto-respawned
     if (isDead(player)) {
@@ -413,7 +423,7 @@ export class WorldManager extends BaseService implements IWorldManager {
       player.y = player.respawnPoint.y;
 
       // if the map has a respawn kick set, we will also try to force to there
-    } else if (mapData?.map.properties.respawnKick) {
+    } else if (mapData.map?.properties.respawnKick) {
       player.map = mapData.map.properties.respawnMap;
       player.x = mapData.map.properties.respawnX;
       player.y = mapData.map.properties.respawnY;
@@ -439,8 +449,8 @@ export class WorldManager extends BaseService implements IWorldManager {
       }
     }
 
-    this.removeCharacter(player);
-    this.mapStates[oldMap]?.removePlayer(player);
+    worldCharacterRemove(player);
+    worldMapStateGet(oldMap)?.removePlayer(player);
 
     if (this.mapPlayerCounts[oldMap] === 0) {
       this.game.groundManager.saveSingleGround(oldMap);
@@ -491,7 +501,7 @@ export class WorldManager extends BaseService implements IWorldManager {
     const now = Date.now();
 
     this.activeMaps.forEach((activeMap) => {
-      const state = this.mapStates[activeMap];
+      const state = worldMapStateGet(activeMap);
       if (!state) {
         consoleError(
           'WorldManager:MapTick',
@@ -501,14 +511,14 @@ export class WorldManager extends BaseService implements IWorldManager {
       }
 
       timer.startTimer(`map-${activeMap}-${now}`);
-      state.steadyTick();
+      state.steadyTick(timer);
       timer.stopTimer(`map-${activeMap}-${now}`);
     });
   }
 
   public npcTick(timer) {
     this.activeMaps.forEach((activeMap) => {
-      const state = this.mapStates[activeMap];
+      const state = worldMapStateGet(activeMap);
       if (!state) {
         consoleError(
           'WorldManager:MapTick',
@@ -521,17 +531,5 @@ export class WorldManager extends BaseService implements IWorldManager {
       state.npcTick();
       timer.stopTimer(`npc-${activeMap}`);
     });
-  }
-
-  public addCharacter(char: ICharacter): void {
-    this.characterUUIDHash[char.uuid] = char;
-  }
-
-  public removeCharacter(char: ICharacter): void {
-    delete this.characterUUIDHash[char.uuid];
-  }
-
-  public getCharacter(uuid: string): ICharacter {
-    return this.characterUUIDHash[uuid];
   }
 }

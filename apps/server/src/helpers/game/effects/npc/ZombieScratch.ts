@@ -1,4 +1,5 @@
 import { healToFull, isDead } from '@lotr/characters';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, INPC, IStatusEffect } from '@lotr/interfaces';
 import {
   Alignment,
@@ -25,14 +26,13 @@ export class ZombieScratch extends Effect {
     });
 
     healToFull(char);
-    const ai = this.game.worldManager
-      .getMap(char.map)
-      ?.state.getNPCSpawner(char.uuid)
+    const ai = worldGetMapAndState(char.map)
+      .state?.getNPCSpawner(char.uuid)
       ?.getNPCAI(char.uuid);
     ai?.resetAgro(true);
 
     if (effect.sourceUUID) {
-      const mapState = this.game.worldManager.getMap(char.map)?.state;
+      const mapState = worldGetMapAndState(char.map)?.state;
       const caster = mapState?.getCharacterByUUID(effect.sourceUUID);
 
       if (caster) {

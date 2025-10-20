@@ -1,3 +1,4 @@
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IMapScript, INPC } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 
@@ -29,9 +30,8 @@ export class RisanMinesScript implements IMapScript {
         { x: trigger.x, y: trigger.y, map: trigger.map },
       );
 
-      game.worldManager
-        .getMap('RisanMines')
-        ?.state.getAllInRange(trigger, 1, [], false)
+      worldGetMapAndState('RisanMines')
+        .state?.getAllInRange(trigger, 1, [], false)
         .forEach((creature) => {
           this.applyDebuff(game, creature);
 
@@ -48,9 +48,8 @@ export class RisanMinesScript implements IMapScript {
 
   private transformMiner(game: IServerGame, npc: INPC) {
     game.deathHelper.fakeNPCDie(npc);
-    game.worldManager
-      .getMap('RisanMines')
-      ?.state.getNPCSpawner(npc.uuid)
+    worldGetMapAndState('RisanMines')
+      .state?.getNPCSpawner(npc.uuid)
       ?.forceSpawnNPC({
         npcId: 'Risan Crazed Miner',
         spawnLoc: { x: npc.x, y: npc.y },

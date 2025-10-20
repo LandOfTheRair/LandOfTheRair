@@ -5,6 +5,7 @@ import { GameAction, GameServerResponse } from '@lotr/interfaces';
 import type { Account, Player } from '../../models';
 import { BaseService } from '../../models/BaseService';
 
+import { wsBroadcast, wsSendToSocket } from '@lotr/core';
 import {
   lobbyAddUser,
   lobbyDiscordUserCount,
@@ -14,9 +15,7 @@ import {
   lobbyPlayerJoinGame,
   lobbyPlayerLeaveGame,
   lobbyRemoveUser,
-  wsBroadcast,
-  wsSendToSocket,
-} from '@lotr/core';
+} from '@lotr/lobby';
 import type { ILobbyCommand } from '../../interfaces';
 import * as commands from './lobby-commands';
 

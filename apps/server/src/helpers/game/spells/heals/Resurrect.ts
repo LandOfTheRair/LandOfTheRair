@@ -1,6 +1,6 @@
 import { healToFull, manaToFull } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
-import { Spawner } from '@lotr/core';
+import { Spawner, worldGetMapAndState } from '@lotr/core';
 import { calculateSkillXPRequiredForLevel } from '@lotr/exp';
 import type { ICharacter, INPC, SpellCastArgs } from '@lotr/interfaces';
 import { Hostility, ItemClass, Stat } from '@lotr/interfaces';
@@ -55,7 +55,7 @@ export class Resurrect extends Spell {
   }
 
   private spawnZombie(caster: ICharacter, level: number): void {
-    const mapData = this.game.worldManager.getMap(caster.map);
+    const mapData = worldGetMapAndState(caster.map);
     if (!mapData) return;
 
     const npcCreateCallback = (npc: INPC) => {
@@ -114,6 +114,8 @@ export class Resurrect extends Spell {
       doInitialSpawnImmediately: true,
       npcCreateCallback,
     } as Partial<Spawner>;
+
+    if (!mapData.map || !mapData.state) return;
 
     const spawner = new Spawner(this.game, mapData.map, mapData.state, {
       npcIds: ['Halloween Zombie'],

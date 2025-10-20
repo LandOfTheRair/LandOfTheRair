@@ -6,7 +6,7 @@ import type {
 } from '@lotr/interfaces';
 import { MessageType } from '@lotr/interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import { worldMapStateGetForCharacter } from '@lotr/core';
 import type { IServerGame } from '@lotr/interfaces';
 import type { BaseEffect } from '../BaseEffect';
 
@@ -67,9 +67,9 @@ export class Effect implements BaseEffect {
   ): ICharacter | undefined {
     if (!effect.effectInfo?.linkedTo) return undefined;
 
-    const linkedTarget = this.game.worldManager
-      .getMapStateForCharacter(char)
-      ?.getCharacterByUUID(effect.effectInfo?.linkedTo);
+    const linkedTarget = worldMapStateGetForCharacter(char)?.getCharacterByUUID(
+      effect.effectInfo?.linkedTo,
+    );
 
     return linkedTarget;
   }

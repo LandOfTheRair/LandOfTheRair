@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 
@@ -15,9 +15,9 @@ export class GMToggleMapBlock extends MacroCommand {
     }
 
     const map = args.stringArgs.split(' ')[0];
-    const mapData = this.game.worldManager.getMap(map);
+    const mapData = worldGetMapAndState(map);
 
-    if (!mapData) {
+    if (!mapData.map || !mapData.state) {
       this.sendMessage(player, 'That is not a valid map name.');
       return;
     }

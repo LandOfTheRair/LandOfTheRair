@@ -3,6 +3,7 @@ import { cloneDeep, get, isEqual, setWith, sortBy, updateWith } from 'lodash';
 import { ObjectId } from 'mongodb';
 
 import { itemPropertiesGet, settingGameGet } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type {
   IGround,
   IGroundItem,
@@ -158,7 +159,7 @@ export class GroundManager extends BaseService {
 
     // if we do not pass an entity, it has been loaded
     if (!groundEntity) {
-      const mapData = this.game.worldManager.getMap(map);
+      const mapData = worldGetMapAndState(map);
       if (mapData?.state) {
         mapData.state.allSpawners.forEach((spawner) => {
           if (spawner.areAnyNPCsAlive || !spawner.areCreaturesDangerous) return;
@@ -200,7 +201,7 @@ export class GroundManager extends BaseService {
 
   // get all serializable spawners for a map for their current state
   private collectSpawners(mapName: string): ISerializableSpawner[] {
-    const state = this.game.worldManager.getMap(mapName)?.state;
+    const state = worldGetMapAndState(mapName)?.state;
     if (!state) return [];
 
     const spawners = sortBy(

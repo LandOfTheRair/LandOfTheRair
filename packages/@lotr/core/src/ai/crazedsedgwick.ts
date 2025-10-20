@@ -1,5 +1,6 @@
 import { isDead } from '@lotr/characters';
 import { DamageClass } from '@lotr/interfaces';
+import { worldGetMapAndState } from '../worldstate';
 import { DefaultAIBehavior } from './default';
 
 export class CrazedSedgwickAIBehavior extends DefaultAIBehavior {
@@ -80,9 +81,9 @@ export class CrazedSedgwickAIBehavior extends DefaultAIBehavior {
       message: 'You hear a lock click in the distance.',
     });
 
-    const chestDoor = this.game.worldManager
-      .getMap(npc.map)
-      ?.map.findInteractableByName('Chest Door');
+    const chestDoor = worldGetMapAndState(npc.map).map?.findInteractableByName(
+      'Chest Door',
+    );
     chestDoor.properties.requireLockpick = false;
   }
 }

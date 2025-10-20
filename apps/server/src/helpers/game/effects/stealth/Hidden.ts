@@ -1,5 +1,6 @@
 import { isPlayer, mana, manaDamage, stealthGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevelValue } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer, IStatusEffect } from '@lotr/interfaces';
 import { Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
@@ -23,7 +24,7 @@ export class Hidden extends Effect {
 
   // update everyone in sight so they can't see us (maybe)
   override apply(char: ICharacter) {
-    const state = this.game.worldManager.getMap(char.map)?.state;
+    const state = worldGetMapAndState(char.map)?.state;
     if (!state) return;
 
     state.triggerPlayerUpdateInRadius(char.x, char.y);
@@ -39,7 +40,7 @@ export class Hidden extends Effect {
 
     // thieves have to use their stealth bar
     if (requiresMPToHide) {
-      const state = this.game.worldManager.getMap(char.map)?.state;
+      const state = worldGetMapAndState(char.map)?.state;
       if (!state) return;
 
       // tick operates on mp5
@@ -86,7 +87,7 @@ export class Hidden extends Effect {
 
   // update everyone in sight so they can see us again (if they couldn't before)
   override unapply(char: ICharacter) {
-    const state = this.game.worldManager.getMap(char.map)?.state;
+    const state = worldGetMapAndState(char.map)?.state;
     if (!state) return;
 
     state.triggerPlayerUpdateInRadius(char.x, char.y);

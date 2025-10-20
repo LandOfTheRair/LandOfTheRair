@@ -1,7 +1,11 @@
 import { sample } from 'lodash';
 
 import { engageInCombat, isPlayer } from '@lotr/characters';
-import { SpellCommand, transmissionMovementPatchSend } from '@lotr/core';
+import {
+  SpellCommand,
+  transmissionMovementPatchSend,
+  worldGetMapAndState,
+} from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
@@ -26,9 +30,9 @@ export class DedlaenCryptThingPunch extends SpellCommand {
     engageInCombat(executor, 60);
 
     const allSpots =
-      this.game.worldManager
-        .getMap(executor.map)
-        ?.map.findAllDecorByName('CryptThing Spot') ?? [];
+      worldGetMapAndState(executor.map).map?.findAllDecorByName(
+        'CryptThing Spot',
+      ) ?? [];
     if (allSpots.length > 0) {
       this.game.messageHelper.sendLogMessageToRadius(executor, 6, {
         message: `${target.name} was cast into a tear in the rift!`,

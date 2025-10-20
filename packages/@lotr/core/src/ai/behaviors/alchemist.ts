@@ -14,6 +14,7 @@ import { distanceFrom } from '@lotr/shared';
 import { forceSpellLearnStatus, hasLearned } from '@lotr/characters';
 import { itemPropertiesGet, itemSetOwner } from '@lotr/content';
 import { hasCurrency, loseCurrency } from '@lotr/currency';
+import { premiumMaxAlchemistOz } from '@lotr/premium';
 import { transmissionSendResponseToAccount } from '../../transmission';
 
 export class AlchemistBehavior implements IAIBehavior {
@@ -36,7 +37,7 @@ export class AlchemistBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
+        const maxOz = premiumMaxAlchemistOz(player, alchOz);
 
         const message = `Hello, ${player.name}!
         You can tell me COMBINE while holding a bottle in your right hand to
@@ -82,7 +83,7 @@ export class AlchemistBehavior implements IAIBehavior {
         const rightHand = player.items.equipment[ItemSlot.RightHand];
         if (!rightHand) return 'You need to hold something in your right hand!';
 
-        const maxOz = game.subscriptionHelper.maxAlchemistOz(player, alchOz);
+        const maxOz = premiumMaxAlchemistOz(player, alchOz);
         const { itemClass, ounces, useEffect } = itemPropertiesGet(rightHand, [
           'itemClass',
           'ounces',

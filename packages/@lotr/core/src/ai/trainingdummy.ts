@@ -1,4 +1,5 @@
 import type { ICharacter, IPlayer } from '@lotr/interfaces';
+import { worldGetMapAndState } from '../worldstate';
 import { DefaultAIBehavior } from './default';
 
 export class TrainingDummyAI extends DefaultAIBehavior {
@@ -92,9 +93,8 @@ export class TrainingDummyAI extends DefaultAIBehavior {
 
   override death(killer: ICharacter | undefined | null) {
     const npc = this.npc;
-    this.game.worldManager
-      .getMap(npc.map)
-      ?.state.getNPCSpawner(npc.uuid)
+    worldGetMapAndState(npc.map)
+      .state?.getNPCSpawner(npc.uuid)
       ?.forceSpawnNPC();
   }
 }

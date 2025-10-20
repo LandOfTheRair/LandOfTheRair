@@ -1,3 +1,4 @@
+import { worldGetMapAndState } from '@lotr/core';
 import type { IMapScript } from '@lotr/interfaces';
 
 import type { IServerGame } from '@lotr/interfaces';
@@ -48,12 +49,12 @@ export class DedlaenMazeScript implements IMapScript {
   }
 
   private toggleDoors(game: IServerGame, open: boolean) {
-    const mapRef = game.worldManager.getMap('DedlaenMaze');
+    const mapRef = worldGetMapAndState('DedlaenMaze');
 
     for (let i = 1; i <= 3; i++) {
-      const door = mapRef?.map.findInteractableByName(`Tile Door ${i}`);
-      if (open) mapRef?.state.openDoor(door.id);
-      else mapRef?.state.closeDoor(door.id);
+      const door = mapRef.map?.findInteractableByName(`Tile Door ${i}`);
+      if (open) mapRef.state?.openDoor(door.id);
+      else mapRef.state?.closeDoor(door.id);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { getSkillLevel } from '@lotr/characters';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { ItemSlot, Skill } from '@lotr/interfaces';
 import { premiumSuccorOzMax } from '@lotr/premium';
@@ -18,7 +19,7 @@ export class Succor extends Spell {
       return;
     }
 
-    const map = this.game.worldManager.getMap(caster.map)?.map;
+    const map = worldGetMapAndState(caster.map)?.map;
     if (!map) return;
 
     if (!map.canSuccor(caster as IPlayer)) {

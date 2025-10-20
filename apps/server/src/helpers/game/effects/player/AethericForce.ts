@@ -1,4 +1,5 @@
 import { dailyResetTime } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IStatusEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
 import { Effect } from '../../../../models';
@@ -15,10 +16,10 @@ export class AethericForce extends Effect {
   }
 
   override expire(char: ICharacter) {
-    const mapData = this.game.worldManager.getMap(char.map);
+    const mapData = worldGetMapAndState(char.map);
 
     // warp to the current map's respawnKick area if possible
-    if (mapData?.map.properties.respawnKick) {
+    if (mapData.map?.properties.respawnKick) {
       const map = mapData.map.properties.respawnMap;
       const x = mapData.map.properties.respawnX;
       const y = mapData.map.properties.respawnY;

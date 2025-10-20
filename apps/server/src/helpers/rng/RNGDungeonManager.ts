@@ -3,6 +3,7 @@ import { Injectable } from 'injection-js';
 import type { Player } from '../../models';
 
 import { coreRNGDungeonConfig, dailyResetTime } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { consoleLog } from '@lotr/logger';
 import { GameEvent } from '../../interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -60,14 +61,14 @@ export class RNGDungeonManager extends BaseService {
 
   // lock a map, and kick all the players out
   private lockAndKickFrom(map: string): void {
-    const mapData = this.game.worldManager.getMap(map);
+    const mapData = worldGetMapAndState(map);
     if (!mapData || !mapData.map) return;
 
     mapData.map.properties.blockEntry = true;
 
     this.game.worldManager.getPlayersInMap(map).forEach((p) => {
       // first, we check if the map is a "respawnKick" map, which means it will kick us back to the maps specified respawn time
-      const props = mapData?.map.properties;
+      const props = mapData.map?.properties;
 
       if (
         props &&

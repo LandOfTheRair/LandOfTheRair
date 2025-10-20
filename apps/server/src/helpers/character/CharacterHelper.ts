@@ -52,6 +52,7 @@ import {
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import { rollInOneHundred } from '@lotr/rng';
 import { cleanNumber } from '@lotr/shared';
 import type { Player } from '../../models';
@@ -449,7 +450,7 @@ export class CharacterHelper extends BaseService implements ICharacterHelper {
     );
 
     // if we're a player and our perception changes, we do a full visual update
-    const state = this.game.worldManager.getMap(character.map)?.state;
+    const state = worldGetMapAndState(character.map)?.state;
     if (!state) return;
 
     if (

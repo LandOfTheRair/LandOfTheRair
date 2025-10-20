@@ -10,6 +10,7 @@ import type {
 } from '@lotr/interfaces';
 import { MapLayer } from '@lotr/interfaces';
 import { distanceFrom } from '@lotr/shared';
+import { worldGetMapAndState } from '../../worldstate';
 
 export class ExitWarperBehavior implements IAIBehavior {
   init(
@@ -27,7 +28,7 @@ export class ExitWarperBehavior implements IAIBehavior {
 
         if (distanceFrom(player, npc) > 2) return 'Please come closer.';
 
-        const mapData = game.worldManager.getMap(npc.map);
+        const mapData = worldGetMapAndState(npc.map);
         if (!mapData || !mapData.map) return 'We seem to be lost!';
 
         const exits = mapData.map.tiledJSON.layers[

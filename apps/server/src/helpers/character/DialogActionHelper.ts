@@ -61,7 +61,10 @@ import {
   questGet,
   settingGameGet,
 } from '@lotr/content';
-import { transmissionSendResponseToAccount } from '@lotr/core';
+import {
+  transmissionSendResponseToAccount,
+  worldMapStateGetForCharacter,
+} from '@lotr/core';
 import { gainCurrency } from '@lotr/currency';
 import { consoleError } from '@lotr/logger';
 import { distanceFrom } from '@lotr/shared';
@@ -249,9 +252,8 @@ export class DialogActionHelper
     const retMessages: string[] = [];
 
     const didSucceed =
-      this.game.worldManager
-        .getMapStateForCharacter(npc)
-        ?.getAllHostilesInRange(npc, range ?? 4).length === 0;
+      worldMapStateGetForCharacter(npc)?.getAllHostilesInRange(npc, range ?? 4)
+        .length === 0;
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
 
@@ -428,9 +430,7 @@ export class DialogActionHelper
 
     let npcCount = 0;
     const npcsInView =
-      this.game.worldManager
-        .getMapStateForCharacter(npc)
-        ?.getAllInRange(npc, 4, [], false) ?? [];
+      worldMapStateGetForCharacter(npc)?.getAllInRange(npc, 4, [], false) ?? [];
     npcsInView.forEach((npcRef) => {
       const npcId = (npcRef as INPC).npcId;
       if (!npcs.includes(npcId)) return;
@@ -450,9 +450,7 @@ export class DialogActionHelper
         items.push(itemRef);
       }
 
-      this.game.worldManager
-        .getMapStateForCharacter(npc)
-        ?.addItemsToGround(npc.x, npc.y, items);
+      worldMapStateGetForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
     }
 
     const actions = (didSucceed ? checkPassActions : checkFailActions) ?? [];
@@ -636,9 +634,7 @@ export class DialogActionHelper
     const items = Array(amount ?? 1)
       .fill(null)
       .map((x) => this.game.itemCreator.getSimpleItem(item));
-    this.game.worldManager
-      .getMapStateForCharacter(npc)
-      ?.addItemsToGround(npc.x, npc.y, items);
+    worldMapStateGetForCharacter(npc)?.addItemsToGround(npc.x, npc.y, items);
 
     return { messages: [], shouldContinue: true };
   }

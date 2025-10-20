@@ -3,7 +3,7 @@ import {
   skillGetDescription,
   textGidDescriptionGet,
 } from '@lotr/content';
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameAction, ItemClass, Skill } from '@lotr/interfaces';
 
@@ -39,7 +39,7 @@ export class LookCommand extends MacroCommand {
       windowName: 'ground',
     });
 
-    const state = this.game.worldManager.getMap(player.map)?.state;
+    const state = worldGetMapAndState(player.map)?.state;
     if (!state) return;
 
     const items = state.getEntireGround(player.x, player.y);
@@ -172,7 +172,7 @@ export class LookCommand extends MacroCommand {
       return;
     }
 
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return;
 
     const target = this.getTarget(player, args.stringArgs, false, true);

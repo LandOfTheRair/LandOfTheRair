@@ -1,4 +1,4 @@
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 
 export class Reincarnate extends SpellCommand {
@@ -8,7 +8,7 @@ export class Reincarnate extends SpellCommand {
   override canTargetSelf = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const mapRef = this.game.worldManager.getMap(player.map);
+    const mapRef = worldGetMapAndState(player.map);
     if (!mapRef) return;
 
     // in dungeon, fail
@@ -20,9 +20,10 @@ export class Reincarnate extends SpellCommand {
     }
 
     // check for valid boss spawners
-    const validSpawners = mapRef.state.allSpawners.filter(
-      (spawner) => spawner.areCreaturesDangerous && !spawner.areAnyNPCsAlive,
-    );
+    const validSpawners =
+      mapRef.state?.allSpawners.filter(
+        (spawner) => spawner.areCreaturesDangerous && !spawner.areAnyNPCsAlive,
+      ) ?? [];
     if (validSpawners.length === 0) {
       return this.sendMessage(
         player,

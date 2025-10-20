@@ -3,6 +3,7 @@ import { cloneDeep, random, sample, sum } from 'lodash';
 import uuid from 'uuid/v4';
 
 import { itemGet } from '@lotr/content';
+import { worldGetMapAndState } from '@lotr/core';
 import type { IItemDefinition, ISimpleItem } from '@lotr/interfaces';
 import { Currency, ItemClass, ItemQuality } from '@lotr/interfaces';
 import { BaseService } from '../../models/BaseService';
@@ -61,9 +62,7 @@ export class ItemCreator extends BaseService {
     y: number,
     ounces: number = 1,
   ): ISimpleItem {
-    const region = this.game.worldManager
-      .getMap(map)
-      ?.map.getRegionNameAt(x, y);
+    const region = worldGetMapAndState(map).map?.getRegionNameAt(x, y);
 
     const succorItem = this.game.itemCreator.getSimpleItem('Succor Blob');
     succorItem.mods.destroyOnDrop = true;

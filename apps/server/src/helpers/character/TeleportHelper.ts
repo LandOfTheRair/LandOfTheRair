@@ -8,6 +8,8 @@ import {
   transmissionDataSendPlayer,
   transmissionMovementPatchSend,
   transmissionSendResponseToAccount,
+  worldGetMapAndState,
+  worldMapStateGetForCharacter,
 } from '@lotr/core';
 import type { ICharacter, IDialogChatAction, IPlayer } from '@lotr/interfaces';
 import { GameAction, GameServerResponse } from '@lotr/interfaces';
@@ -24,8 +26,8 @@ export class TeleportHelper extends BaseService {
     char.x = x;
     char.y = y;
 
-    const mapData = this.game.worldManager.getMap(char.map);
-    if (!mapData) return;
+    const mapData = worldGetMapAndState(char.map);
+    if (!mapData.map || !mapData.state) return;
 
     const { map, state } = mapData;
 
@@ -93,8 +95,8 @@ export class TeleportHelper extends BaseService {
         destinationMapName,
       );
 
-      const mapData = this.game.worldManager.getMap(destinationMapName);
-      if (!mapData) return false;
+      const mapData = worldGetMapAndState(destinationMapName);
+      if (!mapData.state || !mapData.map) return false;
 
       // check if the map exists (it may not; invalid refs happen)
       if (!mapData.state) {
@@ -116,9 +118,7 @@ export class TeleportHelper extends BaseService {
       if (!player.isBeingForciblyRespawned) {
         this.game.worldManager.leaveMap(player);
       } else {
-        this.game.worldManager
-          .getMapStateForCharacter(player)
-          ?.removePlayer(player);
+        worldMapStateGetForCharacter(player)?.removePlayer(player);
       }
 
       // order of operations here is REALLY important
@@ -162,7 +162,7 @@ export class TeleportHelper extends BaseService {
 
   public memorizeLocation(player: IPlayer, name: string): boolean {
     name = truncate(name, { length: 15, omission: '' }).trim();
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return false;
 
     if (!map.canMemorize || !map.canTeleport(player)) {

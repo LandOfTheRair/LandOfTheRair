@@ -15,7 +15,10 @@ import {
   settingGameGet,
   traitLevelValue,
 } from '@lotr/content';
-import { transmissionResponseSendPlayer } from '@lotr/core';
+import {
+  transmissionResponseSendPlayer,
+  worldGetMapAndState,
+} from '@lotr/core';
 import { getEffect, hasEffect } from '@lotr/effects';
 import type {
   CombatEffect,
@@ -377,9 +380,8 @@ export class CombatHelper extends BaseService {
 
     // notify the ai if needed
     if (!isPlayer(defender)) {
-      const ai = this.game.worldManager
-        .getMap(defender.map)
-        ?.state.getNPCSpawner(defender.uuid)
+      const ai = worldGetMapAndState(defender.map)
+        .state?.getNPCSpawner(defender.uuid)
         ?.getNPCAI(defender.uuid);
       ai?.damageTaken({ damage, attacker });
     }

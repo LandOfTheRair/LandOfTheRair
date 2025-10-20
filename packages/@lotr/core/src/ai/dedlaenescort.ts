@@ -7,6 +7,7 @@ import { DefaultAIBehavior } from './default';
 import { getStat, isDead } from '@lotr/characters';
 import { oneInX } from '@lotr/rng';
 import { distanceFrom } from '@lotr/shared';
+import { worldMapStateGetForCharacter } from '../worldstate';
 export class DedlaenEscortAI extends DefaultAIBehavior {
   private following: IPlayer | undefined;
   private notFollowingTicks = 0;
@@ -17,9 +18,9 @@ export class DedlaenEscortAI extends DefaultAIBehavior {
     if (isDead(npc)) return;
     if (npc.hostility === Hostility.Never) return;
 
-    const nearbyPlayers = this.game.worldManager
-      .getMapStateForCharacter(npc)
-      ?.getAllPlayersInRange(npc, 4);
+    const nearbyPlayers = worldMapStateGetForCharacter(
+      npc,
+    )?.getAllPlayersInRange(npc, 4);
 
     const target = sample(nearbyPlayers ?? []);
     this.following = target;

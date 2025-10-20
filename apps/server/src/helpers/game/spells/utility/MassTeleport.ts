@@ -1,4 +1,5 @@
 import { mana, takeDamage } from '@lotr/characters';
+import { worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
 import type { Player } from '../../../../models';
@@ -12,10 +13,11 @@ export class MassTeleport extends Spell {
   ): void {
     if (!caster) return;
 
-    const mapData = this.game.worldManager.getMap(caster.map);
+    const mapData = worldGetMapAndState(caster.map);
     if (!mapData) return;
 
     const { map, state } = mapData;
+    if (!map) return;
 
     if (!map.canTeleport(caster as IPlayer)) {
       this.game.messageHelper.sendLogMessageToPlayer(caster, {
@@ -44,7 +46,7 @@ export class MassTeleport extends Spell {
 
     takeDamage(caster, caster.hp.current - 1);
 
-    state.getPlayersInRange(caster, 0).forEach((teleportedTarget) => {
+    state?.getPlayersInRange(caster, 0).forEach((teleportedTarget) => {
       this.sendMessage(teleportedTarget, {
         message: 'Your vision blurs as you travel through the rift.',
         sfx: SoundEffect.SpellSpecialTeleport,

@@ -1,7 +1,7 @@
 import { clamp } from 'lodash';
 
 import { getStat, isPlayer } from '@lotr/characters';
-import { SpellCommand } from '@lotr/core';
+import { SpellCommand, worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter } from '@lotr/interfaces';
 import { Stat } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
@@ -16,9 +16,7 @@ export class GhostWail extends SpellCommand {
 
   override canUse(char: ICharacter, target: ICharacter) {
     const nearby =
-      this.game.worldManager
-        .getMapStateForCharacter(char)
-        ?.getAllPlayersInRange(char, 10) ?? [];
+      worldMapStateGetForCharacter(char)?.getAllPlayersInRange(char, 10) ?? [];
     return char.mp.current > this.mpCost(char) && nearby.length > 0;
   }
 
@@ -28,8 +26,7 @@ export class GhostWail extends SpellCommand {
     this.game.messageHelper.sendLogMessageToRadius(executor, 10, {
       message: 'You hear a terrifying wail!',
     });
-    this.game.worldManager
-      .getMapStateForCharacter(executor)
+    worldMapStateGetForCharacter(executor)
       ?.getAllPlayersInRange(executor, 10)
       .forEach((char) => {
         const successChance =

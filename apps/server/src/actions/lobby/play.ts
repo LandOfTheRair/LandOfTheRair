@@ -3,7 +3,8 @@ import { merge } from 'lodash';
 import type { IServerGame, IWorldMap } from '@lotr/interfaces';
 import { GameAction, GameServerEvent } from '@lotr/interfaces';
 
-import { lobbyBlockingGame } from '@lotr/core';
+import { worldGetMapAndState } from '@lotr/core';
+import { lobbyBlockingGame } from '@lotr/lobby';
 import type { Player } from '../../models';
 import { ServerAction } from '../../models/ServerAction';
 
@@ -51,9 +52,9 @@ export class PlayAction extends ServerAction {
 
     const mapName = player.map;
 
-    let map: IWorldMap | undefined = game.worldManager.getMap(mapName)?.map;
+    let map: IWorldMap | undefined = worldGetMapAndState(mapName)?.map;
     if (!map || !player.x || !player.y || isNaN(player.x) || isNaN(player.y)) {
-      map = game.worldManager.getMap('Tutorial')?.map;
+      map = worldGetMapAndState('Tutorial')?.map;
 
       player.map = 'Tutorial';
       player.x = 14;
@@ -77,7 +78,7 @@ export class PlayAction extends ServerAction {
       const respawnX = map.properties.kickX ?? 0;
       const respawnY = map.properties.kickY ?? 0;
 
-      map = game.worldManager.getMap(respawnMap)?.map;
+      map = worldGetMapAndState(respawnMap)?.map;
 
       player.map = respawnMap;
       player.x = respawnX;

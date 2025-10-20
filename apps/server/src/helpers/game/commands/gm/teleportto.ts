@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { isUndefined } from 'lodash';
 import type { Player } from '../../../../models';
@@ -15,8 +15,8 @@ export class GMTeleportTo extends MacroCommand {
     const allPossibleTargets: ICharacter[] = [];
 
     this.game.worldManager.allMapNames.forEach((map) => {
-      const mapData = this.game.worldManager.getMap(map);
-      if (!mapData) return;
+      const mapData = worldGetMapAndState(map);
+      if (!mapData.state) return;
 
       const validNPCs = mapData.state.allNPCS.filter((npc) =>
         this.game.targettingHelper.doesTargetMatchSearch(npc, search, true),

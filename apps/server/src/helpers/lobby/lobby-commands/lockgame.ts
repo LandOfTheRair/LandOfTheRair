@@ -1,7 +1,6 @@
-import { lobbyBlockingGame, lobbyToggleBlockingGame } from '@lotr/core';
+import { lobbyBlockingGame, lobbyToggleBlockingGame } from '@lotr/lobby';
 import type { ILobbyCommand } from '../../../interfaces';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { IServerGame } from '@lotr/interfaces';
 
 export class LockGameCommand implements ILobbyCommand {

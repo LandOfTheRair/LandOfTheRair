@@ -1,6 +1,6 @@
 import { get, isNumber } from 'lodash';
 
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { GameServerResponse } from '@lotr/interfaces';
 
@@ -13,9 +13,10 @@ export class GMExamineGround extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     const [itemClass, arraySlot, drill] = args.arrayArgs;
 
-    const ground = this.game.worldManager
-      .getMap(player.map)
-      ?.state.getEntireGround(player.x, player.y);
+    const ground = worldGetMapAndState(player.map).state?.getEntireGround(
+      player.x,
+      player.y,
+    );
     if (!ground) {
       this.sendMessage(player, 'No ground here!');
       return;

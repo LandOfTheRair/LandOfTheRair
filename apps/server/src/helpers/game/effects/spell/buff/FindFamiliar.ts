@@ -11,7 +11,7 @@ import {
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
-import { Spawner } from '@lotr/core';
+import { Spawner, worldGetMapAndState } from '@lotr/core';
 import {
   calcSkillLevelForCharacter,
   calculateSkillXPRequiredForLevel,
@@ -23,8 +23,8 @@ import { Effect } from '../../../../../models';
 
 export class FindFamiliar extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
-    const mapData = this.game.worldManager.getMap(char.map);
-    if (!mapData) return;
+    const mapData = worldGetMapAndState(char.map);
+    if (!mapData.state || !mapData.map) return;
 
     const potency = effect.effectInfo.potency ?? 1;
 
@@ -169,12 +169,12 @@ export class FindFamiliar extends Effect {
 
     // summon all creatures individually
     (effect.effectInfo.summonCreatures ?? []).forEach((creatureId) => {
-      const spawner = new Spawner(this.game, mapData.map, mapData.state, {
+      const spawner = new Spawner(this.game, mapData.map!, mapData.state!, {
         npcIds: [creatureId ?? 'Mage Summon Deer'],
         ...spawnerOpts,
       } as Partial<Spawner>);
 
-      mapData.state.addSpawner(spawner);
+      mapData.state!.addSpawner(spawner);
 
       spawner.tryInitialSpawn();
     });

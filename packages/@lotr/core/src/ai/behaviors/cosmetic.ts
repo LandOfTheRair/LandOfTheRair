@@ -17,6 +17,7 @@ import {
 import { distanceFrom } from '@lotr/shared';
 
 import { itemPropertyGet, itemPropertySet } from '@lotr/content';
+import { lobbyGetAccount } from '@lotr/lobby';
 import { getSilverCosmetics } from '@lotr/premium';
 import { transmissionSendResponseToAccount } from '../../transmission';
 

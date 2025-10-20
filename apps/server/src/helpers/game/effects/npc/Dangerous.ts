@@ -1,4 +1,5 @@
 import { heal } from '@lotr/characters';
+import { worldGetMapAndState, worldMapStateGetForCharacter } from '@lotr/core';
 import type { ICharacter, INPC } from '@lotr/interfaces';
 import { Effect } from '../../../../models';
 
@@ -7,11 +8,8 @@ export class Dangerous extends Effect {
   override tick(char: ICharacter) {
     if (char.combatTicks) return;
     if (
-      (
-        this.game.worldManager
-          .getMapStateForCharacter(char)
-          ?.getAllHostilesInRange(char, 4) ?? []
-      ).length > 0
+      (worldMapStateGetForCharacter(char)?.getAllHostilesInRange(char, 4) ?? [])
+        .length > 0
     ) {
       return;
     }
@@ -23,7 +21,7 @@ export class Dangerous extends Effect {
 
     const anticipatedRespawn = new Date();
     const respawnSeconds =
-      this.game.worldManager.getMap(char.map)?.state.getNPCSpawner(char.uuid)
+      worldGetMapAndState(char.map).state?.getNPCSpawner(char.uuid)
         ?.respawnTimeSeconds ?? 3600;
     anticipatedRespawn.setSeconds(
       anticipatedRespawn.getSeconds() + respawnSeconds,

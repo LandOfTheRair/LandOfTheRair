@@ -40,6 +40,7 @@ import {
 import { getEffect, hasEffect } from '@lotr/effects';
 import { consoleWarn } from '@lotr/logger';
 import { rollInOneHundred, rollTraitValue } from '@lotr/rng';
+import { worldGetMapAndState } from './worldstate';
 
 export abstract class MacroCommand implements IMacroCommand {
   abstract aliases: string[]; // the aliases representing this command
@@ -130,7 +131,7 @@ export abstract class MacroCommand implements IMacroCommand {
         if (direction === Direction.Center) break;
         const offset = directionToOffset(direction);
 
-        const map = this.game.worldManager.getMap(user.map)?.map;
+        const map = worldGetMapAndState(user.map)?.map;
         if (!map) continue;
 
         // if you specify a wall tile, your cast is halted

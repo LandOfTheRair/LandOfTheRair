@@ -1,4 +1,4 @@
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import { hasEffect } from '@lotr/effects';
 import type { IMacroCommandArgs } from '@lotr/interfaces';
 import { SoundEffect } from '@lotr/interfaces';
@@ -13,7 +13,7 @@ export class Stairs extends MacroCommand {
       return this.sendMessage(player, 'You are snared!');
     }
 
-    const map = this.game.worldManager.getMap(player.map)?.map;
+    const map = worldGetMapAndState(player.map)?.map;
     if (!map) return;
 
     const interactable = map.getInteractableAt(player.x, player.y);

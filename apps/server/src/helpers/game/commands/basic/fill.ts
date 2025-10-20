@@ -1,5 +1,5 @@
 import { itemIsOwnedBy, itemPropertiesGet } from '@lotr/content';
-import { MacroCommand } from '@lotr/core';
+import { MacroCommand, worldGetMapAndState } from '@lotr/core';
 import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemClass, ObjectType, SwimLevel } from '@lotr/interfaces';
 
@@ -41,9 +41,9 @@ export class Fill extends MacroCommand {
       return this.sendMessage(player, 'That bottle is not empty!');
     }
 
-    const fillable = this.game.worldManager
-      .getMap(player.map)
-      ?.map.getInteractableOfTypeAt(player.x, player.y, ObjectType.Fillable);
+    const fillable = worldGetMapAndState(
+      player.map,
+    ).map?.getInteractableOfTypeAt(player.x, player.y, ObjectType.Fillable);
 
     let effect = 'FillNormalWater';
     let desc = 'filled with water';
