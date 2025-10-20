@@ -55,7 +55,7 @@ import {
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
-import { getEffect, hasEffect } from '@lotr/effects';
+import { darknessIsDarkAt, getEffect, hasEffect } from '@lotr/effects';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
 import {
   oneInX,
@@ -1306,11 +1306,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (
-      this.game.visibilityHelper.isDarkAt(
-        defender.map,
-        defender.x,
-        defender.y,
-      ) &&
+      darknessIsDarkAt(defender.map, defender.x, defender.y) &&
       !hasEffect(defender, 'DarkVision')
     ) {
       isAttackerVisible = false;

@@ -1,4 +1,5 @@
 import { worldGetMapAndState } from '@lotr/core';
+import { darknessCreatePermanent } from '@lotr/effects';
 import type { IMapScript } from '@lotr/interfaces';
 
 import type { IServerGame } from '@lotr/interfaces';
@@ -28,7 +29,7 @@ export class DedlaenMazeScript implements IMapScript {
     ];
 
     darkTiles.forEach(([x, y]) => {
-      game.darknessHelper.createPermanentDarkness('DedlaenMaze', x, y);
+      darknessCreatePermanent('DedlaenMaze', x, y);
     });
   }
 

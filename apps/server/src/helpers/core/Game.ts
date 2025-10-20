@@ -5,6 +5,7 @@ import { LoggerTimer } from 'logger-timer';
 
 import { settingIsAIActive } from '@lotr/content';
 import { wsSetHandler } from '@lotr/core';
+import { darknessCheckAll } from '@lotr/effects';
 import type { IServerGame } from '@lotr/interfaces';
 import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
 import { EventEmitter, once } from 'events';
@@ -43,7 +44,6 @@ import { PartyManager } from '../character/PartyManager';
 import {
   ContentLoader,
   CorpseManager,
-  DarknessHelper,
   EffectManager,
   GroundManager,
   ItemCreator,
@@ -139,7 +139,6 @@ export class Game implements IServerGame {
     public lockerHelper: LockerHelper,
     public partyHelper: PartyHelper,
     public partyManager: PartyManager,
-    public darknessHelper: DarknessHelper,
     public trapHelper: TrapHelper,
     public achievementsHelper: AchievementsHelper,
 
@@ -198,7 +197,6 @@ export class Game implements IServerGame {
         'subscriptionHelper',
         'groundManager',
         'dynamicEventHelper',
-        'darknessHelper',
         'worldManager',
         'discordHelper',
         'guildManager',
@@ -449,7 +447,7 @@ export class Game implements IServerGame {
       timer.stopTimer(`corpseTick-${now}`);
 
       timer.startTimer(`darknessTick-${now}`);
-      this.darknessHelper.tick(timer);
+      darknessCheckAll();
       timer.stopTimer(`darknessTick-${now}`);
 
       timer.startTimer(`dynamicEventTick-${now}`);

@@ -1,5 +1,6 @@
 import { isPlayer } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
+import { darknessCreate } from '@lotr/effects';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -32,12 +33,6 @@ export class Darkness extends Spell {
     const radius =
       spellCastArgs.range +
       (caster ? traitLevelValue(caster, 'DarknessWiden') : 0);
-    this.game.darknessHelper.createDarkness(
-      map,
-      x,
-      y,
-      radius,
-      Date.now() + duration,
-    );
+    darknessCreate(map, x, y, radius, Date.now() + duration);
   }
 }

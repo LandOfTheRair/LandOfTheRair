@@ -780,7 +780,6 @@ export interface IMovementHelper extends IGameService {
 
 export interface IVisibilityHelper extends IGameService {
   canSee(char: ICharacter, xOffset: number, yOffset: number): boolean;
-  isDarkAt(map: string, x: number, y: number): boolean;
   canContinueHidingAtSpot(char: ICharacter): boolean;
   canHide(char: ICharacter): boolean;
   reasonUnableToHide(char: ICharacter): string;
@@ -1090,29 +1089,6 @@ export interface IPartyManager extends IGameService {
   removeParty(party: IParty): void;
   addPartyMember(member: IPartyMember): void;
   removePartyMember(member: IPartyMember): void;
-}
-
-export interface IDarknessHelper extends IGameService {
-  tick(timer: any): void;
-  checkAllDarkness(): void;
-  isDarkAt(map: string, x: number, y: number): boolean;
-  createDarkness(
-    map: string,
-    x: number,
-    y: number,
-    radius: number,
-    endsAt: number,
-  ): void;
-  removeDarkness(
-    map: string,
-    x: number,
-    y: number,
-    radius: number,
-    lightEndsAt: number,
-  ): void;
-  removeSingleDarkness(map: string, x: number, y: number): void;
-  createPermanentDarkness(map: string, x: number, y: number): void;
-  createLight(map: string, x: number, y: number, endsAt: number): void;
 }
 
 export interface ITrapHelper extends IGameService {
@@ -1432,7 +1408,6 @@ export interface IServerGame {
   lockerHelper: ILockerHelper;
   partyHelper: IPartyHelper;
   partyManager: IPartyManager;
-  darknessHelper: IDarknessHelper;
   trapHelper: ITrapHelper;
   achievementsHelper: IAchievementsHelper;
 

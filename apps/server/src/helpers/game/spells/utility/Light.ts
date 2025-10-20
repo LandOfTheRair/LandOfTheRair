@@ -1,3 +1,4 @@
+import { darknessRemove } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
@@ -18,7 +19,7 @@ export class Light extends Spell {
       map: spellCastArgs.map ?? '',
     };
 
-    this.game.darknessHelper.removeDarkness(
+    darknessRemove(
       center.map,
       center.x,
       center.y,

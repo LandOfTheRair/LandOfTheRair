@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@lotr/content": "*",
+    "@lotr/core": "*",
     "@lotr/eslint-config": "*",
-    "@lotr/interfaces": "*"
+    "@lotr/interfaces": "*",
+    "lodash": "^4.17.21"
   }
 }

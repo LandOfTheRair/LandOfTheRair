@@ -5,7 +5,7 @@ import { get, setWith } from 'lodash';
 import { getStat, perceptionGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { transmissionFOVPatchSend, worldGetMapAndState } from '@lotr/core';
-import { hasEffect } from '@lotr/effects';
+import { darknessIsDarkAt, hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   INPC,
@@ -40,7 +40,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
     // blind OR dark and no darkvision
     if (
       hasEffect(character, 'Blind') ||
-      (this.isDarkAt(character.map, character.x, character.y) &&
+      (darknessIsDarkAt(character.map, character.x, character.y) &&
         !hasEffect(character, 'DarkVision'))
     ) {
       for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
@@ -65,7 +65,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
           FOVVisibility.CanSee,
         (x, y) => {
           if (
-            this.isDarkAt(character.map, x, y) &&
+            darknessIsDarkAt(character.map, x, y) &&
             hasEffect(character, 'DarkVision')
           ) {
             setWith(
@@ -88,7 +88,7 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
       if (!hasEffect(character, 'DarkVision')) {
         for (let xx = character.x - dist; xx <= character.x + dist; xx++) {
           for (let yy = character.y - dist; yy <= character.y + dist; yy++) {
-            if (!this.isDarkAt(character.map, xx, yy)) continue;
+            if (!darknessIsDarkAt(character.map, xx, yy)) continue;
             setWith(
               affected,
               [xx - character.x, yy - character.y],
@@ -121,16 +121,12 @@ export class VisibilityHelper extends BaseService implements IVisibilityHelper {
     return get(char.fov, [xOffset, yOffset]) >= FOVVisibility.CanSee;
   }
 
-  public isDarkAt(map: string, x: number, y: number): boolean {
-    return this.game.darknessHelper.isDarkAt(map, x, y);
-  }
-
   // whether or not this spot is hideable (near a wall, or in dark)
   public canContinueHidingAtSpot(char: ICharacter): boolean {
     const map = worldGetMapAndState(char.map)?.map;
     if (!map) return false;
 
-    if (this.isDarkAt(char.map, char.x, char.y)) return true;
+    if (darknessIsDarkAt(char.map, char.x, char.y)) return true;
     if (!map.checkIfCanHideAt(char.x, char.y)) return false;
 
     return true;
