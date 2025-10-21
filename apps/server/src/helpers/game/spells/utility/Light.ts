@@ -1,4 +1,4 @@
-import { darknessRemove } from '@lotr/effects';
+import { darknessRemove } from '@lotr/darkness';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 

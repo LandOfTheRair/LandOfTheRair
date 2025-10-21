@@ -1,6 +1,6 @@
 import { isPlayer } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
-import { darknessCreate } from '@lotr/effects';
+import { darknessCreate } from '@lotr/darkness';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 

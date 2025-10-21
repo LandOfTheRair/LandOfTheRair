@@ -1,5 +1,5 @@
 {
-  "name": "@lotr/effects",
+  "name": "@lotr/darkness",
   "main": "dist/index.js",
   "private": true,
   "scripts": {
@@ -12,9 +12,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@lotr/content": "*",
     "@lotr/eslint-config": "*",
-    "@lotr/interfaces": "*",
-    "lodash": "^4.17.21"
+    "@lotr/interfaces": "*"
   }
 }

@@ -5,7 +5,8 @@ import { get, setWith } from 'lodash';
 import { getStat, perceptionGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { transmissionFOVPatchSend, worldGetMapAndState } from '@lotr/core';
-import { darknessIsDarkAt, hasEffect } from '@lotr/effects';
+import { darknessIsDarkAt } from '@lotr/darkness';
+import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
   INPC,
