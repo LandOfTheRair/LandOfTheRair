@@ -285,6 +285,10 @@ export enum MonsterClass {
   Dragon = 'Dragon',
   Humanoid = 'Humanoid',
   Undead = 'Undead',
+  Rock = 'Rock',
+  Plant = 'Plant',
+  Insect = 'Insect',
+  Elemental = 'Elemental',
 }
 
 export type SkillBlock = Partial<Record<Skill, number>>;
