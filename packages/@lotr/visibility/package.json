@@ -1,5 +1,5 @@
 {
-  "name": "@lotr/darkness",
+  "name": "@lotr/visibility",
   "main": "dist/index.js",
   "private": true,
   "scripts": {

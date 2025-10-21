@@ -1,5 +1,5 @@
-import { darknessRemove } from '@lotr/darkness';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { darknessRemove } from '@lotr/visibility';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Light extends Spell {

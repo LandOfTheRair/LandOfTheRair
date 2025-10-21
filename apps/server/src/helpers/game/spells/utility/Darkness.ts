@@ -1,7 +1,7 @@
 import { isPlayer } from '@lotr/characters';
 import { traitLevelValue } from '@lotr/content';
-import { darknessCreate } from '@lotr/darkness';
 import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import { darknessCreate } from '@lotr/visibility';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Darkness extends Spell {

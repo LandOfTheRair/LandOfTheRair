@@ -1,6 +1,6 @@
 import { worldGetMapAndState } from '@lotr/core';
-import { darknessCreatePermanent } from '@lotr/darkness';
 import type { IMapScript } from '@lotr/interfaces';
+import { darknessCreatePermanent } from '@lotr/visibility';
 
 import type { IServerGame } from '@lotr/interfaces';
 

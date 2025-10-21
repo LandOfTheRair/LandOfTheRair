@@ -1,4 +1,3 @@
-import { darknessIsDarkAt } from '@lotr/darkness';
 import type {
   ArmorClass,
   DamageArgs,
@@ -23,6 +22,7 @@ import {
   SoundEffect,
   Stat,
 } from '@lotr/interfaces';
+import { darknessIsDarkAt } from '@lotr/visibility';
 import { Injectable } from 'injection-js';
 import { clamp, isNumber, random } from 'lodash';
 import { BaseService } from '../../models/BaseService';

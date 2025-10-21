@@ -5,9 +5,9 @@ import { LoggerTimer } from 'logger-timer';
 
 import { settingIsAIActive } from '@lotr/content';
 import { wsSetHandler } from '@lotr/core';
-import { darknessCheckAll } from '@lotr/darkness';
 import type { IServerGame } from '@lotr/interfaces';
 import { consoleError, consoleLog, consoleWarn } from '@lotr/logger';
+import { darknessCheckAll } from '@lotr/visibility';
 import { EventEmitter, once } from 'events';
 import type { IWebsocketCommandHandler } from '../../interfaces';
 import { GameEvent } from '../../interfaces';

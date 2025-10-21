@@ -5,7 +5,6 @@ import { get, setWith } from 'lodash';
 import { getStat, perceptionGet } from '@lotr/characters';
 import { settingClassConfigGet, traitLevel } from '@lotr/content';
 import { transmissionFOVPatchSend, worldGetMapAndState } from '@lotr/core';
-import { darknessIsDarkAt } from '@lotr/darkness';
 import { hasEffect } from '@lotr/effects';
 import type {
   ICharacter,
@@ -14,6 +13,7 @@ import type {
   IVisibilityHelper,
 } from '@lotr/interfaces';
 import { Allegiance, FOVVisibility, Stat } from '@lotr/interfaces';
+import { darknessIsDarkAt } from '@lotr/visibility';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
