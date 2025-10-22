@@ -28,6 +28,7 @@ import type {
   IStatusEffectData,
 } from '@lotr/interfaces';
 import {
+  Allegiance,
   DamageClass,
   ItemSlot,
   MessageType,
@@ -199,7 +200,7 @@ export class SpellManager extends BaseService {
   }
 
   private canCastSpell(character: ICharacter, spellName: string): boolean {
-    if ((character as IPlayer).isGM) return true;
+    if ((character as IPlayer).allegiance === Allegiance.GM) return true;
     return Date.now() > (character.spellCooldowns?.[spellName] ?? 0);
   }
 
@@ -210,7 +211,7 @@ export class SpellManager extends BaseService {
   ): void {
     if (!spellData.cooldown) return;
 
-    character.spellCooldowns = character.spellCooldowns || {};
+    character.spellCooldowns ??= {};
     character.spellCooldowns[spellName] =
       Date.now() + 1000 * (spellData.cooldown ?? 0);
   }

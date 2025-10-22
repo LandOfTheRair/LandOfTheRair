@@ -118,6 +118,12 @@ export class MigrationHelper extends BaseService {
       delete player.effects._hash[key];
     });
 
+    // clean up old cooldowns
+    Object.keys(player.spellCooldowns).forEach((spell) => {
+      if (Date.now() < player.spellCooldowns[spell]) return;
+      delete player.spellCooldowns[spell];
+    });
+
     // basic resets
     player.agro = {};
 
