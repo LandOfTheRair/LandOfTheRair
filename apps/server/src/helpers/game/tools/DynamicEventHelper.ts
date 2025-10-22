@@ -393,7 +393,7 @@ export class DynamicEventHelper extends BaseService {
     let y;
 
     do {
-      spawnMap = event.extraData.map ?? sample(Object.keys(allSpawns));
+      spawnMap = event.extraData?.map ?? sample(Object.keys(allSpawns));
       spawnMonster = sample(allSpawns[spawnMap as string].spawns);
 
       const mapRef = worldGetMapAndState(spawnMap);
