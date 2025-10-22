@@ -49,6 +49,8 @@ export class WizardStance extends Effect {
     damageArgs: DamageArgs,
     currentDamage: number,
   ): number {
+    if (damageArgs.hasBeenReflected) return currentDamage;
+
     if (currentDamage < 0) return currentDamage;
 
     if (!attacker || damageArgs.damageClass === DamageClass.Physical) {
@@ -64,6 +66,7 @@ export class WizardStance extends Effect {
         defMsg: '%0 hit you with a burst of energetic power!',
         damage: effect.effectInfo.potency,
         damageClass: DamageClass.Energy,
+        hasBeenReflected: true,
       });
     }
 

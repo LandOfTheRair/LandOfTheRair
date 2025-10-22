@@ -69,6 +69,7 @@ export class DamageHelperMagic extends BaseService {
     const damage = this.game.combatHelper.modifyDamage(attacker, defender, {
       damage: startDamage,
       damageClass: args.damageClass || DamageClass.Physical,
+      hasbeenReflected: args.hasBeenReflected,
     });
 
     // and, do the damage
@@ -82,6 +83,7 @@ export class DamageHelperMagic extends BaseService {
       attackerDamageMessage: args.atkMsg,
       defenderDamageMessage: args.defMsg,
       attackNum: args.attackNum,
+      hasBeenReflected: args.hasBeenReflected,
     });
 
     // send combat effects for heals and stuff

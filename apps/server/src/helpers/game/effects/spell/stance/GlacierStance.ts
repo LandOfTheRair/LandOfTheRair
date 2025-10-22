@@ -43,6 +43,7 @@ export class GlacierStance extends Effect {
         defMsg: '%0 hit you with a burst of glacial frost!',
         damage: effect.effectInfo.potency,
         damageClass: DamageClass.Ice,
+        hasBeenReflected: true,
       });
     }
 

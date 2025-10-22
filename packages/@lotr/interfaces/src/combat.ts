@@ -85,6 +85,7 @@ export interface MagicalAttackArgs {
   isAoE?: boolean;
   sfx?: SoundEffect;
   attackNum?: number;
+  hasBeenReflected?: boolean;
 }
 
 export interface DamageArgs {

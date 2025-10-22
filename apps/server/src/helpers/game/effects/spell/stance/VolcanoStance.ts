@@ -38,6 +38,7 @@ export class VolcanoStance extends Effect {
         defMsg: '%0 hit you with a burst of volcanic heat!',
         damage: effect.effectInfo.potency,
         damageClass: DamageClass.Fire,
+        hasBeenReflected: true,
       });
     }
   }

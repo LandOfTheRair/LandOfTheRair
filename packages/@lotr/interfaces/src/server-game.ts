@@ -2,7 +2,7 @@ import { IAccount } from './account';
 import { IAI } from './ai';
 import { BaseClass, ItemSlot, Rollable, Stat } from './building-blocks';
 import { ICharacter, IItemContainer } from './character';
-import { OnesidedDamageArgs } from './combat';
+import { MagicalAttackArgs, OnesidedDamageArgs } from './combat';
 import { IDynamicEvent, IDynamicEventMeta } from './dynamicevent';
 import { IItemEffect } from './effect';
 import { IGround, IGroundItem } from './ground';
@@ -680,7 +680,7 @@ export interface IDamageHelperMagic extends IGameService {
   magicalAttack(
     attacker: ICharacter | undefined,
     defender: ICharacter,
-    args: any,
+    args: MagicalAttackArgs,
   ): void;
 }
 
