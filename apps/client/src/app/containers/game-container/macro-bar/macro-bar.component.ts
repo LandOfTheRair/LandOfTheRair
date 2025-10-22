@@ -88,7 +88,11 @@ export class MacroBarComponent {
 
   public macroCooldown(player: IPlayer, macro: IMacro): number {
     if (!macro?.for) return 0;
-    return player.spellCooldowns?.[macro.for] ?? 0;
+    const cooldown = player.spellCooldowns?.[macro.for] ?? 0;
+
+    if (Date.now() > cooldown) return 0;
+
+    return cooldown;
   }
 
   public isMacroDisabled(player: IPlayer, macro: IMacro): boolean {
