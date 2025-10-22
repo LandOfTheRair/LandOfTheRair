@@ -4,6 +4,11 @@ import { DamageClass } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class BloodyTears extends Effect {
+  public override create(char: ICharacter, effect: IStatusEffect) {
+    const potency = Math.max(effect.effectInfo.potency ?? 1, 1);
+    effect.effectInfo.tooltip = `Draining ${potency}% of physical damage as HP.`;
+  }
+
   public override outgoing(
     effect: IStatusEffect,
     char: ICharacter,
@@ -12,10 +17,12 @@ export class BloodyTears extends Effect {
   ): void {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
 
-    const healAmount = Math.floor(damageArgs.damage * (1 / 100));
+    const potency = Math.max(effect.effectInfo.potency ?? 1, 1);
+
+    const healAmount = Math.floor(damageArgs.damage * (potency / 100));
     if (healAmount === 0) return;
 
-    heal(target, healAmount);
+    heal(char, healAmount);
     this.sendMessage(char, {
       message: `You drain ${healAmount} life from your foe!`,
     });

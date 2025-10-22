@@ -258,6 +258,7 @@ export class GameService {
   }
 
   private shouldConfirmAction(command: string): boolean {
+    if (command.includes('art')) return false;
     return ['shatter', 'tear', 'disenchant'].some((c) => command.includes(c));
   }
 
