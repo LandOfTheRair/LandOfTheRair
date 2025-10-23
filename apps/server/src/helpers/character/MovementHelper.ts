@@ -290,7 +290,7 @@ export class MovementHelper extends BaseService implements IMovementHelper {
       return false;
     }
 
-    if (subscriberOnly && isPlayerSubscribed(player)) {
+    if (subscriberOnly && !isPlayerSubscribed(player)) {
       this.game.messageHelper.sendLogMessageToPlayer(player, {
         message: "You found an easter egg! Sadly, it's spoiled.",
       });
