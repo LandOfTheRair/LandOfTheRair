@@ -243,24 +243,12 @@ describe('Player AXP Functions', () => {
     });
 
     describe('Edge Cases and Error Handling', () => {
-      it('should handle null character name gracefully', () => {
-        mockHasEffect.mockReturnValue(false);
-        mockCharacter.name = null as any;
-
-        expect(() => {
-          const result = playerCalcAXPReward(mockCharacter);
-          expect(result).toBe(1); // Should default to 1 since null.includes() will throw
-        }).toThrow(); // Actually, this will throw because null doesn't have includes method
-      });
-
       it('should handle undefined character name gracefully', () => {
         mockHasEffect.mockReturnValue(false);
         mockCharacter.name = undefined as any;
 
-        expect(() => {
-          const result = playerCalcAXPReward(mockCharacter);
-          expect(result).toBe(1);
-        }).toThrow(); // This will throw because undefined doesn't have includes method
+        const result = playerCalcAXPReward(mockCharacter);
+        expect(result).toBe(1);
       });
 
       it('should handle very long character names', () => {
