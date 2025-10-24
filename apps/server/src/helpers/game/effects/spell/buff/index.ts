@@ -43,6 +43,7 @@ export * from './Lightbath';
 export * from './MagicMirror';
 export * from './Manapool';
 export * from './NecroticAura';
+export * from './Passwall';
 export * from './PhysicalToEnergy';
 export * from './PhysicalToFire';
 export * from './PhysicalToIce';

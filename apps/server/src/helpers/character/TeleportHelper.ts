@@ -89,6 +89,7 @@ export class TeleportHelper extends BaseService {
         player,
         map,
       );
+
       this.game.worldManager.ensureMapExists(
         map,
         this.game.partyHelper.partyName(player),
@@ -96,10 +97,7 @@ export class TeleportHelper extends BaseService {
       );
 
       const mapData = worldGetMapAndState(destinationMapName);
-      if (!mapData.state || !mapData.map) return false;
-
-      // check if the map exists (it may not; invalid refs happen)
-      if (!mapData.state) {
+      if (!mapData.state || !mapData.map) {
         this.game.messageHelper.sendLogMessageToPlayer(player, {
           message: `Warning: map ${map} does not exist.`,
         });

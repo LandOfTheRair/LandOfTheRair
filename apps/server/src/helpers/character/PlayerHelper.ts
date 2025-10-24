@@ -211,6 +211,8 @@ export class PlayerHelper extends BaseService {
     const map = worldGetMapAndState(player.map)?.map;
     if (
       !hasEffect(player, 'WallWalk') &&
+      !hasEffect(player, 'Passwall') &&
+      !isDead(player) &&
       (map?.getWallAt(player.x, player.y) ||
         map?.getDenseDecorAt(player.x, player.y))
     ) {

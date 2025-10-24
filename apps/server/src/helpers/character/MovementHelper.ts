@@ -168,6 +168,8 @@ export class MovementHelper extends BaseService implements IMovementHelper {
 
       const nextTileWall = map.getWallAt(nextX, nextY);
       const canWallWalk = hasEffect(character, 'WallWalk');
+      const hasPasswall = hasEffect(character, 'Passwall');
+
       if (!nextTileWall || canWallWalk) {
         const possibleDenseObj = map.getInteractableOrDenseObject(nextX, nextY);
 
@@ -189,6 +191,14 @@ export class MovementHelper extends BaseService implements IMovementHelper {
             wasSuccessfulWithNoInterruptions = false;
             return;
           }
+        }
+
+        // if we have passwall and run near a passable wall, we can try to walk through it
+      } else if (hasPasswall) {
+        const possiblePasswall = map.getOpaqueDecorAt(nextX, nextY);
+        if (possiblePasswall?.type !== ObjectType.PassableWall) {
+          wasSuccessfulWithNoInterruptions = false;
+          return;
         }
 
         // if we run into a wall: nope, no more movement

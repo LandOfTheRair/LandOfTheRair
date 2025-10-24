@@ -321,6 +321,11 @@ export class WorldMap implements IWorldMap {
 
       if (mapLayer === MapLayer.OpaqueDecor) {
         obj.opacity = 1;
+
+        if (obj.type === ObjectType.PassableWall) {
+          this.json.layers[MapLayer.Walls].data[realX + realY * this.width] =
+            TilesWithNoFOVUpdate.Air;
+        }
       }
 
       if (mapLayer === MapLayer.DenseDecor) {

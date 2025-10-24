@@ -47,6 +47,7 @@ export enum ObjectType {
   Fillable = 'Fillable',
   EventSource = 'EventSource',
   TreasureChest = 'TreasureChest',
+  PassableWall = 'PassableWall',
 }
 
 export interface IMapData {
