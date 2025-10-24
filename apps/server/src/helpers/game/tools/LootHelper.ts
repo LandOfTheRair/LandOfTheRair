@@ -73,7 +73,7 @@ export class LootHelper extends BaseService {
   // depending on the npc, they may boost their drop rates
   private getNPCBonusMultiplier(npc: INPC): number {
     const { eliteLootMult, normalLootMult } = settingGameGet('npcgen');
-    if (npc.name.includes('elite')) return eliteLootMult ?? 2;
+    if ((npc.name ?? '').includes('elite')) return eliteLootMult ?? 2;
     return normalLootMult ?? 2;
   }
 
