@@ -74,6 +74,8 @@ export class MapScene extends Phaser.Scene {
     eagleeye: false,
   };
 
+  private fovContainer: Phaser.GameObjects.Container;
+
   private firstCreate = true;
   private tilemap: Phaser.Tilemaps.Tilemap;
   private allNPCSprites = {};
@@ -113,12 +115,17 @@ export class MapScene extends Phaser.Scene {
   private createLayers() {
     Object.keys(this.layers).forEach((layer, index) => {
       this.layers[layer] = this.add.container();
+      this.layers[layer].setName(`Layer ${layer}`);
       this.layers[layer].depth = index + 1;
     });
   }
 
   // create the fov / subfov sprites
   private createFOV() {
+    this.fovContainer = this.add.container();
+    this.fovContainer.setDepth(100);
+    this.fovContainer.setName('FoV');
+
     // if the fov was made before, remove and re-create (we're changing maps)
     if (this.textures.exists('black')) {
       this.textures.remove('black');
@@ -142,6 +149,8 @@ export class MapScene extends Phaser.Scene {
 
         setWith(this.fovSprites, [x, y], dark, Object);
         this.fovSprites[x][y] = dark;
+        dark.name = `FoV Sprite ${positionText({ x, y })}`;
+        this.fovContainer.add(dark);
       }
     }
   }
@@ -288,12 +297,14 @@ export class MapScene extends Phaser.Scene {
       this.allMapData.layerData[this.getLayer(MapLayer.OpaqueDecor)],
       [totalX, totalY],
     );
+
     const wallList =
       layers[this.getLayer(MapLayer.Walls)].data ||
       layers[this.getLayer(MapLayer.Walls)].tileIds;
     const wallLayerTile = wallList[width * totalY + totalX];
 
     return (
+      potentialSecretWall?.type === ObjectType.PassableWall ||
       (potentialSecretWall?.type === ObjectType.SecretWall &&
         !this.specialRenders.truesight) ||
       (wallLayerTile !== TilesWithNoFOVUpdate.Empty &&
@@ -313,6 +324,7 @@ export class MapScene extends Phaser.Scene {
 
       const tileFov =
         get(this.player.fov, [position.x, position.y]) ?? FOVVisibility.CantSee;
+
       switch (tileFov) {
         case FOVVisibility.CantSee:
           return;
@@ -329,6 +341,7 @@ export class MapScene extends Phaser.Scene {
 
       const isWallHere = this.isFovBlocker(position.x, position.y);
       if (!isWallHere) return;
+
       const fovDirections = positionSurrounding().reduce(
         (combinedDirections, tileOffset) =>
           !(
@@ -358,7 +371,9 @@ export class MapScene extends Phaser.Scene {
         fovSprite.setDisplayOrigin(80, 32);
         fovSprite.setDisplaySize(32, 64);
       };
+
       if (directionHasAll(fovDirections, Direction.WestAndEast)) return;
+
       switch (fovDirections as number) {
         case 0b011_0_1_000:
         case 0b111_0_1_000:

@@ -37,5 +37,6 @@ export class MapRenderGame extends Phaser.Game {
     },
   ) {
     super(config);
+    (window as any).__PHASER_GAME__ = this;
   }
 }

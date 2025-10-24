@@ -6,7 +6,7 @@
     "setup": "npm i && npm run setup:content",
     "setup:content": "node scripts/setup",
     "start": "node dist/src/core/index",
-    "start:dev": "concurrently \"npm run tsc:dev\" \"npm run content:dev\"",
+    "start:dev": "concurrently --prefix none \"npm run tsc:dev\" \"npm run content:dev\"",
     "tsc:dev": "tsc-watch --sourceMap --onSuccess \"node --inspect=7010 -r source-map-support/register dist/src/core/index.js\"",
     "content:dev": "nodemon --delay 1 --ext json --watch content/_output/maps --exec \"npm run forcereboot\"",
     "forcereboot": "node scripts/forcereboot.js",

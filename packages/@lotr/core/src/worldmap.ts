@@ -45,7 +45,16 @@ export class WorldMap implements IWorldMap {
   }
 
   public get mapData(): IMapData {
-    return { tiledJSON: this.formattedJson, layerData: this.layerHashes };
+    return {
+      tiledJSON: this.formattedJson,
+      layerData: {
+        [MapLayer.Decor + 1]: this.layerHashes[MapLayer.Decor],
+        [MapLayer.DenseDecor + 1]: this.layerHashes[MapLayer.DenseDecor],
+        [MapLayer.OpaqueDecor + 1]: this.layerHashes[MapLayer.OpaqueDecor],
+        [MapLayer.Interactables + 1]: this.layerHashes[MapLayer.Interactables],
+        [MapLayer.NPCs + 1]: this.layerHashes[MapLayer.NPCs],
+      },
+    };
   }
 
   public get properties(): IMapProperties {
@@ -252,20 +261,14 @@ export class WorldMap implements IWorldMap {
     });
 
     this.fov = new Mrpas(this.width, this.height, (x, y) => {
+      const object =
+        this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
+      if (object?.opacity) return false;
+
       const tile = this.getWallAt(x, y);
+      if (tile === TilesWithNoFOVUpdate.Empty) return true;
+      if (tile === TilesWithNoFOVUpdate.Air) return true;
 
-      // if the tile is either empty or air, we look for interactables/opaquedecor
-      // if neither, we can see here
-      if (
-        tile === TilesWithNoFOVUpdate.Empty ||
-        tile === TilesWithNoFOVUpdate.Air
-      ) {
-        const object =
-          this.getInteractableAt(x, y) || this.getOpaqueDecorAt(x, y);
-        return !object || (object && !object.opacity);
-      }
-
-      // by default, we can't see
       return false;
     });
   }
