@@ -16,6 +16,13 @@ if (isMainThread) {
     gameloop: null,
   };
 
+  const reinit = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    createWorker('networking', 'WebsocketWorker');
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    createWorker('gameloop', 'GameloopWorker');
+  };
+
   const createWorker = (worker, name) => {
     if (workers[worker]) {
       workers[worker]?.terminate();
@@ -33,6 +40,16 @@ if (isMainThread) {
           'Killing game... hopefully the server restarts!',
         );
         kill();
+      }
+
+      if (msg.type === GameServerEvent.ForceRebootLocal) {
+        consoleLog(
+          'Master:ForceRebootLocal',
+          'Killing game... hopefully the server restarts!',
+        );
+
+        reinit();
+        return;
       }
 
       const target = msg.target;
@@ -61,10 +78,6 @@ if (isMainThread) {
         `Worker:${worker}:Exit`,
         new Error(`Worker exited with code ${code}`),
       );
-
-      setTimeout(() => {
-        createWorker(worker, name);
-      }, 1000);
     });
 
     workers[worker] = createdWorker;

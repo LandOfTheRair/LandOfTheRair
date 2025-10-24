@@ -12,6 +12,13 @@ export class ForceRebootRoute {
         if (secret !== testSecret) return;
       }
 
+      if (req.query.now) {
+        sendToGame({
+          type: GameServerEvent.ForceRebootLocal,
+        });
+        return;
+      }
+
       sendToGame({
         type: GameServerEvent.Announce,
         message:

@@ -46,6 +46,7 @@ export enum GameServerEvent {
   BlockAndKickAll = 'GM:Emit:BlockAndKickAll',
   Announce = 'GM:Emit:Announce',
   ForceReboot = 'GM:Emit:ForceReboot',
+  ForceRebootLocal = 'GM:Emit:ForceRebootLocal',
 
   CharacterCreateInformation = 'Creator:Emit:CharacterSelect',
 
