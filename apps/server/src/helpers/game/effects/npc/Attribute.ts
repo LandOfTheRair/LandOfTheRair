@@ -25,6 +25,7 @@ type AttributeType =
   | 'necrotic'
   | 'fire'
   | 'lightning'
+  | 'acid'
   | 'ice'
   | 'water'
   | 'energy'
@@ -174,7 +175,9 @@ export class Attribute extends Effect {
       case 'fire':
         return '#dc143c';
       case 'lightning':
-        return '#ffd700';
+        return '#e7ff68';
+      case 'acid':
+        return '#12ff00';
       case 'ice':
         return '#000080';
       case 'water':
