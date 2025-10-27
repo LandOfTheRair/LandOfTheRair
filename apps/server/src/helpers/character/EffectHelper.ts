@@ -12,6 +12,7 @@ import type {
 } from '@lotr/interfaces';
 import { Allegiance } from '@lotr/interfaces';
 import { consoleError } from '@lotr/logger';
+import { rollTraitValue } from '@lotr/rng';
 import { BaseService } from '../../models/BaseService';
 
 @Injectable()
@@ -87,7 +88,9 @@ export class EffectHelper extends BaseService {
     const { type, extra, duration } = effectData.effect;
     const { recentlyRef, noStack } = effectData.effectMeta;
 
-    if (type === 'debuff') {
+    const isCurse = effectName.includes('Curse');
+
+    if (type === 'debuff' && !isCurse) {
       const serenityBuff = getEffect(character, 'Serenity');
       if (serenityBuff) {
         this.game.messageHelper.sendLogMessageToPlayer(character, {
@@ -95,6 +98,16 @@ export class EffectHelper extends BaseService {
         });
         serenityBuff.effectInfo.charges =
           (serenityBuff.effectInfo.charges || 0) - 1;
+        return;
+      }
+    }
+
+    if (type === 'debuff' && isCurse) {
+      const canIgnore = rollTraitValue(character, 'Cursewarden');
+      if (canIgnore) {
+        this.game.messageHelper.sendLogMessageToPlayer(character, {
+          message: 'You ward off a curse!',
+        });
         return;
       }
     }

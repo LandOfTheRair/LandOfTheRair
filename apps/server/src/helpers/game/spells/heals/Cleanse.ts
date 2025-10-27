@@ -1,5 +1,6 @@
 import { getEffectLike, hasEffectLike } from '@lotr/effects';
 import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import { sample } from 'lodash';
 import { Spell } from '../../../../models/world/Spell';
 
 export class Cleanse extends Spell {
@@ -14,7 +15,7 @@ export class Cleanse extends Spell {
     if (caster) {
       if (hasCurse) {
         this.sendMessage(caster, {
-          message: `You removed curses from ${target.name}!`,
+          message: `You removed a curse from ${target.name}!`,
         });
       } else {
         this.sendMessage(caster, { message: `${target.name} is not cursed.` });
@@ -23,9 +24,10 @@ export class Cleanse extends Spell {
 
     if (hasCurse) {
       const curses = getEffectLike(target, 'Curse');
-      curses.forEach((c) => {
-        this.game.effectHelper.removeEffectByName(target, c.effectName);
-      });
+      const curse = sample(curses);
+      if (curse) {
+        this.game.effectHelper.removeEffectByName(target, curse.effectName);
+      }
     }
   }
 }
