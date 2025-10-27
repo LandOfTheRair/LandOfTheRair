@@ -511,6 +511,8 @@ export class CombatHelper extends BaseService {
         return ['BuildupHeat', 'Burning', 'RecentlyBurned'];
       case DamageClass.Ice:
         return ['BuildupChill', 'Chilled', 'RecentlyChilled'];
+      case DamageClass.Acid:
+        return ['BuildupAcid', 'Corroded', 'RecentlyCorroded'];
       case DamageClass.Water:
         return ['BuildupWater', 'Suffocating', 'RecentlySuffocated'];
       case DamageClass.Lightning:
