@@ -41,6 +41,7 @@ import {
   coreStatDamageMultipliers,
   coreWeaponTiers,
   coreWeaponTiersNPC,
+  effectExists,
   getHandsItem,
   isShield,
   isWeapon,
@@ -1688,15 +1689,7 @@ export class DamageHelperPhysical extends BaseService {
       );
 
       if (ammoStrikeEffect) {
-        this.game.spellManager.castSpell(
-          ammoStrikeEffect.name,
-          attacker,
-          defender,
-          {
-            potency: ammoStrikeEffect.potency,
-            chance: ammoStrikeEffect.chance ?? 100,
-          },
-        );
+        this.tryApplyItemEffect(attacker, defender, ammoStrikeEffect);
       }
     }
 
@@ -1714,29 +1707,13 @@ export class DamageHelperPhysical extends BaseService {
       );
 
       if (encrustGive.strikeEffect) {
-        this.game.spellManager.castSpell(
-          encrustGive.strikeEffect.name,
-          attacker,
-          defender,
-          {
-            potency: encrustGive.strikeEffect.potency,
-            chance: encrustGive.strikeEffect.chance ?? 100,
-          },
-        );
+        this.tryApplyItemEffect(attacker, defender, encrustGive.strikeEffect);
       }
     }
 
     // if our weapon has a strike effect, we apply it
     if (weaponStrikeEffect) {
-      this.game.spellManager.castSpell(
-        weaponStrikeEffect.name,
-        attacker,
-        defender,
-        {
-          potency: weaponStrikeEffect.potency,
-          chance: weaponStrikeEffect.chance ?? 100,
-        },
-      );
+      this.tryApplyItemEffect(attacker, defender, weaponStrikeEffect);
     }
 
     resolveThrow();
@@ -1755,6 +1732,30 @@ export class DamageHelperPhysical extends BaseService {
       damage: totalDamageDealt,
       damageType: args.damageClass,
     };
+  }
+
+  private tryApplyItemEffect(
+    attacker: ICharacter,
+    defender: ICharacter,
+    effect: IItemEffect,
+  ) {
+    if (effectExists(effect.name)) {
+      if (rollInOneHundred(effect.chance ?? 100)) {
+        this.game.effectHelper.addEffect(defender, attacker, effect.name, {
+          effect: {
+            duration: effect.duration,
+            extra: {
+              potency: effect.potency,
+            },
+          },
+        });
+      }
+    } else {
+      this.game.spellManager.castSpell(effect.name, attacker, defender, {
+        potency: effect.potency,
+        chance: effect.chance ?? 100,
+      });
+    }
   }
 
   private doExtraDurabilityDamageForNaturalResources(

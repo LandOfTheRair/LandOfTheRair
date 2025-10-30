@@ -208,7 +208,7 @@ export function descTextFor(
 
     sense2Text = `This item has ${useEffect ? 'castable' : 'on-contact'} ${
       (useEffect || strikeEffect).name
-    }.`;
+    }`;
 
     if ((useEffect || strikeEffect).potency) {
       sense2Text = `${sense2Text} with a potency of ${
