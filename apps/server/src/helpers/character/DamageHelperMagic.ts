@@ -86,6 +86,10 @@ export class DamageHelperMagic extends BaseService {
       hasBeenReflected: args.hasBeenReflected,
     });
 
+    if (args.damageClass === DamageClass.Acid) {
+      this.game.combatHelper.damageRandomItemForCharacter(defender, 10);
+    }
+
     // send combat effects for heals and stuff
     if (attacker && !args.isAoE && !args.isOverTime) {
       this.game.combatHelper.combatEffect(

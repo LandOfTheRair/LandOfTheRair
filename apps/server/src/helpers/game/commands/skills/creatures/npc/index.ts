@@ -1,5 +1,8 @@
 export * from './specific';
 
+export * from './acidbitemedium';
+export * from './acidbitestrong';
+export * from './acidbiteweak';
 export * from './chillbitemedium';
 export * from './chillbitestrong';
 export * from './chillbiteweak';
@@ -20,6 +23,9 @@ export * from './poisonbiteweak';
 export * from './pounce';
 export * from './pullone';
 export * from './settrap';
+export * from './shockbitemedium';
+export * from './shockbitestrong';
+export * from './shockbiteweak';
 export * from './shredfivepercent';
 export * from './shredonepercent';
 export * from './shredtenpercent';

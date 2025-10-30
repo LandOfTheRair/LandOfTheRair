@@ -35,6 +35,7 @@ import {
   DamageClass,
   GameServerResponse,
   ItemClass,
+  ItemSlot,
   MessageType,
   SoundEffect,
   Stat,
@@ -520,6 +521,32 @@ export class CombatHelper extends BaseService {
     }
 
     return ['', '', ''];
+  }
+
+  public damageRandomItemForCharacter(
+    character: ICharacter,
+    loss: number,
+  ): void {
+    const allEquipment = Object.keys(character.items.equipment)
+      .filter(
+        (slot) => ![ItemSlot.Potion, ItemSlot.Ammo].includes(slot as ItemSlot),
+      )
+      .map((i) => character.items.equipment[i as ItemSlot])
+      .filter(Boolean)
+      .filter((item) => (item?.mods.condition ?? 20000) > 0);
+
+    const itemToDamage = sample(allEquipment);
+    if (itemToDamage) {
+      const durabilityLoss = isPlayer(character) ? loss : loss * 5;
+      this.game.itemHelper.loseCondition(
+        itemToDamage,
+        durabilityLoss,
+        character,
+      );
+      this.game.messageHelper.sendLogMessageToPlayer(character, {
+        message: `Your ${itemPropertyGet(itemToDamage, 'itemClass').toLowerCase()} takes corrosion damage!`,
+      });
+    }
   }
 
   private doElementalDebuffing(

@@ -712,6 +712,7 @@ export interface ICombatHelper extends IGameService {
     defender: ICharacter,
     args: any,
   ): void;
+  damageRandomItemForCharacter(target: ICharacter, damageAmt: number): void;
 }
 
 export interface IQuestHelper extends IGameService {
