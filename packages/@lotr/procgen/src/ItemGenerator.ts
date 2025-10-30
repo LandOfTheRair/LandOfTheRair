@@ -58,17 +58,7 @@ export class RNGDungeonItemGenerator {
 
     // rings start with prots
     const ringStatBoosts: Partial<StatBlock> = {};
-    const ringStats = [
-      Stat.FireResist,
-      Stat.IceResist,
-      Stat.WaterResist,
-      Stat.LightningResist,
-      Stat.EnergyResist,
-      Stat.PoisonResist,
-      Stat.PoisonResist,
-      Stat.DiseaseResist,
-      Stat.NecroticResist,
-    ];
+    const ringStats = this.config.itemStatConfigs[ItemClass.Ring] ?? [];
 
     const betterRingStats = [Stat.MagicalResist, Stat.PhysicalResist];
 
@@ -90,20 +80,7 @@ export class RNGDungeonItemGenerator {
 
     // amulets start with boosts
     const amuletStatBoosts: Partial<StatBlock> = {};
-    const amuletStats = [
-      Stat.FireBoostPercent,
-      Stat.IceBoostPercent,
-      Stat.NecroticBoostPercent,
-      Stat.EnergyBoostPercent,
-      Stat.WaterBoostPercent,
-      Stat.LightningBoostPercent,
-      Stat.PoisonBoostPercent,
-      Stat.DiseaseBoostPercent,
-      Stat.SonicBoostPercent,
-      Stat.HealingBoostPercent,
-      Stat.PhysicalBoostPercent,
-      Stat.MagicalBoostPercent,
-    ];
+    const amuletStats = this.config.itemStatConfigs[ItemClass.Amulet] ?? [];
 
     const amuletStat = this.rng.getItem(amuletStats);
     if (amuletStat) {

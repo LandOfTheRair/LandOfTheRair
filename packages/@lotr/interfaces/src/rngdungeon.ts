@@ -289,6 +289,8 @@ export interface IRNGDungeonConfig {
 
   itemConfigs: Record<ItemClass, IRNGItem>;
 
+  itemStatConfigs: Record<ItemClass, Stat[]>;
+
   itemScenarios: IRNGItemScenario[];
 }
 
