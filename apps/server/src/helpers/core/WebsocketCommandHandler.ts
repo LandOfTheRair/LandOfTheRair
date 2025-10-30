@@ -75,7 +75,7 @@ export class WebsocketCommandHandler implements IWebsocketCommandHandler {
           GameServerEvent.Logout,
         ];
         if (!blacklistedActionsForLogging.includes(action.type)) {
-          consoleError(
+          console.error(
             'WSCmdHandler',
             new Error(
               `Not logged in and trying to do ${type} with ${JSON.stringify(data)}.`,
