@@ -5,10 +5,12 @@
   "scripts": {
     "setup": "",
     "build": "tsc",
-    "start:dev": "tsc --watch",
-    "lint": "eslint -c .eslintrc.json --ext .ts src"
+    "start:dev": "tsc-watch --onSuccess \"npm run restartserver\"",
+    "lint": "eslint -c .eslintrc.json --ext .ts src",
+    "restartserver": "cd ../../../apps/server && npm run forcereboot"
   },
   "devDependencies": {
+    "tsc-watch": "^7.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {

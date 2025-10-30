@@ -5,14 +5,16 @@
   "scripts": {
     "setup": "",
     "build": "tsc",
-    "start:dev": "tsc --watch",
-    "lint": "eslint -c .eslintrc.json --ext .ts src"
+    "start:dev": "tsc-watch --onSuccess \"npm run restartserver\"",
+    "lint": "eslint -c .eslintrc.json --ext .ts src",
+    "restartserver": "cd ../../../apps/server && npm run forcereboot"
   },
   "devDependencies": {
     "@lotr/eslint-config": "*",
     "@types/pathfinding": "^0.1.0",
     "@types/rbush": "^3.0.4",
     "@types/uuid": "^3.4.13",
+    "tsc-watch": "^7.2.0",
     "typescript": "^5.9.3"
   },
   "dependencies": {
@@ -20,10 +22,10 @@
     "@lotr/content": "*",
     "@lotr/currency": "*",
     "@lotr/interfaces": "*",
+    "@lotr/lobby": "*",
     "@lotr/logger": "*",
     "@lotr/premium": "*",
     "@lotr/rng": "*",
-    "@lotr/lobby": "*",
     "@lotr/shared": "*",
     "fast-json-patch": "^3.1.1",
     "logger-timer": "^1.0.7",
