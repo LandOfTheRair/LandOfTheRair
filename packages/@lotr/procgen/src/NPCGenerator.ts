@@ -424,8 +424,13 @@ export class RNGDungeonNPCGenerator {
     const creatureSets = this.pickCreatureSets();
 
     const res = creatureSets.map((setName) => {
-      const { creatures, factions } = this.config.creatureGroupings[setName]!;
+      const { creatures: creatureNames, factions } =
+        this.config.creatureGroupings[setName]!;
       const faction = this.rng.getItem(factions);
+
+      const creatures = creatureNames
+        .map((name) => this.config.creatures[name])
+        .filter(Boolean) as IRNGDungeonCreature[];
 
       const legendaryCreature = this.rng.getItem(
         creatures.filter((x) => x.isLegendary),

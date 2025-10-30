@@ -109,7 +109,7 @@ export interface IRNGDungeonCreature {
 
 export interface IRNGDungeonCreatureGroup {
   name: string;
-  creatures: IRNGDungeonCreature[];
+  creatures: string[];
   factions: Allegiance[];
 }
 
