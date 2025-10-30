@@ -10,7 +10,7 @@ export class ShowSkills extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.`;
+    let message = `You are ${player.name}, the level ${player.level} ${player.baseClass}.`;
     this.game.messageHelper.sendLogMessageToPlayer(
       player,
       { message, sfx: undefined },

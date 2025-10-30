@@ -1,5 +1,9 @@
 import { MacroCommand } from '@lotr/core';
-import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import {
+  GameServerResponse,
+  type IMacroCommandArgs,
+  type IPlayer,
+} from '@lotr/interfaces';
 
 export class LookAt extends MacroCommand {
   override aliases = ['lookat', 'consider'];
@@ -22,5 +26,11 @@ export class LookAt extends MacroCommand {
     The target is of ${(target.alignment || 'unknown').toLowerCase()} alignment.`;
 
     this.sendMessage(player, description);
+
+    args.callbacks.emit({
+      type: GameServerResponse.SendAlert,
+      title: `Examine ${target.name}`,
+      content: description,
+    });
   }
 }

@@ -9,7 +9,7 @@ export class ShowStats extends MacroCommand {
   override canBeFast = true;
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    let message = `You are ${player.name}, the ${player.alignment} level ${player.level} ${player.baseClass}.<br>`;
+    let message = `You are ${player.name}, the level ${player.level} ${player.baseClass}.<br>`;
     message = `${message}Your allegiance lies with ${player.allegiance === Allegiance.None ? 'no one' : `the ${player.allegiance}`}.`;
 
     if (args.stringArgs === 'leader') {
