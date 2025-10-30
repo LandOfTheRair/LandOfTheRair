@@ -780,7 +780,7 @@ export class MapScene extends Phaser.Scene {
         });
       };
       const interactTile =
-        this.allMapData.layerData[this.getLayer(MapLayer.Interactables) - 1]?.[
+        this.allMapData.layerData[this.getLayer(MapLayer.Interactables)]?.[
           clickedTilePostion.x
         ]?.[clickedTilePostion.y];
 
