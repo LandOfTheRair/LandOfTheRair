@@ -14,7 +14,7 @@ function getProp(item: ISimpleItem, itemDef: IItem, prop: keyof IItem): any {
   return item.mods[prop] || itemDef[prop];
 }
 
-function conditionString(item: ISimpleItem): string {
+export function conditionString(item: ISimpleItem): string {
   const condition = item.mods.condition ?? 20000;
   if (condition <= 0) return 'broken';
   if (condition <= 2500) return 'rough';
