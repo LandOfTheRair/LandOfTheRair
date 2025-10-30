@@ -33,10 +33,9 @@ export class LookAt extends MacroCommand {
       return itemDesc;
     });
 
-    const description = `
-    You are looking at a being named ${target.name}.<br><br>${itemDescs.join('<br>')}`;
+    const description = `You are looking at a being named ${target.name}.<br><br>${itemDescs.join('<br>')}`;
 
-    this.sendMessage(player, description);
+    this.sendMessage(player, description.replace('<br>', '\n'));
 
     args.callbacks.emit({
       type: GameServerResponse.SendAlert,
