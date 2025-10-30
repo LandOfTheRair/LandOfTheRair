@@ -35,7 +35,9 @@
         <strong>{{ macroName() || 'Empty' }}</strong>
 
         @if (macroRefFor(); as forMacro) {
-          <span class="for-macro">(for {{ forMacro.name }})</span>
+          @if (forMacro.name !== macroName()) {
+            <span class="for-macro">(for {{ forMacro.name }})</span>
+          }
         }
       </mat-card-title>
 
