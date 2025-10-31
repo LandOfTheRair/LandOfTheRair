@@ -142,6 +142,10 @@ export class Spawner implements ISpawner {
     return this.npcDefs;
   }
 
+  public get allPossibleNPCSpawnsById(): string[] {
+    return this.npcIds;
+  }
+
   private get canBeActive(): boolean {
     if (this.requireHoliday && !isHoliday(this.requireHoliday)) {
       return false;

@@ -185,6 +185,7 @@ export interface ISpawner {
   readonly respawnTimeSeconds: number;
   readonly respectsKnowledge: boolean;
   readonly allPossibleNPCSpawns: INPCDefinition[];
+  readonly allPossibleNPCSpawnsById: string[];
   readonly mapName: string;
 
   tryInitialSpawn(): void;
