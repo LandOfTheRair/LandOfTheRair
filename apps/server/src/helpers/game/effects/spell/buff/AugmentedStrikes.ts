@@ -1,4 +1,4 @@
-import { isDead } from '@lotr/characters';
+import { isDead, manaDamage } from '@lotr/characters';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { DamageClass } from '@lotr/interfaces';
 import { rollInOneHundred } from '@lotr/rng';
@@ -14,6 +14,9 @@ export class AugmentedStrikes extends Effect {
     if (damageArgs.damageClass !== DamageClass.Physical) return;
     if (isDead(target)) return;
     if (!rollInOneHundred(20)) return;
+    if (char.mp.current < 20) return;
+
+    manaDamage(char, 20);
 
     this.game.damageHelperMagic.magicalAttack(char, target, {
       atkMsg: 'You strike is augmented by arcane energies %0!',
