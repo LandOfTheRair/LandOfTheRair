@@ -19,7 +19,7 @@ export class AugmentedStrikes extends Effect {
     manaDamage(char, 20);
 
     this.game.damageHelperMagic.magicalAttack(char, target, {
-      atkMsg: 'You strike is augmented by arcane energies %0!',
+      atkMsg: 'You strike is augmented by arcane energies!',
       defMsg: '%0 hit you with an augmented strike!',
       damage: Math.floor(damageArgs.damage * (effect.effectInfo.potency / 100)),
       damageClass: DamageClass.Physical,
