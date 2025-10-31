@@ -2,6 +2,7 @@ export * from './Absorption';
 export * from './Aid';
 export * from './Applied';
 export * from './ArcaneHunger';
+export * from './AugmentedStrikes';
 export * from './Autoheal';
 export * from './BarAcid';
 export * from './BarbaricStrength';
