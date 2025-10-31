@@ -37,6 +37,7 @@ type AttributeType =
   | 'turkey';
 
 const ResistanceShredders = {
+  [MonsterClass.Rock]: 'RockPiercer',
   [MonsterClass.Undead]: 'EtherFire',
   [MonsterClass.Beast]: 'BeastRipper',
   [MonsterClass.Dragon]: 'ScaleShredder',
