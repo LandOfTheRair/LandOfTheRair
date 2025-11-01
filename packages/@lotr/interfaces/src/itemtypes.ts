@@ -11,7 +11,9 @@ export type DamageType =
   | 'energy'
   | 'poison'
   | 'disease'
-  | 'sonic';
+  | 'sonic'
+  | 'blunt'
+  | 'sharp';
 
 export const MagicClasses: Record<DamageType, boolean> = {
   physical: false,
@@ -25,6 +27,8 @@ export const MagicClasses: Record<DamageType, boolean> = {
   disease: true,
   acid: false,
   sonic: false,
+  blunt: false,
+  sharp: false,
 };
 
 export enum WeaponClass {
