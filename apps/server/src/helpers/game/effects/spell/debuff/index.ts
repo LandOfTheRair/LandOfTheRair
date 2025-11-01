@@ -12,6 +12,7 @@ export * from './Burning';
 export * from './ChainKunai';
 export * from './Chilled';
 export * from './Corroded';
+export * from './CurseDecay';
 export * from './Daze';
 export * from './Debilitate';
 export * from './DeliriousShout';
