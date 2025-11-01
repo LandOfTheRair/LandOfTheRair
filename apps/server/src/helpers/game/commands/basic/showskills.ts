@@ -23,15 +23,18 @@ export class ShowSkills extends MacroCommand {
       [MessageType.Description],
     );
 
-    Object.keys(player.skills).forEach((key) => {
-      const skillLevel = getSkillLevel(player, key as Skill);
-      const skillName = skillGetDescription(key as Skill, skillLevel);
-      message = `Your ${key.toUpperCase()} skill level is ${skillLevel} (${skillName}).`;
-      this.game.messageHelper.sendLogMessageToPlayer(
-        player,
-        { message, sfx: undefined },
-        [MessageType.Description],
-      );
-    });
+    message = `${message}<br>Your skills are as follows:<br>`;
+    Object.keys(player.skills)
+      .sort()
+      .forEach((key) => {
+        const skillLevel = getSkillLevel(player, key as Skill);
+        const skillName = skillGetDescription(key as Skill, skillLevel);
+        message = `Your ${key.toUpperCase()} skill level is ${skillLevel} (${skillName}).`;
+        this.game.messageHelper.sendLogMessageToPlayer(
+          player,
+          { message, sfx: undefined },
+          [MessageType.Description],
+        );
+      });
   }
 }

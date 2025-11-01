@@ -119,7 +119,7 @@ export class CharacterHelper extends BaseService implements ICharacterHelper {
       this.game.itemHelper.tryToBindItem(char, item);
     }
 
-    this.game.characterHelper.recalculateEverything(char);
+    this.recalculateEverything(char);
   }
 
   public tryDance(char: ICharacter): void {

@@ -17,6 +17,7 @@ export * from './shatter';
 export * from './sheathe';
 export * from './showskills';
 export * from './showstats';
+export * from './showtraits';
 export * from './steal';
 export * from './take';
 export * from './tear';
