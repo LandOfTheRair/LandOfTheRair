@@ -68,6 +68,23 @@ export function recalculateTraits(character: ICharacter): void {
     if (trait) {
       traitLevelAdd(character, trait.name, trait.level);
     }
+
+    if (item.mods.upgrades) {
+      item.mods.upgrades.forEach((upgrade) => {
+        const upgradeItem = itemGet(upgrade);
+        if (!upgradeItem) return;
+
+        const upgradeItemTrait = upgradeItem.trait;
+
+        if (upgradeItemTrait) {
+          traitLevelAdd(
+            character,
+            upgradeItemTrait.name,
+            upgradeItemTrait.level,
+          );
+        }
+      });
+    }
   });
 
   // get benefits from inscribed rune scrolls
