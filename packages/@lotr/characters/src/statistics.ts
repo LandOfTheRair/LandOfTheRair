@@ -1,4 +1,6 @@
+import { achievementGet } from '@lotr/content';
 import type { IPlayer, TrackedStatistic } from '@lotr/interfaces';
+import { sumBy } from 'lodash';
 
 export function addStatistic(
   player: IPlayer,
@@ -15,6 +17,17 @@ export function addStatistic(
   player.sessionStatistics.statistics[statistic]! += number ?? 0;
 }
 
+function syncOtherStatistics(player: IPlayer): void {
+  player.statistics.statistics.achievementsearned = Object.keys(
+    player.achievements.achievements,
+  ).length;
+
+  player.statistics.statistics.achievementpoints = sumBy(
+    Object.keys(player.achievements.achievements),
+    (a) => achievementGet(a)?.ap ?? 0,
+  );
+}
+
 export function syncBaseStatistics(player: IPlayer): void {
   player.statistics.baseClass = player.baseClass;
   player.statistics.xp = player.exp;
@@ -22,6 +35,10 @@ export function syncBaseStatistics(player: IPlayer): void {
   player.statistics.level = player.level;
   player.statistics.username = player.username;
   player.statistics.charSlot = player.charSlot;
+
+  syncOtherStatistics(player);
+
+  console.log(player.statistics);
 }
 
 export function syncSessionStatistics(player: IPlayer): void {

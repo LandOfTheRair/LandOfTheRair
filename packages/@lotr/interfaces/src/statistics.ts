@@ -9,12 +9,14 @@ export enum TrackedStatistic {
   NPCsGreeted = 'npcsgreeted',
   RepeatableQuests = 'repeatablequests',
   DailyQuests = 'dailyquests',
+  AchievementsEarned = 'achievementsearned',
+  AchievementPoints = 'achievementpoints',
   AlchemyCrafts = 'alchemycrafts',
   MetalworkingCrafts = 'metalworkingcrafts',
   SpellforgingCrafts = 'spellforgingcrafts',
   GemcraftingCrafts = 'gemcraftingcrafts',
   WeavefabricatingCrafts = 'weavefabricatingcrafts',
-  FoodmakingCrafts = 'foodmakingcrafts'
+  FoodmakingCrafts = 'foodmakingcrafts',
 }
 
 export interface ICharacterStatistics {
