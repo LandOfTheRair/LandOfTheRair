@@ -100,6 +100,18 @@ export class RuneCodexComponent {
     return AllTraits[item.trait.name].icon;
   }
 
+  getTraitDesc(runescrollName: string): string {
+    const item = this.assetService.getItem(runescrollName);
+    if (!AllTraits[item?.trait?.name]) return '';
+    const level = item?.trait?.level ?? 0;
+    const value = level * (AllTraits[item.trait.name].valuePerTier ?? 0);
+    const finalDesc = AllTraits[item.trait.name].desc.replace(
+      /\$(\d+)\$/,
+      value.toString(),
+    );
+    return finalDesc;
+  }
+
   getTraitLevel(runescrollName: string): string {
     const item = this.assetService.getItem(runescrollName);
     const level = item?.trait?.level ?? 0;
