@@ -430,10 +430,10 @@ export class Spawner implements ISpawner {
     this.tryElitify(npc);
     this.game.visibilityHelper.calculateFOV(npc);
 
-    this.addNPC(npc, aiInst, npcDef);
+    this.npcCreateCallback?.(npc, this);
+    createCallback?.(npc);
 
-    if (this.npcCreateCallback) this.npcCreateCallback(npc, this);
-    if (createCallback) createCallback(npc);
+    this.addNPC(npc, aiInst, npcDef);
 
     this.game.characterHelper.characterStatTotalsCalculate(npc);
 
