@@ -6,7 +6,12 @@ import {
   traitLevel,
 } from '@lotr/content';
 import { calcSkillLevelForCharacter } from '@lotr/exp';
-import type { ICharacter, IPlayer, SpellCastArgs } from '@lotr/interfaces';
+import type {
+  ICharacter,
+  IItemDefinition,
+  IPlayer,
+  SpellCastArgs,
+} from '@lotr/interfaces';
 import { GameServerResponse, ItemSlot, Skill } from '@lotr/interfaces';
 import { descTextFor } from '@lotr/shared';
 import { Spell } from '../../../../models/world/Spell';
@@ -54,6 +59,9 @@ export class Identify extends Spell {
       rightHand.mods?.encrustItem
         ? itemGet(rightHand.mods.encrustItem)
         : undefined,
+      (rightHand.mods?.upgrades || [])
+        .map((upgName) => itemGet(upgName))
+        .filter(Boolean) as IItemDefinition[],
       castTier,
       canAppraiseWhileIdentifying ? thiefTier : 0,
     );

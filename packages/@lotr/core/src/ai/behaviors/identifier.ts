@@ -4,6 +4,7 @@ import type { Parser } from 'muud';
 import type {
   IAIBehavior,
   IIdentifierBehavior,
+  IItemDefinition,
   INPC,
   IPlayer,
   IServerGame,
@@ -93,6 +94,9 @@ export class IdentifierBehavior implements IAIBehavior {
           rightHand.mods?.encrustItem
             ? itemGet(rightHand.mods.encrustItem)
             : undefined,
+          (rightHand.mods?.upgrades || [])
+            .map((upgName) => itemGet(upgName))
+            .filter(Boolean) as IItemDefinition[],
           identifyTier,
         );
 

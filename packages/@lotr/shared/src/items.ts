@@ -83,6 +83,7 @@ export function descTextFor(
   item: ISimpleItem,
   itemDef: IItem,
   encrustDef?: IItem,
+  upgradeDefs: IItem[] = [],
   castIdentifyTier = 0,
   thiefTier = 0,
 ): string {
@@ -174,10 +175,12 @@ export function descTextFor(
 
   if (maxUpgrades > 0 || upgrades?.length > 0) {
     allTexts.push(
-      `It has ${maxUpgrades} magical slot(s), ${
-        upgrades?.length ?? 0
-      } of which are taken.`,
+      `It has ${upgrades?.length ?? 0}/${maxUpgrades} magical slots filled.`,
     );
+
+    upgradeDefs.forEach((upg) => {
+      allTexts.push(`It is slotted with ${upg.desc}.`);
+    });
   }
 
   // whether the item has an implicit sell price or not
