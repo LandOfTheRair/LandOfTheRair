@@ -40,6 +40,8 @@ export class CombatDebugComponent implements OnInit, OnDestroy {
     { display: 'ReI', key: 'iceResist' },
     { display: 'ReP', key: 'poisonResist' },
     { display: 'ReD', key: 'diseaseResist' },
+    { display: 'ReL', key: 'lightningResist' },
+    { display: 'ReA', key: 'acidResist' },
   ];
 
   public get totalLogged() {
