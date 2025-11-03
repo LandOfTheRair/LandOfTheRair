@@ -19,11 +19,11 @@ export function addStatistic(
 
 function syncOtherStatistics(player: IPlayer): void {
   player.statistics.statistics.achievementsearned = Object.keys(
-    player.achievements.achievements,
+    player.achievements?.achievements ?? {},
   ).length;
 
   player.statistics.statistics.achievementpoints = sumBy(
-    Object.keys(player.achievements.achievements),
+    Object.keys(player.achievements?.achievements ?? {}),
     (a) => achievementGet(a)?.ap ?? 0,
   );
 }
@@ -37,8 +37,6 @@ export function syncBaseStatistics(player: IPlayer): void {
   player.statistics.charSlot = player.charSlot;
 
   syncOtherStatistics(player);
-
-  console.log(player.statistics);
 }
 
 export function syncSessionStatistics(player: IPlayer): void {
