@@ -159,6 +159,19 @@ export class TraitsComponent {
       });
   }
 
+  public renameBuild(tree: number) {
+    this.modalService
+      .input(
+        'Rename Build',
+        `Enter a new name for the build in slot ${tree + 1}:`,
+      )
+      .subscribe((res) => {
+        if (!res) return;
+
+        this.gameService.sendCommandString(`!renamebuild ${tree} ${res}`);
+      });
+  }
+
   public loadBuild(tree: number) {
     this.modalService
       .confirm(

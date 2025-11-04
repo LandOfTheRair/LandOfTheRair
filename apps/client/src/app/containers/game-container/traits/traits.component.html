@@ -58,11 +58,21 @@
             <button
               mat-raised-button
               color="primary"
+              (click)="renameBuild(currentTree)"
+              [disabled]="currentTree === -1"
+            >
+              Rename Current Build
+            </button>
+
+            <button
+              mat-raised-button
+              color="primary"
               (click)="saveBuild(currentTree)"
               [disabled]="currentTree === -1"
             >
               Save Current Build
             </button>
+
             <button
               mat-raised-button
               color="primary"
