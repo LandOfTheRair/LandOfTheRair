@@ -20,6 +20,7 @@ import {
   SetLastCharSlotPlayed,
   SetLogMode,
   SetOption,
+  SetServerTimestamp,
   ShowWindow,
   ToggleWindow,
   UpdateWindowPosition,
@@ -32,6 +33,7 @@ const defaultSettings: () => ISettings = () => ({
   windows: {},
   activeWindow: '',
   charSlot: 0,
+  serverTimestampDelta: 0,
   lastCharSlot: -1,
   wasKicked: false,
   assetHash: '',
@@ -153,6 +155,11 @@ export class SettingsState implements NgxsOnInit {
   }
 
   @Selector()
+  static serverTimestampDelta(state: ISettings) {
+    return state.serverTimestampDelta;
+  }
+
+  @Selector()
   static assetHash(state: ISettings) {
     return state.assetHash;
   }
@@ -168,12 +175,25 @@ export class SettingsState implements NgxsOnInit {
   }
 
   ngxsOnInit(ctx: StateContext<ISettings>) {
-    ctx.patchState({ wasKicked: false, assetHash: '' });
+    ctx.patchState({
+      wasKicked: false,
+      assetHash: '',
+      serverTimestampDelta: 0,
+    });
   }
 
   @Action(SetAssetHash)
   updateHash(ctx: StateContext<ISettings>, { assetHash }: SetAssetHash) {
     ctx.patchState({ assetHash });
+  }
+
+  @Action(SetServerTimestamp)
+  setServerTimestamp(
+    ctx: StateContext<ISettings>,
+    { serverTimestamp }: SetServerTimestamp,
+  ) {
+    const serverTimestampDelta = Date.now() - serverTimestamp;
+    ctx.patchState({ serverTimestampDelta });
   }
 
   @Action(Login)

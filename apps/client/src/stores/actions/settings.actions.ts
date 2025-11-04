@@ -88,6 +88,12 @@ export class SetAssetHash {
   constructor(public assetHash: string) {}
 }
 
+// dispatched when the server sends the asset hash to the client
+export class SetServerTimestamp {
+  static type = GameAction.SettingsSetServerTimestamp;
+  constructor(public serverTimestamp: number) {}
+}
+
 // dispatched when the user changes their in game chat mode
 export class SetChatMode {
   static type = GameAction.SettingsSetChatMode;

@@ -9,7 +9,9 @@ import { timer } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IStatusEffect } from '@lotr/interfaces';
+import { select } from '@ngxs/store';
 import * as effectData from '../../../assets/content/_output/effect-data.json';
+import { SettingsState } from '../../../stores';
 
 @Component({
   selector: 'app-effect-icon',
@@ -97,6 +99,8 @@ export class EffectIconComponent {
 
   public currentTicksLeft = signal<number>(0);
 
+  public serverOffset = select(SettingsState.serverTimestampDelta);
+
   public iconData = computed(
     () =>
       (
@@ -143,24 +147,30 @@ export class EffectIconComponent {
 
   public charges = computed(() => this.effect().effectInfo.charges ?? 0);
 
-  public buildUpPercent = computed(() => Math.floor(
+  public buildUpPercent = computed(() =>
+    Math.floor(
       (this.effect().effectInfo.buildUpCurrent /
         this.effect().effectInfo.buildUpMax) *
         100,
-    ));
+    ),
+  );
 
   public getRemainingTicks() {
     const eff = this.effect();
     if (eff.endsAt === -1 || eff.effectInfo.hideTicks) {
       return 0;
     }
-    return Math.floor((eff.endsAt - Date.now()) / 1000);
+    return (
+      Math.floor((eff.endsAt - Date.now()) / 1000) -
+      Math.floor(this.serverOffset() / 1000)
+    );
   }
 
   constructor() {
     timer(0, 1000)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
+        console.log('tick', this.serverOffset());
         this.currentTicksLeft.set(this.getRemainingTicks());
       });
   }

@@ -99,23 +99,24 @@ export enum GameServerResponse {
 }
 
 export enum GameAction {
-  Login = '[Account] Log in',
-  Logout = '[Account] Log out',
+  Login = '[Account] Log In',
+  Logout = '[Account] Log Out',
   SetCharacterSlotInformation = '[Account] Set Charslot Info',
   SetAccount = '[Account] Set Account',
 
-  ChatAddMessage = '[Chat] Add message',
+  ChatAddMessage = '[Chat] Add Message',
   ChatSetMOTD = '[Chat] Set MOTD',
-  ChatSetUserList = '[Chat] Set user list',
-  ChatAddUser = '[Chat] Add user',
-  ChatRemoveUser = '[Chat] Remove user',
+  ChatSetUserList = '[Chat] Set User List',
+  ChatAddUser = '[Chat] Add User',
+  ChatRemoveUser = '[Chat] Remove User',
   ChatUserEnterGame = '[Chat] User Enter Game',
   ChatUserLeaveGame = '[Chat] User Leave Game',
 
-  SettingsSetAssetHash = '[Settings] Set server asset hash',
+  SettingsSetAssetHash = '[Settings] Set Server Asset Hash',
   SettingsSetChatMode = '[Settings] Set Chat Mode',
   SettingsSetLogMode = '[Settings] Set Log Mode',
   SettingsSetCharacterView = '[Settings] Set Character View',
+  SettingsSetServerTimestamp = '[Settings] Set Server Timestamp',
 
   SetCharacterCreateInformation = '[CharSelect] Set Create Info',
 

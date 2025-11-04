@@ -68,6 +68,7 @@ export interface ISettings {
   activeWindow: string;
   charSlot: number;
   lastCharSlot: number;
+  serverTimestampDelta: number;
   wasKicked: boolean;
   assetHash: string;
   chatMode: ChatMode;

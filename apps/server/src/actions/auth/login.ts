@@ -103,6 +103,11 @@ export class LoginAction extends ServerAction {
       });
 
       emit({
+        action: GameAction.SettingsSetServerTimestamp,
+        serverTimestamp: Date.now(),
+      });
+
+      emit({
         action: GameAction.EventSetList,
         events: game.dynamicEventHelper.getEventsForPlayer(),
       });

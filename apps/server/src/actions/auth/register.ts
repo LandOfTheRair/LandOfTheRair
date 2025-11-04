@@ -97,6 +97,11 @@ export class RegisterAction extends ServerAction {
         assetHash: meta.hash,
       });
 
+      emit({
+        action: GameAction.SettingsSetServerTimestamp,
+        serverTimestamp: Date.now(),
+      });
+
       game.messageHelper.broadcastSystemMessage(
         `Welcome ${account.username} to Land of the Rair!`,
       );

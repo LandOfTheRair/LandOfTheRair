@@ -37,7 +37,7 @@
         >
           <app-icon name="swap-bag" size="xsmall"></app-icon>
         </button>
-        @if (showPouch) {
+        @if (showPouch()) {
           <button
             mat-icon-button
             (click)="showWindow('inventoryPouch')"
