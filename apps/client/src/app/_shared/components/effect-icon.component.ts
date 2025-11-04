@@ -170,7 +170,6 @@ export class EffectIconComponent {
     timer(0, 1000)
       .pipe(takeUntilDestroyed())
       .subscribe(() => {
-        console.log('tick', this.serverOffset());
         this.currentTicksLeft.set(this.getRemainingTicks());
       });
   }
