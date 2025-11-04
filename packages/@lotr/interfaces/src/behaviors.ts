@@ -41,6 +41,7 @@ export enum BehaviorType {
   SpoilerLogger = 'spoilerlogger',
   RNGArtificer = 'rngartificer',
   TreasureClaimer = 'treasureclaimer',
+  EventPlanner = 'eventplanner',
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',

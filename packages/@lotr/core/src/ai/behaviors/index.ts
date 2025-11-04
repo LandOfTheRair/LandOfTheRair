@@ -13,6 +13,7 @@ export * from './cosmetic';
 export * from './crier';
 export * from './culinarian';
 export * from './encruster';
+export * from './eventplanner';
 export * from './exitwarper';
 export * from './furupgrader';
 export * from './guildclerk';

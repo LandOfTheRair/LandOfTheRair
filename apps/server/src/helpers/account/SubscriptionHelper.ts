@@ -159,28 +159,7 @@ export class SubscriptionHelper extends BaseService {
 
     const festival = this.getSilverItem(purchase)?.festival;
     if (festival) {
-      const oldEvent = this.game.dynamicEventHelper
-        .getEvents()
-        .find((x) => x.name === festival.name);
-      if (oldEvent) {
-        oldEvent.endsAt += 6 * 3600 * 1000;
-        this.game.dynamicEventHelper.updateEvent(oldEvent);
-        this.game.messageHelper.broadcastSystemMessage(
-          `${account.username} extended the ${oldEvent.name} by 6 hours!`,
-        );
-      } else {
-        const newEvent = {
-          name: festival.name,
-          description: 'A Player-started festival!',
-          endsAt: Date.now() + 6 * 3600 * 1000,
-          statBoost: festival.stats,
-        };
-
-        this.game.dynamicEventHelper.startEvent(newEvent);
-        this.game.messageHelper.broadcastSystemMessage(
-          `${account.username} started the ${newEvent.name} for 6 hours!`,
-        );
-      }
+      this.game.dynamicEventHelper.startFestival(account, festival);
     }
 
     consoleLog(

@@ -1,10 +1,13 @@
+/* eslint-disable brace-style */
 import { ObjectId } from 'bson';
 import { Injectable } from 'injection-js';
 import { cloneDeep, merge, random, sample } from 'lodash';
 
 import { hasEffect } from '@lotr/effects';
 import type {
+  IAccount,
   IDynamicEvent,
+  IDynamicEventHelper,
   IDynamicEventMeta,
   INPC,
   Stat,
@@ -24,7 +27,10 @@ import { oneInX } from '@lotr/rng';
 import { BaseService } from '../../../models/BaseService';
 
 @Injectable()
-export class DynamicEventHelper extends BaseService {
+export class DynamicEventHelper
+  extends BaseService
+  implements IDynamicEventHelper
+{
   private activeEventNames: Record<string, boolean> = {};
   private activeEvents: IDynamicEvent[] = [];
   private statTotals: Partial<Record<Stat, number>> = {};
@@ -51,6 +57,34 @@ export class DynamicEventHelper extends BaseService {
     this.checkOtherEvents();
 
     timer.stopTimer(`dynamicevent-${now}`);
+  }
+
+  public startFestival(
+    account: IAccount,
+    festival: { name: string; stats: Partial<Record<Stat, number>> },
+  ): void {
+    const oldEvent = this.game.dynamicEventHelper
+      .getEvents()
+      .find((x) => x.name === festival.name);
+    if (oldEvent) {
+      oldEvent.endsAt += 6 * 3600 * 1000;
+      this.game.dynamicEventHelper.updateEvent(oldEvent);
+      this.game.messageHelper.broadcastSystemMessage(
+        `${account.username} extended the ${oldEvent.name} by 6 hours!`,
+      );
+    } else {
+      const newEvent = {
+        name: festival.name,
+        description: 'A Player-started festival!',
+        endsAt: Date.now() + 6 * 3600 * 1000,
+        statBoost: festival.stats,
+      };
+
+      this.game.dynamicEventHelper.startEvent(newEvent);
+      this.game.messageHelper.broadcastSystemMessage(
+        `${account.username} started the ${newEvent.name} for 6 hours!`,
+      );
+    }
   }
 
   // start a new event

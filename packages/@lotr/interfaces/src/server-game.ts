@@ -1181,6 +1181,10 @@ export interface IDynamicEventHelper extends IGameService {
   isEventActive(eventName: string): boolean;
   getActiveEvent(eventName: string): IDynamicEvent | undefined;
   startDynamicEvent(event: IDynamicEventMeta): void;
+  startFestival(
+    account: IAccount,
+    festival: { name: string; stats: Partial<Record<Stat, number>> },
+  ): void;
   getEventRef(ref: string): IDynamicEventMeta | undefined;
   trackNPCKill(npcId: string): void;
 }
