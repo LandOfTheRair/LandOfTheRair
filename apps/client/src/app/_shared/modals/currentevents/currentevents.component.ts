@@ -32,6 +32,10 @@ export class CurrentEventsComponent {
         if (isPercent) statDisplay = statDisplay.split('PERCENT')[0];
         statDisplay = statDisplay.split('BONUS')[0];
 
+        if (statDisplay === 'SPAWNTICKMULTIPLIERBOOST') {
+          return `+${event.statBoost[stat]}x Spawn Rate Boost`;
+        }
+
         return `+${event.statBoost[stat]}${
           isPercent ? '%' : ''
         } ${statDisplay}`;

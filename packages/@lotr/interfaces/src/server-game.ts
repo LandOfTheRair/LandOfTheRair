@@ -1,6 +1,12 @@
 import { IAccount } from './account';
 import { IAI } from './ai';
-import { BaseClass, ItemSlot, Rollable, Stat } from './building-blocks';
+import {
+  BaseClass,
+  FestivalStat,
+  ItemSlot,
+  Rollable,
+  Stat,
+} from './building-blocks';
 import { ICharacter, IItemContainer } from './character';
 import { MagicalAttackArgs, OnesidedDamageArgs } from './combat';
 import { IDynamicEvent, IDynamicEventMeta } from './dynamicevent';
@@ -882,7 +888,6 @@ export interface IPlayerHelper extends IGameService {
     player: IPlayer,
     opts?: { ignoreMessages?: boolean; sendFOV?: boolean },
   ): void;
-  getStat(player: IPlayer, stat: any): number;
   flagSkill(player: IPlayer, skill: any): void;
   trainSkill(player: IPlayer, skill: any, amt: number): void;
   canGainSkillOnMap(player: IPlayer, skill: any): boolean;
@@ -1177,13 +1182,16 @@ export interface IDynamicEventHelper extends IGameService {
   updateEvent(event: IDynamicEvent): void;
   getEvents(): IDynamicEvent[];
   getEventsForPlayer(): IDynamicEvent[];
-  getStat(stat: Stat): number;
+  getStat(stat: Stat | FestivalStat): number;
   isEventActive(eventName: string): boolean;
   getActiveEvent(eventName: string): IDynamicEvent | undefined;
   startDynamicEvent(event: IDynamicEventMeta): void;
   startFestival(
     account: IAccount,
-    festival: { name: string; stats: Partial<Record<Stat, number>> },
+    festival: {
+      name: string;
+      stats: Partial<Record<Stat | FestivalStat, number>>;
+    },
   ): void;
   getEventRef(ref: string): IDynamicEventMeta | undefined;
   trackNPCKill(npcId: string): void;

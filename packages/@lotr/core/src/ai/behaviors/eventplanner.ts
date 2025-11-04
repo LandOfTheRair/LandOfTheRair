@@ -1,6 +1,8 @@
 import type { Parser } from 'muud';
 
+import { hasCurrency, loseCurrency } from '@lotr/currency';
 import {
+  Currency,
   GameServerResponse,
   type IAIBehavior,
   type ICrierBehavior,
@@ -30,6 +32,15 @@ export class EventPlannerBehavior implements IAIBehavior {
         festival: {
           name: 'Gold Skill Festival',
           stats: { skillBonusPercent: 100 },
+        },
+      },
+      {
+        name: '2x Spawn Festival',
+        action: 'goldspawn',
+        cost: 250_000_000,
+        festival: {
+          name: 'Gold Spawn Festival',
+          stats: { spawnTickMultiplierBoost: 1 },
         },
       },
     ];
@@ -81,6 +92,12 @@ export class EventPlannerBehavior implements IAIBehavior {
           if (!player) return 'You do not exist.';
 
           if (distanceFrom(player, npc) > 0) return 'Please come closer.';
+
+          if (!hasCurrency(player, festivalData.cost, Currency.Gold)) {
+            return 'You do not have enough gold!';
+          }
+
+          loseCurrency(player, festivalData.cost, Currency.Gold);
 
           game.dynamicEventHelper.startFestival(player, festivalData.festival);
 

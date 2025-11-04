@@ -150,9 +150,7 @@ export class PlayerHelper extends BaseService {
       const queue = player.actionQueue[type] || [];
 
       const actions =
-        type === 'fast'
-          ? 5
-          : this.getStat(player as IPlayer, Stat.ActionSpeed) || 1;
+        type === 'fast' ? 5 : getStat(player as IPlayer, Stat.ActionSpeed) || 1;
 
       for (let i = 0; i < actions; i++) {
         const command = queue.shift();
@@ -379,11 +377,6 @@ export class PlayerHelper extends BaseService {
         );
       }
     }
-  }
-
-  // get a stat from a player, or 0
-  public getStat(player: IPlayer, stat: Stat): number {
-    return player.stats[stat] || 0;
   }
 
   // flag a certain skill for a player

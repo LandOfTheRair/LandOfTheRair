@@ -5,6 +5,7 @@ import { cloneDeep, merge, random, sample } from 'lodash';
 
 import { hasEffect } from '@lotr/effects';
 import type {
+  FestivalStat,
   IAccount,
   IDynamicEvent,
   IDynamicEventHelper,
@@ -33,7 +34,7 @@ export class DynamicEventHelper
 {
   private activeEventNames: Record<string, boolean> = {};
   private activeEvents: IDynamicEvent[] = [];
-  private statTotals: Partial<Record<Stat, number>> = {};
+  private statTotals: Partial<Record<Stat | FestivalStat, number>> = {};
   private eventCooldowns: Record<string, number> = {};
 
   public async init() {
@@ -61,14 +62,15 @@ export class DynamicEventHelper
 
   public startFestival(
     account: IAccount,
-    festival: { name: string; stats: Partial<Record<Stat, number>> },
+    festival: {
+      name: string;
+      stats: Partial<Record<Stat | FestivalStat, number>>;
+    },
   ): void {
-    const oldEvent = this.game.dynamicEventHelper
-      .getEvents()
-      .find((x) => x.name === festival.name);
+    const oldEvent = this.getEvents().find((x) => x.name === festival.name);
     if (oldEvent) {
       oldEvent.endsAt += 6 * 3600 * 1000;
-      this.game.dynamicEventHelper.updateEvent(oldEvent);
+      this.updateEvent(oldEvent);
       this.game.messageHelper.broadcastSystemMessage(
         `${account.username} extended the ${oldEvent.name} by 6 hours!`,
       );
@@ -80,7 +82,7 @@ export class DynamicEventHelper
         statBoost: festival.stats,
       };
 
-      this.game.dynamicEventHelper.startEvent(newEvent);
+      this.startEvent(newEvent);
       this.game.messageHelper.broadcastSystemMessage(
         `${account.username} started the ${newEvent.name} for 6 hours!`,
       );
@@ -173,7 +175,7 @@ export class DynamicEventHelper
   }
 
   // get a stat value to boost with (not a percent)
-  public getStat(stat: Stat): number {
+  public getStat(stat: Stat | FestivalStat): number {
     return this.statTotals[stat] ?? 0;
   }
 

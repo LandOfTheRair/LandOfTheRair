@@ -9,7 +9,7 @@ import type {
 } from '@lotr/interfaces';
 
 import type { Holiday, IAI, INPC, INPCDefinition } from '@lotr/interfaces';
-import { Hostility } from '@lotr/interfaces';
+import { FestivalStat, Hostility } from '@lotr/interfaces';
 
 import { isDead } from '@lotr/characters';
 import { isHoliday } from '@lotr/content';
@@ -70,6 +70,15 @@ export class Spawner implements ISpawner {
   private npcAI: Record<string, IAI> = {}; // the ai for each npc on this spawner
   private replaceNPCTicks: Record<string, number> = {}; // the number of ticks before we replace a dead (probably green) NPC
   private replaceNPCDefs: Record<string, INPCDefinition> = {};
+
+  private get tickRate() {
+    return (
+      1 +
+      (this.game.dynamicEventHelper.getStat(
+        FestivalStat.SpawnTickMultiplierBoost,
+      ) ?? 0)
+    );
+  }
 
   public get areAnyNPCsAlive(): boolean {
     return this.npcs.some((npc) => !isDead(npc));
@@ -225,7 +234,7 @@ export class Spawner implements ISpawner {
         }
 
         let replaceNPCTicks = this.replaceNPCTicks[npc.uuid] ?? 0;
-        replaceNPCTicks++;
+        replaceNPCTicks += this.tickRate;
         this.replaceNPCTicks[npc.uuid] = replaceNPCTicks;
 
         if (replaceNPCTicks > this.respawnRate) {
@@ -479,7 +488,7 @@ export class Spawner implements ISpawner {
     // can never make elite
     if (this.eliteTickCap <= 0 || npc.hostility === Hostility.Never) return;
 
-    this.currentEliteTick++;
+    this.currentEliteTick += this.tickRate;
 
     // elites can happen randomly 1% of the time, or are guaranteed upon cap
     if (this.currentEliteTick < this.eliteTickCap || random(1, 100) !== 1) {
@@ -500,6 +509,6 @@ export class Spawner implements ISpawner {
   }
 
   public increaseTick(by = 1) {
-    this.currentTick += by;
+    this.currentTick += by * this.tickRate;
   }
 }

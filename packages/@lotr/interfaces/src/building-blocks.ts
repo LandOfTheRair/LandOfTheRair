@@ -84,6 +84,10 @@ export enum ItemSlot {
   Ammo = 'ammo',
 }
 
+export enum FestivalStat {
+  SpawnTickMultiplierBoost = 'spawnTickMultiplierBoost',
+}
+
 export enum Stat {
   // core
   STR = 'str',
