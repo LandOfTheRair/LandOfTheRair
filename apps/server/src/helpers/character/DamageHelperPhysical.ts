@@ -34,6 +34,7 @@ import {
   getStat,
   isDead,
   isPlayer,
+  isUtilizingMartialWeapon,
   mana,
   manaDamage,
 } from '@lotr/characters';
@@ -53,6 +54,7 @@ import {
   itemPropertySet,
   settingClassConfigGet,
   settingGameGet,
+  traitHasLearned,
   traitLevel,
   traitLevelValue,
 } from '@lotr/content';
@@ -740,10 +742,13 @@ export class DamageHelperPhysical extends BaseService {
       defenderScope.dodgeBonus;
 
     const defenderDodgeBoost = traitLevelValue(defender, 'MartialAgility');
-    if (
-      !defender.items.equipment[ItemSlot.RightHand] &&
-      defenderDodgeBoost > 0
-    ) {
+
+    const defWeapon = defenderScope.blocker;
+    const canUseMartialWeapon =
+      traitHasLearned(defender, 'MartialWeapons') &&
+      isUtilizingMartialWeapon(defender);
+
+    if ((!defWeapon || canUseMartialWeapon) && defenderDodgeBoost > 0) {
       defenderDodgeRoll *= 1 + defenderDodgeBoost;
     }
 
