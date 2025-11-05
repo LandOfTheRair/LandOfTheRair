@@ -1,13 +1,11 @@
-import { getSkillLevel } from '@lotr/characters';
+import { getSkillLevel, isUtilizingMartialWeapon } from '@lotr/characters';
+import { traitHasLearned } from '@lotr/content';
 import type { DamageArgs, ICharacter, IStatusEffect } from '@lotr/interfaces';
 import { ItemSlot, Skill, Stat } from '@lotr/interfaces';
 import { Effect } from '../../../../../models';
 
 export class TurtleStance extends Effect {
   public override create(char: ICharacter, effect: IStatusEffect) {
-    const rightHand = char.items.equipment[ItemSlot.RightHand];
-    if (rightHand) return;
-
     this.game.messageHelper.sendLogMessageToRadius(char, 4, {
       message: `${char.name} takes on a careful stance.`,
     });
@@ -30,7 +28,11 @@ export class TurtleStance extends Effect {
   public override tick(char: ICharacter, effect: IStatusEffect) {
     super.tick(char, effect);
 
-    if (char.items.equipment[ItemSlot.RightHand]) {
+    const weapon = char.items.equipment[ItemSlot.RightHand];
+    const canUseMartialWeapon =
+      traitHasLearned(char, 'MartialWeapons') && isUtilizingMartialWeapon(char);
+
+    if (weapon && !canUseMartialWeapon) {
       this.game.effectHelper.removeEffect(char, effect);
     }
   }

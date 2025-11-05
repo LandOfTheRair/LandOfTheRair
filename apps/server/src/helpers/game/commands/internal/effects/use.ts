@@ -81,8 +81,15 @@ export class UseCommand extends MacroCommand {
         const item = this.game.itemCreator.rerollItem(groundItem.item, false);
 
         const itemDefType = itemPropertyGet(item, 'itemClass');
+        if (!itemDefType) return;
+
         this.game.characterHelper.setEquipmentSlot(player, emptyHand, item);
-        state.removeItemFromGround(player.x, player.y, itemDefType, oldUUID);
+        state.removeItemFromGround(
+          player.x,
+          player.y,
+          itemDefType as ItemClass,
+          oldUUID,
+        );
 
         useItemInHand(emptyHand);
       } else {

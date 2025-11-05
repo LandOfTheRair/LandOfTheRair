@@ -1,9 +1,9 @@
 import { IItem, IItemDefinition, IItemRequirements, ISimpleItem } from './item';
-import { ItemClass } from './itemtypes';
+import { ItemClassType } from './itemtypes';
 
 export interface IMarketItemInfo {
   sprite: number;
-  itemClass: ItemClass;
+  itemClass: ItemClassType;
   requirements: IItemRequirements;
   uuid: string;
   cosmetic: string;

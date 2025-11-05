@@ -52,10 +52,15 @@ export function itemGetStat(item: ISimpleItem, stat: Stat): number {
 
 export function isShield(item: ISimpleItem) {
   const itemClass = itemPropertyGet(item, 'itemClass');
-  return ShieldClasses.includes(itemClass);
+  return ShieldClasses.includes(itemClass as WeaponClass);
 }
 
 export function isWeapon(item: ISimpleItem): boolean {
   const itemClass = itemPropertyGet(item, 'itemClass');
   return WeaponClasses.includes(itemClass as WeaponClass);
+}
+
+export function isMartialWeapon(item: ISimpleItem): boolean {
+  const itemType = itemPropertyGet(item, 'type');
+  return itemType === Skill.Staff;
 }

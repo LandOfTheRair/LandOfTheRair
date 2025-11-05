@@ -385,7 +385,7 @@ export class CharacterHelper extends BaseService implements ICharacterHelper {
       }
 
       // only some items give bonuses in hands
-      const itemClass = itemPropertyGet(item, 'itemClass');
+      const itemClass = itemPropertyGet(item, 'itemClass') ?? ItemClass.Rock;
       if (
         [ItemSlot.RightHand, ItemSlot.LeftHand].includes(
           itemSlot as ItemSlot,

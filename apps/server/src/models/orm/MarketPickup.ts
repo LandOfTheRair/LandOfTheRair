@@ -4,7 +4,7 @@ import type {
   IItemRequirements,
   IMarketPickup,
   ISimpleItem,
-  ItemClass,
+  ItemClassType,
 } from '@lotr/interfaces';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { BaseEntity } from '../BaseEntity';
@@ -15,7 +15,7 @@ export class MarketPickup extends BaseEntity implements IMarketPickup {
 
   @Property() itemInfo: {
     sprite: number;
-    itemClass: ItemClass;
+    itemClass: ItemClassType;
     requirements: IItemRequirements;
     uuid: string;
     cosmetic: string;

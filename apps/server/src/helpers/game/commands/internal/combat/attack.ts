@@ -69,7 +69,7 @@ export class AttackCommand extends SkillCommand {
 
     // as a last resort, we traverse the sack, then slot the first item we find in ammo, then use it
     const firstShotIndex = user.items.sack.items.findIndex((i) => {
-      const numShots = itemPropertyGet(i, 'shots');
+      const numShots = itemPropertyGet(i, 'shots') ?? 0;
       return numShots > 0;
     });
 

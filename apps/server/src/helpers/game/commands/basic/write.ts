@@ -12,8 +12,8 @@ export class Write extends MacroCommand {
     const right = player.items.equipment[ItemSlot.RightHand];
     const left = player.items.equipment[ItemSlot.LeftHand];
 
-    const rightDesc = itemPropertyGet(right, 'desc');
-    const leftName = itemPropertyGet(left, 'name');
+    const rightDesc = itemPropertyGet(right, 'desc') ?? '';
+    const leftName = itemPropertyGet(left, 'name') ?? '';
 
     if (!right) {
       return this.sendMessage(player, 'You need an item in your right hand!');

@@ -21,8 +21,8 @@ export class Multishot extends SpellCommand {
 
   override canUse(char: ICharacter, target: ICharacter): boolean {
     const weapon = char.items.equipment[ItemSlot.RightHand];
-    const canShoot = itemPropertyGet(weapon, 'canShoot');
-    return weapon && canShoot && char.items.equipment[ItemSlot.Ammo];
+    const canShoot = !!itemPropertyGet(weapon, 'canShoot');
+    return !!weapon && canShoot && !!char.items.equipment[ItemSlot.Ammo];
   }
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {

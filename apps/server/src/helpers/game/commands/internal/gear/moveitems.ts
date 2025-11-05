@@ -348,8 +348,10 @@ export class MoveItems extends MacroCommand {
   private getEquipmentSlot(
     player: IPlayer,
     item: ISimpleItem,
-  ): ItemSlot | null {
+  ): ItemSlot | undefined {
     const itemClass = itemPropertyGet(item, 'itemClass');
+    if (!itemClass) return undefined;
+
     const slot = EquipHash[itemClass];
 
     if (slot === ItemSlot.Ring) {
@@ -357,7 +359,7 @@ export class MoveItems extends MacroCommand {
         player.items.equipment[ItemSlot.Ring1] &&
         player.items.equipment[ItemSlot.Ring2]
       ) {
-        return null;
+        return undefined;
       }
       if (player.items.equipment[ItemSlot.Ring1]) return ItemSlot.Ring2;
       if (player.items.equipment[ItemSlot.Ring2]) return ItemSlot.Ring1;
@@ -365,7 +367,7 @@ export class MoveItems extends MacroCommand {
     }
 
     if (slot === ItemSlot.Armor) {
-      if (player.items.equipment[ItemSlot.Armor]) return null;
+      if (player.items.equipment[ItemSlot.Armor]) return undefined;
     }
 
     if (slot === ItemSlot.Robe) {
@@ -374,7 +376,7 @@ export class MoveItems extends MacroCommand {
         player.items.equipment[ItemSlot.Robe1] &&
         player.items.equipment[ItemSlot.Robe2]
       ) {
-        return null;
+        return undefined;
       }
 
       if (!player.items.equipment[ItemSlot.Armor]) return ItemSlot.Armor;
@@ -389,7 +391,7 @@ export class MoveItems extends MacroCommand {
       itemClass === ItemClass.Wand &&
       !traitHasLearned(player, 'MagicalStrikes')
     ) {
-      return null;
+      return undefined;
     }
 
     return slot;

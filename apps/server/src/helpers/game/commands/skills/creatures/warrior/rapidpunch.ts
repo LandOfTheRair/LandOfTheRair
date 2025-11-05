@@ -1,5 +1,5 @@
-import { getStat } from '@lotr/characters';
-import { traitLevelValue } from '@lotr/content';
+import { getStat, isUtilizingMartialWeapon } from '@lotr/characters';
+import { traitHasLearned, traitLevelValue } from '@lotr/content';
 import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
@@ -30,10 +30,14 @@ export class Rapidpunch extends SpellCommand {
     if (!args.stringArgs) return false;
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
-    if (weapon) {
+    const canUseMartialWeapon =
+      traitHasLearned(player, 'MartialWeapons') &&
+      isUtilizingMartialWeapon(player);
+
+    if (weapon && !canUseMartialWeapon) {
       return this.sendMessage(
         player,
-        'You cannot punch effectively with an item in your right hand!',
+        'You cannot maneuver effectively with that item in your right hand!',
       );
     }
 

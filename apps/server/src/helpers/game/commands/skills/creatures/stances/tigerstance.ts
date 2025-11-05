@@ -2,6 +2,8 @@ import { SpellCommand } from '@lotr/core';
 import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 
+import { isUtilizingMartialWeapon } from '@lotr/characters';
+import { traitHasLearned } from '@lotr/content';
 import { hasEffect } from '@lotr/effects';
 export class TigerStance extends SpellCommand {
   override aliases = ['tigerstance', 'art tigerstance'];
@@ -11,10 +13,15 @@ export class TigerStance extends SpellCommand {
   override spellRef = 'TigerStance';
 
   override canUse(caster: ICharacter, target: ICharacter): boolean {
+    const weapon = caster.items.equipment[ItemSlot.RightHand];
+    const canUseMartialWeapon =
+      traitHasLearned(caster, 'MartialWeapons') &&
+      isUtilizingMartialWeapon(caster);
+
     return (
       super.canUse(caster, target) &&
       !caster.effects.incoming.length &&
-      !caster.items.equipment[ItemSlot.RightHand]
+      (!weapon || canUseMartialWeapon)
     );
   }
 
@@ -25,10 +32,15 @@ export class TigerStance extends SpellCommand {
       return;
     }
 
-    if (player.items.equipment[ItemSlot.RightHand]) {
+    const weapon = player.items.equipment[ItemSlot.RightHand];
+    const canUseMartialWeapon =
+      traitHasLearned(player, 'MartialWeapons') &&
+      isUtilizingMartialWeapon(player);
+
+    if (weapon && !canUseMartialWeapon) {
       return this.sendMessage(
         player,
-        'You need an empty right hand to take a stance!',
+        'You cannot take a stance with that in your right hand!',
       );
     }
 

@@ -4,7 +4,7 @@ import type {
   IItemRequirements,
   IMarketListing,
   ISimpleItem,
-  ItemClass,
+  ItemClassType,
 } from '@lotr/interfaces';
 import { Entity, Property } from '../../helpers/core/db/decorators';
 import { BaseEntity } from '../BaseEntity';
@@ -15,7 +15,7 @@ export class MarketListing extends BaseEntity implements IMarketListing {
 
   @Property() itemInfo: {
     sprite: number;
-    itemClass: ItemClass;
+    itemClass: ItemClassType;
     requirements: IItemRequirements;
     uuid: string;
     cosmetic: string;

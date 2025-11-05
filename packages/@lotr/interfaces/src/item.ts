@@ -8,6 +8,7 @@ import {
   ItemSlot,
   RandomNumber,
   Rollable,
+  Skill,
   Stat,
   StatBlock,
 } from './building-blocks';
@@ -270,10 +271,10 @@ export type IItem = IConsumable &
     requirements?: IItemRequirements;
 
     // the type of the item (the skill it gives)
-    type: string;
+    type: Skill;
 
     // the secondary type of the item (it will also give this skill)
-    secondaryType?: string;
+    secondaryType?: Skill;
 
     // how much the item will absolutely sell for - useful for gems that have a specific value (no CHA)
     sellValue?: number;

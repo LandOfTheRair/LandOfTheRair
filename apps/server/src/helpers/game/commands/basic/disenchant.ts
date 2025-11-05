@@ -36,9 +36,9 @@ export class Disenchant extends MacroCommand {
       if (!args.stringArgs) {
         const options: string[] = uniq(
           player.items.sack.items
-            .filter((x) => itemPropertyGet(x, 'quality') >= 1)
+            .filter((x) => (itemPropertyGet(x, 'quality') ?? 0) >= 1)
             .map((x) => itemPropertyGet(x, 'itemClass')),
-        ).sort();
+        ).sort() as string[];
 
         if (options.length === 0) {
           return this.sendMessage(
@@ -72,7 +72,7 @@ export class Disenchant extends MacroCommand {
       if (args.stringArgs) {
         const items = player.items.sack.items
           .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
-          .filter((x) => itemPropertyGet(x, 'quality') >= 1)
+          .filter((x) => (itemPropertyGet(x, 'quality') ?? 0) >= 1)
           .filter((x) => itemIsOwnedBy(player, x));
 
         if (items.length === 0) {
@@ -91,7 +91,7 @@ export class Disenchant extends MacroCommand {
 
         items.forEach(
           (cItem) =>
-            (enosDust.mods.ounces += itemPropertyGet(cItem, 'quality') ?? 0),
+            (enosDust.mods.ounces! += itemPropertyGet(cItem, 'quality') ?? 0),
         );
 
         this.game.characterHelper.setEquipmentSlot(

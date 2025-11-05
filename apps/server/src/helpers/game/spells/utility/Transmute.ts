@@ -50,10 +50,10 @@ export class Transmute extends Spell {
       items[itemClass].forEach((groundItem: IGroundItem) => {
         if (groundItem.item.mods.owner) return;
 
-        const ounces = itemPropertyGet(groundItem.item, 'ounces');
+        const ounces = itemPropertyGet(groundItem.item, 'ounces') ?? 0;
         if (itemClass === ItemClass.Bottle && ounces > 0) return;
 
-        const quality = itemPropertyGet(groundItem.item, 'quality');
+        const quality = itemPropertyGet(groundItem.item, 'quality') ?? 0;
         if (quality > 0) return;
 
         removeItems.push(groundItem);

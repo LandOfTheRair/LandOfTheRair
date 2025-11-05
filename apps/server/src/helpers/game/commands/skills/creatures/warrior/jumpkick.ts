@@ -1,5 +1,5 @@
-import { getStat } from '@lotr/characters';
-import { traitLevel } from '@lotr/content';
+import { getStat, isUtilizingMartialWeapon } from '@lotr/characters';
+import { traitHasLearned, traitLevel } from '@lotr/content';
 import { SpellCommand } from '@lotr/core';
 import type {
   ICharacter,
@@ -29,10 +29,14 @@ export class Jumpkick extends SpellCommand {
     if (!args.stringArgs) return false;
 
     const weapon = player.items.equipment[ItemSlot.RightHand];
-    if (weapon) {
+    const canUseMartialWeapon =
+      traitHasLearned(player, 'MartialWeapons') &&
+      isUtilizingMartialWeapon(player);
+
+    if (weapon && !canUseMartialWeapon) {
       return this.sendMessage(
         player,
-        'You cannot maneuver effectively with an item in your right hand!',
+        'You cannot maneuver effectively with that item in your right hand!',
       );
     }
 

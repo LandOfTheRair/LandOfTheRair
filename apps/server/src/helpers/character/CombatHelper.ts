@@ -285,7 +285,8 @@ export class CombatHelper extends BaseService {
     const otherClass = isHeal ? MessageType.Heal : MessageType.Hit;
     const damageType = isMelee ? MessageType.Melee : MessageType.Magic;
 
-    const itemClass = itemPropertyGet(attackerWeapon, 'itemClass');
+    const itemClass =
+      itemPropertyGet(attackerWeapon, 'itemClass') ?? ItemClass.Rock;
 
     // tell the attacker something's going on
     if (attackerDamageMessage && attacker) {
@@ -544,7 +545,7 @@ export class CombatHelper extends BaseService {
         character,
       );
       this.game.messageHelper.sendLogMessageToPlayer(character, {
-        message: `Your ${itemPropertyGet(itemToDamage, 'itemClass').toLowerCase()} takes corrosion damage!`,
+        message: `Your ${itemPropertyGet(itemToDamage, 'itemClass')?.toLowerCase() ?? 'item'} takes corrosion damage!`,
       });
     }
   }

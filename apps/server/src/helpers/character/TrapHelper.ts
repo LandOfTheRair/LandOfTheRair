@@ -32,6 +32,8 @@ export class TrapHelper extends BaseService {
 
   public triggerTrap(target: ICharacter, trap: IGroundItem) {
     const trapEffect = itemPropertyGet(trap.item, 'trapEffect');
+    if (!trapEffect) return;
+
     if (
       trap.item.mods.trapSetBy === target.uuid &&
       !trapEffect.extra?.isPositive
@@ -54,7 +56,7 @@ export class TrapHelper extends BaseService {
   }
 
   public castEffectFromTrap(target: ICharacter, trap: IGroundItem) {
-    const trapEffect: IItemEffect = itemPropertyGet(trap.item, 'trapEffect');
+    const trapEffect = itemPropertyGet(trap.item, 'trapEffect');
     if (!trapEffect) return;
 
     const mapState = worldGetMapAndState(target.map)?.state;
@@ -94,9 +96,11 @@ export class TrapHelper extends BaseService {
     trap.mods.trapSetSkill = getSkillLevel(placer, Skill.Thievery);
     trap.mods.trapUses = 1 + traitLevelValue(placer, 'ReusableTraps');
 
-    const trapEffect: IItemEffect = cloneDeep(
-      itemPropertyGet(trap, 'trapEffect'),
-    );
+    const trapEffectData = itemPropertyGet(trap, 'trapEffect');
+    if (!trapEffectData) return;
+
+    const trapEffect: IItemEffect = cloneDeep(trapEffectData);
+
     trapEffect.potency *= 1 + traitLevelValue(placer, 'StrongerTraps');
     trapEffect.range = trapEffect.range ?? 0;
     trap.mods.trapEffect = trapEffect;

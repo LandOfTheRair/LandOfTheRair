@@ -63,12 +63,15 @@ export class Tear extends MacroCommand {
           player.items.sack.items
             .filter(
               (x) =>
-                itemPropertyGet(x, 'quality') >= 1 ||
+                (itemPropertyGet(x, 'quality') ?? 0) >= 1 ||
                 itemPropertyGet(x, 'itemClass') === ItemClass.Flower,
             )
-            .filter((x) => allClasses.includes(itemPropertyGet(x, 'itemClass')))
+            .filter((x) =>
+              allClasses.includes(itemPropertyGet(x, 'itemClass') as MiscClass),
+            )
+            .filter(Boolean)
             .map((x) => itemPropertyGet(x, 'itemClass')),
-        ).sort();
+        ).sort() as string[];
 
         if (options.length === 0) {
           return this.sendMessage(
@@ -100,11 +103,13 @@ export class Tear extends MacroCommand {
       // DE all items
       if (args.stringArgs) {
         const items = player.items.sack.items
-          .filter((x) => allClasses.includes(itemPropertyGet(x, 'itemClass')))
+          .filter((x) =>
+            allClasses.includes(itemPropertyGet(x, 'itemClass') as MiscClass),
+          )
           .filter((x) => itemPropertyGet(x, 'itemClass') === args.stringArgs)
           .filter(
             (x) =>
-              itemPropertyGet(x, 'quality') >= 1 ||
+              (itemPropertyGet(x, 'quality') ?? 0) >= 1 ||
               itemPropertyGet(x, 'itemClass') === ItemClass.Flower,
           )
           .filter((x) => itemIsOwnedBy(player, x));

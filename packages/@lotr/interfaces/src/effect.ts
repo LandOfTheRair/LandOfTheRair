@@ -34,6 +34,9 @@ export interface IItemEffectExtra {
 
   // the stats given (food)
   statChanges?: StatBlock;
+
+  // if the effect is a good one (trap)
+  isPositive?: boolean;
 }
 
 export interface IItemEffect {

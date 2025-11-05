@@ -1,4 +1,4 @@
-import type { ICharacter, IPlayer } from '@lotr/interfaces';
+import type { ICharacter } from '@lotr/interfaces';
 import { traitGet } from './traits';
 
 // the level of the trait for the character
@@ -7,7 +7,7 @@ export function traitLevel(character: ICharacter, trait: string): number {
 }
 
 // whether or not the player has learned the trait
-export function traitHasLearned(player: IPlayer, trait: string): boolean {
+export function traitHasLearned(player: ICharacter, trait: string): boolean {
   return traitLevel(player, trait) > 0;
 }
 

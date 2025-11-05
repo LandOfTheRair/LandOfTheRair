@@ -275,7 +275,7 @@ export class BanditWaves extends Effect {
         item,
       );
 
-      const itemClass = itemPropertyGet(item, 'itemClass');
+      const itemClass = itemPropertyGet(item, 'itemClass') ?? ItemClass.Rock;
 
       this.game.messageHelper.sendMessageToMap(char.map, {
         message: `Thanks for saving me! I found this ${itemClass.toLowerCase()} on one of the bandits, you can have it!`,

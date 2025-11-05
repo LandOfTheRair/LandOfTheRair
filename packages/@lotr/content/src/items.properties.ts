@@ -2,10 +2,10 @@ import type { IItem, ISimpleItem } from '@lotr/interfaces';
 import { isUndefined } from 'lodash';
 import { itemGet } from './items';
 
-export function itemPropertyGet(
+export function itemPropertyGet<T extends keyof IItem>(
   item: ISimpleItem | undefined,
-  prop: keyof IItem,
-): any | undefined {
+  prop: T,
+): IItem[T] | undefined {
   if (!item) return undefined;
 
   if (!isUndefined(item.mods[prop])) return item.mods[prop];
@@ -23,7 +23,7 @@ export function itemPropertiesGet(
   props: Array<keyof IItem>,
 ): Partial<IItem> {
   const hash: Partial<IItem> = {};
-  props.forEach((prop) => (hash[prop] = itemPropertyGet(item, prop)));
+  props.forEach((prop) => (hash[prop] = itemPropertyGet(item, prop) as any));
   return hash;
 }
 

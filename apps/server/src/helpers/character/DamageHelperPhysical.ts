@@ -766,7 +766,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     if (forceMiss || dodgeRoll < 0 || attackDistance < distBetween) {
-      const itemClass = itemPropertyGet(weapon, 'itemClass');
+      const itemClass = itemPropertyGet(weapon, 'itemClass') ?? ItemClass.Rock;
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -847,7 +847,7 @@ export class DamageHelperPhysical extends BaseService {
     const acRoll = random(defenderACRoll, attackerACRoll);
 
     if (acRoll < 0) {
-      const itemClass = itemPropertyGet(weapon, 'itemClass');
+      const itemClass = itemPropertyGet(weapon, 'itemClass') ?? ItemClass.Rock;
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -947,11 +947,9 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseBlocker) {
-      const itemClass = itemPropertyGet(weapon, 'itemClass');
-      const defenderItemClass = itemPropertyGet(
-        defenderScope.blocker,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(weapon, 'itemClass') ?? ItemClass.Rock;
+      const defenderItemClass =
+        itemPropertyGet(defenderScope.blocker, 'itemClass') ?? ItemClass.Rock;
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -1056,7 +1054,7 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseShield) {
-      const itemClass = itemPropertyGet(weapon, 'itemClass');
+      const itemClass = itemPropertyGet(weapon, 'itemClass') ?? ItemClass.Rock;
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -1161,11 +1159,9 @@ export class DamageHelperPhysical extends BaseService {
     );
 
     if (acRoll < 0 && canDefenderUseOffhand) {
-      const itemClass = itemPropertyGet(weapon, 'itemClass');
-      const defenderItemClass = itemPropertyGet(
-        defenderScope.offhand,
-        'itemClass',
-      );
+      const itemClass = itemPropertyGet(weapon, 'itemClass') ?? ItemClass.Rock;
+      const defenderItemClass =
+        itemPropertyGet(defenderScope.offhand, 'itemClass') ?? ItemClass.Rock;
 
       this.game.combatHelper.combatEffect(
         attacker,
@@ -1236,7 +1232,7 @@ export class DamageHelperPhysical extends BaseService {
     }
 
     const hasFleetOfFoot = hasEffect(defender, 'FleetOfFoot');
-    const proneChance = itemPropertyGet(attackerWeapon, 'proneChance');
+    const proneChance = itemPropertyGet(attackerWeapon, 'proneChance') ?? 0;
 
     // if we can prone a target, we prone a target
     if (!hasFleetOfFoot && proneChance > 0 && rollInOneHundred(proneChance)) {
@@ -1683,7 +1679,7 @@ export class DamageHelperPhysical extends BaseService {
       (canShoot && ammo && ammoItemClass !== ItemClass.Wand) ||
       (!canShoot && ammo && ammoItemClass === ItemClass.Wand)
     ) {
-      const ammoStrikeEffect: IItemEffect = itemPropertyGet(
+      const ammoStrikeEffect: IItemEffect | undefined = itemPropertyGet(
         ammo,
         'strikeEffect',
       );
@@ -1701,12 +1697,12 @@ export class DamageHelperPhysical extends BaseService {
     // if it has an encrust strike effect, we apply it
     if (encrustItem) {
       const realEncrustItem = this.game.itemCreator.getSimpleItem(encrustItem);
-      const encrustGive: IItemEncrust = itemPropertyGet(
+      const encrustGive: IItemEncrust | undefined = itemPropertyGet(
         realEncrustItem,
         'encrustGive',
       );
 
-      if (encrustGive.strikeEffect) {
+      if (encrustGive?.strikeEffect) {
         this.tryApplyItemEffect(attacker, defender, encrustGive.strikeEffect);
       }
     }

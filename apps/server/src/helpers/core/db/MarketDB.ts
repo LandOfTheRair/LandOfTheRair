@@ -7,7 +7,7 @@ import type {
   IPlayer,
   ISimpleItem,
 } from '@lotr/interfaces';
-import { Currency } from '@lotr/interfaces';
+import { Currency, ItemClass } from '@lotr/interfaces';
 import { calculateListingFee } from '@lotr/shared';
 import { Injectable } from 'injection-js';
 import { ObjectId } from 'mongodb';
@@ -82,10 +82,10 @@ export class MarketDB extends BaseService {
 
     listing.itemInfo = {
       uuid: item.uuid,
-      sprite: itemPropertyGet(item, 'sprite'),
-      itemClass: itemPropertyGet(item, 'itemClass'),
-      requirements: itemPropertyGet(item, 'requirements'),
-      cosmetic: itemPropertyGet(item, 'cosmetic'),
+      sprite: itemPropertyGet(item, 'sprite') ?? 0,
+      itemClass: itemPropertyGet(item, 'itemClass') ?? ItemClass.Rock,
+      requirements: itemPropertyGet(item, 'requirements') ?? {},
+      cosmetic: itemPropertyGet(item, 'cosmetic')?.name ?? '',
       condition: itemPropertyGet(item, 'condition') ?? 20000,
       itemOverride: Object.assign({}, itemDefinition, item.mods, {
         mods: item.mods || {},
@@ -147,9 +147,9 @@ export class MarketDB extends BaseService {
         condition: 20000,
         cosmetic: '',
         uuid: item.uuid,
-        sprite: itemPropertyGet(item, 'sprite'),
-        itemClass: itemPropertyGet(item, 'itemClass'),
-        requirements: itemPropertyGet(item, 'requirements'),
+        sprite: itemPropertyGet(item, 'sprite') ?? 0,
+        itemClass: itemPropertyGet(item, 'itemClass') ?? ItemClass.Rock,
+        requirements: itemPropertyGet(item, 'requirements') ?? {},
         itemOverride: Object.assign({}, itemDefinition, item),
       };
 

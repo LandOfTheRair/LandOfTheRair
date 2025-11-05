@@ -153,10 +153,7 @@ export class ItemHelper extends BaseService implements IItemHelper {
     player: IPlayer,
     item: ISimpleItem,
   ): string {
-    const requirements: IItemRequirements = itemPropertyGet(
-      item,
-      'requirements',
-    );
+    const requirements = itemPropertyGet(item, 'requirements');
     if (requirements) {
       if (
         requirements.alignment &&

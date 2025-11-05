@@ -1,4 +1,6 @@
+import { isMartialWeapon } from '@lotr/content';
 import { ItemSlot, type ICharacter, type IPlayer } from '@lotr/interfaces';
+import { equipmentItemGet } from './equipment';
 
 // check if this player is holding something
 export function hasHeldItem(
@@ -45,4 +47,9 @@ export function getEmptyHand(char: ICharacter): ItemSlot | null {
   if (!char.items.equipment[ItemSlot.RightHand]) return ItemSlot.RightHand;
   if (!char.items.equipment[ItemSlot.LeftHand]) return ItemSlot.LeftHand;
   return null;
+}
+
+export function isUtilizingMartialWeapon(character: ICharacter): boolean {
+  const item = equipmentItemGet(character, ItemSlot.RightHand);
+  return !item || isMartialWeapon(item);
 }

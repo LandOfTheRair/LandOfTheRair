@@ -49,7 +49,7 @@ export class Shatter extends MacroCommand {
           player.items.sack.items
             .filter((x) => itemPropertyGet(x, 'itemClass') === ItemClass.Gem)
             .map((x) => itemPropertyGet(x, 'itemClass')),
-        ).sort();
+        ).sort() as string[];
 
         if (options.length === 0) {
           return this.sendMessage(

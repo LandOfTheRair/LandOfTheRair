@@ -28,7 +28,6 @@ import {
   ItemClass,
   ItemSlot,
   NPCTriggerType,
-  ShieldClasses,
   Stat,
 } from '@lotr/interfaces';
 
@@ -43,7 +42,7 @@ import {
   manaDamage,
   manaToFull,
 } from '@lotr/characters';
-import { itemPropertyGet } from '@lotr/content';
+import { isShield, itemPropertyGet } from '@lotr/content';
 import { consoleWarn, logCrashContextEntry } from '@lotr/logger';
 import { oneInX, rollInOneHundred } from '@lotr/rng';
 import {
@@ -557,11 +556,9 @@ export class DefaultAIBehavior implements IAI {
       })
       .find((groundItem) => {
         const item = groundItem.item;
-        const itemClass = itemPropertyGet(item, 'itemClass');
         const isOffhand = itemPropertyGet(item, 'offhand');
-        const isShield = ShieldClasses.includes(itemClass);
 
-        return isOffhand || isShield;
+        return isOffhand || isShield(item);
       });
 
     if (!suitableItem) return;
