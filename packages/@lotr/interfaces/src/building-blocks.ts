@@ -261,7 +261,7 @@ export enum LearnedSpell {
 }
 
 export enum Currency {
-  January = 'new year coins',
+  January = 'confetti coins',
   February = 'heart coins',
   March = 'spring coins',
   April = 'rain coins',
