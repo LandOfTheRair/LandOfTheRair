@@ -540,11 +540,13 @@ export class DefaultAIBehavior implements IAI {
     if (isTwoHanded) return;
 
     // Get all items from ground at NPC's position
+    // Note: passing undefined as any matches the interface signature which accepts any
+    // When itemClass is falsy, all item classes are returned
     const groundItems = this.game.groundManager.getItemsFromGround(
       npc.map,
       npc.x,
       npc.y,
-      undefined as any, // Get all item classes
+      undefined as any,
     );
 
     if (groundItems.length === 0) return;
