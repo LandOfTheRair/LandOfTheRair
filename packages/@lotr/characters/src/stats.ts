@@ -4,7 +4,7 @@ import {
   traitGet,
   traitLevelValue,
 } from '@lotr/content';
-import type { ICharacter, StatBlock } from '@lotr/interfaces';
+import type { ArmorClass, ICharacter, StatBlock } from '@lotr/interfaces';
 import { ItemClass, ItemSlot, Stat } from '@lotr/interfaces';
 import { equipmentItemGet } from './equipment';
 import { isPlayer } from './player';
@@ -88,11 +88,13 @@ export function characterStatValueFromTraits(
       : 1;
 
     const item = equipmentItemGet(character, ItemSlot.Armor);
-    const itemClass = itemPropertyGet(item, 'itemClass');
+    const itemClass = itemPropertyGet(item, 'itemClass') ?? ItemClass.Rock;
 
     if (
       !item ||
-      [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(itemClass)
+      [ItemClass.Cloak, ItemClass.Robe, ItemClass.Fur].includes(
+        itemClass as ArmorClass,
+      )
     ) {
       stats[Stat.Mitigation] += savantBoost * mainHandItemMultiplier;
 
