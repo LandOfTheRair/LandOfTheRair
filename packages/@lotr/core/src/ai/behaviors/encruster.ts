@@ -259,7 +259,8 @@ export class EncrusterBehavior implements IAIBehavior {
           'encrustGive',
           'requirements',
         ]);
-        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
+        const rightRequirements =
+          itemPropertyGet(rightHand, 'requirements') ?? {};
 
         const encrustGemLevel = leftRequirements?.level ?? 0;
         const encrustCostPerlevel =

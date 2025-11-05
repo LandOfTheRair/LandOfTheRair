@@ -986,11 +986,13 @@ export class MapState implements IMapState {
   ): void {
     items.forEach((item) => {
       const itemClass = itemPropertyGet(item.item, 'itemClass');
+      if (!itemClass) return;
+
       this.game.groundManager.removeItemFromGround(
         this.map.name,
         x,
         y,
-        itemClass,
+        itemClass as ItemClass,
         item.item.uuid,
         item.count,
       );

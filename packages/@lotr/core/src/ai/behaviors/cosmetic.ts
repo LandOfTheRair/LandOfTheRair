@@ -95,7 +95,7 @@ export class CosmeticBehavior implements IAIBehavior {
 
         const cosmetic = itemPropertyGet(scroll, 'cosmetic');
 
-        item.mods.cosmetic = { name: cosmetic.name };
+        item.mods.cosmetic = { name: cosmetic?.name };
         game.characterHelper.setLeftHand(player, undefined);
 
         return 'Done! Look at how cool your item looks!';

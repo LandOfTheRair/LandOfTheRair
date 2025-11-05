@@ -1,6 +1,7 @@
 import type { Parser } from 'muud';
 
 import type {
+  ArmorClass,
   IAIBehavior,
   IDialogChatAction,
   INPC,
@@ -111,7 +112,8 @@ export class FurUpgraderBehavior implements IAIBehavior {
         const leftHand = player.items.equipment[ItemSlot.LeftHand];
         if (!leftHand) return 'Your left hand must have a fur!';
 
-        const rightItemClass = itemPropertyGet(rightHand, 'itemClass');
+        const rightItemClass =
+          itemPropertyGet(rightHand, 'itemClass') ?? ItemClass.Rock;
 
         const { requirements, itemClass } = itemPropertiesGet(leftHand, [
           'itemClass',
@@ -134,7 +136,7 @@ export class FurUpgraderBehavior implements IAIBehavior {
           return 'I cannot upgrade that item for you!';
         }
         if (itemClass !== ItemClass.Fur) return 'That material is not a fur!';
-        if (!ArmorClasses.includes(rightItemClass)) {
+        if (!ArmorClasses.includes(rightItemClass as ArmorClass)) {
           return 'That item is not armor!';
         }
         if ((requirements?.level ?? 0) > player.level) {
@@ -142,7 +144,8 @@ export class FurUpgraderBehavior implements IAIBehavior {
         }
 
         const leftRequirements = itemPropertyGet(leftHand, 'requirements');
-        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
+        const rightRequirements =
+          itemPropertyGet(rightHand, 'requirements') ?? {};
 
         itemPropertySet(
           rightHand,

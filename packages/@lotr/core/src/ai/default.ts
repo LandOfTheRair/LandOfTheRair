@@ -568,7 +568,7 @@ export class DefaultAIBehavior implements IAI {
       npc.map,
       npc.x,
       npc.y,
-      itemPropertyGet(suitableItem.item, 'itemClass'),
+      itemPropertyGet(suitableItem.item, 'itemClass') as ItemClass,
       suitableItem.item.uuid,
     );
 

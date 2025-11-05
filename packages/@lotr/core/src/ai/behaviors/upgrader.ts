@@ -126,7 +126,8 @@ export class UpgraderBehavior implements IAIBehavior {
         game.itemHelper.upgradeItem(rightHand, leftHand.name, true);
 
         const leftRequirements = itemPropertyGet(leftHand, 'requirements');
-        const rightRequirements = itemPropertyGet(rightHand, 'requirements');
+        const rightRequirements =
+          itemPropertyGet(rightHand, 'requirements') ?? {};
 
         if (
           leftRequirements?.baseClass &&

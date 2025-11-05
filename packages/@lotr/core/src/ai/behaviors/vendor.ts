@@ -145,7 +145,7 @@ export class VendorBehavior implements IAIBehavior {
 
           const options = uniq(
             player.items.sack.items.map((x) => itemPropertyGet(x, 'itemClass')),
-          ).sort();
+          ).sort() as string[];
 
           const formattedChat: IDialogChatAction = {
             message,
