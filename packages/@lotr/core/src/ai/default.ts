@@ -540,26 +540,29 @@ export class DefaultAIBehavior implements IAI {
     if (isTwoHanded) return;
 
     // Get all items from ground at NPC's position
-    // Note: passing null as any matches the interface signature which accepts any
-    // When itemClass is falsy, all item classes are returned
-    const groundItems = this.game.groundManager.getItemsFromGround(
+    const groundItems = this.game.groundManager.getAllItemsFromGroundAtPosition(
       npc.map,
       npc.x,
       npc.y,
-      null as any,
     );
 
     if (groundItems.length === 0) return;
 
     // Look for items that are offhand or shields
-    const suitableItem = groundItems.find((groundItem) => {
-      const item = groundItem.item;
-      const itemClass = itemPropertyGet(item, 'itemClass');
-      const isOffhand = itemPropertyGet(item, 'offhand');
-      const isShield = ShieldClasses.includes(itemClass);
+    const suitableItem = groundItems
+      .filter((f) => {
+        const item = f.item;
+        const isOwned = itemPropertyGet(item, 'owner');
+        return !isOwned;
+      })
+      .find((groundItem) => {
+        const item = groundItem.item;
+        const itemClass = itemPropertyGet(item, 'itemClass');
+        const isOffhand = itemPropertyGet(item, 'offhand');
+        const isShield = ShieldClasses.includes(itemClass);
 
-      return isOffhand || isShield;
-    });
+        return isOffhand || isShield;
+      });
 
     if (!suitableItem) return;
 
@@ -573,6 +576,12 @@ export class DefaultAIBehavior implements IAI {
     );
 
     this.game.characterHelper.setLeftHand(npc, suitableItem.item);
+
+    npc.copyDrops ??= [];
+    npc.copyDrops.push({
+      result: 'equipment.leftHand',
+      chance: -1,
+    });
   }
 
   private findValidAllyInView(skillRef: SkillCommand): ICharacter | undefined {

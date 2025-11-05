@@ -1004,28 +1004,37 @@ export interface IGroundManager extends IGameService {
   tick(timer: any): void;
   saveAllGround(): Promise<void>;
   getMapSpawners(mapName: string): ISerializableSpawner[];
-  getGroundAround(mapName: string, x: number, y: number, radius: number): any;
+  getGroundAround(
+    mapName: string,
+    x: number,
+    y: number,
+    radius: number,
+  ): IGround;
   addItemToGround(
     mapName: string,
     x: number,
     y: number,
-    item: any,
+    item: ISimpleItem,
     forceSave?: boolean,
   ): void;
-  getEntireGround(mapName: string, x: number, y: number): any;
+  getEntireGround(
+    mapName: string,
+    x: number,
+    y: number,
+  ): Record<ItemClass, IGroundItem[]>;
   getItemsFromGround(
     mapName: string,
     x: number,
     y: number,
-    itemClass: any,
+    itemClass: ItemClass,
     uuid?: string,
     allowTraps?: boolean,
-  ): any[];
+  ): IGroundItem[];
   removeItemFromGround(
     mapName: string,
     x: number,
     y: number,
-    itemClass: any,
+    itemClass: ItemClass,
     uuid: string,
     count?: number,
   ): void;
@@ -1035,8 +1044,13 @@ export interface IGroundManager extends IGameService {
   removeGround(mapName: string): Promise<void>;
   removeGroundsForParties(partyName: string): Promise<void>;
   lootChest(map: string, chestName: string): void;
-  getTrapsFromGround(mapName: string, x: number, y: number): any[];
-  getAllItemsFromGround(mapName: string): any[];
+  getTrapsFromGround(mapName: string, x: number, y: number): IGroundItem[];
+  getAllItemsFromGround(mapName: string): IGroundItem[];
+  getAllItemsFromGroundAtPosition(
+    mapName: string,
+    x: number,
+    y: number,
+  ): IGroundItem[];
   isChestLooted(mapName: string, chestName: string): boolean;
 }
 
