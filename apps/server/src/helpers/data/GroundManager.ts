@@ -378,17 +378,28 @@ export class GroundManager extends BaseService {
     return [itemStack];
   }
 
+  public getAllItemsFromGroundAtPosition(
+    mapName: string,
+    x: number,
+    y: number,
+  ): IGroundItem[] {
+    const items: IGroundItem[] = [];
+    Object.keys(this.ground[mapName]?.[x]?.[y] || {}).forEach((itemClass) => {
+      (this.ground[mapName][x][y][itemClass] || []).forEach(
+        (item: IGroundItem) => {
+          items.push(item);
+        },
+      );
+    });
+
+    return items;
+  }
+
   public getAllItemsFromGround(mapName: string): IGroundItem[] {
     const items: IGroundItem[] = [];
     Object.keys(this.ground[mapName] || {}).forEach((x) => {
       Object.keys(this.ground[mapName][x] || {}).forEach((y) => {
-        Object.keys(this.ground[mapName][x][y] || {}).forEach((itemClass) => {
-          (this.ground[mapName][x][y][itemClass] || []).forEach(
-            (item: IGroundItem) => {
-              items.push(item);
-            },
-          );
-        });
+        items.push(...this.getAllItemsFromGroundAtPosition(mapName, +x, +y));
       });
     });
 
