@@ -360,7 +360,9 @@ describe('DefaultAIBehavior - checkGroundForItems', () => {
       ai.tick();
 
       expect(mockGame.characterHelper.setLeftHand).not.toHaveBeenCalled();
-      expect(mockGame.groundManager.removeItemFromGround).not.toHaveBeenCalled();
+      expect(
+        mockGame.groundManager.removeItemFromGround,
+      ).not.toHaveBeenCalled();
     });
 
     it('should pick up the first suitable item when multiple items are on ground', async () => {
@@ -437,7 +439,9 @@ describe('DefaultAIBehavior - checkGroundForItems', () => {
       ai.tick();
 
       expect(mockGame.characterHelper.setLeftHand).not.toHaveBeenCalled();
-      expect(mockGame.groundManager.removeItemFromGround).not.toHaveBeenCalled();
+      expect(
+        mockGame.groundManager.removeItemFromGround,
+      ).not.toHaveBeenCalled();
     });
   });
 });

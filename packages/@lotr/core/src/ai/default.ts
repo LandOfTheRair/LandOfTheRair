@@ -527,18 +527,18 @@ export class DefaultAIBehavior implements IAI {
 
   private checkGroundForItems() {
     const npc = this.npc;
-    
+
     // Check if NPC has a right hand item and no left hand item
     const rightHand = npc.items.equipment[ItemSlot.RightHand];
     const leftHand = npc.items.equipment[ItemSlot.LeftHand];
-    
+
     // Only proceed if we have a right hand item and no left hand item
     if (!rightHand || leftHand) return;
-    
+
     // Don't pick up if right hand is two-handed
     const isTwoHanded = itemPropertyGet(rightHand, 'twoHanded');
     if (isTwoHanded) return;
-    
+
     // Get all items from ground at NPC's position
     const groundItems = this.game.groundManager.getItemsFromGround(
       npc.map,
@@ -546,21 +546,21 @@ export class DefaultAIBehavior implements IAI {
       npc.y,
       undefined as any, // Get all item classes
     );
-    
+
     if (groundItems.length === 0) return;
-    
+
     // Look for items that are offhand or shields
     const suitableItem = groundItems.find((groundItem) => {
       const item = groundItem.item;
       const itemClass = itemPropertyGet(item, 'itemClass');
       const isOffhand = itemPropertyGet(item, 'offhand');
       const isShield = ShieldClasses.includes(itemClass);
-      
+
       return isOffhand || isShield;
     });
-    
+
     if (!suitableItem) return;
-    
+
     // Pick up the item and equip it in left hand
     this.game.groundManager.removeItemFromGround(
       npc.map,
@@ -569,7 +569,7 @@ export class DefaultAIBehavior implements IAI {
       itemPropertyGet(suitableItem.item, 'itemClass'),
       suitableItem.item.uuid,
     );
-    
+
     this.game.characterHelper.setLeftHand(npc, suitableItem.item);
   }
 
