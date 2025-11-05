@@ -1,9 +1,4 @@
-import type {
-  ICharacter,
-  IItemRequirements,
-  IPlayer,
-  ISimpleItem,
-} from '@lotr/interfaces';
+import type { ICharacter, IPlayer, ISimpleItem } from '@lotr/interfaces';
 import { Allegiance } from '@lotr/interfaces';
 import { itemPropertyGet, itemPropertySet } from './items.properties';
 
@@ -14,7 +9,7 @@ export function itemSetOwner(player: IPlayer, item: ISimpleItem): void {
 
 // check if an item is broken
 export function itemIsBroken(item: ISimpleItem) {
-  const condition = itemPropertyGet(item, 'condition');
+  const condition = itemPropertyGet(item, 'condition') ?? 0;
   return condition <= 0;
 }
 
@@ -49,7 +44,7 @@ export function itemCanGetBenefitsFrom(
   // GMs can wear everything disregarding requirements
   if (char.allegiance === Allegiance.GM) return true;
 
-  const requirements: IItemRequirements = itemPropertyGet(item, 'requirements');
+  const requirements = itemPropertyGet(item, 'requirements');
   if (requirements) {
     if (requirements.alignment && char.alignment !== requirements.alignment) {
       return false;
