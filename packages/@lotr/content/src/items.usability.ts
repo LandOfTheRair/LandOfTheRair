@@ -9,7 +9,7 @@ export function itemSetOwner(player: IPlayer, item: ISimpleItem): void {
 
 // check if an item is broken
 export function itemIsBroken(item: ISimpleItem) {
-  const condition = itemPropertyGet(item, 'condition') ?? 0;
+  const condition = itemPropertyGet(item, 'condition') ?? 20000;
   return condition <= 0;
 }
 
@@ -56,4 +56,24 @@ export function itemCanGetBenefitsFrom(
   }
 
   return true;
+}
+
+export function reasonCantGetBenefitsFromItem(
+  player: IPlayer,
+  item: ISimpleItem,
+): string {
+  const requirements = itemPropertyGet(item, 'requirements');
+  if (requirements) {
+    if (requirements.alignment && player.alignment !== requirements.alignment) {
+      return 'Your alignment does not match this items!';
+    }
+    if (requirements.baseClass && player.baseClass !== requirements.baseClass) {
+      return 'You are not the correct class for this item!';
+    }
+    if (requirements.level && player.level < requirements.level) {
+      return 'You are not high enough level for this item!';
+    }
+  }
+
+  return 'You cannot use this item. Who knows why, the item must not like you?';
 }
