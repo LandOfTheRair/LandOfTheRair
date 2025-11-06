@@ -220,6 +220,34 @@ export class SpellManager extends BaseService {
     delete character.spellCooldowns?.[spellName];
   }
 
+  public castSpellVFX(
+    spell: string,
+    caster: ICharacter | undefined,
+    x: number,
+    y: number,
+    map: string,
+  ) {
+    const spellData = this.getSpellData(spell, `CS:${caster?.name}`);
+    if (!spellData) {
+      consoleError(
+        'SpellManager',
+        new Error(`Tried to cast invalid spell ${spell}.`),
+      );
+      return;
+    }
+
+    const spellRef = this.getSpell(spell);
+    if (!spellRef) {
+      consoleError(
+        'SpellManager',
+        new Error(`Tried to ref invalid spell ${spell}.`),
+      );
+      return;
+    }
+
+    spellRef.showAoEVFX(caster, x, y, map);
+  }
+
   // cast a spell!
   public castSpell(
     spell: string,

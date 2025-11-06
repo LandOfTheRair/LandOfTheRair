@@ -371,6 +371,7 @@ export class SpellCommand extends SkillCommand {
 
     // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
+      !args.primaryTarget &&
       caster &&
       isPlayer(caster) &&
       !spellData.spellMeta.targetsParty &&
@@ -384,6 +385,17 @@ export class SpellCommand extends SkillCommand {
       );
       if ((primaryTarget as ICharacter)?.name) {
         targets = [primaryTarget as ICharacter];
+      }
+    }
+
+    // visually cast the spell (if applicable)
+    if ((caster || primaryTarget) && spellData.spellMeta.aoe) {
+      const x = primaryTarget?.x ?? caster?.x ?? 0;
+      const y = primaryTarget?.y ?? caster?.y ?? 0;
+      const map = primaryTarget?.map ?? caster?.map ?? '';
+
+      if (x > 0 && y > 0 && map) {
+        this.game.spellManager.castSpellVFX(this.spellRef, caster, x, y, map);
       }
     }
 
@@ -447,17 +459,6 @@ export class SpellCommand extends SkillCommand {
     });
 
     if (didHit.some((hit) => !hit)) return false;
-
-    // visually cast the spell anyway
-    if ((caster || primaryTarget) && spellData.spellMeta.aoe) {
-      const x = primaryTarget?.x ?? caster?.x ?? 0;
-      const y = primaryTarget?.y ?? caster?.y ?? 0;
-      const map = primaryTarget?.map ?? caster?.map ?? '';
-
-      if (x > 0 && y > 0 && map) {
-        return this.castSpellAt(caster, undefined, args, { x, y, map });
-      }
-    }
 
     return true;
   }

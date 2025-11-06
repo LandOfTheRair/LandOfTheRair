@@ -159,4 +159,11 @@ export class Spell implements BaseSpell {
   ): number {
     return this.game.spellManager.getPotency(caster, target, spellData);
   }
+
+  public showAoEVFX(
+    caster: ICharacter | undefined,
+    x: number,
+    y: number,
+    map: string,
+  ): void {}
 }

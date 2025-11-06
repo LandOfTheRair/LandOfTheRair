@@ -1072,6 +1072,14 @@ export interface ISpellManager extends IGameService {
     originalArgs?: Partial<IMacroCommandArgs>,
     targetsPosition?: { x: number; y: number; map: string },
   ): void;
+
+  castSpellVFX(
+    spell: string,
+    caster: ICharacter | undefined,
+    x: number,
+    y: number,
+    map: string,
+  ): void;
 }
 
 export interface ILockerHelper extends IGameService {

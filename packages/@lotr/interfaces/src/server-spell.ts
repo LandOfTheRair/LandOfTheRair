@@ -27,6 +27,12 @@ export interface BaseSpell {
     target: ICharacter | undefined,
     spellCastArgs: SpellCastArgs,
   ): void;
+  showAoEVFX(
+    caster: ICharacter | undefined,
+    x: number,
+    y: number,
+    map: string,
+  ): void;
 }
 
 export interface SpellCastArgs {

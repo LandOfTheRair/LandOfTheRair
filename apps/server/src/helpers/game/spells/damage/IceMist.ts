@@ -1,27 +1,18 @@
 import { traitLevelValue } from '@lotr/content';
-import type { ICharacter, SpellCastArgs } from '@lotr/interfaces';
+import type { ICharacter } from '@lotr/interfaces';
 import { SoundEffect, VisualEffect } from '@lotr/interfaces';
 import { Spell } from '../../../../models/world/Spell';
 
 export class IceMist extends Spell {
-  override cast(
+  override showAoEVFX(
     caster: ICharacter | undefined,
-    target: ICharacter | undefined,
-    spellCastArgs: SpellCastArgs,
+    x: number,
+    y: number,
+    map: string,
   ): void {
-    if (target) return;
+    const center = { x, y, map };
 
-    const center = target
-      ? target
-      : {
-          x: spellCastArgs.x ?? 0,
-          y: spellCastArgs.y ?? 0,
-          map: spellCastArgs.map ?? '',
-        };
-
-    const radius =
-      spellCastArgs.range +
-      (caster ? traitLevelValue(caster, 'IceMistWiden') : 0);
+    const radius = 1 + (caster ? traitLevelValue(caster, 'IceMistWiden') : 0);
 
     this.game.messageHelper.sendLogMessageToRadius(center, 8, {
       message: 'You see a dense fog form.',
