@@ -1,5 +1,5 @@
 import { itemGet, itemPropertyGet } from '@lotr/content';
-import type { ICharacter, IItemLevelup, ISimpleItem } from '@lotr/interfaces';
+import type { ICharacter, ISimpleItem } from '@lotr/interfaces';
 import { ItemSlot } from '@lotr/interfaces';
 import { cleanNumber, trinketExpMax } from '@lotr/shared';
 import { equipmentItemGet } from './equipment';
@@ -11,16 +11,17 @@ export function trinketLevelUp(trinket: ISimpleItem): void {
   const levelup = trinketDef.levelup;
   if (!levelup) return;
 
-  const currentLevel = itemPropertyGet(trinket, 'levelup')?.currentLevel ?? 0;
+  const currentLevel =
+    itemPropertyGet(trinket, 'levelupCurrent')?.currentLevel ?? 0;
 
   trinket.mods ??= {};
-  trinket.mods.levelup ??= {
+  trinket.mods.levelupCurrent ??= {
     currentLevel: 0,
     currentXp: 0,
-  } as IItemLevelup;
+  };
 
-  trinket.mods.levelup.currentXp = 0;
-  trinket.mods.levelup.currentLevel = Math.min(
+  trinket.mods.levelupCurrent.currentXp = 0;
+  trinket.mods.levelupCurrent.currentLevel = Math.min(
     currentLevel + 1,
     levelup.maxLevel,
   );
@@ -31,14 +32,14 @@ export function trinketExpGain(char: ICharacter, expGained: number): void {
   if (!trinket) return;
 
   trinket.mods ??= {};
-  trinket.mods.levelup ??= {
+  trinket.mods.levelupCurrent ??= {
     currentLevel: 0,
     currentXp: 0,
-  } as IItemLevelup;
+  };
 
-  const currentXp = cleanNumber(trinket.mods.levelup.currentXp, 0);
+  const currentXp = cleanNumber(trinket.mods.levelupCurrent.currentXp, 0);
 
-  trinket.mods.levelup.currentXp = Math.min(
+  trinket.mods.levelupCurrent.currentXp = Math.min(
     currentXp + expGained,
     trinketExpMax(trinket, itemGet(trinket.name)!),
   );

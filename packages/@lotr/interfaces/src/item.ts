@@ -49,13 +49,16 @@ export interface IItemTrait {
 }
 
 export interface IItemLevelup {
-  currentXp: number;
-  currentLevel: number;
   maxLevel: number;
   xpPerLevel: number;
   xpScalarPerLevel: number;
   goldCostPerLevel: number;
   statsPerLevel: StatBlock;
+}
+
+export interface IItemLevelupCurrent {
+  currentXp: number;
+  currentLevel: number;
 }
 
 export interface IGear {
@@ -210,6 +213,7 @@ export interface ICorpse {
 
 export interface ITrinket {
   levelup?: IItemLevelup;
+  levelupCurrent?: IItemLevelupCurrent;
 }
 
 export type IItem = IConsumable &

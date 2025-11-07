@@ -124,12 +124,17 @@ export class TrinketManagerBehavior implements IAIBehavior {
               }
 
               const currentLevel =
-                itemPropertyGet(playerRightHand, 'levelup')?.currentLevel ?? 0;
+                itemPropertyGet(playerRightHand, 'levelupCurrent')
+                  ?.currentLevel ?? 0;
               const currentXp =
-                itemPropertyGet(playerRightHand, 'levelup')?.currentXp ?? 0;
+                itemPropertyGet(playerRightHand, 'levelupCurrent')?.currentXp ??
+                0;
               const maxXp = trinketExpMax(playerRightHand, trinketDef);
-              const maxLevel = trinketDef.levelup?.maxLevel ?? 0;
-              const statsPerLevel = trinketDef.levelup?.statsPerLevel ?? {};
+              const maxLevel =
+                itemPropertyGet(playerRightHand, 'levelup')?.maxLevel ?? 0;
+              const statsPerLevel =
+                itemPropertyGet(playerRightHand, 'levelup')?.statsPerLevel ??
+                {};
 
               const statsString = Object.keys(statsPerLevel)
                 .map((stat) => {

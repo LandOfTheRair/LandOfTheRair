@@ -377,7 +377,7 @@ export function trinketExpMax(
   const levelup = trinketDef?.levelup;
   if (!levelup) return 0;
 
-  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
+  const currentLevel = trinket.mods.levelupCurrent?.currentLevel ?? 0;
 
   return levelup.xpPerLevel * (currentLevel + 1) * levelup.xpScalarPerLevel;
 }
@@ -389,7 +389,7 @@ export function trinketGoldCost(
   const levelup = trinketDef?.levelup;
   if (!levelup) return 0;
 
-  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
+  const currentLevel = trinket.mods.levelupCurrent?.currentLevel ?? 0;
 
   return levelup.goldCostPerLevel * (currentLevel + 1);
 }
@@ -401,8 +401,8 @@ export function trinketCanLevelUp(
   const levelup = trinketDef?.levelup;
   if (!levelup) return false;
 
-  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
-  const currentXp = trinket.mods.levelup?.currentXp ?? 0;
+  const currentLevel = trinket.mods.levelupCurrent?.currentLevel ?? 0;
+  const currentXp = trinket.mods.levelupCurrent?.currentXp ?? 0;
 
   return (
     currentXp >= trinketExpMax(trinket, trinketDef) &&

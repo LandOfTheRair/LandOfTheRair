@@ -412,7 +412,8 @@ export class CharacterHelper extends BaseService implements ICharacterHelper {
       });
 
       // if the item can level up, add those stats, too
-      const levelup = itemPropertyGet(item, 'levelup')?.currentLevel ?? 0;
+      const levelup =
+        itemPropertyGet(item, 'levelupCurrent')?.currentLevel ?? 0;
       const levelupStats = itemGet(item.name)?.levelup?.statsPerLevel ?? {};
 
       Object.keys(levelupStats).forEach((stat) => {
