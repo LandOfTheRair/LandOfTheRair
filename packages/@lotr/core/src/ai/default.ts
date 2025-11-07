@@ -7,6 +7,7 @@ import {
   shuffle,
   size,
   uniq,
+  uniqBy,
 } from 'lodash';
 
 import type {
@@ -574,11 +575,16 @@ export class DefaultAIBehavior implements IAI {
 
     this.game.characterHelper.setLeftHand(npc, suitableItem.item);
 
-    npc.copyDrops ??= [];
-    npc.copyDrops.push({
-      result: 'equipment.leftHand',
-      chance: -1,
-    });
+    npc.copyDrops = uniqBy(
+      [
+        ...(npc.copyDrops ?? []),
+        {
+          result: 'equipment.leftHand',
+          chance: -1,
+        },
+      ],
+      'result',
+    );
   }
 
   private findValidAllyInView(skillRef: SkillCommand): ICharacter | undefined {
