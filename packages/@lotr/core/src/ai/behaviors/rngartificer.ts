@@ -5,7 +5,6 @@ import type {
   INPC,
   IPlayer,
   IServerGame,
-  ISpoilerLogger,
   Stat,
 } from '@lotr/interfaces';
 import { ItemClass, ItemSlot } from '@lotr/interfaces';
@@ -14,7 +13,7 @@ import { distanceFrom } from '@lotr/shared';
 import { isWeapon, itemIsOwnedBy, itemPropertiesGet } from '@lotr/content';
 
 export class RNGArtificerBehavior implements IAIBehavior {
-  init(game: IServerGame, npc: INPC, parser: Parser, behavior: ISpoilerLogger) {
+  init(game: IServerGame, npc: INPC, parser: Parser) {
     parser
       .addCommand('hello')
       .setSyntax(['hello'])
