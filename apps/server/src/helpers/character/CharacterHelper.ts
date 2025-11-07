@@ -43,6 +43,7 @@ import {
 import {
   coreAllegianceStats,
   itemCanGetBenefitsFrom,
+  itemGet,
   itemGetStat,
   itemPropertiesGet,
   itemPropertyGet,
@@ -404,9 +405,19 @@ export class CharacterHelper extends BaseService implements ICharacterHelper {
         return;
       }
 
+      // add each stat
       Object.values(Stat).forEach((stat) => {
         const bonus = itemGetStat(item, stat);
         addStat(stat, bonus);
+      });
+
+      // if the item can level up, add those stats, too
+      const levelup = itemPropertyGet(item, 'levelup')?.currentLevel ?? 0;
+      const levelupStats = itemGet(item.name)?.levelup?.statsPerLevel ?? {};
+
+      Object.keys(levelupStats).forEach((stat) => {
+        const bonus = levelupStats[stat as Stat] ?? 0;
+        addStat(stat as Stat, Math.floor(bonus * levelup));
       });
     });
 

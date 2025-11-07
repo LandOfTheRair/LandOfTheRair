@@ -1,5 +1,6 @@
 export * from './agro';
 export * from './combat';
+export * from './equipment';
 export * from './hands';
 export * from './health';
 export * from './interactions';
@@ -18,3 +19,4 @@ export * from './status';
 export * from './stealth';
 export * from './swimming';
 export * from './trait';
+export * from './trinket';

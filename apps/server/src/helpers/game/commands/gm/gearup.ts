@@ -39,6 +39,7 @@ export class GMGearUp extends MacroCommand {
       ItemSlot.Ring,
       ItemSlot.Hands,
       ItemSlot.Feet,
+      ItemSlot.Trinket,
     ];
 
     slotsToFill.forEach((itemSlot) => {

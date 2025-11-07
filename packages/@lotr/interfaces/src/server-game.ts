@@ -811,11 +811,6 @@ export interface IItemHelper extends IGameService {
     baseRequirements: IItemRequirements | undefined,
     newRequirements: IItemRequirements,
   ): IItemRequirements;
-  reasonCantGetBenefitsFromItem(
-    char: ICharacter,
-    item: ISimpleItem,
-    slot?: ItemSlot,
-  ): string;
   gainCondition(
     item: ISimpleItem,
     conditionLoss: number,

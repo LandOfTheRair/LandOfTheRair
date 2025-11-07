@@ -42,6 +42,7 @@ export enum BehaviorType {
   RNGArtificer = 'rngartificer',
   TreasureClaimer = 'treasureclaimer',
   EventPlanner = 'eventplanner',
+  TrinketManager = 'trinketmanager',
   HalloweenCandy = 'halloweencandy',
   ThanksgivingFood = 'thanksgivingfood',
   ThanksgivingGuns = 'thanksgivingguns',
@@ -165,6 +166,11 @@ export interface ITreasureClaimer {
 
 export interface IRNGArtificer {}
 
+export interface ITrinketManager {
+  trinketName: string;
+  exchangeTrinketItem: string;
+}
+
 export type IBehavior = IVendorBehavior &
   ITrainerBehavior &
   ICrierBehavior &
@@ -192,7 +198,8 @@ export type IBehavior = IVendorBehavior &
   IExitWarperBehavior &
   ITreasureClaimer &
   IRNGArtificer &
-  ICulinarianBehavior & {
+  ICulinarianBehavior &
+  ITrinketManager & {
     type: BehaviorType;
     props?: string[];
   };

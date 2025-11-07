@@ -80,6 +80,7 @@ export enum ArmorClass {
   Scaleplate = 'Scaleplate',
   Skull = 'Skull',
   Tunic = 'Tunic',
+  Trinket = 'Trinket',
 }
 
 export enum MiscClass {
@@ -107,6 +108,8 @@ export const ItemClass = Object.assign({}, WeaponClass, ArmorClass, MiscClass);
 export type ItemClassType = `${ItemClass}`;
 
 export const AmmoClasses = [ItemClass.Arrow, ItemClass.Wand];
+
+export const TrinketClasses = [ItemClass.Trinket];
 
 export const SharpWeaponClasses = {
   [ItemClass.Axe]: true,
@@ -168,6 +171,7 @@ export const PotionClasses = [ItemClass.Bottle];
 export const EquipHash: Partial<
   Record<ArmorClass | WeaponClass | MiscClass, ItemSlot>
 > = {};
+
 ArmorClasses.forEach((t) => (EquipHash[t] = ItemSlot.Armor));
 RobeClasses.forEach((t) => (EquipHash[t] = ItemSlot.Robe));
 HeadClasses.forEach((t) => (EquipHash[t] = ItemSlot.Head));
@@ -180,6 +184,7 @@ HandsClasses.forEach((t) => (EquipHash[t] = ItemSlot.Hands));
 EarClasses.forEach((t) => (EquipHash[t] = ItemSlot.Ear));
 PotionClasses.forEach((t) => (EquipHash[t] = ItemSlot.Potion));
 AmmoClasses.forEach((t) => (EquipHash[t] = ItemSlot.Ammo));
+TrinketClasses.forEach((t) => (EquipHash[t] = ItemSlot.Trinket));
 
 export const GivesBonusInHandItemClasses = [
   ...Object.keys(WeaponClass),
@@ -197,6 +202,7 @@ export const EquippableItemClasses = [
   ...FeetClasses,
   ...HandsClasses,
   ...EarClasses,
+  ...TrinketClasses,
 ];
 
 export const EquippableItemClassesWithWeapons = [

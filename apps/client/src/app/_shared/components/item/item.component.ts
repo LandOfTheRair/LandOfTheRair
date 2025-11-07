@@ -21,7 +21,7 @@ import {
   ItemSlot,
   WeaponClass,
 } from '@lotr/interfaces';
-import { canUseItem, descTextFor } from '@lotr/shared';
+import { canUseItem, descTextFor, trinketCanLevelUp } from '@lotr/shared';
 import { GameState, SetCurrentItemTooltip } from '../../../../stores';
 import { AssetService } from '../../../services/asset.service';
 import { GameService } from '../../../services/game.service';
@@ -89,7 +89,7 @@ export class ItemComponent implements OnDestroy {
     const context = this.context();
     const item = this.item();
     const realItem = this.realItem();
-    const realItemClass = realItem?.itemClass;
+    const realItemClass = this.item()?.mods?.itemClass ?? realItem?.itemClass;
     const viewingPlayer = this.viewingPlayer();
 
     if (!context || !item || !realItem || !viewingPlayer || !this.canDrag()) {
@@ -292,9 +292,19 @@ export class ItemComponent implements OnDestroy {
   });
 
   public glowColor = computed(() => {
-    if (this.item().mods.condition <= 0) return 'glow-black';
-    if (this.item().mods.condition <= 5000) return 'glow-red';
-    if (this.item().mods.condition <= 10000) return 'glow-yellow';
+    const item = this.item();
+    const realItem = this.realItem();
+
+    const condition = item.mods.condition ?? 20000;
+    if (condition <= 0) return 'glow-black';
+    if (condition <= 5000) return 'glow-red';
+    if (condition <= 10000) return 'glow-yellow';
+
+    const thisItemClass = item.mods?.itemClass ?? realItem?.itemClass;
+    if (thisItemClass === ItemClass.Trinket) {
+      return trinketCanLevelUp(item, realItem) ? 'glow-green' : 'glow-none';
+    }
+
     return 'glow-none';
   });
 

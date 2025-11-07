@@ -1,4 +1,9 @@
-import type { IItem, IPlayer, ISimpleItem } from '@lotr/interfaces';
+import type {
+  IItem,
+  IItemDefinition,
+  IPlayer,
+  ISimpleItem,
+} from '@lotr/interfaces';
 import { ItemClass, Skill, Stat } from '@lotr/interfaces';
 
 const formatStatForDisplay = (stat: Stat, statValue: number) => {
@@ -313,11 +318,11 @@ export function descTextFor(
   return allTexts.join(' ');
 }
 
-export const foodTextFor = (
+export function foodTextFor(
   player: IPlayer,
   item: ISimpleItem,
   itemDef: IItem,
-) => {
+): string {
   const desc = getProp(item, itemDef, 'desc');
 
   const useEffect = getProp(item, itemDef, 'useEffect');
@@ -329,13 +334,13 @@ export const foodTextFor = (
   }`;
 
   return `${baseText} ${statText}`;
-};
+}
 
-export const gemTextFor = (
+export function gemTextFor(
   player: IPlayer,
   item: ISimpleItem,
   itemDef: IItem,
-) => {
+): string {
   const desc = getProp(item, itemDef, 'desc');
 
   const encrustGive = getProp(item, itemDef, 'encrustGive');
@@ -363,4 +368,44 @@ export const gemTextFor = (
     : '';
 
   return `${baseText}${slotText}${statText}${effectText}`;
-};
+}
+
+export function trinketExpMax(
+  trinket: ISimpleItem,
+  trinketDef: IItemDefinition,
+): number {
+  const levelup = trinketDef?.levelup;
+  if (!levelup) return 0;
+
+  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
+
+  return levelup.xpPerLevel * (currentLevel + 1) * levelup.xpScalarPerLevel;
+}
+
+export function trinketGoldCost(
+  trinket: ISimpleItem,
+  trinketDef: IItemDefinition,
+): number {
+  const levelup = trinketDef?.levelup;
+  if (!levelup) return 0;
+
+  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
+
+  return levelup.goldCostPerLevel * (currentLevel + 1);
+}
+
+export function trinketCanLevelUp(
+  trinket: ISimpleItem,
+  trinketDef: IItemDefinition,
+): boolean {
+  const levelup = trinketDef?.levelup;
+  if (!levelup) return false;
+
+  const currentLevel = trinket.mods.levelup?.currentLevel ?? 0;
+  const currentXp = trinket.mods.levelup?.currentXp ?? 0;
+
+  return (
+    currentXp >= trinketExpMax(trinket, trinketDef) &&
+    currentLevel < levelup.maxLevel
+  );
+}

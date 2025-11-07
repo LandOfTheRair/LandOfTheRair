@@ -51,7 +51,11 @@ export class EquipmentMainComponent {
       name: 'Amulet',
       dropScope: 'Equipment',
     },
-    {},
+    {
+      slot: 'trinket',
+      name: 'Trinket',
+      dropScope: 'Equipment',
+    },
 
     {
       slot: 'waist',

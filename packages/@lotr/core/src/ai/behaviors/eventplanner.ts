@@ -5,7 +5,6 @@ import {
   Currency,
   GameServerResponse,
   type IAIBehavior,
-  type ICrierBehavior,
   type IDialogChatAction,
   type INPC,
   type IServerGame,
@@ -14,7 +13,7 @@ import { distanceFrom } from '@lotr/shared';
 import { transmissionSendResponseToAccount } from '../../transmission';
 
 export class EventPlannerBehavior implements IAIBehavior {
-  init(game: IServerGame, npc: INPC, parser: Parser, behavior: ICrierBehavior) {
+  init(game: IServerGame, npc: INPC, parser: Parser) {
     const allFestivals = [
       {
         name: '2x XP Festival',

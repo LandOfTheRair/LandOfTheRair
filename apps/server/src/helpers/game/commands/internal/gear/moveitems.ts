@@ -6,6 +6,7 @@ import {
   itemCanGetBenefitsFrom,
   itemIsOwnedBy,
   itemPropertyGet,
+  reasonCantGetBenefitsFromItem,
   traitHasLearned,
 } from '@lotr/content';
 import type { VendorBehavior } from '@lotr/core';
@@ -175,10 +176,7 @@ export class MoveItems extends MacroCommand {
 
     // Dest: E - Items must be able to be used by the equipper
     if (dest === 'E' && !itemCanGetBenefitsFrom(player, srcItem)) {
-      this.sendMessage(
-        player,
-        this.game.itemHelper.reasonCantGetBenefitsFromItem(player, srcItem),
-      );
+      this.sendMessage(player, reasonCantGetBenefitsFromItem(player, srcItem));
       return false;
     }
 

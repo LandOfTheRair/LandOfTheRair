@@ -1,4 +1,3 @@
-
 .item-container {
   position: relative;
   height: 64px;
@@ -31,10 +30,16 @@ img {
   }
 }
 
-.count, .value, .ounces {
+.count,
+.value,
+.ounces {
   position: absolute;
   color: #000;
-  text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
+  text-shadow:
+    -1px 0 #fff,
+    0 1px #fff,
+    1px 0 #fff,
+    0 -1px #fff;
   font-size: 0.9rem;
   z-index: 560;
   font-weight: bold;
@@ -76,6 +81,10 @@ img {
   z-index: 540;
 }
 
+.glow-green {
+  animation: glow-green 1500ms ease-out infinite alternate;
+}
+
 .glow-yellow {
   animation: glow-yellow 800ms ease-out infinite alternate;
 }
@@ -86,6 +95,15 @@ img {
 
 .glow-black {
   animation: glow-black 200ms ease-out infinite alternate;
+}
+
+@keyframes glow-green {
+  0% {
+    box-shadow: inset 0 0 5px #0a0;
+  }
+  100% {
+    box-shadow: inset 0 0 10px #0a0;
+  }
 }
 
 @keyframes glow-yellow {

@@ -9,6 +9,7 @@ import {
   isDead,
   isPlayer,
   swimLevelGet,
+  trinketExpGain,
 } from '@lotr/characters';
 import {
   isHoliday,
@@ -450,6 +451,8 @@ export class PlayerHelper extends BaseService {
 
     player.exp = Math.max(Math.floor(player.exp + xpGained), 1);
     player.exp = Math.min(player.exp, settingGetMaxExp());
+
+    trinketExpGain(player, xpGained);
   }
 
   // gain axp for a player

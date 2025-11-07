@@ -43,7 +43,12 @@ export class EquipmentViewOnlyComponent {
       dropScope: 'Equipment',
       canShow: () => true,
     },
-    {},
+    {
+      slot: 'trinket',
+      name: 'Trinket',
+      dropScope: 'Equipment',
+      canShow: () => true,
+    },
 
     {
       slot: 'waist',
