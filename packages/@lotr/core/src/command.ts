@@ -369,8 +369,6 @@ export class SpellCommand extends SkillCommand {
       return false;
     }
 
-    console.log('CS', args.primaryTarget);
-
     // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
       !args.primaryTarget &&
