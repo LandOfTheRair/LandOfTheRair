@@ -369,6 +369,8 @@ export class SpellCommand extends SkillCommand {
       return false;
     }
 
+    console.log('CS', args.primaryTarget);
+
     // if we're not a party target spell AND we're cast by a player, we look for a primary target (location or character)
     if (
       !args.primaryTarget &&
@@ -610,9 +612,10 @@ export class SpellCommand extends SkillCommand {
       this.spellDataRef || this.spellRef,
       `USE:${char?.name}`,
     );
+
     if (spellData.spellMeta.aoe) {
       this.castSpell(char, {
-        primaryTarget: target ?? targetsPosition,
+        primaryTarget: targetsPosition ?? target,
         ...(args || {}),
       });
       return;

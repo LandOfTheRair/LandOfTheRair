@@ -1,9 +1,9 @@
-
 export function distanceFrom(
   refPoint: { x: number; y: number },
-  checkPoint: { x: number; y: number }
+  checkPoint: { x: number; y: number },
 ): number {
-  const checkX = refPoint.x;
-  const checkY = refPoint.y;
-  return Math.floor(Math.sqrt(Math.pow(checkPoint.x - checkX, 2) + Math.pow(checkPoint.y - checkY, 2)));
+  return Math.max(
+    Math.abs(refPoint.x - checkPoint.x),
+    Math.abs(refPoint.y - checkPoint.y),
+  );
 }

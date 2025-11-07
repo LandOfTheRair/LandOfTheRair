@@ -1,5 +1,5 @@
 import { SpellCommand } from '@lotr/core';
-import type { IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
+import type { ICharacter, IMacroCommandArgs, IPlayer } from '@lotr/interfaces';
 
 export class HolyFire extends SpellCommand {
   override aliases = ['holyfire', 'cast holyfire'];
@@ -8,13 +8,24 @@ export class HolyFire extends SpellCommand {
   override spellRef = 'HolyFire';
 
   override execute(player: IPlayer, args: IMacroCommandArgs) {
-    const res = super.execute(player, args);
+    if (!args.stringArgs) return false;
 
-    if (res) {
-      this.game.commandHandler.getSkillRef('Light').execute(player, {
-        ...args,
-        overrideEffect: { range: 0, name: 'Light', potency: 1 },
-      });
-    }
+    const target = this.game.targettingHelper.getFirstPossibleTargetInViewRange(
+      player,
+      args.stringArgs,
+    );
+    if (!target) return this.youDontSeeThatPerson(player, args.stringArgs);
+
+    if (target === player) return;
+
+    this.use(player, target);
+  }
+
+  override use(caster: ICharacter, target: ICharacter): void {
+    super.use(caster, target);
+
+    this.game.commandHandler.getSkillRef('Light').execute(caster, {
+      overrideEffect: { range: 0, name: 'Light', potency: 1 },
+    });
   }
 }
