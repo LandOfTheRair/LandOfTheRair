@@ -948,6 +948,7 @@ export interface IInventoryHelper extends IGameService {
     locker: IItemContainer,
   ): boolean;
   materialSpaceLeft(player: IPlayer, material: string): number;
+  materialSpaceUsed(player: IPlayer, material: string): number;
   canAddMaterial(player: IPlayer, material: string): boolean;
   addMaterial(player: IPlayer, material: string, number?: number): void;
   removeMaterial(player: IPlayer, material: string, number?: number): void;

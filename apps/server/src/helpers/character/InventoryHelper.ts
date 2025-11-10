@@ -262,10 +262,14 @@ export class InventoryHelper extends BaseService implements IInventoryHelper {
   }
 
   // material functions
+  public materialSpaceUsed(player: IPlayer, material: string): number {
+    return player.accountLockers.materials[material] ?? 0;
+  }
+
   public materialSpaceLeft(player: IPlayer, material: string): number {
     return (
       premiumMaxMaterialStorageSpace(player, this.materialSize) -
-      (player.accountLockers.materials[material] ?? 0)
+      this.materialSpaceUsed(player, material)
     );
   }
 

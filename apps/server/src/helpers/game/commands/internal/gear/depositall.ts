@@ -8,6 +8,8 @@ export class DepositAllCommand extends MacroCommand {
   override execute(player: IPlayer, args: IMacroCommandArgs) {
     let materialsDeposited = 0;
 
+    const depositedByName: Record<string, number> = {};
+
     const removeItemUUIDs: string[] = [];
 
     player.items.sack.items.forEach((item) => {
@@ -20,8 +22,11 @@ export class DepositAllCommand extends MacroCommand {
       );
       if (materialSpaceLeft < 0) return;
 
+      depositedByName[item.name] ??= 0;
+
       const { withdrawInOunces } =
         this.game.lockerHelper.getMaterialData(materialRef);
+
       if (withdrawInOunces) {
         const totalOz = itemPropertyGet(item, 'ounces') ?? 1;
         const takeOz = Math.min(materialSpaceLeft, totalOz);
@@ -34,20 +39,37 @@ export class DepositAllCommand extends MacroCommand {
         }
 
         materialsDeposited += takeOz;
+        depositedByName[item.name] += takeOz;
       } else {
         this.game.inventoryHelper.addMaterial(player, materialRef, 1);
-        materialsDeposited += 1;
         removeItemUUIDs.push(item.uuid);
+
+        materialsDeposited += 1;
+        depositedByName[item.name] += 1;
       }
     });
 
     if (materialsDeposited === 0) {
       this.sendMessage(player, 'You did not have any materials to deposit.');
     } else {
-      this.sendMessage(
-        player,
-        `Deposited ${materialsDeposited.toLocaleString()} items.`,
-      );
+      const messages = [
+        `Deposited ${materialsDeposited.toLocaleString()} items:`,
+      ];
+
+      Object.keys(depositedByName).forEach((itemName) => {
+        const materialRef = this.game.lockerHelper.getMaterialRef(itemName);
+        if (!materialRef) return;
+
+        const deposited = depositedByName[itemName];
+        const totalInStorage = this.game.inventoryHelper.materialSpaceLeft(
+          player,
+          materialRef,
+        );
+
+        messages.push(`- ${deposited}x ${itemName} (total: ${totalInStorage})`);
+      });
+
+      this.sendMessage(player, messages.join('<br>'));
     }
 
     this.game.inventoryHelper.removeItemsFromSackByUUID(
