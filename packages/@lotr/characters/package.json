@@ -21,7 +21,7 @@
     "@lotr/exp": "*",
     "@lotr/interfaces": "*",
     "@lotr/shared": "*",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "luxon": "^1.25.0"
   }
 }

@@ -18,6 +18,6 @@
     "@lotr/content": "*",
     "@lotr/eslint-config": "*",
     "@lotr/interfaces": "*",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.23"
   }
 }
